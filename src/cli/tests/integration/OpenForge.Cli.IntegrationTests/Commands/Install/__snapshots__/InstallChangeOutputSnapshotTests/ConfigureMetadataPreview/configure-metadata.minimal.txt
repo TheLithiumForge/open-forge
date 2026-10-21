@@ -17,8 +17,6 @@ Frontmatter: root -> scoped
     metadata would move under open-forge:
   .agents/memory/emerging/_emerging.md
     metadata would move under open-forge:
-  .agents/memory/saving.md
-    metadata would move under open-forge:
   .agents/memory/working/_working.md
     metadata would move under open-forge:
   .agents/patterns/_patterns.md
@@ -35,5 +33,5 @@ Frontmatter: root -> scoped
     metadata would move under open-forge:
   .agents/templates/_templates.md
     metadata would move under open-forge:
-  Would update 17 existing files.
+  Would update 16 existing files.
 No files were changed.

@@ -6,6 +6,8 @@ open-forge:
 
 # Directives
 
+## What behavior is required in this scope?
+
 Rule files here apply to the whole workspace.
 
 ## Axioms

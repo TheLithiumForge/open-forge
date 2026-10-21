@@ -71,7 +71,7 @@
     "filesCreated": 0,
     "filesDeleted": 0,
     "filesKept": 0,
-    "filesUnchanged": 19,
+    "filesUnchanged": 18,
     "sectionsUpdated": 0,
     "errors": 1
   },
@@ -104,9 +104,6 @@
       },
       {
         "path": ".agents/memory/emerging/_emerging.md"
-      },
-      {
-        "path": ".agents/memory/saving.md"
       },
       {
         "path": ".agents/memory/working/_working.md"

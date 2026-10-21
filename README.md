@@ -81,14 +81,14 @@ Add Working Memory when work needs to survive a pause:
 open-forge install --configure --preset custom --route memory/working=git-ignore --dry-run
 ```
 
-`git-ignore` keeps the records on your machine and still shares the folder's catalogue. The saving policy, `.agents/memory/saving.md`, asks agents to write down the goal, where things stand, the next step and open questions before they pause. Delete that one file if you'd rather save by hand.
+`git-ignore` keeps the records on your machine and still shares the folder's catalogue. Its catalogue asks agents to write down the goal, where things stand, the next step and open questions before they pause.
 
 ## Choose how much to adopt
 
 | You need                                          | Start with                                                |
 | ------------------------------------------------- | --------------------------------------------------------- |
 | Rules, accepted facts and your existing documents | Minimal, the recommended start                            |
-| Work that continues across sessions               | Minimal plus Working Memory and its saving policy         |
+| Work that continues across sessions               | Minimal plus Working Memory                               |
 | The usual set for a new project                   | Essentials, which adds patterns, skills and working notes |
 | Every built-in folder                             | Full Core                                                 |
 | A particular planning or development method       | An [Extension](#extensions)                               |
@@ -182,7 +182,7 @@ An agent doesn't need to know everything, but it does need to know where everyth
 
 I call this **Adaptive Context Engineering (ACE)**. It takes progressive disclosure and spec-driven development and applies them to the workspace itself. Start with what you want to achieve, add detail as the work unfolds, and keep what's worth knowing next time.
 
-Full Core supplies 21 Markdown files, including a guide for people, the saving policy, and four supporting CLI guides that are opened when needed. Essentials installs fewer categories, and Custom follows your selection. Startup reads the installed entrypoints tagged to load and the files their rules require. The files work on their own. The optional CLI speeds up maintenance.
+Full Core supplies 20 Markdown files, including a guide for people and four supporting CLI guides that are opened when needed. Essentials installs fewer categories, and Custom follows your selection. Startup reads the installed entrypoints tagged to load and the files their rules require. The files work on their own. The optional CLI speeds up maintenance.
 
 I built Open Forge to work beside your harness, the tool that runs your agent. Anything that reads `AGENTS.md` (or the `CLAUDE.md` bridge) can use it. Keep your hooks, custom agents, and tools. If you want to define them once for several harnesses, a translator such as [APM](https://github.com/microsoft/apm) can install them where each harness looks for them.
 
@@ -210,7 +210,6 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
   maps/_maps.md                   <- pointers to important local and external sources
   memory/
     _memory.md                    <- what is worth remembering
-    saving.md                     <- save progress before pausing, needs Working
     working/_working.md           <- temporary state for active work
     emerging/_emerging.md         <- useful, but not settled yet
     crystallized/_crystallized.md <- accepted knowledge that stays current
@@ -219,7 +218,7 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 
 Each installed entrypoint says what its category is for and the rules for using it, then lists what's inside under `Entries`. Apart from Memory state entrypoints and the `open-forge-cli` Skill, every selected category starts empty. The content comes from your work, or from Extensions you choose.
 
-In Full Core, startup reads `AGENTS.md`, the loader, Directives, Memory, Crystallized, Emerging and Working Memory, and the saving policy. Guidance, Maps, Patterns, Skills, Templates and Archived Memory open when a task fits their description, and the CLI guide before any CLI command other than `context`. Other linked files open when selected, tagged to load, or explicitly required by a loaded rule. Essentials and Custom use the same loading rules for the routes present. Git-ignored Working records stay readable on your machine, but generated `Entries` leave them out.
+In Full Core, startup reads `AGENTS.md`, the loader, Directives, Memory, Crystallized, Emerging and Working Memory. Guidance, Maps, Patterns, Skills, Templates and Archived Memory open when a task fits their description, and the CLI guide before any CLI command other than `context`. Other linked files open when selected, tagged to load, or explicitly required by a loaded rule. Essentials and Custom use the same loading rules for the routes present. Git-ignored Working records stay readable on your machine, but generated `Entries` leave them out.
 
 Read these files once now, and again after each update. They're short, and they become the instructions your agents are asked to follow.
 

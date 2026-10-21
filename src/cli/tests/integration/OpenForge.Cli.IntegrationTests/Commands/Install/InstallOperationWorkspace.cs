@@ -30,7 +30,6 @@ internal sealed class InstallOperationWorkspace : IDisposable
         ".agents/memory/archived/_archived.md",
         ".agents/memory/crystallized/_crystallized.md",
         ".agents/memory/emerging/_emerging.md",
-        ".agents/memory/saving.md",
         ".agents/memory/working/_working.md",
         ".agents/patterns/_patterns.md",
         ".agents/skills/_skills.md",

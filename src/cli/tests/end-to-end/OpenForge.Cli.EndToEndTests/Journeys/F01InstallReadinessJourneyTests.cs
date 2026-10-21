@@ -39,7 +39,6 @@ public sealed class F01InstallReadinessJourneyTests
         ".agents/memory/_memory.md",
         ".agents/memory/crystallized/_crystallized.md",
         ".agents/memory/emerging/_emerging.md",
-        ".agents/memory/saving.md",
         ".agents/memory/working/_working.md",
     ];
 

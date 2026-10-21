@@ -6,6 +6,8 @@ open-forge:
 
 # Skills
 
+## Which specialized capability would help with this work?
+
 This folder holds native capability packages, each entered through its `SKILL.md`.
 
 ## Axioms

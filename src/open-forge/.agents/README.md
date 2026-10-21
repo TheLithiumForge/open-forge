@@ -53,6 +53,7 @@ These apply whenever you or an agent write workspace context, catalogues or meta
 - Connect related material with relative links to local sources and precise references. Reuse consistent descriptive tags for shared subjects. Add links and tags only when they help someone find or retrieve something.
 - Put detail in the narrowest source that defines it. A parent catalogue keeps only the summary and link needed to choose that source. Put material at workspace level only when it applies across the workspace. Don't repeat inherited rules.
 - A folder has one catalogue, named `_{folder-name}.md`. The compatibility names `index.md`, `_index.md`, `references.md` and `_references.md` also work.
+- Under a catalogue's title, write the one question its folder answers as a `##` heading, then a short paragraph on what the folder holds. A catalogue describes its own folder and does not name other routes.
 - For a catalogue without rules of its own, put only `- inherited - No local axioms; loaded ancestor axioms remain active.` under `## Axioms`. A missing or empty Axioms section also adds no rules. Never mix that line with local rules.
 - Scopes can nest before, between or after deeper route segments, and each one narrows everything after it.
 - A scope holds only the routes that are useful there. It doesn't need to copy another scope or the installed defaults.

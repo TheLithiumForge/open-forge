@@ -6,6 +6,8 @@ open-forge:
 
 # Archived Memory
 
+## What useful history should remain available without governing current work?
+
 This folder keeps history for reference without letting it guide current work.
 
 ## Axioms

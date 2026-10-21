@@ -6,6 +6,8 @@ open-forge:
 
 # Memory
 
+## What is worth remembering for current or future work?
+
 Memory is self-growing Markdown state: people and agents add useful records and routed scopes without a fixed structural limit. A record need not pass through every state.
 
 ## Axioms
@@ -19,10 +21,10 @@ Memory is self-growing Markdown state: people and agents add useful records and 
 
 ### Where it goes
 
-- An accepted record can define current knowledge or decisions. Recording another category's content does not give the record that category's role. Saving or moving a record does not make it accepted.
+- An accepted record can define current knowledge. Recording another category's content does not give the record that category's role. Saving or moving a record does not make it accepted.
 - Add records and routed scopes when their likely future value justifies the cost of finding and reviewing them. Use an existing suitable record before creating another.
 - Move material when its state, scope or intended use changes, and leave no stale or competing copy. The destination's rules govern its new role. Put accepted instructions for future agent behavior in the source for that role.
-- A record needs no named category or Template. Use an existing state and the narrowest useful scope. Do not recreate a removed folder merely to save a record.
+- A record needs no named category. Use an existing state and the narrowest useful scope. Do not recreate a removed folder merely to save a record.
 - Within the authority granted for the work, add an ordinary record or scoped route when needed. Ask when placement would change accepted meaning or cross an unresolved authority boundary. Get explicit user direction before creating a new top-level Memory state.
 
 ## Entries
@@ -30,5 +32,4 @@ Memory is self-growing Markdown state: people and agents add useful records and 
 - [History that no longer guides current work](archived/_archived.md) - #Memory #Archived #Contextual #Historical
 - [Accepted knowledge that should stay current](crystallized/_crystallized.md) - #LoadNow #Memory #Crystallized #CurrentTruth
 - [Ideas, findings and analysis that are not accepted yet](emerging/_emerging.md) - #KeepInMind #Memory #Emerging #Contextual #Candidate
-- [Save progress before pausing unfinished work](saving.md) - #LoadNow #Memory #Working #Policy
 - [Work in progress and how to resume it](working/_working.md) - #LoadNow #Memory #Working #Contextual

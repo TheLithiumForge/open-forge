@@ -10,6 +10,6 @@ Frontmatter: root
     Open Forge section would be added, your content would be kept
   CLAUDE.md                     would be created with an Open Forge section
   .agents/open-forge.lock.json  would be created
-  Would create 19 files and 13 directories under .agents, and update 1 existing
+  Would create 18 files and 13 directories under .agents, and update 1 existing
   file.
 No files were changed.

@@ -276,7 +276,7 @@
     "entriesSectionsCurrent": null,
     "entriesSectionsStale": null,
     "entriesSectionsMissing": null,
-    "frameworkFilesCurrent": 20,
+    "frameworkFilesCurrent": 19,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -354,10 +354,10 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 8,
-          "characters": 16827,
-          "bytes": 16827,
-          "tokens": 4207
+          "files": 7,
+          "characters": 15741,
+          "bytes": 15741,
+          "tokens": 3936
         },
         "current": {
           "files": null,
@@ -429,10 +429,6 @@
       },
       {
         "path": ".agents/memory/emerging/_emerging.md",
-        "state": "current"
-      },
-      {
-        "path": ".agents/memory/saving.md",
         "state": "current"
       },
       {

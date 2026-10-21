@@ -6,6 +6,8 @@ open-forge:
 
 # Guidance
 
+## What approach is recommended, and when does it fit?
+
 This folder holds advice for recurring situations. Advice is not a rule.
 
 ## Axioms

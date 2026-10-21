@@ -26,7 +26,6 @@ public sealed class F32StartSmallJourneyTests
         JourneyPayloadAssertions.AssertCompleted(install);
         Assert.Contains("Setup: Minimal", install.StandardOutput, StringComparison.Ordinal);
         Assert.False(Directory.Exists(workspace.Combine(".agents/memory/working")));
-        Assert.False(File.Exists(workspace.Combine(".agents/memory/saving.md")));
         var installed = JourneyPayloadAssertions.Entries(ReadLoader(workspace));
         Assert.Equal(2, installed.Length);
         Assert.EndsWith("](directives/_directives.md) - #LoadNow #Core #Directive", installed[0], StringComparison.Ordinal);

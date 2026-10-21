@@ -36,8 +36,6 @@ Frontmatter: root
     would be created; source: .agents/memory/crystallized/_crystallized.md
   .agents/memory/emerging/_emerging.md
     would be created; source: .agents/memory/emerging/_emerging.md
-  .agents/memory/saving.md
-    would be created; source: .agents/memory/saving.md
   .agents/memory/working/_working.md
     would be created; source: .agents/memory/working/_working.md
   .agents/patterns/_patterns.md
@@ -66,11 +64,11 @@ Frontmatter: root
   .agents/open-forge.lock.json                           would be created
   .agents/memory/_memory.overwrite.md
     Planned migration: content preserved
-  Would create 19 files and 12 directories under .agents, and replace 1 existing
+  Would create 18 files and 12 directories under .agents, and replace 1 existing
   file, plus AGENTS.md and CLAUDE.md.
   Planned migration for 1 source.
   Bundled Framework fingerprint:
-  <sha256> (21 assets).
+  <sha256> (20 assets).
   The ownership record is planned for publication.
   No recovery bundle was created.
   Verification was not requested.

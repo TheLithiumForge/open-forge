@@ -270,16 +270,6 @@
       "after": null
     },
     {
-      "path": ".agents/memory/saving.md",
-      "kind": "file",
-      "action": "created",
-      "outcome": "not-started",
-      "reason": null,
-      "owner": null,
-      "before": null,
-      "after": null
-    },
-    {
       "path": ".agents/memory/working/_working.md",
       "kind": "file",
       "action": "created",
@@ -424,7 +414,7 @@
     "automatic": false,
     "classification": "safe-absence",
     "footprint": {
-      "files": 19,
+      "files": 18,
       "directories": 13,
       "sections": 2
     },
@@ -509,10 +499,6 @@
         "sourceAssetPath": ".agents/memory/emerging/_emerging.md"
       },
       {
-        "path": ".agents/memory/saving.md",
-        "sourceAssetPath": ".agents/memory/saving.md"
-      },
-      {
         "path": ".agents/memory/working/_working.md",
         "sourceAssetPath": ".agents/memory/working/_working.md"
       },
@@ -565,7 +551,7 @@
     ],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 21
+      "assetCount": 20
     },
     "lifecycle": {
       "action": "publish",

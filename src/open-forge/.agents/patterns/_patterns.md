@@ -6,6 +6,8 @@ open-forge:
 
 # Patterns
 
+## What reusable shape makes related work easy to create and inspect?
+
 Each Pattern shows one reusable shape for code, files, naming, placement, boundaries, APIs or documents, so related work is consistent and easy to inspect.
 
 ## Axioms
@@ -16,7 +18,7 @@ Each Pattern shows one reusable shape for code, files, naming, placement, bounda
 - Create or update a Pattern only for an accepted shape that should guide future related work. Do not promote one-off work, temporary transitions or unsettled candidates into a Pattern merely because they have structure.
 - Show one shape as the main content, through a concrete example, tree, table, diagram or annotated outline, so a reviewer can compare real work against it without further explanation. Label which parts are required, optional or repeatable, how they nest and relate, and which names, values and orders are fixed or only illustrative.
 - Keep examples valid for their APIs, formats and tools. Label incomplete examples as schematic and say what they omit.
-- Keep required behavior, procedures and substantial rationale in their defining sources. Example names and values illustrate the shape unless a requirement fixes them. Link related rules, advice, maps, procedures and starting files, say which of them bind the shape, and link back to the Pattern from sources that apply it.
+- Keep required behavior, procedures and substantial rationale in their defining sources. Example names and values illustrate the shape unless a requirement fixes them. Link related sources, say which of them bind the shape, and link back to the Pattern from sources that apply it.
 
 ## Entries
 
