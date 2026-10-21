@@ -15,6 +15,8 @@ internal static class DoctorMaintenanceText
     internal static string RenameTitle() => "Linked file was renamed or moved";
     internal static string MissingFields(string path)
         => $"{path} needs a description or tags. Index can fill the missing fields and keep your content.";
+    internal static string MissingSkillFields(string path)
+        => $"{path} needs its Skill name or description. Index can fill them from the folder name and heading and keep your content.";
     internal static string ChainGap(string path)
         => $"{path} is inside folders without navigation files. Index can create the missing chain.";
     internal static string OutsideFolders(string path)
@@ -31,9 +33,7 @@ internal static class DoctorMaintenanceText
     internal static string ChooseFragment() => "Choose a valid heading, or link to the file without a fragment.";
     internal static string ManagedLink(string path) => $"{path} is managed. Its managing Update owns this file.";
     internal static string UpdateProtectedLink() => "Restore this file through its managing Update operation.";
-    internal static string NativeLink(string path) => $"{path} is inside a native Skill package.";
     internal static string ProtectedLink(string path) => $"{path} is protected from link repair.";
-    internal static string EditPackageLink(string path) => $"Edit the link in {path} through its SKILL.md or package resource.";
     internal static string NoCandidate(string oldPath)
         => $"{oldPath} is missing and no replacement was found.";
     internal static string Malformed(string path, string? cause)
@@ -59,10 +59,6 @@ internal static class DoctorMaintenanceText
     internal static string RepairReason() => "Repair can update the links and affected Entries.";
     internal static string IndexReason() => "Complete missing metadata and navigation while keeping your content.";
     internal static string ManagedMetadata(string path) => $"{path} needs a description or tags. Its managing Update operation can restore its metadata.";
-    internal static string NativeMetadata(string path) => $"{path} needs its package metadata. Complete its native Skill metadata by hand.";
-    internal static string NativeResourceMetadata(string path)
-        => $"{path} needs a description and tags. Index does not edit files inside a Skill package, so add them by hand.";
-    internal static string AddNativeResourceMetadata(string path) => $"Add the missing description and tags to {path} by hand.";
     internal static string ReviewBoundary(string path) => $"Review the route boundary in {path} before continuing.";
     internal static string RestoreRoute(string path) => $"Restore the intentionally removed or private route for {path} before indexing it.";
 }

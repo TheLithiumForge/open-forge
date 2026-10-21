@@ -124,18 +124,15 @@ public sealed class PublishedUpdateAdoptionProcessTests
         Assert.Equal(beforeRepeatDataHome, SnapshotDataHome(workspace));
 
         var beforeIndexWorkspace = workspace.SnapshotState();
-        var beforeIndexDataHome = SnapshotDataHome(workspace);
         var index = await workspace.RunAsync("index", "--format", "json", "--detail", "full");
-        using (var document = AssertIndexWarnings(
-            index,
-            [ReferencePath],
-            [ReferenceCataloguePath]))
+        using (AssertIndexCompletesMetadata(index, [ReferencePath]))
         {
-            Assert.Equal("completed-with-warnings", document.RootElement.GetProperty("status").GetString());
         }
 
-        Assert.Equal(beforeIndexWorkspace, workspace.SnapshotState());
-        Assert.Equal(beforeIndexDataHome, SnapshotDataHome(workspace));
+        var reference = File.ReadAllText(workspace.Combine(ReferencePath));
+        Assert.Contains("tags: [Skill]", reference, StringComparison.Ordinal);
+        Assert.EndsWith(ReferenceBody, reference, StringComparison.Ordinal);
+        Assert.NotEqual(beforeIndexWorkspace, workspace.SnapshotState());
     }
 
     [Fact]
@@ -430,50 +427,16 @@ public sealed class PublishedUpdateAdoptionProcessTests
         }
     }
 
-    private static JsonDocument AssertIndexWarnings(
-        ProcessRunResult result,
-        IReadOnlyCollection<string> expectedMetadataPaths,
-        IReadOnlyCollection<string> expectedCurrentCatalogues)
+    private static JsonDocument AssertIndexCompletesMetadata(ProcessRunResult result, IReadOnlyCollection<string> expectedPaths)
     {
-        var expectedFindings = expectedMetadataPaths
-            .Select(path => (Code: "index.metadata-optional", Path: path))
-            .ToArray();
-        Assert.Equal(2, result.ExitCode);
-        Assert.NotEmpty(result.StandardOutput);
+        Assert.Equal(0, result.ExitCode);
         Assert.Empty(result.StandardError);
         var document = JsonDocument.Parse(result.StandardOutput);
-        var root = document.RootElement;
-        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
-        Assert.Equal("index", root.GetProperty("command").GetString());
-        Assert.Equal("completed-with-warnings", root.GetProperty("status").GetString());
-
-        var findings = root.GetProperty("findings").EnumerateArray().ToArray();
-        Assert.All(findings, finding => Assert.Equal("warning", finding.GetProperty("severity").GetString()));
-        var actualFindings = findings
-            .Select(finding => (
-                Code: finding.GetProperty("code").GetString()!,
-                Path: finding.GetProperty("subject").GetProperty("path").GetString()!))
-            .OrderBy(finding => finding.Code, StringComparer.Ordinal)
-            .ThenBy(finding => finding.Path, StringComparer.Ordinal)
-            .ToArray();
-        var orderedExpected = expectedFindings
-            .OrderBy(finding => finding.Code, StringComparer.Ordinal)
-            .ThenBy(finding => finding.Path, StringComparer.Ordinal)
-            .ToArray();
-        Assert.Equal(orderedExpected, actualFindings);
-
-        Assert.Empty(root.GetProperty("effects").EnumerateArray());
-        Assert.Equal(0, root.GetProperty("counts").GetProperty("filesUpdated").GetInt32());
-        var data = root.GetProperty("data");
-        Assert.Empty(data.GetProperty("changes").EnumerateArray());
-        var unchanged = data.GetProperty("unchanged").EnumerateArray()
-            .Select(item => item.GetProperty("path").GetString())
-            .ToArray();
-        foreach (var catalogue in expectedCurrentCatalogues)
-        {
-            Assert.Contains(catalogue, unchanged);
-        }
-
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
+        var completed = document.RootElement.GetProperty("data").GetProperty("metadata").EnumerateArray()
+            .Select(item => item.GetProperty("path").GetString()).Order(StringComparer.Ordinal).ToArray();
+        Assert.Equal(expectedPaths.Order(StringComparer.Ordinal), completed);
         return document;
     }
 

@@ -173,7 +173,7 @@ public sealed class IndexCompletionIntegrationTests
         Assert.Contains("[Independent](note.md) - #Map", File.ReadAllText(workspace.Combine(".agents/maps/_maps.md")), StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Index excludes unknown removed empty package and overwrite-only chains")]
+    [Fact(DisplayName = "Index excludes unknown removed empty and overwrite-only chains")]
     public async Task ExcludesChains()
     {
         using var workspace = TemporaryWorkspace.Create("index-completion-exclusions");
@@ -181,8 +181,6 @@ public sealed class IndexCompletionIntegrationTests
         workspace.CreateFile(".agents/open-forge.json", "{\"schemaVersion\":1,\"removedDirectories\":[\".agents/guidance/removed\"]}");
         workspace.CreateFile(".agents/unknown/deep/note.md", "# Unknown\n");
         workspace.CreateFile(".agents/guidance/removed/deep/note.md", "# Removed\n");
-        workspace.CreateFile(".agents/guidance/native/SKILL.md", "---\nname: native\ndescription: Native\n---\n\n# Native\n");
-        workspace.CreateFile(".agents/guidance/native/references/deep/note.md", "# Package resource\n");
         workspace.CreateFile(".agents/guidance/orphan/deep/note.overwrite.md", "# Overwrite\n");
         workspace.CreateFile(".agents/guidance/resources/deep/file.txt", "Resource\n");
         var excluded = workspace.SnapshotHashes();
@@ -190,7 +188,6 @@ public sealed class IndexCompletionIntegrationTests
         Assert.Equal(0, result.ExitCode);
         foreach (var path in excluded.Keys.Where(path => path.EndsWith("note.md", StringComparison.Ordinal)))
             Assert.Equal(excluded[path], workspace.SnapshotHashes()[path]);
-        Assert.False(File.Exists(workspace.Combine(".agents/guidance/native/references/_references.md")));
         Assert.False(File.Exists(workspace.Combine(".agents/guidance/removed/_removed.md")));
         Assert.False(File.Exists(workspace.Combine(".agents/unknown/_unknown.md")));
     }

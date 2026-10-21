@@ -10,7 +10,6 @@ internal enum RoutedMetadataEligibility
     UnsupportedForm,
     Unreadable,
     UnsafeLeaf,
-    NativePackage,
     ManagedContent,
     GeneratedContent,
     SettingsExcluded,

@@ -12,12 +12,11 @@ internal enum DoctorMaintenanceCondition
     MalformedFrontmatter,
     OldNavigation,
     ManagedMetadata,
-    NativeMetadata,
     RestorationBoundary,
     UnsafeBoundary,
     ProtectedReference,
     RenamedFragmentMissing,
-    NativeResourceMetadata,
+    MissingSkillFields,
 }
 
 internal sealed record DoctorMaintenanceAdvice
@@ -33,7 +32,6 @@ internal sealed record DoctorMaintenanceAdvice
     public bool SameContent { get; init; }
     public int? Similarity { get; init; }
     public string? ProtectedPath { get; init; }
-    public bool ProtectedByNativePackage { get; init; }
     public string? Fragment { get; init; }
     public bool PreserveRenameIdentity { get; init; }
 }

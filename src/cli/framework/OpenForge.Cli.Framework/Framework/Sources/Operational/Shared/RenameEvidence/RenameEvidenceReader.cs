@@ -26,14 +26,6 @@ internal sealed class RenameEvidenceReader(PhysicalPathResolver physicalPathReso
     {
         ArgumentNullException.ThrowIfNull(request);
         cancellationToken.ThrowIfCancellationRequested();
-        request = request with
-        {
-            Policy = request.Policy with
-            {
-                PackageRoots = request.Policy.PackageRoots.AddRange(request.CandidatePaths.Where(path => Path.GetFileName(path) == "SKILL.md")
-                    .Select(SourceLogicalPath.ReadParent)).Distinct(StringComparer.Ordinal).ToImmutableArray(),
-            },
-        };
         var git = gitReader is null
             ? RenameGitObservation.Unavailable(RenameGitAvailability.NotRequested)
             : await gitReader(new RenameGitRequest(request.Workspace, request.Policy), cancellationToken).ConfigureAwait(false);

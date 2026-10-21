@@ -74,7 +74,7 @@ open-forge repair --automatic
 
 Repair fixes links and affected navigation when exactly one successor is proven by committed content or unique recorded metadata. With committed Git evidence, Index and Repair work in either order. Without Git, run Repair first while old Entries still record the file's metadata.
 
-If a target needs your choice, run interactive Repair or copy its candidate's relink command and preview it with `--dry-run`. If a file was deleted with no replacement, edit or remove its authored link. Repair preserves managed files, native Skill packages and other protected sources.
+If a target needs your choice, run interactive Repair or copy its candidate's relink command and preview it with `--dry-run`. If a file was deleted with no replacement, edit or remove its authored link. Repair preserves managed files and other protected sources.
 
 Run `open-forge doctor` and follow its one next step until every check completes with no warnings or errors. A Git timeout asks you to retry. See [Index](#index), [Doctor](#doctor) and [Repair](#repair) for the boundaries and folder-rename advice.
 
@@ -1009,7 +1009,7 @@ exposing parent.
 
 Index also fills missing descriptions and tags in user-owned routed Markdown and creates missing entrypoints below existing roots. A leaf selection includes its missing chain and exposing parent. Existing content and supplied metadata stay intact. See [manual edits](#after-you-edit-files-by-hand) for the everyday procedure.
 
-Completion leaves native Skill packages, overwrite companions, managed authored content, and excluded or recorded private contents to their own maintenance rules. Index does not invent a root. Invalid frontmatter stays unchanged with a precise edit instruction, while independent valid files are indexed.
+Completion leaves overwrite companions, managed authored content, and excluded or recorded private contents to their own maintenance rules. A user-owned `SKILL.md` gets its native `name` from the folder and its `description` from the heading, and other Markdown in its package gets the usual description and tags. Index does not invent a root. Invalid frontmatter stays unchanged with a precise edit instruction, while independent valid files are indexed.
 
 #### Next step
 
@@ -1059,8 +1059,6 @@ apply a proposal.
 
 Doctor gives one next action: safe Repair, eligible Index completion, a target choice, or a precise edit. It uses the same rename proof and protected-source rules as Repair. A missing generated Entries target is reported once as stale navigation. A clean Doctor prints no next step.
 
-Doctor currently reports missing package metadata for plain Markdown Skill resources without frontmatter, even when `SKILL.md` is valid. Index keeps those resources unchanged. This diagnostic needs manual review.
-
 #### Next step
 
 Follow the reported next action, using [`repair`](#repair) for supported link corrections.
@@ -1108,7 +1106,7 @@ boundary for review.
 
 Proven manual renames and moves are included in automatic repairs. The same plan completes eligible metadata and missing entrypoints and refreshes Entries in the affected old and new routes. Unrelated new notes still need Index. See [manual edits](#after-you-edit-files-by-hand) for proof, choices, and deleted files.
 
-Repair preserves managed Framework and Extension files, native Skill packages and resources, overwrite companions, excluded or recorded private contents, and unsafe link sources or targets. Managed-file findings point to the managing Update. Native Skill findings name the file to edit. A partial result names the repairs it applied before the remaining choices or edits. If Git times out, retry the complete request before deciding that a missing file has no successor.
+Repair preserves managed Framework and Extension files, overwrite companions, excluded or recorded private contents, and unsafe link sources or targets. Managed-file findings point to the managing Update. A partial result names the repairs it applied before the remaining choices or edits. If Git times out, retry the complete request before deciding that a missing file has no successor.
 
 Interactive Repair explains possible targets with reasons such as a matching
 file name or title. Choose `Leave this link unchanged` to keep the

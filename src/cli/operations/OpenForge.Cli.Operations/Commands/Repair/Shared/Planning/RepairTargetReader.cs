@@ -112,7 +112,7 @@ internal sealed class RepairTargetReader(SourceCatalogue? catalogue = null, Acti
         var selectedCatalogue = catalogue;
         if (selectedCatalogue is null && plan.Selection.Selected.Count > 0)
             selectedCatalogue = (await new SourceReadSessionReader(_physicalPaths).ReadAsync(plan.Request.Workspace, cancellationToken).ConfigureAwait(false)).Catalogue;
-        var protection = await new RepairProtectionReader(_physicalPaths).ReadAsync(plan.Request.Workspace, cancellationToken, selectedCatalogue).ConfigureAwait(false);
+        var protection = await new RepairProtectionReader(_physicalPaths).ReadAsync(plan.Request.Workspace, cancellationToken).ConfigureAwait(false);
         if (protection.Policy is not { } policy) return null;
         var reader = this;
         if (catalogue is null && selectedCatalogue is not null)
@@ -147,8 +147,6 @@ internal sealed class RepairTargetReader(SourceCatalogue? catalogue = null, Acti
         }
 
         expectations.AddRange(protection.Expectations);
-        expectations.AddRange(RepairProtectionReader.PackageBoundaries(plan.Request.Workspace,
-            plan.Selection.Selected.SelectMany(selected => new[] { selected.Proposal.SourceCanonicalPath, selected.Resolution.Target.CanonicalTargetPath })));
         return expectations.Distinct().ToArray();
     }
 

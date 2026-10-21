@@ -54,7 +54,7 @@ public sealed class RoutedMaintenanceSnapshotIntegrationTests
             Catalogue = catalogue,
             RootPaths = [root],
             SelectedSources = [.. catalogue.Sources],
-            Policy = new() { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty, NativeSkillPaths = [] },
+            Policy = new() { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty },
         }, token);
 
         Assert.Equal(33, reads.Count);
@@ -72,7 +72,7 @@ public sealed class RoutedMaintenanceSnapshotIntegrationTests
             Catalogue = catalogue,
             RootPaths = [root],
             SelectedSources = [.. catalogue.Sources],
-            Policy = new() { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty, NativeSkillPaths = [] },
+            Policy = new() { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty },
             ObservedDocuments = intent.Documents,
         }, token);
         Assert.Equal(33, reads.Count);

@@ -38,7 +38,7 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(view);
         var findings = new List<RepairFinding>();
-        var protection = await new RepairProtectionReader(_physicalPathResolver).ReadAsync(workspace, cancellationToken, view.Catalogue).ConfigureAwait(false);
+        var protection = await new RepairProtectionReader(_physicalPathResolver).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
         if (protection.Policy is not { } policy)
             return new([], [new(RepairFindingCode.DiagnosisIncomplete, "Repair source settings or ownership could not be established.")]);
         var retainedEvidence = retainDiagnosisEvidence ? maintenance?.Renames : null;

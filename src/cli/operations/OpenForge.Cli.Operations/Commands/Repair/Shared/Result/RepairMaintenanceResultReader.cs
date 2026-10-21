@@ -54,6 +54,7 @@ internal static class RepairMaintenanceResultReader
             {
                 FrameworkMetadataField.Description => "description",
                 FrameworkMetadataField.Tags => "tags",
+                FrameworkMetadataField.Name => "name",
                 _ => throw new ArgumentOutOfRangeException(nameof(field)),
             }).ToArray(), item.Completion.Description, item.Completion.Tags, Outcome(item.Path))).ToArray();
         var entrypoints = maintenance.Intent.Entrypoints.Select(item => new RepairCompletedEntrypoint(item.Source.Identity.CanonicalBasePath,

@@ -32,8 +32,6 @@ internal static class RepairContinuationReader
         {
             Settings = settings.Document,
             Ownership = ownership.Document,
-            NativeSkillPaths = [.. routes.Sources.Where(source => source.Source.Base.Form == OpenForge.Cli.Core.Framework.Sources.Models.Identity.SourceDocumentForm.Skill)
-                .Select(source => source.Source.Identity.CanonicalBasePath)],
         };
         var eligible = ImmutableArray.CreateBuilder<OpenForge.Cli.Core.Framework.Sources.Models.Inventory.SourceLogicalSource>();
         var metadataMissing = false;

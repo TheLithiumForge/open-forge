@@ -43,7 +43,6 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
         {
             Settings = settings.Document,
             Ownership = ownership.Document,
-            NativeSkillPaths = [.. catalogue.Candidates.Where(source => source.Form == SourceDocumentForm.Skill).Select(source => source.CanonicalPath)],
         };
         if (plan.Selection.Selected.Any(selected => !RepairProtectionReader.Allows(selected.Proposal.SourceCanonicalPath, policy)
             || !RepairProtectionReader.Allows(Uri.UnescapeDataString(selected.Resolution.Target.CanonicalTargetPath), policy)))

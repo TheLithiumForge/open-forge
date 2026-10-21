@@ -13,13 +13,12 @@ internal static class RenameCandidateAdmission
     internal static bool Allows(string path, RenameEvidencePolicy policy)
     {
         if (!SourceFormClassifier.TryClassify(path, out var form)
-            || form is SourceDocumentForm.Loader or SourceDocumentForm.Skill or SourceDocumentForm.OverwriteCompanion)
+            || form is SourceDocumentForm.Loader or SourceDocumentForm.OverwriteCompanion)
         {
             return false;
         }
 
         return !policy.ManagedPaths.Any(blocked => IsWithin(path, blocked))
-            && !policy.PackageRoots.Any(blocked => IsWithin(path, blocked))
             && !policy.ExcludedPaths.Any(blocked => IsWithin(path, blocked))
             && !policy.PrivatePaths.Any(blocked => IsWithin(path, blocked))
             && !policy.ProjectionPaths.Any(blocked => IsWithin(path, blocked));
@@ -33,7 +32,7 @@ internal static class RenameCandidateAdmission
     internal static ImmutableArray<string> ReadBlockedPhysicalPaths(CliWorkspace workspace, PhysicalPathResolver resolver, RenameEvidencePolicy policy)
     {
         var blocked = ImmutableArray.CreateBuilder<string>();
-        foreach (var path in policy.ManagedPaths.Concat(policy.PackageRoots).Concat(policy.ExcludedPaths).Concat(policy.PrivatePaths).Concat(policy.ProjectionPaths).Distinct())
+        foreach (var path in policy.ManagedPaths.Concat(policy.ExcludedPaths).Concat(policy.PrivatePaths).Concat(policy.ProjectionPaths).Distinct())
         {
             if (!SourceLogicalPath.IsCanonicalRoot(path)) continue;
             var physical = resolver.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, path));

@@ -56,7 +56,7 @@ internal sealed class DoctorMaintenanceReader(RenameEvidenceReader renames, Func
         var paths = (physicalPaths ?? new PhysicalPathResolver()).CreateReadSession();
         var catalogue = routes.Catalogue;
         var workspace = catalogue.Workspace;
-        var protection = await new ReferenceProtectionReader(paths).ReadAsync(workspace, token, catalogue).ConfigureAwait(false);
+        var protection = await new ReferenceProtectionReader(paths).ReadAsync(workspace, token).ConfigureAwait(false);
         var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
         var policyAvailable = settings.State is WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete
             && sharing.Ownership.State is WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete;
@@ -64,7 +64,6 @@ internal sealed class DoctorMaintenanceReader(RenameEvidenceReader renames, Func
         {
             Settings = settings.Document,
             Ownership = sharing.Ownership.Document,
-            NativeSkillPaths = [.. catalogue.Sources.Where(source => source.Base.Form == SourceDocumentForm.Skill).Select(source => source.Identity.CanonicalBasePath)],
         };
         var roots = routes.Routes.Topology.LoaderRootPaths.ToImmutableArray();
         var rootFolders = roots.Select(path => (Path: path, Folder: _readRouteParent(path))).ToArray();
@@ -144,7 +143,6 @@ internal sealed class DoctorMaintenanceReader(RenameEvidenceReader renames, Func
             var policy = new RenameEvidencePolicy
             {
                 ManagedPaths = [.. context.Ownership.ManagedPaths().Select(claim => claim.Path)],
-                PackageRoots = [.. context.NativeSkillPaths.Select(SourceLogicalPath.ReadParent)],
                 ExcludedPaths = [.. catalogue.Candidates.Where(candidate => WorkspaceRemovals.IsPathRemoved(candidate.CanonicalPath, context.Settings))
                     .Select(candidate => candidate.CanonicalPath), .. context.Settings.RemovedFiles, .. context.Settings.RemovedDirectories],
                 PrivatePaths = [.. context.Ownership.Framework?.GitIgnoredRoutes.Select(route => route.Directory) ?? []],

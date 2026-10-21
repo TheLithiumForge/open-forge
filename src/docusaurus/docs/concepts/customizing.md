@@ -114,7 +114,7 @@ Compatible Skill adoption can add missing metadata and navigation to user-owned 
 
 You may move, rename, or restructure routes. Moving a managed route may end automatic updates for it, but it doesn't change what the content means once loaded. A familiar folder name in a new place doesn't gain root-route behavior.
 
-For user-owned notes, Index completes missing metadata and navigation after manual creation. Repair fixes proven renames or moves and their affected Entries. Managed files, native Skill packages and resources, overwrite companions, and excluded or private contents keep their own maintenance boundaries. Follow the reported Update or authoring action. See [manual edits](/guides/cli#after-you-edit-files-by-hand).
+For user-owned notes, Index completes missing metadata and navigation after manual creation. Repair fixes proven renames or moves and their affected Entries. Managed files, overwrite companions, and excluded or private contents keep their own maintenance boundaries. Follow the reported Update or authoring action. See [manual edits](/guides/cli#after-you-edit-files-by-hand).
 
 ## Managed versus meaningful
 

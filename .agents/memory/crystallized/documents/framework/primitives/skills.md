@@ -25,7 +25,7 @@ A Skill describes the positive work for which its capability is useful. Routed s
 
 Resources referenced by a Skill belong to that Skill unless they identify another authoritative source explicitly. Opening the routed Skill does not make every resource relevant; its own contract determines what should be loaded.
 
-Place native packages at `.agents/skills/{skill-name}/SKILL.md` or beneath any number of optional Skills scopes, such as `.agents/skills/{scope}/{scope}/{skill-name}/SKILL.md`. Open Forge can then index the package without rewriting its native contract. A `route` elsewhere remains generically routable, but a familiar name or #Skill tag does not grant native Skill-package indexing or runtime discovery outside the Skills `root route`.
+Place native packages at `.agents/skills/{skill-name}/SKILL.md` or beneath any number of optional Skills scopes, such as `.agents/skills/{scope}/{scope}/{skill-name}/SKILL.md`. Open Forge can then index the package and fill a missing native `name` or `description` without changing its native format. A `route` elsewhere remains generically routable, but a familiar name or #Skill tag does not grant native Skill-package indexing or runtime discovery outside the Skills `root route`.
 
 ## Composition
 

@@ -120,13 +120,8 @@ public sealed class PublishedInstallAdoptionProcessTests
         var beforeIndexDataHome = SnapshotDataHome(workspace);
         var index = await workspace.RunAsync(
             "index", "--dry-run", "--format", "json", "--detail", "full");
-        using (var document = AssertIndexWarnings(
-            index,
-            [ReferencePath],
-            [ReferenceCataloguePath],
-            requireNoChanges: true))
+        using (AssertIndexCompletesMetadata(index, [ReferencePath]))
         {
-            Assert.Equal("completed-with-warnings", document.RootElement.GetProperty("status").GetString());
         }
 
         Assert.Equal(beforeIndexWorkspace, workspace.SnapshotState());
@@ -317,31 +312,16 @@ public sealed class PublishedInstallAdoptionProcessTests
         return document;
     }
 
-    private static JsonDocument AssertIndexWarnings(
-        ProcessRunResult result,
-        IReadOnlyCollection<string> expectedMetadataPaths,
-        IReadOnlyCollection<string> expectedCurrentCatalogues,
-        bool requireNoChanges)
+    private static JsonDocument AssertIndexCompletesMetadata(ProcessRunResult result, IReadOnlyCollection<string> expectedPaths)
     {
-        var expectedFindings = expectedMetadataPaths
-            .Select(path => ("index.metadata-optional", path))
-            .ToArray();
-        var document = AssertCompletedWithExactWarnings(result, "index", expectedFindings);
-        var data = document.RootElement.GetProperty("data");
-        if (requireNoChanges)
-        {
-            Assert.Empty(document.RootElement.GetProperty("effects").EnumerateArray());
-            Assert.Equal(0, document.RootElement.GetProperty("counts").GetProperty("filesUpdated").GetInt32());
-            Assert.Empty(data.GetProperty("changes").EnumerateArray());
-            var unchanged = data.GetProperty("unchanged").EnumerateArray()
-                .Select(item => item.GetProperty("path").GetString())
-                .ToArray();
-            foreach (var catalogue in expectedCurrentCatalogues)
-            {
-                Assert.Contains(catalogue, unchanged);
-            }
-        }
-
+        Assert.Equal(0, result.ExitCode);
+        Assert.Empty(result.StandardError);
+        var document = JsonDocument.Parse(result.StandardOutput);
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
+        var completed = document.RootElement.GetProperty("data").GetProperty("metadata").EnumerateArray()
+            .Select(item => item.GetProperty("path").GetString()).Order(StringComparer.Ordinal).ToArray();
+        Assert.Equal(expectedPaths.Order(StringComparer.Ordinal), completed);
         return document;
     }
 

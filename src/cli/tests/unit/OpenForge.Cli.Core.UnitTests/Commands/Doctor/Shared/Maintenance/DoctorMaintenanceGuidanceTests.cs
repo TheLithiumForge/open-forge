@@ -23,22 +23,27 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor.Shared.Maintenance;
 [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
 public sealed class DoctorMaintenanceGuidanceTests
 {
+    [Fact(DisplayName = "Doctor leaves links in a user-owned Skill package to ordinary repair proof")]
+    public void UserOwnedSkillPackageIsNotProtected()
+    {
+        var reference = Reference() with { SourcePath = ".agents/skills/checks/SKILL.md" };
+        var policy = new RoutedMetadataPolicyContext { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty };
+        Assert.Null(DoctorReferenceProtectionFindingFactory.Read(reference, policy));
+    }
+
     [Theory(DisplayName = "Doctor applies source and original target protection before projecting repair proof")]
-    [InlineData(false, false, true)]
-    [InlineData(false, true, true)]
-    [InlineData(true, false, true)]
-    [InlineData(true, false, false)]
-    public void ReferenceProtection(bool native, bool targetOwned, bool managed)
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void ReferenceProtection(bool skill, bool targetOwned)
     {
         var reference = Reference();
-        if (native) reference = reference with { SourcePath = ".agents/skills/checks/SKILL.md" };
+        if (skill) reference = reference with { SourcePath = ".agents/skills/checks/SKILL.md" };
         var path = targetOwned ? RenameEvidenceTestFacts.OldPath : reference.SourcePath;
         var policy = new RoutedMetadataPolicyContext
         {
             Settings = WorkspaceSettingsDocument.Empty,
-            Ownership = managed ? WorkspaceOwnershipDocument.Empty with { Framework = new(new("open-forge", null), [path], []) }
-                : WorkspaceOwnershipDocument.Empty,
-            NativeSkillPaths = native ? [reference.SourcePath] : [],
+            Ownership = WorkspaceOwnershipDocument.Empty with { Framework = new(new("open-forge", null), [path], []) },
         };
         var finding = DoctorReferenceProtectionFindingFactory.Read(reference, policy);
         Assert.NotNull(finding);
@@ -211,7 +216,6 @@ public sealed class DoctorMaintenanceGuidanceTests
     [InlineData("Eligible", "RouteMetadataRequiredMissing", "TargetedOperation", true)]
     [InlineData("Eligible", "RouteUnreachable", "TargetedOperation", true)]
     [InlineData("OutsideRoot", "RouteUnreachable", "ManualDecision", false)]
-    [InlineData("NativePackage", "RouteMetadataRequiredMissing", "ManualDecision", false)]
     [InlineData("ManagedContent", "RouteMetadataRequiredMissing", "TargetedOperation", false)]
     [InlineData("SettingsExcluded", "RouteUnreachable", "ManualDecision", false)]
     [InlineData("PrivateContent", "RouteUnreachable", "ManualDecision", false)]
@@ -238,11 +242,6 @@ public sealed class DoctorMaintenanceGuidanceTests
         var finding = DoctorMaintenanceGuidance.Project(original, view, DoctorOperationTestSupport.Workspace());
         Assert.Equal(Enum.Parse<DoctorResolutionLane>(laneName), finding.Resolution);
         Assert.Equal(indexes, finding.Actions.Any(action => action.Operation == DoctorNextOperation.Index));
-        if (eligibility == RoutedMetadataEligibility.NativePackage)
-        {
-            Assert.Equal($"{path} needs a description and tags. Index does not edit files inside a Skill package, so add them by hand.", DoctorWording.Message(finding));
-            Assert.Equal($"Add the missing description and tags to {path} by hand.", Assert.Single(DoctorWording.Actions(finding)).Command);
-        }
         Snapshot(finding, $"{eligibilityName}.{kindName}");
         if (kind == DoctorFindingKind.RouteUnreachable && eligibility == RoutedMetadataEligibility.Eligible)
         {
@@ -251,6 +250,30 @@ public sealed class DoctorMaintenanceGuidanceTests
             Assert.Null(unlisted.Maintenance);
             Assert.Equal("open-forge index", Assert.Single(unlisted.Actions).Command);
         }
+    }
+
+    [Fact(DisplayName = "Doctor sends a SKILL.md missing its native metadata to Index")]
+    public void SkillMetadataUsesIndex()
+    {
+        const string path = ".agents/skills/release-notes/SKILL.md";
+        var view = new DoctorMaintenanceObservation
+        {
+            Eligibility = ImmutableDictionary<string, RoutedMetadataEligibility>.Empty.Add(path, RoutedMetadataEligibility.Eligible),
+            IndexablePaths = [path],
+            ChainGapPaths = [],
+            OldNavigationPaths = ImmutableDictionary<string, string>.Empty,
+            Renames = null,
+        };
+        var original = DoctorDomainSupport.Create(DoctorDomainSupport.Warning(DoctorFindingKind.RouteMetadataRequiredMissing, "Metadata is missing.", DoctorResolutionLane.ManualDecision),
+            DoctorDomainSupport.Subject(DoctorSubjectKind.Path, path),
+            DoctorDomainSupport.Provenance(DoctorDomainKind.RoutesMetadataOverwritesGeneratedNavigation, DoctorProvenanceSource.RouteMetadata),
+            [new DoctorStateEvidence(DoctorObservedState.Missing)]);
+
+        var finding = DoctorMaintenanceGuidance.Project(original, view, DoctorOperationTestSupport.Workspace());
+
+        Assert.Equal(DoctorResolutionLane.TargetedOperation, finding.Resolution);
+        Assert.Equal($"{path} needs its Skill name or description. Index can fill them from the folder name and heading and keep your content.", DoctorWording.Message(finding));
+        Assert.Equal("open-forge index", Assert.Single(DoctorWording.Actions(finding)).Command);
     }
 
     [Theory(DisplayName = "Doctor distinguishes zero one and several strong successors and retains exact proposal data")]

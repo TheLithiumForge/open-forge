@@ -10,7 +10,7 @@ open-forge:
 
 The [project-control ledger](project-control.md#active-task-ledger) owns the queue and permanent Task identities. Each Task defines its remaining outcome and evidence.
 
-1. Choose the next Task with the maintainer from the [beta follow-up backlog](tasks/beta-follow-up-backlog.md), now that beta15 is released.
+1. Deliver [Task 84](tasks/task84-skill-package-maintenance.md), so Index and Repair maintain user-owned Skill packages like other Markdown.
 2. Keep Tasks 34 and 39 paused, and Task 48 frozen at A/B1. Its Extension scoping work remains required before 1.0. The [wave capsule](one-zero-polish-wave.md) retains resume boundaries.
 3. Retain Task 62's pending maintainer review, deferred documentation reviews and the broader [Local Planning review](../local-planning.md). Other unfinished work stays in the [Task index](tasks/_tasks.md) and [candidate queue](tasks/potential/_potential.md).
 

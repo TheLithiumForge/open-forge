@@ -9,19 +9,13 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Doctor;
 [Trait("Feature", "doctor-command"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
 public sealed class DoctorMaintenanceGuidanceIntegrationTests
 {
-    [Theory(DisplayName = "Doctor respects actual native managed and intentionally excluded metadata boundaries")]
-    [InlineData("native", "manual-decision")]
+    [Theory(DisplayName = "Doctor respects actual managed and intentionally excluded metadata boundaries")]
     [InlineData("managed", "targeted-operation")]
     [InlineData("excluded", "manual-decision")]
     public async Task CompletionBoundaries(string scenario, string lane)
     {
         using var workspace = await Seed();
         var path = ".agents/guidance/note.md";
-        if (scenario == "native")
-        {
-            path = ".agents/guidance/package/resources/note.md";
-            workspace.CreateFile(".agents/guidance/package/SKILL.md", OpenForgeDocumentSeed.Skill("package", "Native package"));
-        }
         if (scenario == "managed") workspace.CreateFile(".agents/open-forge.lock.json",
             "{\"schemaVersion\":1,\"framework\":{\"source\":{\"id\":\"builtin\",\"version\":null},\"paths\":[\".agents/guidance/note.md\"],\"regions\":[]},\"extensions\":[],\"libraries\":[]}");
         if (scenario == "excluded") workspace.CreateFile(".agents/open-forge.json", "{\"schemaVersion\":1,\"removedFiles\":[\".agents/guidance/note.md\"]}");
@@ -33,11 +27,6 @@ public sealed class DoctorMaintenanceGuidanceIntegrationTests
         Assert.DoesNotContain(finding.GetProperty("actions").EnumerateArray(), action => action.GetProperty("command").GetString()?.StartsWith("open-forge index", StringComparison.Ordinal) == true);
         if (scenario == "managed") Assert.Contains("open-forge update", finding.GetProperty("actions")[0].GetProperty("command").GetString(), StringComparison.Ordinal);
         if (scenario == "excluded") Assert.DoesNotContain("open-forge index", Next(doctor), StringComparison.Ordinal);
-        if (scenario == "native")
-        {
-            Assert.Equal($"{path} needs a description and tags. Index does not edit files inside a Skill package, so add them by hand.", finding.GetProperty("message").GetString());
-            Assert.Equal($"Add the missing description and tags to {path} by hand.", finding.GetProperty("actions")[0].GetProperty("command").GetString());
-        }
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

@@ -10,10 +10,11 @@ using OpenForge.Cli.Core.Framework.Sources.Sharing;
 namespace OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata;
 
 // Index, Repair and Doctor share the ordinary eligibility defined by the Forgiving Maintenance design.
-// Native Skill policy and mutation orchestration retain their existing owners.
+// A user-owned Skill package is ordinary content: its SKILL.md gets native metadata and other Markdown gets the usual defaults.
 internal sealed class RoutedMetadataCompletionPolicy
 {
     private readonly FrameworkMetadataCompleter _completer = new();
+    private readonly RoutedSkillMetadataCompleter _skills = new();
 
     internal RoutedMetadataEligibility Evaluate(RoutedMetadataFileFacts file, RoutedMetadataPolicyContext context)
     {
@@ -41,9 +42,6 @@ internal sealed class RoutedMetadataCompletionPolicy
     {
         if (!SourceFormClassifier.TryClassify(path, out var form) || form == SourceDocumentForm.OverwriteCompanion)
             return RoutedMetadataEligibility.UnsupportedForm;
-        if (form == SourceDocumentForm.Skill
-            || context.NativeSkillPaths.Any(skill => RoutedMetadataDefaults.IsAncestor(path, SourceLogicalPath.ReadParent(skill))))
-            return RoutedMetadataEligibility.NativePackage;
         if (context.Ownership.HasManagedPath(path)) return RoutedMetadataEligibility.ManagedContent;
         if ((context.Ownership.Framework?.Regions ?? []).Concat(context.Ownership.Extensions.SelectMany(owner => owner.Regions))
                 .Any(region => region.Path == path && region.Region != WorkspaceOwnershipDefinitions.EntriesRegion))
@@ -63,7 +61,12 @@ internal sealed class RoutedMetadataCompletionPolicy
         ArgumentNullException.ThrowIfNull(input);
         var eligibility = Evaluate(input.File, context);
         var completion = FrameworkMetadataCompletionResult.Unchanged(input.Bytes);
-        if (eligibility == RoutedMetadataEligibility.Eligible)
+        if (eligibility == RoutedMetadataEligibility.Eligible && SourceFormClassifier.TryClassify(input.File.CanonicalPath, out var form)
+            && form == SourceDocumentForm.Skill)
+        {
+            completion = _skills.Complete(input);
+        }
+        else if (eligibility == RoutedMetadataEligibility.Eligible)
         {
             completion = _completer.Complete(new()
             {

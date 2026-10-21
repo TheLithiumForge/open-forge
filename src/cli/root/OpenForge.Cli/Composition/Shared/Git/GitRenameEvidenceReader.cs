@@ -46,11 +46,7 @@ internal sealed class GitRenameEvidenceReader
             var tree = await Run(["ls-tree", "-r", "-z", "--full-tree", head]);
             if (tree is not { ExitCode: 0 } treeRead || !ValidNulOutput(treeRead.Output)) return Unavailable(RenameGitAvailability.Unavailable);
             var inventory = ReadInventory(treeRead.Output, prefix);
-            var policy = request.Policy with
-            {
-                PackageRoots = request.Policy.PackageRoots.AddRange(inventory.Where(path => Path.GetFileName(path.Path) == "SKILL.md")
-                    .Select(path => SourceLogicalPath.ReadParent(path.Path))).Distinct(StringComparer.Ordinal).ToImmutableArray(),
-            };
+            var policy = request.Policy;
             var resolver = _physicalPaths.CreateReadSession();
             var blockedPhysicalPaths = RenameCandidateAdmission.ReadBlockedPhysicalPaths(request.Workspace, resolver, policy);
             var admitted = inventory.Where(path => RenameCandidateAdmission.Allows(path.Path, policy)

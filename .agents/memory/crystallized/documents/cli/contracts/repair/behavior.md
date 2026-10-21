@@ -609,7 +609,7 @@ Plan authored relinks first against original occurrences. Compose shared affecte
 
 Fresh post-diagnosis chooses the Interface's single next step from actual remaining work. Automatic guided-only results must not recommend the same automatic command. No-successor links require a named authored edit. Schema and exact text additions follow the Interface and [Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md#safety-and-wire-inventory).
 
-Apply the shared protection policy to both the containing link source and every candidate target during diagnosis, selection, planning and under-lease revalidation. Managed content, native Skill packages and resources, overwrites, exclusions, private contents and unsafe leaves are not authored-link repair targets. Preserve protected bytes and report the managing Update or precise authoring action.
+Apply the shared protection policy to both the containing link source and every candidate target during diagnosis, selection, planning and under-lease revalidation. Managed content, overwrites, exclusions, private contents and unsafe leaves are not authored-link repair targets. Preserve protected bytes and report the managing Update or precise authoring action.
 
 A Git timeout keeps links visible without advice to remove them and retries the complete request. Partial application headlines count verified effects and remaining choices or edits. All continuation commands retain the explicit workspace, even inside prose. For an incomplete preview with independent safe effects, applying that safe plan precedes malformed-frontmatter advice.
 

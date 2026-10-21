@@ -21,8 +21,7 @@ internal static class DoctorMaintenanceWording
             DoctorMaintenanceCondition.MalformedFrontmatter => DoctorMaintenanceText.Malformed(path, advice.Cause),
             DoctorMaintenanceCondition.OldNavigation => DoctorMaintenanceText.OldNavigation(path),
             DoctorMaintenanceCondition.ManagedMetadata => DoctorMaintenanceText.ManagedMetadata(path),
-            DoctorMaintenanceCondition.NativeMetadata => DoctorMaintenanceText.NativeMetadata(path),
-            DoctorMaintenanceCondition.NativeResourceMetadata => DoctorMaintenanceText.NativeResourceMetadata(path),
+            DoctorMaintenanceCondition.MissingSkillFields => DoctorMaintenanceText.MissingSkillFields(path),
             DoctorMaintenanceCondition.RestorationBoundary => DoctorMaintenanceText.RestoreRoute(path),
             DoctorMaintenanceCondition.UnsafeBoundary => DoctorMaintenanceText.ReviewBoundary(path),
             DoctorMaintenanceCondition.ProtectedReference => ProtectedReferenceMessage(finding, advice, path),
@@ -42,7 +41,8 @@ internal static class DoctorMaintenanceWording
             var reason = advice.Condition switch
             {
                 DoctorMaintenanceCondition.ProvenRename => DoctorMaintenanceText.RepairReason(),
-                DoctorMaintenanceCondition.MissingFields or DoctorMaintenanceCondition.ChainGap => DoctorMaintenanceText.IndexReason(),
+                DoctorMaintenanceCondition.MissingFields or DoctorMaintenanceCondition.MissingSkillFields or DoctorMaintenanceCondition.ChainGap
+                    => DoctorMaintenanceText.IndexReason(),
                 DoctorMaintenanceCondition.SeveralStrongCandidates or DoctorMaintenanceCondition.WeakOnly => DoctorMaintenanceText.ChooseTarget(),
                 DoctorMaintenanceCondition.RenamedFragmentMissing => DoctorMaintenanceText.ChooseFragment(),
                 DoctorMaintenanceCondition.ProtectedReference => DoctorMaintenanceText.UpdateProtectedLink(),
@@ -56,10 +56,7 @@ internal static class DoctorMaintenanceWording
             DoctorMaintenanceCondition.NoCandidate => DoctorMaintenanceText.EditLink(path, finding.Subject.LocationView?.Line, finding.Subject.LocationView?.Column),
             DoctorMaintenanceCondition.MalformedFrontmatter => DoctorMaintenanceText.FixFrontmatter(path, advice.IndexCommand ?? "open-forge index"),
             DoctorMaintenanceCondition.OldNavigation => OldRulesAction(path, advice),
-            DoctorMaintenanceCondition.NativeResourceMetadata => DoctorMaintenanceText.AddNativeResourceMetadata(path),
-            DoctorMaintenanceCondition.ProtectedReference => advice.ProtectedByNativePackage && advice.ProtectedPath == path
-                ? DoctorMaintenanceText.EditPackageLink(path)
-                : DoctorMaintenanceText.EditLink(path, finding.Subject.LocationView?.Line, finding.Subject.LocationView?.Column),
+            DoctorMaintenanceCondition.ProtectedReference => DoctorMaintenanceText.EditLink(path, finding.Subject.LocationView?.Line, finding.Subject.LocationView?.Column),
             _ => message,
         };
         return [new(sentence, sentence) { Kind = CliNextActionKind.Sentence }];
@@ -69,7 +66,6 @@ internal static class DoctorMaintenanceWording
     {
         var protectedPath = advice.ProtectedPath ?? path;
         if (finding.Actions.Any(action => action.Command is not null)) return DoctorMaintenanceText.ManagedLink(protectedPath);
-        if (advice.ProtectedByNativePackage) return DoctorMaintenanceText.NativeLink(protectedPath);
         return DoctorMaintenanceText.ProtectedLink(protectedPath);
     }
 

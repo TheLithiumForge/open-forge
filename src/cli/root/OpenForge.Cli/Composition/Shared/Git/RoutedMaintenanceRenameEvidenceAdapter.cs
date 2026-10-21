@@ -41,8 +41,6 @@ internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReade
         var policy = new RenameEvidencePolicy
         {
             ManagedPaths = [.. ownership.Document.ManagedPaths().Select(claim => claim.Path)],
-            PackageRoots = [.. catalogue.Sources.Where(source => source.Base.Form == SourceDocumentForm.Skill)
-                .Select(source => SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath))],
             ExcludedPaths = [.. catalogue.Candidates.Where(candidate => WorkspaceRemovals.IsPathRemoved(candidate.CanonicalPath, settings.Document))
                 .Select(candidate => candidate.CanonicalPath), .. settings.Document.RemovedFiles, .. settings.Document.RemovedDirectories],
             PrivatePaths = [.. (ownership.Document.Framework?.GitIgnoredRoutes ?? []).Select(route => route.Directory)],

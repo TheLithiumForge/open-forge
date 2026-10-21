@@ -2,6 +2,7 @@ using System.Text;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata;
 using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models.Syntax;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
@@ -120,8 +121,6 @@ public sealed class RoutedMetadataCompletionTests
     [InlineData("overwrite", "UnsupportedForm")]
     [InlineData("unreadable", "Unreadable")]
     [InlineData("link", "UnsafeLeaf")]
-    [InlineData("native", "NativePackage")]
-    [InlineData("native-resource", "NativePackage")]
     [InlineData("framework", "ManagedContent")]
     [InlineData("extension", "ManagedContent")]
     [InlineData("generated", "GeneratedContent")]
@@ -147,10 +146,6 @@ public sealed class RoutedMetadataCompletionTests
             case "overwrite": facts = facts with { CanonicalPath = ".agents/guidance/note.overwrite.md" }; break;
             case "unreadable": facts = facts with { IsReadable = false }; break;
             case "link": facts = facts with { IsSafeOrdinaryLeaf = false }; break;
-            case "native": facts = facts with { CanonicalPath = ".agents/skills/native/SKILL.md" }; break;
-            case "native-resource":
-                facts = Facts("skills") with { CanonicalPath = ".agents/skills/native/docs/note.md" };
-                context = context with { NativeSkillPaths = [".agents/skills/native/SKILL.md"] }; break;
             case "framework": context = context with { Ownership = Owned(framework: true) }; break;
             case "extension": context = context with { Ownership = Owned(framework: false) }; break;
             case "generated": facts = facts with { IsGeneratedFile = true }; break;
@@ -169,6 +164,91 @@ public sealed class RoutedMetadataCompletionTests
         Assert.Equal(Enum.Parse<RoutedMetadataEligibility>(expected), result.Eligibility);
         Assert.Equal(FrameworkMetadataCompletionState.NoOp, result.Completion.State);
         Assert.Equal(input.Bytes, result.Completion.Bytes);
+    }
+
+    [Fact(DisplayName = "A user-owned SKILL.md without frontmatter gets its native name and description")]
+    public void CompletesNativeSkillMetadata()
+    {
+        var facts = Facts("skills") with { CanonicalPath = ".agents/skills/release-notes/SKILL.md" };
+        var input = Input(facts) with { Bytes = [.. Encoding.UTF8.GetBytes("# Release notes\n\nWrite them.\n")] };
+
+        var result = new RoutedMetadataCompletionPolicy().Complete(input, Context());
+
+        Assert.Equal(RoutedMetadataEligibility.Eligible, result.Eligibility);
+        Assert.Equal(FrameworkMetadataCompletionState.Completed, result.Completion.State);
+        Assert.Equal([FrameworkMetadataField.Name, FrameworkMetadataField.Description], result.Completion.Fields);
+        Assert.Equal("Release notes", result.Completion.Description);
+        Assert.Null(result.Completion.Tags);
+        Assert.Equal(
+            "---\nname: \"release-notes\"\ndescription: \"Release notes\"\n---\n\n# Release notes\n\nWrite them.\n",
+            Encoding.UTF8.GetString(result.Completion.Bytes.AsSpan()));
+    }
+
+    [Fact(DisplayName = "A SKILL.md keeps its native name and gains only the missing description")]
+    public void KeepsSuppliedNativeSkillName()
+    {
+        var facts = Facts("skills") with { CanonicalPath = ".agents/skills/release-notes/SKILL.md" };
+        var input = Input(facts) with { Bytes = [.. Encoding.UTF8.GetBytes("---\nname: notes\n---\n\n# Release notes\n")] };
+
+        var result = new RoutedMetadataCompletionPolicy().Complete(input, Context());
+
+        Assert.Equal(FrameworkMetadataCompletionState.Completed, result.Completion.State);
+        Assert.Equal([FrameworkMetadataField.Description], result.Completion.Fields);
+        Assert.Equal(
+            "---\nname: notes\ndescription: \"Release notes\"\n---\n\n# Release notes\n",
+            Encoding.UTF8.GetString(result.Completion.Bytes.AsSpan()));
+    }
+
+    [Fact(DisplayName = "A complete SKILL.md stays byte-identical")]
+    public void LeavesCompleteNativeSkillUnchanged()
+    {
+        var facts = Facts("skills") with { CanonicalPath = ".agents/skills/release-notes/SKILL.md" };
+        var input = Input(facts) with { Bytes = [.. Encoding.UTF8.GetBytes("---\nname: release-notes\ndescription: Write notes\n---\n\n# Notes\n")] };
+
+        var result = new RoutedMetadataCompletionPolicy().Complete(input, Context());
+
+        Assert.Equal(FrameworkMetadataCompletionState.NoOp, result.Completion.State);
+        Assert.Equal(input.Bytes, result.Completion.Bytes);
+    }
+
+    [Fact(DisplayName = "An unclosed SKILL.md frontmatter stays a malformed Index fact")]
+    public void ReportsMalformedNativeSkill()
+    {
+        var facts = Facts("skills") with { CanonicalPath = ".agents/skills/release-notes/SKILL.md" };
+        var input = Input(facts) with { Bytes = [.. Encoding.UTF8.GetBytes("---\nname: release-notes\n# Notes\n")] };
+
+        var result = new RoutedMetadataCompletionPolicy().Complete(input, Context());
+
+        Assert.Equal(FrameworkMetadataCompletionState.Malformed, result.Completion.State);
+        Assert.Equal("index.metadata-skipped", result.FactCode);
+        Assert.Equal(input.Bytes, result.Completion.Bytes);
+    }
+
+    [Fact(DisplayName = "Markdown inside a user-owned Skill package gets ordinary metadata with Skill tags")]
+    public void CompletesSkillPackageMarkdown()
+    {
+        var facts = Facts("skills") with { CanonicalPath = ".agents/skills/release-notes/references/style.md" };
+
+        var result = new RoutedMetadataCompletionPolicy().Complete(Input(facts), Context());
+
+        Assert.Equal(RoutedMetadataEligibility.Eligible, result.Eligibility);
+        Assert.Equal(FrameworkMetadataCompletionState.Completed, result.Completion.State);
+        Assert.Equal(["Skill"], result.Completion.Tags);
+    }
+
+    [Fact(DisplayName = "A managed SKILL.md stays with its managing Update")]
+    public void KeepsManagedSkillProtected()
+    {
+        var facts = Facts("skills") with { CanonicalPath = ".agents/skills/open-forge-cli/SKILL.md" };
+        var context = Context() with
+        {
+            Ownership = WorkspaceOwnershipDocument.Empty with { Framework = new(new("framework", null), [facts.CanonicalPath], []) },
+        };
+
+        var result = new RoutedMetadataCompletionPolicy().Complete(Input(facts), context);
+
+        Assert.Equal(RoutedMetadataEligibility.ManagedContent, result.Eligibility);
+        Assert.Equal(FrameworkMetadataCompletionState.NoOp, result.Completion.State);
     }
 
     [Fact(DisplayName = "The sharing evaluator keeps the shared user-owned entrypoint eligible")]
@@ -220,7 +300,7 @@ public sealed class RoutedMetadataCompletionTests
         => new() { File = facts, Bytes = [.. Encoding.UTF8.GetBytes("# Note\nKeep body\n")] };
 
     private static RoutedMetadataPolicyContext Context()
-        => new() { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty, NativeSkillPaths = [] };
+        => new() { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty };
 
     private static RoutedMetadataFileFacts Facts(string root = "guidance", string state = "")
     {

@@ -15,8 +15,8 @@ namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
 internal sealed class RepairProtectionReader(PhysicalPathResolver paths)
 {
-    internal ValueTask<ReferenceProtectionRead> ReadAsync(CliWorkspace workspace, CancellationToken token, SourceCatalogue? catalogue = null)
-        => new ReferenceProtectionReader(paths).ReadAsync(workspace, token, catalogue);
+    internal ValueTask<ReferenceProtectionRead> ReadAsync(CliWorkspace workspace, CancellationToken token)
+        => new ReferenceProtectionReader(paths).ReadAsync(workspace, token);
 
     internal static bool Allows(string path, RoutedMetadataPolicyContext policy)
         => ReferenceProtectionReader.Allows(path, policy);
@@ -35,26 +35,11 @@ internal sealed class RepairProtectionReader(PhysicalPathResolver paths)
         }
         var kind = protection switch
         {
-            RoutedMetadataEligibility.NativePackage => RepairProtectionKind.NativePackage,
             RoutedMetadataEligibility.SettingsExcluded or RoutedMetadataEligibility.PrivateContent => RepairProtectionKind.PrivateOrExcluded,
             RoutedMetadataEligibility.UnsupportedForm => RepairProtectionKind.UnsupportedForm,
             _ => RepairProtectionKind.Protected,
         };
         return new(RepairFindingCode.ManualFindingRemaining, reason, source, occurrence)
         { Protection = true, ProtectionKind = kind, ProtectedPath = protectedPath, OwnerAction = action };
-    }
-
-    internal static IEnumerable<FileExpectation> PackageBoundaries(CliWorkspace workspace, IEnumerable<string> selectedPaths)
-        => selectedPaths.SelectMany(path => Ancestors(SourceLogicalPath.ReadParent(Uri.UnescapeDataString(path))))
-            .Distinct(StringComparer.Ordinal).Select(directory => FileExpectation.Missing(
-                SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, directory + "/SKILL.md")));
-
-    private static IEnumerable<string> Ancestors(string directory)
-    {
-        while (directory.StartsWith(SourceLogicalPath.AgentsRoot + "/", StringComparison.Ordinal))
-        {
-            yield return directory;
-            directory = SourceLogicalPath.ReadParent(directory);
-        }
     }
 }

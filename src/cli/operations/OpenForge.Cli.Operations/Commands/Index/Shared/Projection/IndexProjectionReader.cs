@@ -109,7 +109,6 @@ internal sealed class IndexProjectionReader
             {
                 Settings = settings.Document,
                 Ownership = ownership.Document,
-                NativeSkillPaths = [.. catalogue.Sources.Where(source => source.Base.Form == SourceDocumentForm.Skill).Select(source => source.Identity.CanonicalBasePath)]
             },
         }, cancellationToken).ConfigureAwait(false);
         if (intent.Limitations.Any(item => !item.Malformed))

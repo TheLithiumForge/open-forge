@@ -50,7 +50,7 @@ public sealed class F02NativeSkillJourneyTests
 
         Use a short subject, the decision or question, and the next action when there is one.
 
-        This package resource intentionally has no frontmatter. It is not an independently routed Open Forge source.
+        This package resource starts without frontmatter, so Index adds its description and tags.
         """;
 
     private const string NativeAssetText = """
@@ -77,7 +77,7 @@ public sealed class F02NativeSkillJourneyTests
         Keep independently complete guidance work visible.
         """;
 
-    [Fact(DisplayName = "F02 pastes a native Skill, indexes only its Skills navigation, and reads it unchanged"),
+    [Fact(DisplayName = "F02 pastes a native Skill, indexes its navigation and reference metadata, and reads the Skill unchanged"),
      Trait("Feature", "native-skill-journey"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F02")]
     public async Task NativeSkillIsIndexedDiscoveredInspectedAndRead()
     {
@@ -89,21 +89,18 @@ public sealed class F02NativeSkillJourneyTests
 
         var beforeIndex = SnapshotWorkspaceEntries(workspace.Path);
         var beforeExternal = SnapshotExternalStore(workspace);
-        var checkedLists = CountEntriesSections(workspace.Path);
         var index = await workspace.RunAsync("index");
         Assert.Equal(0, index.ExitCode);
         Assert.NotEqual(string.Empty, index.StandardOutput);
         Assert.Equal(string.Empty, index.StandardError);
 
         var afterIndex = SnapshotWorkspaceEntries(workspace.Path);
-        PublishedJourneyAssertions.AssertOnlyFileMutations(beforeIndex, afterIndex, SkillsListPath);
+        PublishedJourneyAssertions.AssertOnlyFileMutations(beforeIndex, afterIndex, SkillsListPath, NativeReferencePath);
         AssertOrdinaryFileEntry(afterIndex, SkillsListPath);
         var changedLists = ChangedOrdinaryFilePaths(beforeIndex, afterIndex);
-        Assert.Equal([SkillsListPath], changedLists);
-        Assert.Contains(
-            $"Updated the Entries section in {changedLists.Count} of {checkedLists} files.",
-            index.StandardOutput,
-            StringComparison.Ordinal);
+        Assert.Equal([SkillsListPath, NativeReferencePath], changedLists);
+        Assert.Contains("Completed metadata in 1 file.", index.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains($"{SkillsListPath}  1 -> 2 entries", index.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("team-notes", File.ReadAllText(workspace.Combine(SkillsListPath)), StringComparison.Ordinal);
         Assert.Contains(
             "Organize a team's notes into clear decisions and follow-up work.",
@@ -329,9 +326,10 @@ public sealed class F02NativeSkillJourneyTests
         Assert.Equal(
             Encoding.UTF8.GetBytes(NativeSkillText),
             File.ReadAllBytes(workspace.Combine(NativeSkillPath)));
-        Assert.Equal(
-            Encoding.UTF8.GetBytes(NativeReferenceText),
-            File.ReadAllBytes(workspace.Combine(NativeReferencePath)));
+        var reference = File.ReadAllText(workspace.Combine(NativeReferencePath));
+        Assert.Contains("description: Note format", reference, StringComparison.Ordinal);
+        Assert.Contains("tags: [Skill]", reference, StringComparison.Ordinal);
+        Assert.EndsWith(NativeReferenceText, reference, StringComparison.Ordinal);
         Assert.Equal(
             Encoding.UTF8.GetBytes(NativeAssetText),
             File.ReadAllBytes(workspace.Combine(NativeAssetPath)));
@@ -425,14 +423,6 @@ public sealed class F02NativeSkillJourneyTests
         Assert.True(snapshot.TryGetValue(path, out var description));
         Assert.StartsWith("type=file;", description, StringComparison.Ordinal);
     }
-
-    private static int CountEntriesSections(string rootPath)
-        => Directory
-            .EnumerateFiles(
-                System.IO.Path.Combine(rootPath, ".agents"),
-                "*.md",
-                SearchOption.AllDirectories)
-            .Count(path => File.ReadLines(path).Any(line => line == "## Entries"));
 
     private static string ExtractBody(string source)
     {

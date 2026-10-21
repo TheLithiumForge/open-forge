@@ -50,7 +50,7 @@ public sealed class RoutedMetadataCompletionIntegrationTests
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var settings = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), workspace, TestContext.Current.CancellationToken);
         Assert.Equal(WorkspaceSettingsReadState.Complete, settings.State);
-        var context = new RoutedMetadataPolicyContext { Settings = settings.Document, Ownership = WorkspaceOwnershipDocument.Empty, NativeSkillPaths = [] };
+        var context = new RoutedMetadataPolicyContext { Settings = settings.Document, Ownership = WorkspaceOwnershipDocument.Empty };
         var input = new RoutedMetadataCompletionInput
         {
             File = new()
@@ -95,7 +95,7 @@ public sealed class RoutedMetadataCompletionIntegrationTests
         var ownership = WorkspaceOwnershipDocument.Empty;
         if (privateRoute)
             ownership = ownership with { Framework = new(new("framework", null), [], []) { GitIgnoredRoutes = [new(".agents/guidance", ".agents/guidance/_guidance.md")] } };
-        var context = new RoutedMetadataPolicyContext { Settings = settings.Document, Ownership = ownership, NativeSkillPaths = [] };
+        var context = new RoutedMetadataPolicyContext { Settings = settings.Document, Ownership = ownership };
         var input = new RoutedMetadataCompletionInput
         {
             File = new()

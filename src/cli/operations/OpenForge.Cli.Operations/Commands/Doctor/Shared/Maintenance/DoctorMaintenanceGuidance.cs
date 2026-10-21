@@ -115,18 +115,16 @@ internal static class DoctorMaintenanceGuidance
         }
         if (finding.Kind != DoctorFindingKind.RouteMetadataRequiredMissing) return finding;
         if (maintenance.IndexablePaths.Contains(path))
-            return Explain(finding, DoctorMaintenanceCondition.MissingFields, finding.Message, DoctorResolutionLane.TargetedOperation,
+        {
+            var condition = SourceFormClassifier.TryClassify(path, out var form) && form == SourceDocumentForm.Skill
+                ? DoctorMaintenanceCondition.MissingSkillFields : DoctorMaintenanceCondition.MissingFields;
+            return Explain(finding, condition, finding.Message, DoctorResolutionLane.TargetedOperation,
                 Command(DoctorNextOperation.Index, "open-forge index", "Complete the eligible missing metadata."));
+        }
         if (eligibility == RoutedMetadataEligibility.ManagedContent)
         {
             return Explain(finding, DoctorMaintenanceCondition.ManagedMetadata, finding.Message, DoctorResolutionLane.TargetedOperation,
                 maintenance.ManagingUpdates.GetValueOrDefault(path) ?? Command(DoctorNextOperation.Update, "open-forge update", "The managing operation owns this metadata."));
-        }
-        if (eligibility == RoutedMetadataEligibility.NativePackage)
-        {
-            var condition = SourceFormClassifier.TryClassify(path, out var form) && form == SourceDocumentForm.Skill
-                ? DoctorMaintenanceCondition.NativeMetadata : DoctorMaintenanceCondition.NativeResourceMetadata;
-            return Explain(finding, condition, finding.Message, DoctorResolutionLane.ManualDecision, Manual(path));
         }
         if (eligibility is RoutedMetadataEligibility.SettingsExcluded or RoutedMetadataEligibility.PrivateContent)
             return Explain(finding, DoctorMaintenanceCondition.RestorationBoundary, finding.Message, DoctorResolutionLane.ManualDecision, Manual(path));

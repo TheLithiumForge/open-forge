@@ -327,7 +327,7 @@ Use this after manual edits, a merge, or a Status warning. When Git retains the 
    shared Entries current after manual edits. Private routes intentionally omit
    their child files from shared Entries. Find can still discover those local files.
 
-Repair keeps managed files and native Skill packages protected. Follow their reported managing Update or authoring action. A partial result states what changed and what remains. Copyable commands retain the selected workspace. A Git timeout asks you to retry before editing a possibly renamed link.
+Repair keeps managed files protected. Follow their reported managing Update or authoring action. A partial result states what changed and what remains. Copyable commands retain the selected workspace. A Git timeout asks you to retry before editing a possibly renamed link.
 
 ## Take a Framework update
 

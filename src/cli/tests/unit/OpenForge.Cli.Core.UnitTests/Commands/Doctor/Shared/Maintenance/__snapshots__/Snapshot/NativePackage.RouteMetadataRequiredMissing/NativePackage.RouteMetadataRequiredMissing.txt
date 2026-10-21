@@ -1,3 +1,0 @@
-.agents/guidance/note.md needs a description and tags. Index does not edit files inside a Skill package, so add them by hand.
-ManualDecision
-Add the missing description and tags to .agents/guidance/note.md by hand.

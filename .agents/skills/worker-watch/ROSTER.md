@@ -1,3 +1,9 @@
+---
+open-forge:
+  description: Worker model roster for this workspace
+  tags: [Skill]
+---
+
 # Worker model roster for this workspace
 
 The maintainer set this roster on 2026-09-29. Use only these models and efforts

@@ -23,7 +23,7 @@ public sealed class RenameGitFailureIntegrationTests
         for (var pass = 0; pass < 2; pass++)
         {
             reads.Clear();
-            var result = await reader.ReadAsync(new(repository.Workspace, new() { PackageRoots = [".agents/skills"] }), TestContext.Current.CancellationToken);
+            var result = await reader.ReadAsync(new(repository.Workspace, new() { ManagedPaths = [".agents/skills"] }), TestContext.Current.CancellationToken);
             Assert.Equal(RenameGitAvailability.Available, result.Availability);
             Assert.Equal(1, reads[repository.PathFor(".agents")]);
             Assert.Equal(1, reads[repository.PathFor(".agents/guidance/_guidance.md")]);

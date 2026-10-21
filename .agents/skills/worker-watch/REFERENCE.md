@@ -1,3 +1,9 @@
+---
+open-forge:
+  description: Worker Watch reference
+  tags: [Skill]
+---
+
 # Worker Watch reference
 
 The CLI must be installed and visible in the same environment as the parent process. On WSL, install and run the CLI and daemon in that WSL distribution.

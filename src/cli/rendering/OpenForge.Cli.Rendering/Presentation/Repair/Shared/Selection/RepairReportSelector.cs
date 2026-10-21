@@ -892,7 +892,6 @@ internal static class RepairReportSelector
         if (finding.OwnerAction is not null) return global::OpenForge.Cli.OutputText.Repair.RepairProtectionText.Managed(path);
         return finding.ProtectionKind switch
         {
-            RepairProtectionKind.NativePackage => global::OpenForge.Cli.OutputText.Repair.RepairProtectionText.NativePackage(path),
             RepairProtectionKind.PrivateOrExcluded => global::OpenForge.Cli.OutputText.Repair.RepairProtectionText.PrivateOrExcluded(path),
             _ => global::OpenForge.Cli.OutputText.Repair.RepairProtectionText.Protected(path),
         };

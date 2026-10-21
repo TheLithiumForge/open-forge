@@ -36,16 +36,14 @@ public sealed class RepairProtectionIntegrationTests
     [InlineData("excluded", false), InlineData("excluded", true)]
     [InlineData("private", false), InlineData("private", true)]
     [InlineData("overwrite", false), InlineData("overwrite", true)]
-    [InlineData("native-resource", false), InlineData("native-resource", true)]
     [InlineData("managed-target", false), InlineData("managed-target", true)]
     [InlineData("managed-missing-target", false), InlineData("managed-missing-target", true)]
-    [InlineData("native-target", false), InlineData("native-target", true)]
     public async Task EveryProtectedBoundaryPreservesSource(string protection, bool explicitRelink)
     {
         using var fixture = new RepairRenameGitWorkspace();
         var source = protection == "overwrite" ? ".agents/guidance/notes.overwrite.md" : ".agents/guidance/notes.md";
         const string old = ".agents/guidance/rounding.md";
-        var successor = protection == "native-target" ? ".agents/guidance/native/money-rounding.md" : ".agents/guidance/money-rounding.md";
+        const string successor = ".agents/guidance/money-rounding.md";
         const string text = "# Notes\n\nRead [Rounding](rounding.md).\n";
         await fixture.InitializeAsync(new Dictionary<string, string>
         {
@@ -64,8 +62,7 @@ public sealed class RepairProtectionIntegrationTests
     }
 
     [Theory]
-    [InlineData("managed"), InlineData("excluded"), InlineData("private"), InlineData("native-resource")]
-    [InlineData("managed-target"), InlineData("native-target")]
+    [InlineData("managed"), InlineData("excluded"), InlineData("private"), InlineData("managed-target")]
     public async Task ProtectionAddedAfterPlanningBlocksUnderLease(string protection)
     {
         using var fixture = new RepairRenameGitWorkspace();
@@ -95,12 +92,6 @@ public sealed class RepairProtectionIntegrationTests
             fixture.Write(".agents/open-forge.json", $"{{\"schemaVersion\":1,\"removedFiles\":[\"{source}\"]}}");
             return;
         }
-        if (protection is "native-resource" or "native-target")
-        {
-            var marker = protection == "native-target" ? Path.GetDirectoryName(successor)!.Replace('\\', '/') + "/SKILL.md" : ".agents/guidance/SKILL.md";
-            fixture.Write(marker, "---\nname: rules\ndescription: Workspace rules\n---\n\n# Rules\n");
-            return;
-        }
         var ownership = WorkspaceOwnershipDocument.Empty;
         if (protection is "managed" or "managed-target" or "managed-missing-target")
         {
@@ -119,7 +110,7 @@ public sealed class RepairProtectionIntegrationTests
         return RepairOperationFactory.CreateDefaultComponents(new(evidence.ReadEvidenceAsync, evidence));
     }
 
-    [Theory(DisplayName = "Automatic and explicit Repair preserve protected Skill source bytes")]
+    [Theory(DisplayName = "Automatic and explicit Repair preserve a managed Skill and repair a user-owned Skill")]
     [InlineData(false, false), InlineData(false, true), InlineData(true, false), InlineData(true, true)]
     public async Task ProtectedSkillSource(bool managed, bool explicitRelink)
     {
@@ -148,14 +139,17 @@ public sealed class RepairProtectionIntegrationTests
         var request = new RepairRequest(fixture.Workspace, RepairMode.Apply, automatic: !explicitRelink,
             relinks: explicitRelink ? [new(source, 8, 17, destination, successor, null)] : [], allowInteraction: false);
         var result = await operation.ExecuteAsync(request, TestContext.Current.CancellationToken);
+        if (!managed)
+        {
+            Assert.Equal(skill.Replace("rounding.md)", "money-rounding.md)", StringComparison.Ordinal), File.ReadAllText(fixture.PathFor(source)));
+            return;
+        }
+
         Assert.Equal(skill, File.ReadAllText(fixture.PathFor(source)));
         Assert.DoesNotContain(result.Plan?.Effects ?? [], effect => effect.SourceCanonicalPath == source);
         var report = RepairReportSelector.Select(result, new(CliDetail.Standard));
-        if (managed)
-        {
-            var actions = report.Findings.SelectMany(finding => finding.Actions).Select(action => action.Command)
-                .Append(report.Next?.Command ?? "");
-            Assert.Contains(actions, command => command.StartsWith("open-forge update", StringComparison.Ordinal));
-        }
+        var actions = report.Findings.SelectMany(finding => finding.Actions).Select(action => action.Command)
+            .Append(report.Next?.Command ?? "");
+        Assert.Contains(actions, command => command.StartsWith("open-forge update", StringComparison.Ordinal));
     }
 }

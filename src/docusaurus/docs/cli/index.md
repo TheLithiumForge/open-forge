@@ -65,7 +65,7 @@ To restore one left-out built-in category, preview
 same request without `--dry-run`. Use `open-forge install --configure` as the
 interactive way to change several setup choices.
 
-Index and Repair preserve protected sources, including managed files and native Skill packages. Doctor names the managing Update or required edit. If Git times out, follow the retry command before deciding that a missing file was deleted. See [manual edits](/guides/cli#after-you-edit-files-by-hand).
+Index and Repair preserve protected sources, including managed files. Doctor names the managing Update or required edit. If Git times out, follow the retry command before deciding that a missing file was deleted. See [manual edits](/guides/cli#after-you-edit-files-by-hand).
 
 ## Everyday habits
 

@@ -24,7 +24,6 @@ internal sealed record RenameEvidenceRequest
 internal sealed record RenameEvidencePolicy
 {
     public ImmutableArray<string> ManagedPaths { get; init; } = [];
-    public ImmutableArray<string> PackageRoots { get; init; } = [];
     public ImmutableArray<string> ExcludedPaths { get; init; } = [];
     public ImmutableArray<string> PrivatePaths { get; init; } = [];
     public ImmutableArray<string> ProjectionPaths { get; init; } = [];

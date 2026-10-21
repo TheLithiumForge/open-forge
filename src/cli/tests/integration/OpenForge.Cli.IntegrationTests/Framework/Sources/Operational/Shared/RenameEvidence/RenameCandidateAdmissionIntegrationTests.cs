@@ -8,7 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Operational.Shared.Re
 [Trait("Feature", "rename-evidence"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
 public sealed class RenameCandidateAdmissionIntegrationTests
 {
-    [Fact(DisplayName = "Managed private excluded package overwrite and projection records never enter the candidate universe")]
+    [Fact(DisplayName = "Managed private excluded overwrite and projection records never enter the candidate universe, while user-owned Skill files do")]
     public async Task ExcludedRecords()
     {
         using var repository = new RenameEvidenceGitWorkspace();
@@ -30,7 +30,8 @@ public sealed class RenameCandidateAdmissionIntegrationTests
             },
         };
         var result = await new RenameEvidenceReader(new PhysicalPathResolver()).ReadAsync(request, TestContext.Current.CancellationToken);
-        Assert.Equal(".agents/guidance/ordinary.md", Assert.Single(result.Facts.Candidates).Path);
+        Assert.Equal([".agents/guidance/ordinary.md", ".agents/skills/package/SKILL.md", ".agents/skills/package/references/note.md"],
+            result.Facts.Candidates.Select(candidate => candidate.Path).Order(StringComparer.Ordinal));
     }
 
     [Fact(DisplayName = "Directories non-Markdown invalid UTF-8 and uncontained names are excluded from ordinary evidence")]

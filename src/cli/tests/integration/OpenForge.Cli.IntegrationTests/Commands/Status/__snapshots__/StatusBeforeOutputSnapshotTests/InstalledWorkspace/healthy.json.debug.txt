@@ -20,8 +20,8 @@
     "startupTokens": 6568,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 274,
-    "allTokens": 22652,
-    "startupShare": 28.994768558373617641215813522,
+    "allTokens": 22680,
+    "startupShare": 28.958333333333333333333333333,
     "rootCategories": 7,
     "entriesSectionsCurrent": 12,
     "entriesSectionsStale": 0,
@@ -73,11 +73,11 @@
       },
       "allRouted": {
         "files": 18,
-        "characters": 90605,
-        "bytes": 90606,
-        "tokens": 22652
+        "characters": 90719,
+        "bytes": 90720,
+        "tokens": 22680
       },
-      "startupShare": 28.994768558373617641215813522,
+      "startupShare": 28.958333333333333333333333333,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",

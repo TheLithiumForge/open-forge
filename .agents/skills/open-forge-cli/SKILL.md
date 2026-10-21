@@ -9,7 +9,7 @@ Use the optional CLI to read and maintain Open Forge's Markdown, rules, and link
 
 When authoring metadata, follow the workspace's frontmatter form described in the loader.
 
-You may create or move user-owned Markdown files directly inside routed folders. Preview and run `open-forge index` to fill missing metadata, create missing entrypoints, and refresh Entries instead of writing those by hand. After renames or moves, preview and run `open-forge repair --automatic` to repair proven links and affected navigation. When Git retains the old file's committed content, Index and Repair work in either order. Without Git, run Repair first while old Entries still record the file's metadata. Index and Repair preserve protected content, including managed files and native Skill packages. Follow Doctor's next step for remaining choices, edits or a Git timeout retry. Read [route maintenance](references/routes.md) for the boundaries.
+You may create or move user-owned Markdown files directly inside routed folders. Preview and run `open-forge index` to fill missing metadata, create missing entrypoints, and refresh Entries instead of writing those by hand. After renames or moves, preview and run `open-forge repair --automatic` to repair proven links and affected navigation. When Git retains the old file's committed content, Index and Repair work in either order. Without Git, run Repair first while old Entries still record the file's metadata. Index and Repair preserve protected content, including managed files. Follow Doctor's next step for remaining choices, edits or a Git timeout retry. Read [route maintenance](references/routes.md) for the boundaries.
 
 ## Most Important Commands
 

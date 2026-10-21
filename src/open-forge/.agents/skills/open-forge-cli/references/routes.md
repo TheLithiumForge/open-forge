@@ -115,7 +115,7 @@ open-forge index memory/crystallized
 
 For an Install Git-ignore route, Index uses the policy recorded in `.agents/open-forge.lock.json` to omit private child files and nested private entrypoints from shareable `Entries`. It still maintains the whitelisted route entrypoint and its parent link. This keeps the route available to the team without publishing local private navigation. See [Install setup](packages.md#install) for how the route is recorded before its contents are ignored.
 
-Context, Find, and References can still read local private files when selected. Ignore rules do not change their loading authority. Index rewrites the unique `## Entries` interior and removes retired generated guard comments there. Metadata completion preserves authored bytes outside inserted fields. Native Skill packages, overwrites, managed authored content, excluded paths, and recorded private contents are not completed. Index never invents a root or clears an exclusion. Invalid frontmatter stays untouched with an edit instruction, while independent valid files are indexed.
+Context, Find, and References can still read local private files when selected. Ignore rules do not change their loading authority. Index rewrites the unique `## Entries` interior and removes retired generated guard comments there. Metadata completion preserves authored bytes outside inserted fields. In a user-owned Skill, Index fills a missing native `name` and `description` in `SKILL.md` and the usual description and tags in other package Markdown, without adding entrypoints inside the package. Overwrites, managed authored content, excluded paths, and recorded private contents are not completed. Index never invents a root or clears an exclusion. Invalid frontmatter stays untouched with an edit instruction, while independent valid files are indexed.
 
 ## `repair`
 
@@ -148,7 +148,7 @@ Interactive Repair explains possible targets and offers `Leave this link unchang
 
 Repair does not decide missing content or delete recovery artifacts. It maintains navigation only in the routes affected by selected corrections.
 
-Repair preserves managed Framework and Extension files, native Skill packages and resources, overwrites, excluded or private contents, and unsafe sources or targets. Follow their managing Update or exact edit action. Each candidate appears once under its link with its strongest reason and copyable command. Partial results state applied repairs and remaining choices or edits. Continuations retain the explicit workspace even inside prose. A Git timeout retries the complete request before manual link edits.
+Repair preserves managed Framework and Extension files, overwrites, excluded or private contents, and unsafe sources or targets. Follow their managing Update or exact edit action. Each candidate appears once under its link with its strongest reason and copyable command. Partial results state applied repairs and remaining choices or edits. Continuations retain the explicit workspace even inside prose. A Git timeout retries the complete request before manual link edits.
 
 Repair, Route Move and Route Remove preserve links covered by `ignoreLinksFrom` or `ignoreLinksTo` in `.agents/open-forge.json`. Incoming links into an `ignoreLinksFrom` path stay checked and repairable. Route Move remaps listed paths in the moved tree. Route Remove drops entries in the removed tree.
 
