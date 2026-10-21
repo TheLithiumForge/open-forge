@@ -14,13 +14,13 @@ cd /path/to/your-project
 open-forge install --preset minimal --dry-run
 ```
 
-The plan lists every file it would touch. Minimal writes the loader, a short guide for people in `.agents/README.md`, and a marked Open Forge section in `AGENTS.md` and `CLAUDE.md`. Your existing text in those files stays as it is. Apply the same selection:
+The plan lists every file it would touch. Minimal writes the loader, a Directives folder for rules agents must follow, a Crystallized Memory folder for accepted knowledge, a short guide for people in `.agents/README.md`, and a marked Open Forge section in `AGENTS.md` and `CLAUDE.md`. Your existing text in those files stays as it is. Apply the same selection:
 
 ```sh
 open-forge install --preset minimal --automatic
 ```
 
-Review the result with `git status` and `git diff`. Nothing is switched on yet.
+Review the result with `git status` and `git diff`. Both folders start empty, so agents read only the loader and two short catalogues until you add something.
 
 ### Point agents at a document you already have
 
@@ -40,9 +40,15 @@ Check the answer against your contribution guide. You can stop here.
 
 ### Add a rule and an accepted fact
 
-You don't need any Open Forge folders for this. Say your agent keeps calling export work done without running the tests. Create `docs/agent-rules.md`:
+Minimal gives you two places for this. Say your agent keeps calling export work done without running the tests. Create `.agents/directives/exports.md`:
 
 ```markdown
+---
+description: Run the export tests before reporting export work done
+tags: [LoadNow, Directive]
+applyTo: ["src/export/**"]
+---
+
 # Export rules
 
 ## Instructions
@@ -50,38 +56,22 @@ You don't need any Open Forge folders for this. Say your agent keeps calling exp
 - When changing CSV exports, run the export tests before reporting completion. Include the command and its result. If the tests cannot run, say why.
 ```
 
-Once your team has settled that exports use UTF-8, write it down in `docs/export-format.md`:
+Once your team has settled that exports use UTF-8, keep that as accepted knowledge in `.agents/memory/crystallized/export-format.md`:
 
 ```markdown
+---
+description: Accepted CSV export encoding
+tags: [Memory, Crystallized, CurrentTruth]
+---
+
 # Export format
 
 CSV exports use UTF-8.
 ```
 
-Reading a file doesn't make it accepted, so record the authority you're giving it, outside the marked section in `AGENTS.md`:
+Run `open-forge index` to list both files in their catalogues, or add their lines under `Entries` by hand. An export task now reads the rule before it starts, and agents check Crystallized Memory before deciding what's true about exports.
 
-```markdown
-Use docs/export-format.md as the accepted source for CSV export encoding.
-```
-
-Then link both, limited to export work:
-
-```markdown
-- [Required behavior for export changes](../docs/agent-rules.md) - #LoadNow - applies to `src/export/**`
-- [Accepted CSV export encoding](../docs/export-format.md) - #LoadNow - applies to `src/export/**`
-```
-
-An export task now reads the rule and the format before it starts. Other tasks don't.
-
-### Give rules and knowledge their own folders
-
-When you want dedicated places for new rules and accepted knowledge, add only those parts:
-
-```sh
-open-forge install --configure --preset custom --route directives=add --route memory/crystallized=add --dry-run
-```
-
-Review the plan, then run the same command with `--automatic` instead of `--dry-run`. Directives hold rules agents must follow. Crystallized Memory holds accepted knowledge that stays current. Your linked documents stay linked.
+Would you rather keep rules and facts in your own `docs/` folder? Link them from the loader like any other document, and say in `AGENTS.md`, outside the marked section, which of them are accepted sources.
 
 ### Keep unfinished work across sessions
 
@@ -95,18 +85,17 @@ open-forge install --configure --preset custom --route memory/working=git-ignore
 
 ## Choose how much to adopt
 
-| You need                                    | Start with                                         |
-| ------------------------------------------- | -------------------------------------------------- |
-| Agents that use your existing instructions  | Minimal and one document link                      |
-| Project rules and accepted facts            | Linked docs, or Directives and Crystallized Memory |
-| Work that continues across sessions         | Working Memory and its saving policy               |
-| The usual set for a new project             | Essentials                                         |
-| Every built-in folder                       | Full Core                                          |
-| A particular planning or development method | An [Extension](#extensions)                        |
+| You need                                          | Start with                                                |
+| ------------------------------------------------- | --------------------------------------------------------- |
+| Rules, accepted facts and your existing documents | Minimal, the recommended start                            |
+| Work that continues across sessions               | Minimal plus Working Memory and its saving policy         |
+| The usual set for a new project                   | Essentials, which adds patterns, skills and working notes |
+| Every built-in folder                             | Full Core                                                 |
+| A particular planning or development method       | An [Extension](#extensions)                               |
 
-These are useful stopping points, not steps you must climb. Every folder is optional, and Custom lets you pick each one. Memory states need Memory, but they don't need each other. Extensions declare their own dependencies. To turn a part off, remove its line from the loader. Its files stay as notes, and updates keep it off.
+Each preset includes the one before it, and each is a useful stopping point, not a step you must climb. Every folder is optional, and Custom lets you pick each one. Memory states need Memory, but they don't need each other. Extensions declare their own dependencies. To turn a part off, remove its line from the loader. Its files stay as notes, and updates keep it off.
 
-Running `open-forge install` with no options starts a short wizard that offers Essentials, Full Core, Custom and Minimal, with a line on each. The [installation guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation) explains every choice and how to change it later. To experiment without touching your checkout, [try it in a separate clone](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation#try-it-and-undo-a-trial).
+Running `open-forge install` with no options starts a short wizard that recommends Minimal and offers Essentials, Full Core and Custom, with a line on each. The [installation guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation) explains every choice and how to change it later. To experiment without touching your checkout, [try it in a separate clone](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation#try-it-and-undo-a-trial).
 
 Starting something new? The [greenfield demo](https://thelithiumforge.github.io/open-forge/docs/demos/greenfield) gives you a first build request, and the [ten-minute guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/ten-minute-guide) walks through adding a rule, keeping a useful fact, and finding the context for your next task. You don't need to choose a workflow, install Extensions, or write a specification first.
 
@@ -138,7 +127,7 @@ Clone this repository and follow the [local setup guide](docs/development.md#lin
 
 ### Install the Framework
 
-Minimal installs only the loader, the guide for people and the marked host sections, with nothing switched on. Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory. Full Core includes every built-in folder, and Custom lets you select each one. No preset installs optional Extensions.
+Minimal installs Directives and Crystallized Memory with the loader, the guide for people and the marked host sections. Essentials adds Patterns, Skills, and Working and Emerging Memory to it. Full Core includes every built-in folder, and Custom lets you select each one. No preset installs optional Extensions.
 
 Essentials keeps new Working records out of ordinary Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools.
 
@@ -199,7 +188,7 @@ I built Open Forge to work beside your harness, the tool that runs your agent. A
 
 ## What you get
 
-This is the Full Core inventory. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal keeps only `AGENTS.md`, `CLAUDE.md`, the loader and the guide for people. Custom follows your selection. No preset installs optional Extensions.
+This is the Full Core inventory. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal keeps `AGENTS.md`, `CLAUDE.md`, the loader, the guide for people, Directives and Crystallized Memory. Custom follows your selection. No preset installs optional Extensions.
 
 ```text
 AGENTS.md                         <- tells the agent to read the loader first

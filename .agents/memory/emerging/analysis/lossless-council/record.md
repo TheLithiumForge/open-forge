@@ -90,5 +90,11 @@ Lossless costs about 1,000 startup words over v2, and is still 46% below the shi
 ## Open choices for the maintainer
 
 - Whether the communication defaults should become an optional policy file in a later release, with existing installations keeping them.
-- Whether to change the wizard's recommendation to Minimal after a stranger trial.
 - Whether a `link` command is worth its cost. The engineer estimated three to five days and recommended shipping copyable entry lines first.
+
+## Maintainer decisions after review
+
+On 2026-10-21 the maintainer reviewed the PR and decided:
+
+- Minimal is the loader, Directives and Crystallized Memory, because a loader with nothing listed does nothing for the user. Essentials and Full Core build on it, so each built-in preset includes the one before it.
+- The interactive wizard offers Minimal first and recommends it. Unattended Install without a preset still uses Full Core.

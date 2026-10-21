@@ -71,7 +71,7 @@ public sealed class PublishedInstallConfigurationProcessTests
         Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
     }
 
-    [Theory(DisplayName = "Real TTY first Install offers Essentials before one reviewed application confirmation"), InlineData(80, 24, true), InlineData(40, 12, true), InlineData(80, 24, false)]
+    [Theory(DisplayName = "Real TTY first Install recommends Minimal before one reviewed application confirmation"), InlineData(80, 24, true), InlineData(40, 12, true), InlineData(80, 24, false)]
     [Trait("Feature", "install-configuration"), Trait("Evidence", "EndToEnd")]
     public async Task FirstPresetTerminal(short width, short height, bool apply)
     {
@@ -85,9 +85,9 @@ public sealed class PublishedInstallConfigurationProcessTests
                 TerminalName = "xterm",
                 Steps = [new("Choose your Open Forge setup", "\r"), new("How should Open Forge write", "\r"), new("Apply these changes? [y/N]", apply ? "y" : "n")],
             });
-        Capture($"essentials-{width}x{height}-{apply}", terminal.Transcript);
+        Capture($"minimal-{width}x{height}-{apply}", terminal.Transcript);
         Assert.Equal(apply ? 0 : 130, terminal.ExitCode);
-        Assert.Contains("Essentials", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("Minimal", terminal.Transcript, StringComparison.Ordinal);
         var plan = terminal.Transcript.IndexOf("Would ", StringComparison.Ordinal);
         var heading = terminal.Transcript.IndexOf("Review changes", StringComparison.Ordinal);
         var confirmation = terminal.Transcript.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal);
@@ -98,9 +98,11 @@ public sealed class PublishedInstallConfigurationProcessTests
         {
             Assert.Contains("If your agent tool", terminal.Transcript, StringComparison.Ordinal);
             Assert.Contains("Next:", terminal.Transcript, StringComparison.Ordinal);
-            Assert.True(File.Exists(workspace.Combine(".agents/memory/working/_working.md")));
+            Assert.True(File.Exists(workspace.Combine(".agents/directives/_directives.md")));
+            Assert.True(File.Exists(workspace.Combine(".agents/memory/crystallized/_crystallized.md")));
+            Assert.False(File.Exists(workspace.Combine(".agents/memory/working/_working.md")));
             Assert.False(File.Exists(workspace.Combine(".agents/guidance/_guidance.md")));
-            Assert.Contains("/.agents/memory/working/", File.ReadAllText(workspace.Combine(".gitignore")), StringComparison.Ordinal);
+            Assert.False(File.Exists(workspace.Combine(".gitignore")));
         }
         else Assert.Equal(before, workspace.SnapshotState());
     }

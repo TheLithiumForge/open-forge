@@ -22,7 +22,7 @@ Establish or configure the Framework bundled in the running CLI. Install does no
 | `--automatic`                                       | Suppress confirmation without adding force or choosing missing setup inputs                                                                         |
 | `--dry-run`                                         | Preview selection, adoption, files, settings, and ignore changes                                                                                    |
 
-First interactive Install offers the recommended Essentials, Full Core, Custom, or Minimal. Configure offers the current choices. Ordinary repeated Install retains its quiet no-op or divergence behavior.
+First interactive Install offers the recommended Minimal, then Essentials, Full Core and Custom. Each built-in preset includes the one before it. Configure offers the current choices. Ordinary repeated Install retains its quiet no-op or divergence behavior.
 
 After the preset choice, first interactive Install asks `How should Open Forge write file metadata?` with root preselected. An explicit `--frontmatter` skips the question. A fresh Install keeps an explicit preference already in settings unless the flag overrides it. Without either, fresh unattended Install uses root. Interactive Configure offers the current form first. Ordinary repeated Install and Update retain the form and never ask.
 
@@ -36,14 +36,14 @@ Root keys are recommended. Choose the scoped form when other tools already use t
 
 Install's headline describes the result, with the path on a separate `Workspace:` line. Explanations wrap at spaces to fit the terminal width.
 
-| Preset       | Selected content                                                                                                              |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| `essentials` | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus the ordinary Working route with Install Git-ignore rules |
-| `full-core`  | Every built-in category and Memory state, with no Install-owned ignore entries                                                |
-| `custom`     | Current concrete choices, or Essentials on a fresh workspace, with explicit row overrides                                     |
-| `minimal`    | Only the loader, `.agents/README.md` and the managed host sections. Its `Entries` start empty. Add rows with `--route`        |
+| Preset       | Selected content                                                                                                                  |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `minimal`    | Directives and Crystallized Memory, with the Memory catalogue, plus the loader, `.agents/README.md` and the managed host sections |
+| `essentials` | Everything in Minimal, plus Patterns, Skills, Emerging Memory and the ordinary Working route with Install Git-ignore rules        |
+| `full-core`  | Every built-in category and Memory state, with no Install-owned ignore entries                                                    |
+| `custom`     | Current concrete choices, or Essentials on a fresh workspace, with explicit row overrides                                         |
 
-No built-in preset installs optional Extensions. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal omits every category and Memory state. A Memory state added with `--route` brings the Memory catalogue with it.
+No built-in preset installs optional Extensions. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal includes only Directives and Crystallized Memory. A Memory state added with `--route` brings the Memory catalogue with it.
 
 Install, Update, Configure, and Extension commands keep the loader's `Entries` as the user left them. A removed root line stays removed, links to documents outside `.agents/` stay, and an empty list stays empty. A root joins the list only when the command creates its catalogue or Configure adds a route that was left out.
 

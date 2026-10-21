@@ -4,8 +4,8 @@ Usage:
   open-forge [command] [options]
 
 Get started in your project folder:
-  open-forge install --preset essentials --dry-run  Preview Essentials, no edits
-  open-forge install --preset essentials            Install it
+  open-forge install --preset minimal --dry-run  Preview Minimal, no edits
+  open-forge install --preset minimal            Install it
   Then give your agent a normal task.
   Already installed? Preview updates with open-forge update --dry-run.
 

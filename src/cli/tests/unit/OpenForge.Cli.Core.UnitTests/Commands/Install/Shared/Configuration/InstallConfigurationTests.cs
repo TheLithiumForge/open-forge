@@ -45,18 +45,22 @@ public sealed class InstallConfigurationTests
         Assert.NotNull(InstallBindingInputReader.Read(parse, symbols).SetupError);
     }
 
-    [Fact(DisplayName = "Minimal leaves out every route and accepts route additions"), Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Minimal adds Directives and Crystallized Memory, and every other preset builds on it"), Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void MinimalStartsEmptyAndTakesOverrides()
     {
-        Assert.All(InstallConfigurationChoices.Defaults(InstallPreset.Minimal), row => Assert.Equal(InstallRouteAction.Remove, row.Action));
+        var minimal = InstallConfigurationChoices.Defaults(InstallPreset.Minimal);
+        Assert.Equal(["directives", "memory/crystallized"], minimal.Where(row => row.Action == InstallRouteAction.Add).Select(row => row.Id));
+        Assert.All(minimal.Where(row => row.Id is not ("directives" or "memory/crystallized")), row => Assert.Equal(InstallRouteAction.Remove, row.Action));
+        foreach (var preset in new[] { InstallPreset.Essentials, InstallPreset.FullCore })
+            Assert.All(minimal.Where(row => row.Action != InstallRouteAction.Remove), row => Assert.NotEqual(InstallRouteAction.Remove, InstallConfigurationChoices.Defaults(preset).Single(other => other.Id == row.Id).Action));
         var symbols = InstallBinding.CreateSymbols();
-        var parse = symbols.InstallCommand.Parse(["--preset", "minimal", "--route", "directives=add", "--route", "memory/crystallized=add"]);
+        var parse = symbols.InstallCommand.Parse(["--preset", "minimal", "--route", "guidance=add", "--route", "memory/working=git-ignore"]);
         Assert.Empty(parse.Errors);
         var input = InstallBindingInputReader.Read(parse, symbols);
         Assert.Null(input.SetupError);
         var setup = Assert.IsType<InstallSetupInput>(input.Setup);
         Assert.Equal(InstallPreset.Minimal, setup.Preset);
-        Assert.Equal(["directives", "memory/crystallized"], setup.Overrides.Select(row => row.Id));
+        Assert.Equal(["guidance", "memory/working"], setup.Overrides.Select(row => row.Id));
     }
 
     [Fact(DisplayName = "Each route switches on through its top-level Loader line"), Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]

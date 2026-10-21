@@ -1166,7 +1166,7 @@ open-forge install --preset essentials --dry-run
 open-forge install --preset essentials --automatic
 ```
 
-To start small in an existing repository, install only the loader and link the documents you already have:
+To start small in an existing repository, install the loader with Directives and Crystallized Memory, then link the documents you already have:
 
 ```sh
 open-forge install --preset minimal --dry-run
@@ -1210,14 +1210,15 @@ and converts eligible owned files to the chosen frontmatter form.
 
 Install has no operands.
 
-First interactive Install offers Essentials, Full Core, Custom, or Minimal before
+First interactive Install offers Minimal, Essentials, Full Core, or Custom before
 showing the selected plan and asking for confirmation. An explicit preset
 skips the preset question. `--dry-run` changes nothing and never
 asks setup questions. Naming the preset makes a preview use the intended
-selection. Essentials is marked as recommended. Its focused detail explains
-that new notes for active work stay out of Git. Full Core adds advice, pointers
-to sources, starter files, and archived records, without Install-owned
-Git-ignore rules.
+selection. Minimal is marked as recommended. Each built-in preset includes the
+one before it. Essentials adds patterns, skills and notes for active work, and
+its focused detail explains that new notes for active work stay out of Git.
+Full Core adds advice, pointers to sources, starter files, and archived
+records, without Install-owned Git-ignore rules.
 
 After resolving the preset, first interactive Install asks `How should Open Forge write file metadata?` and shows a short example of each form when settings do not already declare a preference. Root is preselected. An explicit `--frontmatter` skips that question.
 
@@ -1239,18 +1240,18 @@ line. Explanations wrap at spaces to fit the terminal width.
 
 ##### Setup choices
 
-| Preset       | Supplied defaults                                                                                                                 |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| `essentials` | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with private contents and a shared entrypoint |
-| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                |
-| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                |
-| `minimal`    | Nothing but the loader, `.agents/README.md` and the managed sections in `AGENTS.md` and `CLAUDE.md`. Add rows with `--route`      |
+| Preset       | Supplied defaults                                                                                                                                           |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `minimal`    | Directives and Crystallized Memory, with the Memory catalogue, plus the loader, `.agents/README.md` and the managed sections in `AGENTS.md` and `CLAUDE.md` |
+| `essentials` | Everything in Minimal, plus Patterns, Skills and Emerging Memory, and Working Memory with private contents and a shared entrypoint                          |
+| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                                          |
+| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                                          |
 
 Essentials omits Guidance, Maps, Templates, and Archived Memory. Full Core
 includes the base categories, not optional Extensions or an agent runtime.
-Minimal installs no category or Memory state, so its loader starts with an
-empty `Entries` list. Link an existing document there, or add rows with
-`--route`, such as `--route directives=add --route memory/crystallized=add`.
+Minimal installs Directives and Crystallized Memory, so agents read your rules
+and accepted knowledge from the first task. Link existing documents from the
+loader, or add rows with `--route`, such as `--route memory/working=git-ignore`.
 A Memory state brings the Memory catalogue with it. Presets select supplied
 defaults. Existing content in an omitted route remains in place and routable.
 
@@ -1293,8 +1294,8 @@ Custom offers three actions for each row. The wizard shows each as a mark:
 | `[-]` | `remove`     | Omit supplied defaults and release only their Framework management, preserving existing files, authored notes, overwrite companions, and routability |
 
 Repeat `--route <id>=<action>` to override rows. It requires
-`--preset custom` or `--preset minimal`. Minimal starts with every row left
-out, so its rows add only what you name. Accepted IDs are:
+`--preset custom` or `--preset minimal`. Minimal starts from its two rows and
+adds only what you name. Accepted IDs are:
 
 ```text
 directives

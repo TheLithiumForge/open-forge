@@ -75,7 +75,7 @@ public sealed class InstallCompositionIntegrationTests
         var applied = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            $"2{Environment.NewLine}2{Environment.NewLine}y{Environment.NewLine}remaining{Environment.NewLine}",
+            $"3{Environment.NewLine}2{Environment.NewLine}y{Environment.NewLine}remaining{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -271,7 +271,7 @@ public sealed class InstallCompositionIntegrationTests
             root.StandardOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
             line => line.TrimStart().StartsWith("install", StringComparison.Ordinal));
         Assert.Contains("Already installed?", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("open-forge install --preset essentials", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("open-forge install --preset minimal", root.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(string.Empty, leaf.StandardError);
         Assert.Contains(

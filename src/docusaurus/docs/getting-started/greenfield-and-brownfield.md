@@ -41,9 +41,10 @@ Four principles guide adoption:
 Save your current work before adoption. For a trial, use a separate local clone and copy any additional local files you need. [Try it and undo a trial](installation.md#try-it-and-undo-a-trial) explains the saved baseline, how to restore changed tracked files, and how to remove only trial additions. Keep any work you want, and preserve an existing `.agents/` tree.
 
 1. **Install the smallest setup with a dry run and review the diff.** Minimal
-   writes only the loader, a short guide for people, and an Open Forge section
-   in `AGENTS.md` and `CLAUDE.md` that keeps your content. Nothing is switched
-   on until you list it. See [With the CLI](installation.md#with-the-cli) for
+   writes the loader, Directives for your rules, Crystallized Memory for
+   accepted knowledge, a short guide for people, and an Open Forge section in
+   `AGENTS.md` and `CLAUDE.md` that keeps your content. The two folders start
+   empty. See [With the CLI](installation.md#with-the-cli) for
    details, including how the CLI adopts an existing `.agents/` tree.
 
    ```sh
@@ -65,11 +66,11 @@ Save your current work before adoption. For a trial, use a separate local clone 
    ```
 
    Then try a normal request and check that the agent names the files it used.
-   When you want dedicated homes for rules, accepted knowledge or resume
-   notes, add only those parts with
-   `open-forge install --configure --preset custom --route directives=add`, and
-   install the [Development Toolkit](../extensions/development-toolkit.md) when
-   you want Planning's Decisions.
+   New rules go in Directives and new accepted facts in Crystallized Memory.
+   When work should survive a pause, add Working Memory with
+   `open-forge install --configure --preset custom --route memory/working=git-ignore`,
+   and install the [Development Toolkit](../extensions/development-toolkit.md)
+   when you want Planning's Decisions.
 
 3. **Work as usual, and record Decisions as you change things.** When a change alters behavior or picks between real alternatives, ask for its reasoning in the same change:
 

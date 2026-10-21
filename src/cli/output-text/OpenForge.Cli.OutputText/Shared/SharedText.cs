@@ -976,13 +976,13 @@ internal static class SharedText
     internal static IReadOnlyList<(string Label, string? Description)> HelpGettingStartedRows()
         =>
         [
-            ("open-forge install --preset essentials --dry-run", "Preview Essentials, no edits"),
-            ("open-forge install --preset essentials", "Install it"),
+            ("open-forge install --preset minimal --dry-run", "Preview Minimal, no edits"),
+            ("open-forge install --preset minimal", "Install it"),
         ];
 
     // @OpenForgeText shared.help.getting-started-examples
     internal static string HelpGettingStartedExamples()
-        => "open-forge install --preset essentials --dry-run\nopen-forge install --preset essentials";
+        => "open-forge install --preset minimal --dry-run\nopen-forge install --preset minimal";
 
     // @OpenForgeText shared.help.command-help-description
     internal static string HelpCommandHelpDescription()
@@ -1026,7 +1026,7 @@ internal static class SharedText
 
     // @OpenForgeText shared.shared.help.gettingstartedbefore
     internal static string HelpGettingStartedBefore()
-        => "Get started in your project folder. Preview Essentials without changing files, then install the same preset:";
+        => "Get started in your project folder. Preview Minimal without changing files, then install the same preset:";
 
     // @OpenForgeText shared.shared.help.gettingstartedafter
     internal static string HelpGettingStartedAfter()

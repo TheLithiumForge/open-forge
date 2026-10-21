@@ -70,7 +70,7 @@ public sealed class CommandHelpIntegrationTests
             Assert.DoesNotContain("Managed content:", text, StringComparison.Ordinal);
             Assert.DoesNotContain("Command help:", text, StringComparison.Ordinal);
             Assert.Single(text.Split(Environment.NewLine), line => line.Contains("--workspace <path>", StringComparison.Ordinal));
-            Assert.Contains("  open-forge install --preset essentials --dry-run  Preview Essentials, no edits", text, StringComparison.Ordinal);
+            Assert.Contains("  open-forge install --preset minimal --dry-run  Preview Minimal, no edits", text, StringComparison.Ordinal);
         }
 
         CommandOutputSnapshot.MatchSnapshot(text, command.Length == 0 ? "root" : command.Replace(' ', '-'),

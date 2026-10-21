@@ -11,7 +11,7 @@ Startup context
   Shipped by this CLI:   8 files, about 4.0k tokens
   This workspace:        8 files, about 4.0k tokens
   May load again later:  1 file, about 0.2k tokens
-All routed files: 20 files, about 22.9k tokens (startup is 17%)
+All routed files: 20 files, about 23.0k tokens (startup is 17%)
 Routes: 7 root categories, 12 Entries sections current
 Framework files: 21 current
 Libraries: team-knowledge, shared/team-knowledge -> .
@@ -56,6 +56,6 @@ Library team-knowledge links
   .agents/resources/data.json
     missing (expected ../../shared/team-knowledge/.agents/resources/data.json)
 Recovery data: none
-20 routed files, 8 startup files, 3979 startup tokens, 1 may-load-again files, 249 may-load-again tokens, 22935 all routed tokens, 17.345570682682769971986352885 startup share, 7 root categories, 12 current Entries sections, 21 current Framework files, 1 registered Libraries, 1 missing Library links, 1 warnings.
+20 routed files, 8 startup files, 3979 startup tokens, 1 may-load-again files, 249 may-load-again tokens, 22965 all routed tokens, 17.323477541422630581985238085 startup share, 7 root categories, 12 current Entries sections, 21 current Framework files, 1 registered Libraries, 1 missing Library links, 1 warnings.
   Synchronize the missing Library link.
 Next: open-forge library sync team-knowledge

@@ -58,7 +58,7 @@ internal static class InstallConfigurationChoices
         return preset switch
         {
             InstallPreset.FullCore => InstallRouteAction.Add,
-            InstallPreset.Minimal => InstallRouteAction.Remove,
+            InstallPreset.Minimal => id is "directives" or "memory/crystallized" ? InstallRouteAction.Add : InstallRouteAction.Remove,
             InstallPreset.Essentials or InstallPreset.Custom => id switch
             {
                 "guidance" or "maps" or "templates" or "memory/archived" => InstallRouteAction.Remove,

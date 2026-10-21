@@ -4,16 +4,16 @@ Usage:
   open-forge install [options]
 
 Examples:
-  open-forge install --preset essentials --dry-run
   open-forge install --preset minimal --dry-run
+  open-forge install --preset essentials --dry-run
   open-forge install
 
 Behavior:
   Install adds selected bundled defaults and Open Forge sections to AGENTS.md
   and CLAUDE.md, preserving your other instructions.
-  The wizard starts with Essentials. Unattended Install and dry run use Full
-  Core unless you name a preset. Fresh unattended metadata is root unless
-  settings declare a preference.
+  The wizard starts with Minimal. Unattended Install and dry run use Full Core
+  unless you name a preset. Fresh unattended metadata is root unless settings
+  declare a preference.
   Omissions stay omitted. --configure offers current setup choices, keeps
   existing content, and can restore missing selected defaults. Identical
   installations need no writes.
@@ -26,12 +26,13 @@ Behavior:
 
 Options:
   --configure        Configure built-in routes while retaining existing files.
-  --preset <preset>  Select essentials, full-core, or custom.
+  --preset <preset>  Select minimal, essentials, full-core, or custom.
   --frontmatter <frontmatter>
       Choose where Open Forge writes file metadata: root or scoped. A fresh
       unattended Install uses root. Change an installed workspace with
       --configure.
-  --route <route>    Set a Custom route: <id>=<add|remove|git-ignore>.
+  --route <route>    Set a Custom or Minimal route:
+                     <id>=<add|remove|git-ignore>.
   --force            Allow eligible existing items to be replaced during first
                      installation.
   --automatic        Suppress confirmation and use deterministic safe defaults.

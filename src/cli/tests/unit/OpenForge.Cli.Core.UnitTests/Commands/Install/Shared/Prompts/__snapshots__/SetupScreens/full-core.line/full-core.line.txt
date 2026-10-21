@@ -1,18 +1,19 @@
 Choose your Open Forge setup
 
-  1. Essentials  Recommended. Rules, patterns, skills and memory
-     Rules, reusable patterns, skills and project memory. New notes for active
-     work stay out of Git.
-  2. Full Core   Every built-in folder, all shared through Git
+  1. Minimal     Recommended. Rules, accepted knowledge, your documents
+     The loader, Directives for your rules and Crystallized Memory for accepted
+     knowledge, plus the Open Forge sections in AGENTS.md and CLAUDE.md. Link
+     documents you already have from the loader.
+  2. Essentials  Minimal plus patterns, skills and working notes
+     Everything in Minimal, plus reusable patterns, skills, notes for active
+     work and findings not accepted yet. New notes for active work stay out of
+     Git.
+  3. Full Core   Every built-in folder, all shared through Git
      Everything in Essentials, plus advice, pointers to sources, starter files
      and archived records. All contents, including notes for active work, are
      shared through Git.
-  3. Custom      Choose each folder on the next screen
+  4. Custom      Choose each folder on the next screen
      Starts from your current choices, or Essentials in a new workspace, then
      shows one list to change.
-  4. Minimal     Just the loader. Link the documents you already have
-     Only the loader and the Open Forge sections in AGENTS.md and CLAUDE.md.
-     Nothing is on until you list it, for example a link to a document you
-     already have.
 
 Choose a number (1-4), or press Enter to cancel:
