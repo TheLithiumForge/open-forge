@@ -22,7 +22,7 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 - It records the current goal, state, and current step, accepted decisions, evidence, unresolved questions, next steps, and durable sources when they help the work resume
 - Update the Checkpoint before an actual transfer or explicitly planned resumption. Seal a transfer snapshot only when that boundary needs fixed state while the Checkpoint may continue changing. The workspace chooses its transfer record, and the optional Observations and Handoffs package supplies Handoffs for this role.
 - Routine pauses and ordinary closeout do not require a Handoff
-- Closeout saves durable outcomes outside the Checkpoint. When its active need ends, the Checkpoint loses its active continuity status and is moved or pruned.
+- Closeout saves durable outcomes outside the Checkpoint. When its active need ends, the Checkpoint loses its active continuity status and is archived or pruned.
 
 ## Verification
 

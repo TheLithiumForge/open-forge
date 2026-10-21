@@ -12,7 +12,7 @@ This route contains maintainer contracts for reviewed Core and Extension install
 
 - The canonical routed Markdown and generated-region contracts apply unless a component links a more specific representation
 - Each category catalogue keeps its question as a level-2 heading immediately under its title, followed by a short paragraph on what its folder holds.
-- A shipped catalogue describes its own folder and never names another route.
+- A Core catalogue under `src/open-forge/` describes its own folder and never names another route. Extension packages may name their own related routes.
 - A newly authored category entrypoint with no local Axioms uses one `inherited` sentinel. Omission or an empty local section remains accepted compatibility input with the same inherited meaning. It never combines `inherited` with substantive local Axioms, and it never uses `none` for Axioms.
 - A direct sibling Directive file keeps its instructions under a substantive `Instructions` heading. Maintenance leaves retain `Source`, `Contract`, and `Verification` instead of Axioms.
 - Keep maintenance Entries aligned with the contracts present in this folder. For contract-only changes, edit the lines by hand and check links. Verify payload navigation or lifecycle changes in isolated fixtures, following the task's command boundary.

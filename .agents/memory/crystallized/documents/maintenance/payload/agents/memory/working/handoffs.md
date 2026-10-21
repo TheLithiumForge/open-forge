@@ -24,7 +24,7 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 - Boundary status, next action, blockers, and verification state appear in the Handoff itself. A live working record may supplement but not replace the snapshot
 - The snapshot remains unchanged while serving as a sealed Handoff. Later state belongs in the active working record or a new Handoff. Category transitions follow the destination's rules
 - Handoffs remain contextual rather than complete history or accepted truth
-- Useful material is extracted before moving a Handoff that no longer supports an active transfer.
+- Useful material is extracted and the Handoff is archived after it no longer supports an active transfer.
 
 ## Verification
 
