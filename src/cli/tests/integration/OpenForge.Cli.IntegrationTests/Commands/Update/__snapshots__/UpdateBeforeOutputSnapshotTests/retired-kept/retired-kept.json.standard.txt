@@ -51,7 +51,7 @@
     "filesCreated": 0,
     "filesDeleted": 0,
     "filesKept": 1,
-    "filesUnchanged": 19,
+    "filesUnchanged": 21,
     "sectionsUpdated": 1,
     "warnings": 1
   },
@@ -66,6 +66,9 @@
     "unchanged": [
       {
         "path": ".agents/README.md"
+      },
+      {
+        "path": ".agents/authoring.md"
       },
       {
         "path": ".agents/directives/_directives.md"

@@ -2,5 +2,5 @@ Open Forge is installed, but 1 file needs attention.
   Warning  CLAUDE.md  Missing managed file
          missing; it was installed by the Framework
          open-forge update
-  Startup reads 7 of 19 routed files, about 3.9k tokens.
+  Startup reads 8 of 21 routed files, about 4.3k tokens.
 Next: open-forge update

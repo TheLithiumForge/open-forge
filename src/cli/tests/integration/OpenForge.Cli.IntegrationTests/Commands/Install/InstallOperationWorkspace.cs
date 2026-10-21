@@ -22,6 +22,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
     internal static readonly IReadOnlyList<string> EmbeddedPayloadPaths =
     [
         ".agents/README.md",
+        ".agents/authoring.md",
         ".agents/directives/_directives.md",
         ".agents/guidance/_guidance.md",
         ".agents/loader.md",

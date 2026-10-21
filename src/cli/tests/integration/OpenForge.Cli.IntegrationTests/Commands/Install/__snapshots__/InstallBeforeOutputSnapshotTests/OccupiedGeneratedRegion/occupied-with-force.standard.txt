@@ -7,6 +7,7 @@ Git-ignored contents: none
 Leave out: none
 Frontmatter: scoped
   .agents/README.md                                      created
+  .agents/authoring.md                                   created
   .agents/directives/_directives.md                      created
   .agents/guidance/_guidance.md                          created
   .agents/loader.md                                      created
@@ -34,7 +35,7 @@ Frontmatter: scoped
     created as the ownership receipt
   .agents/memory/_memory.overwrite.md
     Migrated: content preserved
-  Created 18 files and 12 directories under .agents, and replaced 1 existing
+  Created 20 files and 12 directories under .agents, and replaced 1 existing
   file.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Migrated 1 source.

@@ -83,7 +83,7 @@ public sealed class WorkspaceSettingsLinkScopeTests
     {
         var bytes = Assert.IsType<byte[]>(WorkspaceSettingsCodec.SeedArchiveLinkScope(ReadOnlyMemory<byte>.Empty));
         var settings = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(bytes).Document);
-        Assert.Equal(2, settings.SchemaVersion);
+        Assert.Equal(3, settings.SchemaVersion);
         Assert.Equal([".agents/memory/archived"], settings.IgnoreLinksFrom);
     }
 }

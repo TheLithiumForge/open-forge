@@ -191,9 +191,9 @@ internal sealed class ContextProjectionBuilder
         {
             // An entry document is not a routed source, so it carries no route metadata by design.
             // A linked document takes its metadata from the Entries line that links it, and the guide
-            // for people sits outside routing.
+            // files sit outside routing.
             if (!source.IsEntryDocument && !source.IsLinked && layer.Kind != SourceLayerKind.Overwrite
-                && !string.Equals(source.CanonicalPath, SourceLogicalPath.HumanGuidePath, StringComparison.Ordinal))
+                && !SourceLogicalPath.IsUnroutedGuide(source.CanonicalPath))
             {
                 state.Attention = true;
                 state.Findings.Add(Finding(

@@ -7,6 +7,7 @@ Git-ignored contents: none
 Leave out: none
 Frontmatter: root
   .agents/README.md                                      created
+  .agents/authoring.md                                   created
   .agents/directives/_directives.md                      created
   .agents/guidance/_guidance.md                          created
   .agents/loader.md                                      created
@@ -31,7 +32,7 @@ Frontmatter: root
   .agents/open-forge.json                                created
   .agents/open-forge.lock.json
     created; records the files above
-  Created 18 files and 13 directories under .agents (listed in
+  Created 20 files and 13 directories under .agents (listed in
   .agents/open-forge.lock.json).
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
 If your agent tool does not read AGENTS.md on its own, ask it to read AGENTS.md

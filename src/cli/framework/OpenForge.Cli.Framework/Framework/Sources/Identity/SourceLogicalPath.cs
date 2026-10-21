@@ -14,6 +14,19 @@ internal static class SourceLogicalPath
     /// </summary>
     internal const string HumanGuidePath = AgentsRoot + "/README.md";
 
+    /// <summary>
+    /// The file-format reference agents read before they write workspace files. Like the guide for
+    /// people, it sits outside routing and carries no frontmatter.
+    /// </summary>
+    internal const string AuthoringGuidePath = AgentsRoot + "/authoring.md";
+
+    /// <summary>
+    /// Whether a path is one of the unrouted guide files at the top of `.agents/`.
+    /// </summary>
+    internal static bool IsUnroutedGuide(string? path)
+        => string.Equals(path, HumanGuidePath, StringComparison.Ordinal)
+            || string.Equals(path, AuthoringGuidePath, StringComparison.Ordinal);
+
     internal static bool IsCanonical([NotNullWhen(true)] string? path)
     {
         return IsCanonicalSource(path);

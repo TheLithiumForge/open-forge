@@ -148,9 +148,9 @@ internal static class RouteDoctorFactReader
             .ToArray();
     }
 
-    // The guide for people is deliberately outside routing, so it is neither unreachable nor missing metadata.
+    // The guide files are deliberately outside routing, so they are neither unreachable nor missing metadata.
     private static bool IsHumanGuide(string canonicalPath)
-        => string.Equals(canonicalPath, SourceLogicalPath.HumanGuidePath, StringComparison.Ordinal);
+        => SourceLogicalPath.IsUnroutedGuide(canonicalPath);
 
     private static bool IsValidNativeSkill(RouteSourceObservation source)
     {

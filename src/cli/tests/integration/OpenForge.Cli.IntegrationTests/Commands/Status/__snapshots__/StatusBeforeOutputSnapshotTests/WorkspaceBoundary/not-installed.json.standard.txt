@@ -48,10 +48,10 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 7,
-          "characters": 15741,
-          "bytes": 15741,
-          "tokens": 3936
+          "files": 8,
+          "characters": 17020,
+          "bytes": 17020,
+          "tokens": 4255
         },
         "current": {
           "files": null,

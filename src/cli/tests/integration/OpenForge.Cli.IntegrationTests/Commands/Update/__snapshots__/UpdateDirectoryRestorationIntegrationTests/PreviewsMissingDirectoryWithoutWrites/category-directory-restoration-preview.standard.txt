@@ -4,6 +4,6 @@ Workspace: <workspace>
   .agents/guidance/_guidance.md  would be created
   .agents/loader.md              Entries would be updated
   .agents/open-forge.lock.json   ownership record would be updated
-  18 files unchanged
+  20 files unchanged
   Previous content will be kept in a recovery bundle.
 No files were changed.

@@ -165,6 +165,16 @@
       "after": null
     },
     {
+      "path": ".agents/authoring.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -376,7 +386,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 18,
+    "filesCreated": 20,
     "directoriesCreated": 13,
     "sectionsAdded": 1,
     "filesReplaced": 0
@@ -388,7 +398,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 18,
+      "files": 20,
       "directories": 13,
       "sections": 2
     },
@@ -439,6 +449,10 @@
       {
         "path": ".agents/README.md",
         "sourceAssetPath": ".agents/README.md"
+      },
+      {
+        "path": ".agents/authoring.md",
+        "sourceAssetPath": ".agents/authoring.md"
       },
       {
         "path": ".agents/directives/_directives.md",
@@ -525,7 +539,7 @@
     ],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 20
+      "assetCount": 22
     },
     "lifecycle": {
       "action": "publish",

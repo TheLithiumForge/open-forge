@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Install stopped after 17 of 35 changes.",
+    "headline": "Install stopped after 18 of 37 changes.",
     "kind": "failed"
   },
   "findings": [
@@ -133,6 +133,14 @@
     },
     {
       "path": ".agents/README.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/authoring.md",
       "kind": "file",
       "action": "created",
       "outcome": "done",
@@ -317,7 +325,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 5,
+    "filesCreated": 6,
     "directoriesCreated": 12,
     "sectionsAdded": 0,
     "filesReplaced": 0,
@@ -330,7 +338,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 18,
+      "files": 20,
       "directories": 12,
       "sections": 2
     },

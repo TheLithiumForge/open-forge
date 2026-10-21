@@ -132,18 +132,18 @@
   ],
   "effects": [],
   "counts": {
-    "routedFiles": 19,
-    "startupFiles": 7,
-    "startupTokens": 3936,
+    "routedFiles": 21,
+    "startupFiles": 8,
+    "startupTokens": 4255,
     "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 247,
-    "allTokens": 22841,
-    "startupShare": 17.229075227389643509954795705,
+    "mayLoadAgainTokens": 256,
+    "allTokens": 24085,
+    "startupShare": 17.666964230106500031140359983,
     "rootCategories": 7,
     "entriesSectionsCurrent": 10,
     "entriesSectionsStale": 2,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 19,
+    "frameworkFilesCurrent": 21,
     "frameworkFilesChanged": 1,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -165,16 +165,16 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 7,
-          "characters": 15741,
-          "bytes": 15741,
-          "tokens": 3936
+          "files": 8,
+          "characters": 17020,
+          "bytes": 17020,
+          "tokens": 4255
         },
         "current": {
-          "files": 7,
-          "characters": 15741,
-          "bytes": 15741,
-          "tokens": 3936
+          "files": 8,
+          "characters": 17020,
+          "bytes": 17020,
+          "tokens": 4255
         },
         "difference": {
           "files": 0,
@@ -190,12 +190,12 @@
         }
       },
       "allRouted": {
-        "files": 19,
-        "characters": 91362,
-        "bytes": 91363,
-        "tokens": 22841
+        "files": 21,
+        "characters": 96337,
+        "bytes": 96338,
+        "tokens": 24085
       },
-      "startupShare": 17.229075227389643509954795705,
+      "startupShare": 17.666964230106500031140359983,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
@@ -219,6 +219,10 @@
     "frameworkFiles": [
       {
         "path": ".agents/README.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/authoring.md",
         "state": "current"
       },
       {

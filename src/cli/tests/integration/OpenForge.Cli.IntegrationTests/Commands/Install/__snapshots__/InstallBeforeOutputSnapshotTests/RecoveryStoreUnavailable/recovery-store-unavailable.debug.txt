@@ -12,7 +12,7 @@ Git-ignored contents: none
 Leave out: none
 Frontmatter: root
   Bundled Framework fingerprint:
-  <sha256> (20 assets).
+  <sha256> (22 assets).
   No ownership record change was requested.
   No recovery bundle was required.
   Verification was not requested.

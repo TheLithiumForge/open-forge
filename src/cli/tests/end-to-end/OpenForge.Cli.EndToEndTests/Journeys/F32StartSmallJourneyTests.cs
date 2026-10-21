@@ -19,7 +19,7 @@ public sealed class F32StartSmallJourneyTests
         workspace.WriteText("docs/csharp.md", "# C# conventions\n\nUse file-scoped namespaces.\n");
         var documents = new[] { "README.md", "CONTRIBUTING.md", "docs/csharp.md" }
             .ToDictionary(path => path, path => File.ReadAllBytes(workspace.Combine(path)));
-        workspace.ExpectFiles("AGENTS.md", "CLAUDE.md", LoaderPath, ".agents/README.md", ".agents/open-forge.json", ".agents/open-forge.lock.json",
+        workspace.ExpectFiles("AGENTS.md", "CLAUDE.md", LoaderPath, ".agents/README.md", ".agents/authoring.md", ".agents/open-forge.json", ".agents/open-forge.lock.json",
             ".agents/directives/_directives.md", ".agents/memory/_memory.md", ".agents/memory/crystallized/_crystallized.md");
 
         var install = await workspace.RunAsync("install", "--preset", "minimal", "--automatic");
