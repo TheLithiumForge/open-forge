@@ -126,12 +126,12 @@ open-forge help concepts --format json
 
 With no topic, Help lists the available topics. `concepts` is the only topic.
 It explains loading, rules, conditions, reuse and customization, then prints
-the shipped authoring reference. Text keeps the Markdown unchanged. JSON puts
-the topic name and complete Markdown in the shared result envelope.
+the file formats from the shipped `.agents/README.md`. Text keeps the Markdown
+unchanged. JSON puts the topic name and complete Markdown in the shared result
+envelope.
 
-In a workspace, `.agents/authoring.md` and its `authoring.overwrite.md` are the
-version that applies. Read them with `open-forge context .agents/authoring.md`.
-Help reads no workspace files and changes nothing.
+Help prints the shipped copy, so it works the same after a project deletes its
+README. It reads no workspace files and changes nothing.
 
 An unknown topic is invalid input and lists the topics. A command name also
 suggests its options, so `open-forge help install` points to

@@ -42,8 +42,8 @@ Save your current work before adoption. For a trial, use a separate local clone 
 
 1. **Install the smallest setup with a dry run and review the diff.** Minimal
    writes the loader, Directives for your rules, Crystallized Memory for
-   accepted knowledge, the file formats agents follow when they write workspace
-   files, a short guide for people that you may delete, and an Open Forge section in
+   accepted knowledge, a short guide that also holds the file formats agents
+   follow, which you may delete, and an Open Forge section in
    `AGENTS.md` and `CLAUDE.md` that keeps your content. The two folders start
    empty. See [With the CLI](installation.md#with-the-cli) for
    details, including how the CLI adopts an existing `.agents/` tree.

@@ -102,11 +102,7 @@ The rules that matter most are the ones only your project knows. Write them down
 
 ## Writing workspace files
 
-In a workspace, `.agents/authoring.md` and its `authoring.overwrite.md` are the version that applies. Run `open-forge context .agents/authoring.md` to read them.
-
-Read this before you write or change workspace context: catalogues, rule files, metadata or lines under `Entries`. It describes the file shapes that agents and the Open Forge CLI both read. A file in another shape is ignored or reported as malformed.
-
-This page describes formats, not how to do your work. To change it in a way that survives updates, put your version in `authoring.overwrite.md` next to it.
+Read this before you write or change workspace context: catalogues, rule files, metadata or lines under `Entries`. It describes the file shapes that agents and the Open Forge CLI both read. A file in another shape is ignored or reported as malformed. This section describes formats, not how to do your work.
 
 ### Lines under Entries
 

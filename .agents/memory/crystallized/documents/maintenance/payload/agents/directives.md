@@ -24,7 +24,7 @@ The [current Directive contract](../../../framework/primitives/directives.md) de
 - The entrypoint defines the reusable category rules. Each sibling Directive defines its own required behavior
 - The category uses `applyTo` to limit file-specific rules and required child catalogues. The [loader](loader.md) defines matching through the full ancestor chain and conflict reporting.
 
-The [authoring reference](authoring.md) defines catalogue and Instructions formats. The [routed Markdown representation](../../../framework/markdown/routes.md) defines entrypoint and generated-region syntax. Directive-specific meaning remains in the source and current Directive contract rather than in shared Markdown rules.
+The file-format section of the [workspace guide](README.md) defines catalogue and Instructions formats. The [routed Markdown representation](../../../framework/markdown/routes.md) defines entrypoint and generated-region syntax. Directive-specific meaning remains in the source and current Directive contract rather than in shared Markdown rules.
 
 ## Verification
 

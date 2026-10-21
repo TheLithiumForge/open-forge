@@ -51,7 +51,7 @@ public sealed class HelpIntegrationTests
     }
 
     [Fact, Trait("Feature", "help"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
-    public async Task ConceptsPreservesEmbeddedConceptsAndPayloadAuthoringBytesWithoutAWorkspace()
+    public async Task ConceptsPreservesEmbeddedConceptsAndTheGuideFileFormatsWithoutAWorkspace()
     {
         using var workspace = TemporaryWorkspace.Create("help-parity");
         var (exit, stdout, stderr) = await RunAsync(workspace, ["help", "concepts"]);
@@ -70,47 +70,21 @@ public sealed class HelpIntegrationTests
 
         var payload = EmbeddedFrameworkPayloadReader.Read();
         Assert.NotNull(payload.Payload);
-        var asset = payload.Payload.Find(".agents/authoring.md");
+        var asset = payload.Payload.Find(".agents/README.md");
         Assert.NotNull(asset);
-        var authoring = asset.Bytes.ToArray();
-        var titleEnd = Array.IndexOf(authoring, (byte)'\n') + 1;
-        Assert.True(titleEnd > 0);
-        var body = NestHeadings(Encoding.UTF8.GetString(authoring[titleEnd..]));
-        Assert.EndsWith(body, stdout, StringComparison.Ordinal);
-        Assert.Contains("\n## Writing workspace files\n", stdout, StringComparison.Ordinal);
+        var guide = Encoding.UTF8.GetString(asset.Bytes.AsSpan());
+        var section = guide[(guide.IndexOf("\n## Writing workspace files\n", StringComparison.Ordinal) + 1)..];
+        Assert.EndsWith(section, stdout, StringComparison.Ordinal);
         Assert.Contains("\n### Lines under Entries\n", stdout, StringComparison.Ordinal);
-        Assert.DoesNotContain("\n## Lines under Entries\n", stdout, StringComparison.Ordinal);
-        Assert.DoesNotContain("\n# Writing workspace files", stdout, StringComparison.Ordinal);
-    }
-
-    // The authoring reference's own sections sit one level below the concepts section that holds it.
-    // Lines inside fenced code are examples, not headings.
-    private static string NestHeadings(string markdown)
-    {
-        var inFence = false;
-        var lines = markdown.Split('\n');
-        for (var index = 0; index < lines.Length; index++)
-        {
-            if (lines[index].StartsWith("```", StringComparison.Ordinal))
-            {
-                inFence = !inFence;
-            }
-            else if (!inFence && lines[index].StartsWith("##", StringComparison.Ordinal))
-            {
-                lines[index] = "#" + lines[index];
-            }
-        }
-
-        return string.Join('\n', lines);
+        Assert.DoesNotContain("## Use a document you already have", stdout, StringComparison.Ordinal);
     }
 
     [Fact, Trait("Feature", "help"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
-    public async Task LocalAuthoringAndMalformedWorkspaceFilesDoNotChangeBuiltInConcepts()
+    public async Task LocalGuideAndMalformedWorkspaceFilesDoNotChangeBuiltInConcepts()
     {
         using var workspace = TemporaryWorkspace.Create("help-local");
         var original = await RunAsync(workspace, ["help", "concepts"]);
-        workspace.WriteText(".agents/authoring.md", "# Local title\n\nLocal rules.\n");
-        workspace.WriteText(".agents/authoring.overwrite.md", "Local changes.\n");
+        workspace.WriteText(".agents/README.md", "# Local guide\n\n## Writing workspace files\n\nLocal rules.\n");
         workspace.WriteText(".agents/open-forge.json", "invalid JSON");
         workspace.WriteText(".agents/loader.md", "Invalid workspace loader");
         var before = workspace.SnapshotHashes();

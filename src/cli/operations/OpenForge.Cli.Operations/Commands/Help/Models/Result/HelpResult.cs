@@ -12,7 +12,7 @@ internal sealed record HelpResult : ICliCommandResult
     public CliNextAction? Next { get; init; }
     internal required string? Topic { get; init; }
     internal IReadOnlyList<string> Topics { get; init; } = HelpDefinitions.Topics;
-    internal string? Authoring { get; init; }
+    internal string? FileFormats { get; init; }
     internal string? Cause { get; init; }
     internal string? SuggestedCommand { get; init; }
 

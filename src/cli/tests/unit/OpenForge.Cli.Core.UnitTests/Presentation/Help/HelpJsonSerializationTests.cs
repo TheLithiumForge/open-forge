@@ -18,7 +18,7 @@ public sealed class HelpJsonSerializationTests
         {
             Status = CliSemanticStatus.Complete,
             Topic = "concepts",
-            Authoring = "\nExact `source` <text> and Unicode: café.\n",
+            FileFormats = "\nExact `source` <text> and Unicode: café.\n",
         };
         var selection = new CliSelection(Enum.Parse<CliDetail>(detail, ignoreCase: true), null);
         var rendering = HelpPresentation.Rendering;
@@ -33,7 +33,7 @@ public sealed class HelpJsonSerializationTests
         var data = json.RootElement.GetProperty("data");
         Assert.Equal("concepts", data.GetProperty("topic").GetString());
         Assert.Equal(report.Data.Markdown, data.GetProperty("markdown").GetString());
-        Assert.EndsWith(result.Authoring, data.GetProperty("markdown").GetString(), StringComparison.Ordinal);
+        Assert.EndsWith(result.FileFormats, data.GetProperty("markdown").GetString(), StringComparison.Ordinal);
         Assert.False(data.TryGetProperty("complete", out _));
         Assert.Empty(json.RootElement.GetProperty("effects").EnumerateArray());
     }

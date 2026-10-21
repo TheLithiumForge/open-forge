@@ -27,7 +27,7 @@ The [current Skills document](../../../framework/primitives/skills.md) defines t
 - Loose Markdown files directly under the Skills `root route` or one of its scopes do not become native Skills
 - The installable source ships one Skill package, `open-forge-cli`, and other Skills arrive through Extensions or the workspace itself
 - When present, `open-forge-cli/SKILL.md` must be read before CLI commands other than `context`. It is not a startup requirement. Intentional omission is respected, and unavailable CLI commands fall back to plain files.
-- The loader keeps the Context entry path and names Include. The CLI Skill and its task-specific resources carry command discovery, navigation, mutation and lifecycle details. Shared flags are explained once and exact installed syntax comes from command help. The [authoring reference](authoring.md) now defines workspace metadata formats.
+- The loader keeps the Context entry path and names Include. The CLI Skill and its task-specific resources carry command discovery, navigation, mutation and lifecycle details. Shared flags are explained once and exact installed syntax comes from command help. The file-format section of the [workspace guide](README.md) defines workspace metadata formats, and the Skill points to it or to `open-forge help concepts`.
 - Keep the CLI Skill and all its resources byte-aligned between the installable source and repository counterpart. Reference pages carry concise Open Forge metadata for retrieval and health checks. They need no entrypoint or blanket loading rule.
 
 ## Verification

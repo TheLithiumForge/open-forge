@@ -14,7 +14,7 @@ public sealed class HelpOperationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(["concepts"], result.Topics);
         Assert.Null(result.Topic);
-        Assert.Null(result.Authoring);
+        Assert.Null(result.FileFormats);
         Assert.Null(result.Workspace);
         Assert.Null(result.Next);
     }
@@ -28,7 +28,7 @@ public sealed class HelpOperationTests
         Assert.Equal(CliSemanticStatus.Invalid, result.Status);
         Assert.Equal(topic, result.Topic);
         Assert.Equal(["concepts"], result.Topics);
-        Assert.Null(result.Authoring);
+        Assert.Null(result.FileFormats);
         Assert.Null(result.Workspace);
         Assert.Equal(namesCommand ? $"open-forge {topic} --help" : null, result.SuggestedCommand);
         Assert.Equal(result.SuggestedCommand ?? "open-forge help --help", result.Next?.Command);
@@ -43,7 +43,7 @@ public sealed class HelpOperationTests
 
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Equal("help.interrupted", result.FindingCode);
-        Assert.Null(result.Authoring);
+        Assert.Null(result.FileFormats);
         Assert.Null(result.Workspace);
     }
 }

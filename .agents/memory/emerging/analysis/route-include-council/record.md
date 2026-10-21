@@ -131,15 +131,15 @@ Both apply directly after preflight, like `route create`, and preview with `--dr
 
 **The loader wins.** Its rows decide what loads, in which order, and with which description, tags and conditions. `roots` only records what Include brought in, so Status and Doctor can report it and #7 can rewrite its links when the main root moves. Deleting a row by hand leaves an off registration, and no command restores it. A row without a registration is an active hand-written include. Adding a path to `roots` by hand switches nothing on.
 
-### `help concepts`, the removable guide and the authoring reference
+### `help concepts` and the removable guide
 
 **What the authoring rules are.** They are the file formats the framework and the CLI read: how a catalogue is named, which frontmatter fields a routed file carries, how an `Entries` line is written, where `## Axioms` and `## Instructions` go, how an `applyTo` condition is written and how an overwrite companion is named. They matter because a file in the wrong shape is ignored or reported as malformed, by agents following the loader and by the CLI. They say nothing about how to do the work, so they are not a Directive and are never read at startup. They are a reference an agent reads before it writes workspace files.
 
-**Their home is `.agents/authoring.md`,** a new file every preset installs beside the loader. It is not listed in `Entries` and has no frontmatter, like the README. It holds the README's current Instructions, its terms and the scope example, and it can be customized with `authoring.overwrite.md`. No authoring Directive ships.
+**Their home is the README's last section, "Writing workspace files".** The council proposed a separate `.agents/authoring.md`. The maintainer chose the README instead on 2026-10-21: "Let's keep them in the readme, since that is more of a helpful file for anyone to read and if they wish to delete, and in it we should anyway say, hey all of this info is also found out in the clis help section anyway." No authoring Directive and no separate authoring file ship.
 
-**The loader** keeps the whole reading procedure, authority, conditions, the off switch and missing-file rules in plain words. Its "Writing context" line links `authoring.md` instead of the README, and says `open-forge context .agents/authoring.md` returns it with any overwrite. Its "Turn something on" line mentions `open-forge route include`.
+**`help concepts` prints that same section** from the shipped README, so the two cannot drift, and a project that deletes its README still has the formats in Help.
 
-**`context` accepts `.agents/authoring.md`** as an ordinary source operand and returns it with its overwrite. Startup context never adds it on its own. No `--authoring` flag is added.
+**The loader** keeps the whole reading procedure, authority, conditions, the off switch and missing-file rules in plain words. Its "Writing context" line sends agents to the file formats in `README.md`, to `open-forge help concepts` when that page was deleted, and otherwise to the shape of a neighbouring file. It names the README by path, not by link, so deleting the guide leaves no broken link. Its "Turn something on" line mentions `open-forge route include`.
 
 **`open-forge help [<topic>]`** is a new top-level command. With no topic it lists the topics and says that `open-forge <command> --help` shows a command's options. The first and only topic is `concepts`. An unknown topic is invalid input that lists the topics, and a topic that names a command suggests its `--help`. `--help` on every command is unchanged.
 
@@ -156,18 +156,19 @@ Both apply directly after preflight, like `route create`, and preview with `--dr
 9. **Customizing safely.** Overwrites, exclusions, switching off, stopping management and deleting.
 10. **Keeping navigation current.** What Index writes and what it leaves alone.
 11. **Build your own.** Write the rules and structure your project needs and share them when they prove useful.
-12. **Writing workspace files.** The complete shipped authoring reference, noting that in a workspace `.agents/authoring.md` and its overwrite are the version that applies.
+12. **Writing workspace files.** The file-format section of the shipped README, printed from the bundled copy.
 
 #7 adds a section on the workspace layout.
 
-**The README becomes a guide you may delete.** Its header says so, says that no rule depends on it, and says how to keep it deleted through updates by listing `.agents/README.md` in `removedFiles`. Its sections:
+**The README becomes a guide you may delete.** Its header says so, says that everything in it is also in `open-forge help concepts`, and says how to keep it deleted through updates by listing `.agents/README.md` in `removedFiles`. Its sections:
 
 1. **Use a document you already have,** with a `route include` example and the hand-written line it writes.
 2. **Write your first rule,** encouraging the project's own Directives.
 3. **Add only what helps,** the content kinds in one line each.
 4. **Turn something off.**
 5. **Reuse your knowledge elsewhere,** when an include, a Library or an Extension fits.
-6. **Find the details,** pointing to the loader, `authoring.md`, `open-forge help concepts` and the website.
+6. **Find the details,** pointing to the loader, `open-forge help concepts` and the website.
+7. **Writing workspace files,** the file formats.
 
 ### The configurable main root (#7)
 
@@ -188,7 +189,7 @@ Slices, in order:
 
 1. Freeze the layout, migration, ownership and recovery contracts. Add the layout resolver with unchanged default behavior.
 2. Move source identity, discovery and loading onto the resolver. Prove stable IDs and unchanged default output.
-3. Move generated navigation, privacy filtering and authoring paths.
+3. Move generated navigation, privacy filtering and the guide's path.
 4. Move route operations, the Framework lifecycle, exclusions and permission checks.
 5. Move Extension destination mapping and ownership publication.
 6. Move Library projection, relative links, ignore ownership and recovery attribution.
@@ -202,7 +203,7 @@ After slice 1, workers can own source reading, packages and Libraries separately
 - **Metadata in `roots`.** Copying description, tags and conditions into settings creates a second policy that drifts from the loader.
 - **Replacing a row's whole policy on a repeated include.** An omitted `--apply-to` would silently widen a conditioned rule to every task.
 - **Index maintaining included catalogues outside `.agents/`.** #6 keeps them read-only. Writing navigation into a project's own docs can come later as an explicit opt-in.
-- **`context --authoring`, `help authoring` and `route list --includes`.** Existing operands and listings cover them.
+- **A separate `authoring.md`, `context --authoring`, `help authoring` and `route list --includes`.** The README and `help concepts` hold the formats, and existing listings cover the rest.
 - **Moving the controls or recovery storage in #7.** That adds settings discovery and control-store migration that a content move doesn't need.
 - **A separate `relocate` command.** Configure already owns reviewed layout changes.
 
@@ -215,7 +216,7 @@ After slice 1, workers can own source reading, packages and Libraries separately
 - `./<workspace-path>` source references for files outside `.agents/`.
 - `context`, `find`, `route list` and `status` show included files outside `.agents/`, and startup estimates can grow.
 - The settings file is written as schema v3.
-- `.agents/authoring.md` is installed with every preset, and the README becomes optional.
+- The README becomes optional and holds the file formats that `help concepts` also prints.
 
 #7:
 
@@ -228,7 +229,7 @@ After slice 1, workers can own source reading, packages and Libraries separately
 
 #6:
 
-- Payload and dogfood: `loader.md`, `README.md` and the new `authoring.md` under `src/open-forge/.agents/` and `.agents/`.
+- Payload and dogfood: `loader.md` under `src/open-forge/.agents/` and `.agents/`, and the payload `README.md`.
 - `schemas/v3/open-forge.schema.json`.
 - `docs/cli.md`, root `README.md`, `docs/extensions.md`.
 - Docs site: `concepts/index.md`, `routing.md`, `loading-and-tags.md`, `customizing.md`, `getting-started/installation.md`, `grow-your-framework.md`, `greenfield-and-brownfield.md`, `cli/index.md`, `cli/flows.md` and `glossary.md`.

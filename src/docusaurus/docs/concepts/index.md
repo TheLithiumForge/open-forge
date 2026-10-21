@@ -39,7 +39,7 @@ The Framework has two parts:
 - **Core** defines routing, loading, and six reusable content roles.
 - **Memory** keeps useful context as the work evolves, in four states.
 
-Full Core supplies 22 Framework Markdown files. They include `AGENTS.md`, `CLAUDE.md`, the loader, the authoring reference, the guide for people, six Core category entrypoints, five Memory entrypoints, the saving policy, and the `open-forge-cli` Skill with its four reference files. Essentials and Custom follow your [installation choices](../getting-started/installation.md#choose-the-installed-routes). The CLI also keeps settings and an [ownership record](../glossary.md#ownership-record) for maintenance. Records such as Decisions, Documents, and Checkpoints, workflow recipes, and starter Templates come from an Extension or from you.
+Full Core supplies 21 Framework Markdown files. They include `AGENTS.md`, `CLAUDE.md`, the loader, the guide for people, six Core category entrypoints, five Memory entrypoints, the saving policy, and the `open-forge-cli` Skill with its four reference files. Essentials and Custom follow your [installation choices](../getting-started/installation.md#choose-the-installed-routes). The CLI also keeps settings and an [ownership record](../glossary.md#ownership-record) for maintenance. Records such as Decisions, Documents, and Checkpoints, workflow recipes, and starter Templates come from an Extension or from you.
 
 Methods for planning, development, project documents, or coordinating several agents are optional [Extensions](../extensions/index.md). You install the ones that fit your work and skip the rest.
 

@@ -17,7 +17,6 @@ This route contains maintainer contracts for reviewed Core and Extension install
 
 ## Entries
 
-- [Current maintenance contract for the installed workspace file-format reference](authoring.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Framework #Authoring
 - [Current maintenance contract for the installable Directives Core category entrypoint](directives.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Directive
 - [Current maintenance contract for the installable Guidance Core category and its optional Collaboration Extension](guidance.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Guidance
 - [Current maintenance contract for the installable Open Forge loader and its dogfood counterpart](loader.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Framework #Loader #Routing

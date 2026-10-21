@@ -14,7 +14,7 @@ cd /path/to/your-project
 open-forge install --preset minimal --dry-run
 ```
 
-The plan lists every file it would touch. Minimal writes the loader, a Directives folder for rules agents must follow, a Crystallized Memory folder for accepted knowledge, `.agents/authoring.md` with the file formats agents follow when they write workspace files, a short guide for people in `.agents/README.md` that you may delete, and a marked Open Forge section in `AGENTS.md` and `CLAUDE.md`. Your existing text in those files stays as it is. Apply the same selection:
+The plan lists every file it would touch. Minimal writes the loader, a Directives folder for rules agents must follow, a Crystallized Memory folder for accepted knowledge, a short guide in `.agents/README.md` that also holds the file formats agents follow when they write workspace files, which you may delete, and a marked Open Forge section in `AGENTS.md` and `CLAUDE.md`. Your existing text in those files stays as it is. Apply the same selection:
 
 ```sh
 open-forge install --preset minimal --automatic
@@ -188,21 +188,20 @@ An agent doesn't need to know everything, but it does need to know where everyth
 
 I call this **Adaptive Context Engineering (ACE)**. It takes progressive disclosure and spec-driven development and applies them to the workspace itself. Start with what you want to achieve, add detail as the work unfolds, and keep what's worth knowing next time.
 
-Full Core supplies 22 Markdown files, including the authoring reference, a guide for people, the saving policy, and four supporting CLI guides that are opened when needed. Essentials installs fewer categories, and Custom follows your selection. Startup reads the installed entrypoints tagged to load and the files their rules require. The files work on their own. The optional CLI speeds up maintenance.
+Full Core supplies 21 Markdown files, including a guide for people, the saving policy, and four supporting CLI guides that are opened when needed. Essentials installs fewer categories, and Custom follows your selection. Startup reads the installed entrypoints tagged to load and the files their rules require. The files work on their own. The optional CLI speeds up maintenance.
 
 I built Open Forge to work beside your harness, the tool that runs your agent. Anything that reads `AGENTS.md` (or the `CLAUDE.md` bridge) can use it. Keep your hooks, custom agents, and tools. If you want to define them once for several harnesses, a translator such as [APM](https://github.com/microsoft/apm) can install them where each harness looks for them.
 
 ## What you get
 
-This is the Full Core inventory. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal keeps `AGENTS.md`, `CLAUDE.md`, the loader, the authoring reference, the guide for people, Directives and Crystallized Memory. Custom follows your selection. No preset installs optional Extensions.
+This is the Full Core inventory. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal keeps `AGENTS.md`, `CLAUDE.md`, the loader, the guide for people, Directives and Crystallized Memory. Custom follows your selection. No preset installs optional Extensions.
 
 ```text
 AGENTS.md                         <- tells the agent to read the loader first
 CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 .agents/
   loader.md                       <- the reading steps and the list of what is on
-  authoring.md                    <- file formats, read before writing workspace files
-  README.md                       <- a short guide for people, safe to delete
+  README.md                       <- a guide and the file formats, safe to delete
   directives/_directives.md       <- required behavior
   guidance/_guidance.md           <- advice for recurring choices
   patterns/_patterns.md           <- reusable shapes for code, files, and documents
@@ -455,7 +454,7 @@ Your agent can use it too. The Skills entrypoint requires the `open-forge-cli` u
 
 Follow the links, edit the files, and keep each `Entries` list in step with the files it points to. That's all the Framework itself needs.
 
-The Framework explains itself through its own files: the loader for reading and `authoring.md` for writing. This README and the guides are here to help you get acquainted. The rules you need to understand and use Open Forge live in the files themselves.
+The Framework explains itself through its own files: the loader for reading, and the README's file formats or `open-forge help concepts` for writing. This README and the guides are here to help you get acquainted. The rules you need to understand and use Open Forge live in the files themselves.
 
 ## Extensions
 

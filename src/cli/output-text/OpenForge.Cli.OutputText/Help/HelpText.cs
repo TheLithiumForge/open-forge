@@ -14,13 +14,6 @@ internal static class HelpText
         return reader.ReadToEnd();
     }
 
-    // @OpenForgeText help.authoring-heading
-    internal static string AuthoringHeading() => "\n## Writing workspace files\n\n";
-
-    // @OpenForgeText help.authoring-note
-    internal static string AuthoringNote()
-        => "In a workspace, `.agents/authoring.md` and its `authoring.overwrite.md` are the version that applies. Run `open-forge context .agents/authoring.md` to read them.\n";
-
     // @OpenForgeText help.topics-heading
     internal static string TopicsHeading() => "Help topics:";
 

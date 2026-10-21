@@ -35,14 +35,13 @@ Root `open-forge --help` lists Help. Every existing command keeps its own `--hel
 
 ## Human Output
 
-With no topic, Help lists available topic names, one per line, then says
-`open-forge <command> --help` shows a command's options.
+With no topic, Help lists each topic with a one-line summary, then says how to
+read one and that `open-forge <command> --help` shows a command's options.
 
-`help concepts` prints the built-in Markdown unchanged, followed by
-`## Writing workspace files` and the complete shipped authoring reference without its title line.
-Before the reference, a short note says that a workspace's `.agents/authoring.md`
-and `authoring.overwrite.md` are the version that applies and that
-`open-forge context .agents/authoring.md` returns them.
+`help concepts` prints the built-in Markdown unchanged, followed by the
+`## Writing workspace files` section of the shipped `.agents/README.md`. It
+prints the shipped copy, so a project that deletes its README still has the
+same file formats in Help.
 Markdown is neither wrapped nor styled. All detail levels retain the complete topic.
 
 ## Structured Output
@@ -81,8 +80,8 @@ The shared result contract governs unexpected failures and cancellation.
 - Snapshot the topic list, concepts and an unknown topic in text and JSON.
 - Prove that `help install` suggests `open-forge install --help`.
 - Compare the printed concepts prefix byte for byte with its embedded resource.
-- Compare the appended authoring body byte for byte with the embedded Framework payload minus its title line.
-- Prove that concepts works without a workspace and ignores workspace authoring changes.
+- Compare the appended file-format section byte for byte with the section in the embedded Framework README.
+- Prove that concepts works without a workspace and ignores a local README.
 - Snapshot root help and `help --help`, and retain existing command help snapshots.
 - Prove no persistent effects, correct streams, statuses, exits and complete content at every detail level.
 

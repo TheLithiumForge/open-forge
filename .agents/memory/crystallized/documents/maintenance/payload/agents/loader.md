@@ -20,7 +20,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - The loader remains the first Open Forge reading procedure after the workspace entry. It works with plain files and needs no repository-only documents or CLI.
 - Its introduction explains that its Entries decide what is enabled. The authored shape is one Axioms section with three groups, in order: `Read before you work`, `Use what you read` and `Change what is switched on`, followed by Entries.
 - The loader keeps the full reading procedure, rule inheritance, acceptance, conditions, loading tags, off switch, dependencies and missing-file rules.
-- The [authoring reference](authoring.md) carries file formats, catalogue naming, metadata forms, scope examples and vocabulary. The [CLI Skill](skills.md) carries command discovery and maintenance procedures. Category behavior stays in its own catalogue.
+- The file-format section of the optional [workspace guide](README.md), also printed by `open-forge help concepts`, carries file formats, catalogue naming, metadata forms, scope examples and vocabulary. The [CLI Skill](skills.md) carries command discovery and maintenance procedures. Category behavior stays in its own catalogue.
 
 ### Reading and applicability
 
@@ -47,7 +47,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - Removing a loader row disables its branch without deleting files or canceling accepted requirements or host-loaded instructions. Background reading does not reactivate rules. Removed rows stay absent until the user asks to restore them.
 - Dependencies are removed or replaced before a branch is disabled. Missing listed files or required dependencies are errors. Empty Entries are valid.
 - Other catalogues follow their folder contents. Keeping a file out requires moving or deleting it. Managed removals are also recorded in exclusions before updates.
-- Before authoring workspace context, catalogues or metadata, the loader links `authoring.md` and names `open-forge context .agents/authoring.md` as the way to read it with its overwrite. It does not depend on the optional README.
+- Before authoring workspace context, catalogues or metadata, the loader sends agents to the file formats in `README.md`, to `open-forge help concepts` when that page was deleted, and otherwise to the shape of a neighbouring file. It names README by path, not by link, so deleting the guide leaves no broken link.
 - An adjacent overwrite follows its base with the same role, scope and loading conditions. It wins only for corresponding content and is neither listed nor selected independently.
 
 ### Distribution and baseline
@@ -62,4 +62,4 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - [SourceLoadingClosureResolverTests](../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Framework/Sources/Loading/SourceLoadingClosureResolverTests.cs) cover loading order, deduplication, continuity and conditioned ancestry.
 - [ContextApplicationIntegrationTests](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Context/ContextApplicationIntegrationTests.cs) cover startup order, selected chains, overwrites and read-only context results.
 - Use the [payload integrity checks](../_payload.md#verification) for shipped bytes. Compare source and repository text before Entries, measure the baseline again and inspect intentional row differences.
-- Manually trace the reading procedure with a foreign leaf, a conditional catalogue, an overwrite, an omitted row and an empty list. Verify authoring remains available with the README removed. Automated loading tests do not prove that an agent follows prose instructions.
+- Manually trace the reading procedure with a foreign leaf, a conditional catalogue, an overwrite, an omitted row and an empty list. Verify the file formats remain available through Help with the README removed. Automated loading tests do not prove that an agent follows prose instructions.

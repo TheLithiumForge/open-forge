@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Resolve built-in topics and append the shipped authoring reference without workspace reads
+  description: Resolve built-in topics and append the shipped guide's file formats without workspace reads
   responsibility: Define Help selection, content assembly, result formation and read-only effects
   tags: [Memory, Crystallized, CLI, Command, Contract, Help, Behavior, CurrentTruth, Evergreen]
 ---
@@ -30,15 +30,16 @@ Sections 1 through 11 come from the embedded
 [concepts resource](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Help/concepts.md).
 Their bytes are preserved. Help does not correct or rewrite the authored topic at runtime.
 
-Section 12 uses `.agents/authoring.md` from the embedded Framework payload.
-It is never copied into a separate Help resource. Remove only the parsed
-top-level title and its line ending, preserving every remaining byte.
-Append it under `## Writing workspace files` after the workspace-version note
-defined by the Interface. Existing authoring headings retain their bytes.
+Section 12 is the `## Writing workspace files` section of `.agents/README.md`
+from the embedded Framework payload, from its heading up to the next heading of
+the same or a higher level. It is never copied into a separate Help resource,
+and its bytes are preserved apart from trailing blank lines. A shipped guide
+without that section is a failed result.
 
 The operation reads neither the selected workspace nor any workspace's loader,
-settings, authoring reference or overwrite. Workspace changes cannot alter the built-in topic.
-It produces command-owned authoring facts for presentation. Text and JSON use
+settings or guide. Workspace changes, including a deleted or edited README,
+cannot alter the built-in topic. It produces command-owned file-format facts
+for presentation. Text and JSON use
 the same complete Markdown, independent of detail and finding filters.
 
 ## Result Formation And Effects

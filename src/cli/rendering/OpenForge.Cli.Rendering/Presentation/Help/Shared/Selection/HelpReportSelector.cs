@@ -32,10 +32,8 @@ internal static class HelpReportSelector
             Data = new HelpData
             {
                 Topic = result.Topic,
-                Markdown = result.Authoring is { } authoring
-                    ? string.Concat(global::OpenForge.Cli.OutputText.Help.HelpText.ConceptsMarkdown(),
-                        global::OpenForge.Cli.OutputText.Help.HelpText.AuthoringHeading(),
-                        global::OpenForge.Cli.OutputText.Help.HelpText.AuthoringNote(), authoring)
+                Markdown = result.FileFormats is { } formats
+                    ? string.Concat(global::OpenForge.Cli.OutputText.Help.HelpText.ConceptsMarkdown(), "\n", formats)
                     : null,
                 Topics = result.Topics,
                 Complete = complete,

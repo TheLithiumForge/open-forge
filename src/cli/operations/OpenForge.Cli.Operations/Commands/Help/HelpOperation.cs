@@ -62,30 +62,29 @@ internal sealed class HelpOperation
         }
 
         var payload = EmbeddedFrameworkPayloadReader.Read();
-        var asset = payload.Payload?.Find(SourceLogicalPath.AuthoringGuidePath)
-            ?? throw new InvalidDataException(payload.Cause ?? "The embedded authoring reference is missing.");
-        var authoring = Encoding.UTF8.GetString(asset.Bytes.AsSpan());
-        var document = new MarkdownDocumentParser().Parse(authoring);
-        var title = document.Headings.FirstOrDefault(heading => heading.Level == 1 && heading.IsTopLevel)
-            ?? throw new InvalidDataException("The embedded authoring reference has no title.");
-        var titleEnd = title.Span.End;
-        if (titleEnd < authoring.Length && authoring[titleEnd] == '\r') titleEnd++;
-        if (titleEnd < authoring.Length && authoring[titleEnd] == '\n') titleEnd++;
-        authoring = authoring.Remove(title.Span.Start, titleEnd - title.Span.Start);
-
-        // The reference becomes one section of the concepts topic, so its own sections nest one level below it.
-        foreach (var heading in new MarkdownDocumentParser().Parse(authoring).Headings
-                     .Where(heading => heading.Form == MarkdownHeadingForm.Atx && heading.Level is >= 2 and < 6)
-                     .OrderByDescending(heading => heading.Span.Start))
-        {
-            authoring = authoring.Insert(heading.Span.Start, "#");
-        }
-
+        var asset = payload.Payload?.Find(SourceLogicalPath.HumanGuidePath)
+            ?? throw new InvalidDataException(payload.Cause ?? "The embedded guide is missing.");
         return new HelpResult
         {
             Status = CliSemanticStatus.Complete,
             Topic = request.Topic,
-            Authoring = authoring,
+            FileFormats = ReadFileFormats(Encoding.UTF8.GetString(asset.Bytes.AsSpan())),
         };
+    }
+
+    // The shipped guide's file-format section, from its heading up to the next section of the same level.
+    // Help reads the bundled copy, so it still works in a workspace whose guide was deleted.
+    private static string ReadFileFormats(string guide)
+    {
+        var headings = new MarkdownDocumentParser().Parse(guide).Headings
+            .Where(heading => heading.Form == MarkdownHeadingForm.Atx && heading.Level <= 2)
+            .OrderBy(heading => heading.Span.Start)
+            .ToArray();
+        var index = Array.FindIndex(headings, heading =>
+            heading.Level == 2 && heading.VisibleText == HelpDefinitions.FileFormatsHeading);
+        if (index < 0) throw new InvalidDataException("The embedded guide has no file-format section.");
+        var start = headings[index].Span.Start;
+        var end = index + 1 < headings.Length ? headings[index + 1].Span.Start : guide.Length;
+        return guide[start..end].TrimEnd() + "\n";
     }
 }

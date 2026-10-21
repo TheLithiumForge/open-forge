@@ -7,6 +7,11 @@ internal static class HelpDefinitions
     internal const string CommandIdentity = "help";
     internal const string ConceptsTopic = "concepts";
 
+    /// <summary>
+    /// The heading of the shipped guide's file-format section, which the concepts topic prints last.
+    /// </summary>
+    internal const string FileFormatsHeading = "Writing workspace files";
+
     internal static IReadOnlyList<string> Topics { get; } = [ConceptsTopic];
 
     internal static CliSyntaxDefinition HelpCommand { get; } = new(
