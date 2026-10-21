@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -40,13 +41,18 @@ public sealed class F28SwitchFrontmatterFormJourneyTests
         Assert.Contains("collaboration", extension.StandardOutput, StringComparison.Ordinal);
         JourneyPayloadAssertions.AssertDelivered(workspace, sources, JourneyFrontmatterForm.Scoped);
         JourneyPayloadAssertions.AssertCanonicalEntries(workspace, sources, GuidancePath, ".agents/templates/_templates.md");
-        string[] guidanceWithExtension =
-        [
-            "- [Explore ideas, match the depth to the decision, integrate accepted outcomes, and offer useful independent review](adaptive-collaboration.md) - #Extension #Guidance #Collaboration #Ideation #Decision #Convergence #Review #Experience",
-        ];
-        JourneyPayloadAssertions.AssertEntries(workspace, GuidancePath, guidanceWithExtension);
-        JourneyPayloadAssertions.AssertEntries(workspace, ".agents/templates/_templates.md",
-            "- [Explore a choice before committing to a direction](collaboration/_collaboration.md) - #Extension #Template #Collaboration");
+        var guidanceWithExtension = JourneyPayloadAssertions.Entries(File.ReadAllText(workspace.Combine(GuidancePath)));
+        var templatesWithExtension = JourneyPayloadAssertions.Entries(File.ReadAllText(workspace.Combine(".agents/templates/_templates.md")));
+        Assert.EndsWith("](adaptive-collaboration.md) - #Extension #Guidance #Collaboration #Ideation #Decision #Convergence #Review #Experience",
+            Assert.Single(guidanceWithExtension), StringComparison.Ordinal);
+        Assert.EndsWith("](collaboration/_collaboration.md) - #Extension #Template #Collaboration", Assert.Single(templatesWithExtension), StringComparison.Ordinal);
+        CommandOutputSnapshot.MatchSnapshot($"""
+            === {GuidancePath} ===
+            {string.Join('\n', guidanceWithExtension)}
+
+            === .agents/templates/_templates.md ===
+            {string.Join('\n', templatesWithExtension)}
+            """, "collaboration-catalogues");
 
         var note = await workspace.RunAsync("route", "create", NotePath,
             "--description", "Team notes for reviews", "--tag", "Guidance", "--tag", "Team");

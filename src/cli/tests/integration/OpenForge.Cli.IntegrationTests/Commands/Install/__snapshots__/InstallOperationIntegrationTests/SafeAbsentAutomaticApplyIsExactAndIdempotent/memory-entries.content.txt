@@ -1,0 +1,6 @@
+
+
+- [History that no longer guides current work](archived/_archived.md) - #Memory #Archived #Contextual #Historical
+- [Accepted knowledge that should stay current](crystallized/_crystallized.md) - #LoadNow #Memory #Crystallized #CurrentTruth
+- [Ideas, findings and analysis that are not accepted yet](emerging/_emerging.md) - #KeepInMind #Memory #Emerging #Contextual #Candidate
+- [Work in progress and how to resume it](working/_working.md) - #LoadNow #Memory #Working #Contextual

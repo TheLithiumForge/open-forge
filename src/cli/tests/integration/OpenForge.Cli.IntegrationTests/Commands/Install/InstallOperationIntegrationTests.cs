@@ -1,11 +1,11 @@
 using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
-using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
-using OpenForge.Cli.Core.Framework.Distribution;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Presentation.Install;
@@ -15,8 +15,10 @@ using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Fixtures;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Serialization.Shared.Assertions;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -25,9 +27,6 @@ public sealed class InstallOperationIntegrationTests
     private const string GeneratedTargetPath = ".agents/memory/_memory.md";
     private const string LifecyclePath = ".agents/open-forge.lifecycle.json";
     private const string OwnershipPath = InstallOperationWorkspace.OwnershipPath;
-    private const string CurrentGeneratedEntry =
-        "- [Accepted knowledge that should stay current](crystallized/_crystallized.md)";
-    private const string StaleGeneratedEntry = "- [Stale generated entry](stale.md)";
 
     private static IReadOnlyList<string> CompleteEmbeddedSourceAssetPaths { get; } =
         InstallOperationWorkspace.EmbeddedPayloadPaths
@@ -128,18 +127,6 @@ public sealed class InstallOperationIntegrationTests
         var claude = await workspace.ReadTextAsync(
             "CLAUDE.md",
             TestContext.Current.CancellationToken);
-        Assert.Equal(
-            "# Open Forge\n\n"
-            + "Open Forge provides the working rules and context for this workspace.\n\n"
-            + "Before you start or resume a task, read `.agents/loader.md` and follow it until the task is done. The loader lists the rules and documents this workspace uses and says how to read them. If the `open-forge` CLI is available and allowed, `open-forge context` gathers the required reads in one call, with `--for <file>` once for each working file. Without the CLI, the loader's steps work with your own file tools.\n\n"
-            + "**End of Open Forge managed section.**\n",
-            agents);
-        Assert.Equal(
-            "# Open Forge\n\n"
-            + "@AGENTS.md\n"
-            + "@.agents/loader.md\n\n"
-            + "**End of Open Forge managed section.**\n",
-            claude);
         Assert.Equal(1, Count(agents, "# Open Forge"));
         Assert.Equal(1, Count(agents, "**End of Open Forge managed section.**"));
         Assert.Equal(1, Count(claude, "# Open Forge"));
@@ -154,10 +141,16 @@ public sealed class InstallOperationIntegrationTests
             TestContext.Current.CancellationToken);
         Assert.Equal(1, Count(memory, "## Entries"));
         Assert.DoesNotContain("generated-index", memory, StringComparison.Ordinal);
-        Assert.Contains(
-            "- [Accepted knowledge that should stay current](crystallized/_crystallized.md)",
-            memory,
-            StringComparison.Ordinal);
+        var memoryDocument = new MarkdownDocumentParser().Parse(memory);
+        var entries = Assert.IsType<MarkdownTextSpan>(memoryDocument.GeneratedRegion.ContentSpan);
+        Assert.Contains(memoryDocument.Links, link => link.RawDestination == "crystallized/_crystallized.md"
+            && link.Span.Start >= entries.Start && link.Span.End <= entries.End);
+        CommandOutputSnapshot.MatchDetailSnapshot(new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["installed-agents.content"] = agents,
+            ["installed-claude.content"] = claude,
+            ["memory-entries.content"] = memory[entries.Start..entries.End],
+        });
 
         Assert.False(workspace.Exists(LifecyclePath));
         Assert.False(workspace.Exists(".agents/open-forge.libraries.json"));
@@ -290,18 +283,7 @@ public sealed class InstallOperationIntegrationTests
     public async Task ExistingEntrypointReportsPreservationAndBaseReplacement()
     {
         using var workspace = InstallOperationWorkspace.Create("install-generated-replacement");
-        var payload = EmbeddedFrameworkPayloadReader.Read().Payload
-            ?? throw new InvalidOperationException("The embedded Framework payload is unavailable.");
-        var asset = payload.Find(GeneratedTargetPath)
-            ?? throw new InvalidOperationException("The embedded generated target is unavailable.");
-        var original = Encoding.UTF8.GetString(asset.Bytes.AsSpan());
-        Assert.Contains(CurrentGeneratedEntry, original, StringComparison.Ordinal);
-        workspace.WriteText(
-            GeneratedTargetPath,
-            original.Replace(
-                CurrentGeneratedEntry,
-                StaleGeneratedEntry,
-                StringComparison.Ordinal));
+        InstallMarkdownFixture.SeedStaleEntries(workspace, GeneratedTargetPath);
         var result = await InstallOperationFactory.Create(
                 InstallInteractionTestSupport.Confirmation(),
                 workspace.LockStoreRoot)
@@ -339,14 +321,7 @@ public sealed class InstallOperationIntegrationTests
     public async Task ConfirmationUsesPureDryRunProjectionAndTargetReplacementCount()
     {
         using var workspace = InstallOperationWorkspace.Create("install-confirmation-preview");
-        var payload = EmbeddedFrameworkPayloadReader.Read().Payload
-            ?? throw new InvalidOperationException("The embedded Framework payload is unavailable.");
-        var asset = payload.Find(GeneratedTargetPath)
-            ?? throw new InvalidOperationException("The embedded generated target is unavailable.");
-        var original = Encoding.UTF8.GetString(asset.Bytes.AsSpan());
-        workspace.WriteText(
-            GeneratedTargetPath,
-            original.Replace(CurrentGeneratedEntry, StaleGeneratedEntry, StringComparison.Ordinal));
+        InstallMarkdownFixture.SeedStaleEntries(workspace, GeneratedTargetPath);
         var before = workspace.SnapshotHashes();
         InstallResult? preview = null;
         InstallConfirmationFacts? facts = null;

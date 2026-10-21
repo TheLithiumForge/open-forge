@@ -1,0 +1,5 @@
+=== .agents/guidance/_guidance.md ===
+- [Explore ideas, match the depth to the decision, integrate accepted outcomes, and offer useful independent review](adaptive-collaboration.md) - #Extension #Guidance #Collaboration #Ideation #Decision #Convergence #Review #Experience
+
+=== .agents/templates/_templates.md ===
+- [Explore a choice before committing to a direction](collaboration/_collaboration.md) - #Extension #Template #Collaboration

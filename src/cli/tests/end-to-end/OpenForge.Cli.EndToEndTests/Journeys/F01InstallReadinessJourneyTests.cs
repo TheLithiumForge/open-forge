@@ -19,17 +19,8 @@ public sealed class F01InstallReadinessJourneyTests
     private const string ManagedStart = "# Open Forge";
     private const string ManagedEnd = "**End of Open Forge managed section.**";
     private const string OccupiedPath = ".agents/guidance/_guidance.md";
-    private const string ExpectedManagedRegion =
-        ManagedStart + "\n\n"
-        + "Open Forge provides the working rules and context for this workspace.\n\n"
-        + "Before you start or resume a task, read `.agents/loader.md` and follow it until the task is done. The loader lists the rules and documents this workspace uses and says how to read them. If the `open-forge` CLI is available and allowed, `open-forge context` gathers the required reads in one call, with `--for <file>` once for each working file. Without the CLI, the loader's steps work with your own file tools.\n"
-        + "\n"
-        + ManagedEnd + "\n";
-    private const string ExpectedClaudeRegion =
-        ManagedStart + "\n\n"
-        + "@AGENTS.md\n"
-        + "@.agents/loader.md\n\n"
-        + ManagedEnd + "\n";
+    private static readonly string ExpectedManagedRegion = ReadCanonicalHost(AgentsPath);
+    private static readonly string ExpectedClaudeRegion = ReadCanonicalHost(ClaudePath);
 
     private static readonly IReadOnlyList<string> ExpectedStartupSourcePaths =
     [
@@ -452,6 +443,19 @@ public sealed class F01InstallReadinessJourneyTests
         Assert.Equal(readme, File.ReadAllText(workspace.Combine(ReadmePath)));
         workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
+    }
+
+    private static string ReadCanonicalHost(string relativePath)
+    {
+        var source = File.ReadAllText(Path.Combine(
+            PublishedExecutableTarget.FindRepositoryRoot(), "src", "open-forge", relativePath), Encoding.UTF8);
+        Assert.StartsWith(ManagedStart + "\n\n", source, StringComparison.Ordinal);
+        Assert.EndsWith(ManagedEnd + "\n", source, StringComparison.Ordinal);
+        Assert.Equal(1, Count(source, ManagedStart));
+        Assert.Equal(1, Count(source, ManagedEnd));
+        Assert.DoesNotContain(LegacyManagedStart, source, StringComparison.Ordinal);
+        Assert.DoesNotContain(LegacyManagedEnd, source, StringComparison.Ordinal);
+        return source;
     }
 
     private static void AssertCompleted(ProcessRunResult result)

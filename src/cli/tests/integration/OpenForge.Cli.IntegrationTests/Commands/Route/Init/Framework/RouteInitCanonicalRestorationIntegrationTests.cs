@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
@@ -8,6 +9,7 @@ using OpenForge.Cli.Core.Commands.Route.Init.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
@@ -109,7 +111,11 @@ public sealed class RouteInitCanonicalRestorationIntegrationTests
             Assert.False(workspace.Exists($".agents/skills/open-forge-cli/references/{name}.md")));
 
         var skills = workspace.ReadText(".agents/skills/_skills.md");
-        Assert.Contains("read it before running `open-forge` commands other than `context`.", skills, StringComparison.Ordinal);
+        var payload = EmbeddedFrameworkPayloadReader.Read().Payload;
+        Assert.NotNull(payload);
+        var canonicalSkills = payload.Find(".agents/skills/_skills.md");
+        Assert.NotNull(canonicalSkills);
+        Assert.Equal(AuthoredBody(Encoding.UTF8.GetString(canonicalSkills.Bytes.AsSpan())), AuthoredBody(skills));
         Assert.DoesNotContain(new MarkdownDocumentParser().Parse(skills).Links,
             link => link.RawDestination.Contains("open-forge-cli/SKILL.md", StringComparison.Ordinal));
 
@@ -293,6 +299,18 @@ public sealed class RouteInitCanonicalRestorationIntegrationTests
         var result = await new RouteInitPlanRevalidator(builder).RevalidateAsync(plan, TestContext.Current.CancellationToken);
         Assert.Equal(RouteInitPlanRevalidationState.Changed, result.State);
         Assert.False(workspace.Exists(".agents/patterns"));
+    }
+
+    private static string AuthoredBody(string source)
+    {
+        var document = new MarkdownDocumentParser().Parse(source);
+        Assert.Equal(MarkdownGeneratedRegionState.Complete, document.GeneratedRegion.State);
+        var body = document.BodySpan;
+        var entries = document.GeneratedRegion.OmissionSpan;
+        Assert.NotNull(body);
+        Assert.NotNull(entries);
+        Assert.Contains(document.Headings, heading => heading.Level == 2 && heading.VisibleText == "Axioms");
+        return source[body.Start..entries.Start] + source[entries.End..body.End];
     }
 
     private static async Task<RouteInitFrameworkIntegrationWorkspace> TrustedAsync()

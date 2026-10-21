@@ -4,6 +4,7 @@ using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -120,7 +121,7 @@ public sealed class F26BundledExtensionsJourneyTests
         await AssertContextRetrievalAsync(
             workspace,
             AdaptiveCollaborationPath,
-            "## Recommended Approach");
+            "collaboration-context");
 
         var planningInstall = await workspace.RunAsync(
             "extension", "install", "planning", "--automatic");
@@ -167,11 +168,11 @@ public sealed class F26BundledExtensionsJourneyTests
         await AssertContextRetrievalAsync(
             workspace,
             PlanningPlanPath,
-            "## Steps And Dependencies");
+            "planning-plan-context");
         await AssertContextRetrievalAsync(
             workspace,
             PlanningTaskPath,
-            "## Outcome");
+            "planning-task-context");
 
         var collaborationPreimages = CollaborationPayloadPaths.ToDictionary(
             path => path,
@@ -477,13 +478,12 @@ public sealed class F26BundledExtensionsJourneyTests
     private static async Task AssertContextRetrievalAsync(
         PublishedJourneyWorkspace workspace,
         string relativePath,
-        string expectedBodyMarker)
+        string snapshotName)
     {
         var before = workspace.SnapshotState();
         var human = await workspace.RunAsync("context", relativePath);
         AssertSuccessfulHumanResult(human);
         Assert.Contains(relativePath, human.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains(expectedBodyMarker, human.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotState());
 
         var structured = await workspace.RunAsync(
@@ -502,7 +502,11 @@ public sealed class F26BundledExtensionsJourneyTests
             item => item.GetProperty("path").GetString() == relativePath);
         var body = Assert.Single(source.GetProperty("parts").EnumerateArray());
         Assert.Equal("body", body.GetProperty("part").GetString());
-        Assert.Contains(expectedBodyMarker, body.GetProperty("text").GetString(), StringComparison.Ordinal);
+        var text = body.GetProperty("text").GetString();
+        Assert.NotNull(text);
+        Assert.Contains(text.TrimEnd('\n'), human.StandardOutput, StringComparison.Ordinal);
+        CommandOutputSnapshot.MatchSnapshot(text, snapshotName,
+            testName: nameof(SelectOnlyNeededExtensionsPreservesPlanningAndUserContent));
         Assert.Equal(before, workspace.SnapshotState());
     }
 

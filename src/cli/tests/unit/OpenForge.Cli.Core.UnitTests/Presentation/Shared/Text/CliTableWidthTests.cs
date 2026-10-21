@@ -65,8 +65,8 @@ public sealed class CliTableWidthTests
     {
         IReadOnlyList<IReadOnlyList<string>> rows =
         [
-            ["  skills/open-forge-cli", "Use the CLI to load workspace context, find sources, maintain routes and links, and preview installation changes."],
-            ["  guidance/example", "Advice for recurring choices"],
+            ["  skills/open-forge-cli", "Check the sample inputs, report the matching items, and keep each remaining detail aligned beneath its column."],
+            ["  guidance/example", "A short sample description"],
         ];
         var text = string.Concat(CliTable.RenderRows(rows, width: width, stackOverflow: false));
         Assert.All(text.Split('\n'), line => Assert.True(line.Length <= width, line));

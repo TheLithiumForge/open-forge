@@ -1,0 +1,23 @@
+=== .agents/directives/_directives.md ===
+- [Required work-record relationships without imposing a task schema](planning/_planning.md) - #Extension #Directive #Planning
+
+=== .agents/patterns/_patterns.md ===
+- [Keep task outcomes, planned steps, and current state predictable without duplicating project knowledge](work-records.md) - #Extension #Pattern #Planning #Task #Memory
+
+=== .agents/skills/use-workflow/references/_references.md ===
+- [Turn an accepted outcome into ordered work with clear dependencies and evidence](planning/_planning.md) - #Extension #Workflow #Planning
+
+=== .agents/templates/_templates.md ===
+- [Choose a starter for a possibility, investigation, accepted choice, or active work](planning/_planning.md) - #Extension #Template #Planning #Memory
+- [Create a method for the Use Workflow Skill without defining a new harness capability](workflows/_workflows.md) - #Extension #Template #Workflow
+
+=== .agents/memory/crystallized/_crystallized.md ===
+- [What was chosen, why, and what follows from the choice](decisions/_decisions.md) - #Extension #Memory #Decision #CurrentTruth
+
+=== .agents/memory/emerging/_emerging.md ===
+- [Structured reasoning, investigation, or comparison that is useful but not accepted truth](analysis/_analysis.md) - #Extension #Memory #Analysis #Contextual #Candidate
+- [Future possibilities, experiments, open questions, and options to explore later](ideas/_ideas.md) - #Extension #Memory #Idea #Exploration #Contextual #Candidate
+
+=== .agents/memory/working/_working.md ===
+- [Current state, current step, and next steps for one active workstream](checkpoints/_checkpoints.md) - #Extension #Memory #Working #Checkpoint #Contextual
+
