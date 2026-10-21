@@ -68,7 +68,7 @@ public sealed class InstallPresetEstablishmentOwnershipIntegrationTests
         var payload = EmbeddedFrameworkPayloadReader.Read().Payload ?? throw new InvalidOperationException("Payload is unavailable.");
         var agent = payload.Find("AGENTS.md") ?? throw new InvalidOperationException("Agent payload is unavailable.");
         var original = Encoding.UTF8.GetString(agent.Bytes.AsSpan());
-        workspace.WriteText("AGENTS.md", original.Replace("Before starting or resuming a task", "Before starting or resuming another task", StringComparison.Ordinal));
+        workspace.WriteText("AGENTS.md", original.Replace("Before you start or resume a task", "Before you start or resume another task", StringComparison.Ordinal));
         var operation = InstallOperationFactory.Create(InstallInteractionTestSupport.Unavailable(), workspace.LockStoreRoot);
         var request = workspace.Request() with { Setup = new(false, InstallPreset.Essentials, []) };
         var before = workspace.SnapshotHashes();
@@ -90,7 +90,7 @@ public sealed class InstallPresetEstablishmentOwnershipIntegrationTests
         Assert.DoesNotContain(".agents/open-forge.json", framework.Paths);
         Assert.DoesNotContain(".gitignore", framework.Paths);
         workspace.ReplaceInstalledText("AGENTS.md", File.ReadAllText(workspace.Combine("AGENTS.md"))
-            .Replace("Before starting or resuming a task", "Before starting or resuming another task", StringComparison.Ordinal));
+            .Replace("Before you start or resume a task", "Before you start or resume another task", StringComparison.Ordinal));
         var repeat = await operation.ExecuteAsync(workspace.Request(force: true), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, repeat.Status);
         Assert.Contains(repeat.Findings, finding => finding.Code == InstallFindingCode.ManagedDivergence);

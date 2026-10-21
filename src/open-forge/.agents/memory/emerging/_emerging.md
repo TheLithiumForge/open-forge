@@ -6,7 +6,7 @@ open-forge:
 
 # Emerging Memory
 
-Optional. Useful ideas, findings and reasoning that are not accepted yet. Needs Memory.
+This folder is optional and needs Memory. It holds useful ideas, findings and reasoning that are not accepted yet.
 
 ## Axioms
 

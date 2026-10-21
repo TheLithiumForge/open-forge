@@ -6,7 +6,7 @@ open-forge:
 
 # Skills
 
-Optional. Native capability packages, each entered through its `SKILL.md`. Nothing else depends on this folder.
+This folder is optional and nothing else depends on it. It holds native capability packages, each entered through its `SKILL.md`.
 
 ## Axioms
 

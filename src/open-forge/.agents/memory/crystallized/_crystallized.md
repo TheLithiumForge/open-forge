@@ -6,7 +6,7 @@ open-forge:
 
 # Crystallized Memory
 
-Optional. Accepted knowledge and decisions that should stay current within their scope. Needs Memory.
+This folder is optional and needs Memory. It holds accepted knowledge and decisions that should stay current within their scope.
 
 ## Axioms
 

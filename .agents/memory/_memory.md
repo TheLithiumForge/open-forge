@@ -6,7 +6,7 @@ open-forge:
 
 # Memory
 
-Optional. Memory is self-growing Markdown state. People and agents add useful records and routed scopes without a fixed structural limit. Each folder below is optional on its own, so leave out the ones you do not want. Every state needs this catalogue, and the states do not need each other. Unselected branches do not load their contents, and records need not pass through every state. Nothing outside Memory depends on it.
+This folder is optional, and so is each folder below it. Memory is self-growing Markdown state: people and agents add useful records and routed scopes without a fixed structural limit. Every state needs this catalogue, but the states don't need each other. Unselected branches don't load their contents, and a record need not pass through every state. Nothing outside Memory depends on it.
 
 ## Axioms
 

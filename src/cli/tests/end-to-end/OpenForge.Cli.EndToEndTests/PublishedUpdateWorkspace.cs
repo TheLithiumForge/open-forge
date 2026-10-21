@@ -59,8 +59,8 @@ internal sealed class PublishedUpdateWorkspace : IDisposable
 
     internal void MutateManagedContent()
     {
-        const string installedToken = "This workspace uses the context linked under `Entries`.";
-        const string divergentToken = "This workspace uses the context listed under `Entries`.";
+        const string installedToken = "Agents read this file before every task.";
+        const string divergentToken = "Agents read this file before each task.";
         var installed = ReadText(ManagedPath);
         var occurrence = installed.IndexOf(installedToken, StringComparison.Ordinal);
         if (occurrence < 0

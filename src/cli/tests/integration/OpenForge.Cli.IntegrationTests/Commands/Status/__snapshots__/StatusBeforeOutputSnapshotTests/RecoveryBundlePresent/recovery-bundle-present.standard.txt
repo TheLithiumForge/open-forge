@@ -5,10 +5,10 @@ Workspace: <workspace>
          open-forge cleanup
          Review and remove the recovery data.
 Startup context
-  Shipped by this CLI:   8 files, about 4.0k tokens
-  This workspace:        8 files, about 4.0k tokens
-  May load again later:  1 file, about 0.2k tokens
-All routed files: 20 files, about 23.0k tokens (startup is 17%)
+  Shipped by this CLI:   8 files, about 4.2k tokens
+  This workspace:        8 files, about 4.2k tokens
+  May load again later:  1 file, about 0.3k tokens
+All routed files: 20 files, about 23.4k tokens (startup is 18%)
 Routes: 7 root categories, 12 Entries sections current
 Framework files: 21 current
   Review and remove the recovery data.

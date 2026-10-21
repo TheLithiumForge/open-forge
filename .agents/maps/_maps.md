@@ -6,7 +6,7 @@ open-forge:
 
 # Maps
 
-Optional. Curated pointers to local and external sources. Each destination keeps its own detail and authority. Nothing else depends on this folder.
+This folder is optional and nothing else depends on it. It holds curated pointers to local and external sources. Each destination keeps its own detail and authority.
 
 ## Axioms
 

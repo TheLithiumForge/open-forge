@@ -6,7 +6,7 @@ open-forge:
 
 # Working Memory
 
-Optional. Records of unfinished work, so another session can pick it up. Needs Memory. The saving policy in [`../saving.md`](../saving.md) asks agents to keep these records current.
+This folder is optional and needs Memory. It holds records of unfinished work, so another session can pick it up. The saving policy in [`../saving.md`](../saving.md) asks agents to keep these records current.
 
 ## Axioms
 

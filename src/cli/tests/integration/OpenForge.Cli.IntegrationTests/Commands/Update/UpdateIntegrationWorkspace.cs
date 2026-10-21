@@ -194,8 +194,8 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
 
     internal void MutateManagedContent()
         => ReplaceUniqueManagedText(
-            "This workspace uses the context linked under `Entries`.",
-            "This workspace uses the context listed under `Entries`.");
+            "Agents read this file before every task.",
+            "Agents read this file before each task.");
 
     internal string MutateManagedContentAgain()
         => ReplaceUniqueManagedText(
