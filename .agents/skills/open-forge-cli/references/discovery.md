@@ -22,6 +22,21 @@ open-forge context directives/order-rules --for src/Order.cs --follow-links 1
 
 `directives/order-rules` is an example ID. Use an ID from the search result. Before creating a record, search for its subject and category, such as `find --tag Decision`.
 
+## Included Workspace Files
+
+The loader can list an existing workspace file where it lives. Context follows
+those rows with their tags and conditions. Select a file outside `.agents/` by
+exact path, such as `context ./CONTRIBUTING.md`. It has no short source ID.
+An exact `.agents/` path to an unrouted file, such as `context .agents/README.md`,
+reads it and its overwrite without making them startup reads.
+
+Find searches included leaves and the listed descendants of included catalogues
+by row metadata and Markdown headings and tags. It never scans an included leaf's
+folder. References counts authored links in active included Markdown files. Other
+text formats are opaque, and Entries rows remain navigation. Route List includes
+these root rows and labels a registration with no loader row as off, without
+children.
+
 ## `context [<source-reference>...]`
 
 Load startup context or selected sources with their required route context. No operands returns the loading-tag closure. The default content is `frontmatter,body`, which includes instructions. Explicit prose instructions still require their named reads.

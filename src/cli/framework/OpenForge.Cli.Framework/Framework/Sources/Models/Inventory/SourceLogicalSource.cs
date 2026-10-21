@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
@@ -36,4 +37,10 @@ internal sealed class SourceLogicalSource
     internal SourceLayer Base { get; }
 
     internal SourceLayer? Overwrite { get; }
+
+    internal string? IncludedParentPath { get; init; }
+
+    internal SourceGeneratedEntry? IncludedEntry { get; init; }
+
+    internal bool IsIncludedCatalogue { get; init; }
 }

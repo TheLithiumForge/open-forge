@@ -33,7 +33,7 @@ internal static class FindOperationFactory
         FindMarkdownDocumentReader markdownDocumentReader = new MarkdownDocumentParser().Parse;
         FindFrontmatterFactsReader frontmatterFactsReader = new FindFrontmatterReader().Read;
         var sourceResolver = new FindSourceResolver(
-            sourceSessionRead: sourceSessionReader.ReadAsync,
+            sourceSessionRead: sourceSessionReader.ReadIncludedAsync,
             universeResolver: new FindUniverseResolver(universeFilterResolver),
             physicalPathResolver: physicalPathResolver,
             routeFactsReader: routeFactsReader);

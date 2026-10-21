@@ -49,6 +49,9 @@ internal sealed record ReferencesDataSource
 
 internal sealed record ReferencesDataIncoming
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Id { get; init; }
+
     public required string Path { get; init; }
     public required string Location { get; init; }
 

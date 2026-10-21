@@ -282,7 +282,7 @@ internal static class ContextReportSelector
         => new()
         {
             Path = layer.Path,
-            Id = source.Id,
+            Id = source.Id ?? SelectedIncludedReference(source),
             Layer = ContextWording.Layer(layer.Kind),
             Parts = parts,
             Standard = standard
@@ -328,7 +328,7 @@ internal static class ContextReportSelector
         bool full)
         => new()
         {
-            Path = layer.Path,
+            Path = SelectedIncludedReference(source) ?? layer.Path,
             Id = source.Id,
             DelimiterLayer = ContextWording.Layer(layer.Kind),
             Parts = parts
@@ -342,6 +342,11 @@ internal static class ContextReportSelector
             Order = full ? layer.PathPosition : null,
             Layer = full ? ContextWording.Layer(layer.Kind) : null,
         };
+
+    private static string? SelectedIncludedReference(ContextSource source)
+        => source.Id is null
+            ? source.InclusionReasons.FirstOrDefault(reason => reason.Kind == ContextInclusionReasonKind.SelectedSource)?.Reference
+            : null;
 
     private static IReadOnlyList<ContextDataPart> Parts(
         ContextResult result,

@@ -97,7 +97,7 @@ Follow the [shared help template](../shared/global-flags/interface.md#--help): c
 
 | Flag                              | Role          | Accepted value                            | Omission                                                            | Repetition, ordering, and composition                                                                |
 | --------------------------------- | ------------- | ----------------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `--include=<source-reference>`    | Selection     | One shared source reference               | Start from the normal complete eligible `.agents` Markdown universe | Repeatable. Occurrences form a union of source selections.                                           |
+| `--include=<source-reference>`    | Selection     | One shared source reference               | Start from the normal complete eligible `.agents` Markdown and active included-file universe | Repeatable. Occurrences form a union of source selections.                                           |
 | `--exclude=<source-reference>`    | Selection     | One shared source reference               | Subtract nothing                                                    | Repeatable. Occurrences form a union of exclusions, and exclusions win overlap.                      |
 | `--for=<workspace-relative-path>` | Applicability | One workspace-relative file path          | Keep the existing candidate universe when omitted                   | Repeatable. Paths form one normalized working set; duplicates have no additional effect.             |
 | `--tag=<tag>`                     | Selection     | One tag query value                       | No tag predicate is added                                           | Repeatable. Each occurrence adds one scalar predicate in command-line order.                         |
@@ -504,8 +504,8 @@ Each status has one representative native text transcript above. JSON uses the s
   tags.
 - `find` does not infer applicability, scope, authority,
   loading, or current truth from a match.
-- `find` does not follow links or search local files outside
-  `.agents`.
+- `find` does not follow ordinary outgoing links. Outside `.agents/`, it searches
+  only active included files and listed catalogue descendants.
 - `find` does not build the complete context graph.
 - `find` does not support grouped Boolean expressions,
   precedence, or negation.
@@ -611,8 +611,10 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
   files are excluded.
 - Extension receipts, recovery files, and operational metadata
   are excluded.
-- Local Markdown outside `.agents`, including ordinary link
-  targets, is excluded.
+- Active included leaves and descendants reached through included Markdown
+  catalogues are also candidates. Their row metadata supplies descriptions, tags
+  and conditions. Markdown headings and tags remain searchable. Unlisted sibling
+  files and ordinary outgoing link targets stay excluded.
 - Symlinks, junctions, aliases, and other identities that escape
   the selected workspace are not valid sources. An encountered unsafe candidate
   affects coverage.
@@ -893,7 +895,7 @@ predicates using AND.
   universe regardless of argument order. Equivalent or overlapping selectors
   have no additional effect.
 - When `--include` is omitted, Find starts from its existing
-  normal complete eligible `.agents` Markdown universe defined in [Workspace
+  normal complete eligible `.agents` Markdown and active included-file universe defined in [Workspace
   And Source Universe](#workspace-and-source-universe). When `--exclude` is
   omitted, it subtracts nothing. An invocation with neither flag therefore
   selects the same universe and operation as before these filters were added.
@@ -929,6 +931,9 @@ predicates using AND.
   the shared interactive disambiguation flow resolves that ID. JSON and other
   non-interactive uses do not prompt. An unsafe or escaping physical boundary
   is blocked; no selector resolution guesses or bypasses it.
+
+For an included catalogue outside `.agents/`, expansion follows only its listed
+parent-child tree. A leaf expands to itself. This does not scan a physical folder.
 
 ### Filtered Coverage, Results, And Ordering
 

@@ -25,7 +25,7 @@ internal static class ContextApplicabilityProjector
         }
 
         return SourceApplicabilityEvaluator.Evaluate(
-            chain.Select(item => new SourceApplyToCondition(item.CanonicalPath, item.Metadata.ApplyTo)).ToArray(),
+            chain.Select(item => new SourceApplyToCondition(item.CanonicalPath, item.IsLinked ? item.LinkedApplyTo : item.Metadata.ApplyTo)).ToArray(),
             workingPaths);
     }
 
@@ -75,6 +75,20 @@ internal static class ContextApplicabilityProjector
 
     internal static IReadOnlyList<ContextGraphSource>? ReadChain(ContextGraph graph, ContextGraphSource source)
     {
+        if (source.IsLinked)
+        {
+            var linkedChain = new List<ContextGraphSource>();
+            ContextGraphSource? linked = source;
+            while (linked is not null && !linkedChain.Contains(linked))
+            {
+                linkedChain.Add(linked);
+                linked = linked.LinkedParentPath is { } parent ? graph.FindByPath(parent) : null;
+            }
+
+            linkedChain.Reverse();
+            return linkedChain;
+        }
+
         var current = graph.RouteFacts.Topology.FindByPath(source.CanonicalPath);
         if (current is null)
         {

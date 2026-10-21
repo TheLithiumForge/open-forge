@@ -61,6 +61,15 @@ internal sealed class RouteListResultBuilder
             ReadNextAction(CliSemanticStatus.Failed));
     }
 
+    internal RouteListResult BuildInterrupted(RouteListRequest request, RouteListSelection selection)
+    {
+        const string cause = "Route listing was interrupted.";
+        return RouteListResult.Create(CliSemanticStatus.Interrupted, request.Workspace, selection,
+            RouteListCoverage.Interrupted(request.RequestedDepth, null, 0, 0, [], [cause]), [],
+            [new RouteListFinding(RouteListFindingCode.Interrupted, CliSemanticStatus.Interrupted,
+                selection.AttemptedId ?? selection.AttemptedPath, cause)], ReadNextAction(CliSemanticStatus.Interrupted));
+    }
+
     internal static CliNextAction? ReadNextAction(CliSemanticStatus status)
     {
         return status switch

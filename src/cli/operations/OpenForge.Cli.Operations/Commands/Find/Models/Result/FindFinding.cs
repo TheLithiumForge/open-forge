@@ -77,8 +77,8 @@ internal sealed record FindFinding
         }
 
         if (path is not null && layer is { } pathLayer
-            && (!path.EndsWith(".md", StringComparison.Ordinal)
-                || (pathLayer == SourceLayerKind.Overwrite) != path.EndsWith(".overwrite.md", StringComparison.Ordinal)))
+            && ((SourceLogicalPath.IsCanonicalSource(path) && !path.EndsWith(".md", StringComparison.Ordinal))
+                || (pathLayer == SourceLayerKind.Overwrite) != (SourceLogicalPath.IsCanonicalSource(path) && path.EndsWith(".overwrite.md", StringComparison.Ordinal))))
         {
             throw new ArgumentException("The Find finding path and layer must agree.", nameof(path));
         }

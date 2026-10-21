@@ -20,7 +20,8 @@ internal sealed class SourceCatalogue
         IEnumerable<SourceCandidate> candidates,
         IEnumerable<SourceLogicalSource> sources,
         IEnumerable<SourceCatalogueIssue> issues,
-        bool isCancelled)
+        bool isCancelled,
+        IReadOnlyDictionary<string, string>? aliases = null)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(candidates);
@@ -95,6 +96,17 @@ internal sealed class SourceCatalogue
             }
         }
 
+        var retainedAliases = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var alias in aliases ?? new Dictionary<string, string>())
+        {
+            if (sourcesByPath.TryGetValue(alias.Value, out var source) && !sourcesByPath.ContainsKey(alias.Key))
+            {
+                sourcesByPath.Add(alias.Key, source);
+                retainedAliases.Add(alias.Key, alias.Value);
+            }
+        }
+
+        Aliases = new ReadOnlyDictionary<string, string>(retainedAliases);
         _sourcesByPath = new ReadOnlyDictionary<string, SourceLogicalSource>(sourcesByPath);
         _layersByPhysicalPath = orderedSources
             .SelectMany(source => (source.Overwrite is { } overwrite ? new[] { source.Base, overwrite } : [source.Base])
@@ -116,6 +128,8 @@ internal sealed class SourceCatalogue
     internal IReadOnlyList<SourceCatalogueIssue> Issues { get; }
 
     internal bool IsCancelled { get; }
+
+    internal IReadOnlyDictionary<string, string> Aliases { get; }
 
     internal IReadOnlyList<(SourceLogicalSource Source, SourceLayer Layer)> FindLayersByPhysicalPath(string physicalPath)
         => _layersByPhysicalPath.TryGetValue(physicalPath, out var layers) ? layers : [];

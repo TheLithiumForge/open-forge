@@ -58,7 +58,7 @@ internal sealed class SourceUniverseSelectorResolution
             || !isResolved && (materializedSources.Length != 0 || scope is not null)
             || expansion == SourceUniverseSelectorExpansion.Source
                 && (materializedSources.Length != 1 || scope is not null)
-            || expansion == SourceUniverseSelectorExpansion.Folder && scope is null)
+            || expansion == SourceUniverseSelectorExpansion.Folder && scope is null && reference.Source?.IsIncludedCatalogue != true)
         {
             throw new ArgumentException("Selector expansion facts must match the source-reference resolution.");
         }

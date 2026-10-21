@@ -98,7 +98,7 @@ Command examples stay on one line so copying one runs one shell command.
 
 The CLI works against the current directory unless `--workspace` selects one
 explicit directory. A source reference is either an automatic source ID, such
-as `memory/crystallized/documents`, or an exact path under `.agents`, such as
+as `memory/crystallized/documents`, or an exact workspace path, such as
 `.agents/memory/crystallized/documents/_documents.md`. The exact grammar is
 covered in [Source references](#source-references).
 
@@ -343,6 +343,10 @@ See [global options](#global-options) for shared flags.
 #### Behavior notes
 
 `context` returns ordered startup context or the selected sources added to it.
+It follows active included rows and their Markdown catalogues with the usual tags
+and conditions. Select an included file with `context ./CONTRIBUTING.md`.
+An exact `.agents/` path to an unrouted file, such as `context .agents/README.md`,
+returns it and its overwrite without adding either to startup context.
 With no source arguments it returns the startup files. Add source IDs or
 exact paths to include the context you select. An unresolved source reports why
 Context could not read it and suggests `open-forge route list --depth all`.
@@ -437,7 +441,10 @@ See [global options](#global-options) for shared flags.
 
 #### Behavior notes
 
-`find` selects Markdown sources by authored tags and structural headings. It
+`find` selects Markdown sources by authored tags and structural headings.
+It also searches active included leaves and listed catalogue descendants, using
+their row metadata and Markdown headings and tags. Including a file never scans
+its folder. Files outside `.agents/` use exact `./path` source references. It
 does not treat arbitrary body text as a substitute for route or metadata
 meaning.
 
@@ -475,7 +482,9 @@ See [global options](#global-options) for shared flags.
 #### Behavior notes
 
 `references` reports direct authored incoming and outgoing Markdown references
-for one source. The default direction is `both`.
+for one source. The default direction is `both`. Active included Markdown files
+also participate. Other included text formats are opaque, and loader rows remain
+navigation rather than authored references.
 
 `--direction=in|out|both` selects the report. `--include` and `--exclude`
 limit the incoming scan. Combining them with `--direction=out` is invalid
@@ -511,6 +520,9 @@ An `entrypoint` makes a folder routable. A `route` is the navigable path that
 the entrypoint and its generated `Entries` expose. Route commands accept the
 source-reference grammar described below unless their target has a narrower
 shape.
+
+`route list` also shows included root rows. A registration in settings `roots`
+without a loader row is labelled off and has no children.
 
 `route list` shows routed sources and descendants at a structural depth. The
 default depth is `1`. Use `--depth=0` for the selected sources only, or
@@ -2318,12 +2330,13 @@ Use [`library list`](#library-list) and check that the source folder remains int
 
 ## Source references
 
-Existing `.agents` sources accept one of these forms:
+Source operands accept these forms:
 
 ```text
 <source-id>
 .agents/<path>
 ./.agents/<path>
+./<workspace-path>
 ```
 
 The first two examples address the same route. The third shows quoting
@@ -2345,7 +2358,7 @@ An automatic source ID is derived from the canonical path below `.agents`:
 - `SKILL.md` uses its containing Skill folder ID.
 - Exact case, spaces, and Unicode are preserved.
 
-The `.agents/` prefix means an exact workspace path. Any other value is an ID,
+The `.agents/` and `./` prefixes mean an exact workspace path. Any other value is an ID,
 even if it looks like a relative filesystem path. Use the exact `.agents/...`
 form when an ID has more than one candidate. The CLI does not use fuzzy,
 case-correcting, or likely-intent matching.

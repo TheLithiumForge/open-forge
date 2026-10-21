@@ -5,6 +5,9 @@ using OpenForge.Cli.Core.Commands.Find.Models.Selection;
 using OpenForge.Cli.Core.Commands.Find.Shared.Matching;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Documents;
 
@@ -45,6 +48,31 @@ internal sealed class FindLayerInspector(
             ?? throw new InvalidOperationException("A complete source document read requires source text.");
         var document = input.DocumentReader.Documents.Parse(_markdownDocumentReader.Invoke, source);
         var frontmatter = _frontmatterFactsReader(new FindFrontmatterInput(input.Layer, document));
+        if (input.Source.IncludedEntry is { } entry && input.Source.IncludedParentPath is { } parentPath)
+        {
+            var workspace = input.DocumentReader.Workspace;
+            var parent = input.DocumentReader.PhysicalPaths.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot,
+                Path.Combine(workspace.LexicalRoot, parentPath.Replace('/', Path.DirectorySeparatorChar)));
+            if (parent.State != PhysicalPathState.Contained)
+            {
+                return Unavailable(input, CreateFinding(input.Source, input.Layer, FindFindingCode.InspectionUnavailable));
+            }
+
+            var parentRead = await input.DocumentReader.Acquisition.ReadAsync(
+                parent.GetContainedPhysicalPath(),
+                parentPath, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (parentRead is not { State: FileReadState.Complete, Value: { } parentText })
+            {
+                return Unavailable(input, CreateFinding(input.Source, input.Layer, FindFindingCode.InspectionUnavailable));
+            }
+
+            var location = new Utf8SourceMap(parentText).Map(entry.Span.Start, entry.Span.Length);
+            var tags = entry.Tags.Select(tag => new FindFrontmatterTagOccurrence(tag, location) { Path = parentPath })
+                .Concat(frontmatter.Tags);
+            frontmatter = new FindFrontmatterFacts(FindFrontmatterAvailability.Complete, entry.Description, tags,
+                ApplyToMetadataFacts.FromEntryLine(entry.ApplyTo));
+        }
         var bodyTags = _bodyTagScanner.Scan(new FindBodyTagInput(document));
         return new FindLayerInspectionFacts(
             input.Source,

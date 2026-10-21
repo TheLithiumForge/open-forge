@@ -2,7 +2,6 @@ using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
@@ -16,6 +15,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Includes;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Context.Shared.Graph;
@@ -77,10 +78,24 @@ internal sealed class ContextGraphBuilder
                 layers: layers));
         }
 
-        sources.AddRange(await new ContextLinkedEntryReader()
-            .ReadAsync(reader, sources, cancellationToken)
-            .ConfigureAwait(false));
+        var included = await new SourceIncludedEntryReader().ReadEntriesAsync(catalogue, reader, cancellationToken).ConfigureAwait(false);
+        foreach (var source in included.Sources)
+        {
+            var layer = await ReadLayerAsync(reader, source.Base, cancellationToken).ConfigureAwait(false);
+            var document = layer.Document ?? throw new InvalidOperationException("An included source requires a readable document.");
+            var entry = source.IncludedEntry ?? throw new InvalidOperationException("An included source requires its catalogue row.");
+            sources.Add(new ContextGraphSource(logicalSource: null, id: null, canonicalPath: source.Base.CanonicalPath,
+                form: SourceDocumentForm.Markdown, routeState: SourceRouteState.Unrouted, route: null,
+                metadata: _metadataParser.Parse(document, SourceDocumentForm.Markdown),
+                generatedEntries: SourceGeneratedDestinationResolver.IsMarkdown(source.Base.CanonicalPath)
+                    ? SourceGeneratedEntriesParser.Parse(document) : SourceGeneratedEntriesFacts.Absent, layers: [layer])
+            {
+                LinkedParentPath = source.IncludedParentPath,
+                LinkedApplyTo = ApplyToMetadataFacts.FromEntryLine(entry.ApplyTo),
+            });
+        }
 
+        catalogue = SourceIncludedEntryReader.Extend(catalogue, included.Sources, included.Rows);
         return new ContextGraph(
             catalogue: catalogue,
             routeFacts: routeFacts,
@@ -104,7 +119,7 @@ internal sealed class ContextGraphBuilder
         if (resolution.State == PhysicalPathState.Contained)
         {
             physicalPath = resolution.GetContainedPhysicalPath();
-            read = await StrictUtf8FileReader
+            read = await reader.Acquisition
                 .ReadAsync(physicalPath, logicalPath, cancellationToken)
                 .ConfigureAwait(false);
         }

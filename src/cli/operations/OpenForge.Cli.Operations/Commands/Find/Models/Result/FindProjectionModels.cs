@@ -32,9 +32,9 @@ internal sealed record FindMetadataLayer
         }
 
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        if (!SourceLogicalPath.IsCanonicalSource(path)
-            || !path.EndsWith(".md", StringComparison.Ordinal)
-            || (kind == SourceLayerKind.Overwrite) != path.EndsWith(".overwrite.md", StringComparison.Ordinal))
+        if (!SourceWorkspaceRelativePath.IsCanonical(path)
+            || (SourceLogicalPath.IsCanonicalSource(path) && !path.EndsWith(".md", StringComparison.Ordinal))
+            || (kind == SourceLayerKind.Overwrite) != (SourceLogicalPath.IsCanonicalSource(path) && path.EndsWith(".overwrite.md", StringComparison.Ordinal)))
         {
             throw new ArgumentException("The Find metadata layer path and kind must agree.", nameof(path));
         }
@@ -64,13 +64,13 @@ internal sealed record FindMetadata
 
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        if (!SourceLogicalPath.IsCanonicalSource(path)
-            || !path.EndsWith(".md", StringComparison.Ordinal)
-            || path.EndsWith(".overwrite.md", StringComparison.Ordinal))
+        if (!SourceWorkspaceRelativePath.IsCanonical(path)
+            || (SourceLogicalPath.IsCanonicalSource(path) && !path.EndsWith(".md", StringComparison.Ordinal))
+            || (SourceLogicalPath.IsCanonicalSource(path) && path.EndsWith(".overwrite.md", StringComparison.Ordinal)))
         {
             throw new ArgumentException("Find metadata requires a canonical base source path.", nameof(path));
         }
-        if (!string.Equals(SourceIdentity.DeriveId(path), id, StringComparison.Ordinal))
+        if (!string.Equals(SourceWorkspaceRelativePath.ReadReference(path), id, StringComparison.Ordinal))
         {
             throw new ArgumentException("A Find metadata ID must be derived from its canonical base path.", nameof(id));
         }
@@ -239,10 +239,10 @@ internal sealed record FindProjection
         }
 
         if (path is not null
-            && (!SourceLogicalPath.IsCanonicalSource(path)
-                || !path.EndsWith(".md", StringComparison.Ordinal)
+            && (!SourceWorkspaceRelativePath.IsCanonical(path)
+                || (SourceLogicalPath.IsCanonicalSource(path) && !path.EndsWith(".md", StringComparison.Ordinal))
                 || layer is { } pathLayer
-                    && (pathLayer == SourceLayerKind.Overwrite) != path.EndsWith(".overwrite.md", StringComparison.Ordinal)))
+                    && (pathLayer == SourceLayerKind.Overwrite) != (SourceLogicalPath.IsCanonicalSource(path) && path.EndsWith(".overwrite.md", StringComparison.Ordinal))))
         {
             throw new ArgumentException("The Find projection path and layer must agree.", nameof(path));
         }

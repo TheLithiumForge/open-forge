@@ -50,11 +50,9 @@ punctuation, including `%23`, is part of the decoded path, not a fragment or que
 
 ## Reference Classification
 
-At request resolution, a value beginning with `.agents/` or `./.agents/` is an
+At request resolution, a value beginning with `.agents/` or `./` is an
 exact workspace-path request. Every other value is an ID request, including a
-value that looks like a relative filesystem path. The resolver does not add a
-second path grammar. A command-specific external-source operand remains outside
-this shared classification and follows that command's own grammar, as stated in
+value that looks like a relative filesystem path. The `./` prefix selects an exact contained workspace file, as stated in
 [Accepted Forms](interface.md#accepted-forms) and [Command Use](interface.md#command-use).
 
 ## Input Normalization
@@ -96,8 +94,12 @@ The identity and route boundary follows [Entrypoints](interface.md#entrypoints).
 
 ## Exact Path Resolution
 
+Included aliases of the same contained physical file resolve to the first retained
+source and its catalogue parent. They do not create another source ID or repeat
+the file. A required alias row can select that retained source through its parent.
+
 For a path-form request, the resolver starts at the selected workspace, accepts
-the two public `.agents` prefixes, reports the canonical `.agents/...` form, and
+the public path prefixes, reports a workspace-relative canonical path, and
 uses documented `/` input. It proves that the path remains lexically and
 physically inside the selected workspace and that it identifies a source kind
 supported by the selected command. It does not reinterpret the path as another
@@ -112,8 +114,9 @@ A filesystem symlink projection at an eligible `.agents/...` destination is
 identified under the destination's canonical logical path and retains the
 normal automatic source ID derived from that destination. The resolver does not
 replace that ID with the source root or Library ID from a separate management
-record. Only content reached through an `AUTHORED LOCAL MARKDOWN REFERENCE`
-outside `.agents` has no automatic ID.
+record. Files outside `.agents/` have no short automatic ID. Active included
+files use the exact-reference display defined by the shared Interface Contract.
+Unlisted authored-link targets retain a null ID.
 
 ## ID Resolution
 
@@ -180,10 +183,9 @@ path for a resolved source. Structured output exposes them as separate fields.
 An ID collision remains visible as ambiguous while each source retains its exact
 path. A filesystem symlink projection at an eligible `.agents/...` destination
 keeps that canonical destination path and its normal destination-derived
-automatic ID. Only content reached through an `AUTHORED LOCAL MARKDOWN REFERENCE`
-outside `.agents` has no automatic ID, so human output uses `ID: none`,
-structured output uses a null ID, and the canonical workspace-relative path
-remains required. A Workspace Library ID remains a separate management identity
+automatic ID. Files outside `.agents/` have no automatic short ID. Explicit
+Context selections, Find, References and Route List put the exact `./path`
+reference in their existing `id` field. Other Context reads keep a null ID. The canonical workspace-relative path remains required. A Workspace Library ID remains a separate management identity
 and is never a source-reference operand.
 
 These facts form one typed result consumed by the command's presentation layer;
