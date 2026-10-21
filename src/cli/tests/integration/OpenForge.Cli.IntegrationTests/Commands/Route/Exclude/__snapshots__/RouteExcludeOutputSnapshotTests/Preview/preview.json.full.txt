@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 3,
+  "command": "route exclude",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would exclude 'guide.md'.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "# Open Forge Loader\n\n## Entries\n\n- [Guide](../guide.md) - #Docs",
+      "after": "# Open Forge Loader\n\n## Entries\n\n- none - No entries - #Empty\n"
+    }
+  ],
+  "counts": {
+    "filesChanged": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": "guide.md",
+    "before": "- [Guide](../guide.md) - #Docs",
+    "after": null,
+    "registeredBefore": false,
+    "registeredAfter": false,
+    "verified": false
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

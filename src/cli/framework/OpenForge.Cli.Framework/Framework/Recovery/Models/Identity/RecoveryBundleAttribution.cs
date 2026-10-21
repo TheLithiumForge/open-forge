@@ -27,6 +27,8 @@ internal enum RecoveryBundleOperation
     Attach,
     Sync,
     Detach,
+    Include,
+    Exclude,
 }
 
 internal enum RecoveryBundleSubjectKind
@@ -130,6 +132,8 @@ internal sealed record RecoveryBundleAttribution
             (RecoveryBundleProducer.Extension, RecoveryBundleOperation.Remove) => true,
             (RecoveryBundleProducer.Index, RecoveryBundleOperation.Index) => true,
             (RecoveryBundleProducer.Route, RecoveryBundleOperation.Create) => true,
+            (RecoveryBundleProducer.Route, RecoveryBundleOperation.Include) => true,
+            (RecoveryBundleProducer.Route, RecoveryBundleOperation.Exclude) => true,
             (RecoveryBundleProducer.Route, RecoveryBundleOperation.Init) => true,
             (RecoveryBundleProducer.Route, RecoveryBundleOperation.Move) => true,
             (RecoveryBundleProducer.Route, RecoveryBundleOperation.Update) => true,

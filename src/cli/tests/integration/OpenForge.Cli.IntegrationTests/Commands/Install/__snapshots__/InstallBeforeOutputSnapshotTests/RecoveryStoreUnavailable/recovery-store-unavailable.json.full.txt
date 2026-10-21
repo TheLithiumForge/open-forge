@@ -53,7 +53,7 @@
     "automatic": true,
     "classification": null,
     "footprint": {
-      "files": 20,
+      "files": 19,
       "directories": null,
       "sections": 2
     },
@@ -61,7 +61,7 @@
     "effects": [],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 22
+      "assetCount": 21
     },
     "lifecycle": {
       "action": "none",

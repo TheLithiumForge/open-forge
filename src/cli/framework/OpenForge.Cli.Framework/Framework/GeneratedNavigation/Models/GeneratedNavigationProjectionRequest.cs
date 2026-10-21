@@ -105,6 +105,10 @@ internal sealed class GeneratedNavigationProjectionRequest
     /// </summary>
     internal IReadOnlySet<string> TurnedOnLoaderRoots { get; init; } = new HashSet<string>(StringComparer.Ordinal);
 
+    internal IReadOnlySet<string> TurnedOffLoaderRoots { get; init; } = new HashSet<string>(StringComparer.Ordinal);
+
+    internal GeneratedNavigationLoaderEdit? LoaderEdit { get; init; }
+
     internal SourceRouteTopology Topology => Formation.Topology;
 
     internal IReadOnlyList<SourceLogicalSource> Sources => Formation.Sources;

@@ -115,6 +115,8 @@ non-directory workspace is blocked.
 `status` inspects only the facts needed for its summary:
 
 - The canonical workspace entry and supported context files below `.agents`.
+- Settings `roots`, loader-listed files outside `.agents/` and their catalogue
+  descendants, limited to the selected workspace.
 - The embedded Framework payload distributed with the running CLI.
 - Entrypoints, generated `Entries`, loading tags, and overwrite companions needed
   to calculate startup and continuity context.
@@ -180,6 +182,13 @@ allow it.
 
 ## Context Inventory
 
+### Included files
+
+Count registered settings `roots` as on when a loader row lists the path, off
+when no loader row lists it, or missing when no file exists. Missing takes
+precedence. Count unregistered loader rows outside `.agents/` separately.
+Registrations never switch files on or restore loader rows.
+
 ### Context File
 
 The human display uses `Files`. The status inventory has one closed content
@@ -188,6 +197,8 @@ boundary:
 - The canonical workspace `AGENTS.md` entry when it is an ordinary UTF-8 file.
 - Every ordinary UTF-8 Markdown file with a `.md` suffix that is physically
   contained below the selected workspace's `.agents` directory.
+- Active loader-listed text files outside `.agents/` and files reached through
+  their catalogue Entries. These files need no Open Forge frontmatter.
 
 The inventory follows these rules:
 
@@ -214,6 +225,12 @@ precision is needed. Human output keeps `Files` because the displayed counts are
 physical files.
 
 ### Startup Context
+
+Required included files outside `.agents/` follow their Entries tags and inherited
+conditions through included catalogues. Each physical file contributes once.
+Conditioned required files remain pending because Status has no working-file
+operands. They make the result incomplete while the known contribution remains
+measurable. The report names the startup contribution outside `.agents/`.
 
 Startup context is the complete context required when work starts or resumes:
 
@@ -641,6 +658,13 @@ bundle paths with their integrity.
 
 ### JSON data by level
 
+When included rows or registrations exist, every level adds `data.includedFiles`.
+It reports registered on, off and missing counts, the hand-written loader-row
+count, the startup measurement outside `.agents/` and pending included paths.
+The [included-files data model](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Models/StatusDataIncludedFiles.cs)
+defines its exact fields. Empty or absent `roots` without included rows omit this
+member and keep existing text and JSON unchanged.
+
 | Level    | `data` members                                                                                                                                                                                                                                                                                 |
 | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | minimal  | `installation { state, entryPath, loaderPath }`, `context { startup { shipped, current, difference, mayLoadAgain } each { files, characters, bytes, tokens }, allRouted { same }, startupShare }`, `extensions [ { id, version } ]`, `libraries [ { id, sourceRoot, destinationRoot } ]`       |
@@ -791,6 +815,12 @@ operations.
 
 ## Public Verification
 
+- Included paths on, off and missing, with hand-written loader rows counted
+  separately in text and JSON.
+- Required included catalogue descendants, duplicate physical files and pending
+  conditions in startup measurements.
+- Empty and absent settings `roots` retain existing reports and snapshots.
+
 Implementation evidence must cover:
 
 - Exact CWD and `--workspace` selection without discovery.
@@ -929,3 +959,6 @@ remain the output evidence.
 - [StatusWording.cs](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusWording.cs)
   <!-- @OpenForgeTextRef status.wording.generated-navigation-metadata-invalid -->
   <!-- @OpenForgeTextRef status.title.generated-navigation-metadata-invalid -->
+  <!-- @OpenForgeTextRef status.wording.included-files -->
+  <!-- @OpenForgeTextRef status.wording.included-startup -->
+  <!-- @OpenForgeTextRef status.wording.included-pending -->

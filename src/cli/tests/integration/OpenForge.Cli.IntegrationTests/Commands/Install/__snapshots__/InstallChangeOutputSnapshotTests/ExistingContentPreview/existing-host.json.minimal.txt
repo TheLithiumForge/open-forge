@@ -135,14 +135,6 @@
       "owner": null
     },
     {
-      "path": ".agents/authoring.md",
-      "kind": "file",
-      "action": "created",
-      "outcome": "planned",
-      "reason": null,
-      "owner": null
-    },
-    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -312,7 +304,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 20,
+    "filesCreated": 19,
     "directoriesCreated": 13,
     "sectionsAdded": 1,
     "filesReplaced": 0
@@ -324,7 +316,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 20,
+      "files": 19,
       "directories": 13,
       "sections": 2
     },

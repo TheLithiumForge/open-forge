@@ -7,7 +7,6 @@ Git-ignored contents: none
 Leave out: none
 Frontmatter: root
   .agents/README.md                                      would be created
-  .agents/authoring.md                                   would be created
   .agents/directives/_directives.md                      would be created
   .agents/guidance/_guidance.md                          would be created
   .agents/loader.md                                      would be created
@@ -34,7 +33,7 @@ Frontmatter: root
   .agents/open-forge.lock.json                           would be created
   .agents/memory/_memory.overwrite.md
     Planned migration: content preserved
-  Would create 20 files and 12 directories under .agents, and replace 1 existing
+  Would create 19 files and 12 directories under .agents, and replace 1 existing
   file, plus AGENTS.md and CLAUDE.md.
   Planned migration for 1 source.
 No files were changed.

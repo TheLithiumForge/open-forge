@@ -10,14 +10,13 @@ Startup context
   Shipped by this CLI:   8 files, about 4.3k tokens
   This workspace:        8 files, about 4.3k tokens
   May load again later:  1 file, about 0.3k tokens
-All routed files: 21 files, about 24.3k tokens (startup is 18%)
+All routed files: 20 files, about 25.1k tokens (startup is 17%)
 Routes: 7 root categories, 12 Entries sections current
-Framework files: 21 current
+Framework files: 20 current
 Largest may-load-again sources
   memory/emerging  985 B
 Framework files
   .agents/README.md                                      current
-  .agents/authoring.md                                   current
   .agents/directives/_directives.md                      current
   .agents/guidance/_guidance.md                          changed
   .agents/loader.md                                      current
@@ -51,6 +50,6 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-21 routed files, 8 startup files, 4255 startup tokens, 1 may-load-again files, 256 may-load-again tokens, 24288 all routed tokens, 17.519300051466803911477097272 startup share, 7 root categories, 12 current Entries sections, 21 current Framework files, 1 changed Framework files, 1 warnings.
+20 routed files, 8 startup files, 4261 startup tokens, 1 may-load-again files, 256 may-load-again tokens, 25125 all routed tokens, 16.959203980099502487562189055 startup share, 7 root categories, 12 current Entries sections, 20 current Framework files, 1 changed Framework files, 1 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

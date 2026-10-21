@@ -13,7 +13,7 @@ public sealed class CommandHelpIntegrationTests
     {
         "", "route", "extension", "library",
         "install", "update", "remove", "status", "context", "find", "references", "index", "doctor", "repair", "cleanup", "help",
-        "route list", "route inspect", "route init", "route create", "route update", "route move", "route remove",
+        "route list", "route inspect", "route init", "route create", "route include", "route exclude", "route update", "route move", "route remove",
         "extension list", "extension inspect", "extension create", "extension install", "extension update", "extension remove",
         "library list", "library inspect", "library attach", "library sync", "library detach",
     };

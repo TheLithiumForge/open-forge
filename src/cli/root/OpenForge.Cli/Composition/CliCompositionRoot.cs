@@ -106,6 +106,8 @@ internal static class CliCompositionRoot
                 route.InitBinding,
                 route.CreateBinding,
                 route.UpdateBinding,
+                route.IncludeBinding,
+                route.ExcludeBinding,
                 route.MoveBinding,
                 route.RemoveBinding,
                 standalone.FindBinding,

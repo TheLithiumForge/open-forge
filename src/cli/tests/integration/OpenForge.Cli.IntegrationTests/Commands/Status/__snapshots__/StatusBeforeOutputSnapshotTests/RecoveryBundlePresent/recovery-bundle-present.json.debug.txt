@@ -45,18 +45,18 @@
   ],
   "effects": [],
   "counts": {
-    "routedFiles": 21,
+    "routedFiles": 20,
     "startupFiles": 8,
-    "startupTokens": 4255,
+    "startupTokens": 4261,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 256,
-    "allTokens": 24279,
-    "startupShare": 17.525613962827575554754672296,
+    "allTokens": 25116,
+    "startupShare": 16.965112228139152938834419947,
     "rootCategories": 7,
     "entriesSectionsCurrent": 12,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 22,
+    "frameworkFilesCurrent": 21,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -79,15 +79,15 @@
       "startup": {
         "shipped": {
           "files": 8,
-          "characters": 17020,
-          "bytes": 17020,
-          "tokens": 4255
+          "characters": 17044,
+          "bytes": 17044,
+          "tokens": 4261
         },
         "current": {
           "files": 8,
-          "characters": 17020,
-          "bytes": 17020,
-          "tokens": 4255
+          "characters": 17044,
+          "bytes": 17044,
+          "tokens": 4261
         },
         "difference": {
           "files": 0,
@@ -103,12 +103,12 @@
         }
       },
       "allRouted": {
-        "files": 21,
-        "characters": 97114,
-        "bytes": 97115,
-        "tokens": 24279
+        "files": 20,
+        "characters": 100464,
+        "bytes": 100465,
+        "tokens": 25116
       },
-      "startupShare": 17.525613962827575554754672296,
+      "startupShare": 16.965112228139152938834419947,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
@@ -132,10 +132,6 @@
     "frameworkFiles": [
       {
         "path": ".agents/README.md",
-        "state": "current"
-      },
-      {
-        "path": ".agents/authoring.md",
         "state": "current"
       },
       {

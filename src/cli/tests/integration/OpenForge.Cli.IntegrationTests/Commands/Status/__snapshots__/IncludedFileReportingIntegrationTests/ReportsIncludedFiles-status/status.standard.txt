@@ -1,0 +1,20 @@
+Open Forge is installed, but some checks could not finish.
+Workspace: <workspace>
+  Warning  <workspace>  Startup context is incomplete
+         Startup context could not be measured completely.
+         open-forge doctor
+         Inspect the reported operational facts before rerunning Status.
+Startup context
+  Shipped by this CLI:  8 files, about 4.3k tokens
+  This workspace:       3 files, about 0.1k tokens
+Compared with shipped: 5 fewer files, about 4.2k fewer tokens
+All routed files: unavailable files, unavailable tokens (startup is unavailable)
+Routes: 1 root category, 2 Entries sections current, removed: directives, maps, memory, patterns, skills, templates
+Framework files: unavailable
+Included files: 1 on, 1 off, 1 missing, 1 hand-written loader row.
+Startup outside .agents/: 0 files, about 0.0k tokens
+  routed files: The total available context measurement is incomplete.
+  all routed tokens: The total available context measurement is incomplete.
+  startup share: The total available context measurement is incomplete.
+  Inspect the reported operational facts before rerunning Status.
+Next: open-forge doctor

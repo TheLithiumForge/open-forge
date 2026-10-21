@@ -123,6 +123,13 @@ internal static class StatusReportSelector
 
         return new StatusData
         {
+            IncludedFiles = facts.Context.IncludedFiles is { } included ? new StatusDataIncludedFiles(
+                On: included.On,
+                Off: included.Off,
+                Missing: included.Missing,
+                HandWritten: included.HandWritten,
+                Startup: Measurement(included.Startup),
+                Pending: included.Pending) : null,
             Installation = new StatusDataInstallation
             {
                 State = StatusWording.State(facts.Installation.State),

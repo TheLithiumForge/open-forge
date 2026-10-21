@@ -17,8 +17,6 @@ Frontmatter: root
   .agents/skills/open-forge-cli/references               created
   .agents/README.md
     created; source: .agents/README.md
-  .agents/authoring.md
-    created; source: .agents/authoring.md
   .agents/directives/_directives.md
     created; source: .agents/directives/_directives.md
   .agents/loader.md
@@ -54,11 +52,11 @@ Frontmatter: root
     created; records the files above
   .gitignore
     Open Forge Git-ignore rules added
-  Created 16 files and 9 directories under .agents (listed in
+  Created 15 files and 9 directories under .agents (listed in
   .agents/open-forge.lock.json).
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Bundled Framework fingerprint:
-  <sha256> (22 assets).
+  <sha256> (21 assets).
   The ownership record was published and verified.
   No recovery bundle was required.
   All written targets were verified.

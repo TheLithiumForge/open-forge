@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 3,
+  "command": "doctor",
+  "status": "completed-with-warnings",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "1 error, 1 warning and 4 info findings.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "workspace.root-missing",
+      "title": "Root route is missing",
+      "message": "The included file is missing. Restore the file or exclude its path.",
+      "subject": {
+        "kind": "file",
+        "path": "missing.md",
+        "id": null,
+        "location": null
+      },
+      "category": "Workspace",
+      "resolution": "manual-decision",
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "reference.target-missing",
+      "title": "Broken link",
+      "message": "The linked file was not found: ../missing.md. No possible target was found.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/loader.md",
+        "id": "../missing.md",
+        "location": {
+          "line": 11,
+          "column": 3
+        }
+      },
+      "category": "Links",
+      "resolution": "manual-decision",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Correct this link in .agents/loader.md at line 11, column 3 through the owner of missing.md.",
+          "reason": "Correct this link in .agents/loader.md at line 11, column 3 through the owner of missing.md."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "checks": 6,
+    "checksComplete": 6,
+    "errors": 1,
+    "warnings": 1,
+    "infos": 4,
+    "linksChecked": 4,
+    "linksValid": 3,
+    "externalLinksNotChecked": 0,
+    "imageLinks": 0,
+    "routesChecked": 1,
+    "frameworkFiles": 0,
+    "extensionsInstalled": 0,
+    "librariesRegistered": null
+  },
+  "limitations": [],
+  "data": {
+    "categories": [
+      {
+        "name": "Workspace",
+        "coverage": "complete",
+        "counts": {
+          "errors": 1,
+          "warnings": 0,
+          "infos": 2
+        },
+        "limitations": []
+      },
+      {
+        "name": "Recovery data",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "limitations": []
+      },
+      {
+        "name": "Routes and Entries",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "limitations": []
+      },
+      {
+        "name": "Links",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 1,
+          "infos": 0
+        },
+        "limitations": []
+      },
+      {
+        "name": "Framework files",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 1
+        },
+        "limitations": []
+      },
+      {
+        "name": "Extensions",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 1
+        },
+        "limitations": []
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "Review the route boundary in missing.md before continuing.",
+    "reason": "Review the route boundary in missing.md before continuing."
+  }
+}

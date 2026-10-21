@@ -232,6 +232,14 @@ The resolution lanes are formed as follows:
 
 ## Domain 1: Workspace And Entry
 
+Read included targets from loader Entries and registrations from settings `roots`.
+The loader controls loading. Missing targets produce errors, off registrations
+produce information and registered paths that Include would now reject produce
+warnings. Use the existing `workspace.root-missing`, `workspace.detached` and
+`workspace.path-invalid` codes respectively. Preserve these facts without restoring
+rows, rewriting registrations or changing target files. Empty or absent `roots`
+with no included rows leave existing diagnosis unchanged.
+
 Library mapping identity ignores only separator differences in supported
 relative link targets. A recorded matching Windows link with `/` in its raw
 target is unreadable. Report `library.projection-retargeted` with an unreadable

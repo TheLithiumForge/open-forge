@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "incomplete",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed, but some checks could not finish.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "status.context-inventory-incomplete",
+      "title": "Startup context is incomplete",
+      "message": "Startup context could not be measured completely.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported operational facts before rerunning Status."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": null,
+    "startupFiles": 3,
+    "startupTokens": 98,
+    "mayLoadAgainFiles": 0,
+    "mayLoadAgainTokens": 0,
+    "allTokens": null,
+    "startupShare": null,
+    "rootCategories": 1,
+    "entriesSectionsCurrent": 2,
+    "entriesSectionsStale": 0,
+    "entriesSectionsMissing": 0,
+    "frameworkFilesCurrent": null,
+    "frameworkFilesChanged": null,
+    "frameworkFilesMissing": null,
+    "extensionsInstalled": null,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "warnings": 1,
+    "infos": 3
+  },
+  "limitations": [
+    {
+      "what": "routed files",
+      "why": "The total available context measurement is incomplete.",
+      "subject": null
+    },
+    {
+      "what": "all routed tokens",
+      "why": "The total available context measurement is incomplete.",
+      "subject": null
+    },
+    {
+      "what": "startup share",
+      "why": "The total available context measurement is incomplete.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "includedFiles": {
+      "on": 1,
+      "off": 1,
+      "missing": 1,
+      "handWritten": 1,
+      "startup": {
+        "files": 0,
+        "characters": 0,
+        "bytes": 0,
+        "tokens": 0
+      },
+      "pending": []
+    },
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": ".agents/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 8,
+          "characters": 17044,
+          "bytes": 17044,
+          "tokens": 4261
+        },
+        "current": {
+          "files": 3,
+          "characters": 389,
+          "bytes": 389,
+          "tokens": 98
+        },
+        "difference": {
+          "files": -5,
+          "characters": -16655,
+          "bytes": -16655,
+          "tokens": -4163
+        },
+        "mayLoadAgain": {
+          "files": 0,
+          "characters": 0,
+          "bytes": 0,
+          "tokens": 0
+        }
+      },
+      "allRouted": {
+        "files": null,
+        "characters": null,
+        "bytes": null,
+        "tokens": null
+      },
+      "startupShare": null
+    },
+    "extensions": [],
+    "libraries": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported operational facts before rerunning Status."
+  }
+}

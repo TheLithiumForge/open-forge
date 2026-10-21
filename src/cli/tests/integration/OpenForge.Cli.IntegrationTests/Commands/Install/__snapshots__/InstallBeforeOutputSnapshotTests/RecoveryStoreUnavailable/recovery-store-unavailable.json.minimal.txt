@@ -49,7 +49,7 @@
     "automatic": true,
     "classification": null,
     "footprint": {
-      "files": 20,
+      "files": 19,
       "directories": null,
       "sections": 2
     },

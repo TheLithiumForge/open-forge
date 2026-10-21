@@ -136,6 +136,8 @@ Design:
 | `route inspect` | [`route inspect Interface`](contracts/route/inspect/interface.md) | [`route inspect Behavior`](contracts/route/inspect/behavior.md) | None                                                                          |
 | `route list`    | [`route list Interface`](contracts/route/list/interface.md)       | [`route list Behavior`](contracts/route/list/behavior.md)       | None                                                                          |
 | `route init`    | [`route init Interface`](contracts/route/init/interface.md)       | [`route init Behavior`](contracts/route/init/behavior.md)       | None                                                                          |
+| `route include` | [`route include Interface`](contracts/route/include/interface.md) | [`route include Behavior`](contracts/route/include/behavior.md) | None |
+| `route exclude` | [`route exclude Interface`](contracts/route/exclude/interface.md) | [`route exclude Behavior`](contracts/route/exclude/behavior.md) | None |
 | `route create`  | [`route create Interface`](contracts/route/create/interface.md)   | [`route create Behavior`](contracts/route/create/behavior.md)   | None                                                                          |
 | `route update`  | [`route update Interface`](contracts/route/update/interface.md)   | [`route update Behavior`](contracts/route/update/behavior.md)   | [`route update Technical Design`](contracts/route/update/technical-design.md) |
 | `route move`    | [`route move Interface`](contracts/route/move/interface.md)       | [`route move Behavior`](contracts/route/move/behavior.md)       | None                                                                          |

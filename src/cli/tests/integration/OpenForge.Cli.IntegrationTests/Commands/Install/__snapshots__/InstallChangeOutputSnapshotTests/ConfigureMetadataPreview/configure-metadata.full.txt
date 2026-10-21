@@ -45,7 +45,7 @@ Frontmatter: root -> scoped
     .agents/templates/_templates.md
   Would update 16 existing files.
   Bundled Framework fingerprint:
-  <sha256> (22 assets).
+  <sha256> (21 assets).
   No ownership record change was requested.
   No recovery bundle was created.
   Verification was not requested.

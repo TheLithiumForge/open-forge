@@ -17,6 +17,10 @@ internal sealed record CliRouteComposition
 
     public required ICliCommandBinding UpdateBinding { get; init; }
 
+    public required ICliCommandBinding IncludeBinding { get; init; }
+
+    public required ICliCommandBinding ExcludeBinding { get; init; }
+
     public required ICliCommandBinding MoveBinding { get; init; }
 
     public required ICliCommandBinding RemoveBinding { get; init; }
