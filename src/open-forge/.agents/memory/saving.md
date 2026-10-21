@@ -6,7 +6,7 @@ open-forge:
 
 # Save progress
 
-This policy is optional and only does something when Working Memory is installed. It sits beside the Memory folders so it stays shared through Git even when Working records are private. To stop automatic saving but keep your Working records, delete this file and remove its line from `_memory.md`. If the CLI manages updates, record the removal so updates don't restore it.
+This policy applies only when Working Memory is installed.
 
 ## Instructions
 

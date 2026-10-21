@@ -6,7 +6,7 @@ open-forge:
 
 # Patterns
 
-This folder is optional and nothing else depends on it. Each Pattern shows one reusable shape for code, files, naming, placement, boundaries, APIs or documents, so related work is consistent and easy to inspect.
+Each Pattern shows one reusable shape for code, files, naming, placement, boundaries, APIs or documents, so related work is consistent and easy to inspect.
 
 ## Axioms
 

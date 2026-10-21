@@ -6,7 +6,7 @@ open-forge:
 
 # Memory
 
-This folder is optional, and so is each folder below it. Memory is self-growing Markdown state: people and agents add useful records and routed scopes without a fixed structural limit. Every state needs this catalogue, but the states don't need each other. Unselected branches don't load their contents, and a record need not pass through every state. Nothing outside Memory depends on it.
+Memory is self-growing Markdown state: people and agents add useful records and routed scopes without a fixed structural limit. A record need not pass through every state.
 
 ## Axioms
 
@@ -22,7 +22,7 @@ This folder is optional, and so is each folder below it. Memory is self-growing 
 - An accepted record can define current knowledge or decisions. Recording another category's content does not give the record that category's role. Saving or moving a record does not make it accepted.
 - Add records and routed scopes when their likely future value justifies the cost of finding and reviewing them. Use an existing suitable record before creating another.
 - Move material when its state, scope or intended use changes, and leave no stale or competing copy. The destination's rules govern its new role. Put accepted instructions for future agent behavior in the source for that role.
-- Named record categories and Templates are optional. Use an existing state and the narrowest useful scope. A record may live directly under its state. Do not recreate a removed folder merely to save a record.
+- A record needs no named category or Template. Use an existing state and the narrowest useful scope. Do not recreate a removed folder merely to save a record.
 - Within the authority granted for the work, add an ordinary record or scoped route when needed. Ask when placement would change accepted meaning or cross an unresolved authority boundary. Get explicit user direction before creating a new top-level Memory state.
 
 ## Entries

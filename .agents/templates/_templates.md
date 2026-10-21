@@ -6,7 +6,7 @@ open-forge:
 
 # Templates
 
-This folder is optional and nothing else depends on it. It holds starting files to copy, adapt and then maintain on their own.
+This folder holds starting files to copy, adapt and then maintain on their own.
 
 ## Axioms
 

@@ -38,17 +38,13 @@ Each folder is a place for one kind of content, and you add only the ones you wa
 - **Maps** point to important sources.
 - **Skills** expose capabilities through native `SKILL.md` packages.
 
-Each Memory state needs Memory, but the states don't need each other. The saving policy needs Working Memory. Everything else needs only the loader, unless its own content says otherwise.
-
-You don't have to adopt any of these. Existing ADRs and docs can stay where they are. A rule can live in `docs/agent-rules.md` and an accepted fact in `docs/export-format.md`, each linked from the loader like any other document. Named record kinds and workflows come from optional Extensions.
+Existing ADRs and docs can stay where they are. A rule can live in `docs/agent-rules.md` and an accepted fact in `docs/export-format.md`, each linked from the loader like any other document. Named record kinds and workflows come from Extensions.
 
 ## Turn something off
 
 Remove its line from the loader. The whole branch switches off and its files stay as notes. Remove or replace any part that depends on it first. Your accepted requirements, and instructions your agent tool loads on its own, still apply.
 
 Inside a catalogue, the list follows the files on disk. To keep a file as a note there, move it out of the routed folder and remove its line. To get rid of it, delete the file and its line. When the CLI manages updates, record the removal too, so updates don't bring it back. Custom's `remove` choice only stops Open Forge managing the defaults. It keeps existing files and routes, and it doesn't switch them off.
-
-To stop automatic progress saving but keep your Working records, delete `memory/saving.md` and remove its line from `memory/_memory.md`. Record that removal when the CLI manages updates. Emerging's capture of new findings is a separate choice. It stays active while Emerging is listed with #KeepInMind.
 
 ## Instructions
 

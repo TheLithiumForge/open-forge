@@ -6,7 +6,7 @@ open-forge:
 
 # Emerging Memory
 
-This folder is optional and needs Memory. It holds useful ideas, findings and reasoning that are not accepted yet.
+This folder holds useful ideas, findings and reasoning that are not accepted yet.
 
 ## Axioms
 
@@ -14,7 +14,7 @@ This folder is optional and needs Memory. It holds useful ideas, findings and re
 - Keep each record's source, uncertainty and scope visible when they affect later use.
 - Refine material while its validity, use or final destination is unsettled.
 - When something is accepted, move the durable result to the source that should define it. Before archiving or pruning rejected or replaced material, keep its useful outcomes and reasoning.
-- Revisit repeated or stale material and decide whether to consolidate, promote, archive or prune it. A review may leave a record unchanged.
+- Revisit repeated or stale material and decide whether to consolidate, promote, archive or prune it.
 
 ## Entries
 
