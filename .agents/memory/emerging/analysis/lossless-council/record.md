@@ -77,9 +77,9 @@ Counted with the CLI's estimate method, characters divided by four.
 | --- | --- | --- | --- |
 | `develop` before v2 | 12 | about 4,560 | 2,052 |
 | v2 | 7 | about 1,430 | 823 |
-| v2 lossless | 8 | 2,419 | 1,153 |
+| v2 lossless | 8 | 2,451 | 1,185 |
 
-Lossless costs about 1,000 startup words over v2, and is still 47% below the shipped startup.
+Lossless costs about 1,000 startup words over v2, and is still 46% below the shipped startup.
 
 ## Risks and the proof that would settle them
 
