@@ -46,9 +46,7 @@ Each folder holds one kind of content, and you add only the ones you want:
 - **Maps** point to important sources.
 - **Skills** expose capabilities through native `SKILL.md` packages.
 
-Each Memory state needs Memory, but the states don't need each other. The saving policy needs Working Memory. Everything else needs only the loader, unless its own content says otherwise.
-
-You don't have to adopt any of these. Existing ADRs and docs can stay where they are and be included. Named record kinds and workflows come from optional Extensions.
+Existing ADRs and docs can stay where they are and be included. Named record kinds and workflows come from Extensions.
 
 `open-forge install --configure` adds or leaves out these parts later, and `open-forge route init <category> --framework` restores one.
 
@@ -57,8 +55,6 @@ You don't have to adopt any of these. Existing ADRs and docs can stay where they
 Remove its line from the loader, or run `open-forge route exclude` with its catalogue, such as `.agents/patterns/_patterns.md`. The whole branch switches off and its files stay as notes. Remove or replace any part that depends on it first. Your accepted requirements, and instructions your agent tool loads on its own, still apply.
 
 Inside a catalogue, the list follows the files on disk. To keep a file as a note there, move it out of the routed folder and remove its line. To get rid of it, delete the file and its line. When the CLI manages updates, record the removal too, so updates don't bring it back. Custom's `remove` choice only stops Open Forge managing the defaults. It keeps existing files and routes, and it doesn't switch them off.
-
-To stop automatic progress saving, follow the note at the top of `memory/saving.md`. Emerging's capture of new findings is a separate choice, and it stays active while Emerging is listed with #KeepInMind.
 
 ## Reuse your knowledge elsewhere
 
@@ -107,6 +103,8 @@ open-forge:
 
 # Testing
 
+## What rules apply to tests?
+
 Rules that apply to every test in this repository.
 
 ## Axioms
@@ -118,6 +116,7 @@ Rules that apply to every test in this repository.
 - [How to name and place tests](naming.md) - #Directive
 ```
 
+- Under the title, write the one question the folder answers as a `##` heading, then a short paragraph on what the folder holds. A catalogue describes its own folder and does not name other routes.
 - Put rules for everything below the catalogue under `## Axioms`. A catalogue without rules of its own has only the `inherited` line shown above. A missing or empty Axioms section also adds no rules. Never mix that line with local rules.
 - List the folder's files and the catalogues of its child folders under `## Entries`. An empty list is valid.
 

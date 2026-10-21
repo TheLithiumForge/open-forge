@@ -81,7 +81,7 @@ The [Concepts](concepts/index.md) section covers each part in depth.
 
 ## What you actually install
 
-Full Core supplies 21 Markdown files, including a guide for people, the saving policy, and four supporting CLI guides that are opened when needed. Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory. Custom follows your selection.
+Full Core supplies 20 Markdown files, including a guide for people and four supporting CLI guides that are opened when needed. Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory. Custom follows your selection.
 
 Essentials keeps new Working records out of ordinary Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools. [Installation](getting-started/installation.md#choose-the-installed-routes) covers the exact choices.
 
