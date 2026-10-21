@@ -34,7 +34,7 @@ Frontmatter: scoped
     created as the ownership receipt
   .agents/memory/_memory.overwrite.md
     Migrated: content preserved
-  Created 19 files and 12 directories under .agents, and replaced 1 existing
+  Created 18 files and 12 directories under .agents, and replaced 1 existing
   file.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Migrated 1 source.

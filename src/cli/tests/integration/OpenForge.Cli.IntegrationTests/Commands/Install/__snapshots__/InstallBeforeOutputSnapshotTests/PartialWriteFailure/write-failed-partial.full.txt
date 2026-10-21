@@ -1,4 +1,4 @@
-Install stopped after 17 of 36 changes.
+Install stopped after 17 of 35 changes.
 Workspace: <workspace>
   Error  .agents/memory/_memory.md  Write failed [install.write-failed]
          Writing .agents/memory/_memory.md failed: filesystem access was denied.
@@ -70,7 +70,7 @@ Frontmatter: root
   17 files and directories were created.
   Planned migration for 1 source.
   Bundled Framework fingerprint:
-  <sha256> (21 assets).
+  <sha256> (20 assets).
   Ownership record publication did not start.
   The recovery bundle was retained at <recovery-bundle>.
   The final verification state is unknown.

@@ -306,7 +306,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 15,
+    "filesCreated": 14,
     "directoriesCreated": 9,
     "sectionsAdded": 0,
     "filesReplaced": 0
@@ -318,7 +318,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 15,
+      "files": 14,
       "directories": 9,
       "sections": 2
     },
@@ -430,7 +430,7 @@
     ],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 21
+      "assetCount": 20
     },
     "lifecycle": {
       "action": "publish",

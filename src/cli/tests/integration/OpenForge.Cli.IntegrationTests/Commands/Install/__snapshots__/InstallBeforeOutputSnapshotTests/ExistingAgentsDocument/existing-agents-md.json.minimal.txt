@@ -304,7 +304,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 19,
+    "filesCreated": 18,
     "directoriesCreated": 13,
     "sectionsAdded": 1,
     "filesReplaced": 0
@@ -316,7 +316,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 19,
+      "files": 18,
       "directories": 13,
       "sections": 2
     },

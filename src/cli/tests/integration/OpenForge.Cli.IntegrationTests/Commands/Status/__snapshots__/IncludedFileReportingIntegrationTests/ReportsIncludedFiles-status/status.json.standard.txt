@@ -100,10 +100,10 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 8,
-          "characters": 17044,
-          "bytes": 17044,
-          "tokens": 4261
+          "files": 7,
+          "characters": 15958,
+          "bytes": 15958,
+          "tokens": 3990
         },
         "current": {
           "files": 3,
@@ -112,10 +112,10 @@
           "tokens": 98
         },
         "difference": {
-          "files": -5,
-          "characters": -16655,
-          "bytes": -16655,
-          "tokens": -4163
+          "files": -4,
+          "characters": -15569,
+          "bytes": -15569,
+          "tokens": -3892
         },
         "mayLoadAgain": {
           "files": 0,

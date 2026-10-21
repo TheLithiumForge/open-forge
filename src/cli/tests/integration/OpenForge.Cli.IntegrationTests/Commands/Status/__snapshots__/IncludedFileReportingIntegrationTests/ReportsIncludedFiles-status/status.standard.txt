@@ -5,9 +5,9 @@ Workspace: <workspace>
          open-forge doctor
          Inspect the reported operational facts before rerunning Status.
 Startup context
-  Shipped by this CLI:  8 files, about 4.3k tokens
+  Shipped by this CLI:  7 files, about 4.0k tokens
   This workspace:       3 files, about 0.1k tokens
-Compared with shipped: 5 fewer files, about 4.2k fewer tokens
+Compared with shipped: 4 fewer files, about 3.9k fewer tokens
 All routed files: unavailable files, unavailable tokens (startup is unavailable)
 Routes: 1 root category, 2 Entries sections current, removed: directives, maps, memory, patterns, skills, templates
 Framework files: unavailable

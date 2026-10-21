@@ -65,11 +65,11 @@ Frontmatter: root
     would be created with an Open Forge section; source: CLAUDE.md
   .agents/open-forge.json                                would be created
   .agents/open-forge.lock.json                           would be created
-  Would create 19 files and 13 directories under .agents, and update 1 existing
+  Would create 18 files and 13 directories under .agents, and update 1 existing
   file.
   Would add 1 section.
   Bundled Framework fingerprint:
-  <sha256> (21 assets).
+  <sha256> (20 assets).
   The ownership record is planned for publication.
   No recovery bundle was created.
   Verification was not requested.

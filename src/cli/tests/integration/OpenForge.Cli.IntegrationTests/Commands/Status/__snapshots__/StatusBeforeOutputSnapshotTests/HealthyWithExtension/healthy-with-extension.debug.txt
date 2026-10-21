@@ -1,13 +1,13 @@
 Open Forge is installed and current.
 Workspace: <workspace>
 Startup context
-  Shipped by this CLI:   8 files, about 4.3k tokens
-  This workspace:        8 files, about 4.4k tokens
+  Shipped by this CLI:   7 files, about 4.0k tokens
+  This workspace:        7 files, about 4.2k tokens
   May load again later:  1 file, about 0.3k tokens
 Compared with shipped: about 0.2k more tokens
-All routed files: 60 files, about 42.3k tokens (startup is 10%)
+All routed files: 59 files, about 42.2k tokens (startup is 10%)
 Routes: 7 root categories, 26 Entries sections current
-Framework files: 21 current
+Framework files: 20 current
 Extensions: development 0.4.0 (4 files current)
 Extensions: development-toolkit 0.4.0
 Extensions: planning 0.4.0 (17 files current)
@@ -146,4 +146,4 @@ Extension workflows files
   .agents/templates/workflows/_workflows.md              current
   .agents/templates/workflows/workflow.md                current
 Recovery data: none
-60 routed files, 8 startup files, 4429 startup tokens, 1 may-load-again files, 328 may-load-again tokens, 42311 all routed tokens, 10.466078160267545881046076033 startup share, 7 root categories, 26 current Entries sections, 21 current Framework files, 6 installed Extensions.
+59 routed files, 7 startup files, 4161 startup tokens, 1 may-load-again files, 319 may-load-again tokens, 42176 all routed tokens, 9.865207701062215477996965099 startup share, 7 root categories, 26 current Entries sections, 20 current Framework files, 6 installed Extensions.

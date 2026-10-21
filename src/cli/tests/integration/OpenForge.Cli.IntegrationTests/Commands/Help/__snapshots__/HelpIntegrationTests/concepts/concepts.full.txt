@@ -132,6 +132,8 @@ open-forge:
 
 # Testing
 
+## What rules apply to tests?
+
 Rules that apply to every test in this repository.
 
 ## Axioms
@@ -143,6 +145,7 @@ Rules that apply to every test in this repository.
 - [How to name and place tests](naming.md) - #Directive
 ```
 
+- Under the title, write the one question the folder answers as a `##` heading, then a short paragraph on what the folder holds. A catalogue describes its own folder and does not name other routes.
 - Put rules for everything below the catalogue under `## Axioms`. A catalogue without rules of its own has only the `inherited` line shown above. A missing or empty Axioms section also adds no rules. Never mix that line with local rules.
 - List the folder's files and the catalogues of its child folders under `## Entries`. An empty list is valid.
 

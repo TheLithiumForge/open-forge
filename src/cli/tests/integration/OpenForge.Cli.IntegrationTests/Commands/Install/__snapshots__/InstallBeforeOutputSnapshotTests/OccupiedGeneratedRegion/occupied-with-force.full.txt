@@ -63,12 +63,12 @@ Frontmatter: scoped
     created as the ownership receipt
   .agents/memory/_memory.overwrite.md
     Migrated: content preserved
-  Created 19 files and 12 directories under .agents, and replaced 1 existing
+  Created 18 files and 12 directories under .agents, and replaced 1 existing
   file.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Migrated 1 source.
   Bundled Framework fingerprint:
-  <sha256> (21 assets).
+  <sha256> (20 assets).
   The ownership record was published and verified.
   The recovery bundle was removed.
   All written targets were verified.
