@@ -15,11 +15,12 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 ## Contract
 
-- Frontmatter uses #Extension, #Memory, #Decision, and #CurrentTruth to classify this optional Planning route
+- The title is followed by `## What was chosen, why, and what follows from the choice?` and a short paragraph describing the folder.
+- Frontmatter uses #Extension, #Memory, #Decision, and #CurrentTruth to classify this Planning route.
 - Decisions record important accepted choices, why they were made and which applicable authority accepted them. Unaccepted proposals stay in candidate routes.
 - The source for the current behavior, record, route, code, or external state defines the result and may link back to the Decision for why
 - Alternatives, tradeoffs, constraints and consequences remain only when they provide future explanatory value. Keep one choice or a tightly related group per record and split unrelated choices.
-- Overlapping Decisions are consolidated, reshaped, or linked when their reasoning agrees. Reasoning behind a replaced choice is archived or linked
+- Overlapping Decisions are consolidated, reshaped, or linked when their reasoning agrees. Reasoning behind a replaced choice is moved or linked.
 - Important disagreement or competing accepted reasoning is surfaced for discussion instead of being merged silently
 - Current-result updates follow the [loader](../../loader.md) and [Memory](../_memory.md) rules. Decisions preserve useful rationale without becoming a competing exact specification.
 - The repository-only knowledge-role helper stays in the user-owned overwrite. It never enters the canonical source, and installed wording remains understandable without it.

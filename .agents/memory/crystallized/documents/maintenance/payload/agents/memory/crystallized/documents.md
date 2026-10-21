@@ -15,8 +15,9 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 ## Contract
 
+- The title is followed by `## What is the complete current explanation of this subject?` and a short paragraph describing the folder.
 - Frontmatter preserves #Extension, #Memory, #Document, and #CurrentTruth classification
-- Check Entries when work needs accepted current knowledge. Documents explain the subject coherently without requiring readers to reconstruct it from past decisions. Link the Decision when its reasoning helps.
+- Check Entries when work needs accepted current knowledge. Documents explain the subject coherently without requiring readers to reconstruct it from past choices. Link supporting rationale when it helps.
 - A document that assigns a subject to another authoritative source follows that source for its detail. Linking does not make the destination's content accepted.
 - A routed destination still defines its own detail. The containing document does not become a competing copy
 - Copy-ready creation sources belong in [Templates](../../../../../framework/primitives/templates.md), while Documents retain accepted current content

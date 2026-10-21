@@ -15,7 +15,8 @@ The [Archived state contract](../../../../framework/memory/archived.md) defines 
 
 ## Contract
 
-- Frontmatter preserves #Memory, #Archived, #Contextual and #Historical without a loading tag. Archived is optional and needs Memory. Its Entries are checked when history may help current work.
+- The title is followed by `## What useful history should remain available without governing current work?` and a short paragraph describing the folder.
+- Frontmatter preserves #Memory, #Archived, #Contextual and #Historical without a loading tag. Its Entries are checked when history may help current work.
 - Archived material remains historical context without current authority
 - Archived keeps historical Memory records and links to retained sources when the history belongs elsewhere
 - The entrypoint requires retained records to identify their origin, archival reason and replacement when one exists.

@@ -15,7 +15,8 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Contract
 
-- Frontmatter uses #Extension, #Memory, #Idea, #Exploration, #Contextual, and #Candidate to classify this optional Planning route
+- The title is followed by `## What possibility is worth exploring?` and a short paragraph describing the folder.
+- Frontmatter uses #Extension, #Memory, #Idea, #Exploration, #Contextual, and #Candidate to classify this Planning route.
 - Ideas remain available when work explores possibilities, plans future work, or revisits postponed options
 - Each Idea preserves enough problem, opportunity, or motivation to make later reconsideration meaningful
 - Explicit user requests to preserve or explore an idea are sufficient for capture without implying acceptance

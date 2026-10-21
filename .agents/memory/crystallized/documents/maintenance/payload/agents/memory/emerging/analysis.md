@@ -15,7 +15,8 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Contract
 
-- Frontmatter uses #Extension, #Memory, #Analysis, #Contextual, and #Candidate to classify this optional Planning route
+- The title is followed by `## What does the available evidence support, and what remains uncertain?` and a short paragraph describing the folder.
+- Frontmatter uses #Extension, #Memory, #Analysis, #Contextual, and #Candidate to classify this Planning route.
 - Analysis keeps its question, evidence, assumptions, limits, and current conclusion visible
 - Assumptions are rechecked before later work relies on the analysis. Exploratory Analysis may change while its question is open, and experimental use does not seal or accept it.
 - Analysis remains contextual until a separate acceptance source establishes a durable result. Check Entries when prior reasoning may help.

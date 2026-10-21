@@ -15,12 +15,13 @@ The [current Map document](../../../framework/primitives/map.md) defines coarse 
 
 ## Contract
 
-- Frontmatter uses #Core and #Map without a loading tag. The category is optional, has no dependents and is checked when work needs an important local or external source.
+- The title is followed by `## Where is a useful local or external source, and when should it be used?` and a short paragraph describing the folder.
+- Frontmatter uses #Core and #Map without a loading tag. Check the category when work needs an important local or external source.
 - Each routed Map file links to one or more local or external sources and explains their contents and relevance
 - Local destinations use containing-file-relative Markdown links. External destinations use their normal URLs.
 - The map stays intentionally broad unless finer routing clearly justifies its selection and maintenance cost
 - Route filenames, grouping, nesting, and destination types remain workspace-defined rather than imposed by a project taxonomy
-- Map routes point to Memory and other sources without replacing their detail
+- Maps retain each destination's detail and authority without replacing its current information.
 - The installable source begins with no project-specific Map route files
 
 ## Verification

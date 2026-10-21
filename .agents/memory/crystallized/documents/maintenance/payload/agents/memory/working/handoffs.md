@@ -15,6 +15,7 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 
 ## Contract
 
+- The title is followed by `## What state must survive this transfer or planned resumption?` and a short paragraph describing the folder.
 - Frontmatter preserves #Extension, #Memory, #Handoff, #AgentCommunication, and #Contextual classification
 - Check Entries when work resumes, transfers, is delegated or interrupted, or is reviewed after a context break. Create and seal a Handoff only when an actual transfer or planned resumption needs fixed boundary state while the active record may change.
 - Routine pauses, ordinary closeout, and possible future interruptions do not create a Handoff
@@ -23,7 +24,7 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 - Boundary status, next action, blockers, and verification state appear in the Handoff itself. A live working record may supplement but not replace the snapshot
 - The snapshot remains unchanged while serving as a sealed Handoff. Later state belongs in the active working record or a new Handoff. Category transitions follow the destination's rules
 - Handoffs remain contextual rather than complete history or accepted truth
-- Useful material is extracted and the handoff is archived after it no longer supports an active transfer
+- Useful material is extracted before moving a Handoff that no longer supports an active transfer.
 
 ## Verification
 

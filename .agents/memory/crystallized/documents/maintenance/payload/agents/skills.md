@@ -17,7 +17,8 @@ The [current Skills document](../../../framework/primitives/skills.md) defines t
 
 ## Contract
 
-- Frontmatter uses #Core and #Skill without a loading tag. The category is optional, has no dependents and is checked before specialized work that may benefit from a capability.
+- The title is followed by `## Which specialized capability would help with this work?` and a short paragraph describing the folder.
+- Frontmatter uses #Core and #Skill without a loading tag. Check the category when work may benefit from a capability.
 - The standard `route` exposes ordinary `.agents/skills/{skill-name}/SKILL.md` packages. A package the user owns is maintained like other user-owned Markdown: Index fills a missing native `name` and `description` in `SKILL.md` and the usual description and tags in other package Markdown, and Repair maintains its links. A managed package stays with its managing Update
 - Routed scopes beneath the Skills `root route` may expose direct native Skill packages through the same contract for generated `entries`
 - The selected `SKILL.md` defines its metadata, use, instructions, resource organization, and on-demand loading

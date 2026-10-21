@@ -54,7 +54,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 
 - Source and repository authored loader content stay aligned. Locally maintained Entries may differ in descriptions, tags and selected roots. The shipped rows require Directives and Memory, while Guidance, Maps, Patterns, Skills and Templates stay on demand.
 - Entries preserve authored root links, order and intentional omissions. They may include foreign leaves or catalogues and must not flatten nested catalogues.
-- The shipped loader has 29 non-empty lines before `## Entries`, excluding that heading and its body. The full file has 37 non-empty lines, including the Entries heading and seven rows. Count any line containing a non-whitespace character, including headings and list items. This is a review baseline, not a ceiling.
+- Measured at `a438be5bd`, the shipped loader has 29 non-empty lines before `## Entries`, excluding that heading and its body. The full file has 37 non-empty lines, including the Entries heading and seven rows. Count any line containing a non-whitespace character, including headings and list items. This is a review baseline, not a ceiling.
 
 ## Verification
 

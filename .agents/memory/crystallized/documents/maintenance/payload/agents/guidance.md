@@ -15,7 +15,8 @@ The [current Guidance document](../../../framework/primitives/guidance.md) defin
 
 ## Contract
 
-- Frontmatter uses #Core and #Guidance without a loading tag. Guidance is optional and on demand, with no dependency from other categories.
+- The title is followed by `## What approach is recommended, and when does it fit?` and a short paragraph describing the folder.
+- Frontmatter uses #Core and #Guidance without a loading tag. The route stays on demand.
 - The entrypoint directs agents to check for Guidance when a recurring situation or choice may have an established approach
 - Routed Guidance explains its situation, recommended approach, reasons, and tradeoffs
 - Guidance remains advice. Explain an adaptation when the difference matters to the result

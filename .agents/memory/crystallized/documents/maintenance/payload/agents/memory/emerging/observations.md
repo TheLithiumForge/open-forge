@@ -15,6 +15,7 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Contract
 
+- The title is followed by `## What was observed, and why might it matter later?` and a short paragraph describing the folder.
 - Frontmatter preserves #Extension, #Memory, #Observation, #AgentLearning, #Contextual, and #Candidate classification
 - Concrete occurrences or patterns noticed in evidence are saved before handoff or closeout when they may matter later
 - One reusable, surprising or costly occurrence may justify capture. Keep concrete evidence and occurrence details clear enough to verify and reuse.

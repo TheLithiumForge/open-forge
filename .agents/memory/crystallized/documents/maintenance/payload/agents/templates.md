@@ -15,14 +15,15 @@ The [current Templates contract](../../../framework/primitives/templates.md) def
 
 ## Contract
 
+- The title is followed by `## What starting content can be copied, adapted, and maintained independently?` and a short paragraph describing the folder.
 - Templates are copy-ready starting files. After copying and adapting one, the destination is maintained independently.
 - The entrypoint explains when to choose a Template, how the result becomes independent, how continuing requirements differ from starting content, and how customization works. Restoration follows the inherited Loader rule: removed defaults stay removed unless the user asks to restore them.
 - Every Template makes its selection information visible before use: its description and source instructions state the need and main question. Packaged starters use removable prompts where their own format calls for them.
 - Focused prompts request necessary content once, in a readable order. Optional sections are clearly marked, and adapted results preserve the destination's required structure.
 - Template prose is never hidden in HTML comments. Canonical Templates use visible Markdown and do not emit HTML guard comments. Exact legacy Open Forge control-marker pairs remain input-only compatibility, as defined by the [Markdown compatibility contract](../../../framework/markdown/compatibility.md).
 - Templates are on-demand. The entrypoint uses #Core and #Template without a load-policy tag so its description remains visible while its Axioms load only when the route is selected.
-- A Template result receives destination-specific metadata in the workspace's chosen frontmatter form, scope, state, authority, and relationships. Native `SKILL.md` keeps its native metadata. The source Template does not control the result, and later Template changes do not update it. The file-format section of the [workspace guide](README.md) defines metadata forms and placement.
-- Continuing guidance or requirements belong to the matching #Core route. A Template may link to that source without copying its complete rules.
+- A Template result receives destination-specific metadata in the workspace's chosen frontmatter form, scope, state, authority, and relationships. A native file keeps its own metadata. The source Template does not control the result, and later Template changes do not update it. The file-format section of the [workspace guide](README.md) defines metadata forms and placement.
+- Continuing advice or requirements belong to their defining source. A Template may link to that source without copying its complete rules.
 - Generic Templates are fallbacks. A specialized Template exists only when it provides meaningfully different starting content.
 - Templates remain readable and usable through ordinary file operations. Tools may make selection and copying cheaper without defining Template meaning or result state.
 - Users may edit, replace, scope, or remove templates. Normal installation or upgrade does not silently restore a removed template.

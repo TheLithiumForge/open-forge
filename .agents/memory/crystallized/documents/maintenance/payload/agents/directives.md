@@ -15,8 +15,9 @@ The [current Directive contract](../../../framework/primitives/directives.md) de
 
 ## Contract
 
+- The title is followed by `## What behavior is required in this scope?` and a short paragraph describing the folder.
 - Frontmatter uses #LoadNow, #Core, and #Directive so the `root route` enters baseline context with its primitive type visible
-- The category is optional and nothing else depends on it. When its loader row is enabled, #LoadNow reads its catalogue and applicable rule files in order.
+- When its loader row is enabled, #LoadNow reads its catalogue and applicable rule files in order.
 - Sibling Directives under the root apply across the workspace. A child catalogue narrows the scope. It may stay on demand, or carry #LoadNow and applicable file conditions when its rules must load automatically.
 - Child Directives add to active parent Directives and report conflicts instead of creating hidden precedence
 - Every sibling Directive carries #LoadNow and keeps its instructions under a non-empty level-2 `## Instructions` heading

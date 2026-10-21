@@ -15,10 +15,11 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 ## Contract
 
-- Frontmatter preserves #LoadNow, #Memory, #Crystallized and #CurrentTruth. The state is optional and needs Memory.
+- The title is followed by `## What accepted knowledge should remain current within this scope?` and a short paragraph describing the folder.
+- Frontmatter preserves #LoadNow, #Memory, #Crystallized and #CurrentTruth.
 - Entries are checked before deciding no accepted knowledge applies. Only accepted current knowledge belongs here, within its scope and under the loader's acceptance rule. Tags, repetition and confidence do not establish acceptance.
 - Changed accepted direction updates, splits, merges or reshapes existing records rather than adding a competing current version.
-- Superseded material is archived or linked with enough context to understand the change.
+- Superseded material is moved or linked with enough context to understand the change.
 - Decisions and Documents are distinct optional Extension roles. Core does not ship their routes or force all accepted knowledge into Memory.
 - The installed state catalogue contains no project records and starts with empty Entries.
 
