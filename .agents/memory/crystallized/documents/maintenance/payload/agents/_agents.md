@@ -19,13 +19,13 @@ This route contains maintainer contracts for reviewed Core and Extension install
 
 ## Entries
 
+- [Current maintenance contract for the installed project guide](README.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Guide
 - [Current maintenance contract for the installable Directives Core category entrypoint](directives.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Directive
 - [Current maintenance contract for the installable Guidance Core category and its optional Collaboration Extension](guidance.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Guidance
 - [Current maintenance contract for the installable Open Forge loader and its dogfood counterpart](loader.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Framework #Loader #Routing
 - [Current maintenance contract for the installable Maps Core category entrypoint](map.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Map
 - [Current maintenance contracts for the Core Memory root and its standard state routes](memory/_memory.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #MemoryModel
 - [Current maintenance contract for the installable Patterns Core category entrypoint](patterns.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Pattern
-- [Current maintenance contract for the installed project guide](README.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Guide
 - [Current maintenance contract for the installable Skills Core category entrypoint](skills.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Skill
 - [Current maintenance contract for the installable Templates Core category entrypoint](templates.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Template
 - [Current maintenance contract for the optional Workflow Support Skill and its recipe catalogue](workflows.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Extension #Workflow

@@ -24,5 +24,5 @@ Help has no separate Technical Design.
 
 ## Entries
 
-- [Resolve built-in topics and append the shipped guide's file formats without workspace reads](behavior.md) - #Memory #Crystallized #CLI #Command #Contract #Help #Behavior #CurrentTruth
-- [List help topics and print concepts in text or JSON](interface.md) - #Memory #Crystallized #CLI #Command #Contract #Help #Interface #CurrentTruth
+- [Resolve built-in topics and append the shipped guide's file formats without workspace reads](behavior.md) - #Memory #Crystallized #CLI #Command #Contract #Help #Behavior #CurrentTruth #Evergreen
+- [List help topics and print concepts in text or JSON](interface.md) - #Memory #Crystallized #CLI #Command #Contract #Help #Interface #CurrentTruth #Evergreen

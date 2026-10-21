@@ -33,10 +33,9 @@ Generated `Entries` provide navigation only.
 
 ## Entries
 
-- [Routing-only entrypoint for route include contracts](include/_include.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Include #Mutation #CurrentTruth
-- [Routing-only entrypoint for route exclude contracts](exclude/_exclude.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Exclude #Mutation #CurrentTruth
-
 - [Routing-only entrypoint for the accepted `route create` command contracts](create/_create.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Create #Template #Mutation #CurrentTruth
+- [Routing-only entrypoint for the accepted route exclude command contracts](exclude/_exclude.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Exclude #Mutation #CurrentTruth
+- [Routing-only entrypoint for the accepted route include command contracts](include/_include.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Include #Mutation #CurrentTruth
 - [Routing-only entrypoint for the accepted `route init` command contracts](init/_init.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Init #Entrypoint #CurrentTruth
 - [Routing-only entrypoint for the accepted `route inspect` command contracts](inspect/_inspect.md) - #Memory #Crystallized #CLI #Release #Command #Route #Inspect #Contract #CurrentTruth
 - [Routing-only entrypoint for the accepted current `route list` command contracts](list/_list.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #List #CurrentTruth
