@@ -517,7 +517,7 @@ git diff
 
 ## Measure context size
 
-Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. The current base has 20 Markdown files, with 7 read at startup through `AGENTS.md`.
+Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. The current base has 22 Markdown files, with 8 read at startup through `AGENTS.md`.
 
 The README uses the CLI's estimate method: divide each file's character count by four, round up, and sum. The current base gives about 3.9k estimated tokens for the 7 startup files and about 23.1k for all 20. The startup files are `AGENTS.md`, the loader, the Directives and Memory entrypoints, and the Crystallized, Emerging and Working entrypoints. The `open-forge-cli` Skill entry file, about 1.1k, is read before CLI commands other than `context`, and its reference files load only when the Skill points to them.
 
