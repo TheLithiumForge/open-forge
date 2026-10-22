@@ -89,7 +89,8 @@ internal sealed class RouteListRow
     internal static RouteListRow Unlisted(string path)
         => new($"./{path}", path, null, null, 0, 0, RouteListRowKind.RoutedLeaf,
             path, [], null,
-            new RouteListProvenance(RouteListSelectionProvenance.LoaderRoot, RouteListSourceProvenance.AuthoredLeaf, false)) { IsUnlisted = true };
+            new RouteListProvenance(RouteListSelectionProvenance.LoaderRoot, RouteListSourceProvenance.AuthoredLeaf, false))
+        { IsUnlisted = true };
 
     internal RouteListRow WithDirectChildCount(int? count)
         => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, count, Provenance) { IsUnlisted = IsUnlisted };

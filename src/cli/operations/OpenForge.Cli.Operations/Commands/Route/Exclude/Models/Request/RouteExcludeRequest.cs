@@ -13,6 +13,9 @@ internal sealed record RouteExcludeRequest
 
     internal RouteInclusionRequest ToInclusion() => new()
     {
-        Workspace = Workspace, File = File, DryRun = DryRun, Action = RouteInclusionAction.Exclude,
+        Workspace = Workspace,
+        File = File,
+        DryRun = DryRun,
+        Action = RouteInclusionAction.Exclude,
     };
 }

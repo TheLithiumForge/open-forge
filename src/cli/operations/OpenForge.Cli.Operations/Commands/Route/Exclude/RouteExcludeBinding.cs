@@ -23,7 +23,9 @@ internal static class RouteExcludeBinding
     internal static CliRequestBinding<RouteExcludeRequest, RouteExcludeResult> CreateRequestBinding(RouteExcludeSymbols symbols, RouteExcludeBindingComponents components)
         => new()
         {
-            Command = symbols.Command, Help = components.Help, WorkspaceRequirement = CliWorkspaceRequirement.Required,
+            Command = symbols.Command,
+            Help = components.Help,
+            WorkspaceRequirement = CliWorkspaceRequirement.Required,
             Binder = (parse, invocation) => RouteExcludeRequestBinder.Bind(parse.Result, invocation, symbols),
             InvalidResultFactory = RouteExcludeInvalidResultFactory.Create,
             Operation = components.Operation.ExecuteAsync,

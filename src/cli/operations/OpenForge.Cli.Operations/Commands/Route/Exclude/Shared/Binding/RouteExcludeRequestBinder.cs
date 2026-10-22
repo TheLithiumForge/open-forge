@@ -23,7 +23,9 @@ internal static class RouteExcludeRequestBinder
         var workspace = invocation.Workspace ?? throw new InvalidOperationException("A selected workspace is required.");
         return CliBindResult<RouteExcludeRequest, RouteExcludeResult>.Bound(new RouteExcludeRequest
         {
-            Workspace = workspace, File = file, DryRun = parse.GetValue(symbols.DryRun),
+            Workspace = workspace,
+            File = file,
+            DryRun = parse.GetValue(symbols.DryRun),
         });
     }
 }

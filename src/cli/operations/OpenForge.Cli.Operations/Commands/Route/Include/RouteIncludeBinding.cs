@@ -29,7 +29,9 @@ internal static class RouteIncludeBinding
     internal static CliRequestBinding<RouteIncludeRequest, RouteIncludeResult> CreateRequestBinding(RouteIncludeSymbols symbols, RouteIncludeBindingComponents components)
         => new()
         {
-            Command = symbols.Command, Help = components.Help, WorkspaceRequirement = CliWorkspaceRequirement.Required,
+            Command = symbols.Command,
+            Help = components.Help,
+            WorkspaceRequirement = CliWorkspaceRequirement.Required,
             Binder = (parse, invocation) => RouteIncludeRequestBinder.Bind(parse.Result, invocation, symbols),
             InvalidResultFactory = RouteIncludeInvalidResultFactory.Create,
             Operation = components.Operation.ExecuteAsync,

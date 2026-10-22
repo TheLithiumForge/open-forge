@@ -16,7 +16,9 @@ public sealed class RouteExcludeOutputSnapshotTests
         using var workspace = new RouteInclusionWorkspace("- [Guide](../guide.md) - #Docs");
         var result = await new RouteExcludeOperation().ExecuteAsync(new RouteExcludeRequest
         {
-            Workspace = workspace.Workspace, File = "guide.md", DryRun = true,
+            Workspace = workspace.Workspace,
+            File = "guide.md",
+            DryRun = true,
         }, TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         CommandOutputRenderers<RouteExcludeResult>.From(RouteExcludePresentation.Rendering,

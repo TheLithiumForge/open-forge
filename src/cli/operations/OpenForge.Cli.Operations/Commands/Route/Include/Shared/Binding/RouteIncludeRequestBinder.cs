@@ -44,7 +44,9 @@ internal static class RouteIncludeRequestBinder
         var workspace = invocation.Workspace ?? throw new InvalidOperationException("A selected workspace is required.");
         return CliBindResult<RouteIncludeRequest, RouteIncludeResult>.Bound(new RouteIncludeRequest
         {
-            Workspace = workspace, File = file, DryRun = parse.GetValue(symbols.DryRun),
+            Workspace = workspace,
+            File = file,
+            DryRun = parse.GetValue(symbols.DryRun),
             Description = descriptionFacts.IsExplicit ? description : null,
             Tags = tagFacts.IsExplicit ? tags : null,
             ApplyTo = applyFacts.IsExplicit ? patterns.DistinctBy(pattern => pattern.Text, StringComparer.Ordinal).OrderBy(pattern => pattern.Text, StringComparer.Ordinal).ToImmutableArray() : null,

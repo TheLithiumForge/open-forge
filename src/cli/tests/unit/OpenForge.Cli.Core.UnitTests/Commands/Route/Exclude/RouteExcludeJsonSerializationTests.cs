@@ -19,11 +19,16 @@ public sealed class RouteExcludeJsonSerializationTests
     {
         var result = new RouteExcludeResult
         {
-            Workspace = null, Requested = "guide.md", DryRun = true,
+            Workspace = null,
+            Requested = "guide.md",
+            DryRun = true,
             Outcome = new RouteInclusionOutcome
             {
-                Path = "guide.md", Before = "- [Guide](../guide.md)", After = null,
-                NoOp = noOp, Verified = noOp,
+                Path = "guide.md",
+                Before = "- [Guide](../guide.md)",
+                After = null,
+                NoOp = noOp,
+                Verified = noOp,
             },
         };
         var rendered = CliRenderingStage.Render(new CliPresentationRequest<RouteExcludeResult>(result,

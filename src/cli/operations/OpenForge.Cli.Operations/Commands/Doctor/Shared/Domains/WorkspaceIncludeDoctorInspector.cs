@@ -29,5 +29,6 @@ internal static class WorkspaceIncludeDoctorInspector
             DoctorDomainSupport.Subject(DoctorSubjectKind.Path, file.Path),
             DoctorDomainSupport.Provenance(DoctorDomainKind.WorkspaceEntry, DoctorProvenanceSource.WorkspaceEntry,
                 file.Registered ? WorkspaceSettingsDefinitions.RelativePath : SourceLogicalPath.LoaderPath),
-            [new DoctorAuthoredValueEvidence(file.Path, Location: null)]) with { IsIncludedFile = true };
+            [new DoctorAuthoredValueEvidence(file.Path, Location: null)]) with
+        { IsIncludedFile = true };
 }

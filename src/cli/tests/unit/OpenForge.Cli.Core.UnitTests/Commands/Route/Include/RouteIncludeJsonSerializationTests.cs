@@ -19,11 +19,16 @@ public sealed class RouteIncludeJsonSerializationTests
     {
         var result = new RouteIncludeResult
         {
-            Workspace = null, Requested = "guide.md", DryRun = true,
+            Workspace = null,
+            Requested = "guide.md",
+            DryRun = true,
             Outcome = new RouteInclusionOutcome
             {
-                Path = "guide.md", Before = null, After = "- [Guide](../guide.md)",
-                NoOp = noOp, Verified = noOp,
+                Path = "guide.md",
+                Before = null,
+                After = "- [Guide](../guide.md)",
+                NoOp = noOp,
+                Verified = noOp,
             },
         };
         var rendered = CliRenderingStage.Render(new CliPresentationRequest<RouteIncludeResult>(result,

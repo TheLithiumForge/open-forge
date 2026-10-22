@@ -39,7 +39,9 @@ internal static class RouteExcludeReportSelector
         var recovery = RouteInclusionWireVocabulary.Recovery(outcome.Recovery);
         return new CliReport<RouteExcludeData>
         {
-            Command = result.Command, Status = result.Status, Headline = new CliHeadline(sentence, kind),
+            Command = result.Command,
+            Status = result.Status,
+            Headline = new CliHeadline(sentence, kind),
             HeadlineFindingCode = result.Status is CliSemanticStatus.Invalid or CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete ? code : null,
             Workspace = result.WorkspacePath is { } workspace ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit) : null,
             Findings = code is null ? [] :
@@ -54,7 +56,8 @@ internal static class RouteExcludeReportSelector
             ],
             Effects = outcome.Effects.Select(effect => new CliEffect
             {
-                Path = effect.Path, Kind = effect.Path == ".agents/loader.md" ? CliEffectKind.Section : CliEffectKind.Setting,
+                Path = effect.Path,
+                Kind = effect.Path == ".agents/loader.md" ? CliEffectKind.Section : CliEffectKind.Setting,
                 Action = effect.Before is null ? CliEffectAction.Created : CliEffectAction.Replaced,
                 Outcome = RouteInclusionWireVocabulary.Effect(effect.State),
                 Before = selection.Detail >= CliDetail.Full ? effect.Before : null,
@@ -65,8 +68,13 @@ internal static class RouteExcludeReportSelector
             Next = result.Next,
             Data = new RouteExcludeData
             {
-                Mode = result.DryRun ? "dry-run" : "apply", Target = path, Before = outcome.Before, After = outcome.After,
-                RegisteredBefore = outcome.RegisteredBefore, RegisteredAfter = outcome.RegisteredAfter, Verified = outcome.Verified,
+                Mode = result.DryRun ? "dry-run" : "apply",
+                Target = path,
+                Before = outcome.Before,
+                After = outcome.After,
+                RegisteredBefore = outcome.RegisteredBefore,
+                RegisteredAfter = outcome.RegisteredAfter,
+                Verified = outcome.Verified,
             },
         };
     }

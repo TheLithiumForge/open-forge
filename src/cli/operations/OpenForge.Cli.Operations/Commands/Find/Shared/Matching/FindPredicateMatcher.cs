@@ -159,7 +159,8 @@ internal sealed class FindPredicateMatcher
                 input.Layer.Layer,
                 tag.Location,
                 null,
-                occurrence) { AuthoredPath = tag.Path });
+                occurrence)
+            { AuthoredPath = tag.Path });
         }
 
         return new FindPredicateMatchFacts(evidence, [], false);

@@ -147,8 +147,13 @@ internal sealed class RouteInclusionPlanBuilder
         var noOp = changes.Count == 0;
         var preview = new RouteInclusionOutcome
         {
-            Path = path, Before = before, After = after, RegisteredBefore = registered,
-            RegisteredAfter = external && include, NoOp = noOp, Verified = noOp,
+            Path = path,
+            Before = before,
+            After = after,
+            RegisteredBefore = registered,
+            RegisteredAfter = external && include,
+            NoOp = noOp,
+            Verified = noOp,
             Recovery = noOp ? RouteInclusionRecoveryState.NotRequired : RouteInclusionRecoveryState.NotCreated,
             Effects = changes.Select(change => new RouteInclusionEffect(
                 Path.GetRelativePath(request.Workspace.LexicalRoot, change.LogicalPath).Replace('\\', '/'),
@@ -157,7 +162,9 @@ internal sealed class RouteInclusionPlanBuilder
         };
         return new RouteInclusionPlanBuild(preview, new RouteInclusionPlan
         {
-            Request = request, Preview = preview, Changes = changes.ToImmutable(),
+            Request = request,
+            Preview = preview,
+            Changes = changes.ToImmutable(),
             RecoveryTargets = recovery.ToImmutable(),
             Observations = observations.DistinctBy(item => item.LogicalPath, StringComparer.Ordinal).ToImmutableArray(),
         });

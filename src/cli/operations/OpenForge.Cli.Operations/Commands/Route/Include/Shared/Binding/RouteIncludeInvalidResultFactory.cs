@@ -15,7 +15,8 @@ internal static class RouteIncludeInvalidResultFactory
     internal static RouteIncludeResult Invalid(CliWorkspace? workspace, string file, string cause)
         => new()
         {
-            Workspace = workspace, Requested = file,
+            Workspace = workspace,
+            Requested = file,
             Outcome = new RouteInclusionOutcome { Status = CliSemanticStatus.Invalid, Code = RouteInclusionFindingCode.InvalidInput, Cause = $"'{file}': {cause}" },
         };
 }

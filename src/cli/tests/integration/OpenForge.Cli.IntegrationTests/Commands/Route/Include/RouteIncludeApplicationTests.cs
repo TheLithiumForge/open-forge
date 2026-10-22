@@ -21,7 +21,9 @@ public sealed class RouteIncludeApplicationTests
         var bytes = workspace.Bytes("guide.md");
         var request = new RouteIncludeRequest
         {
-            Workspace = workspace.Workspace, File = "guide.md", Description = "Guide",
+            Workspace = workspace.Workspace,
+            File = "guide.md",
+            Description = "Guide",
             Tags = metadata ? ["LoadNow", "Docs"] : null,
             ApplyTo = metadata ? ApplyToPatternExpressionParser.Parse("src/**").Patterns : null,
         };

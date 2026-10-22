@@ -16,8 +16,11 @@ public sealed class RouteIncludeOutputSnapshotTests
         using var workspace = new RouteInclusionWorkspace();
         var result = await new RouteIncludeOperation().ExecuteAsync(new RouteIncludeRequest
         {
-            Workspace = workspace.Workspace, File = "guide.md", DryRun = true,
-            Description = "Guide", Tags = ["LoadNow", "Docs"],
+            Workspace = workspace.Workspace,
+            File = "guide.md",
+            DryRun = true,
+            Description = "Guide",
+            Tags = ["LoadNow", "Docs"],
         }, TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         CommandOutputRenderers<RouteIncludeResult>.From(RouteIncludePresentation.Rendering,
