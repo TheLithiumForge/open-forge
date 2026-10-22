@@ -1,7 +1,7 @@
-Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.
+Cannot clean up: another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was removed.
 Workspace: <workspace>
   Error  cleanup  Workspace lock is unavailable
-         Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.
+         Cannot clean up: another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was removed.
          open-forge cleanup --workspace <workspace>
          Rerun Cleanup from a fresh catalogue.
   <recovery-bundle-1>

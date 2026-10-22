@@ -41,6 +41,6 @@ Select relevant scopes from returned descriptions and batch their source IDs. Af
 - [Reading and discovery](references/discovery.md): context, tags, headings, direct references, route inspection, and health checks. Find candidates, inspect their relationships, then load only the relevant chain or bounded linked context.
 - [Route maintenance](references/routes.md): create, update, move, remove, index, repair, and cleanup. Read before changing routes or generated navigation.
 - [Framework and packages](references/packages.md): install setup, update, removal, all Extension commands, and all Library commands. Read for an authorized lifecycle task.
-- [Shared options and results](references/common.md): global flags, source syntax, previews, unattended execution, permission boundaries, and exit codes. Read before an unfamiliar command or when interpreting a result.
+- [Shared options and results](references/common.md): global flags, source syntax, worktrees and sandboxes, previews, unattended execution, permission boundaries, and exit codes. Read before an unfamiliar command or when interpreting a result.
 
 Preview each mutation with `--dry-run` and inspect its plan before applying. Run installation or package changes only when requested. `--automatic`, `--force`, and `--allow-path` add no human authorization. Check semantic status and exit code. Resolve an in-scope suggested next step or report the boundary when a command is incomplete or blocked. Do not force the same effect through manual edits.

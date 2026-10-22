@@ -154,7 +154,7 @@ internal static class RouteInitWording
             RouteInitFindingCode.MetadataUnsafe => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleMetadataIsUnsafe(),
             RouteInitFindingCode.GeneratedRegionUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleGeneratedRegionIsUnsafe(),
             RouteInitFindingCode.LifecycleBlocked => global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.TitleOwnershipRecordIsBlocked(),
-            RouteInitFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsHeld(),
+            RouteInitFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable(),
             RouteInitFindingCode.TargetChanged => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetChanged(),
             RouteInitFindingCode.RecoveryConflict => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryDataBlocksTheChange(),
             RouteInitFindingCode.FrameworkPayloadUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleFrameworkPayloadIsUnavailable(),

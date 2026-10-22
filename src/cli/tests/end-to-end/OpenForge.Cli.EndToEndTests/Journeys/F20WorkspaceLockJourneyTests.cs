@@ -15,6 +15,7 @@ public sealed class F20WorkspaceLockJourneyTests
     private const string BNotePath = ".agents/guidance/f20-b.md";
     private const string AChangedNotePath = ".agents/guidance/f20-a-after-block.md";
     private const string MarkerPath = "first-writer.txt";
+    private const string DataHomeVariable = "OPENFORGE_DATA_HOME";
 
     [Fact(DisplayName = "F20 X21 C05-09 a live OS writer blocks A, leaves B independent, and permits a real retry")]
     [Trait("Feature", Feature)]
@@ -166,6 +167,40 @@ public sealed class F20WorkspaceLockJourneyTests
         Assert.Equal(changedNoteBytes, File.ReadAllBytes(workspaceA.Combine(AChangedNotePath)));
         workspaceA.LockStore.AssertPersistentZeroByteLock(workspaceA.Path);
         workspaceA.LockStore.AssertNoRecoveryArtifacts(workspaceA.Path);
+    }
+
+    [Fact(DisplayName = "F20 an unusable data home blocks a writer, names OPENFORGE_DATA_HOME, and writes nothing")]
+    [Trait("Feature", Feature)]
+    [Trait("Evidence", "EndToEnd")]
+    [Trait("Journey", "F20")]
+    public async Task UnusableDataHomeBlocksWriterAndNamesTheSetting()
+    {
+        using var workspace = PublishedJourneyWorkspace.Create("e2e-f20-data-home");
+        workspace.ExpectCoreInstall();
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
+        AssertCompleted(install, "install");
+        workspace.WriteText(
+            ANotePath,
+            OpenForgeDocumentSeed.Metadata(
+                description: "F20 A note",
+                tags: ["Guidance", "F20"],
+                body: "\n# F20 A Note\n\nA note that index would list.\n"));
+
+        // A sandbox that can write only inside the workspace leaves the data home unusable. A relative value is
+        // the portable way to reach the same state: the CLI rejects it instead of falling back to the profile.
+        var environment = new Dictionary<string, string>(workspace.ProcessEnvironment)
+        {
+            [DataHomeVariable] = "relative-data-home",
+        };
+        var blocked = await PublishedJourneyProcess.RunWithoutWritesAsync(
+            workspace.Target,
+            workspace.Path,
+            workspace.SnapshotState,
+            ["index"],
+            environment);
+
+        AssertBlocked(blocked, "index with an unusable data home");
+        Assert.Contains(DataHomeVariable, blocked.StandardError, StringComparison.Ordinal);
     }
 
     private static async Task InstallPairAsync(

@@ -21,8 +21,8 @@ internal static class CliFindingWording
     internal static string InvalidInput(string command, string problem) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.InvalidInput(command, problem);
     internal static string WorkspaceUnavailable(string path) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.WorkspaceUnavailable(path);
     internal static string WorkspaceUnsafe(string path, string reason) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.WorkspaceUnsafe(path, reason);
-    internal static string WorkspaceLockUnavailable() => global::OpenForge.Cli.OutputText.Shared.SharedText.MessageAnotherOpenForgeCommandHoldsTheWorkspaceLockNothingWasChanged();
-    internal static string WorkspaceLockUnavailableReason() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelAnotherOpenForgeCommandHoldsTheWorkspaceLock();
+    internal static string WorkspaceLockUnavailable() => global::OpenForge.Cli.OutputText.Shared.SharedText.MessageWorkspaceLockHeldOrDataFolderUnwritableNothingWasChanged();
+    internal static string WorkspaceLockUnavailableReason() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelWorkspaceLockHeldOrDataFolderUnwritable();
     internal static string FilesystemOperationFailed() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheFilesystemOperationFailed();
     internal static string FilesystemAccessDenied() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFilesystemAccessWasDenied();
     internal static string InvalidJson() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheContentIsNotValidJson();

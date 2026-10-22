@@ -139,7 +139,7 @@ internal static class RouteCreateWording
         RouteCreateFindingCode.MetadataUnsafe => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleMetadataIsUnsafe(),
         RouteCreateFindingCode.TemplateUnsafe => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleTemplateIsUnsafe(),
         RouteCreateFindingCode.GeneratedRegionUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleGeneratedRegionIsUnsafe(),
-        RouteCreateFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsHeld(),
+        RouteCreateFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable(),
         RouteCreateFindingCode.TargetChanged => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetChanged(),
         RouteCreateFindingCode.RecoveryConflict => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryDataBlocksTheChange(),
         RouteCreateFindingCode.InspectionIncomplete => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleInspectionIsIncomplete(),

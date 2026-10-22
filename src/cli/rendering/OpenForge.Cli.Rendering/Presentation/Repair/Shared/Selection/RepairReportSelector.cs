@@ -586,7 +586,7 @@ internal static class RepairReportSelector
 
         if (finding.Code.ToString() == "WorkspaceLockUnavailable")
         {
-            return global::OpenForge.Cli.OutputText.Shared.SharedText.LabelAnotherOpenForgeCommandHoldsTheWorkspaceLock();
+            return global::OpenForge.Cli.OutputText.Shared.SharedText.LabelWorkspaceLockHeldOrDataFolderUnwritable();
         }
 
         return FindingMessage(result, finding).Trim().TrimEnd('.');

@@ -259,6 +259,22 @@ change that can't establish trusted lifecycle facts is blocked. Follow the
 suggested next action in the result, then run the command again so it starts
 from the workspace's current state.
 
+### Worktrees, sandboxes and the data folder
+
+Each directory is its own workspace. Every Git worktree has its own locks and
+recovery bundles, so commands in different worktrees never wait for each other.
+Run the CLI inside the worktree or select it with `--workspace <path>`.
+
+Writing commands take the workspace lock and keep recovery bundles in a
+per-user data folder outside the workspace, such as `%LOCALAPPDATA%\OpenForge`
+on Windows or `~/.local/share/OpenForge` on Linux. Set `OPENFORGE_DATA_HOME`
+to an absolute folder to use another one, for example when a sandbox lets a
+command write only inside its worktree. Choose a folder outside the workspace or
+one that Git ignores. A relative value is not used, so writing commands stop
+instead of falling back to the default folder. When the data folder cannot be
+written, they report that the workspace lock is unavailable and change nothing.
+Reading commands such as `context` and `find` do not use it.
+
 ## Read the workspace
 
 ### `status`

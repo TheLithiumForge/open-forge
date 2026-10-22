@@ -1,4 +1,4 @@
-Cannot remove guidance/old guide: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot remove guidance/old guide: Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
 Workspace: <workspace>
   .agents/guidance/old guide.md  not started
   .agents/guidance/old guide.overwrite.md  not started

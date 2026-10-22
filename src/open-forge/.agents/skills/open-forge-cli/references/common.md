@@ -35,6 +35,10 @@ Every command accepts these flags. Extension Create accepts `--workspace` but cr
 
 Quote values containing spaces and glob expressions. Repeat flags only where the command supports repetition. Route List accepts both `--depth=2` and `--depth 2`. Content and region selectors take one comma-separated value, such as `--content frontmatter,body`.
 
+## Worktrees And Sandboxes
+
+Each directory is its own workspace, so commands in different Git worktrees use separate locks and recovery bundles. Writing commands keep both in a per-user data folder outside the workspace. When a sandbox blocks that folder, they report the workspace lock as unavailable and change nothing. Set `OPENFORGE_DATA_HOME` to an absolute writable folder, outside the workspace or ignored by Git, and rerun.
+
 ## Preview And Apply
 
 `--dry-run` reports the complete checked mutation plan without writing files. Review destinations, replacements, deletions, reference changes, and recovery effects. Apply the same authorized request without `--dry-run` after review.

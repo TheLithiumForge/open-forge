@@ -30,8 +30,10 @@ Environment.GetFolderPath(
   Environment.SpecialFolderOption.Create)
 ```
 
-and uses only the application-owned `OpenForge/recovery/v1` subtree. There is no
-temporary-directory, repository, `HOME`, or custom-platform fallback.
+and uses only the application-owned `OpenForge/recovery/v1` subtree. An absolute
+`OPENFORGE_DATA_HOME` replaces that special folder for both stores. A relative
+value leaves both stores unavailable. There is no temporary-directory,
+repository, `HOME`, or custom-platform fallback.
 
 Status, Doctor, and Cleanup are observers. They resolve the same special folder
 with `Environment.SpecialFolderOption.None` and never create the operating-

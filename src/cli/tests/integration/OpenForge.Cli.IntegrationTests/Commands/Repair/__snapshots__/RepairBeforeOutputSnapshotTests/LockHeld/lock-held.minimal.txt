@@ -1,4 +1,4 @@
-Cannot repair: another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot repair: another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
 Workspace: <workspace>
   Warning  .agents/docs/source.md:9:8  Broken link
          This link still needs repair.

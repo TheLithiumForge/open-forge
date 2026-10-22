@@ -184,7 +184,7 @@ internal static class RouteRemoveWording
         RouteRemoveFindingCode.OwnershipClaimed => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleSourceIsManaged(),
         RouteRemoveFindingCode.ReferenceUnsafe => global::OpenForge.Cli.OutputText.Route.Remove.RouteRemoveText.TitleLinkCannotBeDetachedSafely(),
         RouteRemoveFindingCode.GeneratedRegionUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionIsUnsafe(),
-        RouteRemoveFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsHeld(),
+        RouteRemoveFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable(),
         RouteRemoveFindingCode.TargetChanged => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetChanged(),
         RouteRemoveFindingCode.RecoveryConflict => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleBlocksRemoval(),
         RouteRemoveFindingCode.WorkspaceUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnavailable(),

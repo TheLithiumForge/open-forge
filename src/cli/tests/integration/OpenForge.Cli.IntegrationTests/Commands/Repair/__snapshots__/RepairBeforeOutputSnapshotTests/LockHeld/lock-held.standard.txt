@@ -1,7 +1,7 @@
-Cannot repair: another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot repair: another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
 Workspace: <workspace>
-  Error  repair.workspace-lock-unavailable  Workspace lock is held
-         Another Open Forge command holds the workspace lock. Nothing was changed.
+  Error  repair.workspace-lock-unavailable  Workspace lock is unavailable
+         Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
   Warning  .agents/docs/source.md:9:8  Broken link
          This link still needs repair.
   Warning  .agents/docs/source.md:10:10  Broken link

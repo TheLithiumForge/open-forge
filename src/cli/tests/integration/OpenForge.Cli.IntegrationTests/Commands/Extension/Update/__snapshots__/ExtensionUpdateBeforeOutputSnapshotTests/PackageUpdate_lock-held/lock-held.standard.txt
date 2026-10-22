@@ -1,7 +1,7 @@
-Cannot update toolkit: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot update toolkit: Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
 Workspace: <workspace>
   Error  toolkit  Workspace lock is unavailable
-         Another Open Forge command holds the workspace lock. Nothing was changed.
+         Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
   Source: <extension-source>
   Dependency closure: toolkit
   0 files unchanged

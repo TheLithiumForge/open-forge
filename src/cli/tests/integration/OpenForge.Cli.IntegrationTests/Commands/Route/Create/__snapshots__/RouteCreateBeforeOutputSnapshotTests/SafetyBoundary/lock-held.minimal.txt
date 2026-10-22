@@ -1,4 +1,4 @@
-Cannot create .agents/memory/project-alpha/overview.md: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot create .agents/memory/project-alpha/overview.md: Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
 Workspace: <workspace>
   .agents/memory/project-alpha/overview.md  not started
   .agents/memory/project-alpha/_project-alpha.md  not started
