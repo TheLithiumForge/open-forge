@@ -8,7 +8,7 @@ internal sealed record FindApplicabilityCondition
     internal FindApplicabilityCondition(string source, IEnumerable<string> patterns)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(source);
-        if (!SourceLogicalPath.IsCanonicalSource(source))
+        if (!SourceWorkspaceRelativePath.IsCanonical(source))
         {
             throw new ArgumentException("Find applicability condition sources must be canonical .agents paths.", nameof(source));
         }

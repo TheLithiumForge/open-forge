@@ -35,8 +35,12 @@ public sealed class F24LiteralContentJourneyTests
             ["context", "guidance/notes", "--additions-only", "--content=body,section:Examples"],
             workspace.ProcessEnvironment);
 
-        Assert.Equal(0, context.ExitCode);
+        // Guidance is on demand, so its catalogue is an addition read before the note. It has no Examples
+        // section, which Context reports as attention while still returning the note's literal content.
+        Assert.Equal(2, context.ExitCode);
         Assert.Equal(string.Empty, context.StandardError);
+        Assert.Contains("=== .agents/guidance/_guidance.md (guidance) ===", context.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains(".agents/guidance/_guidance.md has no section named Examples.", context.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Café — literal lifecycle payload", context.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("## Examples", context.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("```text", context.StandardOutput, StringComparison.Ordinal);

@@ -137,6 +137,27 @@ An entrypoint with no children has a placeholder line so the section is never am
 
 After a folder rename, Index keeps a compatibility entrypoint or renames a proven old canonical navigation file while preserving its rules. Without proof, Doctor explains how to keep the rules in the current entrypoint. Index completes only folders below existing roots and preserves exclusions and protected content.
 
+## Documents outside `.agents/`
+
+The loader can list any text file in the workspace, not only catalogues under `.agents/`. Agents then use the documents a project already has, where they live:
+
+```sh
+open-forge route include CONTRIBUTING.md --description "Contribution rules to follow" --tag LoadNow
+```
+
+That writes one line under the loader's `Entries`, which you can also write by hand:
+
+```md
+- [Contribution rules to follow](../CONTRIBUTING.md) - #LoadNow
+```
+
+- The line carries the description, tags and conditions, so the file needs no frontmatter. Another tool's frontmatter, such as a Cursor rule's `globs`, never decides when it loads.
+- A Markdown file with its own `## Entries`, such as `docs/team/_team.md`, is followed as a catalogue.
+- Index keeps these lines in their order and never writes to the files they point at.
+- `route include` records the files it adds under `roots` in `.agents/open-forge.json`, so `open-forge status` and `open-forge doctor` can report one whose line was removed or whose file went missing. The loader line still decides whether and how each file loads.
+- `open-forge route exclude CONTRIBUTING.md` removes the line and leaves the file alone. Deleting the line by hand has the same effect on what agents read.
+- Commands name these files by their path, such as `open-forge context ./CONTRIBUTING.md`.
+
 ## How an agent navigates
 
 1. Read the entrypoint and follow applicable Axioms and required-read instructions.

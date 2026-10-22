@@ -247,6 +247,16 @@ is not silently converted to a healthy installation.
 
 ## Coverage, Severity, And Resolution
 
+Included targets are checked without changing loader rows, registrations or files.
+A missing target uses `workspace.root-missing` with Error severity. A registered
+path with no loader row uses `workspace.detached` with Information severity.
+A registered path that Include would now reject uses `workspace.path-invalid`
+with Warning severity. This includes directories, files resolving inside
+`.agents/`, unsafe paths and files that are no longer UTF-8 text. Missing and
+rejected targets need a manual decision. Unlisted registrations remain informational.
+Restore or exclude missing targets and update or remove rejected registrations.
+Doctor never repairs these conditions.
+
 Each domain report exposes its identity, inspected boundary, coverage,
 limitations, counts, findings, and next actions. Domain coverage has three
 values:

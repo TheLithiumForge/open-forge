@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.Core.Framework.Settings;
@@ -20,7 +21,13 @@ internal static class InstallNextCommand
         if (configuration is not null)
         {
             setup = new(configuration.Configure, configuration.Preset,
-                configuration.Preset == Models.Configuration.InstallPreset.Custom ? configuration.Routes : [])
+                configuration.Preset switch
+                {
+                    Models.Configuration.InstallPreset.Custom => configuration.Routes,
+                    Models.Configuration.InstallPreset.Minimal => configuration.Routes
+                        .Where(row => row.Action != Models.Configuration.InstallRouteAction.Remove).ToImmutableArray(),
+                    _ => [],
+                })
             { Frontmatter = input.ResolvedFrontmatter ?? setup?.Frontmatter };
         }
         if (setup is not null)

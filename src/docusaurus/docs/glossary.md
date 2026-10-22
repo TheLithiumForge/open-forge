@@ -39,6 +39,12 @@ A route exposed directly by the loader. The standard root routes are Directives,
 
 Example: `directives` is a root route when the loader lists it.
 
+### Include
+
+To list a document that already exists in the project in the loader, where it lives, so agents use it without moving it or adding frontmatter.
+
+Example: `open-forge route include CONTRIBUTING.md --description "Contribution rules" --tag LoadNow`.
+
 ### Scope
 
 A part of a route that narrows where the following content applies.
@@ -101,7 +107,7 @@ Example: The CLI updates an installed category entrypoint it manages.
 
 ### Source reference
 
-A source ID or exact `.agents` Markdown path that selects routed content in commands. Extension and Library IDs identify different things.
+A source ID, an exact `.agents` Markdown path, or `./<path>` for an included file outside `.agents/`, that selects content in commands. Extension and Library IDs identify different things.
 
 Example: `skills/open-forge-cli` selects `.agents/skills/open-forge-cli/SKILL.md`.
 

@@ -310,10 +310,32 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 .Where(source => sharing.Includes(source.Identity.CanonicalBasePath))
                 .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
                 .ToArray();
+            string? observedLoader = null;
+            if (catalogue.FindByPath(SourceLogicalPath.LoaderPath) is { } loaderSource)
+            {
+                var loaderRead = await ReadProjectionInputAsync(request, loaderSource.Base, projectionInputReader, cancellationToken)
+                    .ConfigureAwait(false);
+                if (loaderRead.Build is { } loaderBoundary)
+                {
+                    return loaderBoundary;
+                }
+
+                observedLoader = loaderRead.Snapshot is { } loaderSnapshot
+                    ? StrictUtf8.GetString(loaderSnapshot.Bytes.AsSpan())
+                    : null;
+            }
+
             var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
                 formation,
                 ReadRegionInputs(regionSources, documents, parsedDocuments),
-                metadata));
+                metadata)
+            {
+                PreserveLoaderMembership = observedLoader is not null,
+                ObservedLoaderSource = observedLoader,
+                TurnedOnLoaderRoots = LoaderMembership.ReadTurnedOn(
+                    formation.Topology.LoaderRootPaths,
+                    path => catalogue.FindByPath(path) is not null),
+            });
             var unavailable = projection.Regions.FirstOrDefault(region =>
                 region.State != GeneratedNavigationRegionState.Available);
             if (unavailable is not null)

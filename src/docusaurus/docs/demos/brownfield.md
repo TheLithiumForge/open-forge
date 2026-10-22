@@ -36,7 +36,7 @@ A friend started an expense splitter and handed it to you. It works and it has t
 
    > Add a Map of this project's important files, such as the README, the author's notes, and the tests, with a line on when to read each one.
 
-   A [Map](../concepts/core-categories.md#maps) points to sources and copies nothing. The Maps entrypoint is read at startup, so every later task sees the Map's one-line entry. The Map itself opens on demand, when a task needs the project's sources, and says where the notes are and when they matter.
+   A [Map](../concepts/core-categories.md#maps) points to sources and copies nothing. The loader lists Maps, so a task that needs the project's sources checks the Maps entrypoint first. The Map itself then says where the notes are and when they matter. To have every task read it, tag the Maps line in the loader `#LoadNow`, or link the notes from the loader directly.
 
    The rules the app already had get no Decisions. The advice here is to record Decisions from the moment you adopt Open Forge, for changes made from then on. For the older rules, the Map points to where their reasons live.
 

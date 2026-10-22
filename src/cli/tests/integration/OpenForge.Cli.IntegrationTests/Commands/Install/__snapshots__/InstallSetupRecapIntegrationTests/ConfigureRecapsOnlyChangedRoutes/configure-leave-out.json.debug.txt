@@ -63,7 +63,7 @@
     ],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 19
+      "assetCount": 20
     },
     "lifecycle": {
       "action": "publish",

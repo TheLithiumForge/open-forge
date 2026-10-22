@@ -67,6 +67,52 @@ For example, preview a new decision record using that available Template:
 open-forge route create memory/crystallized/decisions/api-choice --description "Accepted API choice" --tag Decision --tag API --template templates/planning/decision --dry-run
 ```
 
+## `route include <workspace-file>`
+
+List a project document in the loader where it lives. A new external row requires
+`--description <text>`. Repeat `--tag <tag>` in order, with or without `#`, and
+`--apply-to <glob>` for conditions. Without tags the document loads on demand.
+A file's own frontmatter never controls its loading.
+
+```sh
+open-forge route include CONTRIBUTING.md --description "How to contribute" --dry-run
+open-forge route include CONTRIBUTING.md --description "How to contribute"
+```
+
+The target is one workspace-relative UTF-8 file. A Markdown file with
+`## Entries` is followed as a catalogue. Both path separators and a leading
+`./` are accepted. Use a catalogue instead of a directory. Globs, URLs, fragments,
+workspace escapes, Git metadata and control files are invalid.
+
+An existing row keeps omitted fields. Each supplied option replaces only its own
+field. An identical request is a verified no-op. A hand-written row is registered
+without rewriting it. To clear tags or conditions, edit the row or exclude and
+include again. The preview shows rows before and after.
+
+Inside `.agents/`, use only a direct child folder's catalogue. Include switches
+its generated row on. Change that catalogue's frontmatter for metadata, since
+`--description`, `--tag` and `--apply-to` are rejected there.
+
+External files are recorded in settings `roots`. The loader controls activation.
+Deleting a row by hand leaves the registration unlisted. Index, Update, Configure and
+Extension installation never restore it. Included files keep their bytes.
+
+## `route exclude <workspace-file>`
+
+Remove every loader row for the target and its external `roots` registration.
+The target file stays in place. A missing target and a hand-written row are valid.
+Inside `.agents/`, use a direct child folder's catalogue to remove its row from the loader.
+
+```sh
+open-forge route exclude CONTRIBUTING.md --dry-run
+open-forge route exclude CONTRIBUTING.md
+```
+
+When nothing lists or registers the target, Exclude reports nothing changed and
+succeeds. Both commands preview with `--dry-run` and otherwise apply after checks
+with the workspace mutation lock and recovery, without a prompt. They write only
+`.agents/loader.md` and `.agents/open-forge.json`.
+
 ## `route update <source-reference>`
 
 Patch one existing source's selected metadata or complete its eligible empty body. Supply at least one operation.

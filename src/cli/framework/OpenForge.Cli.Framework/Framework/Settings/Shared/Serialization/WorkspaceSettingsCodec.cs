@@ -59,6 +59,7 @@ internal static partial class WorkspaceSettingsCodec
                     RemovedDirectories = ReadRemovedDirectories(root),
                     RemovedExtensions = ReadRemovedExtensions(root),
                     RemovedLibraries = ReadRemovedLibraries(root),
+                    Roots = ReadRoots(root),
                 },
                 Cause: null);
         }

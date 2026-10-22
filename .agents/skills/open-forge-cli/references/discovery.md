@@ -22,6 +22,21 @@ open-forge context directives/order-rules --for src/Order.cs --follow-links 1
 
 `directives/order-rules` is an example ID. Use an ID from the search result. Before creating a record, search for its subject and category, such as `find --tag Decision`.
 
+## Included Workspace Files
+
+The loader can list an existing workspace file where it lives. Context follows
+those rows with their tags and conditions. Select a file outside `.agents/` by
+exact path, such as `context ./CONTRIBUTING.md`. It has no short source ID.
+An exact `.agents/` path to an unrouted file, such as `context .agents/README.md`,
+reads it and its overwrite without making them startup reads.
+
+Find searches included leaves and the listed descendants of included catalogues
+by row metadata and Markdown headings and tags. It never scans an included leaf's
+folder. References counts authored links in active included Markdown files. Other
+text formats are opaque, and Entries rows remain navigation. Route List includes
+these root rows and labels a registration with no loader row as not in the
+loader, without children.
+
 ## `context [<source-reference>...]`
 
 Load startup context or selected sources with their required route context. No operands returns the loading-tag closure. The default content is `frontmatter,body`, which includes instructions. Explicit prose instructions still require their named reads.
@@ -98,9 +113,22 @@ An unrestricted source reports all files without scanning. Restricted scans use 
 
 Get a quick summary of installation, startup and continuity context, generated navigation, lifecycle, managed content, and recovery candidates. It has no command-specific flags and writes nothing.
 
+Included files registered in settings `roots` are counted as listed, unlisted
+when no loader row lists them, or missing when no file exists. Missing takes precedence.
+Hand-written loader rows outside `.agents/` are counted separately. Startup
+includes required files outside `.agents/` and their required catalogue children,
+each physical file once. The report names that contribution and keeps conditioned
+required files pending, with an incomplete result. Supply working files to
+`context` to resolve them.
+
 ## `doctor`
 
 Diagnose workspace, routes, references, recovery, Framework files, and managed Extensions without changes. It has no command-specific flags. Use `--detail standard` for reasons or `--format json --detail full` for evidence. Run after routed changes and resolve or report findings within the task.
+
+A missing included target is an error. An unlisted registration is information.
+A registered path that Include would now reject is a warning. Restore or exclude
+missing targets and update or remove rejected registrations. Doctor never repairs
+these conditions.
 
 Existing workspace folders are valid link targets, with or without a trailing
 slash. Folder links cannot have heading fragments. A missing folder named with

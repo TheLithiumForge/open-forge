@@ -8,18 +8,13 @@ open-forge:
 
 ## What behavior is required in this scope?
 
-Directives define required agent behavior within a scope.
+Rule files here apply to the whole workspace.
 
 ## Axioms
 
-- Each Directive file in the same folder as an `entrypoint` must carry #LoadNow. Directives are mandatory within their scope.
-- Each Directive file keeps its instructions under a non-empty `## Instructions` heading.
-- State each obligation, its conditions, and meaningful exceptions in the instructions. Supporting examples or visuals illustrate those instructions. The obligation must remain understandable from the instructions themselves.
-- Directive files in this root `entrypoint`'s folder apply throughout the workspace.
-- A child entrypoint does not need #LoadNow. It loads only when selected.
-- Select a child entrypoint before loading its Directive files. Their Instructions apply only within that narrower scope.
-- Child Directives add to active parent Directives. A narrower scope does not create higher authority.
-- Report any conflict or instruction that cannot be followed, and explain why.
+- Put each file's rules under a non-empty `## Instructions`. State each obligation with its conditions and meaningful exceptions, so it stays understandable without its examples.
+- Tag each rule file in this folder #LoadNow. Directives are mandatory within their scope. Limit a rule file with `applyTo` when it only matters for some files, for example `**/*.cs`.
+- A subfolder narrows its rules to that area, and its catalogue may stay on demand. Its rules apply once the task selects it. Tag the subfolder's catalogue #LoadNow, limited with `applyTo` when it matches files, when its rules must load automatically for matching work.
 
 ## Entries
 

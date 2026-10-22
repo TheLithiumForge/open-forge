@@ -1,0 +1,39 @@
+1 error, 1 warning and 4 info findings.
+Workspace: <workspace>
+Workspace
+  Error  missing.md  Root route is missing [workspace.root-missing]
+         The included file is missing. Restore the file or exclude its path.
+         fix by hand
+         authored value: missing.md
+         read from .agents/open-forge.json
+Links
+  Warning  .agents/loader.md:11:3  Broken link [reference.target-missing]
+         The linked file was not found: ../missing.md. No possible target was found.
+         fix by hand
+         Correct this link in .agents/loader.md at line 11, column 3 through the owner of missing.md.
+         authored value: ../missing.md
+         state: missing
+         read from .agents/loader.md
+Workspace
+  Info  .agents/open-forge.lock.json  No ownership record [library.ownership-observation]
+         No ownership record exists, so Libraries cannot be read from it.
+         state: unavailable
+         read from .agents/open-forge.lock.json
+Framework files
+  Info  <workspace>/.agents/open-forge.lock.json  No ownership record [framework.ownership-observation]
+         No ownership record exists, so Framework files cannot be read from it.
+         state: unavailable
+         read from <workspace>/.agents/open-forge.lock.json
+Extensions
+  Info  <workspace>/.agents/open-forge.lock.json  No ownership record [extension.ownership-observation]
+         No ownership record exists, so installed Extensions cannot be read from it.
+         state: unavailable
+         read from <workspace>/.agents/open-forge.lock.json
+Workspace
+  Info  off.md  Source is outside the loaded routes [workspace.detached]
+         The registered include has no loader row, so agents do not read it. Include it again to list it, or exclude it to remove the registration.
+         authored value: off.md
+         read from .agents/open-forge.json
+  3 links and 1 route checked.
+  2 must be fixed by hand.
+Next: Review the route boundary in missing.md before continuing.

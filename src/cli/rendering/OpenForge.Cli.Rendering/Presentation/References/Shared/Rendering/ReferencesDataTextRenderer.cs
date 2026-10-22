@@ -37,7 +37,7 @@ internal static class ReferencesDataTextRenderer
         foreach (var row in incoming)
         {
             builder.Append("  in   ")
-                .Append(style.Subject(CliText.Escape(row.Path)))
+                .Append(style.Subject(CliText.Escape(row.Id ?? row.Path)))
                 .Append(CliText.Escape(row.Location));
             if (row.Layer is { } layer)
             {

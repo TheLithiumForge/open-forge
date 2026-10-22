@@ -12,16 +12,24 @@ internal static class StatusContextAggregator
         OperationalInstallationState installation)
     {
         var initial = StatusMeasurementCalculator.Project(routes.InitialStartup);
-        var total = StatusMeasurementCalculator.Project(routes.TotalAvailable);
+        var total = StatusMeasurementCalculator.Add(routes.TotalAvailable, routes.IncludedFiles?.Total);
+        var includedFiles = routes.IncludedFiles is { } included ? new StatusIncludedFiles(
+            Listed: included.Files.Count(file => file.Registered && file.FileExists && file.Listed),
+            Unlisted: included.Files.Count(file => file.Registered && file.FileExists && !file.Listed),
+            Missing: included.Files.Count(file => file.Registered && !file.FileExists),
+            HandWritten: included.HandWrittenRows,
+            Startup: StatusMeasurementCalculator.Project(included.Startup),
+            Pending: included.Pending) : null;
         if (installation == OperationalInstallationState.Uninstalled)
         {
-            return BuildNotApplicable(initial, total);
+            return BuildNotApplicable(initial, total) with { IncludedFiles = includedFiles };
         }
 
-        var current = StatusMeasurementCalculator.Project(routes.CurrentStartup);
-        var continuity = StatusMeasurementCalculator.Project(routes.Continuity);
+        var current = StatusMeasurementCalculator.Add(routes.CurrentStartup, routes.IncludedFiles?.Startup);
+        var continuity = StatusMeasurementCalculator.Add(routes.Continuity, routes.IncludedFiles?.Continuity);
         return new StatusContext
         {
+            IncludedFiles = includedFiles,
             TokenEstimator = StatusDefinitions.TokenEstimator,
             Startup = new StatusStartupComparison(
                 initial,
@@ -31,6 +39,7 @@ internal static class StatusContextAggregator
             StartupPercentage = StatusMeasurementCalculator.StartupPercentage(current.Utf8Bytes, total.Utf8Bytes),
             Continuity = continuity,
             ContinuitySources = routes.ContinuitySources
+                .Concat(routes.IncludedFiles?.ContinuitySources ?? [])
                 .OrderByDescending(source => source.Utf8Bytes)
                 .ThenBy(source => source.SourceId, StringComparer.Ordinal)
                 .Select(Project)

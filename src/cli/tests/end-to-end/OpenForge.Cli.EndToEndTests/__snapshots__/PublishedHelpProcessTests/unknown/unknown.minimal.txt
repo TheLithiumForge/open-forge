@@ -1,0 +1,3 @@
+Cannot show help: Unknown help topic 'unknown'. Available topics: concepts.
+1 errors.
+Next: open-forge help --help

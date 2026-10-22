@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Cannot install: Preset must be essentials, full-core, or custom.",
+    "headline": "Cannot install: Preset must be minimal, essentials, full-core, or custom.",
     "kind": "cannot-start"
   },
   "findings": [
@@ -17,7 +17,7 @@
       "severity": "error",
       "code": "install.invalid-input",
       "title": "Invalid input",
-      "message": "Invalid --preset value: other. Use essentials, full-core, or custom.",
+      "message": "Invalid --preset value: other. Use minimal, essentials, full-core, or custom.",
       "subject": {
         "kind": "workspace",
         "path": null,

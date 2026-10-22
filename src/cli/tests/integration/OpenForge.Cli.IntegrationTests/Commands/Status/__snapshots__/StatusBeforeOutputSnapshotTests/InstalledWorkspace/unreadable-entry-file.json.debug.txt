@@ -276,7 +276,7 @@
     "entriesSectionsCurrent": null,
     "entriesSectionsStale": null,
     "entriesSectionsMissing": null,
-    "frameworkFilesCurrent": 18,
+    "frameworkFilesCurrent": 19,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -354,10 +354,10 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 11,
-          "characters": 26271,
-          "bytes": 26271,
-          "tokens": 6568
+          "files": 7,
+          "characters": 15907,
+          "bytes": 15907,
+          "tokens": 3977
         },
         "current": {
           "files": null,
@@ -395,6 +395,10 @@
       }
     },
     "frameworkFiles": [
+      {
+        "path": ".agents/README.md",
+        "state": "current"
+      },
       {
         "path": ".agents/directives/_directives.md",
         "state": "current"

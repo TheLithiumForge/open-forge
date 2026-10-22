@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Reusable default shapes for code, files, APIs, documents, and other work
-  tags: [LoadNow, Core, Pattern]
+  tags: [Core, Pattern]
 ---
 
 # Patterns

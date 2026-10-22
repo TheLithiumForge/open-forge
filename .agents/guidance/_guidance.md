@@ -1,20 +1,20 @@
 ---
 open-forge:
   description: Advice for recurring choices, tradeoffs, and work situations
-  tags: [LoadNow, Core, Guidance]
+  tags: [Core, Guidance]
 ---
 
 # Guidance
 
 ## What approach is recommended, and when does it fit?
 
-Guidance recommends approaches for recurring situations and explains when they fit. It offers adaptable advice, not the binding instructions of a Directive.
+This folder holds advice for recurring situations. Advice is not a rule.
 
 ## Axioms
 
-- Check `Entries` when the work involves a recurring situation or choice that may have Guidance.
-- Each Guidance file explains the situation, recommended approach, reasons, and tradeoffs.
-- Apply Guidance when it fits the work. Adapt it when another approach fits better, and explain the reason when the difference matters to the result.
+- Check these Entries when the work involves a recurring situation or choice that may have advice.
+- Each Guidance file explains the situation, the recommended approach, its reasons and its tradeoffs.
+- Apply matching advice when it fits. When another approach fits better, use it and say why if the difference matters to the result.
 
 ## Entries
 

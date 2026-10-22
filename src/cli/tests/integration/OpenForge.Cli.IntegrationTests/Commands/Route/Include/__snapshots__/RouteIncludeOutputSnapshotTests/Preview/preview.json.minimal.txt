@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 3,
+  "command": "route include",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would include 'guide.md'.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesChanged": 2
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": "guide.md",
+    "before": null,
+    "after": "- [Guide](../guide.md) - #LoadNow #Docs",
+    "registeredBefore": false,
+    "registeredAfter": true,
+    "verified": false
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

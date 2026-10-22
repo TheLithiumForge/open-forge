@@ -384,6 +384,10 @@ internal sealed class SourceLinkDestinationResolver
         var matchedLayer = canonicalSource is null
             ? null
             : SourceLinkTargetIdentityReader.FindLayer(canonicalSource, canonicalPath);
+        if (matchedLayer is null && input.Catalogue.Aliases.ContainsKey(canonicalPath) && layerMatches.Count == 1)
+        {
+            matchedLayer = layerMatches[0].Layer;
+        }
         if (canonicalSource is not null
             && matchedLayer is not null
             && !PhysicalIdentityTracker.PathComparer.Equals(matchedLayer.PhysicalPath, physicalTargetPath))

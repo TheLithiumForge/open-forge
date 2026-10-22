@@ -15,18 +15,18 @@
   "findings": [],
   "effects": [],
   "counts": {
-    "routedFiles": 18,
-    "startupFiles": 11,
-    "startupTokens": 6568,
+    "routedFiles": 19,
+    "startupFiles": 7,
+    "startupTokens": 3977,
     "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 274,
-    "allTokens": 22680,
-    "startupShare": 28.958333333333333333333333333,
+    "mayLoadAgainTokens": 243,
+    "allTokens": 24997,
+    "startupShare": 15.908909069088290594871384566,
     "rootCategories": 7,
     "entriesSectionsCurrent": 12,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 19,
+    "frameworkFilesCurrent": 20,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -47,16 +47,16 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 11,
-          "characters": 26271,
-          "bytes": 26271,
-          "tokens": 6568
+          "files": 7,
+          "characters": 15907,
+          "bytes": 15907,
+          "tokens": 3977
         },
         "current": {
-          "files": 11,
-          "characters": 26271,
-          "bytes": 26271,
-          "tokens": 6568
+          "files": 7,
+          "characters": 15907,
+          "bytes": 15907,
+          "tokens": 3977
         },
         "difference": {
           "files": 0,
@@ -66,18 +66,18 @@
         },
         "mayLoadAgain": {
           "files": 1,
-          "characters": 1096,
-          "bytes": 1096,
-          "tokens": 274
+          "characters": 971,
+          "bytes": 971,
+          "tokens": 243
         }
       },
       "allRouted": {
-        "files": 18,
-        "characters": 90719,
-        "bytes": 90720,
-        "tokens": 22680
+        "files": 19,
+        "characters": 99987,
+        "bytes": 99988,
+        "tokens": 24997
       },
-      "startupShare": 28.958333333333333333333333333
+      "startupShare": 15.908909069088290594871384566
     },
     "extensions": [],
     "libraries": []

@@ -1,0 +1,6 @@
+Would exclude 'guide.md'.
+Workspace: <workspace>
+  .agents/loader.md  replaced
+  Before: - [Guide](../guide.md) - #Docs
+  After: (no row)
+No files were changed.

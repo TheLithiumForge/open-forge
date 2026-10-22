@@ -44,7 +44,7 @@ Use this when adding Open Forge to a new or existing project.
 
    Check that `.agents/loader.md`, settings, and the ownership lock exist. Status
    shows context, installed Extensions, and anything needing attention. Plain
-   interactive Install offers Essentials, Full Core, or Custom instead. New
+   interactive Install offers Minimal, Essentials, Full Core, or Custom instead. New
    private Working records stay out of ordinary Git commits.
 
 3. If your agent tool does not read `AGENTS.md` on its own, ask it to read that
@@ -52,6 +52,41 @@ Use this when adding Open Forge to a new or existing project.
    workflow is required.
 
 The installation record lets later updates distinguish supplied files from yours.
+
+## Use documents you already have
+
+Use this when the project already keeps rules or knowledge in its own files.
+
+1. Preview one include.
+
+   ```sh
+   open-forge route include CONTRIBUTING.md --description "Contribution rules to follow" --tag LoadNow --dry-run
+   ```
+
+   The preview shows the loader line it would write and the settings change.
+   Leave the tag off when agents should open the file only when its
+   description fits the task, and add `--apply-to "src/**"` to limit it to
+   matching work.
+
+2. Apply it, then check what agents read.
+
+   ```sh
+   open-forge route include CONTRIBUTING.md --description "Contribution rules to follow" --tag LoadNow
+   open-forge context
+   ```
+
+   The file stays where it is and nothing is written to it. A Markdown file
+   with its own `## Entries` brings its listed files along.
+
+3. Change or remove it later.
+
+   ```sh
+   open-forge route include CONTRIBUTING.md --apply-to "src/**"
+   open-forge route exclude CONTRIBUTING.md
+   ```
+
+   Running Include again changes only the options you pass. Exclude removes the
+   line and leaves the file alone.
 
 ## Change the installed routes
 

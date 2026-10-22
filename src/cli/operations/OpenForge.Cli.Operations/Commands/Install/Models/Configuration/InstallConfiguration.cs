@@ -5,7 +5,7 @@ using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 
 namespace OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 
-internal enum InstallPreset { Essentials, FullCore, Custom }
+internal enum InstallPreset { Essentials, FullCore, Custom, Minimal }
 internal enum InstallRouteAction { Add, Remove, GitIgnore }
 internal sealed record InstallRouteSelection(string Id, InstallRouteAction Action);
 internal sealed record InstallSetupInput(bool Configure, InstallPreset? Preset, ImmutableArray<InstallRouteSelection> Overrides)

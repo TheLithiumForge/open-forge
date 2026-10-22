@@ -64,7 +64,7 @@ internal sealed class RouteListOperationCoordinator(
         }
         catch (OperationCanceledException)
         {
-            throw;
+            return _resultComposer.BuildInterrupted(request, attemptedSelection);
         }
         catch (Exception)
         {

@@ -14,13 +14,6 @@ public sealed class UpdateRemovedFilesIntegrationTests
     private const string LegacyEndMarker = "<!-- open-forge:end -->";
     private const string LegacyHostPrefix = "User-owned introduction.\n\n";
     private const string LegacyHostSuffix = "\n\n# User-owned notes\nKeep this suffix exactly.\n";
-    private const string LegacyAgentsBody =
-        "# Open Forge\n\n"
-        + "Open Forge provides the working rules and context for this workspace.\n\n"
-        + "Before starting a task, read `.agents/loader.md`.\n"
-        + "Use it to select every relevant scope, including nested scopes.\n"
-        + "Follow the loaded rules throughout the task.\n";
-    private const string LegacyClaudeBody = "@AGENTS.md\n@.agents/loader.md\n";
 
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update leaves an absent excluded owned file missing through force and prune, then restores it when exclusion is removed"), Trait("Evidence", "Integration")]
@@ -116,12 +109,21 @@ public sealed class UpdateRemovedFilesIntegrationTests
 
     private static string LegacyHostContents(string path)
     {
-        var body = path switch
+        if (path is not ("AGENTS.md" or "CLAUDE.md"))
         {
-            "AGENTS.md" => LegacyAgentsBody,
-            "CLAUDE.md" => LegacyClaudeBody,
-            _ => throw new ArgumentOutOfRangeException(nameof(path), path, "Unsupported managed host."),
-        };
+            throw new ArgumentOutOfRangeException(nameof(path), path, "Unsupported managed host.");
+        }
+
+        var root = new DirectoryInfo(AppContext.BaseDirectory);
+        while (root is not null && !File.Exists(Path.Combine(root.FullName, "OpenForge.Cli.slnx")))
+        {
+            root = root.Parent;
+        }
+
+        Assert.NotNull(root);
+        var body = File.ReadAllText(Path.Combine(root.FullName,
+            "src", "cli", "tests", "integration", "OpenForge.Cli.IntegrationTests", "Commands", "Update",
+            "Fixtures", "LegacyRootHosts-8141e335f", path));
 
         return $"{LegacyHostPrefix}{LegacyStartMarker}\n\n{body}{LegacyEndMarker}\n{LegacyHostSuffix}";
     }

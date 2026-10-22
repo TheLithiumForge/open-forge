@@ -27,7 +27,11 @@ public sealed class SourceReferenceParserTests
     [Theory(DisplayName = "Neutral source-reference parsing canonicalizes both accepted exact-path prefixes"),
         InlineData(".agents/memory/project alpha/工作%20note.md", ".agents/memory/project alpha/工作%20note.md"),
         InlineData("./.agents/memory/project alpha/工作%20note.md", ".agents/memory/project alpha/工作%20note.md"),
-        InlineData(".agents/encoded%2Fname/file.md", ".agents/encoded%2Fname/file.md")]
+        InlineData(".agents/encoded%2Fname/file.md", ".agents/encoded%2Fname/file.md"),
+        InlineData("./CONTRIBUTING.md", "CONTRIBUTING.md"),
+        InlineData("./.cursor/rules/testing.mdc", ".cursor/rules/testing.mdc"),
+        InlineData("./docs/team/_team.md", "docs/team/_team.md"),
+        InlineData("./docs/file:note.md", "docs/file:note.md")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void ExactPathsPreserveUnicodeSpacesAndPercentText(
         string input,
@@ -72,7 +76,12 @@ public sealed class SourceReferenceParserTests
         InlineData(".agents/./root.md", ".agents/./root.md"),
         InlineData(".agents/../root.md", ".agents/../root.md"),
         InlineData(".agents/root\\root.md", ".agents/root\\root.md"),
-        InlineData("./.agents/root/\u0001.md", ".agents/root/\u0001.md")]
+        InlineData("./.agents/root/\u0001.md", ".agents/root/\u0001.md"),
+        InlineData("./../outside.md", "../outside.md"),
+        InlineData("./docs//file.md", "docs//file.md"),
+        InlineData("./C:/outside.md", "C:/outside.md"),
+        InlineData("./C:outside.md", "C:outside.md"),
+        InlineData("./docs\\file.md", "docs\\file.md")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void InvalidPathsRetainCanonicalAttemptedPath(
         string input,

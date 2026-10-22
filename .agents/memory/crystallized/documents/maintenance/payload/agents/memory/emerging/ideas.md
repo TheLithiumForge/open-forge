@@ -15,11 +15,14 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Contract
 
-- Frontmatter uses #Extension, #Memory, #Idea, #Exploration, #Contextual, and #Candidate to classify this optional Planning route
+- The title is followed by `## What possibility is worth exploring?` and a short paragraph describing the folder.
+- Frontmatter uses #Extension, #Memory, #Idea, #Exploration, #Contextual, and #Candidate to classify this Planning route.
 - Ideas remain available when work explores possibilities, plans future work, or revisits postponed options
 - Each Idea preserves enough problem, opportunity, or motivation to make later reconsideration meaningful
 - Explicit user requests to preserve or explore an idea are sufficient for capture without implying acceptance
 
 ## Verification
 
-- Core-only installation verifies that the optional Ideas route is absent; Planning installation verifies that it installs, indexes, retains its full source classification, and supports recursive child routing
+- Use the [payload integrity checks](../../../_payload.md#verification) for the Planning Extension source and metadata rendering.
+- Compare category rules with the repository counterpart outside Entries. Confirm Core alone has no Ideas category.
+- Review a requested Idea for its problem or motivation and continued candidate status. Package parity does not establish acceptance.

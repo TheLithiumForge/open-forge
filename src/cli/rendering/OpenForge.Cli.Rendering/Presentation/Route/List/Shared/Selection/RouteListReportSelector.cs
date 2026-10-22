@@ -62,11 +62,21 @@ internal static class RouteListReportSelector
         {
             Id = row.Id,
             Path = row.Path,
-            Description = row.Description,
+            Description = Description(row),
             Tags = row.Tags.ToArray(),
             RelativeDepth = row.RelativeDepth,
             Result = row,
         };
+
+    private static string Description(RouteListPresentationRow row)
+    {
+        if (row.IsUnlisted)
+        {
+            return global::OpenForge.Cli.OutputText.Route.List.RouteListText.RegisteredIncludeUnlisted();
+        }
+
+        return row.IsMissing ? global::OpenForge.Cli.OutputText.Route.List.RouteListText.MissingInclude(row.Description) : row.Description;
+    }
 
     private static RouteListDataSubject? Subject(RouteListPresentationSelection selection)
         => selection.ResolvedId is { } id && selection.ResolvedPath is { } path

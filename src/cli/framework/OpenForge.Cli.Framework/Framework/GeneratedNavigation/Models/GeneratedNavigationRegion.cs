@@ -59,6 +59,11 @@ internal sealed record GeneratedNavigationRegion
         Change = change;
     }
 
+    /// <summary>
+    /// The number of authored link rows, such as `../docs/architecture.md`, kept after the generated rows.
+    /// </summary>
+    internal int AuthoredLinkCount { get; init; }
+
     private GeneratedNavigationRegion(
         SourceLogicalSource source,
         GeneratedNavigationRegionUnavailableReason unavailableReason,

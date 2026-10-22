@@ -65,6 +65,20 @@ internal sealed class FindApplicabilityResolver(FindLayerInspector layerInspecto
             }
 
             var chainPaths = ReadChainPaths(routeFacts, match.Path, out var unresolved);
+            if (source.IncludedEntry is not null)
+            {
+                var paths = new List<string>();
+                var current = source;
+                while (current is not null && !paths.Contains(current.Base.CanonicalPath, StringComparer.Ordinal))
+                {
+                    paths.Add(current.Base.CanonicalPath);
+                    current = current.IncludedParentPath is { } parent ? sourceSession.Catalogue.FindByPath(parent) : null;
+                }
+
+                paths.Reverse();
+                chainPaths = paths;
+                unresolved = false;
+            }
             if (unresolved)
             {
                 if (requireCompatibility)

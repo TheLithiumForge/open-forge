@@ -1,0 +1,44 @@
+  Remove a workspace file from the loader without deleting it.
+
+Usage:
+  open-forge route exclude <workspace-file> [--dry-run]
+
+Examples:
+  open-forge route exclude CONTRIBUTING.md
+  open-forge route exclude docs/team/_team.md --dry-run
+  open-forge route exclude .agents/patterns/_patterns.md
+
+Behavior:
+  Remove every loader row for the target and its roots registration.
+  The target may be missing. An unlisted, unregistered target changes nothing.
+  Preview with --dry-run. Otherwise apply after checks, without a prompt.
+  The target file keeps its bytes.
+
+Arguments:
+  <workspace-file>  Select one workspace-relative text file.
+
+Options:
+  --dry-run  Preview loader and settings changes without writing.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Boundary: Use a workspace-relative file, with / or \ and an optional leading
+  ./.
+  Use a catalogue instead of a directory. Globs, URLs and fragments are invalid.
+  Paths must stay inside the workspace, including through links.
+  Git metadata, the loader, settings and lock files are not valid targets.
+  Inside .agents, use a direct child folder's catalogue.
+  Exclude removes its loader row without deleting the catalogue.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  open-forge route include --help
+      List a file where it lives
+  open-forge index --help  Refresh generated navigation

@@ -1,0 +1,58 @@
+  List an existing workspace file in the loader where it lives.
+
+Usage:
+  open-forge route include <workspace-file> [--description <text>] [--tag <tag>]... [--apply-to <glob>]... [--dry-run]
+
+Examples:
+  open-forge route include CONTRIBUTING.md --description "How to contribute"
+  open-forge route include docs/team/_team.md --description "Team context" --dry-run
+  open-forge route include .agents/patterns/_patterns.md
+
+Behavior:
+  List an existing text file where it lives. The loader row controls when it
+  loads.
+  An omitted field keeps its current value. An identical request changes
+  nothing.
+  Preview with --dry-run. Otherwise apply after checks, without a prompt.
+  The target file keeps its bytes.
+
+Arguments:
+  <workspace-file>  Select one workspace-relative text file.
+
+Options:
+  --dry-run             Preview loader and settings changes without writing.
+  --description <text>  Set the loader row description. Required for a new row.
+  --tag <tag>           Replace the ordered tags. Repeat for more tags, with or
+                        without #.
+  --apply-to <glob>     Replace the conditions. Repeat for more
+                        workspace-relative globs.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Metadata: Supply --description for a new row outside .agents.
+  Repeat --tag in the order to keep, with or without #. No tags means on demand.
+  Repeat --apply-to for conditions using workspace-relative globs.
+  A supplied option replaces only its own field. Omitted fields stay as written.
+  To clear tags or conditions, edit the row or exclude and include again.
+  A file's own frontmatter never sets its loading.
+  Boundary: Use a workspace-relative file, with / or \ and an optional leading
+  ./.
+  Use a catalogue instead of a directory. Globs, URLs and fragments are invalid.
+  Paths must stay inside the workspace, including through links.
+  Git metadata, the loader, settings and lock files are not valid targets.
+  Inside .agents, use a direct child folder's catalogue.
+  Change that catalogue's frontmatter to change its description, tags or
+  conditions.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  open-forge route exclude --help
+      Stop listing a file
+  open-forge index --help  Refresh generated navigation

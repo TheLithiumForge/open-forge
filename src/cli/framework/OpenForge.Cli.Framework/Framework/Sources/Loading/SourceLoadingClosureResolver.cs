@@ -129,7 +129,7 @@ internal sealed class SourceLoadingClosureResolver
 
                 var isContinuity = frame.IsContinuity || visible.KeepInMind;
                 var addedToContinuity = isContinuity && AddContinuity(visible.Target.Path);
-                if (visible.Target.IsEntrypoint
+                if (visible.Target.IsCatalogue
                     && (addedToSelection || addedToContinuity))
                 {
                     stack.Push(new TraversalFrame(
@@ -144,14 +144,14 @@ internal sealed class SourceLoadingClosureResolver
             SourceLoadingClosureSource parent,
             SourceGeneratedEntry generated)
         {
-            var target = _graph.FindDirectChild(parent, generated.Destination);
-            if (target is null)
-            {
-                return null;
-            }
-
             var loadNow = generated.HasTag("LoadNow");
             var keepInMind = generated.HasTag("KeepInMind");
+            var target = parent.IsLinked ? null : _graph.FindDirectChild(parent, generated.Destination);
+            if (target is null)
+            {
+                return ReadLinked(parent, generated, loadNow, keepInMind);
+            }
+
             if (!parent.IsLoader && (loadNow || keepInMind))
             {
                 if (target.Metadata.State != SourceAuthoredMetadataState.Complete)
@@ -165,6 +165,44 @@ internal sealed class SourceLoadingClosureResolver
 
                 loadNow &= target.Metadata.Tags.Contains("LoadNow", StringComparer.Ordinal);
                 keepInMind &= target.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal);
+            }
+
+            var applicability = ReadApplicability(target, reportPending: loadNow || keepInMind);
+            var autoSelect = ShouldLoadAutomatically(loadNow || keepInMind, applicability?.State);
+            return new VisibleEntry(target, loadNow, keepInMind, autoSelect, applicability);
+        }
+
+        // A link to a file outside `.agents/` takes its loading tags and conditions from the entry line,
+        // so ordinary documents need no Open Forge frontmatter to take part.
+        private VisibleEntry? ReadLinked(
+            SourceLoadingClosureSource parent,
+            SourceGeneratedEntry generated,
+            bool loadNow,
+            bool keepInMind)
+        {
+            if (!_request.IncludeLinkedSources
+                || SourceLoadingClosureGraph.ReadLinkedPath(parent, generated.Destination) is not { } linkedPath)
+            {
+                return null;
+            }
+
+            var target = _graph.FindLinked(linkedPath);
+            if (target is null)
+            {
+                if (loadNow || keepInMind)
+                {
+                    AddIssue(
+                        SourceLoadingClosureIssueKind.LinkedDestinationMissing,
+                        linkedPath,
+                        $"A required link in {parent.Path} points to a file that is missing.");
+                }
+
+                return null;
+            }
+
+            if (!string.Equals(target.ParentPath, parent.Path, StringComparison.Ordinal))
+            {
+                return null;
             }
 
             var applicability = ReadApplicability(target, reportPending: loadNow || keepInMind);
@@ -247,7 +285,7 @@ internal sealed class SourceLoadingClosureResolver
             }
 
             chain.Reverse();
-            return chain.Select(item => new SourceApplyToCondition(item.Path, item.Metadata.ApplyTo)).ToArray();
+            return chain.Select(item => new SourceApplyToCondition(item.Path, item.Condition)).ToArray();
         }
 
         private bool AddContinuity(string path)

@@ -97,7 +97,7 @@ spelling. The six shared global flags, `--workspace`, `--format json`, `--detail
 
 | Operand               | State                                    | Accepted value                                           | Omission                             | Repetition and order                                                                                                                                                                                              |
 | --------------------- | ---------------------------------------- | -------------------------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `source-reference...` | Optional; required by `--additions-only` | One shared source ID or exact `.agents` path per operand | Resolve the startup-required closure | Each source is a separate shell value. Route closures follow operand order. Repeated or overlapping physical sources are emitted once at their first canonical position while every inclusion reason is retained. |
+| `source-reference...` | Optional. Required by `--additions-only` | One shared source ID or exact workspace path per operand | Resolve the startup-required closure | Each source is a separate shell value. Route closures follow operand order. Repeated or overlapping physical sources are emitted once at their first canonical position while every inclusion reason is retained. |
 
 The shared source-reference contract defines the complete accepted grammar and
 identity behavior for each operand. Context-specific closure and repetition
@@ -735,6 +735,14 @@ When several relationships select the same source:
 Canonical path identity and physical containment prevent aliases from producing
 duplicate or unsafe nodes. The CLI Architecture defines the accepted
 cross-platform identity and containment realization.
+
+## Included Workspace Files
+
+Active included rows use the loader's order, loading tags and conditions. A linked
+Markdown file with `## Entries` is a catalogue. Every physical file is read once.
+Select an included file by exact path, such as `context ./CONTRIBUTING.md`.
+An exact `.agents/` path to an unrouted file, such as `context .agents/README.md`,
+returns it and its adjacent overwrite. It is never added to startup reads by itself.
 
 ## Human Output
 

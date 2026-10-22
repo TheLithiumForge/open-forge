@@ -93,7 +93,7 @@ internal static class InstallText
 
     // @OpenForgeText install.help.examples
     internal static string HelpExamples()
-        => "open-forge install --preset essentials --dry-run\nopen-forge install\nopen-forge install --configure --preset essentials --dry-run";
+        => "open-forge install --preset minimal --dry-run\nopen-forge install --preset essentials --dry-run\nopen-forge install";
 
     // @OpenForgeText install.help.notes
     internal static string HelpNotes()
@@ -289,7 +289,7 @@ internal static class InstallText
 
     // @OpenForgeText install.install.help.behavior
     internal static string HelpBehavior()
-        => "Install adds selected bundled defaults and Open Forge sections to AGENTS.md and CLAUDE.md, preserving your other instructions.\nThe wizard starts with Essentials. Unattended Install and dry run use Full Core unless you name a preset. Fresh unattended metadata is root unless settings declare a preference.\nOmissions stay omitted. --configure offers current setup choices, keeps existing content, and can restore missing selected defaults. Identical installations need no writes.\n--dry-run shows every planned existing-file change without writes. Writing plans ask once after selection and checks unless --automatic. Preview, no-op, automatic, JSON, and redirected requests never prompt. JSON or redirected writes require --automatic, which adds no force.\nSave a Git copy or backup first. Successful installs keep no undo bundle. Use update for other changed managed files.";
+        => "Install adds selected bundled defaults and Open Forge sections to AGENTS.md and CLAUDE.md, preserving your other instructions.\nThe wizard starts with Minimal. Unattended Install and dry run use Full Core unless you name a preset. Fresh unattended metadata is root unless settings declare a preference.\nOmissions stay omitted. --configure offers current setup choices, keeps existing content, and can restore missing selected defaults. Identical installations need no writes.\n--dry-run shows every planned existing-file change without writes. Writing plans ask once after selection and checks unless --automatic. Preview, no-op, automatic, JSON, and redirected requests never prompt. JSON or redirected writes require --automatic, which adds no force.\nSave a Git copy or backup first. Successful installs keep no undo bundle. Use update for other changed managed files.";
 
     // @OpenForgeText install.install.help.relatedcommands
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()

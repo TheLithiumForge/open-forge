@@ -35,6 +35,14 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
     private readonly InstallContentIdentity _identity = new();
     private readonly InstallWorkspaceAdoptionBuilder _adoption = new(paths);
 
+    // A route the user adds after leaving it out joins the loader's Entries. Routes that were already
+    // installed keep their current Loader line, so a line the user removed stays removed.
+    private static IEnumerable<string> ReadReselectedRoots(InstallConfiguration? configuration, WorkspaceSettingsRead settings)
+        => configuration?.Routes
+            .Where(row => row.Action != InstallRouteAction.Remove
+                && WorkspaceRemovals.IsPathRemoved(InstallConfigurationChoices.Entrypoint(row.Id), settings.Document))
+            .Select(row => InstallConfigurationChoices.LoaderRoot(row.Id)) ?? [];
+
     internal async ValueTask<InstallIntendedStateBuild> BuildAsync(
         InstallRequest request, FrameworkPayload payload, WorkspaceOwnershipRead ownership,
         WorkspaceSettingsRead settings, CancellationToken token)
@@ -165,7 +173,12 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
             && (payloadPaths.Contains(source.Identity.CanonicalBasePath) || conversionPaths.Contains(source.Identity.CanonicalBasePath))
             && (source.Base.Form == SourceDocumentForm.Loader || SourceFormClassifier.IsEntrypoint(source.Base.Form))).ToArray();
         var projection = new GeneratedNavigationProjector().Project(new(formation,
-            regionSources.Select(source => new GeneratedNavigationRegionInput(source, parsed[source.Identity.CanonicalBasePath])), metadata));
+            regionSources.Select(source => new GeneratedNavigationRegionInput(source, parsed[source.Identity.CanonicalBasePath])), metadata)
+        {
+            PreserveLoaderMembership = true,
+            TurnedOnLoaderRoots = LoaderMembership.ReadTurnedOn(
+                formation.Topology.LoaderRootPaths, existingPaths.Contains, ReadReselectedRoots(configuration, settings)),
+        });
         foreach (var region in projection.Regions)
         {
             if (region.State != GeneratedNavigationRegionState.Available || region.Change is not { } regionChange)

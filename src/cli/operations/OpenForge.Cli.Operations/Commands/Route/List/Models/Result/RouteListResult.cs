@@ -213,6 +213,11 @@ internal sealed class RouteListResult : ICliCommandResult
         var indexByPath = new Dictionary<string, int>(StringComparer.Ordinal);
         for (var index = 0; index < rows.Count; index++)
         {
+            if (rows[index].IsUnlisted)
+            {
+                continue;
+            }
+
             if (!indexByPath.TryAdd(rows[index].Path, index))
             {
                 throw new ArgumentException("Route-list row paths must be unique.", nameof(rows));

@@ -205,6 +205,7 @@ internal static class InstallReportSelector
         InstallPreset.Essentials => "essentials",
         InstallPreset.FullCore => "full-core",
         InstallPreset.Custom => "custom",
+        InstallPreset.Minimal => "minimal",
         _ => throw new ArgumentOutOfRangeException(nameof(preset)),
     };
 

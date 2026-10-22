@@ -17,6 +17,7 @@ internal sealed class PublishedInstallWorkspace : IDisposable
 
     internal static IReadOnlyList<string> EmbeddedPayloadPaths { get; } =
     [
+        ".agents/README.md",
         ".agents/directives/_directives.md",
         ".agents/guidance/_guidance.md",
         ".agents/loader.md",

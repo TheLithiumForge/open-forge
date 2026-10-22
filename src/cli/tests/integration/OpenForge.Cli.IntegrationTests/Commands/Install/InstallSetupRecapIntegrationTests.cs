@@ -15,7 +15,9 @@ using OpenForge.Cli.TestSupport.Snapshots;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
-using OpenForge.Cli.Core.Framework.Distribution;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Fixtures;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -47,9 +49,10 @@ public sealed class InstallSetupRecapIntegrationTests
     public async Task ResolvedEssentialsWizardRetryPreservesSelection()
     {
         using var workspace = InstallOperationWorkspace.Create("install-wizard-retry");
-        var payload = EmbeddedFrameworkPayloadReader.Read().Payload ?? throw new InvalidOperationException("The embedded payload is unavailable.");
-        var host = payload.Find("AGENTS.md") ?? throw new InvalidOperationException("The embedded agent host is unavailable.");
-        workspace.WriteText("AGENTS.md", System.Text.Encoding.UTF8.GetString(host.Bytes.AsSpan()).Replace("Before starting a task", "Before starting another task", StringComparison.Ordinal));
+        var occupiedHost = InstallMarkdownFixture.OccupiedManagedHost;
+        Assert.NotEqual(InstallMarkdownFixture.ReadEmbeddedText("AGENTS.md"), occupiedHost);
+        Assert.Equal(MarkdownManagedHostState.Present, new MarkdownDocumentParser().Parse(occupiedHost).ManagedHost.State);
+        workspace.WriteText("AGENTS.md", occupiedHost);
         var before = workspace.SnapshotHashes();
         var prompts = new InstallSetupInteraction(
             (_, _, _) => ValueTask.FromResult(CliPromptReply<InstallPreset>.Answered(InstallPreset.Essentials)),
@@ -64,6 +67,8 @@ public sealed class InstallSetupRecapIntegrationTests
         Assert.Equal($"open-forge install --workspace {CliCommandText.Quote(workspace.PhysicalPath)} --preset essentials --frontmatter root --force --dry-run", result.Next?.Command);
         Assert.Equal(result.Next?.Command, InstallReportSelector.Select(result, new(CliDetail.Minimal)).Next?.Command);
         Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.Empty(result.Facts.Effects);
+        Assert.Equal(occupiedHost, File.ReadAllText(workspace.Combine("AGENTS.md")));
     }
 
     private static readonly CommandOutputRenderers<InstallResult> Renderers = CommandOutputRenderers<InstallResult>.From(InstallPresentation.Rendering);

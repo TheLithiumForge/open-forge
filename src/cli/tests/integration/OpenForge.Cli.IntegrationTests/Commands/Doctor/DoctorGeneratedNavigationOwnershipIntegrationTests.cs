@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.IntegrationTests.Commands.Status;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Fixtures;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
 
@@ -34,7 +35,7 @@ public sealed class DoctorGeneratedNavigationOwnershipIntegrationTests
             File.Delete(workspace.Combine(MapsEntrypointPath));
             if (editLoader)
             {
-                EditLoaderTitle(loaderPath, loaderBytes);
+                InsertAuthoredLoaderParagraph(loaderPath, loaderBytes);
             }
 
             var beforeDoctor = workspace.SnapshotHashes();
@@ -74,24 +75,13 @@ public sealed class DoctorGeneratedNavigationOwnershipIntegrationTests
         }
     }
 
-    private static void EditLoaderTitle(string loaderPath, byte[] loaderBytes)
+    private static void InsertAuthoredLoaderParagraph(string loaderPath, byte[] loaderBytes)
     {
-        const string title = "# Open Forge Loader";
-        const string editedTitle = "# Open Forge Loader (authored title edit)";
         var loader = Encoding.UTF8.GetString(loaderBytes);
-        var entriesStart = loader.IndexOf("\n## Entries\n", StringComparison.Ordinal);
-        var titleStart = loader.IndexOf(title, StringComparison.Ordinal);
-        Assert.True(entriesStart > titleStart);
-        Assert.Equal(1, Count(loader, title));
-
         File.WriteAllBytes(
             loaderPath,
-            Encoding.UTF8.GetBytes(loader.Replace(title, editedTitle, StringComparison.Ordinal)));
+            Encoding.UTF8.GetBytes(AuthoredMarkdownFixture.InsertParagraph(loader, "Synthetic authored Doctor fixture change.")));
     }
-
-    private static int Count(string value, string fragment)
-        => (value.Length - value.Replace(fragment, string.Empty, StringComparison.Ordinal).Length)
-            / fragment.Length;
 
     private static string SubjectPath(JsonElement finding)
         => finding.GetProperty("subject").GetProperty("path").GetString()

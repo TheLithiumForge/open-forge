@@ -37,18 +37,18 @@
   ],
   "effects": [],
   "counts": {
-    "routedFiles": 18,
-    "startupFiles": 11,
-    "startupTokens": 6577,
+    "routedFiles": 19,
+    "startupFiles": 7,
+    "startupTokens": 3977,
     "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 274,
-    "allTokens": 22689,
-    "startupShare": 28.985730813729271114539143849,
+    "mayLoadAgainTokens": 243,
+    "allTokens": 25006,
+    "startupShare": 15.903342231286804035071933455,
     "rootCategories": 7,
     "entriesSectionsCurrent": 12,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 18,
+    "frameworkFilesCurrent": 19,
     "frameworkFilesChanged": 1,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -70,37 +70,37 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 11,
-          "characters": 26271,
-          "bytes": 26271,
-          "tokens": 6568
+          "files": 7,
+          "characters": 15907,
+          "bytes": 15907,
+          "tokens": 3977
         },
         "current": {
-          "files": 11,
-          "characters": 26306,
-          "bytes": 26306,
-          "tokens": 6577
+          "files": 7,
+          "characters": 15907,
+          "bytes": 15907,
+          "tokens": 3977
         },
         "difference": {
           "files": 0,
-          "characters": 35,
-          "bytes": 35,
-          "tokens": 9
+          "characters": 0,
+          "bytes": 0,
+          "tokens": 0
         },
         "mayLoadAgain": {
           "files": 1,
-          "characters": 1096,
-          "bytes": 1096,
-          "tokens": 274
+          "characters": 971,
+          "bytes": 971,
+          "tokens": 243
         }
       },
       "allRouted": {
-        "files": 18,
-        "characters": 90754,
-        "bytes": 90755,
-        "tokens": 22689
+        "files": 19,
+        "characters": 100022,
+        "bytes": 100023,
+        "tokens": 25006
       },
-      "startupShare": 28.985730813729271114539143849
+      "startupShare": 15.903342231286804035071933455
     },
     "structure": {
       "rootCategories": {

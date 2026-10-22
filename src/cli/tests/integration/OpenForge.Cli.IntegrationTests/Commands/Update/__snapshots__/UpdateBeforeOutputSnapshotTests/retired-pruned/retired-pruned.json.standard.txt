@@ -29,7 +29,7 @@
     "filesCreated": 0,
     "filesDeleted": 1,
     "filesKept": 0,
-    "filesUnchanged": 19,
+    "filesUnchanged": 20,
     "sectionsUpdated": 0
   },
   "limitations": [],
@@ -41,6 +41,9 @@
     "previousContent": "<recovery-bundle>",
     "lockPath": ".agents/open-forge.lock.json",
     "unchanged": [
+      {
+        "path": ".agents/README.md"
+      },
       {
         "path": ".agents/directives/_directives.md"
       },

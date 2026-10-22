@@ -51,6 +51,8 @@ internal sealed record FindEvidenceCandidate(
     FindHeadingEvidence? Heading,
     int Occurrence)
 {
+    internal string? AuthoredPath { get; init; }
+
     internal FindEvidence Create()
         => new(
             Predicate,
@@ -59,7 +61,7 @@ internal sealed record FindEvidenceCandidate(
             Authored,
             Region,
             Layer.Kind,
-            Layer.CanonicalPath,
+            AuthoredPath ?? Layer.CanonicalPath,
             Location,
             Occurrence,
             Heading);

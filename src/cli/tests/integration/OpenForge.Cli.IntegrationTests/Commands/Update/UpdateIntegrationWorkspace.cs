@@ -25,6 +25,7 @@ using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
 
 using OpenForge.Cli.IntegrationTests.Commands.Update.Shared.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Fixtures;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Update;
 
@@ -193,14 +194,10 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
         => _installWorkspace.RecoveryDirectoryExists();
 
     internal void MutateManagedContent()
-        => ReplaceUniqueManagedText(
-            "It defines how to select context, follow applicable rules, and maintain the workspace.",
-            "It defines how to select context, follow applicable rules, and maintain one workspace.");
+        => InsertAuthoredManagedParagraph("First synthetic authored loader change.");
 
     internal string MutateManagedContentAgain()
-        => ReplaceUniqueManagedText(
-            "# Open Forge Loader",
-            "# Open Forge Router");
+        => InsertAuthoredManagedParagraph("Second synthetic authored loader change.");
 
     internal void RemoveManagedContent()
         => RemoveFile(ManagedPath);
@@ -381,18 +378,10 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
         => value[propertyName]?.GetValue<string>()
             ?? throw new InvalidOperationException($"The lifecycle fixture requires '{propertyName}'.");
 
-    private string ReplaceUniqueManagedText(string before, string after)
+    private string InsertAuthoredManagedParagraph(string paragraph)
     {
         var current = ReadText(ManagedPath);
-        var first = current.IndexOf(before, StringComparison.Ordinal);
-        if (first < 0
-            || current.IndexOf(before, first + before.Length, StringComparison.Ordinal) >= 0)
-        {
-            throw new InvalidOperationException(
-                "The managed-divergence fixture requires one exact authored token.");
-        }
-
-        var updated = current.Replace(before, after, StringComparison.Ordinal);
+        var updated = AuthoredMarkdownFixture.InsertParagraph(current, paragraph);
         ReplaceText(ManagedPath, updated);
         return updated;
     }

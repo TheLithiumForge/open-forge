@@ -6,6 +6,7 @@ memory/emerging, memory/crystallized, memory/archived
 Git-ignored contents: none
 Leave out: none
 Frontmatter: root
+  .agents/README.md                                      would be created
   .agents/directives/_directives.md                      would be created
   .agents/guidance/_guidance.md                          would be created
   .agents/loader.md                                      would be created
@@ -29,7 +30,7 @@ Frontmatter: root
     would be created with an Open Forge section
   .agents/open-forge.json                                would be created
   .agents/open-forge.lock.json                           would be created
-  Would create 17 files and 13 directories under .agents, and update 1 existing
+  Would create 18 files and 13 directories under .agents, and update 1 existing
   file.
   Would add 1 section.
 No files were changed.

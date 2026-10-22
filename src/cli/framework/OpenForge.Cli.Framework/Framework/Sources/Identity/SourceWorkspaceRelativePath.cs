@@ -2,6 +2,15 @@ namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
 internal static class SourceWorkspaceRelativePath
 {
+    internal static bool IsCanonical(string? path)
+        => !string.IsNullOrWhiteSpace(path)
+            && !path.StartsWith("/", StringComparison.Ordinal)
+            && !IsDriveQualified(path)
+            && path.Split('/').All(SourceLogicalPath.IsCanonicalSegment);
+
+    internal static string ReadReference(string path)
+        => SourceIdentity.DeriveId(path) ?? $"./{path}";
+
     internal static string Validate(
         string path,
         string parameterName,
@@ -31,7 +40,7 @@ internal static class SourceWorkspaceRelativePath
     internal static string ValidateMarkdown(string path, string parameterName)
     {
         var validated = Validate(path, parameterName, allowWorkspaceRoot: false);
-        if (!validated.EndsWith(".md", StringComparison.Ordinal))
+        if (!validated.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
         {
             throw new ArgumentException(
                 "The workspace-relative source path must identify a Markdown file.",

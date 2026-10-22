@@ -111,6 +111,14 @@
       "owner": null
     },
     {
+      "path": ".agents/README.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -288,7 +296,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 17,
+    "filesCreated": 18,
     "directoriesCreated": 12,
     "sectionsAdded": 0,
     "filesReplaced": 1
@@ -300,7 +308,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 17,
+      "files": 18,
       "directories": 12,
       "sections": 2
     },

@@ -115,6 +115,16 @@
       "after": null
     },
     {
+      "path": ".agents/README.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -296,7 +306,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 13,
+    "filesCreated": 14,
     "directoriesCreated": 9,
     "sectionsAdded": 0,
     "filesReplaced": 0
@@ -308,7 +318,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 13,
+      "files": 14,
       "directories": 9,
       "sections": 2
     },
@@ -343,6 +353,10 @@
       },
       {
         "path": ".agents/skills/open-forge-cli/references"
+      },
+      {
+        "path": ".agents/README.md",
+        "sourceAssetPath": ".agents/README.md"
       },
       {
         "path": ".agents/directives/_directives.md",
@@ -416,7 +430,7 @@
     ],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 19
+      "assetCount": 20
     },
     "lifecycle": {
       "action": "publish",

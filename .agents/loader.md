@@ -1,148 +1,49 @@
 # Open Forge Loader
 
-Read this after `AGENTS.md`. It defines how to select context, follow applicable rules, and maintain the workspace.
+Agents read this file before every task. It says what to read, how to use it, and how to change what agents use.
 
-## Terms
-
-- `entrypoint` - Markdown file that makes a folder routable. Open Forge uses `_{folder-name}.md`. `index.md`, `_index.md`, `references.md`, and `_references.md` are compatibility names.
-- `entry` - One generated route line under `Entries`, describing a destination rather than containing its contents.
-- `axiom` - Required rule under `Axioms` in this loader or a recognized loaded entrypoint, inherited by selected descendants.
+The list under `Entries` at the bottom is the whole setup: the folders of rules and notes, and any other documents, that agents use in this workspace. Anything not listed is only background reading. Your project's own requirements, and the instructions your agent tool already loads, still apply. Everything works with plain files, and the CLI only makes it faster.
 
 ## Axioms
 
-### Authority And Inheritance
+### Read before you work
 
-#### Working With The User
+1. **List your working files.** Do this when a task starts or resumes, and again after your context is restored. Working files are the files you will investigate, review, create, change, rename or delete, including planned files and both paths of a rename. A file you only read for background is not a working file.
+2. **Use the CLI if you can.** If the `open-forge` CLI is available and allowed, run `open-forge context` with `--for <file>` once for each working file, and read its output. It covers steps 3 and 4. You still do step 5 yourself. If the command is missing, fails or cannot follow a link, do steps 3 to 5 with your own file tools.
+3. **Check conditions first.** Some entries end with `applies to` and one or more patterns. Such an entry applies only when one of your working files matches it, and that same file also matches every conditioned catalogue above it. Within one list, any pattern may match. Patterns are case-sensitive globs from the workspace root: `*.py` matches root files, `**/*.py` matches any depth, and `docs/**` matches a folder's contents. A leading `!` is literal, not an exclusion. Conditions never open a branch on their own and never grant edit permission. If you don't know your working files yet, report conditioned required entries as pending, and resolve them before you touch a matching file.
+4. **Read what is required.** Read every applicable entry tagged #LoadNow or #KeepInMind, in the order listed. A catalogue is a file that lists a folder's context under its own `Entries`. When you read one, repeat steps 3 and 4 for its Entries. Never skip a required read because its description looks unrelated. Read each file once per pass.
+5. **Open what fits the task.** Check the descriptions of the other listed entries and open the ones that fit. Follow any link that a file you read says to read. If search or a direct link leads you to a listed file, read the catalogues above it before you apply it. Keep separately selected branches separate. Use catalogues to find things, and don't open ordinary files just to discover more links or tags.
 
-- Respect platform constraints and runtime safety in every action.
-- Follow clear user direction when it is safe and allowed. It sets goals, priorities, important choices, and accepted changes. Do not ask the user to confirm it again.
-- A request to act allows the routine, reversible, in-scope choices needed to complete it. State assumptions that affect the result, and continue when accepted direction or a reversible assumption is enough.
-- Use the request and accepted context to resolve unclear choices. When an unresolved choice could significantly change the result, scope, risk, cost, external effects, or ability to undo the work, keep it #Contextual and ask before relying on it.
-- Match explanation and planning to the request. Unless deeper analysis is requested, begin with the current understanding, one recommendation, and at most one important open choice.
-- Use the fewest words that preserve meaning, readability, and logical progression in communication and authored content. Remove filler and repetition. Keep the context, conditions, and exceptions needed to understand and apply the result.
+Start again from step 1 when your goal or working files change. Before you hand off or finish, reread the #KeepInMind entries in the branches you are using. During work, reread them only when they may have changed.
 
-#### Sources And Acceptance
+### Use what you read
 
-- Use a declared external authority for the facts assigned to it.
-- Let each source answer one clear question. Link to related sources instead of repeating their detail. A link does not change either source's authority, scope, loading rules, or lifecycle.
-- Connect related material with relative links to local sources and precise references. Reuse consistent descriptive tags for shared subjects so tag and reference searches can find those connections. Add links and tags only when they help navigation or retrieval.
-- Put detail in the narrowest source that defines the question. Higher-level entrypoints and records keep only the summary needed to select that source and link to it.
-- Axioms and Directives govern agent behavior within their scope. Accepted documents and other sources define the current requirements, design, or knowledge of their subjects.
-- Validation establishes whether evidence supports a claim. Acceptance establishes what may be treated as current within its scope. Moving or restoring a record does not establish acceptance.
-- Investigate an apparent #CurrentTruth conflict before changing either source. When accepted direction changes current state, update the source that defines it and preserve useful prior context.
+- **Rules.** Follow the `## Axioms` of every catalogue you load and the `## Instructions` of every rule file, within the scope each one states. Only this loader and loaded catalogues define Axioms. A narrower rule adds to a broader one and never outranks it. If two rules conflict, or you cannot follow one, say so and explain why.
+- **The user.** Follow the user's direction within platform and safety limits. Take routine, reversible steps inside the request without asking again, and state the assumptions that affect the result. Ask first when an open choice could significantly change the result, scope, risk, cost, external effects or the ability to undo the work.
+- **Answers.** Match explanation and planning to the request. Unless the user asks for deeper analysis, start with your current understanding, one recommendation and at most one important open choice.
+- **Words.** In replies and in what you write, use the fewest words that keep the meaning, readability and logical order. Cut filler and repetition, but keep the context, conditions and exceptions a reader needs to apply the result.
+- **What counts as accepted.** Reading, linking, saving or tagging something does not make it accepted, and does not give you permission to edit it. Content is accepted when the user agrees, or when a source the user named for that question says so. Use declared external authorities for the facts they own. #Contextual marks content that is not accepted, and #CurrentTruth marks accepted current state within its scope. Tags, repetition and your own confidence never make something accepted. Evidence can support a claim without making it accepted.
+- **One question per source.** Let each source answer one clear question, and link to related sources instead of repeating their detail. A link never changes either source's authority, scope, loading or lifecycle. Selected advice or other non-binding material may specialize broader material of the same kind within its accepted scope.
+- **Conflicts and change.** When two accepted sources disagree, investigate before you edit either. When accepted direction changes the current state, update the source that defines it and keep useful prior context.
+- **#Evergreen.** This tag marks material that must stay in step with accepted current state. It grants no authority and loads nothing. Update affected #Evergreen sources you may edit before other work depends on them, and by closeout at the latest. Batch related updates when that is safe.
+- **Staying current.** Keep each source true to what it represents now. Keep useful prior context in a listed Memory route or another existing source. Report updates you could not make or were not allowed to make.
 
-#### How Rules Combine
+### Change what agents use
 
-- Only this loader and recognized loaded entrypoints define active Axioms. A loaded child inherits its ancestors' rules and adds only requirements specific to its narrower scope. Do not repeat inherited rules.
-- When authoring an entrypoint with no local rules, use `## Axioms` with one entry: `- inherited - No local axioms; loaded ancestor axioms remain active.` Existing missing or empty local sections also add no rules. Never combine the inherited marker with local rules.
-- Follow loaded Axioms and Directive Instructions within their scope. Adding a child instruction does not cancel an active ancestor rule. Report unresolved conflicts.
-- Customize a default by editing or replacing its source, or by adding its overwrite companion. This changes that source's content. It does not grant a separate file precedence over other active rules.
-- Selected non-binding material may specialize broader material of the same kind within its accepted scope.
-
-### Routing
-
-#### Terms
-
-- `route` - Navigable path exposed through entrypoints and `Entries`.
-- `root route` - Route exposed directly by this loader.
-- `scope` - Part of a route that narrows where the following content applies.
-- `slug` - Concrete folder name in a route path.
-- `managed route` - Route whose declared manager may install, update, or remove identified files. Management does not create runtime authority.
-
-#### Rules
-
-- An entrypoint lists its direct routes under `Entries`. Select what matters from descriptions, tags, paths, ancestor routes, and explicit links. Read each selected entrypoint before its children.
-- Follow relevant branches recursively. Every folder in a route chain has exactly one recognized entrypoint.
-- A root route exists only where this loader exposes it. It cannot be scoped or recreated inside another route.
-- Any number of routed slugs may narrow a route below its root. They may appear before, between, or after deeper route segments. Each narrows everything that follows it.
-- A scope contains only the routes useful there. It need not copy another scope or the installed defaults.
-- Put specialized material in the narrowest useful scope. Use workspace-wide placement only for material that applies across the workspace.
-- Keep separately selected scopes as separate chains and follow their explicit links. Recheck selection after an important task change.
-- When search or a direct link selects a routed file, load its applicable ancestor chain and required context before using it.
-- Use entrypoints for navigation. Do not open ordinary file bodies just to discover routes.
-
-#### Management And Customization
-
-- Management determines which files an installer or updater may change. It does not determine their meaning or authority.
-- Each manager defines the route shapes it recognizes. It preserves their segment order through scopes. It changes only files it owns or can safely identify for the requested lifecycle operation.
-- Users may add, move, replace, or remove routes. A familiar slug or tag does not create root behavior or managed status. Other valid routes remain routable.
-- Removed defaults stay removed unless the user asks to restore them. For managed files, record intentional removals in the manager's exclusions before updating.
-- Generated `Entries` provide navigation, not authority.
-
-#### Overwrites
-
-- A user-owned `{name}.overwrite.md` companion loads immediately after `{name}.md`. It shares the base file's route, scope, and loading behavior. It is not indexed or selected separately.
-- Interpret the overwrite as part of its base source, within that source's role and scope. Where they answer the same question differently, the overwrite wins only for the corresponding content. It does not override unrelated sources.
-
-### Tags And Loading
-
-Defined tags keep the meanings below wherever they appear. They control loading or classify content, but do not grant authority. Other tags remain search and routing signals.
-
-Entries stay on demand unless marked #LoadNow or #KeepInMind. These tags act only through loaded parents. Neither activates an unselected ancestor or scope.
-
-Select the scope first, then follow its loading rules. Do not skip a required file because its individual description seems less relevant. Read each source once per loading or refresh pass. A later refresh or a changed source may require another read.
-
-For example, a C# scope may contain a #LoadNow design file and an on-demand Windows scope. Selecting C# loads its design rules, not Windows. A #LoadNow file under Windows loads only after Windows is selected.
-
-#### Defined Tags
-
-- #LoadNow - Read the linked file, in listed order, when a loaded parent exposes it. If it is an entrypoint, apply its child loading rules.
-- #KeepInMind - Read the tagged context when its parent loads, then refresh it while its scope remains active.
-  - Timing: Refresh at task start or resume, after context restoration, and before handoff or closeout.
-  - Order: Read the tagged file and its adjacent overwrite. For an entrypoint, apply its child loading rules in listed order.
-  - Boundaries: Refresh only active scopes. Do not open file bodies just to discover tagged files.
-  - Recheck: Recheck during work only when the tagged files in active scopes may have changed.
-- #Core - Base routing and loading, workspace orientation, and reusable agent-facing roles.
-- #Memory - Self-growing Markdown state for active work, coordination, accepted knowledge, candidates, and history.
-- #Extension - Optional packaged routes, capabilities, integrations, and support files.
-- #Contextual - Useful context, not authority by itself. Treat it as unaccepted unless applicable authority establishes acceptance within its scope.
-- #CurrentTruth - Accepted current state within its stated scope, subject to user direction, runtime safety, platform constraints, and declared external authorities for the facts they define.
-- #Evergreen - Material that must stay aligned with accepted current state. It creates no authority or loading behavior.
-  - Update affected #Evergreen sources you are allowed to edit before work depends on them and no later than closeout. Batch related updates when safe.
-  - Keep each source aligned with what it represents now. Preserve useful prior context in the appropriate Memory route. Report needed updates that are blocked or not authorized.
-
-#### Choosing Loading Tags
-
-- Keep optional content on demand. Follow any stronger loading rule defined by its category.
-- Use #LoadNow only when the content is needed whenever its parent loads and missing it would cost more than reading it each time.
-- Narrow the scope before making specialized content mandatory. Do not mark a broad parent #LoadNow merely to expose an important descendant.
-- Use #KeepInMind only when work needs the content read again at the defined refresh points. It is not an importance label.
-
-### Frontmatter
-
-Routed Markdown files start with YAML frontmatter. Open Forge fields sit at the root, or under an `open-forge:` key that then holds all of them. When you add metadata, follow `frontmatter` in `.agents/open-forge.json`. A missing value means scoped. For routing, each line under an entrypoint's `Entries` repeats a file's description, tags, and `applyTo` patterns, so you can decide before opening it.
-
-- `description` - Required short text that helps a reader decide whether to open the file.
-- `responsibility` - Optional sentence stating what the file defines, so an editor can decide what belongs there. It creates no authority or loading behavior.
-- `tags` - Required list of tag names without `#`. Defined Tags gives the reserved meanings.
-- `applyTo` - Optional glob patterns, as a list or a comma-separated string, that filter a file by the files the task works on. Root and scoped declarations are both read. Equal patterns count once, and different patterns are invalid.
-  - Filter: A file that would load or refresh does so, and applies, only while one working file matches its patterns and those of every ancestor with `applyTo`. `applyTo` never loads a file by itself.
-  - Patterns: Globs match from the workspace root and are case-sensitive. `*.py` matches root files, `**/*.py` any depth, and `docs/**` a folder. A leading `!` is literal and does not exclude files.
-  - Working files: Files the task investigates, creates, changes, deletes, renames, or reviews, including planned ones. Reading a file for context does not count. When work reaches another file, that file's own conditions apply. `applyTo` never grants or restricts edit permission.
-  - Unknown files: While the working files are unknown, report conditioned #LoadNow and #KeepInMind entries as pending.
-
-### CLI
-
-Use the relevant commands below when the Open Forge CLI is available. The plain files remain complete without it.
-
-#### Applicable Commands
-
-- `open-forge --help` - Show the complete current command interface
-- `open-forge context [<source-reference>...]` - Read startup or selected context
-- `open-forge route list [<source-reference>]` - List routed sources and descendants
-- `open-forge route inspect <source-reference>` - Inspect one source's route behavior
-- `open-forge find [options]` - Find Markdown sources by tags and headings
-- `open-forge references <source-reference>` - Inspect direct authored references
-- `open-forge index [<source-reference>...]` - Complete missing metadata and navigation, including generated `Entries`
-- `open-forge status` - Summarize workspace, context, lifecycle, generated navigation, and recovery
-- `open-forge doctor` - Diagnose workspace, routes, references, lifecycle, and recovery without changes
+- **Add something.** Add a line under `Entries` with a path relative to this file, such as `../docs/architecture.md` or `../.cursor/rules/testing.mdc`. The line carries the description, tags and conditions, so the document needs no frontmatter and stays where it is. A linked Markdown catalogue, such as `../docs/_docs.md`, brings its Entries along. With the CLI, `open-forge route include <file>` writes the line for you.
+- **Remove something.** Remove its line. Its files stay as plain notes, and reading them for background does not bring their rules back. Removing a line does not cancel accepted project requirements or the instructions your agent tool loads on its own. A removed line stays removed until the user asks to restore it.
+- **Check what depends on it.** Before you remove a line, remove or replace the listed parts that need it, and report anything you cannot resolve. Inside other catalogues, the list follows the files in that folder, so move or delete a file to keep it out. When the CLI manages updates, also record the removal in its exclusions before you update.
+- **Missing files.** Report a listed file or required dependency that is missing as an error. An empty `Entries` list is valid.
+- **Required reads.** #LoadNow means a file is read whenever its parent loads. #KeepInMind adds the rereads described above. Both act only through catalogues you have read, so neither opens a branch nobody selected. Keep a required file's catalogue chain unbroken. Add these tags only when the read is really needed, and narrow specialized content before you make it required. No other tag changes loading.
+- **Writing context.** Before you author workspace context, catalogues or metadata, read the file formats under "Writing workspace files" in `README.md`. If that page was deleted, `open-forge help concepts` prints the same section. Without either, copy the shape of a neighbouring file. New routed files carry `description`, `tags` and optional `applyTo`. A native `SKILL.md` keeps its own metadata.
+- **Changes that survive updates.** Put your change in `{name}.overwrite.md` next to the shipped file. It is read right after its base, with the same role, scope and loading conditions. It wins only where the two say different things about the same content, and it is not listed or selected on its own.
 
 ## Entries
 
 - [Required instructions loaded through selected routes](directives/_directives.md) - #LoadNow #Core #Directive
-- [Advice for recurring choices, tradeoffs, and work situations](guidance/_guidance.md) - #LoadNow #Core #Guidance
+- [Advice for recurring choices, tradeoffs, and work situations](guidance/_guidance.md) - #Core #Guidance
 - [Concise maps to important local and external sources and when to use them](maps/_maps.md) - #LoadNow #Core #Map
 - [Self-growing Markdown memory for active work, coordination, accepted knowledge, candidates, and history](memory/_memory.md) - #LoadNow #Memory
-- [Reusable default shapes for code, files, APIs, documents, and other work](patterns/_patterns.md) - #LoadNow #Core #Pattern
-- [Specialized capabilities provided through native SKILL.md packages](skills/_skills.md) - #LoadNow #Core #Skill
+- [Reusable default shapes for code, files, APIs, documents, and other work](patterns/_patterns.md) - #Core #Pattern
+- [Specialized capabilities provided through native SKILL.md packages](skills/_skills.md) - #Core #Skill
 - [Copy-ready files for starting independently maintained workspace content](templates/_templates.md) - #Core #Template

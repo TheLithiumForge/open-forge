@@ -43,11 +43,12 @@ internal static class InstallSetupQuestions
     {
         CliChoice<InstallPreset>[] choices =
         [
+            new(InstallPreset.Minimal, Label: InstallSetupText.MinimalLabel(), Description: InstallSetupText.Minimal(), Summary: InstallSetupText.MinimalSummary()),
             new(InstallPreset.Essentials, Label: InstallSetupText.EssentialsLabel(), Description: InstallSetupText.Essentials(), Summary: InstallSetupText.EssentialsSummary()),
             new(InstallPreset.FullCore, Label: InstallSetupText.FullCoreLabel(), Description: InstallSetupText.FullCore(), Summary: InstallSetupText.FullCoreSummary()),
             new(InstallPreset.Custom, Label: InstallSetupText.CustomLabel(), Description: InstallSetupText.Custom(), Summary: InstallSetupText.CustomSummary()),
         ];
-        if (initial == InstallPreset.Custom) choices = [choices[2], choices[0], choices[1]];
+        if (initial == InstallPreset.Custom) choices = [choices[3], choices[0], choices[1], choices[2]];
         return new(InstallSetupText.PresetQuestion(), choices);
     }
 

@@ -55,9 +55,10 @@ internal sealed record ApplyToMetadataFacts
             throw new ArgumentException("applyTo metadata collections must be initialized.");
         }
 
+        // Conditions read from an Entries line carry patterns without YAML declarations.
         if ((state == ApplyToMetadataState.Invalid) != (failure is not null)
             || state == ApplyToMetadataState.Absent && (!patterns.IsEmpty || !declarations.IsEmpty)
-            || state == ApplyToMetadataState.Valid && (patterns.IsEmpty || declarations.IsEmpty))
+            || state == ApplyToMetadataState.Valid && patterns.IsEmpty)
         {
             throw new ArgumentException("applyTo facts must carry values and failures consistent with their state.");
         }
@@ -86,6 +87,11 @@ internal sealed record ApplyToMetadataFacts
         IEnumerable<ApplyToPattern> patterns,
         IEnumerable<ApplyToDeclaration> declarations)
         => new(ApplyToMetadataState.Valid, patterns.ToImmutableArray(), declarations.ToImmutableArray(), null);
+
+    internal static ApplyToMetadataFacts FromEntryLine(IReadOnlyList<ApplyToPattern> patterns)
+        => patterns.Count == 0
+            ? Absent
+            : new(ApplyToMetadataState.Valid, patterns.ToImmutableArray(), [], null);
 
     internal static ApplyToMetadataFacts Invalid(
         IEnumerable<ApplyToPattern> patterns,

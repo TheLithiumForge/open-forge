@@ -1,11 +1,11 @@
-using System.Text;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Presentation.Install;
-using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
@@ -14,6 +14,7 @@ using OpenForge.Cli.TestSupport.Snapshots;
 
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Fixtures;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -44,7 +45,9 @@ public sealed class InstallBeforeOutputSnapshotTests
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Equal(intended, File.ReadAllText(workspace.Combine(OccupiedPath)));
             var preserved = File.ReadAllText(workspace.Combine(".agents/memory/_memory.overwrite.md"));
-            Assert.Contains("# Memory", preserved, StringComparison.Ordinal);
+            var document = new MarkdownDocumentParser().Parse(intended);
+            var entries = Assert.IsType<MarkdownTextSpan>(document.GeneratedRegion.RegionSpan);
+            Assert.StartsWith(intended[..entries.Start], preserved, StringComparison.Ordinal);
             Assert.DoesNotContain("stale.md", preserved, StringComparison.Ordinal);
             Assert.DoesNotContain("## Entries", preserved, StringComparison.Ordinal);
             Assert.True(File.Exists(workspace.Combine(InstallOperationWorkspace.OwnershipPath)));
@@ -121,17 +124,7 @@ public sealed class InstallBeforeOutputSnapshotTests
     }
 
     private static string SeedOccupiedGeneratedRegion(InstallOperationWorkspace workspace)
-    {
-        var payload = EmbeddedFrameworkPayloadReader.Read().Payload
-            ?? throw new InvalidOperationException("The embedded Framework payload is unavailable.");
-        var asset = payload.Find(OccupiedPath)
-            ?? throw new InvalidOperationException("The generated Install fixture target is unavailable.");
-        var intended = Encoding.UTF8.GetString(asset.Bytes.AsSpan());
-        const string current = "- [Accepted knowledge that should remain current](crystallized/_crystallized.md)";
-        Assert.Contains(current, intended, StringComparison.Ordinal);
-        workspace.WriteText(OccupiedPath, intended.Replace(current, "- [Stale generated entry](stale.md)", StringComparison.Ordinal));
-        return intended;
-    }
+        => InstallMarkdownFixture.SeedStaleEntries(workspace, OccupiedPath);
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Install output preserves invalid arguments before effects")]

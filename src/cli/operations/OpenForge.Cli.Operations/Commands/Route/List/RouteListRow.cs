@@ -82,6 +82,22 @@ internal sealed class RouteListRow
 
     internal string Id { get; }
 
+    internal bool IsUnlisted { get; init; }
+
+    internal bool IsMissing { get; init; }
+
+    internal static RouteListRow Unlisted(string path)
+        => new($"./{path}", path, null, null, 0, 0, RouteListRowKind.RoutedLeaf,
+            path, [], null,
+            new RouteListProvenance(RouteListSelectionProvenance.LoaderRoot, RouteListSourceProvenance.AuthoredLeaf, false))
+        { IsUnlisted = true };
+
+    internal RouteListRow WithDirectChildCount(int? count)
+        => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, count, Provenance) { IsUnlisted = IsUnlisted };
+
+    internal RouteListRow AsMissing()
+        => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, DirectChildCount, Provenance) { IsMissing = true };
+
     internal string Path { get; }
 
     internal string? ParentId { get; }
@@ -248,8 +264,7 @@ internal sealed class RouteListRow
         switch (provenance.Selection)
         {
             case RouteListSelectionProvenance.LoaderRoot:
-                if (kind != RouteListRowKind.Entrypoint
-                    || relativeDepth != 0
+                if (relativeDepth != 0
                     || parentId is null && absoluteDepth != 0
                     || parentId is not null && absoluteDepth == 0)
                 {
@@ -262,7 +277,7 @@ internal sealed class RouteListRow
             case RouteListSelectionProvenance.ExplicitRoot:
                 if (relativeDepth != 0
                     || absoluteDepth is null
-                    || parentId is null && (kind != RouteListRowKind.Entrypoint || absoluteDepth != 0)
+                    || parentId is null && absoluteDepth != 0
                     || parentId is not null && absoluteDepth <= 0)
                 {
                     throw new ArgumentException(

@@ -19,6 +19,11 @@ internal sealed class RouteListResultComposer(
         RouteListSelectionResolution? loaderRootSelection,
         CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested && source.IncludedSources.Count != 0)
+        {
+            return _resultBuilder.BuildInterrupted(request, source.Selection.Selection);
+        }
+
         var input = new RouteListTopologyInput(
             request,
             source.Inventory,
@@ -26,11 +31,15 @@ internal sealed class RouteListResultComposer(
             loaderRootSelection);
         var selected = _topologySelector.SelectSources(input, source.RouteFacts, cancellationToken);
         var coverage = _coverageBuilder.Build(input, selected);
-        return _resultBuilder.Build(input, selected, coverage);
+        var result = _resultBuilder.Build(input, selected, coverage);
+        return RouteListIncludedResultBuilder.Build(request, source, result, cancellationToken);
     }
 
     internal RouteListResult BuildFailure(
         RouteListRequest request,
         RouteListSelection attemptedSelection)
         => _resultBuilder.BuildFailure(request, attemptedSelection);
+
+    internal RouteListResult BuildInterrupted(RouteListRequest request, RouteListSelection attemptedSelection)
+        => _resultBuilder.BuildInterrupted(request, attemptedSelection);
 }

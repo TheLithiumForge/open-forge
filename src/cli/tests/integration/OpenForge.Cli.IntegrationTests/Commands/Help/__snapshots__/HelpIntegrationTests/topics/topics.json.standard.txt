@@ -1,0 +1,1 @@
+{"schemaVersion":3,"command":"help","status":"completed","detail":"standard","filter":null,"workspace":null,"summary":{"headline":"Help is ready.","kind":"done"},"findings":[],"effects":[],"counts":{},"limitations":[],"data":{"topic":null,"markdown":null,"topics":["concepts"]},"recovery":null,"next":null}

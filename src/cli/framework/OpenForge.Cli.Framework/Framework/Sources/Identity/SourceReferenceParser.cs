@@ -23,6 +23,14 @@ internal static class SourceReferenceParser
                     "An exact source path must contain non-empty .agents segments without traversal or control characters.");
         }
 
+        if (value.StartsWith("./", StringComparison.Ordinal))
+        {
+            var path = value[2..];
+            return SourceWorkspaceRelativePath.IsCanonical(path)
+                ? SourceReferenceParseResult.ValidPath(path)
+                : SourceReferenceParseResult.InvalidPath(path, "An exact source path must stay inside the workspace without traversal or control characters.");
+        }
+
         return SourceIdentity.IsValidId(value)
             ? SourceReferenceParseResult.ValidId(value)
             : SourceReferenceParseResult.InvalidId(

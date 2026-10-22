@@ -10,8 +10,8 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized routing-only entrypoint for the
-`route` command family. All seven leaves are implemented in the merged native
-CLI and locally accepted. The [CLI Development](../../../../../working/cli-development/_cli-development.md)
+`route` command family. The existing leaves are implemented in the merged native CLI. Include and
+Exclude add the accepted in-place reuse commands. The [CLI Development](../../../../../working/cli-development/_cli-development.md)
 route records implementation and evidence state. This entrypoint defines group
 routing and help only. The child
 Interface and Behavior Contracts define detailed command meaning. No Route
@@ -20,7 +20,7 @@ Technical Design is needed.
 ## Routing And Help
 
 The `route` group performs no domain operation. Group help exposes the leaf
-operations `inspect`, `list`, `init`, `create`, `update`, `move`, and `remove`.
+operations `inspect`, `list`, `init`, `create`, `update`, `include`, `exclude`, `move`, and `remove`.
 Each child entrypoint routes to its Interface and Behavior Contracts. The
 structural `move` leaf accepts one eligible ordinary unmanaged logical leaf or
 category. `remove` also accepts Framework- and Extension-managed content and
@@ -34,6 +34,8 @@ Generated `Entries` provide navigation only.
 ## Entries
 
 - [Routing-only entrypoint for the accepted `route create` command contracts](create/_create.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Create #Template #Mutation #CurrentTruth
+- [Routing-only entrypoint for the accepted route exclude command contracts](exclude/_exclude.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Exclude #Mutation #CurrentTruth
+- [Routing-only entrypoint for the accepted route include command contracts](include/_include.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Include #Mutation #CurrentTruth
 - [Routing-only entrypoint for the accepted `route init` command contracts](init/_init.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Init #Entrypoint #CurrentTruth
 - [Routing-only entrypoint for the accepted `route inspect` command contracts](inspect/_inspect.md) - #Memory #Crystallized #CLI #Release #Command #Route #Inspect #Contract #CurrentTruth
 - [Routing-only entrypoint for the accepted current `route list` command contracts](list/_list.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #List #CurrentTruth

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
@@ -189,7 +190,10 @@ internal sealed class ContextProjectionBuilder
         if (document.Frontmatter.State == MarkdownFrontmatterState.Missing)
         {
             // An entry document is not a routed source, so it carries no route metadata by design.
-            if (!source.IsEntryDocument && layer.Kind != SourceLayerKind.Overwrite)
+            // A linked document takes its metadata from the Entries line that links it, and the guide
+            // for people sits outside routing.
+            if (!source.IsEntryDocument && !source.IsLinked && layer.Kind != SourceLayerKind.Overwrite
+                && !string.Equals(source.CanonicalPath, SourceLogicalPath.HumanGuidePath, StringComparison.Ordinal))
             {
                 state.Attention = true;
                 state.Findings.Add(Finding(

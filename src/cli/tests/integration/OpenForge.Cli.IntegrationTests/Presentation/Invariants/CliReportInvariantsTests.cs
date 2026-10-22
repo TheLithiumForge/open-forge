@@ -1192,6 +1192,8 @@ public sealed class CliReportInvariantsTests
                 // Help is an informational mode, not a native operation report.
                 .Where(directory => !string.Equals(directory, helpSnapshots, StringComparison.OrdinalIgnoreCase))
                 .SelectMany(directory => Directory.EnumerateFiles(directory, "*.txt", SearchOption.AllDirectories)
+                    // A `.content.txt` capture records installed file content, not a command report.
+                    .Where(path => !path.EndsWith(".content.txt", StringComparison.OrdinalIgnoreCase))
                     .Select(path => Parse(path, directory)))
                 .ToArray();
             if (all.Length == 0)

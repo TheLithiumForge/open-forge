@@ -37,8 +37,8 @@ internal sealed record InstallSymbols(
             Arity = ArgumentArity.Zero,
         };
         var configure = new Option<bool>("--configure") { Description = "Configure built-in routes while retaining existing files.", Arity = ArgumentArity.Zero };
-        var preset = new Option<string?>("--preset") { Description = "Select essentials, full-core, or custom.", Arity = ArgumentArity.ExactlyOne };
-        var route = new Option<string[]>("--route") { Description = "Set a Custom route: <id>=<add|remove|git-ignore>.", Arity = ArgumentArity.OneOrMore, AllowMultipleArgumentsPerToken = false };
+        var preset = new Option<string?>("--preset") { Description = "Select minimal, essentials, full-core, or custom.", Arity = ArgumentArity.ExactlyOne };
+        var route = new Option<string[]>("--route") { Description = "Set a Custom or Minimal route: <id>=<add|remove|git-ignore>.", Arity = ArgumentArity.OneOrMore, AllowMultipleArgumentsPerToken = false };
         var frontmatter = new Option<string[]>(InstallDefinitions.Frontmatter.Name)
         {
             Description = InstallDefinitions.Frontmatter.Description,

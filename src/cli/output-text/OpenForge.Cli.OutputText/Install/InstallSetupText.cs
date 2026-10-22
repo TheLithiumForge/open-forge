@@ -24,11 +24,13 @@ internal static class InstallSetupText
     // @OpenForgeText install.setup.presetquestion
     internal static string PresetQuestion() => "Choose your Open Forge setup";
     // @OpenForgeText install.setup.essentials
-    internal static string Essentials() => "Rules, reusable patterns, skills and project memory. New notes for active work stay out of Git.";
+    internal static string Essentials() => "Everything in Minimal, plus reusable patterns, skills, notes for active work and findings not accepted yet. New notes for active work stay out of Git.";
     // @OpenForgeText install.setup.fullcore
     internal static string FullCore() => "Everything in Essentials, plus advice, pointers to sources, starter files and archived records. All contents, including notes for active work, are shared through Git.";
     // @OpenForgeText install.setup.custom
     internal static string Custom() => "Starts from your current choices, or Essentials in a new workspace, then shows one list to change.";
+    // @OpenForgeText install.setup.minimal
+    internal static string Minimal() => "The loader, Directives for your rules and Crystallized Memory for accepted knowledge, plus the Open Forge sections in AGENTS.md and CLAUDE.md. Link documents you already have from the loader.";
     // @OpenForgeText install.setup.routequestion
     internal static string RouteQuestion() => "Choose what Open Forge sets up";
     // @OpenForgeText install.setup.retention
@@ -42,11 +44,13 @@ internal static class InstallSetupText
     // @OpenForgeText install.setup.freshremove
     internal static string FreshRemove(string id) => $"Leave out: no {id} folder is created. You can add it later with open-forge install --configure.";
     // @OpenForgeText install.setup.essentialssummary
-    internal static string EssentialsSummary() => "Recommended. Rules, patterns, skills and memory";
+    internal static string EssentialsSummary() => "Minimal plus patterns, skills and working notes";
     // @OpenForgeText install.setup.fullcoresummary
     internal static string FullCoreSummary() => "Every built-in folder, all shared through Git";
     // @OpenForgeText install.setup.customsummary
     internal static string CustomSummary() => "Choose each folder on the next screen";
+    // @OpenForgeText install.setup.minimalsummary
+    internal static string MinimalSummary() => "Recommended. Rules, accepted knowledge, your documents";
     // @OpenForgeText install.setup.addlegend
     internal static string AddLegend() => "add";
     // @OpenForgeText install.setup.gitignorelegend
@@ -95,6 +99,8 @@ internal static class InstallSetupText
     internal static string FullCoreLabel() => "Full Core";
     // @OpenForgeText install.setup.customlabel
     internal static string CustomLabel() => "Custom";
+    // @OpenForgeText install.setup.minimallabel
+    internal static string MinimalLabel() => "Minimal";
     // @OpenForgeText install.setup.recap
     internal static string Setup(string preset) => $"Setup: {preset}";
     // @OpenForgeText install.setup.addroutes
@@ -117,5 +123,5 @@ internal static class InstallSetupText
         Next: review the new files with git status and git diff, commit them, then give your agent a normal task.
         """;
     // @OpenForgeText install.setup.help
-    internal static string Help() => "Use --configure to change an installed setup. Choose --preset essentials, full-core, or custom. With Custom, repeat --route <id>=<add|remove|git-ignore>. Built-in IDs: directives, guidance, maps, patterns, skills, templates, memory/working, memory/emerging, memory/crystallized, memory/archived.\nRemove keeps existing files and their routes. Add + Git-ignore shares the entrypoint, ignores route contents, and omits private child Entries. Already tracked files remain tracked.";
+    internal static string Help() => "Use --configure to change an installed setup. Choose --preset minimal, essentials, full-core, or custom. With Custom or Minimal, repeat --route <id>=<add|remove|git-ignore>. Built-in IDs: directives, guidance, maps, patterns, skills, templates, memory/working, memory/emerging, memory/crystallized, memory/archived.\nRemove keeps existing files and their routes. Add + Git-ignore shares the entrypoint, ignores route contents, and omits private child Entries. Already tracked files remain tracked.";
 }

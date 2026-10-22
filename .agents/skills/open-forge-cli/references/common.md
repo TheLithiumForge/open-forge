@@ -16,6 +16,8 @@ open-forge <command> [operands] [command flags] [global flags]
 
 Use `open-forge --help` for the top-level inventory. `route --help`, `extension --help`, and `library --help` list their subcommands. Add `--help` to a complete command for its operands, flags, defaults, and examples.
 
+`open-forge help` lists built-in topics. `open-forge help concepts` prints the concepts and the file formats from the shipped `.agents/README.md`, without a workspace, so it still works after a project deletes its README.
+
 A source reference is an exact source ID, such as `memory/crystallized`, or an exact `.agents/...` Markdown path. Use the exact path when an ID is ambiguous. Source IDs, Extension stable IDs, and Library management IDs identify different things. Examples assume their routes or packages exist. Substitute IDs from the selected workspace's inventory.
 
 ## Global Flags

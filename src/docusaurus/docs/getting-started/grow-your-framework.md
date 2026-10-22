@@ -14,7 +14,7 @@ The [ten-minute guide](ten-minute-guide.md) covers the first rule, Pattern, and 
 
 ## Make the next task simpler
 
-Start with one recurring problem. If you keep repeating a correction, write one rule. If an answer already lives in your README, wiki, or API documentation, link to it and say when it matters. If a task produces a useful finding, keep it where the next relevant task can find it.
+Start with one recurring problem. If you keep repeating a correction, write one rule. If an answer already lives in your README, wiki, or API documentation, include it with `open-forge route include` and say when it matters. If a task produces a useful finding, keep it where the next relevant task can find it.
 
 That is the core: Markdown, rules, and links. You can edit them with your usual editor and review them in Git. Leave unused categories empty, and add a scope or Extension when an actual need appears.
 

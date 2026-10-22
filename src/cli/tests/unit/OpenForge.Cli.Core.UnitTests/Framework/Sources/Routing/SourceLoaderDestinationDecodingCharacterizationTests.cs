@@ -61,7 +61,7 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
     [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Loader destination path rejection retains exact causes after successful decoding"),
         InlineData("./child//../leaf.md", "./child//../leaf.md", "The decoded Loader destination contains an empty or traversal segment."),
-        InlineData("%2E%2E/leaf.md", "../leaf.md", "The decoded Loader destination contains an empty or traversal segment."),
+        InlineData("%2E%2E/%2E%2E/leaf.md", "../../leaf.md", "The decoded Loader destination contains an empty or traversal segment."),
         InlineData("leaf%09.md", "leaf\t.md", "The decoded Loader destination contains an unsafe path character."),
         InlineData("leaf%23fragment.md", "leaf#fragment.md", "The decoded Loader destination contains an unsafe path character.")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
@@ -74,6 +74,22 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
         Assert.Equal(expectedDecoded, result.DecodedDestination);
         Assert.Null(result.CanonicalPath);
         Assert.Equal(expectedCause, result.Cause);
+    }
+
+    [Trait("Boundary", "Input")]
+    [Theory(DisplayName = "Loader destinations that leave .agents but stay in the workspace are linked documents"),
+        InlineData("%2E%2E/leaf.md", "../leaf.md", "leaf.md"),
+        InlineData("../docs/architecture.md", "../docs/architecture.md", "docs/architecture.md"),
+        InlineData("../docs/./adr/../contributing.md", "../docs/./adr/../contributing.md", "docs/contributing.md")]
+    [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void WorkspaceLinksResolveOutsideAgents(string attempted, string expectedDecoded, string expectedPath)
+    {
+        var result = SourceLoaderDestinationParser.Parse(attempted);
+
+        Assert.Equal(SourceLoaderDestinationParseState.Linked, result.State);
+        Assert.Equal(expectedDecoded, result.DecodedDestination);
+        Assert.Equal(expectedPath, result.CanonicalPath);
+        Assert.Null(result.Cause);
     }
 
     [Trait("Boundary", "Input")]

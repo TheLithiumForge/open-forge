@@ -240,6 +240,14 @@ Gate 5 executable proof should cover at least these observable scenarios:
 9. Unsafe and ambiguous references block, invalid depth and source kinds are
    invalid, and incomplete topology never reports `completed`.
 
+## Included Routes
+
+Extend the root listing with active included rows from the shared source reader.
+Follow only listed descendants of included Markdown catalogues. Keep normal
+structural depth and canonical sibling ordering. Read settings `roots` to label
+registrations without a loader row as unlisted. Emit no children for an unlisted registration
+and never restore its row.
+
 ## Related Current Sources
 
 - [route list Interface Contract](interface.md)

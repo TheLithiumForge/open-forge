@@ -12,8 +12,8 @@ public sealed class CommandHelpIntegrationTests
     public static TheoryData<string> Pages => new()
     {
         "", "route", "extension", "library",
-        "install", "update", "remove", "status", "context", "find", "references", "index", "doctor", "repair", "cleanup",
-        "route list", "route inspect", "route init", "route create", "route update", "route move", "route remove",
+        "install", "update", "remove", "status", "context", "find", "references", "index", "doctor", "repair", "cleanup", "help",
+        "route list", "route inspect", "route init", "route create", "route include", "route exclude", "route update", "route move", "route remove",
         "extension list", "extension inspect", "extension create", "extension install", "extension update", "extension remove",
         "library list", "library inspect", "library attach", "library sync", "library detach",
     };
@@ -70,7 +70,7 @@ public sealed class CommandHelpIntegrationTests
             Assert.DoesNotContain("Managed content:", text, StringComparison.Ordinal);
             Assert.DoesNotContain("Command help:", text, StringComparison.Ordinal);
             Assert.Single(text.Split(Environment.NewLine), line => line.Contains("--workspace <path>", StringComparison.Ordinal));
-            Assert.Contains("  open-forge install --preset essentials --dry-run  Preview Essentials, no edits", text, StringComparison.Ordinal);
+            Assert.Contains("  open-forge install --preset minimal --dry-run  Preview Minimal, no edits", text, StringComparison.Ordinal);
         }
 
         CommandOutputSnapshot.MatchSnapshot(text, command.Length == 0 ? "root" : command.Replace(' ', '-'),

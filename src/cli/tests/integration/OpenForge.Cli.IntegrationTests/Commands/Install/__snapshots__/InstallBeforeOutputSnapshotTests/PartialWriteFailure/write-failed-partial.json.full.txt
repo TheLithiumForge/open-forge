@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Install stopped after 16 of 34 changes.",
+    "headline": "Install stopped after 17 of 35 changes.",
     "kind": "failed"
   },
   "findings": [
@@ -157,6 +157,16 @@
     {
       "path": ".agents/skills/open-forge-cli/references",
       "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/README.md",
+      "kind": "file",
       "action": "created",
       "outcome": "done",
       "reason": null,
@@ -386,7 +396,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 4,
+    "filesCreated": 5,
     "directoriesCreated": 12,
     "sectionsAdded": 0,
     "filesReplaced": 0,
@@ -399,7 +409,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 17,
+      "files": 18,
       "directories": 12,
       "sections": 2
     },
@@ -440,6 +450,10 @@
       },
       {
         "path": ".agents/skills/open-forge-cli/references"
+      },
+      {
+        "path": ".agents/README.md",
+        "sourceAssetPath": ".agents/README.md"
       },
       {
         "path": ".agents/directives/_directives.md",
@@ -528,7 +542,7 @@
     ],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 19
+      "assetCount": 20
     },
     "lifecycle": {
       "action": "publish",

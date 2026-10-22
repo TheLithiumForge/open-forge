@@ -6,6 +6,28 @@ namespace OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
 
 internal static class StatusMeasurementCalculator
 {
+    internal static StatusMeasurement Add(ContextMeasurementObservation basis, ContextMeasurementObservation? addition)
+    {
+        var current = Project(basis);
+        if (addition is null)
+            return current;
+        var extra = Project(addition);
+        var characters = Sum(current.Characters, extra.Characters);
+        var tokens = characters.Value is { } count
+            ? new StatusIntegerValue(StatusValueState.Available, count / 4 + (count % 4 == 0 ? 0 : 1))
+            : new StatusIntegerValue(characters.State, null);
+        return new StatusMeasurement(
+            Files: Sum(current.Files, extra.Files),
+            Characters: characters,
+            Utf8Bytes: Sum(current.Utf8Bytes, extra.Utf8Bytes),
+            EstimatedTokens: tokens);
+    }
+
+    private static StatusIntegerValue Sum(StatusIntegerValue basis, StatusIntegerValue addition)
+        => basis.State == StatusValueState.Available && addition.State == StatusValueState.Available
+            ? new StatusIntegerValue(StatusValueState.Available, basis.Value + addition.Value)
+            : new StatusIntegerValue(StatusValueState.Unavailable, null);
+
     internal static StatusIntegerValue Project(OperationalIntegerObservation observation)
     {
         Validate(observation.State, observation.Value, nameof(observation));

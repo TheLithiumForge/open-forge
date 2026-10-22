@@ -19,33 +19,18 @@ public sealed class F01InstallReadinessJourneyTests
     private const string ManagedStart = "# Open Forge";
     private const string ManagedEnd = "**End of Open Forge managed section.**";
     private const string OccupiedPath = ".agents/guidance/_guidance.md";
-    private const string ExpectedManagedRegion =
-        ManagedStart + "\n\n"
-        + "Open Forge provides the working rules and context for this workspace.\n\n"
-        + "Before starting a task, read `.agents/loader.md`.\n"
-        + "Use it to select every relevant scope, including nested scopes.\n"
-        + "Follow the loaded rules throughout the task.\n"
-        + "\n"
-        + ManagedEnd + "\n";
-    private const string ExpectedClaudeRegion =
-        ManagedStart + "\n\n"
-        + "@AGENTS.md\n"
-        + "@.agents/loader.md\n\n"
-        + ManagedEnd + "\n";
+    private static readonly string ExpectedManagedRegion = ReadCanonicalHost(AgentsPath);
+    private static readonly string ExpectedClaudeRegion = ReadCanonicalHost(ClaudePath);
 
     private static readonly IReadOnlyList<string> ExpectedStartupSourcePaths =
     [
         AgentsPath,
         ".agents/loader.md",
         ".agents/directives/_directives.md",
-        ".agents/guidance/_guidance.md",
-        ".agents/maps/_maps.md",
         ".agents/memory/_memory.md",
         ".agents/memory/crystallized/_crystallized.md",
         ".agents/memory/emerging/_emerging.md",
         ".agents/memory/working/_working.md",
-        ".agents/patterns/_patterns.md",
-        ".agents/skills/_skills.md",
     ];
 
     [Theory(DisplayName = "F01 carries a fresh install through readiness, context, diagnosis, and a no-op repeat"),
@@ -458,6 +443,19 @@ public sealed class F01InstallReadinessJourneyTests
         Assert.Equal(readme, File.ReadAllText(workspace.Combine(ReadmePath)));
         workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
+    }
+
+    private static string ReadCanonicalHost(string relativePath)
+    {
+        var source = File.ReadAllText(Path.Combine(
+            PublishedExecutableTarget.FindRepositoryRoot(), "src", "open-forge", relativePath), Encoding.UTF8);
+        Assert.StartsWith(ManagedStart + "\n\n", source, StringComparison.Ordinal);
+        Assert.EndsWith(ManagedEnd + "\n", source, StringComparison.Ordinal);
+        Assert.Equal(1, Count(source, ManagedStart));
+        Assert.Equal(1, Count(source, ManagedEnd));
+        Assert.DoesNotContain(LegacyManagedStart, source, StringComparison.Ordinal);
+        Assert.DoesNotContain(LegacyManagedEnd, source, StringComparison.Ordinal);
+        return source;
     }
 
     private static void AssertCompleted(ProcessRunResult result)

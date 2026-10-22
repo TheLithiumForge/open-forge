@@ -25,6 +25,7 @@ internal sealed class SourceRouteFactsResolver
             .ToHashSet(StringComparer.Ordinal);
         var selectedSources = selection.Sources
             .Where(source => source.Base.Form != SourceDocumentForm.OverwriteCompanion)
+            .Where(source => source.IncludedEntry is null)
             .ToArray();
         var routeIssues = new List<SourceRouteIssue>();
         var nextOccurrence = 0;
@@ -122,6 +123,12 @@ internal sealed class SourceRouteFactsResolver
                     {
                         isCancelled = true;
                         break;
+                    }
+
+                    // A linked destination is ordinary project material outside `.agents/`, not a root route.
+                    if (destination.State == SourceLoaderDestinationParseState.Linked)
+                    {
+                        continue;
                     }
 
                     if (destination.State == SourceLoaderDestinationParseState.Unsafe)

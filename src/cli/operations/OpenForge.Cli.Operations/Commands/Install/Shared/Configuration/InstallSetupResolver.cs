@@ -60,7 +60,7 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
         var preset = request.Setup?.Preset;
         if (preset is null && canPrompt && interaction is { } presetInteraction)
         {
-            var reply = await presetInteraction.Preset(installed ? InstallPreset.Custom : InstallPreset.Essentials, new(true), token).ConfigureAwait(false);
+            var reply = await presetInteraction.Preset(installed ? InstallPreset.Custom : InstallPreset.Minimal, new(true), token).ConfigureAwait(false);
             if (reply.State == CliPromptState.Cancelled) return new(null, Cancelled: true);
             if (reply.State == CliPromptState.Answered) preset = reply.Value;
             else canPrompt = false;

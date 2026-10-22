@@ -129,6 +129,19 @@ An explicitly selected detached entrypoint may enumerate its own local routed
 subtree. A detached tree is not claimed to be Loader-rooted. Detached trees are
 not included by the operand-free form; an entrypoint must be selected explicitly.
 
+## Included Root Rows
+
+Loader-listed workspace files outside `.agents/` are also root rows. Their row
+descriptions and tags are authoritative. Included Markdown catalogues expose only
+their listed descendants. A file registered in settings `roots` without a loader
+row is labelled `not in the loader`, has no children and does not make agents read
+its file or folder. JSON includes `unlisted: true` on an unlisted registration.
+Other rows omit that member. An unlisted registration can share a path with an active descendant row. The
+registration row stays childless, and the active row keeps its catalogue parent.
+Files outside `.agents/` use their exact `./path` reference instead of a short ID.
+A missing included target keeps its path and a missing label. The result is
+incomplete, and its catalogue's direct child count is unknown.
+
 ## Structural Depth
 
 Depth counts routed ancestry edges, not filesystem segments, heading levels, link
@@ -156,7 +169,7 @@ prefix.
 
 ## Authoritative Topology And Included Sources
 
-The current authored filesystem topology and the source contracts that establish
+For `.agents/` sources, the current authored filesystem topology and the source contracts that establish
 route meaning are authoritative. Generated `Entries` are a navigation projection;
 they cannot add a row, hide a row, change a parent, or choose row order. Stale
 generated lines therefore do not change the route-list result.
@@ -171,7 +184,7 @@ The result includes:
 - Routed native sources whose source contract establishes route metadata, such as
   a routed `SKILL.md`.
 
-It excludes supported but unrouted sources and excludes a valid overwrite companion
+Within `.agents/`, it excludes supported but unrouted sources and excludes a valid overwrite companion
 as an independent row. A base row represents the logical source; its overwrite
 relationship is retained in provenance when relevant.
 
@@ -183,8 +196,8 @@ descendant merely because it is physically below a routed ancestor.
 
 Every emitted row is a typed fact from the same resolved topology. It retains:
 
-- **ID**: the automatic source ID, derived under the shared Source References
-  contract.
+- **ID**: the automatic source ID for `.agents/` sources or the exact `./path`
+  reference for included files, under the shared Source References contract.
 - **Path**: the canonical workspace-relative source path.
 - **Parent and hierarchy**: the actual routed parent ID/path when mechanically
   established, or null for a true Loader root or parentless detached root, plus
@@ -205,8 +218,9 @@ Every emitted row is a typed fact from the same resolved topology. It retains:
   root, explicit root, descendant, or detached selection, and the evidence and
   boundary supporting the reported coverage.
 
-Rows do not reconstruct missing metadata or treat a generated entry description
-as authored source metadata. If an authored fact is malformed or cannot be
+For `.agents/` sources, rows do not reconstruct missing metadata or treat a
+generated entry description as authored source metadata. Included files outside
+`.agents/` take their metadata from the row that lists them. If an authored fact is malformed or cannot be
 confirmed, the safe row and the finding remain distinguishable in the result.
 
 ## Ordering

@@ -14,12 +14,20 @@ Users do not receive this Maintenance route. The [Framework distribution contrac
 ## Axioms
 
 - Every reviewed payload file has a Maintenance contract that identifies its canonical installed source, any repository counterpart, related current contracts, and verification matched to change risk and reach
-- The installed source is authoritative for exact runtime wording; Maintenance defines repository obligations without becoming required runtime context
-- Review each installed file as the final readable and agent-facing product; verify that every operational rule named by Maintenance appears in the source or in an installed route the source directs the reader to load
+- The installed source is authoritative for exact runtime wording. Maintenance defines repository obligations without becoming required runtime context
+- Review each installed file as the final readable and agent-facing product. Verify that every operational rule named by Maintenance appears in the source or in an installed route the source directs the reader to load
 - Keep shared authored content aligned between the installed source and repository counterpart while allowing generated regions and explicitly local content to differ
 - Treat authored frontmatter, final generated Entries, and visible base-overwrite pairs as semantic contracts. Stop review or generation when their required meaning cannot be established rather than inferring it from partial structure.
 - When a Maintenance change affects installed behavior, update the canonical source, any repository counterpart, affected current documents, and behavior tests together
 - Replace or define repository-only vocabulary before it enters installed source
+
+## Verification
+
+- [EmbeddedFrameworkPayloadReaderIntegrationTests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Distribution/EmbeddedFrameworkPayloadReaderIntegrationTests.cs) compare the embedded Framework inventory, bytes and hashes with the shipped sources.
+- [EmbeddedExtensionCatalogueIntegrationTests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Extensions/EmbeddedExtensionCatalogueIntegrationTests.cs) compare packaged Extension manifests, assets and hashes with their authored sources.
+- [WorkspacePayloadRenderingParityIntegrationTests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Distribution/WorkspacePayloadRenderingParityIntegrationTests.cs) check both frontmatter forms while preserving metadata values and body bytes.
+- These checks prove packaging and rendering, not prose meaning, agent compliance or repository-copy parity. Review each source beside its contract and compare true counterparts directly, allowing declared local differences.
+- For Markdown-only contract changes, check relative links, catalogue Entries and measured baselines without building. Behavior and lifecycle verification uses isolated fixtures rather than maintenance commands against this repository or the payload source.
 
 ## Entries
 

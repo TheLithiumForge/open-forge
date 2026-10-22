@@ -24,13 +24,10 @@ public sealed class F25OverwriteJourneyTests
         ".agents/loader.md",
         ".agents/directives/_directives.md",
         ".agents/guidance/_guidance.md",
-        ".agents/maps/_maps.md",
         ".agents/memory/_memory.md",
         ".agents/memory/crystallized/_crystallized.md",
         ".agents/memory/emerging/_emerging.md",
         ".agents/memory/working/_working.md",
-        ".agents/patterns/_patterns.md",
-        ".agents/skills/_skills.md",
         TeamNotePath,
         TeamNoteOverwritePath,
     ];

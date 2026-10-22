@@ -10,10 +10,8 @@ public sealed class PublishedUpdateAdoptionProcessTests
     private const string Feature = "update-workspace-adoption";
     private const string OwnershipPath = ".agents/open-forge.lock.json";
     private const string LoaderPath = ".agents/loader.md";
-    private const string InstalledLoaderSentence =
-        "It defines how to select context, follow applicable rules, and maintain the workspace.";
-    private const string SyntheticEarlierLoaderSentence =
-        "It defines how to select context, follow applicable rules, and maintain this synthetic earlier payload.";
+    private const string LoaderEntriesMarker = "\n## Entries\n";
+    private const string SyntheticEarlierLoaderSentence = "Synthetic earlier payload marker.";
     private const string SkillRoot = ".agents/skills/local-skill";
     private const string SkillPath = SkillRoot + "/SKILL.md";
     private const string ReferencePath = SkillRoot + "/references/guide.md";
@@ -67,14 +65,14 @@ public sealed class PublishedUpdateAdoptionProcessTests
         }
 
         AssertAdoptedFiles(workspace, fixtureCase);
+        var restoredLoader = StrictUtf8.GetString(File.ReadAllBytes(workspace.Combine(LoaderPath)));
         Assert.DoesNotContain(
             SyntheticEarlierLoaderSentence,
-            StrictUtf8.GetString(File.ReadAllBytes(workspace.Combine(LoaderPath))),
+            restoredLoader,
             StringComparison.Ordinal);
-        Assert.Contains(
-            InstalledLoaderSentence,
-            StrictUtf8.GetString(File.ReadAllBytes(workspace.Combine(LoaderPath))),
-            StringComparison.Ordinal);
+        var canonicalLoader = File.ReadAllText(Path.Combine(
+            PublishedExecutableTarget.FindRepositoryRoot(), "src", "open-forge", LoaderPath), StrictUtf8);
+        Assert.Equal(AuthoredLoaderContent(canonicalLoader), AuthoredLoaderContent(restoredLoader));
 
         var skillRoutes = await workspace.RunAsync(
             "route", "list", SkillPath, "--depth=all", "--format", "json", "--detail", "full");
@@ -242,20 +240,19 @@ public sealed class PublishedUpdateAdoptionProcessTests
     {
         var loaderBytes = File.ReadAllBytes(workspace.Combine(LoaderPath));
         var loaderText = StrictUtf8.GetString(loaderBytes);
-        var sentenceIndex = loaderText.IndexOf(InstalledLoaderSentence, StringComparison.Ordinal);
-        Assert.True(sentenceIndex >= 0, "The current embedded loader includes the authored sentence fixture.");
-        Assert.Equal(
-            sentenceIndex,
-            loaderText.LastIndexOf(InstalledLoaderSentence, StringComparison.Ordinal));
-        var entriesIndex = loaderText.IndexOf("\n## Entries\n", StringComparison.Ordinal);
-        Assert.True(
-            entriesIndex > sentenceIndex,
-            "The synthetic earlier-payload sentence is before the generated Entries section.");
+        Assert.DoesNotContain(SyntheticEarlierLoaderSentence, loaderText, StringComparison.Ordinal);
+        var entriesIndex = loaderText.IndexOf(LoaderEntriesMarker, StringComparison.Ordinal);
+        Assert.True(entriesIndex >= 0, "The loader has a generated Entries section.");
 
-        var earlierLoaderText = loaderText[..sentenceIndex]
-            + SyntheticEarlierLoaderSentence
-            + loaderText[(sentenceIndex + InstalledLoaderSentence.Length)..];
+        var earlierLoaderText = loaderText.Insert(entriesIndex, $"\n{SyntheticEarlierLoaderSentence}\n");
         workspace.WriteBytes(LoaderPath, StrictUtf8.GetBytes(earlierLoaderText));
+    }
+
+    private static string AuthoredLoaderContent(string source)
+    {
+        var entriesIndex = source.IndexOf(LoaderEntriesMarker, StringComparison.Ordinal);
+        Assert.True(entriesIndex >= 0, "The loader has a generated Entries section.");
+        return source[..(entriesIndex + LoaderEntriesMarker.Length)];
     }
 
     private static byte[] MinimalSkillBytes(string fixtureCase)

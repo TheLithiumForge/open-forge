@@ -75,7 +75,7 @@ public sealed class InstallCompositionIntegrationTests
         var applied = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            $"2{Environment.NewLine}2{Environment.NewLine}y{Environment.NewLine}remaining{Environment.NewLine}",
+            $"3{Environment.NewLine}2{Environment.NewLine}y{Environment.NewLine}remaining{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -87,7 +87,7 @@ public sealed class InstallCompositionIntegrationTests
             StringComparison.Ordinal);
         Assert.Contains("Would install the Open Forge Framework", applied.StandardError, StringComparison.Ordinal);
         Assert.StartsWith("Installed the Open Forge Framework", applied.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Created 17 files and 13 directories under .agents", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Created 18 files and 13 directories under .agents", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", applied.RemainingInput);
         Assert.True(workspace.AgentsDirectoryExists());
         Assert.True(applied.LockInfrastructureExists);
@@ -271,7 +271,7 @@ public sealed class InstallCompositionIntegrationTests
             root.StandardOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
             line => line.TrimStart().StartsWith("install", StringComparison.Ordinal));
         Assert.Contains("Already installed?", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("open-forge install --preset essentials", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("open-forge install --preset minimal", root.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(string.Empty, leaf.StandardError);
         Assert.Contains(
