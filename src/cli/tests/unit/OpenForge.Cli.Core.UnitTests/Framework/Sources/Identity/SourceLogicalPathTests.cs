@@ -23,12 +23,21 @@ public sealed class SourceLogicalPathTests
     {
         const string path = ".agents/memory/archived/cli-development/tasks/notes.md";
         for (var index = 0; index < 100; index++) SourceLogicalPath.IsCanonicalSource(path);
-        var before = GC.GetAllocatedBytesForCurrentThread();
-        var accepted = 0;
-        for (var index = 0; index < 10_000; index++)
-            if (SourceLogicalPath.IsCanonicalSource(path)) accepted++;
-        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
-        Assert.Equal(10_000, accepted);
+
+        // The runtime can occasionally allocate a few bytes on the test thread for its own work, as seen once
+        // on a hosted macOS arm64 runner. A real per-call allocation shows in every attempt, so the best of three
+        // still catches it.
+        var allocated = long.MaxValue;
+        for (var attempt = 0; attempt < 3 && allocated != 0; attempt++)
+        {
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            var accepted = 0;
+            for (var index = 0; index < 10_000; index++)
+                if (SourceLogicalPath.IsCanonicalSource(path)) accepted++;
+            allocated = Math.Min(allocated, GC.GetAllocatedBytesForCurrentThread() - before);
+            Assert.Equal(10_000, accepted);
+        }
+
         Assert.Equal(0, allocated);
     }
 
