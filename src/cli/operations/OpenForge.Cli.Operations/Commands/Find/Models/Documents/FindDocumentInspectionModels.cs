@@ -18,6 +18,8 @@ internal enum FindFrontmatterAvailability
 
 internal sealed record FindFrontmatterTagOccurrence
 {
+    internal string? Path { get; init; }
+
     internal FindFrontmatterTagOccurrence(string authored, SourceLocation location)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(authored);

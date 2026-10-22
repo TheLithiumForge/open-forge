@@ -33,12 +33,14 @@ internal sealed class RouteObservationReader
         var inspection = await _sourceInspector.ReadAsync(workspace, cancellationToken)
             .ConfigureAwait(false);
         var context = new RouteContextReader().Read(payload, inspection);
+        var included = await new RouteIncludedFileReader(workspace).ReadAsync(inspection, cancellationToken).ConfigureAwait(false);
         var generated = await _generatedNavigationReader.ReadAsync(workspace, payload, inspection, sharing, cancellationToken)
             .ConfigureAwait(false);
         var state = ReadState(inspection.State, context.IsIncomplete);
         var contextIssue = ReadContextIssue(inspection);
         return new RouteStatusView
         {
+            IncludedFiles = included,
             State = state,
             SourceInventory = ReadSourceInventory(inspection),
             InitialStartup = context.InitialStartup,
@@ -62,8 +64,10 @@ internal sealed class RouteObservationReader
         var inspection = await _sourceInspector.ReadAsync(workspace, cancellationToken)
             .ConfigureAwait(false);
         var generated = _doctorGeneratedNavigationReader.Read(inspection, sharing);
+        var included = await new RouteIncludedFileReader(workspace).ReadAsync(inspection, cancellationToken).ConfigureAwait(false);
         return new RouteDoctorView
         {
+            IncludedFiles = included,
             Session = inspection.Session,
             State = inspection.State,
             SourceInventory = ReadSourceInventory(inspection),

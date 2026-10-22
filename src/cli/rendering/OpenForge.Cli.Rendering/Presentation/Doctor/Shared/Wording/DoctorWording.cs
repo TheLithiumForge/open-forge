@@ -214,6 +214,7 @@ internal static class DoctorWording
     internal static string Message(DoctorFinding finding)
     {
         ArgumentNullException.ThrowIfNull(finding);
+        if (finding.IsIncludedFile) return finding.Message;
         if (finding.Maintenance is { } maintenance) return DoctorMaintenanceWording.Message(finding, maintenance);
         if (finding.FolderReference is { } folder) return Presentation.Shared.Wording.FolderReferenceWording.Message(folder.Destination, folder.IsMissing);
         var path = Path(finding);
@@ -689,6 +690,7 @@ internal static class DoctorWording
 
     private static CliNextAction? FallbackAction(DoctorFinding finding)
     {
+        if (finding.IsIncludedFile) return null;
         if (finding.LinkRecreation is { } recreation)
         {
             return Presentation.Shared.Wording.LibraryLinkRecreationWording.Next(

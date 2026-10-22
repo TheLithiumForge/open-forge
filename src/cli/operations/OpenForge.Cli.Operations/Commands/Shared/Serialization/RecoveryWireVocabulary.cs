@@ -37,6 +37,8 @@ internal static class RecoveryWireVocabulary
             RecoveryBundleOperation.Attach => "attach",
             RecoveryBundleOperation.Sync => "sync",
             RecoveryBundleOperation.Detach => "detach",
+            RecoveryBundleOperation.Include => "include",
+            RecoveryBundleOperation.Exclude => "exclude",
             _ => Undefined(nameof(value), value),
         };
 

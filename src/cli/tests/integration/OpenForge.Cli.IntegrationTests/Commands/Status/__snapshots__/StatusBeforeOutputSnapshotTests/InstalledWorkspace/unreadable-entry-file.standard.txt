@@ -33,7 +33,7 @@ Workspace: <workspace>
          open-forge doctor
          Inspect the reported operational facts before rerunning Status.
 Startup context
-  Shipped by this CLI:   7 files, about 3.9k tokens
+  Shipped by this CLI:   7 files, about 4.0k tokens
   This workspace:        unavailable files, unavailable tokens
   May load again later:  unavailable files, unavailable tokens
 All routed files: unavailable files, unavailable tokens (startup is unavailable)

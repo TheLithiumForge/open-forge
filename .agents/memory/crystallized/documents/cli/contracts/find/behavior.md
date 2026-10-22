@@ -204,6 +204,15 @@ Contract and does not claim facts before their preconditions are established.
   finding and result instead of being silently discarded. Sources excluded
   before effective-universe formation are not candidates for that result.
 
+## Included Sources
+
+Extend the ordinary source universe with active included leaves and the Entries
+descendants of included Markdown catalogues. Use the shared reader's first parent
+and physical-file deduplication. Search their row metadata and Markdown headings
+and tags. Row-tag evidence identifies the catalogue containing the row. Including
+one leaf never enumerates its folder. Exact included catalogue filters expand
+only their listed descendants.
+
 ## Working-Path Applicability
 
 When supplied, lexically normalize repeated `--for` values against the exact
@@ -278,7 +287,7 @@ requiring one implementation stage or one source module.
   which is not a defect.
 - Effective-universe formation applies the shared set
   algebra: it uses the union of all include expansions, or Find's normal
-  complete eligible `.agents` Markdown universe when no include occurs, then
+  complete eligible `.agents` Markdown and active included-file universe when no include occurs, then
   subtracts the union of all exclude expansions. It deduplicates equivalent and
   overlapping selections, gives exclusion priority over inclusion, and produces
   the same effective universe regardless of include/exclude argument order.

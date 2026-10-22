@@ -15,79 +15,51 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 
 ## Contract
 
-### Responsibility And Shape
+### Responsibility and shape
 
-- The loader is the first Open Forge `entrypoint` after the canonical workspace entry.
-- It contains the terms and `Axioms` needed to enter, route, and use an installed Framework, including a shared concision rule. It also contains compact CLI help and a generated list of direct `root routes`.
-- Its authored sections remain, in order, the introduction, `Terms`, one grouped `Axioms` section, and `Entries`.
-- The `Axioms` groups remain, in order, `Authority And Inheritance`, `Routing`, `Tags And Loading` with `Defined Tags`, `Frontmatter`, and `CLI` with `Applicable Commands`.
-- It lets each source answer one clear question and links to related sources instead of repeating their detail. A link does not change authority, scope, loading, or lifecycle.
-- Relative local links, precise references, and consistent descriptive tags expose useful relationships for navigation and retrieval.
-- Its short grouped lists keep related operational rules adjacent.
-- Category-specific behavior stays in routed sources. Workflow execution, Memory transitions, primitive details, Extension mechanics, and complete CLI behavior do not move into the loader.
-- The installed loader remains understandable without repository governance, source history, or the CLI.
+- The loader remains the first Open Forge reading procedure after the workspace entry. It works with plain files and needs no repository-only documents or CLI.
+- Its introduction explains that its Entries decide what is enabled. The authored shape is one Axioms section with three groups, in order: `Read before you work`, `Use what you read` and `Change what is switched on`, followed by Entries.
+- The loader keeps the full reading procedure, rule inheritance, acceptance, conditions, loading tags, off switch, dependencies and missing-file rules.
+- The file-format section of the optional [workspace guide](README.md), also printed by `open-forge help concepts`, carries file formats, catalogue naming, metadata forms, scope examples and vocabulary. The [CLI Skill](skills.md) carries command discovery and maintenance procedures. Category behavior stays in its own catalogue.
 
-### Authority And Inheritance
+### Reading and applicability
 
-- Role and scope determine authority. File order alone does not.
-- The loader distinguishes evidence validation from acceptance and preserves scoped acceptance when classifying contextual material. The [accepted-state contract](../../../framework/truth.md#acceptance) defines the distinction.
-- Platform constraints and runtime safety bound every action. Clear user direction sets task goals, priorities, important choices, and accepted changes. A declared external source remains authoritative for the facts assigned to it.
-- Explanation and planning match the request. Unless the user asks for deeper analysis, the first response gives the current understanding, one recommendation, and no more than one unresolved important choice.
-- Communication and authored content use the fewest words that preserve meaning, readability, and logical progression, including necessary context, conditions, and exceptions.
-- The agent continues when accepted direction or a stated reversible assumption makes progress safe. It states assumptions and stops when uncertainty, conflict, or an authority boundary could significantly change the work.
-- Only the loader and recognized loaded `entrypoints` define active `Axioms`. Child routes inherit ancestor Axioms and add only rules specific to their narrower scope. Authored scopes without local rules use the inherited marker; missing or empty local sections remain valid input.
-- Clear direction is not reconfirmed. A request to act allows routine, reversible, in-scope choices needed to complete the task. The user decides unresolved choices that could significantly change the result, scope, risk, cost, external effects, or ability to undo the work.
-- Apparent #CurrentTruth conflicts are investigated before either source changes. Accepted changes update the source that defines current state and keep useful prior context.
-- Loaded Axioms and Directive Instructions apply within their scope. Editing or replacing a default, or adding its overwrite companion, changes that source. A separate file does not gain precedence over other active rules. Unresolved conflicts are reported.
-- Narrower selected non-binding material may specialize broader material of the same kind. Loaded binding instructions add to one another and report conflicts instead of silently overriding one another.
+- Reading starts by identifying every working file, including planned files and both rename paths. Background reads do not enlarge that set. Start, resume, restored context and changed goals or working files trigger a fresh pass.
+- When available and allowed, `context` receives one `--for` per working file and supplies required context. The reader still selects relevant on-demand material and follows explicit reading instructions. A missing or failed CLI, or a link it cannot follow, falls back to file tools.
+- Conditions are checked before required reads. One working file must satisfy an entry's condition and every conditioned ancestor. Patterns within one condition are alternatives.
+- Globs are case-sensitive and workspace-relative. Root-only patterns, recursive patterns, folder patterns and a literal leading `!` remain explained. Conditions neither select a branch nor grant edit permission. Unknown working files leave conditioned required entries pending until resolved.
+- Required entries are read in listed order through loaded catalogues, once per pass, regardless of their individual descriptions. Other entries are selected by relevance. Search and direct links require the applicable catalogue chain before use. Separately selected branches stay separate.
+- #LoadNow and #KeepInMind act only through loaded parents. #KeepInMind adds rereads at start, resume, context restoration and handoff or closeout. During work, reread only when active material may have changed. Specialized required reads need an unbroken, appropriately scoped catalogue chain.
 
-### Routing And Loading
+### Using context
 
-- The loader defines an `axiom` only as a mandatory instruction under an `Axioms` heading in the loader or a recognized loaded `entrypoint`, keeps general routing terms in `Terms` and frontmatter fields in `Frontmatter`, and defines only four routing terms locally: `route`, `root route`, `slug`, and `managed route`.
-- `description` helps a reader decide whether to open a file and remains the pre-load route-selection surface. Optional `responsibility` helps an editor decide what belongs in the file by stating what it defines. It creates no authority or loading behavior.
-- The routing section separates short `Terms` and universal `Rules`.
-- A `root route` exists only where the loader exposes it; it cannot be scoped or recreated inside another `route`.
-- Any number of routed `slugs` may narrow a route below its root. A slug may appear before, between, or after deeper route segments and narrows everything that follows it.
-- A scope contains only the routes useful there. It does not need to copy another scope or the installed defaults.
-- Specialized material uses the narrowest useful scope. Workspace-wide placement is reserved for material that applies across the workspace
-- Each scoped entrypoint keeps content on demand by default. #LoadNow is justified only when omission costs more than reading on each parent load. #KeepInMind also requires a need to read exposed content again at the defined refresh points. Scope alone implies no loading tag
-- Selection uses visible paths, descriptions, tags, ancestor routes, and explicit links. It follows relevant branches recursively, keeps separately selected scopes as separate chains, and rechecks them after an important task change. It does not load file bodies only to discover routes.
-- Scoping preserves deeper `route` order and meaning. Manager-declared `route` segments retain their order through every scope.
-- A familiar `slug` or tag alone creates neither root behavior nor managed status.
-- Each declared manager identifies the `route` shapes it recognizes and changes only files it owns or safely identifies.
-- Users may add, move, replace, or remove `routes`. Any `route` outside a manager's declared shapes remains generically routable. Record intentional removal of managed files in the manager's exclusions before updating; excluded defaults stay absent until restoration is explicitly requested.
-- Generated `Entries` remain navigation metadata. Detailed meaning comes from the routed destination or the authoritative source it identifies.
-- Loading and tags change visibility, timing, or classification without creating authority.
-- The loader remains authoritative for the meanings of #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen. Its #Memory definition identifies self-growing Markdown state without moving Memory mechanics into the loader. Undefined tags remain routing and search signals.
-- #LoadNow and #KeepInMind operate through loaded parent routes for both entrypoints and other files. Neither activates an unselected ancestor or scope. Read the tagged context when its parent loads, then refresh it at the defined boundaries while its scope remains active. Base files precede their adjacent overwrites, and entrypoints apply their child loading rules in listed order.
-- The loader defines the `applyTo` file condition once, under `applyTo` in its Frontmatter section. The condition only filters loading, refresh, and applicability by working file. It never selects an entry. Tag definitions and category entrypoints inherit this rule and do not restate it.
-- The Frontmatter section describes root and scoped Open Forge metadata and directs new metadata to follow `frontmatter` in `.agents/open-forge.json`, with scoped as the missing-value default. It keeps the frontmatter fields, the `applyTo` filter and ancestor matching, pattern meaning, working files, and unknown paths. Root and scoped `applyTo` declarations are both read. Equal patterns count once, and different patterns are invalid. Value validation stays in the [syntax contract](../../../framework/markdown/syntax.md#file-conditions).
-- Every recovered result retains the authority and scope established by its `route` and content.
-- A user-owned `{name}.overwrite.md` is not an independent `route` and loads immediately after its base.
-- It is interpreted as part of the base source, within that source's role and scope, and inherits its route and loading behavior. It is neither indexed nor selected independently. Its precedence applies only to corresponding base content and does not override unrelated authority.
+- Loaded catalogue Axioms and rule-file Instructions bind within their stated scope. Narrower rules add to broader rules without outranking them. Conflicts and instructions that cannot be followed are reported with reasons.
+- User direction remains bounded by platform and safety limits. Routine reversible work proceeds within the request. Significant unresolved choices require user judgment, and assumptions affecting the result remain visible.
+- Replies match the request's depth. The shared defaults keep the current understanding, one recommendation and at most one important open choice, with concise wording that retains needed conditions and exceptions.
+- Acceptance comes from the user or a source the user named for the question. Evidence, reading, links, saving, tags, repetition and confidence do not establish acceptance or edit permission. #Contextual and #CurrentTruth retain their scoped state meanings.
+- Each source answers its own question. Links do not transfer authority, scope, loading or lifecycle. Accepted non-binding advice may specialize broader material of the same kind.
+- Conflicting accepted sources are investigated before editing. Accepted changes reach the source that defines current state and preserve useful context.
+- #Evergreen creates an update duty without authority or loading. Affected editable sources are updated before dependent work and by closeout. Related updates may be batched safely, and blocked updates are reported.
 
-### Deterministic Assistance
+### Enabling and customization
 
-- CLI commands automate the complete plain-file contract and never become prerequisites for ordinary inspection.
-- The loader names the compact CLI surface useful for entering and checking a workspace: `--help`, `context`, `route list`, `route inspect`, `find`, `references`, `index`, `status`, and `doctor`.
-- `index` completes eligible missing metadata and rooted navigation, including generated `Entries`, after manual edits. `doctor` diagnoses workspace, routes, references, lifecycle, and recovery without changes after Framework structure changes and before closeout.
-- Complete CLI help, installation lifecycles, unimplemented commands, and component internals stay outside the loader.
+- Loader rows may include a catalogue or any workspace text file by a containing-file-relative link. A foreign file needs no Open Forge frontmatter because the row carries its description, tags and conditions. Included Markdown catalogues expose their Entries. The loader points to `route include` for CLI assistance.
+- Removing a loader row disables its branch without deleting files or canceling accepted requirements or host-loaded instructions. Background reading does not reactivate rules. Removed rows stay absent until the user asks to restore them.
+- Dependencies are removed or replaced before a branch is disabled. Missing listed files or required dependencies are errors. Empty Entries are valid.
+- Other catalogues follow their folder contents. Keeping a file out requires moving or deleting it. Managed removals are also recorded in exclusions before updates.
+- Before authoring workspace context, catalogues or metadata, the loader sends agents to the file formats in `README.md`, to `open-forge help concepts` when that page was deleted, and otherwise to the shape of a neighbouring file. It names README by path, not by link, so deleting the guide leaves no broken link.
+- An adjacent overwrite follows its base with the same role, scope and loading conditions. It wins only for corresponding content and is neither listed nor selected independently.
 
-### Distribution And Generation
+### Distribution and baseline
 
-- Source and dogfood authored loader content remain identical.
-- Source and CLI Maintenance define which `entrypoints` Open Forge ships, updates, restores, and validates. Extension contracts define their own managed files. Management remains a lifecycle relationship rather than a runtime `route` type.
-- The heading-owned `Entries` body is derived locally and may differ when the installed `root routes` differ.
-- Generated loader `entries` expose direct active root `entrypoints` only. They never flatten nested `routes`.
-- Generated links resolve relative to `.agents/loader.md`; CLI `route` identities remain workspace-relative.
-- The authored loader, excluding generated `Entries`, has 102 non-empty lines. Its Frontmatter section holds ten non-empty lines, including both forms, workspace selection, `description`, `responsibility`, and the `applyTo` rules. Review future growth against this baseline and justify changes required by accepted contracts. Keep operational detail in routed sources instead of imposing a hard ceiling.
+- Source and repository authored loader content stay aligned. Locally maintained Entries may differ in descriptions, tags and selected roots. The shipped rows require Directives and Memory, while Guidance, Maps, Patterns, Skills and Templates stay on demand.
+- Entries preserve authored root links, order and intentional omissions. They may include foreign leaves or catalogues and must not flatten nested catalogues.
+- Measured at `a438be5bd`, the shipped loader has 29 non-empty lines before `## Entries`, excluding that heading and its body. The full file has 37 non-empty lines, including the Entries heading and seven rows. Count any line containing a non-whitespace character, including headings and list items. This is a review baseline, not a ceiling.
 
 ## Verification
 
-- The frozen `git show c4428a90:src/cli-mvp/cli.closure.test.ts` remains legacy-only evidence for source and dogfood authored parity. It does not verify replacement command behavior.
-- Replacement [`CliProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) verifies root and route-family help plus the read-only `route list` interface.
-- Replacement [`PublishedContextProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedContextProcessTests.cs) verifies `context` help, startup and selected context, and read-only results.
-- Replacement [`PublishedRouteInspectProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) verifies `route inspect` help, route facts, and read-only results.
-- Replacement [`PublishedFindProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedFindProcessTests.cs), [`PublishedReferencesProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedReferencesProcessTests.cs), and [`PublishedIndexProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedIndexProcessTests.cs) verify search, references, and generated-navigation interfaces.
-- Replacement [`PublishedStatusProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedStatusProcessTests.cs) and [`PublishedDoctorProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorProcessTests.cs) verify status and doctor help, result streams, and read-only behavior.
-- Review the source and dogfood authored line count, exact alignment, and unchanged generated Entries whenever the loader contract changes.
+- [SourceLoaderParserTests](../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Framework/Sources/Routing/SourceLoaderParserTests.cs) cover ordered declarations, valid empty Entries and malformed input.
+- [SourceLoadingClosureResolverTests](../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Framework/Sources/Loading/SourceLoadingClosureResolverTests.cs) cover loading order, deduplication, continuity and conditioned ancestry.
+- [ContextApplicationIntegrationTests](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Context/ContextApplicationIntegrationTests.cs) cover startup order, selected chains, overwrites and read-only context results.
+- Use the [payload integrity checks](../_payload.md#verification) for shipped bytes. Compare source and repository text before Entries, measure the baseline again and inspect intentional row differences.
+- Manually trace the reading procedure with a foreign leaf, a conditional catalogue, an overwrite, an omitted row and an empty list. Verify the file formats remain available through Help with the README removed. Automated loading tests do not prove that an agent follows prose instructions.

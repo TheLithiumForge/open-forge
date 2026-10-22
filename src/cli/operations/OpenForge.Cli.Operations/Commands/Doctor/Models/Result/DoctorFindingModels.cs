@@ -134,6 +134,8 @@ internal enum DoctorFindingKind
 
 internal sealed record DoctorFinding
 {
+    internal bool IsIncludedFile { get; init; }
+
     internal Commands.Shared.Models.FolderReferenceFinding? FolderReference { get; init; }
     internal string? ProtectedReferencePath { get; init; }
 

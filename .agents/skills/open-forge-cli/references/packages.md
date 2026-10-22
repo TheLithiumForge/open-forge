@@ -28,7 +28,7 @@ After the preset choice, first interactive Install asks `How should Open Forge w
 
 Install, Update, and Extension delivery use `frontmatter` in `.agents/open-forge.json`. A missing value means scoped. Both root and scoped frontmatter are read in every workspace. The plan shows the selected form, such as `Frontmatter: root`, or a change such as `Frontmatter: scoped -> root`.
 
-When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `[".agents/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 2.
+When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `[".agents/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 3. Existing settings keep the version they declare.
 
 An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
 

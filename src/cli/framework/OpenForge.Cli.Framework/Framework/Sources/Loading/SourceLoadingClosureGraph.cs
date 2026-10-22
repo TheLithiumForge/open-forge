@@ -20,7 +20,16 @@ internal sealed class SourceLoadingClosureGraph
         WorkspaceEntryPath = request.WorkspaceEntryPath;
         Sources = request.Sources;
         _loaderRootPaths = request.LoaderRootPaths;
-        _sourcesByPath = request.Sources.ToDictionary(source => source.Path, StringComparer.Ordinal);
+        var byPath = request.Sources.ToDictionary(source => source.Path, StringComparer.Ordinal);
+        foreach (var alias in request.Aliases)
+        {
+            if (byPath.TryGetValue(alias.Value, out var source))
+            {
+                byPath.TryAdd(alias.Key, source);
+            }
+        }
+
+        _sourcesByPath = byPath;
     }
 
     internal string WorkspaceEntryPath { get; }
@@ -55,7 +64,7 @@ internal sealed class SourceLoadingClosureGraph
         => SourceGeneratedDestinationResolver.ResolveLinked(parent.Path, parent.IsLoader, destination);
 
     internal SourceLoadingClosureSource? FindLinked(string linkedPath)
-        => _sourcesByPath.TryGetValue(linkedPath, out var target) && target.IsLinked ? target : null;
+        => _sourcesByPath.TryGetValue(linkedPath, out var target) && (target.IsLinked || target.Path != linkedPath) ? target : null;
 
     private static void ValidateSource(SourceLoadingClosureSource source)
     {

@@ -15,38 +15,38 @@ The [Memory architecture](../../../../framework/memory/_memory.md), [Memory mode
 
 ## Contract
 
-- Frontmatter keeps #LoadNow and #Memory so the root Memory contract enters baseline context with its Framework classification and growth role visible
-- Memory can grow through useful records and routed scopes without a fixed structural ceiling, while unrelated branches stay outside active context. People and agents add records deliberately when their value justifies the cost of finding and reviewing them
-- The root `entrypoint` preserves the scoped knowledge authority of accepted records while keeping user direction, platform constraints, runtime safety, and declared external facts applicable. Recording another category's content does not give Memory that category's role
-- Communication, coordination, direction, uncertainty, and learning are saved when they must survive the current context. Ordinary conversation does not become Memory automatically
-- Clear user direction is accepted within its scope. Tentative, exploratory, inferred, or meaningfully unclear conclusions remain in a #Contextual Memory route until accepted
-- Before creating a durable record, the agent checks what must survive, what changes current meaning, whether reasoning will matter later, whether behavior is required, and whether a reusable shape should guide future work. When none apply, no durable record is needed
-- Each useful durable outcome is integrated before other work depends on it and before closeout. Each affected source is updated for the distinct part it defines. Useful reasoning remains in Memory and related sources are linked. Useful durable meaning does not remain only in chat
-- Closeout accounts for accepted durable outcomes, unsettled reusable findings, and continuation state. Accepted durable meaning does not remain only in a #Contextual #Memory `route`. An accepted temporary choice may remain contextual when its source, scope, and expected expiration are clear.
-- The Memory `entrypoint` inherits the loader's universal authority, reserved tag meanings, scoping, and management rules instead of restating them
-- Working, Emerging, Crystallized, and Archived remain the four standard state `routes`, each with its own `entrypoint` and positive state semantics
-- Decisions, Documents, Analysis, Ideas, Observations, Checkpoints, and Handoffs are optional Extension-provided roles under the standard Memory states. Their maintenance contracts remain linked from the corresponding state routes.
-- Movement follows changes in meaning and links to the right #Core route or external system when Memory should not define the accepted result
-- A new top-level Memory state requires explicit user direction because it changes the shared state model. Ordinary routed scopes remain recursively customizable.
-- The authored source stays compact and complete for runtime use even as the stored Memory tree grows
+- The title is followed by `## What is worth remembering for current or future work?` and a short paragraph describing the folder.
+- Frontmatter keeps #LoadNow and #Memory. The root defines self-growing Markdown state for continuity, accepted knowledge, candidates and history, with useful records and scopes added without a structural ceiling.
+- A record need not pass through every state.
+- The two Axioms groups, `What to keep` and `Where it goes`, retain capture thresholds, source visibility, integration timing, placement and state transitions.
+- Communication and coordination are saved only when they must survive the current context. A durable outcome needs future value in its accepted result, reasoning, required behavior or reusable shape. No value means no durable record. Closeout also preserves unsettled findings worth revisiting.
+- Records distinguish stated, observed and inferred material when trust requires it. Accepted durable knowledge reaches its defining source before dependent work and by closeout. Useful reasoning remains available.
+- Saving or moving material does not accept it or grant another category's role. Accepted instructions for future behavior go to the source for that role.
+- Reuse a suitable record before creating another. Place material in the narrowest useful existing state or scope. Moving it leaves no stale competing copy and follows the destination's rules.
+- A record needs no named category. Use an existing state and the narrowest useful scope, without recreating removed folders merely for capture.
+- Ordinary records and scoped routes may be added within granted authority. Placement that changes accepted meaning or crosses an unresolved authority boundary requires a question. New top-level states require explicit user direction.
 
-## Standard Loading And Content Shape
+### Loading and content
 
-| Memory `route`                                                                                            | Loading contract                                                                 |
-| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Memory                                                                                                    | Core #LoadNow baseline `entry`                                                   |
-| Working and Crystallized                                                                                  | Core #LoadNow navigation for active and accepted records                         |
-| Emerging                                                                                                  | Core target-sensitive #KeepInMind continuity review                              |
-| Archived                                                                                                  | Core on-demand historical navigation without #LoadNow or #KeepInMind             |
-| Optional Extension routes: Decisions, Documents, Analysis, Ideas, Observations, Checkpoints, and Handoffs | Not part of Core; each selected Extension supplies its own route source and tags |
+These are maintainer facts for CLI selection and loading, not requirements on catalogue prose. Each state requires the Memory catalogue, while states remain independently selectable. Unselected branches stay unloaded.
 
-Canonical leaf `entrypoints` ship with empty generated `Entries`. The repository dogfood tree may add local records through regenerated indexes without changing authored source.
+| Source | Shipped loading |
+| --- | --- |
+| Memory catalogue | #LoadNow when enabled in the loader |
+| Working and Crystallized | #LoadNow through Memory |
+| Emerging | #KeepInMind through Memory |
+| Archived | On demand through Memory |
+| Decisions, Documents, Analysis, Ideas, Observations, Checkpoints and Handoffs | Optional Extension routes, each retaining its own source and tags |
+
+- The shipped Memory Entries list four state catalogues. Preset selection omits unselected states. Progress saving belongs to Working's own Axioms, with no separate policy file or Install selection special case.
+- State catalogues ship with empty Entries and no project records. The repository may add local records and maintain different Entries without claiming identical navigation.
 
 ## Verification
 
-- Core installation closure tests verify the Core Memory state `routes`, loading policy, root authority wording, `managed route` reconciliation through scopes, generated navigation, and legacy user-owned Sessions preservation during reinstall
-- Compare every canonical Memory source with its dogfood authored content outside generated `Entries`
-- Run `open-forge index` and `open-forge doctor` against both the repository and `src/open-forge/`
+- Use the [payload integrity checks](../../_payload.md#verification) for shipped Memory bytes and metadata rendering.
+- [SourceLoadingClosureResolverTests](../../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Framework/Sources/Loading/SourceLoadingClosureResolverTests.cs) cover required loading, continuity and unselected branches.
+- Compare shared authored source and repository rules outside Entries. Review state independence, Working's saving Axioms and Extension separation manually.
+- Check preset selection and navigation in isolated fixtures. Validate links directly for contract-only changes. Do not run maintenance commands against the source tree to manufacture installation evidence.
 
 ## Entries
 

@@ -28,7 +28,7 @@ contract.
 ## Purpose
 
 Commands accept either a short automatic source ID or an exact workspace-relative
-`.agents` path. IDs are convenient. Paths provide exact disambiguation when a
+path. IDs are convenient for files below `.agents/`. Paths provide exact disambiguation when a
 workspace contains unusual or colliding structures.
 
 The CLI never guesses whether a reference is an ID or path.
@@ -41,6 +41,7 @@ A source reference is one of:
 <source-id>
 .agents/<path>
 ./.agents/<path>
+./<workspace-path>
 ```
 
 An exact path keeps its `.agents/` or `./.agents/` prefix. For example,
@@ -49,10 +50,10 @@ below still apply to Markdown suffixes and recognized entrypoints.
 
 The prefix determines the form:
 
-- `.agents/` or `./.agents/` means an exact workspace path.
+- `.agents/` or `./` means an exact workspace path.
 - Every other value means a source ID, even when it resembles another relative
   filesystem path. For example, `src/file.md` is parsed as an ID and will usually
-  be unknown. Use `.agents/...` for path input.
+  be unknown. Use `./src/file.md` for exact workspace path input.
 
 Examples:
 
@@ -64,9 +65,13 @@ memory/crystallized/documents
 
 These values identify the same source.
 
-Source-reference operands have no general path form outside `.agents`. A
-specific command may define a separate external-source operand with its own
-grammar.
+A file outside `.agents/` has no short source ID. Name an active included file
+by its exact path, such as `./CONTRIBUTING.md`. Explicit Context selections,
+Find, References and Route List use the exact `./path` reference in their
+existing `id` field. Context startup and ordinary linked reads keep a null ID. Their `path` field stays workspace-relative.
+
+Included paths to the same physical file share the first retained source and its
+catalogue parent. Each listed alias remains accepted as an exact operand.
 
 ## Authored Local Destination Spellings
 
@@ -195,7 +200,8 @@ The CLI does not implement another quote language after argument parsing.
 An exact path:
 
 - Resolves from the selected workspace.
-- Accepts `.agents/...` or `./.agents/...` and reports `.agents/...` canonically.
+- Accepts `.agents/...`, `./.agents/...` or `./<workspace-path>`. The canonical
+  path field omits `./`. Files outside `.agents/` are selected by exact path.
 - Uses `/` in documented CLI input on every operating system.
 - Must remain lexically and physically inside the selected workspace.
 - Must identify a supported source kind for the selected command.
@@ -332,9 +338,10 @@ Structured results expose the same automatic ID and canonical path as separate
 fields. A source with an ID collision keeps its path and reports the ambiguous
 ID state.
 
-Only content reached through an `AUTHORED LOCAL MARKDOWN REFERENCE` outside
-`.agents` has no automatic Open Forge ID. Human output reports `ID: none`;
-structured output uses a null ID. The canonical workspace-relative path remains
+An included file outside `.agents/` uses the exact-reference display described
+under [Accepted Forms](#accepted-forms). An unlisted local Markdown link target
+has no source operand identity. Context keeps its null ID for startup and
+ordinary linked reads, and uses the exact reference for explicit included selections. The canonical workspace-relative path remains
 required. A filesystem symlink projection at an eligible `.agents/...`
 destination retains its canonical destination path and normal destination-derived
 automatic source ID.
@@ -349,7 +356,8 @@ with exit 4. JSON retains its command-owned next action and findings.
 ## Errors
 
 - An empty source reference is invalid.
-- A path outside `.agents` is invalid for this operand type.
+- A path outside `.agents/` must use `./<workspace-path>`. The selected command
+  must admit that file as a source.
 - A path that escapes the selected workspace is blocked.
 - An unknown ID or missing path is invalid.
 - An ambiguous ID is blocked unless an interactive choice resolves it.

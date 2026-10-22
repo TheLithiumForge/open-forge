@@ -15,11 +15,16 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Contract
 
-- Frontmatter uses #Extension, #Memory, #Analysis, #Contextual, and #Candidate to classify this optional Planning route
+- The title is followed by `## What does the available evidence support, and what remains uncertain?` and a short paragraph describing the folder.
+- Frontmatter uses #Extension, #Memory, #Analysis, #Contextual, and #Candidate to classify this Planning route.
 - Analysis keeps its question, evidence, assumptions, limits, and current conclusion visible
-- Assumptions are rechecked before later work relies on the analysis
-- Analysis remains contextual until a separate acceptance source establishes a durable result
+- Assumptions are rechecked before later work relies on the analysis. Exploratory Analysis may change while its question is open, and experimental use does not seal or accept it.
+- Analysis remains contextual until a separate acceptance source establishes a durable result. Check Entries when prior reasoning may help.
+
+- When Analysis is handed off for execution, preserve the version used. Later implementation findings and execution evidence belong in the active working record.
 
 ## Verification
 
-- Core-only installation verifies that the optional Analysis route is absent; Planning installation verifies that it installs, indexes, retains its full source classification, and supports recursive child routing
+- Use the [payload integrity checks](../../../_payload.md#verification) for the Planning Extension source and metadata rendering.
+- Compare category rules with the repository counterpart outside Entries. Confirm Core alone has no Analysis category.
+- Manually check a record's evidence, assumptions and uncertainty, then verify an execution handoff preserves its consumed version and leaves later findings in Working.

@@ -7,10 +7,10 @@ Workspace: <workspace>
          Update the Framework files that need attention.
          cause: The managed lifecycle target is not current.
 Startup context
-  Shipped by this CLI:   7 files, about 3.9k tokens
-  This workspace:        7 files, about 3.9k tokens
+  Shipped by this CLI:   7 files, about 4.0k tokens
+  This workspace:        7 files, about 4.0k tokens
   May load again later:  1 file, about 0.2k tokens
-All routed files: 19 files, about 23.0k tokens (startup is 17%)
+All routed files: 19 files, about 25.0k tokens (startup is 16%)
 Routes: 7 root categories, 12 Entries sections current
 Framework files: 19 current
 Largest may-load-again sources
@@ -50,6 +50,6 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-19 routed files, 7 startup files, 3936 startup tokens, 1 may-load-again files, 247 may-load-again tokens, 23030 all routed tokens, 17.087494572297003907946157186 startup share, 7 root categories, 12 current Entries sections, 19 current Framework files, 1 changed Framework files, 1 warnings.
+19 routed files, 7 startup files, 3990 startup tokens, 1 may-load-again files, 247 may-load-again tokens, 24987 all routed tokens, 15.966621975866968162807916275 startup share, 7 root categories, 12 current Entries sections, 19 current Framework files, 1 changed Framework files, 1 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

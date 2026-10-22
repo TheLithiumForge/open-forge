@@ -28,8 +28,9 @@ examples need no preview. Mutation examples show a preview before application.
 
 | Task                          | Commands                                                                                                                                                                                                                                 |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Learn Open Forge concepts     | [help](#help)                                                                                                                                                                                                                            |
 | Read and discover context     | [status](#status), [context](#context), [find](#find), [references](#references), [route list](#route-list), [route inspect](#route-inspect)                                                                                             |
-| Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                                                                                        |
+| Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route include](#route-include), [route exclude](#route-exclude), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                                                                                        |
 | Check and repair              | [index](#index), [doctor](#doctor), [repair](#repair), [cleanup](#cleanup)                                                                                                                                                               |
 | Manage the Framework          | [install](#install), [update](#update), [remove](#remove)                                                                                                                                                                                |
 | Manage Extensions             | [extension list](#extension-list), [extension inspect](#extension-inspect), [extension create](#extension-create), [extension install](#extension-install), [extension update](#extension-update), [extension remove](#extension-remove) |
@@ -97,7 +98,7 @@ Command examples stay on one line so copying one runs one shell command.
 
 The CLI works against the current directory unless `--workspace` selects one
 explicit directory. A source reference is either an automatic source ID, such
-as `memory/crystallized/documents`, or an exact path under `.agents`, such as
+as `memory/crystallized/documents`, or an exact workspace path, such as
 `.agents/memory/crystallized/documents/_documents.md`. The exact grammar is
 covered in [Source references](#source-references).
 
@@ -112,6 +113,29 @@ workspace. Commands that can change files offer `--dry-run` when a complete
 preview is useful. A dry run builds and reports the operation's plan without
 changing any files. Either way, the operation needs enough evidence to tell
 which files it may manage, and it reports a boundary rather than guessing.
+
+## help
+
+Read built-in explanations without a workspace:
+
+```sh
+open-forge help
+open-forge help concepts
+open-forge help concepts --format json
+```
+
+With no topic, Help lists the available topics. `concepts` is the only topic.
+It explains loading, rules, conditions, reuse and customization, then prints
+the file formats from the shipped `.agents/README.md`. Text keeps the Markdown
+unchanged. JSON puts the topic name and complete Markdown in the shared result
+envelope.
+
+Help prints the shipped copy, so it works the same after a project deletes its
+README. It reads no workspace files and changes nothing.
+
+An unknown topic is invalid input and lists the topics. A command name also
+suggests its options, so `open-forge help install` points to
+`open-forge install --help`. Use `open-forge help --help` for Help's own options.
 
 ## Global options
 
@@ -261,6 +285,14 @@ See [global options](#global-options) for shared flags.
 generated navigation, Framework and Extension lifecycle state, Libraries, and
 recovery observations.
 
+Included files registered in settings `roots` are counted as on, off when no
+loader row lists them, or missing when no file exists. Missing takes precedence.
+Hand-written loader rows outside `.agents/` are counted separately. Required
+included files and catalogue descendants contribute to startup once per physical
+file. The report names the part outside `.agents/`. Conditioned required files
+stay pending and make the report incomplete. Supply working files to `context`
+to resolve their conditions for the task.
+
 It is a report. It does not repair stale navigation, adopt changed files, or
 make a lifecycle record trusted. Use `doctor` when the summary names a fact
 that needs diagnosis.
@@ -311,6 +343,10 @@ See [global options](#global-options) for shared flags.
 #### Behavior notes
 
 `context` returns ordered startup context or the selected sources added to it.
+It follows active included rows and their Markdown catalogues with the usual tags
+and conditions. Select an included file with `context ./CONTRIBUTING.md`.
+An exact `.agents/` path to an unrouted file, such as `context .agents/README.md`,
+returns it and its overwrite without adding either to startup context.
 With no source arguments it returns the startup files. Add source IDs or
 exact paths to include the context you select. An unresolved source reports why
 Context could not read it and suggests `open-forge route list --depth all`.
@@ -405,7 +441,10 @@ See [global options](#global-options) for shared flags.
 
 #### Behavior notes
 
-`find` selects Markdown sources by authored tags and structural headings. It
+`find` selects Markdown sources by authored tags and structural headings.
+It also searches active included leaves and listed catalogue descendants, using
+their row metadata and Markdown headings and tags. Including a file never scans
+its folder. Files outside `.agents/` use exact `./path` source references. It
 does not treat arbitrary body text as a substitute for route or metadata
 meaning.
 
@@ -443,7 +482,9 @@ See [global options](#global-options) for shared flags.
 #### Behavior notes
 
 `references` reports direct authored incoming and outgoing Markdown references
-for one source. The default direction is `both`.
+for one source. The default direction is `both`. Active included Markdown files
+also participate. Other included text formats are opaque, and loader rows remain
+navigation rather than authored references.
 
 `--direction=in|out|both` selects the report. `--include` and `--exclude`
 limit the incoming scan. Combining them with `--direction=out` is invalid
@@ -479,6 +520,9 @@ An `entrypoint` makes a folder routable. A `route` is the navigable path that
 the entrypoint and its generated `Entries` expose. Route commands accept the
 source-reference grammar described below unless their target has a narrower
 shape.
+
+`route list` also shows included root rows. A registration in settings `roots`
+without a loader row is labelled off and has no children.
 
 `route list` shows routed sources and descendants at a structural depth. The
 default depth is `1`. Use `--depth=0` for the selected sources only, or
@@ -814,6 +858,70 @@ Planning supplies `templates/planning/decision`. Essentials leaves Templates out
 
 Open the new file and fill in its body, then check it with [`doctor`](#doctor).
 
+### `route include`
+
+List an existing project document in the loader where it lives:
+
+```sh
+open-forge route include CONTRIBUTING.md --description "How to contribute" --dry-run
+open-forge route include CONTRIBUTING.md --description "How to contribute"
+open-forge route include .cursor/rules/testing.mdc --description "Testing rules" --tag LoadNow --apply-to "src/**"
+open-forge route include docs/team/_team.md --description "Team context"
+```
+
+Use one workspace-relative UTF-8 text file. Both path separators and a leading
+`./` are accepted. A Markdown file with `## Entries` is followed as a catalogue.
+Other files are leaves. The file keeps its bytes and needs no Open Forge frontmatter.
+
+A new row outside `.agents/` requires `--description`. Repeat `--tag` in the
+order to keep, with or without `#`. Without tags the document loads on demand.
+Repeat `--apply-to` for workspace-relative glob conditions. The file's own
+frontmatter never sets loading.
+
+An existing row keeps every field you omit. A supplied option replaces only its
+own field. An identical request is a verified no-op. Including a hand-written row
+registers it without rewriting it. To clear tags or conditions, edit the row or
+exclude and include again. The preview shows the row before and after.
+
+Inside `.agents/`, include only a direct child folder's catalogue, such as
+`.agents/patterns/_patterns.md`. This switches its generated row on. Change its
+frontmatter to change its description, tags or conditions. Metadata options on
+these catalogues are invalid. A deeper file belongs through its folder's catalogue.
+
+Use a catalogue instead of a directory. Globs, URLs, fragments, paths that escape
+the workspace through `..` or a link, Git metadata, workspace control files and
+non-UTF-8 files are invalid. Errors name the operand and the supported next step.
+
+Only the loader and settings may change. Outside `.agents/`, the canonical path
+is recorded in settings `roots`. The loader row decides whether and when it loads.
+Deleting a row by hand leaves an off registration. Index, Update, Configure and
+Extension installation keep it off. Index preserves included rows in their order
+and never writes the included files.
+
+`--dry-run` previews without writing. Otherwise Include checks the complete plan,
+takes the workspace mutation lock and applies with recovery, without a prompt.
+Text and JSON report the row and registration before and after.
+
+### `route exclude`
+
+Stop listing a file while keeping the file:
+
+```sh
+open-forge route exclude CONTRIBUTING.md --dry-run
+open-forge route exclude CONTRIBUTING.md
+open-forge route exclude .agents/patterns/_patterns.md
+```
+
+Exclude removes every loader row for the target and its external `roots`
+registration. It works on hand-written rows and when the target is missing.
+A main-root catalogue's generated row is switched off without deleting it.
+The operand rules are the same as Include, except that a missing target is valid.
+
+When nothing lists or registers the target, the command reports nothing changed
+and succeeds. JSON uses the existing no-change shape with no effects.
+`--dry-run` previews the rows before and after. Applied changes use the workspace
+mutation lock and recovery. The target file keeps its bytes.
+
 <a id="update-one-routed-source"></a>
 
 ### `route update`
@@ -1039,6 +1147,11 @@ See [global options](#global-options) for shared flags.
 
 `doctor` diagnoses workspace, route, reference, lifecycle, Library, Extension,
 and recovery facts without changing them.
+
+A missing included target is an error. A registered include with no loader row
+is information. A registration that Include would now reject, such as a target
+that became a directory, is a warning. Restore or exclude missing targets and
+update or remove rejected registrations. Doctor never changes them.
 
 Links to existing folders inside the workspace are valid, with or without a
 trailing slash. A folder has no heading fragments. A missing folder named with
@@ -2217,12 +2330,13 @@ Use [`library list`](#library-list) and check that the source folder remains int
 
 ## Source references
 
-Existing `.agents` sources accept one of these forms:
+Source operands accept these forms:
 
 ```text
 <source-id>
 .agents/<path>
 ./.agents/<path>
+./<workspace-path>
 ```
 
 The first two examples address the same route. The third shows quoting
@@ -2244,7 +2358,7 @@ An automatic source ID is derived from the canonical path below `.agents`:
 - `SKILL.md` uses its containing Skill folder ID.
 - Exact case, spaces, and Unicode are preserved.
 
-The `.agents/` prefix means an exact workspace path. Any other value is an ID,
+The `.agents/` and `./` prefixes mean an exact workspace path. Any other value is an ID,
 even if it looks like a relative filesystem path. Use the exact `.agents/...`
 form when an ID has more than one candidate. The CLI does not use fuzzy,
 case-correcting, or likely-intent matching.

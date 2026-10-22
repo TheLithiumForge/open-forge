@@ -4,6 +4,12 @@ namespace OpenForge.Cli.OutputText.Route.List;
 
 internal static class RouteListText
 {
+    // @OpenForgeText route.list.label.registered-include-off
+    internal static string RegisteredIncludeOff() => "Registered include (off)";
+
+    // @OpenForgeText route.list.label.missing-include
+    internal static string MissingInclude(string description) => $"{description} (missing)";
+
     // @OpenForgeText route.list.message.invalid-depth-value
     internal static string InvalidDepth(string value) => $"Invalid --depth value: {value}. Use a whole number from 0, or all.";
 

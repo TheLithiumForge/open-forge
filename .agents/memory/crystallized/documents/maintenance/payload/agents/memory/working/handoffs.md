@@ -15,16 +15,19 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 
 ## Contract
 
+- The title is followed by `## What state must survive this transfer or planned resumption?` and a short paragraph describing the folder.
 - Frontmatter preserves #Extension, #Memory, #Handoff, #AgentCommunication, and #Contextual classification
-- A Handoff is created and sealed only when an actual transfer or explicitly planned resumption needs a fixed boundary snapshot while the active working record may continue to change
+- Check Entries when work resumes, transfers, is delegated or interrupted, or is reviewed after a context break. Create and seal a Handoff only when an actual transfer or planned resumption needs fixed boundary state while the active record may change.
 - Routine pauses, ordinary closeout, and possible future interruptions do not create a Handoff
 - The intended reader or resumed work remains clear from the route, description, or content
 - Handoffs remain concise and link to current work state, durable sources, documents, code, or other details instead of copying them
 - Boundary status, next action, blockers, and verification state appear in the Handoff itself. A live working record may supplement but not replace the snapshot
 - The snapshot remains unchanged while serving as a sealed Handoff. Later state belongs in the active working record or a new Handoff. Category transitions follow the destination's rules
 - Handoffs remain contextual rather than complete history or accepted truth
-- Useful material is extracted and the handoff is archived after it no longer supports an active transfer
+- Useful material is extracted and the Handoff is archived after it no longer supports an active transfer.
 
 ## Verification
 
-- Installation and `route` tests verify that Core alone does not provide Handoffs and that the Observations and Handoffs Extension supplies their loading, indexing, classification, and recursive child routing
+- Use the [payload integrity checks](../../../_payload.md#verification) for the Observations and Handoffs Extension source and metadata rendering.
+- Compare shared source and repository rules outside Entries. Confirm Core alone has no Handoffs category.
+- Review a sealed snapshot for boundary status, next action, blockers and verification evidence in the snapshot itself. Check later state is recorded elsewhere and ordinary pauses do not require Handoffs.

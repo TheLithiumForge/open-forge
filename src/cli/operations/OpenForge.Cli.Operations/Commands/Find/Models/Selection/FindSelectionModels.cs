@@ -40,14 +40,14 @@ internal sealed record FindSourceIdentity
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        if (!SourceLogicalPath.IsCanonicalSource(path)
-            || !path.EndsWith(".md", StringComparison.Ordinal)
-            || path.EndsWith(".overwrite.md", StringComparison.Ordinal))
+        if (!SourceWorkspaceRelativePath.IsCanonical(path)
+            || (SourceLogicalPath.IsCanonicalSource(path) && !path.EndsWith(".md", StringComparison.Ordinal))
+            || (SourceLogicalPath.IsCanonicalSource(path) && path.EndsWith(".overwrite.md", StringComparison.Ordinal)))
         {
             throw new ArgumentException("A Find source identity requires a canonical base source path.", nameof(path));
         }
 
-        if (!string.Equals(SourceIdentity.DeriveId(path), id, StringComparison.Ordinal))
+        if (!string.Equals(SourceWorkspaceRelativePath.ReadReference(path), id, StringComparison.Ordinal))
         {
             throw new ArgumentException("A Find source identity ID must be derived from its canonical base path.", nameof(id));
         }

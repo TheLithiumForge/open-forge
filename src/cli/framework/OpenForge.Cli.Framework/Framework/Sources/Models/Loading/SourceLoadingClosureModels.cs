@@ -140,6 +140,8 @@ internal sealed record SourceLoadingClosureRequest
 
     public required IReadOnlyList<string> LoaderRootPaths { get; init; }
 
+    public IReadOnlyDictionary<string, string> Aliases { get; init; } = new Dictionary<string, string>();
+
     public bool EvaluateApplicability { get; init; }
 
     public bool WorkingPathsSupplied { get; init; }

@@ -49,7 +49,7 @@ public sealed class WorkspaceSettingsConfigurationTests
         }
         else
         {
-            Assert.Equal(2, json.RootElement.GetProperty("schemaVersion").GetInt32());
+            Assert.Equal(3, json.RootElement.GetProperty("schemaVersion").GetInt32());
         }
     }
 

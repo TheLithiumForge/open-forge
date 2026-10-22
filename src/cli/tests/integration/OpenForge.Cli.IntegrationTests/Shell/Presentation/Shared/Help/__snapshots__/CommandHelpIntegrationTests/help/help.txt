@@ -1,0 +1,29 @@
+  List help topics or read about Open Forge concepts.
+
+Usage:
+  open-forge help [<topic>] [options]
+
+Examples:
+  open-forge help
+  open-forge help concepts
+
+Behavior:
+  With no topic, lists available topics. The only topic is concepts.
+  Reads built-in help without a workspace. Changes no files.
+  Use open-forge <command> --help for a command's options.
+
+Arguments:
+  <topic>  The help topic to read. Available: concepts.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  context     Read workspace instructions and context.
+  route list  List workspace routes.

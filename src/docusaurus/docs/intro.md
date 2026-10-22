@@ -93,7 +93,7 @@ AGENTS.md                         <- tells the agent to read the loader first
 CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 .agents/
   loader.md                       <- the reading steps and the list of what is on
-  README.md                       <- how to customize this setup, for people
+  README.md                       <- a guide and the file formats, safe to delete
   directives/_directives.md       <- required behavior
   guidance/_guidance.md           <- advice for recurring choices
   patterns/_patterns.md           <- reusable shapes for code, files, and documents

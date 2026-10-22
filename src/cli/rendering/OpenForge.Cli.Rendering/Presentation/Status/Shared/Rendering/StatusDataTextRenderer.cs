@@ -21,23 +21,28 @@ internal static class StatusDataTextRenderer
         ArgumentNullException.ThrowIfNull(style);
 
         var builder = new StringBuilder();
-        if (!data.TextFacts.ShowOperationalSections)
-        {
-            return new CliTextDocument([new CliTextSpan(string.Empty)]);
-        }
-
-        if (!data.TextFacts.ShowStandard)
+        if (data.TextFacts.ShowOperationalSections && !data.TextFacts.ShowStandard)
         {
             AppendMinimal(builder, data);
         }
-        else
+        else if (data.TextFacts.ShowOperationalSections)
         {
             AppendStandard(builder, data, style);
         }
 
-        if (data.TextFacts.ShowFull)
+        if (data.TextFacts.ShowOperationalSections && data.TextFacts.ShowFull)
         {
             AppendFull(builder, data, style);
+        }
+
+        if (data.IncludedFiles is { } included)
+        {
+            AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.IncludedFiles(
+                included.On, included.Off, included.Missing, included.HandWritten));
+            AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.IncludedStartup(
+                StatusWording.MeasurementSummary(included.Startup)));
+            foreach (var path in included.Pending)
+                AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.IncludedPending(path));
         }
 
         return new CliTextDocument([new CliTextSpan(builder.ToString())]);

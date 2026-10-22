@@ -133,7 +133,7 @@ public sealed class RouteListApplicationIntegrationTests
                 && line[1] == ' '
                 && char.IsAsciiLetterLower(line[2]))
             .Select(line => line.TrimStart().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[0]);
-        Assert.Equal(["list", "inspect", "init", "create", "update", "move", "remove"], groupCommands);
+        Assert.Equal(["list", "inspect", "init", "create", "update", "include", "exclude", "move", "remove"], groupCommands);
         Assert.Contains("update <source-reference>", group.Output, StringComparison.Ordinal);
         Assert.Contains("remove <source-reference>", group.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("Operations:", group.Output, StringComparison.Ordinal);

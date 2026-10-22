@@ -39,7 +39,7 @@ internal static class ReferencesReportSelector
             Coverage = showResolvedTargets ? Coverage(result) : null,
             Filters = showResolvedTargets ? Filters(result.IncomingSelection) : null,
             Scanned = showLayers ? Scanned(result.IncomingSelection) : null,
-            SourcePath = result.Source?.Path,
+            SourcePath = result.Source?.Id.StartsWith("./", StringComparison.Ordinal) == true ? result.Source.Id : result.Source?.Path,
             ShowResolvedTargets = showResolvedTargets,
             ShowLayers = showLayers,
         };
@@ -65,6 +65,7 @@ internal static class ReferencesReportSelector
     private static ReferencesDataIncoming Incoming(ReferencesOccurrence occurrence, bool showLayers)
         => new()
         {
+            Id = occurrence.Source.Id?.StartsWith("./", StringComparison.Ordinal) == true ? occurrence.Source.Id : null,
             Path = occurrence.Source.Path,
             Location = Location(occurrence.LocationView.Line, occurrence.LocationView.Column),
             Layer = showLayers ? ReferencesWording.WireLayer(occurrence.Source.LayerKind) : null,
@@ -143,17 +144,17 @@ internal static class ReferencesReportSelector
         return result.Status switch
         {
             CliSemanticStatus.Complete when HasOccurrences(result)
-                => new(result.Source?.Path ?? string.Empty, CliHeadlineKind.Done),
+                => new(DisplaySource(result), CliHeadlineKind.Done),
             CliSemanticStatus.Complete
                 => new(
                     ReferencesWording.NoLinks(
                         result.RequestedDirection ?? ReferencesDirection.Both,
-                        result.Source?.Path ?? string.Empty),
+                        DisplaySource(result)),
                     CliHeadlineKind.Done),
             CliSemanticStatus.Attention
-                => new(result.Source?.Path ?? string.Empty, CliHeadlineKind.Warnings),
+                => new(DisplaySource(result), CliHeadlineKind.Warnings),
             CliSemanticStatus.Incomplete
-                => new(result.Source?.Path ?? string.Empty, CliHeadlineKind.Incomplete),
+                => new(DisplaySource(result), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid when finding is { Code: ReferencesFindingCode.InvalidDirection }
                 => new(ReferencesWording.CannotList(Message(finding)), CliHeadlineKind.CannotStart),
             CliSemanticStatus.Invalid
@@ -175,6 +176,9 @@ internal static class ReferencesReportSelector
 
     private static string Cause(ReferencesFinding? finding)
         => finding?.Cause ?? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTheResultDidNotContainAFinding();
+
+    private static string DisplaySource(ReferencesResult result)
+        => result.Source?.Id.StartsWith("./", StringComparison.Ordinal) == true ? result.Source.Id : result.Source?.Path ?? string.Empty;
 
     private static string? HeadlineFindingCode(ReferencesResult result)
     {

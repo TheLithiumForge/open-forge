@@ -25,7 +25,7 @@ internal static class ReferencesOperationFactory
         ReferencesMarkdownParser markdownParser = new MarkdownDocumentParser().Parse;
         ReferencesStrictUtf8Reader strictUtf8Reader = StrictUtf8FileReader.ReadAsync;
         var sourceResolver = new ReferencesSourceResolver(
-            sourceSessionRead: sourceSessionReader.ReadAsync,
+            sourceSessionRead: sourceSessionReader.ReadIncludedAsync,
             sourceReferenceResolver: sourceReferenceResolver,
             universeFilterResolver: universeFilterResolver);
         var layerInspector = new ReferencesLayerInspector(

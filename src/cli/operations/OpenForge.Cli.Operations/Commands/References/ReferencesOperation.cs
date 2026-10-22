@@ -263,7 +263,7 @@ internal sealed class ReferencesOperation
                             }
 
                             if (targetFacts.Target.Kind == ReferencesTargetKind.Local
-                                && TargetMatchesSource(targetFacts.Target, logicalSource)
+                                && TargetMatchesSource(targetFacts.Target, logicalSource, sourceSession.Catalogue)
                                 && targetFacts.Target.Resolution is ReferencesTargetResolution.Complete
                                     or ReferencesTargetResolution.FragmentMissing
                                     or ReferencesTargetResolution.Unreadable
@@ -568,9 +568,16 @@ internal sealed class ReferencesOperation
             .Append(source.Identity.CanonicalBasePath)
             .ToHashSet(StringComparer.Ordinal);
 
-    private static bool TargetMatchesSource(ReferencesTarget target, SourceLogicalSource source)
-        => target.Path is { } path
-            && ReadLayers(source).Any(layer => string.Equals(layer.CanonicalPath, path, StringComparison.Ordinal));
+    private static bool TargetMatchesSource(ReferencesTarget target, SourceLogicalSource source, SourceCatalogue catalogue)
+    {
+        if (target.Path is not { } path)
+        {
+            return false;
+        }
+
+        var retainedPath = catalogue.Aliases.GetValueOrDefault(path) ?? path;
+        return ReadLayers(source).Any(layer => string.Equals(layer.CanonicalPath, retainedPath, StringComparison.Ordinal));
+    }
 
     private static ReferencesCoverage MergeCoverage(
         ReferencesCoverage current,

@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "incomplete",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed, but some checks could not finish.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "status.context-inventory-incomplete",
+      "title": "Startup context is incomplete",
+      "message": "Startup context could not be measured completely.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported operational facts before rerunning Status."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The total available context measurement is incomplete."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "status.extension-ownership-observation",
+      "title": "Extension ownership is unavailable",
+      "message": "No ownership record exists, so installed Extensions cannot be listed from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Extension ownership claims are recorded."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "status.framework-ownership-observation",
+      "title": "Framework ownership is unavailable",
+      "message": "No ownership record exists, so Framework files cannot be checked against it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Framework ownership claims are available."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "status.library-ownership-observation",
+      "title": "Library ownership is unavailable",
+      "message": "No ownership record exists, so Libraries cannot be listed from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Library registrations are recorded."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": null,
+    "startupFiles": 3,
+    "startupTokens": 98,
+    "mayLoadAgainFiles": 0,
+    "mayLoadAgainTokens": 0,
+    "allTokens": null,
+    "startupShare": null,
+    "rootCategories": 1,
+    "entriesSectionsCurrent": 2,
+    "entriesSectionsStale": 0,
+    "entriesSectionsMissing": 0,
+    "frameworkFilesCurrent": null,
+    "frameworkFilesChanged": null,
+    "frameworkFilesMissing": null,
+    "extensionsInstalled": null,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "warnings": 1,
+    "infos": 3
+  },
+  "limitations": [
+    {
+      "what": "routed files",
+      "why": "The total available context measurement is incomplete.",
+      "subject": null
+    },
+    {
+      "what": "all routed tokens",
+      "why": "The total available context measurement is incomplete.",
+      "subject": null
+    },
+    {
+      "what": "startup share",
+      "why": "The total available context measurement is incomplete.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "includedFiles": {
+      "on": 1,
+      "off": 1,
+      "missing": 1,
+      "handWritten": 1,
+      "startup": {
+        "files": 0,
+        "characters": 0,
+        "bytes": 0,
+        "tokens": 0
+      },
+      "pending": []
+    },
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": ".agents/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 7,
+          "characters": 15958,
+          "bytes": 15958,
+          "tokens": 3990
+        },
+        "current": {
+          "files": 3,
+          "characters": 389,
+          "bytes": 389,
+          "tokens": 98
+        },
+        "difference": {
+          "files": -4,
+          "characters": -15569,
+          "bytes": -15569,
+          "tokens": -3892
+        },
+        "mayLoadAgain": {
+          "files": 0,
+          "characters": 0,
+          "bytes": 0,
+          "tokens": 0
+        }
+      },
+      "allRouted": {
+        "files": null,
+        "characters": null,
+        "bytes": null,
+        "tokens": null
+      },
+      "startupShare": null,
+      "mayLoadAgainSources": []
+    },
+    "structure": {
+      "rootCategories": {
+        "count": 1,
+        "added": [],
+        "removed": [
+          "directives",
+          "maps",
+          "memory",
+          "patterns",
+          "skills",
+          "templates"
+        ]
+      }
+    },
+    "frameworkFiles": [],
+    "entriesSections": [
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/loader.md",
+        "state": "current"
+      }
+    ],
+    "extensions": [],
+    "libraries": [],
+    "recovery": {
+      "candidates": []
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported operational facts before rerunning Status."
+  }
+}

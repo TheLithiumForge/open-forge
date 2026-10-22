@@ -27,8 +27,10 @@ public sealed class StatusBeforeOutputSnapshotTests
     }
 
     [Trait("Boundary", "Output")]
-    [Fact(DisplayName = "Status output preserves observed installed workspace conditions without effects")]
-    public async Task InstalledWorkspace()
+    [Theory(DisplayName = "Status output preserves observed installed workspace conditions with absent or empty roots")]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task InstalledWorkspace(bool emptyRoots)
     {
         var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var (situation, exitCode) in new[]
@@ -43,6 +45,16 @@ public sealed class StatusBeforeOutputSnapshotTests
         })
         {
             using var workspace = await StatusIntegrationWorkspace.CreateInstalledAsync("status-output");
+            if (emptyRoots)
+            {
+                var settingsPath = workspace.Combine(".agents/open-forge.json");
+                var settings = File.Exists(settingsPath)
+                    ? System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(settingsPath))
+                    : new System.Text.Json.Nodes.JsonObject();
+                Assert.NotNull(settings);
+                settings["roots"] = new System.Text.Json.Nodes.JsonArray();
+                workspace.OverwriteInstalledText(".agents/open-forge.json", settings.ToJsonString());
+            }
             switch (situation)
             {
                 case "library-link-missing":

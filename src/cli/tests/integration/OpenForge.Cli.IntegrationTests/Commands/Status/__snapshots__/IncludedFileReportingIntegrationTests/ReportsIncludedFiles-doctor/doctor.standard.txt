@@ -1,0 +1,12 @@
+1 error, 1 warning and 4 info findings.
+Workspace: <workspace>
+Workspace
+  Error  missing.md  Root route is missing
+         The included file is missing. Restore the file or exclude its path.
+Links
+  Warning  .agents/loader.md:11:3  Broken link
+         The linked file was not found: ../missing.md. No possible target was found.
+         Correct this link in .agents/loader.md at line 11, column 3 through the owner of missing.md.
+  3 links and 1 route checked.
+  To list the info findings: open-forge doctor --detail full
+Next: Review the route boundary in missing.md before continuing.

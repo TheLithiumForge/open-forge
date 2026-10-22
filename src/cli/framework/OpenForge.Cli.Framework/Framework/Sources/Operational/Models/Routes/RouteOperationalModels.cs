@@ -24,6 +24,8 @@ internal sealed record RouteMetadataObservation(
 
 internal sealed record RouteStatusView
 {
+    public RouteIncludedFilesObservation? IncludedFiles { get; init; }
+
     public required OperationalViewState State { get; init; }
 
     public required RouteSourceInventoryState SourceInventory { get; init; }
@@ -51,6 +53,8 @@ internal sealed record RouteStatusView
 
 internal sealed record RouteDoctorView
 {
+    public RouteIncludedFilesObservation? IncludedFiles { get; init; }
+
     internal SourceReadSession? Session { get; init; }
     public required OperationalViewState State { get; init; }
 

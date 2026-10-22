@@ -196,6 +196,8 @@ admissible combinations are:
 | Current writer  | `workspace` | `remove`    | `workspace`    | `remove`                              |
 | Current writer  | `extension` | `install`   | `workspace`    | `extension install`                   |
 | Current writer  | `index`     | `index`     | `workspace`    | `index`                               |
+| Current writer  | `route`     | `include`   | `workspace`    | `route include`                       |
+| Current writer  | `route`     | `exclude`   | `workspace`    | `route exclude`                       |
 | Current writer  | `route`     | `create`    | `workspace`    | `route create`                        |
 | Current writer  | `route`     | `init`      | `workspace`    | `route init`                          |
 | Current writer  | `route`     | `move`      | `workspace`    | `route move`                          |
