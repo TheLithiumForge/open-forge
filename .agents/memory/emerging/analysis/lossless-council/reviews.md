@@ -514,7 +514,7 @@ Finally, I would extend direct links to explicit text leaves while keeping nativ
 
 **Proposal K.** Its source-level implementation matrix, JSON considerations and cost estimate make the installer proposal particularly reviewable. Its broad Memory-parent exclusion leaves one-state growth needing a special Custom configuration path, weakening the otherwise simple Route Init story.
 
-**Proposal L.** Its worked rule and accepted fact under `docs/` demonstrate progressive adoption more convincingly than category installation alone. Its optional README and architecture entry examples omit every tag, which the current [declaration parser](/src/cli/framework/OpenForge.Cli.Framework/Framework/Sources/Routing/SourceLoaderDeclarationParser.cs:20) rejects. Several proposals need the same parser repair.
+**Proposal L.** Its worked rule and accepted fact under `docs/` demonstrate progressive adoption more convincingly than category installation alone. Its optional README and architecture entry examples omit every tag, which the current declaration parser (`SourceLoaderDeclarationParser.cs:20`) rejects. Several proposals need the same parser repair.
 
 ### Rankings
 

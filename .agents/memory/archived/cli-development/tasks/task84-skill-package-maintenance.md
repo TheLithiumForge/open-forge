@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Open Task 84 so Index fills missing metadata in user-owned Skill packages and Repair maintains their links, instead of excluding them
-  tags: [Memory, Working, Task, CLI, Index, Repair, Doctor, Skill, Contextual, Active]
+  description: "Historical record: Index fills missing metadata in user-owned Skill packages and Repair maintains their links, released in beta17"
+  tags: [Memory, Task, CLI, Index, Repair, Doctor, Skill, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 84: Skill package maintenance
@@ -12,7 +12,7 @@ Index and Repair maintain a Skill package the user owns the way they maintain an
 
 The maintainer reported on 2026-10-21: “Skills are not auto edited to add the frontmatter if it's missing, same for their references. We should not have such randim exclusions. Since they are more breaking than having them.”
 
-Status: Task 84 “Skill package maintenance” (phase 3/3): every gate passed, release with beta16 remains.
+Status: Task 84 “Skill package maintenance” is complete and shipped in beta17.
 
 ## Current behavior (beta15, reproduced 2026-10-21)
 

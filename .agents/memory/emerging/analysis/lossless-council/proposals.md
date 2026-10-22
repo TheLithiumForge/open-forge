@@ -4000,7 +4000,7 @@ Whitespace-delimited counts, including headings and Entries: **loader 1,185 word
 
 ### Risks and proof
 
-**R1, medium, activation:** [GeneratedNavigationRegionPlanner.cs:148](/src/cli/framework/OpenForge.Cli.Framework/Framework/GeneratedNavigation/GeneratedNavigationRegionPlanner.cs:148) returns structural roots when the listed destination count is zero. An intentionally empty loader can therefore regain disabled roots. Preserve the empty set when membership preservation is requested, and let installation explicitly request initial population. This must be fixed before advertising Minimal.
+**R1, medium, activation:** `GeneratedNavigationRegionPlanner.cs:148` returns structural roots when the listed destination count is zero. An intentionally empty loader can therefore regain disabled roots. Preserve the empty set when membership preservation is requested, and let installation explicitly request initial population. This must be fixed before advertising Minimal.
 
 Other risks are a longer loader, larger startup context for selected modules, conflicting existing host rules, and confusion between disabling, releasing management and deleting. The introduction must state those distinctions without promising model compliance.
 
