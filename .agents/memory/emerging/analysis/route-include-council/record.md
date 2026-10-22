@@ -257,3 +257,4 @@ On 2026-10-22 the maintainer merged #4, #5 and #6 into one PR and reviewed it:
 - **No on and off switch wording.** "Switching on and off is a bit too hyperbolic." The loader's list now says what agents use, its section is "Change what agents use" with "Add something" and "Remove something", and the guide, `help concepts` and docs follow it. Status and Route List call included files listed, unlisted, missing or hand-written.
 - **No duplicated loader text.** The loader's "Add something" line keeps only what the rest of the loader does not already say.
 - **The no-naming rule covers Core catalogues.** Bundled Extension packages may name their own related routes.
+- **The configurable main root is deferred.** "#7 make it a task, we can postpone for later, because we have the include now." It is [Task 85](../../../working/cli-development/tasks/task85-configurable-main-root.md), with the [implementation plan](main-root-plan.md) beside this record.

@@ -238,7 +238,7 @@ Edit a shipped file directly when you want a different version. Keep in mind tha
 
 ## Grow your own framework
 
-Say your agent keeps calling work done without running the tests. This example needs Directives, which Essentials and Full Core include. If Custom left it out, preview and restore its packaged files first:
+Say your agent keeps calling work done without running the tests. This example needs Directives, which every preset includes, Minimal too. If Custom left it out, preview and restore its packaged files first:
 
 ```sh
 open-forge route init directives --framework --dry-run
@@ -411,7 +411,7 @@ Tags don't grant authority. Loading tags act only through a parent that is alrea
 
 A file can also list `applyTo` patterns, such as `["**/*.cs"]`. The patterns only filter: a tagged or selected file applies only while the task works on a matching file. [Loading and tags](src/docusaurus/docs/concepts/loading-and-tags.md#file-conditions) has the details.
 
-Each routed folder has an **entrypoint**, normally `_{folder-name}.md`, with short links under `Entries`. Those links are the next choices an agent can make. Reading an entrypoint doesn't open the files it links to. The [loader](src/open-forge/.agents/loader.md) has the complete routing and tag rules, and the [Markdown reference](.agents/memory/crystallized/documents/framework/markdown/syntax.md#frontmatter) covers the format.
+Each routed folder has an **entrypoint**, normally `_{folder-name}.md`. Under its title it states the one question its folder answers, then lists short links under `Entries`. Those links are the next choices an agent can make. Reading an entrypoint doesn't open the files it links to. The [loader](src/open-forge/.agents/loader.md) has the complete routing and tag rules, and the [Markdown reference](.agents/memory/crystallized/documents/framework/markdown/syntax.md#frontmatter) covers the format.
 
 ## The CLI
 

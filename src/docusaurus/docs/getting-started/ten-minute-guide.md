@@ -33,7 +33,7 @@ Each context folder has an `entrypoint`, normally named `_{folder-name}.md`, wit
 
 ## 2. Add a testing rule
 
-A **Directive** says what the agent must do. This step needs Directives, which Essentials and Full Core include. If your Custom setup left it out, restore its packaged files first. Review the preview, then apply it:
+A **Directive** says what the agent must do. This step needs Directives, which every preset includes, Minimal too. If your Custom setup left it out, restore its packaged files first. Review the preview, then apply it:
 
 ```sh
 open-forge route init directives --framework --dry-run

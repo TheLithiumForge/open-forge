@@ -1,4 +1,4 @@
-// Keep this flow aligned with Tags And Loading and Frontmatter in the loader.
+// Keep this flow aligned with the loader's "Read before you work" steps and its Required reads rule.
 export const diagramLabel = "How context loads, from startup through file conditions to refresh";
 export const diagramTitle = "How loading works";
 export const diagramCaption = "Follow only selected scopes. Loading tags and matching patterns never open an unselected ancestor or scope.";
@@ -30,7 +30,7 @@ export const loadingSteps: readonly LoadingStep[] = [
   {
     title: "Read and follow children",
     text: "Read the file, then its overwrite companion if it has one. If it's an entrypoint, go through its entries in listed order, starting again at step 2.",
-    note: "Follow required-read instructions in the source. For example, the Skills entrypoint requires reading open-forge-cli/SKILL.md.",
+    note: "Follow required-read instructions in the source. For example, the Skills entrypoint asks for open-forge-cli/SKILL.md before CLI commands other than context.",
     links: [{ label: "Overwrite companions", href: "/docs/glossary#overwrite-companion" }],
   },
   {
