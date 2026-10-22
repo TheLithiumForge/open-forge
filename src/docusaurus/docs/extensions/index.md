@@ -7,6 +7,8 @@ description: Optional packages of workspace content, what each one is for, how t
 
 Extensions are optional packages of workspace content: advice, reusable shapes, workflow recipes, templates, Memory categories, and native Skills. You install the ones that fit your work, and once installed, an Extension is just more files in your workspace that you can adapt like anything else.
 
+Extensions are one of three ways to reuse knowledge. [Include](../glossary.md#include) a document already in the project where it lives, attach a [Library](/guides/cli#workspace-libraries) to project a folder from this workspace into another place, or install an Extension in any project.
+
 An Extension is a way to ship files. Routed files take on the meaning of the [route](../glossary.md#route) they're installed into. Native files, such as a `SKILL.md`, follow the tool that uses them. Packaging adds no authority, and installing a package doesn't make its methods mandatory.
 
 ## Choose by need

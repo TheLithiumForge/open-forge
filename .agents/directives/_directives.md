@@ -6,7 +6,9 @@ open-forge:
 
 # Directives
 
-Optional. Rule files here apply to the whole workspace, and subfolders narrow them to an area. Nothing else depends on this folder.
+## What behavior is required in this scope?
+
+Rule files here apply to the whole workspace.
 
 ## Axioms
 

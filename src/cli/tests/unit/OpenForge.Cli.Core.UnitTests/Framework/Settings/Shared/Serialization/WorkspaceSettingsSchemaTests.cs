@@ -17,9 +17,8 @@ public sealed class WorkspaceSettingsSchemaTests
     [Fact(DisplayName = "Link scope has a new optional settings schema while published version one stays unchanged"), Trait("Boundary", "Input")]
     public void LinkScopeUsesNewSchema()
     {
-        using var current = ReadPublishedSchema();
+        using var current = ReadPublishedSchema(2);
         using var previous = ReadPublishedSchema(1);
-        Assert.Equal(WorkspaceSettingsDefinitions.SchemaUrl, current.RootElement.GetProperty("$id").GetString());
         foreach (var key in new[] { "ignoreLinksFrom", "ignoreLinksTo" })
         {
             var property = current.RootElement.GetProperty("properties").GetProperty(key);
@@ -29,6 +28,26 @@ public sealed class WorkspaceSettingsSchemaTests
         }
         foreach (var example in current.RootElement.GetProperty("examples").EnumerateArray())
             Assert.NotNull(WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes(example.GetRawText())).Document);
+    }
+
+    [Fact(DisplayName = "Included roots have a new optional settings schema while published version two stays unchanged"), Trait("Boundary", "Input")]
+    public void RootsUseNewSchema()
+    {
+        using var current = ReadPublishedSchema();
+        using var previous = ReadPublishedSchema(2);
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaUrl, current.RootElement.GetProperty("$id").GetString());
+        var property = current.RootElement.GetProperty("properties").GetProperty(WorkspaceSettingsDefinitions.RootsProperty);
+        Assert.Equal("array", property.GetProperty("type").GetString());
+        Assert.Equal("string", property.GetProperty("items").GetProperty("type").GetString());
+        Assert.True(property.GetProperty("uniqueItems").GetBoolean());
+        Assert.False(previous.RootElement.GetProperty("properties").TryGetProperty(WorkspaceSettingsDefinitions.RootsProperty, out _));
+        Assert.True(current.RootElement.GetProperty("additionalProperties").GetBoolean());
+        foreach (var example in current.RootElement.GetProperty("examples").EnumerateArray())
+        {
+            var document = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes(example.GetRawText())).Document);
+            Assert.True(document.IsKnownSchemaVersion);
+            Assert.NotEmpty(document.Roots);
+        }
     }
 
     [Fact(DisplayName = "The published frontmatter schema agrees with codec forms and the missing-key default"), Trait("Boundary", "Input")]
@@ -51,7 +70,7 @@ public sealed class WorkspaceSettingsSchemaTests
         Assert.Equal(frontmatter.GetProperty("default").GetString(), WorkspaceSettingsDefinitions.ReadFrontmatterName(defaultDocument.Frontmatter));
         Assert.False(schema.RootElement.TryGetProperty("required", out var required)
             && required.EnumerateArray().Any(value => value.GetString() == WorkspaceSettingsDefinitions.FrontmatterProperty));
-        Assert.Equal(2, defaultDocument.SchemaVersion);
+        Assert.Equal(3, defaultDocument.SchemaVersion);
     }
 
     [Theory(DisplayName = "The frontmatter schema excludes the malformed forms rejected by the codec"), Trait("Boundary", "Input")]
@@ -67,7 +86,7 @@ public sealed class WorkspaceSettingsSchemaTests
         Assert.Null(WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$"""{"frontmatter":{{value}}}""")).Document);
     }
 
-    private static JsonDocument ReadPublishedSchema(int version = 2)
+    private static JsonDocument ReadPublishedSchema(int version = WorkspaceSettingsDefinitions.SchemaVersion)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null)
@@ -115,7 +134,7 @@ public sealed class WorkspaceSettingsSchemaTests
     [Trait("Boundary", "Input")]
     [Theory(DisplayName = "An unrecognised schema version is still read")]
     [InlineData(0)]
-    [InlineData(3)]
+    [InlineData(4)]
     [InlineData(4096)]
     public void ReadsUnrecognisedVersion(int version)
     {
@@ -154,7 +173,7 @@ public sealed class WorkspaceSettingsSchemaTests
 
         var json = Encoding.UTF8.GetString(Assert.IsType<byte[]>(written));
         Assert.Contains(WorkspaceSettingsDefinitions.SchemaUrl, json, StringComparison.Ordinal);
-        Assert.Contains("\"schemaVersion\": 2", json, StringComparison.Ordinal);
+        Assert.Contains("\"schemaVersion\": 3", json, StringComparison.Ordinal);
 
         // The declaration must not cost the file its readability.
         var read = WorkspaceSettingsCodec.Read(Assert.IsType<byte[]>(written));

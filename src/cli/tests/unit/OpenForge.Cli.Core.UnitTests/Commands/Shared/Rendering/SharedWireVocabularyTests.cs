@@ -23,7 +23,7 @@ public sealed class SharedWireVocabularyTests
             ["framework", "extension", "index", "route", "repair", "library", "workspace"],
             Enum.GetValues<RecoveryBundleProducer>().Select(RecoveryWireVocabulary.Producer));
         Assert.Equal(
-            ["install", "index", "create", "init", "move", "update", "remove", "repair", "attach", "sync", "detach"],
+            ["install", "index", "create", "init", "move", "update", "remove", "repair", "attach", "sync", "detach", "include", "exclude"],
             Enum.GetValues<RecoveryBundleOperation>().Select(RecoveryWireVocabulary.Operation));
         Assert.Equal(
             ["final", "draft"],

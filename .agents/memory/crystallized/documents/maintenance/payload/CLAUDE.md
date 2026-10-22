@@ -31,7 +31,7 @@ The [source and packaging decision](../../../decisions/framework/source-and-pack
 
 ## Verification
 
-- [Install integration tests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Install/InstallOperationIntegrationTests.cs) verify exact installed AGENTS and CLAUDE hosts with the canonical heading and footer.
-- [Managed-host Update tests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Update/UpdateManagedHostIntegrationTests.cs) verify legacy conversion, invalid-boundary blocking, preservation of outside bytes, and repeated canonical no-op behavior.
+- [InstallOperationIntegrationTests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Install/InstallOperationIntegrationTests.cs) verify exact installed AGENTS and CLAUDE hosts with the canonical heading and footer.
+- [UpdateManagedHostIntegrationTests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Update/UpdateManagedHostIntegrationTests.cs) verify legacy conversion, invalid-boundary blocking, preservation of outside bytes, and repeated canonical no-op behavior.
 - Check source and dogfood block equality directly when this maintenance contract changes.
 - Recheck the linked Claude Code documentation when bridge syntax or loading behavior changes.

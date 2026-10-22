@@ -53,7 +53,8 @@ internal sealed class GeneratedNavigationRegionPlanner
                 entryProjection.ReadCause());
         }
 
-        return BuildRegion(input.Source, document.ReadValue(), entryProjection.ReadValue(), ReadObservedLoader(request, input.Source));
+        return BuildRegion(input.Source, document.ReadValue(), entryProjection.ReadValue(), ReadObservedLoader(request, input.Source),
+            input.Source.Base.Form == SourceDocumentForm.Loader ? request.LoaderEdit : null);
     }
 
     // When an operation rewrites the Loader from the payload, the user's authored links live in the
@@ -125,12 +126,17 @@ internal sealed class GeneratedNavigationRegionPlanner
         SourceLogicalSource source,
         MarkdownDocumentFacts document,
         IReadOnlyList<GeneratedNavigationEntry> entries,
-        MarkdownDocumentFacts? observedLoader)
+        MarkdownDocumentFacts? observedLoader,
+        GeneratedNavigationLoaderEdit? loaderEdit = null)
     {
         try
         {
             var linkSource = observedLoader ?? document;
             var authoredLinks = linkSource.GeneratedRegion.EntriesBlock is { } linkBlock ? ReadAuthoredLinks(linkSource, linkBlock) : [];
+            if (loaderEdit is not null)
+            {
+                authoredLinks = ApplyLoaderEdit(authoredLinks, loaderEdit);
+            }
             var expectedBody = BuildExpectedBlock(document, entries, authoredLinks);
             var change = BuildGeneratedChange(document, expectedBody);
             return GeneratedNavigationRegion.Available(source, entries, change) with { AuthoredLinkCount = authoredLinks.Count };
@@ -168,7 +174,8 @@ internal sealed class GeneratedNavigationRegionPlanner
             .Select(destination => destination.CanonicalPath)
             .ToHashSet(StringComparer.Ordinal);
         return structural
-            .Where(path => listedRoots.Contains(path) || request.TurnedOnLoaderRoots.Contains(path))
+            .Where(path => !request.TurnedOffLoaderRoots.Contains(path)
+                && (listedRoots.Contains(path) || request.TurnedOnLoaderRoots.Contains(path)))
             .ToArray();
     }
 
@@ -460,6 +467,25 @@ internal sealed class GeneratedNavigationRegionPlanner
         }
 
         return authored;
+    }
+
+    private static IReadOnlyList<string> ApplyLoaderEdit(IReadOnlyList<string> rows, GeneratedNavigationLoaderEdit edit)
+    {
+        var result = new List<string>();
+        var replaced = false;
+        foreach (var line in rows)
+        {
+            if (MarkdownEntryRowParser.TryParse(line, out var row, out _)
+                && string.Equals(SourceLoaderDestinationParser.Parse(row.Destination).CanonicalPath, edit.Path, StringComparison.Ordinal))
+            {
+                if (!replaced && edit.Row is { } replacement) result.Add(replacement);
+                replaced = true;
+            }
+            else result.Add(line);
+        }
+
+        if (!replaced && edit.Row is { } appended) result.Add(appended);
+        return result;
     }
 
     private static GeneratedNavigationBoundedChange BuildGeneratedChange(MarkdownDocumentFacts document, string expectedBlock)

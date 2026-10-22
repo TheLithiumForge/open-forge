@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Help/concepts.md" LogicalName="OpenForge.Cli.OutputText.Help/concepts.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>OpenForge.Cli.Rendering</_Parameter1>
     </AssemblyAttribute>

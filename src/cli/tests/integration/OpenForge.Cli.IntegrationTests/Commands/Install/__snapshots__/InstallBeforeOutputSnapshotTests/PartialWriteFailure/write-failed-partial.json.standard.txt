@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Install stopped after 17 of 36 changes.",
+    "headline": "Install stopped after 17 of 35 changes.",
     "kind": "failed"
   },
   "findings": [
@@ -213,14 +213,6 @@
       "owner": null
     },
     {
-      "path": ".agents/memory/saving.md",
-      "kind": "file",
-      "action": "created",
-      "outcome": "not-started",
-      "reason": null,
-      "owner": null
-    },
-    {
       "path": ".agents/memory/working/_working.md",
       "kind": "file",
       "action": "created",
@@ -339,7 +331,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 19,
+      "files": 18,
       "directories": 12,
       "sections": 2
     },

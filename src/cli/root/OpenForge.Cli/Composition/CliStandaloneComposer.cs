@@ -1,4 +1,7 @@
 using OpenForge.Cli.Composition.Models;
+using OpenForge.Cli.Core.Commands.Help;
+using OpenForge.Cli.Core.Presentation.Help;
+using OpenForge.Cli.Core.Presentation.Help.Shared.Help;
 using OpenForge.Cli.Core.Commands.Cleanup;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Binding;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
@@ -78,6 +81,7 @@ internal static class CliStandaloneComposer
         PhysicalPathResolver physicalPathResolver)
     {
         ArgumentNullException.ThrowIfNull(interaction);
+        var helpSymbols = HelpBinding.CreateSymbols();
         var findSymbols = FindBinding.CreateSymbols();
         var indexSymbols = IndexBinding.CreateSymbols();
         var statusSymbols = StatusBinding.CreateSymbols();
@@ -90,6 +94,8 @@ internal static class CliStandaloneComposer
         var updateSymbols = UpdateBinding.CreateSymbols();
         return new CliStandaloneComposition
         {
+            HelpBinding = CliReportBinding.Close(HelpBinding.CreateRequestBinding(
+                helpSymbols, HelpHelpSections.Create(), new HelpOperation()), HelpPresentation.Rendering),
             FindBinding = BuildFind(findSymbols),
             IndexBinding = BuildIndex(indexSymbols, lockStoreRoot),
             StatusBinding = BuildStatus(
@@ -105,6 +111,7 @@ internal static class CliStandaloneComposer
             UpdateBinding = BuildUpdate(updateSymbols, interaction, lockStoreRoot),
             RootLeaves =
             [
+                new CliRootLeaf(helpSymbols.HelpCommand),
                 new CliRootLeaf(findSymbols.FindCommand),
                 new CliRootLeaf(indexSymbols.IndexCommand),
                 new CliRootLeaf(statusSymbols.StatusCommand),

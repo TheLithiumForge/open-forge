@@ -109,6 +109,19 @@ only when the safe context and the missing boundary can both be stated. Do not
 claim a complete result when an unresolved boundary could change the selected
 context, its requested projection, or its safety.
 
+## Included Source Reading
+
+Resolve each included destination relative to the catalogue that lists it.
+Follow linked Markdown catalogues and preserve the first parent, row order and
+physical-file deduplication. Reject lexical and physical escapes. Do not scan a
+folder because a leaf is included. The shared source reader supplies the same
+included files to Context, Find, References and Route List.
+
+Selecting an included catalogue exposes its applicable required descendants.
+Inherited row conditions apply along its complete parent chain. The authoring
+reference is an ordinary explicit operand with an optional overwrite, without a
+startup loading reason.
+
 ## Working-Path Applicability
 
 When `--for` is supplied, lexically normalize every value as a

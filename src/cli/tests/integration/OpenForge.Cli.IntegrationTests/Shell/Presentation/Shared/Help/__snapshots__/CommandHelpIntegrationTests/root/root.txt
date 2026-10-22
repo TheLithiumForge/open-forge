@@ -18,6 +18,7 @@ Set up and manage:
   library    Manage links from local source folders into your workspace.
 
 Read and discover:
+  help        List help topics or read about Open Forge concepts.
   status      Show whether Open Forge is installed and whether its setup needs
               attention.
   context     Read startup instructions and the required context for selected

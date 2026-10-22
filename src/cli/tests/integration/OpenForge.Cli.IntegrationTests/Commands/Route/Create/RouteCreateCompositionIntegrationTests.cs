@@ -254,7 +254,7 @@ public sealed class RouteCreateCompositionIntegrationTests
             command => command.Name == "route");
 
         Assert.Equal(
-            ["list", "inspect", "init", "create", "update", "move", "remove"],
+            ["list", "inspect", "init", "create", "update", "include", "exclude", "move", "remove"],
             route.Subcommands.Select(command => command.Name));
         var create = route.Subcommands[3];
         var parse = tree.Parse(["route", "create"]);

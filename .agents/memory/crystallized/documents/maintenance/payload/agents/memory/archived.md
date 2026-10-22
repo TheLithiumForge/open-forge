@@ -15,16 +15,19 @@ The [Archived state contract](../../../../framework/memory/archived.md) defines 
 
 ## Contract
 
-- Frontmatter preserves #Memory, #Archived, #Contextual, and #Historical classification without #LoadNow or #KeepInMind
+- The title is followed by `## What useful history should remain available without governing current work?` and a short paragraph describing the folder.
+- Frontmatter preserves #Memory, #Archived, #Contextual and #Historical without a loading tag. Its Entries are checked when history may help current work.
 - Archived material remains historical context without current authority
 - Archived keeps historical Memory records and links to retained sources when the history belongs elsewhere
-- The entrypoint records origin, archival reason, and replacement when one exists
+- The entrypoint requires retained records to identify their origin, archival reason and replacement when one exists.
 - Still-current content is extracted before archival into the sources that define it. Retain the useful remainder without requiring lossless preservation
-- Destination rules replace the former category's behavioral role. Metadata must no longer activate that role or assert current authority
-- Consolidation and transformation preserve useful history; deletion follows user direction or accepted retention preferences
+- Metadata that would activate a former role or claim current authority is removed, including loading tags. Restoration follows the destination's rules.
+- Consolidation and transformation preserve useful history. Deletion follows user direction or accepted retention preferences
 - Restoration validates material against current conditions and uses an explicit destination. Current knowledge requires acceptance within its scope
 - The installed `route` begins empty and supports Memory scopes before or after the Archived state without requiring a mirrored archive taxonomy
 
 ## Verification
 
-- Installation and `route` tests verify the Archived `entrypoint` remains on demand while preserving classification, generated-region integrity, and recursive child routing
+- Use the [payload integrity checks](../../_payload.md#verification) for shipped bytes and metadata rendering.
+- Compare source and repository rules outside Entries. Check the shipped Memory row leaves Archived on demand.
+- Manually review extraction, historical metadata and explicit restoration. Packaging checks do not prove retention decisions or acceptance.

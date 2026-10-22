@@ -12,8 +12,8 @@ public sealed class CommandHelpIntegrationTests
     public static TheoryData<string> Pages => new()
     {
         "", "route", "extension", "library",
-        "install", "update", "remove", "status", "context", "find", "references", "index", "doctor", "repair", "cleanup",
-        "route list", "route inspect", "route init", "route create", "route update", "route move", "route remove",
+        "install", "update", "remove", "status", "context", "find", "references", "index", "doctor", "repair", "cleanup", "help",
+        "route list", "route inspect", "route init", "route create", "route include", "route exclude", "route update", "route move", "route remove",
         "extension list", "extension inspect", "extension create", "extension install", "extension update", "extension remove",
         "library list", "library inspect", "library attach", "library sync", "library detach",
     };

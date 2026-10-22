@@ -32,7 +32,7 @@ What to avoid: writing Directives for problems you haven't had yet, and creating
 Four principles guide adoption:
 
 - **Existing code is evidence, not automatic authority.** It shows what the system does, not whether that's intended. Ask before treating an odd behavior as a rule, or as a bug.
-- **Point to what exists instead of moving it.** Your README, docs folder, ADRs, runbooks and other tools' rule files stay where they are. A line in the loader links each one where it is, with no frontmatter, and a [Map](../concepts/core-categories.md#maps) can describe a larger set.
+- **Point to what exists instead of moving it.** Your README, docs folder, ADRs, runbooks and other tools' rule files stay where they are. `open-forge route include` lists each one in the loader where it is, with no frontmatter, and a [Map](../concepts/core-categories.md#maps) can describe a larger set.
 - **Decisions start the day you adopt.** You can't decide what was already decided before you arrived. From now on, each important choice gets a [Decision](../highlights.md#decisions-keep-the-why) with its reasons, so the next person doesn't have to guess. The reasons behind older code stay wherever they live today, and your Map points there.
 - **Rules follow real problems.** When an unwritten convention keeps getting broken, write it as a Directive, or as a Pattern if it's a shape rather than a rule, scoped to where it applies. Add a rule when a mistake repeats, not in advance.
 
@@ -42,7 +42,8 @@ Save your current work before adoption. For a trial, use a separate local clone 
 
 1. **Install the smallest setup with a dry run and review the diff.** Minimal
    writes the loader, Directives for your rules, Crystallized Memory for
-   accepted knowledge, a short guide for people, and an Open Forge section in
+   accepted knowledge, a short guide that also holds the file formats agents
+   follow, which you may delete, and an Open Forge section in
    `AGENTS.md` and `CLAUDE.md` that keeps your content. The two folders start
    empty. See [With the CLI](installation.md#with-the-cli) for
    details, including how the CLI adopts an existing `.agents/` tree.
@@ -52,12 +53,21 @@ Save your current work before adoption. For a trial, use a separate local clone 
    open-forge install --preset minimal --automatic
    ```
 
-2. **Link what you already have.** Add a line under `## Entries` in
-   `.agents/loader.md` for each document agents should use. It stays where it
-   is and needs no frontmatter. `#LoadNow` makes it a required read, and
-   `applies to` limits it to matching work. Rule files for other tools, such as
-   `.cursor/rules/*.mdc` or `.windsurfrules`, can be linked one by one in the
-   same way:
+2. **Include what you already have.** Run `open-forge route include` for
+   each document agents should use. It stays where it is and needs no
+   frontmatter. `--tag LoadNow` makes it a required read, and `--apply-to`
+   limits it to matching work. Rule files for other tools, such as
+   `.cursor/rules/*.mdc` or `.windsurfrules`, can be included one by one in
+   the same way:
+
+   ```sh
+   open-forge route include CONTRIBUTING.md --description "Contribution rules to follow" --tag LoadNow
+   open-forge route include docs/contributing/csharp.md --description "C# conventions" --tag LoadNow --apply-to "**/*.cs"
+   open-forge route include docs/architecture.md --description "Architecture overview" --tag Project
+   ```
+
+   Each command writes one line under `## Entries` in `.agents/loader.md`,
+   which you can also write by hand:
 
    ```markdown
    - [Contribution rules to follow](../CONTRIBUTING.md) - #LoadNow

@@ -78,8 +78,21 @@ Counted with the CLI's estimate method, characters divided by four.
 | `develop` before v2 | 12 | about 4,560 | 2,052 |
 | v2 | 7 | about 1,430 | 823 |
 | v2 lossless | 8 | 2,451 | 1,185 |
+| v3 | 8 | 2,705 | 1,413 |
 
-Lossless costs about 1,000 startup words over v2, and is still 46% below the shipped startup.
+Lossless costs about 1,000 startup words over v2, and is still 46% below the shipped startup. v3 adds about 250 more for fuller sentences.
+
+## v3
+
+v3 keeps every v2 obligation and rewrites the loader, the managed `AGENTS.md` block and `.agents/README.md` for a person reading them for the first time, on a separate branch stacked on v2:
+
+- The loader opens with what the file does and that the `Entries` list is the whole setup.
+- Each step and rule starts with a short bold label, such as **List your working files** or **What counts as accepted**, so a reader can scan it.
+- Conditions come before required reads, so the procedure reads in the order an agent acts.
+- `.agents/README.md` says who it is for first, then lists each folder with one line on what it holds.
+- Each catalogue opens by saying whether it is optional and what it needs, then what it holds.
+
+A checker verified that all 46 dropped or partly kept statements still have a home in both v2 and v3.
 
 ## Risks and the proof that would settle them
 
@@ -98,3 +111,10 @@ On 2026-10-21 the maintainer reviewed the PR and decided:
 
 - Minimal is the loader, Directives and Crystallized Memory, because a loader with nothing listed does nothing for the user. Essentials and Full Core build on it, so each built-in preset includes the one before it.
 - The interactive wizard offers Minimal first and recommends it. Unattended Install without a preset still uses Full Core.
+
+On 2026-10-22, reviewing the shipped Markdown, the maintainer decided:
+
+- **No "this is optional" wording.** Every route is optional by default, which the framework's ideas and the ability to remove anything already convey. Catalogues no longer open by saying they are optional, what they need or that nothing depends on them, and sentences that only restated a default are gone.
+- **Each category keeps its question.** The question under each catalogue's title, carried over from `develop`, tells an agent what the category is about. v2 had dropped them, and v3 restores them.
+- **Memory routes are self-contained.** The saving policy no longer lives in a separate `memory/saving.md`. Its rules are Axioms in Working Memory's own catalogue, which stays shared through Git while Working records are private.
+- **A route never names another route.** Working does not mention Crystallized, and Guidance or Patterns do not mention Directives. Each catalogue describes only its own folder.

@@ -45,18 +45,18 @@
   ],
   "effects": [],
   "counts": {
-    "routedFiles": 20,
-    "startupFiles": 8,
-    "startupTokens": 3979,
+    "routedFiles": 19,
+    "startupFiles": 7,
+    "startupTokens": 3990,
     "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 249,
-    "allTokens": 23002,
-    "startupShare": 17.295423174323692762507200539,
+    "mayLoadAgainTokens": 247,
+    "allTokens": 24987,
+    "startupShare": 15.966621975866968162807916275,
     "rootCategories": 7,
     "entriesSectionsCurrent": 12,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 20,
+    "frameworkFilesCurrent": 19,
     "frameworkFilesChanged": 1,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -78,16 +78,16 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 8,
-          "characters": 15913,
-          "bytes": 15913,
-          "tokens": 3979
+          "files": 7,
+          "characters": 15958,
+          "bytes": 15958,
+          "tokens": 3990
         },
         "current": {
-          "files": 8,
-          "characters": 15913,
-          "bytes": 15913,
-          "tokens": 3979
+          "files": 7,
+          "characters": 15958,
+          "bytes": 15958,
+          "tokens": 3990
         },
         "difference": {
           "files": 0,
@@ -97,26 +97,26 @@
         },
         "mayLoadAgain": {
           "files": 1,
-          "characters": 996,
-          "bytes": 996,
-          "tokens": 249
+          "characters": 985,
+          "bytes": 985,
+          "tokens": 247
         }
       },
       "allRouted": {
-        "files": 20,
-        "characters": 92006,
-        "bytes": 92007,
-        "tokens": 23002
+        "files": 19,
+        "characters": 99945,
+        "bytes": 99946,
+        "tokens": 24987
       },
-      "startupShare": 17.295423174323692762507200539,
+      "startupShare": 15.966621975866968162807916275,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
-          "bytes": 996,
+          "bytes": 985,
           "layers": [
             {
               "path": ".agents/memory/emerging/_emerging.md",
-              "bytes": 996
+              "bytes": 985
             }
           ]
         }
@@ -164,10 +164,6 @@
       },
       {
         "path": ".agents/memory/emerging/_emerging.md",
-        "state": "current"
-      },
-      {
-        "path": ".agents/memory/saving.md",
         "state": "current"
       },
       {

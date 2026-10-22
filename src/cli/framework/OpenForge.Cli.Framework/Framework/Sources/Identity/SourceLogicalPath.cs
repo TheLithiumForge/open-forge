@@ -94,7 +94,7 @@ internal static class SourceLogicalPath
     internal static string ToLexicalPath(string workspaceRoot, string logicalPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
-        if (!IsCanonicalRoot(logicalPath))
+        if (!SourceWorkspaceRelativePath.IsCanonical(logicalPath))
         {
             throw new ArgumentException("The logical path is not canonical.", nameof(logicalPath));
         }

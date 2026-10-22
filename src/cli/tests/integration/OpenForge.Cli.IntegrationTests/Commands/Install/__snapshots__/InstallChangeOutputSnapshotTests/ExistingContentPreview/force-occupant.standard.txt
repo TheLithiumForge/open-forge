@@ -16,7 +16,6 @@ Frontmatter: root
   .agents/memory/archived/_archived.md                   would be created
   .agents/memory/crystallized/_crystallized.md           would be created
   .agents/memory/emerging/_emerging.md                   would be created
-  .agents/memory/saving.md                               would be created
   .agents/memory/working/_working.md                     would be created
   .agents/patterns/_patterns.md                          would be created
   .agents/skills/_skills.md                              would be created
@@ -34,7 +33,7 @@ Frontmatter: root
   .agents/open-forge.lock.json                           would be created
   .agents/memory/_memory.overwrite.md
     Planned migration: content preserved
-  Would create 19 files and 12 directories under .agents, and replace 1 existing
+  Would create 18 files and 12 directories under .agents, and replace 1 existing
   file, plus AGENTS.md and CLAUDE.md.
   Planned migration for 1 source.
 No files were changed.

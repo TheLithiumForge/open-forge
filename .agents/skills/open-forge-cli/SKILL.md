@@ -7,7 +7,7 @@ description: Use the open-forge CLI to load workspace context, find sources, mai
 
 Use the optional CLI to read and maintain Open Forge's Markdown, rules, and links. Read this guide before running commands other than `context`. Reading it grants no installation or package-change authority.
 
-When authoring metadata, follow the workspace's frontmatter form described in the loader.
+Before you write workspace files or metadata, read the file formats in `.agents/README.md`, or run `open-forge help concepts` if that page was deleted.
 
 You may create or move user-owned Markdown files directly inside routed folders. Preview and run `open-forge index` to fill missing metadata, create missing entrypoints, and refresh Entries instead of writing those by hand. After renames or moves, preview and run `open-forge repair --automatic` to repair proven links and affected navigation. When Git retains the old file's committed content, Index and Repair work in either order. Without Git, run Repair first while old Entries still record the file's metadata. Index and Repair preserve protected content, including managed files. Follow Doctor's next step for remaining choices, edits or a Git timeout retry. Read [route maintenance](references/routes.md) for the boundaries.
 
@@ -23,6 +23,8 @@ You may create or move user-owned Markdown files directly inside routed folders.
 | Preview generated navigation after manual edits   | `index --dry-run`                      |
 
 Check `open-forge --help` once for availability and groups. Use `open-forge <command> --help` for the installed version's exact syntax. If unavailable, follow the loader and maintain the files directly.
+
+Use `open-forge help concepts` for built-in explanations and the file formats from the shipped `.agents/README.md`. It needs no workspace.
 
 Prefer one context request over separate reads for each entrypoint:
 

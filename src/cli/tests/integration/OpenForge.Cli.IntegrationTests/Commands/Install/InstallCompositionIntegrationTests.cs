@@ -87,7 +87,7 @@ public sealed class InstallCompositionIntegrationTests
             StringComparison.Ordinal);
         Assert.Contains("Would install the Open Forge Framework", applied.StandardError, StringComparison.Ordinal);
         Assert.StartsWith("Installed the Open Forge Framework", applied.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Created 19 files and 13 directories under .agents", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Created 18 files and 13 directories under .agents", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", applied.RemainingInput);
         Assert.True(workspace.AgentsDirectoryExists());
         Assert.True(applied.LockInfrastructureExists);

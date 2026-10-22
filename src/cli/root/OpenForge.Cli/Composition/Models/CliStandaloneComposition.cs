@@ -5,6 +5,8 @@ namespace OpenForge.Cli.Composition.Models;
 
 internal sealed record CliStandaloneComposition
 {
+    public required ICliCommandBinding HelpBinding { get; init; }
+
     public required ICliCommandBinding FindBinding { get; init; }
 
     public required ICliCommandBinding IndexBinding { get; init; }

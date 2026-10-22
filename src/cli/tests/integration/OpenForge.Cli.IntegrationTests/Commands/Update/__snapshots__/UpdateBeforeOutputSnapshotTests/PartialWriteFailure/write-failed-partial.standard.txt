@@ -7,7 +7,7 @@ Workspace: <workspace>
   .agents/guidance/_guidance.md
     replaced (your previous file is in the recovery bundle)
   .agents/loader.md              not started
-  19 files unchanged
+  18 files unchanged
   Previous content is in the recovery bundle at <recovery-bundle>.
   Recovery data: <recovery-bundle>
   Inspect the blocked, unavailable, or incomplete Update facts before rerunning.

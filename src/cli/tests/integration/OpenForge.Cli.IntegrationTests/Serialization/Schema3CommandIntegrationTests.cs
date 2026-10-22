@@ -11,6 +11,7 @@ public sealed class Schema3CommandIntegrationTests
     [Theory(DisplayName = "Every command emits one schema-3 JSON document at every detail without writes")]
     [Trait("Feature", "cli-serialization"), Trait("Evidence", "Integration")]
     [InlineData("install", 5, "blocked")]
+    [InlineData("help", 0, "completed")]
     [InlineData("update", 5, "blocked")]
     [InlineData("index", 5, "blocked")]
     [InlineData("repair", 4, "invalid-input")]
@@ -96,7 +97,7 @@ public sealed class Schema3CommandIntegrationTests
             "extension create" => ["sample-package", "--path", missingCatalogue, "--automatic", "--dry-run"],
             "library inspect" or "library detach" or "library sync" => ["sample-library"],
             "library attach" => ["sample-library", "library-source"],
-            "install" or "update" or "index" or "repair" or "cleanup" or "doctor" or "status" or "find" or "context"
+            "help" or "install" or "update" or "index" or "repair" or "cleanup" or "doctor" or "status" or "find" or "context"
                 or "extension list" or "library list" => [],
             _ => throw new ArgumentOutOfRangeException(nameof(command), command, "The command case is not defined."),
         };

@@ -59,23 +59,22 @@ internal sealed class PublishedUpdateWorkspace : IDisposable
 
     internal void MutateManagedContent()
     {
-        const string installedToken = "This workspace uses the context linked under `Entries`.";
-        const string divergentToken = "This workspace uses the context listed under `Entries`.";
+        const string entriesHeading = "\n## Entries\n";
         var installed = ReadText(ManagedPath);
-        var occurrence = installed.IndexOf(installedToken, StringComparison.Ordinal);
+        var occurrence = installed.IndexOf(entriesHeading, StringComparison.Ordinal);
         if (occurrence < 0
             || installed.IndexOf(
-                installedToken,
-                occurrence + installedToken.Length,
+                entriesHeading,
+                occurrence + entriesHeading.Length,
                 StringComparison.Ordinal) >= 0)
         {
             throw new InvalidOperationException(
-                "The published Update loader requires exactly one authored divergence token.");
+                "The published Update loader requires exactly one Entries heading.");
         }
 
         _installWorkspace.ReplaceInstalledText(
             ManagedPath,
-            installed.Replace(installedToken, divergentToken, StringComparison.Ordinal));
+            installed.Insert(occurrence, "\nSynthetic authored loader change.\n"));
     }
 
     internal void SeedHistoricalRetiredTarget()

@@ -133,7 +133,7 @@ public sealed class WorkspaceSettingsFrontmatterTests
         using var json = JsonDocument.Parse(written);
 
         Assert.Equal(WorkspaceSettingsDefinitions.SchemaUrl, json.RootElement.GetProperty("$schema").GetString());
-        Assert.Equal(2, json.RootElement.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, json.RootElement.GetProperty("schemaVersion").GetInt32());
         Assert.Equal(["$schema", "schemaVersion", "frontmatter"], json.RootElement.EnumerateObject().Select(property => property.Name));
         Assert.Equal((FrontmatterForm)form, Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(written).Document).DeclaredFrontmatter);
     }

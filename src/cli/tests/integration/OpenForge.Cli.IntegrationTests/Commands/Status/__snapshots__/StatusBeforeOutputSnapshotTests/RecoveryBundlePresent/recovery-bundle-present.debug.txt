@@ -7,14 +7,14 @@ Workspace: <workspace>
          Review and remove the recovery data.
          cause: The exact-name recovery candidate requires attention.
 Startup context
-  Shipped by this CLI:   8 files, about 4.0k tokens
-  This workspace:        8 files, about 4.0k tokens
+  Shipped by this CLI:   7 files, about 4.0k tokens
+  This workspace:        7 files, about 4.0k tokens
   May load again later:  1 file, about 0.2k tokens
-All routed files: 20 files, about 23.0k tokens (startup is 17%)
+All routed files: 19 files, about 25.0k tokens (startup is 16%)
 Routes: 7 root categories, 12 Entries sections current
-Framework files: 21 current
+Framework files: 20 current
 Largest may-load-again sources
-  memory/emerging  996 B
+  memory/emerging  985 B
 Framework files
   .agents/README.md                                      current
   .agents/directives/_directives.md                      current
@@ -25,7 +25,6 @@ Framework files
   .agents/memory/archived/_archived.md                   current
   .agents/memory/crystallized/_crystallized.md           current
   .agents/memory/emerging/_emerging.md                   current
-  .agents/memory/saving.md                               current
   .agents/memory/working/_working.md                     current
   .agents/patterns/_patterns.md                          current
   .agents/skills/_skills.md                              current
@@ -53,6 +52,6 @@ Entries sections
 Recovery data:
   <recovery-bundle>
     final recovery bundle, verified
-20 routed files, 8 startup files, 3979 startup tokens, 1 may-load-again files, 249 may-load-again tokens, 22993 all routed tokens, 17.302004958030704997173052668 startup share, 7 root categories, 12 current Entries sections, 21 current Framework files, 1 recovery bundles, 1 warnings.
+19 routed files, 7 startup files, 3990 startup tokens, 1 may-load-again files, 247 may-load-again tokens, 24978 all routed tokens, 15.972215271591716627798740879 startup share, 7 root categories, 12 current Entries sections, 20 current Framework files, 1 recovery bundles, 1 warnings.
   Review and remove the recovery data.
 Next: open-forge cleanup

@@ -94,6 +94,8 @@ internal sealed class ContextGraphSource
 
     internal bool IsEntrypoint => SourceFormClassifier.IsEntrypoint(Form);
 
+    internal bool IsCatalogue => IsEntrypoint || IsLinked && GeneratedEntries.State == SourceGeneratedEntriesState.Complete;
+
     internal bool IsEntryDocument => SourceFormClassifier.IsEntryDocument(CanonicalPath);
 }
 
@@ -122,10 +124,25 @@ internal sealed class ContextGraph
         };
         foreach (var source in values)
         {
-            byPath.Add(source.CanonicalPath, source);
+            if (source.CanonicalPath == workspaceEntry.CanonicalPath)
+            {
+                byPath[source.CanonicalPath] = source;
+            }
+            else
+            {
+                byPath.Add(source.CanonicalPath, source);
+            }
             foreach (var overwrite in source.Layers.Where(layer => layer.Kind == SourceLayerKind.Overwrite))
             {
                 byPath.Add(overwrite.CanonicalPath, source);
+            }
+        }
+
+        foreach (var alias in catalogue.Aliases)
+        {
+            if (byPath.TryGetValue(alias.Value, out var source))
+            {
+                byPath.TryAdd(alias.Key, source);
             }
         }
 

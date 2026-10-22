@@ -31,6 +31,7 @@ internal static class WorkspaceEntryDoctorInspector
         WorkspacePathDoctorInspector.Inspect(view, findings);
         WorkspaceSourceDoctorInspector.Inspect(routes, findings);
         WorkspaceRouteDoctorInspector.Inspect(routes, findings);
+        WorkspaceIncludeDoctorInspector.Inspect(routes.IncludedFiles, findings);
         findings.AddRange(routes.Routes.Issues
             .Where(issue => issue.Code is SourceRouteIssueCode.LoaderMalformed
                 or SourceRouteIssueCode.LoaderDuplicateRoot

@@ -15,18 +15,18 @@
   "findings": [],
   "effects": [],
   "counts": {
-    "routedFiles": 60,
-    "startupFiles": 8,
-    "startupTokens": 4146,
+    "routedFiles": 59,
+    "startupFiles": 7,
+    "startupTokens": 4161,
     "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 322,
-    "allTokens": 40187,
-    "startupShare": 10.315460749367025611356835812,
+    "mayLoadAgainTokens": 319,
+    "allTokens": 42176,
+    "startupShare": 9.865207701062215477996965099,
     "rootCategories": 7,
     "entriesSectionsCurrent": 26,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 21,
+    "frameworkFilesCurrent": 20,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 6,
@@ -47,37 +47,37 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 8,
-          "characters": 15913,
-          "bytes": 15913,
-          "tokens": 3979
+          "files": 7,
+          "characters": 15958,
+          "bytes": 15958,
+          "tokens": 3990
         },
         "current": {
-          "files": 8,
-          "characters": 16582,
-          "bytes": 16582,
-          "tokens": 4146
+          "files": 7,
+          "characters": 16643,
+          "bytes": 16643,
+          "tokens": 4161
         },
         "difference": {
           "files": 0,
-          "characters": 669,
-          "bytes": 669,
-          "tokens": 167
+          "characters": 685,
+          "bytes": 685,
+          "tokens": 171
         },
         "mayLoadAgain": {
           "files": 1,
-          "characters": 1285,
-          "bytes": 1285,
-          "tokens": 322
+          "characters": 1274,
+          "bytes": 1274,
+          "tokens": 319
         }
       },
       "allRouted": {
-        "files": 60,
-        "characters": 160748,
-        "bytes": 160749,
-        "tokens": 40187
+        "files": 59,
+        "characters": 168703,
+        "bytes": 168704,
+        "tokens": 42176
       },
-      "startupShare": 10.315460749367025611356835812
+      "startupShare": 9.865207701062215477996965099
     },
     "extensions": [
       {

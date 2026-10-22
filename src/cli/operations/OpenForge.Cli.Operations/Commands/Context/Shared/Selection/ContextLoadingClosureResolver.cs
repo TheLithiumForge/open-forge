@@ -71,6 +71,7 @@ internal sealed class ContextLoadingClosureResolver
                 LinkedApplyTo = source.LinkedApplyTo,
             }).ToArray(),
             LoaderRootPaths = graph.RouteFacts.Topology.LoaderRootPaths,
+            Aliases = graph.Catalogue.Aliases,
             EvaluateApplicability = true,
             IncludeLinkedSources = true,
             WorkingPathsSupplied = _workingPathsSupplied,
@@ -178,7 +179,7 @@ internal sealed class ContextLoadingClosureResolver
             }
 
             IReadOnlyList<ContextGraphSource> chain = [];
-            if (source.RouteState == SourceRouteState.Routed)
+            if (source.RouteState == SourceRouteState.Routed || source.IsLinked)
             {
                 var resolvedChain = ContextApplicabilityProjector.ReadChain(graph, source);
                 if (resolvedChain is null)
@@ -189,7 +190,7 @@ internal sealed class ContextLoadingClosureResolver
                 {
                     chain = resolvedChain;
                     var identity = Identity(source);
-                    foreach (var ancestor in chain.Take(chain.Count - 1).Where(item => item.IsEntrypoint))
+                    foreach (var ancestor in chain.Take(chain.Count - 1).Where(item => item.IsCatalogue))
                     {
                         var applicability = ReadApplicability(graph, ancestor);
                         selected.Add(
@@ -216,8 +217,8 @@ internal sealed class ContextLoadingClosureResolver
                     depth: null,
                     location: null),
                 ProjectApplicability(sourceApplicability));
-            var selectedEntrypoints = chain.Where(item => item.IsEntrypoint).ToArray();
-            if (selectedEntrypoints.Length == 0 && source.IsEntrypoint)
+            var selectedEntrypoints = chain.Where(item => item.IsCatalogue).ToArray();
+            if (selectedEntrypoints.Length == 0 && source.IsCatalogue)
             {
                 selectedEntrypoints = [source];
             }
@@ -229,7 +230,7 @@ internal sealed class ContextLoadingClosureResolver
                     selectedEntrypoints,
                     selected,
                     value.Reference,
-                    source.RouteState == SourceRouteState.Routed && chain.Count != 0);
+                    (source.RouteState == SourceRouteState.Routed || source.IsLinked) && chain.Count != 0);
             }
         }
     }
@@ -312,7 +313,8 @@ internal sealed class ContextLoadingClosureResolver
         var entries = new List<VisibleEntry>();
         foreach (var generated in parent.GeneratedEntries.Entries)
         {
-            var targetPath = SourceGeneratedDestinationResolver.Resolve(
+            var targetPath = SourceGeneratedDestinationResolver.ResolveLinked(
+                parent.CanonicalPath, parent.IsLoader, generated.Destination) ?? SourceGeneratedDestinationResolver.Resolve(
                 parent.CanonicalPath,
                 parent.IsLoader,
                 generated.Destination);
@@ -324,7 +326,7 @@ internal sealed class ContextLoadingClosureResolver
 
             var loadNow = generated.HasTag("LoadNow");
             var keepInMind = generated.HasTag("KeepInMind");
-            if (!parent.IsLoader && (loadNow || keepInMind))
+            if (!parent.IsLoader && !target.IsLinked && (loadNow || keepInMind))
             {
                 if (target.Metadata.State != SourceAuthoredMetadataState.Complete)
                 {
@@ -431,6 +433,11 @@ internal sealed class ContextLoadingClosureResolver
 
     private static bool IsDirectChild(ContextGraph graph, ContextGraphSource parent, ContextGraphSource target)
     {
+        if (target.IsLinked)
+        {
+            return target.LinkedParentPath == parent.CanonicalPath;
+        }
+
         if (parent.IsLoader)
         {
             return graph.RouteFacts.Topology.LoaderRootPaths.Contains(target.CanonicalPath, StringComparer.Ordinal);

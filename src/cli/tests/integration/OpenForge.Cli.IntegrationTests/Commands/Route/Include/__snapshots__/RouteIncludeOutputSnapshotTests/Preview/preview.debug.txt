@@ -1,0 +1,11 @@
+Would include 'guide.md'.
+Workspace: <workspace>
+  .agents/loader.md  replaced
+    Before: # Open Forge Loader\n\n## Entries\n\n- none - No entries - #Empty
+    After: # Open Forge Loader\n\n## Entries\n\n- [Guide](../guide.md) - #LoadNow #Docs\n
+  .agents/open-forge.json  replaced
+    Before: {"schemaVersion":2,"other":true}\n
+    After: {\n  "schemaVersion": 2,\n  "other": true,\n  "roots": [\n    "guide.md"\n  ]\n}
+  Before: (no row)
+  After: - [Guide](../guide.md) - #LoadNow #Docs
+No files were changed.

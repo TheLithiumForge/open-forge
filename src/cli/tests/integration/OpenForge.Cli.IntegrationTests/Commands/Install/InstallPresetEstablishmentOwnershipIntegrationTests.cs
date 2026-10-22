@@ -3,13 +3,16 @@ using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
-using OpenForge.Cli.Core.Framework.Distribution;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Fixtures;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Fixtures;
 using OpenForge.Cli.IntegrationTests.Hosting;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
@@ -23,9 +26,8 @@ public sealed class InstallPresetEstablishmentOwnershipIntegrationTests
         using var workspace = InstallOperationWorkspace.Create("install-preset-establishment-receipts");
         const string path = ".agents/patterns/_patterns.md";
         const string companion = ".agents/patterns/_patterns.overwrite.md";
-        var payload = EmbeddedFrameworkPayloadReader.Read().Payload ?? throw new InvalidOperationException("Payload is unavailable.");
-        var asset = payload.Find(path) ?? throw new InvalidOperationException("Patterns payload is unavailable.");
-        var original = matchesPayload ? Encoding.UTF8.GetString(asset.Bytes.AsSpan()) : "# Local patterns\n\nKeep my pattern notes.\n";
+        var payload = InstallMarkdownFixture.ReadEmbeddedText(path);
+        var original = matchesPayload ? payload : "# Local patterns\n\nKeep my pattern notes.\n";
         workspace.WriteText(path, original);
         var operation = InstallOperationFactory.Create(InstallInteractionTestSupport.Unavailable(), workspace.LockStoreRoot);
         var request = workspace.Request() with { Setup = new(false, InstallPreset.Essentials, []) { Frontmatter = FrontmatterForm.Scoped } };
@@ -36,9 +38,8 @@ public sealed class InstallPresetEstablishmentOwnershipIntegrationTests
         var preserved = File.ReadAllText(workspace.Combine(companion));
         if (matchesPayload)
         {
-            var generatedHeading = original.IndexOf("## Entries", StringComparison.Ordinal);
-            Assert.True(generatedHeading >= 0);
-            Assert.StartsWith(original[..generatedHeading], preserved, StringComparison.Ordinal);
+            var entries = Assert.IsType<MarkdownTextSpan>(new MarkdownDocumentParser().Parse(original).GeneratedRegion.RegionSpan);
+            Assert.StartsWith(original[..entries.Start], preserved, StringComparison.Ordinal);
             Assert.DoesNotContain("## Entries", preserved, StringComparison.Ordinal);
             Assert.Equal(Encoding.UTF8.GetBytes(original), File.ReadAllBytes(workspace.Combine(path)));
         }
@@ -52,8 +53,8 @@ public sealed class InstallPresetEstablishmentOwnershipIntegrationTests
         Assert.DoesNotContain(".agents/open-forge.json", framework.Paths);
         Assert.DoesNotContain(".gitignore", framework.Paths);
         var current = File.ReadAllText(workspace.Combine(path));
-        Assert.Contains("# Patterns", current, StringComparison.Ordinal);
-        workspace.ReplaceInstalledText(path, current.Replace("# Patterns", "# Authored patterns", StringComparison.Ordinal));
+        Assert.Equal(payload, current);
+        workspace.ReplaceInstalledText(path, AuthoredMarkdownFixture.InsertParagraph(current, "Synthetic authored patterns change."));
         var blocked = await operation.ExecuteAsync(workspace.Request(), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, blocked.Status);
         Assert.Contains(blocked.Findings, finding => finding.Code == InstallFindingCode.ManagedDivergence);
@@ -65,10 +66,7 @@ public sealed class InstallPresetEstablishmentOwnershipIntegrationTests
     public async Task EligibleManagedHostForceKeepsOwnership()
     {
         using var workspace = InstallOperationWorkspace.Create("install-preset-force-host");
-        var payload = EmbeddedFrameworkPayloadReader.Read().Payload ?? throw new InvalidOperationException("Payload is unavailable.");
-        var agent = payload.Find("AGENTS.md") ?? throw new InvalidOperationException("Agent payload is unavailable.");
-        var original = Encoding.UTF8.GetString(agent.Bytes.AsSpan());
-        workspace.WriteText("AGENTS.md", original.Replace("Before starting or resuming a task", "Before starting or resuming another task", StringComparison.Ordinal));
+        workspace.WriteText("AGENTS.md", InstallMarkdownFixture.OccupiedManagedHost);
         var operation = InstallOperationFactory.Create(InstallInteractionTestSupport.Unavailable(), workspace.LockStoreRoot);
         var request = workspace.Request() with { Setup = new(false, InstallPreset.Essentials, []) };
         var before = workspace.SnapshotHashes();
@@ -89,8 +87,7 @@ public sealed class InstallPresetEstablishmentOwnershipIntegrationTests
         Assert.DoesNotContain("AGENTS.md", framework.Paths);
         Assert.DoesNotContain(".agents/open-forge.json", framework.Paths);
         Assert.DoesNotContain(".gitignore", framework.Paths);
-        workspace.ReplaceInstalledText("AGENTS.md", File.ReadAllText(workspace.Combine("AGENTS.md"))
-            .Replace("Before starting or resuming a task", "Before starting or resuming another task", StringComparison.Ordinal));
+        workspace.ReplaceInstalledText("AGENTS.md", InstallMarkdownFixture.OccupiedManagedHost);
         var repeat = await operation.ExecuteAsync(workspace.Request(force: true), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, repeat.Status);
         Assert.Contains(repeat.Findings, finding => finding.Code == InstallFindingCode.ManagedDivergence);

@@ -38,8 +38,6 @@ Frontmatter: root
     created; source: .agents/memory/crystallized/_crystallized.md
   .agents/memory/emerging/_emerging.md
     created; source: .agents/memory/emerging/_emerging.md
-  .agents/memory/saving.md
-    created; source: .agents/memory/saving.md
   .agents/memory/working/_working.md
     created; source: .agents/memory/working/_working.md
   .agents/patterns/_patterns.md
@@ -65,11 +63,11 @@ Frontmatter: root
   .agents/open-forge.json                                created
   .agents/open-forge.lock.json
     created; records the files above
-  Created 19 files and 13 directories under .agents (listed in
+  Created 18 files and 13 directories under .agents (listed in
   .agents/open-forge.lock.json), and updated 1 existing file.
   Added 1 section.
   Bundled Framework fingerprint:
-  <sha256> (21 assets).
+  <sha256> (20 assets).
   The ownership record was published and verified.
   The recovery bundle was removed.
   All written targets were verified.

@@ -26,6 +26,8 @@ internal static class RecoveryBundleAttributionCodec
             [RecoveryBundleOperation.Install] = "install",
             [RecoveryBundleOperation.Index] = "index",
             [RecoveryBundleOperation.Create] = "create",
+            [RecoveryBundleOperation.Include] = "include",
+            [RecoveryBundleOperation.Exclude] = "exclude",
             [RecoveryBundleOperation.Init] = "init",
             [RecoveryBundleOperation.Move] = "move",
             [RecoveryBundleOperation.Update] = "update",

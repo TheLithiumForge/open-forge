@@ -15,18 +15,21 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Contract
 
-- Frontmatter preserves #KeepInMind, #Memory, #Emerging, #Contextual, and #Candidate classification
-- The entrypoint keeps useful unsettled material visible at #KeepInMind boundaries that apply without turning raw activity into durable Memory
-- Candidate source, scope, uncertainty, evidence, knowledge role, and intended destination remain visible when they affect later use
-- Emerging material remains contextual until acceptance is established within its scope. The entrypoint's #Contextual classification applies the loader's rule, so the Axioms do not restate it
-- Repeated or stale material is revisited for consolidation, promotion, archival, or pruning
-- Accepted outcomes move to the route or system that should define them. Useful reasoning from rejected or replaced candidates is archived; material without future value is pruned
-- Analysis, Ideas, and Observations retain their distinct candidate roles within Emerging Memory. Their routes are provided by optional Extensions and remain linked through the maintenance `Entries`.
-- The authored source stays compact enough for #KeepInMind use and contains no workspace-specific candidate records
+- The title is followed by `## What is useful but still unsettled?` and a short paragraph describing the folder.
+- Frontmatter preserves #KeepInMind, #Memory, #Emerging, #Contextual and #Candidate.
+- At each applicable KeepInMind refresh, check Entries and capture useful candidate material before it is lost. An empty result is valid and raw activity alone does not justify Memory.
+- Keep source, uncertainty and scope visible when they affect later use. Refine material while its validity, use or destination is unsettled.
+- Candidate status does not establish acceptance. Accepted durable results move to their defining source. Keep useful outcomes and reasoning before moving or pruning rejected or replaced material.
+- Repeated or stale material is reviewed for consolidation, promotion, movement or pruning.
+- Analysis, Ideas and Observations retain their distinct optional Extension roles. Core ships no candidate records and starts with empty Entries.
+- The shared text stays compact enough for repeated reading. Project candidates belong in records rather than the shipped catalogue.
 
 ## Verification
 
-- Core installation closure tests verify Emerging #KeepInMind traversal and behavior. Selected Extension installation tests verify the optional Analysis, Ideas, and Observations routes, generated navigation, and scoped behavior.
+- Use the [payload integrity checks](../../../_payload.md#verification) for the state, optional Extension bytes and metadata rendering.
+- [SourceLoadingClosureResolverTests](../../../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Framework/Sources/Loading/SourceLoadingClosureResolverTests.cs) cover KeepInMind propagation and unselected scopes.
+- Compare shared source and repository rules outside Entries. Manually review capture, uncertainty and acceptance transitions. Loading tests do not prove that candidate capture happens.
+- Check Emerging capture follows its own #KeepInMind row independently of other state selection.
 
 ## Entries
 

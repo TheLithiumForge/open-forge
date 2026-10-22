@@ -22,7 +22,7 @@ public sealed class RouteRemoveCompositionIntegrationTests
             command => command.Name == "route");
 
         Assert.Equal(
-            ["list", "inspect", "init", "create", "update", "move", "remove"],
+            ["list", "inspect", "init", "create", "update", "include", "exclude", "move", "remove"],
             route.Subcommands.Select(command => command.Name));
         var remove = Assert.Single(route.Subcommands, command => command.Name == "remove");
         var parse = tree.Parse(["route", "remove"]);

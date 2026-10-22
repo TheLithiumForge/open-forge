@@ -179,7 +179,9 @@ With no include or exclude flag, incoming work uses this command's normal
 default universe: every ordinary Markdown candidate physically contained below
 the selected workspace's `.agents` directory, including routed and unrouted
 sources, entrypoints, `SKILL.md`, Markdown Skill resources, Templates, and valid
-base/overwrite layers grouped as logical sources. Non-Markdown resources,
+base/overwrite layers grouped as logical sources. Active included Markdown files
+and the listed descendants of included catalogues also participate. Other
+included text formats are opaque. Non-Markdown resources,
 provider bridges outside `.agents`, receipts, recovery data, and operational
 metadata are excluded. An unreadable, unsafe, malformed, or otherwise
 uninspectable candidate affects incoming coverage rather than disappearing. The
@@ -237,7 +239,8 @@ needed to distinguish a source edge from a transitive graph path:
 ### Local Targets
 
 Contained local targets retain their canonical workspace-relative path. A local
-target outside `.agents` has no automatic Open Forge ID and uses a null local ID
+target outside `.agents/` has no short Open Forge ID. An active included target
+uses its exact `./path` reference, while an unlisted target uses a null local ID
 while retaining its contained canonical path. Resolution findings such as missing,
 unsupported, unsafe, or ambiguous local destinations remain visible rather than
 being dropped.
@@ -272,6 +275,13 @@ The command never fetches, follows, resolves, or validates an external URL over
 the network. An otherwise complete outgoing read may therefore contain
 `external-unchecked` occurrences without an `completed-with-warnings` or `incomplete` result
 merely because no network request was attempted.
+
+## Included Markdown
+
+The incoming universe also includes active included Markdown files and listed
+descendants of included catalogues. Use `./<workspace-path>` to select one.
+Authored links in those files count normally. Loader and catalogue Entries stay
+navigation and are not counted. Other included text formats are opaque.
 
 ## Human Output
 
@@ -355,6 +365,10 @@ of each occurrence.
 ## Structured Output
 
 `--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
+
+Incoming rows from an included file outside `.agents/` also carry `id` with its
+exact `./path` reference. Their `path` remains workspace-relative. Text uses that
+exact reference so it can be passed to another read command.
 
 ### JSON data by level
 

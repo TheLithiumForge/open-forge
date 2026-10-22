@@ -6,7 +6,9 @@ open-forge:
 
 # Guidance
 
-Optional. Advice for recurring situations. It is not a rule. Nothing else depends on this folder.
+## What approach is recommended, and when does it fit?
+
+This folder holds advice for recurring situations. Advice is not a rule.
 
 ## Axioms
 

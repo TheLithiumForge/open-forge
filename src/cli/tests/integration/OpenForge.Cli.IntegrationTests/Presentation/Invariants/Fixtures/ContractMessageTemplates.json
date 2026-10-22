@@ -918,7 +918,7 @@
     },
     {
       "code": "status.context-inventory-incomplete",
-      "forms": ["Startup context could not be measured completely: <path> could not be read completely."]
+      "forms": ["Startup context could not be measured completely: <path> could not be read completely.", "Startup context could not be measured completely."]
     },
     {
       "code": "status.startup-context-unavailable",

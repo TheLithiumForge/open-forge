@@ -14,7 +14,7 @@ cd /path/to/your-project
 open-forge install --preset minimal --dry-run
 ```
 
-The plan lists every file it would touch. Minimal writes the loader, a Directives folder for rules agents must follow, a Crystallized Memory folder for accepted knowledge, a short guide for people in `.agents/README.md`, and a marked Open Forge section in `AGENTS.md` and `CLAUDE.md`. Your existing text in those files stays as it is. Apply the same selection:
+The plan lists every file it would touch. Minimal writes the loader, a Directives folder for rules agents must follow, a Crystallized Memory folder for accepted knowledge, a short guide in `.agents/README.md` that also holds the file formats agents follow when they write workspace files, which you may delete, and a marked Open Forge section in `AGENTS.md` and `CLAUDE.md`. Your existing text in those files stays as it is. Apply the same selection:
 
 ```sh
 open-forge install --preset minimal --automatic
@@ -24,13 +24,19 @@ Review the result with `git status` and `git diff`. Both folders start empty, so
 
 ### Point agents at a document you already have
 
-Add one line under `## Entries` in `.agents/loader.md`, replacing the empty placeholder:
+Include a file you already have, where it lives:
+
+```sh
+open-forge route include CONTRIBUTING.md --description "Contribution rules to follow" --tag LoadNow
+```
+
+That adds one line under `## Entries` in `.agents/loader.md`. You can also write it by hand:
 
 ```markdown
 - [Contribution rules to follow](../CONTRIBUTING.md) - #LoadNow
 ```
 
-Use a file that exists in your repository. It stays where it is and needs no frontmatter. `#LoadNow` means agents read it before every task. Add `- applies to` and a pattern in backticks, such as `**/*.cs`, to limit it to matching work, or leave the tag off so agents open it only when its description fits the task. Rules you already wrote for other tools work the same way, such as `../.cursor/rules/testing.mdc` or `../.windsurfrules`.
+The file stays where it is and needs no frontmatter. `#LoadNow` means agents read it before every task. Add `--apply-to "**/*.cs"` to limit it to matching work, or leave the tag off so agents open it only when its description fits the task. Rules you already wrote for other tools work the same way, such as `.cursor/rules/testing.mdc` or `.windsurfrules`. `open-forge route exclude CONTRIBUTING.md` removes the line again and leaves the file alone.
 
 Now give your agent a normal task:
 
@@ -71,7 +77,7 @@ CSV exports use UTF-8.
 
 Run `open-forge index` to list both files in their catalogues, or add their lines under `Entries` by hand. An export task now reads the rule before it starts, and agents check Crystallized Memory before deciding what's true about exports.
 
-Would you rather keep rules and facts in your own `docs/` folder? Link them from the loader like any other document, and say in `AGENTS.md`, outside the marked section, which of them are accepted sources.
+Would you rather keep rules and facts in your own `docs/` folder? Include them like any other document, and say in `AGENTS.md`, outside the marked section, which of them are accepted sources.
 
 ### Keep unfinished work across sessions
 
@@ -81,14 +87,14 @@ Add Working Memory when work needs to survive a pause:
 open-forge install --configure --preset custom --route memory/working=git-ignore --dry-run
 ```
 
-`git-ignore` keeps the records on your machine and still shares the folder's catalogue. The saving policy, `.agents/memory/saving.md`, asks agents to write down the goal, where things stand, the next step and open questions before they pause. Delete that one file if you'd rather save by hand.
+`git-ignore` keeps the records on your machine and still shares the folder's catalogue. Its catalogue asks agents to write down the goal, where things stand, the next step and open questions before they pause.
 
 ## Choose how much to adopt
 
 | You need                                          | Start with                                                |
 | ------------------------------------------------- | --------------------------------------------------------- |
 | Rules, accepted facts and your existing documents | Minimal, the recommended start                            |
-| Work that continues across sessions               | Minimal plus Working Memory and its saving policy         |
+| Work that continues across sessions               | Minimal plus Working Memory                               |
 | The usual set for a new project                   | Essentials, which adds patterns, skills and working notes |
 | Every built-in folder                             | Full Core                                                 |
 | A particular planning or development method       | An [Extension](#extensions)                               |
@@ -182,7 +188,7 @@ An agent doesn't need to know everything, but it does need to know where everyth
 
 I call this **Adaptive Context Engineering (ACE)**. It takes progressive disclosure and spec-driven development and applies them to the workspace itself. Start with what you want to achieve, add detail as the work unfolds, and keep what's worth knowing next time.
 
-Full Core supplies 21 Markdown files, including a guide for people, the saving policy, and four supporting CLI guides that are opened when needed. Essentials installs fewer categories, and Custom follows your selection. Startup reads the installed entrypoints tagged to load and the files their rules require. The files work on their own. The optional CLI speeds up maintenance.
+Full Core supplies 20 Markdown files, including a guide for people and four supporting CLI guides that are opened when needed. Essentials installs fewer categories, and Custom follows your selection. Startup reads the installed entrypoints tagged to load and the files their rules require. The files work on their own. The optional CLI speeds up maintenance.
 
 I built Open Forge to work beside your harness, the tool that runs your agent. Anything that reads `AGENTS.md` (or the `CLAUDE.md` bridge) can use it. Keep your hooks, custom agents, and tools. If you want to define them once for several harnesses, a translator such as [APM](https://github.com/microsoft/apm) can install them where each harness looks for them.
 
@@ -195,7 +201,7 @@ AGENTS.md                         <- tells the agent to read the loader first
 CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 .agents/
   loader.md                       <- the reading steps and the list of what is on
-  README.md                       <- how to customize this setup, for people
+  README.md                       <- a guide and the file formats, safe to delete
   directives/_directives.md       <- required behavior
   guidance/_guidance.md           <- advice for recurring choices
   patterns/_patterns.md           <- reusable shapes for code, files, and documents
@@ -210,7 +216,6 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
   maps/_maps.md                   <- pointers to important local and external sources
   memory/
     _memory.md                    <- what is worth remembering
-    saving.md                     <- save progress before pausing, needs Working
     working/_working.md           <- temporary state for active work
     emerging/_emerging.md         <- useful, but not settled yet
     crystallized/_crystallized.md <- accepted knowledge that stays current
@@ -219,7 +224,7 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 
 Each installed entrypoint says what its category is for and the rules for using it, then lists what's inside under `Entries`. Apart from Memory state entrypoints and the `open-forge-cli` Skill, every selected category starts empty. The content comes from your work, or from Extensions you choose.
 
-In Full Core, startup reads `AGENTS.md`, the loader, Directives, Memory, Crystallized, Emerging and Working Memory, and the saving policy. Guidance, Maps, Patterns, Skills, Templates and Archived Memory open when a task fits their description, and the CLI guide before any CLI command other than `context`. Other linked files open when selected, tagged to load, or explicitly required by a loaded rule. Essentials and Custom use the same loading rules for the routes present. Git-ignored Working records stay readable on your machine, but generated `Entries` leave them out.
+In Full Core, startup reads `AGENTS.md`, the loader, Directives, Memory, Crystallized, Emerging and Working Memory. Guidance, Maps, Patterns, Skills, Templates and Archived Memory open when a task fits their description, and the CLI guide before any CLI command other than `context`. Other linked files open when selected, tagged to load, or explicitly required by a loaded rule. Essentials and Custom use the same loading rules for the routes present. Git-ignored Working records stay readable on your machine, but generated `Entries` leave them out.
 
 Read these files once now, and again after each update. They're short, and they become the instructions your agents are asked to follow.
 
@@ -416,6 +421,7 @@ The CLI is an accelerant, not a requirement. Everything it does, you can do by e
 | -------------------------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------- |
 | See the tag-selected startup routes          | `open-forge context`                               | You can confirm a new rule is set to load before blaming the model                |
 | Find what the workspace already knows        | `open-forge find --tag=Decision`                   | An existing Decision is better reused than made again                             |
+| Use a document you already have              | `open-forge route include <file>`                  | The loader lists it where it lives, with the right relative path                  |
 | Add a scope or a record                      | `open-forge route init`, `open-forge route create` | Frontmatter and navigation are right from the start                               |
 | Complete metadata and navigation after edits | `open-forge index`                                 | Entries are how agents find things, so stale ones hide knowledge                  |
 | Check that everything still fits             | `open-forge status`, `open-forge doctor`           | Broken links and stale navigation show up before they mislead an agent            |
@@ -436,6 +442,8 @@ The flags you'll reach for most often are:
 | `--for <path>`                         | Supply working files to `context`, `find`, or `route inspect`. Repeat for each file |
 | `--help`                               | See the selected command's arguments and flags                                      |
 
+`open-forge help concepts` explains the whole framework in one place: what is switched on, how reading works, tags, content kinds, reuse and the file formats.
+
 `--automatic` adds no permission to overwrite or delete files. The [CLI overview](https://thelithiumforge.github.io/open-forge/docs/cli#which-command-for-which-job) lists every command's flags in one place.
 
 Your agent can use it too. The Skills entrypoint requires the `open-forge-cli` usage guide at startup. It links to command details and common options, including batching initial reads with `open-forge context skills/open-forge-cli`. The loader and Skill are plain instructions a harness can read with its usual file tools.
@@ -446,7 +454,7 @@ Your agent can use it too. The Skills entrypoint requires the `open-forge-cli` u
 
 Follow the links, edit the files, and keep each `Entries` list in step with the files it points to. That's all the Framework itself needs.
 
-The Framework explains itself through its own files. This README and the guides are here to help you get acquainted. The rules you need to understand and use Open Forge live in the files themselves.
+The Framework explains itself through its own files: the loader for reading, and the README's file formats or `open-forge help concepts` for writing. This README and the guides are here to help you get acquainted. The rules you need to understand and use Open Forge live in the files themselves.
 
 ## Extensions
 

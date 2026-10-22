@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 
@@ -24,6 +25,10 @@ internal static class RouteListSelectionFactory
             null,
             null);
     }
+
+    internal static RouteListSelection ResolvedIncluded(SourceLogicalSource source)
+        => new(ConstructionToken, RouteListSelectionKind.SourcePath, null, source.Base.CanonicalPath,
+            source.Identity.AutomaticId, source.Base.CanonicalPath);
 
     internal static RouteListSelection Attempted(string? sourceReference)
     {

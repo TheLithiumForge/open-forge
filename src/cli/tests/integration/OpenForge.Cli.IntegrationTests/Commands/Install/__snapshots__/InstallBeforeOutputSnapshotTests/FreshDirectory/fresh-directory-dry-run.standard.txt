@@ -15,7 +15,6 @@ Frontmatter: root
   .agents/memory/archived/_archived.md                   would be created
   .agents/memory/crystallized/_crystallized.md           would be created
   .agents/memory/emerging/_emerging.md                   would be created
-  .agents/memory/saving.md                               would be created
   .agents/memory/working/_working.md                     would be created
   .agents/patterns/_patterns.md                          would be created
   .agents/skills/_skills.md                              would be created
@@ -31,7 +30,7 @@ Frontmatter: root
     would be created with an Open Forge section
   .agents/open-forge.json                                would be created
   .agents/open-forge.lock.json                           would be created
-  Would create 19 files and 13 directories under .agents, plus AGENTS.md and
+  Would create 18 files and 13 directories under .agents, plus AGENTS.md and
   CLAUDE.md.
   Nothing that already exists would be changed.
 No files were changed.

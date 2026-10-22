@@ -191,14 +191,6 @@
       "owner": null
     },
     {
-      "path": ".agents/memory/saving.md",
-      "kind": "file",
-      "action": "created",
-      "outcome": "done",
-      "reason": null,
-      "owner": null
-    },
-    {
       "path": ".agents/memory/working/_working.md",
       "kind": "file",
       "action": "created",
@@ -304,7 +296,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 19,
+    "filesCreated": 18,
     "directoriesCreated": 12,
     "sectionsAdded": 0,
     "filesReplaced": 1
@@ -316,7 +308,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 19,
+      "files": 18,
       "directories": 12,
       "sections": 2
     },

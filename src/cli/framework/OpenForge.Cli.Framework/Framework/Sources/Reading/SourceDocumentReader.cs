@@ -83,7 +83,7 @@ internal sealed class SourceDocumentReader
         var resolution = _physicalPathResolver.ResolveCandidate(
             Workspace.LexicalRoot,
             Workspace.PhysicalRoot,
-            SourceLogicalPath.ToLexicalPath(Workspace.LexicalRoot, layer.CanonicalPath));
+            Path.Combine(Workspace.LexicalRoot, layer.CanonicalPath.Replace('/', Path.DirectorySeparatorChar)));
         if (cancellationToken.IsCancellationRequested)
         {
             return new SourceLayerVerification(

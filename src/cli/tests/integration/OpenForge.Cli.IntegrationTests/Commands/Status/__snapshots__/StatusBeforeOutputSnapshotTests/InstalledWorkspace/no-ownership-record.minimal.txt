@@ -1,2 +1,2 @@
 Open Forge is installed and current.
-  Startup reads 8 of 20 routed files, about 4.0k tokens.
+  Startup reads 7 of 19 routed files, about 4.0k tokens.

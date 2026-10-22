@@ -29,6 +29,12 @@ internal sealed record WorkspaceSettingsDocument(
 
     internal ImmutableArray<string> RemovedLibraries { get; init; } = [];
 
+    /// <summary>
+    /// Files outside `.agents/` that `route include` registered. The loader's Entries decide what
+    /// loads, so a path here without a loader line is registered and switched off.
+    /// </summary>
+    internal ImmutableArray<string> Roots { get; init; } = [];
+
     internal static readonly WorkspaceSettingsDocument Empty =
         new(WorkspaceSettingsDefinitions.SchemaVersion, [], [], []);
 
@@ -37,7 +43,7 @@ internal sealed record WorkspaceSettingsDocument(
     /// another one is still read for the keys this release knows; the answer is
     /// reported, never enforced.
     /// </summary>
-    internal bool IsKnownSchemaVersion => SchemaVersion is 1 or WorkspaceSettingsDefinitions.SchemaVersion;
+    internal bool IsKnownSchemaVersion => SchemaVersion is >= 1 and <= WorkspaceSettingsDefinitions.SchemaVersion;
 }
 
 internal sealed record WorkspaceSettingsDecode(

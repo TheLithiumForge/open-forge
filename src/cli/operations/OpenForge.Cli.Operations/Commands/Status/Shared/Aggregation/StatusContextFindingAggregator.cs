@@ -13,6 +13,11 @@ internal static class StatusContextFindingAggregator
         StatusFacts facts)
     {
         AddView(findings, observations);
+        if (observations.Routes.IncludedFiles is { Pending.Count: > 0 })
+        {
+            findings.Add(StatusFindingCode.ContextInventoryIncomplete, null,
+                "Required included files have pending conditions. Supply working files to context to resolve them.");
+        }
         if (facts.Installation.State != StatusInstallationState.Uninstalled)
         {
             AddMeasurements(findings, observations, facts);

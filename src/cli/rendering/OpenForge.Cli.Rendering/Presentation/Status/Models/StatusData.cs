@@ -6,6 +6,9 @@ namespace OpenForge.Cli.Core.Presentation.Status.Models;
 
 internal sealed record StatusData
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public StatusDataIncludedFiles? IncludedFiles { get; init; }
+
     public required StatusDataInstallation Installation { get; init; }
 
     public required StatusDataContext Context { get; init; }

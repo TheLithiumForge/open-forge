@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Includes;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Reading;
@@ -45,5 +46,12 @@ internal sealed class SourceReadSessionReader
                 agentsResolution.GetContainedPhysicalPath())
             : null;
         return new SourceReadSession(catalogue, documentReader, defaultSelectionScope);
+    }
+
+    internal async ValueTask<SourceReadSession> ReadIncludedAsync(CliWorkspace workspace, CancellationToken cancellationToken)
+    {
+        var session = await ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var included = await new SourceIncludedEntryReader().ReadEntriesAsync(session.Catalogue, session.DocumentReader, cancellationToken).ConfigureAwait(false);
+        return new SourceReadSession(SourceIncludedEntryReader.Extend(session.Catalogue, included.Sources, included.Rows), session.DocumentReader, session.DefaultSelectionScope);
     }
 }

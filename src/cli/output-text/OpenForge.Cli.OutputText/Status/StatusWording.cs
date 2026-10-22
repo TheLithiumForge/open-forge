@@ -4,6 +4,18 @@ namespace OpenForge.Cli.OutputText.Status;
 
 internal static class StatusWording
 {
+    // @OpenForgeText status.wording.included-files
+    internal static string IncludedFiles(int on, int off, int missing, int handWritten)
+        => string.Create(CultureInfo.InvariantCulture, $"Included files: {on} on, {off} off, {missing} missing, {handWritten} hand-written loader {(handWritten == 1 ? "row" : "rows")}.");
+
+    // @OpenForgeText status.wording.included-startup
+    internal static string IncludedStartup(string measurement)
+        => $"Startup outside .agents/: {measurement}";
+
+    // @OpenForgeText status.wording.included-pending
+    internal static string IncludedPending(string path)
+        => $"Pending included file: {path}. Supply working files to context to resolve its conditions.";
+
     // @OpenForgeText status.wording.open-forge-is-not-installed-in
     internal static string NotInstalled(string workspace)
         => $"Open Forge is not installed in {workspace}.";

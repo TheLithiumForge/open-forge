@@ -6,7 +6,9 @@ open-forge:
 
 # Templates
 
-Optional. Starting files to copy, adapt and then maintain on their own. Nothing else depends on this folder.
+## What starting content can be copied, adapted, and maintained independently?
+
+This folder holds starting files to copy, adapt and then maintain on their own.
 
 ## Axioms
 
@@ -14,9 +16,9 @@ Optional. Starting files to copy, adapt and then maintain on their own. Nothing 
 
 - Check these Entries when copy-ready starting content would help with a new file.
 - Choose the most relevant Template. Keep only the sections and detail the copy needs, while preserving its required structure.
-- Replace placeholders and metadata so they describe the copy's ownership, scope, state, authority and relationships, in the workspace's frontmatter form. Native `SKILL.md` keeps its native metadata. Remove the #Template tag unless the copy is another Template, and remove package tags that do not describe it.
+- Replace placeholders and metadata so they describe the copy's ownership, scope, state, authority and relationships, in the workspace's frontmatter form. A native file keeps its own metadata. Remove the #Template tag unless the copy is another Template, and remove package tags that do not describe it.
 - Rebase relative links for the copy. Later Template changes do not update existing copies.
-- If the copy needs continuing guidance or requirements, link the source that defines them. A Template supplies starting content only.
+- If the copy needs continuing advice or requirements, link the source that defines them. A Template supplies starting content only.
 
 ### Writing a Template
 

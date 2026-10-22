@@ -1,6 +1,7 @@
 using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -99,26 +100,42 @@ public sealed class F27RootFormJourneyTests
             ".agents/memory/crystallized/_crystallized.md", ".agents/memory/emerging/_emerging.md", ".agents/memory/working/_working.md",
             ".agents/skills/use-workflow/references/_references.md");
         var loaderEntries = JourneyPayloadAssertions.Entries(File.ReadAllText(workspace.Combine(".agents/loader.md")));
-        JourneyPayloadAssertions.AssertEntries(workspace, ".agents/directives/_directives.md",
-            "- [Required work-record relationships without imposing a task schema](planning/_planning.md) - #Extension #Directive #Planning");
-        JourneyPayloadAssertions.AssertEntries(workspace, ".agents/patterns/_patterns.md",
-            "- [Keep task outcomes, planned steps, and current state predictable without duplicating project knowledge](work-records.md) - #Extension #Pattern #Planning #Task #Memory");
-        JourneyPayloadAssertions.AssertEntries(workspace, ".agents/skills/use-workflow/references/_references.md",
-            "- [Turn an accepted outcome into ordered work with clear dependencies and evidence](planning/_planning.md) - #Extension #Workflow #Planning");
         var skillEntries = JourneyPayloadAssertions.Entries(File.ReadAllText(workspace.Combine(".agents/skills/_skills.md")));
         Assert.Equal(2, skillEntries.Length);
         Assert.Equal(JourneyPayloadAssertions.Entries(File.ReadAllText(sources[".agents/skills/_skills.md"]))[0], skillEntries[0]);
         Assert.EndsWith("](use-workflow/SKILL.md) - #Skill", skillEntries[1], StringComparison.Ordinal);
-        JourneyPayloadAssertions.AssertEntries(workspace, ".agents/templates/_templates.md",
-            "- [Choose a starter for a possibility, investigation, accepted choice, or active work](planning/_planning.md) - #Extension #Template #Planning #Memory",
-            "- [Create a method for the Use Workflow Skill without defining a new harness capability](workflows/_workflows.md) - #Extension #Template #Workflow");
-        JourneyPayloadAssertions.AssertEntries(workspace, ".agents/memory/crystallized/_crystallized.md",
-            "- [What was chosen, why, and what follows from the choice](decisions/_decisions.md) - #Extension #Memory #Decision #CurrentTruth");
-        JourneyPayloadAssertions.AssertEntries(workspace, ".agents/memory/emerging/_emerging.md",
-            "- [Structured reasoning, investigation, or comparison that is useful but not accepted truth](analysis/_analysis.md) - #Extension #Memory #Analysis #Contextual #Candidate",
-            "- [Future possibilities, experiments, open questions, and options to explore later](ideas/_ideas.md) - #Extension #Memory #Idea #Exploration #Contextual #Candidate");
-        JourneyPayloadAssertions.AssertEntries(workspace, ".agents/memory/working/_working.md",
-            "- [Current state, current step, and next steps for one active workstream](checkpoints/_checkpoints.md) - #Extension #Memory #Working #Checkpoint #Contextual");
+        (string Path, string[] EntrySuffixes)[] catalogues =
+        [
+            (".agents/directives/_directives.md", ["](planning/_planning.md) - #Extension #Directive #Planning"]),
+            (".agents/patterns/_patterns.md", ["](work-records.md) - #Extension #Pattern #Planning #Task #Memory"]),
+            (".agents/skills/use-workflow/references/_references.md", ["](planning/_planning.md) - #Extension #Workflow #Planning"]),
+            (".agents/templates/_templates.md",
+            [
+                "](planning/_planning.md) - #Extension #Template #Planning #Memory",
+                "](workflows/_workflows.md) - #Extension #Template #Workflow",
+            ]),
+            (".agents/memory/crystallized/_crystallized.md", ["](decisions/_decisions.md) - #Extension #Memory #Decision #CurrentTruth"]),
+            (".agents/memory/emerging/_emerging.md",
+            [
+                "](analysis/_analysis.md) - #Extension #Memory #Analysis #Contextual #Candidate",
+                "](ideas/_ideas.md) - #Extension #Memory #Idea #Exploration #Contextual #Candidate",
+            ]),
+            (".agents/memory/working/_working.md", ["](checkpoints/_checkpoints.md) - #Extension #Memory #Working #Checkpoint #Contextual"]),
+        ];
+        var catalogueSnapshot = new StringBuilder();
+        foreach (var (path, entrySuffixes) in catalogues)
+        {
+            var entries = JourneyPayloadAssertions.Entries(File.ReadAllText(workspace.Combine(path)));
+            Assert.Equal(entrySuffixes.Length, entries.Length);
+            catalogueSnapshot.AppendLine($"=== {path} ===");
+            for (var entryIndex = 0; entryIndex < entries.Length; entryIndex++)
+            {
+                Assert.EndsWith(entrySuffixes[entryIndex], entries[entryIndex], StringComparison.Ordinal);
+                catalogueSnapshot.AppendLine(entries[entryIndex]);
+            }
+            catalogueSnapshot.AppendLine();
+        }
+        CommandOutputSnapshot.MatchSnapshot(catalogueSnapshot.ToString(), "planning-catalogues");
 
         var doctor = await JourneyPayloadAssertions.RunWithoutWritesAsync(workspace, "doctor");
         JourneyPayloadAssertions.AssertCompleted(doctor);

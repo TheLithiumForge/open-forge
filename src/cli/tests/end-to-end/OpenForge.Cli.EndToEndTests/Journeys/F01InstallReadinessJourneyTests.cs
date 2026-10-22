@@ -19,17 +19,8 @@ public sealed class F01InstallReadinessJourneyTests
     private const string ManagedStart = "# Open Forge";
     private const string ManagedEnd = "**End of Open Forge managed section.**";
     private const string OccupiedPath = ".agents/guidance/_guidance.md";
-    private const string ExpectedManagedRegion =
-        ManagedStart + "\n\n"
-        + "Open Forge provides the working rules and context for this workspace.\n\n"
-        + "Before starting or resuming a task, read `.agents/loader.md` and follow it throughout the task. If the `open-forge` CLI is available and allowed, `open-forge context --for <file>` gathers the required reads, with `--for` repeated for every working file. The loader says which other files to choose and how to continue with file tools when the CLI is unavailable.\n"
-        + "\n"
-        + ManagedEnd + "\n";
-    private const string ExpectedClaudeRegion =
-        ManagedStart + "\n\n"
-        + "@AGENTS.md\n"
-        + "@.agents/loader.md\n\n"
-        + ManagedEnd + "\n";
+    private static readonly string ExpectedManagedRegion = ReadCanonicalHost(AgentsPath);
+    private static readonly string ExpectedClaudeRegion = ReadCanonicalHost(ClaudePath);
 
     private static readonly IReadOnlyList<string> ExpectedStartupSourcePaths =
     [
@@ -39,7 +30,6 @@ public sealed class F01InstallReadinessJourneyTests
         ".agents/memory/_memory.md",
         ".agents/memory/crystallized/_crystallized.md",
         ".agents/memory/emerging/_emerging.md",
-        ".agents/memory/saving.md",
         ".agents/memory/working/_working.md",
     ];
 
@@ -453,6 +443,19 @@ public sealed class F01InstallReadinessJourneyTests
         Assert.Equal(readme, File.ReadAllText(workspace.Combine(ReadmePath)));
         workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
+    }
+
+    private static string ReadCanonicalHost(string relativePath)
+    {
+        var source = File.ReadAllText(Path.Combine(
+            PublishedExecutableTarget.FindRepositoryRoot(), "src", "open-forge", relativePath), Encoding.UTF8);
+        Assert.StartsWith(ManagedStart + "\n\n", source, StringComparison.Ordinal);
+        Assert.EndsWith(ManagedEnd + "\n", source, StringComparison.Ordinal);
+        Assert.Equal(1, Count(source, ManagedStart));
+        Assert.Equal(1, Count(source, ManagedEnd));
+        Assert.DoesNotContain(LegacyManagedStart, source, StringComparison.Ordinal);
+        Assert.DoesNotContain(LegacyManagedEnd, source, StringComparison.Ordinal);
+        return source;
     }
 
     private static void AssertCompleted(ProcessRunResult result)

@@ -3,6 +3,14 @@ using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Composition.Shared.RouteInspectMatchingFiles;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.Create;
+using OpenForge.Cli.Core.Commands.Route.Include;
+using OpenForge.Cli.Core.Commands.Route.Include.Models.Binding;
+using OpenForge.Cli.Core.Presentation.Route.Include;
+using OpenForge.Cli.Core.Presentation.Route.Include.Shared.Help;
+using OpenForge.Cli.Core.Commands.Route.Exclude;
+using OpenForge.Cli.Core.Commands.Route.Exclude.Models.Binding;
+using OpenForge.Cli.Core.Presentation.Route.Exclude;
+using OpenForge.Cli.Core.Presentation.Route.Exclude.Shared.Help;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
 using OpenForge.Cli.Core.Presentation.Route.Create;
@@ -64,6 +72,8 @@ internal static class CliRouteComposer
         var initSymbols = RouteInitBinding.CreateSymbols(group);
         var createSymbols = RouteCreateBinding.CreateSymbols(group);
         var updateSymbols = RouteUpdateBinding.CreateSymbols(group);
+        var includeSymbols = RouteIncludeBinding.CreateSymbols(group);
+        var excludeSymbols = RouteExcludeBinding.CreateSymbols(group);
         var moveComposer = new RouteMoveBinding(
             new RouteMoveBindingValidator(),
             new RouteMoveInvalidResultFactory());
@@ -81,6 +91,10 @@ internal static class CliRouteComposer
             InspectBinding = BuildInspect(inspectSymbols, interaction.Prompts),
             InitBinding = BuildInit(initSymbols, lockStoreRoot),
             CreateBinding = BuildCreate(createSymbols, lockStoreRoot),
+            IncludeBinding = CliReportBinding.Close(RouteIncludeBinding.CreateRequestBinding(includeSymbols,
+                new RouteIncludeBindingComponents { Help = RouteIncludeHelpSections.Create(), Operation = RouteIncludeOperationFactory.Create(lockStoreRoot) }), RouteIncludePresentation.Rendering),
+            ExcludeBinding = CliReportBinding.Close(RouteExcludeBinding.CreateRequestBinding(excludeSymbols,
+                new RouteExcludeBindingComponents { Help = RouteExcludeHelpSections.Create(), Operation = RouteExcludeOperationFactory.Create(lockStoreRoot) }), RouteExcludePresentation.Rendering),
             UpdateBinding = BuildUpdate(updateSymbols, interaction.Prompts, lockStoreRoot),
             MoveBinding = BuildMove(moveComposer, moveSymbols, interaction.Prompts, lockStoreRoot),
             RemoveBinding = BuildRemove(removeComposer, removeSymbols, interaction.Prompts, lockStoreRoot),

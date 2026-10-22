@@ -1,0 +1,6 @@
+status=incomplete
+findings=4
+The total available context measurement is incomplete.
+The ownership lock is absent; no Extension ownership claims are recorded.
+The ownership lock is absent; no Framework ownership claims are available.
+The ownership lock is absent; no Library registrations are recorded.
