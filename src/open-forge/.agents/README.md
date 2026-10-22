@@ -50,9 +50,9 @@ Existing ADRs and docs can stay where they are and be included. Named record kin
 
 `open-forge install --configure` adds or leaves out these parts later, and `open-forge route init <category> --framework` restores one.
 
-## Turn something off
+## Stop using something
 
-Remove its line from the loader, or run `open-forge route exclude` with its catalogue, such as `.agents/patterns/_patterns.md`. The whole branch switches off and its files stay as notes. Remove or replace any part that depends on it first. Your accepted requirements, and instructions your agent tool loads on its own, still apply.
+Remove its line from the loader, or run `open-forge route exclude` with its catalogue, such as `.agents/patterns/_patterns.md`. Agents stop using the whole branch, and its files stay as notes. Remove or replace any part that depends on it first. Your accepted requirements, and instructions your agent tool loads on its own, still apply.
 
 Inside a catalogue, the list follows the files on disk. To keep a file as a note there, move it out of the routed folder and remove its line. To get rid of it, delete the file and its line. When the CLI manages updates, record the removal too, so updates don't bring it back. Custom's `remove` choice only stops Open Forge managing the defaults. It keeps existing files and routes, and it doesn't switch them off.
 
@@ -171,4 +171,4 @@ Updates can replace direct edits to shipped files. For a change that should surv
 - **#Memory** labels self-growing Markdown state for active work, coordination, accepted knowledge, candidates and history.
 - **#Extension** labels optional packaged routes, capabilities, integrations and support files.
 
-These labels don't switch anything on and don't make Open Forge manage a file.
+These labels add nothing to what agents read and don't make Open Forge manage a file.

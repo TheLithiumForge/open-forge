@@ -10,7 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 [Trait("Feature", "included-file-reporting"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
 public sealed class IncludedFileReportingIntegrationTests
 {
-    [Theory(DisplayName = "Status and Doctor report on off missing and hand-written includes without changes")]
+    [Theory(DisplayName = "Status and Doctor report listed, unlisted, missing and hand-written includes without changes")]
     [InlineData("status")]
     [InlineData("doctor")]
     public async Task ReportsIncludedFiles(string command)
@@ -34,8 +34,8 @@ public sealed class IncludedFileReportingIntegrationTests
                 if (command == "status")
                 {
                     var includes = report.RootElement.GetProperty("data").GetProperty("includedFiles");
-                    Assert.Equal(1, includes.GetProperty("on").GetInt32());
-                    Assert.Equal(1, includes.GetProperty("off").GetInt32());
+                    Assert.Equal(1, includes.GetProperty("listed").GetInt32());
+                    Assert.Equal(1, includes.GetProperty("unlisted").GetInt32());
                     Assert.Equal(1, includes.GetProperty("missing").GetInt32());
                     Assert.Equal(1, includes.GetProperty("handWritten").GetInt32());
                 }
@@ -47,11 +47,11 @@ public sealed class IncludedFileReportingIntegrationTests
                 }
             }
             else if (command == "status")
-                Assert.Contains("Included files: 1 on, 1 off, 1 missing, 1 hand-written loader row.", run.Output, StringComparison.Ordinal);
+                Assert.Contains("Included files: 1 listed, 1 unlisted, 1 missing, 1 hand-written loader row.", run.Output, StringComparison.Ordinal);
             else
             {
                 Assert.Contains("The included file is missing.", run.Output, StringComparison.Ordinal);
-                Assert.Contains("The registered include has no loader row and is off.", run.Output, StringComparison.Ordinal);
+                Assert.Contains("The registered include has no loader row, so agents do not read it.", run.Output, StringComparison.Ordinal);
                 Assert.DoesNotContain("route init", run.Output, StringComparison.Ordinal);
             }
         }
@@ -120,17 +120,17 @@ public sealed class IncludedFileReportingIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Status reports off registrations even when the loader is absent")]
+    [Fact(DisplayName = "Status reports unlisted registrations even when the loader is absent")]
     public async Task ReportsRegistrationsWithoutLoader()
     {
         using var workspace = TemporaryWorkspace.Create("included-without-loader");
         workspace.CreateFile(".agents/open-forge.json", "{\"roots\":[\"off.md\"]}");
         workspace.CreateFile("off.md", "# Off\n");
         var text = await CliHostCapture.RunAsync(["status"], workspace.Path);
-        Assert.Contains("Included files: 0 on, 1 off, 0 missing", text.Output, StringComparison.Ordinal);
+        Assert.Contains("Included files: 0 listed, 1 unlisted, 0 missing", text.Output, StringComparison.Ordinal);
         var run = await CliHostCapture.RunAsync(["status", "--format", "json"], workspace.Path);
         using var report = JsonDocument.Parse(run.Output);
-        Assert.Equal(1, report.RootElement.GetProperty("data").GetProperty("includedFiles").GetProperty("off").GetInt32());
+        Assert.Equal(1, report.RootElement.GetProperty("data").GetProperty("includedFiles").GetProperty("unlisted").GetInt32());
     }
 
     [Theory(DisplayName = "Empty roots preserve existing Status and Doctor text and JSON reports")]

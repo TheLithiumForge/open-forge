@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: History that no longer guides current work
+  description: Useful history that no longer controls current work
   tags: [Memory, Archived, Contextual, Historical]
 ---
 

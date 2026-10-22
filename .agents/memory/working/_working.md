@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Work in progress and how to resume it
+  description: Temporary memory that helps agents continue or resume active work
   tags: [LoadNow, Memory, Working, Contextual]
 ---
 

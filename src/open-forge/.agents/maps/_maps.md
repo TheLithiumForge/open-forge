@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Where to find project knowledge, checked before relying on it
+  description: Concise maps to important local and external sources and when to use them
   tags: [Core, Map]
 ---
 

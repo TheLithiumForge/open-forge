@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Capabilities to check before specialized work
+  description: Specialized capabilities provided through native SKILL.md packages
   tags: [Core, Skill]
 ---
 

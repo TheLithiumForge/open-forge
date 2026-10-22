@@ -34,8 +34,8 @@ Find searches included leaves and the listed descendants of included catalogues
 by row metadata and Markdown headings and tags. It never scans an included leaf's
 folder. References counts authored links in active included Markdown files. Other
 text formats are opaque, and Entries rows remain navigation. Route List includes
-these root rows and labels a registration with no loader row as off, without
-children.
+these root rows and labels a registration with no loader row as not in the
+loader, without children.
 
 ## `context [<source-reference>...]`
 
@@ -113,8 +113,8 @@ An unrestricted source reports all files without scanning. Restricted scans use 
 
 Get a quick summary of installation, startup and continuity context, generated navigation, lifecycle, managed content, and recovery candidates. It has no command-specific flags and writes nothing.
 
-Included files registered in settings `roots` are counted as on, off when no
-loader row lists them, or missing when no file exists. Missing takes precedence.
+Included files registered in settings `roots` are counted as listed, unlisted
+when no loader row lists them, or missing when no file exists. Missing takes precedence.
 Hand-written loader rows outside `.agents/` are counted separately. Startup
 includes required files outside `.agents/` and their required catalogue children,
 each physical file once. The report names that contribution and keeps conditioned
@@ -125,7 +125,7 @@ required files pending, with an incomplete result. Supply working files to
 
 Diagnose workspace, routes, references, recovery, Framework files, and managed Extensions without changes. It has no command-specific flags. Use `--detail standard` for reasons or `--format json --detail full` for evidence. Run after routed changes and resolve or report findings within the task.
 
-A missing included target is an error. An off registration is information.
+A missing included target is an error. An unlisted registration is information.
 A registered path that Include would now reject is a warning. Restore or exclude
 missing targets and update or remove rejected registrations. Doctor never repairs
 these conditions.

@@ -122,7 +122,7 @@ public sealed class IncludedSourcesIntegrationTests
         Assert.Contains("./.cursor/rules/testing.mdc", routes, StringComparison.Ordinal);
         Assert.Contains("./docs/team/_team.md", routes, StringComparison.Ordinal);
         Assert.Contains("./off.md", routes, StringComparison.Ordinal);
-        Assert.Contains("off", routes, StringComparison.Ordinal);
+        Assert.Contains("not in the loader", routes, StringComparison.Ordinal);
         Assert.Contains("missing-target.md", routes, StringComparison.Ordinal);
         Assert.DoesNotContain("unlisted.md", routes, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
@@ -205,7 +205,7 @@ public sealed class IncludedSourcesIntegrationTests
         var rows = document.RootElement.GetProperty("data").GetProperty("rows").EnumerateArray().ToArray();
         var team = rows.Where(row => row.GetProperty("path").GetString() == "docs/team/_team.md").ToArray();
         Assert.Equal(2, team.Length);
-        Assert.Single(team, row => row.TryGetProperty("off", out var off) && off.GetBoolean());
+        Assert.Single(team, row => row.TryGetProperty("unlisted", out var unlisted) && unlisted.GetBoolean());
         Assert.Single(team, row => row.GetProperty("parentId").GetString() == "./docs/_docs.md");
         Assert.Single(rows, row => row.GetProperty("path").GetString() == "docs/team/conditioned.md");
         Assert.Equal(before, workspace.SnapshotHashes());

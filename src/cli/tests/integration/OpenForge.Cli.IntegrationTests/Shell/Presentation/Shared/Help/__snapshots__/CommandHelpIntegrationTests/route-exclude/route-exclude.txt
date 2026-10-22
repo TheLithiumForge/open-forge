@@ -30,7 +30,7 @@ Details:
   Paths must stay inside the workspace, including through links.
   Git metadata, the loader, settings and lock files are not valid targets.
   Inside .agents, use a direct child folder's catalogue.
-  Exclude switches its loader row off without deleting the catalogue.
+  Exclude removes its loader row without deleting the catalogue.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

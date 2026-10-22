@@ -253,7 +253,7 @@ path with no loader row uses `workspace.detached` with Information severity.
 A registered path that Include would now reject uses `workspace.path-invalid`
 with Warning severity. This includes directories, files resolving inside
 `.agents/`, unsafe paths and files that are no longer UTF-8 text. Missing and
-rejected targets need a manual decision. Off registrations remain informational.
+rejected targets need a manual decision. Unlisted registrations remain informational.
 Restore or exclude missing targets and update or remove rejected registrations.
 Doctor never repairs these conditions.
 

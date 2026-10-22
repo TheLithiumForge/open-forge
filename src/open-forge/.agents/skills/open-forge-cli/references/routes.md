@@ -94,14 +94,14 @@ its generated row on. Change that catalogue's frontmatter for metadata, since
 `--description`, `--tag` and `--apply-to` are rejected there.
 
 External files are recorded in settings `roots`. The loader controls activation.
-Deleting a row by hand leaves the registration off. Index, Update, Configure and
+Deleting a row by hand leaves the registration unlisted. Index, Update, Configure and
 Extension installation never restore it. Included files keep their bytes.
 
 ## `route exclude <workspace-file>`
 
 Remove every loader row for the target and its external `roots` registration.
 The target file stays in place. A missing target and a hand-written row are valid.
-Inside `.agents/`, use a direct child folder's catalogue to switch its row off.
+Inside `.agents/`, use a direct child folder's catalogue to remove its row from the loader.
 
 ```sh
 open-forge route exclude CONTRIBUTING.md --dry-run

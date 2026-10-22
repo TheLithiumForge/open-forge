@@ -115,7 +115,7 @@ internal sealed record RouteListPresentationFacts
                 _ => throw new ArgumentOutOfRangeException(nameof(row), row.Provenance.Selection, "The route-list selection provenance is not defined."),
             },
             HasOverwrite = row.Provenance.HasOverwrite,
-            IsOff = row.IsOff,
+            IsUnlisted = row.IsUnlisted,
             IsMissing = row.IsMissing,
         };
 
@@ -222,7 +222,7 @@ internal enum RouteListPresentationSelectionProvenance
 
 internal sealed record RouteListPresentationRow
 {
-    internal bool IsOff { get; init; }
+    internal bool IsUnlisted { get; init; }
 
     internal bool IsMissing { get; init; }
 

@@ -6,21 +6,21 @@ This topic explains the ideas. Your workspace's own `.agents/loader.md` is the a
 
 ## Start here
 
-Agents read `.agents/loader.md` before every task. It says what to read, how to use it and how to change what is switched on.
+Agents read `.agents/loader.md` before every task. It says what to read, how to use it and how to change what agents use.
 
 - Without the CLI, open the loader and follow its steps.
 - With the CLI, `open-forge context --for <file>`, once for each file you will work on, returns the required reads in one call. You still choose the other relevant entries yourself.
 
 `AGENTS.md` and `CLAUDE.md` at the workspace root point agent tools at the loader.
 
-## What is switched on
+## What agents use
 
-The list under `## Entries` at the bottom of the loader is the whole setup. Each line switches something on: a folder of rules or notes, or any document in the repository.
+The list under `## Entries` at the bottom of the loader is the whole setup: the folders of rules and notes, and any other documents, that agents use in the workspace.
 
-- A line that is listed is on. Anything not listed is off and serves only as background reading.
+- Anything not listed is only background reading.
 - Lines are read in the order they are listed.
 - A listed file that is missing is an error. An empty list is valid.
-- Removing a line switches its whole branch off. Its files stay where they are.
+- Removing a line stops agents from using its whole branch. Its files stay where they are.
 - The instructions your agent tool loads on its own, and your project's accepted requirements, still apply whatever the list says.
 
 ## Choosing what to read
@@ -86,7 +86,7 @@ Management decides which files the CLI may install, update or remove. It never d
 ## Customizing safely
 
 - **Overwrites.** To change a shipped file in a way that survives updates, put the change in `{name}.overwrite.md` next to it. It is read right after its base and wins only where the two say different things about the same content.
-- **Switching off.** Remove a line from the loader, or run `open-forge route exclude` with the catalogue. Before you switch a part off, remove or replace the parts that need it.
+- **Removing a line.** Remove it from the loader, or run `open-forge route exclude` with the file or catalogue. Before you remove a line, remove or replace the parts that need it.
 - **Removing.** `open-forge remove <path>` deletes a file and records it in the settings so updates don't bring it back. Deleting a file by hand records nothing.
 - **Restoring.** `open-forge route init <category> --framework` restores a category.
 

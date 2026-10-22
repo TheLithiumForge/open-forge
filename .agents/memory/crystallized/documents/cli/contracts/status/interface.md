@@ -184,8 +184,8 @@ allow it.
 
 ### Included files
 
-Count registered settings `roots` as on when a loader row lists the path, off
-when no loader row lists it, or missing when no file exists. Missing takes
+Count registered settings `roots` as listed when a loader row lists the path,
+unlisted when no loader row lists it, or missing when no file exists. Missing takes
 precedence. Count unregistered loader rows outside `.agents/` separately.
 Registrations never switch files on or restore loader rows.
 
@@ -659,7 +659,7 @@ bundle paths with their integrity.
 ### JSON data by level
 
 When included rows or registrations exist, every level adds `data.includedFiles`.
-It reports registered on, off and missing counts, the hand-written loader-row
+It reports registered listed, unlisted and missing counts, the hand-written loader-row
 count, the startup measurement outside `.agents/` and pending included paths.
 The [included-files data model](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Models/StatusDataIncludedFiles.cs)
 defines its exact fields. Empty or absent `roots` without included rows omit this
@@ -815,7 +815,7 @@ operations.
 
 ## Public Verification
 
-- Included paths on, off and missing, with hand-written loader rows counted
+- Included paths listed, unlisted and missing, with hand-written loader rows counted
   separately in text and JSON.
 - Required included catalogue descendants, duplicate physical files and pending
   conditions in startup measurements.

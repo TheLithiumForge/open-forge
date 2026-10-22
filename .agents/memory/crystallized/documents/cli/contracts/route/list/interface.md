@@ -134,9 +134,9 @@ not included by the operand-free form; an entrypoint must be selected explicitly
 Loader-listed workspace files outside `.agents/` are also root rows. Their row
 descriptions and tags are authoritative. Included Markdown catalogues expose only
 their listed descendants. A file registered in settings `roots` without a loader
-row is labelled `off`, has no children and does not activate its file or folder.
-JSON includes `off: true` on an off registration. Other rows omit that member.
-An off registration can share a path with an active descendant row. The
+row is labelled `not in the loader`, has no children and does not make agents read
+its file or folder. JSON includes `unlisted: true` on an unlisted registration.
+Other rows omit that member. An unlisted registration can share a path with an active descendant row. The
 registration row stays childless, and the active row keeps its catalogue parent.
 Files outside `.agents/` use their exact `./path` reference instead of a short ID.
 A missing included target keeps its path and a missing label. The result is

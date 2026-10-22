@@ -47,7 +47,7 @@ A deeper file error names that folder's catalogue. Files directly in `.agents/` 
 
 Remove every row for the destination, including hand-written rows and rows whose
 target is missing. Remove its external `roots` registration too.
-For a main-root catalogue, switch its generated row off through loader membership.
+For a main-root catalogue, remove its generated row through loader membership.
 When neither a row nor a registration exists, report nothing changed and succeed.
 
 ## Preview And Effects

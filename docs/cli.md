@@ -285,8 +285,8 @@ See [global options](#global-options) for shared flags.
 generated navigation, Framework and Extension lifecycle state, Libraries, and
 recovery observations.
 
-Included files registered in settings `roots` are counted as on, off when no
-loader row lists them, or missing when no file exists. Missing takes precedence.
+Included files registered in settings `roots` are counted as listed, unlisted
+when no loader row lists them, or missing when no file exists. Missing takes precedence.
 Hand-written loader rows outside `.agents/` are counted separately. Required
 included files and catalogue descendants contribute to startup once per physical
 file. The report names the part outside `.agents/`. Conditioned required files
@@ -894,8 +894,8 @@ non-UTF-8 files are invalid. Errors name the operand and the supported next step
 
 Only the loader and settings may change. Outside `.agents/`, the canonical path
 is recorded in settings `roots`. The loader row decides whether and when it loads.
-Deleting a row by hand leaves an off registration. Index, Update, Configure and
-Extension installation keep it off. Index preserves included rows in their order
+Deleting a row by hand leaves an unlisted registration. Index, Update, Configure
+and Extension installation keep it unlisted. Index preserves included rows in their order
 and never writes the included files.
 
 `--dry-run` previews without writing. Otherwise Include checks the complete plan,
@@ -914,7 +914,7 @@ open-forge route exclude .agents/patterns/_patterns.md
 
 Exclude removes every loader row for the target and its external `roots`
 registration. It works on hand-written rows and when the target is missing.
-A main-root catalogue's generated row is switched off without deleting it.
+A main-root catalogue's generated row is removed from the loader without deleting the catalogue.
 The operand rules are the same as Include, except that a missing target is valid.
 
 When nothing lists or registers the target, the command reports nothing changed
@@ -1368,7 +1368,7 @@ loader, or add rows with `--route`, such as `--route memory/working=git-ignore`.
 A Memory state brings the Memory catalogue with it. Presets select supplied
 defaults. Existing content in an omitted route remains in place and routable.
 
-The loader's `Entries` are the workspace's list of what is on. Install,
+The loader's `Entries` are the workspace's list of what agents use. Install,
 Update, Configure, and Extension commands keep that list as you left it: a
 root line you removed stays removed, links you added to documents outside
 `.agents/` stay in place, and an empty list stays empty. A root joins the

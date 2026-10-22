@@ -245,7 +245,7 @@ Gate 5 executable proof should cover at least these observable scenarios:
 Extend the root listing with active included rows from the shared source reader.
 Follow only listed descendants of included Markdown catalogues. Keep normal
 structural depth and canonical sibling ordering. Read settings `roots` to label
-registrations without a loader row as off. Emit no children for an off registration
+registrations without a loader row as unlisted. Emit no children for an unlisted registration
 and never restore its row.
 
 ## Related Current Sources

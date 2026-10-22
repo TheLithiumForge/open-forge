@@ -31,7 +31,7 @@ Extensions
          read from <workspace>/.agents/open-forge.lock.json
 Workspace
   Info  off.md  Source is outside the loaded routes [workspace.detached]
-         The registered include has no loader row and is off. Include it again to turn it on or exclude it to remove the registration.
+         The registered include has no loader row, so agents do not read it. Include it again to list it, or exclude it to remove the registration.
          authored value: off.md
          read from .agents/open-forge.json
   3 links and 1 route checked.

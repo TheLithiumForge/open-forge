@@ -19,7 +19,7 @@ internal static class RouteListIncludedResultBuilder
         }
 
         var included = source.IncludedSources;
-        if (included.Count == 0 && source.OffRoots.Count == 0 && source.IncludedRows.Count == 0)
+        if (included.Count == 0 && source.UnlistedRoots.Count == 0 && source.IncludedRows.Count == 0)
         {
             return result;
         }
@@ -65,7 +65,7 @@ internal static class RouteListIncludedResultBuilder
                 Add(root, 0, RouteListSelectionProvenance.LoaderRoot);
             }
 
-            rows.AddRange(source.OffRoots.Select(RouteListRow.Off));
+            rows.AddRange(source.UnlistedRoots.Select(RouteListRow.Unlisted));
         }
 
         foreach (var parent in result.Rows.Where(row => row.Kind == RouteListRowKind.Entrypoint))
@@ -198,7 +198,7 @@ internal static class RouteListIncludedResultBuilder
         void Walk(RouteListRow row)
         {
             ordered.Add(row);
-            if (row.IsOff)
+            if (row.IsUnlisted)
             {
                 return;
             }

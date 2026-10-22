@@ -80,8 +80,8 @@
   ],
   "data": {
     "includedFiles": {
-      "on": 1,
-      "off": 1,
+      "listed": 1,
+      "unlisted": 1,
       "missing": 1,
       "handWritten": 1,
       "startup": {
@@ -101,9 +101,9 @@
       "startup": {
         "shipped": {
           "files": 7,
-          "characters": 15958,
-          "bytes": 15958,
-          "tokens": 3990
+          "characters": 15907,
+          "bytes": 15907,
+          "tokens": 3977
         },
         "current": {
           "files": 3,
@@ -113,9 +113,9 @@
         },
         "difference": {
           "files": -4,
-          "characters": -15569,
-          "bytes": -15569,
-          "tokens": -3892
+          "characters": -15518,
+          "bytes": -15518,
+          "tokens": -3879
         },
         "mayLoadAgain": {
           "files": 0,

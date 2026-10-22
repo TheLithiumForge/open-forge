@@ -35,7 +35,7 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
     private readonly InstallContentIdentity _identity = new();
     private readonly InstallWorkspaceAdoptionBuilder _adoption = new(paths);
 
-    // A route the user adds after leaving it out is switched on in the Loader. Routes that were already
+    // A route the user adds after leaving it out joins the loader's Entries. Routes that were already
     // installed keep their current Loader line, so a line the user removed stays removed.
     private static IEnumerable<string> ReadReselectedRoots(InstallConfiguration? configuration, WorkspaceSettingsRead settings)
         => configuration?.Routes

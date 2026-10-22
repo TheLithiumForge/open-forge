@@ -82,17 +82,17 @@ internal sealed class RouteListRow
 
     internal string Id { get; }
 
-    internal bool IsOff { get; init; }
+    internal bool IsUnlisted { get; init; }
 
     internal bool IsMissing { get; init; }
 
-    internal static RouteListRow Off(string path)
+    internal static RouteListRow Unlisted(string path)
         => new($"./{path}", path, null, null, 0, 0, RouteListRowKind.RoutedLeaf,
             path, [], null,
-            new RouteListProvenance(RouteListSelectionProvenance.LoaderRoot, RouteListSourceProvenance.AuthoredLeaf, false)) { IsOff = true };
+            new RouteListProvenance(RouteListSelectionProvenance.LoaderRoot, RouteListSourceProvenance.AuthoredLeaf, false)) { IsUnlisted = true };
 
     internal RouteListRow WithDirectChildCount(int? count)
-        => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, count, Provenance) { IsOff = IsOff };
+        => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, count, Provenance) { IsUnlisted = IsUnlisted };
 
     internal RouteListRow AsMissing()
         => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, DirectChildCount, Provenance) { IsMissing = true };

@@ -108,7 +108,7 @@
     },
     "roots": {
       "type": "array",
-      "description": "Files outside .agents that route include brought into this workspace. The loader's Entries decide what loads and how. This list only records what was included, so status and doctor can report an included file whose loader line was removed or whose file is missing. Removing a loader line by hand leaves the file registered and switched off. Adding a path here by hand switches nothing on.",
+      "description": "Files outside .agents that route include brought into this workspace. The loader's Entries decide what loads and how. This list only records what was included, so status and doctor can report an included file whose loader line was removed or whose file is missing. Removing a loader line by hand leaves the file registered but unlisted. Adding a path here by hand switches nothing on.",
       "items": {
         "type": "string",
         "minLength": 1,

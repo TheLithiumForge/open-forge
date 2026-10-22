@@ -213,7 +213,7 @@ internal sealed class RouteListResult : ICliCommandResult
         var indexByPath = new Dictionary<string, int>(StringComparer.Ordinal);
         for (var index = 0; index < rows.Count; index++)
         {
-            if (rows[index].IsOff)
+            if (rows[index].IsUnlisted)
             {
                 continue;
             }

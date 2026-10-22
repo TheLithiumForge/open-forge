@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Starting files to copy when creating something new
+  description: Copy-ready files for starting independently maintained workspace content
   tags: [Core, Template]
 ---
 

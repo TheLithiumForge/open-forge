@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted knowledge that should stay current
+  description: Accepted knowledge that should remain current
   tags: [LoadNow, Memory, Crystallized, CurrentTruth]
 ---
 

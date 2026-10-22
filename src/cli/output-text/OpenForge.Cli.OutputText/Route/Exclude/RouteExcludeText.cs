@@ -20,7 +20,7 @@ internal static class RouteExcludeText
         Paths must stay inside the workspace, including through links.
         Git metadata, the loader, settings and lock files are not valid targets.
         Inside .agents, use a direct child folder's catalogue.
-        Exclude switches its loader row off without deleting the catalogue.
+        Exclude removes its loader row without deleting the catalogue.
         """;
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelated() => [("open-forge route include --help", "List a file where it lives"), ("open-forge index --help", "Refresh generated navigation")];
     internal static string NothingChanged(string path) => $"Nothing changed for '{path}'.";

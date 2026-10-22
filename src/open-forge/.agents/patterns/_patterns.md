@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Default shapes to check before creating or reviewing structure
+  description: Reusable default shapes for code, files, APIs, documents, and other work
   tags: [Core, Pattern]
 ---
 

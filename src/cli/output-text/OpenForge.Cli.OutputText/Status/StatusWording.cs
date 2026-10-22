@@ -5,8 +5,8 @@ namespace OpenForge.Cli.OutputText.Status;
 internal static class StatusWording
 {
     // @OpenForgeText status.wording.included-files
-    internal static string IncludedFiles(int on, int off, int missing, int handWritten)
-        => string.Create(CultureInfo.InvariantCulture, $"Included files: {on} on, {off} off, {missing} missing, {handWritten} hand-written loader {(handWritten == 1 ? "row" : "rows")}.");
+    internal static string IncludedFiles(int listed, int unlisted, int missing, int handWritten)
+        => string.Create(CultureInfo.InvariantCulture, $"Included files: {listed} listed, {unlisted} unlisted, {missing} missing, {handWritten} hand-written loader {(handWritten == 1 ? "row" : "rows")}.");
 
     // @OpenForgeText status.wording.included-startup
     internal static string IncludedStartup(string measurement)

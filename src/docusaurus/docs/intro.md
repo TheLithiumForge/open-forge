@@ -92,7 +92,7 @@ Essentials keeps new Working records out of ordinary Git commits and leaves `_wo
 AGENTS.md                         <- tells the agent to read the loader first
 CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 .agents/
-  loader.md                       <- the reading steps and the list of what is on
+  loader.md                       <- the reading steps and the list of what agents use
   README.md                       <- a guide and the file formats, safe to delete
   directives/_directives.md       <- required behavior
   guidance/_guidance.md           <- advice for recurring choices

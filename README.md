@@ -99,7 +99,7 @@ open-forge install --configure --preset custom --route memory/working=git-ignore
 | Every built-in folder                             | Full Core                                                 |
 | A particular planning or development method       | An [Extension](#extensions)                               |
 
-Each preset includes the one before it, and each is a useful stopping point, not a step you must climb. Every folder is optional, and Custom lets you pick each one. Memory states need Memory, but they don't need each other. Extensions declare their own dependencies. To turn a part off, remove its line from the loader. Its files stay as notes, and updates keep it off.
+Each preset includes the one before it, and each is a useful stopping point, not a step you must climb. Every folder is optional, and Custom lets you pick each one. Memory states need Memory, but they don't need each other. Extensions declare their own dependencies. To stop using a part, remove its line from the loader. Its files stay as notes, and updates leave the line out.
 
 Running `open-forge install` with no options starts a short wizard that recommends Minimal and offers Essentials, Full Core and Custom, with a line on each. The [installation guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation) explains every choice and how to change it later. To experiment without touching your checkout, [try it in a separate clone](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation#try-it-and-undo-a-trial).
 
@@ -200,7 +200,7 @@ This is the Full Core inventory. Essentials omits Guidance, Maps, Templates, and
 AGENTS.md                         <- tells the agent to read the loader first
 CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 .agents/
-  loader.md                       <- the reading steps and the list of what is on
+  loader.md                       <- the reading steps and the list of what agents use
   README.md                       <- a guide and the file formats, safe to delete
   directives/_directives.md       <- required behavior
   guidance/_guidance.md           <- advice for recurring choices
@@ -442,7 +442,7 @@ The flags you'll reach for most often are:
 | `--for <path>`                         | Supply working files to `context`, `find`, or `route inspect`. Repeat for each file |
 | `--help`                               | See the selected command's arguments and flags                                      |
 
-`open-forge help concepts` explains the whole framework in one place: what is switched on, how reading works, tags, content kinds, reuse and the file formats.
+`open-forge help concepts` explains the whole framework in one place: what agents use, how reading works, tags, content kinds, reuse and the file formats.
 
 `--automatic` adds no permission to overwrite or delete files. The [CLI overview](https://thelithiumforge.github.io/open-forge/docs/cli#which-command-for-which-job) lists every command's flags in one place.
 

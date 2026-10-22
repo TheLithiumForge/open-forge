@@ -4,8 +4,8 @@ namespace OpenForge.Cli.OutputText.Route.List;
 
 internal static class RouteListText
 {
-    // @OpenForgeText route.list.label.registered-include-off
-    internal static string RegisteredIncludeOff() => "Registered include (off)";
+    // @OpenForgeText route.list.label.registered-include-unlisted
+    internal static string RegisteredIncludeUnlisted() => "Registered include (not in the loader)";
 
     // @OpenForgeText route.list.label.missing-include
     internal static string MissingInclude(string description) => $"{description} (missing)";

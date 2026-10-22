@@ -63,7 +63,7 @@ internal sealed class RouteListSourceResolver(
         {
             IncludedSources = included.Sources,
             IncludedRows = included.Rows,
-            OffRoots = settings.Document.Roots.Where(path => !active.Contains(path)).ToArray(),
+            UnlistedRoots = settings.Document.Roots.Where(path => !active.Contains(path)).ToArray(),
         };
     }
 
@@ -101,5 +101,5 @@ internal sealed record RouteListSourceResolution(
 
     internal IReadOnlyList<SourceLogicalSource> IncludedSources { get; init; } = [];
 
-    internal IReadOnlyList<string> OffRoots { get; init; } = [];
+    internal IReadOnlyList<string> UnlistedRoots { get; init; } = [];
 }

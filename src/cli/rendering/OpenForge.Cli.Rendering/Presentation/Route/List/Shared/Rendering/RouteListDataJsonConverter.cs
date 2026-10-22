@@ -66,9 +66,9 @@ internal sealed class RouteListDataJsonConverter : JsonConverter<RouteListData>
 
             writer.WriteEndArray();
             writer.WriteNumber("relativeDepth", row.RelativeDepth);
-            if (row.Result.IsOff)
+            if (row.Result.IsUnlisted)
             {
-                writer.WriteBoolean("off", true);
+                writer.WriteBoolean("unlisted", true);
             }
             if (value.ShowDetails)
             {

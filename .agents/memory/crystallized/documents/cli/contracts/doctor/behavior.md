@@ -233,7 +233,7 @@ The resolution lanes are formed as follows:
 ## Domain 1: Workspace And Entry
 
 Read included targets from loader Entries and registrations from settings `roots`.
-The loader controls loading. Missing targets produce errors, off registrations
+The loader controls loading. Missing targets produce errors, unlisted registrations
 produce information and registered paths that Include would now reject produce
 warnings. Use the existing `workspace.root-missing`, `workspace.detached` and
 `workspace.path-invalid` codes respectively. Preserve these facts without restoring

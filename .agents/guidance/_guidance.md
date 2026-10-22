@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Advice for recurring choices, to check before choosing an approach
+  description: Advice for recurring choices, tradeoffs, and work situations
   tags: [Core, Guidance]
 ---
 

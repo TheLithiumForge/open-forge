@@ -248,3 +248,12 @@ After slice 1, workers can own source reading, packages and Libraries separately
 
 - **Fixed `.agents/` controls in #7.** With a custom main root, `.agents/` still holds `open-forge.json`, the lock file and native Skills. Moving the controls too would need settings discovery and control-store migration, so the council recommends against it for now.
 - **When to build #7.** The contrarian argued it should wait until after the first stable release because of its cost. The chair recommends building #6 first and starting #7 as its own PR afterward, as the maintainer asked.
+
+## Maintainer decisions on the merged PR
+
+On 2026-10-22 the maintainer merged #4, #5 and #6 into one PR and reviewed it:
+
+- **Develop's catalogue descriptions come back.** "Old wording was better." The descriptions that v3 had rewritten, such as Guidance's "to check before choosing an approach", return to their `develop` text, and Memory keeps its self-growing description.
+- **No on and off switch wording.** "Switching on and off is a bit too hyperbolic." The loader's list now says what agents use, its section is "Change what agents use" with "Add something" and "Remove something", and the guide, `help concepts` and docs follow it. Status and Route List call included files listed, unlisted, missing or hand-written.
+- **No duplicated loader text.** The loader's "Add something" line keeps only what the rest of the loader does not already say.
+- **The no-naming rule covers Core catalogues.** Bundled Extension packages may name their own related routes.

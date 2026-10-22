@@ -14,7 +14,7 @@ All routed files: 19 files, about 25.0k tokens (startup is 16%)
 Routes: 7 root categories, 12 Entries sections current
 Framework files: 19 current
 Largest may-load-again sources
-  memory/emerging  985 B
+  memory/emerging  971 B
 Framework files
   .agents/README.md                                      current
   .agents/directives/_directives.md                      current
@@ -50,6 +50,6 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-19 routed files, 7 startup files, 3990 startup tokens, 1 may-load-again files, 247 may-load-again tokens, 24987 all routed tokens, 15.966621975866968162807916275 startup share, 7 root categories, 12 current Entries sections, 19 current Framework files, 1 changed Framework files, 1 warnings.
+19 routed files, 7 startup files, 3977 startup tokens, 1 may-load-again files, 243 may-load-again tokens, 25006 all routed tokens, 15.903342231286804035071933455 startup share, 7 root categories, 12 current Entries sections, 19 current Framework files, 1 changed Framework files, 1 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

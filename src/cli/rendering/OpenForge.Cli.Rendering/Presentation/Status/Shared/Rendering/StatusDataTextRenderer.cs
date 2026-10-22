@@ -38,7 +38,7 @@ internal static class StatusDataTextRenderer
         if (data.IncludedFiles is { } included)
         {
             AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.IncludedFiles(
-                included.On, included.Off, included.Missing, included.HandWritten));
+                included.Listed, included.Unlisted, included.Missing, included.HandWritten));
             AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.IncludedStartup(
                 StatusWording.MeasurementSummary(included.Startup)));
             foreach (var path in included.Pending)

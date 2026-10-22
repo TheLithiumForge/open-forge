@@ -209,7 +209,7 @@ an observation, not an installation error or a trusted empty inventory.
 
 Read settings `roots` and the loader Entries independently. The loader decides
 what is active. Count each registered path as missing when no file exists,
-otherwise on when a loader row lists it, otherwise off. Count unregistered loader
+otherwise listed when a loader row lists it, otherwise unlisted. Count unregistered loader
 rows outside `.agents/` separately, including repeated rows.
 
 Follow included catalogue Entries without scanning their folders. Required
@@ -217,7 +217,7 @@ Follow included catalogue Entries without scanning their folders. Required
 Conditions remain pending until working paths are known. Keep the outside
 `.agents/` startup contribution separate in the report while including it in the
 current startup total. Pending required includes make Status incomplete without
-discarding known measurements. Off registrations contribute no content. Empty or absent
+discarding known measurements. Unlisted registrations contribute no content. Empty or absent
 `roots` with no included rows keep the existing report unchanged.
 
 ### Context File Enumeration

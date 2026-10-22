@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Notes that help work continue, such as resume points, accepted knowledge, ideas and history
+  description: Self-growing Markdown memory for active work, coordination, accepted knowledge, candidates, and history
   tags: [LoadNow, Memory]
 ---
 
@@ -29,7 +29,7 @@ Memory is self-growing Markdown state: people and agents add useful records and 
 
 ## Entries
 
-- [History that no longer guides current work](archived/_archived.md) - #Memory #Archived #Contextual #Historical
-- [Accepted knowledge that should stay current](crystallized/_crystallized.md) - #LoadNow #Memory #Crystallized #CurrentTruth
-- [Ideas, findings and analysis that are not accepted yet](emerging/_emerging.md) - #KeepInMind #Memory #Emerging #Contextual #Candidate
-- [Work in progress and how to resume it](working/_working.md) - #LoadNow #Memory #Working #Contextual
+- [Useful history that no longer controls current work](archived/_archived.md) - #Memory #Archived #Contextual #Historical
+- [Accepted knowledge that should remain current](crystallized/_crystallized.md) - #LoadNow #Memory #Crystallized #CurrentTruth
+- [Useful material that is not accepted yet](emerging/_emerging.md) - #KeepInMind #Memory #Emerging #Contextual #Candidate
+- [Temporary memory that helps agents continue or resume active work](working/_working.md) - #LoadNow #Memory #Working #Contextual

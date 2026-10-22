@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Rules agents must follow in this workspace
+  description: Required instructions loaded through selected routes
   tags: [LoadNow, Core, Directive]
 ---
 

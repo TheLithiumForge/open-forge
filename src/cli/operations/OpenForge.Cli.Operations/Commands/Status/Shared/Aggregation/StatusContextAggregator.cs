@@ -14,8 +14,8 @@ internal static class StatusContextAggregator
         var initial = StatusMeasurementCalculator.Project(routes.InitialStartup);
         var total = StatusMeasurementCalculator.Add(routes.TotalAvailable, routes.IncludedFiles?.Total);
         var includedFiles = routes.IncludedFiles is { } included ? new StatusIncludedFiles(
-            On: included.Files.Count(file => file.Registered && file.FileExists && file.Listed),
-            Off: included.Files.Count(file => file.Registered && file.FileExists && !file.Listed),
+            Listed: included.Files.Count(file => file.Registered && file.FileExists && file.Listed),
+            Unlisted: included.Files.Count(file => file.Registered && file.FileExists && !file.Listed),
             Missing: included.Files.Count(file => file.Registered && !file.FileExists),
             HandWritten: included.HandWrittenRows,
             Startup: StatusMeasurementCalculator.Project(included.Startup),

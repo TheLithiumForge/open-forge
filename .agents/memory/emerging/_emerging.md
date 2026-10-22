@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Ideas, findings and analysis that are not accepted yet
+  description: Useful material that is not accepted yet
   tags: [KeepInMind, Memory, Emerging, Contextual, Candidate]
 ---
 

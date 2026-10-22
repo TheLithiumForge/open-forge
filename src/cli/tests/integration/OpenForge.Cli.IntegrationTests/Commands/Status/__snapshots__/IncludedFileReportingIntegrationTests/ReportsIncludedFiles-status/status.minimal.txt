@@ -2,7 +2,7 @@ Open Forge is installed, but some checks could not finish.
   Warning  <workspace>  Startup context is incomplete
          Startup context could not be measured completely.
          open-forge doctor
-Included files: 1 on, 1 off, 1 missing, 1 hand-written loader row.
+Included files: 1 listed, 1 unlisted, 1 missing, 1 hand-written loader row.
 Startup outside .agents/: 0 files, about 0.0k tokens
   routed files: The total available context measurement is incomplete.
   all routed tokens: The total available context measurement is incomplete.

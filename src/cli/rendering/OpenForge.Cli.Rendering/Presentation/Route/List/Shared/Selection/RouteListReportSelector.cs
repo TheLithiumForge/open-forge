@@ -70,9 +70,9 @@ internal static class RouteListReportSelector
 
     private static string Description(RouteListPresentationRow row)
     {
-        if (row.IsOff)
+        if (row.IsUnlisted)
         {
-            return global::OpenForge.Cli.OutputText.Route.List.RouteListText.RegisteredIncludeOff();
+            return global::OpenForge.Cli.OutputText.Route.List.RouteListText.RegisteredIncludeUnlisted();
         }
 
         return row.IsMissing ? global::OpenForge.Cli.OutputText.Route.List.RouteListText.MissingInclude(row.Description) : row.Description;

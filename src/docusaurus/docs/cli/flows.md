@@ -78,7 +78,7 @@ Use this when the project already keeps rules or knowledge in its own files.
    The file stays where it is and nothing is written to it. A Markdown file
    with its own `## Entries` brings its listed files along.
 
-3. Change or switch it off later.
+3. Change or remove it later.
 
    ```sh
    open-forge route include CONTRIBUTING.md --apply-to "src/**"

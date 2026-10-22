@@ -20,7 +20,7 @@ internal static class WorkspaceIncludeDoctorInspector
 
             if (file.Registered && !file.Listed)
                 findings.Add(Create(file, DoctorDomainSupport.Information(DoctorFindingKind.WorkspaceDetached,
-                    "The registered include has no loader row and is off. Include it again to turn it on or exclude it to remove the registration.")));
+                    "The registered include has no loader row, so agents do not read it. Include it again to list it, or exclude it to remove the registration.")));
         }
     }
 

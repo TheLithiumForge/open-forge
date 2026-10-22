@@ -18,7 +18,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 ### Responsibility and shape
 
 - The loader remains the first Open Forge reading procedure after the workspace entry. It works with plain files and needs no repository-only documents or CLI.
-- Its introduction explains that its Entries decide what is enabled. The authored shape is one Axioms section with three groups, in order: `Read before you work`, `Use what you read` and `Change what is switched on`, followed by Entries.
+- Its introduction explains that its Entries list what agents use. The authored shape is one Axioms section with three groups, in order: `Read before you work`, `Use what you read` and `Change what agents use`, followed by Entries.
 - The loader keeps the full reading procedure, rule inheritance, acceptance, conditions, loading tags, off switch, dependencies and missing-file rules.
 - The file-format section of the optional [workspace guide](README.md), also printed by `open-forge help concepts`, carries file formats, catalogue naming, metadata forms, scope examples and vocabulary. The [CLI Skill](skills.md) carries command discovery and maintenance procedures. Category behavior stays in its own catalogue.
 
