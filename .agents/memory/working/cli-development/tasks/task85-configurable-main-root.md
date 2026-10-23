@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Open Task 85 to let a workspace keep its Open Forge knowledge in a folder other than .agents, chosen at install or moved later, deferred while route include covers reusing project documents
-  tags: [Memory, Working, Task, CLI, Install, Settings, Layout, Contextual, Deferred]
+  description: Open Task 85 to let a workspace keep its Open Forge knowledge in a folder other than .agents, chosen at install or moved later, selected to follow Task 86
+  tags: [Memory, Working, Task, CLI, Install, Settings, Layout, Contextual]
 ---
 
 # Task 85: Configurable main root
 
-Status: Deferred by the maintainer on 2026-10-22. `route include` already lets a project use its documents where they live, so moving the main root waits.
+Status: Selected by the maintainer on 2026-10-23, to start after [Task 86](task86-workspace-runtime-lock.md). It was deferred on 2026-10-22 while `route include` covered reusing project documents.
 
 ## Outcome
 
@@ -35,3 +35,4 @@ The [implementation plan](../../../emerging/analysis/route-include-council/main-
 
 - Re-check the plan against the code. It was written on 2026-10-21 before the merged review, so names and line numbers may have moved.
 - Decide the plan's open questions with the maintainer, starting with whether a Library registration that straddles the moved folder blocks the move or gets a new projection mapping.
+- Keep `.open-forge-state/` from [Task 86](task86-workspace-runtime-lock.md) at the workspace root. A configured main root never moves it, and a main root can never be placed inside it.
