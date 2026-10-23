@@ -25,14 +25,13 @@ The [route include council](../../../emerging/analysis/route-include-council/rec
 
 ## Plan
 
-The [implementation plan](../../../emerging/analysis/route-include-council/main-root-plan.md) has the full inventory, the layout type, the migration and the work packets.
+The [main root council](../../../emerging/analysis/main-root-council/record.md) refreshed the design on 2026-10-23 and split it into two deliveries. Its [Delivery 1 plan](../../../emerging/analysis/main-root-council/plan.md) replaces the [2026-10-21 plan](../../../emerging/analysis/route-include-council/main-root-plan.md).
 
-- About 320 CLI source files assume `.agents`. Each assumption separates into the knowledge root, the control directory or the native Skills location.
-- Wave 0 is one owner's foundation: the layout type, settings v4, ownership shapes and the contracts. Later waves convert source reading, navigation, route operations, Extensions, Libraries, the lifecycle commands and output, then add migration and the published-process journeys.
-- The estimate is 22 to 25 engineering days, or 9 to 12 elapsed days with three implementation lanes.
+- **Delivery 1** is a custom context folder chosen at first installation, with every command supporting it. An established installation refuses a different root. The plan has the frozen layout API, settings v4 and seven waves of packets, and activates `--main-root` and the wizard question last. The estimate is 14 to 18 engineering days after Task 86.
+- **Delivery 2** moves an existing workspace with `install --configure --main-root`. It starts after Delivery 1 ships, once the council's safety conditions are planned and tested. The estimate is 7 to 10 more days.
+- This Task stays open until Delivery 2 ships, because moving an existing workspace is part of the accepted outcome.
 
 ## Before starting
 
-- Re-check the plan against the code. It was written on 2026-10-21 before the merged review, so names and line numbers may have moved.
-- Decide the plan's open questions with the maintainer, starting with whether a Library registration that straddles the moved folder blocks the move or gets a new projection mapping.
-- Keep `.open-forge-state/` from [Task 86](task86-workspace-runtime-lock.md) at the workspace root. A configured main root never moves it, and a main root can never be placed inside it.
+- Start Delivery 1 only after [Task 86](task86-workspace-runtime-lock.md) merges, and reconcile the plan's line numbers against that baseline.
+- Keep `.open-forge-state/` from Task 86 at the workspace root. A configured main root never moves it, and a main root can never be placed inside it.
