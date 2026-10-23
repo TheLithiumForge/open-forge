@@ -43,7 +43,7 @@ Astra high implementers own one packet each in separate worktrees. The overseer 
 
 ## Evidence
 
-An independent Astra high review found seven issues, fixed in three packets: a FIFO hang in the read-only legacy fallback (chair amendment 5), case aliases of the runtime folder on macOS, linked recovery folders read or written before rejection, Extension history missing the legacy store, and two overpromising docs passages. After those fixes, Windows runs passed 5,190 Unit tests, 3,645 Integration tests with 58 Unix-only skips, and 410 EndToEnd tests with 3 Unix-only skips. Linux and macOS run in the pull request Build.
+An independent Astra high review found seven issues, fixed in three packets: a FIFO hang in the read-only legacy fallback (chair amendment 5), case aliases of the runtime folder on macOS, linked recovery folders read or written before rejection, Extension history missing the legacy store, and two overpromising docs passages. After those fixes, Windows runs passed 5,190 Unit tests, 3,645 Integration tests with 58 Unix-only skips, and 410 EndToEnd tests with 3 Unix-only skips. The first pull request Build then failed on every platform. On Linux and macOS the lease rejected the read-only legacy handle, whose stream has no path name, so a sandboxed writer could never hold the legacy lock read-only. A cross-process test held its own implicit lock, macOS reports a socket as EOPNOTSUPP, and the delivery skip allowlist did not know the new Linux-only, macOS-only and public Unix-only reasons. After those fixes, Linux runs in WSL passed 5,190 Unit, 3,646 Integration (56 skips) and 378 EndToEnd tests (35 skips), and both Linux and Windows reports pass the delivery skip qualification.
 
 ## Remaining
 

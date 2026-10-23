@@ -56,7 +56,9 @@ internal static class WorkspaceLockTarget
         {
             kind = WorkspaceLockFailureKind.Busy;
         }
-        else if (!OperatingSystem.IsWindows() && exception is IOException && error is 6 or 19)
+        // Opening a socket fails with ENXIO on Linux and EOPNOTSUPP on macOS. A device can fail with ENODEV.
+        else if (exception is IOException
+            && ((!OperatingSystem.IsWindows() && error is 6 or 19) || (OperatingSystem.IsMacOS() && error == 102)))
         {
             kind = WorkspaceLockFailureKind.InvalidTarget;
         }

@@ -23,11 +23,12 @@ internal sealed class WorkspaceLockLease : IDisposable, IAsyncDisposable
             throw new ArgumentException("A workspace lock lease requires its exact open local handle.", nameof(handle));
         }
 
+        // A read-only legacy handle on Unix wraps a native descriptor, so its FileStream name is not the path.
+        // The recorded lock path, checked against the workspace identity, is the authority instead.
         if (legacy.State == LegacyWorkspaceLockState.Failed
             || legacy.Handle is not null && (!IsLive(legacy.Handle)
                 || legacy.StoreRoot is null
-                || !string.Equals(legacy.LockPath, WorkspaceLockPathIdentity.LockPath(legacy.StoreRoot, request.Workspace), PathComparison())
-                || !string.Equals(legacy.Handle.Name, legacy.LockPath, PathComparison())))
+                || !string.Equals(legacy.LockPath, WorkspaceLockPathIdentity.LockPath(legacy.StoreRoot, request.Workspace), PathComparison())))
         {
             throw new ArgumentException("A workspace lock lease requires a completed matching legacy bridge.", nameof(legacy));
         }

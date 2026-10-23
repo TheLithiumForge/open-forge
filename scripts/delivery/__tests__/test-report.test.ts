@@ -53,6 +53,27 @@ test("OS exclusions qualify only outside their evidence platform and stay counte
   assert.throws(() => qualifyReport(linux, "linux"));
 });
 
+test("Linux-only and macOS-only evidence is excluded only on the other platforms", () => {
+  const linux = platformReport("This evidence requires linux.");
+  assert.deepEqual(qualifyReport(linux, "win32"), { passed: 1, skipped: 1 });
+  assert.deepEqual(qualifyReport(linux, "darwin"), { passed: 1, skipped: 1 });
+  assert.throws(() => qualifyReport(linux, "linux"));
+  const macos = platformReport("This FIFO evidence requires macos.");
+  assert.deepEqual(qualifyReport(macos, "win32"), { passed: 1, skipped: 1 });
+  assert.deepEqual(qualifyReport(macos, "linux"), { passed: 1, skipped: 1 });
+  assert.throws(() => qualifyReport(macos, "darwin"));
+});
+
+test("public Unix journeys are exclusions only on Windows", () => {
+  const report = platformReport("Unix FIFO, socket and symlink qualification requires Linux or macOS.");
+  const skipped = report.results.tests[1];
+  assert.ok(skipped?.extra);
+  skipped.extra.type = "OpenForge.Cli.EndToEndTests.Journeys.WorkspaceRuntimeIsolationJourneyTests";
+  assert.deepEqual(qualifyReport(report, "win32"), { passed: 1, skipped: 1 });
+  assert.throws(() => qualifyReport(report, "linux"));
+  assert.throws(() => qualifyReport(report, "darwin"));
+});
+
 test("unknown, capability, inconsistent and entirely skipped reports still fail", () => {
   assert.throws(() => qualifyReport(platformReport("An unexpected dependency is unavailable."), "linux"));
   assert.throws(() => qualifyReport(platformReport("Creating a file symbolic link requires privileges this host does not grant."), "win32"));

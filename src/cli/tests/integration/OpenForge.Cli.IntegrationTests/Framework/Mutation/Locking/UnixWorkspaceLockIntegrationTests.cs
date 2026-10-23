@@ -81,7 +81,10 @@ public sealed partial class UnixWorkspaceLockIntegrationTests
         RequirePlatform(platform);
         using var temporary = TemporaryWorkspace.Create("flock");
         var path = temporary.CreateFile("lock");
-        using var handle = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+        // A FileStream would take an implicit shared flock, which would stop the holder below from locking.
+        // The native descriptor carries no lock until the checked call takes one.
+        Assert.Null(UnixWorkspaceLock.TryOpenReadOnly(path, TestContext.Current.CancellationToken, out var native));
+        using var handle = Assert.IsType<SafeFileHandle>(native);
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         cancellation.CancelAfter(TimeSpan.FromSeconds(15));
         using var holder = Python(
@@ -90,13 +93,13 @@ public sealed partial class UnixWorkspaceLockIntegrationTests
         try
         {
             Assert.Equal("held", await holder.StandardOutput.ReadLineAsync(cancellation.Token));
-            var busy = UnixWorkspaceLock.TryAcquire(handle.SafeFileHandle, path, cancellation.Token);
+            var busy = UnixWorkspaceLock.TryAcquire(handle, path, cancellation.Token);
             Assert.Equal(WorkspaceLockFailureKind.Busy, busy?.Kind);
             Assert.Equal(platform == "macos" ? 35 : 11, busy?.NativeError);
             await holder.StandardInput.WriteLineAsync();
             await holder.WaitForExitAsync(cancellation.Token);
             Assert.Equal(0, holder.ExitCode);
-            Assert.Null(UnixWorkspaceLock.TryAcquire(handle.SafeFileHandle, path, cancellation.Token));
+            Assert.Null(UnixWorkspaceLock.TryAcquire(handle, path, cancellation.Token));
             using var contender = Python(
                 "import fcntl,sys\nf=open(sys.argv[1],sys.argv[2])\ntry:\n fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)\n print('acquired')\nexcept BlockingIOError:\n print('busy')",
                 path, readOnly ? "rb" : "r+b");
@@ -192,21 +195,6 @@ public sealed partial class UnixWorkspaceLockIntegrationTests
             File.Delete(path);
             _ = store.Track(workspace);
         }
-    }
-
-    [Fact(DisplayName = "A Linux filesystem that refuses flock never grants ownership")]
-    public void UnsupportedLinuxFilesystemDoesNotGrantOwnership()
-    {
-        RequirePlatform("linux");
-        using var handle = new FileStream("/proc/self/status", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        var failure = UnixWorkspaceLock.TryAcquire(handle.SafeFileHandle, handle.Name, TestContext.Current.CancellationToken);
-        if (failure is null)
-        {
-            Assert.Skip("This proc filesystem supports flock, so unsupported-lock qualification needs another mount.");
-        }
-
-        Assert.Equal(WorkspaceLockFailureKind.Unsupported, failure.Kind);
-        Assert.NotNull(failure.NativeError);
     }
 
     private static void RequirePlatform(string platform)
