@@ -43,6 +43,16 @@ internal sealed class ReadCommandOutputCapture(
         }
     }
 
+    private string NormalizeRecoveryStores(string output)
+    {
+        if (recoveryBundlePath is not null)
+        {
+            output = CommandOutputNormalization.ReplaceDelimitedPath(output, recoveryBundlePath, "<recovery-bundle>");
+        }
+
+        return CommandOutputNormalization.NormalizeRecoveryStoreLocations(output, workspacePath);
+    }
+
     internal async Task MatchDetailsAsync(
         ReadOutputScenario scenario,
         [CallerFilePath] string sourceFile = "",
@@ -85,7 +95,9 @@ internal sealed class ReadCommandOutputCapture(
 
                 Assert.NotEmpty(capture.PrimaryContent);
                 var normalized = CommandOutputNormalization.Normalize(
-                    capture.PrimaryContent,
+                    scenario.Arguments[0] is "status" or "doctor"
+                        ? NormalizeRecoveryStores(capture.PrimaryContent)
+                        : capture.PrimaryContent,
                     workspacePath,
                     CliBuildVersion.InformationalVersion,
                     recoveryBundlePath,

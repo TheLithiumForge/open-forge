@@ -4,6 +4,9 @@ namespace OpenForge.Cli.Core.Presentation.Cleanup.Models;
 
 internal sealed record CleanupData
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<CleanupDataStore>? Stores { get; init; }
+
     public required string Mode { get; init; }
 
     public required IReadOnlyList<CleanupDataItem> Items { get; init; }
@@ -53,3 +56,8 @@ internal sealed record CleanupDataTextRow(
     string Path,
     string Wording,
     string? Detail = null);
+
+internal sealed record CleanupDataStore(
+    string Kind, string? Path, string Coverage, string Safety,
+    IReadOnlyList<CleanupDataItem> Candidates, string? Cause,
+    string Revalidation, string Verification);

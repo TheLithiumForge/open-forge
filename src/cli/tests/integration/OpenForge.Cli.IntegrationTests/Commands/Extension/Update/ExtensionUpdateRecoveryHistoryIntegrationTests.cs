@@ -1,3 +1,5 @@
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Install;
 using OpenForge.Cli.Core.Commands.Extension.Models;
@@ -61,8 +63,8 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
             "--automatic", "--format", "json",
         ]);
 
-        Assert.Equal(0, run.ExitCode);
-        Assert.Equal(CliSemanticStatus.Complete, run.Status);
+        Assert.Equal(2, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Attention, run.Status);
         Assert.Equal("version two\n", workspace.ReadText(Target));
         using var document = JsonDocument.Parse(run.StandardOutput);
         var ownBundlePath = Assert.IsType<string>(document.RootElement.GetProperty("recovery").GetProperty("path").GetString());
@@ -82,11 +84,11 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Extension Update blocks unverified recovery history at its exact path")]
+    [Theory(DisplayName = "Extension Update warns about unverified recovery history at its exact path")]
     [InlineData("malformed")]
     [InlineData("draft")]
     [Trait("Feature", "extension-update"), Trait("Evidence", "Integration")]
-    public async Task UnverifiedRecoveryHistoryBlocksWriteFree(string candidateKind)
+    public async Task UnverifiedRecoveryHistoryWarnsAndAllowsChanges(string candidateKind)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             $"extension-update-unverified-recovery-{candidateKind}");
@@ -100,15 +102,22 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
             : RecoveryBundleCandidateKind.Final;
         var candidatePath = ExtensionRecoveryHistoryFixture.CandidatePath(
             workspace.Workspace,
-            Guid.NewGuid(),
+            Guid.Parse("11111111-1111-1111-1111-111111111111"),
             kind);
         var candidateBytes = candidateKind == "draft"
             ? "incomplete draft"u8.ToArray()
             : [0x01, 0x02, 0x03, 0x04];
         await File.WriteAllBytesAsync(candidatePath, candidateBytes, TestContext.Current.CancellationToken);
         source.ReplacePayload("toolkit", Target, "version two\n");
-        var beforeWorkspace = workspace.Snapshot();
         var beforeSource = source.Snapshot();
+
+        await ExtensionRecoveryHistoryFixture.MatchHistoryAsync(workspace, source.Path,
+            new ReadOutputScenario
+            {
+                Situation = candidateKind,
+                Arguments = ["extension", "update", "toolkit", "--source", source.Path, "--dry-run"],
+                ExitCode = 2,
+            }, testName: $"UnverifiedHistory.{candidateKind}");
 
         var run = await workspace.RunAsync(
         [
@@ -117,23 +126,22 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
             "--automatic", "--format", "json",
         ]);
 
-        Assert.Equal(5, run.ExitCode);
-        Assert.Equal(CliSemanticStatus.Blocked, run.Status);
+        Assert.Equal(2, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Attention, run.Status);
         using var document = JsonDocument.Parse(run.StandardOutput);
         var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
-        Assert.Equal("extension-update.recovery-conflict", finding.GetProperty("code").GetString());
+        Assert.Equal("extension-update.recovery-history", finding.GetProperty("code").GetString());
         Assert.Equal(candidatePath, finding.GetProperty("subject").GetProperty("path").GetString());
-        Assert.Empty(document.RootElement.GetProperty("effects").EnumerateArray());
-        Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(candidateBytes, await File.ReadAllBytesAsync(candidatePath, TestContext.Current.CancellationToken));
-        Assert.Equal("version one\n", workspace.ReadText(Target));
+        Assert.Equal("version two\n", workspace.ReadText(Target));
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Extension Update reports a mismatched prepared recovery final at its exact path")]
+    [Theory(DisplayName = "Extension Update still requires its exact prepared recovery final")]
+    [InlineData(false), InlineData(true)]
     [Trait("Feature", "extension-update"), Trait("Evidence", "Integration")]
-    public async Task MismatchedPreparedRecoveryFinalBlocksVerificationWriteFree()
+    public async Task MissingOrMismatchedPreparedRecoveryFinalBlocksVerificationWriteFree(bool missing)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-update-mismatched-prepared-recovery");
@@ -195,6 +203,7 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
             workspace.Workspace);
         await observed.ChangeAttributionAsync(changedAttribution);
         _ = await observed.AssertAdmissionAsync(preparation.Command, changedAttribution);
+        if (missing) File.Delete(preparation.BundlePath);
         var beforeVerification = workspace.Snapshot();
         var beforeSource = source.Snapshot();
 

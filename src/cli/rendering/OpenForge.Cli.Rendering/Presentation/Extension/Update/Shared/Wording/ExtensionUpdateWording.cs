@@ -154,6 +154,8 @@ internal static class ExtensionUpdateWording
         ExtensionUpdateFindingCode.RecoveryConflict => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleRecoveryBundleBlocksUpdate(),
         ExtensionUpdateFindingCode.RecoveryUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsUnavailable(),
         ExtensionUpdateFindingCode.LifecycleObservation => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionRecordWasNotUpdated(),
+        ExtensionUpdateFindingCode.RecoveryHistory => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleWasRetained(),
+        ExtensionUpdateFindingCode.RecoveryCoverageUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsUnavailable(),
         ExtensionUpdateFindingCode.RecoveryArtifactRetained => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleWasRetained(),
         ExtensionUpdateFindingCode.WriteFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWritingFailed(),
         ExtensionUpdateFindingCode.TopologyVerificationFailed => global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.TitleEntriesVerificationFailed(),
@@ -205,6 +207,8 @@ internal static class ExtensionUpdateWording
                 ExtensionUpdateFindingCode.GeneratedRegionUnsafe => CliFindingWording.GeneratedRegionUnsafe(finding.Target ?? id, finding.Cause),
                 ExtensionUpdateFindingCode.WorkspaceLockUnavailable => CliFindingWording.WorkspaceLockUnavailable(),
                 ExtensionUpdateFindingCode.TargetChanged => CliFindingWording.TargetChanged(finding.Target ?? id),
+                ExtensionUpdateFindingCode.RecoveryHistory => CliFindingWording.RecoveryHistory(finding.Target ?? throw new InvalidOperationException("Recovery history requires an artifact path.")),
+                ExtensionUpdateFindingCode.RecoveryCoverageUnavailable => CliFindingWording.RecoveryCoverageUnavailable(finding.Target, finding.Cause),
                 ExtensionUpdateFindingCode.RecoveryConflict => CliFindingWording.RecoveryConflict(finding.Target ?? recoveryPath ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheWorkspace()),
                 ExtensionUpdateFindingCode.RecoveryUnavailable => CliFindingWording.RecoveryUnavailable(finding.Target ?? ".agents"),
                 ExtensionUpdateFindingCode.LifecycleObservation => finding.Target is { } observedId

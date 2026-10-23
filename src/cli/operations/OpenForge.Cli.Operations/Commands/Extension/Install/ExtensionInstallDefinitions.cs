@@ -98,6 +98,8 @@ internal static class ExtensionInstallDefinitions
             ExtensionInstallFindingCode.RecoveryUnavailable => "extension-install.recovery-unavailable",
             ExtensionInstallFindingCode.LifecycleObservation => "extension-install.lifecycle-observation",
             ExtensionInstallFindingCode.PackageContentMissing => "extension-install.package-content-missing",
+            ExtensionInstallFindingCode.RecoveryHistory => "extension-install.recovery-history",
+            ExtensionInstallFindingCode.RecoveryCoverageUnavailable => "extension-install.recovery-coverage-unavailable",
             ExtensionInstallFindingCode.RecoveryArtifactRetained => "extension-install.recovery-artifact-retained",
             ExtensionInstallFindingCode.WriteFailed => "extension-install.write-failed",
             ExtensionInstallFindingCode.TopologyVerificationFailed => "extension-install.topology-verification-failed",
@@ -151,6 +153,8 @@ internal static class ExtensionInstallDefinitions
             ExtensionInstallFindingCode.LifecycleObservation
                 or ExtensionInstallFindingCode.MetadataProjectionSkipped
                 or ExtensionInstallFindingCode.PackageContentMissing
+                or ExtensionInstallFindingCode.RecoveryHistory
+                or ExtensionInstallFindingCode.RecoveryCoverageUnavailable
                 or ExtensionInstallFindingCode.RecoveryArtifactRetained
                 => CliSemanticStatus.Attention,
             ExtensionInstallFindingCode.WriteFailed
@@ -302,6 +306,8 @@ internal static class ExtensionInstallDefinitions
         return status switch
         {
             CliSemanticStatus.Complete => null,
+            CliSemanticStatus.Attention when findings.All(finding => finding.Code is
+                ExtensionInstallFindingCode.RecoveryHistory or ExtensionInstallFindingCode.RecoveryCoverageUnavailable) => null,
             CliSemanticStatus.Invalid => new CliNextAction(
                 confirmation is not null
                     ? Shared.Result.ExtensionInstallRetryCommand.From(request ?? throw new InvalidOperationException("Confirmation requires the Extension Install request."), confirmationRequired: true)

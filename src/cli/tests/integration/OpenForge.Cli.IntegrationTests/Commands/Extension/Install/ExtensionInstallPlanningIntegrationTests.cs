@@ -67,7 +67,7 @@ public sealed class ExtensionInstallPlanningIntegrationTests
         Assert.Contains(result.RootElement.GetProperty("effects").EnumerateArray(), effect =>
             effect.GetProperty("path").GetString() == target && effect.GetProperty("action").GetString() == "replaced");
         Assert.Equal(sourceBefore, source.Snapshot());
-        Assert.Equal(CliSemanticStatus.Complete, (await workspace.RunAsync(arguments)).Status);
+        Assert.Equal(CliSemanticStatus.Attention, (await workspace.RunAsync(arguments)).Status);
     }
 
     [Fact(DisplayName = "Root rendering preserves conflicts between canonical shared package sources"), Trait("Boundary", "OS"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]

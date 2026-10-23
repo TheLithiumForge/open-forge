@@ -7,9 +7,18 @@ internal sealed record StatusRecoveryCandidate(
 
 internal sealed record StatusRecovery
 {
+    public IReadOnlyList<StatusRecoveryStore> Stores { get; init; } = [];
+
     public required StatusIntegerValue VerifiedFinals { get; init; }
 
     public required StatusIntegerValue IncompleteDrafts { get; init; }
 
     public required IReadOnlyList<StatusRecoveryCandidate> Candidates { get; init; }
 }
+
+internal sealed record StatusRecoveryStore(
+    string Kind,
+    string? Path,
+    StatusValueState Coverage,
+    IReadOnlyList<StatusRecoveryCandidate> Candidates,
+    string? Cause);

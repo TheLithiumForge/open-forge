@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Presentation.Route.Update.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Commands.Route.Update;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
@@ -24,11 +26,11 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 public sealed class RouteUpdateRecoveryConflictCoordinateIntegrationTests
 {
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Route Update keeps an observed recovery candidate coordinate and blocks without effects"), Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
+    [Theory(DisplayName = "Route Update keeps an observed recovery candidate coordinate while unrelated work proceeds"), Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     [InlineData("valid-final")]
     [InlineData("draft")]
     [InlineData("malformed-final")]
-    public async Task ExistingRecoveryCandidateUsesObservedPathWithoutApplying(
+    public async Task ExistingRecoveryCandidateIsWarnedWithoutBlocking(
         string candidateKind)
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
@@ -41,19 +43,16 @@ public sealed class RouteUpdateRecoveryConflictCoordinateIntegrationTests
                 workspace.Request(),
                 TestContext.Current.CancellationToken);
 
-            Assert.Equal(CliSemanticStatus.Blocked, result.Status);
-            Assert.Equal(5, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
-            Assert.Equal(RouteUpdateIntegrationWorkspace.TargetId, result.Target.Requested);
-            var finding = Assert.Single(
-                result.Findings,
-                item => item.Code == RouteUpdateFindingCode.RecoveryConflict);
-            Assert.Equal(candidate.Path, finding.Target);
-            Assert.Equal(RouteUpdateRecoveryState.Retained, result.Recovery.State);
-            Assert.Equal(candidate.Path, result.Recovery.ResidualPath);
-            Assert.All(
-                result.Effects,
-                effect => Assert.Equal(RouteUpdateEffectOutcome.NotStarted, effect.Outcome));
-            Assert.Equal(before, workspace.SnapshotHashes());
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            Assert.Equal(0, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
+            Assert.DoesNotContain(result.Findings, item => item.Code == RouteUpdateFindingCode.RecoveryConflict);
+            Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
+            var report = RouteUpdateReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
+            Assert.Contains(report.Findings, item => item.Code == "route-update.recovery-history"
+                && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
+            Assert.NotEqual(candidate.Path, result.Recovery.ResidualPath);
+            Assert.NotEmpty(result.Effects);
+            Assert.Equal(RouteUpdateVerificationState.Verified, result.Verification);
             Assert.Equal(
                 candidate.Bytes,
                 await File.ReadAllBytesAsync(candidate.Path, TestContext.Current.CancellationToken));
@@ -65,8 +64,8 @@ public sealed class RouteUpdateRecoveryConflictCoordinateIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Route Update held-lease preparation retains the candidate observed after planning"), Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
-    public async Task HeldLeasePreparationRetainsLaterObservedPath()
+    [Fact(DisplayName = "Route Update prepares its own bundle while preserving history added after planning"), Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
+    public async Task HeldLeasePreparationPreservesLaterHistory()
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             "route-update-recovery-coordinate-held-lease");
@@ -93,11 +92,10 @@ public sealed class RouteUpdateRecoveryConflictCoordinateIntegrationTests
             },
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(RouteUpdateApplicationPreparationState.Blocked, preparation.State);
-        Assert.Equal(RouteUpdateFindingCode.RecoveryConflict, preparation.Finding?.Code);
-        Assert.Equal(candidate.Path, preparation.Finding?.Target);
-        Assert.Equal(RouteUpdateRecoveryState.Retained, preparation.Recovery.State);
-        Assert.Equal(candidate.Path, preparation.Recovery.ResidualPath);
+        Assert.Equal(RouteUpdateApplicationPreparationState.Ready, preparation.State);
+        Assert.NotNull(preparation.RecoveryPreparation);
+        Assert.NotEqual(candidate.Path, preparation.RecoveryPreparation.BundlePath);
+        RecoveryBundleStoreIntegrationTests.DeleteOwned(preparation.RecoveryPreparation.BundlePath);
         Assert.Equal(before, workspace.SnapshotHashes());
         Assert.Equal(
             candidate.Bytes,

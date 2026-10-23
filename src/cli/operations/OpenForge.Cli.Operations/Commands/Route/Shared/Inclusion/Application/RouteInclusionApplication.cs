@@ -60,13 +60,6 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
                 var validation = await revalidator.ValidateAsync(lease, plan.Changes, token).ConfigureAwait(false);
                 if (validation.State != MutationValidationState.Valid || validation.Checks.Count != plan.Changes.Length)
                     return Stop(result, CliSemanticStatus.Blocked, RouteInclusionFindingCode.TargetChanged, validation.Cause ?? "Review a fresh preview and retry.");
-                var catalogue = await RecoveryBundleCatalogue.ReadAsync(plan.Request.Workspace, token).ConfigureAwait(false);
-                token.ThrowIfCancellationRequested();
-                if (catalogue.State != RecoveryBundleCatalogueState.Available)
-                    return Stop(result, CliSemanticStatus.Incomplete, RouteInclusionFindingCode.RecoveryUnavailable, catalogue.Cause ?? "Recovery storage is unavailable. Retry when it is readable.");
-                if (!catalogue.Candidates.IsEmpty)
-                    return Stop(result with { Recovery = RouteInclusionRecoveryState.Retained, RecoveryPath = catalogue.Candidates[0].Path },
-                        CliSemanticStatus.Blocked, RouteInclusionFindingCode.RecoveryConflict, "Resolve the existing recovery artifact before retrying.");
                 var operation = plan.Request.Action == RouteInclusionAction.Include ? RecoveryBundleOperation.Include : RecoveryBundleOperation.Exclude;
                 result = result with { Recovery = RouteInclusionRecoveryState.Unknown };
                 var prepared = await RecoveryBundleStore.PrepareAsync(RecoveryBundleInput.Create(

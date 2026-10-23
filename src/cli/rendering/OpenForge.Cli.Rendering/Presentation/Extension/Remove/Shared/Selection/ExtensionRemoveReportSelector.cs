@@ -266,11 +266,14 @@ internal static class ExtensionRemoveReportSelector
     {
         var finding = result.Findings.FirstOrDefault(finding => finding.Status == result.Status)
             ?? result.Findings.FirstOrDefault();
-        if (result.Status == CliSemanticStatus.Complete
+        if ((result.Status == CliSemanticStatus.Complete
+                || result.Status == CliSemanticStatus.Attention && result.Findings.All(finding =>
+                    finding.Code is ExtensionRemoveFindingCode.RecoveryHistory or ExtensionRemoveFindingCode.RecoveryCoverageUnavailable))
             && ((result.Paths.Count == 0 && result.Effects.Count == 0)
                 || result.Findings.Any(finding => finding.Code == ExtensionRemoveFindingCode.OwnershipObservation)))
         {
-            return new(ExtensionRemoveWording.NoFilesRecorded(id), CliHeadlineKind.NothingToDo);
+            return new(ExtensionRemoveWording.NoFilesRecorded(id), result.Status == CliSemanticStatus.Attention
+                ? CliHeadlineKind.Warnings : CliHeadlineKind.NothingToDo);
         }
 
         if (result.Status == CliSemanticStatus.Complete && result.Mode == ExtensionRemoveMode.DryRun)

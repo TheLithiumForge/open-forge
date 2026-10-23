@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Route.Shared.Recovery;
 using OpenForge.Cli.Core.Presentation.Route.Shared.NextActions;
 using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Globalization;
@@ -32,7 +33,8 @@ internal static class RouteRemoveReportSelector
             Workspace = result.WorkspacePath is { } workspace
                 ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit)
                 : null,
-            Findings = result.Findings.Select(finding => Finding(result, finding)).ToArray(),
+            Findings = result.Findings.Select(finding => Finding(result, finding))
+                .Concat(RouteRecoveryHistoryFindings.Read(result.RecoveryHistory, "route-remove")).ToArray(),
             Effects = result.Effects.Select(effect => Effect(effect, selection.Detail)).ToArray(),
             Counts = Counts(result),
             Data = Data(result, selection.Detail),

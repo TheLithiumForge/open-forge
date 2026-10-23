@@ -29,7 +29,7 @@ public sealed class CleanupPresentationContractTests
      Trait("Evidence", "Unit")]
     public void NativeDataPreservesPropertyOrderAndNullableBoundaries()
     {
-        AssertProperties<CleanupData>("Mode", "Items", "NotEligible", "Lock", "FinalCheck");
+        AssertProperties<CleanupData>("Stores", "Mode", "Items", "NotEligible", "Lock", "FinalCheck");
         AssertProperties<CleanupDataItem>("Path", "Kind", "Outcome", "Origin", "Integrity");
         AssertProperties<CleanupDataNotEligible>("Path", "Reason");
 

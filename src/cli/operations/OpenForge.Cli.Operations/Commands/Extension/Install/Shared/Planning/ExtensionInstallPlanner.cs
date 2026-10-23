@@ -254,6 +254,7 @@ internal sealed class ExtensionInstallPlanner
             IntendedExtensions = targetState.IntendedExtensions,
             Topology = foundation.Topology,
             TopologyFindings = topologyFindings,
+            HistoryFindings = foundation.HistoryFindings,
             ForceEligiblePaths = targetState.EligibleOccupants,
             Facts = facts,
             Effects = effectPlan.Effects,
@@ -262,7 +263,7 @@ internal sealed class ExtensionInstallPlanner
         });
         return new ExtensionInstallPlanBuild(
             plan,
-            ExtensionInstallResultFactory.Result(request, facts, plan.TopologyFindings));
+            ExtensionInstallResultFactory.Result(request, facts, plan.TopologyFindings.Concat(plan.HistoryFindings)));
     }
 
     internal ValueTask<ExtensionInstallFinding?> AuthorizeForceAsync(

@@ -38,8 +38,7 @@ internal static class ExtensionInstallReportSelector
             .ToArray() ?? [];
         var projectedEffects = result.Effects.Select(effect => ProjectEffect(effect, result.Recovery.State)).ToArray();
         var counts = Counts(result, preview, projectedEffects);
-        var noOp = result.Status == CliSemanticStatus.Complete
-            && result.Lifecycle.Outcome == ExtensionInstallLifecycleOutcome.AlreadyCurrent;
+        var noOp = IsNoOp(result);
         var textNextLines = TextNextLines(result, primaryId);
         var data = new ExtensionInstallData
         {
@@ -155,6 +154,8 @@ internal static class ExtensionInstallReportSelector
                 result.Mode == ExtensionInstallMode.DryRun
                     ? CliHeadlineKind.Preview
                     : CliHeadlineKind.Done),
+            CliSemanticStatus.Attention when noOp => new(
+                ExtensionInstallWording.AlreadyInstalled(primaryId), CliHeadlineKind.Warnings),
             CliSemanticStatus.Attention when finding?.Code == ExtensionInstallFindingCode.PackageContentMissing
                 => new(
                     ExtensionInstallWording.NothingInstalled(SourceName(result)),
@@ -214,7 +215,8 @@ internal static class ExtensionInstallReportSelector
         var matching = result.Findings
             .Where(finding => finding.Status == result.Status)
             .ToArray();
-        return matching.Length == 0 || matching[0].Code == ExtensionInstallFindingCode.MetadataProjectionSkipped
+        return matching.Length == 0 || matching[0].Code is ExtensionInstallFindingCode.MetadataProjectionSkipped
+            or ExtensionInstallFindingCode.RecoveryHistory or ExtensionInstallFindingCode.RecoveryCoverageUnavailable
             ? null
             : ExtensionInstallWording.FindingCode(matching[0].Code);
     }
@@ -274,6 +276,8 @@ internal static class ExtensionInstallReportSelector
                 or ExtensionInstallFindingCode.OwnershipConflict
                 or ExtensionInstallFindingCode.RecoveryConflict
                 or ExtensionInstallFindingCode.RecoveryUnavailable
+                or ExtensionInstallFindingCode.RecoveryHistory
+                or ExtensionInstallFindingCode.RecoveryCoverageUnavailable
                 or ExtensionInstallFindingCode.RecoveryArtifactRetained
                 or ExtensionInstallFindingCode.WriteFailed
                 or ExtensionInstallFindingCode.TopologyVerificationFailed
@@ -417,6 +421,8 @@ internal static class ExtensionInstallReportSelector
                 Sentence(finding.Cause)),
             ExtensionInstallFindingCode.WorkspaceLockUnavailable => CliFindingWording.WorkspaceLockUnavailable(),
             ExtensionInstallFindingCode.TargetChanged => CliFindingWording.TargetChanged(target),
+            ExtensionInstallFindingCode.RecoveryHistory => CliFindingWording.RecoveryHistory(finding.Target ?? throw new InvalidOperationException("Recovery history requires an artifact path.")),
+            ExtensionInstallFindingCode.RecoveryCoverageUnavailable => CliFindingWording.RecoveryCoverageUnavailable(finding.Target, finding.Cause),
             ExtensionInstallFindingCode.RecoveryConflict => CliFindingWording.RecoveryConflict(target),
             ExtensionInstallFindingCode.RecoveryUnavailable => CliFindingWording.RecoveryUnavailable(target),
             ExtensionInstallFindingCode.RecoveryArtifactRetained => finding.Cause,
@@ -568,7 +574,8 @@ internal static class ExtensionInstallReportSelector
 
         return
         [
-            new CliCount("packagesInstalled", global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.LabelPackagesInstalled(), result.Status == CliSemanticStatus.Complete && !IsNoOp(result) ? packageIds : 0),
+            new CliCount("packagesInstalled", global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.LabelPackagesInstalled(),
+                (result.Status == CliSemanticStatus.Complete || HistoryOnlyWarning(result)) && !IsNoOp(result) ? packageIds : 0),
             new CliCount("filesCreated", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFilesCreated(), created),
             new CliCount("filesReplaced", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFilesReplaced(), replaced),
             new CliCount("sectionsUpdated", global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionsUpdated(), sections),
@@ -577,8 +584,12 @@ internal static class ExtensionInstallReportSelector
     }
 
     private static bool IsNoOp(ExtensionInstallResult result)
-        => result.Status == CliSemanticStatus.Complete
+        => (result.Status == CliSemanticStatus.Complete || HistoryOnlyWarning(result))
             && result.Lifecycle.Outcome == ExtensionInstallLifecycleOutcome.AlreadyCurrent;
+
+    private static bool HistoryOnlyWarning(ExtensionInstallResult result)
+        => result.Status == CliSemanticStatus.Attention && result.Findings.All(finding =>
+            finding.Code is ExtensionInstallFindingCode.RecoveryHistory or ExtensionInstallFindingCode.RecoveryCoverageUnavailable);
 
     private static CliEffect ProjectEffect(ExtensionInstallEffect effect, ExtensionInstallRecoveryState recoveryState)
         => new()

@@ -6,5 +6,8 @@ Workspace: <workspace>
          Inspect the recovery store before relying on this Cleanup result.
   No workspace lock was needed.
   No final recovery-store check was needed.
+  items left in place: The recovery storage directory chain contains a
+  non-directory:
+  <recovery-store>
   Inspect the recovery store before relying on this Cleanup result.
 Next: open-forge doctor --workspace <workspace>

@@ -25,6 +25,8 @@ public sealed class DoctorBeforeOutputSnapshotTests
     [InlineData("stale-entries", (int)CliSemanticStatus.Attention)]
     [InlineData("library-drift", (int)CliSemanticStatus.Attention)]
     [InlineData("recovery-bundle", (int)CliSemanticStatus.Complete)]
+    [InlineData("recovery-stores", (int)CliSemanticStatus.Complete)]
+    [InlineData("recovery-legacy-unavailable", (int)CliSemanticStatus.Incomplete)]
     public void Diagnosis(string situation, int expectedStatus)
     {
         var result = DoctorBeforeOutputFixtures.Create(situation);

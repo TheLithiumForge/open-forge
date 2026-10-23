@@ -41,7 +41,7 @@
       "kind": "file",
       "action": "deleted",
       "outcome": "unknown",
-      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "reason": "No deletion was attempted. The candidate's current disposition was not established.",
       "owner": "open-forge index"
     },
     {
@@ -49,7 +49,7 @@
       "kind": "file",
       "action": "deleted",
       "outcome": "unknown",
-      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "reason": "No deletion was attempted. The candidate's current disposition was not established.",
       "owner": "open-forge repair"
     },
     {
@@ -57,7 +57,7 @@
       "kind": "file",
       "action": "deleted",
       "outcome": "unknown",
-      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "reason": "No deletion was attempted. The candidate's current disposition was not established.",
       "owner": null
     }
   ],

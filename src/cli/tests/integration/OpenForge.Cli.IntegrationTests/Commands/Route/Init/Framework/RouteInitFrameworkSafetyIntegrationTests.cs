@@ -276,16 +276,17 @@ public sealed class RouteInitFrameworkSafetyIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Framework recovery candidate conflict blocks apply and dry-run plans without consuming the candidate"),
+    [Theory(DisplayName = "Framework recovery history permits apply and dry-run plans without consuming the candidate"),
      Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration"),
      InlineData(false),
      InlineData(true)]
-    public static async Task ExistingRecoveryCandidateBlocksBeforeEffects(bool dryRun)
+    public static async Task ExistingRecoveryHistoryDoesNotBlockEffects(bool dryRun)
     {
         using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
             "route-init-framework-recovery-conflict",
             TestContext.Current.CancellationToken);
         var candidate = workspace.CreateRecoveryConflictCandidate();
+        var candidateBytes = File.ReadAllBytes(candidate);
         var before = workspace.SnapshotHashes();
 
         var result = await ExecuteAsync(
@@ -293,14 +294,11 @@ public sealed class RouteInitFrameworkSafetyIntegrationTests
             "memory/release-notes/working",
             dryRun ? RouteInitMode.DryRun : RouteInitMode.Apply);
 
-        Assert.Equal(CliSemanticStatus.Blocked, result.Status);
-        Assert.Contains(
-            result.Findings,
-            finding => finding.Code == RouteInitFindingCode.RecoveryConflict);
-        Assert.True(File.Exists(candidate));
-        Assert.Equal(before, workspace.SnapshotHashes());
-        Assert.Equal(RouteInitLifecycleOutcome.NotStarted, result.Lifecycle.Outcome);
-        Assert.Equal(RouteInitVerificationState.NotRequested, result.Verification);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Contains(candidate, result.RecoveryHistory.Paths);
+        Assert.Equal(candidateBytes, File.ReadAllBytes(candidate));
+        if (dryRun) Assert.Equal(before, workspace.SnapshotHashes());
+        else Assert.Equal(RouteInitVerificationState.Verified, result.Verification);
     }
 
     private static ValueTask<RouteInitResult> ExecuteAsync(

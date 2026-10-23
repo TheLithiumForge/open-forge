@@ -1,0 +1,6 @@
+The toolkit Extension is already installed and matches the package. Nothing to do.
+Workspace: <workspace>
+  Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>  Recovery bundle is unavailable
+         Recovery history at <workspace>/.open-forge-state/recovery/v1/<workspace-key> could not be checked completely: The recovery workspace storage path is not a directory.. Current workspace validation still applies.
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  ownership record unchanged

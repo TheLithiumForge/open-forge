@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Route.Shared.Recovery;
 using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Commands.Route.Exclude.Models.Result;
 using OpenForge.Cli.Core.Presentation.Route.Exclude.Models;
@@ -46,7 +47,7 @@ internal static class RouteExcludeReportSelector
             Headline = new CliHeadline(sentence, kind),
             HeadlineFindingCode = result.Status is CliSemanticStatus.Invalid or CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete ? code : null,
             Workspace = result.WorkspacePath is { } workspace ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit) : null,
-            Findings = code is null ? [] :
+            Findings = (code is null ? Array.Empty<CliFinding>() :
             [
                 new CliFinding
                 {
@@ -57,7 +58,7 @@ internal static class RouteExcludeReportSelector
                     Subject = new CliSubject(CliSubjectKind.File, Path: path),
                     Actions = result.Next is { } next ? [next] : [],
                 },
-            ],
+            ]).Concat(RouteRecoveryHistoryFindings.Read(result.RecoveryHistory, "route-exclude")).ToArray(),
             Effects = outcome.Effects.Select(effect => new CliEffect
             {
                 Path = effect.Path,

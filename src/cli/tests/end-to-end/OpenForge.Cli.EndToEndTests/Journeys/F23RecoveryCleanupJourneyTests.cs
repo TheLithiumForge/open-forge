@@ -14,14 +14,15 @@ public sealed class F23RecoveryCleanupJourneyTests
     private const string Feature = "f23-recovery-cleanup-journey";
     private const string WorkspaceNotePath = "workspace-note.md";
 
-    [Fact(DisplayName = "F23 C07-03 C07-02 C07-01 cleanup carries one real workspace through preview, removal, and no-op")]
+    [Theory(DisplayName = "F23 C07-03 C07-02 C07-01 cleanup carries each recovery store through preview, removal, and no-op")]
+    [InlineData(false), InlineData(true)]
     [Trait("Feature", Feature)]
     [Trait("Evidence", "EndToEnd")]
     [Trait("Journey", "F23")]
-    public async Task C07MainJourneyCarriesRealRecoveryStateThroughPreviewRemovalAndNoOp()
+    public async Task C07MainJourneyCarriesRealRecoveryStateThroughPreviewRemovalAndNoOp(bool legacyStore)
     {
         using var workspace = await CreateInstalledWorkspaceAsync("f23-main");
-        using var fixture = RecoveryFixture.Create(workspace);
+        using var fixture = RecoveryFixture.Create(workspace, legacyStore);
         var sourceBefore = CaptureSourceInventory(workspace);
         var previewBefore = CaptureFullInventory(workspace, fixture);
 
@@ -68,6 +69,36 @@ public sealed class F23RecoveryCleanupJourneyTests
         Assert.True(File.Exists(fixture.ForeignPath));
     }
 
+    [Fact(DisplayName = "F23 Cleanup reports and removes bundles from both recorded recovery stores")]
+    [Trait("Feature", Feature), Trait("Evidence", "EndToEnd"), Trait("Journey", "F23")]
+    public async Task BothStoresAreReportedAndCleaned()
+    {
+        using var workspace = await CreateInstalledWorkspaceAsync("f23-both-stores");
+        using var local = RecoveryFixture.Create(workspace, legacyStore: false);
+        using var legacy = RecoveryFixture.Create(workspace, legacyStore: true);
+        var preview = await workspace.RunAsync("cleanup", "--dry-run", "--format", "json", "--detail", "full");
+        Assert.Equal(0, preview.ExitCode);
+        using (var document = JsonDocument.Parse(preview.StandardOutput))
+        {
+            var stores = document.RootElement.GetProperty("data").GetProperty("stores").EnumerateArray().ToArray();
+            Assert.Equal(["workspace", "legacy"], stores.Select(store => store.GetProperty("kind").GetString()));
+            Assert.Equal(local.SelectedRecoveryDirectory, stores[0].GetProperty("path").GetString());
+            Assert.Equal(legacy.SelectedRecoveryDirectory, stores[1].GetProperty("path").GetString());
+            Assert.All(stores, store => Assert.Equal(3, store.GetProperty("candidates").GetArrayLength()));
+        }
+
+        var applied = await workspace.RunAsync("cleanup");
+        Assert.Equal(0, applied.ExitCode);
+        Assert.Contains("Removed 4 recovery bundles and 2 unfinished drafts.", applied.StandardOutput, StringComparison.Ordinal);
+        foreach (var fixture in new[] { local, legacy })
+        {
+            Assert.False(File.Exists(fixture.FirstBundlePath));
+            Assert.False(File.Exists(fixture.SecondBundlePath));
+            Assert.False(File.Exists(fixture.DraftPath));
+            Assert.True(File.Exists(fixture.UnknownPath));
+        }
+    }
+
     [Fact(DisplayName = "F23 C07-04 damaged selected-workspace candidate is retained while independent recovery items are removed")]
     [Trait("Feature", Feature)]
     [Trait("Evidence", "EndToEnd")]
@@ -75,7 +106,7 @@ public sealed class F23RecoveryCleanupJourneyTests
     public async Task C07DamagedCandidateDoesNotBlockIndependentRemoval()
     {
         using var workspace = await CreateInstalledWorkspaceAsync("f23-damaged");
-        using var fixture = RecoveryFixture.Create(workspace, includeDamagedCandidate: true);
+        using var fixture = RecoveryFixture.Create(workspace, legacyStore: true, includeDamagedCandidate: true);
         var damagedBytes = File.ReadAllBytes(fixture.DamagedPath);
 
         var result = await workspace.RunAsync("cleanup");
@@ -107,7 +138,7 @@ public sealed class F23RecoveryCleanupJourneyTests
         }
 
         using var workspace = await CreateInstalledWorkspaceAsync("f23-unreadable");
-        using var fixture = RecoveryFixture.Create(workspace);
+        using var fixture = RecoveryFixture.Create(workspace, legacyStore: true);
         var before = CaptureFullInventory(workspace, fixture);
         var ownedDataHomeRoot = workspace.LockStore.LocalApplicationDataDirectory;
         var selectedRecoveryDirectory = fixture.SelectedRecoveryDirectory;
@@ -153,7 +184,7 @@ public sealed class F23RecoveryCleanupJourneyTests
         }
 
         using var workspace = await CreateInstalledWorkspaceAsync("f23-partial");
-        using var fixture = RecoveryFixture.Create(workspace);
+        using var fixture = RecoveryFixture.Create(workspace, legacyStore: true);
         var sourceBefore = CaptureSourceInventory(workspace);
 
         using (var held = new FileStream(
@@ -310,9 +341,12 @@ public sealed class F23RecoveryCleanupJourneyTests
 
         internal static RecoveryFixture Create(
             PublishedJourneyWorkspace workspace,
+            bool legacyStore,
             bool includeDamagedCandidate = false)
         {
-            var selected = workspace.LockStore.RecoveryWorkspaceDirectory(workspace.Path);
+            var selected = legacyStore
+                ? workspace.LockStore.RecoveryWorkspaceDirectory(workspace.Path)
+                : PublishedWorkspaceLockStore.LocalRecoveryWorkspaceDirectory(workspace.Path);
             var foreign = Path.Combine(
                 workspace.LockStore.RecoveryStoreRoot,
                 Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes("foreign-workspace"))));

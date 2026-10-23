@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "completed-with-warnings",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "The toolkit Extension is already installed and matches the package. Nothing to do.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-install.recovery-history",
+      "title": "Recovery bundle was retained",
+      "message": "Recovery data from an earlier run remains at <workspace>/.open-forge-state/recovery/v1/<workspace-key>\\operation-11111111111111111111111111111111.draft. It does not block this operation.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>/.open-forge-state/recovery/v1/<workspace-key>\\operation-11111111111111111111111111111111.draft",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "extension-install.recovery-history",
+      "title": "Recovery bundle was retained",
+      "message": "Recovery data from an earlier run remains at <workspace>/.open-forge-state/recovery/v1/<workspace-key>\\operation-22222222222222222222222222222222.zip. It does not block this operation.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>/.open-forge-state/recovery/v1/<workspace-key>\\operation-22222222222222222222222222222222.zip",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "warnings": 2
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

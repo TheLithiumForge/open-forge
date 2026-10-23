@@ -1,0 +1,10 @@
+The toolkit Extension is up to date. Nothing to do.
+Workspace: <workspace>
+  Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.draft  Recovery bundle was retained
+         Recovery data from an earlier run remains at <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.draft. It does not block this operation.
+  Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-22222222222222222222222222222222.zip  Recovery bundle was retained
+         Recovery data from an earlier run remains at <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-22222222222222222222222222222222.zip. It does not block this operation.
+  Source: <extension-source>
+  Dependency closure: toolkit
+  1 file unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Presentation.Route.Init.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
@@ -27,9 +29,10 @@ public sealed class RouteInitRecoveryConflictCoordinateIntegrationTests
     private const string RouteTarget = "memory/project-alpha";
 
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Generic Route Init keeps an observed recovery candidate coordinate and blocks without effects"), Trait("Feature", "route-init"), Trait("Evidence", "IntegrationSafety")]
+    [Theory(DisplayName = "Generic Route Init keeps an observed recovery candidate coordinate while unrelated work proceeds"), Trait("Feature", "route-init"), Trait("Evidence", "IntegrationSafety")]
     [InlineData("valid-final", false)]
     [InlineData("draft", false)]
+    [InlineData("malformed-final", false)]
     [InlineData("malformed-final", true)]
     public async Task GenericPlanningReportsObservedPathAndPreservesRequestedRoute(
         string candidateKind,
@@ -55,17 +58,17 @@ public sealed class RouteInitRecoveryConflictCoordinateIntegrationTests
                     workspace.Request(RouteTarget, mode),
                     TestContext.Current.CancellationToken);
 
-            Assert.Equal(CliSemanticStatus.Blocked, result.Status);
-            Assert.Equal(5, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
-            Assert.Equal(RouteTarget, result.Target.Requested);
-            var finding = Assert.Single(
-                result.Findings,
-                item => item.Code == RouteInitFindingCode.RecoveryConflict);
-            Assert.Equal(candidate.Path, finding.Target);
-            Assert.Equal(RouteInitRecoveryState.NotRequired, result.Recovery.State);
-            Assert.Null(result.Recovery.ResidualPath);
-            Assert.Empty(result.Effects);
-            Assert.Equal(before, workspace.SnapshotHashes());
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            Assert.Equal(0, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
+            Assert.DoesNotContain(result.Findings, item => item.Code == RouteInitFindingCode.RecoveryConflict);
+            Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
+            var report = RouteInitReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
+            Assert.Contains(report.Findings, item => item.Code == "route-init.recovery-history"
+                && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
+            Assert.NotEqual(candidate.Path, result.Recovery.ResidualPath);
+            Assert.NotEmpty(result.Effects);
+            if (dryRun) Assert.Equal(before, workspace.SnapshotHashes());
+            else Assert.Equal(RouteInitVerificationState.Verified, result.Verification);
             Assert.Equal(
                 candidate.Bytes,
                 await File.ReadAllBytesAsync(candidate.Path, TestContext.Current.CancellationToken));
@@ -100,16 +103,15 @@ public sealed class RouteInitRecoveryConflictCoordinateIntegrationTests
                     workspace.Request(target, RouteInitMode.DryRun),
                     TestContext.Current.CancellationToken);
 
-            Assert.Equal(CliSemanticStatus.Blocked, result.Status);
-            Assert.Equal(5, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
-            Assert.Equal(target, result.Target.Requested);
-            var finding = Assert.Single(
-                result.Findings,
-                item => item.Code == RouteInitFindingCode.RecoveryConflict);
-            Assert.Equal(candidate.Path, finding.Target);
-            Assert.Equal(RouteInitRecoveryState.NotRequired, result.Recovery.State);
-            Assert.Null(result.Recovery.ResidualPath);
-            Assert.Empty(result.Effects);
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            Assert.Equal(0, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
+            Assert.DoesNotContain(result.Findings, item => item.Code == RouteInitFindingCode.RecoveryConflict);
+            Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
+            var report = RouteInitReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
+            Assert.Contains(report.Findings, item => item.Code == "route-init.recovery-history"
+                && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
+            Assert.NotEqual(candidate.Path, result.Recovery.ResidualPath);
+            Assert.NotEmpty(result.Effects);
             Assert.Equal(before, workspace.SnapshotHashes());
             Assert.Equal(
                 candidate.Bytes,
@@ -122,8 +124,8 @@ public sealed class RouteInitRecoveryConflictCoordinateIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Generic Route Init application recovery preparation retains the later observed candidate path"), Trait("Feature", "route-init"), Trait("Evidence", "IntegrationSafety")]
-    public async Task ApplicationRecoveryPreparationRetainsLaterObservedPath()
+    [Fact(DisplayName = "Generic Route Init prepares its own bundle while preserving history added after planning"), Trait("Feature", "route-init"), Trait("Evidence", "IntegrationSafety")]
+    public async Task ApplicationRecoveryPreparationPreservesLaterHistory()
     {
         using var workspace = GenericRouteInitIntegrationWorkspace.Create(
             "route-init-recovery-coordinate-application");
@@ -145,10 +147,10 @@ public sealed class RouteInitRecoveryConflictCoordinateIntegrationTests
                 Guid.NewGuid(),
                 TestContext.Current.CancellationToken);
 
-            Assert.Equal(RouteInitRecoveryPreparationState.Blocked, preparation.State);
-            Assert.Equal(RouteInitRecoveryState.Retained, preparation.Recovery.State);
-            Assert.Equal(candidate.Path, preparation.Recovery.ResidualPath);
-            Assert.Null(preparation.Preparation);
+            Assert.Equal(RouteInitRecoveryPreparationState.Prepared, preparation.State);
+            Assert.NotNull(preparation.Preparation);
+            Assert.NotEqual(candidate.Path, preparation.Preparation.BundlePath);
+            RecoveryBundleStoreIntegrationTests.DeleteOwned(preparation.Preparation.BundlePath);
             Assert.Equal(before, workspace.SnapshotHashes());
             Assert.Equal(
                 candidate.Bytes,

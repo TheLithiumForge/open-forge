@@ -5,6 +5,9 @@ namespace OpenForge.Cli.Core.Presentation.Doctor.Models;
 internal sealed record DoctorData
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<DoctorDataRecoveryStore>? RecoveryStores { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<DoctorDataCategory>? Categories { get; init; }
 
     [JsonIgnore]
@@ -61,3 +64,9 @@ internal sealed record DoctorDataLanes
 
     public required long BlockedRepair { get; init; }
 }
+
+internal sealed record DoctorDataRecoveryStore(
+    string Kind, string? Path, string Coverage,
+    IReadOnlyList<DoctorDataRecoveryCandidate> Candidates, string? Cause);
+
+internal sealed record DoctorDataRecoveryCandidate(string Path, string Kind, string Integrity, string? Cause);

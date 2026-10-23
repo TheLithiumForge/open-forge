@@ -188,6 +188,8 @@ internal static class ExtensionRemoveWording
         ExtensionRemoveFindingCode.TargetChanged => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetChanged(),
         ExtensionRemoveFindingCode.RecoveryConflict => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleBlocksRemoval(),
         ExtensionRemoveFindingCode.RecoveryUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsUnavailable(),
+        ExtensionRemoveFindingCode.RecoveryHistory => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleWasRetained(),
+        ExtensionRemoveFindingCode.RecoveryCoverageUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsUnavailable(),
         ExtensionRemoveFindingCode.RecoveryArtifactRetained => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleWasRetained(),
         ExtensionRemoveFindingCode.WriteFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWritingFailed(),
         ExtensionRemoveFindingCode.TopologyVerificationFailed => global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.TitleEntriesVerificationFailed(),
@@ -222,6 +224,9 @@ internal static class ExtensionRemoveWording
                     ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageGeneratedNavigationPathExcluded(path)
                     : finding.Cause,
                 ExtensionRemoveFindingCode.WorkspaceLockUnavailable => LockUnavailable(),
+                ExtensionRemoveFindingCode.RecoveryHistory => CliFindingWording.RecoveryHistory(
+                    finding.Target ?? throw new InvalidOperationException("Recovery history requires an artifact path.")),
+                ExtensionRemoveFindingCode.RecoveryCoverageUnavailable => CliFindingWording.RecoveryCoverageUnavailable(finding.Target, finding.Cause),
                 ExtensionRemoveFindingCode.WriteFailed => CliFindingWording.CauseSentence(finding.Cause),
                 ExtensionRemoveFindingCode.Interrupted => Cancelled(),
                 _ => finding.Cause,

@@ -39,7 +39,7 @@ public sealed class PublishedCleanupProcessTests
     public async Task ApplicationRemovesEligibleItemsPreservesBlockedAndUnknownThenRepeatsAsNoOp()
     {
         var target = PublishedExecutableTarget.Discover();
-        using var workspace = PublishedCleanupWorkspace.CreateWithArtifacts();
+        using var workspace = PublishedCleanupWorkspace.CreateWithArtifacts(legacyStore: true);
         var unknownHash = PublishedCleanupWorkspace.HashFile(workspace.UnknownPath);
         var blockedHash = PublishedCleanupWorkspace.HashFile(workspace.ForeignBlockedPath);
         var nestedSentinelHash = PublishedCleanupWorkspace.HashFile(workspace.NestedSentinelPath);
@@ -94,7 +94,7 @@ public sealed class PublishedCleanupProcessTests
     public async Task DryRunJsonIsDeterministicTypedContingentAndLeaseFree()
     {
         var target = PublishedExecutableTarget.Discover();
-        using var workspace = PublishedCleanupWorkspace.CreateWithArtifacts();
+        using var workspace = PublishedCleanupWorkspace.CreateWithArtifacts(legacyStore: true);
         var nestedSentinelHash = PublishedCleanupWorkspace.HashFile(workspace.NestedSentinelPath);
         PublishedCleanupWorkspace.AssertNestedSupportSnapshot(workspace.SnapshotState(), nestedSentinelHash);
 

@@ -111,6 +111,8 @@ public sealed class ExtensionUpdateDefinitionsTests
             ("extension-update.recovery-unavailable", CliSemanticStatus.Incomplete),
             ("extension-update.lifecycle-observation", CliSemanticStatus.Attention),
             ("extension-update.recovery-artifact-retained", CliSemanticStatus.Attention),
+            ("extension-update.recovery-history", CliSemanticStatus.Attention),
+            ("extension-update.recovery-coverage-unavailable", CliSemanticStatus.Attention),
             ("extension-update.write-failed", CliSemanticStatus.Failed),
             ("extension-update.topology-verification-failed", CliSemanticStatus.Failed),
             ("extension-update.lifecycle-publication-failed", CliSemanticStatus.Failed),

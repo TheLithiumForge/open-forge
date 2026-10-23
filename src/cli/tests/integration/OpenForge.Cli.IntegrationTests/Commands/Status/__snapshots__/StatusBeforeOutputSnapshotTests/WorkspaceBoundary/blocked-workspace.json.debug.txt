@@ -120,6 +120,7 @@
     "extensions": [],
     "libraries": [],
     "recovery": {
+      "stores": [],
       "candidates": []
     }
   },

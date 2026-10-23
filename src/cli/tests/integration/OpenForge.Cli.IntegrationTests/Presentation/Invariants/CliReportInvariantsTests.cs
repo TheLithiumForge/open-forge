@@ -830,7 +830,7 @@ public sealed class CliReportInvariantsTests
             if (found < 0
                 && RequiredString(effect, "action") == "created"
                 && ((detail == "minimal"
-                        && (path.Contains("ExtensionInstallBeforeOutputSnapshotTests", StringComparison.Ordinal)
+                        && (RequiredString(root, "command") == "extension install"
                             || RequiredString(root, "command") == "install"
                             || path.Contains("LibraryAttachBeforeOutputSnapshotTests", StringComparison.Ordinal)))
                     || path.Contains("InstallBeforeOutputSnapshotTests", StringComparison.Ordinal)

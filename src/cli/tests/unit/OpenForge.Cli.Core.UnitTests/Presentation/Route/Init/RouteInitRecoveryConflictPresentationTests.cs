@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Recovery.Models;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
@@ -19,6 +20,38 @@ public sealed class RouteInitRecoveryConflictPresentationTests
 {
     private const string RequestedRouteId = "memory/project-alpha/documents";
     private const string RequestedRoutePath = ".agents/memory/project-alpha/documents/_documents.md";
+    [Fact(DisplayName = "Route Init retains history warnings separately at every detail level"), Trait("Boundary", "Output")]
+    public void RecoveryHistoryProjectionIsStableAtEveryDetailLevel()
+    {
+        var baseline = Result();
+        var result = baseline with
+        {
+            RecoveryHistory = new RouteRecoveryHistory(
+                ["recovery/prior-final.zip", "recovery/prior-draft.tmp"],
+                [new RouteRecoveryCoverageFailure("legacy/recovery", "Access was denied.")]),
+        };
+        var captures = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var detail in Enum.GetValues<CliDetail>())
+        {
+            var report = RouteInitReportSelector.Select(result, new CliSelection(detail, null));
+            Assert.Equal(baseline.Status, report.Status);
+            Assert.Equal(baseline.Recovery, result.Recovery);
+            Assert.Equal(3, report.Findings.Count);
+            Assert.All(report.Findings, finding => Assert.Equal(CliSeverity.Warning, finding.Severity));
+            Assert.Equal(result.RecoveryHistory.Paths, report.Findings.Take(2).Select(finding => finding.Subject.Path));
+            var text = Render(result, CliFormat.Text, detail).PrimaryContent;
+            var jsonText = Render(result, CliFormat.Json, detail).PrimaryContent;
+            Assert.All(result.RecoveryHistory.Paths, path => Assert.Contains(path, text, StringComparison.Ordinal));
+            Assert.Contains("legacy/recovery", text, StringComparison.Ordinal);
+            using var json = JsonDocument.Parse(jsonText);
+            Assert.Equal(3, json.RootElement.GetProperty("findings").GetArrayLength());
+            var detailName = detail.ToString().ToLowerInvariant();
+            captures.Add($"recovery-history.{detailName}", text.Replace("\r\n", "\n", StringComparison.Ordinal));
+            captures.Add($"recovery-history{CommandOutputSnapshot.JsonContentNameSegment}{detailName}", jsonText.Replace("\r\n", "\n", StringComparison.Ordinal));
+        }
+        CommandOutputSnapshot.MatchDetailSnapshot(captures);
+    }
+
     private const string RecoveryCandidatePath = "recovery/open-forge/recovery-candidate.zip";
     private const string RecoveryConflictMessage = "Recovery data from an earlier run exists at "
         + RecoveryCandidatePath

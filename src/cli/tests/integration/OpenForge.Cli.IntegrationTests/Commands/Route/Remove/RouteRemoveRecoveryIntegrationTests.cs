@@ -32,9 +32,9 @@ public sealed class RouteRemoveRecoveryIntegrationTests
     }
 
     [Trait("Boundary", "Host")]
-    [Fact(DisplayName = "Route Remove refuses a pre-existing recovery collision before any workspace effect"),
+    [Fact(DisplayName = "Route Remove warns about damaged history while applying the requested removal"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
-    public async Task RecoveryCollisionBlocksBeforeApplication()
+    public async Task DamagedHistoryDoesNotBlockApplication()
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-recovery-collision");
         var recoveryDirectory = RecoveryBundleStoreIntegrationTests.WorkspaceDirectory(workspace.Workspace);
@@ -52,15 +52,16 @@ public sealed class RouteRemoveRecoveryIntegrationTests
             output,
             error);
 
-        Assert.Equal(5, completion.ExitCode);
-        Assert.Equal(CliSemanticStatus.Blocked, completion.Status);
-        Assert.Equal(string.Empty, output.ToString());
+        Assert.Equal(0, completion.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, completion.Status);
+        Assert.Equal(string.Empty, error.ToString());
         Assert.Contains(
-            "route-remove.recovery-conflict",
-            error.ToString(),
+            "route-remove.recovery-history",
+            output.ToString(),
             StringComparison.Ordinal);
-        Assert.Equal(before, workspace.SnapshotHashes());
-        Assert.True(File.Exists(candidate));
+        Assert.Contains(candidate, output.ToString(), StringComparison.Ordinal);
+        Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafPath)));
+        Assert.Equal("not a recovery archive"u8.ToArray(), File.ReadAllBytes(candidate));
     }
 
     [Trait("Boundary", "Host")]

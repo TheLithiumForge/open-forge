@@ -226,6 +226,13 @@ internal sealed class ExtensionRemovePlanner
             }
         }
 
+        var recovery = await ReadRecoveryAsync(request, allowedRecovery, cancellationToken)
+            .ConfigureAwait(false);
+        if (recovery.Boundary is not null)
+        {
+            return recovery.Boundary;
+        }
+
         var installedIds = current.Select(package => package.Id)
             .ToHashSet(StringComparer.Ordinal);
         if (selection.Ids.All(id => !installedIds.Contains(id))
@@ -257,7 +264,7 @@ internal sealed class ExtensionRemovePlanner
                     [],
                     residualPath: null),
                 Verified(),
-                lockFindings,
+                [.. lockFindings.Concat(recovery.Findings ?? [])],
                 settingsEffect);
             if (request.AllowPath.IsEmpty)
             {
@@ -301,13 +308,6 @@ internal sealed class ExtensionRemovePlanner
 
         if (selection.Ids.All(id => !installedIds.Contains(id)))
         {
-            var recoveryRead = await ReadRecoveryAsync(request, allowedRecovery, cancellationToken)
-                .ConfigureAwait(false);
-            if (recoveryRead.Boundary is not null)
-            {
-                return recoveryRead.Boundary;
-            }
-
             var settingsOnlyPlan = ExtensionRemovePlan.Create(new ExtensionRemovePlanInput
             {
                 Request = request,
@@ -349,16 +349,9 @@ internal sealed class ExtensionRemovePlanner
                         settingsEffect is null ? [] : [WorkspaceSettingsDefinitions.RelativePath],
                         residualPath: null),
                     Planned(),
-                    [],
+                    recovery.Findings ?? [],
                     settingsEffect),
             };
-        }
-
-        var recovery = await ReadRecoveryAsync(request, allowedRecovery, cancellationToken)
-            .ConfigureAwait(false);
-        if (recovery.Boundary is not null)
-        {
-            return recovery.Boundary;
         }
 
         var selected = selection.Ids.ToHashSet(StringComparer.Ordinal);
@@ -395,7 +388,7 @@ internal sealed class ExtensionRemovePlanner
             .Select(value => value.ToPathPlan())
             .OrderBy(value => value.Path, StringComparer.Ordinal)
             .ToArray();
-        var findings = new List<ExtensionRemoveFinding>();
+        var findings = new List<ExtensionRemoveFinding>(recovery.Findings ?? []);
         findings.AddRange(dependencies.RetainedOrphanDependencyIds.Select(id =>
             new ExtensionRemoveFinding(
                 ExtensionRemoveFindingCode.LifecycleObservation,
@@ -590,59 +583,53 @@ internal sealed class ExtensionRemovePlanner
         }
         catch (Exception)
         {
-            return new ExtensionRemoveRecoveryRead(Stop(
-                request,
-                ExtensionRemoveFindingCode.RecoveryUnavailable,
-                "Extension Remove recovery inspection failed unexpectedly."));
+            catalogue = RecoveryBundleCatalogueResult.Unavailable(
+                "Extension Remove recovery inspection failed unexpectedly.");
         }
 
-        if (IsExpectedRecovery(catalogue, allowed))
+        if (catalogue.State == RecoveryBundleCatalogueState.Cancelled)
         {
-            return new ExtensionRemoveRecoveryRead(Boundary: null);
+            return new ExtensionRemoveRecoveryRead(Stop(request,
+                ExtensionRemoveFindingCode.Interrupted,
+                "Extension Remove recovery inspection was interrupted."));
+        }
+        if (!IsExpectedRecovery(catalogue, allowed))
+        {
+            return new ExtensionRemoveRecoveryRead(Stop(request,
+                catalogue.State == RecoveryBundleCatalogueState.Unavailable
+                    ? ExtensionRemoveFindingCode.RecoveryUnavailable
+                    : ExtensionRemoveFindingCode.RecoveryConflict,
+                catalogue.Cause ?? "The current operation's recovery preparation is missing or changed.",
+                target: allowed?.BundlePath));
         }
 
-        return new ExtensionRemoveRecoveryRead(Stop(
-            request,
-            ReadRecoveryFindingCode(catalogue.State),
-            catalogue.Cause ?? "Recognized recovery residuals block Extension Remove."));
+        var findings = catalogue.Candidates
+            .Where(candidate => allowed is null || !RecoveryBundleIdentity.Matches(candidate, allowed))
+            .Select(candidate => new ExtensionRemoveFinding(
+                ExtensionRemoveFindingCode.RecoveryHistory,
+                "Recovery data from an earlier run remains.", candidate.Path)).ToList();
+        if (catalogue.State == RecoveryBundleCatalogueState.Unavailable)
+        {
+            findings.Add(new ExtensionRemoveFinding(
+                ExtensionRemoveFindingCode.RecoveryCoverageUnavailable,
+                catalogue.Cause ?? "Recovery history could not be checked.",
+                OpenForge.Cli.Core.Framework.Recovery.Shared.Storage.RecoveryStoreLocator.Local(request.Workspace).WorkspaceDirectory));
+        }
+        return new ExtensionRemoveRecoveryRead(Boundary: null, findings);
     }
 
     private static bool IsExpectedRecovery(
         RecoveryBundleCatalogueResult catalogue,
         RecoveryBundlePreparation? allowed)
     {
-        if (catalogue.State != RecoveryBundleCatalogueState.Available)
-        {
-            return false;
-        }
-
-        if (!catalogue.Candidates.All(IsVerifiedFinal))
-        {
-            return false;
-        }
-
         if (allowed is null)
         {
             return true;
         }
 
-        return catalogue.Candidates.Count(candidate => RecoveryBundleIdentity.Matches(candidate, allowed)) == 1;
+        return catalogue.State == RecoveryBundleCatalogueState.Available
+            && catalogue.Candidates.Count(candidate => RecoveryBundleIdentity.Matches(candidate, allowed)) == 1;
     }
-
-    private static bool IsVerifiedFinal(RecoveryBundleCandidateSnapshot candidate)
-        => candidate.Kind == RecoveryBundleCandidateKind.Final
-            && candidate.Integrity == RecoveryBundleIntegrity.Verified
-            && candidate.Verified is not null;
-
-    private static ExtensionRemoveFindingCode ReadRecoveryFindingCode(
-        RecoveryBundleCatalogueState state)
-        => state switch
-        {
-            RecoveryBundleCatalogueState.Cancelled => ExtensionRemoveFindingCode.Interrupted,
-            RecoveryBundleCatalogueState.Available => ExtensionRemoveFindingCode.RecoveryConflict,
-            RecoveryBundleCatalogueState.Unavailable => ExtensionRemoveFindingCode.RecoveryUnavailable,
-            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The recovery catalogue state is not defined."),
-        };
 
     private static ExtensionRemoveLifecycle Lifecycle(
         ExtensionRemoveLifecycleAction action,

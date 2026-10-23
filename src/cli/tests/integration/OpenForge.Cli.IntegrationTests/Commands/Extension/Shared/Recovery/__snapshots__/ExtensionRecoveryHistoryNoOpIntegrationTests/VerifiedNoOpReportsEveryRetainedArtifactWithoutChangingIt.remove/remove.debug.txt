@@ -1,0 +1,11 @@
+No files are recorded for toolkit, so there is nothing to remove.
+Workspace: <workspace>
+  Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.draft  Recovery bundle was retained [extension-remove.recovery-history]
+         Recovery data from an earlier run remains at <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.draft. It does not block this operation.
+  Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-22222222222222222222222222222222.zip  Recovery bundle was retained [extension-remove.recovery-history]
+         Recovery data from an earlier run remains at <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-22222222222222222222222222222222.zip. It does not block this operation.
+  Removal order: toolkit
+  .agents/open-forge.lock.json  unchanged
+  Entries sections unchanged: none
+  Verification: targets verified; Entries verified; Extension record verified
+  Recovery: not-required.

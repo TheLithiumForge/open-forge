@@ -65,7 +65,7 @@ public sealed class ExtensionUpdatePlanningIntegrationTests
         Assert.Equal(sourceBefore, source.Snapshot());
         var before = workspace.Snapshot();
         var repeated = await workspace.RunAsync(["extension", "update", "toolkit", "--source", source.Path, "--automatic", "--format", "json"]);
-        Assert.Equal(CliSemanticStatus.Complete, repeated.Status);
+        Assert.Equal(CliSemanticStatus.Attention, repeated.Status);
         using var repeatResult = JsonDocument.Parse(repeated.StandardOutput);
         Assert.Empty(repeatResult.RootElement.GetProperty("effects").EnumerateArray());
         Assert.Equal(before, workspace.Snapshot());

@@ -5,8 +5,6 @@ using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -56,18 +54,6 @@ internal sealed class RouteInitPlanFinalizer
             effectPlan = RouteInitRestorationEffects.Extend(effectPlan, inspection.Restoration);
         }
 
-        if (effectPlan.RecoveryTargets.Count > 0)
-        {
-            var recovery = await RecoveryBundleCatalogue.ReadAsync(
-                    request.Workspace,
-                    cancellationToken)
-                .ConfigureAwait(false);
-            if (ReadRecoveryBoundary(inspection, recovery) is { } recoveryBoundary)
-            {
-                return new RouteInitPlanFinalizationStopped(recoveryBoundary);
-            }
-        }
-
         var preflight = await new MutationPreflight(
                 new FileExpectationValidator(_physicalPathResolver))
             .ValidateAsync(
@@ -88,38 +74,6 @@ internal sealed class RouteInitPlanFinalizer
 
         return new RouteInitPlanFinalizationCompleted(
             new RouteInitPlanFinalizationFacts(effectPlan, ownershipState));
-    }
-
-    private static RouteInitPlanningBoundary? ReadRecoveryBoundary(
-        RouteInitInspectionFacts inspection,
-        RecoveryBundleCatalogueResult recovery)
-    {
-        return recovery.State switch
-        {
-            RecoveryBundleCatalogueState.Available when recovery.Candidates.Length == 0 => null,
-            RecoveryBundleCatalogueState.Available => Boundary(
-                inspection,
-                RouteInitFindingCode.RecoveryConflict,
-                "A recognized recovery candidate conflicts with this Route Init plan.",
-                incomplete: false) with
-            {
-                FindingTarget = recovery.Candidates[0].Path,
-            },
-            RecoveryBundleCatalogueState.Unavailable => Boundary(
-                inspection,
-                RouteInitFindingCode.RecoveryUnavailable,
-                recovery.Cause ?? "The Route Init recovery catalogue is unavailable.",
-                incomplete: true),
-            RecoveryBundleCatalogueState.Cancelled => Boundary(
-                inspection,
-                RouteInitFindingCode.Interrupted,
-                "Route Init recovery inspection was interrupted.",
-                incomplete: true),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(recovery),
-                recovery.State,
-                "The recovery catalogue state is not defined."),
-        };
     }
 
     internal static (RouteInitFindingCode Code, bool Incomplete) ReadPreflightFinding(

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Recovery.Models;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -32,6 +33,8 @@ internal sealed record RouteRemoveResult : ICliCommandResult
         Status = status;
         Next = next;
     }
+
+    internal RouteRecoveryHistory RecoveryHistory { get; init; } = RouteRecoveryHistory.Empty;
 
     public string Command => RouteRemoveDefinitions.CommandIdentity;
 

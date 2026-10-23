@@ -244,6 +244,8 @@ internal sealed record StatusDataLibraryLink
 
 internal sealed record StatusDataRecovery
 {
+    public IReadOnlyList<StatusDataRecoveryStore> Stores { get; init; } = [];
+
     public required IReadOnlyList<StatusDataRecoveryCandidate> Candidates { get; init; }
 }
 
@@ -261,3 +263,7 @@ internal sealed record StatusDataRecoveryCandidate
     [JsonIgnore]
     internal StatusRecoveryIntegrity IntegrityState { get; init; }
 }
+
+internal sealed record StatusDataRecoveryStore(
+    string Kind, string? Path, string Coverage,
+    IReadOnlyList<StatusDataRecoveryCandidate> Candidates, string? Cause);

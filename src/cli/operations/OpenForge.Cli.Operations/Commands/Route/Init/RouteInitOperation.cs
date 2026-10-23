@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Recovery;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Application;
@@ -18,6 +19,16 @@ internal sealed class RouteInitOperation(
     internal RouteInitResultBuilder ResultBuilder { get; } = resultBuilder;
 
     internal async ValueTask<RouteInitResult> ExecuteAsync(
+        RouteInitRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var history = await RouteRecoveryHistoryReader.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var result = await ExecuteCoreAsync(request, cancellationToken).ConfigureAwait(false);
+        return result with { RecoveryHistory = history };
+    }
+
+    private async ValueTask<RouteInitResult> ExecuteCoreAsync(
         RouteInitRequest request,
         CancellationToken cancellationToken)
     {

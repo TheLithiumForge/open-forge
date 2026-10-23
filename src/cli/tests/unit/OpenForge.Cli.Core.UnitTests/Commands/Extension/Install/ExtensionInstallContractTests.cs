@@ -98,6 +98,8 @@ public sealed class ExtensionInstallContractTests
             ("extension-install.lifecycle-observation", CliSemanticStatus.Attention),
             ("extension-install.package-content-missing", CliSemanticStatus.Attention),
             ("extension-install.recovery-artifact-retained", CliSemanticStatus.Attention),
+            ("extension-install.recovery-history", CliSemanticStatus.Attention),
+            ("extension-install.recovery-coverage-unavailable", CliSemanticStatus.Attention),
             ("extension-install.write-failed", CliSemanticStatus.Failed),
             ("extension-install.topology-verification-failed", CliSemanticStatus.Failed),
             ("extension-install.lifecycle-publication-failed", CliSemanticStatus.Failed),

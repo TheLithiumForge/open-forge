@@ -7,12 +7,33 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 using OpenForge.Cli.TestSupport.Isolation;
+using System.Runtime.CompilerServices;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Recovery;
 
 internal static class ExtensionRecoveryHistoryFixture
 {
     internal const string TargetPath = ".agents/recovery-history.txt";
+
+    internal static async Task MatchHistoryAsync(
+        ExtensionInstallIntegrationWorkspace workspace,
+        string sourcePath,
+        ReadOutputScenario scenario,
+        [CallerFilePath] string sourceFile = "",
+        [CallerMemberName] string testName = "")
+    {
+        var location = RecoveryStoreLocator.Local(workspace.Workspace);
+        var captures = new Dictionary<string, string>(StringComparer.Ordinal);
+        await new ReadCommandOutputCapture(workspace.Path, sourcePath, location.WorkspaceDirectory)
+            .MatchDetailsAsync(scenario, snapshotCollector: captures);
+        CommandOutputSnapshot.MatchDetailSnapshot(captures.ToDictionary(pair => pair.Key,
+            pair => pair.Value.Replace("<recovery-bundle>",
+                "<workspace>/.open-forge-state/recovery/v1/<workspace-key>", StringComparison.Ordinal)),
+            sourceFile, testName);
+    }
 
     internal static async ValueTask<RecoveryBundlePreparation> CreateVerifiedFinalAsync(
         ExtensionInstallIntegrationWorkspace workspace,

@@ -82,6 +82,8 @@ internal static class ExtensionRemoveDefinitions
             ExtensionRemoveFindingCode.RecoveryUnavailable => "extension-remove.recovery-unavailable",
             ExtensionRemoveFindingCode.LifecycleObservation => "extension-remove.lifecycle-observation",
             ExtensionRemoveFindingCode.OwnershipObservation => "extension-remove.ownership-observation",
+            ExtensionRemoveFindingCode.RecoveryHistory => "extension-remove.recovery-history",
+            ExtensionRemoveFindingCode.RecoveryCoverageUnavailable => "extension-remove.recovery-coverage-unavailable",
             ExtensionRemoveFindingCode.RecoveryArtifactRetained => "extension-remove.recovery-artifact-retained",
             ExtensionRemoveFindingCode.WriteFailed => "extension-remove.write-failed",
             ExtensionRemoveFindingCode.TopologyVerificationFailed => "extension-remove.topology-verification-failed",
@@ -123,6 +125,8 @@ internal static class ExtensionRemoveDefinitions
                 or ExtensionRemoveFindingCode.TargetChanged
                 or ExtensionRemoveFindingCode.RecoveryConflict => CliSemanticStatus.Blocked,
             ExtensionRemoveFindingCode.LifecycleObservation
+                or ExtensionRemoveFindingCode.RecoveryHistory
+                or ExtensionRemoveFindingCode.RecoveryCoverageUnavailable
                 or ExtensionRemoveFindingCode.RecoveryArtifactRetained => CliSemanticStatus.Attention,
             ExtensionRemoveFindingCode.WriteFailed
                 or ExtensionRemoveFindingCode.TopologyVerificationFailed
@@ -300,6 +304,8 @@ internal static class ExtensionRemoveDefinitions
         return status switch
         {
             CliSemanticStatus.Complete => null,
+            CliSemanticStatus.Attention when findings.All(finding => finding.Code is
+                ExtensionRemoveFindingCode.RecoveryHistory or ExtensionRemoveFindingCode.RecoveryCoverageUnavailable) => null,
             CliSemanticStatus.Invalid => new CliNextAction(
                 confirmationRequired
                     ? "open-forge extension remove --automatic"

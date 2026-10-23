@@ -42,6 +42,8 @@ internal enum ExtensionInstallFindingCode
     LifecycleObservation,
     PackageContentMissing,
     RecoveryArtifactRetained,
+    RecoveryHistory,
+    RecoveryCoverageUnavailable,
     WriteFailed,
     TopologyVerificationFailed,
     LifecyclePublicationFailed,

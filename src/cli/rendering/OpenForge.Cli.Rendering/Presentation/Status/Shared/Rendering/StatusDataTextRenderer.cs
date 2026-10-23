@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Presentation.Shared.Text.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Status.Models;
 using OpenForge.Cli.Core.Presentation.Status.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -205,6 +206,16 @@ internal static class StatusDataTextRenderer
 
         if (data.Recovery is { } recovery)
         {
+            foreach (var store in recovery.Stores.Where(store => store.Coverage != "complete"))
+            {
+                AppendLine(builder, CliFindingWording.RecoveryCoverageUnavailable(store.Path, CliFindingWording.PlainCause(store.Cause ?? "Coverage is unavailable")));
+            }
+
+            if (recovery.Candidates.Count == 0 && recovery.Stores.Any(store => store.Coverage != "complete"))
+            {
+                return;
+            }
+
             if (recovery.Candidates.Count == 0)
             {
                 AppendLine(builder, $"{StatusWording.RecoveryDataHeading()}: {StatusWording.NoRecovery()}");

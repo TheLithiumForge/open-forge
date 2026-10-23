@@ -59,6 +59,9 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
             Assert.Equal(string.Empty, error.ToString());
             using var result = JsonDocument.Parse(output.ToString());
             Assert.Equal(JsonValueKind.Null, result.RootElement.GetProperty("recovery").ValueKind);
+            Assert.Contains(result.RootElement.GetProperty("findings").EnumerateArray(),
+                item => item.GetProperty("code").GetString() == "route-remove.recovery-history"
+                    && item.GetProperty("subject").GetProperty("path").GetString() == priorPreparation.BundlePath);
 
             if (category)
             {
@@ -109,11 +112,11 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Route Remove blocks unverified recovery candidates before workspace writes"),
+    [Theory(DisplayName = "Route Remove preserves unverified recovery history while applying removal"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     [InlineData("malformed")]
     [InlineData("draft")]
-    public async Task UnverifiedPriorRecoveryCandidateBlocksWithoutWorkspaceEffects(string candidateKind)
+    public async Task UnverifiedPriorRecoveryCandidateDoesNotBlockWorkspaceEffects(string candidateKind)
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create(
             $"route-remove-prior-unverified-{candidateKind}");
@@ -140,24 +143,17 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
                 output,
                 error);
 
-            Assert.Equal(5, completion.ExitCode);
-            Assert.Equal(CliSemanticStatus.Blocked, completion.Status);
+            Assert.Equal(0, completion.ExitCode);
+            Assert.Equal(CliSemanticStatus.Complete, completion.Status);
             Assert.Equal(string.Empty, error.ToString());
             using var result = JsonDocument.Parse(output.ToString());
-            var finding = Assert.Single(result.RootElement.GetProperty("findings").EnumerateArray());
-            Assert.Equal("route-remove.recovery-conflict", finding.GetProperty("code").GetString());
-            Assert.Equal("file", finding.GetProperty("subject").GetProperty("kind").GetString());
+            var finding = Assert.Single(result.RootElement.GetProperty("findings").EnumerateArray(),
+                item => item.GetProperty("code").GetString() == "route-remove.recovery-history");
+            Assert.Equal("warning", finding.GetProperty("severity").GetString());
             Assert.Equal(candidatePath, finding.GetProperty("subject").GetProperty("path").GetString());
-            Assert.Equal(candidatePath, result.RootElement.GetProperty("recovery").GetProperty("path").GetString());
-            var effects = result.RootElement.GetProperty("effects").EnumerateArray().ToArray();
-            Assert.NotEmpty(effects);
-            Assert.All(
-                effects,
-                effect => Assert.Equal("not-started", effect.GetProperty("outcome").GetString()));
-            Assert.Equal(before, workspace.SnapshotHashes());
+            Assert.Equal(JsonValueKind.Null, result.RootElement.GetProperty("recovery").ValueKind);
+            Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafPath)));
             Assert.Equal(ownershipBefore, workspace.ReadBytes(RouteRemoveIntegrationWorkspace.OwnershipPath));
-            Assert.False(File.Exists(workspace.Combine(".agents/open-forge.json")));
-            Assert.True(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafPath)));
             Assert.Equal(candidateBytes, await File.ReadAllBytesAsync(candidatePath, TestContext.Current.CancellationToken));
 
             var catalogue = await RecoveryBundleCatalogue.ReadAsync(

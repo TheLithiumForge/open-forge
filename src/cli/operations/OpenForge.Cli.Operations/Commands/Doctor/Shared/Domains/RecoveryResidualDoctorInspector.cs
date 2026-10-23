@@ -1,9 +1,9 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
+using OpenForge.Cli.Core.Commands.Shared;
+using OpenForge.Cli.Core.Commands.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
-using OpenForge.Cli.Core.Commands.Shared.Serialization;
-using OpenForge.Cli.Core.Commands.Shared;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
 
@@ -26,6 +26,12 @@ internal static class RecoveryResidualDoctorInspector
         return new DoctorDomainReport
         {
             Domain = Domain,
+            RecoveryStores = view.Stores.Select(store => new DoctorRecoveryStore(
+                RecoveryWireVocabulary.StoreKind(store.Kind), store.Location?.WorkspaceDirectory,
+                DoctorDomainSupport.Coverage(store.State),
+                store.Candidates.Select(candidate => new DoctorRecoveryCandidate(candidate.Path,
+                    RecoveryWireVocabulary.CandidateKind(candidate.Kind), RecoveryWireVocabulary.Integrity(candidate.Integrity),
+                    candidate.Cause)).ToArray(), store.Cause)).ToArray(),
             Boundary = new DoctorBoundary { Kind = DoctorBoundaryKind.RecoveryStore, Path = null },
             Coverage = coverage,
             Lifecycle = null,

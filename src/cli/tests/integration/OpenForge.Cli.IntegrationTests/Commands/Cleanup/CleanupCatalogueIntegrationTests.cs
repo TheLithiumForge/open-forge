@@ -190,7 +190,9 @@ public sealed class CleanupCatalogueIntegrationTests
         Assert.Equal([indexFinal, repairFinal, draft], CleanupJsonAssertions.Paths(result.GetProperty("items")));
         Assert.All(
             result.GetProperty("items").EnumerateArray(),
-            item => Assert.Equal("would-be-removed", item.GetProperty("outcome").GetString()));
+            item => Assert.Equal("not-started", item.GetProperty("outcome").GetString()));
+        Assert.Equal(0, document.RootElement.GetProperty("counts").GetProperty("bundlesRemoved").GetInt32());
+        Assert.Equal(0, document.RootElement.GetProperty("counts").GetProperty("draftsRemoved").GetInt32());
         Assert.Equal(
             blocked.Order(StringComparer.Ordinal),
             CleanupJsonAssertions.Paths(result.GetProperty("notEligible")));

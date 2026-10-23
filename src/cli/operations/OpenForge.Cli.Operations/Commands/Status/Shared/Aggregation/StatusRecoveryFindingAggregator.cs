@@ -11,7 +11,16 @@ internal static class StatusRecoveryFindingAggregator
         RecoveryResidualStatusView observation,
         StatusRecovery recovery)
     {
-        switch (observation.State)
+        if (observation.Stores.Count > 0)
+        {
+            foreach (var store in observation.Stores.Where(store => store.State != OperationalViewState.Complete))
+            {
+                findings.Add(store.State == OperationalViewState.Interrupted
+                        ? StatusFindingCode.Interrupted : StatusFindingCode.RecoveryCatalogueUnavailable,
+                    store.Location?.WorkspaceDirectory, store.Cause ?? "Recovery coverage is unavailable.");
+            }
+        }
+        else switch (observation.State)
         {
             case OperationalViewState.Complete:
                 break;

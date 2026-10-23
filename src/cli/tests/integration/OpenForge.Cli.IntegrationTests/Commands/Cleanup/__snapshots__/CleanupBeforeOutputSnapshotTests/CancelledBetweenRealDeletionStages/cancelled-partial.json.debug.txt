@@ -78,6 +78,7 @@
   },
   "limitations": [],
   "data": {
+    "stores": [],
     "mode": "apply",
     "items": [
       {

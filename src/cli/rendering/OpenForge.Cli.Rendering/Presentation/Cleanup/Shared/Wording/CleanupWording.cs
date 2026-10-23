@@ -36,6 +36,12 @@ internal static class CleanupWording
         return global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatAnd(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{verb}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{bundles}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{Plural(bundles, "recovery bundle")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{drafts}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{Plural(drafts, "unfinished draft")}"));
     }
 
+    internal static string Partial(int removed, int total, bool preview)
+        => global::OpenForge.Cli.OutputText.Cleanup.CleanupWording.Partial(removed, total, preview);
+
+    internal static string StoreValidationUnavailable(string path, string cause)
+        => global::OpenForge.Cli.OutputText.Cleanup.CleanupWording.StoreValidationUnavailable(path, TrimSentence(cause));
+
     internal static string StoreIncomplete()
         => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageTheRecoveryStoreCouldNotBeReadCompletelyNothingWasRemoved();
 
@@ -162,6 +168,7 @@ internal static class CleanupWording
             CleanupFindingCode.WorkspaceNotDirectory => "cleanup.workspace-not-directory",
             CleanupFindingCode.WorkspaceUnsafe => "cleanup.workspace-unsafe",
             CleanupFindingCode.CatalogueIncomplete => "cleanup.catalogue-incomplete",
+            CleanupFindingCode.StoreValidationUnavailable => "cleanup.store-validation-unavailable",
             CleanupFindingCode.RecoveryFinalMalformed => "cleanup.recovery-final-malformed",
             CleanupFindingCode.RecoveryFinalUnsupported => "cleanup.recovery-final-unsupported",
             CleanupFindingCode.RecoveryFinalUnavailable => "cleanup.recovery-final-unavailable",
@@ -183,7 +190,7 @@ internal static class CleanupWording
             CleanupFindingCode.WorkspaceUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnavailable(),
             CleanupFindingCode.WorkspaceNotDirectory => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsNotADirectory(),
             CleanupFindingCode.WorkspaceUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnsafe(),
-            CleanupFindingCode.CatalogueIncomplete => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.TitleRecoveryStoreIsIncomplete(),
+            CleanupFindingCode.CatalogueIncomplete or CleanupFindingCode.StoreValidationUnavailable => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.TitleRecoveryStoreIsIncomplete(),
             CleanupFindingCode.RecoveryFinalMalformed => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsDamaged(),
             CleanupFindingCode.RecoveryFinalUnsupported => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.TitleRecoveryBundleVersionIsUnsupported(),
             CleanupFindingCode.RecoveryFinalUnavailable => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.TitleRecoveryBundleIsUnreadable(),
@@ -221,12 +228,15 @@ internal static class CleanupWording
                 CleanupFindingCode.WorkspaceNotDirectory => CliFindingWording.WorkspaceNotDirectory(path),
                 CleanupFindingCode.WorkspaceUnsafe => CliFindingWording.WorkspaceUnsafe(path, TrimSentence(finding.Cause)),
                 CleanupFindingCode.CatalogueIncomplete => CatalogueIncomplete(finding.Cause),
+                CleanupFindingCode.StoreValidationUnavailable => StoreValidationUnavailable(path, finding.Cause),
                 CleanupFindingCode.RecoveryFinalMalformed => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatIsDamagedAndWasLeftInPlace($"{path}"),
                 CleanupFindingCode.RecoveryFinalUnsupported => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatWasWrittenByAnUnsupportedVersionAndWasLeftInPlace($"{path}"),
                 CleanupFindingCode.RecoveryFinalUnavailable => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatCouldNotBeReadAndWasLeftInPlace($"{path}"),
                 CleanupFindingCode.RecoveryDraftUnsafe => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatIsNotAnOrdinaryFileAndWasLeftInPlace($"{path}"),
                 CleanupFindingCode.WorkspaceLockUnavailable => LockHeld(),
-                CleanupFindingCode.CatalogueChangedDuringApply => ChangedDuringApply(),
+                CleanupFindingCode.CatalogueChangedDuringApply => removed > 0
+                    ? global::OpenForge.Cli.OutputText.Shared.CliFindingWording.RecoveryCoverageUnavailable(finding.Subject, TrimSentence(finding.Cause))
+                    : ChangedDuringApply(),
                 CleanupFindingCode.CandidateChangedDuringApply => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatChangedWhileCleanupWasRunningAndWasLeftInPlace($"{path}"),
                 CleanupFindingCode.DeletionFailed => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.RemovalFailedPath($"{path}", $"{TrimSentence(finding.Cause)}"),
                 CleanupFindingCode.VerificationFailed => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatStillExistsAfterRemoval($"{path}"),

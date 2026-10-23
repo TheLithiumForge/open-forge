@@ -490,6 +490,18 @@ internal static class ExtensionUpdateReportSelector
         var changed = result.Effects.Count > 0;
         var count = selectedIds.Count == 0 ? result.Packages.Count : selectedIds.Count;
         var version = result.Packages.FirstOrDefault(package => package.Id == primaryId)?.ToVersion ?? global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.LabelTheSelectedVersion();
+        if (result.Status == CliSemanticStatus.Attention && result.Findings.All(finding =>
+            finding.Code is ExtensionUpdateFindingCode.RecoveryHistory or ExtensionUpdateFindingCode.RecoveryCoverageUnavailable))
+        {
+            if (!changed)
+            {
+                return new(count > 1 ? ExtensionUpdateWording.AllUpToDate(count)
+                    : ExtensionUpdateWording.UpToDate(primaryId), CliHeadlineKind.Warnings);
+            }
+            return new(result.Mode == ExtensionUpdateMode.DryRun
+                ? ExtensionUpdateWording.WouldUpdate(primaryId, version)
+                : ExtensionUpdateWording.Updated(primaryId, version), CliHeadlineKind.Warnings);
+        }
         if (result.Status == CliSemanticStatus.Complete && !changed && kept == 0)
         {
             return count > 1

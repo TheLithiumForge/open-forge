@@ -52,6 +52,47 @@
   },
   "limitations": [],
   "data": {
+    "stores": [
+      {
+        "kind": "workspace",
+        "path": "<workspace-recovery-store>",
+        "coverage": "complete",
+        "safety": "safe",
+        "candidates": [
+          {
+            "path": "<recovery-bundle-1>",
+            "kind": "bundle",
+            "outcome": "would-be-removed",
+            "integrity": "verified"
+          },
+          {
+            "path": "<recovery-bundle-2>",
+            "kind": "bundle",
+            "outcome": "would-be-removed",
+            "integrity": "verified"
+          },
+          {
+            "path": "<recovery-bundle-3>",
+            "kind": "draft",
+            "outcome": "would-be-removed",
+            "integrity": "incomplete"
+          }
+        ],
+        "cause": null,
+        "revalidation": "not-requested",
+        "verification": "not-requested"
+      },
+      {
+        "kind": "legacy",
+        "path": "<legacy-recovery-store>",
+        "coverage": "complete",
+        "safety": "safe",
+        "candidates": [],
+        "cause": null,
+        "revalidation": "not-requested",
+        "verification": "not-requested"
+      }
+    ],
     "mode": "dry-run",
     "items": [
       {

@@ -65,6 +65,8 @@ public sealed class ExtensionRemoveDefinitionsTests
             ("extension-remove.lifecycle-observation", CliSemanticStatus.Attention),
             ("extension-remove.ownership-observation", CliSemanticStatus.Complete),
             ("extension-remove.recovery-artifact-retained", CliSemanticStatus.Attention),
+            ("extension-remove.recovery-history", CliSemanticStatus.Attention),
+            ("extension-remove.recovery-coverage-unavailable", CliSemanticStatus.Attention),
             ("extension-remove.write-failed", CliSemanticStatus.Failed),
             ("extension-remove.topology-verification-failed", CliSemanticStatus.Failed),
             ("extension-remove.lifecycle-publication-failed", CliSemanticStatus.Failed),

@@ -4,6 +4,14 @@ namespace OpenForge.Cli.OutputText.Route.Shared;
 
 internal static class RouteSharedText
 {
+    // @OpenForgeText route.shared.title.recovery-history-retained
+    internal static string TitleRecoveryHistoryRetained()
+        => "Recovery history is retained";
+
+    // @OpenForgeText route.shared.title.recovery-history-unavailable
+    internal static string TitleRecoveryHistoryUnavailable()
+        => "Recovery history is unavailable";
+
     // @OpenForgeText route.shared.label.the-blocking-condition-is-not-defined
     internal static string LabelTheBlockingConditionIsNotDefined()
         => "the blocking condition is not defined";

@@ -105,8 +105,10 @@ public sealed class CleanupBeforeOutputSnapshotTests
 
             var renderers = CommandOutputRenderers<CleanupResult>.From(
                 CleanupPresentation.Rendering,
-                output => CommandOutputNormalization.NormalizeRecoveryPaths(output, paths),
-                output => CommandOutputNormalization.NormalizeRecoveryPaths(output, paths));
+                output => CommandOutputNormalization.NormalizeRecoveryStoreLocations(
+                    CommandOutputNormalization.NormalizeRecoveryPaths(output, paths), workspace.Path),
+                output => CommandOutputNormalization.NormalizeRecoveryStoreLocations(
+                    CommandOutputNormalization.NormalizeRecoveryPaths(output, paths), workspace.Path));
             renderers.MatchDetails(result, situation, snapshotCollector: snapshots,
             lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
@@ -188,8 +190,10 @@ public sealed class CleanupBeforeOutputSnapshotTests
         Assert.Equal(recoveryBefore[Path.GetFileName(paths[2])], workspace.SnapshotRecovery()[Path.GetFileName(paths[2])]);
         var renderers = CommandOutputRenderers<CleanupResult>.From(
             CleanupPresentation.Rendering,
-            output => CommandOutputNormalization.NormalizeRecoveryPaths(output, paths),
-            output => CommandOutputNormalization.NormalizeRecoveryPaths(output, paths));
+            output => CommandOutputNormalization.NormalizeRecoveryStoreLocations(
+                    CommandOutputNormalization.NormalizeRecoveryPaths(output, paths), workspace.Path),
+            output => CommandOutputNormalization.NormalizeRecoveryStoreLocations(
+                    CommandOutputNormalization.NormalizeRecoveryPaths(output, paths), workspace.Path));
         renderers.MatchDetails(result, "cancelled-partial");
     }
 
@@ -231,7 +235,8 @@ public sealed class CleanupBeforeOutputSnapshotTests
 
         string NormalizeStore(string output)
             => CommandOutputNormalization.NormalizeRecoveryPaths(
-                CommandOutputNormalization.NormalizeRecoveryPaths(output, [], store), [], reportedStore);
+                CommandOutputNormalization.NormalizeRecoveryStoreLocations(
+                    CommandOutputNormalization.NormalizeRecoveryPaths(output, [], store), workspace.Path), [], reportedStore);
     }
 
 }

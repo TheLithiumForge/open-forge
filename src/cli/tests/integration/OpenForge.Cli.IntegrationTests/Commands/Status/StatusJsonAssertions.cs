@@ -122,7 +122,17 @@ internal static class StatusJsonAssertions
         }
 
         var recovery = data.GetProperty("recovery");
-        PropertyOrder(recovery, "candidates");
+        PropertyOrder(recovery, "stores", "candidates");
+        var stores = recovery.GetProperty("stores").EnumerateArray().ToArray();
+        Assert.Equal(["workspace", "legacy"], stores.Select(store => store.GetProperty("kind").GetString()));
+        foreach (var store in stores)
+        {
+            PropertyOrder(store, "kind", "path", "coverage", "candidates", "cause");
+            Assert.Equal("complete", store.GetProperty("coverage").GetString());
+            Assert.Equal(JsonValueKind.String, store.GetProperty("path").ValueKind);
+            foreach (var candidate in store.GetProperty("candidates").EnumerateArray())
+                PropertyOrder(candidate, "path", "kind", "integrity");
+        }
         foreach (var candidate in recovery.GetProperty("candidates").EnumerateArray())
             PropertyOrder(candidate, "path", "kind", "integrity");
 

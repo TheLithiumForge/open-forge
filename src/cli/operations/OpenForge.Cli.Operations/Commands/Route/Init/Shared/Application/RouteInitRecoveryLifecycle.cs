@@ -48,48 +48,6 @@ internal static class RouteInitRecoveryLifecycle
                 Cause: null);
         }
 
-        RecoveryBundleCatalogueResult catalogue;
-        try
-        {
-            catalogue = await RecoveryBundleCatalogue.ReadAsync(
-                    plan.Request.Workspace,
-                    cancellationToken)
-                .ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            return Cancelled(ResidualPath: null);
-        }
-        catch (Exception)
-        {
-            return Failed("The Route Init recovery catalogue failed unexpectedly.", ResidualPath: null);
-        }
-
-        if (catalogue.State == RecoveryBundleCatalogueState.Cancelled)
-        {
-            return Cancelled(ResidualPath: null);
-        }
-
-        if (catalogue.State == RecoveryBundleCatalogueState.Unavailable)
-        {
-            return new RouteInitRecoveryPreparationResult(
-                RouteInitRecoveryPreparationState.Incomplete,
-                Preparation: null,
-                new RouteInitRecovery(RouteInitRecoveryState.Unknown, ResidualPath: null),
-                catalogue.Cause ?? "The Route Init recovery catalogue is unavailable.");
-        }
-
-        if (catalogue.Candidates.Length != 0)
-        {
-            return new RouteInitRecoveryPreparationResult(
-                RouteInitRecoveryPreparationState.Blocked,
-                Preparation: null,
-                new RouteInitRecovery(
-                    RouteInitRecoveryState.Retained,
-                    catalogue.Candidates[0].Path),
-                "An existing recovery candidate conflicts with this Route Init application.");
-        }
-
         RecoveryBundlePreparationResult preparation;
         try
         {

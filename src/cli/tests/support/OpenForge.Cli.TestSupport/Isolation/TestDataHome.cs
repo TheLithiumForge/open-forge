@@ -71,6 +71,9 @@ public sealed class TestDataHome : IDisposable
     public string LegacyRecoveryWorkspaceDirectory(string workspacePath)
         => RecoveryWorkspaceDirectory(workspacePath);
 
+    public static string LegacyRecoveryWorkspaceDirectory(string dataHome, string workspacePath)
+        => System.IO.Path.Combine(dataHome, ApplicationDirectoryName, RecoveryDirectoryName, StoreVersionName, WorkspaceKey(workspacePath));
+
     public static string LocalRecoveryStoreRoot(string workspacePath)
         => System.IO.Path.Combine(workspacePath, TemporaryWorkspace.RuntimeDirectoryName, RecoveryDirectoryName, StoreVersionName);
 
