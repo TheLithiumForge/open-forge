@@ -123,11 +123,8 @@ non-directory workspace is blocked.
 - The current `Loader`'s direct root categories.
 - One shared read of `.agents/open-forge.lock.json`, with separate Framework,
   Extension, and Library claims, including typed Library roots and mappings.
-- The current user's external recovery store at
-  `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`, limited to
-  exact-name final and draft candidates for the selected normalized physical
-  workspace path.
+- Workspace and legacy recovery stores, limited to exact-name final and draft
+  candidates for the selected normalized physical workspace path.
 
 The command may enumerate and stream supported context files to measure their
 content. It does not build the complete context graph, parse ordinary links or
@@ -482,20 +479,10 @@ source additions, retirements, or adoption.
 
 ### Recovery Bundles
 
-Recovery accounting considers only exact-name final and draft candidates in the
-current user's external
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.None)/OpenForge/recovery/v1` store. Status uses
-this observer-only lookup and never creates the OS application-data root or the
-Open Forge subtree. The store is keyed by the selected normalized physical
-workspace path, and Status never
-falls back to the workspace, a repository, a temporary directory, or a target's
-adjacent files. Unknown, lookalike, mismatched, or differently keyed items do not
-enter the candidate catalogue. A malformed exact-name final remains a reported
-candidate; it is not omitted merely because it is not verified.
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
 
-If the application-data root or its `OpenForge/recovery/v1` store is absent,
-Status reports zero verified finals and zero incomplete drafts. If an existing
+If a store is absent,
+Status reports zero verified finals and zero incomplete drafts for that store. If an existing
 root or selected workspace bucket cannot be read, the recovery fact is
 unavailable and Status forms its locally contracted `incomplete` result; it does
 not treat access failure as absence.
@@ -852,7 +839,7 @@ Implementation evidence must cover:
   lengths and hashes, bounded buffers and memory independent of entry size, and
   no extraction, disclosure, retention, or materialization.
 - No live-target hashing, target-state classification, or activity inference
-  from bundle contents or the persistent external lock file.
+  from bundle contents or the persistent workspace lock file.
 - Completed, completed-with-warnings, incomplete, invalid-input, blocked,
   failed, and cancelled outcomes.
 - Human and structured output from the same typed result.
@@ -962,3 +949,9 @@ remain the output evidence.
   <!-- @OpenForgeTextRef status.wording.included-files -->
   <!-- @OpenForgeTextRef status.wording.included-startup -->
   <!-- @OpenForgeTextRef status.wording.included-pending -->
+
+## Recovery Stores
+
+At full and debug detail, `data.recovery.stores` reports ordered store records with `kind`, `path`, `coverage`, `candidates` and `cause`. Existing aggregate recovery fields remain. Store kinds are `workspace` and `legacy`. Text lists candidate paths together and adds warnings for unavailable stores. Empty readable stores do not get separate text rows.
+
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.

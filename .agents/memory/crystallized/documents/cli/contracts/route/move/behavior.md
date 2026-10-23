@@ -488,13 +488,10 @@ does not prompt and does not accept a confirmation flag.
 The command uses Git only to select reference coverage. It does not inspect or
 report repository changes. Before the
 first target effect, orchestration uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a
 pre-effect `incomplete` result. When the operation has one or more existing-target
 effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`), it prepares exactly
-one immutable ZIP bundle outside the workspace. An operation containing only Create effects or
+one immutable ZIP bundle in the workspace runtime folder. An operation containing only Create effects or
 no-ops creates no bundle. Its source-generated
 versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
@@ -506,7 +503,7 @@ final name, and reopened and verified. Only the valid final ZIP forms the opaque
 `RecoveryBundlePreparation`; the draft remains `Incomplete`.
 `FileChangeApplier` requires the matching preparation for every existing-target effect
 and performs one final effect per target. All preparation completes before the
-first target effect; unknown, malformed, mismatched, or colliding bundles block.
+first target effect. A missing, malformed, mismatched or colliding current-operation preparation blocks.
 
 A verified no-op is not available for an ordinary move whose old source is
 missing. The operation must resolve the requested source to form a move; the
@@ -632,12 +629,12 @@ category inventory, destination mapping, reference transformations, projection,
 plan completeness, dry-run parity, status, and no-op/repeat boundaries. Focused
 integration tests should use real temporary workspaces with leaf and category
 trees, overwrite pairs and orphans, native and ordinary resources, contained
-Markdown outside `.agents`, generated parent effects, external recovery bundles,
+Markdown outside `.agents`, generated parent effects, local recovery bundles,
 expected-state changes, and concurrent edits. Gate 5 executable proof must
 exercise the accepted parser, filesystem, physical-identity, lock, recovery,
 library, Native AOT, test, and source-layout boundaries; source inspection or a
-managed build alone is insufficient. The persistent reusable zero-byte external
-workspace lock below `LocalApplicationData/OpenForge/locks/v1` is held with one
+managed build alone is insufficient. The persistent reusable local
+workspace lock below `.open-forge-state/workspace.lock` is held with one
 read/write `FileShare.None` handle; it never receives metadata writes, deletion,
 or truncation.
 
@@ -663,3 +660,7 @@ or truncation.
 - [Overwrite Customization](../../../../framework/routing/overwrites.md)
 - [Routed Markdown Representation](../../../../framework/markdown/routes.md)
 - [Markdown Compatibility Boundary](../../../../framework/markdown/compatibility.md)
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

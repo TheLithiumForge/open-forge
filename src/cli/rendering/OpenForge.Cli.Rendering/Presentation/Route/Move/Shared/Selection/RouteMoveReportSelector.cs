@@ -282,6 +282,8 @@ internal static class RouteMoveReportSelector
                 => new(RouteMoveWording.Incomplete(id, Message(result, first)), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid
                 => new(RouteMoveWording.Invalid(result.Source.Requested, Problem(result, first)), CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when first?.LockFailure is { } lockFailure
+                => new(RouteMoveWording.Blocked(id, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(RouteMoveWording.Blocked(id, Problem(result, first)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed

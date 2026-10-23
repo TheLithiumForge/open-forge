@@ -268,7 +268,7 @@ internal static class RouteCreateReportSelector
     {
         if (finding?.LockFailure is { } lockFailure)
         {
-            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+            return CliFindingWording.WorkspaceLockUnavailableReason(lockFailure);
         }
 
         if (finding is null)

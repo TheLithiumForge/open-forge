@@ -1,3 +1,3 @@
 The toolkit Extension is already installed and matches the package. Nothing to do.
   Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>  Recovery bundle is unavailable
-         Recovery history at <workspace>/.open-forge-state/recovery/v1/<workspace-key> could not be checked completely: The recovery workspace storage path is not a directory.. Current workspace validation still applies.
+         Recovery history at <workspace>/.open-forge-state/recovery/v1/<workspace-key> could not be checked completely: The recovery workspace storage path is not a directory. Current workspace validation still applies.

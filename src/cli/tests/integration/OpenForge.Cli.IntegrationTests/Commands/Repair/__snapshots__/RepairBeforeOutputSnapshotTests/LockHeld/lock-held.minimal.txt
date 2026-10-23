@@ -1,4 +1,4 @@
-Cannot repair: Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
+Cannot repair: another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   Warning  .agents/docs/source.md:9:8  Broken link
          This link still needs repair.

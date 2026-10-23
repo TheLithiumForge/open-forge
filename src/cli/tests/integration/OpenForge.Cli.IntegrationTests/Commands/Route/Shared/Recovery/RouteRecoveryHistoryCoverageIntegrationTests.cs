@@ -1,4 +1,8 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Recovery;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
@@ -12,6 +16,56 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Shared.Recovery;
 [Trait("Boundary", "OS"), Trait("Feature", "route-recovery-history"), Trait("Evidence", "Integration")]
 public sealed class RouteRecoveryHistoryCoverageIntegrationTests
 {
+    [Theory(DisplayName = "Route commands omit verified finals from both stores on application and repeat no-ops")]
+    [InlineData("include"), InlineData("exclude"), InlineData("create"), InlineData("init")]
+    [InlineData("move"), InlineData("update"), InlineData("remove")]
+    public async Task VerifiedHistoryIsSilent(string command)
+    {
+        using var files = SeedWorkspace(command == "exclude");
+        var workspace = new CliWorkspace(files.Path, files.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        var target = files.Combine("guide.md");
+        var snapshot = FileStateSnapshot.File(target, target, File.ReadAllBytes(target));
+        var prepared = await RecoveryBundleStore.PrepareAsync(RecoveryBundleInput.Create(
+            workspace, "route include",
+            RecoveryBundleAttribution.Create(RecoveryBundleProducer.Route, RecoveryBundleOperation.Include, workspace),
+            Guid.NewGuid(), [RecoveryBundleTarget.Create(PlannedFileChange.Delete(snapshot.Expectation), snapshot)]),
+            TestContext.Current.CancellationToken);
+        var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
+        var legacy = RecoveryStoreLocator.Legacy(workspace);
+        Assert.NotNull(legacy);
+        Directory.CreateDirectory(legacy.WorkspaceDirectory);
+        var legacyPath = Path.Combine(legacy.WorkspaceDirectory, Path.GetFileName(preparation.BundlePath));
+        File.Copy(preparation.BundlePath, legacyPath);
+        var bytes = File.ReadAllBytes(preparation.BundlePath);
+        try
+        {
+            var result = await CliHostCapture.RunAsync(Arguments(command), files.Path);
+
+            Assert.True(result.ExitCode == 0, result.Output + result.Error);
+            using var json = JsonDocument.Parse(result.Output);
+            Assert.Empty(json.RootElement.GetProperty("findings").EnumerateArray());
+            AssertApplied(command, files, json.RootElement);
+            if (command is not ("move" or "remove"))
+            {
+                var before = files.SnapshotHashes();
+                string[] arguments = command == "init" ? ["route", "init", "docs/new", "--format", "json"] : Arguments(command);
+                var repeat = await CliHostCapture.RunAsync(arguments, files.Path);
+                Assert.True(repeat.ExitCode == 0, repeat.Output + repeat.Error);
+                using var repeated = JsonDocument.Parse(repeat.Output);
+                Assert.Empty(repeated.RootElement.GetProperty("findings").EnumerateArray());
+                Assert.Equal(before, files.SnapshotHashes());
+            }
+            Assert.Equal(bytes, File.ReadAllBytes(preparation.BundlePath));
+            Assert.Equal(bytes, File.ReadAllBytes(legacyPath));
+        }
+        finally
+        {
+            File.Delete(preparation.BundlePath);
+            File.Delete(legacyPath);
+            RemoveCreatedTargets(files);
+        }
+    }
+
     [Theory(DisplayName = "Route commands warn about every retained path across both recovery stores")]
     [InlineData("include"), InlineData("exclude"), InlineData("create"), InlineData("init")]
     [InlineData("move"), InlineData("update"), InlineData("remove")]

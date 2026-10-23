@@ -391,7 +391,7 @@ internal static class RouteRemoveReportSelector
     {
         if (finding?.LockFailure is { } lockFailure)
         {
-            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+            return CliFindingWording.WorkspaceLockUnavailableReason(lockFailure);
         }
 
         return finding is null

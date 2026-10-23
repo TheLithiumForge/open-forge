@@ -270,7 +270,7 @@ Preflight validates all selected target identities, source bytes, semantic
 comparisons, route and generated boundaries, ownership, containment, cross-
 section preservation, expected state, recovery-bundle readiness, and
 verification conditions. One failed condition blocks the complete plan. Before
-the first target effect, one immutable external schema-v1 ZIP
+the first target effect, one immutable local schema-v1 ZIP
 bundle covers every existing-target effect (`Replace`, `ReplaceGeneratedRegion`,
 or `Delete`) in the complete operation.
 Its source-generated `manifest.json` and streamed ordinal payload
@@ -278,7 +278,7 @@ entries contain command/operation/workspace identity, ordered relative targets,
 change kinds, exact prior bytes/lengths/hashes, payload names, and intended final
 absence or length/hash. `Create` and semantic/byte no-op effects have no entry
 and create no bundle. Preparation uses CreateNew under the exact draft name in
-the LocalApplicationData `OpenForge/recovery/v1` subtree only, closes and reopens
+`.open-forge-state/recovery/v1/<workspace key>/`, closes and reopens
 for semantic manifest, exact ordered entry, length, hash, and payload-byte
 validation, moves within the same directory to the deterministic final name, and
 reopens and verifies it. Only the valid final ZIP forms the opaque
@@ -292,8 +292,8 @@ Confirmation continues the already formed plan; it never replans or widens
 authority.
 
 Before the first workspace effect, the implementation obtains the actual OS lock
-for the persistent reusable zero-byte external path under
-`LocalApplicationData/OpenForge/locks/v1` defined by the [Mutation And Recovery
+for the persistent reusable path under
+`.open-forge-state/workspace.lock` defined by the [Mutation And Recovery
 Technical Design](../../technical-designs/mutation-and-recovery.md). It holds one read/write `FileShare.None` handle and never writes
 metadata, deletes, or truncates the
 lock file. An active handle blocks the plan; the lock is not lifecycle authority,
@@ -405,3 +405,7 @@ block guarantees.
 Directory creation follows the installed-Framework and exclusion boundaries in
 [Normal Plan](#normal-plan). A missing retired path requires neither parent
 creation nor deletion.
+
+## Workspace Runtime Boundary
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.

@@ -23,7 +23,7 @@ public sealed class RouteInclusionRecoveryHistoryIntegrationTests
 {
     private static CancellationToken Token => TestContext.Current.CancellationToken;
 
-    [Theory(DisplayName = "Include and Exclude warn about every final draft and damaged artifact on changes and no-ops")]
+    [Theory(DisplayName = "Include and Exclude warn only about draft and damaged artifacts on changes and no-ops")]
     [InlineData(false), InlineData(true)]
     public async Task HistoryDoesNotBlockChangesOrNoOps(bool exclude)
     {
@@ -53,9 +53,9 @@ public sealed class RouteInclusionRecoveryHistoryIntegrationTests
             Assert.Equal(CliSemanticStatus.Complete, outcome.Status);
             Assert.Equal(run == 1, outcome.NoOp);
             Assert.Null(outcome.RecoveryPath);
-            Assert.Equal(history.Count, findings.Count);
+            Assert.Equal(2, findings.Count);
             Assert.All(findings, finding => Assert.Equal(CliSeverity.Warning, finding.Severity));
-            Assert.Equal(history.Keys.Order(StringComparer.Ordinal), findings.Select(finding => finding.Subject.Path).Order(StringComparer.Ordinal));
+            Assert.Equal(history.Keys.Skip(1).Order(StringComparer.Ordinal), findings.Select(finding => finding.Subject.Path).Order(StringComparer.Ordinal));
             Assert.All(history, item => Assert.Equal(item.Value, File.ReadAllBytes(item.Key)));
             Assert.Equal(before, workspace.Bytes("guide.md"));
         }

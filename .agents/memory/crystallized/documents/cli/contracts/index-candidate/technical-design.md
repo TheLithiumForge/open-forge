@@ -66,8 +66,8 @@ or own command policy. Existing `GeneratedNavigationProjectionRequest` is
 refined to consume that formation instead of separately accepting independently
 assembled topology and source collections.
 
-Mutating application coordinates through the persistent external zero-byte
-workspace operation lock below `LocalApplicationData/OpenForge/locks/v1`. The
+Mutating application coordinates through the persistent local
+workspace operation lock below `.open-forge-state/workspace.lock`. The
 lock is held through the mutation planning, application, verification, and
 recovery boundary. It does not become route
 content or a source of workspace meaning, and it does not replace
@@ -253,9 +253,8 @@ textual diff.
 When an operation has one or more existing-target effects (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`), application
 uses one immutable ZIP recovery bundle for that complete
-operation, outside the workspace in the current user's
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1` subtree. No
+operation, in the workspace runtime folder at
+`.open-forge-state/recovery/v1/<workspace key>/` subtree. No
 temporary, repository, `HOME`, or custom-platform fallback exists.
 The deterministic storage key combines the normalized physical workspace path
 and operation ID. A source-generated schema-v1 `manifest.json` carries
@@ -265,7 +264,7 @@ Streamed ordinal payload entries contain the exact old bytes for every
 existing-target effect. This is recovery provenance, not an evolving journal or a second
 authority for workspace meaning.
 
-The draft is written with CreateNew under its exact name in the same external
+The draft is written with CreateNew under its exact name in the same local
 directory, closed and reopened for semantic manifest, exact ordered entry,
 length, hash, and payload-byte validation, moved within that directory to the
 deterministic final name, and reopened and verified again. Only the valid final
@@ -321,7 +320,7 @@ paths, while complete process tests remain in the separate system boundary.
 Direct tests cover typed request normalization, resolved-path and alias behavior, topology-derived
 projection, metadata admission, canonical output, byte ranges, heading
 ownership, ordering, result formation, and no-op behavior. Focused integration
-tests use real temporary rooted and detached source trees, external recovery
+tests use real temporary rooted and detached source trees, local recovery
 bundles, filesystem failures, expected-state changes, concurrency changes,
 safe replacement, verification, residual preservation, interruption, and rerun
 convergence.

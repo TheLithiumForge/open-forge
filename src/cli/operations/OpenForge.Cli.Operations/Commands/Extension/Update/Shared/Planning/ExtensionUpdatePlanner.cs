@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Recovery;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Ownership.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
@@ -303,6 +304,7 @@ internal sealed class ExtensionUpdatePlanner
         var bulkSelection = selectionKind is ExtensionUpdateSelectionKind.ExplicitAll
             or ExtensionUpdateSelectionKind.InteractiveAll;
         var policyFindings = recovery.Candidates
+            .Where(ExtensionRecoveryHistory.RequiresWarning)
             .Where(candidate => allowedRecovery is null || !RecoveryBundleIdentity.Matches(candidate, allowedRecovery))
             .Select(candidate => new ExtensionUpdateFinding(
                 ExtensionUpdateFindingCode.RecoveryHistory,

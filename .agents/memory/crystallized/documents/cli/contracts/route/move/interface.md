@@ -441,12 +441,9 @@ only. The command does not inspect or report repository changes.
 When the operation has one or more existing-target effects (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`),
 orchestration uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a
 pre-effect `incomplete` result. The complete move operation prepares exactly
-one immutable ZIP bundle outside the workspace. Its
+one immutable ZIP bundle in the workspace runtime folder. Its
 source-generated versioned `manifest.json` and streamed ordinal payload
 entries record command/operation/workspace identity, ordered relative targets,
 change kinds, exact prior bytes/lengths/hashes, and intended final absence or
@@ -644,6 +641,8 @@ The finding catalogue is:
 | route-move.reference-coverage-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.reference-coverage-incomplete`). | `open-forge doctor`                 |
 | route-move.projection-incomplete         | warning  | projection-unavailable      |                                                                                                                                                                                                                                                                                                                                                               |                                     |
 | route-move.recovery-unavailable          | warning  | recovery-unavailable        |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.recovery-history | warning | recovery-history | Recovery data from an earlier run remains at {path}. It does not block this operation. | |
+| route-move.recovery-coverage-unavailable | warning | recovery-coverage-unavailable | Recovery history at {path} could not be checked completely: {cause}. Current workspace validation still applies. | |
 | route-move.recovery-artifact-retained    | warning  | recovery-artifact-retained  |                                                                                                                                                                                                                                                                                                                                                               |                                     |
 | route-move.target-changed-during-apply   | error    | target-changed-during-apply |                                                                                                                                                                                                                                                                                                                                                               |                                     |
 | route-move.write-failed                  | error    | write-failed                |                                                                                                                                                                                                                                                                                                                                                               |                                     |
@@ -793,3 +792,7 @@ Exact wording is owned by the linked typed factories. Selection, output coordina
 CLI help syntax: [`route.move.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Move/RouteMoveText.cs).
 
 <!-- @OpenForgeTextRef route.move.help.syntax -->
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

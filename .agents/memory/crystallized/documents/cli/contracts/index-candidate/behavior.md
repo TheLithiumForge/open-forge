@@ -338,12 +338,8 @@ Application authority covers changed generated interiors and absent-field insert
 A verified no-op has no affected mutation path and therefore does not create a
 bundle. For an actual update with one or more existing targets to replace,
 preparation uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
-`incomplete` result. It prepares exactly one immutable ZIP bundle outside the
-workspace. An operation containing only
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle in the workspace runtime folder. An operation containing only
 Create effects or no-ops does not resolve recovery storage and creates no bundle.
 Its source-generated
 schema-v1 `manifest.json` and streamed ordinal payload entries identify
@@ -352,7 +348,7 @@ targets, change kinds, exact prior bytes/lengths/hashes, and intended final
 absence or length/hash. `Create` and byte/semantic no-op effects add no bundle
 entry.
 
-The draft uses `CreateNew` under its exact name in the same external directory,
+The draft uses `CreateNew` under its exact name in the same local directory,
 is closed and reopened for semantic manifest, exact ordered entry, length,
 hash, and payload-byte validation, moved within that directory to the
 deterministic final name, and reopened and verified. Only the valid final ZIP
@@ -617,9 +613,13 @@ concerns. Conforming implementation evidence must cover:
 
 Direct tests should prove the relevant selection, projection, ordering, heading,
 effect-planning, status, and no-op concerns. Focused integration tests should
-use real temporary rooted and detached source trees, external recovery bundles
+use real temporary rooted and detached source trees, local recovery bundles
 and drafts, filesystem failures, concurrency changes, and parent mutations. A
 small suite that runs the built Native AOT process must prove parsing, exact
 dry-run output, human and structured results, exit behavior, and packaged
 execution. Current implementation evidence is recorded in Working Memory rather
 than duplicated in this normative contract.
+
+## Workspace Runtime Boundary
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.

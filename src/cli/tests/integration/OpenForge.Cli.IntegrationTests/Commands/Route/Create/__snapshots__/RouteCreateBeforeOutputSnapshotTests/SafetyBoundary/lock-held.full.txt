@@ -1,7 +1,7 @@
-Cannot create .agents/memory/project-alpha/overview.md: Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
+Cannot create .agents/memory/project-alpha/overview.md: another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   Error  .agents/memory/project-alpha/overview.md  Workspace lock is unavailable [route-create.workspace-lock-unavailable]
-         Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
+         Another Open Forge command holds the lock at <lock-path>. Nothing was changed.
          cause: IOException (0x80070020): The filesystem operation failed.
   description: Project overview
   tags: Docs, Overview

@@ -17,7 +17,7 @@
       "severity": "warning",
       "code": "extension-install.recovery-coverage-unavailable",
       "title": "Recovery bundle is unavailable",
-      "message": "Recovery history at <workspace>/.open-forge-state/recovery/v1/<workspace-key> could not be checked completely: The recovery workspace storage path is not a directory.. Current workspace validation still applies.",
+      "message": "Recovery history at <workspace>/.open-forge-state/recovery/v1/<workspace-key> could not be checked completely: The recovery workspace storage path is not a directory. Current workspace validation still applies.",
       "subject": {
         "kind": "file",
         "path": "<workspace>/.open-forge-state/recovery/v1/<workspace-key>",

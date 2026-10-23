@@ -81,3 +81,7 @@ could widen current grants. Existing recovery source/ownership checks remain.
 
 A known unavailable grant file is never replaced by an empty synthetic grant
 record. The only persisted authority is the authored shared list.
+
+## Reserved Runtime Storage
+
+A grant never admits `.open-forge-state/` as an Extension or Library destination. Check lexical and resolved physical paths. The CLI itself uses this fixed folder for locks and recovery with ordinary workspace write access. No `--allow-path` grant is needed for runtime storage.

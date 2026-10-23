@@ -188,6 +188,18 @@ public sealed partial class WorkspaceLockFailurePresentationTests
         Assert.Throws<ArgumentOutOfRangeException>(() => WorkspaceLockFailureProjection.From(new((WorkspaceLockFailureKind)99, LockPath)));
     }
 
+    [Theory(DisplayName = "Recovery coverage adds one period after causes with or without terminal punctuation")]
+    [InlineData(""), InlineData("."), InlineData("!"), InlineData("?"), InlineData(". ")]
+    public void RecoveryCoveragePunctuation(string punctuation)
+    {
+        foreach (var path in new string?[] { null, LockPath })
+        {
+            Assert.Equal(
+                CliFindingWording.RecoveryCoverageUnavailable(path, "History is unavailable"),
+                CliFindingWording.RecoveryCoverageUnavailable(path, $"History is unavailable{punctuation}"));
+        }
+    }
+
     private static void Verify<TResult, TData>(TResult result, CliReportRendering<TResult, TData> rendering,
         WorkspaceLockFailureInfo failure, string code, CliSemanticStatus status)
         where TResult : ICliCommandResult where TData : class
@@ -213,9 +225,12 @@ public sealed partial class WorkspaceLockFailurePresentationTests
                     var finding = Assert.Single(json.RootElement.GetProperty("findings").EnumerateArray());
                     Assert.Equal(code, finding.GetProperty("code").GetString());
                     Assert.Equal("Workspace lock is unavailable", finding.GetProperty("title").GetString());
+                    Assert.Equal(CliFindingWording.WorkspaceLockUnavailable(failure), finding.GetProperty("message").GetString());
                     Assert.Contains(LockPath, finding.GetProperty("message").GetString(), StringComparison.Ordinal);
                 }
                 var message = CliFindingWording.WorkspaceLockUnavailable(failure);
+                Assert.Equal($"{char.ToLowerInvariant(message[0])}{message[1..]}", CliFindingWording.WorkspaceLockUnavailableReason(failure));
+                Assert.DoesNotContain($": {message}", output.PrimaryContent, StringComparison.Ordinal);
                 Assert.Equal(failure.Reason == WorkspaceLockFailureReason.Busy, message.Contains("Another Open Forge command", StringComparison.Ordinal));
                 Assert.DoesNotContain("delete", message, StringComparison.OrdinalIgnoreCase);
                 Assert.EndsWith("Nothing was changed.", message, StringComparison.Ordinal);

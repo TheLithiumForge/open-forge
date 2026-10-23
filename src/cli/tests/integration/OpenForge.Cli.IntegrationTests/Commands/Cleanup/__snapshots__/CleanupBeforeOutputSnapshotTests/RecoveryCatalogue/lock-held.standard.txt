@@ -1,7 +1,7 @@
-Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
+Another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   Error  cleanup  Workspace lock is unavailable
-         Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
+         Another Open Forge command holds the lock at <lock-path>. Nothing was changed.
          open-forge cleanup --workspace <workspace>
          Rerun Cleanup from a fresh catalogue.
   <recovery-bundle-1>

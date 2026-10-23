@@ -31,7 +31,7 @@ public sealed class RouteRemoveRevalidationIntegrationTests
         Assert.Equal(CliSemanticStatus.Blocked, completion.Status);
         Assert.Equal(string.Empty, output.ToString());
         Assert.Contains(
-            $"Cannot remove guidance/old guide: Another Open Forge command is changing the workspace. The workspace lock is busy at {Path.Combine(workspace.Workspace.PhysicalRoot, ".open-forge-state", "workspace.lock")}. Nothing was changed.",
+            $"Cannot remove guidance/old guide: another Open Forge command holds the lock at {Path.Combine(workspace.Workspace.PhysicalRoot, ".open-forge-state", "workspace.lock")}. Nothing was changed.",
             error.ToString(),
             StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());

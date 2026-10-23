@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Recovery;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
@@ -604,6 +605,7 @@ internal sealed class ExtensionRemovePlanner
         }
 
         var findings = catalogue.Candidates
+            .Where(ExtensionRecoveryHistory.RequiresWarning)
             .Where(candidate => allowed is null || !RecoveryBundleIdentity.Matches(candidate, allowed))
             .Select(candidate => new ExtensionRemoveFinding(
                 ExtensionRemoveFindingCode.RecoveryHistory,

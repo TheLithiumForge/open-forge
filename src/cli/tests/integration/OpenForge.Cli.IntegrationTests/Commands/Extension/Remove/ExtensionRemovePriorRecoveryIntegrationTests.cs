@@ -72,10 +72,11 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
             "--automatic", "--format", "json",
         ]);
 
-        Assert.Equal(2, remove.ExitCode);
-        Assert.Equal(CliSemanticStatus.Attention, remove.Status);
+        Assert.Equal(0, remove.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, remove.Status);
         Assert.Equal(string.Empty, remove.StandardError);
         using var removeDocument = JsonDocument.Parse(remove.StandardOutput);
+        Assert.Empty(removeDocument.RootElement.GetProperty("findings").EnumerateArray());
         var removePath = removeDocument.RootElement
             .GetProperty("recovery")
             .GetProperty("path")

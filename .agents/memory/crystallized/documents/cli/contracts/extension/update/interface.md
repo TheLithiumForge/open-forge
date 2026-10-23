@@ -155,8 +155,8 @@ Update requires:
   readable ordinary metadata exception defined below.
 
 Before a workspace effect, the implementation must hold the actual OS lock for
-the persistent external zero-byte path under
-`LocalApplicationData/OpenForge/locks/v1` defined by the [Mutation And Recovery
+the persistent local path under
+`.open-forge-state/workspace.lock` defined by the [Mutation And Recovery
 Technical Design](../../../technical-designs/mutation-and-recovery.md). The lock file is persistent and reusable: write no metadata,
 timestamp, or ownership record. Hold a
 `FileShare.None` handle for the operation; file existence is not lock
@@ -181,9 +181,8 @@ without using a legacy fallback. Old files remain unrelated user content.
 Before the first target effect, application prepares and verifies exactly one
 immutable ZIP recovery bundle for the complete operation when the plan contains
 an existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) or a permission-file Create. The bundle
-is outside the workspace under
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`; no temporary,
+stored in the workspace under
+`.open-forge-state/recovery/v1/<workspace key>/`. No temporary,
 repository, `HOME`, or custom platform fallback is permitted. Unavailable
 storage makes the operation `incomplete` before any target effect.
 
@@ -226,7 +225,7 @@ automatic guarantee: deterministic rediscovery uses the same normalized
 physical path, while Doctor/Cleanup may report orphan bundles for the original
 root and never auto-bind or restore them.
 
-Recovery storage is ordinary current-user `LocalApplicationData` under the
+New recovery storage is inside `.open-forge-state/` under the
 stable workspace and cooperating-client threat model. No special platform-
 permission or encryption behavior is promised. Recovery reads use semantic
 schema and exact ordered-entry validation; the
@@ -623,3 +622,7 @@ remain the output evidence.
   <!-- @OpenForgeTextRef extension.update.phrase.would-update-with-kept -->
   <!-- @OpenForgeTextRef extension.update.phrase.would-save-a-grant-for-to-agents-open-forge-json -->
   <!-- @OpenForgeTextRef extension.update.phrase.saved-a-grant-for-to-agents-open-forge-json -->
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

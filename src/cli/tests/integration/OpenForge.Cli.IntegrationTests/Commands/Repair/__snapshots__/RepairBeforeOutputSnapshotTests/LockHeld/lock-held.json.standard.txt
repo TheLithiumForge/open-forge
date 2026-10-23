@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Cannot repair: Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.",
+    "headline": "Cannot repair: another Open Forge command holds the lock at <lock-path>. Nothing was changed.",
     "kind": "blocked"
   },
   "findings": [
@@ -17,7 +17,7 @@
       "severity": "error",
       "code": "repair.workspace-lock-unavailable",
       "title": "Workspace lock is unavailable",
-      "message": "Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.",
+      "message": "Another Open Forge command holds the lock at <lock-path>. Nothing was changed.",
       "subject": {
         "kind": "identifier",
         "path": null,

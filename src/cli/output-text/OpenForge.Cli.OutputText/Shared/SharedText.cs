@@ -110,8 +110,8 @@ internal static class SharedText
     internal static string LabelFixByHand()
         => "fix by hand";
 
-    // @OpenForgeText shared.message.workspace-lock-unavailable-nothing-was-changed
-    internal static string MessageWorkspaceLockUnavailableNothingWasChanged()
+    // @OpenForgeText shared.message.the-workspace-lock-could-not-be-acquired-nothing-was-changed
+    internal static string MessageTheWorkspaceLockCouldNotBeAcquiredNothingWasChanged()
         => "The workspace lock could not be acquired. Nothing was changed.";
 
     // @OpenForgeText shared.label.the-filesystem-operation-failed

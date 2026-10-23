@@ -1,6 +1,6 @@
 Cannot rebuild the Entries section of <workspace>.
 Workspace: <workspace>
   Error  <workspace>  Workspace lock is unavailable
-         Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
+         Another Open Forge command holds the lock at <lock-path>. Nothing was changed.
   .agents/root/_root.md  not started
 Next: open-forge index --workspace <workspace>

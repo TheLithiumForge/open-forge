@@ -259,21 +259,64 @@ change that can't establish trusted lifecycle facts is blocked. Follow the
 suggested next action in the result, then run the command again so it starts
 from the workspace's current state.
 
-### Worktrees, sandboxes and the data folder
+### Worktrees, sandboxes and the runtime folder
 
-Each directory is its own workspace. Every Git worktree has its own locks and
-recovery bundles, so commands in different worktrees never wait for each other.
-Run the CLI inside the worktree or select it with `--workspace <path>`.
+Each directory is its own workspace: the current directory, or the one
+`--workspace` selects. Every Git worktree therefore has its own lock and
+recovery bundles, and commands in different worktrees never wait for each other.
 
-Writing commands take the workspace lock and keep recovery bundles in a
-per-user data folder outside the workspace, such as `%LOCALAPPDATA%\OpenForge`
-on Windows or `~/.local/share/OpenForge` on Linux. Set `OPENFORGE_DATA_HOME`
-to an absolute folder to use another one, for example when a sandbox lets a
-command write only inside its worktree. Choose a folder outside the workspace or
-one that Git ignores. A relative value is not used, so writing commands stop
-instead of falling back to the default folder. When the data folder cannot be
-written, they report that the workspace lock is unavailable and change nothing.
-Reading commands such as `context` and `find` do not use it.
+Writing commands keep their state in `.open-forge-state/` inside the workspace:
+
+```text
+.open-forge-state/
+  .gitignore
+  workspace.lock
+  recovery/v1/<workspace key>/
+```
+
+The folder writes its own `.gitignore` first, so Git ignores it. `git clean -x`
+and `git clean -X` delete ignored files, including this folder and its recovery
+bundles. Review the bundles before you run them. Open Forge never reads this
+folder as content, never includes or installs into it, and keeps it when the
+Framework is removed.
+
+A sandbox only needs write access to the workspace. The open file handle is the
+lock, so the operating system releases it when the command exits, even after a
+crash. The file stays behind and its contents do not matter. Never delete it to
+release a lock. Dry runs, prompts, refusals, read-only commands and verified
+no-ops create nothing in this folder.
+
+When a command cannot take the lock, it changes nothing and says why:
+
+| Cause | Message |
+| --- | --- |
+| Busy | `Another Open Forge command holds the lock at <path>. Nothing was changed.` |
+| Access denied | `Cannot open the lock at <path>: access denied. Nothing was changed.` |
+| Unsupported | `Cannot lock <path>: this filesystem does not support file locks. Nothing was changed.` |
+| Invalid target | `Cannot use <path> as the lock: it is not an ordinary file. Nothing was changed.` |
+| I/O error | `Cannot open the lock at <path>. Nothing was changed.` |
+| Cancelled | `Cancelled before taking the lock at <path>. Nothing was changed.` |
+
+Only a busy lock means another command is running. Retry when it finishes.
+
+Older CLIs (0.9.0-beta.17 and earlier) lock and store bundles in a per-user
+folder instead, `OpenForge/` under the local application data folder or under
+`OPENFORGE_DATA_HOME` when that is set to an absolute path. Until 1.0, every
+writing command also takes that older lock, so old and new CLIs never write at
+the same time. When a sandbox cannot write that folder, the command opens the
+existing lock file read-only, which still excludes older CLIs. It goes ahead
+without it only when no older lock file exists for this workspace. The one gap
+left is an older CLI that has never written this workspace, started outside the
+sandbox during a sandboxed write. Older CLIs also cannot see new bundles.
+`OPENFORGE_DATA_HOME` now only tells the CLI where that older lock and those
+older bundles are. It never moves `.open-forge-state/`.
+
+Status, Doctor and Cleanup report both stores. `--format json --detail full`
+shows each store's path, coverage and candidates. An unreadable older store
+never blocks local cleanup. Leftover bundles never block a writing command,
+which still checks the files it changes. It warns about drafts, damaged bundles
+and stores that cannot be read, and says nothing about verified bundles from
+earlier runs.
 
 ## Read the workspace
 
@@ -1837,8 +1880,11 @@ See [global options](#global-options) for shared flags.
 #### Behavior notes
 
 `cleanup` removes only recognized Open Forge recovery bundles and drafts for
-the selected workspace. The bundles are stored outside the workspace, and
-`status` reports the ones that remain.
+the selected workspace. New bundles are stored in `.open-forge-state/recovery/v1/<workspace key>/`, and
+`status` reports the ones that remain. Status, Doctor and Cleanup also read the
+legacy per-user store. With `--format json --detail full`, they report each store's path, coverage
+and candidates. Cleanup checks each store separately. Unavailable legacy coverage
+or deletion authority does not prevent eligible local deletion.
 
 Install compares a verified bundle with the current files before deciding
 whether it blocks the operation. Fully restored, fully applied and superseded

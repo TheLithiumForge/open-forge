@@ -4,49 +4,54 @@ using System.Text;
 namespace OpenForge.Cli.EndToEndTests.Shared.Journeys;
 
 /// <summary>
-/// Holds one published workspace lock from a real, owned Windows PowerShell child.
+/// Holds a workspace lock from an owned child of the EndToEnd executable.
 /// The child is deliberately a cooperative test fixture, not a suspended CLI.
 /// </summary>
 internal sealed class PublishedLockHolder : IDisposable
 {
-    private const string LockPathVariable = "OPEN_FORGE_F20_LOCK_PATH";
-    private const string MutationPathVariable = "OPEN_FORGE_F20_MUTATION_PATH";
+    internal const string ChildArgument = "--workspace-lock-holder";
     private const string LockedMarker = "LOCKED";
     private const string ReleasedMarker = "RELEASED";
-    // Wait for the child's protocol markers. Saturated-CPU runs approached the
-    // former ten-second startup limit before the fixture could acquire its lock.
     private static readonly TimeSpan HandshakeTimeout = TimeSpan.FromSeconds(60);
-    private const string HolderScript = """
-        $ErrorActionPreference = 'Stop'
-        $lockPath = [Environment]::GetEnvironmentVariable('OPEN_FORGE_F20_LOCK_PATH')
-        $mutationPath = [Environment]::GetEnvironmentVariable('OPEN_FORGE_F20_MUTATION_PATH')
-        $lock = $null
-        try {
-            $lock = [System.IO.File]::Open(
-                $lockPath,
-                [System.IO.FileMode]::Open,
-                [System.IO.FileAccess]::ReadWrite,
-                [System.IO.FileShare]::None)
-            [System.IO.File]::WriteAllText(
-                $mutationPath,
-                'Open Forge F20 first-writer marker',
-                [System.Text.UTF8Encoding]::new($false))
-            [Console]::Out.WriteLine('LOCKED')
-            [Console]::Out.Flush()
-            $command = [Console]::In.ReadLine()
-            if ($command -cne 'release') {
-                throw [System.InvalidOperationException]::new('The lock holder received an unexpected command.')
+
+    internal static int RunChild(string[] arguments)
+    {
+        try
+        {
+            if (arguments.Length != 4 || arguments[0] != ChildArgument)
+            {
+                throw new ArgumentException("Invalid lock holder arguments.");
             }
-        }
-        finally {
-            if ($null -ne $lock) {
-                $lock.Dispose()
+
+            var access = arguments[3] switch
+            {
+                "read-write" => FileAccess.ReadWrite,
+                "read-only" => FileAccess.Read,
+                _ => throw new ArgumentException("Invalid lock holder access."),
+            };
+            ValidateAbsoluteOrdinaryFile(arguments[1], nameof(arguments));
+            ValidateAbsoluteMutationPath(arguments[2]);
+            using (var handle = new FileStream(arguments[1], FileMode.Open, access, FileShare.None))
+            {
+                File.WriteAllText(arguments[2], "Open Forge first-writer marker");
+                Console.Out.WriteLine(LockedMarker);
+                Console.Out.Flush();
+                if (Console.In.ReadLine() != "release")
+                {
+                    throw new InvalidOperationException("The lock holder received an unexpected command.");
+                }
             }
+
+            Console.Out.WriteLine(ReleasedMarker);
+            Console.Out.Flush();
+            return 0;
         }
-        [Console]::Out.WriteLine('RELEASED')
-        [Console]::Out.Flush()
-        exit 0
-        """;
+        catch (Exception exception)
+        {
+            Console.Error.WriteLine(exception);
+            return 1;
+        }
+    }
 
     private readonly Process _process;
     private readonly StreamWriter _standardInput;
@@ -73,34 +78,19 @@ internal sealed class PublishedLockHolder : IDisposable
 
     internal static async Task<PublishedLockHolder> StartAsync(
         string lockPath,
-        string ownedMutationPath)
+        string ownedMutationPath,
+        bool readOnly = false)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(lockPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(ownedMutationPath);
-        if (!OperatingSystem.IsWindows())
-        {
-            throw new PlatformNotSupportedException(
-                "The published lock holder requires Windows PowerShell and Windows file sharing.");
-        }
-
-        ValidateAbsoluteOrdinaryZeroByteFile(lockPath, nameof(lockPath));
+        ValidateAbsoluteOrdinaryFile(lockPath, nameof(lockPath));
         ValidateAbsoluteMutationPath(ownedMutationPath);
-
-        var powershellPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.System),
-            "WindowsPowerShell",
-            "v1.0",
-            "powershell.exe");
-        if (!File.Exists(powershellPath))
-        {
-            throw new FileNotFoundException(
-                "The OS-provided Windows PowerShell executable is unavailable.",
-                powershellPath);
-        }
+        var executable = Environment.ProcessPath
+            ?? throw new InvalidOperationException("The test process executable is unavailable.");
 
         var startInfo = new ProcessStartInfo
         {
-            FileName = powershellPath,
+            FileName = executable,
             RedirectStandardInput = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -109,16 +99,18 @@ internal sealed class PublishedLockHolder : IDisposable
             UseShellExecute = false,
             CreateNoWindow = true,
         };
-        startInfo.ArgumentList.Add("-NoLogo");
-        startInfo.ArgumentList.Add("-NoProfile");
-        startInfo.ArgumentList.Add("-NonInteractive");
-        startInfo.ArgumentList.Add("-EncodedCommand");
-        startInfo.ArgumentList.Add(Convert.ToBase64String(Encoding.Unicode.GetBytes(HolderScript)));
-        startInfo.Environment[LockPathVariable] = lockPath;
-        startInfo.Environment[MutationPathVariable] = ownedMutationPath;
+        if (string.Equals(Path.GetFileNameWithoutExtension(executable), "dotnet", StringComparison.OrdinalIgnoreCase))
+        {
+            startInfo.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "OpenForge.Cli.EndToEndTests.dll"));
+        }
+
+        startInfo.ArgumentList.Add(ChildArgument);
+        startInfo.ArgumentList.Add(lockPath);
+        startInfo.ArgumentList.Add(ownedMutationPath);
+        startInfo.ArgumentList.Add(readOnly ? "read-only" : "read-write");
 
         var process = Process.Start(startInfo)
-            ?? throw new InvalidOperationException("Unable to start the owned Windows PowerShell lock holder.");
+            ?? throw new InvalidOperationException("Unable to start the owned test lock holder.");
         var holder = new PublishedLockHolder(process);
         var started = Stopwatch.GetTimestamp();
         try
@@ -384,7 +376,7 @@ internal sealed class PublishedLockHolder : IDisposable
     private static Exception Combine(Exception? first, Exception second)
         => first is null ? second : new AggregateException(first, second);
 
-    private static void ValidateAbsoluteOrdinaryZeroByteFile(string path, string parameterName)
+    private static void ValidateAbsoluteOrdinaryFile(string path, string parameterName)
     {
         if (!Path.IsPathFullyQualified(path))
         {
@@ -397,10 +389,6 @@ internal sealed class PublishedLockHolder : IDisposable
             throw new InvalidOperationException("The lock path is not an ordinary file.");
         }
 
-        if (new FileInfo(path).Length != 0)
-        {
-            throw new InvalidOperationException("The lock path must be the exact zero-byte lock file.");
-        }
     }
 
     private static void ValidateAbsoluteMutationPath(string path)

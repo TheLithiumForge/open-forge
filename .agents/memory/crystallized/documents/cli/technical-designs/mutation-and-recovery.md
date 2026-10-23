@@ -16,63 +16,75 @@ selection, policy, lifecycle publication timing, findings, recovery mapping, and
 result.
 
 The [CLI Architecture](../architecture.md) defines the cross-cutting stage,
-cooperating-process, external-recovery, no-automatic-rollback, and provenance
+cooperating-process, local-recovery, no-automatic-rollback, and provenance
 invariants. The [Shared CLI Operation Contract](../shared-operation-contract.md)
 and command contracts define observable operation policy.
 
-## Application-Data Stores And Workspace Identity
+## Runtime Paths And Workspace Identity
 
-The mutation bundle writer resolves exactly:
+Every selected physical workspace has a fixed runtime folder:
 
 ```text
-Environment.GetFolderPath(
-  Environment.SpecialFolder.LocalApplicationData,
-  Environment.SpecialFolderOption.Create)
+.open-forge-state/
+  .gitignore
+  workspace.lock
+  recovery/v1/<workspace key>/
 ```
 
-and uses only the application-owned `OpenForge/recovery/v1` subtree. An absolute
-`OPENFORGE_DATA_HOME` replaces that special folder for both stores. A relative
-value leaves both stores unavailable. There is no temporary-directory,
-repository, `HOME`, or custom-platform fallback.
+`WorkspaceRuntimePaths` derives these paths from `CliWorkspace.PhysicalRoot`.
+Bootstrap creates or repairs an ordinary `.gitignore` containing `*` before
+creating any other runtime file. The folder ignores itself in Git. Git clean
+with `-x` or `-X` can delete it, including recovery evidence.
 
-Status, Doctor, and Cleanup are observers. They resolve the same special folder
-with `Environment.SpecialFolderOption.None` and never create the operating-
-system application-data root or either Open Forge subtree. An absent root or
-store produces an available empty catalogue. An existing selected-workspace
-bucket that cannot be read remains unavailable. A final ZIP that fails semantic
-validation retains its exact malformed, unsupported, or unavailable condition;
-neither condition is treated as absence.
+New bundles always use the local store. `RecoveryStoreLocator` constructs typed
+workspace and legacy locations without creating storage. The legacy location
+uses the existing per-user `OpenForge/recovery/v1` layout. An absolute
+`OPENFORGE_DATA_HOME` selects only that legacy data root and its `OpenForge/locks/v1`
+bridge. A relative value or failed resolution makes legacy coverage unavailable.
+It never relocates or prevents the local store.
 
-Lock and recovery keys derive from the normalized physical workspace path. A
-workspace move is outside automatic rediscovery. The two stores occupy separate
-versioned subtrees.
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
+
+The full SHA-256 key derives from the normalized physical workspace path.
+Separate worktrees have independent local locks and bundles. Moving a workspace
+does not rediscover bundles under its previous key.
+
+The runtime subtree is reserved from source inventory, direct source reads,
+Markdown traversal, inclusion, package destinations and removal. Admission checks
+both lexical and resolved physical paths. Recovery observers deliberately read
+their own stores. Framework removal preserves the runtime folder.
 
 ## Persistent Workspace Lock
 
-`WorkspaceLockManager` owns a persistent reusable zero-byte ordinary file under
-`LocalApplicationData/OpenForge/locks/v1`, named:
+`WorkspaceLockManager` opens `.open-forge-state/workspace.lock` without truncating,
+rewriting or deleting it. Its contents and length do not establish ownership.
+The live handle owns the lock. Windows uses `FileShare.None`. Unix also requires
+a successful checked `flock(LOCK_EX | LOCK_NB)`. The only native interop is
+`flock`. BCL attributes and link targets reject directories and links before
+opening. A non-seekable handle is rejected as `InvalidTarget` after opening.
 
-```text
-<friendly-workspace-name>-<full-sha256-workspace-key>.lock
-```
+Typed failures preserve the exact path and one cause: `Busy`, `AccessDenied`,
+`Unsupported`, `InvalidTarget`, `IoError` or `Cancelled`. Only proven contention
+means another writer holds the lock. There is no contention wait loop. Unix
+retries an interrupted system call with cancellation checks. No failure advises
+deleting a lock or recovery bundle.
 
-The full lowercase SHA-256 of the normalized physical workspace path is the
-identity authority. The bounded filename-safe friendly prefix derives from the
-final normalized directory name, uses `workspace` as its deterministic fallback,
-and is display only.
+After local acquisition, the bridge attempts the existing legacy lock read-write.
+On access denial it opens an existing legacy file read-only with exclusive
+sharing. It skips the bridge only when denied access accompanies proven absence,
+or legacy-root resolution is unavailable. Other bridge failures release the local
+handle and fail with their typed cause. The legacy zero-length check remains.
+The legacy filename retains its friendly prefix and full workspace key.
 
-The manager opens one writable `FileStream` and holds its read/write
-`FileShare.None` handle as the sole lock ownership proof. It writes no metadata,
-does not truncate or delete the file, and does not infer ownership from
-existence. An unlocked file is reused. Disposal releases only the handle. The
-persistent pathname avoids split coordination through unlink and recreation
-while another handle is open.
+The composite lease validates the physical workspace and fixed local path.
+It releases the legacy handle before the local handle, including on failure and
+cancellation. Process exit releases ownership. A leftover sentinel blocks nothing.
+Planning, prompts, refusals, dry runs and verified no-ops create no runtime state.
 
-Current-user store resolution is deferred until acquisition after the initial
-cancellation boundary. Composition, help, dry-run, verified no-op, and prompt
-refusal do not create lock infrastructure. The managed BCL does not expose one
-portable sharing-violation type, so an ambiguous open `IOException` remains a
-typed input/output failure rather than inferred contention.
+The bridge ends at 1.0. Its accepted mixed-version gap is an older CLI
+(0.9.0-beta.17 or earlier) that has never written this workspace, started outside
+the sandbox during a sandboxed write. Older readers may miss new local bundles.
+Existing legacy files and bundles stay in place.
 
 ## Expected State And Preflight
 
@@ -140,13 +152,13 @@ again immediately before its effect.
 ## Recovery Bundle
 
 An operation with one or more reversible non-no-op effects prepares exactly one
-immutable external ZIP before the first target effect. Covered effects include
+immutable local ZIP before the first target effect. Covered effects include
 ordinary existing-file `Replace`, `ReplaceGeneratedRegion`, and `Delete`,
 relative-file-link `Create` and `Delete`, and a prior-missing ordinary `Create`
 when it creates a record that the operation must be able to remove. A semantic
 or byte no-op operation does not resolve recovery storage and creates no bundle.
 
-The deterministic external directory key and names bind the normalized physical
+The deterministic workspace directory key and names bind the normalized physical
 workspace path and operation ID. The source-generated public schema-v1
 `manifest.json` has exactly one schema discriminator value: `1`; no v2, dual
 reader, or compatibility layer exists. It records command and operation
@@ -434,6 +446,16 @@ plans from current facts; no journal, progress receipt, history, saved plan, or
 replay mechanism exists.
 
 ## Guarded Recovery-Artifact Deletion
+
+`RecoveryBundleCatalogue.ReadAsync(CliWorkspace, ...)` reads only the workspace store.
+`ReadStoresAsync` returns workspace then legacy observations. A location-specific
+read retains that exact store identity.
+
+Candidates, verified reads and preparations carry their immutable `RecoveryStoreLocation`.
+Deletion uses that recorded location and never resolves the environment again.
+Legacy deletion also requires the lease to hold the matching legacy lock.
+Cleanup opens a separate frozen deletion session for each store. A store with
+unavailable coverage or authority cannot prevent eligible local deletion.
 
 Given an existing same-workspace lease and one caller-selected eligible candidate,
 `RecoveryBundleDeletionGuard` re-enumerates the workspace bucket once, proves the

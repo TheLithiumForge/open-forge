@@ -234,3 +234,7 @@ Gate 5 executable proof must cover:
 - [Framework path rules](../../../../framework/routing/paths.md)
 - [Framework overwrite rules](../../../../framework/routing/overwrites.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
+
+## Reserved Runtime Storage
+
+The fixed `.open-forge-state/` subtree is reserved runtime storage. Exclude it before source reads and traversal, even without Git ignore rules. Direct paths and links into it do not admit its files as sources or writable package destinations.

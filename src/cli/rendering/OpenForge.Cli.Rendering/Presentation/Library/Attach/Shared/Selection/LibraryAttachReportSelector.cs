@@ -330,6 +330,8 @@ internal static class LibraryAttachReportSelector
                 => new(LibraryAttachWording.Incomplete(id, FindingMessage(result, first, progress)), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid
                 => new(LibraryAttachWording.CannotAttach(id, FindingMessage(result, first, progress)), CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when first?.LockFailure is { } lockFailure
+                => new(LibraryAttachWording.CannotAttach(id, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(LibraryAttachWording.CannotAttach(id, FindingMessage(result, first, progress)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed when IgnoreStarted(payload)

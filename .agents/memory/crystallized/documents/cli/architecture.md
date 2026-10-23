@@ -650,3 +650,7 @@ publication boundary live in [CLI Distribution](distribution.md). New RIDs,
 architectures, operating systems, libc variants, channels, signatures, SBOM,
 provenance, OIDC attestation, or support-floor claims require a later explicit
 maintainer decision.
+
+## Workspace Runtime Storage
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the mutation and recovery design for the bridge gap and typed failures.

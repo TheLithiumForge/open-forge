@@ -61,10 +61,18 @@ public sealed class RouteInitRecoveryConflictCoordinateIntegrationTests
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Equal(0, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
             Assert.DoesNotContain(result.Findings, item => item.Code == RouteInitFindingCode.RecoveryConflict);
-            Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
             var report = RouteInitReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
-            Assert.Contains(report.Findings, item => item.Code == "route-init.recovery-history"
-                && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
+            if (candidateKind == "valid-final")
+            {
+                Assert.Empty(result.RecoveryHistory.Paths);
+                Assert.DoesNotContain(report.Findings, item => item.Subject.Path == candidate.Path);
+            }
+            else
+            {
+                Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
+                Assert.Contains(report.Findings, item => item.Code == "route-init.recovery-history"
+                    && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
+            }
             Assert.NotEqual(candidate.Path, result.Recovery.ResidualPath);
             Assert.NotEmpty(result.Effects);
             if (dryRun) Assert.Equal(before, workspace.SnapshotHashes());
@@ -80,7 +88,7 @@ public sealed class RouteInitRecoveryConflictCoordinateIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Framework Route Init dry-run preserves the requested route and reports the observed recovery path"), Trait("Feature", "route-init-framework"), Trait("Evidence", "IntegrationSafety")]
+    [Fact(DisplayName = "Framework Route Init dry-run preserves the requested route and does not report verified recovery history"), Trait("Feature", "route-init-framework"), Trait("Evidence", "IntegrationSafety")]
     public async Task FrameworkDryRunReportsObservedPathWithoutEffects()
     {
         using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
@@ -106,10 +114,9 @@ public sealed class RouteInitRecoveryConflictCoordinateIntegrationTests
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Equal(0, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
             Assert.DoesNotContain(result.Findings, item => item.Code == RouteInitFindingCode.RecoveryConflict);
-            Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
+            Assert.Empty(result.RecoveryHistory.Paths);
             var report = RouteInitReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
-            Assert.Contains(report.Findings, item => item.Code == "route-init.recovery-history"
-                && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
+            Assert.DoesNotContain(report.Findings, item => item.Subject.Path == candidate.Path);
             Assert.NotEqual(candidate.Path, result.Recovery.ResidualPath);
             Assert.NotEmpty(result.Effects);
             Assert.Equal(before, workspace.SnapshotHashes());

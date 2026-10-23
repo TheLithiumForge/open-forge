@@ -549,3 +549,9 @@ Use this to check workspace health in CI or another tool.
    See [status and exit codes](/guides/cli#status-and-exit-codes).
 
 Next: [Command reference](/guides/cli#command-index).
+
+## Work in separate worktrees
+
+Each directory has its own `.open-forge-state/` lock and recovery store. A sandbox needs workspace write access. A leftover lock file does not mean a command is running.
+
+Use `open-forge status --detail full` or `open-forge doctor --detail full` to inspect workspace and legacy recovery stores. Preview `open-forge cleanup --dry-run` before removing evidence. Eligible local cleanup can proceed when the legacy store is unavailable. See [worktrees and sandboxes](/guides/cli#worktrees-sandboxes-and-the-runtime-folder).

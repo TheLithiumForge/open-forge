@@ -305,6 +305,8 @@ internal static class RouteInitReportSelector
                 => new(RouteInitWording.Incomplete(Message(result, first)), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid
                 => new(InvalidHeadline(result, first), CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when first?.LockFailure is { } lockFailure
+                => new(RouteInitWording.Blocked(target, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(RouteInitWording.Blocked(target, Message(result, first)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed

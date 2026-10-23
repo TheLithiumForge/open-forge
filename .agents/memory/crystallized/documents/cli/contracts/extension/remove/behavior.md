@@ -171,8 +171,8 @@ Preflight validates IDs, dependencies, owner sets, current exact
 facts, route and generated boundaries, cross-section preservation,
 expected state, deletion safety, verification, and recovery-bundle readiness.
 One failed condition blocks all effects. Before the first workspace effect,
-obtain the actual OS lock for the persistent external zero-byte path under
-`LocalApplicationData/OpenForge/locks/v1` defined by the [Mutation And Recovery
+obtain the actual OS lock for the persistent local path under
+`.open-forge-state/workspace.lock` defined by the [Mutation And Recovery
 Technical Design](../../../technical-designs/mutation-and-recovery.md). The lock file is persistent and reusable: write no metadata,
 timestamp, or ownership record.
 Hold a `FileShare.None` handle; existence is not lock ownership, and another
@@ -188,11 +188,9 @@ never produces an apply-time `failed` or `cancelled` result because it performs
 no effects. A planning or read failure and caller cancellation before effects
 retain their own event meaning.
 
-Application first prepares exactly one immutable ZIP recovery bundle outside the
-workspace whenever the plan has an existing-target effect (`Replace`,
+Application first prepares exactly one immutable ZIP recovery bundle in the workspace runtime folder whenever the plan has an existing-target effect (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`) or a permission-file Create. The storage root is
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`; temporary,
+`.open-forge-state/recovery/v1/<workspace key>/`. Temporary,
 repository, `HOME`, and custom platform fallbacks are forbidden, and unavailable
 storage is `incomplete` before any target effect.
 
@@ -229,8 +227,10 @@ for an effect, derive current target state from recovery provenance, or create a
 journal, progress receipt, or persisted plan. After whole-operation success, re-read and verify the prepared bundle and retain
 it. Return `retained` with the exact bundle path and no failure finding. Its
 payload is the protection for edited bytes. A missing or invalid prepared bundle
-fails final recovery verification. Existing recovery-catalogue conflict checks
-remain for later mutations; users review the bundle before explicit Cleanup.
+fails final recovery verification. Later mutations validate their own preparation
+and current targets. Verified retained finals produce no writer warning. Drafts,
+invalid bundles and unavailable history coverage warn without blocking unrelated
+work. Review retained evidence before explicit Cleanup.
 An absent-ID Remove no-op may complete without mutation despite a retained bundle.
 
 Explicit Cleanup owns exact named final and draft deletion under its separate
@@ -267,3 +267,7 @@ bundle before any deletion, and edited bytes remain recoverable after successful
 application. Cover unsafe final leaves, reserved state files, no legacy fallback,
 dry-run parity, absent-ID no-ops, and unknown-option rejection for `--prune`.
 Run the supported managed and Native AOT verification gates.
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

@@ -19,9 +19,11 @@ Global options: --workspace, --format, --detail, --detail-filter, --help,
 
 Details:
   Coverage: Inspect installation, startup and continuity context, generated
-  navigation, lifecycle, managed targets, and exact recovery candidates. This
-  deterministic, stateless command takes no workspace lock, repairs no lifecycle
-  state, and restores no recovery data.
+  navigation, lifecycle, managed targets, and recovery candidates in the
+  workspace and legacy stores. Use --format json --detail full for each store's
+  path, coverage and candidates. This deterministic, stateless command creates
+  neither store, takes no workspace lock, repairs no lifecycle state, and
+  restores no recovery data.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

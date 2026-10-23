@@ -591,7 +591,7 @@ internal static class ExtensionUpdateReportSelector
     {
         if (finding?.LockFailure is { } lockFailure)
         {
-            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+            return CliFindingWording.WorkspaceLockUnavailableReason(lockFailure);
         }
 
         var message = FindingMessage(result, finding, id);

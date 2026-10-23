@@ -12,7 +12,14 @@ internal static class RouteRecoveryHistoryReader
     {
         var stores = await RecoveryBundleCatalogue.ReadStoresAsync(workspace, cancellationToken).ConfigureAwait(false);
         return new RouteRecoveryHistory(
-            stores.SelectMany(store => store.Catalogue.Candidates).Select(candidate => candidate.Path).ToImmutableArray(),
+            stores.SelectMany(store => store.Catalogue.Candidates)
+                .Where(candidate => candidate is not
+                {
+                    Kind: RecoveryBundleCandidateKind.Final,
+                    Integrity: RecoveryBundleIntegrity.Verified,
+                    Verified: not null,
+                })
+                .Select(candidate => candidate.Path).ToImmutableArray(),
             stores.Where(store => store.Catalogue.State == RecoveryBundleCatalogueState.Unavailable)
                 .Select(store => new RouteRecoveryCoverageFailure(store.Location?.WorkspaceDirectory,
                     store.Catalogue.Cause ?? throw new InvalidOperationException("Unavailable recovery coverage requires a cause.")))

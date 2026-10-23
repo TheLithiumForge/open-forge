@@ -44,10 +44,18 @@ public sealed class RouteCreateRecoveryConflictCoordinateIntegrationTests
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Equal(0, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
             Assert.DoesNotContain(result.Findings, item => item.Code == RouteCreateFindingCode.RecoveryConflict);
-            Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
             var report = RouteCreateReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
-            Assert.Contains(report.Findings, item => item.Code == "route-create.recovery-history"
-                && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
+            if (candidateKind == "valid-final")
+            {
+                Assert.Empty(result.RecoveryHistory.Paths);
+                Assert.DoesNotContain(report.Findings, item => item.Subject.Path == candidate.Path);
+            }
+            else
+            {
+                Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
+                Assert.Contains(report.Findings, item => item.Code == "route-create.recovery-history"
+                    && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
+            }
             Assert.NotEqual(candidate.Path, result.Recovery.ResidualPath);
             Assert.NotEmpty(result.Effects);
             Assert.Equal(RouteCreateVerificationState.Verified, result.Verification);
@@ -136,7 +144,7 @@ public sealed class RouteCreateRecoveryConflictCoordinateIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Route Create warns about every catalogue candidate while applying"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationSafety")]
+    [Fact(DisplayName = "Route Create warns about unverified catalogue candidates while applying"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationSafety")]
     public async Task MultipleCandidatesPreserveCatalogueOrdering()
     {
         using var workspace = RouteCreateIntegrationWorkspace.Create(
@@ -163,9 +171,9 @@ public sealed class RouteCreateRecoveryConflictCoordinateIntegrationTests
                     TestContext.Current.CancellationToken);
 
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
-            Assert.Equal(catalogue.Candidates.Select(item => item.Path), result.RecoveryHistory.Paths);
+            Assert.Equal(new[] { second.Path }, result.RecoveryHistory.Paths);
             var report = RouteCreateReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
-            Assert.Equal(catalogue.Candidates.Select(item => item.Path),
+            Assert.Equal(new[] { second.Path },
                 report.Findings.Where(item => item.Code == "route-create.recovery-history").Select(item => item.Subject.Path));
             Assert.Equal(RouteCreateVerificationState.Verified, result.Verification);
             Assert.Equal(

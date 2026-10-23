@@ -128,3 +128,9 @@ package delivered nothing" are different outcomes, and a result that renders bot
 as `Effects: 0` with a complete status has failed to answer the question the user
 asked. The distinguishing fact is available at planning time; the result carries
 it.
+
+## Lock Failures And Recovery History
+
+Operations projects Framework lock failures into `Commands.Shared.Models.Mutation.WorkspaceLockFailureInfo`. Findings carry the six-cause reason and exact path for presentation. Command codes, statuses, exits and streams stay unchanged.
+
+Route and Extension writers report drafts, damaged or invalid bundles, and unavailable recovery coverage as warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated Route or Extension work. Install keeps its state-based recovery checks. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

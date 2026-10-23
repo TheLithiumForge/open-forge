@@ -37,7 +37,11 @@ Quote values containing spaces and glob expressions. Repeat flags only where the
 
 ## Worktrees And Sandboxes
 
-Each directory is its own workspace, so commands in different Git worktrees use separate locks and recovery bundles. Writing commands keep both in a per-user data folder outside the workspace. When a sandbox blocks that folder, they report the workspace lock as unavailable and change nothing. Set `OPENFORGE_DATA_HOME` to an absolute writable folder, outside the workspace or ignored by Git, and rerun.
+Each directory is its own workspace, so every Git worktree has its own lock and recovery bundles. Writing commands keep both in `.open-forge-state/` inside the workspace, which ignores itself in Git. A sandbox only needs write access to the workspace.
+
+The open file handle is the lock. A leftover `workspace.lock` blocks nothing, so never delete it. A lock failure names the exact path and its cause. Only a busy lock means another command is running, so retry after it finishes. Access denied, unsupported locking, an invalid target or an I/O error each need the path fixed, not a retry. Leftover recovery bundles never block a command. Drafts, damaged bundles and unreadable stores appear as warnings.
+
+`git clean -x` and `-X` delete `.open-forge-state/` and its recovery bundles. Review them with `status --format json --detail full` first.
 
 ## Preview And Apply
 

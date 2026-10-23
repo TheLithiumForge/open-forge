@@ -90,7 +90,7 @@ public sealed class ExtensionUpdateRestoredCategoryIntegrationTests
         Assert.Equal(8, Assert.Single(workspace.ReadExtensionOwnership().EnumerateArray()).GetProperty("paths").GetArrayLength());
         Assert.True(File.Exists(workspace.Combine(".agents/templates/core/_core.md")));
         var completed = workspace.Snapshot();
-        Assert.Equal(2, (await workspace.RunAsync(["extension", "install", "core-templates", "--automatic"])).ExitCode);
+        Assert.Equal(0, (await workspace.RunAsync(["extension", "install", "core-templates", "--automatic"])).ExitCode);
         Assert.Equal(completed, workspace.Snapshot());
     }
 

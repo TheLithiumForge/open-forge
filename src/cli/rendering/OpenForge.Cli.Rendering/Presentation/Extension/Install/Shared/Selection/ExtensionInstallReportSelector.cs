@@ -174,6 +174,8 @@ internal static class ExtensionInstallReportSelector
             CliSemanticStatus.Invalid => new(
                 ExtensionInstallWording.CannotInstall(InvalidProblem(result, finding)),
                 CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when finding?.LockFailure is { } lockFailure
+                => new(ExtensionInstallWording.Blocked(primaryId, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked when finding?.Code == ExtensionInstallFindingCode.PermissionRequired
                 => new(
                     ExtensionInstallWording.PermissionRequired(primaryId),

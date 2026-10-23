@@ -1,4 +1,4 @@
-Cannot remove guidance/old guide: Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
+Cannot remove guidance/old guide: another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   .agents/guidance/old guide.md  not started
   .agents/guidance/old guide.overwrite.md  not started

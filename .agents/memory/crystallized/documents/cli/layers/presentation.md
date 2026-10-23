@@ -20,6 +20,10 @@ result vocabulary in `Commands.Shared.WorkspaceAdoption.Models.Result` because
 both command results expose those migration facts. Shared planning models and
 behavior remain outside the Presentation dependency boundary.
 
+The shared finding model and its wording may also read
+`Commands.Shared.Models.Mutation` for the typed lock failure and exact path.
+This does not permit Presentation to read Framework types or mutation behavior.
+
 The [land Architecture](../architecture.md) records how this layer sits against
 the others.
 

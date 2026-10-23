@@ -144,7 +144,7 @@ Show the two proposed changes and no writes.
 
 ### Verification
 
-Compare raw link targets, directory entries, registration, settings and external recovery.
+Compare raw link targets, directory entries, registration, settings and local recovery.
 
 ## C27-06
 
@@ -447,3 +447,7 @@ open-forge library sync team --automatic
 ### Verification
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
+
+## Task 86 Runtime Expectations
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the mutation and recovery design for the bridge gap and typed failures.

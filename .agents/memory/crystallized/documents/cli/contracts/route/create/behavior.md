@@ -413,12 +413,8 @@ creation checks every new directory, entrypoint, and destination path for
 collision. If the plan contains an
 existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`),
 orchestration uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
-`incomplete` result. It prepares exactly one immutable ZIP bundle outside
-the workspace. An operation containing only
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle in the workspace runtime folder. An operation containing only
 Create effects or no-ops creates no bundle. Its source-generated
 versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
@@ -471,8 +467,8 @@ exact named final and draft deletion under its separate lease-bound contract. Re
 replays a saved plan, receipt, journal, history, or progress record.
 
 Expected-state revalidation and preservation of unexpected concurrent edits are
-required safety properties. The persistent reusable zero-byte external workspace
-lock below `LocalApplicationData/OpenForge/locks/v1` is held with one read/write
+required safety properties. The persistent reusable workspace
+lock below `.open-forge-state/workspace.lock` is held with one read/write
 `FileShare.None` handle; it never receives metadata writes, deletion, or
 truncation. The BCL-first filesystem boundary is defined by the [CLI
 Architecture](../../../architecture.md), and exact recovery-bundle identity
@@ -612,3 +608,7 @@ Shared scaffold composition supplies canonical missing entrypoints and intended 
 - [CLI Command Contract Set — Behavior Contract](../../../command-contract-set.md#behavior-contract)
 - [CLI Contract Document Templates](../../../../../../../templates/cli/documents/_documents.md)
 - [Interface Contract](interface.md)
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

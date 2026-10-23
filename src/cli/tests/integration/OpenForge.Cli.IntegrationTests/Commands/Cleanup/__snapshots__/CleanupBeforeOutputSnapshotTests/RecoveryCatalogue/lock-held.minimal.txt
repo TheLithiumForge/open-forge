@@ -1,4 +1,4 @@
-Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
+Another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   <recovery-bundle-1>
     not started

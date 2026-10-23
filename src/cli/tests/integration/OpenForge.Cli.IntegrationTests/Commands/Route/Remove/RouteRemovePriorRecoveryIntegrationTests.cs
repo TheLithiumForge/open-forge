@@ -59,7 +59,7 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
             Assert.Equal(string.Empty, error.ToString());
             using var result = JsonDocument.Parse(output.ToString());
             Assert.Equal(JsonValueKind.Null, result.RootElement.GetProperty("recovery").ValueKind);
-            Assert.Contains(result.RootElement.GetProperty("findings").EnumerateArray(),
+            Assert.DoesNotContain(result.RootElement.GetProperty("findings").EnumerateArray(),
                 item => item.GetProperty("code").GetString() == "route-remove.recovery-history"
                     && item.GetProperty("subject").GetProperty("path").GetString() == priorPreparation.BundlePath);
 

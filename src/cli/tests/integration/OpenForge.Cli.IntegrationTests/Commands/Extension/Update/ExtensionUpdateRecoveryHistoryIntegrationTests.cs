@@ -63,10 +63,11 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
             "--automatic", "--format", "json",
         ]);
 
-        Assert.Equal(2, run.ExitCode);
-        Assert.Equal(CliSemanticStatus.Attention, run.Status);
+        Assert.Equal(0, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.Equal("version two\n", workspace.ReadText(Target));
         using var document = JsonDocument.Parse(run.StandardOutput);
+        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
         var ownBundlePath = Assert.IsType<string>(document.RootElement.GetProperty("recovery").GetProperty("path").GetString());
         Assert.NotEqual(prior.BundlePath, ownBundlePath);
         Assert.Equal(priorBytes, await File.ReadAllBytesAsync(prior.BundlePath, TestContext.Current.CancellationToken));

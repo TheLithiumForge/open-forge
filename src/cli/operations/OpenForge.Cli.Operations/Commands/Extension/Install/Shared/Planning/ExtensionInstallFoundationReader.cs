@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Recovery;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using System.Security.Cryptography;
 using System.Text;
@@ -104,7 +105,7 @@ internal sealed class ExtensionInstallFoundationReader(
                 "Extension Install recovery inspection was interrupted.");
         }
 
-        var historyFindings = recovery.Candidates.Select(candidate => new ExtensionInstallFinding(
+        var historyFindings = recovery.Candidates.Where(ExtensionRecoveryHistory.RequiresWarning).Select(candidate => new ExtensionInstallFinding(
             ExtensionInstallFindingCode.RecoveryHistory,
             "Recovery data from an earlier run remains.", candidate.Path)).ToList();
         if (recovery.State == RecoveryBundleCatalogueState.Unavailable)

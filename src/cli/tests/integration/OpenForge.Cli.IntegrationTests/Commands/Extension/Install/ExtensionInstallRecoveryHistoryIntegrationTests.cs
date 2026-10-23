@@ -48,8 +48,10 @@ public sealed class ExtensionInstallRecoveryHistoryIntegrationTests
             "--automatic", "--format", "json",
         ]);
 
-        Assert.Equal(2, run.ExitCode);
-        Assert.Equal(CliSemanticStatus.Attention, run.Status);
+        Assert.Equal(0, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, run.Status);
+        using var document = JsonDocument.Parse(run.StandardOutput);
+        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
         Assert.Equal(Document("Toolkit"), workspace.ReadText(payload));
         Assert.True(File.Exists(preparation.BundlePath));
         Assert.Equal(priorBytes, await File.ReadAllBytesAsync(preparation.BundlePath, TestContext.Current.CancellationToken));

@@ -280,6 +280,8 @@ internal static class RouteUpdateReportSelector
                 => new(RouteUpdateWording.Incomplete(id, Message(result, first)), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid
                 => new(RouteUpdateWording.Invalid(id, Message(result, first)), CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when first?.LockFailure is { } lockFailure
+                => new(RouteUpdateWording.Blocked(id, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(RouteUpdateWording.Blocked(id, Message(result, first)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed

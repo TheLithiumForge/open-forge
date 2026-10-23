@@ -57,7 +57,7 @@ internal static class CleanupWording
         => CliFindingWording.InvalidInput(global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelCleanUp(), TrimSentence(cause));
 
     internal static string LockHeld()
-        => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageCannotCleanUpWorkspaceLockUnavailableNothingWasRemoved();
+        => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageCannotCleanUpTheWorkspaceLockCouldNotBeAcquiredNothingWasRemoved();
 
     internal static string ChangedDuringApply()
         => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageCannotCleanUpTheRecoveryStoreChangedWhileCleanupWasRunningNothingWasRemoved();

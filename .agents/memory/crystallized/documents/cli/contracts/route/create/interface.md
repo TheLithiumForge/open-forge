@@ -402,12 +402,8 @@ A verified no-op has no affected mutation path and creates no bundle. An actual
 creation checks the planned new path for collision and, when the plan contains
 an existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`),
 uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
-`incomplete` result. It prepares exactly one immutable ZIP bundle outside
-the workspace. An operation containing only
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle in the workspace runtime folder. An operation containing only
 Create effects or no-ops creates no bundle. Its source-generated
 versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change
@@ -566,6 +562,8 @@ The finding catalogue is:
 | route-create.projection-incomplete       | warning  | projection-unavailable      |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
 | route-create.template-unavailable        | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.template-unavailable`).                                                                      | none                                                                                   |
 | route-create.recovery-unavailable        | warning  | recovery-unavailable        |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.recovery-history | warning | recovery-history | Recovery data from an earlier run remains at {path}. It does not block this operation. | |
+| route-create.recovery-coverage-unavailable | warning | recovery-coverage-unavailable | Recovery history at {path} could not be checked completely: {cause}. Current workspace validation still applies. | |
 | route-create.recovery-artifact-retained  | warning  | recovery-artifact-retained  |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
 | route-create.target-changed-during-apply | error    | target-changed-during-apply |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
 | route-create.write-failed                | error    | write-failed                |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
@@ -700,3 +698,7 @@ remain the output evidence.
   <!-- @OpenForgeTextRef route.create.message.optional-metadata-is-missing -->
   <!-- @OpenForgeTextRef route.create.next.add-optional-description-or-tag -->
   <!-- @OpenForgeTextRef route.create.next.optional-metadata-inline -->
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

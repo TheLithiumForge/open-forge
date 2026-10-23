@@ -142,7 +142,7 @@ internal static class LibraryDetachReportSelector
                 LibraryDetachWording.Cannot(id, finding is null ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheRequestIsInvalid() : Problem(result, finding)),
                 CliHeadlineKind.CannotStart),
             CliSemanticStatus.Blocked when finding?.LockFailure is { } lockFailure => new(
-                LibraryDetachWording.Cannot(id, CliFindingWording.WorkspaceLockUnavailable(lockFailure)), CliHeadlineKind.Blocked),
+                LibraryDetachWording.Cannot(id, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked => new(
                 LibraryDetachWording.Blocked(id, BlockedReason(result, finding)),
                 CliHeadlineKind.Blocked),

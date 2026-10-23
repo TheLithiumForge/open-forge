@@ -292,7 +292,7 @@ internal static class ExtensionRemoveReportSelector
                 CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid => new(ExtensionRemoveWording.CannotRemove(finding?.Cause ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheInputIsInvalid()), CliHeadlineKind.CannotStart),
             CliSemanticStatus.Blocked when finding?.LockFailure is { } lockFailure
-                => new(ExtensionRemoveWording.Blocked(id, CliFindingWording.WorkspaceLockUnavailable(lockFailure)), CliHeadlineKind.Blocked),
+                => new(ExtensionRemoveWording.Blocked(id, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked => new(ExtensionRemoveWording.Blocked(
                 id,
                 finding?.Code switch

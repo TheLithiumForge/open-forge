@@ -451,3 +451,7 @@ unlisted siblings. Included catalogue filters expand only listed descendants.
 - [Global CLI Flags Interface Contract](../shared/global-flags/interface.md)
 - [Source Universe Filters Behavior Contract](../shared/source-universe-filters/behavior.md)
 - [CLI Architecture](../../architecture.md)
+
+## Reserved Runtime Storage
+
+The fixed `.open-forge-state/` subtree is reserved runtime storage. Exclude it before source reads and traversal, even without Git ignore rules. Direct paths and links into it do not admit its files as sources or writable package destinations.

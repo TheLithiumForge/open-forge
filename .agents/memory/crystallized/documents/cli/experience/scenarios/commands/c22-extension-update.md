@@ -316,7 +316,7 @@ Show proposed effects in future tense with no writes or prompts.
 
 ### Verification
 
-Compare targets, ownership lock, settings and external recovery inventory.
+Compare targets, ownership lock, settings and local recovery inventory.
 
 **Execution constraint:** Bind package IDs and bytes to a verified fixture catalogue/version pair; toolkit/base are fixture IDs, not assumed bundled packages.
 
@@ -460,3 +460,7 @@ Extension Update compares intended content rendered in the workspace form before
 **State:** Compare the selected closure and every target with independently rendered source bytes. Compare the complete content, settings, ownership, and recovery inventory before and after each request, carrying real state forward.
 
 **Output:** Check current identities and zero actual effects against independent state. Do not accept canonical scoped source bytes or a printed no-op as proof of root identity.
+
+## Task 86 Runtime Expectations
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

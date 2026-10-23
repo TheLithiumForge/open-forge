@@ -52,7 +52,7 @@ Follow the [shared help template](../shared/global-flags/interface.md#--help): c
 associated with one exact selected workspace when the complete candidate set
 remains eligible after final validation under the same-workspace lease. Bare
 `cleanup` discovers the current filtered exact-name candidate catalogue and
-applies one complete deletion plan. It does
+applies one complete deletion plan per store. It does
 not accept an artifact operand or selector, and it does not interpret user
 content, migration intent, or recovery strategy.
 
@@ -84,7 +84,7 @@ Cleanup accepts no operands. Artifact IDs, paths, filenames, directory values,
 selectors, globs, age expressions, profiles, and saved-plan references are not
 alternate selection forms; they are invalid input.
 
-The bare command catalogues all external exact-name recovery candidates under the
+The bare command catalogues workspace and legacy exact-name recovery candidates under the
 boundary below. Only verified finals and ordinary exact-name drafts are selected
 for deletion. Application deletes a selected candidate only after acquiring the
 same-workspace lease and repeating final catalogue and expected-state validation.
@@ -107,17 +107,7 @@ delete flag. `--dry-run` is not an implicit plan command.
 
 ## Recognized Catalogue
 
-The catalogue is the filtered set of exact deterministic final and draft names
-directly under the selected workspace bucket. It is read from
-the current user's external root
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`; this
-observer-only lookup never creates the OS application-data root or the Open Forge
-subtree. It is not a recursive workspace scan. An absent application-data root
-or recovery store produces an empty catalogue and a verified complete no-op. An
-existing selected workspace bucket that cannot be read produces the locally
-contracted `incomplete` result rather than an empty catalogue. Each exact-name
-candidate retains its path, current file kind, and integrity condition:
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
 
 | Artifact kind    | Candidate and eligibility facts                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -199,7 +189,7 @@ auto-bound to the selected path and is not eligible through that selected path.
 ## Planning, Dry Run, And Application
 
 Cleanup forms one complete filtered exact-name candidate catalogue and one
-deterministic deletion plan before effects. The catalogue includes every exact
+deterministic deletion plan per store before effects. Each catalogue includes every exact
 named final or draft path and its observed kind and integrity condition. The plan
 includes only verified final ordinary files and ordinary exact-name drafts, with
 the required same-workspace lease boundary, deletion verification condition, and
@@ -207,7 +197,7 @@ result effect. A readable ordinary `Malformed` final is retained as a warning
 preservation entry and does not block independently eligible deletions; it is
 never a deletion entry. Unsupported, unavailable, unreadable, non-ordinary,
 unsafe, or changed exact-name candidates remain reported and preserved and
-block all deletion.
+block all deletion in that store.
 
 `--dry-run` uses the same candidate catalogue, plan, deterministic ordering,
 expected-state facts, and preflight as application. It lists every exact-name
@@ -219,7 +209,7 @@ readable ordinary `Malformed` final remains a warning preservation condition in
 the dry-run result and does not prevent independently eligible effects from
 being listed; planned deletions alone do not create `completed-with-warnings`.
 
-An empty candidate catalogue is a verified complete no-op and acquires no lease.
+Two available empty store catalogues form a verified complete no-op without a lease.
 Before any deletion, Cleanup acquires one live same-workspace
 `WorkspaceLockLease` and holds it through deletion and verification. It then
 re-enumerates the selected bucket once under that lease, filters the same exact
@@ -231,8 +221,8 @@ validation above immediately before effect; each draft repeats its exact
 path/name/kind check. Cleanup calls ordinary `File.Delete` for each validated
 path and verifies absence. If lease acquisition fails, a cooperating mutator owns
 the lease, or the filtered under-lease candidate set differs from the planned
-catalogue, Cleanup performs no deletion. A later ordinary deletion or
-verification failure stops the operation and reports already verified deletions
+catalogue, Cleanup performs no deletion in that store. A later ordinary deletion or
+verification failure stops deletion in that store and reports already verified deletions
 and remaining paths.
 
 Once deletion begins, cleanup has a narrow monotonic support-artifact
@@ -246,22 +236,15 @@ effects. Unprocessed, remaining, and currently unsafe artifacts stay visible,
 and residual facts are reported. A later invocation forms a fresh catalogue and
 does not replay a saved plan.
 
-## External Recovery Boundary
+## Recovery Store Boundaries
 
-Cleanup reads only the current user's
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.None)/OpenForge/recovery/v1` root and the
-deterministic selected-workspace bucket and exact names derived from the
-normalized physical workspace path. Manifest workspace association and valid
-current-v1 typed attribution are required as part of semantic verification for
-an exact-name final; they are not required
-to catalogue a draft or a malformed, unsupported, or unavailable final. This
-observer-only lookup never creates the OS application-data root or the Open Forge
-subtree. It does not discover a repository root, inspect version-control state,
-or use any workspace-local fallback. If the external root or store is absent,
-the catalogue is empty and the operation is a verified complete no-op. If an
-existing root or store is unavailable or unsafe to inspect, the operation is
-`incomplete` and makes no deletion; it does not treat access failure as absence.
+Each store uses the deterministic selected-workspace bucket and exact names
+derived from the normalized physical workspace path. Manifest workspace
+association and valid current-v1 attribution are required to verify a final.
+They are not required to catalogue a draft or an invalid final.
+The catalogue is a direct-child read, not a recursive workspace scan.
+
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
 
 Only verified final ordinary files and ordinary exact-name drafts that pass final
 under-lease validation are eligible. A bundle is not a restore source: Cleanup
@@ -288,7 +271,7 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 | completed-with-warnings | readable ordinary malformed final retained; any independently eligible items are handled separately | normal cleanup headline plus the retained-candidate warning                                        |    2 | stdout |
 | incomplete              | store could not be read completely                                                                  | `The recovery store could not be read completely. Nothing was removed.`                            |    3 | stdout |
 | invalid-input           | operand or bad flag                                                                                 | family                                                                                             |    4 | stderr |
-| blocked                 | lock held or data folder unwritable                                                                 | `Cannot clean up: another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was removed.` |    5 | stderr |
+| blocked | Workspace lock acquisition failed | Use the cause-specific `workspace-lock-unavailable` wording in the [shared operation contract](../../shared-operation-contract.md#shared-message-families) | 5 | stderr |
 | blocked                 | unsupported, unavailable, unreadable, non-ordinary, unsafe, or changed candidate                    | Identifies the preserved candidate and its actual blocking cause; states that nothing was removed. |    5 | stderr |
 | blocked                 | catalogue changed under the lock                                                                    | `Cannot clean up: the recovery store changed while cleanup was running. Nothing was removed.`      |    5 | stderr |
 | failed                  | a deletion or verification failed after effects                                                     | `Cleanup stopped after removing <n> of <m> items.`                                                 |    1 | stderr |
@@ -332,31 +315,31 @@ the blocking result and no-delete rule.
 
 ### Representative transcripts by status
 
-### Transcript — completed
+### Transcript â€” completed
 
 [Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-completed). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Cleanup/__snapshots__/CleanupBeforeOutputSnapshotTests/RecoveryCatalogue/nothing-to-remove.minimal.txt).
 
-### Transcript — completed-with-warnings
+### Transcript â€” completed-with-warnings
 
 [Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-completed-with-warnings).
 
-### Transcript — incomplete
+### Transcript â€” incomplete
 
 [Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-incomplete). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Cleanup/__snapshots__/CleanupBeforeOutputSnapshotTests/StoreUnreadable/store-unreadable.minimal.txt).
 
-### Transcript — invalid-input
+### Transcript â€” invalid-input
 
 [Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-invalid-input). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Cleanup/__snapshots__/CleanupBeforeOutputSnapshotTests/InvalidInput/invalid-input.standard.txt).
 
-### Transcript — blocked
+### Transcript â€” blocked
 
 [Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-blocked). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Cleanup/__snapshots__/CleanupBeforeOutputSnapshotTests/RecoveryCatalogue/lock-held.minimal.txt).
 
-### Transcript — failed
+### Transcript â€” failed
 
 [Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-failed).
 
-### Transcript — cancelled
+### Transcript â€” cancelled
 
 [Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-cancelled). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Cleanup/__snapshots__/CleanupBeforeOutputSnapshotTests/CancelledBetweenRealDeletionStages/cancelled-partial.minimal.txt).
 
@@ -510,7 +493,7 @@ Conformance evidence must cover:
 - [Global CLI Flags Behavior](../shared/global-flags/behavior.md)
 - [Doctor Interface Contract](../doctor/interface.md)
 - [Repair Interface Contract](../repair/interface.md)
-- [CLI Command Contract Set — Interface Contract](../../command-contract-set.md#interface-contract)
+- [CLI Command Contract Set â€” Interface Contract](../../command-contract-set.md#interface-contract)
 - [Historical CLI Decision Agenda](../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
 
@@ -531,3 +514,7 @@ CLI help syntax: [`cleanup.help.syntax`](../../../../../../../src/cli/output-tex
 <!-- @OpenForgeTextRef cleanup.phrase.was-written-by-an-unsupported-version-and-was-left-in-place -->
 <!-- @OpenForgeTextRef cleanup.removal.failed-path -->
 <!-- @OpenForgeTextRef cleanup.removal.failure-reason -->
+
+## Recovery Stores
+
+At full and debug detail, `data.stores` reports ordered store records with kind, path, coverage, candidates, cause and `safety`, `revalidation` and `verification`. Candidate rows carry their integrity and outcome. Existing aggregate fields remain. Each store has a frozen plan and deletion session. Local deletion can complete when legacy coverage or matching legacy lock authority is unavailable. The result reports completed effects and retained or unknown items even when its aggregate status is incomplete or blocked. Store kinds are `workspace` and `legacy`. Text reports planned or completed deletions, retained items and findings. The separate store records are JSON data.

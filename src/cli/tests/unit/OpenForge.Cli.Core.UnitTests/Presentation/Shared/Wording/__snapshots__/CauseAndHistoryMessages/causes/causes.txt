@@ -1,6 +1,6 @@
-Busy: Another Open Forge command is changing the workspace. The workspace lock is busy at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
-AccessDenied: Access was denied while acquiring the workspace lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
-Unsupported: Workspace locking is not supported at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
-InvalidTarget: The workspace lock target at <workspace>/.open-forge-state/workspace.lock is invalid. Nothing was changed.
-IoError: An I/O error prevented acquiring the workspace lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
-Cancelled: Acquiring the workspace lock at <workspace>/.open-forge-state/workspace.lock was cancelled. Nothing was changed.
+Busy: Another Open Forge command holds the lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
+AccessDenied: Cannot open the lock at <workspace>/.open-forge-state/workspace.lock: access denied. Nothing was changed.
+Unsupported: Cannot lock <workspace>/.open-forge-state/workspace.lock: this filesystem does not support file locks. Nothing was changed.
+InvalidTarget: Cannot use <workspace>/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+IoError: Cannot open the lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
+Cancelled: Cancelled before taking the lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.

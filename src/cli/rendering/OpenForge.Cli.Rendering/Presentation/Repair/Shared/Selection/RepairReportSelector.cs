@@ -484,7 +484,7 @@ internal static class RepairReportSelector
             CliSemanticStatus.Invalid
                 => new(RepairWording.Invalid(FindingMessage(result, primary)), CliHeadlineKind.CannotStart),
             CliSemanticStatus.Blocked when primary?.LockFailure is { } lockFailure
-                => new(RepairWording.Invalid(CliFindingWording.WorkspaceLockUnavailable(lockFailure)), CliHeadlineKind.Blocked),
+                => new(RepairWording.Invalid(CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(RepairWording.Cannot(BlockedReason(result, primary)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed

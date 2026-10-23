@@ -550,7 +550,7 @@ internal static class LibrarySyncReportSelector
             CliSemanticStatus.Invalid
                 => new(LibrarySyncWording.CannotSynchronize(id, Message(result, finding, id)), CliHeadlineKind.CannotStart),
             CliSemanticStatus.Blocked when finding?.LockFailure is { } lockFailure
-                => new(LibrarySyncWording.CannotSynchronize(id, CliFindingWording.WorkspaceLockUnavailable(lockFailure)), CliHeadlineKind.Blocked),
+                => new(LibrarySyncWording.CannotSynchronize(id, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(LibrarySyncWording.Blocked(id, BlockedReason(result, finding, id)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed when CountCompleted(data.Effects) == 0

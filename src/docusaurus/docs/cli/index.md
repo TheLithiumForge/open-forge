@@ -94,9 +94,10 @@ Use `--format json` and check the exit code in scripts. `0` means completed and
 defines every result. Doctor returns a nonzero code for warnings or errors, so
 it can check workspace health in CI.
 
-Each Git worktree is its own workspace. In a sandbox that can write only inside
-the worktree, set `OPENFORGE_DATA_HOME` to a writable folder that Git ignores.
-See [worktrees, sandboxes and the data folder](/guides/cli#worktrees-sandboxes-and-the-data-folder).
+Each directory is its own workspace, including each Git worktree. Writing commands
+use its fixed `.open-forge-state/` folder, so a sandbox needs only workspace write
+access. See [worktrees, sandboxes and the runtime folder](/guides/cli#worktrees-sandboxes-and-the-runtime-folder)
+for lock failures, recovery stores and the bridge to older CLIs.
 
 When an Extension or Library asks to change paths outside `.agents`, key mode
 starts focused on `Allow once`. Enter approves only this run without saving a

@@ -422,8 +422,8 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
 
         var repeated = await workspace.RunAsync(arguments);
 
-        Assert.Equal(2, repeated.ExitCode);
-        Assert.Equal(CliSemanticStatus.Attention, repeated.Status);
+        Assert.Equal(0, repeated.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, repeated.Status);
         Assert.Equal(string.Empty, repeated.StandardError);
         using var document = JsonDocument.Parse(repeated.StandardOutput);
         var result = document.RootElement.GetProperty("data");

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
@@ -11,6 +12,36 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Recovery;
 
 public sealed class ExtensionRecoveryHistoryNoOpIntegrationTests
 {
+    [Theory(DisplayName = "Extension no-ops omit verified recovery history and keep exit zero")]
+    [InlineData("install"), InlineData("update"), InlineData("remove")]
+    [Trait("Feature", "extension-recovery-history"), Trait("Evidence", "Integration")]
+    public async Task VerifiedHistoryIsSilent(string command)
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-noop-verified-history");
+        using var source = ExtensionInstallCatalogue.Create("extension-noop-verified-history-source");
+        await SeedAsync(workspace, source, command);
+        var prior = await ExtensionRecoveryHistoryFixture.CreateVerifiedFinalAsync(
+            workspace, "extension install", RecoveryBundleOperation.Install, TestContext.Current.CancellationToken);
+        var bytes = File.ReadAllBytes(prior.BundlePath);
+        var before = workspace.Snapshot();
+
+        await ExtensionRecoveryHistoryFixture.MatchHistoryAsync(workspace, source.Path, new ReadOutputScenario
+        {
+            Situation = command,
+            Arguments = Arguments(command, source.Path),
+            ExitCode = 0,
+        }, testName: $"{nameof(VerifiedHistoryIsSilent)}.{command}");
+        var run = await workspace.RunAsync([.. Arguments(command, source.Path), "--format", "json"]);
+
+        Assert.Equal(0, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, run.Status);
+        using var json = JsonDocument.Parse(run.StandardOutput);
+        Assert.Empty(json.RootElement.GetProperty("findings").EnumerateArray());
+        Assert.Equal(before, workspace.Snapshot());
+        Assert.Equal(bytes, File.ReadAllBytes(prior.BundlePath));
+        Assert.False(File.Exists(workspace.Combine(".open-forge-state/workspace.lock")));
+    }
+
     [Theory, InlineData("install"), InlineData("update"), InlineData("remove")]
     public async Task VerifiedNoOpCreatesNoRuntimeState(string command)
     {
@@ -27,7 +58,8 @@ public sealed class ExtensionRecoveryHistoryNoOpIntegrationTests
         Assert.False(Directory.Exists(workspace.Combine(".open-forge-state")));
     }
 
-    [Theory, InlineData("install"), InlineData("update"), InlineData("remove")]
+    [Theory(DisplayName = "Extension no-ops warn only about draft and damaged history while preserving every bundle")]
+    [InlineData("install"), InlineData("update"), InlineData("remove")]
     public async Task VerifiedNoOpReportsEveryRetainedArtifactWithoutChangingIt(string command)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-noop-history");
@@ -41,6 +73,9 @@ public sealed class ExtensionRecoveryHistoryNoOpIntegrationTests
                 Guid.Parse("22222222-2222-2222-2222-222222222222"), RecoveryBundleCandidateKind.Final),
         };
         foreach (var path in paths) File.WriteAllText(path, "retained history");
+        var verified = await ExtensionRecoveryHistoryFixture.CreateVerifiedFinalAsync(
+            workspace, "extension install", RecoveryBundleOperation.Install, TestContext.Current.CancellationToken);
+        var verifiedBytes = File.ReadAllBytes(verified.BundlePath);
         var before = workspace.Snapshot();
         await ExtensionRecoveryHistoryFixture.MatchHistoryAsync(workspace, source.Path, new ReadOutputScenario
         {
@@ -59,6 +94,7 @@ public sealed class ExtensionRecoveryHistoryNoOpIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
         Assert.False(File.Exists(workspace.Combine(".open-forge-state/workspace.lock")));
         foreach (var path in paths) Assert.Equal("retained history", File.ReadAllText(path));
+        Assert.Equal(verifiedBytes, File.ReadAllBytes(verified.BundlePath));
     }
 
     [Theory, InlineData("install"), InlineData("update"), InlineData("remove")]

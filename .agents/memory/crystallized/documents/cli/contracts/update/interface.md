@@ -199,7 +199,7 @@ effects. It does not bypass exclusions, no-follow checks or expected-state
 revalidation. An empty `.agents` directory without Framework registration does
 not authorize this behavior.
 
-Mutation still holds the actual external OS lock described in the
+Mutation still holds the actual local OS lock described in the
 [mutation design](../../technical-designs/mutation-and-recovery.md).
 
 ## Flags
@@ -259,12 +259,9 @@ Framework uninstall requires a separate product and safety review.
 When the operation has one or more existing-target effects (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`),
 update uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is
 pre-effect `incomplete`. The complete command operation gets exactly one
-immutable ZIP bundle outside the workspace under a deterministic
+immutable ZIP bundle in the workspace runtime folder under a deterministic
 normalized physical-workspace-path key and operation ID. A source-generated
 schema-v1 `manifest.json` records command/operation/workspace identity,
 ordered relative targets, change kinds, prior lengths/hashes/payload names, and
@@ -273,7 +270,7 @@ the exact prior bytes for every existing-target effect; fingerprints are
 provenance, not an evolving journal. `Create` and semantic/byte no-op effects
 create no bundle.
 
-The draft is created with `CreateNew` under its exact name in the same external
+The draft is created with `CreateNew` under its exact name in the same local
 directory, closed and reopened for semantic manifest, exact ordered entry,
 length, hash, and payload-byte validation, moved within that directory to its
 deterministic final name, and reopened and verified again. Only the valid final
@@ -587,3 +584,7 @@ Exact wording is owned by the linked typed factories. Selection, output coordina
 CLI help syntax: [`update.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Update/UpdateText.cs).
 
 <!-- @OpenForgeTextRef update.help.syntax -->
+
+## Workspace Runtime Boundary
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.

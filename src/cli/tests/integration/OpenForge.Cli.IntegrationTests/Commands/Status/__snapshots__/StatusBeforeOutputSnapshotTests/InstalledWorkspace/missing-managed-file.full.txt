@@ -10,7 +10,7 @@ Startup context
   Shipped by this CLI:   7 files, about 4.0k tokens
   This workspace:        7 files, about 4.0k tokens
   May load again later:  1 file, about 0.2k tokens
-All routed files: 19 files, about 25.1k tokens (startup is 16%)
+All routed files: 19 files, about 25.6k tokens (startup is 16%)
 Routes: 7 root categories, 12 Entries sections current
 Framework files: 19 current
 Largest may-load-again sources
@@ -50,6 +50,6 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-19 routed files, 7 startup files, 3977 startup tokens, 1 may-load-again files, 243 may-load-again tokens, 25112 all routed tokens, 15.836369790733329351094120224 startup share, 7 root categories, 12 current Entries sections, 19 current Framework files, 1 missing Framework files, 1 warnings.
+19 routed files, 7 startup files, 3977 startup tokens, 1 may-load-again files, 243 may-load-again tokens, 25574 all routed tokens, 15.549972628450770313599749746 startup share, 7 root categories, 12 current Entries sections, 19 current Framework files, 1 missing Framework files, 1 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

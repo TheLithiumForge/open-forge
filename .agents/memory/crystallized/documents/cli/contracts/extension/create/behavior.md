@@ -33,7 +33,7 @@ The operation never forms a workspace lifecycle plan. Its `--workspace` value
 may be parsed and reported as an accepted global no-op, but it does not affect
 the catalogue destination. Create is the accepted no-workspace mutation
 exception: the catalogue destination is the sole operation subject, so create
-does not acquire the external workspace mutation lock or mutate workspace state.
+does not acquire the local workspace mutation lock or mutate workspace state.
 
 ## Request Resolution
 
@@ -157,7 +157,7 @@ Use the shared seven statuses and streams; `completed-with-warnings` is currentl
 unreachable for create.
 
 Create never mutates a workspace, package source, ownership lock, generated
-navigation, or Framework file. It does not acquire the external workspace lock.
+navigation, or Framework file. It does not acquire the local workspace lock.
 Conformance must cover zero, one, and all currently missing required human facts, local
 blank/invalid correction without an attempt limit, invalid end of input,
 caller cancellation, direct requests, automatic omission states,
@@ -178,3 +178,7 @@ and no implementation or shipping claim. The [Shared Result
 Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
 result schema and exit mapping. Gate 5 must prove source-generated serialization, fixed Markdig where
 used, real `System.IO`, Native AOT, isolated tests, and package journeys.
+
+## Workspace Runtime Boundary
+
+Extension Create keeps its separate create-only destination semantics. It takes no workspace mutation lock and creates no `.open-forge-state/` folder or recovery bundle.

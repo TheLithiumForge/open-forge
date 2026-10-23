@@ -43,7 +43,7 @@ ownership lock, or publish Framework or Extension lifecycle state.
 
 `extension create` is the accepted no-workspace mutation exception. The catalogue
 destination is the sole operation subject. Because `--workspace` is a no-op for
-this operation, create does not acquire the external workspace mutation lock or
+this operation, create does not acquire the workspace mutation lock or
 mutate workspace state.
 
 The create destination is distinct from package source selection used by other
@@ -92,7 +92,7 @@ The shared flags are:
 
 `--workspace` is accepted as a global flag but is a no-op for create. The
 catalogue destination, not the workspace, is the operation subject, and create
-does not acquire the external workspace mutation lock. Other global grammar, repetition,
+does not acquire the workspace mutation lock. Other global grammar, repetition,
 terminal, and presentation rules remain in [Global CLI
 Flags](../../shared/global-flags/interface.md).
 

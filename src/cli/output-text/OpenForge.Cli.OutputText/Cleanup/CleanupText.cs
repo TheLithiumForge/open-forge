@@ -12,8 +12,8 @@ internal static class CleanupText
     internal static string MessageTheRecoveryStoreCouldNotBeReadCompletelyNothingWasRemoved()
         => "The recovery store could not be read completely. Nothing was removed.";
 
-    // @OpenForgeText cleanup.message.cannot-clean-up-workspace-lock-unavailable-nothing-was-removed
-    internal static string MessageCannotCleanUpWorkspaceLockUnavailableNothingWasRemoved()
+    // @OpenForgeText cleanup.message.cannot-clean-up-the-workspace-lock-could-not-be-acquired-nothing-was-removed
+    internal static string MessageCannotCleanUpTheWorkspaceLockCouldNotBeAcquiredNothingWasRemoved()
         => "Cannot clean up: the workspace lock could not be acquired. Nothing was removed.";
 
     // @OpenForgeText cleanup.message.cannot-clean-up-the-recovery-store-changed-while-cleanup-was-running-nothing-was-removed
@@ -26,11 +26,11 @@ internal static class CleanupText
 
     // @OpenForgeText cleanup.help.catalogue
     internal static string HelpCatalogue()
-        => "Remove every recognized completed recovery bundle and draft with an exact expected name for the selected workspace.\n  Unknown, malformed, unsupported, unavailable, and unsafe items remain preserved.";
+        => "Remove eligible recovery bundles and drafts from the workspace and legacy stores.\n  Unknown, malformed, unsupported, unavailable, and unsafe items remain preserved.";
 
     // @OpenForgeText cleanup.help.write-policy
     internal static string HelpWritePolicy()
-        => "Omit --dry-run to apply the complete deletion plan while holding the workspace lock.\n  --dry-run previews the same plan without locking the workspace or writing files.";
+        => "Omit --dry-run to apply each store's checked deletion plan while holding the workspace lock.\n  --dry-run previews the same plans without locking the workspace or writing files.";
 
     // @OpenForgeText cleanup.help.notes
     internal static string HelpNotes()
@@ -213,5 +213,5 @@ internal static class CleanupText
         ];
     // @OpenForgeText cleanup.help.details-1
     internal static string HelpSafetyDetails()
-        => "Only completed recovery bundles and drafts with exact expected names for the selected workspace are eligible. Unknown, malformed, unsupported, unavailable, or unsafe items stay. Apply holds the workspace lock. Preview takes no lock. Each run rechecks the catalogue and verifies every deletion. No operands, selectors, force mode, age or glob filters, or arbitrary recursive deletion are accepted.";
+        => "Only verified recovery bundles and ordinary drafts with exact expected names for the selected workspace are eligible. Unknown, malformed, unsupported, unavailable or unsafe items stay. Each store has its own checked plan. Eligible local cleanup can proceed when legacy coverage or deletion authority is unavailable. Apply holds the workspace lock. Preview takes no lock. Each run rechecks the catalogues and verifies every deletion. Use --format json --detail full for per-store coverage and results. No operands, selectors, force mode, age or glob filters, or arbitrary recursive deletion are accepted.";
 }

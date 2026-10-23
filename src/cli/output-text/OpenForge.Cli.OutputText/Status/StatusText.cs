@@ -430,5 +430,5 @@ internal static class StatusText
         => "Inspect the current workspace, or select another with --workspace.\nThe default gives a short installation and context summary.\nUse --detail standard for reasons and next actions. This command changes no files and asks no questions.";
     // @OpenForgeText status.help.details-1
     internal static string HelpCoverageDetails()
-        => "Inspect installation, startup and continuity context, generated navigation, lifecycle, managed targets, and exact recovery candidates. This deterministic, stateless command takes no workspace lock, repairs no lifecycle state, and restores no recovery data.";
+        => "Inspect installation, startup and continuity context, generated navigation, lifecycle, managed targets, and recovery candidates in the workspace and legacy stores. Use --format json --detail full for each store's path, coverage and candidates. This deterministic, stateless command creates neither store, takes no workspace lock, repairs no lifecycle state, and restores no recovery data.";
 }
