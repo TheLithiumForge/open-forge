@@ -185,7 +185,7 @@ public sealed partial class UnixWorkspaceLockIntegrationTests
 
             var result = await store.AcquireAsync(new(workspace, "index", Guid.NewGuid()), TestContext.Current.CancellationToken);
             Assert.Null(result.Lease);
-            Assert.Equal(WorkspaceLockFailureKind.InvalidTarget, result.LockFailure?.Kind);
+            Assert.True(result.LockFailure?.Kind == WorkspaceLockFailureKind.InvalidTarget, $"Expected InvalidTarget for a {kind}, got {result.LockFailure}.");
             Assert.Equal(path, result.LockFailure?.Path);
             Assert.NotEqual((FileAttributes)(-1), File.GetAttributes(path));
         }
