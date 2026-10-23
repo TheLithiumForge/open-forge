@@ -305,18 +305,26 @@ folder instead, `OpenForge/` under the local application data folder or under
 writing command also takes that older lock, so old and new CLIs never write at
 the same time. When a sandbox cannot write that folder, the command opens the
 existing lock file read-only, which still excludes older CLIs. It goes ahead
-without it only when no older lock file exists for this workspace. The one gap
-left is an older CLI that has never written this workspace, started outside the
-sandbox during a sandboxed write. Older CLIs also cannot see new bundles.
-`OPENFORGE_DATA_HOME` now only tells the CLI where that older lock and those
-older bundles are. It never moves `.open-forge-state/`.
+without the older lock in two cases: no older lock file exists for this
+workspace, or the older folder cannot be resolved at all, for example because
+`OPENFORGE_DATA_HOME` is relative. In those cases an older CLI that runs at the
+same time, using its own folder, is not excluded. Older CLIs also cannot see new
+bundles. `OPENFORGE_DATA_HOME` only tells the CLI where that older lock and
+those older bundles are. It never moves `.open-forge-state/`.
+
+If a sandbox cannot even read the older folder, writing commands stop with an
+access-denied message that names a lock under `OpenForge/locks/v1`. Allow the
+sandbox to read that folder, or set `OPENFORGE_DATA_HOME` to an absolute folder
+it can write.
 
 Status, Doctor and Cleanup report both stores. `--format json --detail full`
 shows each store's path, coverage and candidates. An unreadable older store
-never blocks local cleanup. Leftover bundles never block a writing command,
-which still checks the files it changes. It warns about drafts, damaged bundles
-and stores that cannot be read, and says nothing about verified bundles from
-earlier runs.
+never blocks local cleanup. Bundles left by unrelated earlier runs never block a
+writing command, which still checks the files it changes. It warns about drafts,
+damaged bundles and stores that cannot be read, and says nothing about verified
+bundles from earlier runs. Install is the exception: it still stops on an
+unverified bundle, an unreadable workspace store or evidence of a partly applied
+change, because it cannot plan safely on top of them.
 
 ## Read the workspace
 

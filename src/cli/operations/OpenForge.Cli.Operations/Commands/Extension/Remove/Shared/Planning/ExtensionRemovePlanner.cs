@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Recovery;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
@@ -18,6 +19,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
@@ -569,10 +571,10 @@ internal sealed class ExtensionRemovePlanner
         RecoveryBundlePreparation? allowed,
         CancellationToken cancellationToken)
     {
-        RecoveryBundleCatalogueResult catalogue;
+        ImmutableArray<RecoveryStoreObservation> stores;
         try
         {
-            catalogue = await RecoveryBundleCatalogue.ReadAsync(request.Workspace, cancellationToken)
+            stores = await RecoveryBundleCatalogue.ReadStoresAsync(request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -584,16 +586,17 @@ internal sealed class ExtensionRemovePlanner
         }
         catch (Exception)
         {
-            catalogue = RecoveryBundleCatalogueResult.Unavailable(
+            stores = ExtensionRecoveryHistory.Unavailable(request.Workspace,
                 "Extension Remove recovery inspection failed unexpectedly.");
         }
 
-        if (catalogue.State == RecoveryBundleCatalogueState.Cancelled)
+        if (stores.Any(store => store.Catalogue.State == RecoveryBundleCatalogueState.Cancelled))
         {
             return new ExtensionRemoveRecoveryRead(Stop(request,
                 ExtensionRemoveFindingCode.Interrupted,
                 "Extension Remove recovery inspection was interrupted."));
         }
+        var catalogue = stores.Single(store => store.Kind == RecoveryStoreKind.Workspace).Catalogue;
         if (!IsExpectedRecovery(catalogue, allowed))
         {
             return new ExtensionRemoveRecoveryRead(Stop(request,
@@ -604,18 +607,18 @@ internal sealed class ExtensionRemovePlanner
                 target: allowed?.BundlePath));
         }
 
-        var findings = catalogue.Candidates
+        var findings = stores.SelectMany(store => store.Catalogue.Candidates)
             .Where(ExtensionRecoveryHistory.RequiresWarning)
             .Where(candidate => allowed is null || !RecoveryBundleIdentity.Matches(candidate, allowed))
             .Select(candidate => new ExtensionRemoveFinding(
                 ExtensionRemoveFindingCode.RecoveryHistory,
                 "Recovery data from an earlier run remains.", candidate.Path)).ToList();
-        if (catalogue.State == RecoveryBundleCatalogueState.Unavailable)
+        foreach (var store in stores.Where(store => store.Catalogue.State == RecoveryBundleCatalogueState.Unavailable))
         {
             findings.Add(new ExtensionRemoveFinding(
                 ExtensionRemoveFindingCode.RecoveryCoverageUnavailable,
-                catalogue.Cause ?? "Recovery history could not be checked.",
-                OpenForge.Cli.Core.Framework.Recovery.Shared.Storage.RecoveryStoreLocator.Local(request.Workspace).WorkspaceDirectory));
+                store.Catalogue.Cause ?? "Recovery history could not be checked.",
+                store.Location?.WorkspaceDirectory));
         }
         return new ExtensionRemoveRecoveryRead(Boundary: null, findings);
     }

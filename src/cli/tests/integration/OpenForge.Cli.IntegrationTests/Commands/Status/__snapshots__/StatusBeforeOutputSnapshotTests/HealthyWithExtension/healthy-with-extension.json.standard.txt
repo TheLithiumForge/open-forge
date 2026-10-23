@@ -20,8 +20,8 @@
     "startupTokens": 4148,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 315,
-    "allTokens": 42772,
-    "startupShare": 9.697876543787151716358152774,
+    "allTokens": 42854,
+    "startupShare": 9.679489423267644416442064242,
     "rootCategories": 7,
     "entriesSectionsCurrent": 26,
     "entriesSectionsStale": 0,
@@ -73,11 +73,11 @@
       },
       "allRouted": {
         "files": 59,
-        "characters": 171088,
-        "bytes": 171089,
-        "tokens": 42772
+        "characters": 171413,
+        "bytes": 171414,
+        "tokens": 42854
       },
-      "startupShare": 9.697876543787151716358152774
+      "startupShare": 9.679489423267644416442064242
     },
     "structure": {
       "rootCategories": {

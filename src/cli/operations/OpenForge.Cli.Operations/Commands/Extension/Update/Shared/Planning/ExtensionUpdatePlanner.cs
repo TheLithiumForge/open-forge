@@ -37,6 +37,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
@@ -141,10 +142,10 @@ internal sealed class ExtensionUpdatePlanner
                 affectedPackage));
         }
 
-        RecoveryBundleCatalogueResult recovery;
+        ImmutableArray<RecoveryStoreObservation> stores;
         try
         {
-            recovery = await RecoveryBundleCatalogue.ReadAsync(
+            stores = await RecoveryBundleCatalogue.ReadStoresAsync(
                 request.Workspace,
                 cancellationToken).ConfigureAwait(false);
         }
@@ -157,15 +158,16 @@ internal sealed class ExtensionUpdatePlanner
         }
         catch (Exception)
         {
-            recovery = RecoveryBundleCatalogueResult.Unavailable(
+            stores = ExtensionRecoveryHistory.Unavailable(request.Workspace,
                 "Extension Update recovery inspection failed unexpectedly.");
         }
 
-        if (recovery.State == RecoveryBundleCatalogueState.Cancelled)
+        if (stores.Any(store => store.Catalogue.State == RecoveryBundleCatalogueState.Cancelled))
         {
             return Stop(request, ExtensionUpdateFindingCode.Interrupted,
                 "Extension Update recovery inspection was interrupted.");
         }
+        var recovery = stores.Single(store => store.Kind == RecoveryStoreKind.Workspace).Catalogue;
         if (!IsExpectedRecovery(recovery, allowedRecovery))
         {
             return Stop(request, new ExtensionUpdateFinding(
@@ -303,18 +305,18 @@ internal sealed class ExtensionUpdatePlanner
                 : null);
         var bulkSelection = selectionKind is ExtensionUpdateSelectionKind.ExplicitAll
             or ExtensionUpdateSelectionKind.InteractiveAll;
-        var policyFindings = recovery.Candidates
+        var policyFindings = stores.SelectMany(store => store.Catalogue.Candidates)
             .Where(ExtensionRecoveryHistory.RequiresWarning)
             .Where(candidate => allowedRecovery is null || !RecoveryBundleIdentity.Matches(candidate, allowedRecovery))
             .Select(candidate => new ExtensionUpdateFinding(
                 ExtensionUpdateFindingCode.RecoveryHistory,
                 "Recovery data from an earlier run remains.", candidate.Path)).ToList();
-        if (recovery.State == RecoveryBundleCatalogueState.Unavailable)
+        foreach (var store in stores.Where(store => store.Catalogue.State == RecoveryBundleCatalogueState.Unavailable))
         {
             policyFindings.Add(new ExtensionUpdateFinding(
                 ExtensionUpdateFindingCode.RecoveryCoverageUnavailable,
-                recovery.Cause ?? "Recovery history could not be checked.",
-                OpenForge.Cli.Core.Framework.Recovery.Shared.Storage.RecoveryStoreLocator.Local(request.Workspace).WorkspaceDirectory));
+                store.Catalogue.Cause ?? "Recovery history could not be checked.",
+                store.Location?.WorkspaceDirectory));
         }
         var installed = ownership.Document.Extensions.Select(package => package.Id)
             .ToHashSet(StringComparer.Ordinal);

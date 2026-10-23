@@ -15,6 +15,28 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 
 public sealed class RecoveryBundleStoreIntegrationTests
 {
+    [Fact(DisplayName = "Recovery preparation rejects a linked ancestor before creating any storage")]
+    [Trait("Boundary", "OS"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
+    public async Task LinkedAncestorCannotCreateExternalStorage()
+    {
+        using var temporary = TemporaryWorkspace.Create("recovery-linked-ancestor");
+        using var external = TemporaryWorkspace.Create("recovery-linked-external");
+        var storage = external.CreateDirectory("storage");
+        var workspace = Workspace(temporary);
+        var input = DeleteInput(temporary, workspace, Guid.NewGuid());
+        temporary.CreateDirectorySymbolicLink(".open-forge-state/recovery", storage);
+        var before = temporary.SnapshotHashes(includeRuntime: true);
+
+        var result = await RecoveryBundleStore.PrepareAsync(input, TestContext.Current.CancellationToken);
+
+        Assert.Equal(RecoveryBundlePreparationState.Incomplete, result.State);
+        Assert.Null(result.Preparation);
+        Assert.Null(result.ResidualPath);
+        Assert.Equal(Core.Framework.Filesystem.Models.FilesystemFailureKind.InvalidPath, result.Failure?.Kind);
+        Assert.Equal(before, temporary.SnapshotHashes(includeRuntime: true));
+        Assert.Empty(Directory.EnumerateFileSystemEntries(storage));
+    }
+
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery store closes reopens and verifies one exact multi-target bundle")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]

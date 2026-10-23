@@ -93,12 +93,34 @@ internal static class LegacyWorkspaceLockBridge
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            handle = new FileStream(lockPath, new FileStreamOptions
+            if (access == FileAccess.Read && !OperatingSystem.IsWindows())
             {
-                Mode = access == FileAccess.ReadWrite ? FileMode.OpenOrCreate : FileMode.Open,
-                Access = access,
-                Share = FileShare.None,
-            });
+                var openFailure = UnixWorkspaceLock.TryOpenReadOnly(lockPath, cancellationToken, out var descriptor);
+                if (openFailure is not null)
+                {
+                    return Failed(storeRoot, lockPath, openFailure);
+                }
+
+                var owned = descriptor ?? throw new InvalidOperationException("A successful legacy open requires a handle.");
+                try
+                {
+                    handle = new FileStream(owned, FileAccess.Read);
+                }
+                catch
+                {
+                    owned.Dispose();
+                    throw;
+                }
+            }
+            else
+            {
+                handle = new FileStream(lockPath, new FileStreamOptions
+                {
+                    Mode = access == FileAccess.ReadWrite ? FileMode.OpenOrCreate : FileMode.Open,
+                    Access = access,
+                    Share = FileShare.None,
+                });
+            }
             var failure = WorkspaceLockTarget.Validate(lockPath, directory: false, allowMissing: false);
             if (failure is null && (!handle.CanSeek || handle.Length != 0))
             {

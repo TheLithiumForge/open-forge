@@ -197,31 +197,41 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundlePreparationState.Prepared, prepared.State);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
-        var observed = await RecoveryFinalIdentityFixture.ObserveAsync(workspace.Workspace, preparation);
-        var changedAttribution = RecoveryBundleAttribution.Create(
-            RecoveryBundleProducer.Repair,
-            RecoveryBundleOperation.Repair,
-            workspace.Workspace);
-        await observed.ChangeAttributionAsync(changedAttribution);
-        _ = await observed.AssertAdmissionAsync(preparation.Command, changedAttribution);
-        if (missing) File.Delete(preparation.BundlePath);
-        var beforeVerification = workspace.Snapshot();
-        var beforeSource = source.Snapshot();
+        var legacyCopy = await ExtensionRecoveryHistoryFixture.CopyToLegacyAsync(preparation, TestContext.Current.CancellationToken);
+        var legacyBytes = File.ReadAllBytes(legacyCopy);
+        try
+        {
+            var observed = await RecoveryFinalIdentityFixture.ObserveAsync(workspace.Workspace, preparation);
+            var changedAttribution = RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Repair,
+                RecoveryBundleOperation.Repair,
+                workspace.Workspace);
+            await observed.ChangeAttributionAsync(changedAttribution);
+            _ = await observed.AssertAdmissionAsync(preparation.Command, changedAttribution);
+            if (missing) File.Delete(preparation.BundlePath);
+            var beforeVerification = workspace.Snapshot();
+            var beforeSource = source.Snapshot();
 
-        var revalidated = await planner.BuildForVerificationAsync(
-            request,
-            preparation,
-            TestContext.Current.CancellationToken);
+            var revalidated = await planner.BuildForVerificationAsync(
+                request,
+                preparation,
+                TestContext.Current.CancellationToken);
 
-        Assert.Null(revalidated.Plan);
-        var finding = Assert.Single(revalidated.Result.Findings);
-        Assert.Equal(ExtensionUpdateFindingCode.RecoveryConflict, finding.Code);
-        Assert.Equal(preparation.BundlePath, finding.Target);
-        Assert.Empty(revalidated.Result.Effects);
-        Assert.Equal(beforeVerification, workspace.Snapshot());
-        Assert.Equal(beforeSource, source.Snapshot());
-        Assert.Equal(retainedBytes, await File.ReadAllBytesAsync(retained.BundlePath, TestContext.Current.CancellationToken));
-        Assert.Equal("version one\n", workspace.ReadText(Target));
+            Assert.Null(revalidated.Plan);
+            var finding = Assert.Single(revalidated.Result.Findings);
+            Assert.Equal(ExtensionUpdateFindingCode.RecoveryConflict, finding.Code);
+            Assert.Equal(preparation.BundlePath, finding.Target);
+            Assert.Empty(revalidated.Result.Effects);
+            Assert.Equal(beforeVerification, workspace.Snapshot());
+            Assert.Equal(beforeSource, source.Snapshot());
+            Assert.Equal(retainedBytes, await File.ReadAllBytesAsync(retained.BundlePath, TestContext.Current.CancellationToken));
+            Assert.Equal("version one\n", workspace.ReadText(Target));
+            Assert.Equal(legacyBytes, File.ReadAllBytes(legacyCopy));
+        }
+        finally
+        {
+            File.Delete(legacyCopy);
+        }
     }
 
     private static async Task InstallAsync(

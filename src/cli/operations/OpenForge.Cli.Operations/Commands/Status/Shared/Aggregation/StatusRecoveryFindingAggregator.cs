@@ -21,25 +21,25 @@ internal static class StatusRecoveryFindingAggregator
             }
         }
         else switch (observation.State)
-        {
-            case OperationalViewState.Complete:
-                break;
-            case OperationalViewState.Incomplete:
-                findings.Add(StatusFindingCode.RecoveryCatalogueUnavailable, null,
-                    "The recovery-candidate catalogue is incomplete.");
-                break;
-            case OperationalViewState.Blocked:
-                findings.Add(StatusFindingCode.WorkspaceUnsafe, null,
-                    "The recovery-candidate boundary is blocked.");
-                break;
-            case OperationalViewState.Interrupted:
-                findings.Add(StatusFindingCode.Interrupted, null,
-                    "The recovery-candidate observation was interrupted.");
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(observation), observation.State,
-                    "The recovery-residual view state is not defined.");
-        }
+            {
+                case OperationalViewState.Complete:
+                    break;
+                case OperationalViewState.Incomplete:
+                    findings.Add(StatusFindingCode.RecoveryCatalogueUnavailable, null,
+                        "The recovery-candidate catalogue is incomplete.");
+                    break;
+                case OperationalViewState.Blocked:
+                    findings.Add(StatusFindingCode.WorkspaceUnsafe, null,
+                        "The recovery-candidate boundary is blocked.");
+                    break;
+                case OperationalViewState.Interrupted:
+                    findings.Add(StatusFindingCode.Interrupted, null,
+                        "The recovery-candidate observation was interrupted.");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(observation), observation.State,
+                        "The recovery-residual view state is not defined.");
+            }
 
         foreach (var candidate in recovery.Candidates)
         {

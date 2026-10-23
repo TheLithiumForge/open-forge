@@ -18,6 +18,18 @@ internal static class ExtensionRecoveryHistoryFixture
 {
     internal const string TargetPath = ".agents/recovery-history.txt";
 
+    internal static async Task<string> CopyToLegacyAsync(RecoveryBundlePreparation preparation, CancellationToken cancellationToken)
+    {
+        var legacy = RecoveryStoreLocator.Legacy(preparation.Location.Workspace)
+            ?? throw new InvalidOperationException("The recovery history fixture requires a legacy location.");
+        Directory.CreateDirectory(legacy.WorkspaceDirectory);
+        var path = Path.Combine(legacy.WorkspaceDirectory, Path.GetFileName(preparation.BundlePath));
+        File.Copy(preparation.BundlePath, path);
+        var read = await RecoveryBundleReader.ReadFinalAsync(legacy, path, cancellationToken);
+        Assert.Equal(RecoveryBundleReadState.Valid, read.State);
+        return path;
+    }
+
     internal static async Task MatchHistoryAsync(
         ExtensionInstallIntegrationWorkspace workspace,
         string sourcePath,

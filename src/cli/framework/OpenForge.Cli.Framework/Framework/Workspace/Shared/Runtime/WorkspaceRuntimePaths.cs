@@ -21,11 +21,14 @@ internal static class WorkspaceRuntimePaths
     internal static bool Contains(CliWorkspace workspace, string absolutePath)
     {
         var candidate = WorkspaceIdentity.NormalizePhysicalPath(absolutePath);
-        var directory = WorkspaceIdentity.NormalizePhysicalPath(DirectoryPath(workspace));
+        var root = WorkspaceIdentity.NormalizePhysicalPath(workspace.PhysicalRoot);
+        var prefix = Path.EndsInDirectorySeparator(root) ? root : root + Path.DirectorySeparatorChar;
         var comparison = OperatingSystem.IsWindows()
             ? StringComparison.OrdinalIgnoreCase
             : StringComparison.Ordinal;
-        return string.Equals(candidate, directory, comparison)
-            || candidate.StartsWith(directory + Path.DirectorySeparatorChar, comparison);
+        if (!candidate.StartsWith(prefix, comparison)) return false;
+        var relative = candidate[prefix.Length..];
+        return string.Equals(relative, DirectoryName, StringComparison.OrdinalIgnoreCase)
+            || relative.StartsWith(DirectoryName + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
     }
 }

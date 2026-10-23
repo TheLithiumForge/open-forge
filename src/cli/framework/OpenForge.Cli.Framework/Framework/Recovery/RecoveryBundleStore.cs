@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 
@@ -30,6 +31,11 @@ internal static class RecoveryBundleStore
         }
 
         var location = RecoveryStoreLocator.Local(input.Workspace);
+        if (RecoveryDeletionStorageBoundary.ReadLocation(location) is { } boundaryFailure)
+        {
+            return RecoveryBundlePreparationResult.Incomplete(boundaryFailure.DirectCause, failure: boundaryFailure);
+        }
+
         var storeRoot = location.RootPath;
         var bootstrapFailure = WorkspaceRuntimeBootstrap.EnsureCreated(input.Workspace, cancellationToken);
         if (bootstrapFailure is not null)

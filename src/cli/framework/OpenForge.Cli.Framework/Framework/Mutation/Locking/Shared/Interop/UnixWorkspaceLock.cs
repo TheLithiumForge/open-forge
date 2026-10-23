@@ -9,6 +9,66 @@ internal static partial class UnixWorkspaceLock
     private const int LockExclusive = 2;
     private const int LockNonBlocking = 4;
     private const int Interrupted = 4;
+    private const int NoEntry = 2;
+    private const int OpenReadOnly = 0;
+    private const int LinuxOpenNonBlocking = 0x800;
+    private const int LinuxOpenCloseOnExec = 0x80000;
+    private const int MacOSOpenNonBlocking = 0x4;
+    private const int MacOSOpenCloseOnExec = 0x1000000;
+
+    internal static WorkspaceLockFailure? TryOpenReadOnly(
+        string path,
+        CancellationToken cancellationToken,
+        out SafeFileHandle? handle)
+    {
+        handle = null;
+        if (!OperatingSystem.IsLinux() && !OperatingSystem.IsMacOS())
+        {
+            return new(WorkspaceLockFailureKind.Unsupported, path);
+        }
+
+        try
+        {
+            while (true)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return new(WorkspaceLockFailureKind.Cancelled, path);
+                }
+
+                var descriptor = OperatingSystem.IsLinux()
+                    ? LinuxOpen(path, OpenReadOnly | LinuxOpenNonBlocking | LinuxOpenCloseOnExec)
+                    : MacOSOpen(path, OpenReadOnly | MacOSOpenNonBlocking | MacOSOpenCloseOnExec);
+                var error = Marshal.GetLastPInvokeError();
+                if (descriptor >= 0)
+                {
+                    var opened = new SafeFileHandle((nint)descriptor, ownsHandle: true);
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        opened.Dispose();
+                        return new(WorkspaceLockFailureKind.Cancelled, path);
+                    }
+
+                    handle = opened;
+                    return null;
+                }
+
+                if (error == NoEntry)
+                {
+                    throw new FileNotFoundException("The legacy lock file is absent.", path);
+                }
+
+                if (error != Interrupted)
+                {
+                    return new(Classify(error), path, NativeError: error);
+                }
+            }
+        }
+        catch (Exception exception) when (exception is DllNotFoundException or EntryPointNotFoundException)
+        {
+            return new(WorkspaceLockFailureKind.Unsupported, path);
+        }
+    }
 
     internal static WorkspaceLockFailure? TryAcquire(
         SafeFileHandle handle,
@@ -93,4 +153,10 @@ internal static partial class UnixWorkspaceLock
 
     [LibraryImport("/usr/lib/libSystem.B.dylib", EntryPoint = "flock", SetLastError = true)]
     private static partial int MacOSFlock(int fd, int operation);
+
+    [LibraryImport("libc.so.6", EntryPoint = "open", SetLastError = true, StringMarshalling = StringMarshalling.Utf8)]
+    private static partial int LinuxOpen(string path, int flags);
+
+    [LibraryImport("/usr/lib/libSystem.B.dylib", EntryPoint = "open", SetLastError = true, StringMarshalling = StringMarshalling.Utf8)]
+    private static partial int MacOSOpen(string path, int flags);
 }

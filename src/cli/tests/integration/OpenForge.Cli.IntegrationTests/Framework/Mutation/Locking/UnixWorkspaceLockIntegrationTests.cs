@@ -13,7 +13,7 @@ using OpenForge.Cli.TestSupport;
 namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 
 [Trait("Boundary", "OS"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
-public sealed class UnixWorkspaceLockIntegrationTests
+public sealed partial class UnixWorkspaceLockIntegrationTests
 {
     [Theory(DisplayName = "Unix constructor contention is Busy for local and legacy lock files")]
     [InlineData("linux", false), InlineData("linux", true)]

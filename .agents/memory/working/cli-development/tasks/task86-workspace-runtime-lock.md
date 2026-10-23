@@ -38,12 +38,12 @@ Astra high implementers own one packet each in separate worktrees. The overseer 
 | 2 | B, C | New recovery bundles live in `.open-forge-state/recovery/v1`. Every candidate carries its store, so deletion never re-resolves a location. The runtime folder is reserved from every scan, include target, package destination and removal |
 | 3 | D, C2 | Lock failures name the real cause and path. Registered roots and links that resolve into the runtime folder are never read |
 | 4 | E, F, G | Leftover bundles no longer block Route and Extension commands. Status and Doctor report both stores, and Cleanup plans and deletes per store |
-| 5 | E2, H, J | Writing commands warn only about drafts, damaged bundles and unreadable stores (chair amendment 4). The lock journeys run on every platform. The lock messages are short |
+| 5 | E2, H, J, K1 to K3 | Writing commands warn only about drafts, damaged bundles and unreadable stores (chair amendment 4). The lock journeys run on every platform. The lock messages are short |
 | 6 | I | Contracts, designs, the CLI guide, the docs site and the CLI Skill describe the runtime folder |
 
 ## Evidence
 
-On the integrated branch, before the closeout review, Windows runs passed 5,181 Unit tests, 3,610 Integration tests with 40 Unix-only skips, and 410 EndToEnd tests with 3 Unix-only skips. Linux and macOS run in the pull request Build. Each wave's commit message records its own results.
+An independent Astra high review found seven issues, fixed in three packets: a FIFO hang in the read-only legacy fallback (chair amendment 5), case aliases of the runtime folder on macOS, linked recovery folders read or written before rejection, Extension history missing the legacy store, and two overpromising docs passages. After those fixes, Windows runs passed 5,190 Unit tests, 3,645 Integration tests with 58 Unix-only skips, and 410 EndToEnd tests with 3 Unix-only skips. Linux and macOS run in the pull request Build.
 
 ## Remaining
 

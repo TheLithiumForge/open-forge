@@ -96,24 +96,25 @@ internal sealed class ExtensionInstallFoundationReader(
                 "Recorded Extension identities are duplicated; no ownership or file effects were inferred.");
         }
 
-        var recovery = await RecoveryBundleCatalogue.ReadAsync(
+        var stores = await RecoveryBundleCatalogue.ReadStoresAsync(
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
-        if (recovery.State == RecoveryBundleCatalogueState.Cancelled)
+        if (stores.Any(store => store.Catalogue.State == RecoveryBundleCatalogueState.Cancelled))
         {
             return Stop(ExtensionInstallFindingCode.Interrupted,
                 "Extension Install recovery inspection was interrupted.");
         }
 
-        var historyFindings = recovery.Candidates.Where(ExtensionRecoveryHistory.RequiresWarning).Select(candidate => new ExtensionInstallFinding(
+        var historyFindings = stores.SelectMany(store => store.Catalogue.Candidates)
+            .Where(ExtensionRecoveryHistory.RequiresWarning).Select(candidate => new ExtensionInstallFinding(
             ExtensionInstallFindingCode.RecoveryHistory,
             "Recovery data from an earlier run remains.", candidate.Path)).ToList();
-        if (recovery.State == RecoveryBundleCatalogueState.Unavailable)
+        foreach (var store in stores.Where(store => store.Catalogue.State == RecoveryBundleCatalogueState.Unavailable))
         {
             historyFindings.Add(new ExtensionInstallFinding(
                 ExtensionInstallFindingCode.RecoveryCoverageUnavailable,
-                recovery.Cause ?? "Recovery history could not be checked.",
-                OpenForge.Cli.Core.Framework.Recovery.Shared.Storage.RecoveryStoreLocator.Local(request.Workspace).WorkspaceDirectory));
+                store.Catalogue.Cause ?? "Recovery history could not be checked.",
+                store.Location?.WorkspaceDirectory));
         }
 
         return new ExtensionInstallFoundationObservation(

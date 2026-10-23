@@ -171,22 +171,32 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
         var prepared = await ExtensionRemoveRecoveryApplication.PrepareAsync(execution, Guid.NewGuid(),
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
-        var valid = await planner.BuildForVerificationAsync(request, preparation, TestContext.Current.CancellationToken);
-        Assert.NotNull(valid.Plan);
-        Assert.DoesNotContain(valid.Result.Findings, finding => finding.Target == preparation.BundlePath);
-        if (missing) File.Delete(preparation.BundlePath);
-        else File.WriteAllText(preparation.BundlePath, "changed preparation");
-        var before = workspace.Snapshot();
+        var legacyCopy = await ExtensionRecoveryHistoryFixture.CopyToLegacyAsync(preparation, TestContext.Current.CancellationToken);
+        var legacyBytes = File.ReadAllBytes(legacyCopy);
+        try
+        {
+            var valid = await planner.BuildForVerificationAsync(request, preparation, TestContext.Current.CancellationToken);
+            Assert.NotNull(valid.Plan);
+            Assert.DoesNotContain(valid.Result.Findings, finding => finding.Target == preparation.BundlePath);
+            if (missing) File.Delete(preparation.BundlePath);
+            else File.WriteAllText(preparation.BundlePath, "changed preparation");
+            var before = workspace.Snapshot();
 
-        var verification = await planner.BuildForVerificationAsync(request, preparation, TestContext.Current.CancellationToken);
+            var verification = await planner.BuildForVerificationAsync(request, preparation, TestContext.Current.CancellationToken);
 
-        Assert.Null(verification.Plan);
-        var failure = Assert.Single(verification.Result.Findings);
-        Assert.Equal(ExtensionRemoveFindingCode.RecoveryConflict, failure.Code);
-        Assert.Equal(preparation.BundlePath, failure.Target);
-        Assert.Equal(before, workspace.Snapshot());
-        Assert.Equal("prior draft", File.ReadAllText(history));
-        Assert.True(File.Exists(workspace.Combine(Target)));
+            Assert.Null(verification.Plan);
+            var failure = Assert.Single(verification.Result.Findings);
+            Assert.Equal(ExtensionRemoveFindingCode.RecoveryConflict, failure.Code);
+            Assert.Equal(preparation.BundlePath, failure.Target);
+            Assert.Equal(before, workspace.Snapshot());
+            Assert.Equal("prior draft", File.ReadAllText(history));
+            Assert.True(File.Exists(workspace.Combine(Target)));
+            Assert.Equal(legacyBytes, File.ReadAllBytes(legacyCopy));
+        }
+        finally
+        {
+            File.Delete(legacyCopy);
+        }
     }
 
     private static async Task InstallAsync(

@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 
@@ -44,16 +45,16 @@ internal sealed class CleanupOperation
                 return result.Build();
             }
 
-            var observations = await RecoveryBundleCatalogue.ReadStoresAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+            var local = RecoveryStoreLocator.Local(request.Workspace);
+            var legacy = RecoveryStoreLocator.Legacy(request.Workspace);
+            RecoveryStoreObservation[] observations =
+            [
+                await ReadStoreAsync(RecoveryStoreKind.Workspace, local, cancellationToken).ConfigureAwait(false),
+                await ReadStoreAsync(RecoveryStoreKind.Legacy, legacy, cancellationToken).ConfigureAwait(false),
+            ];
             var stores = new List<CleanupStoreApplication>();
-            foreach (var observation in observations)
+            foreach (var frozen in observations)
             {
-                var frozen = observation;
-                if (observation.Location is { } location && RecoveryDeletionStorageBoundary.ReadLocation(location) is { } boundaryFailure)
-                {
-                    frozen = observation with { Catalogue = RecoveryBundleCatalogueResult.Unavailable(boundaryFailure.DirectCause, boundaryFailure) };
-                }
-
                 var plan = CleanupPlanner.Create(request, frozen.Catalogue);
                 var builder = new CleanupResultBuilder(plan)
                 {
@@ -86,6 +87,30 @@ internal sealed class CleanupOperation
             result.AddFinding(CleanupFindingCode.OperationFailed, $"Cleanup could not complete: {exception.Message}");
             return result.Build();
         }
+    }
+
+    private static async ValueTask<RecoveryStoreObservation> ReadStoreAsync(
+        RecoveryStoreKind kind,
+        RecoveryStoreLocation? location,
+        CancellationToken cancellationToken)
+    {
+        if (location is null)
+        {
+            return new(kind, null, RecoveryBundleCatalogueResult.Unavailable("The legacy recovery store location is unavailable."));
+        }
+
+        if (RecoveryDeletionStorageBoundary.ReadLocation(location) is { } beforeFailure)
+        {
+            return new(kind, location, RecoveryBundleCatalogueResult.Unavailable(beforeFailure.DirectCause, beforeFailure));
+        }
+
+        var catalogue = await RecoveryBundleCatalogue.ReadAsync(location, cancellationToken).ConfigureAwait(false);
+        if (RecoveryDeletionStorageBoundary.ReadLocation(location) is { } afterFailure)
+        {
+            catalogue = RecoveryBundleCatalogueResult.Unavailable(afterFailure.DirectCause, afterFailure);
+        }
+
+        return new(kind, location, catalogue);
     }
 
     private static CleanupEffect InitialEffect(CleanupRequest request, CleanupPlanEntry entry, CleanupPlanSafety safety)
