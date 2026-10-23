@@ -107,12 +107,19 @@ public sealed class IndexMutationMapperTests
             Assert.Equal(testCase.Item2, IndexMutationMapper.ReadLockFailureCode(failure));
             Assert.Equal(
                 testCase.Item2,
-                IndexMutationMapper.ReadLockFindingCode(WorkspaceLockResult.Failed(failure)));
+                IndexMutationMapper.ReadLockFindingCode(WorkspaceLockResult.Failed(new WorkspaceLockFailure(testCase.Item1 switch
+                {
+                    FilesystemFailureKind.InvalidPath => WorkspaceLockFailureKind.InvalidTarget,
+                    FilesystemFailureKind.AccessDenied => WorkspaceLockFailureKind.AccessDenied,
+                    FilesystemFailureKind.InputOutput => WorkspaceLockFailureKind.IoError,
+                    FilesystemFailureKind.Unsupported => WorkspaceLockFailureKind.Unsupported,
+                    _ => throw new InvalidOperationException(),
+                }, Path.GetTempPath(), failure))));
         }
 
         Assert.Equal(
             IndexFindingCode.Interrupted,
-            IndexMutationMapper.ReadLockFindingCode(WorkspaceLockResult.Cancelled()));
+            IndexMutationMapper.ReadLockFindingCode(WorkspaceLockResult.Cancelled(Path.GetTempPath())));
         Assert.Throws<InvalidOperationException>(() =>
             IndexMutationMapper.ReadLockFailureCode(Failure(FilesystemFailureKind.InvalidEncoding)));
         Assert.Throws<InvalidOperationException>(() =>

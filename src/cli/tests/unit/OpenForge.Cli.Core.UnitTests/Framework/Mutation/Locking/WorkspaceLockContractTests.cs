@@ -40,15 +40,15 @@ public sealed class WorkspaceLockContractTests
     public void WorkspaceLockResultsKeepNonOwnershipStatesDistinct()
     {
         var failure = new FilesystemFailure(FilesystemFailureKind.AccessDenied, "Access was denied.");
-        var failed = WorkspaceLockResult.Failed(failure);
-        var cancelled = WorkspaceLockResult.Cancelled();
+        var failed = WorkspaceLockResult.Failed(new WorkspaceLockFailure(WorkspaceLockFailureKind.AccessDenied, Workspace().PhysicalRoot, failure));
+        var cancelled = WorkspaceLockResult.Cancelled(Workspace().PhysicalRoot);
 
         Assert.Equal(WorkspaceLockState.Failed, failed.State);
         Assert.Same(failure, failed.Failure);
         Assert.Null(failed.Lease);
         Assert.Equal(WorkspaceLockState.Cancelled, cancelled.State);
         Assert.Null(cancelled.Lease);
-        Assert.Null(cancelled.Failure);
+        Assert.Equal(WorkspaceLockFailureKind.Cancelled, cancelled.LockFailure?.Kind);
     }
 
     [Trait("Boundary", "Processing")]

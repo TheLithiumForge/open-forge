@@ -11,6 +11,8 @@ namespace OpenForge.Cli.TestSupport;
 /// </summary>
 public sealed class TemporaryWorkspace : IDisposable
 {
+    public const string RuntimeDirectoryName = ".open-forge-state";
+
     private enum OwnedEntryKind
     {
         Directory,
@@ -45,6 +47,11 @@ public sealed class TemporaryWorkspace : IDisposable
     /// Gets the absolute path of the owned temporary directory.
     /// </summary>
     public string Path { get; }
+
+    public static bool IsRuntimeEntry(string workspacePath, string entryPath)
+        => PathComparer.Equals(
+            System.IO.Path.GetFullPath(entryPath),
+            System.IO.Path.Combine(System.IO.Path.GetFullPath(workspacePath), RuntimeDirectoryName));
 
     /// <summary>
     /// Creates a uniquely named, marker-owned directory below the operating
@@ -276,14 +283,17 @@ public sealed class TemporaryWorkspace : IDisposable
 
     /// <summary>
     /// Returns deterministic SHA-256 hashes for ordinary files below the
-    /// workspace. Ownership metadata and symbolic links are not followed.
+    /// workspace. Runtime state is excluded unless explicitly included.
+    /// Ownership metadata and symbolic links are not followed.
     /// </summary>
-    public IReadOnlyDictionary<string, string> SnapshotHashes()
+    public IReadOnlyDictionary<string, string> SnapshotHashes() => SnapshotHashes(includeRuntime: false);
+
+    public IReadOnlyDictionary<string, string> SnapshotHashes(bool includeRuntime)
     {
         VerifyOwnership();
 
         var hashes = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        SnapshotDirectory(new DirectoryInfo(Path), Path, hashes);
+        SnapshotDirectory(new DirectoryInfo(Path), Path, hashes, includeRuntime);
         VerifyOwnership();
         return new ReadOnlyDictionary<string, string>(hashes);
     }
@@ -399,7 +409,8 @@ public sealed class TemporaryWorkspace : IDisposable
     private static void SnapshotDirectory(
         DirectoryInfo directory,
         string rootPath,
-        IDictionary<string, string> hashes)
+        IDictionary<string, string> hashes,
+        bool includeRuntime)
     {
         foreach (var entry in directory
                      .EnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly)
@@ -410,6 +421,16 @@ public sealed class TemporaryWorkspace : IDisposable
                 continue;
             }
 
+            if (IsRuntimeEntry(rootPath, entry.FullName))
+            {
+                if (!includeRuntime)
+                {
+                    continue;
+                }
+
+                hashes[RuntimeDirectoryName] = $"attributes={(int)entry.Attributes}";
+            }
+
             if ((entry.Attributes & FileAttributes.ReparsePoint) != 0)
             {
                 continue;
@@ -417,7 +438,7 @@ public sealed class TemporaryWorkspace : IDisposable
 
             if ((entry.Attributes & FileAttributes.Directory) != 0)
             {
-                SnapshotDirectory((DirectoryInfo)entry, rootPath, hashes);
+                SnapshotDirectory((DirectoryInfo)entry, rootPath, hashes, includeRuntime);
                 continue;
             }
 
@@ -433,6 +454,12 @@ public sealed class TemporaryWorkspace : IDisposable
 
     private void DeleteOwnedEntries()
     {
+        var runtimePath = System.IO.Path.Combine(Path, RuntimeDirectoryName);
+        if (EntryExists(runtimePath))
+        {
+            DeleteRuntimeEntry(runtimePath);
+        }
+
         foreach (var pair in _ownedEntries
                      .OrderByDescending(pair => pair.Key.Length)
                      .ThenByDescending(pair => pair.Key, PathComparer))
@@ -512,6 +539,26 @@ public sealed class TemporaryWorkspace : IDisposable
 
         File.Delete(markerPath);
         Directory.Delete(Path, recursive: false);
+    }
+
+    private static void DeleteRuntimeEntry(string path)
+    {
+        var attributes = File.GetAttributes(path);
+        if ((attributes & FileAttributes.Directory) == 0)
+        {
+            File.Delete(path);
+            return;
+        }
+
+        if ((attributes & FileAttributes.ReparsePoint) == 0)
+        {
+            foreach (var child in Directory.EnumerateFileSystemEntries(path))
+            {
+                DeleteRuntimeEntry(child);
+            }
+        }
+
+        Directory.Delete(path, recursive: false);
     }
 
     private string PrepareFilePath(string relativePath)

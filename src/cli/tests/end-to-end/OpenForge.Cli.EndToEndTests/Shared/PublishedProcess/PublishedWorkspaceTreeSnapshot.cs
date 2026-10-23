@@ -1,14 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Security.Cryptography;
+using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 internal static class PublishedWorkspaceTreeSnapshot
 {
-    internal static IReadOnlyDictionary<string, string> Capture(string rootPath)
+    internal static IReadOnlyDictionary<string, string> Capture(string rootPath, bool includeRuntime = false)
     {
         var state = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        SnapshotEntry(new DirectoryInfo(rootPath), rootPath, ".", state);
+        SnapshotEntry(new DirectoryInfo(rootPath), rootPath, ".", state, includeRuntime);
         return new ReadOnlyDictionary<string, string>(state);
     }
 
@@ -16,7 +17,8 @@ internal static class PublishedWorkspaceTreeSnapshot
         FileSystemInfo entry,
         string rootPath,
         string relativePath,
-        IDictionary<string, string> state)
+        IDictionary<string, string> state,
+        bool includeRuntime)
     {
         entry.Refresh();
         var attributes = entry.Attributes;
@@ -31,7 +33,13 @@ internal static class PublishedWorkspaceTreeSnapshot
             .EnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly)
             .OrderBy(child => RelativePath(rootPath, child.FullName), StringComparer.Ordinal))
         {
-            SnapshotEntry(child, rootPath, RelativePath(rootPath, child.FullName), state);
+            var childPath = RelativePath(rootPath, child.FullName);
+            if (!includeRuntime && TemporaryWorkspace.IsRuntimeEntry(rootPath, child.FullName))
+            {
+                continue;
+            }
+
+            SnapshotEntry(child, rootPath, childPath, state, includeRuntime);
         }
     }
 

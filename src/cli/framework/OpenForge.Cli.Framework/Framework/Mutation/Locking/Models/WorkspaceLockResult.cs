@@ -14,22 +14,32 @@ internal sealed record WorkspaceLockResult
     private WorkspaceLockResult(
         WorkspaceLockState state,
         WorkspaceLockLease? lease,
-        FilesystemFailure? failure,
-        string? cause)
+        WorkspaceLockFailure? lockFailure)
     {
         State = state;
         Lease = lease;
-        Failure = failure;
-        Cause = cause;
+        LockFailure = lockFailure;
     }
 
     internal WorkspaceLockState State { get; }
-
     internal WorkspaceLockLease? Lease { get; }
+    internal WorkspaceLockFailure? LockFailure { get; }
 
-    internal FilesystemFailure? Failure { get; }
+    internal FilesystemFailure? Failure => LockFailure is null
+        ? null
+        : LockFailure.Detail ?? new FilesystemFailure(
+            LockFailure.Kind switch
+            {
+                WorkspaceLockFailureKind.AccessDenied => FilesystemFailureKind.AccessDenied,
+                WorkspaceLockFailureKind.Unsupported => FilesystemFailureKind.Unsupported,
+                WorkspaceLockFailureKind.InvalidTarget => FilesystemFailureKind.InvalidPath,
+                WorkspaceLockFailureKind.Busy or WorkspaceLockFailureKind.IoError
+                    or WorkspaceLockFailureKind.Cancelled => FilesystemFailureKind.InputOutput,
+                _ => throw new ArgumentOutOfRangeException(nameof(LockFailure)),
+            },
+            $"Workspace lock acquisition failed: {LockFailure.Kind}.");
 
-    internal string? Cause { get; }
+    internal string? Cause => Failure?.DirectCause;
 
     internal static WorkspaceLockResult Acquired(WorkspaceLockLease lease)
     {
@@ -38,26 +48,15 @@ internal sealed record WorkspaceLockResult
             throw new ArgumentException("An acquired lock result requires a held lease.", nameof(lease));
         }
 
-        return new WorkspaceLockResult(
-            state: WorkspaceLockState.Acquired,
-            lease: lease,
-            failure: null,
-            cause: null);
+        return new(WorkspaceLockState.Acquired, lease, null);
     }
 
-    internal static WorkspaceLockResult Failed(FilesystemFailure failure)
-    {
-        return new WorkspaceLockResult(
-            state: WorkspaceLockState.Failed,
-            lease: null,
-            failure: failure,
-            cause: failure.DirectCause);
-    }
-
-    internal static WorkspaceLockResult Cancelled()
+    internal static WorkspaceLockResult Failed(WorkspaceLockFailure failure)
         => new(
-            state: WorkspaceLockState.Cancelled,
+            failure.Kind == WorkspaceLockFailureKind.Cancelled ? WorkspaceLockState.Cancelled : WorkspaceLockState.Failed,
             lease: null,
-            failure: null,
-            cause: null);
+            lockFailure: failure);
+
+    internal static WorkspaceLockResult Cancelled(string path)
+        => Failed(new WorkspaceLockFailure(WorkspaceLockFailureKind.Cancelled, path));
 }

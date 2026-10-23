@@ -139,6 +139,9 @@ internal sealed class PublishedJourneyWorkspace : IDisposable
     internal IReadOnlyDictionary<string, string> SnapshotState()
         => PublishedWorkspaceTreeSnapshot.Capture(Path);
 
+    internal IReadOnlyDictionary<string, string> SnapshotState(bool includeRuntime)
+        => PublishedWorkspaceTreeSnapshot.Capture(Path, includeRuntime);
+
     public void Dispose()
     {
         if (_disposed)

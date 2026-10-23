@@ -1,97 +1,64 @@
-using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
+using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 
 public sealed class WorkspaceLockContractIntegrationTests
 {
-    [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Workspace lock leases require one exact zero-byte external handle"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
-    public void WorkspaceLockLeaseRequiresExactExternalHandle()
+    [Fact(DisplayName = "Workspace lock leases require the exact local handle and accept nonempty sentinels")]
+    [Trait("Boundary", "OS"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
+    public void WorkspaceLockLeaseRequiresExactLocalHandle()
     {
-        using var workspaceDirectory = TemporaryWorkspace.Create("lock-lease-workspace");
-        using var storeDirectory = TemporaryWorkspace.Create("lock-lease-store");
-        using var otherStoreDirectory = TemporaryWorkspace.Create("lock-lease-other-store");
-        var workspace = new CliWorkspace(
-            workspaceDirectory.Path,
-            workspaceDirectory.Path,
-            CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        using var temporary = TemporaryWorkspace.Create("lock-lease-workspace");
+        var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var request = new WorkspaceLockRequest(workspace, "index", Guid.NewGuid());
-        var storeRoot = WorkspaceLockStoreRoot.FromAbsolutePath(storeDirectory.Path);
-        var otherStoreRoot = WorkspaceLockStoreRoot.FromAbsolutePath(otherStoreDirectory.Path);
-        var lockPath = CreateLockFile(storeDirectory, storeRoot, workspace, []);
-        var otherPath = CreateLockFile(otherStoreDirectory, otherStoreRoot, workspace, []);
-
-        using (var handle = Open(lockPath))
-        {
-            Assert.Throws<ArgumentException>(() => new WorkspaceLockLease(
-                request: request,
-                storeRoot: otherStoreRoot,
-                lockPath: lockPath,
-                handle: handle));
-        }
-
+        var path = temporary.CreateFile(Path.Combine(".open-forge-state", "workspace.lock"), "preserved");
+        var otherPath = temporary.CreateFile("other.lock");
+        var legacy = new LegacyWorkspaceLockResult(LegacyWorkspaceLockState.Unavailable);
         using (var handle = Open(otherPath))
         {
-            Assert.Throws<ArgumentException>(() => new WorkspaceLockLease(
-                request: request,
-                storeRoot: storeRoot,
-                lockPath: lockPath,
-                handle: handle));
+            Assert.Throws<ArgumentException>(() => new WorkspaceLockLease(request, handle, legacy));
         }
 
-        var otherWorkspace = new CliWorkspace(
-            Path.Combine(workspaceDirectory.Path, "other"),
-            Path.Combine(workspaceDirectory.Path, "other"),
-            CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        var nonzeroPath = CreateLockFile(
-            storeDirectory,
-            storeRoot,
-            otherWorkspace,
-            "not-zero"u8.ToArray());
-        using (var handle = Open(nonzeroPath))
+        using (var handle = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
         {
-            Assert.Throws<ArgumentException>(() => new WorkspaceLockLease(
-                request: new WorkspaceLockRequest(otherWorkspace, "index", Guid.NewGuid()),
-                storeRoot: storeRoot,
-                lockPath: nonzeroPath,
-                handle: handle));
+            Assert.Throws<ArgumentException>(() => new WorkspaceLockLease(request, handle, legacy));
         }
 
-        using var lease = new WorkspaceLockLease(
-            request: request,
-            storeRoot: storeRoot,
-            lockPath: lockPath,
-            handle: Open(lockPath));
+        using var lease = new WorkspaceLockLease(request, Open(path), legacy);
         Assert.True(lease.IsHeldFor(workspace));
-        Assert.False(lease.IsHeldFor(new CliWorkspace(
-            Path.Combine(workspaceDirectory.Path, "foreign"),
-            Path.Combine(workspaceDirectory.Path, "foreign"),
-            CliWorkspaceSelectionMethod.ExplicitWorkspace)));
+        Assert.Equal(WorkspaceRuntimePaths.LockPath(workspace), lease.LockPath);
+        Assert.False(lease.IsHeldFor(new CliWorkspace(otherPath, otherPath, CliWorkspaceSelectionMethod.ExplicitWorkspace)));
         lease.Dispose();
         Assert.False(lease.IsHeldFor(workspace));
+        Assert.Equal("preserved", File.ReadAllText(path));
     }
 
-    private static string CreateLockFile(
-        TemporaryWorkspace temporary,
-        WorkspaceLockStoreRoot storeRoot,
-        CliWorkspace workspace,
-        byte[] contents)
+    [Fact(DisplayName = "A composite lease loses authority when either owned handle closes")]
+    [Trait("Boundary", "OS"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
+    public async Task ClosedLegacyHandleInvalidatesCompositeAuthority()
     {
-        var lockPath = WorkspaceLockPathIdentity.LockPath(storeRoot, workspace);
-        var relativePath = Path.GetRelativePath(temporary.Path, lockPath);
-        return temporary.CreateFile(relativePath, contents);
+        using var temporary = TemporaryWorkspace.Create("lock-composite-authority");
+        using var store = WorkspaceLockTestStore.Create("lock-composite-store");
+        var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        var request = new WorkspaceLockRequest(workspace, "index", Guid.NewGuid());
+        var legacyPath = store.Track(workspace);
+        Directory.CreateDirectory(Path.GetDirectoryName(legacyPath) ?? throw new InvalidOperationException());
+        using var legacyHandle = new FileStream(legacyPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        var legacy = new LegacyWorkspaceLockResult(LegacyWorkspaceLockState.HeldReadWrite, store.StoreRoot, legacyPath, legacyHandle);
+        var localPath = temporary.CreateFile(Path.Combine(".open-forge-state", "workspace.lock"));
+        await using var lease = new WorkspaceLockLease(request, Open(localPath), legacy);
+        Assert.True(lease.HoldsLegacyLock(store.StoreRoot));
+        legacyHandle.Dispose();
+        Assert.False(lease.IsHeld);
+        Assert.False(lease.HoldsLegacyLock(store.StoreRoot));
+        await lease.DisposeAsync();
+        using var reopened = Open(localPath);
     }
 
     private static FileStream Open(string path)
-        => new(
-            path,
-            new FileStreamOptions
-            {
-                Mode = FileMode.Open,
-                Access = FileAccess.ReadWrite,
-                Share = FileShare.None,
-            });
+        => new(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 }
