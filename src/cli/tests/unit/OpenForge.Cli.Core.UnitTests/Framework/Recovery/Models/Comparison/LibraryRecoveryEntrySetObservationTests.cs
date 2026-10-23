@@ -1,12 +1,13 @@
 using System.Collections.Immutable;
-using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
@@ -83,12 +84,12 @@ public sealed class LibraryRecoveryEntrySetObservationTests
         var verified = Assert.IsType<RecoveryBundleVerifiedRead>(candidate.Verified);
         var invalid = defect switch
         {
-            "draft" => RecoveryBundleCandidateSnapshot.IncompleteDraft(candidate.Path),
-            "malformed" => RecoveryBundleCandidateSnapshot.Classified(candidate.Path,
+            "draft" => RecoveryBundleCandidateSnapshot.IncompleteDraft(candidate.Location, candidate.Path),
+            "malformed" => RecoveryBundleCandidateSnapshot.Classified(candidate.Location, candidate.Path,
                 RecoveryBundleCandidateKind.Final, RecoveryBundleIntegrity.Malformed, "malformed"),
-            "unsupported" => RecoveryBundleCandidateSnapshot.Classified(candidate.Path,
+            "unsupported" => RecoveryBundleCandidateSnapshot.Classified(candidate.Location, candidate.Path,
                 RecoveryBundleCandidateKind.Final, RecoveryBundleIntegrity.Unsupported, "unsupported"),
-            "unavailable" => RecoveryBundleCandidateSnapshot.Classified(candidate.Path,
+            "unavailable" => RecoveryBundleCandidateSnapshot.Classified(candidate.Location, candidate.Path,
                 RecoveryBundleCandidateKind.Final, RecoveryBundleIntegrity.Unavailable, "unavailable"),
             "workspace-key" => RecoveryBundleCandidateSnapshot.VerifiedFinal(verified with { WorkspaceKey = new string('0', 64) }),
             "workspace-path" => RecoveryBundleCandidateSnapshot.VerifiedFinal(verified with { WorkspacePhysicalPath = Path.GetFullPath("other") }),
@@ -142,6 +143,7 @@ public sealed class LibraryRecoveryEntrySetObservationTests
             intended: RecoveryEntryState.RelativeLink(RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, "../shared/source.md")));
         var verified = new RecoveryBundleVerifiedRead
         {
+            Location = RecoveryStoreLocator.Local(workspace),
             BundlePath = Path.GetFullPath("operation.zip"),
             WorkspacePhysicalPath = root,
             WorkspaceKey = WorkspaceIdentity.Key(root),

@@ -27,15 +27,41 @@ internal sealed class RecoveryResidualOperationalContributor(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
-        var result = await RecoveryBundleCatalogue.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
-        return new RecoveryResidualStatusView(ReadState(result.State), ReadCandidates(result));
+        var observations = await RecoveryBundleCatalogue.ReadStoresAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var stores = observations.Select(store => new RecoveryStoreStatusView(
+            store.Kind, store.Location, ReadState(store.Catalogue.State), ReadCandidates(store.Catalogue), store.Catalogue.Cause)).ToArray();
+        return new RecoveryResidualStatusView(AggregateState(stores.Select(store => store.State)), [.. stores.SelectMany(store => store.Candidates)])
+        {
+            Stores = stores,
+        };
     }
 
     internal async ValueTask<RecoveryResidualDoctorView> ReadDoctorAsync(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
-        var result = await RecoveryBundleCatalogue.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var observations = await RecoveryBundleCatalogue.ReadStoresAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var stores = new List<RecoveryStoreDoctorView>(observations.Length);
+        foreach (var observation in observations)
+        {
+            var view = await ReadDoctorStoreAsync(workspace, observation.Catalogue, cancellationToken).ConfigureAwait(false);
+            stores.Add(new RecoveryStoreDoctorView(observation.Kind, observation.Location, view.State, view.Candidates, view.Cause));
+        }
+
+        return new RecoveryResidualDoctorView(
+            AggregateState(stores.Select(store => store.State)),
+            [.. stores.SelectMany(store => store.Candidates)],
+            stores.FirstOrDefault(store => store.Cause is not null)?.Cause)
+        {
+            Stores = stores,
+        };
+    }
+
+    private async ValueTask<RecoveryResidualDoctorView> ReadDoctorStoreAsync(
+        CliWorkspace workspace,
+        RecoveryBundleCatalogueResult result,
+        CancellationToken cancellationToken)
+    {
         if (result.State != RecoveryBundleCatalogueState.Available)
         {
             return new RecoveryResidualDoctorView(
@@ -99,6 +125,19 @@ internal sealed class RecoveryResidualOperationalContributor(
                 state,
                 "The recovery-catalogue state is not defined."),
         };
+
+    private static OperationalViewState AggregateState(IEnumerable<OperationalViewState> states)
+    {
+        var observed = states.ToArray();
+        if (observed.Contains(OperationalViewState.Interrupted))
+        {
+            return OperationalViewState.Interrupted;
+        }
+
+        return observed.All(state => state == OperationalViewState.Complete)
+            ? OperationalViewState.Complete
+            : OperationalViewState.Incomplete;
+    }
 
     private static RecoveryCandidateObservation[] ReadCandidates(
         RecoveryBundleCatalogueResult result)

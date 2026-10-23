@@ -4,8 +4,8 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
-using OpenForge.Cli.Core.Framework.Libraries.Shared.Permissions;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Permissions;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Recovery;
@@ -13,6 +13,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 
@@ -44,7 +45,7 @@ public sealed class LibraryRecoveryPermissionIntegrationTests
         try
         {
             File.Delete(absolute);
-            var read = await RecoveryBundleReader.ReadFinalAsync(workspace.Workspace, preparation.BundlePath, TestContext.Current.CancellationToken);
+            var read = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(workspace.Workspace), preparation.BundlePath, TestContext.Current.CancellationToken);
             var verified = Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified);
             var entry = Assert.Single(verified.Entries);
             var comparison = new RecoveryEntryComparison

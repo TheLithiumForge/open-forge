@@ -1,6 +1,6 @@
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Security.Cryptography;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
@@ -45,16 +45,16 @@ public sealed class F01InstallReadinessJourneyTests
         workspace.ExpectCoreInstall();
         var readmeBytes = File.ReadAllBytes(workspace.Combine(ReadmePath));
 
-        var notInstalledBefore = workspace.SnapshotState();
+        var notInstalledBefore = workspace.SnapshotState(includeRuntime: true);
         var notInstalledExternalBefore = SnapshotExternalStore(workspace);
         var notInstalled = await workspace.RunAsync("status");
         AssertCompleted(notInstalled);
         Assert.Contains("Open Forge is not installed", notInstalled.StandardOutput, StringComparison.Ordinal);
-        Assert.Equal(notInstalledBefore, workspace.SnapshotState());
+        Assert.Equal(notInstalledBefore, workspace.SnapshotState(includeRuntime: true));
         Assert.Equal(notInstalledExternalBefore, SnapshotExternalStore(workspace));
         workspace.LockStore.AssertNoInfrastructure();
 
-        var dryRunBefore = workspace.SnapshotState();
+        var dryRunBefore = workspace.SnapshotState(includeRuntime: true);
         var dryRunExternalBefore = SnapshotExternalStore(workspace);
         var dryRun = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--dry-run"));
         AssertCompleted(dryRun);
@@ -65,7 +65,7 @@ public sealed class F01InstallReadinessJourneyTests
             StringComparison.Ordinal);
         Assert.Contains(OwnershipPath, dryRun.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("No files were changed.", dryRun.StandardOutput, StringComparison.Ordinal);
-        Assert.Equal(dryRunBefore, workspace.SnapshotState());
+        Assert.Equal(dryRunBefore, workspace.SnapshotState(includeRuntime: true));
         Assert.Equal(dryRunExternalBefore, SnapshotExternalStore(workspace));
         workspace.LockStore.AssertNoInfrastructure();
 
@@ -105,7 +105,7 @@ public sealed class F01InstallReadinessJourneyTests
         Assert.Contains(".agents", createdDirectories, StringComparer.Ordinal);
         Assert.Equal(ExpectedPayloadDirectories(), createdDirectoriesBelowAgents);
         Assert.Equal([AgentsPath, ClaudePath], createdHosts);
-        Assert.Empty(
+        Assert.Equal([".open-forge-state/.gitignore", ".open-forge-state/workspace.lock"],
             createdFiles
                 .Except(ExpectedPayloadPaths().Append(OwnershipPath).Append(SettingsPath).Append(AgentsPath).Append(ClaudePath),
                     StringComparer.Ordinal));

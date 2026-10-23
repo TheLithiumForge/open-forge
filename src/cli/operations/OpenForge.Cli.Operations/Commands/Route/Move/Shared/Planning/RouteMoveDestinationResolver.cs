@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
@@ -48,6 +49,28 @@ internal sealed class RouteMoveDestinationResolver(FileExpectationValidator expe
                 operation.Workspace.LexicalRoot,
                 destination.DestinationPath);
             var resolution = _expectationValidator.ResolvePath(operation.Workspace, logicalPath);
+            var current = logicalPath;
+            var boundary = resolution;
+            while (current is not null)
+            {
+                if (WorkspaceRuntimePaths.Contains(operation.Workspace,
+                        SourceLogicalPath.ToLexicalPath(operation.Workspace.PhysicalRoot, destination.DestinationPath))
+                    || (boundary.ResolvedPhysicalPath is { } physical && WorkspaceRuntimePaths.Contains(operation.Workspace, physical)))
+                {
+                    return RouteMoveDestinationProjector.Stop(projection.Inventory,
+                        RouteMoveFindingCode.DestinationUnsafe, CliSemanticStatus.Blocked, destination.DestinationPath,
+                        "The destination is inside the reserved workspace runtime directory.").Boundary;
+                }
+                if (boundary.State != PhysicalPathState.Missing)
+                {
+                    break;
+                }
+                current = Path.GetDirectoryName(current);
+                if (current is not null)
+                {
+                    boundary = _expectationValidator.ResolvePath(operation.Workspace, current);
+                }
+            }
             if (resolution.State == PhysicalPathState.Missing)
             {
                 continue;

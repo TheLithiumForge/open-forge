@@ -5,7 +5,9 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
 
@@ -38,7 +40,9 @@ internal sealed class CleanupApplicationOperation(WorkspaceLockManager lockManag
 
         await using (lease.ConfigureAwait(false))
         {
-            var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, frozenCatalogue, cancellationToken).ConfigureAwait(false);
+            var location = frozenCatalogue.Candidates.FirstOrDefault()?.Location ?? RecoveryStoreLocator.Local(request.Workspace);
+            var frozenStore = new RecoveryStoreObservation(location.Kind, location, frozenCatalogue);
+            var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, frozenStore, cancellationToken).ConfigureAwait(false);
             result.Revalidation = new CleanupCatalogueComparison
             {
                 State = ReadComparison(opened.State),

@@ -53,6 +53,29 @@ public sealed class TemporaryWorkspace : IDisposable
             System.IO.Path.GetFullPath(entryPath),
             System.IO.Path.Combine(System.IO.Path.GetFullPath(workspacePath), RuntimeDirectoryName));
 
+    public void DeleteRuntimeState(string workspaceRelativePath)
+    {
+        var selected = ResolveRelativePath([workspaceRelativePath]);
+        var current = selected;
+        while (!PathComparer.Equals(current, Path))
+        {
+            if (!EntryExists(current))
+            {
+                return;
+            }
+
+            EnsureOrdinaryDirectory(current);
+            current = System.IO.Path.GetDirectoryName(current)
+                ?? throw new InvalidOperationException("A selected workspace must remain inside its owned root.");
+        }
+
+        var runtimePath = System.IO.Path.Combine(selected, RuntimeDirectoryName);
+        if (EntryExists(runtimePath))
+        {
+            DeleteRuntimeEntry(runtimePath);
+        }
+    }
+
     /// <summary>
     /// Creates a uniquely named, marker-owned directory below the operating
     /// system temporary directory.

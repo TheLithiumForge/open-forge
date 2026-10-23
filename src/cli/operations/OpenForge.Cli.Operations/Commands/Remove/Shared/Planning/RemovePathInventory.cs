@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Remove.Shared.Planning;
 
@@ -30,6 +31,11 @@ internal sealed class RemovePathInventory
         string logicalPath,
         CancellationToken cancellationToken)
     {
+        if (WorkspaceRuntimePaths.Contains(workspace,
+            Path.GetFullPath(Path.GetRelativePath(workspace.LexicalRoot, logicalPath), workspace.PhysicalRoot)))
+        {
+            return new RemovePathFileCapture.Unavailable("The selected file is inside the reserved workspace runtime directory.");
+        }
         var resolution = _resolver.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, logicalPath);
         if (resolution.State != PhysicalPathState.Contained)
         {
@@ -38,6 +44,10 @@ internal sealed class RemovePathInventory
         }
 
         var physicalPath = resolution.GetContainedPhysicalPath();
+        if (WorkspaceRuntimePaths.Contains(workspace, physicalPath))
+        {
+            return new RemovePathFileCapture.Unavailable("The selected file is inside the reserved workspace runtime directory.");
+        }
         try
         {
             var bytes = await File.ReadAllBytesAsync(physicalPath, cancellationToken).ConfigureAwait(false);
@@ -84,6 +94,11 @@ internal sealed class RemovePathInventory
                 return new RemovePathDirectoryInventory.Cancelled("Directory inventory was cancelled.");
             }
             var logicalDirectory = pending.Pop();
+            if (WorkspaceRuntimePaths.Contains(workspace,
+                Path.GetFullPath(Path.GetRelativePath(workspace.LexicalRoot, logicalDirectory), workspace.PhysicalRoot)))
+            {
+                return new RemovePathDirectoryInventory.Unavailable("The selected directory contains reserved workspace runtime state.");
+            }
             var resolution = _resolver.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, logicalDirectory);
             if (resolution.State != PhysicalPathState.Contained)
             {
@@ -91,6 +106,10 @@ internal sealed class RemovePathInventory
                     "A selected directory no longer resolves inside the workspace.");
             }
             var physicalDirectory = resolution.GetContainedPhysicalPath();
+            if (WorkspaceRuntimePaths.Contains(workspace, physicalDirectory))
+            {
+                return new RemovePathDirectoryInventory.Unavailable("The selected directory contains reserved workspace runtime state.");
+            }
             var state = NoFollowLeafObserver.Observe(_resolver, workspace, logicalDirectory, cancellationToken);
             if (state.State != NoFollowLeafState.Directory)
             {
@@ -112,6 +131,10 @@ internal sealed class RemovePathInventory
 
             foreach (var childPhysical in children.OrderBy(value => value, StringComparer.Ordinal))
             {
+                if (WorkspaceRuntimePaths.Contains(workspace, childPhysical))
+                {
+                    return new RemovePathDirectoryInventory.Unavailable("The selected directory contains reserved workspace runtime state.");
+                }
                 var relative = Path.GetRelativePath(workspace.PhysicalRoot, childPhysical)
                     .Replace(Path.DirectorySeparatorChar, '/')
                     .Replace(Path.AltDirectorySeparatorChar, '/');

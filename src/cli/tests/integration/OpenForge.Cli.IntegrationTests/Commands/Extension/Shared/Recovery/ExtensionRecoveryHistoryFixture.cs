@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Recovery;
 
@@ -46,8 +47,7 @@ internal static class ExtensionRecoveryHistoryFixture
         Guid operationId,
         RecoveryBundleCandidateKind kind)
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.None)
-            ?? throw new InvalidOperationException("LocalApplicationData must be observable for Integration evidence.");
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(workspace.PhysicalRoot);
         var directory = RecoveryBundlePathIdentity.WorkspaceDirectory(storeRoot, workspace.PhysicalRoot);
         Directory.CreateDirectory(directory);
         var fileName = kind switch

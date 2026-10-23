@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
@@ -32,6 +33,7 @@ internal sealed class LibraryResidualFacts
         var key = WorkspaceIdentity.Key(Workspace.PhysicalRoot);
         var candidate = RecoveryBundleCandidateSnapshot.VerifiedFinal(new RecoveryBundleVerifiedRead
         {
+            Location = RecoveryStoreLocator.Local(Workspace),
             BundlePath = Path.Combine(Path.GetTempPath(), "operation-123456781234123412341234567890ab.zip"),
             WorkspacePhysicalPath = WorkspaceIdentity.NormalizePhysicalPath(Workspace.PhysicalRoot),
             WorkspaceKey = key,

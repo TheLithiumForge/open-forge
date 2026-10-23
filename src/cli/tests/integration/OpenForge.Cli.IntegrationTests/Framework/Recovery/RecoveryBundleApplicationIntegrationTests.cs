@@ -15,6 +15,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 
@@ -230,7 +231,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
             }
 
             var corruptRead = await RecoveryBundleReader.ReadExpectedFinalAsync(
-                input,
+                input, RecoveryStoreLocator.Local(input.Workspace),
                 preparation.BundlePath,
                 TestContext.Current.CancellationToken);
             Assert.Equal(RecoveryBundleReadState.Malformed, corruptRead.Read.State);
@@ -245,13 +246,12 @@ public sealed class RecoveryBundleApplicationIntegrationTests
             Assert.Equal(FilesystemNotStartedReason.ContractRejected, corruptAttempt.NotStartedReason);
 
             draftPath = RecoveryBundlePathIdentity.DraftPath(
-                RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.None)
-                    ?? throw new InvalidOperationException("LocalApplicationData must remain observable."),
+                TestDataHome.LocalRecoveryStoreRoot(workspace.PhysicalRoot),
                 workspace.PhysicalRoot,
                 operationId);
             File.Move(preparation.BundlePath, draftPath);
             var draftRead = await RecoveryBundleReader.ReadExpectedFinalAsync(
-                input,
+                input, RecoveryStoreLocator.Local(input.Workspace),
                 draftPath,
                 TestContext.Current.CancellationToken);
             Assert.Null(draftRead.Preparation);

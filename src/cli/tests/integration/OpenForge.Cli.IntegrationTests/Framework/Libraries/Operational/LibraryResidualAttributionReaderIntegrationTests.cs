@@ -2,12 +2,13 @@ using System.Security.Cryptography;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
-using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Operational;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.IntegrationTests.Framework.Libraries.Operational.Shared.Attribution;
 using OpenForge.Cli.IntegrationTests.Framework.Libraries.Operational.Shared.Reading;
 
@@ -224,7 +225,7 @@ public sealed class LibraryResidualAttributionReaderIntegrationTests
         using var fixture = new LibraryObservationWorkspace();
         fixture.Write(LibraryObservationWorkspace.RecordPath, LibraryObservationWorkspace.SingleRecord);
         var draft = fixture.Files.CreateFile("recovery/operation-123456781234123412341234567890ab.draft", "untrusted draft");
-        var candidate = RecoveryBundleCandidateSnapshot.IncompleteDraft(draft);
+        var candidate = RecoveryBundleCandidateSnapshot.IncompleteDraft(RecoveryStoreLocator.Local(fixture.Workspace), draft);
         var recovery = new RecoveryResidualDoctorView(OperationalViewState.Complete,
             [RecoveryDoctorCandidateObservation.Create(candidate, null)], null);
         var before = fixture.Snapshot();

@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.TestSupport;
@@ -37,7 +38,7 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
             priorPreparation.BundlePath,
             TestContext.Current.CancellationToken);
         var priorRead = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             priorPreparation.BundlePath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, priorRead.State);
@@ -87,7 +88,7 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
                 priorBytes,
                 await File.ReadAllBytesAsync(priorPreparation.BundlePath, TestContext.Current.CancellationToken));
             var retainedRead = await RecoveryBundleReader.ReadFinalAsync(
-                workspace.Workspace,
+                RecoveryStoreLocator.Local(workspace.Workspace),
                 priorPreparation.BundlePath,
                 TestContext.Current.CancellationToken);
             Assert.Equal(RecoveryBundleReadState.Valid, retainedRead.State);

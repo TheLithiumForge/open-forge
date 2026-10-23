@@ -2,6 +2,7 @@ using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
@@ -46,7 +47,7 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
         Assert.NotNull(priorPath);
         var priorBytes = File.ReadAllBytes(priorPath!);
         var priorRead = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             priorPath!,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, priorRead.State);
@@ -70,7 +71,7 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
         Assert.True(File.Exists(removePath));
         Assert.Equal(priorBytes, File.ReadAllBytes(priorPath!));
         var removeRead = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             removePath!,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, removeRead.State);

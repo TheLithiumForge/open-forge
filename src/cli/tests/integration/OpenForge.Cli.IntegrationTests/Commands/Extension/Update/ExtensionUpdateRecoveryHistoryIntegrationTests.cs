@@ -1,6 +1,6 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.Extension.Models;
 using OpenForge.Cli.Core.Commands.Extension.Install;
+using OpenForge.Cli.Core.Commands.Extension.Models;
 using OpenForge.Cli.Core.Commands.Extension.Update;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
@@ -10,12 +10,13 @@ using OpenForge.Cli.Core.Commands.Extension.Update.Shared.Application;
 using OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
-using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Presentation.Extension.Update.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
@@ -68,12 +69,12 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
         Assert.NotEqual(prior.BundlePath, ownBundlePath);
         Assert.Equal(priorBytes, await File.ReadAllBytesAsync(prior.BundlePath, TestContext.Current.CancellationToken));
         var priorRead = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             prior.BundlePath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, priorRead.State);
         var ownRead = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             ownBundlePath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, ownRead.State);

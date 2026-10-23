@@ -12,6 +12,7 @@ public sealed class LibraryDestinationPolicyTests
     [Trait("Boundary", "Processing")]
     [Theory]
     [InlineData(".git/config")]
+    [InlineData(".open-forge-state"), InlineData(".open-forge-state/recovery/archive.zip")]
     [InlineData(".agents/directives/_directives.md"), InlineData(".agents/directives/_directives.md/child.md")]
     [InlineData(".agents/loader.md"), InlineData(".AGENTS/anything.md")]
     [InlineData(".agents/open-forge.json"), InlineData(".agents/open-forge.lock.json")]

@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.Models.Reading;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
@@ -77,7 +78,7 @@ public sealed class DoctorLifecycleAbsenceTests
     public async Task RecoveryResidualPreventsFrameworkAbsence()
     {
         var support = new DoctorOperationTestSupport();
-        var draft = RecoveryBundleCandidateSnapshot.IncompleteDraft(Path.Combine(
+        var draft = RecoveryBundleCandidateSnapshot.IncompleteDraft(RecoveryStoreLocator.Local(DoctorOperationTestSupport.Workspace()), Path.Combine(
             DoctorOperationTestSupport.Workspace().LexicalRoot,
             "operation-00000000000000000000000000000000.draft"));
         support.RecoveryResiduals.View = new RecoveryResidualDoctorView(

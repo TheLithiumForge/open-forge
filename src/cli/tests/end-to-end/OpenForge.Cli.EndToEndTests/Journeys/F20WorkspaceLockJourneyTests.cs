@@ -169,16 +169,19 @@ public sealed class F20WorkspaceLockJourneyTests
         workspaceA.LockStore.AssertNoRecoveryArtifacts(workspaceA.Path);
     }
 
-    [Fact(DisplayName = "F20 an unusable data home blocks a writer, names OPENFORGE_DATA_HOME, and writes nothing")]
+    [Fact(DisplayName = "F20 a relative data home skips legacy locking and permits a local writer")]
     [Trait("Feature", Feature)]
     [Trait("Evidence", "EndToEnd")]
     [Trait("Journey", "F20")]
-    public async Task UnusableDataHomeBlocksWriterAndNamesTheSetting()
+    public async Task RelativeDataHomePermitsLocalWriter()
     {
         using var workspace = PublishedJourneyWorkspace.Create("e2e-f20-data-home");
         workspace.ExpectCoreInstall();
         var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         AssertCompleted(install, "install");
+        File.Delete(workspace.Combine(".open-forge-state/workspace.lock"));
+        File.Delete(workspace.Combine(".open-forge-state/.gitignore"));
+        Directory.Delete(workspace.Combine(".open-forge-state"), recursive: false);
         workspace.WriteText(
             ANotePath,
             OpenForgeDocumentSeed.Metadata(
@@ -186,21 +189,21 @@ public sealed class F20WorkspaceLockJourneyTests
                 tags: ["Guidance", "F20"],
                 body: "\n# F20 A Note\n\nA note that index would list.\n"));
 
-        // A sandbox that can write only inside the workspace leaves the data home unusable. A relative value is
-        // the portable way to reach the same state: the CLI rejects it instead of falling back to the profile.
         var environment = new Dictionary<string, string>(workspace.ProcessEnvironment)
         {
             [DataHomeVariable] = "relative-data-home",
         };
-        var blocked = await PublishedJourneyProcess.RunWithoutWritesAsync(
+        var indexed = await PublishedJourneyProcess.RunAsync(
             workspace.Target,
             workspace.Path,
-            workspace.SnapshotState,
             ["index"],
             environment);
 
-        AssertBlocked(blocked, "index with an unusable data home");
-        Assert.Contains(DataHomeVariable, blocked.StandardError, StringComparison.Ordinal);
+        AssertCompleted(indexed, "index with a relative data home");
+        Assert.Contains(Path.GetFileName(ANotePath), File.ReadAllText(workspace.Combine(GuidanceEntrypointPath)), StringComparison.Ordinal);
+        Assert.Equal("*\n", File.ReadAllText(workspace.Combine(".open-forge-state/.gitignore")));
+        Assert.True(File.Exists(workspace.Combine(".open-forge-state/workspace.lock")));
+        Assert.False(Directory.Exists(workspace.Combine("relative-data-home")));
     }
 
     private static async Task InstallPairAsync(

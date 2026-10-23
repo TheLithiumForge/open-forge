@@ -82,14 +82,15 @@ internal sealed class CleanupOperation
 
     private static async ValueTask<RecoveryBundleCatalogueResult> ReadCatalogueAsync(CleanupRequest request, CancellationToken cancellationToken)
     {
-        var failure = RecoveryDeletionStorageBoundary.ReadWorkspace(request.Workspace);
+        var location = RecoveryStoreLocator.Local(request.Workspace);
+        var failure = RecoveryDeletionStorageBoundary.ReadLocation(location);
         if (failure is not null)
         {
             return RecoveryBundleCatalogueResult.Unavailable(failure.DirectCause, failure);
         }
 
-        var catalogue = await RecoveryBundleCatalogue.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
-        failure = RecoveryDeletionStorageBoundary.ReadWorkspace(request.Workspace);
+        var catalogue = await RecoveryBundleCatalogue.ReadAsync(location, cancellationToken).ConfigureAwait(false);
+        failure = RecoveryDeletionStorageBoundary.ReadLocation(location);
         if (failure is not null)
         {
             return RecoveryBundleCatalogueResult.Unavailable(failure.DirectCause, failure);

@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
@@ -185,9 +186,7 @@ public sealed class RouteMoveRecoveryConflictCoordinateIntegrationTests
                     TestContext.Current.CancellationToken));
         }
 
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-                Environment.SpecialFolderOption.Create)
-            ?? throw new InvalidOperationException("The Route Move recovery store is unavailable.");
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(workspace.PhysicalRoot);
         var operationId = Guid.NewGuid();
         string path;
         if (candidateKind == "draft")

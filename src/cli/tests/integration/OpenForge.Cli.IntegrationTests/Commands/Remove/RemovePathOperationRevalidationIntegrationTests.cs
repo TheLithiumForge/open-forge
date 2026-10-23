@@ -2,8 +2,9 @@ using OpenForge.Cli.Core.Commands.Remove;
 using OpenForge.Cli.Core.Commands.Remove.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Remove.Models.Result;
-using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Remove;
 
@@ -147,7 +148,7 @@ public sealed class RemovePathOperationRevalidationIntegrationTests
         Assert.NotNull(result.RecoveryPath);
         Assert.Equal(lockedBytes, File.ReadAllBytes(workspace.Combine("batch/z-locked.bin")));
         var finalRead = await OpenForge.Cli.Core.Framework.Recovery.RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             result.RecoveryPath!,
             TestContext.Current.CancellationToken);
         Assert.Equal(OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue.RecoveryBundleReadState.Valid, finalRead.State);

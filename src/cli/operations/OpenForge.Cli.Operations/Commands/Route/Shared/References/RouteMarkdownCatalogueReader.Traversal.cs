@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.References;
 
@@ -19,6 +20,13 @@ internal sealed partial class RouteMarkdownCatalogueReader
             if (cancellationToken.IsCancellationRequested)
             {
                 return true;
+            }
+
+            if (WorkspaceRuntimePaths.Contains(state.Request.Workspace,
+                    ToLexicalPath(state.Request.Workspace.PhysicalRoot, directory.CanonicalPath))
+                || WorkspaceRuntimePaths.Contains(state.Request.Workspace, directory.PhysicalPath))
+            {
+                continue;
             }
 
             if (!state.MarkDirectory(directory.PhysicalPath))
@@ -77,13 +85,20 @@ internal sealed partial class RouteMarkdownCatalogueReader
                     canonicalPath = SourceLogicalPath.AgentsRoot;
                 }
 
-                if (state.IsExcluded(canonicalPath) || state.IsGitIgnored(canonicalPath))
+                if (WorkspaceRuntimePaths.Contains(state.Request.Workspace,
+                        ToLexicalPath(state.Request.Workspace.PhysicalRoot, canonicalPath))
+                    || state.IsExcluded(canonicalPath) || state.IsGitIgnored(canonicalPath))
                 {
                     continue;
                 }
 
                 var component = LinkTargetReader.Read(lexicalEntry);
                 var resolution = Resolve(state.Request, canonicalPath);
+                if (resolution.ResolvedPhysicalPath is { } resolvedPath
+                    && WorkspaceRuntimePaths.Contains(state.Request.Workspace, resolvedPath))
+                {
+                    continue;
+                }
                 if (component.State != PathComponentState.Ordinary
                     || component.Attributes is not { } attributes
                     || resolution.State != PhysicalPathState.Contained)
@@ -126,7 +141,10 @@ internal sealed partial class RouteMarkdownCatalogueReader
         string physicalPath,
         CancellationToken cancellationToken)
     {
-        if (!state.Request.Filters.SupportedExtensions.Contains(
+        if (WorkspaceRuntimePaths.Contains(state.Request.Workspace,
+                ToLexicalPath(state.Request.Workspace.PhysicalRoot, canonicalPath))
+            || WorkspaceRuntimePaths.Contains(state.Request.Workspace, physicalPath)
+            || !state.Request.Filters.SupportedExtensions.Contains(
                 Path.GetExtension(canonicalPath),
                 StringComparer.Ordinal))
         {

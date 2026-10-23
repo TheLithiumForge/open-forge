@@ -6,10 +6,13 @@ namespace OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 internal static class PublishedWorkspaceTreeSnapshot
 {
-    internal static IReadOnlyDictionary<string, string> Capture(string rootPath, bool includeRuntime = false)
+    internal static IReadOnlyDictionary<string, string> Capture(
+        string rootPath,
+        bool includeRuntime = false,
+        IReadOnlyCollection<string>? workspacePaths = null)
     {
         var state = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        SnapshotEntry(new DirectoryInfo(rootPath), rootPath, ".", state, includeRuntime);
+        SnapshotEntry(new DirectoryInfo(rootPath), rootPath, ".", state, includeRuntime, workspacePaths ?? [rootPath]);
         return new ReadOnlyDictionary<string, string>(state);
     }
 
@@ -18,7 +21,8 @@ internal static class PublishedWorkspaceTreeSnapshot
         string rootPath,
         string relativePath,
         IDictionary<string, string> state,
-        bool includeRuntime)
+        bool includeRuntime,
+        IReadOnlyCollection<string> workspacePaths)
     {
         entry.Refresh();
         var attributes = entry.Attributes;
@@ -34,12 +38,12 @@ internal static class PublishedWorkspaceTreeSnapshot
             .OrderBy(child => RelativePath(rootPath, child.FullName), StringComparer.Ordinal))
         {
             var childPath = RelativePath(rootPath, child.FullName);
-            if (!includeRuntime && TemporaryWorkspace.IsRuntimeEntry(rootPath, child.FullName))
+            if (!includeRuntime && workspacePaths.Any(workspace => TemporaryWorkspace.IsRuntimeEntry(workspace, child.FullName)))
             {
                 continue;
             }
 
-            SnapshotEntry(child, rootPath, childPath, state, includeRuntime);
+            SnapshotEntry(child, rootPath, childPath, state, includeRuntime, workspacePaths);
         }
     }
 

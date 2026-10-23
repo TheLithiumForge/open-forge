@@ -1,11 +1,12 @@
 using System.IO.Compression;
-using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Recovery;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
+using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Remove;
@@ -83,7 +84,7 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         }
         var recoveryPath = Assert.IsType<string>(result.GetProperty("recovery").GetProperty("path").GetString());
         var recovered = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             recoveryPath,
             TestContext.Current.CancellationToken);
         var entries = Assert.IsType<RecoveryBundleVerifiedRead>(recovered.Verified).Entries;
@@ -347,7 +348,7 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
         Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
         var bundlePath = Assert.IsType<string>(result.GetProperty("recovery").GetProperty("path").GetString());
-        var recovered = await RecoveryBundleReader.ReadFinalAsync(workspace.Workspace, bundlePath, TestContext.Current.CancellationToken);
+        var recovered = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(workspace.Workspace), bundlePath, TestContext.Current.CancellationToken);
         var entry = Assert.Single(Assert.IsType<RecoveryBundleVerifiedRead>(recovered.Verified).Entries,
             value => value.TargetPath == ".agents/toolkit.md");
         using var archive = ZipFile.OpenRead(bundlePath);

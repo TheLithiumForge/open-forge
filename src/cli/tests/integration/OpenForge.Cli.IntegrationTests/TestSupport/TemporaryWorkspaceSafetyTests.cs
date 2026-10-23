@@ -4,6 +4,37 @@ namespace OpenForge.Cli.IntegrationTests.TestSupport;
 
 public sealed class TemporaryWorkspaceSafetyTests
 {
+    [Fact(DisplayName = "Selected nested workspace runtime cleanup preserves authored files")]
+    [Trait("Boundary", "OS"), Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
+    public void NestedWorkspaceRuntimeCanBeRemovedBeforeParentCleanup()
+    {
+        using var workspace = TemporaryWorkspace.Create("nested-runtime-ownership");
+        var selected = workspace.CreateDirectory("selected/nested");
+        var authored = workspace.CreateFile("selected/nested/authored.txt", "preserved");
+        var runtime = Path.Combine(selected, TemporaryWorkspace.RuntimeDirectoryName);
+        Directory.CreateDirectory(runtime);
+        File.WriteAllText(Path.Combine(runtime, "workspace.lock"), "held earlier");
+
+        workspace.DeleteRuntimeState("selected/nested");
+
+        Assert.False(Directory.Exists(runtime));
+        Assert.Equal("preserved", File.ReadAllText(authored));
+    }
+
+    [Fact(DisplayName = "Selected nested workspace runtime cleanup refuses linked workspace ancestors")]
+    [Trait("Boundary", "OS"), Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
+    public void NestedWorkspaceRuntimeCleanupDoesNotFollowAncestors()
+    {
+        using var workspace = TemporaryWorkspace.Create("nested-runtime-link");
+        using var external = TemporaryWorkspace.Create("nested-runtime-external");
+        var sentinel = external.CreateFile("nested/.open-forge-state/workspace.lock", "preserved");
+        Assert.SkipUnless(workspace.TryCreateDirectorySymbolicLink("selected", external.Path, out _), "Directory symbolic links are unavailable.");
+
+        Assert.Throws<InvalidOperationException>(() => workspace.DeleteRuntimeState("selected/nested"));
+
+        Assert.Equal("preserved", File.ReadAllText(sentinel));
+    }
+
     [Fact(DisplayName = "Temporary workspace owns runtime contents created outside fixture APIs")]
     [Trait("Boundary", "OS"), Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
     public void RuntimeContentsAreRemovedOnDisposal()

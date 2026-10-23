@@ -66,6 +66,17 @@ public sealed class TestDataHome : IDisposable
     public string RecoveryWorkspaceDirectory(string workspacePath)
         => System.IO.Path.Combine(RecoveryStoreRoot, WorkspaceKey(workspacePath));
 
+    public string LegacyRecoveryStoreRoot => RecoveryStoreRoot;
+
+    public string LegacyRecoveryWorkspaceDirectory(string workspacePath)
+        => RecoveryWorkspaceDirectory(workspacePath);
+
+    public static string LocalRecoveryStoreRoot(string workspacePath)
+        => System.IO.Path.Combine(workspacePath, TemporaryWorkspace.RuntimeDirectoryName, RecoveryDirectoryName, StoreVersionName);
+
+    public static string LocalRecoveryWorkspaceDirectory(string workspacePath)
+        => System.IO.Path.Combine(LocalRecoveryStoreRoot(workspacePath), WorkspaceKey(workspacePath));
+
     /// <summary>
     /// The environment that points a child process at this data home. Windows is not redirected
     /// by <c>LOCALAPPDATA</c>, because <see cref="Environment.GetFolderPath(Environment.SpecialFolder)"/>

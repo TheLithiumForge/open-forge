@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
@@ -222,8 +223,7 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
 
     private void DeleteRecoveryArtifacts()
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None);
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(Workspace.PhysicalRoot);
         if (storeRoot is null)
         {
             return;
@@ -259,8 +259,7 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
 
     private void AppendRecoverySnapshot(SortedDictionary<string, string> snapshot)
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None);
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(Workspace.PhysicalRoot);
         if (storeRoot is null)
         {
             return;

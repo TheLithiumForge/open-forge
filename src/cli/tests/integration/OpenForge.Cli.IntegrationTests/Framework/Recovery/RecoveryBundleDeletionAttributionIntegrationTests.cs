@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
@@ -60,7 +61,7 @@ public sealed class RecoveryBundleDeletionAttributionIntegrationTests
                 changedAttribution,
                 TestContext.Current.CancellationToken);
             var read = await RecoveryBundleReader.ReadFinalAsync(
-                workspace,
+                RecoveryStoreLocator.Local(workspace),
                 preparation.BundlePath,
                 TestContext.Current.CancellationToken);
             Assert.Equal(RecoveryBundleReadState.Valid, read.State);

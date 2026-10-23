@@ -1,23 +1,14 @@
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
 
 internal static class RecoveryDeletionStorageBoundary
 {
-    internal static FilesystemFailure? ReadWorkspace(CliWorkspace workspace)
-    {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.None);
-        if (storeRoot is null)
-        {
-            return null;
-        }
-
-        return ReadDirectoryChain(RecoveryBundlePathIdentity.WorkspaceDirectory(storeRoot, workspace.PhysicalRoot));
-    }
+    internal static FilesystemFailure? ReadLocation(RecoveryStoreLocation location)
+        => ReadDirectoryChain(location.WorkspaceDirectory);
 
     internal static FilesystemFailure? ReadDirectoryChain(string directory)
     {

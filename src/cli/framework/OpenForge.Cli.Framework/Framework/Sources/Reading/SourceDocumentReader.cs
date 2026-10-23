@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Acquisition;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Reading;
 
@@ -80,6 +81,13 @@ internal sealed class SourceDocumentReader
         SourceLayer layer,
         CancellationToken cancellationToken)
     {
+        if (WorkspaceRuntimePaths.Contains(Workspace,
+                Path.Combine(Workspace.PhysicalRoot, layer.CanonicalPath.Replace('/', Path.DirectorySeparatorChar)))
+            || WorkspaceRuntimePaths.Contains(Workspace, layer.PhysicalPath))
+        {
+            return new SourceLayerVerification(layer, SourceLayerVerificationState.Unsafe, null, null);
+        }
+
         var resolution = _physicalPathResolver.ResolveCandidate(
             Workspace.LexicalRoot,
             Workspace.PhysicalRoot,
@@ -122,11 +130,15 @@ internal sealed class SourceDocumentReader
         };
     }
 
-    private static SourceLayerVerification FormContainedVerification(
+    private SourceLayerVerification FormContainedVerification(
         SourceLayer layer,
         PhysicalPathResolution resolution)
     {
         var currentPhysicalPath = resolution.GetContainedPhysicalPath();
+        if (WorkspaceRuntimePaths.Contains(Workspace, currentPhysicalPath))
+        {
+            return new SourceLayerVerification(layer, SourceLayerVerificationState.Unsafe, null, null);
+        }
         var state = PhysicalIdentityTracker.PathComparer.Equals(
             currentPhysicalPath,
             layer.PhysicalPath)

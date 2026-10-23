@@ -15,8 +15,15 @@ internal static class RecoveryApplicationEvidence
         RecoveryBundlePreparation preparation,
         CancellationToken cancellationToken)
     {
+        if (!preparation.MatchesWorkspace(workspace))
+        {
+            return RecoveryBundleReadResult.Classified(
+                RecoveryBundleReadState.Malformed,
+                "The recovery preparation belongs to a different workspace.");
+        }
+
         var read = await RecoveryBundleReader.ReadFinalAsync(
-            workspace,
+            preparation.Location,
             preparation.BundlePath,
             cancellationToken).ConfigureAwait(false);
         if (read.Verified is null || RecoveryBundleIdentity.Matches(preparation.Verified, read.Verified))

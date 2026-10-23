@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
@@ -30,7 +31,7 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
         Assert.Equal(RouteRemoveRecoveryPreparationState.Prepared, prepared.State);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         var verified = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             preparation.BundlePath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, verified.State);

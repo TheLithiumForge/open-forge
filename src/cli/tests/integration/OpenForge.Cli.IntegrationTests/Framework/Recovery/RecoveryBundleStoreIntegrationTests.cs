@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 
@@ -91,7 +92,7 @@ public sealed class RecoveryBundleStoreIntegrationTests
             Assert.Equal(largeBytes, await ReadEntryAsync(archive.Entries[3]));
 
             var reopened = await RecoveryBundleReader.ReadFinalAsync(
-                workspace,
+                RecoveryStoreLocator.Local(workspace),
                 preparation.BundlePath,
                 TestContext.Current.CancellationToken);
             Assert.Equal(RecoveryBundleReadState.Valid, reopened.State);
@@ -159,7 +160,7 @@ public sealed class RecoveryBundleStoreIntegrationTests
             using var readbackCancellation = new CancellationTokenSource();
             readbackCancellation.Cancel();
             var cancelledReadback = await RecoveryBundleReader.ReadExpectedFinalAsync(
-                input,
+                input, RecoveryStoreLocator.Local(input.Workspace),
                 preparation.BundlePath,
                 readbackCancellation.Token);
             using var cancellation = new CancellationTokenSource();
@@ -209,9 +210,7 @@ public sealed class RecoveryBundleStoreIntegrationTests
 
     internal static string WorkspaceDirectory(CliWorkspace workspace)
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None)
-            ?? throw new InvalidOperationException("LocalApplicationData must be observable for Integration evidence.");
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(workspace.PhysicalRoot);
         return RecoveryBundlePathIdentity.WorkspaceDirectory(storeRoot, workspace.PhysicalRoot);
     }
 
@@ -243,9 +242,7 @@ public sealed class RecoveryBundleStoreIntegrationTests
 
     private static string DraftPath(CliWorkspace workspace, Guid operationId)
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None)
-            ?? throw new InvalidOperationException("The prepared store root must be observable.");
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(workspace.PhysicalRoot);
         return RecoveryBundlePathIdentity.DraftPath(storeRoot, workspace.PhysicalRoot, operationId);
     }
 

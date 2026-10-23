@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Index;
 
@@ -306,8 +307,7 @@ internal sealed class IndexOperationWorkspace : IDisposable
 
     private void DeleteRecoveryArtifacts()
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None);
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(Workspace.PhysicalRoot);
         if (storeRoot is null)
         {
             return;

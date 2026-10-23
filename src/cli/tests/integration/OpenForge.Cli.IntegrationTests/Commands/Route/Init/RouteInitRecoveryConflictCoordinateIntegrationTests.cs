@@ -18,6 +18,7 @@ using OpenForge.Cli.IntegrationTests.Commands.Route.Init.Framework;
 using OpenForge.Cli.IntegrationTests.Commands.Route.Init.Generic;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init;
 
@@ -286,9 +287,7 @@ public sealed class RouteInitRecoveryConflictCoordinateIntegrationTests
                     TestContext.Current.CancellationToken));
         }
 
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-                Environment.SpecialFolderOption.Create)
-            ?? throw new InvalidOperationException("The Route Init recovery store is unavailable.");
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(workspace.PhysicalRoot);
         var operationId = Guid.NewGuid();
         string path;
         if (candidateKind == "draft")

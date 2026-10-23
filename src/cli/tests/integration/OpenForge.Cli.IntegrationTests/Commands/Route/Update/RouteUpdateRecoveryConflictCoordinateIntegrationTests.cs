@@ -7,9 +7,9 @@ using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
@@ -17,6 +17,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
@@ -205,9 +206,7 @@ public sealed class RouteUpdateRecoveryConflictCoordinateIntegrationTests
                     TestContext.Current.CancellationToken));
         }
 
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-                Environment.SpecialFolderOption.Create)
-            ?? throw new InvalidOperationException("The Route Update recovery store is unavailable.");
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(workspace.PhysicalRoot);
         var operationId = Guid.NewGuid();
         string path;
         if (candidateKind == "draft")
