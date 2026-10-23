@@ -264,6 +264,11 @@ internal static class RouteCreateReportSelector
 
     private static string BlockedReason(RouteCreateResult result, RouteCreateFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.LabelTheBlockingConditionIsNotDefined();
@@ -305,6 +310,7 @@ internal static class RouteCreateReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = code,
+            LockFailure = finding.LockFailure,
             Title = RouteCreateWording.FindingTitle(finding.Code),
             Message = Message(result, finding),
             Subject = subject,
@@ -359,6 +365,11 @@ internal static class RouteCreateReportSelector
 
     private static string Message(RouteCreateResult result, RouteCreateFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Create.RouteCreateText.MessageTheRouteCreateResultDidNotContainAFinding();

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
@@ -102,7 +104,8 @@ internal sealed class RouteInitApplicationOperation
                 lockResult.State == WorkspaceLockState.Cancelled
                     ? RouteInitFindingCode.Interrupted
                     : RouteInitFindingCode.WorkspaceLockUnavailable,
-                lockResult.Cause ?? "The persistent Route Init workspace lease could not be acquired.");
+                lockResult.Cause ?? "The persistent Route Init workspace lease could not be acquired.",
+                lockFailure: WorkspaceLockFailureProjection.From(lockResult.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")));
         }
 
         await using (lease.ConfigureAwait(false))
@@ -573,7 +576,8 @@ internal sealed class RouteInitApplicationOperation
         RouteInitVerificationState verification,
         RouteInitFindingCode code,
         string cause,
-        RouteInitApplicationAttempt? uncertainAttempt = null)
+        RouteInitApplicationAttempt? uncertainAttempt = null,
+        WorkspaceLockFailureInfo? lockFailure = null)
     {
         var finding = code == RouteInitFindingCode.RecoveryConflict
             ? new RouteInitFinding(code, cause, recovery.ResidualPath)
@@ -585,7 +589,7 @@ internal sealed class RouteInitApplicationOperation
             files,
             recovery,
             verification,
-            finding,
+            finding with { LockFailure = lockFailure },
             uncertainAttempt);
     }
 

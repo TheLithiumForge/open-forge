@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
@@ -6,6 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 
 internal sealed record LibrarySyncCompletionInput
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     public required LibrarySyncRequest Request { get; init; }
     public required LibrarySyncPlan? Plan { get; init; }
     public required LibrarySyncPlanningInput? Observations { get; init; }

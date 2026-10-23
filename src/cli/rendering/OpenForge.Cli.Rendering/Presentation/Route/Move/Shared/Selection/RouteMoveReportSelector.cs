@@ -320,6 +320,7 @@ internal static class RouteMoveReportSelector
                 ? CliSeverity.Warning
                 : CliReportVocabulary.Severity(finding.Status),
             Code = RouteMoveWireVocabulary.Name(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = RouteMoveWording.FindingTitle(finding.Code),
             Message = Message(result, finding),
             Subject = Subject(result, finding),
@@ -378,6 +379,11 @@ internal static class RouteMoveReportSelector
 
     private static string Message(RouteMoveResult result, RouteMoveFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.LabelTheBlockingConditionIsNotDefined();

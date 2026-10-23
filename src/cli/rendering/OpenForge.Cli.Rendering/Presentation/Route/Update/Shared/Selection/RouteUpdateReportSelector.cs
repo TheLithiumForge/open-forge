@@ -313,6 +313,7 @@ internal static class RouteUpdateReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = code,
+            LockFailure = finding.LockFailure,
             Title = RouteUpdateWording.FindingTitle(finding.Code),
             Message = Message(result, finding),
             Subject = Subject(result, finding),
@@ -366,6 +367,11 @@ internal static class RouteUpdateReportSelector
 
     private static string Message(RouteUpdateResult result, RouteUpdateFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateText.MessageTheRouteUpdateResultDidNotContainAFinding();

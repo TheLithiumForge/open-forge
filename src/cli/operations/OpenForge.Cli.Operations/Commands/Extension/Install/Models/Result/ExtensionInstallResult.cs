@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
@@ -277,6 +278,8 @@ internal sealed record ExtensionInstallVerification(
 
 internal sealed record ExtensionInstallFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     internal ExtensionInstallFinding(
         ExtensionInstallFindingCode code,
         string cause,

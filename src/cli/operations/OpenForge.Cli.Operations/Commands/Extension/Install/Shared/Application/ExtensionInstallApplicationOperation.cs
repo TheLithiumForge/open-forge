@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
@@ -59,7 +61,8 @@ internal sealed class ExtensionInstallApplicationOperation(
                 progress,
                 ReadLockFindingCode(lockResult.State),
                 lockResult.Cause
-                    ?? "The persistent Extension Install workspace lease could not be acquired.");
+                    ?? "The persistent Extension Install workspace lease could not be acquired.",
+                WorkspaceLockFailureProjection.From(lockResult.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")));
         }
 
         await using (lease.ConfigureAwait(false))
@@ -280,6 +283,7 @@ internal sealed class ExtensionInstallApplicationOperation(
     private static ExtensionInstallApplicationStageResult Stop(
         ExtensionInstallApplicationProgress progress,
         ExtensionInstallFindingCode code,
-        string cause)
-        => new(progress, new ExtensionInstallFinding(code, cause));
+        string cause,
+        WorkspaceLockFailureInfo? lockFailure = null)
+        => new(progress, new ExtensionInstallFinding(code, cause) { LockFailure = lockFailure });
 }

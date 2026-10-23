@@ -107,7 +107,8 @@ public sealed class CleanupBeforeOutputSnapshotTests
                 CleanupPresentation.Rendering,
                 output => CommandOutputNormalization.NormalizeRecoveryPaths(output, paths),
                 output => CommandOutputNormalization.NormalizeRecoveryPaths(output, paths));
-            renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+            renderers.MatchDetails(result, situation, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: testName);

@@ -77,6 +77,9 @@ internal static class CliReportTrimmer
             .ThenBy(finding => finding.Subject.Location?.Column)
             .Select(finding => finding with
             {
+                Title = finding.LockFailure is not null
+                    ? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable()
+                    : finding.Title,
                 Candidates = selection.Detail >= CliDetail.Full ? finding.Candidates : [],
                 Evidence = selection.Detail >= CliDetail.Full ? finding.Evidence : [],
                 Provenance = selection.Detail >= CliDetail.Full ? finding.Provenance : null,
@@ -105,7 +108,9 @@ internal static class CliReportTrimmer
             TextFindings = selection.Detail == CliDetail.Minimal
                 && report.HeadlineFindingCode is { } headlineCode
                 && textFindings.Count(finding => finding.Code == headlineCode) == 1
-                    ? textFindings.Where(finding => finding.Code != headlineCode).ToArray() : textFindings,
+                    ? textFindings.Where(finding => finding.Code != headlineCode
+                        || finding.LockFailure is { } failure && !report.Headline.Sentence.Contains(failure.Path, StringComparison.Ordinal)).ToArray()
+                    : textFindings,
         };
     }
 }

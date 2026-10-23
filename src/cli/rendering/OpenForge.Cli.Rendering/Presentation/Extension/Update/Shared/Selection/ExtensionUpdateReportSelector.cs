@@ -537,6 +537,11 @@ internal static class ExtensionUpdateReportSelector
         ExtensionUpdateFinding? finding,
         string id)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.MessageTheExtensionUpdateCouldNotBeClassified();
@@ -572,6 +577,11 @@ internal static class ExtensionUpdateReportSelector
         ExtensionUpdateFinding? finding,
         string id)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         var message = FindingMessage(result, finding, id);
         const string prefix = "Cannot update: ";
         return message.StartsWith(prefix, StringComparison.Ordinal)
@@ -683,6 +693,7 @@ internal static class ExtensionUpdateReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = ExtensionUpdateWording.FindingCode(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = ExtensionUpdateWording.FindingTitle(finding.Code),
             Message = FindingMessage(result, finding, id),
             Subject = new CliSubject(

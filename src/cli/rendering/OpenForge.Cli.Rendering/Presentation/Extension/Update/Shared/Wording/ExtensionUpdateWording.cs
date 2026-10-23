@@ -176,56 +176,58 @@ internal static class ExtensionUpdateWording
         string id,
         string? sourcePath,
         string? recoveryPath)
-        => finding.Code switch
-        {
-            ExtensionUpdateFindingCode.InvalidInput => CannotUpdate(finding.Cause),
-            ExtensionUpdateFindingCode.SelectionRequired => CliFindingWording.SelectionRequired(global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionUpdate(), false),
-            ExtensionUpdateFindingCode.InteractionEnded => CliFindingWording.InteractionEnded(),
-            ExtensionUpdateFindingCode.ConfirmationRequired => CliFindingWording.ConfirmationRequired(global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionUpdate()),
-            ExtensionUpdateFindingCode.SourceUnavailable => SourceUnreadable(sourcePath ?? finding.Target ?? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelTheSelectedSource()),
-            ExtensionUpdateFindingCode.SourceInvalid => InvalidSource(sourcePath ?? finding.Target ?? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelTheSelectedSource(), finding.Cause),
-            ExtensionUpdateFindingCode.SourceOverlap => SourceOverlap(sourcePath ?? finding.Target ?? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelTheSelectedSource()),
-            ExtensionUpdateFindingCode.SourceIdentityConflict => SourceIdentityConflict(sourcePath ?? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelTheSelectedSource(), finding.Target ?? id),
-            ExtensionUpdateFindingCode.FrameworkUnavailable => CliFindingWording.FrameworkUnavailable(),
-            ExtensionUpdateFindingCode.FrameworkUnsafe => CliFindingWording.FrameworkUnsafe(),
-            ExtensionUpdateFindingCode.LifecycleUnavailable => CliFindingWording.LifecycleUnavailable(),
-            ExtensionUpdateFindingCode.LifecycleBlocked => CliFindingWording.LifecycleBlocked(finding.Cause),
-            ExtensionUpdateFindingCode.ManagedDivergence => finding.Cause,
-            ExtensionUpdateFindingCode.OwnershipConflict => finding.Cause,
-            ExtensionUpdateFindingCode.PermissionRequired => CliFindingWording.PermissionRequired(global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpdate()),
-            ExtensionUpdateFindingCode.PermissionDeclined => CliFindingWording.PermissionDeclined(),
-            ExtensionUpdateFindingCode.PermissionsInvalid => CliFindingWording.PermissionsInvalid(finding.Cause),
-            ExtensionUpdateFindingCode.PermissionsUnavailable => CliFindingWording.PermissionsUnavailable(),
-            ExtensionUpdateFindingCode.PermissionsChanged => CliFindingWording.PermissionsChanged(),
-            ExtensionUpdateFindingCode.PermissionWriteFailed => CliFindingWording.PermissionWriteFailed(),
-            ExtensionUpdateFindingCode.TargetUnsafe => CliFindingWording.TargetUnsafe(finding.Target ?? id, finding.Cause),
-            ExtensionUpdateFindingCode.ProjectionUnavailable => CliFindingWording.ProjectionUnavailable(finding.Target ?? id, finding.Cause),
-            ExtensionUpdateFindingCode.GeneratedRegionUnsafe => CliFindingWording.GeneratedRegionUnsafe(finding.Target ?? id, finding.Cause),
-            ExtensionUpdateFindingCode.WorkspaceLockUnavailable => CliFindingWording.WorkspaceLockUnavailable(),
-            ExtensionUpdateFindingCode.TargetChanged => CliFindingWording.TargetChanged(finding.Target ?? id),
-            ExtensionUpdateFindingCode.RecoveryConflict => CliFindingWording.RecoveryConflict(finding.Target ?? recoveryPath ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheWorkspace()),
-            ExtensionUpdateFindingCode.RecoveryUnavailable => CliFindingWording.RecoveryUnavailable(finding.Target ?? ".agents"),
-            ExtensionUpdateFindingCode.LifecycleObservation => finding.Target is { } observedId
-                ? global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdatePhrases.FormatIsNotRecordedAsInstalledSoItWasNotUpdated($"{observedId}")
-                : finding.Cause,
-            ExtensionUpdateFindingCode.RecoveryArtifactRetained => recoveryPath is { } retained
-                ? CliFindingWording.RecoveryRetained(retained)
-                : finding.Cause,
-            ExtensionUpdateFindingCode.WriteFailed => CliFindingWording.CauseSentence(finding.Cause),
-            ExtensionUpdateFindingCode.TopologyVerificationFailed => TopologyFailure(finding.Target ?? id, recoveryPath),
-            ExtensionUpdateFindingCode.LifecyclePublicationFailed => CliFindingWording.LifecyclePublicationFailed(),
-            ExtensionUpdateFindingCode.VerificationFailed => finding.Cause,
-            ExtensionUpdateFindingCode.RecoveryFailed => CliFindingWording.RecoveryFailed(),
-            ExtensionUpdateFindingCode.OperationFailed => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionUpdate(), finding.Cause),
-            ExtensionUpdateFindingCode.Interrupted => Cancelled(),
-            ExtensionUpdateFindingCode.SettingsInvalid
-                or ExtensionUpdateFindingCode.SettingsUnavailable
-                or ExtensionUpdateFindingCode.RemovedExtension
-                or ExtensionUpdateFindingCode.BulkExcluded
-                or ExtensionUpdateFindingCode.PathExcluded
-                or ExtensionUpdateFindingCode.ExcludedAncestor => finding.Cause,
-            _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code, "The Extension Update finding code is not defined."),
-        };
+        => finding.LockFailure is { } lockFailure
+            ? CliFindingWording.WorkspaceLockUnavailable(lockFailure)
+            : finding.Code switch
+            {
+                ExtensionUpdateFindingCode.InvalidInput => CannotUpdate(finding.Cause),
+                ExtensionUpdateFindingCode.SelectionRequired => CliFindingWording.SelectionRequired(global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionUpdate(), false),
+                ExtensionUpdateFindingCode.InteractionEnded => CliFindingWording.InteractionEnded(),
+                ExtensionUpdateFindingCode.ConfirmationRequired => CliFindingWording.ConfirmationRequired(global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionUpdate()),
+                ExtensionUpdateFindingCode.SourceUnavailable => SourceUnreadable(sourcePath ?? finding.Target ?? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelTheSelectedSource()),
+                ExtensionUpdateFindingCode.SourceInvalid => InvalidSource(sourcePath ?? finding.Target ?? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelTheSelectedSource(), finding.Cause),
+                ExtensionUpdateFindingCode.SourceOverlap => SourceOverlap(sourcePath ?? finding.Target ?? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelTheSelectedSource()),
+                ExtensionUpdateFindingCode.SourceIdentityConflict => SourceIdentityConflict(sourcePath ?? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelTheSelectedSource(), finding.Target ?? id),
+                ExtensionUpdateFindingCode.FrameworkUnavailable => CliFindingWording.FrameworkUnavailable(),
+                ExtensionUpdateFindingCode.FrameworkUnsafe => CliFindingWording.FrameworkUnsafe(),
+                ExtensionUpdateFindingCode.LifecycleUnavailable => CliFindingWording.LifecycleUnavailable(),
+                ExtensionUpdateFindingCode.LifecycleBlocked => CliFindingWording.LifecycleBlocked(finding.Cause),
+                ExtensionUpdateFindingCode.ManagedDivergence => finding.Cause,
+                ExtensionUpdateFindingCode.OwnershipConflict => finding.Cause,
+                ExtensionUpdateFindingCode.PermissionRequired => CliFindingWording.PermissionRequired(global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpdate()),
+                ExtensionUpdateFindingCode.PermissionDeclined => CliFindingWording.PermissionDeclined(),
+                ExtensionUpdateFindingCode.PermissionsInvalid => CliFindingWording.PermissionsInvalid(finding.Cause),
+                ExtensionUpdateFindingCode.PermissionsUnavailable => CliFindingWording.PermissionsUnavailable(),
+                ExtensionUpdateFindingCode.PermissionsChanged => CliFindingWording.PermissionsChanged(),
+                ExtensionUpdateFindingCode.PermissionWriteFailed => CliFindingWording.PermissionWriteFailed(),
+                ExtensionUpdateFindingCode.TargetUnsafe => CliFindingWording.TargetUnsafe(finding.Target ?? id, finding.Cause),
+                ExtensionUpdateFindingCode.ProjectionUnavailable => CliFindingWording.ProjectionUnavailable(finding.Target ?? id, finding.Cause),
+                ExtensionUpdateFindingCode.GeneratedRegionUnsafe => CliFindingWording.GeneratedRegionUnsafe(finding.Target ?? id, finding.Cause),
+                ExtensionUpdateFindingCode.WorkspaceLockUnavailable => CliFindingWording.WorkspaceLockUnavailable(),
+                ExtensionUpdateFindingCode.TargetChanged => CliFindingWording.TargetChanged(finding.Target ?? id),
+                ExtensionUpdateFindingCode.RecoveryConflict => CliFindingWording.RecoveryConflict(finding.Target ?? recoveryPath ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheWorkspace()),
+                ExtensionUpdateFindingCode.RecoveryUnavailable => CliFindingWording.RecoveryUnavailable(finding.Target ?? ".agents"),
+                ExtensionUpdateFindingCode.LifecycleObservation => finding.Target is { } observedId
+                    ? global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdatePhrases.FormatIsNotRecordedAsInstalledSoItWasNotUpdated($"{observedId}")
+                    : finding.Cause,
+                ExtensionUpdateFindingCode.RecoveryArtifactRetained => recoveryPath is { } retained
+                    ? CliFindingWording.RecoveryRetained(retained)
+                    : finding.Cause,
+                ExtensionUpdateFindingCode.WriteFailed => CliFindingWording.CauseSentence(finding.Cause),
+                ExtensionUpdateFindingCode.TopologyVerificationFailed => TopologyFailure(finding.Target ?? id, recoveryPath),
+                ExtensionUpdateFindingCode.LifecyclePublicationFailed => CliFindingWording.LifecyclePublicationFailed(),
+                ExtensionUpdateFindingCode.VerificationFailed => finding.Cause,
+                ExtensionUpdateFindingCode.RecoveryFailed => CliFindingWording.RecoveryFailed(),
+                ExtensionUpdateFindingCode.OperationFailed => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionUpdate(), finding.Cause),
+                ExtensionUpdateFindingCode.Interrupted => Cancelled(),
+                ExtensionUpdateFindingCode.SettingsInvalid
+                    or ExtensionUpdateFindingCode.SettingsUnavailable
+                    or ExtensionUpdateFindingCode.RemovedExtension
+                    or ExtensionUpdateFindingCode.BulkExcluded
+                    or ExtensionUpdateFindingCode.PathExcluded
+                    or ExtensionUpdateFindingCode.ExcludedAncestor => finding.Cause,
+                _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code, "The Extension Update finding code is not defined."),
+            };
 
     internal static string HelpSyntax() => ("  " + global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.HelpSyntax());
 

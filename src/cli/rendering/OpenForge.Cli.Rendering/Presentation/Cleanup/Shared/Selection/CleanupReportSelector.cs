@@ -161,9 +161,11 @@ internal static class CleanupReportSelector
 
     private static string BlockedHeadline(CleanupResult result, CleanupFinding? first)
     {
-        if (result.Findings.FirstOrDefault(finding => finding.Code == CleanupFindingCode.WorkspaceLockUnavailable) is not null)
+        if (result.Findings.FirstOrDefault(finding => finding.Code == CleanupFindingCode.WorkspaceLockUnavailable) is { } lockFinding)
         {
-            return CleanupWording.LockHeld();
+            return lockFinding.LockFailure is { } lockFailure
+                ? CliFindingWording.WorkspaceLockUnavailable(lockFailure)
+                : CleanupWording.LockHeld();
         }
 
         if (result.Findings.FirstOrDefault(finding => finding.Code == CleanupFindingCode.CatalogueChangedDuringApply) is not null)
@@ -236,6 +238,7 @@ internal static class CleanupReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = CleanupWording.FindingCode(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = CleanupWording.FindingTitle(finding.Code),
             Message = CleanupWording.FindingMessage(finding, path, removed, total),
             Subject = workspaceFinding

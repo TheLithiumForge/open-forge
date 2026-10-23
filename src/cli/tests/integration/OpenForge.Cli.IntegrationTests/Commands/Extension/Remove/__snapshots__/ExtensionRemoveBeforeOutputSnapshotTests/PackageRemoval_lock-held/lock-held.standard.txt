@@ -1,7 +1,7 @@
-Cannot remove toolkit: Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
+Cannot remove toolkit: Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   Error  toolkit  Workspace lock is unavailable
-         Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
+         Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
   .agents/open-forge.json  not started
   .agents/toolkit.md       not started
     owners before: toolkit; owners after: none

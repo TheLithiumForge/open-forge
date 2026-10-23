@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Shared.Models;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Request;
@@ -9,6 +10,8 @@ namespace OpenForge.Cli.Core.Commands.Repair.Models.Result;
 
 internal sealed record RepairFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     internal RepairFinding(
         RepairFindingCode code,
         string cause,

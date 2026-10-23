@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
@@ -207,6 +208,8 @@ internal sealed record ExtensionRemoveVerification
 
 internal sealed record ExtensionRemoveFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     internal ExtensionRemoveFinding(
         ExtensionRemoveFindingCode code,
         string cause,

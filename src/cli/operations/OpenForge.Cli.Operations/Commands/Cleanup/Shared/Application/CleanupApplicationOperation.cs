@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
 using OpenForge.Cli.Core.Commands.Cleanup.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
@@ -34,7 +35,10 @@ internal sealed class CleanupApplicationOperation(WorkspaceLockManager lockManag
         {
             result.PreserveUnattempted(observed: null);
             var code = acquired.State == WorkspaceLockState.Cancelled ? CleanupFindingCode.Interrupted : CleanupFindingCode.WorkspaceLockUnavailable;
-            result.AddFinding(code, acquired.Cause ?? "Workspace lease acquisition was interrupted.");
+            result.Findings = result.Findings.Add(CleanupFinding.Create(code, acquired.Cause ?? "Workspace lease acquisition was interrupted.") with
+            {
+                LockFailure = WorkspaceLockFailureProjection.From(acquired.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")),
+            });
             return;
         }
 

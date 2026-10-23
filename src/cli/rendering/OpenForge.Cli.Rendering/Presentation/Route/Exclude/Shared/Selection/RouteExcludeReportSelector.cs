@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Commands.Route.Exclude.Models.Result;
 using OpenForge.Cli.Core.Presentation.Route.Exclude.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
@@ -28,12 +29,13 @@ internal static class RouteExcludeReportSelector
             CliSemanticStatus.Interrupted => CliHeadlineKind.Cancelled,
             _ => throw new ArgumentOutOfRangeException(nameof(result)),
         };
+        var lockMessage = outcome.LockFailure is { } lockFailure ? CliFindingWording.WorkspaceLockUnavailable(lockFailure) : null;
         var sentence = kind switch
         {
             CliHeadlineKind.NothingToDo => global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.NothingChanged(path),
             CliHeadlineKind.Preview => global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.Preview(path),
             CliHeadlineKind.Done or CliHeadlineKind.Warnings => global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.Done(path),
-            _ => global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.Failure(outcome.Cause ?? "The request could not complete."),
+            _ => global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.Failure(lockMessage ?? outcome.Cause ?? "The request could not complete."),
         };
         var code = outcome.Code is { } findingCode ? "route-exclude." + RouteInclusionWireVocabulary.Finding(findingCode) : null;
         var recovery = RouteInclusionWireVocabulary.Recovery(outcome.Recovery);
@@ -49,7 +51,9 @@ internal static class RouteExcludeReportSelector
                 new CliFinding
                 {
                     Code = code, Severity = CliReportVocabulary.Severity(result.Status),
-                    Title = outcome.Cause ?? sentence, Message = outcome.Cause ?? sentence,
+                    LockFailure = outcome.LockFailure,
+                    Title = lockMessage is null ? outcome.Cause ?? sentence : global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable(),
+                    Message = lockMessage ?? outcome.Cause ?? sentence,
                     Subject = new CliSubject(CliSubjectKind.File, Path: path),
                     Actions = result.Next is { } next ? [next] : [],
                 },

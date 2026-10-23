@@ -483,6 +483,8 @@ internal static class RepairReportSelector
                 => IncompleteHeadline(result, repaired),
             CliSemanticStatus.Invalid
                 => new(RepairWording.Invalid(FindingMessage(result, primary)), CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when primary?.LockFailure is { } lockFailure
+                => new(RepairWording.Invalid(CliFindingWording.WorkspaceLockUnavailable(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(RepairWording.Cannot(BlockedReason(result, primary)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed
@@ -574,6 +576,11 @@ internal static class RepairReportSelector
 
     private static string BlockedReason(RepairResult result, RepairFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Repair.RepairText.LabelTheRepairRequestIsBlocked();
@@ -586,7 +593,7 @@ internal static class RepairReportSelector
 
         if (finding.Code.ToString() == "WorkspaceLockUnavailable")
         {
-            return global::OpenForge.Cli.OutputText.Shared.SharedText.LabelWorkspaceLockHeldOrDataFolderUnwritable();
+            return CliFindingWording.WorkspaceLockUnavailableReason();
         }
 
         return FindingMessage(result, finding).Trim().TrimEnd('.');
@@ -627,6 +634,7 @@ internal static class RepairReportSelector
         {
             Severity = FindingSeverity(finding),
             Code = finding.MachineName,
+            LockFailure = finding.LockFailure,
             Title = finding.Observation is null
                 ? RepairWording.FindingTitle(finding.Code.ToString())
                 : global::OpenForge.Cli.OutputText.Repair.RepairWording.RemainingLibraryDiagnosis(),
@@ -671,6 +679,11 @@ internal static class RepairReportSelector
 
     private static string FindingMessage(RepairResult result, RepairFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Repair.RepairText.MessageTheRepairResultDidNotContainAFinding();

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
@@ -71,12 +72,13 @@ internal sealed class InstallApplicationOperation(
             var code = lockResult.State == WorkspaceLockState.Cancelled
                 ? InstallFindingCode.Interrupted
                 : InstallFindingCode.WorkspaceUnsafe;
-            return Failed(
+            return InstallApplicationResultFactory.Failed(
                 plan,
                 progress,
-                code,
-                lockResult.Cause
-                    ?? "The persistent Install workspace lease could not be acquired.");
+                new InstallFinding(code, lockResult.Cause ?? "The workspace lock could not be acquired.")
+                {
+                    LockFailure = WorkspaceLockFailureProjection.From(lockResult.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")),
+                });
         }
 
         await using (lease.ConfigureAwait(false))

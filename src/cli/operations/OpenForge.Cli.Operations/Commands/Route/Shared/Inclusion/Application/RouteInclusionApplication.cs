@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Models;
@@ -32,11 +33,19 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
         try
         {
             var acquired = await manager.AcquireAsync(new WorkspaceLockRequest(plan.Request.Workspace, plan.Request.Command, operationId), token).ConfigureAwait(false);
-            token.ThrowIfCancellationRequested();
             if (acquired.Lease is not { } lease)
-                return Stop(result, CliSemanticStatus.Blocked, RouteInclusionFindingCode.WorkspaceLockUnavailable, acquired.Cause ?? "Wait for the other workspace operation, then retry.");
+            {
+                return Stop(result,
+                    acquired.State == WorkspaceLockState.Cancelled ? CliSemanticStatus.Interrupted : CliSemanticStatus.Blocked,
+                    acquired.State == WorkspaceLockState.Cancelled ? RouteInclusionFindingCode.Interrupted : RouteInclusionFindingCode.WorkspaceLockUnavailable,
+                    acquired.Cause ?? "The workspace lock could not be acquired.") with
+                {
+                    LockFailure = WorkspaceLockFailureProjection.From(acquired.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")),
+                };
+            }
             await using (lease.ConfigureAwait(false))
             {
+                token.ThrowIfCancellationRequested();
                 var fresh = await new RouteInclusionPlanBuilder().BuildAsync(plan.Request, token).ConfigureAwait(false);
                 if (fresh.Plan is not { } current || !Equivalent(plan, current))
                     return Stop(result, CliSemanticStatus.Blocked, RouteInclusionFindingCode.TargetChanged, "The plan changed. Review a fresh preview and retry.");

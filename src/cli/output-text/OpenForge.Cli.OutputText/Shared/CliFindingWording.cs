@@ -4,6 +4,33 @@ namespace OpenForge.Cli.OutputText.Shared;
 
 internal static class CliFindingWording
 {
+    // @OpenForgeText shared.wording.workspace-lock-busy
+    internal static string WorkspaceLockBusy(string path) => $"Another Open Forge command is changing the workspace. The workspace lock is busy at {path}. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.workspace-lock-access-denied
+    internal static string WorkspaceLockAccessDenied(string path) => $"Access was denied while acquiring the workspace lock at {path}. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.workspace-lock-unsupported
+    internal static string WorkspaceLockUnsupported(string path) => $"Workspace locking is not supported at {path}. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.workspace-lock-invalid-target
+    internal static string WorkspaceLockInvalidTarget(string path) => $"The workspace lock target at {path} is invalid. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.workspace-lock-io-error
+    internal static string WorkspaceLockIoError(string path) => $"An I/O error prevented acquiring the workspace lock at {path}. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.workspace-lock-cancelled
+    internal static string WorkspaceLockCancelled(string path) => $"Acquiring the workspace lock at {path} was cancelled. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.recovery-history
+    internal static string RecoveryHistory(string path) => $"Recovery data from an earlier run remains at {path}. It does not block this operation.";
+
+    // @OpenForgeText shared.wording.recovery-coverage-unavailable
+    internal static string RecoveryCoverageUnavailable(string? path, string cause)
+        => path is null
+            ? $"Recovery history could not be checked completely: {cause}. Current workspace validation still applies."
+            : $"Recovery history at {path} could not be checked completely: {cause}. Current workspace validation still applies.";
+
     // @OpenForgeText shared.wording.before
     internal static string BeforeHash(string hash) => $"Before: {hash}";
 

@@ -1,4 +1,4 @@
-Cannot clean up: another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was removed.
+Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   <recovery-bundle-1>
     not started

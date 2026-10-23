@@ -39,7 +39,12 @@ public sealed class LayerBoundaryTests
                     offences.Add($"{path}: {imported}");
                 if (path.StartsWith("Presentation/Shared/", StringComparison.Ordinal))
                 {
-                    if (imported.StartsWith("Commands.", StringComparison.Ordinal) || imported.StartsWith("Framework.", StringComparison.Ordinal))
+                    // Every writing command reports a lock failure with the same typed facts, so the shared finding
+                    // and its wording may read that one Operations model and nothing else from Commands.
+                    var sharedLockFailure = imported == "Commands.Shared.Models.Mutation"
+                        && path is "Presentation/Shared/Models/CliFinding.cs" or "Presentation/Shared/Wording/CliFindingWording.cs";
+                    if (!sharedLockFailure
+                        && (imported.StartsWith("Commands.", StringComparison.Ordinal) || imported.StartsWith("Framework.", StringComparison.Ordinal)))
                         offences.Add($"{path}: {imported}");
                     continue;
                 }

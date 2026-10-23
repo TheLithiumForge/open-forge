@@ -147,6 +147,7 @@ public sealed class ExtensionUpdateBeforeOutputSnapshotTests
         Assert.Equal(sourceBefore, source.Snapshot());
         if (result.Recovery.ResidualPath is { } path) Assert.True(File.Exists(path));
         Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, source.Path,
-            testName: $"{nameof(PackageUpdate)}_{situation}");
+            testName: $"{nameof(PackageUpdate)}_{situation}",
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 }

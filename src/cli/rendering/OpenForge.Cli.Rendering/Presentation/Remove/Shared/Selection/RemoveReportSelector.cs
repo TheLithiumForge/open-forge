@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Commands.Remove.Models.Result;
 using OpenForge.Cli.Core.Presentation.Remove.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
@@ -72,7 +73,10 @@ internal static class RemoveReportSelector
             return new CliHeadline(global::OpenForge.Cli.OutputText.Remove.RemoveText.Unchanged(result.Target), CliHeadlineKind.NothingToDo);
         }
 
-        var message = result.Findings.FirstOrDefault()?.Message ?? "Remove could not complete.";
+        var first = result.Findings.FirstOrDefault();
+        var message = first?.LockFailure is { } lockFailure
+            ? CliFindingWording.WorkspaceLockUnavailable(lockFailure)
+            : first?.Message ?? "Remove could not complete.";
         var kind = result.Status switch
         {
             CliSemanticStatus.Invalid => CliHeadlineKind.CannotStart,
@@ -91,8 +95,13 @@ internal static class RemoveReportSelector
         {
             Severity = finding.Status == CliSemanticStatus.Attention ? CliSeverity.Warning : CliSeverity.Error,
             Code = FindingCode(finding.Code),
-            Title = finding.Code.ToString(),
-            Message = finding.Message,
+            LockFailure = finding.LockFailure,
+            Title = finding.LockFailure is not null
+                ? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable()
+                : finding.Code.ToString(),
+            Message = finding.LockFailure is { } lockFailure
+                ? CliFindingWording.WorkspaceLockUnavailable(lockFailure)
+                : finding.Message,
             Subject = new CliSubject(CliSubjectKind.File, finding.Target),
             Resolution = CliResolution.TargetedOperation,
             Actions = next is null ? [] : [next],

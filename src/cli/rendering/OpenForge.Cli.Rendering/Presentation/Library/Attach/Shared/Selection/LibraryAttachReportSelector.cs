@@ -370,6 +370,7 @@ internal static class LibraryAttachReportSelector
         {
             Severity = Severity(result, finding),
             Code = LibraryAttachWording.MachineCode(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = ignoreFailure
                 ? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWritingFailed()
                 : LibraryAttachWording.FindingTitle(finding.Code),
@@ -448,6 +449,11 @@ internal static class LibraryAttachReportSelector
         LibraryAttachFinding? finding,
         LinkProgress progress)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachText.MessageTheLibraryAttachResultDidNotContainAFinding();

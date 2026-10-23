@@ -86,7 +86,8 @@ public sealed class RouteMoveBeforeOutputSnapshotTests
             }
 
             CaptureRecovery(workspace, result);
-            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: nameof(Move));
@@ -135,7 +136,8 @@ public sealed class RouteMoveBeforeOutputSnapshotTests
             Assert.Equal(scenario.Status, result.Status);
             Assert.Equal(before, workspace.SnapshotHashes());
             CaptureRecovery(workspace, result);
-            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: nameof(SafetyBoundary));

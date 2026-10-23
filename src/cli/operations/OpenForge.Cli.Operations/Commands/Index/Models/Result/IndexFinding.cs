@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Index.Models.Selection;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -6,6 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Index.Models.Result;
 
 internal sealed record IndexFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     internal IndexFinding(
         IndexFindingCode code,
         int? sourceOccurrence,

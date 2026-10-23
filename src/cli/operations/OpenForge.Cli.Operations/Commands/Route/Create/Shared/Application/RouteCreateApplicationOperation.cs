@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
@@ -92,7 +94,8 @@ internal sealed class RouteCreateApplicationOperation
                 plan,
                 code,
                 lockResult.Cause
-                    ?? "The persistent Route Create workspace lease could not be acquired.");
+                    ?? "The persistent Route Create workspace lease could not be acquired.",
+                lockFailure: WorkspaceLockFailureProjection.From(lockResult.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")));
         }
 
         await using (lease.ConfigureAwait(false))
@@ -351,11 +354,16 @@ internal sealed class RouteCreateApplicationOperation
         RouteCreatePlan plan,
         RouteCreateFindingCode code,
         string cause,
-        RouteCreateRecovery? recovery = null)
+        RouteCreateRecovery? recovery = null,
+        WorkspaceLockFailureInfo? lockFailure = null)
     {
         var finding = code == RouteCreateFindingCode.RecoveryConflict
             ? new RouteCreateFinding(code, cause, recovery?.ResidualPath)
             : RouteCreateEffectApplication.Finding(plan, code, cause);
+        if (lockFailure is not null)
+        {
+            finding = new RouteCreateFinding(code, cause, finding.Target) { LockFailure = lockFailure };
+        }
 
         return RouteCreateApplicationResultFactory.Build(
             plan,

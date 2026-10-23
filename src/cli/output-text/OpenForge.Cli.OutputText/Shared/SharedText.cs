@@ -110,13 +110,9 @@ internal static class SharedText
     internal static string LabelFixByHand()
         => "fix by hand";
 
-    // @OpenForgeText shared.message.workspace-lock-held-or-data-folder-unwritable-nothing-was-changed
-    internal static string MessageWorkspaceLockHeldOrDataFolderUnwritableNothingWasChanged()
-        => "Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.";
-
-    // @OpenForgeText shared.label.workspace-lock-held-or-data-folder-unwritable
-    internal static string LabelWorkspaceLockHeldOrDataFolderUnwritable()
-        => "another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written";
+    // @OpenForgeText shared.message.workspace-lock-unavailable-nothing-was-changed
+    internal static string MessageWorkspaceLockUnavailableNothingWasChanged()
+        => "The workspace lock could not be acquired. Nothing was changed.";
 
     // @OpenForgeText shared.label.the-filesystem-operation-failed
     internal static string LabelTheFilesystemOperationFailed()

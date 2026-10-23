@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Repair.Models.Application;
@@ -215,12 +216,19 @@ internal static class RepairLibraryRecoveryApplication
 
         if (acquired.State != WorkspaceLockState.Acquired || acquired.Lease is null)
         {
-            return AtomicPreparationResult.BoundaryResult(acquired.State == WorkspaceLockState.Cancelled
+            var outcome = acquired.State == WorkspaceLockState.Cancelled
                 ? Cancelled(RepairLibraryExecutionStage.Lease, "Repair lock acquisition was interrupted.")
                 : Boundary(
                     RepairPreflightState.Blocked,
                     RepairFindingCode.WorkspaceLockUnavailable,
-                    acquired.Cause ?? "The Repair workspace lock could not be acquired."));
+                    acquired.Cause ?? "The Repair workspace lock could not be acquired.");
+            return AtomicPreparationResult.BoundaryResult(outcome with
+            {
+                Findings = [.. outcome.Findings.Select(finding => finding with
+                {
+                    LockFailure = WorkspaceLockFailureProjection.From(acquired.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")),
+                })],
+            });
         }
 
         var lease = acquired.Lease;

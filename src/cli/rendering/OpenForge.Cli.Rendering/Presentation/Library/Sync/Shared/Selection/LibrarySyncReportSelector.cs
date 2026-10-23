@@ -549,6 +549,8 @@ internal static class LibrarySyncReportSelector
                 => new(LibrarySyncWording.Incomplete(id, IncompleteReason(result, finding, id)), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid
                 => new(LibrarySyncWording.CannotSynchronize(id, Message(result, finding, id)), CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when finding?.LockFailure is { } lockFailure
+                => new(LibrarySyncWording.CannotSynchronize(id, CliFindingWording.WorkspaceLockUnavailable(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(LibrarySyncWording.Blocked(id, BlockedReason(result, finding, id)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed when CountCompleted(data.Effects) == 0
@@ -600,6 +602,7 @@ internal static class LibrarySyncReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = LibrarySyncWording.MachineCode(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = finding.UnreadableOnWindows
                 ? global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Title()
                 : LibrarySyncWording.FindingTitle(finding.Code),
@@ -618,6 +621,11 @@ internal static class LibrarySyncReportSelector
 
     private static string Message(LibrarySyncResult result, LibrarySyncFinding? finding, string id)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding?.UnreadableOnWindows == true)
         {
             return global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Unreadable(finding.Path ?? id);
@@ -695,6 +703,11 @@ internal static class LibrarySyncReportSelector
 
     private static string BlockedReason(LibrarySyncResult result, LibrarySyncFinding? finding, string id)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding?.UnreadableOnWindows == true)
         {
             return global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Unreadable(finding.Path ?? id);

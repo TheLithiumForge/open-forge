@@ -140,7 +140,8 @@ public sealed class ExtensionInstallBeforeOutputSnapshotTests
         if (prompted) Assert.NotEmpty(scripted.Output.ToString());
         AssertRecovery(result);
         Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, source.Path,
-            testName: $"{nameof(PackageInstallation)}_{situation}");
+            testName: $"{nameof(PackageInstallation)}_{situation}",
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 
     [Trait("Boundary", "Output")]
@@ -174,7 +175,8 @@ public sealed class ExtensionInstallBeforeOutputSnapshotTests
             Assert.Equal(sourceBefore, source.SnapshotHashes());
             AssertRecovery(result);
             Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, source.Path,
-                testName: $"{nameof(PathPermission)}_{situation}");
+                testName: $"{nameof(PathPermission)}_{situation}",
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
         finally
         {

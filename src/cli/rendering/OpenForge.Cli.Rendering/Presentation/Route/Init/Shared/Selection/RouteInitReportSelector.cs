@@ -350,6 +350,11 @@ internal static class RouteInitReportSelector
         RouteInitResult result,
         RouteInitFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.LabelTheRouteInitResultDidNotContainAFinding();
@@ -398,8 +403,9 @@ internal static class RouteInitReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = RouteInitWireVocabulary.Name(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = RouteInitWording.FindingTitle(finding.Code),
-            Message = finding.Code == RouteInitFindingCode.RecoveryConflict
+            Message = finding.LockFailure is not null || finding.Code == RouteInitFindingCode.RecoveryConflict
                 ? Message(result, finding)
                 : RouteInitWording.Message(
                     finding.Code,

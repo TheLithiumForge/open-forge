@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
@@ -6,6 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
 
 internal sealed record LibraryDetachCompletionInput
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     public required LibraryDetachRequest Request { get; init; }
     public required LibraryDetachPlan? Plan { get; init; }
     public required LibraryDetachPlanningInput? Observations { get; init; }

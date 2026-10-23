@@ -230,6 +230,7 @@ internal static class ExtensionInstallReportSelector
         {
             Severity = Severity(finding),
             Code = ExtensionInstallWording.FindingCode(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = ExtensionInstallWording.FindingTitle(finding.Code),
             Message = FindingMessage(result, finding, primaryId),
             Subject = subject,
@@ -354,6 +355,11 @@ internal static class ExtensionInstallReportSelector
         ExtensionInstallFinding? finding,
         string primaryId)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.LabelTheRequiredExtensionInstallFactsAreUnavailable();

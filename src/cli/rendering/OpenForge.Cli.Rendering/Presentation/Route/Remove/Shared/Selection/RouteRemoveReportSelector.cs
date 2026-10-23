@@ -249,6 +249,7 @@ internal static class RouteRemoveReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = RouteRemoveWording.FindingCode(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = RouteRemoveWording.FindingTitle(finding.Code),
             Message = Message(result, finding),
             Subject = subject,
@@ -291,6 +292,11 @@ internal static class RouteRemoveReportSelector
 
     private static string Message(RouteRemoveResult result, RouteRemoveFinding finding)
     {
+        if (finding.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         var path = finding.Target
             ?? result.Source.Path
             ?? result.Source.Id
@@ -380,9 +386,16 @@ internal static class RouteRemoveReportSelector
                 : Message(result, finding).Trim().TrimEnd('.');
 
     private static string BlockedReason(RouteRemoveResult result, RouteRemoveFinding? finding)
-        => finding is null
+    {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
+        return finding is null
             ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheRemovalIsBlocked()
             : Message(result, finding).Trim().TrimEnd('.');
+    }
 
     private static string OwnershipClaimed(RouteRemoveResult result, RouteRemoveFinding finding)
     {

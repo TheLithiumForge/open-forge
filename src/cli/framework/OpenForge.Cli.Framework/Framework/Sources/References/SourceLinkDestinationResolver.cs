@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Acquisition;
 using OpenForge.Cli.Core.Framework.Sources.References.Shared.Resolution;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Framework.Sources.References;
 
@@ -213,6 +214,11 @@ internal sealed class SourceLinkDestinationResolver
         }
 
         canonicalPath = canonicalPath.TrimEnd('/');
+        if (WorkspaceRuntimePaths.Contains(input.Workspace,
+                Path.Combine(input.Workspace.PhysicalRoot, canonicalPath.Replace('/', Path.DirectorySeparatorChar))))
+        {
+            return ReservedRuntimeTarget(canonicalPath, rawFragment);
+        }
         var explicitFolder = decodedPath.EndsWith('/');
         PhysicalPathResolution physical;
         try
@@ -222,6 +228,11 @@ internal sealed class SourceLinkDestinationResolver
         catch (Exception)
         {
             return Unsafe(rawFragment, SourceLinkTargetResolution.PhysicalEscape, "The local destination physical boundary could not be established.");
+        }
+
+        if (physical.ResolvedPhysicalPath is { } resolved && WorkspaceRuntimePaths.Contains(input.Workspace, resolved))
+        {
+            return ReservedRuntimeTarget(canonicalPath, rawFragment);
         }
 
         if (physical.State == PhysicalPathState.Missing)
@@ -682,6 +693,28 @@ internal sealed class SourceLinkDestinationResolver
             {
                 Code = SourceLinkDestinationFindingCode.DestinationMalformed,
                 Cause = cause,
+                Candidates = [],
+            },
+        };
+
+    private static SourceLinkDestinationFacts ReservedRuntimeTarget(string path, string? fragment)
+        => new()
+        {
+            Fragment = fragment,
+            Target = new SourceLinkTarget
+            {
+                Kind = SourceLinkTargetKind.Local,
+                Id = null,
+                Path = path,
+                PhysicalPath = null,
+                Layer = null,
+                Resolution = SourceLinkTargetResolution.Unreadable,
+                Network = null,
+            },
+            Finding = new SourceLinkDestinationFinding
+            {
+                Code = SourceLinkDestinationFindingCode.TargetUnreadable,
+                Cause = "The local destination is inside the reserved runtime directory.",
                 Candidates = [],
             },
         };

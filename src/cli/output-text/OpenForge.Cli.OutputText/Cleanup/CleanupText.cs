@@ -12,9 +12,9 @@ internal static class CleanupText
     internal static string MessageTheRecoveryStoreCouldNotBeReadCompletelyNothingWasRemoved()
         => "The recovery store could not be read completely. Nothing was removed.";
 
-    // @OpenForgeText cleanup.message.cannot-clean-up-workspace-lock-held-or-data-folder-unwritable-nothing-was-removed
-    internal static string MessageCannotCleanUpWorkspaceLockHeldOrDataFolderUnwritableNothingWasRemoved()
-        => "Cannot clean up: another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was removed.";
+    // @OpenForgeText cleanup.message.cannot-clean-up-workspace-lock-unavailable-nothing-was-removed
+    internal static string MessageCannotCleanUpWorkspaceLockUnavailableNothingWasRemoved()
+        => "Cannot clean up: the workspace lock could not be acquired. Nothing was removed.";
 
     // @OpenForgeText cleanup.message.cannot-clean-up-the-recovery-store-changed-while-cleanup-was-running-nothing-was-removed
     internal static string MessageCannotCleanUpTheRecoveryStoreChangedWhileCleanupWasRunningNothingWasRemoved()

@@ -63,7 +63,7 @@ internal static class InstallPresentation
                         .ToArray()
                     : selected.Report.Data.SuppressInterruptedFinding
                         ? selected.TextFindings
-                            .Where(finding => finding.Code != InstallWireVocabulary.Name(InstallFindingCode.Interrupted))
+                            .Where(finding => finding.Code != InstallWireVocabulary.Name(InstallFindingCode.Interrupted) || finding.LockFailure is not null)
                             .ToArray()
                         : selected.TextFindings,
         });

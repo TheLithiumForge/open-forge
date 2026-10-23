@@ -1,4 +1,4 @@
-Cannot attach team-knowledge: Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
+Cannot attach team-knowledge: Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   Error  .agents/open-forge.lock.json  Workspace lock is unavailable
-         Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
+         Another Open Forge command is changing the workspace. The workspace lock is busy at <lock-path>. Nothing was changed.

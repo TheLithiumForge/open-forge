@@ -1,9 +1,12 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
 
 internal sealed record LibraryDetachFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     public required LibraryDetachFindingCode Code { get; init; }
 
     public required CliSemanticStatus Status { get; init; }

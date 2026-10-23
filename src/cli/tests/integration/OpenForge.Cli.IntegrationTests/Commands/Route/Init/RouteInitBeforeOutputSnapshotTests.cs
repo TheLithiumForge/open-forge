@@ -79,7 +79,8 @@ public sealed class RouteInitBeforeOutputSnapshotTests
                 Assert.True(workspace.Exists(".agents/documents/_documents.md"));
             }
 
-            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
@@ -99,7 +100,8 @@ public sealed class RouteInitBeforeOutputSnapshotTests
             var result = await RouteInitOperationFactory.Create(workspace.LockStoreRoot).ExecuteAsync(request, TestContext.Current.CancellationToken);
             Assert.Equal(CliSemanticStatus.Invalid, result.Status);
             Assert.Equal(before, workspace.SnapshotHashes());
-            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
@@ -127,7 +129,8 @@ public sealed class RouteInitBeforeOutputSnapshotTests
                 Assert.Equal(before, workspace.SnapshotHashes());
             }
 
-            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
@@ -156,7 +159,8 @@ public sealed class RouteInitBeforeOutputSnapshotTests
             var result = await RouteInitOperationFactory.Create(workspace.LockStoreRoot).ExecuteAsync(workspace.Request("documents"), cancellation.Token);
             Assert.Equal(cancelled ? CliSemanticStatus.Interrupted : CliSemanticStatus.Blocked, result.Status);
             Assert.Equal(before, workspace.SnapshotHashes());
-            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);

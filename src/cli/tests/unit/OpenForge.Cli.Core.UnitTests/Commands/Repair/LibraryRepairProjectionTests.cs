@@ -61,7 +61,9 @@ public sealed class LibraryRepairProjectionTests
         var selected = Select(result, CliDetail.Standard);
         var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, RepairPresentation.Rendering.DataTextRenderer).Content;
         Assert.Contains("Would restore 1 Library link.", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("39", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("39 Library links would still need recovery.", text, StringComparison.Ordinal);
+        if (expected > 0)
+            Assert.Contains($"{expected} Library links would still need recovery.", text, StringComparison.Ordinal);
         using var document = JsonDocument.Parse(CliJsonRenderer.Render(selected, RepairPresentation.Rendering.DataJsonTypeInfo));
         var counts = document.RootElement.GetProperty("counts");
         Assert.Equal(expected, counts.GetProperty("problemsRemaining").GetInt32());
