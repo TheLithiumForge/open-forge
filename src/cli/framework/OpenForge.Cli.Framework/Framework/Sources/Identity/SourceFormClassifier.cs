@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Paths;
 using System.Diagnostics.CodeAnalysis;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
@@ -7,7 +8,7 @@ namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
 internal static class SourceFormClassifier
 {
-    internal const string MarkdownExtension = ".md";
+    internal const string MarkdownExtension = WorkspaceRoutePath.MarkdownExtension;
     internal const string NativeSkillFileName = "SKILL.md";
     internal const string IndexFileName = "index" + MarkdownExtension;
     internal const string UnderscoreIndexFileName = "_" + IndexFileName;
@@ -100,7 +101,7 @@ internal static class SourceFormClassifier
     }
 
     internal static string CanonicalEntrypointFileName(string directoryName)
-        => $"_{directoryName}{MarkdownExtension}";
+        => WorkspaceRoutePath.CanonicalEntrypointFileName(directoryName);
 
     internal static bool IsEntrypointPath(string path)
     {
