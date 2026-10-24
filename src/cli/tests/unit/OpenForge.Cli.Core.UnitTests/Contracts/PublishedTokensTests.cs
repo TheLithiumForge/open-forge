@@ -113,6 +113,9 @@ public sealed class PublishedTokensTests
 
         Assert.Equal(WorkspaceOwnershipDefinitions.RelativePath, PublishedTokens.Ownership.RelativePath);
 
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersion, PublishedTokens.Settings.SchemaVersion);
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersionProperty, PublishedTokens.Settings.SchemaVersionProperty);
+        Assert.Equal(WorkspaceSettingsDefinitions.FrontmatterProperty, PublishedTokens.Settings.FrontmatterProperty);
         Assert.Equal(WorkspaceSettingsDefinitions.FrontmatterScopedName, PublishedTokens.Settings.ScopedFrontmatter);
 
         Assert.Equal(ExtensionPackageLayout.ContentDirectoryName, PublishedTokens.ExtensionPackage.ContentDirectory);

@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using Tokens = OpenForge.Cli.TestSupport.Contracts.PublishedTokens;
 
 namespace OpenForge.Cli.EndToEndTests.Shared.Journeys;
 
@@ -81,8 +82,8 @@ internal static class JourneyPayloadAssertions
     internal static void AssertForm(PublishedJourneyWorkspace workspace, JourneyFrontmatterForm form)
     {
         using var settings = JsonDocument.Parse(File.ReadAllBytes(workspace.Combine(PublishedInstallWorkspace.SettingsPath)));
-        Assert.Equal(3, settings.RootElement.GetProperty("schemaVersion").GetInt32());
-        Assert.Equal(JourneyFrontmatter.Flag(form), settings.RootElement.GetProperty("frontmatter").GetString());
+        Assert.Equal(Tokens.Settings.SchemaVersion, settings.RootElement.GetProperty(Tokens.Settings.SchemaVersionProperty).GetInt32());
+        Assert.Equal(JourneyFrontmatter.Flag(form), settings.RootElement.GetProperty(Tokens.Settings.FrontmatterProperty).GetString());
     }
 
     internal static async Task<ProcessRunResult> RunWithoutWritesAsync(PublishedJourneyWorkspace workspace, params string[] arguments)
