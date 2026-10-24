@@ -113,7 +113,7 @@ internal static class RouteInspectWording
         {
             var relatedSourceId = reading.RelatedSourceId
                 ?? throw new InvalidOperationException("A parent-load automatic reading requires a related source ID.");
-            return relatedSourceId is "loader" or ".agents/loader.md"
+            return reading.RelatedSourceIsLoader
                 ? global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelTheLoaderIsRead()
                 : global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectPhrases.FormatIsRead($"{relatedSourceId}");
         }

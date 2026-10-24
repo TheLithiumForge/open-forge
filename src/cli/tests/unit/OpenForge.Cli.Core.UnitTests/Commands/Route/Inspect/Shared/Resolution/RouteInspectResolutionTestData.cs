@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Resolution;
 
@@ -64,7 +65,7 @@ internal static class RouteInspectResolutionTestData
             [],
             areLoaderRootFactsComplete,
             isCancelled: false);
-        return new RouteInspectGraph(projectionSet, routeFacts);
+        return new RouteInspectGraph(WorkspaceLayout.Create(Workspace(), WorkspaceLayout.DefaultMainRoot), projectionSet, routeFacts);
     }
 
     internal static RouteInspectResolution Resolved(

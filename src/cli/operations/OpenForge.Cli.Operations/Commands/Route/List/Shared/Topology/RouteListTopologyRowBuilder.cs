@@ -119,7 +119,7 @@ internal sealed class RouteListTopologyRowBuilder
                     || RouteListTopologyProjectionPolicy.IsAmbiguousEntrypoint(_input, child);
             })
             || _input.Inventory.Findings.Any(finding =>
-                RouteListTopologyFindingPolicy.AffectsDirectChildren(node, source, finding)))
+                RouteListTopologyFindingPolicy.AffectsDirectChildren(_input, node, source, finding)))
         {
             return null;
         }

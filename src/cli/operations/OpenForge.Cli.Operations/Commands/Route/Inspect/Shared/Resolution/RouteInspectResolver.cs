@@ -2,10 +2,9 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Interaction;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
-using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
-using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
@@ -15,7 +14,6 @@ namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 internal sealed partial class RouteInspectResolver
 {
     private readonly PhysicalPathResolver _physicalPathResolver = new();
-    private readonly SourceCatalogueReader _catalogueReader = new();
     private readonly SourceRouteFactsResolver _routeFactsResolver = new();
     private readonly RouteInspectSourceSelectionResolver _sourceSelectionResolver;
 
@@ -62,6 +60,19 @@ internal sealed partial class RouteInspectResolver
 
         try
         {
+            var layoutRead = await new WorkspaceLayoutReader(_physicalPathResolver)
+                .ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+            if (layoutRead.Layout is not { } layout)
+            {
+                return RouteInspectResolutionSupport.CreateBoundaryResolution(
+                    unresolvedSelection,
+                    layoutRead.Issues.Select(issue => RouteInspectResolutionSupport.CreateIssue(
+                        RouteInspectResolutionIssueCode.UnsafeSource,
+                        issue.Path,
+                        issue.Cause,
+                        issue.RelatedPaths)).ToArray());
+            }
+
             var exactPathPhysical = parsed.Kind == SourceReferenceKind.SourcePath
                 ? ResolveExactPath(request.Workspace, ReadAttemptedReference(parsed))
                 : null;
@@ -78,13 +89,11 @@ internal sealed partial class RouteInspectResolver
                 }
             }
 
-            var reader = new SourceDocumentReader(request.Workspace);
-            var catalogue = await _catalogueReader
-                .ReadSessionAsync(
-                    new SourceCatalogueRequest(request.Workspace, [SourceLogicalPath.AgentsRoot]),
-                    reader.PhysicalPaths,
-                    cancellationToken)
+            var session = await new SourceReadSessionReader(_physicalPathResolver)
+                .ReadAsync(layout, cancellationToken)
                 .ConfigureAwait(false);
+            var reader = session.DocumentReader;
+            var catalogue = session.Catalogue;
             if (catalogue.IsCancelled || cancellationToken.IsCancellationRequested)
             {
                 return RouteInspectResolutionSupport.Interrupted(

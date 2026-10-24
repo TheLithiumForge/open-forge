@@ -1,0 +1,1 @@
+'binary.txt': Save the file as UTF-8 text, then retry.

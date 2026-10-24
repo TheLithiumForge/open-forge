@@ -1,0 +1,1 @@
+'.agents/patterns/deep/note.md': Use the catalogue '.agents/patterns/_patterns.md' that lists this file instead.

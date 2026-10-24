@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Text;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Route.Create;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
@@ -182,7 +183,7 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
 
     internal async ValueTask<SourceCatalogue> ReadCatalogueAsync()
         => await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(Workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(WorkspaceLayout.Create(Workspace, WorkspaceLayout.DefaultMainRoot), [SourceLogicalPath.AgentsRoot]),
             TestContext.Current.CancellationToken);
 
     internal void OwnNestedApplicationPlan(RouteCreatePlan plan)

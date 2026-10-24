@@ -1,0 +1,13 @@
+---
+{}
+---
+
+# notes/releases
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- [Release checklist](checklist.md) - #Docs

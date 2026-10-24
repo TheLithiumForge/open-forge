@@ -1,0 +1,1 @@
+{"mode":"apply","target":{"id":"notes/releases/checklist","path":"handbook/context/notes/releases/checklist.md"},"listedIn":"handbook/context/notes/releases/_releases.md","template":null}

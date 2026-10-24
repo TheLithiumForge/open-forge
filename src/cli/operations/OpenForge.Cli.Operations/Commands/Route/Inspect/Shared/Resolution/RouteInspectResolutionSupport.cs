@@ -1,5 +1,4 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
@@ -56,21 +55,22 @@ internal static class RouteInspectResolutionSupport
         var issues = new List<RouteInspectResolutionIssue>();
         foreach (var issue in catalogue.Issues)
         {
+            var boundaryPath = catalogue.Layout.IsDefault ? catalogue.Layout.MainRoot : issue.AttemptedCanonicalPath;
             var mapped = issue.Code switch
             {
                 SourceCatalogueIssueCode.RootUnsafe => CreateIssue(
                     RouteInspectResolutionIssueCode.UnsafeSource,
                     issue.AttemptedCanonicalPath,
-                    "The .agents source boundary could not be proved or read."),
+                    $"The {boundaryPath} source boundary could not be proved or read."),
                 SourceCatalogueIssueCode.RootUnavailable
                     or SourceCatalogueIssueCode.DirectoryUnavailable => CreateIssue(
                         RouteInspectResolutionIssueCode.ReadUnavailable,
                         issue.AttemptedCanonicalPath,
-                        "The .agents source boundary could not be proved or read."),
+                        $"The {boundaryPath} source boundary could not be proved or read."),
                 SourceCatalogueIssueCode.CandidateUnsafe
                     when string.Equals(
                         issue.AttemptedCanonicalPath,
-                        SourceLogicalPath.LoaderPath,
+                        catalogue.Layout.LoaderPath,
                         StringComparison.Ordinal) => CreateIssue(
                         RouteInspectResolutionIssueCode.UnsafeSource,
                         issue.AttemptedCanonicalPath,
@@ -78,7 +78,7 @@ internal static class RouteInspectResolutionSupport
                 SourceCatalogueIssueCode.CandidateUnavailable
                     when string.Equals(
                         issue.AttemptedCanonicalPath,
-                        SourceLogicalPath.LoaderPath,
+                        catalogue.Layout.LoaderPath,
                         StringComparison.Ordinal) => CreateIssue(
                         RouteInspectResolutionIssueCode.ReadUnavailable,
                         issue.AttemptedCanonicalPath,

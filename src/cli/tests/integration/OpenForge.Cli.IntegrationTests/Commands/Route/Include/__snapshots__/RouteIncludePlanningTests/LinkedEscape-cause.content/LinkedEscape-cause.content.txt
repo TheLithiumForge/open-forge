@@ -1,0 +1,1 @@
+'escape/note.md': Choose a file whose links stay inside this workspace.

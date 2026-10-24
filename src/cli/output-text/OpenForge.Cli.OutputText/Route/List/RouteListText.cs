@@ -32,6 +32,12 @@ internal static class RouteListText
     internal static string MessageTheLoaderIsTheRootOfEveryRouteRunRouteListWithoutAnOperand()
         => "The Loader is the root of every route. Run route list without an operand.";
 
+    internal static string MessageLoaderCouldNotBeRead(string loaderPath)
+        => $"{loaderPath} could not be read.";
+
+    internal static string MessageLoaderHasNoUsableEntriesSection(string loaderPath)
+        => $"{loaderPath} has no usable Entries section.";
+
     // @OpenForgeText route.list.message.agents-loader-md-could-not-be-read
     internal static string MessageAgentsLoaderMdCouldNotBeRead()
         => ".agents/loader.md could not be read.";

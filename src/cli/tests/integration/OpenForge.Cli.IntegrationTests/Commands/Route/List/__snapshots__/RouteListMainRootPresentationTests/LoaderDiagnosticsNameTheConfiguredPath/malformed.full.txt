@@ -1,0 +1,6 @@
+Cannot list routes: knowledge/team/context/loader.md has no usable Entries section.
+Workspace: <workspace>
+  Error  knowledge/team/context/loader.md  Loader is malformed [route-list.loader-malformed]
+         knowledge/team/context/loader.md has no usable Entries section.
+  Inspect the route boundary with open-forge doctor.
+Next: open-forge doctor

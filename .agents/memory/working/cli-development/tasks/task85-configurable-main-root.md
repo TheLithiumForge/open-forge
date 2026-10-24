@@ -109,7 +109,28 @@ Valid settings keep a diagnostic layout even when other evidence is unsafe, and 
 E2 makes implicit admission follow the content locations, keeps explicit grants literal, gives permission prompts projected context-folder facts and revalidates the layout before writing grants.
 Extension caller prefilters are removed. Default permission carriers, Extension path-only admission and Library destination and consumer-boundary adapters remain for Wave 5.
 
+## Wave 5 Q handoff
+
+Include and Exclude carry the observed layout, distinguish native Skills from literal includes and supply typed effects to the renderers.
+One default resolver adapter remains for two runtime-reservation tests, which Z1 removes.
+
+## Wave 5 L handoff
+
+Route List carries the layout through inventory, loader selection, includes and custom-root diagnostics.
+Its runtime adapters are removed. Default-only fixtures keep the shared catalogue and route source constructors until Z1.
+
+## Wave 5 V handoff
+
+Route Inspect uses the actual loader and retained identities, with projected loader wording.
+Its runtime adapters are removed. Static default-root help and shared outside-include routing stay with the overseer.
+
+## Wave 5 C handoff
+
+Route Create maps stable IDs, bounds ancestry and revalidates the layout under the lock.
+Its command adapters are removed. Two static help sentences keep default-root wording to preserve existing snapshots.
+
 ## Overseer notes
 
 - Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.
 - Before Z1 removes the permission adapters, resolve how maintenance treats an intentionally excluded missing loader against the frozen revalidator (from E2). The plan's `*LibrarySharedGrant*` filter selects nothing, because the shared-grant class has another name.
+- Static help still shows default-root wording in Route Create and Route Inspect. The final documentation packet and Z2 help changes decide whether it changes.

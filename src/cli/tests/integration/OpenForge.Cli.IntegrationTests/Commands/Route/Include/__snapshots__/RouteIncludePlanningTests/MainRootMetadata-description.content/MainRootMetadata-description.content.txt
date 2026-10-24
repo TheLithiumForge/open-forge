@@ -1,0 +1,1 @@
+'.agents/patterns/_patterns.md': Change the frontmatter in '.agents/patterns/_patterns.md' instead of supplying metadata options.

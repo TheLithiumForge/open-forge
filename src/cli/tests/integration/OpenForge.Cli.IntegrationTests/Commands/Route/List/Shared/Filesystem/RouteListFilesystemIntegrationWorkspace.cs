@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -71,7 +72,7 @@ internal sealed class RouteListFilesystemIntegrationWorkspace : IDisposable
 
     internal async ValueTask<RouteListInventoryFacts> ReadAsync(CancellationToken cancellationToken = default)
     {
-        var request = new RouteListInventoryRequest(Workspace, cancellationToken);
+        var request = new RouteListInventoryRequest(WorkspaceLayout.Create(Workspace, WorkspaceLayout.DefaultMainRoot), cancellationToken);
         var documentReader = new SourceDocumentReader(Workspace);
         return await new RouteListInventoryReader()
             .ReadAsync(request, documentReader);

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
@@ -12,7 +13,7 @@ internal static class RouteListTopologyFindingDepthPolicy
         IReadOnlyList<SourceRouteNode> selectedRoots,
         RouteListFilesystemFinding finding)
     {
-        if (string.Equals(finding.CanonicalLogicalSubject, SourceLogicalPath.AgentsRoot, StringComparison.Ordinal))
+        if (input.Inventory.SourceCatalogue.Layout.SourceRoots.Contains(finding.CanonicalLogicalSubject, StringComparer.Ordinal))
         {
             return 0;
         }
@@ -35,6 +36,7 @@ internal static class RouteListTopologyFindingDepthPolicy
     }
 
     internal static int? ReadLexicalRelativeDepth(
+        WorkspaceLayout layout,
         SourceRouteNode root,
         string subject)
     {
@@ -54,8 +56,8 @@ internal static class RouteListTopologyFindingDepthPolicy
         var segments = sourcePath[prefix.Length..].Split('/', StringSplitOptions.None);
         var depth = segments.Length;
         var fileName = segments[^1];
-        if (string.Equals(fileName, "SKILL.md", StringComparison.Ordinal)
-            || SourceIdentity.IsRecognizedEntrypointPath(sourcePath))
+        if (string.Equals(fileName, SourceFormClassifier.NativeSkillFileName, StringComparison.Ordinal)
+            || SourceIdentity.IsRecognizedEntrypointPath(layout, sourcePath))
         {
             depth--;
         }
@@ -86,7 +88,7 @@ internal static class RouteListTopologyFindingDepthPolicy
             return graphDepth;
         }
 
-        var lexicalDepth = ReadLexicalRelativeDepth(root, subject);
+        var lexicalDepth = ReadLexicalRelativeDepth(input.Inventory.SourceCatalogue.Layout, root, subject);
         if (lexicalDepth is null
             || !HasRepresentedIntermediateChain(root, topology, input, subject, lexicalDepth.Value))
         {
@@ -104,8 +106,8 @@ internal static class RouteListTopologyFindingDepthPolicy
 
     private static string ReadLogicalSourcePath(string subject)
     {
-        return subject.EndsWith(".overwrite.md", StringComparison.Ordinal)
-            ? subject[..^".overwrite.md".Length] + ".md"
+        return SourceOverwritePath.HasSuffix(subject)
+            ? SourceOverwritePath.ReadBasePath(subject)
             : subject;
     }
 

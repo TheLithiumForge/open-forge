@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -16,14 +17,15 @@ internal sealed partial class RouteListSelectionResolver
         SourceRouteFacts routeFacts,
         CancellationToken cancellationToken)
     {
+        var layout = catalogue.Layout;
         var selection = RouteListSelectionFactory.LoaderRoots();
         var cancelled = WasCancelled(catalogue, projectionSet, routeFacts, cancellationToken);
         var rootPaths = routeFacts.Topology.LoaderRootPaths.ToHashSet(StringComparer.Ordinal);
-        var loaderDestinations = ReadLoaderDestinations(projectionSet);
+        var loaderDestinations = ReadLoaderDestinations(layout, projectionSet);
         var sourceIssues = routeFacts.Issues
             .Where(issue => issue.Code != SourceRouteIssueCode.RouteAmbiguous
                 || rootPaths.Contains(issue.CanonicalPath))
-            .OrderBy(issue => IsDeferredEntriesIssue(issue))
+            .OrderBy(issue => IsDeferredEntriesIssue(layout, issue))
             .ThenBy(issue => issue.Occurrence)
             .ToArray();
         var issues = sourceIssues
@@ -47,7 +49,7 @@ internal sealed partial class RouteListSelectionResolver
                 || projection.BaseRead.Verification.State != SourceLayerVerificationState.Verified
                 || projection.Source is null)
             {
-                AddLoaderProjectionIssue(rootPath, projection, issues);
+                AddLoaderProjectionIssue(layout, rootPath, projection, issues);
                 continue;
             }
 
@@ -64,7 +66,7 @@ internal sealed partial class RouteListSelectionResolver
             {
                 issues.Add(new RouteListSelectionIssue(
                     RouteListFindingCode.LoaderUnavailable,
-                    ReadLoaderAttempt(rootPath, loaderDestinations),
+                    ReadLoaderAttempt(layout, rootPath, loaderDestinations),
                     "The Loader root is unavailable in the route-fact allowlist."));
                 continue;
             }
@@ -72,7 +74,7 @@ internal sealed partial class RouteListSelectionResolver
             if (routeFact.State == SourceRouteState.Ambiguous
                 || HasAmbiguousEntrypoint(projection.LogicalSource, projectionSet))
             {
-                var subject = ReadLoaderAttempt(rootPath, loaderDestinations);
+                var subject = ReadLoaderAttempt(layout, rootPath, loaderDestinations);
                 if (!issues.Any(issue => issue.Code == RouteListFindingCode.RouteAmbiguous
                     && string.Equals(issue.Subject, subject, StringComparison.Ordinal)))
                 {
@@ -88,25 +90,25 @@ internal sealed partial class RouteListSelectionResolver
             selectedSources.Add(source);
         }
 
-        var loaderCandidate = catalogue.FindCandidateByPath(LoaderPath);
+        var loaderCandidate = catalogue.FindCandidateByPath(layout.LoaderPath);
         if (!cancelled && loaderCandidate is null)
         {
             foreach (var rootIssue in catalogue.Issues.Where(issue =>
                          issue.Stage == SourceCatalogueIssueStage.Root
-                         && string.Equals(issue.AttemptedCanonicalPath, ".agents", StringComparison.Ordinal)))
+                         && string.Equals(issue.AttemptedCanonicalPath, layout.MainRoot, StringComparison.Ordinal)))
             {
-                issues.Add(MapCatalogueRootIssue(rootIssue));
+                issues.Add(MapCatalogueRootIssue(layout, rootIssue));
             }
         }
 
         if (!cancelled
             && loaderCandidate?.Form != SourceDocumentForm.Loader
-            && !issues.Any(issue => string.Equals(issue.Subject, LoaderPath, StringComparison.Ordinal)
+            && !issues.Any(issue => string.Equals(issue.Subject, layout.LoaderPath, StringComparison.Ordinal)
                 && (issue.Code is RouteListFindingCode.LoaderUnavailable or RouteListFindingCode.PhysicalBoundary)))
         {
             issues.Add(new RouteListSelectionIssue(
                 RouteListFindingCode.LoaderUnavailable,
-                LoaderPath,
+                layout.LoaderPath,
                 "The Loader file is missing."));
         }
 
@@ -114,7 +116,7 @@ internal sealed partial class RouteListSelectionResolver
         {
             issues.Add(new RouteListSelectionIssue(
                 RouteListFindingCode.Interrupted,
-                LoaderPath,
+                layout.LoaderPath,
                 "Loader root resolution was interrupted."));
             return RouteListSelectionResolutionFactory.Interrupted(selection, selectedSources, issues);
         }
@@ -124,7 +126,7 @@ internal sealed partial class RouteListSelectionResolver
         {
             issues.Add(new RouteListSelectionIssue(
                 RouteListFindingCode.LoaderUnavailable,
-                LoaderPath,
+                layout.LoaderPath,
                 "The Loader root boundary is incomplete."));
         }
 
@@ -139,6 +141,7 @@ internal sealed partial class RouteListSelectionResolver
     }
 
     private static void AddLoaderProjectionIssue(
+        WorkspaceLayout layout,
         string rootPath,
         RouteSourceProjection? projection,
         ICollection<RouteListSelectionIssue> issues)
@@ -155,14 +158,14 @@ internal sealed partial class RouteListSelectionResolver
         {
             issues.Add(new RouteListSelectionIssue(
                 RouteListFindingCode.PhysicalBoundary,
-                ReadLoaderDestination(rootPath),
+                ReadLoaderDestination(layout, rootPath),
                 "The Loader root crosses an unproved physical boundary or has changed identity."));
             return;
         }
 
         issues.Add(new RouteListSelectionIssue(
             RouteListFindingCode.LoaderUnavailable,
-            ReadLoaderDestination(rootPath),
+            ReadLoaderDestination(layout, rootPath),
             "The Loader root is unavailable in the Route projection allowlist."));
     }
 

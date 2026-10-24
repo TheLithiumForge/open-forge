@@ -6,8 +6,9 @@ using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Models;
 
 internal enum RouteInclusionEffectState { Planned, NotStarted, Verified, Unknown }
+internal enum RouteInclusionEffectKind { LoaderEntries, Settings }
 
-internal sealed record RouteInclusionEffect(string Path, string? Before, string After, RouteInclusionEffectState State);
+internal sealed record RouteInclusionEffect(string Path, string? Before, string After, RouteInclusionEffectState State, RouteInclusionEffectKind Kind);
 
 internal sealed record RouteInclusionOutcome
 {

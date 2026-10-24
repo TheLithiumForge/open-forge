@@ -207,6 +207,8 @@ internal static class RouteListReportSelector
         {
             RouteListPresentationFindingCode.InvalidDepth => RouteListWording.InvalidDepth(subject),
             RouteListPresentationFindingCode.InvalidSourceReference => RouteListWording.InvalidSourceReference(subject),
+            RouteListPresentationFindingCode.WorkspaceUnavailable when result.WorkspacePath is not null
+                => finding.Cause,
             RouteListPresentationFindingCode.InvalidWorkspace or RouteListPresentationFindingCode.WorkspaceUnavailable
                 => OpenForge.Cli.Core.Presentation.Shared.Wording.CliFindingWording.WorkspaceUnavailable(subject),
             RouteListPresentationFindingCode.UnknownSource => OpenForge.Cli.Core.Presentation.Shared.Wording.CliFindingWording.UnknownSource(subject),
@@ -214,8 +216,8 @@ internal static class RouteListReportSelector
             RouteListPresentationFindingCode.LoaderSubject => RouteListWording.LoaderSubject(),
             RouteListPresentationFindingCode.AmbiguousSource => OpenForge.Cli.Core.Presentation.Shared.Wording.CliFindingWording.SourceAmbiguous(subject),
             RouteListPresentationFindingCode.UnsafeSource => OpenForge.Cli.Core.Presentation.Shared.Wording.CliFindingWording.SourceUnsafe(subject),
-            RouteListPresentationFindingCode.LoaderUnavailable => RouteListWording.LoaderUnavailable(),
-            RouteListPresentationFindingCode.LoaderMalformed => RouteListWording.LoaderMalformed(),
+            RouteListPresentationFindingCode.LoaderUnavailable => RouteListWording.LoaderUnavailable(result.CustomLoaderPath),
+            RouteListPresentationFindingCode.LoaderMalformed => RouteListWording.LoaderMalformed(result.CustomLoaderPath),
             RouteListPresentationFindingCode.RouteAmbiguous => OpenForge.Cli.Core.Presentation.Shared.Wording.CliFindingWording.RouteAmbiguous(FindingId(result, finding)),
             RouteListPresentationFindingCode.MetadataMissing => RouteListWording.MetadataMissing(subject),
             RouteListPresentationFindingCode.MetadataMalformed => RouteListWording.MetadataMalformed(subject, finding.Cause),

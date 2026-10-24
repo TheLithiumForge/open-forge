@@ -21,7 +21,7 @@ internal sealed class RouteListInventoryReader
 
         var sourceCatalogue = await new SourceCatalogueReader()
             .ReadSessionAsync(
-                new SourceCatalogueRequest(request.Workspace, request.LogicalRoots),
+                new SourceCatalogueRequest(request.Layout, request.LogicalRoots),
                 documentReader.PhysicalPaths,
                 request.CancellationToken)
             .ConfigureAwait(false);
@@ -46,7 +46,7 @@ internal sealed class RouteListInventoryReader
                 findings,
                 aliases,
                 RouteListFilesystemFindingPolicy.Interrupted(
-                    ReadInterruptionSubject(projectionBuildResult)));
+                    ReadInterruptionSubject(request, projectionBuildResult)));
         }
 
         return RouteListInventoryFacts.Create(
@@ -194,6 +194,7 @@ internal sealed class RouteListInventoryReader
     }
 
     private static string ReadInterruptionSubject(
+        RouteListInventoryRequest request,
         RouteSourceProjectionBuildResult projectionBuildResult)
     {
         foreach (var read in projectionBuildResult.Projections
@@ -209,7 +210,7 @@ internal sealed class RouteListInventoryReader
             }
         }
 
-        return SourceLogicalPath.AgentsRoot;
+        return request.Layout.MainRoot;
     }
 
     private static void ValidateWorkspace(

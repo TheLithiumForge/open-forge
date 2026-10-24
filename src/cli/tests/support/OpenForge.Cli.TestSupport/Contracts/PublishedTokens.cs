@@ -47,6 +47,7 @@ public static class PublishedTokens
 
     public static class Metadata
     {
+        public const string EmptyEntry = "- none - No entries - #Empty";
         public const string SkillName = "name";
         public const string Description = "description";
         public const string Tags = "tags";
@@ -76,6 +77,9 @@ public static class PublishedTokens
 
     public static class Install
     {
+        public const string Configure = "--configure";
+        public const string Preset = "--preset";
+        public const string CustomPreset = "custom";
         public const string Command = "install";
         public const string Automatic = "--automatic";
         public const string DryRun = "--dry-run";
@@ -116,20 +120,60 @@ public static class PublishedTokens
         public const string Command = "route";
     }
 
+    public static class RouteList
+    {
+        public const int DefaultDepth = 1;
+        public const string Command = "list";
+        public const string CommandIdentity = "route list";
+        public const string Depth = "--depth";
+        public const string AllDepth = "all";
+        public const string InvalidDepthCode = "route-list.invalid-depth";
+    }
+
+    public static class RouteListData
+    {
+        public const string Rows = "rows";
+        public const string Depth = "depth";
+        public const string HasOverwrite = "hasOverwrite";
+        public const string AbsoluteDepth = "absoluteDepth";
+    }
+
     public static class RouteInclude
     {
+        public const string DryRun = "--dry-run";
+        public const string Tag = "--tag";
+        public const string ApplyTo = "--apply-to";
         public const string Command = "include";
         public const string Description = "--description";
         public const string RecoveryHistoryCode = "route-include.recovery-history";
     }
 
+    public static class RouteInspect
+    {
+        public const string Command = "inspect";
+    }
+
+    public static class RouteInspectData
+    {
+        public const string Read = "read";
+        public const string AtStart = "atStart";
+    }
+
     public static class RouteExclude
     {
+        public const string DryRun = "--dry-run";
         public const string Command = "exclude";
+    }
+
+    public static class Update
+    {
+        public const string Command = "update";
+        public const string Automatic = "--automatic";
     }
 
     public static class RouteCreate
     {
+        public const string DryRun = "--dry-run";
         public const string Command = "create";
         public const string Description = "--description";
         public const string Tag = "--tag";
@@ -186,6 +230,7 @@ public static class PublishedTokens
 
     public static class Syntax
     {
+        public const string TextFormat = "text";
         public const string FormatOption = "--format";
         public const string DetailOption = "--detail";
         public const string JsonFormat = "json";
@@ -193,6 +238,7 @@ public static class PublishedTokens
 
     public static class Presentation
     {
+        public const string MinimalDetail = "minimal";
         public const string FullDetail = "full";
     }
 
@@ -219,6 +265,7 @@ public static class PublishedTokens
 
     public static class Settings
     {
+        public const string RootsProperty = "roots";
         public const string RelativePath = ".agents/open-forge.json";
         public const int SchemaVersion = 4;
         public const string SchemaVersionProperty = "schemaVersion";
@@ -250,6 +297,9 @@ public static class PublishedTokens
 
     public static class Statuses
     {
+        public const int CompleteExitCode = 0;
+        public const int InvalidExitCode = 4;
+        public const string Invalid = "invalid-input";
         public const string Complete = "completed";
         public const string Attention = "completed-with-warnings";
         public const string Incomplete = "incomplete";
@@ -262,6 +312,8 @@ public static class PublishedTokens
 
     public static class Json
     {
+        public const string Effects = "effects";
+        public const string After = "after";
         public const string Id = "id";
         public const string Data = "data";
         public const string Command = "command";

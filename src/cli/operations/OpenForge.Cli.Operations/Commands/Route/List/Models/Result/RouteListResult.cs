@@ -38,6 +38,8 @@ internal sealed class RouteListResult : ICliCommandResult
 
     internal bool WorkspaceExplicit => Workspace?.SelectedBy == CliWorkspaceSelectionMethod.ExplicitWorkspace;
 
+    internal string? CustomLoaderPath { get; init; }
+
     internal RouteListPresentationFacts PresentationFacts => RouteListPresentationFacts.From(this);
 
     internal RouteListSelection Selection { get; }
@@ -61,7 +63,8 @@ internal sealed class RouteListResult : ICliCommandResult
         RouteListCoverage coverage,
         IEnumerable<RouteListRow> rows,
         IEnumerable<RouteListFinding> findings,
-        CliNextAction? next)
+        CliNextAction? next,
+        string? customLoaderPath = null)
     {
         _ = CliStatusDefinitions.Read(status);
         ArgumentNullException.ThrowIfNull(selection);
@@ -95,7 +98,10 @@ internal sealed class RouteListResult : ICliCommandResult
             coverage,
             new ReadOnlyCollection<RouteListRow>(materializedRows),
             new ReadOnlyCollection<RouteListFinding>(materializedFindings),
-            next);
+            next)
+        {
+            CustomLoaderPath = customLoaderPath,
+        };
     }
 
     private static void ValidateWorkspace(

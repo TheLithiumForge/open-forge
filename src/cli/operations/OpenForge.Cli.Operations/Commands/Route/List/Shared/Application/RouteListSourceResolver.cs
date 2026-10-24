@@ -1,10 +1,11 @@
+using OpenForge.Cli.Core.Commands.Route.List.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
-using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Includes;
-using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 
@@ -21,12 +22,16 @@ internal sealed class RouteListSourceResolver(
 
     internal async ValueTask<RouteListSourceResolution> ResolveAsync(
         RouteListRequest request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        WorkspaceLayoutRead? layoutRead = null)
     {
         var documentReader = new SourceDocumentReader(request.Workspace);
+        layoutRead ??= await new WorkspaceLayoutReader(documentReader.PhysicalPaths)
+            .ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var layout = layoutRead.Layout ?? throw new InvalidOperationException("The workspace layout is unavailable.");
         var inventory = await _inventoryReader
             .ReadAsync(
-                new RouteListInventoryRequest(request.Workspace, cancellationToken),
+                new RouteListInventoryRequest(layout, cancellationToken),
                 documentReader)
             .ConfigureAwait(false);
         var sourceCatalogue = inventory.SourceCatalogue;
@@ -57,9 +62,9 @@ internal sealed class RouteListSourceResolver(
             }
         }
 
-        var settings = await WorkspaceSettingsReader.ReadAsync(documentReader.PhysicalPaths, request.Workspace, cancellationToken).ConfigureAwait(false);
-        var active = included.Rows.Where(row => row.ParentPath == SourceLogicalPath.LoaderPath).Select(row => row.Path).ToHashSet(StringComparer.Ordinal);
-        return new RouteListSourceResolution(inventory, routeFacts, selection)
+        var settings = layoutRead.Settings;
+        var active = included.Rows.Where(row => row.ParentPath == layout.LoaderPath).Select(row => row.Path).ToHashSet(StringComparer.Ordinal);
+        return new RouteListSourceResolution(layoutRead, inventory, routeFacts, selection)
         {
             IncludedSources = included.Sources,
             IncludedRows = included.Rows,
@@ -90,16 +95,4 @@ internal sealed class RouteListSourceResolver(
                 cancellationToken)
             .ConfigureAwait(false);
     }
-}
-
-internal sealed record RouteListSourceResolution(
-    RouteListInventoryFacts Inventory,
-    SourceRouteFacts RouteFacts,
-    RouteListSelectionResolution Selection)
-{
-    internal IReadOnlyList<OpenForge.Cli.Core.Framework.Sources.Models.Reading.SourceIncludedEntryRow> IncludedRows { get; init; } = [];
-
-    internal IReadOnlyList<SourceLogicalSource> IncludedSources { get; init; } = [];
-
-    internal IReadOnlyList<string> UnlistedRoots { get; init; } = [];
 }

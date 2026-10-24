@@ -116,7 +116,7 @@ internal sealed class RouteCreatePlanBuilder
         var plan = new RouteCreatePlan
         {
             Request = request,
-            Settings = inspection.Settings,
+            LayoutRead = inspection.LayoutRead,
             Preview = preview,
             NavigationFormation = navigation.Formation,
             SharingExpectation = navigation.SharingExpectation,

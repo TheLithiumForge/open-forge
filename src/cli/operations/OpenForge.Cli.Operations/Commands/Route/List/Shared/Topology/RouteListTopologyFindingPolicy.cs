@@ -90,6 +90,7 @@ internal static class RouteListTopologyFindingPolicy
     }
 
     internal static bool AffectsDirectChildren(
+        RouteListTopologyInput input,
         SourceRouteNode node,
         RouteSource source,
         RouteListFilesystemFinding finding)
@@ -101,6 +102,7 @@ internal static class RouteListTopologyFindingPolicy
         }
 
         return RouteListTopologyFindingDepthPolicy.ReadLexicalRelativeDepth(
+            input.Inventory.SourceCatalogue.Layout,
             node,
             finding.CanonicalLogicalSubject) == 1;
     }

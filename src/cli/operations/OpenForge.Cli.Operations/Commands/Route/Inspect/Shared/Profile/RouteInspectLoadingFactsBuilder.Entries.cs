@@ -35,6 +35,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         foreach (var generatedEntry in generated.Entries)
         {
             var targetPath = SourceGeneratedDestinationResolver.Resolve(
+                _graph.Layout,
                 parent.CanonicalPath,
                 parent.Kind == RouteSourceKind.Loader,
                 generatedEntry.Destination);
@@ -49,8 +50,8 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
                 continue;
             }
 
-            var loadNow = generatedEntry.HasTag("LoadNow");
-            var keepInMind = generatedEntry.HasTag("KeepInMind");
+            var loadNow = generatedEntry.HasTag(SourceLoadingClosureResolver.LoadNowTag);
+            var keepInMind = generatedEntry.HasTag(SourceLoadingClosureResolver.KeepInMindTag);
             if (parent.Kind != RouteSourceKind.Loader
                 && (loadNow || keepInMind)
                 && child.Metadata.State != RouteSourceMetadataState.Complete)
@@ -64,8 +65,8 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 
             if (parent.Kind != RouteSourceKind.Loader)
             {
-                loadNow &= HasTag(child, "LoadNow");
-                keepInMind &= HasTag(child, "KeepInMind");
+                loadNow &= HasTag(child, SourceLoadingClosureResolver.LoadNowTag);
+                keepInMind &= HasTag(child, SourceLoadingClosureResolver.KeepInMindTag);
             }
 
             var current = entries.GetValueOrDefault(targetPath);
