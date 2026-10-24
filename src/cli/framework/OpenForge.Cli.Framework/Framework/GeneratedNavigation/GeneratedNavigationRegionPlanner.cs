@@ -55,7 +55,7 @@ internal sealed class GeneratedNavigationRegionPlanner
         }
 
         return BuildRegion(new SourceContentRoots(request.Formation.Catalogue.Layout), input.Source, document.ReadValue(), entryProjection.ReadValue(), ReadObservedLoader(request, input.Source),
-            input.Source.Base.Form == SourceDocumentForm.Loader ? request.LoaderEdit : null);
+            request);
     }
 
     // When an operation rewrites the Loader from the payload, the user's authored links live in the
@@ -137,13 +137,13 @@ internal sealed class GeneratedNavigationRegionPlanner
         MarkdownDocumentFacts document,
         IReadOnlyList<GeneratedNavigationEntry> entries,
         MarkdownDocumentFacts? observedLoader,
-        GeneratedNavigationLoaderEdit? loaderEdit = null)
+        GeneratedNavigationProjectionRequest? request = null)
     {
         try
         {
             var linkSource = observedLoader ?? document;
-            var authoredLinks = linkSource.GeneratedRegion.EntriesBlock is { } linkBlock ? ReadAuthoredLinks(roots, source, linkSource, linkBlock) : [];
-            if (loaderEdit is not null)
+            var authoredLinks = ReadAuthoredLinks(roots, source, linkSource, entries, request);
+            if (source.Base.Form == SourceDocumentForm.Loader && request?.LoaderEdit is { } loaderEdit)
             {
                 authoredLinks = ApplyLoaderEdit(roots, authoredLinks, loaderEdit);
             }
@@ -467,27 +467,47 @@ internal sealed class GeneratedNavigationRegionPlanner
         SourceContentRoots roots,
         SourceLogicalSource source,
         MarkdownDocumentFacts document,
-        MarkdownEntriesBlock block)
+        IReadOnlyList<GeneratedNavigationEntry> entries,
+        GeneratedNavigationProjectionRequest? request)
     {
-        if (!block.Exists)
+        if (document.GeneratedRegion.EntriesBlock is not { Exists: true } block)
         {
             return [];
         }
 
         var authored = new List<string>();
+        var generatedPaths = entries.Select(entry => entry.CanonicalPath).ToHashSet(StringComparer.Ordinal);
         var text = document.Source[block.Span.Start..block.Span.End].Replace("\r\n", "\n", StringComparison.Ordinal);
         foreach (var line in text.Split('\n'))
         {
-            if (MarkdownEntryRowParser.TryParse(line, out var row, out _)
-                && SourceGeneratedDestinationResolver.IsAuthoredLink(row.Destination)
-                && (roots.IsDefault || source.Base.Form != SourceDocumentForm.Loader
-                    || SourceGeneratedDestinationResolver.Resolve(roots, source.Identity.CanonicalBasePath, true, row.Destination) is null))
+            if (!MarkdownEntryRowParser.TryParse(line, out var row, out _)) continue;
+            var path = source.Base.Form == SourceDocumentForm.Loader
+                ? SourceGeneratedDestinationResolver.Resolve(roots, source.Identity.CanonicalBasePath, true, row.Destination)
+                : null;
+
+            // Direct nested catalogue rows belong to the loader's authored membership.
+            // Structural topology does not generate them or acquire their metadata.
+            if (path is not null && !generatedPaths.Contains(path) && RetainNestedCatalogue(roots, path, request)
+                || SourceGeneratedDestinationResolver.IsAuthoredLink(row.Destination)
+                && (roots.IsDefault || source.Base.Form != SourceDocumentForm.Loader || path is null))
             {
                 authored.Add(line);
             }
         }
 
         return authored;
+    }
+
+    private static bool RetainNestedCatalogue(SourceContentRoots roots, string path, GeneratedNavigationProjectionRequest? request)
+    {
+        if (!SourceFormClassifier.IsEntrypointPath(path)) return false;
+        var directory = SourceLogicalPath.ReadParent(path);
+        if (!SourceLogicalPath.IsPrimarySource(roots, directory)
+            || SourceLogicalPath.IsPrimaryCategoryDirectory(roots, directory)) return false;
+        if (request is null) return true;
+        return request.FindSource(path) is { } source && source.Identity.CanonicalBasePath == path
+            && SourceFormClassifier.IsEntrypoint(source.Base.Form)
+            && request.Sharing.Includes(path) && !request.TurnedOffLoaderRoots.Contains(path);
     }
 
     private static IReadOnlyList<string> ApplyLoaderEdit(SourceContentRoots roots, IReadOnlyList<string> rows, GeneratedNavigationLoaderEdit edit)
