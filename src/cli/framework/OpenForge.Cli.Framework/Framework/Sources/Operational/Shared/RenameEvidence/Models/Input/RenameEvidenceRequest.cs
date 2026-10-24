@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -23,6 +24,7 @@ internal sealed record RenameEvidenceRequest
 
 internal sealed record RenameEvidencePolicy
 {
+    public SourceContentRoots Roots { get; init; } = SourceContentRoots.Default;
     public ImmutableArray<string> ManagedPaths { get; init; } = [];
     public ImmutableArray<string> ExcludedPaths { get; init; } = [];
     public ImmutableArray<string> PrivatePaths { get; init; } = [];

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
@@ -16,6 +18,12 @@ internal sealed class WorkspaceAdoptionEntrypointComposer
     private readonly FrameworkDocumentMetadataEmitter _metadataEmitter = new();
 
     internal WorkspaceAdoptionDocumentPlan Create(string canonicalPath, string newline, FrontmatterForm form)
+        => Create(SourceContentRoots.Default, canonicalPath, newline, form);
+
+    internal WorkspaceAdoptionDocumentPlan Create(WorkspaceLayout layout, string canonicalPath, string newline, FrontmatterForm form)
+        => Create(new SourceContentRoots(layout), canonicalPath, newline, form);
+
+    private WorkspaceAdoptionDocumentPlan Create(SourceContentRoots roots, string canonicalPath, string newline, FrontmatterForm form)
     {
         if (newline is not ("\n" or "\r\n"))
         {
@@ -23,7 +31,7 @@ internal sealed class WorkspaceAdoptionEntrypointComposer
         }
 
         if (!SourceLogicalPath.IsCanonicalSource(canonicalPath)
-            || !SourceFormClassifier.TryClassify(canonicalPath, out var sourceForm)
+            || !SourceFormClassifier.TryClassify(roots, canonicalPath, out var sourceForm)
             || !SourceFormClassifier.IsEntrypoint(sourceForm))
         {
             return Blocked(canonicalPath, "field 'canonicalPath' must identify a recognized entrypoint source.");

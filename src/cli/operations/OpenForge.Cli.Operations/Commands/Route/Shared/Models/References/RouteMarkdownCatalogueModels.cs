@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
@@ -56,18 +57,23 @@ internal sealed record RouteMarkdownCatalogueRequest
         IEnumerable<string> includedRoots,
         IEnumerable<string> excludedPaths,
         RouteMarkdownCatalogueFilters filters)
+        : this(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), includedRoots, excludedPaths, filters) { }
+
+    internal RouteMarkdownCatalogueRequest(WorkspaceLayout layout, IEnumerable<string> includedRoots,
+        IEnumerable<string> excludedPaths, RouteMarkdownCatalogueFilters filters)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(includedRoots);
         ArgumentNullException.ThrowIfNull(excludedPaths);
         ArgumentNullException.ThrowIfNull(filters);
-        Workspace = workspace;
+        Layout = layout;
         IncludedRoots = SnapshotPaths(includedRoots, nameof(includedRoots), requireValues: true);
         ExcludedPaths = SnapshotPaths(excludedPaths, nameof(excludedPaths), requireValues: false);
         Filters = filters;
     }
 
-    internal CliWorkspace Workspace { get; }
+    internal WorkspaceLayout Layout { get; }
+
+    internal CliWorkspace Workspace => Layout.Workspace;
 
     internal ImmutableArray<string> IncludedRoots { get; }
 

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
@@ -125,6 +126,9 @@ internal sealed class WorkspaceAdoptionDocumentPlanner
 
     internal WorkspaceAdoptionDocumentPlan CreateEntrypoint(string canonicalPath, string newline, FrontmatterForm form)
         => _entrypointComposer.Create(canonicalPath, newline, form);
+
+    internal WorkspaceAdoptionDocumentPlan CreateEntrypoint(WorkspaceLayout layout, string canonicalPath, string newline, FrontmatterForm form)
+        => _entrypointComposer.Create(layout, canonicalPath, newline, form);
 
     private static bool IsEntrypoint(SourceDocumentForm form)
         => form is SourceDocumentForm.CanonicalEntrypoint

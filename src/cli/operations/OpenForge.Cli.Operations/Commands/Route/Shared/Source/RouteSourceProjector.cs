@@ -61,6 +61,7 @@ internal sealed class RouteSourceProjector
             hasOverwrite,
             reader);
         return new RouteSource(
+            logicalSource.Identity,
             baseDocument,
             metadata,
             ReadSourceKind(baseDocument.Form),
@@ -72,9 +73,7 @@ internal sealed class RouteSourceProjector
         var fileRead = read.Read;
         var state = fileRead?.State ?? ReadUnavailableState(read.Verification.State);
         return new RouteSourceDocument(
-            read.Layer.CanonicalPath,
-            read.Layer.PhysicalPath,
-            SourceDocumentForm.OverwriteCompanion,
+            read.Layer,
             state,
             fileRead?.Value);
     }
@@ -98,9 +97,7 @@ internal sealed class RouteSourceProjector
         var file = read.Read
             ?? throw new InvalidOperationException("A Route document requires an associated file read.");
         return new RouteSourceDocument(
-            read.Layer.CanonicalPath,
-            read.Layer.PhysicalPath,
-            read.Layer.Form,
+            read.Layer,
             file.State,
             file.Value);
     }

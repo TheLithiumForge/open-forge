@@ -37,7 +37,7 @@ internal sealed partial class GeneratedNavigationFormationBuilder
                 retainedEvidence.Candidates,
                 retainedEvidence.SourcesByCandidatePath,
                 _sourcesByPath,
-                unrootedTopology);
+                unrootedTopology, new SourceContentRoots(catalogue.Layout));
             IntendedTargetCollisions = BuildIntendedTargetCollisions(
                 Sources,
                 retainedEvidence.Candidates,
@@ -49,13 +49,14 @@ internal sealed partial class GeneratedNavigationFormationBuilder
                     retainedEvidence.SourcesByCandidatePath,
                     PhysicalAliasGroups)
                 .ToList();
-            Loader = FindSource(SourceLogicalPath.LoaderPath);
+            Loader = FindSource(catalogue.Layout.LoaderPath);
             if (Loader is not null && Loader.Base.Form != SourceDocumentForm.Loader)
             {
                 Loader = null;
             }
 
             var structuralRootPaths = ReadStructuralRootPaths(
+                new SourceContentRoots(catalogue.Layout),
                 Sources,
                 retainedEvidence.MemberCandidatesByPath,
                 PhysicalAliasGroups,

@@ -108,6 +108,7 @@ internal sealed class RouteListSourceProjectionBuilder
         var source = projection.Source
             ?? throw new InvalidOperationException("An ambiguous entrypoint projection requires a Route source.");
         var ambiguousSource = new RouteSource(
+            source.Identity,
             source.Base,
             source.Metadata,
             source.Kind,

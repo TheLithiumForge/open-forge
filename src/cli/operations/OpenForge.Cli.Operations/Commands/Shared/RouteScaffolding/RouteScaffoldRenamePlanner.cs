@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding.Models.Rename;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -15,6 +17,12 @@ namespace OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 internal sealed class RouteScaffoldRenamePlanner
 {
     internal RouteScaffoldEntrypointIntent Decide(RouteScaffoldRenameCandidate candidate, RouteScaffoldRenameProof? proof)
+        => Decide(SourceContentRoots.Default, candidate, proof);
+
+    internal RouteScaffoldEntrypointIntent Decide(WorkspaceLayout layout, RouteScaffoldRenameCandidate candidate, RouteScaffoldRenameProof? proof)
+        => Decide(new SourceContentRoots(layout), candidate, proof);
+
+    private static RouteScaffoldEntrypointIntent Decide(SourceContentRoots roots, RouteScaffoldRenameCandidate candidate, RouteScaffoldRenameProof? proof)
     {
         if (candidate.Destination.Base.Form != SourceDocumentForm.CanonicalEntrypoint
             || candidate.DestinationBefore.Kind != FileExpectationKind.Missing)
@@ -31,7 +39,7 @@ internal sealed class RouteScaffoldRenamePlanner
             && before is { Kind: FileExpectationKind.File, HasBytes: true }
             && proof.CurrentCanonicalPath == old.Identity.CanonicalBasePath
             && proof.CurrentContentHash == before.ContentHash
-            && SourceFormClassifier.TryClassify(proof.OldCanonicalPath, out var form)
+            && SourceFormClassifier.TryClassify(roots, proof.OldCanonicalPath, out var form)
             && form == SourceDocumentForm.CanonicalEntrypoint
             && SourceLogicalPath.ReadFileName(proof.OldCanonicalPath) == SourceLogicalPath.ReadFileName(old.Identity.CanonicalBasePath);
 

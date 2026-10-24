@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
@@ -19,6 +20,10 @@ internal sealed class RouteSource
         RouteSourceKind kind,
         RouteSourceDocument? overwrite = null,
         bool isRouteAmbiguous = false)
+        : this(DefaultIdentity(@base), @base, metadata, kind, overwrite, isRouteAmbiguous) { }
+
+    internal RouteSource(SourceLogicalIdentity identity, RouteSourceDocument @base, RouteSourceMetadata metadata,
+        RouteSourceKind kind, RouteSourceDocument? overwrite = null, bool isRouteAmbiguous = false)
     {
         ArgumentNullException.ThrowIfNull(@base);
         ArgumentNullException.ThrowIfNull(metadata);
@@ -36,8 +41,9 @@ internal sealed class RouteSource
         ValidateMetadata(@base.Form, metadata);
         ValidateOverwrite(@base, metadata, overwrite);
 
-        Id = SourceIdentity.DeriveId(@base.CanonicalLogicalPath)
-            ?? throw new ArgumentException("The source base path does not have a derivable automatic ID.", nameof(@base));
+        if (identity.CanonicalBasePath != @base.CanonicalLogicalPath)
+            throw new ArgumentException("The source identity must match its base document.", nameof(identity));
+        Identity = identity;
         Base = @base;
         Metadata = metadata;
         Overwrite = overwrite;
@@ -45,7 +51,9 @@ internal sealed class RouteSource
         Kind = kind;
     }
 
-    internal string Id { get; }
+    internal SourceLogicalIdentity Identity { get; }
+
+    internal string Id => Identity.AutomaticId;
 
     internal RouteSourceDocument Base { get; }
 
@@ -62,6 +70,13 @@ internal sealed class RouteSource
     internal string PhysicalPath => Base.PhysicalPath;
 
     internal string? OverwritePath => Overwrite?.CanonicalLogicalPath;
+
+    private static SourceLogicalIdentity DefaultIdentity(RouteSourceDocument @base)
+    {
+        ArgumentNullException.ThrowIfNull(@base);
+        return new(SourceIdentity.DeriveId(@base.CanonicalLogicalPath)
+            ?? throw new ArgumentException("The source base path does not have a derivable automatic ID.", nameof(@base)), @base.CanonicalLogicalPath);
+    }
 
     private static void ValidateKindAndForm(RouteSourceKind kind, SourceDocumentForm form)
     {
@@ -114,15 +129,11 @@ internal sealed class RouteSource
         }
 
         if (overwrite.Form != SourceDocumentForm.OverwriteCompanion
-            || !string.Equals(overwrite.CanonicalLogicalPath, ReadAdjacentOverwritePath(@base.CanonicalLogicalPath), StringComparison.Ordinal))
+            || !string.Equals(overwrite.CanonicalLogicalPath, SourceOverwritePath.ReadAdjacentPath(@base.CanonicalLogicalPath), StringComparison.Ordinal))
         {
             throw new ArgumentException("The overwrite document must be the adjacent companion of the base.", nameof(overwrite));
         }
     }
 
-    private static string ReadAdjacentOverwritePath(string canonicalPath)
-    {
-        return canonicalPath[..^".md".Length] + ".overwrite.md";
-    }
 
 }
