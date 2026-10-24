@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
@@ -91,16 +92,19 @@ internal sealed record RouteInitTargetResolution(
 internal sealed class RouteInitTargetPlanner
 {
     internal RouteInitTargetResolution Resolve(RouteInitRequest request)
+        => Resolve(request, WorkspaceLayout.Create(request.Workspace, WorkspaceLayout.DefaultMainRoot));
+
+    internal RouteInitTargetResolution Resolve(RouteInitRequest request, WorkspaceLayout layout)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var result = IsExactPath(request.RouteTarget)
-            ? ResolveExactPath(request.RouteTarget)
-            : ResolveId(request);
+        var result = SourceReferenceParser.Parse(request.RouteTarget).Kind == SourceReferenceKind.SourcePath
+            ? ResolveExactPath(layout, request.RouteTarget)
+            : ResolveId(request, layout);
         if (!result.IsResolved || result.Target is not { } target)
         {
             return result;
         }
-        var path = target.CanonicalPath ?? ReadCanonicalEntrypointPath(target.RequestedSegments);
+        var path = target.CanonicalPath ?? ReadCanonicalEntrypointPath(layout, target.RequestedSegments);
         if (WorkspaceRuntimePaths.Contains(request.Workspace,
             SourceLogicalPath.ToLexicalPath(request.Workspace.PhysicalRoot, path)))
         {
@@ -125,6 +129,7 @@ internal sealed class RouteInitTargetPlanner
     }
 
     internal RouteInitTargetFacts ResolveAlignedFrameworkTarget(
+        WorkspaceLayout layout,
         RouteInitTargetFacts requested,
         IEnumerable<string> concreteSegments)
     {
@@ -143,7 +148,7 @@ internal sealed class RouteInitTargetPlanner
                 ?? throw new ArgumentException(
                     "An exact Framework target requires its requested entrypoint path.",
                     nameof(requested))
-            : ReadCanonicalEntrypointPath(segments);
+            : ReadCanonicalEntrypointPath(layout, segments);
         return new RouteInitTargetFacts(
             requested.Requested,
             requested.Kind,
@@ -153,7 +158,7 @@ internal sealed class RouteInitTargetPlanner
             path);
     }
 
-    internal static IReadOnlyList<string> ReadChainPaths(RouteInitTargetFacts target)
+    internal static IReadOnlyList<string> ReadChainPaths(WorkspaceLayout layout, RouteInitTargetFacts target)
     {
         ArgumentNullException.ThrowIfNull(target);
         var segments = target.CanonicalSegments
@@ -161,11 +166,11 @@ internal sealed class RouteInitTargetPlanner
                 "Route Init chain paths require an aligned target.",
                 nameof(target));
         return Enumerable.Range(1, segments.Count)
-            .Select(length => ReadCanonicalEntrypointPath(segments.Take(length).ToArray()))
+            .Select(length => ReadCanonicalEntrypointPath(layout, segments.Take(length).ToArray()))
             .ToArray();
     }
 
-    private static RouteInitTargetResolution ResolveExactPath(string value)
+    private static RouteInitTargetResolution ResolveExactPath(WorkspaceLayout layout, string value)
     {
         var parsed = SourceReferenceParser.Parse(value);
         if (parsed.State != SourceReferenceParseState.Valid
@@ -175,14 +180,15 @@ internal sealed class RouteInitTargetPlanner
             return Invalid(parsed.Cause ?? "The exact Route Init target path is invalid.");
         }
 
-        if (string.Equals(path, SourceLogicalPath.LoaderPath, StringComparison.Ordinal)
-            || !SourceFormClassifier.TryClassify(path, out var form)
+        if (!layout.IsImplicitContentDestination(path)
+            || string.Equals(path, layout.LoaderPath, StringComparison.Ordinal)
+            || !SourceFormClassifier.TryClassify(layout, path, out var form)
             || !SourceFormClassifier.IsEntrypoint(form))
         {
             return Invalid("An exact Route Init target must identify one recognized entrypoint and cannot identify the Loader.");
         }
 
-        var id = SourceIdentity.DeriveId(path);
+        var id = SourceIdentity.DeriveId(layout, path);
         if (id is null)
         {
             return Invalid("The exact Route Init target has no canonical route identity.");
@@ -198,7 +204,7 @@ internal sealed class RouteInitTargetPlanner
             path));
     }
 
-    private static RouteInitTargetResolution ResolveId(RouteInitRequest request)
+    private static RouteInitTargetResolution ResolveId(RouteInitRequest request, WorkspaceLayout layout)
     {
         var segments = request.RouteTarget.Split('/', StringSplitOptions.None);
         if (segments.Length == 0
@@ -233,12 +239,8 @@ internal sealed class RouteInitTargetPlanner
             segments,
             segments,
             request.RouteTarget,
-            ReadCanonicalEntrypointPath(segments)));
+            ReadCanonicalEntrypointPath(layout, segments)));
     }
-
-    private static bool IsExactPath(string value)
-        => value.StartsWith(".agents/", StringComparison.Ordinal)
-            || value.StartsWith("./.agents/", StringComparison.Ordinal);
 
     private static bool IsStructurallyInvalidSegment(string segment)
         => string.IsNullOrEmpty(segment)
@@ -246,8 +248,8 @@ internal sealed class RouteInitTargetPlanner
             || segment.IndexOfAny(['/', '\\']) >= 0
             || segment.Any(char.IsControl);
 
-    private static string ReadCanonicalEntrypointPath(IReadOnlyList<string> segments)
-        => RouteScaffoldSourceBuilder.CanonicalPath(string.Join('/', segments));
+    private static string ReadCanonicalEntrypointPath(WorkspaceLayout layout, IReadOnlyList<string> segments)
+        => RouteScaffoldSourceBuilder.CanonicalPath(layout, string.Join('/', segments));
 
     private static RouteInitTargetResolution Resolved(RouteInitTargetFacts target)
         => new(RouteInitTargetResolutionState.Resolved, target, Cause: null);

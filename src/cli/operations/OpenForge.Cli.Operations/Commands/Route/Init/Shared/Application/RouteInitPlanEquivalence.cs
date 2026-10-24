@@ -14,6 +14,9 @@ internal static class RouteInitPlanEquivalence
         ArgumentNullException.ThrowIfNull(actual);
         return ReferenceEquals(expected.Request, actual.Request)
             && expected.Settings.MatchesObservation(actual.Settings)
+            && expected.LayoutRead.State == actual.LayoutRead.State
+            && string.Equals(expected.LayoutRead.Layout?.MainRoot, actual.LayoutRead.Layout?.MainRoot, StringComparison.Ordinal)
+            && expected.LayoutRead.Expectations.SequenceEqual(actual.LayoutRead.Expectations)
             && Matches(expected.Preview, actual.Preview)
             && SequenceMatches(expected.DirectoryCreations, actual.DirectoryCreations, Matches)
             && SequenceMatches(expected.FileChanges, actual.FileChanges, Matches)

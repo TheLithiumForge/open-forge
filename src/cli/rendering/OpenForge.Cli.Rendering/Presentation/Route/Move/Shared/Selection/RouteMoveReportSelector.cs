@@ -415,7 +415,8 @@ internal static class RouteMoveReportSelector
                 IsOverwrite(target)),
             RouteMoveFindingCode.InvalidDestination => RouteMoveWording.InvalidDestination(
                 result.Destination.Requested,
-                result.Subject.Kind == RouteMoveSubjectKind.Category),
+                result.Subject.Kind == RouteMoveSubjectKind.Category,
+                result.Destination.CustomMainRoot),
             RouteMoveFindingCode.SelfMove => global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.MessageTheSourceAndTheDestinationAreTheSame(),
             RouteMoveFindingCode.DestinationInsideSource => global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.MessageTheDestinationIsInsideTheFolderBeingMoved(),
             RouteMoveFindingCode.WorkspaceUnavailable => CliFindingWording.WorkspaceUnavailable(workspace),
@@ -772,10 +773,7 @@ internal static class RouteMoveReportSelector
             return parentId;
         }
 
-        var folder = ParentFolder(result.Destination.Requested);
-        return folder.StartsWith(".agents/", StringComparison.Ordinal)
-            ? folder[".agents/".Length..]
-            : folder;
+        return result.Destination.SuggestedParentReference ?? ParentFolder(result.Destination.Requested);
     }
 
     private static bool IsOverwrite(string value)

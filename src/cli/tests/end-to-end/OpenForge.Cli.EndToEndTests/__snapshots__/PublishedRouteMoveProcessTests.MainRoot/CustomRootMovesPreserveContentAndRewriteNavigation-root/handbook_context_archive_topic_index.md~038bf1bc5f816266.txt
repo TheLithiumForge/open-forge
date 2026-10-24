@@ -1,0 +1,9 @@
+---
+description: Move fixture
+tags: [Docs]
+---
+# Root
+
+## Entries
+
+- [Move fixture](child.md) - #Docs

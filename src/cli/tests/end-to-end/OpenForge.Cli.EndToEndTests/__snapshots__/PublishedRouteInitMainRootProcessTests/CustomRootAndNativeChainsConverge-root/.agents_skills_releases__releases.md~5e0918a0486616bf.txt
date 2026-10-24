@@ -1,0 +1,16 @@
+---
+description: Draft route for skills/releases; replace this description before relying on it for selection
+tags: [NeedsAuthoring]
+---
+
+# releases
+
+Draft route for skills/releases; replace this description before relying on it for selection.
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- none - No entries - #Empty

@@ -47,6 +47,7 @@ using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Shared.Runtime;
 using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
@@ -68,6 +69,10 @@ public sealed class PublishedTokensTests
     {
 #pragma warning disable xUnit2000 // The projected constants are under test, and the production owners supply the expected values.
         var install = InstallSymbols.Create();
+        Assert.Equal(RouteMoveDefinitions.DryRun.Name, PublishedTokens.RouteMove.DryRun);
+        Assert.Equal(WorkspaceOwnershipDefinitions.FrameworkProperty, PublishedTokens.Ownership.Framework);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(FrameworkOwnershipEntry.Source)), PublishedTokens.Ownership.Source);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(OwnedSourceEntry.Id)), PublishedTokens.Ownership.Id);
         Assert.Equal(install.Configure.Name, PublishedTokens.Install.Configure);
         Assert.Equal(install.Preset.Name, PublishedTokens.Install.Preset);
         Assert.Equal(InstallConfigurationChoices.Name(InstallPreset.Custom), PublishedTokens.Install.CustomPreset);
@@ -152,6 +157,8 @@ public sealed class PublishedTokensTests
         Assert.Equal(RouteInitDefinitions.InitCommand.Name, PublishedTokens.RouteInit.Command);
         Assert.Equal(RouteInitDefinitions.Description.Name, PublishedTokens.RouteInit.Description);
         Assert.Equal(RouteInitDefinitions.Tag.Name, PublishedTokens.RouteInit.Tag);
+        Assert.Equal(RouteInitDefinitions.DryRun.Name, PublishedTokens.RouteInit.DryRun);
+        Assert.Equal(RouteInitDefinitions.Framework.Name, PublishedTokens.RouteInit.Framework);
 
         Assert.Equal(ExtensionDefinitions.ExtensionGroup.Name, PublishedTokens.Extension.Command);
 

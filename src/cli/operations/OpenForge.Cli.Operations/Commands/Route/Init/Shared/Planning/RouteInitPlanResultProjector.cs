@@ -94,7 +94,7 @@ internal sealed class RouteInitPlanResultProjector
             effects.RecoveryTargets,
             inspection.SharingOwnership ?? inspection.Framework?.Trust.Ownership)
         {
-            Settings = inspection.Settings,
+            LayoutRead = inspection.LayoutRead,
             Restoration = inspection.Restoration,
             SourceSnapshots = [.. prospective.EffectSources.Select(content => content.Before)],
         };
@@ -218,7 +218,7 @@ internal sealed class RouteInitPlanResultProjector
             }
 
             var canonicalPath = Relative(request, change.LogicalPath);
-            var payloadFile = restoration?.Files.FirstOrDefault(file => file.Asset.Path == canonicalPath);
+            var payloadFile = restoration?.Files.FirstOrDefault(file => file.TargetPath == canonicalPath);
             if (payloadFile is not null || canonicalPath == WorkspaceSettingsDefinitions.RelativePath)
             {
                 result.Add(new RouteInitEffect(canonicalPath,

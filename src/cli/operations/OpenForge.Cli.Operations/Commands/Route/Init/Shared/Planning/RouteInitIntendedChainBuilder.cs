@@ -104,7 +104,8 @@ internal sealed class RouteInitIntendedChainBuilder
                         "A managed Framework segment has no embedded asset.",
                         incomplete: false);
                 var rendered = WorkspacePayloadRenderer.Render(
-                    aligned.IntendedSource.Identity.CanonicalBasePath,
+                    inspection.Catalogue.Catalogue.Layout,
+                    asset.Path,
                     asset.Bytes.AsMemory(),
                     inspection.Settings.Document.Frontmatter);
                 var renderedBytes = rendered.Bytes ?? throw new RouteInitPlanningException(
@@ -151,7 +152,7 @@ internal sealed class RouteInitIntendedChainBuilder
             var title = chain.Id.Split('/')[^1];
             var scaffold = _scaffoldComposer.Compose(chain.Id, title, metadata, inspection.Settings.Document.Frontmatter);
             var source = aligned?.IntendedSource
-                ?? _sourceBuilder.Create(request.Workspace, chain.CanonicalMissingPath);
+                ?? _sourceBuilder.Create(inspection.Catalogue.Catalogue.Layout, chain.CanonicalMissingPath);
             var userContent = new RouteInitProspectiveSourceContent(
                 source,
                 MissingSnapshot(request, source.Identity.CanonicalBasePath),

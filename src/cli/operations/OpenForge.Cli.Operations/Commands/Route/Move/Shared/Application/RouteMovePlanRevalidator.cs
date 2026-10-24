@@ -3,6 +3,9 @@ using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
 
@@ -25,6 +28,12 @@ internal sealed class RouteMovePlanRevalidator(RouteMovePlanBuilder planBuilder)
         RouteMovePlanBuild fresh;
         try
         {
+            var layoutValidation = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver())
+                .ValidateAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+            if (layoutValidation.State == MutationValidationState.Cancelled) return Interrupted();
+            if (layoutValidation.State != MutationValidationState.Valid)
+                return new RouteMovePlanRevalidation(RouteMovePlanRevalidationState.Changed, layoutValidation.Cause);
+
             fresh = await _planBuilder.BuildAsync(plan.Request, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -55,8 +64,10 @@ internal sealed class RouteMovePlanRevalidator(RouteMovePlanBuilder planBuilder)
     }
 
     private static bool Matches(RouteMovePlan expected, RouteMovePlan actual)
-        => (expected.Projection.Destination.Inventory.Settings is not { } settings
-                || actual.Projection.Destination.Inventory.Settings is { } current && settings.MatchesObservation(current))
+        => expected.LayoutRead.State == actual.LayoutRead.State
+            && expected.LayoutRead.Layout?.MainRoot == actual.LayoutRead.Layout?.MainRoot
+            && expected.LayoutRead.Settings.MatchesObservation(actual.LayoutRead.Settings)
+            && expected.LayoutRead.Expectations.SequenceEqual(actual.LayoutRead.Expectations)
             && RouteMoveSemanticPlanProjection.Create(expected).Matches(RouteMoveSemanticPlanProjection.Create(actual));
 
     private static RouteMovePlanRevalidation Interrupted()

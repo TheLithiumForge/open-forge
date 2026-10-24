@@ -34,14 +34,24 @@ internal sealed class RouteInitOperation(
     {
         ArgumentNullException.ThrowIfNull(request);
         var build = await PlanBuilder.BuildAsync(request, cancellationToken).ConfigureAwait(false);
+        RouteInitResult BuildResult(RouteInitResultFormation formation)
+        {
+            var layout = build.LayoutRead?.Layout;
+            return ResultBuilder.Build(formation with { Request = request }) with
+            {
+                CustomRoot = layout is { IsDefault: false } ? layout.MainRoot : null,
+                LoaderPath = layout is { IsDefault: false } ? layout.LoaderPath : null,
+            };
+        }
+
         if (build.Plan is not { } plan)
         {
-            return ResultBuilder.Build(build.Formation with { Request = request });
+            return BuildResult(build.Formation);
         }
 
         if (request.IsDryRun)
         {
-            return ResultBuilder.Build(build.Formation with { Request = request });
+            return BuildResult(build.Formation);
         }
 
         if (plan.IsNoOp)
@@ -67,10 +77,10 @@ internal sealed class RouteInitOperation(
                     null),
                 Models.Result.RouteInitVerificationState.Verified,
                 preview.Findings);
-            return ResultBuilder.Build(formation with { Request = request });
+            return BuildResult(formation);
         }
 
         var outcome = await ApplicationOperation.ExecuteAsync(plan, cancellationToken).ConfigureAwait(false);
-        return ResultBuilder.Build(outcome.Formation with { Request = request });
+        return BuildResult(outcome.Formation);
     }
 }

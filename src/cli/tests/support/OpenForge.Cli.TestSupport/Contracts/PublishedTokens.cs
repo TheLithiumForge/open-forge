@@ -188,6 +188,7 @@ public static class PublishedTokens
     public static class RouteMove
     {
         public const string Command = "move";
+        public const string DryRun = "--dry-run";
     }
 
     public static class RouteRemove
@@ -202,6 +203,8 @@ public static class PublishedTokens
         public const string Command = "init";
         public const string Description = "--description";
         public const string Tag = "--tag";
+        public const string DryRun = "--dry-run";
+        public const string Framework = "--framework";
     }
 
     public static class Extension
@@ -277,6 +280,9 @@ public static class PublishedTokens
     public static class Ownership
     {
         public const string RelativePath = ".agents/open-forge.lock.json";
+        public const string Framework = "framework";
+        public const string Source = "source";
+        public const string Id = "id";
     }
 
     public static class Settings

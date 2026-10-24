@@ -1,0 +1,1 @@
+{"mode":"apply","subject":"file","source":{"id":"notes/guide","path":"handbook/context/notes/guide.md"},"destination":{"id":"skills/workshop/references/guide","path":".agents/skills/workshop/references/guide.md"},"moved":[{"from":"handbook/context/notes/guide.md","to":".agents/skills/workshop/references/guide.md"}],"rewrittenLinks":[{"path":"README.md","location":":1:9"}]}

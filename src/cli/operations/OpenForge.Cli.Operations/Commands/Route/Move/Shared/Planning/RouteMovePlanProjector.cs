@@ -51,6 +51,7 @@ internal static class RouteMovePlanProjector
         };
         return new RouteMovePlan
         {
+            LayoutRead = destination.Inventory.Subject.LayoutRead,
             Request = request,
             Preview = preview,
             Projection = input,

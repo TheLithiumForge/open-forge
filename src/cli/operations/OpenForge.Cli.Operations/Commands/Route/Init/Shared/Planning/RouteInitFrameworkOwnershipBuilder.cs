@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -20,28 +21,29 @@ internal sealed class RouteInitFrameworkOwnershipBuilder
     private readonly PhysicalPathResolver _physicalPathResolver = new();
     private readonly WorkspaceOwnershipStore _ownershipStore = new();
 
-    internal async ValueTask<RouteInitFrameworkTrust> ReadTrustAsync(
-        CliWorkspace workspace,
+    internal ValueTask<RouteInitFrameworkTrust> ReadTrustAsync(
+        WorkspaceLayoutRead layoutRead,
         FrameworkPayload payload,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
+        var layout = layoutRead.Layout ?? throw new InvalidOperationException("Framework trust requires a layout.");
+        var workspace = layout.Workspace;
         ArgumentNullException.ThrowIfNull(payload);
         cancellationToken.ThrowIfCancellationRequested();
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(_physicalPathResolver, workspace, cancellationToken).ConfigureAwait(false);
-        var container = Path.Combine(workspace.LexicalRoot, ".agents");
+        var ownership = layoutRead.Ownership;
+        var container = SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, layout.MainRoot);
         var physical = _physicalPathResolver.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, container);
         if (physical.State == PhysicalPathState.Missing)
         {
-            return new(RouteInitFrameworkTrustState.InstallRequired, ownership, "The .agents Framework container is missing.");
+            return ValueTask.FromResult(new RouteInitFrameworkTrust(RouteInitFrameworkTrustState.InstallRequired, ownership, $"The {layout.MainRoot} Framework container is missing."));
         }
         if (physical.State != PhysicalPathState.Contained
             || !Directory.Exists(physical.GetContainedPhysicalPath())
             || (File.GetAttributes(container) & FileAttributes.ReparsePoint) != 0)
         {
-            return new(RouteInitFrameworkTrustState.Blocked, ownership, "The .agents Framework container is not a contained ordinary directory.");
+            return ValueTask.FromResult(new RouteInitFrameworkTrust(RouteInitFrameworkTrustState.Blocked, ownership, $"The {layout.MainRoot} Framework container is not a contained ordinary directory."));
         }
-        return new(RouteInitFrameworkTrustState.Current, ownership, null);
+        return ValueTask.FromResult(new RouteInitFrameworkTrust(RouteInitFrameworkTrustState.Current, ownership, null));
     }
 
     internal RouteInitFrameworkOwnershipPlan BuildPlan(

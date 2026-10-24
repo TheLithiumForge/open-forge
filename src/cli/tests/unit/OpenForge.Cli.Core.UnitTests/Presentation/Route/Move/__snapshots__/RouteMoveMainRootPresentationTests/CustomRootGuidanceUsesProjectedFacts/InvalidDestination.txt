@@ -1,0 +1,8 @@
+Cannot move memory/guides/old guide: handbook/context/memory/archive/new guide must be a Markdown file path in the handbook/context context folder or a native Skills route.
+  Error  handbook/context/memory/archive/new guide  Invalid destination
+         handbook/context/memory/archive/new guide must be a Markdown file path in the handbook/context context folder or a native Skills route.
+         open-forge route move --help
+         Correct the named Route Move input, then rerun the request.
+No files were changed.
+  Correct the named Route Move input, then rerun the request.
+Next: open-forge route move --help

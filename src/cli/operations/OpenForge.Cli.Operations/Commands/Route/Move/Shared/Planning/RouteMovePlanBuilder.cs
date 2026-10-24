@@ -2,10 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.References;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
-using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
-using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
@@ -74,22 +71,18 @@ internal sealed class RouteMovePlanBuilder
         RouteMoveResolvedDestination destination,
         CancellationToken cancellationToken)
     {
-        var workspace = destination.Inventory.Subject.Request.Workspace;
-        var settings = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), workspace, cancellationToken).ConfigureAwait(false);
-        if (settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
-            return new RouteMovePlanBuild(null, RouteMoveBoundary.Stop(RouteMoveBoundary.Start(destination.Inventory.Subject.Request),
-                Models.Result.RouteMoveFindingCode.ReferenceCoverageIncomplete, CliSemanticStatus.Incomplete, settings.LogicalPath,
-                settings.Cause ?? "The required workspace settings are unavailable or invalid."));
+        var subject = destination.Inventory.Subject;
+        var settings = subject.LayoutRead.Settings;
         destination = destination with { Inventory = destination.Inventory with { Settings = settings } };
         var references = await _referencePlanner.BuildAsync(
             new RouteMoveReferencePlanningRequest
             {
                 Destination = destination,
                 CatalogueRequest = new RouteMarkdownCatalogueRequest(
-                    workspace,
+                    subject.Catalogue.Layout,
                     ["."],
                     [],
-                    new RouteMarkdownCatalogueFilters([".md"])),
+                    new RouteMarkdownCatalogueFilters([SourceFormClassifier.MarkdownExtension])),
             },
             cancellationToken).ConfigureAwait(false);
         if (references.Boundary is { } referenceBoundary)

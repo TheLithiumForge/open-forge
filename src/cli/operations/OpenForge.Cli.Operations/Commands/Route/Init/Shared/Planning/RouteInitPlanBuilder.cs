@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
@@ -26,7 +29,22 @@ internal sealed class RouteInitPlanBuilder
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var inspectionResult = await _inspector.InspectAsync(request, cancellationToken)
+        if (cancellationToken.IsCancellationRequested)
+            return _resultProjector.ProjectStopped(request, new RouteInitPlanningBoundary(
+                RouteInitFindingCode.Interrupted, "Route Init planning was cancelled.", Incomplete: true));
+
+        var layoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver())
+            .ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var build = await BuildCoreAsync(request, layoutRead, cancellationToken).ConfigureAwait(false);
+        return build with { LayoutRead = layoutRead };
+    }
+
+    private async ValueTask<RouteInitPlanBuild> BuildCoreAsync(
+        RouteInitRequest request,
+        WorkspaceLayoutRead layoutRead,
+        CancellationToken cancellationToken)
+    {
+        var inspectionResult = await _inspector.InspectAsync(request, layoutRead, cancellationToken)
             .ConfigureAwait(false);
         if (inspectionResult is RouteInitInspectionStopped inspectionStopped)
         {
@@ -36,7 +54,7 @@ internal sealed class RouteInitPlanBuilder
         var inspection = ((RouteInitInspectionCompleted)inspectionResult).Facts;
         var sharing = inspection.Framework is { } framework
             ? NavigationSharingReader.FromOwnership(framework.Trust.Ownership)
-            : await NavigationSharingReader.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+            : NavigationSharingReader.FromOwnership(inspection.LayoutRead.Ownership);
         if (!sharing.IsAvailable)
             return _resultProjector.ProjectStopped(request, new RouteInitPlanningBoundary(
                 RouteInitFindingCode.LifecycleBlocked, sharing.Cause, Incomplete: false, inspection.Target));

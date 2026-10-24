@@ -4,7 +4,7 @@ using OpenForge.Cli.EndToEndTests.Shared.Route;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedRouteMoveProcessTests
+public sealed partial class PublishedRouteMoveProcessTests
 {
     [Fact(DisplayName = "Published Route Move JSON dry-run previews the intended move without writes"), Trait("Feature", "route-move"), Trait("Evidence", "EndToEnd")]
     public async Task JsonDryRunIsReadOnly()

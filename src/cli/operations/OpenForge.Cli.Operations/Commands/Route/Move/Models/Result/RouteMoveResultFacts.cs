@@ -19,6 +19,10 @@ internal sealed record RouteMoveSource
 
 internal sealed record RouteMoveDestination
 {
+    internal string? CustomMainRoot { get; init; }
+
+    internal string? SuggestedParentReference { get; init; }
+
     public required string Requested { get; init; }
 
     public string? Id { get; init; }

@@ -1,3 +1,8 @@
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
@@ -14,6 +19,15 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
 
 internal static class RouteInitRedTestData
 {
+    internal static WorkspaceLayoutRead LayoutRead(CliWorkspace workspace)
+    {
+        var settings = WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceSettingsDefinitions.RelativePath));
+        var ownership = WorkspaceOwnershipRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceOwnershipDefinitions.RelativePath));
+        return new WorkspaceLayoutRead(WorkspaceLayoutReadState.Uninstalled, settings, ownership,
+            WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [],
+            [settings.Snapshot!.Expectation, ownership.Snapshot!.Expectation]);
+    }
+
     internal static CliWorkspace Workspace()
     {
         var root = Path.GetFullPath(

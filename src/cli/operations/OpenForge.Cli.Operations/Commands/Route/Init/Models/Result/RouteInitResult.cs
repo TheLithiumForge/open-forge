@@ -38,6 +38,10 @@ internal sealed record RouteInitResult : ICliCommandResult
         DebugCommand = formation.Request is { } debugRequest ? RouteInitRetryCommand.From(debugRequest, diagnostics: true) : null;
     }
 
+    internal string? CustomRoot { get; init; }
+
+    internal string? LoaderPath { get; init; }
+
     internal RouteRecoveryHistory RecoveryHistory { get; init; } = RouteRecoveryHistory.Empty;
 
     internal string RecoveryHistoryCode => RouteInitDefinitions.RecoveryHistoryCode;

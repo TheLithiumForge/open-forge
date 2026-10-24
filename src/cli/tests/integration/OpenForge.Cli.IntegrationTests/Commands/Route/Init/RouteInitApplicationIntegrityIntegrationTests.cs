@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
@@ -91,7 +93,7 @@ public sealed class RouteInitApplicationIntegrityIntegrationTests
 
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "An escaped lifecycle attempt reports lifecycle completion and recovery state as unknown"), Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
-    public void EscapedLifecycleAndRecoveryStoreAttemptsAreUnknown()
+    public async Task EscapedLifecycleAndRecoveryStoreAttemptsAreUnknown()
     {
         using var owned = TemporaryWorkspace.Create("route-init-attempt-lifecycle");
         var workspace = Workspace(owned);
@@ -118,7 +120,7 @@ public sealed class RouteInitApplicationIntegrityIntegrationTests
             recoveryTargets: [RecoveryBundleTarget.Create(change, before)],
             ownership: null)
         {
-            Settings = WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, ".agents", "open-forge.json")),
+            LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, TestContext.Current.CancellationToken),
         };
 
         var outcome = RouteInitApplicationResultFactory.Build(
