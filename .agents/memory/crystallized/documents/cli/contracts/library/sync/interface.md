@@ -9,6 +9,12 @@ open-forge:
 
 A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
 
+## Workspace Layout
+
+Library registrations, source roots, destination roots and suffixes stay literal. The selected consumer layout determines content identity, existing navigation and implicit path admission.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the current Crystallized Interface Contract for
@@ -267,10 +273,10 @@ It persists in non-interactive execution; `--dry-run` never writes it. A refused
 explicit write is reported and prevents content application. Eligible interactive
 approval offers always, once or cancel. Once adds no persistent permission grant.
 Invalid or unavailable required settings block the request, including destinations
-inside `.agents/`.
+inside the primary content locations.
 
 This command selects [Workspace Permissions](../../shared/workspace-permissions/interface.md)
-for the union of complete current mapped inventory and registered destinations, including unchanged links and retirements. `.agents/**` leaves remain implicit.
+for the union of complete current mapped inventory and registered destinations, including unchanged links and retirements. Eligible primary-content leaves remain implicit.
 Requirements are destination paths shared by every Extension and Library; they carry no Library ID or source binding. Permission remains
 necessary even for existing owned links; recorded identity makes removal
 source-independent, without exempting it from revocation.
@@ -533,7 +539,7 @@ safe effects), `registered-link-gone` (completed-with-warnings),
 
 Prompt rules from the catalogue:
 
-Permission for new links outside `.agents`; plan review; `Apply these
+Permission for new links outside the primary content locations. plan review. `Apply these
 changes? [y/N]` unless `--automatic` (added by 04).
 
 ## Representative Transcripts

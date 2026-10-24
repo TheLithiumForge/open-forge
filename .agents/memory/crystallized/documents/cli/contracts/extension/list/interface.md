@@ -7,6 +7,12 @@ open-forge:
 
 # extension list Interface Contract
 
+## Workspace Layout
+
+Package paths remain package coordinates. Installed paths follow the selected layout, with native Skills and controls fixed in `.agents`. Workspace comparisons report the actual installed destinations.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for

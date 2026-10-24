@@ -6,6 +6,12 @@ open-forge:
 
 # remove Interface Contract
 
+## Workspace Layout
+
+Root Remove selects actual content paths in the chosen layout. Settings and ownership stay in `.agents`, separate from removable content.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Help
 
 The purpose sentence is: Remove one exact path, route, Extension, or Library and remember supported exclusions.
@@ -109,7 +115,7 @@ The authored settings contain optional, duplicate-free lists:
 
 | Setting              | Meaning                                                             |
 | -------------------- | ------------------------------------------------------------------- |
-| `removedCategories`  | Root category names such as `guidance`, covering `.agents/guidance` |
+| `removedCategories`  | Root category names such as `guidance`, covering the selected layout’s Guidance category |
 | `removedFiles`       | Exact canonical workspace-relative file destinations                |
 | `removedDirectories` | Canonical directories and every descendant, including future files  |
 | `removedExtensions`  | Stable package IDs, including packages requested as dependencies    |

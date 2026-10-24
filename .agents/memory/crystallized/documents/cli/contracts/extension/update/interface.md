@@ -7,6 +7,12 @@ open-forge:
 
 # extension update Interface Contract
 
+## Workspace Layout
+
+Package paths remain package coordinates. Installed paths follow the selected layout, with native Skills and controls fixed in `.agents`. Permission and ownership checks use those installed destinations.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for
@@ -67,14 +73,14 @@ It persists in non-interactive execution; `--dry-run` never writes it. A refused
 explicit write is reported and prevents content application. Eligible interactive
 approval offers always, once or cancel. Once changes no settings. Invalid or unavailable settings block planning before permission approval,
 because removal exclusions cannot be determined safely. A missing settings file
-means no saved exclusions or external grants. Implicit `.agents/` destinations
+means no saved exclusions or external grants. Implicit primary-content destinations
 still require no permission grant.
 
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
 [Behavior](../../shared/workspace-permissions/behavior.md). Require shared allow-list admission for intended external targets and previously owned
 external targets in the selected update plan, including retirement and
 preserved paths.
-Existing `.agents/` targets need no grant; their prior safety and ownership
+Eligible primary-content targets need no grant. Their prior safety and ownership
 checks remain. Revocation blocks the complete selected lifecycle operation,
 including ownership release, until exact explicit reapproval. Unrelated
 installed packages do not enter this request's required set.
@@ -149,7 +155,7 @@ Update requires:
 
 - recorded Extension ownership for selecting installed IDs and dependencies;
 - readable current source bytes for every selected identity and dependency;
-- an ordinary contained `.agents` Framework container; and
+- an ordinary contained main-root container, and
 - complete affected route-host, generated-navigation, ownership, and
   cross-section preservation facts, subject only to the proven unrelated
   readable ordinary metadata exception defined below.
@@ -292,7 +298,7 @@ permission, expected-state, verification or recovery checks and never implies pr
 
 `--prune` releases selected retired ownership. It deletes a retired whole-file
 path only when it exists as an ordinary contained file, the shared allow list
-(with implicit `.agents` admission) admits it, reserved-path checks pass, and no
+(with implicit primary-content admission) admits it, reserved-path checks pass, and no
 remaining owner or route dependency requires it. Changed content is eligible.
 Absent paths are never deleted. Out-of-boundary claims cannot authorize deletion.
 The verified recovery bundle precedes every deletion.

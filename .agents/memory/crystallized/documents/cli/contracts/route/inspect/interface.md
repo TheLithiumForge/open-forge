@@ -7,6 +7,12 @@ open-forge:
 
 # route inspect Interface Contract
 
+## Workspace Layout
+
+Inspection reports the actual selected loader and source path for custom-root content and native Skills.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
@@ -202,7 +208,7 @@ retain their event meanings.
 
 | Operand              | State                         | Accepted value                                                                | Omission                                                                                                        | Repetition and order                                                                                     |
 | -------------------- | ----------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `<source-reference>` | Required for domain execution | One shared automatic source ID or exact `.agents/...` or `./.agents/...` path | Invalid in domain mode; terminal `--help` and `--version` behavior follows the shared Global CLI Flags contract | Exactly one subject; missing or several source references are invalid. There is no source-list ordering. |
+| `<source-reference>` | Required for domain execution | One shared automatic source ID or exact `./<workspace-path>` path | Invalid in domain mode. terminal `--help` and `--version` behavior follows the shared Global CLI Flags contract | Exactly one subject. missing or several source references are invalid. There is no source-list ordering. |
 
 The source-reference contract remains the complete authority for exact matching,
 quoting, path containment, collisions, interactive identity disambiguation,

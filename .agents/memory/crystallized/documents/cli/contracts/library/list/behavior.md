@@ -10,6 +10,12 @@ open-forge:
 Unavailable ownership is reported as `library-list.ownership-observation`
 with `completed` status. This finding grants no ownership or mutation permission.
 
+## Workspace Layout
+
+Use the observed consumer layout for destination identities and navigation comparisons. Never reinterpret Library mappings as package coordinates.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This is the accepted current Crystallized Behavior Contract for read-only
@@ -141,7 +147,7 @@ different destination, use a nearby file, or infer a missing path from a source
 root. A safely observed `missing` or `changed` link is drift, not proof of a
 source addition or retirement.
 
-For an eligible `.agents` destination, derive its automatic source ID from the
+For an eligible primary-content destination, derive its automatic source ID from the
 destination path under the shared source-reference rules. Keep that ID separate
 from the Library management ID. If the destination is not an eligible source
 kind or its identity cannot be established, retain a null source ID and the

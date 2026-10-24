@@ -7,6 +7,12 @@ open-forge:
 
 # route list Interface Contract
 
+## Workspace Layout
+
+Root rows come from the selected loader. Native Skills retain `skills/...` identities, and included files retain exact `./path` identities.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for `open-forge
@@ -19,7 +25,7 @@ in the merged native CLI; implementation and executable evidence are tracked in
 The sibling [Behavior Contract](behavior.md) defines deterministic,
 technology-neutral resolution and conformance. The [Route group entrypoint](../_route.md)
 defines routing-only help. The shared [CLI Source References](../../shared/source-references/interface.md)
-contract owns source IDs, exact `.agents` paths, quoting, collisions, and
+contract owns source IDs, exact workspace paths, quoting, collisions, and
 disambiguation. The shared [Global CLI Flags](../../shared/global-flags/interface.md)
 contract owns the six global flags and their common presentation and error rules.
 Those sources remain authoritative for their complete shared meaning; this file
@@ -63,7 +69,7 @@ open-forge route list [source-reference]
 ```
 
 There is at most one optional source operand. It uses the shared source-reference
-grammar: an automatic source ID or an exact `.agents/...` path. The command has
+grammar: an automatic source ID or an exact `./<workspace-path>` path. The command has
 no alias. Depth accepts the native value forms `--depth 2`, `--depth=2`, and
 `--depth:2`, with identical meaning. Source-reference syntax is unchanged.
 
@@ -71,7 +77,7 @@ no alias. Depth accepts the native value forms `--depth 2`, `--depth=2`, and
 
 | Input                                 | Role                                                                  | Accepted value                                          | Omission                                                                 | Repetition and composition                                                |
 | ------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| `source-reference`                    | Select one routed entrypoint or routed leaf                           | One shared source ID or exact `.agents` path            | Select every current root route mechanically exposed by the exact Loader | At most one operand; a second operand is invalid                          |
+| `source-reference`                    | Select one routed entrypoint or routed leaf                           | One shared source ID or exact workspace path            | Select every current root route mechanically exposed by the exact Loader | At most one operand. a second operand is invalid                          |
 | `--depth=<non-negative-integer\|all>` | Select route descendants by structural edges                          | A decimal non-negative integer or the exact value `all` | `1`                                                                      | One scalar value; repetition is invalid rather than choosing a precedence |
 | global flags                          | Select workspace, presentation, diagnostics, or terminal help/version | The six values defined by the shared contract           | Shared defaults                                                          | Shared repetition, terminal, and composition rules apply                  |
 
@@ -94,7 +100,7 @@ command does not search parent directories or infer a workspace from an operand.
 Every source operand is interpreted by the shared Source References contract. In
 particular:
 
-- An ID is matched exactly. An exact `.agents/...` path is resolved from the
+- An ID is matched exactly. An exact `./<workspace-path>` path is resolved from the
   selected workspace and reported canonically with `/` separators.
 - Selecting a base or a valid overwrite path resolves the one logical source to
   its base route. The overwrite is never an independent row.
@@ -131,14 +137,14 @@ not included by the operand-free form; an entrypoint must be selected explicitly
 
 ## Included Root Rows
 
-Loader-listed workspace files outside `.agents/` are also root rows. Their row
+Loader-listed workspace files outside the primary content locations are also root rows. Their row
 descriptions and tags are authoritative. Included Markdown catalogues expose only
 their listed descendants. A file registered in settings `roots` without a loader
 row is labelled `not in the loader`, has no children and does not make agents read
 its file or folder. JSON includes `unlisted: true` on an unlisted registration.
 Other rows omit that member. An unlisted registration can share a path with an active descendant row. The
 registration row stays childless, and the active row keeps its catalogue parent.
-Files outside `.agents/` use their exact `./path` reference instead of a short ID.
+Files outside the primary content locations use their exact `./path` reference instead of a short ID.
 A missing included target keeps its path and a missing label. The result is
 incomplete, and its catalogue's direct child count is unknown.
 
@@ -169,7 +175,7 @@ prefix.
 
 ## Authoritative Topology And Included Sources
 
-For `.agents/` sources, the current authored filesystem topology and the source contracts that establish
+For primary-content sources, the current authored filesystem topology and the source contracts that establish
 route meaning are authoritative. Generated `Entries` are a navigation projection;
 they cannot add a row, hide a row, change a parent, or choose row order. Stale
 generated lines therefore do not change the route-list result.
@@ -184,7 +190,7 @@ The result includes:
 - Routed native sources whose source contract establishes route metadata, such as
   a routed `SKILL.md`.
 
-Within `.agents/`, it excludes supported but unrouted sources and excludes a valid overwrite companion
+Within the primary content locations, it excludes supported but unrouted sources and excludes a valid overwrite companion
 as an independent row. A base row represents the logical source; its overwrite
 relationship is retained in provenance when relevant.
 
@@ -196,7 +202,7 @@ descendant merely because it is physically below a routed ancestor.
 
 Every emitted row is a typed fact from the same resolved topology. It retains:
 
-- **ID**: the automatic source ID for `.agents/` sources or the exact `./path`
+- **ID**: the automatic source ID for primary-content sources or the exact `./path`
   reference for included files, under the shared Source References contract.
 - **Path**: the canonical workspace-relative source path.
 - **Parent and hierarchy**: the actual routed parent ID/path when mechanically
@@ -218,9 +224,9 @@ Every emitted row is a typed fact from the same resolved topology. It retains:
   root, explicit root, descendant, or detached selection, and the evidence and
   boundary supporting the reported coverage.
 
-For `.agents/` sources, rows do not reconstruct missing metadata or treat a
+For primary-content sources, rows do not reconstruct missing metadata or treat a
 generated entry description as authored source metadata. Included files outside
-`.agents/` take their metadata from the row that lists them. If an authored fact is malformed or cannot be
+the primary content locations take their metadata from the row that lists them. If an authored fact is malformed or cannot be
 confirmed, the safe row and the finding remain distinguishable in the result.
 
 ## Ordering

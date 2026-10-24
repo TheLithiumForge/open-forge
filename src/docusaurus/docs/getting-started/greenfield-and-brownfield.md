@@ -7,6 +7,8 @@ description: How to start Open Forge on a greenfield project, how to adopt it in
 
 Open Forge works the same way in a brand-new project and in a ten-year-old codebase. What differs is where the truth lives when you start, and so what you should write down first.
 
+At first installation, either kind of project can [choose a context folder](installation.md#choose-the-context-folder). The examples below use the default `.agents` layout. Existing documents can still be included where they live.
+
 The base Framework gives you routing, loading, and your selected Core categories and Memory states. [Installation](installation.md#choose-the-installed-routes) explains Essentials, Full Core, and Custom. Several things on this page come from optional Extensions: Decisions from [Planning](../extensions/planning.md), and Vision and Architecture documents from [Project Documents](../extensions/project-documents.md). The [Development Toolkit](../extensions/development-toolkit.md) installs both, plus the Development and Flows and Scenarios packages.
 
 |                                    | Greenfield: a new project                         | Brownfield: an existing codebase                         |
@@ -66,7 +68,7 @@ Save your current work before adoption. For a trial, use a separate local clone 
    open-forge route include docs/architecture.md --description "Architecture overview" --tag Project
    ```
 
-   Each command writes one line under `## Entries` in `.agents/loader.md`,
+   Each command writes one line under `## Entries` in the selected loader, `.agents/loader.md` by default,
    which you can also write by hand:
 
    ```markdown

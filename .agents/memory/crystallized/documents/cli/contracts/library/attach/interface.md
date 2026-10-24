@@ -9,6 +9,12 @@ open-forge:
 
 A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
 
+## Workspace Layout
+
+Library registrations, source roots, destination roots and suffixes stay literal. The selected consumer layout determines content identity, existing navigation and implicit path admission.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the current Crystallized Interface Contract for
@@ -128,7 +134,7 @@ characters are invalid. The ID is caller-supplied, is not derived from
 `<source-root>`, and is unique within the consumer library-record namespace.
 
 Automatic source IDs remain a separate namespace. A projected eligible
-`.agents/...` destination retains its ordinary destination-derived automatic
+primary-content destination retains its ordinary destination-derived automatic
 source ID. The library ID is never passed to a source-reference operation,
 treated as a route identity, or confused with the Extension `--source` value.
 
@@ -191,7 +197,7 @@ ancestry. Local sibling files remain untouched; no directory symlink, copied
 file fallback or directory ownership is introduced.
 
 Validate source eligibility and final destination protection separately. Protect
-Git metadata, Framework and recognized manager controls, `.agents` Loader,
+Git metadata, Framework and recognized manager controls, selected-layout Loader,
 entrypoint and overwrite controls, authored settings and generated ownership controls, recovery and temporary
 storage, and every selected or registered Library source tree. A grant covering
 a containing directory never overrides these leaf checks. Compare portable
@@ -200,7 +206,7 @@ Libraries may share ordinary directories but never the same destination leaf.
 An unregistered link, including an exact-looking link, is an existing occupant
 and is never adopted.
 
-Only mapped `.agents/**` leaves may participate in an existing consumer route
+Only projected primary-content leaves may participate in an existing consumer route
 chain and its bounded generated `Entries` projection under the Index contract.
 The region and route chain must already exist and authored bytes remain intact.
 External Markdown remains opaque content. No source entrypoint, Loader, missing
@@ -275,10 +281,10 @@ It persists in non-interactive execution; `--dry-run` never writes it. A refused
 explicit write is reported and prevents content application. Eligible interactive
 approval offers always, once or cancel. Once adds no persistent permission grant.
 Invalid or unavailable required settings block the request, including destinations
-inside `.agents/`.
+inside the primary content locations.
 
 This command selects [Workspace Permissions](../../shared/workspace-permissions/interface.md)
-for the complete eligible mapped inventory. `.agents/**` leaves remain implicit.
+for the complete eligible mapped inventory. Eligible primary-content leaves remain implicit.
 Requirements are destination paths shared by every Extension and Library; they carry no Library ID or source binding. Permission remains
 necessary even for existing owned links; recorded identity makes removal
 source-independent, without exempting it from revocation.
@@ -560,7 +566,7 @@ action when available. Counts are:
 Prompt rules from the catalogue:
 
 Permission (`Allow always / Allow once / Cancel`, with `Allow once` initially
-focused in key mode) covers destinations outside `.agents`. A plan review and
+focused in key mode) covers destinations outside the primary content locations. A plan review and
 `Apply these changes? [y/N]` follow unless `--automatic` is supplied (added by 04).
 
 ## Representative Transcripts

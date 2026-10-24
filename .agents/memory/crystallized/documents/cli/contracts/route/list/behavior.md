@@ -7,6 +7,12 @@ open-forge:
 
 # route list Behavior Contract
 
+## Workspace Layout
+
+Carry the observed layout through inventory, loader selection and included-source projection. Preserve aliases and conditions when reconstructing the catalogue.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Authority
 
 This is the accepted current Crystallized Behavior Contract for `open-forge route

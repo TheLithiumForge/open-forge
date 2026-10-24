@@ -7,6 +7,12 @@ open-forge:
 
 # route exclude Interface Contract
 
+## Workspace Layout
+
+Exclude removes a row from the selected loader. The native Skills catalogue follows primary-category rules with a custom root.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This contract implements the maintainer's frozen route include decision.
@@ -38,16 +44,16 @@ Reject directories, globs, URLs, fragments, lexical or linked workspace escapes,
 Git metadata, the loader, settings and lock files as invalid input.
 A directory error names its `_<folder>.md` catalogue and says whether to create it first.
 
-Outside `.agents/`, any text file is eligible. A Markdown file with
+Outside the primary content locations, any text file is eligible. A Markdown file with
 `## Entries` is followed as a catalogue. Its own frontmatter never sets loading.
-Inside `.agents/`, accept only a direct child folder's canonical catalogue.
-A deeper file error names that folder's catalogue. Files directly in `.agents/` are invalid.
+Within the main root, accept only a direct child folder's canonical catalogue. The fixed `.agents/skills/_skills.md` catalogue is also a primary category.
+A deeper file error names that category's catalogue. Other files directly in the main root are invalid.
 
 ## Removal And No Change
 
 Remove every row for the destination, including hand-written rows and rows whose
 target is missing. Remove its external `roots` registration too.
-For a main-root catalogue, remove its generated row through loader membership.
+For a primary-category catalogue, remove its generated row through loader membership.
 When neither a row nor a registration exists, report nothing changed and succeed.
 
 ## Preview And Effects

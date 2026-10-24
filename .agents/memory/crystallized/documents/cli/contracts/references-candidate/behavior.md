@@ -7,6 +7,12 @@ open-forge:
 
 # references Behavior Contract
 
+## Workspace Layout
+
+Use the layout carried by the read session for source resolution and incoming selection. Keep link destinations literal and retain catalogue identities in results.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Authority
 
 This is the accepted current Crystallized Behavior Contract for
@@ -92,7 +98,7 @@ typed result and is not evaluated, scanned, or counted toward aggregate coverage
 
 Include/exclude filters are passed unchanged to the shared Source Universe
 Filters contract for incoming work. With no filter flags, use the normal default
-of all eligible `.agents` Markdown sources. With filters, use the effective
+of all eligible primary-content Markdown sources. With filters, use the effective
 universe produced by the shared union and exclusion-precedence rules. With both,
 the filtered universe affects incoming only; outgoing remains the full selected
 source layer read. With out, reject the filters before scanning.
@@ -168,7 +174,7 @@ HTTP/HTTPS destinations, and unsupported non-HTTP schemes.
 For a local occurrence, retain the raw authored destination, fragment when
 present, link-use location, nullable destination location, direction `out`,
 source layer/path, target kind, resolved local ID/path when available, and
-resolution/containment status. A contained local target outside `.agents/` has no
+resolution/containment status. A contained local target outside the primary content locations has no
 short ID. An active included target uses its exact `./path` reference, while an
 unlisted target has a null ID. Both keep their canonical workspace-relative path. Preserve every
 duplicate and every base/overwrite occurrence; do not deduplicate by destination,
@@ -231,7 +237,7 @@ Classify the authored destination before resolving it:
 
 Target kind remains `local` for local path forms even when their local resolution
 is malformed, unsafe, ambiguous, missing, or unreadable. `target.id` is present
-only for an existing unambiguous `.agents` logical source or an active included
+only for an existing unambiguous primary-content logical source or an active included
 source identified by its exact `./path` reference. `target.path` is the
 canonical contained workspace-relative path whenever it can be established,
 including a missing path. `target.layer` identifies an existing physical base or
@@ -394,7 +400,7 @@ A conforming implementation should prove at least these observable scenarios:
    `in` or `out` removes the other section from work and accounting.
 2. Repeated or aliased direction values are invalid, and include/exclude with
    `out` is invalid.
-3. The default incoming universe is all eligible `.agents` Markdown; shared
+3. The default incoming universe is all eligible primary-content Markdown. shared
    include/exclude selectors form unions with exclusion precedence, and a
    complete empty result follows only a complete effective scan.
 4. With both, filters change incoming work only; outgoing still reads the full
@@ -414,7 +420,7 @@ A conforming implementation should prove at least these observable scenarios:
    physical layer, while malformed, duplicate, misplaced, or unsafe regions do
    not suppress links and produce incomplete or blocked coverage according to the
    safe-boundary rule.
-10. Local contained targets, local targets outside `.agents`, fragment-only links,
+10. Local contained targets, local targets outside the primary content locations, fragment-only links,
     every declared local resolution, non-HTTP unsupported schemes, and external
     HTTP/HTTPS facts are represented with no network attempt.
 11. An otherwise complete outgoing result containing external-unchecked facts is

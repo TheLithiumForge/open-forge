@@ -7,6 +7,12 @@ open-forge:
 
 # Index Interface Contract
 
+## Workspace Layout
+
+Index maintains the selected context folder and reachable native Skill catalogues. Deliberately omitted loader rows remain omitted.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Help
 
 The purpose sentence is: Complete missing metadata and navigation after edits to routed Markdown.
@@ -157,7 +163,7 @@ Zero source operands are valid. Omitting all source operands selects the
 complete Loader-rooted topology described in [Rooted selection](#rooted-selection).
 
 One or more source operands use the complete shared `source-reference` contract.
-The command accepts source IDs and exact `.agents/...` paths through that
+The command accepts source IDs and exact `./<workspace-path>` paths through that
 contract, including its quoting, exact-match, collision, path, and overwrite
 rules.
 
@@ -210,12 +216,12 @@ The smallest valid invocation is:
 open-forge index
 ```
 
-With no source operand, the command starts from the exact `.agents/loader.md` in
-the selected workspace.
+With no source operand, the command starts from the selected layout’s loader in
+the workspace.
 
 When that Loader is present, each intended root is one structurally valid,
 physically unique recognized entrypoint that directly represents one
-`.agents/<slug>` folder. More than one recognized entrypoint representing the
+primary category folder in the selected layout. More than one recognized entrypoint representing the
 same root folder is ambiguous and blocks the request. The operand-free form
 selects the Loader's generated region and every entrypoint region reachable from
 those intended roots through the current routed topology.

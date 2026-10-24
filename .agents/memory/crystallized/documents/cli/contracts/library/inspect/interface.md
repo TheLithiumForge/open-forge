@@ -10,6 +10,12 @@ open-forge:
 Unavailable ownership is reported as `library-inspect.ownership-observation`
 with `completed` status. This finding grants no ownership or mutation permission.
 
+## Workspace Layout
+
+Library registrations, source roots, destination roots and suffixes stay literal. The selected consumer layout determines content identity, existing navigation and implicit path admission.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for read-only

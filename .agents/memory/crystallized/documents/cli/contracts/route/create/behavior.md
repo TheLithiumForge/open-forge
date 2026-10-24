@@ -7,6 +7,12 @@ open-forge:
 
 # route create Behavior Contract
 
+## Workspace Layout
+
+Build destinations from the layout and stop ancestor traversal at the relevant primary content root. Apply ordinal authority checks and revalidate the layout under the lease.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral
@@ -95,15 +101,15 @@ contract. It does not search parent directories, substitute a Git root, infer a
 workspace from the target, or use another `.agents` directory.
 
 The [CLI Source References Behavior Contract](../../shared/source-references/behavior.md) determines whether an existing-source
-reference is an automatic ID or an exact `.agents/...` path. It defines ID
+reference is an automatic ID or an exact `./<workspace-path>` path. It defines ID
 segments, exact-path detection, quoting, containment, source identity, spaces,
 Unicode, collisions, overwrite identity, and canonical reporting. `route create`
 adds only the mapping from a target ID to one ordinary Markdown path described
 in [File Target](interface.md#file-target). It does not guess another target
 shape from filesystem coincidence.
 
-The exact target path is normalized to the selected workspace's canonical
-`.agents/...` reporting form and must remain lexically and physically inside
+The exact target path is normalized to the selected workspace’s canonical
+workspace-relative reporting form and must remain lexically and physically inside
 that workspace. A directory, Loader, recognized entrypoint, overwrite
 companion, `SKILL.md`, non-Markdown resource, unsafe identity, path escape, or
 other unsupported kind cannot become the ordinary-file target. Backslash input,

@@ -9,6 +9,12 @@ open-forge:
 
 A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
 
+## Workspace Layout
+
+Library registrations, source roots, destination roots and suffixes stay literal. The selected consumer layout determines content identity, existing navigation and implicit path admission.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the current Crystallized Interface Contract for
@@ -165,7 +171,7 @@ siblings and destination directories remain untouched.
 
 Validate recorded path grammar and destination protection without resolving or
 enumerating source content. Protect
-Git metadata, Framework and recognized manager controls, `.agents` Loader,
+Git metadata, Framework and recognized manager controls, selected-layout Loader,
 entrypoint and overwrite controls, authored settings and generated ownership controls, recovery and temporary
 storage, and every selected or registered Library source tree. A grant covering
 a containing directory never overrides these leaf checks. Compare portable
@@ -174,7 +180,7 @@ Libraries may share ordinary directories but never the same destination leaf.
 An unregistered link, including an exact-looking link, is an existing occupant
 and is never adopted.
 
-Only mapped `.agents/**` leaves may participate in an existing consumer route
+Only projected primary-content leaves may participate in an existing consumer route
 chain and its bounded generated `Entries` projection under the Index contract.
 The region and route chain must already exist and authored bytes remain intact.
 External Markdown remains opaque content. No source entrypoint, Loader, missing
@@ -252,12 +258,12 @@ explicit write is reported and prevents content application. Eligible interactiv
 approval offers always, once or cancel. Once saves no permission grant; removal
 still records its persistent exclusion. Invalid or unavailable settings block planning before permission approval,
 because removal exclusions cannot be determined safely. A missing settings file
-means no saved exclusions or external grants. Implicit `.agents/` destinations
+means no saved exclusions or external grants. Implicit primary-content destinations
 still require no permission grant.
 
 This command selects [Workspace Permissions](../../shared/workspace-permissions/interface.md)
 for every registered destination in the detach plan, including a positively
-missing or changed ordinary destination whose bytes are retained. `.agents/**`
+missing or changed ordinary destination whose bytes are retained. Eligible primary-content
 leaves remain implicit.
 Requirements are destination paths shared by every Extension and Library; they carry no Library ID or source binding. Permission remains
 necessary even for existing owned links; recorded identity makes removal
@@ -331,7 +337,7 @@ all is the default filter.
 
 Library detach shows a plan review before final confirmation. `--automatic`
 bypasses the final confirmation only; without it the prompt is
-`Apply these changes, including removing <N> links? [y/N]`. Permission prompts for links outside `.agents`
+`Apply these changes, including removing <N> links? [y/N]`. Permission prompts for links outside the primary content locations
 remain separate. In a noninteractive invocation, when final confirmation is
 required and `--automatic` is absent, the result is `Invalid4` with
 `library-detach.confirmation-required`; no link or record effect is applied.
@@ -513,7 +519,7 @@ or alternate occupant: blocked),
 
 Prompt rules from the catalogue:
 
-Permission when links outside `.agents` are removed; plan review listing
+Permission when links outside the primary content locations are removed. plan review listing
 every link; `Apply these changes, including removing <N> links? [y/N]` unless `--automatic`
 (added by 04).
 

@@ -7,6 +7,10 @@ open-forge:
 
 # Workspace Libraries Technical Design
 
+## Consumer Layout
+
+Library registrations, source roots, destination roots and suffixes remain literal. They never use package-path remapping. The consumer’s observed layout supplies source identity, existing navigation boundaries and implicit destination admission. Fixed settings and ownership storage stay in `.agents`. Carry that observation through planning and revalidate it before grants or effects. See [Workspace Layout](workspace-layout.md).
+
 ## Boundary And Ownership
 
 Workspace Libraries project eligible files from a workspace-contained source
@@ -170,10 +174,10 @@ inspection and recovery consumers use derived destinations. Source suffixes
 remain the membership keys for current-versus-registered reconciliation.
 
 Final destination admission separately protects Git metadata, known manager
-controls, Framework-owned paths/regions, `.agents` Loader/entrypoint/overwrite
+controls, Framework-owned paths/regions, selected-layout Loader/entrypoint/overwrite
 controls, authored settings and generated ownership controls, operation temporary and
 recovery storage, and source trees. Library external Markdown remains opaque.
-Only mapped `.agents/**` leaves can affect existing generated navigation under
+Only projected leaves in the primary content locations can affect existing generated navigation under
 the Index contract. No new route chain, Loader or source entrypoint is created.
 
 ## Library Permission Planning
@@ -277,7 +281,7 @@ List observes records, bounded source availability and registered mapped leaves
 without a source inventory. Inspect inventories the selected root completely
 and compares the mapped union. Both expose the recorded destination root and
 source-relative/destination facts; automatic source IDs apply only to eligible
-`.agents` destinations and remain null for opaque external files. Neither
+primary-content destinations and remain null for opaque external files. Neither
 command prompts, acquires a lease or writes persistent state.
 
 Status remains bounded; Doctor attempts complete inventories of registered

@@ -7,6 +7,12 @@ open-forge:
 
 # extension list Behavior Contract
 
+## Workspace Layout
+
+Use the observed layout for installed closure, path comparisons and lifecycle fingerprints. Keep package `Path` separate from installed `TargetPath`.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This is the accepted current Crystallized Behavior Contract for read-only

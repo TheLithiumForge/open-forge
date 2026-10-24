@@ -8,6 +8,8 @@ description: What happens when an agent starts work in an Open Forge workspace, 
 
 An agent starts with your instructions and folder indexes, then opens the branches its task needs.
 
+The path examples use the default `.agents` context folder. With a [custom folder](installation.md#choose-the-context-folder), follow the loader path in the installed host instructions.
+
 For one walkthrough from installation to a saved useful fact, follow the [ten-minute guide](ten-minute-guide.md). This page explains what the agent loads and how to check it.
 
 For a first look at what the agent reads, try a small task in an existing project:
@@ -27,7 +29,7 @@ The rest of this page explains what happens underneath. The [ten-minute guide](t
 
 ## What the rules ask the agent to do
 
-1. **It reads `AGENTS.md`.** The installed block tells it to read `.agents/loader.md` before starting.
+1. **It reads `AGENTS.md`.** The installed block tells it to read the selected loader, `.agents/loader.md` by default, before starting.
 2. **It reads the loader.** The loader gives the reading steps and lists what this workspace uses. Full Core lists Directives, Guidance, Maps, Memory, Patterns, Skills, and Templates. Essentials, Custom and Minimal follow your [installation choices](installation.md#choose-the-installed-routes), and you can add links to documents anywhere in the repository.
 3. **It loads what's marked for startup.** Entries tagged `#LoadNow` are read right away. That's how the Directives and Memory entrypoints, your workspace-wide Directives, the installed Working and Crystallized Memory entrypoints and any document you linked with `#LoadNow` reach the agent before it touches your task. Guidance, Maps, Patterns, Skills and Templates open when the task fits their description. The Emerging Memory entrypoint is tagged `#KeepInMind`, so when present it's read at startup and read again at each refresh point: task start or resume, after context restoration, and before handoff or closeout. Git-ignored routes load the same way.
 4. **It reads each entrypoint's rules and map.** An entrypoint gives the agent its category's purpose, rules, and one line per item under `Entries`. Linked files open when selected, tagged to load, or explicitly required by a loaded rule. The Skills entrypoint asks for the CLI usage guide before any CLI command other than `context`. With Planning installed, the agent sees an entry for Decisions in Crystallized Memory, but reads no Decision at startup.

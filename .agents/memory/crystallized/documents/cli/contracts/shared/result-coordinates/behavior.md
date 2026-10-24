@@ -7,6 +7,10 @@ open-forge:
 
 # Shared CLI Result Coordinates Behavior Contract
 
+## Layout Coordinates
+
+Project layout facts from the operation’s retained observation or intended Install layout. Do not infer a context folder from path segment positions or substitute a default when settings cannot supply a layout. Preserve actual installed paths separately from package coordinates.
+
 ## Status And Authority
 
 This is the accepted current Behavior Contract for forming the shared public

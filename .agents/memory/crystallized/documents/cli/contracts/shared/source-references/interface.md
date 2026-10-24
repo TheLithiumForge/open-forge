@@ -7,6 +7,12 @@ open-forge:
 
 # CLI Source References Interface Contract
 
+## Content Locations
+
+The primary content locations are the selected main root, defaulting to `.agents`, and native Skills at `.agents/skills`. Short IDs are relative to the main root, with `skills/...` retained for native Skills. A custom root such as `docs/forge` therefore gives `docs/forge/guidance/style.md` the ID `guidance/style`. Use `./docs/forge/guidance/style.md` for its exact path. The bare `docs/forge/guidance/style.md` is still an ID operand.
+
+The [shared layout contract](../../../shared-operation-contract.md#workspace-layout) defines fixed controls and layout availability. Examples below using `.agents` show the default layout.
+
 ## Status And Authority
 
 This file is the accepted current Crystallized authority for the caller-visible
@@ -28,7 +34,7 @@ contract.
 ## Purpose
 
 Commands accept either a short automatic source ID or an exact workspace-relative
-path. IDs are convenient for files below `.agents/`. Paths provide exact disambiguation when a
+path. IDs are convenient for files in the primary content locations. Paths provide exact disambiguation when a
 workspace contains unusual or colliding structures.
 
 The CLI never guesses whether a reference is an ID or path.
@@ -44,8 +50,8 @@ A source reference is one of:
 ./<workspace-path>
 ```
 
-An exact path keeps its `.agents/` or `./.agents/` prefix. For example,
-`.agents/x/y/z` and `./.agents/x/y/z` have the ID `x/y/z`; the derivation rules
+An exact path uses `./<workspace-path>`. The `.agents/` prefix also remains accepted as a literal path. In the default layout,
+`.agents/x/y/z` and `./.agents/x/y/z` have the ID `x/y/z`. The derivation rules
 below still apply to Markdown suffixes and recognized entrypoints.
 
 The prefix determines the form:
@@ -65,7 +71,7 @@ memory/crystallized/documents
 
 These values identify the same source.
 
-A file outside `.agents/` has no short source ID. Name an active included file
+A file outside the primary content locations has no short source ID. Name an active included file
 by its exact path, such as `./CONTRIBUTING.md`. Explicit Context selections,
 Find, References and Route List use the exact `./path` reference in their
 existing `id` field. Context startup and ordinary linked reads keep a null ID. Their `path` field stays workspace-relative.
@@ -119,8 +125,8 @@ spelling edits when the original bytes do not match the parsed destination.
 
 ## Automatic Source IDs
 
-Every supported file under `.agents` receives an automatic ID derived from its
-workspace-relative path. The ID is calculated per invocation. It is not stored
+Every supported file in a primary content location receives an automatic ID derived from its
+layout-relative path. The ID is calculated per invocation. It is not stored
 in frontmatter or a registry.
 
 Examples:
@@ -136,7 +142,7 @@ Examples:
 
 Derivation rules:
 
-1. Start from the canonical workspace-relative path below `.agents`.
+1. Start from the canonical path relative to the selected main root, or from `skills/` plus the path relative to `.agents/skills`.
 2. Use `/` between ID segments on every operating system.
 3. Remove the `.md` suffix from Markdown files.
 4. For a recognized entrypoint, use its containing folder ID instead of its
@@ -201,7 +207,7 @@ An exact path:
 
 - Resolves from the selected workspace.
 - Accepts `.agents/...`, `./.agents/...` or `./<workspace-path>`. The canonical
-  path field omits `./`. Files outside `.agents/` are selected by exact path.
+  path field omits `./`. Files outside the primary content locations are selected by exact path.
 - Uses `/` in documented CLI input on every operating system.
 - Must remain lexically and physically inside the selected workspace.
 - Must identify a supported source kind for the selected command.
@@ -213,7 +219,7 @@ BCL-first filesystem boundary. Canonical output uses workspace-relative `/`
 paths; the implementation may not add compatibility or alias behavior that
 changes the public identity rules.
 
-A filesystem symlink projection at an eligible `.agents/...` destination is
+A filesystem symlink projection at an eligible primary-content destination is
 identified and reported under that canonical destination path. It retains the
 normal automatic source ID derived from the destination path; the source root
 named by the separate Library record does not replace that ID.
@@ -306,7 +312,7 @@ as broken evidence, but commands must not treat it as a valid standalone source.
 
 ## Command Use
 
-Every command operand that identifies existing `.agents` content accepts either
+Every command operand that identifies existing primary content accepts either
 an ID or exact path unless that command contract states a narrower requirement:
 
 ```text
@@ -338,11 +344,11 @@ Structured results expose the same automatic ID and canonical path as separate
 fields. A source with an ID collision keeps its path and reports the ambiguous
 ID state.
 
-An included file outside `.agents/` uses the exact-reference display described
+An included file outside the primary content locations uses the exact-reference display described
 under [Accepted Forms](#accepted-forms). An unlisted local Markdown link target
 has no source operand identity. Context keeps its null ID for startup and
 ordinary linked reads, and uses the exact reference for explicit included selections. The canonical workspace-relative path remains
-required. A filesystem symlink projection at an eligible `.agents/...`
+required. A filesystem symlink projection at an eligible primary-content
 destination retains its canonical destination path and normal destination-derived
 automatic source ID.
 
@@ -356,7 +362,7 @@ with exit 4. JSON retains its command-owned next action and findings.
 ## Errors
 
 - An empty source reference is invalid.
-- A path outside `.agents/` must use `./<workspace-path>`. The selected command
+- A literal path without the `.agents/` prefix must use `./<workspace-path>`. The selected command
   must admit that file as a source.
 - A path that escapes the selected workspace is blocked.
 - An unknown ID or missing path is invalid.

@@ -7,6 +7,12 @@ open-forge:
 
 # Update Interface Contract
 
+## Workspace Layout
+
+Update reconciles mapped installed destinations and does not recreate a default loader in a custom-root workspace. A lone missing selected loader remains eligible for restoration under the ordinary rules.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Ownership Receipt Boundary
 
 The generated `.agents/open-forge.lock.json` distinguishes whole-file paths
@@ -185,7 +191,7 @@ that host's existing ownership.
 Current states use `same`, `changed`, `missing` and `format-only` from fresh
 current/intended comparison. Exact bytes support recovery and expected-state
 checks. Source alignment comes from current payloads and may be null for retired
-targets. `removedCategories` prevents reinstating named `.agents/<category>/`
+targets. `removedCategories` prevents reinstating named primary category
 payload roots. `removedFiles` excludes exact canonical workspace-relative file
 destinations from whole-file and generated-region effects, including root managed
 hosts. It has no glob or recursive-directory semantics. `removedDirectories`
@@ -196,7 +202,7 @@ When a readable Framework registration establishes an installed workspace,
 restoration includes the ordinary missing directories needed by selected current
 payloads. Directory creation appears in the same preview and result as file
 effects. It does not bypass exclusions, no-follow checks or expected-state
-revalidation. An empty `.agents` directory without Framework registration does
+revalidation. An empty main-root directory without Framework registration does
 not authorize this behavior.
 
 Mutation still holds the actual local OS lock described in the
@@ -221,7 +227,7 @@ restores owned current content; force bypasses no safety check.
 
 Additionally deletes eligible present retired whole files after verified
 recovery preparation. Shared `allowInstallPaths` applies to every owner with
-`.agents/` implicit. Reserved and physical checks remain. Absent paths and
+the primary content locations implicit. Reserved and physical checks remain. Absent paths and
 region-only hosts are never deleted. Edited retired content remains eligible.
 
 ## Generated Navigation
@@ -250,8 +256,8 @@ ownership from its presence. A shared or competing owner, route dependency,
 unknown path, or unsafe host blocks deletion.
 
 The root Remove command can remove selected Framework content; it does not
-uninstall the entire Framework. The `.agents` container remains protected.
-Manual guidance must never recommend deleting `.agents` wholesale. A future
+uninstall the entire Framework. The main root and fixed `.agents` controls remain protected.
+Manual guidance must never recommend deleting either content location wholesale. A future
 Framework uninstall requires a separate product and safety review.
 
 ## Recovery Boundary
