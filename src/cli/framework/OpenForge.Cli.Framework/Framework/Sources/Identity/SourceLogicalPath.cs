@@ -1,18 +1,19 @@
 using System.Diagnostics.CodeAnalysis;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
 internal static class SourceLogicalPath
 {
-    internal const string WorkspaceEntryPath = "AGENTS.md";
-    internal const string AgentsRoot = ".agents";
-    internal const string LoaderPath = AgentsRoot + "/loader.md";
+    internal const string WorkspaceEntryPath = WorkspaceLayoutNames.AgentHostFileName;
+    internal const string AgentsRoot = WorkspaceLayout.DefaultMainRoot;
+    internal const string LoaderPath = AgentsRoot + "/" + WorkspaceLayoutNames.LoaderFileName;
 
     /// <summary>
     /// The guide for people at the top of `.agents/`. It is never a routed source, so agents do not
     /// read it at startup and maintenance commands neither index it nor ask it for frontmatter.
     /// </summary>
-    internal const string HumanGuidePath = AgentsRoot + "/README.md";
+    internal const string HumanGuidePath = AgentsRoot + "/" + WorkspaceLayoutNames.HumanGuideFileName;
 
     internal static bool IsCanonical([NotNullWhen(true)] string? path)
     {

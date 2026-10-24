@@ -1,7 +1,8 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 namespace OpenForge.Cli.Core.Framework.Ownership;
 
 /// <summary>
-/// The generated workspace lock file. The tool writes and owns this one; its
+/// The generated workspace lock file. The tool writes and owns this one. its
 /// authored counterpart is <c>open-forge.json</c>, and the npm-shaped pair of
 /// names is what tells a reader which is which.
 ///
@@ -15,8 +16,8 @@ internal static class WorkspaceOwnershipDefinitions
 
     internal const string ManagedBlockRegion = "open-forge";
 
-    internal const string DirectoryName = ".agents";
-    internal const string FileName = "open-forge.lock.json";
+    internal const string DirectoryName = WorkspaceLayout.DefaultMainRoot;
+    internal const string FileName = WorkspaceLayoutNames.OwnershipFileName;
     internal const string RelativePath = DirectoryName + "/" + FileName;
 
     /// <summary>

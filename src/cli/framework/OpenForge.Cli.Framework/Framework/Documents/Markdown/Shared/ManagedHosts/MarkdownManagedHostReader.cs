@@ -8,8 +8,8 @@ namespace OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.ManagedHosts;
 
 internal static class MarkdownManagedHostReader
 {
-    private const string HeadingText = "Open Forge";
-    private const string FooterText = "End of Open Forge managed section.";
+    internal const string HeadingText = "Open Forge";
+    internal const string FooterText = "End of Open Forge managed section.";
     private const string LegacyStart = "<!-- open-forge:start -->";
     private const string LegacyEnd = "<!-- open-forge:end -->";
     private const string InvalidBoundary = "The managed host contains an incomplete, duplicate, reversed, or mixed Open Forge boundary.";

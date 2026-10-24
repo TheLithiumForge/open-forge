@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v4/open-forge.schema.json",
+  "title": "Open Forge workspace settings",
+  "description": "Authored workspace settings. Unknown keys are preserved. Custom main roots require a CLI that supports settings v4.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "The schema describing this file. Editors use it for completion and validation. The CLI never fetches it.",
+      "format": "uri"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "description": "The shape this file was written for. A version the CLI does not recognise is read for the keys it understands and reported, never refused.",
+      "minimum": 1
+    },
+    "frontmatter": {
+      "type": "string",
+      "enum": [
+        "root",
+        "scoped"
+      ],
+      "default": "scoped",
+      "description": "Selects where Open Forge writes metadata: at the frontmatter root or under open-forge. Both forms are always read. A missing value means scoped."
+    },
+    "allowInstallPaths": {
+      "type": "array",
+      "description": "Literal workspace destinations outside the selected content locations that permission-gated commands may write. A directory admits its descendants. Entries are paths, not patterns.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "A workspace-relative path to a file or directory."
+      },
+      "uniqueItems": true
+    },
+    "removedCategories": {
+      "type": "array",
+      "description": "Canonical category names under the selected main root, with skills fixed under .agents. Install and update do not reinstate removed categories.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "removedFiles": {
+      "type": "array",
+      "description": "Exact canonical workspace-relative file paths deliberately removed from this workspace. Install and update do not restore or modify these destinations. Paths use forward slashes and cannot name the workspace root, Git metadata, settings, or ownership controls. Globs and recursive directory semantics are not supported. Remove an entry explicitly to allow a later install or update to restore that destination.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "One canonical workspace-relative file path using forward slashes."
+      },
+      "uniqueItems": true
+    },
+    "removedDirectories": {
+      "type": "array",
+      "description": "Canonical workspace-relative directories deliberately removed from this workspace. Each entry excludes the directory itself and every descendant, including files created later. Install and update do not restore or modify those destinations. The workspace root, Git metadata, settings, and ownership controls are reserved. Remove an entry explicitly to allow a later install or update to restore that directory.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "One canonical workspace-relative directory path using forward slashes, without a trailing slash."
+      },
+      "uniqueItems": true
+    },
+    "removedExtensions": {
+      "type": "array",
+      "description": "Stable Extension IDs deliberately removed from this workspace. Install, update, and dependency resolution do not reinstall an excluded Extension. Remove an entry explicitly to allow a later install or update.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "description": "One stable Extension ID."
+      },
+      "uniqueItems": true
+    },
+    "removedLibraries": {
+      "type": "array",
+      "description": "Stable local Library IDs deliberately detached from this workspace. Attach and sync do not restore an excluded Library. Remove an entry explicitly to allow a later attach or sync.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "description": "One stable local Library ID."
+      },
+      "uniqueItems": true
+    },
+    "ignoreLinksFrom": {
+      "type": "array",
+      "description": "Links written inside these files or folders are excluded from diagnosis and maintenance. Incoming links remain checked. Entries are paths, not patterns, compared like allowInstallPaths.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "ignoreLinksTo": {
+      "type": "array",
+      "description": "Links whose resolved workspace target lies inside these files or folders are excluded from diagnosis and maintenance. Entries are paths, not patterns, compared like allowInstallPaths.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "roots": {
+      "type": "array",
+      "description": "Files outside the selected main root and native Skills that route include brought into this workspace. The loader's Entries decide what loads and how. This list only records what was included, so status and doctor can report an included file whose loader line was removed or whose file is missing. Removing a loader line by hand leaves the file registered but unlisted. Adding a path here by hand switches nothing on.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "One canonical workspace-relative file path using forward slashes, outside the selected main root and native Skills. It cannot name Git metadata, settings, or ownership controls."
+      },
+      "uniqueItems": true
+    },
+    "mainRoot": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "description": "The canonical workspace-relative context directory, using forward slashes. Absence means .agents. Settings, ownership and native Skills stay in .agents. The workspace root, .agents descendants, Git metadata, host files and .open-forge-state are reserved. Editing this value moves no files."
+    }
+  },
+  "examples": [
+    {
+      "schemaVersion": 4,
+      "allowInstallPaths": [
+        "docs/agents",
+        "tools/agent-notes.md"
+      ],
+      "removedCategories": [
+        "skills"
+      ],
+      "removedFiles": [
+        ".agents/patterns/_patterns.md",
+        "AGENTS.md"
+      ],
+      "removedDirectories": [
+        "docs/obsolete"
+      ],
+      "removedExtensions": [
+        "planning"
+      ],
+      "removedLibraries": [
+        "team-knowledge"
+      ],
+      "ignoreLinksFrom": [
+        ".agents/memory/archived"
+      ],
+      "ignoreLinksTo": [],
+      "roots": [
+        "CONTRIBUTING.md",
+        ".cursor/rules/testing.mdc",
+        "docs/team/_team.md"
+      ]
+    }
+  ]
+}
