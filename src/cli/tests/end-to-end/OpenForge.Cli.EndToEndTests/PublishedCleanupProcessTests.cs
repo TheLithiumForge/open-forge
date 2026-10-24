@@ -1,10 +1,47 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedCleanupProcessTests
 {
+    private const string CustomRoot = "knowledge/nested";
+    private const string CustomLoader = $"# Context\n\n## {PublishedTokens.Metadata.Entries}\n\n{PublishedTokens.Metadata.EmptyEntry}\n";
+
+    [Theory(DisplayName = "Published Cleanup preserves custom context and cleans recorded local or legacy recovery stores"),
+     InlineData(false), InlineData(true), Trait("Feature", "cleanup-command"), Trait("Evidence", "EndToEnd")]
+    public async Task CustomRootKeepsRecordedRecoveryLocations(bool legacyStore)
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedCleanupWorkspace.CreateWithArtifacts(legacyStore);
+        var settingsPath = workspace.Combine(PublishedTokens.Settings.RelativePath);
+        workspace.WriteText(PublishedTokens.Settings.RelativePath, $$"""
+            {"{{PublishedTokens.Settings.SchemaVersionProperty}}":{{PublishedTokens.Settings.SchemaVersion}},"{{PublishedTokens.Settings.MainRootProperty}}":"{{CustomRoot}}"}
+            """);
+        var loaderPath = workspace.Combine(CustomRoot, PublishedTokens.Layout.LoaderFileName);
+        workspace.WriteText($"{CustomRoot}/{PublishedTokens.Layout.LoaderFileName}", CustomLoader);
+        var settingsBytes = File.ReadAllBytes(settingsPath);
+        var loaderBytes = File.ReadAllBytes(loaderPath);
+        var unknownBytes = File.ReadAllBytes(workspace.UnknownPath);
+
+        var preview = await PublishedProcessTestSupport.RunWithoutWritesAsync(target, workspace.Path,
+            workspace.SnapshotState, [PublishedTokens.Cleanup.Command, PublishedTokens.Cleanup.DryRun], workspace.ProcessEnvironment);
+        Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, preview.ExitCode);
+        var applied = await PublishedProcessTestSupport.RunAsync(target, workspace.Path,
+            [PublishedTokens.Cleanup.Command], workspace.ProcessEnvironment);
+        Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, applied.ExitCode);
+        Assert.False(File.Exists(workspace.EligibleFinalPath));
+        Assert.False(File.Exists(workspace.EligibleDraftPath));
+        Assert.Equal(settingsBytes, File.ReadAllBytes(settingsPath));
+        Assert.Equal(loaderBytes, File.ReadAllBytes(loaderPath));
+        Assert.Equal(unknownBytes, File.ReadAllBytes(workspace.UnknownPath));
+
+        var repeated = await PublishedProcessTestSupport.RunWithoutWritesAsync(target, workspace.Path,
+            workspace.SnapshotState, [PublishedTokens.Cleanup.Command], workspace.ProcessEnvironment);
+        Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, repeated.ExitCode);
+    }
+
     [Fact(DisplayName = "Published Cleanup help is terminal and performs no workspace, recovery, lease, or write work"),
      Trait("Feature", "cleanup-command"),
      Trait("Evidence", "EndToEnd")]

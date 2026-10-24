@@ -118,6 +118,8 @@ internal sealed class PublishedCleanupWorkspace : IDisposable
 
     internal string Combine(params string[] segments) => _workspace.Combine(segments);
 
+    internal void WriteText(string relativePath, string contents) => _workspace.WriteText(relativePath, contents);
+
     internal IReadOnlyDictionary<string, string> SnapshotState()
     {
         var state = new SortedDictionary<string, string>(StringComparer.Ordinal);

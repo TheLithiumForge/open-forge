@@ -65,6 +65,7 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
             libraryResiduals)
         {
             Maintenance = maintenance,
+            LayoutRead = observation,
         };
         var result = DoctorResultBuilder.Build(request, resultObservation);
         return new DoctorDiagnosisRead(resultObservation, result);

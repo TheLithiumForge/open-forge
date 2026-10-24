@@ -1,5 +1,5 @@
+using OpenForge.Cli.Core.Commands.Shared.Layout;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
@@ -13,19 +13,8 @@ internal static class DoctorLayoutPresentation
         {
             var oldPath = advice.OldPath;
             var newPath = advice.NewPath;
-            if (oldPath is not null && newPath is not null
-                && layout.TryGetSourceRelativePath(oldPath, out var oldRelative)
-                && layout.TryGetSourceRelativePath(newPath, out var newRelative))
-            {
-                var oldCategory = oldRelative.Split('/')[0];
-                var newCategory = newRelative.Split('/')[0];
-                if (oldCategory == newCategory && oldRelative.Contains('/') && newRelative.Contains('/'))
-                {
-                    var prefix = layout.CategoryDirectory(oldCategory).Length + 1;
-                    oldPath = oldPath[prefix..];
-                    newPath = newPath[prefix..];
-                }
-            }
+            if (oldPath is not null && newPath is not null)
+                (oldPath, newPath) = WorkspaceLayoutPathDisplay.Rename(layout, oldPath, newPath);
             advice = advice with
             {
                 DisplayOldPath = oldPath,

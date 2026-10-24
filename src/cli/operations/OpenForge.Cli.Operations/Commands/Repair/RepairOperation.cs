@@ -55,9 +55,7 @@ internal sealed class RepairOperation
                 .. RepairAuthoredReferenceBoundary.IncompleteFindings(initialScope.IncompleteSources),
                 .. libraryFindings,
             ];
-            var catalogue = await _components.CatalogueReader.ReadAsync(
-                request.Workspace,
-                diagnosis.Observation.LocalReferences,
+            var catalogue = await _components.CatalogueReader.ReadAsync(diagnosis.Observation.LayoutRead ?? throw new InvalidOperationException("Doctor must retain its layout observation."), diagnosis.Observation.LocalReferences,
                 cancellationToken,
                 request.Relinks, diagnosis.Observation.Maintenance).ConfigureAwait(false);
             catalogue = catalogue with
@@ -112,7 +110,7 @@ internal sealed class RepairOperation
 
         if (CanPlan(facts) && safeInputs.Length != 0)
         {
-            var safePlan = RepairPlanner.Build(request, safeInputs);
+            var safePlan = RepairPlanner.Build(request, safeInputs) with { LayoutRead = catalogue.LayoutRead };
             if (_components.MaintenancePlanner is { } safeMaintenance)
                 safePlan = await safeMaintenance.CompleteAsync(safePlan, catalogue, cancellationToken).ConfigureAwait(false);
             var safePreflight = await _components.Application.PreflightAsync(safePlan, cancellationToken)
@@ -231,6 +229,7 @@ internal sealed class RepairOperation
         RepairConfirmationQuestion? confirmationQuestion = null,
         CliPromptPolicy? policy = null)
     {
+        plan = plan with { LayoutRead = facts.Catalogue.LayoutRead };
         var request = facts.Request;
         if (_components.MaintenancePlanner is { } maintenance)
             plan = await maintenance.CompleteAsync(plan, facts.Catalogue, cancellationToken).ConfigureAwait(false);

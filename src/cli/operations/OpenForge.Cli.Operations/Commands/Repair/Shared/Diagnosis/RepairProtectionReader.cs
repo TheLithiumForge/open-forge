@@ -1,25 +1,22 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Shared.ReferenceMaintenance;
 using OpenForge.Cli.Core.Commands.Shared.ReferenceMaintenance.Models;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
-using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
-internal sealed class RepairProtectionReader(PhysicalPathResolver paths)
+internal static class RepairProtectionReader
 {
-    internal ValueTask<ReferenceProtectionRead> ReadAsync(CliWorkspace workspace, CancellationToken token)
-        => new ReferenceProtectionReader(paths).ReadAsync(workspace, token);
+    internal static ReferenceProtectionRead Read(WorkspaceLayoutRead observation)
+        => ReferenceProtectionReader.Read(observation);
 
     internal static bool Allows(string path, RoutedMetadataPolicyContext policy)
-        => ReferenceProtectionReader.Allows(path, policy);
+        => policy.Layout is { } layout && layout.IsImplicitContentDestination(path)
+            && ReferenceProtectionReader.Allows(path, policy);
 
     internal static RepairFinding Finding(string source, SourceLocation? occurrence, string protectedPath, RoutedMetadataPolicyContext policy)
     {

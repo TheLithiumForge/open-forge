@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Commands.Library.Inspect;
 using OpenForge.Cli.Core.Commands.Library.List;
 using OpenForge.Cli.Core.Presentation.Library.Inspect.Models;
 using OpenForge.Cli.Core.Presentation.Library.List.Models;
+using OpenForge.Cli.Core.Commands.Repair;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Context;
@@ -133,6 +134,10 @@ public sealed class PublishedTokensTests
         Assert.Equal(StatusDefinitions.StatusCommand.Name, PublishedTokens.Status.Command);
 
         Assert.Equal(DoctorDefinitions.DoctorCommand.Name, PublishedTokens.Doctor.Command);
+
+        Assert.Equal(RepairDefinitions.CommandIdentity, PublishedTokens.Repair.Command);
+        Assert.Equal(RepairDefinitions.Automatic.Name, PublishedTokens.Repair.Automatic);
+        Assert.Equal(RepairDefinitions.DryRun.Name, PublishedTokens.Repair.DryRun);
 
         Assert.Equal(CleanupDefinitions.CleanupCommand.Name, PublishedTokens.Cleanup.Command);
         Assert.Equal(CleanupDefinitions.DryRun.Name, PublishedTokens.Cleanup.DryRun);

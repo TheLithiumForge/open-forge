@@ -50,7 +50,7 @@ public sealed class RepairTargetWorkTests
         var targetReader = new RepairTargetReader(view.Catalogue, acquisition: acquisition);
         var reader = new RepairCatalogueReader(paths, targets: targetReader);
 
-        var first = await reader.ReadAsync(workspace, view, token);
+        var first = await reader.ReadAsync(observation, view, token);
         Assert.Equal(32, first.Proposals.Count);
         Assert.All(first.Proposals, input => Assert.Equal(
             [".agents/guidance/target-0.md", ".agents/guidance/target-1.md"],
@@ -60,7 +60,7 @@ public sealed class RepairTargetWorkTests
         Assert.Equal(0, active);
 
         temporary.ReplaceText(".agents/guidance/target-0.md", "# Changed\n");
-        var second = await reader.ReadAsync(workspace, view, token);
+        var second = await reader.ReadAsync(observation, view, token);
         Assert.Equal(2 * 32 * 33, acquisition.ReadCount);
         Assert.All(second.Proposals, input => Assert.Equal(".agents/guidance/target-1.md",
             Assert.Single(input.Proposal.Candidates?.Items ?? []).Target.CanonicalTargetPath));
