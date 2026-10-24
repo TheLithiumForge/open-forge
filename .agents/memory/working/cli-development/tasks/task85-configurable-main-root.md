@@ -135,6 +135,11 @@ Extension Install, Update, Remove, Inspect and List use the observed layout for 
 A missing loader the settings record as removed is intentional (chair amendment 6), and every other mismatch still blocks writers.
 EX no longer calls the payload and admission adapters. The optional permission layout fallback and the shared default payload overloads remain for Z1.
 
+## Wave 5 X handoff
+
+Route Remove expands category exclusions through the layout, including absent targets, checks content ordinally and revalidates the layout under the lock.
+Its command adapters are removed. Two static help sentences keep default-root wording, like Route Create's.
+
 ## Overseer notes
 
 - Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.

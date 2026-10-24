@@ -14,7 +14,7 @@ internal static class RouteRemoveWording
             return global::OpenForge.Cli.OutputText.Route.Remove.RouteRemovePhrases.PlannedRemoval(settings.Path,
                 !settings.Categories.IsEmpty || !settings.Directories.IsEmpty);
         }
-        var targets = settings.Categories.Select(category => $"category .agents/{category}")
+        var targets = settings.CategoryPaths.Select(path => $"category {path}")
             .Concat(settings.Files.Select(path => $"file {path}"))
             .Concat(settings.Directories.Select(path => $"directory {path}"));
         var targetText = string.Join(", ", targets);

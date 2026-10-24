@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
@@ -17,7 +18,8 @@ internal static class RouteRemovePlanProjector
 
     internal static RouteRemovePlan Build(
         RouteRemovePlanProjectionInput input,
-        RouteRemoveCategoryInventory inventory)
+        RouteRemoveCategoryInventory inventory,
+        WorkspaceLayoutRead layoutRead)
     {
         ArgumentNullException.ThrowIfNull(input);
         var request = input.Subject.Request;
@@ -75,7 +77,7 @@ internal static class RouteRemovePlanProjector
             Persistence = Persistence(input),
             Verification = RouteRemoveVerificationState.NotRequested,
         };
-        return new RouteRemovePlan { Request = request, Preview = preview, Projection = input };
+        return new RouteRemovePlan { LayoutRead = layoutRead, Request = request, Preview = preview, Projection = input };
     }
 
     private static RouteRemovePersistence Persistence(RouteRemovePlanProjectionInput input)
@@ -88,6 +90,7 @@ internal static class RouteRemovePlanProjector
                     : RouteRemovePersistenceOutcome.Planned,
                 Path = WorkspaceSettingsDefinitions.RelativePath,
                 Categories = input.RemovalSelection.Categories,
+                CategoryPaths = input.RemovalSelection.Categories.Select(input.Subject.Catalogue.Layout.CategoryDirectory).ToImmutableArray(),
                 Files = input.RemovalSelection.Files,
                 Directories = input.RemovalSelection.Directories,
             },

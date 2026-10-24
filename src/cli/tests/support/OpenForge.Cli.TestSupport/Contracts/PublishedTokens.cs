@@ -192,6 +192,7 @@ public static class PublishedTokens
 
     public static class RouteRemove
     {
+        public const string DryRun = "--dry-run";
         public const string Command = "remove";
         public const string Automatic = "--automatic";
     }
@@ -280,6 +281,8 @@ public static class PublishedTokens
 
     public static class Settings
     {
+        public const string RemovedCategoriesProperty = "removedCategories";
+        public const string RemovedDirectoriesProperty = "removedDirectories";
         public const string RootsProperty = "roots";
         public const string RelativePath = ".agents/open-forge.json";
         public const int SchemaVersion = 4;

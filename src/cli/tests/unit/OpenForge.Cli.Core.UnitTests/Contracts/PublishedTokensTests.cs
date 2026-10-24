@@ -145,6 +145,9 @@ public sealed class PublishedTokensTests
 
         Assert.Equal(RouteRemoveDefinitions.RemoveCommand.Name, PublishedTokens.RouteRemove.Command);
         Assert.Equal(RouteRemoveDefinitions.Automatic.Name, PublishedTokens.RouteRemove.Automatic);
+        Assert.Equal(RouteRemoveDefinitions.DryRun.Name, PublishedTokens.RouteRemove.DryRun);
+        Assert.Equal(WorkspaceSettingsDefinitions.RemovedCategoriesProperty, PublishedTokens.Settings.RemovedCategoriesProperty);
+        Assert.Equal(WorkspaceSettingsDefinitions.RemovedDirectoriesProperty, PublishedTokens.Settings.RemovedDirectoriesProperty);
 
         Assert.Equal(RouteInitDefinitions.InitCommand.Name, PublishedTokens.RouteInit.Command);
         Assert.Equal(RouteInitDefinitions.Description.Name, PublishedTokens.RouteInit.Description);

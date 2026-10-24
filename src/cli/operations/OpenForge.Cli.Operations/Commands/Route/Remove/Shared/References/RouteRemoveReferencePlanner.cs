@@ -105,7 +105,7 @@ internal sealed class RouteRemoveReferencePlanner
         ArgumentNullException.ThrowIfNull(sourceCatalogue);
         var catalogue = await _catalogueReader.ReadAsync(
             new RouteMarkdownCatalogueRequest(
-                scope.Request.Workspace,
+                scope.Layout,
                 ["."],
                 [],
                 new RouteMarkdownCatalogueFilters([".md"])),

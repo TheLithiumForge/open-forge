@@ -1,0 +1,16 @@
+Removed the route notes  (4 files)
+Workspace: <workspace>
+  Removed handbook/context/notes/index.md
+  Removed handbook/context/notes/retired.md
+  Removed handbook/context/notes/retired.overwrite.md
+  Removed handbook/context/notes/sample.bin
+  Entry removed from handbook/context/loader.md
+  Recorded persistent route removal for category handbook/context/notes, directory handbook/context/notes in .agents/open-forge.json.
+  No managed content ownership claims needed release.
+    Before: 2ac27899888897a8f6e966eb040e2769d0f4baeef1b35c4cb308b0926ae9dc02
+    After: f863e1fa48c55e7a0b8fc3d75deb7a370c99db6ab456c0420326bd5d32261a4d
+    Before: caae6587210903b5e55a9bbdbfa0bc8fd5fe01056091ebc3a5fbdaec97760928
+    Before: d7df50a916da95573a9dc1808285f73454e72abbe22aff6647375d885d75c2c1
+    Before: e627c2018511c1d3e80962fc349dff2a342363edac23ec21e9b433c52addc5aa
+    Before: 4234f1064f32788dc9487507f9eeecd0cdf7df6bd010fd1dad8026226e222813
+  Scanned 7 files and found 0 links.

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
@@ -32,9 +34,10 @@ internal sealed partial class RouteRemoveSubjectSelector(
 
     internal async ValueTask<RouteRemoveSubjectSelection> SelectAsync(
         RouteRemoveRequest request,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
-        var catalogueSelection = await ReadCatalogueAsync(request, cancellationToken)
+        var catalogueSelection = await ReadCatalogueAsync(request, layoutRead.Layout ?? throw new InvalidOperationException("Route Remove requires its observed layout."), cancellationToken)
             .ConfigureAwait(false);
         if (catalogueSelection.Boundary is { } catalogueBoundary)
         {
@@ -55,28 +58,18 @@ internal sealed partial class RouteRemoveSubjectSelector(
             discovery.Discovery
                 ?? throw new InvalidOperationException(
                     "A successful Route Remove source discovery requires its source."),
+            layoutRead,
             cancellationToken).ConfigureAwait(false);
     }
 
     private async ValueTask<RouteRemoveSubjectCatalogueSelection> ReadCatalogueAsync(
         RouteRemoveRequest request,
+        WorkspaceLayout layout,
         CancellationToken cancellationToken)
     {
         var formation = RouteRemoveBoundary.Start(request);
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return new RouteRemoveSubjectCatalogueSelection(
-                catalogue: null,
-                Boundary(
-                    formation,
-                    RouteRemoveFindingCode.Interrupted,
-                    CliSemanticStatus.Interrupted,
-                    request.SourceReference,
-                    "Route Remove subject resolution was interrupted."));
-        }
-
         var catalogue = await _catalogueReader.ReadAsync(
-            new SourceCatalogueRequest(request.Workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(layout, layout.SourceRoots),
             cancellationToken).ConfigureAwait(false);
         if (catalogue.IsCancelled)
         {
@@ -146,7 +139,8 @@ internal sealed partial class RouteRemoveSubjectSelector(
 
         var sourceFacts = ProjectSource(request.SourceReference, resolution, source);
         formation = formation with { Source = sourceFacts };
-        if (!TryReadForm(source.Base.Form, out var form, out var kind))
+        if (!TryReadForm(source.Base.Form, out var form, out var kind)
+            || !catalogue.Layout.IsImplicitContentDestination(source.Identity.CanonicalBasePath))
         {
             return new RouteRemoveSubjectDiscoveryResult(
                 discovery: null,
@@ -212,6 +206,7 @@ internal sealed partial class RouteRemoveSubjectSelector(
 
     private async ValueTask<RouteRemoveSubjectSelection> InspectRouteAsync(
         RouteRemoveSubjectDiscovery discovery,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
         var routeFacts = await _routeFactsResolver.ResolveAsync(
@@ -229,7 +224,7 @@ internal sealed partial class RouteRemoveSubjectSelector(
             discovery.Catalogue,
             cancellationToken)
             .ConfigureAwait(false);
-        var sharing = await NavigationSharingReader.ReadAsync(discovery.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        var sharing = NavigationSharingReader.FromOwnership(layoutRead.Ownership);
         if (!sharing.IsAvailable)
             return new RouteRemoveSubjectSelection(subject: null, Boundary(
                 RouteRemoveBoundary.Start(discovery.Request) with { Source = discovery.Source },
