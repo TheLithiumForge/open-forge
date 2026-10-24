@@ -1,5 +1,6 @@
 using System.Security.AccessControl;
 using System.Security.Principal;
+using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Shared.Legacy;
@@ -94,7 +95,7 @@ public sealed class LegacyWorkspaceLockBridgeIntegrationTests
                 try
                 {
                     using var probe = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-                    Assert.Skip("This host bypasses Unix write permissions.");
+                    Assert.Fail("This host bypasses Unix write permissions.");
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -152,7 +153,7 @@ public sealed class LegacyWorkspaceLockBridgeIntegrationTests
             await using var lease = Assert.IsType<WorkspaceLockLease>(result.Lease);
             if (!OperatingSystem.IsWindows() && lease.LegacyState == LegacyWorkspaceLockState.HeldReadWrite)
             {
-                Assert.Skip("This host bypasses Unix directory write permissions.");
+                Assert.Fail("This host bypasses Unix directory write permissions.");
             }
 
             Assert.Equal(LegacyWorkspaceLockState.SkippedAbsent, lease.LegacyState);
@@ -197,5 +198,5 @@ public sealed class LegacyWorkspaceLockBridgeIntegrationTests
         => new(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
 
     private static WorkspaceLockRequest Request(CliWorkspace workspace)
-        => new(workspace, "index", Guid.NewGuid());
+        => new(workspace, IndexDefinitions.CommandIdentity, Guid.NewGuid());
 }

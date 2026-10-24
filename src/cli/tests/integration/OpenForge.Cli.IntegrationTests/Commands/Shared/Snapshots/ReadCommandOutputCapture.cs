@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Status;
+using OpenForge.Cli.Core.Commands.Doctor;
 using System.Runtime.CompilerServices;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
@@ -95,7 +97,7 @@ internal sealed class ReadCommandOutputCapture(
 
                 Assert.NotEmpty(capture.PrimaryContent);
                 var normalized = CommandOutputNormalization.Normalize(
-                    scenario.Arguments[0] is "status" or "doctor"
+                    (scenario.Arguments[0] == StatusDefinitions.StatusCommand.Name || scenario.Arguments[0] == DoctorDefinitions.DoctorCommand.Name)
                         ? NormalizeRecoveryStores(capture.PrimaryContent)
                         : capture.PrimaryContent,
                     workspacePath,

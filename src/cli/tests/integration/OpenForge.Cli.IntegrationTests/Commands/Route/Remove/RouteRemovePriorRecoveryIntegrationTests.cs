@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Commands.Route.Remove;
+using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery;
@@ -58,10 +61,10 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
             Assert.Equal(CliSemanticStatus.Complete, completion.Status);
             Assert.Equal(string.Empty, error.ToString());
             using var result = JsonDocument.Parse(output.ToString());
-            Assert.Equal(JsonValueKind.Null, result.RootElement.GetProperty("recovery").ValueKind);
-            Assert.DoesNotContain(result.RootElement.GetProperty("findings").EnumerateArray(),
-                item => item.GetProperty("code").GetString() == "route-remove.recovery-history"
-                    && item.GetProperty("subject").GetProperty("path").GetString() == priorPreparation.BundlePath);
+            Assert.Equal(JsonValueKind.Null, result.RootElement.GetProperty(CliJsonFields.Recovery).ValueKind);
+            Assert.DoesNotContain(result.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray(),
+                item => item.GetProperty(CliJsonFields.Code).GetString() == RouteRemoveDefinitions.RecoveryHistoryCode
+                    && item.GetProperty(CliJsonFields.Subject).GetProperty(CliJsonFields.Path).GetString() == priorPreparation.BundlePath);
 
             if (category)
             {
@@ -147,11 +150,11 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
             Assert.Equal(CliSemanticStatus.Complete, completion.Status);
             Assert.Equal(string.Empty, error.ToString());
             using var result = JsonDocument.Parse(output.ToString());
-            var finding = Assert.Single(result.RootElement.GetProperty("findings").EnumerateArray(),
-                item => item.GetProperty("code").GetString() == "route-remove.recovery-history");
-            Assert.Equal("warning", finding.GetProperty("severity").GetString());
-            Assert.Equal(candidatePath, finding.GetProperty("subject").GetProperty("path").GetString());
-            Assert.Equal(JsonValueKind.Null, result.RootElement.GetProperty("recovery").ValueKind);
+            var finding = Assert.Single(result.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray(),
+                item => item.GetProperty(CliJsonFields.Code).GetString() == RouteRemoveDefinitions.RecoveryHistoryCode);
+            Assert.Equal(CliReportVocabulary.Name(CliSeverity.Warning), finding.GetProperty(CliJsonFields.Severity).GetString());
+            Assert.Equal(candidatePath, finding.GetProperty(CliJsonFields.Subject).GetProperty(CliJsonFields.Path).GetString());
+            Assert.Equal(JsonValueKind.Null, result.RootElement.GetProperty(CliJsonFields.Recovery).ValueKind);
             Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafPath)));
             Assert.Equal(ownershipBefore, workspace.ReadBytes(RouteRemoveIntegrationWorkspace.OwnershipPath));
             Assert.Equal(candidateBytes, await File.ReadAllBytesAsync(candidatePath, TestContext.Current.CancellationToken));

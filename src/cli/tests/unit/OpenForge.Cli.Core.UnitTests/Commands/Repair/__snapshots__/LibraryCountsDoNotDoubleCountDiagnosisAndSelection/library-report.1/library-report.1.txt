@@ -1,0 +1,7 @@
+Would restore 1 Library link.
+Workspace: <workspace>
+  .agents/directives/item-0.md  restored from recovery
+No files were changed.
+1 Library link to restore.
+  Apply the previewed repairs.
+Next: open-forge repair --automatic

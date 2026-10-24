@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.Core.Commands.Library.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
@@ -9,10 +10,26 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Planning;
 [Trait("Feature", "library-mapping"), Trait("Evidence", "Unit")]
 public sealed class LibraryDestinationPolicyTests
 {
+    private const string ArchiveName = "archive.zip";
+
+    public static TheoryData<string> RuntimeDestinations
+    {
+        get
+        {
+            var workspace = Workspace();
+            var root = workspace.PhysicalRoot;
+            return
+            [
+                Path.GetRelativePath(root, WorkspaceRuntimePaths.DirectoryPath(workspace)).Replace('\\', '/'),
+                Path.GetRelativePath(root, Path.Combine(WorkspaceRuntimePaths.RecoveryRoot(workspace), ArchiveName)).Replace('\\', '/'),
+            ];
+        }
+    }
+
     [Trait("Boundary", "Processing")]
     [Theory]
     [InlineData(".git/config")]
-    [InlineData(".open-forge-state"), InlineData(".open-forge-state/recovery/archive.zip")]
+    [MemberData(nameof(RuntimeDestinations))]
     [InlineData(".agents/directives/_directives.md"), InlineData(".agents/directives/_directives.md/child.md")]
     [InlineData(".agents/loader.md"), InlineData(".AGENTS/anything.md")]
     [InlineData(".agents/open-forge.json"), InlineData(".agents/open-forge.lock.json")]

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Shared.Runtime;
@@ -12,6 +13,11 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 [Trait("Boundary", "OS"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
 public sealed class WorkspaceRuntimeIntegrationTests
 {
+    private const string RuntimeTarget = "runtime";
+    private const string IgnoreTarget = "ignore";
+    private const string SentinelTarget = "sentinel";
+    private const string PartialContent = "partial";
+
     [Fact(DisplayName = "Local ownership contends across legacy homes and physical aliases but permits another worktree")]
     public async Task LocalOwnershipUsesPhysicalWorkspace()
     {
@@ -39,17 +45,17 @@ public sealed class WorkspaceRuntimeIntegrationTests
         using var store = WorkspaceLockTestStore.Create("local-content-store");
         var workspace = Workspace(temporary);
         byte[] bytes = [0, 255, 10, 13, 42, 128];
-        var path = temporary.CreateFile(Path.Combine(".open-forge-state", "workspace.lock"), bytes);
+        var path = temporary.CreateFile(Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.LockPath(workspace)), bytes);
         var result = await store.AcquireAsync(Request(workspace), TestContext.Current.CancellationToken);
         await Assert.IsType<WorkspaceLockLease>(result.Lease).DisposeAsync();
         Assert.Equal(bytes, File.ReadAllBytes(path));
-        Assert.Equal("*\n", File.ReadAllText(WorkspaceRuntimePaths.IgnorePath(workspace)));
+        Assert.Equal(WorkspaceRuntimeBootstrap.IgnoreContent, File.ReadAllText(WorkspaceRuntimePaths.IgnorePath(workspace)));
     }
 
     [Theory(DisplayName = "Bootstrap creates only the ignore file and repairs interrupted content")]
     [InlineData(null)]
     [InlineData("")]
-    [InlineData("partial")]
+    [InlineData(PartialContent)]
     public void BootstrapWritesIgnoreBeforeOtherFiles(string? prior)
     {
         using var temporary = TemporaryWorkspace.Create("runtime-bootstrap");
@@ -58,18 +64,18 @@ public sealed class WorkspaceRuntimeIntegrationTests
         _ = store.Track(workspace);
         if (prior is not null)
         {
-            temporary.CreateFile(Path.Combine(".open-forge-state", ".gitignore"), prior);
+            temporary.CreateFile(Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.IgnorePath(workspace)), prior);
         }
 
         Assert.Null(WorkspaceRuntimeBootstrap.EnsureCreated(workspace, TestContext.Current.CancellationToken));
         Assert.Equal([WorkspaceRuntimePaths.IgnorePath(workspace)], Directory.GetFileSystemEntries(WorkspaceRuntimePaths.DirectoryPath(workspace)));
-        Assert.Equal("*\n", File.ReadAllText(WorkspaceRuntimePaths.IgnorePath(workspace)));
+        Assert.Equal(WorkspaceRuntimeBootstrap.IgnoreContent, File.ReadAllText(WorkspaceRuntimePaths.IgnorePath(workspace)));
     }
 
     [Theory(DisplayName = "Unsafe runtime directory ignore and sentinel targets are refused without changing them")]
-    [InlineData("runtime")]
-    [InlineData("ignore")]
-    [InlineData("sentinel")]
+    [InlineData(RuntimeTarget)]
+    [InlineData(IgnoreTarget)]
+    [InlineData(SentinelTarget)]
     public async Task UnsafeRuntimeTargetsAreRefused(string target)
     {
         using var temporary = TemporaryWorkspace.Create("runtime-unsafe");
@@ -77,9 +83,9 @@ public sealed class WorkspaceRuntimeIntegrationTests
         var workspace = Workspace(temporary);
         var path = target switch
         {
-            "runtime" => temporary.CreateFile(".open-forge-state", "preserved"),
-            "ignore" => temporary.CreateDirectory(Path.Combine(".open-forge-state", ".gitignore")),
-            "sentinel" => temporary.CreateDirectory(Path.Combine(".open-forge-state", "workspace.lock")),
+            RuntimeTarget => temporary.CreateFile(Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.DirectoryPath(workspace)), "preserved"),
+            IgnoreTarget => temporary.CreateDirectory(Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.IgnorePath(workspace))),
+            SentinelTarget => temporary.CreateDirectory(Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.LockPath(workspace))),
             _ => throw new ArgumentOutOfRangeException(nameof(target)),
         };
         var result = await store.AcquireAsync(Request(workspace), TestContext.Current.CancellationToken);
@@ -125,7 +131,7 @@ public sealed class WorkspaceRuntimeIntegrationTests
                     Assert.Equal(WorkspaceRuntimePaths.LockPath(workspace), failure.Path);
                 }
             });
-            Assert.Equal("*\n", File.ReadAllText(WorkspaceRuntimePaths.IgnorePath(workspace)));
+            Assert.Equal(WorkspaceRuntimeBootstrap.IgnoreContent, File.ReadAllText(WorkspaceRuntimePaths.IgnorePath(workspace)));
         }
         finally
         {
@@ -141,7 +147,7 @@ public sealed class WorkspaceRuntimeIntegrationTests
     {
         using var temporary = TemporaryWorkspace.Create("runtime-ignore-preserved");
         var workspace = Workspace(temporary);
-        var path = temporary.CreateFile(".open-forge-state/.gitignore", "*\n");
+        var path = temporary.CreateFile(Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.IgnorePath(workspace)), WorkspaceRuntimeBootstrap.IgnoreContent);
         File.SetLastWriteTimeUtc(path, new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
         var before = File.GetLastWriteTimeUtc(path);
         using var reader = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -152,12 +158,12 @@ public sealed class WorkspaceRuntimeIntegrationTests
     }
 
     [Theory(DisplayName = "A shared reader blocks ignore repair with an initialization error and no sentinel")]
-    [InlineData("partial"), InlineData("xx")]
+    [InlineData(PartialContent), InlineData("xx")]
     public void IgnoreRepairSharingConflictIsNotWorkspaceContention(string prior)
     {
         using var temporary = TemporaryWorkspace.Create("runtime-ignore-repair");
         var workspace = Workspace(temporary);
-        var path = temporary.CreateFile(".open-forge-state/.gitignore", prior);
+        var path = temporary.CreateFile(Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.IgnorePath(workspace)), prior);
         using (var reader = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
             var failure = WorkspaceRuntimeBootstrap.EnsureCreated(workspace, TestContext.Current.CancellationToken);
@@ -168,7 +174,7 @@ public sealed class WorkspaceRuntimeIntegrationTests
         }
 
         Assert.Null(WorkspaceRuntimeBootstrap.EnsureCreated(workspace, TestContext.Current.CancellationToken));
-        Assert.Equal("*\n", File.ReadAllText(path));
+        Assert.Equal(WorkspaceRuntimeBootstrap.IgnoreContent, File.ReadAllText(path));
     }
 
     [Fact(DisplayName = "A writer cannot acquire the workspace while ignore repair holds partial bytes")]
@@ -177,7 +183,7 @@ public sealed class WorkspaceRuntimeIntegrationTests
         using var temporary = TemporaryWorkspace.Create("runtime-ignore-in-progress");
         using var store = WorkspaceLockTestStore.Create("runtime-ignore-in-progress-store");
         var workspace = Workspace(temporary);
-        var path = temporary.CreateFile(".open-forge-state/.gitignore", "*");
+        var path = temporary.CreateFile(Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.IgnorePath(workspace)), WorkspaceRuntimeBootstrap.IgnoreContent[..1]);
         using (var repair = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
         {
             var blocked = await store.AcquireAsync(Request(workspace), TestContext.Current.CancellationToken);
@@ -186,13 +192,13 @@ public sealed class WorkspaceRuntimeIntegrationTests
             Assert.Equal(path, blocked.LockFailure?.Path);
             Assert.False(File.Exists(WorkspaceRuntimePaths.LockPath(workspace)));
             repair.Position = 1;
-            repair.WriteByte((byte)'\n');
+            repair.Write(System.Text.Encoding.UTF8.GetBytes(WorkspaceRuntimeBootstrap.IgnoreContent[1..]));
             repair.Flush(flushToDisk: true);
         }
 
         var acquired = await store.AcquireAsync(Request(workspace), TestContext.Current.CancellationToken);
         await using var lease = Assert.IsType<WorkspaceLockLease>(acquired.Lease);
-        Assert.Equal("*\n", File.ReadAllText(path));
+        Assert.Equal(WorkspaceRuntimeBootstrap.IgnoreContent, File.ReadAllText(path));
     }
 
     [Fact(DisplayName = "Recovery location discovery creates neither local nor legacy storage")]
@@ -213,5 +219,5 @@ public sealed class WorkspaceRuntimeIntegrationTests
         => new(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
 
     private static WorkspaceLockRequest Request(CliWorkspace workspace)
-        => new(workspace, "index", Guid.NewGuid());
+        => new(workspace, IndexDefinitions.CommandIdentity, Guid.NewGuid());
 }

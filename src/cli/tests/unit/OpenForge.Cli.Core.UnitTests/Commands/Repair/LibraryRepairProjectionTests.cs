@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Commands.Repair;
 using System.Collections.Immutable;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
@@ -19,6 +21,10 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class LibraryRepairProjectionTests
 {
+    private const string FixtureRoute = "directives";
+    private const string MissingProjectionCause = "The projection is missing.";
+    private const string ResidualRecoveryCause = "The Library residual needs recovery.";
+
     [Theory(DisplayName = "Library recovery source counts and JSON count each remaining link once")]
     [InlineData(1), InlineData(20)]
     [Trait("Boundary", "Output"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
@@ -27,7 +33,7 @@ public sealed class LibraryRepairProjectionTests
         var proposals = Enumerable.Range(0, linkCount)
             .Select(index => new Core.Commands.Repair.Models.Selection.RepairLibraryRecoveryProposal(
                 LibraryRepairData.Evidence(Core.Framework.Recovery.Models.Entries.RecoveryEntryKind.RelativeFileLinkDelete,
-                    targetPath: $".agents/directives/item-{index}.md")))
+                    targetPath: $"{SourceLogicalPath.AgentsRoot}/{FixtureRoute}/item-{index}.md")))
             .ToImmutableArray();
         var input = LibraryRepairData.Input(proposals[0].Evidence) with
         {
@@ -35,7 +41,7 @@ public sealed class LibraryRepairProjectionTests
             Libraries = proposals,
         };
         var plan = RepairLibraryRecoveryPlanner.Build(input);
-        var observations = proposals.SelectMany(proposal => new[] { "The projection is missing.", "The Library residual needs recovery." }
+        var observations = proposals.SelectMany(proposal => new[] { MissingProjectionCause, ResidualRecoveryCause }
             .Select(cause => new RepairFinding(Core.Commands.Repair.RepairFindingCode.ManualFindingRemaining, cause)
             {
                 Observation = new(proposal.TargetPath, proposal.LibraryIdValue),
@@ -57,19 +63,15 @@ public sealed class LibraryRepairProjectionTests
         Assert.Equal(expected, result.Counts.Remaining);
         Assert.Equal(expected, result.Counts.Manual);
         Assert.Equal(CliSemanticStatus.Attention, result.Status);
-        Assert.All(result.Findings, finding => Assert.Contains("The Library residual needs recovery.", finding.Cause, StringComparison.Ordinal));
+        Assert.All(result.Findings, finding => Assert.Equal(RepairFindingCode.ManualFindingRemaining, finding.Code));
         var selected = Select(result, CliDetail.Standard);
         var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, RepairPresentation.Rendering.DataTextRenderer).Content;
-        Assert.Contains("Would restore 1 Library link.", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("39 Library links would still need recovery.", text, StringComparison.Ordinal);
-        if (expected > 0)
-            Assert.Contains($"{expected} Library links would still need recovery.", text, StringComparison.Ordinal);
+        Assert.NotNull(result.Workspace);
+        CommandOutputSnapshot.MatchSnapshot(CommandOutputNormalization.ReplaceDelimitedPath(text, result.Workspace.LexicalRoot, "<workspace>"),
+            $"library-report.{linkCount}");
         using var document = JsonDocument.Parse(CliJsonRenderer.Render(selected, RepairPresentation.Rendering.DataJsonTypeInfo));
-        var counts = document.RootElement.GetProperty("counts");
-        Assert.Equal(expected, counts.GetProperty("problemsRemaining").GetInt32());
-        Assert.Equal(expected, counts.GetProperty("problemsNeedingHand").GetInt32());
-        Assert.Equal(expected, counts.TryGetProperty("warnings", out var warnings) ? warnings.GetInt32() : 0);
-        Assert.Equal(expected, document.RootElement.GetProperty("findings").GetArrayLength());
+        var counts = document.RootElement.GetProperty(CliJsonFields.Counts);
+        Assert.Equal(expected, document.RootElement.GetProperty(CliJsonFields.Findings).GetArrayLength());
         CommandOutputSnapshot.MatchSnapshot(counts.GetRawText(), $"library-counts.{linkCount}.json");
     }
     [Trait("Boundary", "Processing")]

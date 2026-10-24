@@ -1,0 +1,1 @@
+'alias.md': Choose a project document outside the reserved workspace runtime directory.

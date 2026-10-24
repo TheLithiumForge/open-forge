@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Removed .agents/guidance/old guide.md",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-remove.recovery-history",
+      "title": "Recovery history is retained",
+      "message": "Recovery data from an earlier run remains at <recovery-bundle>. It does not block this operation.",
+      "subject": {
+        "kind": "file",
+        "path": "<recovery-bundle>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "README.md",
+      "kind": "link",
+      "action": "detached",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/guidance/old guide.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/guidance/old guide.overwrite.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesRemoved": 2,
+    "sectionsUpdated": 1,
+    "linksDetached": 1,
+    "filesScanned": 11,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "removed": [
+      ".agents/guidance/old guide.md",
+      ".agents/guidance/old guide.overwrite.md"
+    ],
+    "detachedLinks": [
+      {
+        "path": "README.md",
+        "location": "1:8"
+      }
+    ],
+    "settings": {
+      "outcome": "applied",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [
+        ".agents/guidance/old guide.md",
+        ".agents/guidance/old guide.overwrite.md"
+      ],
+      "directories": []
+    },
+    "ownershipRelease": {
+      "outcome": "unchanged",
+      "claims": []
+    }
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
+using OpenForge.Cli.Core.Commands.Route;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
@@ -22,18 +26,23 @@ public sealed class RouteRemoveRevalidationIntegrationTests
         var output = new StringWriter();
         var error = new StringWriter();
 
+        string[] arguments = [RouteDefinitions.RouteGroup.Name, RouteRemoveDefinitions.RemoveCommand.Name,
+            RouteRemoveIntegrationWorkspace.LeafId, RouteRemoveDefinitions.Automatic.Name];
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic"],
+            arguments,
             output,
             error);
 
         Assert.Equal(5, completion.ExitCode);
         Assert.Equal(CliSemanticStatus.Blocked, completion.Status);
         Assert.Equal(string.Empty, output.ToString());
-        Assert.Contains(
-            $"Cannot remove guidance/old guide: another Open Forge command holds the lock at {Path.Combine(workspace.Workspace.PhysicalRoot, ".open-forge-state", "workspace.lock")}. Nothing was changed.",
-            error.ToString(),
-            StringComparison.Ordinal);
+        Assert.True(File.Exists(WorkspaceRuntimePaths.LockPath(workspace.Workspace)));
+        await new ReadCommandOutputCapture(workspace.Path).MatchDetailsAsync(new ReadOutputScenario
+        {
+            Situation = "lock-held",
+            Arguments = arguments,
+            ExitCode = 5,
+        });
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

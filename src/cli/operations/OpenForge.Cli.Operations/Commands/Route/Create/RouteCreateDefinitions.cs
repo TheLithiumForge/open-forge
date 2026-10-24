@@ -9,6 +9,9 @@ namespace OpenForge.Cli.Core.Commands.Route.Create;
 
 internal static class RouteCreateDefinitions
 {
+    internal const string RecoveryHistoryCode = "route-create.recovery-history";
+    internal const string RecoveryCoverageUnavailableCode = "route-create.recovery-coverage-unavailable";
+
     internal const int SchemaVersion = 1;
     internal const string CommandIdentity = "route create";
     internal const string RouteCreateCommandName = "create";

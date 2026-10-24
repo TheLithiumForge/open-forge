@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
@@ -6,13 +7,27 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Shared.Permissions;
 [Trait("Feature", "extension-destination"), Trait("Evidence", "Unit")]
 public sealed class ExtensionDestinationPolicyTests
 {
+    private const string ArchiveName = "archive.zip";
+    private static readonly string Root = Path.GetFullPath("extension-policy-unit");
+    private static readonly CliWorkspace Workspace = new(Root, Root, CliWorkspaceSelectionMethod.ExplicitWorkspace);
+
+    public static TheoryData<string> RuntimeDestinations
+    {
+        get
+        {
+            return
+            [
+                Path.GetRelativePath(Root, WorkspaceRuntimePaths.DirectoryPath(Workspace)).Replace('\\', '/'),
+                Path.GetRelativePath(Root, Path.Combine(WorkspaceRuntimePaths.RecoveryRoot(Workspace), ArchiveName)).Replace('\\', '/'),
+            ];
+        }
+    }
+
     [Theory(DisplayName = "Extension destinations reserve the runtime directory without ignore rules")]
-    [InlineData(".open-forge-state"), InlineData(".open-forge-state/recovery/archive.zip")]
+    [MemberData(nameof(RuntimeDestinations))]
     public void RuntimeDestinationsAreReserved(string path)
     {
-        var root = Path.GetFullPath("extension-policy-unit");
-        var workspace = new CliWorkspace(root, root, CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        Assert.False(ExtensionDestinationPolicy.IsAllowed(workspace, path));
+        Assert.False(ExtensionDestinationPolicy.IsAllowed(Workspace, path));
     }
 
     [Trait("Boundary", "Processing")]

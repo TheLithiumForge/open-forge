@@ -36,6 +36,10 @@ internal sealed record RouteRemoveResult : ICliCommandResult
 
     internal RouteRecoveryHistory RecoveryHistory { get; init; } = RouteRecoveryHistory.Empty;
 
+    internal string RecoveryHistoryCode => RouteRemoveDefinitions.RecoveryHistoryCode;
+
+    internal string RecoveryCoverageUnavailableCode => RouteRemoveDefinitions.RecoveryCoverageUnavailableCode;
+
     public string Command => RouteRemoveDefinitions.CommandIdentity;
 
     public CliSemanticStatus Status { get; }

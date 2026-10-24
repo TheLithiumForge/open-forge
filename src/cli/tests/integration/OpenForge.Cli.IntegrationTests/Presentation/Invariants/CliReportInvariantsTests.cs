@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Extension.Install;
+using OpenForge.Cli.Core.Commands.Route.Remove;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -712,9 +714,8 @@ public sealed class CliReportInvariantsTests
         var routeMoveCatalogueProjection = path.Contains(
             "RouteMoveBeforeOutputSnapshotTests",
             StringComparison.Ordinal);
-        var routeRemoveCatalogueProjection = path.Contains(
-            "RouteRemoveBeforeOutputSnapshotTests",
-            StringComparison.Ordinal);
+        var routeRemoveCatalogueProjection = RequiredString(root, CliJsonFields.Command)
+            == RouteRemoveDefinitions.CommandIdentity;
         var routeUpdateCatalogueProjection = path.Contains(
                 "RouteUpdateBeforeOutputSnapshotTests",
                 StringComparison.Ordinal)
@@ -830,7 +831,7 @@ public sealed class CliReportInvariantsTests
             if (found < 0
                 && RequiredString(effect, "action") == "created"
                 && ((detail == "minimal"
-                        && (RequiredString(root, "command") == "extension install"
+                        && (RequiredString(root, CliJsonFields.Command) == ExtensionInstallDefinitions.CommandIdentity
                             || RequiredString(root, "command") == "install"
                             || path.Contains("LibraryAttachBeforeOutputSnapshotTests", StringComparison.Ordinal)))
                     || path.Contains("InstallBeforeOutputSnapshotTests", StringComparison.Ordinal)

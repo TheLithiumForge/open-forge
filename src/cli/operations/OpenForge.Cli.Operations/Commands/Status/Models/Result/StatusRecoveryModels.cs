@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Shared.Serialization;
+
 namespace OpenForge.Cli.Core.Commands.Status.Models.Result;
 
 internal sealed record StatusRecoveryCandidate(
@@ -21,4 +23,9 @@ internal sealed record StatusRecoveryStore(
     string? Path,
     StatusValueState Coverage,
     IReadOnlyList<StatusRecoveryCandidate> Candidates,
-    string? Cause);
+    string? Cause)
+{
+    internal string CoverageName => Coverage == StatusValueState.Available
+        ? RecoveryWireVocabulary.CompleteCoverage
+        : RecoveryWireVocabulary.IncompleteCoverage;
+}

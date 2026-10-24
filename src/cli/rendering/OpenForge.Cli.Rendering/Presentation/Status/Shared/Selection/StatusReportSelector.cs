@@ -212,7 +212,7 @@ internal static class StatusReportSelector
             {
                 Stores = facts.Recovery.Stores.Select(store => new StatusDataRecoveryStore(
                     store.Kind, store.Path,
-                    store.Coverage == StatusValueState.Available ? "complete" : "incomplete",
+                    store.CoverageName,
                     store.Candidates.Select(candidate => new StatusDataRecoveryCandidate
                     {
                         Path = candidate.Path,

@@ -7,6 +7,9 @@ namespace OpenForge.Cli.Core.Framework.Mutation.Locking.Shared.Runtime;
 
 internal static class WorkspaceRuntimeBootstrap
 {
+    internal const string IgnoreContent = "*\n";
+    private static readonly byte[] IgnoreBytes = System.Text.Encoding.UTF8.GetBytes(IgnoreContent);
+
     internal static WorkspaceLockFailure? EnsureCreated(CliWorkspace workspace, CancellationToken cancellationToken)
     {
         var path = WorkspaceRuntimePaths.DirectoryPath(workspace);
@@ -36,7 +39,7 @@ internal static class WorkspaceRuntimeBootstrap
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
-                if (new FileInfo(path).Length == 2)
+                if (new FileInfo(path).Length == IgnoreBytes.Length)
                 {
                     using var existing = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
                     if (!existing.CanSeek)
@@ -81,8 +84,8 @@ internal static class WorkspaceRuntimeBootstrap
             }
 
             handle.Position = 0;
-            handle.Write("*\n"u8);
-            handle.SetLength(2);
+            handle.Write(IgnoreBytes);
+            handle.SetLength(IgnoreBytes.Length);
             handle.Flush(flushToDisk: true);
             return null;
         }
@@ -97,7 +100,7 @@ internal static class WorkspaceRuntimeBootstrap
     }
 
     private static bool ContainsIgnoreRule(FileStream handle)
-        => handle.Length == 2 && handle.ReadByte() == '*' && handle.ReadByte() == '\n';
+        => handle.Length == IgnoreBytes.Length && handle.ReadByte() == IgnoreBytes[0] && handle.ReadByte() == IgnoreBytes[1];
 
     private static WorkspaceLockFailure InitializationFailure(WorkspaceLockFailure failure)
         => failure.Kind == WorkspaceLockFailureKind.Busy

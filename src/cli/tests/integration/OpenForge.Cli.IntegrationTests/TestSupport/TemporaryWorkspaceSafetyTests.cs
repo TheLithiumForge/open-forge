@@ -1,24 +1,42 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.TestSupport;
 
 public sealed class TemporaryWorkspaceSafetyTests
 {
+    private const string NestedDirectory = "nested";
+    private const string SelectedDirectory = "selected";
+    private const string SelectedWorkspace = SelectedDirectory + "/" + NestedDirectory;
+    private const string AuthoredFile = "authored.txt";
+    private const string AuthoredRuntimeFile = "authored/" + TemporaryWorkspace.RuntimeDirectoryName + "/notes.txt";
+    private const string RecordFile = "record.json";
+    private const string ExternalDirectory = "external";
+    private const string PreservedContent = "preserved";
+
+    private static CliWorkspace Workspace(string path)
+        => new(path, path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
+
+    private static string RelativeSentinel(TemporaryWorkspace workspace)
+        => Path.GetRelativePath(workspace.Path, WorkspaceRuntimePaths.LockPath(Workspace(workspace.Path))).Replace('\\', '/');
+
     [Fact(DisplayName = "Selected nested workspace runtime cleanup preserves authored files")]
     [Trait("Boundary", "OS"), Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
     public void NestedWorkspaceRuntimeCanBeRemovedBeforeParentCleanup()
     {
         using var workspace = TemporaryWorkspace.Create("nested-runtime-ownership");
-        var selected = workspace.CreateDirectory("selected/nested");
-        var authored = workspace.CreateFile("selected/nested/authored.txt", "preserved");
+        var selected = workspace.CreateDirectory(SelectedWorkspace);
+        var authored = workspace.CreateFile(SelectedWorkspace + "/" + AuthoredFile, PreservedContent);
         var runtime = Path.Combine(selected, TemporaryWorkspace.RuntimeDirectoryName);
         Directory.CreateDirectory(runtime);
-        File.WriteAllText(Path.Combine(runtime, "workspace.lock"), "held earlier");
+        File.WriteAllText(WorkspaceRuntimePaths.LockPath(Workspace(selected)), "held earlier");
 
-        workspace.DeleteRuntimeState("selected/nested");
+        workspace.DeleteRuntimeState(SelectedWorkspace);
 
         Assert.False(Directory.Exists(runtime));
-        Assert.Equal("preserved", File.ReadAllText(authored));
+        Assert.Equal(PreservedContent, File.ReadAllText(authored));
     }
 
     [Fact(DisplayName = "Selected nested workspace runtime cleanup refuses linked workspace ancestors")]
@@ -27,12 +45,12 @@ public sealed class TemporaryWorkspaceSafetyTests
     {
         using var workspace = TemporaryWorkspace.Create("nested-runtime-link");
         using var external = TemporaryWorkspace.Create("nested-runtime-external");
-        var sentinel = external.CreateFile("nested/.open-forge-state/workspace.lock", "preserved");
-        Assert.SkipUnless(workspace.TryCreateDirectorySymbolicLink("selected", external.Path, out _), "Directory symbolic links are unavailable.");
+        var sentinel = external.CreateFile(NestedDirectory + "/" + RelativeSentinel(external), PreservedContent);
+        Assert.True(workspace.TryCreateDirectorySymbolicLink(SelectedDirectory, external.Path, out var cause), cause);
 
-        Assert.Throws<InvalidOperationException>(() => workspace.DeleteRuntimeState("selected/nested"));
+        Assert.Throws<InvalidOperationException>(() => workspace.DeleteRuntimeState(SelectedWorkspace));
 
-        Assert.Equal("preserved", File.ReadAllText(sentinel));
+        Assert.Equal(PreservedContent, File.ReadAllText(sentinel));
     }
 
     [Fact(DisplayName = "Temporary workspace owns runtime contents created outside fixture APIs")]
@@ -42,9 +60,10 @@ public sealed class TemporaryWorkspaceSafetyTests
         var workspace = TemporaryWorkspace.Create("runtime-ownership");
         var root = workspace.Path;
         var runtime = workspace.CreateDirectory(TemporaryWorkspace.RuntimeDirectoryName);
-        Directory.CreateDirectory(Path.Combine(runtime, "recovery", "v1"));
-        File.WriteAllText(Path.Combine(runtime, "recovery", "v1", "record.json"), "{}");
-        File.WriteAllText(Path.Combine(runtime, "workspace.lock"), "arbitrary sentinel bytes");
+        var recovery = TestDataHome.LocalRecoveryStoreRoot(root);
+        Directory.CreateDirectory(recovery);
+        File.WriteAllText(Path.Combine(recovery, RecordFile), "{}");
+        File.WriteAllText(WorkspaceRuntimePaths.LockPath(Workspace(root)), "arbitrary sentinel bytes");
 
         workspace.Dispose();
         workspace.Dispose();
@@ -57,13 +76,13 @@ public sealed class TemporaryWorkspaceSafetyTests
     public void DefaultSnapshotExcludesHeldRuntimeState()
     {
         using var workspace = TemporaryWorkspace.Create("runtime-snapshot");
-        workspace.CreateFile("authored/.open-forge-state/notes.txt", "authored bytes");
+        workspace.CreateFile(AuthoredRuntimeFile, "authored bytes");
         var before = workspace.SnapshotHashes();
-        var sentinel = workspace.CreateFile(".open-forge-state/workspace.lock", "held");
+        var sentinel = workspace.CreateFile(RelativeSentinel(workspace), "held");
         using var held = new FileStream(sentinel, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
         Assert.Equal(before, workspace.SnapshotHashes());
-        Assert.Contains("authored/.open-forge-state/notes.txt", before.Keys);
+        Assert.Contains(AuthoredRuntimeFile, before.Keys);
     }
 
     [Fact(DisplayName = "Explicit runtime snapshot observes empty runtime directories and later contents")]
@@ -74,11 +93,11 @@ public sealed class TemporaryWorkspaceSafetyTests
         Assert.Empty(workspace.SnapshotHashes(includeRuntime: true));
         workspace.CreateDirectory(TemporaryWorkspace.RuntimeDirectoryName);
         Assert.Contains(TemporaryWorkspace.RuntimeDirectoryName, workspace.SnapshotHashes(includeRuntime: true).Keys);
-        workspace.CreateFile(".open-forge-state/workspace.lock", "first");
+        workspace.CreateFile(RelativeSentinel(workspace), "first");
         var before = workspace.SnapshotHashes(includeRuntime: true);
-        workspace.ReplaceText(".open-forge-state/workspace.lock", "second");
+        workspace.ReplaceText(RelativeSentinel(workspace), "second");
 
-        Assert.NotEqual(before[".open-forge-state/workspace.lock"], workspace.SnapshotHashes(includeRuntime: true)[".open-forge-state/workspace.lock"]);
+        Assert.NotEqual(before[RelativeSentinel(workspace)], workspace.SnapshotHashes(includeRuntime: true)[RelativeSentinel(workspace)]);
         Assert.Empty(workspace.SnapshotHashes());
     }
 
@@ -91,8 +110,8 @@ public sealed class TemporaryWorkspaceSafetyTests
         external.CreateFile("preserved.txt", "external bytes");
         var before = external.SnapshotHashes(includeRuntime: true);
         using var workspace = TemporaryWorkspace.Create("runtime-links");
-        var link = linkAtRoot ? TemporaryWorkspace.RuntimeDirectoryName : ".open-forge-state/external";
-        Assert.SkipUnless(workspace.TryCreateDirectorySymbolicLink(link, external.Path, out _), "Directory symbolic links are unavailable.");
+        var link = linkAtRoot ? TemporaryWorkspace.RuntimeDirectoryName : TemporaryWorkspace.RuntimeDirectoryName + "/" + ExternalDirectory;
+        Assert.True(workspace.TryCreateDirectorySymbolicLink(link, external.Path, out var cause), cause);
 
         workspace.Dispose();
 

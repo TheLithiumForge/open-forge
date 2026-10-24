@@ -7,14 +7,14 @@ namespace OpenForge.Cli.Core.Presentation.Route.Shared.Recovery;
 
 internal static class RouteRecoveryHistoryFindings
 {
-    internal static IEnumerable<CliFinding> Read(RouteRecoveryHistory history, string prefix)
+    internal static IEnumerable<CliFinding> Read(RouteRecoveryHistory history, string historyCode, string unavailableCode)
     {
         foreach (var path in history.Paths)
         {
             var message = CliFindingWording.RecoveryHistory(path);
             yield return new CliFinding
             {
-                Code = $"{prefix}.recovery-history",
+                Code = historyCode,
                 Severity = CliSeverity.Warning,
                 Title = global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleRecoveryHistoryRetained(),
                 Message = message,
@@ -28,7 +28,7 @@ internal static class RouteRecoveryHistoryFindings
             var message = CliFindingWording.RecoveryCoverageUnavailable(unavailable.Path, CliFindingWording.PlainCause(unavailable.Cause));
             yield return new CliFinding
             {
-                Code = $"{prefix}.recovery-coverage-unavailable",
+                Code = unavailableCode,
                 Severity = CliSeverity.Warning,
                 Title = global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleRecoveryHistoryUnavailable(),
                 Message = message,

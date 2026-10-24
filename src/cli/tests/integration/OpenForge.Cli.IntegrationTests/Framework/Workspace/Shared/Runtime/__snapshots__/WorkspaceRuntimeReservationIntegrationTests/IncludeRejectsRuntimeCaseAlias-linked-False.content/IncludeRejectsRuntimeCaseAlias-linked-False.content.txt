@@ -1,0 +1,1 @@
+'.OPEN-FORGE-STATE/notes.md': Choose a project document outside the reserved workspace runtime directory.

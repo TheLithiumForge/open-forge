@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Serialization;
 using OpenForge.Cli.Core.Commands.Cleanup;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
@@ -114,7 +115,7 @@ public sealed class RecoveryStoreCoverageIntegrationTests
 
             var result = await operation.ExecuteAsync(new(workspace, CleanupMode.Apply), Token);
 
-            Assert.Equal(["workspace", "legacy"], result.Stores.Select(store => store.Kind));
+            Assert.Equal([RecoveryWireVocabulary.StoreKind(RecoveryStoreKind.Workspace), RecoveryWireVocabulary.StoreKind(RecoveryStoreKind.Legacy)], result.Stores.Select(store => store.Kind));
             Assert.False(File.Exists(local.BundlePath));
             Assert.Equal(mismatchedAuthority, File.Exists(legacyPath));
             Assert.Equal(mismatchedAuthority ? 1 : 2,
@@ -192,8 +193,8 @@ public sealed class RecoveryStoreCoverageIntegrationTests
             var contributor = new RecoveryResidualOperationalContributor(new RecoveryBundleTargetStateReader(resolver), resolver);
             var status = StatusRecoveryAggregator.Build(await RecoveryResidualOperationalContributor.ReadStatusAsync(workspace, Token));
             var doctor = RecoveryResidualDoctorInspector.Inspect(await contributor.ReadDoctorAsync(workspace, Token));
-            Assert.Equal(["workspace", "legacy"], status.Stores.Select(store => store.Kind));
-            Assert.Equal(["workspace", "legacy"], doctor.RecoveryStores.Select(store => store.Kind));
+            Assert.Equal([RecoveryWireVocabulary.StoreKind(RecoveryStoreKind.Workspace), RecoveryWireVocabulary.StoreKind(RecoveryStoreKind.Legacy)], status.Stores.Select(store => store.Kind));
+            Assert.Equal([RecoveryWireVocabulary.StoreKind(RecoveryStoreKind.Workspace), RecoveryWireVocabulary.StoreKind(RecoveryStoreKind.Legacy)], doctor.RecoveryStores.Select(store => store.Kind));
             foreach (var mode in new[] { CleanupMode.DryRun, CleanupMode.Apply })
             {
                 var cleanup = await new CleanupOperation().ExecuteAsync(new CleanupRequest(workspace, mode), Token);

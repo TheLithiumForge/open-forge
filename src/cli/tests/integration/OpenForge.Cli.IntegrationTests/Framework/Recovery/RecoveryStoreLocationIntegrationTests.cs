@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Cleanup;
 using OpenForge.Cli.Core.Commands.Install.Shared.Recovery;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
@@ -118,7 +119,7 @@ public sealed class RecoveryStoreLocationIntegrationTests
             if (legacy) File.Copy(preparation.BundlePath, path);
             var frozen = await RecoveryBundleCatalogue.ReadAsync(location, Token);
             var candidate = Assert.Single(frozen.Candidates);
-            var acquired = await WorkspaceLockManager.CreateForCurrentUser().AcquireAsync(new WorkspaceLockRequest(workspace, "cleanup", Guid.NewGuid()), Token);
+            var acquired = await WorkspaceLockManager.CreateForCurrentUser().AcquireAsync(new WorkspaceLockRequest(workspace, CleanupDefinitions.CommandIdentity, Guid.NewGuid()), Token);
             await using var lease = Assert.IsType<WorkspaceLockLease>(acquired.Lease);
 
             Environment.SetEnvironmentVariable(TestDataHome.Variable, otherHome.Path);
@@ -172,7 +173,7 @@ public sealed class RecoveryStoreLocationIntegrationTests
             var catalogue = await RecoveryBundleCatalogue.ReadAsync(legacy, Token);
             var candidate = Assert.Single(catalogue.Candidates);
             var manager = new WorkspaceLockManager(WorkspaceLockStoreRoot.FromAbsolutePath(otherHome.Path));
-            var acquired = await manager.AcquireAsync(new WorkspaceLockRequest(workspace, "cleanup", Guid.NewGuid()), Token);
+            var acquired = await manager.AcquireAsync(new WorkspaceLockRequest(workspace, CleanupDefinitions.CommandIdentity, Guid.NewGuid()), Token);
             await using var lease = Assert.IsType<WorkspaceLockLease>(acquired.Lease);
             Assert.Equal(RecoveryBundleDeletionState.Blocked, (await RecoveryBundleDeletionGuard.DeleteAsync(lease, candidate, Token)).State);
             var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, new(legacy.Kind, legacy, catalogue), Token);

@@ -28,6 +28,8 @@ public sealed class TestDataHome : IDisposable
     private const string LockDirectoryName = "locks";
     private const string StoreVersionName = "v1";
     private const string HomeDirectoryName = "home";
+    private const string WorkspaceLockFileName = "workspace.lock";
+    private const string RuntimeIgnoreFileName = ".gitignore";
 
     private readonly string _root;
     private bool _disposed;
@@ -74,8 +76,17 @@ public sealed class TestDataHome : IDisposable
     public static string LegacyRecoveryWorkspaceDirectory(string dataHome, string workspacePath)
         => System.IO.Path.Combine(dataHome, ApplicationDirectoryName, RecoveryDirectoryName, StoreVersionName, WorkspaceKey(workspacePath));
 
+    public static string LocalRuntimeDirectory(string workspacePath)
+        => System.IO.Path.Combine(workspacePath, TemporaryWorkspace.RuntimeDirectoryName);
+
+    public static string LocalWorkspaceLockPath(string workspacePath)
+        => System.IO.Path.Combine(LocalRuntimeDirectory(workspacePath), WorkspaceLockFileName);
+
+    public static string LocalRuntimeIgnorePath(string workspacePath)
+        => System.IO.Path.Combine(LocalRuntimeDirectory(workspacePath), RuntimeIgnoreFileName);
+
     public static string LocalRecoveryStoreRoot(string workspacePath)
-        => System.IO.Path.Combine(workspacePath, TemporaryWorkspace.RuntimeDirectoryName, RecoveryDirectoryName, StoreVersionName);
+        => System.IO.Path.Combine(LocalRuntimeDirectory(workspacePath), RecoveryDirectoryName, StoreVersionName);
 
     public static string LocalRecoveryWorkspaceDirectory(string workspacePath)
         => System.IO.Path.Combine(LocalRecoveryStoreRoot(workspacePath), WorkspaceKey(workspacePath));

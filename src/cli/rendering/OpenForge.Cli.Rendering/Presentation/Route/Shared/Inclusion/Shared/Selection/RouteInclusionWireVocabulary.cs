@@ -5,6 +5,9 @@ namespace OpenForge.Cli.Core.Presentation.Route.Shared.Inclusion.Shared.Selectio
 
 internal static class RouteInclusionWireVocabulary
 {
+    internal static string FindingCode(string prefix, RouteInclusionFindingCode code)
+        => $"{prefix}.{Finding(code)}";
+
     internal static CliEffectOutcome Effect(RouteInclusionEffectState state) => state switch
     {
         RouteInclusionEffectState.Planned => CliEffectOutcome.Planned,

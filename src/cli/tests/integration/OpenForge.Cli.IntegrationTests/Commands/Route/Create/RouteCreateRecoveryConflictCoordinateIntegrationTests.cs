@@ -53,7 +53,7 @@ public sealed class RouteCreateRecoveryConflictCoordinateIntegrationTests
             else
             {
                 Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
-                Assert.Contains(report.Findings, item => item.Code == "route-create.recovery-history"
+                Assert.Contains(report.Findings, item => item.Code == RouteCreateDefinitions.RecoveryHistoryCode
                     && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
             }
             Assert.NotEqual(candidate.Path, result.Recovery.ResidualPath);
@@ -174,7 +174,7 @@ public sealed class RouteCreateRecoveryConflictCoordinateIntegrationTests
             Assert.Equal(new[] { second.Path }, result.RecoveryHistory.Paths);
             var report = RouteCreateReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
             Assert.Equal(new[] { second.Path },
-                report.Findings.Where(item => item.Code == "route-create.recovery-history").Select(item => item.Subject.Path));
+                report.Findings.Where(item => item.Code == RouteCreateDefinitions.RecoveryHistoryCode).Select(item => item.Subject.Path));
             Assert.Equal(RouteCreateVerificationState.Verified, result.Verification);
             Assert.Equal(
                 expectedBytes,

@@ -1,6 +1,12 @@
 Busy: Another Open Forge command holds the lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
+Reason: another Open Forge command holds the lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
 AccessDenied: Cannot open the lock at <workspace>/.open-forge-state/workspace.lock: access denied. Nothing was changed.
+Reason: cannot open the lock at <workspace>/.open-forge-state/workspace.lock: access denied. Nothing was changed.
 Unsupported: Cannot lock <workspace>/.open-forge-state/workspace.lock: this filesystem does not support file locks. Nothing was changed.
+Reason: cannot lock <workspace>/.open-forge-state/workspace.lock: this filesystem does not support file locks. Nothing was changed.
 InvalidTarget: Cannot use <workspace>/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Reason: cannot use <workspace>/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
 IoError: Cannot open the lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
+Reason: cannot open the lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
 Cancelled: Cancelled before taking the lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.
+Reason: cancelled before taking the lock at <workspace>/.open-forge-state/workspace.lock. Nothing was changed.

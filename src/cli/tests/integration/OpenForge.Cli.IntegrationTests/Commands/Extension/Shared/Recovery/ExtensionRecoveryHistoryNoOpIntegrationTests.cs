@@ -1,3 +1,8 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
+using OpenForge.Cli.Core.Commands.Shared.Serialization;
+using OpenForge.Cli.Core.Commands.Extension.Install;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
@@ -10,41 +15,50 @@ using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Recovery;
 
+[Trait("Boundary", "OS"), Trait("Evidence", "Integration")]
 public sealed class ExtensionRecoveryHistoryNoOpIntegrationTests
 {
+    private const string Target = SourceLogicalPath.AgentsRoot + "/toolkit.txt";
+    private const string RetainedHistory = "retained history";
+    private const string VersionOne = "version one\n";
+    private const string VersionTwo = "version two\n";
+    private const string UnavailableHistory = "unavailable history";
+    private const string PackageId = "toolkit";
     [Theory(DisplayName = "Extension no-ops omit verified recovery history and keep exit zero")]
-    [InlineData("install"), InlineData("update"), InlineData("remove")]
+    [InlineData(RecoveryBundleOperation.Install), InlineData(RecoveryBundleOperation.Update), InlineData(RecoveryBundleOperation.Remove)]
     [Trait("Feature", "extension-recovery-history"), Trait("Evidence", "Integration")]
-    public async Task VerifiedHistoryIsSilent(string command)
+    public async Task VerifiedHistoryIsSilent(object commandValue)
     {
+        var command = Assert.IsType<RecoveryBundleOperation>(commandValue);
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-noop-verified-history");
         using var source = ExtensionInstallCatalogue.Create("extension-noop-verified-history-source");
         await SeedAsync(workspace, source, command);
         var prior = await ExtensionRecoveryHistoryFixture.CreateVerifiedFinalAsync(
-            workspace, "extension install", RecoveryBundleOperation.Install, TestContext.Current.CancellationToken);
+            workspace, ExtensionInstallDefinitions.CommandIdentity, RecoveryBundleOperation.Install, TestContext.Current.CancellationToken);
         var bytes = File.ReadAllBytes(prior.BundlePath);
         var before = workspace.Snapshot();
 
         await ExtensionRecoveryHistoryFixture.MatchHistoryAsync(workspace, source.Path, new ReadOutputScenario
         {
-            Situation = command,
+            Situation = RecoveryWireVocabulary.Operation(command),
             Arguments = Arguments(command, source.Path),
             ExitCode = 0,
-        }, testName: $"{nameof(VerifiedHistoryIsSilent)}.{command}");
-        var run = await workspace.RunAsync([.. Arguments(command, source.Path), "--format", "json"]);
+        }, testName: $"{nameof(VerifiedHistoryIsSilent)}.{RecoveryWireVocabulary.Operation(command)}");
+        var run = await workspace.RunAsync([.. Arguments(command, source.Path), CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat]);
 
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         using var json = JsonDocument.Parse(run.StandardOutput);
-        Assert.Empty(json.RootElement.GetProperty("findings").EnumerateArray());
+        Assert.Empty(json.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray());
         Assert.Equal(before, workspace.Snapshot());
         Assert.Equal(bytes, File.ReadAllBytes(prior.BundlePath));
-        Assert.False(File.Exists(workspace.Combine(".open-forge-state/workspace.lock")));
+        Assert.False(File.Exists(WorkspaceRuntimePaths.LockPath(workspace.Workspace)));
     }
 
-    [Theory, InlineData("install"), InlineData("update"), InlineData("remove")]
-    public async Task VerifiedNoOpCreatesNoRuntimeState(string command)
+    [Theory, InlineData(RecoveryBundleOperation.Install), InlineData(RecoveryBundleOperation.Update), InlineData(RecoveryBundleOperation.Remove)]
+    public async Task VerifiedNoOpCreatesNoRuntimeState(object commandValue)
     {
+        var command = Assert.IsType<RecoveryBundleOperation>(commandValue);
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-noop-runtime");
         using var source = ExtensionInstallCatalogue.Create("extension-noop-runtime-source");
         await SeedAsync(workspace, source, command);
@@ -55,13 +69,14 @@ public sealed class ExtensionRecoveryHistoryNoOpIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(before, workspace.Snapshot());
-        Assert.False(Directory.Exists(workspace.Combine(".open-forge-state")));
+        Assert.False(Directory.Exists(WorkspaceRuntimePaths.DirectoryPath(workspace.Workspace)));
     }
 
     [Theory(DisplayName = "Extension no-ops warn only about draft and damaged history while preserving every bundle")]
-    [InlineData("install"), InlineData("update"), InlineData("remove")]
-    public async Task VerifiedNoOpReportsEveryRetainedArtifactWithoutChangingIt(string command)
+    [InlineData(RecoveryBundleOperation.Install), InlineData(RecoveryBundleOperation.Update), InlineData(RecoveryBundleOperation.Remove)]
+    public async Task VerifiedNoOpReportsEveryRetainedArtifactWithoutChangingIt(object commandValue)
     {
+        var command = Assert.IsType<RecoveryBundleOperation>(commandValue);
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-noop-history");
         using var source = ExtensionInstallCatalogue.Create("extension-noop-history-source");
         await SeedAsync(workspace, source, command);
@@ -72,34 +87,35 @@ public sealed class ExtensionRecoveryHistoryNoOpIntegrationTests
             ExtensionRecoveryHistoryFixture.CandidatePath(workspace.Workspace,
                 Guid.Parse("22222222-2222-2222-2222-222222222222"), RecoveryBundleCandidateKind.Final),
         };
-        foreach (var path in paths) File.WriteAllText(path, "retained history");
+        foreach (var path in paths) File.WriteAllText(path, RetainedHistory);
         var verified = await ExtensionRecoveryHistoryFixture.CreateVerifiedFinalAsync(
-            workspace, "extension install", RecoveryBundleOperation.Install, TestContext.Current.CancellationToken);
+            workspace, ExtensionInstallDefinitions.CommandIdentity, RecoveryBundleOperation.Install, TestContext.Current.CancellationToken);
         var verifiedBytes = File.ReadAllBytes(verified.BundlePath);
         var before = workspace.Snapshot();
         await ExtensionRecoveryHistoryFixture.MatchHistoryAsync(workspace, source.Path, new ReadOutputScenario
         {
-            Situation = command,
+            Situation = RecoveryWireVocabulary.Operation(command),
             Arguments = Arguments(command, source.Path),
             ExitCode = 2,
-        }, testName: $"{nameof(VerifiedNoOpReportsEveryRetainedArtifactWithoutChangingIt)}.{command}");
-        var run = await workspace.RunAsync([.. Arguments(command, source.Path), "--format", "json"]);
+        }, testName: $"{nameof(VerifiedNoOpReportsEveryRetainedArtifactWithoutChangingIt)}.{RecoveryWireVocabulary.Operation(command)}");
+        var run = await workspace.RunAsync([.. Arguments(command, source.Path), CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat]);
         Assert.Equal(CliSemanticStatus.Attention, run.Status);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var findings = document.RootElement.GetProperty("findings").EnumerateArray().ToArray();
+        var findings = document.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray().ToArray();
         Assert.Equal(paths.Order(StringComparer.Ordinal), findings.Select(finding =>
-            finding.GetProperty("subject").GetProperty("path").GetString()).Order(StringComparer.Ordinal));
-        Assert.All(findings, finding => Assert.Equal($"extension-{command}.recovery-history",
-            finding.GetProperty("code").GetString()));
+            finding.GetProperty(CliJsonFields.Subject).GetProperty(CliJsonFields.Path).GetString()).Order(StringComparer.Ordinal));
+        Assert.All(findings, finding => Assert.Equal(ExtensionRecoveryHistoryFixture.HistoryCode(command),
+            finding.GetProperty(CliJsonFields.Code).GetString()));
         Assert.Equal(before, workspace.Snapshot());
-        Assert.False(File.Exists(workspace.Combine(".open-forge-state/workspace.lock")));
-        foreach (var path in paths) Assert.Equal("retained history", File.ReadAllText(path));
+        Assert.False(File.Exists(WorkspaceRuntimePaths.LockPath(workspace.Workspace)));
+        foreach (var path in paths) Assert.Equal(RetainedHistory, File.ReadAllText(path));
         Assert.Equal(verifiedBytes, File.ReadAllBytes(verified.BundlePath));
     }
 
-    [Theory, InlineData("install"), InlineData("update"), InlineData("remove")]
-    public async Task UnavailableHistoryDoesNotVetoVerifiedNoOp(string command)
+    [Theory, InlineData(RecoveryBundleOperation.Install), InlineData(RecoveryBundleOperation.Update), InlineData(RecoveryBundleOperation.Remove)]
+    public async Task UnavailableHistoryDoesNotVetoVerifiedNoOp(object commandValue)
     {
+        var command = Assert.IsType<RecoveryBundleOperation>(commandValue);
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-noop-coverage");
         using var source = ExtensionInstallCatalogue.Create("extension-noop-coverage-source");
         await SeedAsync(workspace, source, command);
@@ -112,60 +128,59 @@ public sealed class ExtensionRecoveryHistoryNoOpIntegrationTests
 
         await ExtensionRecoveryHistoryFixture.MatchHistoryAsync(workspace, source.Path, new ReadOutputScenario
         {
-            Situation = command,
+            Situation = RecoveryWireVocabulary.Operation(command),
             Arguments = Arguments(command, source.Path),
             ExitCode = 2,
-        }, testName: $"{nameof(UnavailableHistoryDoesNotVetoVerifiedNoOp)}.{command}");
+        }, testName: $"{nameof(UnavailableHistoryDoesNotVetoVerifiedNoOp)}.{RecoveryWireVocabulary.Operation(command)}");
 
         Assert.Equal(before, workspace.Snapshot());
-        Assert.False(File.Exists(workspace.Combine(".open-forge-state/workspace.lock")));
+        Assert.False(File.Exists(WorkspaceRuntimePaths.LockPath(workspace.Workspace)));
     }
 
-    private static string[] Arguments(string command, string source)
-        => command == "remove"
-            ? ["extension", command, "toolkit", "--automatic"]
-            : ["extension", command, "toolkit", "--source", source, "--automatic"];
+    private static string[] Arguments(RecoveryBundleOperation command, string source)
+        => ExtensionRecoveryHistoryFixture.Arguments(command, source, PackageId);
 
-    [Theory, InlineData("install"), InlineData("update"), InlineData("remove")]
-    public async Task UnavailableHistoryStillRequiresNewPreparationBeforeWriting(string command)
+    [Theory, InlineData(RecoveryBundleOperation.Install), InlineData(RecoveryBundleOperation.Update), InlineData(RecoveryBundleOperation.Remove)]
+    public async Task UnavailableHistoryStillRequiresNewPreparationBeforeWriting(object commandValue)
     {
+        var command = Assert.IsType<RecoveryBundleOperation>(commandValue);
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-history-required-preparation");
         using var source = ExtensionInstallCatalogue.Create("extension-history-required-preparation-source");
         await workspace.SeedFrameworkAsync();
-        source.AddPackage("toolkit", [], (".agents/toolkit.txt", "version one\n"));
-        if (command != "install")
+        source.AddPackage(PackageId, [], (Target, VersionOne));
+        if (command != RecoveryBundleOperation.Install)
         {
-            Assert.Equal(0, (await workspace.RunAsync(Arguments("install", source.Path))).ExitCode);
-            if (command == "update") source.ReplacePayload("toolkit", ".agents/toolkit.txt", "version two\n");
+            Assert.Equal(0, (await workspace.RunAsync(Arguments(RecoveryBundleOperation.Install, source.Path))).ExitCode);
+            if (command == RecoveryBundleOperation.Update) source.ReplacePayload(PackageId, Target, VersionTwo);
         }
         var location = RecoveryStoreLocator.Local(workspace.Workspace);
         Directory.CreateDirectory(Path.GetDirectoryName(location.WorkspaceDirectory)
             ?? throw new InvalidOperationException("The recovery directory requires a parent."));
         if (Directory.Exists(location.WorkspaceDirectory)) Directory.Delete(location.WorkspaceDirectory, recursive: true);
-        File.WriteAllText(location.WorkspaceDirectory, "unavailable history");
+        File.WriteAllText(location.WorkspaceDirectory, UnavailableHistory);
         var before = workspace.Snapshot();
         var arguments = Arguments(command, source.Path);
-        var preview = await workspace.RunAsync([.. arguments, "--dry-run", "--format", "json"]);
+        var preview = await workspace.RunAsync([.. arguments, ExtensionRecoveryHistoryFixture.DryRunOption(command), CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat]);
         Assert.Equal(CliSemanticStatus.Attention, preview.Status);
         Assert.Equal(before, workspace.Snapshot());
 
-        var run = await workspace.RunAsync([.. arguments, "--format", "json"]);
+        var run = await workspace.RunAsync([.. arguments, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat]);
 
         Assert.True(run.Status is CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete, run.StandardOutput);
         Assert.Equal(before, workspace.Snapshot());
-        Assert.Equal("unavailable history", File.ReadAllText(location.WorkspaceDirectory));
+        Assert.Equal(UnavailableHistory, File.ReadAllText(location.WorkspaceDirectory));
     }
 
     private static async Task SeedAsync(
-        ExtensionInstallIntegrationWorkspace workspace, ExtensionInstallCatalogue source, string command)
+        ExtensionInstallIntegrationWorkspace workspace, ExtensionInstallCatalogue source, RecoveryBundleOperation command)
     {
         await workspace.SeedFrameworkAsync();
-        source.AddPackage("toolkit", [], (".agents/toolkit.txt", "toolkit\n"));
-        Assert.Equal(0, (await workspace.RunAsync(Arguments("install", source.Path))).ExitCode);
-        if (command == "remove")
+        source.AddPackage(PackageId, [], (Target, "toolkit\n"));
+        Assert.Equal(0, (await workspace.RunAsync(Arguments(RecoveryBundleOperation.Install, source.Path))).ExitCode);
+        if (command == RecoveryBundleOperation.Remove)
         {
-            Assert.Equal(0, (await workspace.RunAsync(Arguments("remove", source.Path))).ExitCode);
+            Assert.Equal(0, (await workspace.RunAsync(Arguments(RecoveryBundleOperation.Remove, source.Path))).ExitCode);
         }
-        Directory.Delete(workspace.Combine(".open-forge-state"), recursive: true);
+        Directory.Delete(WorkspaceRuntimePaths.DirectoryPath(workspace.Workspace), recursive: true);
     }
 }

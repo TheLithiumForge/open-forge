@@ -173,6 +173,10 @@ internal sealed record RouteCreateResult : ICliCommandResult
 
     internal RouteRecoveryHistory RecoveryHistory { get; init; } = RouteRecoveryHistory.Empty;
 
+    internal string RecoveryHistoryCode => RouteCreateDefinitions.RecoveryHistoryCode;
+
+    internal string RecoveryCoverageUnavailableCode => RouteCreateDefinitions.RecoveryCoverageUnavailableCode;
+
     public string Command => RouteCreateDefinitions.CommandIdentity;
 
     public CliSemanticStatus Status { get; }

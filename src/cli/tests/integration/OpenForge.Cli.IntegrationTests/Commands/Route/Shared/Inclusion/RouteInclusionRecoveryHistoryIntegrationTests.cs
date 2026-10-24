@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Route.Exclude;
 using OpenForge.Cli.Core.Commands.Route.Exclude.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Include;
@@ -76,7 +77,7 @@ public sealed class RouteInclusionRecoveryHistoryIntegrationTests
         var build = await new RouteInclusionPlanBuilder().BuildAsync(request, Token);
         Assert.NotNull(build.Plan);
         var history = await SeedHistoryAsync(workspace);
-        workspace.Files.ReplaceText(".agents/loader.md", workspace.Read(".agents/loader.md") + "\nChanged after planning.\n");
+        workspace.Files.ReplaceText(SourceLogicalPath.LoaderPath, workspace.Read(SourceLogicalPath.LoaderPath) + "\nChanged after planning.\n");
         var before = workspace.Files.SnapshotHashes();
 
         var outcome = await new RouteInclusionApplication(workspace.Locks.StoreRoot).ApplyAsync(build.Plan, Token);
@@ -93,7 +94,7 @@ public sealed class RouteInclusionRecoveryHistoryIntegrationTests
         var path = workspace.Files.Combine("guide.md");
         var snapshot = FileStateSnapshot.File(path, path, workspace.Bytes("guide.md"));
         var prepared = await RecoveryBundleStore.PrepareAsync(RecoveryBundleInput.Create(
-            workspace.Workspace, "route include",
+            workspace.Workspace, RouteIncludeDefinitions.CommandIdentity,
             RecoveryBundleAttribution.Create(RecoveryBundleProducer.Route, RecoveryBundleOperation.Include, workspace.Workspace),
             Guid.NewGuid(), [RecoveryBundleTarget.Create(PlannedFileChange.Delete(snapshot.Expectation), snapshot)]), Token);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);

@@ -1,3 +1,9 @@
+using System.Globalization;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
+using OpenForge.Cli.Core.Commands.Cleanup;
+using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared.Serialization;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using System.Diagnostics;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
@@ -51,12 +57,15 @@ public sealed class CleanupLinkedStorageIntegrationTests
             }
 
             var lines = await IntegrationProbeProcess.RunAsync(
-                [CleanupStorageProbe.ChildArgument, files.Path, dryRun ? "dry-run" : "apply", legacy ? "legacy" : "workspace"]);
+                [CleanupStorageProbe.ChildArgument, files.Path, (dryRun ? CleanupMode.DryRun : CleanupMode.Apply).ToString(), RecoveryWireVocabulary.StoreKind(legacy ? RecoveryStoreKind.Legacy : RecoveryStoreKind.Workspace)]);
 
-            Assert.Equal(["Incomplete", "0", "NotRequested"], lines);
+            Assert.Collection(lines,
+                line => Assert.Equal(CleanupCatalogueCoverage.Incomplete, Enum.Parse<CleanupCatalogueCoverage>(line)),
+                line => Assert.Equal(0, int.Parse(line, CultureInfo.InvariantCulture)),
+                line => Assert.Equal(CleanupLeaseState.NotRequested, Enum.Parse<CleanupLeaseState>(line)));
             Assert.Equal(storage, new DirectoryInfo(bucket).LinkTarget);
             Assert.Equal(fifo, Assert.Single(Directory.EnumerateFileSystemEntries(storage)));
-            Assert.False(File.Exists(files.Combine(".open-forge-state/workspace.lock")));
+            Assert.False(File.Exists(WorkspaceRuntimePaths.LockPath(workspace)));
         }
         finally
         {

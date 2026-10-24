@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
@@ -28,7 +29,7 @@ public sealed class WorkspaceLockEnvironmentIntegrationTests
         {
             Environment.SetEnvironmentVariable(CurrentUserDataHome.OverrideVariable, "relative-data-home");
             var result = await WorkspaceLockManager.CreateForCurrentUser().AcquireAsync(
-                new(workspace, "index", Guid.NewGuid()), TestContext.Current.CancellationToken);
+                new(workspace, IndexDefinitions.CommandIdentity, Guid.NewGuid()), TestContext.Current.CancellationToken);
             await using var lease = Assert.IsType<WorkspaceLockLease>(result.Lease);
             Assert.Equal(LegacyWorkspaceLockState.Unavailable, lease.LegacyState);
             Assert.Null(lease.LegacyStoreRoot);

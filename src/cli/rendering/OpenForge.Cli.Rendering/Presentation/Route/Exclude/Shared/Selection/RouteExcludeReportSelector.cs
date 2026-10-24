@@ -13,6 +13,8 @@ namespace OpenForge.Cli.Core.Presentation.Route.Exclude.Shared.Selection;
 
 internal static class RouteExcludeReportSelector
 {
+    internal const string FindingPrefix = "route-exclude";
+
     internal static CliReport<RouteExcludeData> Select(RouteExcludeResult result, CliSelection selection)
     {
         var outcome = result.Outcome;
@@ -38,7 +40,7 @@ internal static class RouteExcludeReportSelector
             CliHeadlineKind.Done or CliHeadlineKind.Warnings => global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.Done(path),
             _ => global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.Failure(lockMessage ?? outcome.Cause ?? "The request could not complete."),
         };
-        var code = outcome.Code is { } findingCode ? "route-exclude." + RouteInclusionWireVocabulary.Finding(findingCode) : null;
+        var code = outcome.Code is { } findingCode ? RouteInclusionWireVocabulary.FindingCode(FindingPrefix, findingCode) : null;
         var recovery = RouteInclusionWireVocabulary.Recovery(outcome.Recovery);
         return new CliReport<RouteExcludeData>
         {
@@ -58,7 +60,9 @@ internal static class RouteExcludeReportSelector
                     Subject = new CliSubject(CliSubjectKind.File, Path: path),
                     Actions = result.Next is { } next ? [next] : [],
                 },
-            ]).Concat(RouteRecoveryHistoryFindings.Read(result.RecoveryHistory, "route-exclude")).ToArray(),
+            ]).Concat(RouteRecoveryHistoryFindings.Read(result.RecoveryHistory,
+                    result.RecoveryHistoryCode,
+                    result.RecoveryCoverageUnavailableCode)).ToArray(),
             Effects = outcome.Effects.Select(effect => new CliEffect
             {
                 Path = effect.Path,

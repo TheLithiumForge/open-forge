@@ -9,6 +9,8 @@ namespace OpenForge.Cli.Core.Presentation.Cleanup.Shared.Wording;
 
 internal static class CleanupWording
 {
+    internal const string NotStartedOutcome = "not-started";
+
     internal static string NoData() => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageNoRecoveryDataToRemove();
 
     internal static string RemovedSummary(int bundles, int drafts, bool preview)
@@ -139,12 +141,12 @@ internal static class CleanupWording
         return effect.Outcome switch
         {
             CleanupEffectOutcome.Planned => "would-be-removed",
-            CleanupEffectOutcome.NotStarted => "not-started",
+            CleanupEffectOutcome.NotStarted => NotStartedOutcome,
             CleanupEffectOutcome.Verified => "removed",
             CleanupEffectOutcome.VerificationFailed => "could-not-be-removed",
             CleanupEffectOutcome.CompletionUnknown when effect.Cause is { } cause
                 && cause.StartsWith("No deletion was attempted", StringComparison.Ordinal)
-                => "not-started",
+                => NotStartedOutcome,
             CleanupEffectOutcome.CompletionUnknown => "final-state-unknown",
             _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Outcome, "The cleanup effect outcome is not defined."),
         };

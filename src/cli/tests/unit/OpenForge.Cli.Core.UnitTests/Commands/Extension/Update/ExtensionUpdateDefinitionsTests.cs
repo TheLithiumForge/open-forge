@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport.Snapshots;
 using System.CommandLine;
 using OpenForge.Cli.Core.Commands.Extension;
 using OpenForge.Cli.Core.Commands.Extension.Update;
@@ -80,56 +81,58 @@ public sealed class ExtensionUpdateDefinitionsTests
     [Fact(DisplayName = "Extension Update maps every finding to its stable machine code and semantic status"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void FindingDefinitionsMapEveryCodeAndStatus()
     {
-        Assert.Equal(
+        (ExtensionUpdateFindingCode Code, CliSemanticStatus Status)[] expected =
         [
-            ("extension-update.invalid-input", CliSemanticStatus.Invalid),
-            ("extension-update.selection-required", CliSemanticStatus.Invalid),
-            ("extension-update.interaction-ended", CliSemanticStatus.Invalid),
-            ("extension-update.confirmation-required", CliSemanticStatus.Invalid),
-            ("extension-update.source-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-update.source-invalid", CliSemanticStatus.Invalid),
-            ("extension-update.source-overlap", CliSemanticStatus.Blocked),
-            ("extension-update.source-identity-conflict", CliSemanticStatus.Blocked),
-            ("extension-update.framework-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-update.framework-unsafe", CliSemanticStatus.Blocked),
-            ("extension-update.lifecycle-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-update.lifecycle-blocked", CliSemanticStatus.Blocked),
-            ("extension-update.managed-divergence", CliSemanticStatus.Attention),
-            ("extension-update.ownership-conflict", CliSemanticStatus.Blocked),
-            ("extension-update.permission-required", CliSemanticStatus.Blocked),
-            ("extension-update.permission-declined", CliSemanticStatus.Blocked),
-            ("extension-update.permissions-invalid", CliSemanticStatus.Blocked),
-            ("extension-update.permissions-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-update.permissions-changed", CliSemanticStatus.Blocked),
-            ("extension-update.permission-write-failed", CliSemanticStatus.Failed),
-            ("extension-update.target-unsafe", CliSemanticStatus.Blocked),
-            ("extension-update.projection-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-update.generated-region-unsafe", CliSemanticStatus.Blocked),
-            ("extension-update.workspace-lock-unavailable", CliSemanticStatus.Blocked),
-            ("extension-update.target-changed", CliSemanticStatus.Blocked),
-            ("extension-update.recovery-conflict", CliSemanticStatus.Blocked),
-            ("extension-update.recovery-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-update.lifecycle-observation", CliSemanticStatus.Attention),
-            ("extension-update.recovery-artifact-retained", CliSemanticStatus.Attention),
-            ("extension-update.recovery-history", CliSemanticStatus.Attention),
-            ("extension-update.recovery-coverage-unavailable", CliSemanticStatus.Attention),
-            ("extension-update.write-failed", CliSemanticStatus.Failed),
-            ("extension-update.topology-verification-failed", CliSemanticStatus.Failed),
-            ("extension-update.lifecycle-publication-failed", CliSemanticStatus.Failed),
-            ("extension-update.verification-failed", CliSemanticStatus.Failed),
-            ("extension-update.recovery-failed", CliSemanticStatus.Failed),
-            ("extension-update.operation-failed", CliSemanticStatus.Failed),
-            ("extension-update.interrupted", CliSemanticStatus.Interrupted),
-            ("extension-update.settings-invalid", CliSemanticStatus.Blocked),
-            ("extension-update.settings-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-update.removed-extension", CliSemanticStatus.Blocked),
-            ("extension-update.bulk-excluded", CliSemanticStatus.Attention),
-            ("extension-update.path-excluded", CliSemanticStatus.Complete),
-            ("extension-update.excluded-ancestor", CliSemanticStatus.Blocked),
-        ],
-            ExtensionUpdateDefinitions.FindingCodes.Select(code => (
-                ExtensionUpdateDefinitions.ReadMachineName(code),
-                ExtensionUpdateDefinitions.ReadStatus(code))));
+            (ExtensionUpdateFindingCode.InvalidInput, CliSemanticStatus.Invalid),
+            (ExtensionUpdateFindingCode.SelectionRequired, CliSemanticStatus.Invalid),
+            (ExtensionUpdateFindingCode.InteractionEnded, CliSemanticStatus.Invalid),
+            (ExtensionUpdateFindingCode.ConfirmationRequired, CliSemanticStatus.Invalid),
+            (ExtensionUpdateFindingCode.SourceUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionUpdateFindingCode.SourceInvalid, CliSemanticStatus.Invalid),
+            (ExtensionUpdateFindingCode.SourceOverlap, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.SourceIdentityConflict, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.FrameworkUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionUpdateFindingCode.FrameworkUnsafe, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.LifecycleUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionUpdateFindingCode.LifecycleBlocked, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.ManagedDivergence, CliSemanticStatus.Attention),
+            (ExtensionUpdateFindingCode.OwnershipConflict, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.PermissionRequired, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.PermissionDeclined, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.PermissionsInvalid, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.PermissionsUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionUpdateFindingCode.PermissionsChanged, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.PermissionWriteFailed, CliSemanticStatus.Failed),
+            (ExtensionUpdateFindingCode.TargetUnsafe, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.ProjectionUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionUpdateFindingCode.GeneratedRegionUnsafe, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.WorkspaceLockUnavailable, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.TargetChanged, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.RecoveryConflict, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.RecoveryUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionUpdateFindingCode.LifecycleObservation, CliSemanticStatus.Attention),
+            (ExtensionUpdateFindingCode.RecoveryArtifactRetained, CliSemanticStatus.Attention),
+            (ExtensionUpdateFindingCode.RecoveryHistory, CliSemanticStatus.Attention),
+            (ExtensionUpdateFindingCode.RecoveryCoverageUnavailable, CliSemanticStatus.Attention),
+            (ExtensionUpdateFindingCode.WriteFailed, CliSemanticStatus.Failed),
+            (ExtensionUpdateFindingCode.TopologyVerificationFailed, CliSemanticStatus.Failed),
+            (ExtensionUpdateFindingCode.LifecyclePublicationFailed, CliSemanticStatus.Failed),
+            (ExtensionUpdateFindingCode.VerificationFailed, CliSemanticStatus.Failed),
+            (ExtensionUpdateFindingCode.RecoveryFailed, CliSemanticStatus.Failed),
+            (ExtensionUpdateFindingCode.OperationFailed, CliSemanticStatus.Failed),
+            (ExtensionUpdateFindingCode.Interrupted, CliSemanticStatus.Interrupted),
+            (ExtensionUpdateFindingCode.SettingsInvalid, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.SettingsUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionUpdateFindingCode.RemovedExtension, CliSemanticStatus.Blocked),
+            (ExtensionUpdateFindingCode.BulkExcluded, CliSemanticStatus.Attention),
+            (ExtensionUpdateFindingCode.PathExcluded, CliSemanticStatus.Complete),
+            (ExtensionUpdateFindingCode.ExcludedAncestor, CliSemanticStatus.Blocked),
+        ];
+        Assert.Equal(expected.Select(item => item.Code), Enum.GetValues<ExtensionUpdateFindingCode>());
+        Assert.Equal(expected.Select(item => item.Code), ExtensionUpdateDefinitions.FindingCodes);
+        Assert.All(expected, item => Assert.Equal(item.Status, ExtensionUpdateDefinitions.ReadStatus(item.Code)));
+        CommandOutputSnapshot.MatchSnapshot(string.Join("\n", ExtensionUpdateDefinitions.FindingCodes.Select(code =>
+            $"{code}: {ExtensionUpdateDefinitions.ReadMachineName(code)}")), "finding-codes");
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             ExtensionUpdateDefinitions.ReadMachineName((ExtensionUpdateFindingCode)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() =>

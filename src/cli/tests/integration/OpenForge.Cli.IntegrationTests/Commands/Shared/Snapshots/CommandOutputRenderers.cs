@@ -108,7 +108,6 @@ internal sealed class CommandOutputRenderers<TResult>(
             var textContent = normalizeText is null ? textRendered.PrimaryContent : normalizeText(textRendered.PrimaryContent);
             if (lockFailurePath is not null)
             {
-                Assert.Contains(lockFailurePath, textRendered.PrimaryContent, StringComparison.Ordinal);
                 textContent = CommandOutputNormalization.ReplaceDelimitedPath(textContent, lockFailurePath, "<lock-path>");
             }
             snapshots.Add(
@@ -136,9 +135,6 @@ internal sealed class CommandOutputRenderers<TResult>(
             var jsonContent = normalizeJson is null ? jsonRendered.PrimaryContent : normalizeJson(jsonRendered.PrimaryContent);
             if (lockFailurePath is not null)
             {
-                using var document = JsonDocument.Parse(jsonRendered.PrimaryContent);
-                Assert.Contains(document.RootElement.GetProperty("findings").EnumerateArray(), finding =>
-                    finding.GetProperty("message").GetString()?.Contains(lockFailurePath, StringComparison.Ordinal) == true);
                 jsonContent = CommandOutputNormalization.ReplaceDelimitedPath(jsonContent, lockFailurePath, "<lock-path>");
             }
             var normalizedJson = CommandOutputNormalization.Normalize(jsonContent, workspacePath, CliBuildVersion.InformationalVersion, recoveryBundlePath, extensionSourcePath);

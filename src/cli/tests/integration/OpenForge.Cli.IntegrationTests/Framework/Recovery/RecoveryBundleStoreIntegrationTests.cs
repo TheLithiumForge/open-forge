@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Isolation;
 
@@ -24,7 +25,8 @@ public sealed class RecoveryBundleStoreIntegrationTests
         var storage = external.CreateDirectory("storage");
         var workspace = Workspace(temporary);
         var input = DeleteInput(temporary, workspace, Guid.NewGuid());
-        temporary.CreateDirectorySymbolicLink(".open-forge-state/recovery", storage);
+        temporary.CreateDirectorySymbolicLink(Path.GetRelativePath(temporary.Path,
+            Path.GetDirectoryName(WorkspaceRuntimePaths.RecoveryRoot(workspace)) ?? throw new InvalidOperationException()), storage);
         var before = temporary.SnapshotHashes(includeRuntime: true);
 
         var result = await RecoveryBundleStore.PrepareAsync(input, TestContext.Current.CancellationToken);

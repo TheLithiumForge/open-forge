@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Cleanup.Shared.Rendering;
 using System.Text.Json.Serialization;
 
 namespace OpenForge.Cli.Core.Presentation.Cleanup.Models;
@@ -36,6 +37,7 @@ internal sealed record CleanupDataItem
 
     public required string Kind { get; init; }
 
+    [JsonPropertyName(CleanupDataJsonFields.Outcome)]
     public required string Outcome { get; init; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

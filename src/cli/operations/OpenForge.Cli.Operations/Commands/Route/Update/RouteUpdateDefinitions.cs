@@ -9,6 +9,9 @@ namespace OpenForge.Cli.Core.Commands.Route.Update;
 
 internal static class RouteUpdateDefinitions
 {
+    internal const string RecoveryHistoryCode = "route-update.recovery-history";
+    internal const string RecoveryCoverageUnavailableCode = "route-update.recovery-coverage-unavailable";
+
     internal const int SchemaVersion = 1;
     internal const string CommandIdentity = "route update";
     internal const string RouteUpdateCommandName = "update";

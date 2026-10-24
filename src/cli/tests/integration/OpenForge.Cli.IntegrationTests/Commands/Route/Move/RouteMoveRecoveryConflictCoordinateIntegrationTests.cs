@@ -59,7 +59,7 @@ public sealed class RouteMoveRecoveryConflictCoordinateIntegrationTests
             else
             {
                 Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
-                Assert.Contains(report.Findings, item => item.Code == "route-move.recovery-history"
+                Assert.Contains(report.Findings, item => item.Code == RouteMoveDefinitions.RecoveryHistoryCode
                     && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
             }
             Assert.NotEqual(candidate.Path, result.Recovery.ResidualPath);

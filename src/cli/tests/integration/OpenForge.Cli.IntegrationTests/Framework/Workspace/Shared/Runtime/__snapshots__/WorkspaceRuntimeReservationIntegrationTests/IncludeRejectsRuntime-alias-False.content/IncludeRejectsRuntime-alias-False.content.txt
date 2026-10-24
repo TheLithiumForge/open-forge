@@ -1,0 +1,1 @@
+'.open-forge-state/recovery/v1/history.md': Choose a project document outside the reserved workspace runtime directory.

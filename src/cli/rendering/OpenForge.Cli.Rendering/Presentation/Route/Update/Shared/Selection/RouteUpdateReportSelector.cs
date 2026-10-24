@@ -35,7 +35,9 @@ internal static class RouteUpdateReportSelector
                 ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit)
                 : null,
             Findings = result.Findings.Select(finding => Finding(result, finding))
-                .Concat(RouteRecoveryHistoryFindings.Read(result.RecoveryHistory, "route-update")).ToArray(),
+                .Concat(RouteRecoveryHistoryFindings.Read(result.RecoveryHistory,
+                    result.RecoveryHistoryCode,
+                    result.RecoveryCoverageUnavailableCode)).ToArray(),
             Effects = result.Effects.Select(effect => Effect(effect, selection.Detail)).ToArray(),
             Counts =
             [

@@ -1,5 +1,6 @@
 using System.Security.AccessControl;
 using System.Security.Principal;
+using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -12,6 +13,12 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 [Trait("Boundary", "OS"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
 public sealed class WorkspaceLockFailureIntegrationTests
 {
+    private const string RuntimeTarget = "runtime";
+    private const string IgnoreTarget = "ignore";
+    private const string SentinelTarget = "sentinel";
+    private const string PreservedContent = "preserved";
+    private const string OutsideContent = "outside-content";
+
     [Fact(DisplayName = "Unobservable existing legacy files fail as access denied and release the local lock")]
     public async Task UnobservableLegacyFileIsNotAssumedAbsent()
     {
@@ -43,11 +50,11 @@ public sealed class WorkspaceLockFailureIntegrationTests
 
         try
         {
-            var result = await store.AcquireAsync(new(workspace, "index", Guid.NewGuid()), TestContext.Current.CancellationToken);
+            var result = await store.AcquireAsync(new(workspace, IndexDefinitions.CommandIdentity, Guid.NewGuid()), TestContext.Current.CancellationToken);
             if (result.Lease is not null)
             {
                 result.Lease.Dispose();
-                Assert.Skip("This host bypasses the fixture access denial.");
+                Assert.Fail("This host bypasses the fixture access denial.");
             }
 
             Assert.Equal(WorkspaceLockFailureKind.AccessDenied, result.LockFailure?.Kind);
@@ -77,19 +84,19 @@ public sealed class WorkspaceLockFailureIntegrationTests
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         _ = cleanup.Track(workspace);
         var root = WorkspaceLockStoreRoot.FromAbsolutePath(legacy.Path);
-        var path = legacy.CreateFile("OpenForge", "preserved");
-        var result = await new WorkspaceLockManager(root).AcquireAsync(new(workspace, "index", Guid.NewGuid()), TestContext.Current.CancellationToken);
+        var path = legacy.CreateFile(WorkspaceLockPathIdentity.ApplicationDirectoryName, PreservedContent);
+        var result = await new WorkspaceLockManager(root).AcquireAsync(new(workspace, IndexDefinitions.CommandIdentity, Guid.NewGuid()), TestContext.Current.CancellationToken);
         Assert.Equal(WorkspaceLockFailureKind.IoError, result.LockFailure?.Kind);
         Assert.Equal(WorkspaceLockPathIdentity.StoreDirectory(root), result.LockFailure?.Path);
-        Assert.Equal("preserved", File.ReadAllText(path));
+        Assert.Equal(PreservedContent, File.ReadAllText(path));
         using var local = new FileStream(WorkspaceRuntimePaths.LockPath(workspace), FileMode.Open, FileAccess.ReadWrite, FileShare.None);
         Assert.True(local.CanWrite);
     }
 
     [Theory(DisplayName = "Runtime links are refused before following or modifying their targets")]
-    [InlineData("runtime")]
-    [InlineData("ignore")]
-    [InlineData("sentinel")]
+    [InlineData(RuntimeTarget)]
+    [InlineData(IgnoreTarget)]
+    [InlineData(SentinelTarget)]
     public async Task RuntimeLinksAreRefused(string target)
     {
         using var temporary = TemporaryWorkspace.Create("runtime-link");
@@ -98,32 +105,32 @@ public sealed class WorkspaceLockFailureIntegrationTests
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var relativePath = target switch
         {
-            "runtime" => ".open-forge-state",
-            "ignore" => Path.Combine(".open-forge-state", ".gitignore"),
-            "sentinel" => Path.Combine(".open-forge-state", "workspace.lock"),
+            RuntimeTarget => Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.DirectoryPath(workspace)),
+            IgnoreTarget => Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.IgnorePath(workspace)),
+            SentinelTarget => Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.LockPath(workspace)),
             _ => throw new ArgumentOutOfRangeException(nameof(target)),
         };
-        var outsideFile = outside.CreateFile("preserved", "outside-content");
-        var created = target == "runtime"
+        var outsideFile = outside.CreateFile(PreservedContent, OutsideContent);
+        var created = target == RuntimeTarget
             ? temporary.TryCreateDirectorySymbolicLink(relativePath, outside.Path, out _)
             : temporary.TryCreateFileSymbolicLink(relativePath, outsideFile, out _);
         if (!created)
         {
-            Assert.Skip("This host does not permit symbolic-link creation.");
+            Assert.Fail("This host does not permit symbolic-link creation.");
         }
 
         var path = temporary.Combine(relativePath);
         try
         {
-            var result = await store.AcquireAsync(new(workspace, "index", Guid.NewGuid()), TestContext.Current.CancellationToken);
+            var result = await store.AcquireAsync(new(workspace, IndexDefinitions.CommandIdentity, Guid.NewGuid()), TestContext.Current.CancellationToken);
             Assert.Equal(WorkspaceLockFailureKind.InvalidTarget, result.LockFailure?.Kind);
             Assert.Equal(path, result.LockFailure?.Path);
-            Assert.Equal("outside-content", File.ReadAllText(outsideFile));
-            Assert.False(File.Exists(outside.Combine("workspace.lock")));
+            Assert.Equal(OutsideContent, File.ReadAllText(outsideFile));
+            Assert.False(File.Exists(outside.Combine(Path.GetFileName(WorkspaceRuntimePaths.LockPath(workspace)))));
         }
         finally
         {
-            if (target == "runtime")
+            if (target == RuntimeTarget)
             {
                 Directory.Delete(path);
             }

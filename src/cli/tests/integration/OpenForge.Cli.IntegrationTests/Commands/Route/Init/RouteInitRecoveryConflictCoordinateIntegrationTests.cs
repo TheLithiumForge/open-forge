@@ -70,7 +70,7 @@ public sealed class RouteInitRecoveryConflictCoordinateIntegrationTests
             else
             {
                 Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
-                Assert.Contains(report.Findings, item => item.Code == "route-init.recovery-history"
+                Assert.Contains(report.Findings, item => item.Code == RouteInitDefinitions.RecoveryHistoryCode
                     && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
             }
             Assert.NotEqual(candidate.Path, result.Recovery.ResidualPath);

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Shared.Interop;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Shared.Runtime;
@@ -13,7 +14,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 public sealed partial class UnixWorkspaceLockIntegrationTests
 {
     [Theory(DisplayName = "A write-denied legacy FIFO returns promptly and releases the local lock")]
-    [InlineData("linux"), InlineData("macos")]
+    [InlineData(Linux), InlineData(MacOS)]
     public async Task ReadOnlyFifoCannotHoldTheWorkspace(string platform)
     {
         RequirePlatform(platform);
@@ -24,16 +25,16 @@ public sealed partial class UnixWorkspaceLockIntegrationTests
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await CreateWriteDeniedFifoAsync(path);
 
-        var lines = await IntegrationProbeProcess.RunAsync([WorkspaceLockProbe.ChildArgument, temporary.Path, store.StoreRoot.Path, "fifo", path]);
+        var lines = await IntegrationProbeProcess.RunAsync([WorkspaceLockProbe.ChildArgument, temporary.Path, store.StoreRoot.Path, WorkspaceLockProbe.FifoMode, path]);
 
-        Assert.Equal(["InvalidTarget", path, "local-released"], lines);
+        Assert.Equal([nameof(WorkspaceLockFailureKind.InvalidTarget), path, WorkspaceLockProbe.LocalReleased], lines);
         File.Delete(path);
-        var acquired = await store.AcquireAsync(new(workspace, "index", Guid.NewGuid()), TestContext.Current.CancellationToken);
+        var acquired = await store.AcquireAsync(new(workspace, IndexDefinitions.CommandIdentity, Guid.NewGuid()), TestContext.Current.CancellationToken);
         await using var lease = Assert.IsType<WorkspaceLockLease>(acquired.Lease);
     }
 
     [Theory(DisplayName = "Cancellation on the read-only FIFO path returns no handle or workspace lease")]
-    [InlineData("linux"), InlineData("macos")]
+    [InlineData(Linux), InlineData(MacOS)]
     public async Task ReadOnlyFifoHonorsCancellation(string platform)
     {
         RequirePlatform(platform);
@@ -44,15 +45,15 @@ public sealed partial class UnixWorkspaceLockIntegrationTests
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await CreateWriteDeniedFifoAsync(path);
 
-        var lines = await IntegrationProbeProcess.RunAsync([WorkspaceLockProbe.ChildArgument, temporary.Path, store.StoreRoot.Path, "cancel-fallback", path]);
+        var lines = await IntegrationProbeProcess.RunAsync([WorkspaceLockProbe.ChildArgument, temporary.Path, store.StoreRoot.Path, WorkspaceLockProbe.CancelFallbackMode, path]);
 
-        Assert.Equal(["Cancelled", "no-handle", "Cancelled"], lines);
+        Assert.Equal([nameof(WorkspaceLockFailureKind.Cancelled), WorkspaceLockProbe.NoHandle, nameof(WorkspaceLockFailureKind.Cancelled)], lines);
         Assert.False(Directory.Exists(WorkspaceRuntimePaths.DirectoryPath(workspace)));
     }
 
     [Theory(DisplayName = "Manager contention is detected when implicit runtime file locking is disabled")]
-    [InlineData("linux", false), InlineData("linux", true)]
-    [InlineData("macos", false), InlineData("macos", true)]
+    [InlineData(Linux, false), InlineData(Linux, true)]
+    [InlineData(MacOS, false), InlineData(MacOS, true)]
     public async Task ManagerRequiresCheckedFlock(string platform, bool legacy)
     {
         RequirePlatform(platform);
@@ -65,19 +66,18 @@ public sealed partial class UnixWorkspaceLockIntegrationTests
         File.WriteAllBytes(path, []);
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         cancellation.CancelAfter(TimeSpan.FromSeconds(30));
-        using var holder = Python(
-            "import fcntl,sys\nf=open(sys.argv[1],'r+b')\nfcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)\nprint('held',flush=True)\nsys.stdin.readline()", path);
+        using var holder = UnixLockWitness.Hold(path);
         try
         {
-            Assert.Equal("held", await holder.StandardOutput.ReadLineAsync(cancellation.Token));
+            Assert.Equal(UnixLockWitness.Held, await holder.StandardOutput.ReadLineAsync(cancellation.Token));
             var lines = await IntegrationProbeProcess.RunAsync(
-                [WorkspaceLockProbe.ChildArgument, temporary.Path, store.StoreRoot.Path, "implicit-disabled", path], disableImplicitLocking: true);
+                [WorkspaceLockProbe.ChildArgument, temporary.Path, store.StoreRoot.Path, WorkspaceLockProbe.ImplicitDisabledMode, path], disableImplicitLocking: true);
 
-            Assert.Equal(["managed-opened", "Busy", path, platform == "macos" ? "35" : "11"], lines);
+            Assert.Equal([WorkspaceLockProbe.ManagedOpened, nameof(WorkspaceLockFailureKind.Busy), path, (platform == MacOS ? 35 : 11).ToString(System.Globalization.CultureInfo.InvariantCulture)], lines);
             await holder.StandardInput.WriteLineAsync();
             await holder.WaitForExitAsync(cancellation.Token);
             Assert.Equal(0, holder.ExitCode);
-            var acquired = await store.AcquireAsync(new(workspace, "index", Guid.NewGuid()), cancellation.Token);
+            var acquired = await store.AcquireAsync(new(workspace, IndexDefinitions.CommandIdentity, Guid.NewGuid()), cancellation.Token);
             await using var lease = Assert.IsType<WorkspaceLockLease>(acquired.Lease);
         }
         finally
@@ -87,7 +87,7 @@ public sealed partial class UnixWorkspaceLockIntegrationTests
     }
 
     [Theory(DisplayName = "Native read-only open distinguishes absence and permission denial")]
-    [InlineData("linux"), InlineData("macos")]
+    [InlineData(Linux), InlineData(MacOS)]
     public void NativeOpenPreservesAbsenceAndPermission(string platform)
     {
         RequirePlatform(platform);
@@ -102,7 +102,7 @@ public sealed partial class UnixWorkspaceLockIntegrationTests
             var failure = UnixWorkspaceLock.TryOpenReadOnly(path, TestContext.Current.CancellationToken, out var handle);
             using (handle)
             {
-                if (handle is not null) Assert.Skip("This process bypasses Unix read permissions.");
+                if (handle is not null) Assert.Fail("This process bypasses Unix read permissions.");
                 Assert.Equal(WorkspaceLockFailureKind.AccessDenied, failure?.Kind);
                 Assert.Equal(13, failure?.NativeError);
             }
@@ -115,14 +115,13 @@ public sealed partial class UnixWorkspaceLockIntegrationTests
 
     private static async Task CreateWriteDeniedFifoAsync(string path)
     {
-        using var create = Python(
-            "import os,sys\nos.mkfifo(sys.argv[1],0o400)\ntry:\n fd=os.open(sys.argv[1],os.O_RDWR|os.O_NONBLOCK)\n os.close(fd)\n print('writable')\nexcept PermissionError:\n print('denied')", path);
+        using var create = UnixLockWitness.CreateWriteDeniedFifo(path);
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         cancellation.CancelAfter(TimeSpan.FromSeconds(15));
         var permission = await create.StandardOutput.ReadLineAsync(cancellation.Token);
         await create.WaitForExitAsync(cancellation.Token);
         Assert.Equal(0, create.ExitCode);
-        if (permission == "writable") Assert.Skip("This process bypasses Unix write permissions, so a read-only fallback cannot be qualified.");
-        Assert.Equal("denied", permission);
+        if (permission == UnixLockWitness.Writable) Assert.Fail("This process bypasses Unix write permissions, so a read-only fallback cannot be qualified.");
+        Assert.Equal(UnixLockWitness.Denied, permission);
     }
 }

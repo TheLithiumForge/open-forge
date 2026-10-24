@@ -1,3 +1,9 @@
+using OpenForge.Cli.Core.Commands.Extension;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Commands.Extension.Install;
+using OpenForge.Cli.Core.Commands.Extension.Update;
+using OpenForge.Cli.Core.Commands.Extension.Remove;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using System.Text.Json;
@@ -26,7 +32,10 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemovePriorRecoveryIntegrationTests
 {
-    private const string Target = ".agents/toolkit.md";
+    private const string PriorDraft = "prior draft";
+    private const string PackageId = "toolkit";
+    private const string Heading = "Toolkit";
+    private const string Target = SourceLogicalPath.AgentsRoot + "/toolkit.md";
 
     [Trait("Boundary", "OS")]
     [Fact(
@@ -38,16 +47,16 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
         await workspace.SeedFrameworkAsync();
         using var source = ExtensionInstallCatalogue.Create(
             "extension-remove-prior-recovery-valid-source");
-        source.AddPackage("toolkit", [], (Target, Document("Toolkit v1")));
+        source.AddPackage(PackageId, [], (Target, Document("Toolkit v1")));
         await InstallAsync(workspace, source);
 
-        source.ReplacePayload("toolkit", Target, Document("Toolkit v2"));
+        source.ReplacePayload(PackageId, Target, Document("Toolkit v2"));
         var sourceBefore = source.Snapshot();
         var update = await workspace.RunAsync(
         [
-            "extension", "update", "toolkit",
-            "--source", source.Path,
-            "--automatic", "--format", "json",
+            ExtensionDefinitions.ExtensionGroup.Name, ExtensionUpdateDefinitions.UpdateCommand.Name, PackageId,
+            ExtensionUpdateDefinitions.Source.Name, source.Path,
+            ExtensionUpdateDefinitions.Automatic.Name, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat,
         ]);
 
         Assert.Equal(0, update.ExitCode);
@@ -55,8 +64,8 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
         Assert.Equal(string.Empty, update.StandardError);
         using var updateDocument = JsonDocument.Parse(update.StandardOutput);
         var priorPath = updateDocument.RootElement
-            .GetProperty("recovery")
-            .GetProperty("path")
+            .GetProperty(CliJsonFields.Recovery)
+            .GetProperty(CliJsonFields.Path)
             .GetString();
         Assert.NotNull(priorPath);
         var priorBytes = File.ReadAllBytes(priorPath!);
@@ -68,18 +77,18 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
 
         var remove = await workspace.RunAsync(
         [
-            "extension", "remove", "toolkit",
-            "--automatic", "--format", "json",
+            ExtensionDefinitions.ExtensionGroup.Name, ExtensionRemoveDefinitions.RemoveCommand.Name, PackageId,
+            ExtensionRemoveDefinitions.Automatic.Name, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat,
         ]);
 
         Assert.Equal(0, remove.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, remove.Status);
         Assert.Equal(string.Empty, remove.StandardError);
         using var removeDocument = JsonDocument.Parse(remove.StandardOutput);
-        Assert.Empty(removeDocument.RootElement.GetProperty("findings").EnumerateArray());
+        Assert.Empty(removeDocument.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray());
         var removePath = removeDocument.RootElement
-            .GetProperty("recovery")
-            .GetProperty("path")
+            .GetProperty(CliJsonFields.Recovery)
+            .GetProperty(CliJsonFields.Path)
             .GetString();
         Assert.NotNull(removePath);
         Assert.NotEqual(priorPath, removePath);
@@ -106,7 +115,7 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
         await workspace.SeedFrameworkAsync();
         using var source = ExtensionInstallCatalogue.Create(
             $"extension-remove-prior-recovery-{candidateKind}-source");
-        source.AddPackage("toolkit", [], (Target, Document("Toolkit")));
+        source.AddPackage(PackageId, [], (Target, Document(Heading)));
         await InstallAsync(workspace, source);
 
         var directory = RecoveryBundleStoreIntegrationTests.WorkspaceDirectory(workspace.Workspace);
@@ -126,14 +135,14 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
             new ReadOutputScenario
             {
                 Situation = candidateKind,
-                Arguments = ["extension", "remove", "toolkit", "--dry-run"],
+                Arguments = [ExtensionDefinitions.ExtensionGroup.Name, ExtensionRemoveDefinitions.RemoveCommand.Name, PackageId, ExtensionRemoveDefinitions.DryRun.Name],
                 ExitCode = 2,
             }, testName: $"UnverifiedHistory.{candidateKind}");
 
         var run = await workspace.RunAsync(
         [
-            "extension", "remove", "toolkit",
-            "--automatic", "--format", "json",
+            ExtensionDefinitions.ExtensionGroup.Name, ExtensionRemoveDefinitions.RemoveCommand.Name, PackageId,
+            ExtensionRemoveDefinitions.Automatic.Name, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat,
         ]);
 
         Assert.Equal(2, run.ExitCode);
@@ -141,9 +150,9 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
         Assert.Equal(string.Empty, run.StandardError);
         using var document = JsonDocument.Parse(run.StandardOutput);
         Assert.Contains(
-            document.RootElement.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("code").GetString()
-                == "extension-remove.recovery-history");
+            document.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray(),
+            finding => finding.GetProperty(CliJsonFields.Code).GetString()
+                == ExtensionRemoveDefinitions.ReadMachineName(ExtensionRemoveFindingCode.RecoveryHistory));
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(candidateBytes, File.ReadAllBytes(candidatePath));
         Assert.False(File.Exists(workspace.Combine(Target)));
@@ -155,13 +164,13 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-remove-own-preparation");
         await workspace.SeedFrameworkAsync();
         using var source = ExtensionInstallCatalogue.Create("extension-remove-own-preparation-source");
-        source.AddPackage("toolkit", [], (Target, Document("Toolkit")));
+        source.AddPackage(PackageId, [], (Target, Document(Heading)));
         await InstallAsync(workspace, source);
         var history = ExtensionRecoveryHistoryFixture.CandidatePath(workspace.Workspace,
             Guid.NewGuid(), RecoveryBundleCandidateKind.Draft);
-        File.WriteAllText(history, "prior draft");
+        File.WriteAllText(history, PriorDraft);
         var request = new ExtensionRemoveRequest(workspace.Workspace, ExtensionRemoveMode.Apply,
-            ["toolkit"], automatic: true, allowInteraction: false);
+            [PackageId], automatic: true, allowInteraction: false);
         var planner = new ExtensionRemovePlanner(ExtensionInteractionTestFactory.UnavailableSelection,
             ExtensionRemoveWording.Selection(), new PhysicalPathResolver());
         var build = await planner.BuildAsync(request, TestContext.Current.CancellationToken);
@@ -189,7 +198,7 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
             Assert.Equal(ExtensionRemoveFindingCode.RecoveryConflict, failure.Code);
             Assert.Equal(preparation.BundlePath, failure.Target);
             Assert.Equal(before, workspace.Snapshot());
-            Assert.Equal("prior draft", File.ReadAllText(history));
+            Assert.Equal(PriorDraft, File.ReadAllText(history));
             Assert.True(File.Exists(workspace.Combine(Target)));
             Assert.Equal(legacyBytes, File.ReadAllBytes(legacyCopy));
         }
@@ -205,9 +214,9 @@ public sealed class ExtensionRemovePriorRecoveryIntegrationTests
     {
         var run = await workspace.RunAsync(
         [
-            "extension", "install", "toolkit",
-            "--source", source.Path,
-            "--automatic", "--format", "json",
+            ExtensionDefinitions.ExtensionGroup.Name, ExtensionInstallDefinitions.InstallCommand.Name, PackageId,
+            ExtensionInstallDefinitions.Source.Name, source.Path,
+            ExtensionInstallDefinitions.Automatic.Name, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat,
         ]);
 
         Assert.Equal(0, run.ExitCode);

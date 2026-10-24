@@ -10,6 +10,10 @@ internal sealed record RouteExcludeResult : ICliCommandResult
 {
     internal RouteRecoveryHistory RecoveryHistory { get; init; } = RouteRecoveryHistory.Empty;
 
+    internal string RecoveryHistoryCode => RouteExcludeDefinitions.RecoveryHistoryCode;
+
+    internal string RecoveryCoverageUnavailableCode => RouteExcludeDefinitions.RecoveryCoverageUnavailableCode;
+
     public string Command => RouteExcludeDefinitions.CommandIdentity;
     public CliSemanticStatus Status => Outcome.Status;
     public required CliWorkspace? Workspace { get; init; }

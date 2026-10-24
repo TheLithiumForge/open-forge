@@ -4,7 +4,7 @@ namespace OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 internal static class WorkspaceRuntimePaths
 {
-    private const string DirectoryName = ".open-forge-state";
+    internal const string DirectoryName = ".open-forge-state";
 
     internal static string DirectoryPath(CliWorkspace workspace)
         => Path.Combine(workspace.PhysicalRoot, DirectoryName);

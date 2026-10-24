@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport.Snapshots;
 using OpenForge.Cli.Core.Commands.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
@@ -20,7 +21,9 @@ public sealed class SharedWireVocabularyTests
     [Fact(DisplayName = "Recovery wire names cover every member of every recovery enum"), Trait("Feature", "command-presentation"), Trait("Evidence", "UnitContract")]
     public void RecoveryNamesAreComplete()
     {
-        Assert.Equal(["workspace", "legacy"], Enum.GetValues<RecoveryStoreKind>().Select(RecoveryWireVocabulary.StoreKind));
+        Assert.Equal([RecoveryStoreKind.Workspace, RecoveryStoreKind.Legacy], Enum.GetValues<RecoveryStoreKind>());
+        CommandOutputSnapshot.MatchSnapshot(string.Join("\n", Enum.GetValues<RecoveryStoreKind>().Select(kind =>
+            $"{kind}: {RecoveryWireVocabulary.StoreKind(kind)}")), "recovery-store-kinds");
         Assert.Equal(
             ["framework", "extension", "index", "route", "repair", "library", "workspace"],
             Enum.GetValues<RecoveryBundleProducer>().Select(RecoveryWireVocabulary.Producer));

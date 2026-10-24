@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Commands.Library.Detach;
+using OpenForge.Cli.Core.Commands.Library.Attach;
+using OpenForge.Cli.Core.Commands.Extension.Remove;
+using OpenForge.Cli.Core.Commands.Extension.Update;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
@@ -17,17 +21,17 @@ namespace OpenForge.Cli.Core.UnitTests.Presentation.Shared.Wording;
 
 public sealed partial class WorkspaceLockFailurePresentationTests
 {
-    private static void VerifyOtherPackages(WorkspaceLockFailureInfo failure, CliSemanticStatus status, string cause)
+    private void VerifyOtherPackages(WorkspaceLockFailureInfo failure, CliSemanticStatus status, string cause)
     {
         var cancelled = failure.Reason == WorkspaceLockFailureReason.Cancelled;
         Verify(ExtensionUpdateResult.Empty(Workspace, ExtensionUpdateMode.Apply, false, false, true,
             new ExtensionUpdateFinding(cancelled ? ExtensionUpdateFindingCode.Interrupted : ExtensionUpdateFindingCode.WorkspaceLockUnavailable, cause)
             { LockFailure = failure }), ExtensionUpdatePresentation.Rendering, failure,
-            cancelled ? "extension-update.interrupted" : "extension-update.workspace-lock-unavailable", status);
+            ExtensionUpdateDefinitions.ReadMachineName(cancelled ? ExtensionUpdateFindingCode.Interrupted : ExtensionUpdateFindingCode.WorkspaceLockUnavailable), status);
         Verify(ExtensionRemoveResult.Empty(Workspace, ExtensionRemoveMode.Apply, true,
             new ExtensionRemoveFinding(cancelled ? ExtensionRemoveFindingCode.Interrupted : ExtensionRemoveFindingCode.WorkspaceLockUnavailable, cause)
             { LockFailure = failure }), ExtensionRemovePresentation.Rendering, failure,
-            cancelled ? "extension-remove.interrupted" : "extension-remove.workspace-lock-unavailable", status);
+            ExtensionRemoveDefinitions.ReadMachineName(cancelled ? ExtensionRemoveFindingCode.Interrupted : ExtensionRemoveFindingCode.WorkspaceLockUnavailable), status);
 
         Verify(new LibraryAttachResult
         {
@@ -46,10 +50,10 @@ public sealed partial class WorkspaceLockFailurePresentationTests
                 Findings = [new LibraryAttachFinding
                 {
                     Code = cancelled ? LibraryAttachFindingCode.Interrupted : LibraryAttachFindingCode.LockUnavailable,
-                    Status = status, Cause = cause, Path = null, LibraryId = "team-knowledge", LockFailure = failure,
+                    Status = status, Cause = cause, Path = null, LibraryId = LibraryMutationPlanningData.Id, LockFailure = failure,
                 }],
             },
-        }, LibraryAttachPresentation.Rendering, failure, cancelled ? "library-attach.interrupted" : "library-attach.lock-unavailable", status);
+        }, LibraryAttachPresentation.Rendering, failure, LibraryAttachDefinitions.ReadFindingCode(cancelled ? LibraryAttachFindingCode.Interrupted : LibraryAttachFindingCode.LockUnavailable), status);
 
         Verify(new LibraryDetachResult
         {
@@ -67,9 +71,9 @@ public sealed partial class WorkspaceLockFailurePresentationTests
                 Findings = [new LibraryDetachFinding
                 {
                     Code = cancelled ? LibraryDetachFindingCode.Interrupted : LibraryDetachFindingCode.LockUnavailable,
-                    Status = status, Cause = cause, Path = null, LibraryId = "team-knowledge", OccupantKind = null, LockFailure = failure,
+                    Status = status, Cause = cause, Path = null, LibraryId = LibraryMutationPlanningData.Id, OccupantKind = null, LockFailure = failure,
                 }],
             },
-        }, LibraryDetachPresentation.Rendering, failure, cancelled ? "library-detach.interrupted" : "library-detach.lock-unavailable", status);
+        }, LibraryDetachPresentation.Rendering, failure, LibraryDetachDefinitions.ReadFindingCode(cancelled ? LibraryDetachFindingCode.Interrupted : LibraryDetachFindingCode.LockUnavailable), status);
     }
 }

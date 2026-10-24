@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Commands.Extension;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using System.Text.Json;
@@ -33,7 +36,10 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Update;
 
 public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
 {
-    private const string Target = ".agents/toolkit.txt";
+    private const string VersionOne = "version one\n";
+    private const string VersionTwo = "version two\n";
+    private const string PackageId = "toolkit";
+    private const string Target = SourceLogicalPath.AgentsRoot + "/toolkit.txt";
 
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Update retains prior verified recovery history while verifying its own preparation")]
@@ -45,7 +51,7 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
         await workspace.SeedFrameworkAsync();
         using var source = ExtensionInstallCatalogue.Create(
             "extension-update-verified-recovery-history-source");
-        source.AddPackage("toolkit", [], (Target, "version one\n"));
+        source.AddPackage(PackageId, [], (Target, VersionOne));
         await InstallAsync(workspace, source);
         var prior = await ExtensionRecoveryHistoryFixture.CreateVerifiedFinalAsync(
             workspace,
@@ -53,22 +59,22 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
             RecoveryBundleOperation.Install,
             TestContext.Current.CancellationToken);
         var priorBytes = await File.ReadAllBytesAsync(prior.BundlePath, TestContext.Current.CancellationToken);
-        source.ReplacePayload("toolkit", Target, "version two\n");
+        source.ReplacePayload(PackageId, Target, VersionTwo);
         var sourceBefore = source.Snapshot();
 
         var run = await workspace.RunAsync(
         [
-            "extension", "update", "toolkit",
-            "--source", source.Path,
-            "--automatic", "--format", "json",
+            ExtensionDefinitions.ExtensionGroup.Name, ExtensionUpdateDefinitions.UpdateCommand.Name, PackageId,
+            ExtensionUpdateDefinitions.Source.Name, source.Path,
+            ExtensionUpdateDefinitions.Automatic.Name, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat,
         ]);
 
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
-        Assert.Equal("version two\n", workspace.ReadText(Target));
+        Assert.Equal(VersionTwo, workspace.ReadText(Target));
         using var document = JsonDocument.Parse(run.StandardOutput);
-        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
-        var ownBundlePath = Assert.IsType<string>(document.RootElement.GetProperty("recovery").GetProperty("path").GetString());
+        Assert.Empty(document.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray());
+        var ownBundlePath = Assert.IsType<string>(document.RootElement.GetProperty(CliJsonFields.Recovery).GetProperty(CliJsonFields.Path).GetString());
         Assert.NotEqual(prior.BundlePath, ownBundlePath);
         Assert.Equal(priorBytes, await File.ReadAllBytesAsync(prior.BundlePath, TestContext.Current.CancellationToken));
         var priorRead = await RecoveryBundleReader.ReadFinalAsync(
@@ -96,7 +102,7 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
         await workspace.SeedFrameworkAsync();
         using var source = ExtensionInstallCatalogue.Create(
             $"extension-update-unverified-recovery-{candidateKind}-source");
-        source.AddPackage("toolkit", [], (Target, "version one\n"));
+        source.AddPackage(PackageId, [], (Target, VersionOne));
         await InstallAsync(workspace, source);
         var kind = candidateKind == "draft"
             ? RecoveryBundleCandidateKind.Draft
@@ -109,33 +115,33 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
             ? "incomplete draft"u8.ToArray()
             : [0x01, 0x02, 0x03, 0x04];
         await File.WriteAllBytesAsync(candidatePath, candidateBytes, TestContext.Current.CancellationToken);
-        source.ReplacePayload("toolkit", Target, "version two\n");
+        source.ReplacePayload(PackageId, Target, VersionTwo);
         var beforeSource = source.Snapshot();
 
         await ExtensionRecoveryHistoryFixture.MatchHistoryAsync(workspace, source.Path,
             new ReadOutputScenario
             {
                 Situation = candidateKind,
-                Arguments = ["extension", "update", "toolkit", "--source", source.Path, "--dry-run"],
+                Arguments = [ExtensionDefinitions.ExtensionGroup.Name, ExtensionUpdateDefinitions.UpdateCommand.Name, PackageId, ExtensionUpdateDefinitions.Source.Name, source.Path, ExtensionUpdateDefinitions.DryRun.Name],
                 ExitCode = 2,
             }, testName: $"UnverifiedHistory.{candidateKind}");
 
         var run = await workspace.RunAsync(
         [
-            "extension", "update", "toolkit",
-            "--source", source.Path,
-            "--automatic", "--format", "json",
+            ExtensionDefinitions.ExtensionGroup.Name, ExtensionUpdateDefinitions.UpdateCommand.Name, PackageId,
+            ExtensionUpdateDefinitions.Source.Name, source.Path,
+            ExtensionUpdateDefinitions.Automatic.Name, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat,
         ]);
 
         Assert.Equal(2, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Attention, run.Status);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
-        Assert.Equal("extension-update.recovery-history", finding.GetProperty("code").GetString());
-        Assert.Equal(candidatePath, finding.GetProperty("subject").GetProperty("path").GetString());
+        var finding = Assert.Single(document.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray());
+        Assert.Equal(ExtensionUpdateDefinitions.ReadMachineName(ExtensionUpdateFindingCode.RecoveryHistory), finding.GetProperty(CliJsonFields.Code).GetString());
+        Assert.Equal(candidatePath, finding.GetProperty(CliJsonFields.Subject).GetProperty(CliJsonFields.Path).GetString());
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(candidateBytes, await File.ReadAllBytesAsync(candidatePath, TestContext.Current.CancellationToken));
-        Assert.Equal("version two\n", workspace.ReadText(Target));
+        Assert.Equal(VersionTwo, workspace.ReadText(Target));
     }
 
     [Trait("Boundary", "OS")]
@@ -149,7 +155,7 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
         await workspace.SeedFrameworkAsync();
         using var source = ExtensionInstallCatalogue.Create(
             "extension-update-mismatched-prepared-recovery-source");
-        source.AddPackage("toolkit", [], (Target, "version one\n"));
+        source.AddPackage(PackageId, [], (Target, VersionOne));
         await InstallAsync(workspace, source);
         var retained = await ExtensionRecoveryHistoryFixture.CreateVerifiedFinalAsync(
             workspace,
@@ -157,11 +163,11 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
             RecoveryBundleOperation.Install,
             TestContext.Current.CancellationToken);
         var retainedBytes = await File.ReadAllBytesAsync(retained.BundlePath, TestContext.Current.CancellationToken);
-        source.ReplacePayload("toolkit", Target, "version two\n");
+        source.ReplacePayload(PackageId, Target, VersionTwo);
         var request = new ExtensionUpdateRequest(
             workspace.Workspace,
             ExtensionUpdateMode.Apply,
-            ["toolkit"],
+            [PackageId],
             all: false,
             sourcePath: source.Path,
             force: false,
@@ -225,7 +231,7 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
             Assert.Equal(beforeVerification, workspace.Snapshot());
             Assert.Equal(beforeSource, source.Snapshot());
             Assert.Equal(retainedBytes, await File.ReadAllBytesAsync(retained.BundlePath, TestContext.Current.CancellationToken));
-            Assert.Equal("version one\n", workspace.ReadText(Target));
+            Assert.Equal(VersionOne, workspace.ReadText(Target));
             Assert.Equal(legacyBytes, File.ReadAllBytes(legacyCopy));
         }
         finally
@@ -240,9 +246,9 @@ public sealed class ExtensionUpdateRecoveryHistoryIntegrationTests
     {
         var run = await workspace.RunAsync(
         [
-            "extension", "install", "toolkit",
-            "--source", source.Path,
-            "--automatic", "--format", "json",
+            ExtensionDefinitions.ExtensionGroup.Name, ExtensionInstallDefinitions.InstallCommand.Name, PackageId,
+            ExtensionInstallDefinitions.Source.Name, source.Path,
+            ExtensionInstallDefinitions.Automatic.Name, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat,
         ]);
 
         Assert.Equal(0, run.ExitCode);

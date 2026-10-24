@@ -107,7 +107,7 @@ internal static class RemoveReportSelector
             Actions = next is null ? [] : [next],
         };
 
-    private static string FindingCode(RemoveFindingCode code)
+    internal static string FindingCode(RemoveFindingCode code)
         => "remove." + ToKebabCase(code.ToString());
 
     private static CliEffect Effect(RemoveEffect effect)

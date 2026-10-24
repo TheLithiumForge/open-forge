@@ -1,0 +1,51 @@
+namespace OpenForge.Cli.Core.Presentation.Shared.Rendering;
+
+internal static class CliJsonFields
+{
+    internal const string SchemaVersion = "schemaVersion";
+    internal const string Command = "command";
+    internal const string Status = "status";
+    internal const string Detail = "detail";
+    internal const string Filter = "filter";
+    internal const string Workspace = "workspace";
+    internal const string Path = "path";
+    internal const string SelectedBy = "selectedBy";
+    internal const string Summary = "summary";
+    internal const string Headline = "headline";
+    internal const string Kind = "kind";
+    internal const string Findings = "findings";
+    internal const string Effects = "effects";
+    internal const string Action = "action";
+    internal const string Outcome = "outcome";
+    internal const string Reason = "reason";
+    internal const string Owner = "owner";
+    internal const string Before = "before";
+    internal const string After = "after";
+    internal const string Counts = "counts";
+    internal const string Limitations = "limitations";
+    internal const string What = "what";
+    internal const string Why = "why";
+    internal const string Subject = "subject";
+    internal const string Data = "data";
+    internal const string Recovery = "recovery";
+    internal const string Disposition = "disposition";
+    internal const string Next = "next";
+    internal const string Severity = "severity";
+    internal const string Code = "code";
+    internal const string Title = "title";
+    internal const string Message = "message";
+    internal const string Category = "category";
+    internal const string Resolution = "resolution";
+    internal const string Actions = "actions";
+    internal const string Candidates = "candidates";
+    internal const string Reasons = "reasons";
+    internal const string Evidence = "evidence";
+    internal const string Label = "label";
+    internal const string Value = "value";
+    internal const string Provenance = "provenance";
+    internal const string Source = "source";
+    internal const string Location = "location";
+    internal const string Id = "id";
+    internal const string Line = "line";
+    internal const string Column = "column";
+}

@@ -11,7 +11,7 @@ internal static class CleanupStorageProbe
     internal static async Task RunAsync(string[] arguments)
     {
         var workspace = new CliWorkspace(arguments[1], arguments[1], CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        var mode = arguments[2] == "dry-run" ? CleanupMode.DryRun : CleanupMode.Apply;
+        var mode = Enum.Parse<CleanupMode>(arguments[2]);
         var result = await new CleanupOperation().ExecuteAsync(new(workspace, mode), CancellationToken.None);
         var store = result.Stores.Single(item => item.Kind == arguments[3]);
         Console.WriteLine(store.Facts.Catalogue.Coverage);

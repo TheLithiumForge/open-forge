@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Shared.Recovery.Models;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
@@ -44,7 +45,7 @@ public sealed class RouteInitRecoveryConflictPresentationTests
             Assert.All(result.RecoveryHistory.Paths, path => Assert.Contains(path, text, StringComparison.Ordinal));
             Assert.Contains("legacy/recovery", text, StringComparison.Ordinal);
             using var json = JsonDocument.Parse(jsonText);
-            Assert.Equal(3, json.RootElement.GetProperty("findings").GetArrayLength());
+            Assert.Equal(3, json.RootElement.GetProperty(CliJsonFields.Findings).GetArrayLength());
             var detailName = detail.ToString().ToLowerInvariant();
             captures.Add($"recovery-history.{detailName}", text.Replace("\r\n", "\n", StringComparison.Ordinal));
             captures.Add($"recovery-history{CommandOutputSnapshot.JsonContentNameSegment}{detailName}", jsonText.Replace("\r\n", "\n", StringComparison.Ordinal));
@@ -88,7 +89,7 @@ public sealed class RouteInitRecoveryConflictPresentationTests
             Assert.Contains(RecoveryCandidatePath, text, StringComparison.Ordinal);
             using var json = JsonDocument.Parse(jsonText);
             var root = json.RootElement;
-            var jsonFinding = Assert.Single(root.GetProperty("findings").EnumerateArray());
+            var jsonFinding = Assert.Single(root.GetProperty(CliJsonFields.Findings).EnumerateArray());
             Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
             Assert.Equal("blocked", root.GetProperty("status").GetString());
             Assert.Equal("file", jsonFinding.GetProperty("subject").GetProperty("kind").GetString());

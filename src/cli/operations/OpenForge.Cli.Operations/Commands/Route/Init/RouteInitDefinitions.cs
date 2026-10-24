@@ -9,6 +9,9 @@ namespace OpenForge.Cli.Core.Commands.Route.Init;
 
 internal static partial class RouteInitDefinitions
 {
+    internal const string RecoveryHistoryCode = "route-init.recovery-history";
+    internal const string RecoveryCoverageUnavailableCode = "route-init.recovery-coverage-unavailable";
+
     internal const int SchemaVersion = 1;
     internal const string CommandIdentity = "route init";
 

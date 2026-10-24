@@ -11,6 +11,9 @@ namespace OpenForge.Cli.Core.Commands.Shared.Serialization;
 /// </summary>
 internal static class RecoveryWireVocabulary
 {
+    internal const string CompleteCoverage = "complete";
+    internal const string IncompleteCoverage = "incomplete";
+
     internal static string StoreKind(RecoveryStoreKind value)
         => value switch
         {

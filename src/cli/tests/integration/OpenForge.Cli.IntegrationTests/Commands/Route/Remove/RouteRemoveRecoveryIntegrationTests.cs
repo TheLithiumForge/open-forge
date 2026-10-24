@@ -1,3 +1,11 @@
+using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
+using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
+using OpenForge.Cli.Core.Presentation.Route.Remove;
+using OpenForge.Cli.Core.Presentation.Route.Remove.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
+using OpenForge.Cli.Core.Commands.Route.Remove;
+using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -7,6 +15,8 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveRecoveryIntegrationTests
 {
+    private static readonly byte[] DamagedBundleBytes = "not a recovery archive"u8.ToArray();
+
     [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove dry-run does not create or alter an external recovery bundle"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
@@ -31,7 +41,7 @@ public sealed class RouteRemoveRecoveryIntegrationTests
         Assert.Equal(before, SnapshotRecovery(recoveryDirectory));
     }
 
-    [Trait("Boundary", "Host")]
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove warns about damaged history while applying the requested removal"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task DamagedHistoryDoesNotBlockApplication()
@@ -42,26 +52,24 @@ public sealed class RouteRemoveRecoveryIntegrationTests
         var candidate = Path.Combine(
             recoveryDirectory,
             RecoveryBundleFormatV1.FinalFileName(Guid.NewGuid()));
-        File.WriteAllBytes(candidate, "not a recovery archive"u8.ToArray());
-        var before = workspace.SnapshotHashes();
-        var output = new StringWriter();
-        var error = new StringWriter();
+        File.WriteAllBytes(candidate, DamagedBundleBytes);
+        var result = await RouteRemoveOperationFactory.Create(workspace.LockStoreRoot).ExecuteAsync(
+            new RouteRemoveRequest(
+                workspace.Workspace,
+                RouteRemoveIntegrationWorkspace.LeafId,
+                RouteRemoveMode.Apply,
+                automatic: true),
+            TestContext.Current.CancellationToken);
 
-        var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic", "--detail", "full"],
-            output,
-            error);
-
-        Assert.Equal(0, completion.ExitCode);
-        Assert.Equal(CliSemanticStatus.Complete, completion.Status);
-        Assert.Equal(string.Empty, error.ToString());
-        Assert.Contains(
-            "route-remove.recovery-history",
-            output.ToString(),
-            StringComparison.Ordinal);
-        Assert.Contains(candidate, output.ToString(), StringComparison.Ordinal);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        var report = RouteRemoveReportSelector.Select(result, new CliSelection(CliDetail.Full, null));
+        var finding = Assert.Single(report.Findings,
+            finding => finding.Code == RouteRemoveDefinitions.RecoveryHistoryCode);
+        Assert.Equal(candidate, finding.Subject.Path);
+        CommandOutputRenderers<RouteRemoveResult>.From(RouteRemovePresentation.Rendering)
+            .MatchDetails(result, "damaged-history", recoveryBundlePath: candidate);
         Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafPath)));
-        Assert.Equal("not a recovery archive"u8.ToArray(), File.ReadAllBytes(candidate));
+        Assert.Equal(DamagedBundleBytes, File.ReadAllBytes(candidate));
     }
 
     [Trait("Boundary", "Host")]

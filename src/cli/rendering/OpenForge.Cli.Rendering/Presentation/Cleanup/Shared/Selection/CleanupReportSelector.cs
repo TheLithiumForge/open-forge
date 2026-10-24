@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Cleanup.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
@@ -93,8 +94,8 @@ internal static class CleanupReportSelector
             Effects = result.Effects.Select(Effect).ToArray(),
             Counts =
             [
-                new CliCount("bundlesRemoved", global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelRecoveryBundlesRemoved(), bundlesRemoved),
-                new CliCount("draftsRemoved", global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelUnfinishedDraftsRemoved(), draftsRemoved),
+                new CliCount(CleanupDataJsonFields.BundlesRemoved, global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelRecoveryBundlesRemoved(), bundlesRemoved),
+                new CliCount(CleanupDataJsonFields.DraftsRemoved, global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelUnfinishedDraftsRemoved(), draftsRemoved),
                 new CliCount("itemsLeftInPlace", global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelItemsLeftInPlace(),
                     result.Catalogue.IsComplete ? itemsLeftInPlace : null,
                     result.Findings.FirstOrDefault(finding => finding.Code == CleanupFindingCode.CatalogueIncomplete)?.Cause),
