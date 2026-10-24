@@ -16,6 +16,23 @@ public sealed class TemporaryWorkspaceSafetyTests
     private const string ExternalDirectory = "external";
     private const string PreservedContent = "preserved";
 
+    [Fact(DisplayName = "Filesystem case sensitivity probes preserve owned entries and remove their probe directory")]
+    [Trait("Boundary", "OS"), Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
+    public void CaseSensitivityProbePreservesWorkspace()
+    {
+        using var workspace = TemporaryWorkspace.Create(nameof(CaseSensitivityProbePreservesWorkspace));
+        workspace.CreateFile(NestedDirectory + "/" + AuthoredFile, PreservedContent);
+        var directories = Directory.GetDirectories(workspace.Path);
+        var before = workspace.SnapshotHashes();
+
+        var caseSensitive = workspace.IsFileSystemCaseSensitive();
+
+        Assert.Equal(!Directory.Exists(workspace.Combine(NestedDirectory.ToUpperInvariant())), caseSensitive);
+        Assert.Equal(caseSensitive, workspace.IsFileSystemCaseSensitive());
+        Assert.Equal(directories, Directory.GetDirectories(workspace.Path));
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
     private static CliWorkspace Workspace(string path)
         => new(path, path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
 

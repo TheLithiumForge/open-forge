@@ -113,7 +113,9 @@ public sealed class UpdateMainRootIntegrationTests
     {
         using var temporary = TemporaryWorkspace.Create(nameof(CaseAliasNeedsExplicitAdmission));
         var retired = alias ? MainRoot.ToUpperInvariant() + "/" + RetiredName : RetiredPath;
-        Seed(temporary, retired);
+        var physicalRetired = retired;
+        if (alias && !temporary.IsFileSystemCaseSensitive()) physicalRetired = RetiredPath;
+        Seed(temporary, retired: physicalRetired, recordedRetired: retired);
         var before = temporary.SnapshotHashes();
         var resolution = await UpdatePlanBuilder.Create().BuildExecutionAsync(Request(temporary, prune: true), TestContext.Current.CancellationToken);
         if (alias)
@@ -170,12 +172,13 @@ public sealed class UpdateMainRootIntegrationTests
         => new(new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.CurrentDirectory), UpdateMode.Apply,
             force: false, prune: prune, automatic: !prompt, allowsInteractiveConfirmation: prompt);
 
-    private static void Seed(TemporaryWorkspace temporary, string? retired = null)
+    private static void Seed(TemporaryWorkspace temporary, string? retired = null, string? recordedRetired = null)
     {
         temporary.WriteText(WorkspaceSettingsDefinitions.RelativePath, Settings(MainRoot));
         temporary.WriteText(Loader, OpenForgeDocumentSeed.GeneratedEntries(string.Empty));
         if (retired is not null) temporary.WriteText(retired, OpenForgeDocumentSeed.Metadata(OwnerId, [], ChangedBody));
-        var framework = new FrameworkOwnership(new OwnedSource(OwnerId, null), retired is null ? [Loader] : [Loader, retired], []);
+        var retiredReceipt = recordedRetired ?? retired;
+        var framework = new FrameworkOwnership(new OwnedSource(OwnerId, null), retiredReceipt is null ? [Loader] : [Loader, retiredReceipt], []);
         temporary.WriteBytes(WorkspaceOwnershipDefinitions.RelativePath, WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty with { Framework = framework }));
     }
 
