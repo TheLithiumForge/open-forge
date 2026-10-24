@@ -8,6 +8,26 @@ open-forge:
 
 The CLI architect of the [multiple roots council](record.md) wrote this plan from the chair decisions and the maintainer's direction. It is frozen for [Task 87](../../../working/cli-development/tasks/task87-routes-outside-main-root.md) and starts after Task 85 Delivery 1.
 
+## Chair amendments
+
+These override packet size, ownership and execution order below without changing the accepted command behavior or frozen API.
+
+1. **Reconcile and split against Delivery 1.** Checked at `a7e25a992` on 2026-10-24. Task 85 already supplies layout transport, included-row retention and the public-token projection, so packet B extends those owners rather than replacing them. The packets below divide the original broad assignments into one coherent outcome each. Run dependent packets sequentially. Only the disjoint Wave 3 pairs may run concurrently, with at most the two assigned writers. Each packet uses its milestone base plus explicitly named prerequisite patches. This keeps intermediate contracts settled and prevents shared-file conflicts. Complete suites run in hosted CI, while local runs select affected classes, report invariants, layer boundaries, affected serialization and the command's published journey.
+
+| Wave | Packets and integration order | Ownership boundary |
+| --- | --- | --- |
+| 0 | A1 pure layout, directory validation and settings v5, then A2 physical observation and lease revalidation | A1 owns layout models, Workspace route paths, settings definitions/document/codec/schema, pure tests and the token projection pair. A2 owns layout observation models/readers/revalidation and their Unit and Integration tests. |
+| 1 | B1 registered inventory and exact identity, then B2 topology, included edges and generated navigation | B1 owns identity/classification, catalogue requests/readers and read sessions. B2 owns included-row merge, route facts/topology, loading/filter selection and generated navigation. Preserve the existing carriers in both. |
+| 2 | C1 boundary-aware scaffolding and metadata, then C2 Index and Repair | C1 owns shared route scaffolding, routed maintenance and Route source carriers. C2 owns Index and Repair selection, projection, diagnosis and tests. |
+| 3 | D folder Include/Exclude alongside E1 Create, then E2 Init alongside F read commands, then E3 Update, E4 Move and E5 Remove | D owns inclusion and its presentation. Each E packet owns its command subtree and focused tests. E5 also owns top-level Remove dispatch and safety. F owns Context, Find and References. Shared maintenance remains frozen. |
+| 4 | G1 route observations, List and Inspect, then G2 Status, Doctor and lifecycle | G1 owns route observations and List/Inspect presentation. G2 owns Status/Doctor, Update reconstruction and the permission audit. |
+| 5 | H published qualification and final token audit | Three published journeys, their fixtures/snapshots and the token projection pair. Detailed failure branches remain in Integration. |
+| 6 | I1 contracts and designs, then I2 public documentation and shipped CLI Skill | I1 owns current semantic contracts and designs. I2 owns repository guides, the docs site and CLI Skill. The coordinator owns Task state and final acceptance handoff. |
+
+A1 also moves canonical catalogue filename construction into Workspace route paths and updates the existing classifier to reuse it. B1 and C1 consume that owner after integration. This is the direct dependency needed to keep Workspace below Sources. Every packet owns its associated focused tests and snapshots. Other shared-file edits require coordinator reassignment before parallel work resumes.
+
+2. **Preserve primary identities and paired layers during the outside merge.** Physical collapse in B applies to outside and included sources. Existing primary inventory members keep their identities and short IDs, including physical aliases. Overwrite physical paths retain their logical base owner. New outside inventory must not take precedence over an established authored target. Keep candidates, issues and every row while merging outside physical sources. The B2-R1 regressions demonstrated these preservation boundaries under default and custom layouts. This narrows the broad deduplication step below to honor the required Delivery 1 compatibility, without changing outside command behavior or the frozen API.
+
 ## Authority and baseline
 
 Implement frozen `council/decisions.md`, especially R2 through R5. Task 87 follows Task 85 Delivery 1. It does not implement main-root migration or introduce another maintenance command.

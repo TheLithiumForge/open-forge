@@ -28,17 +28,29 @@ A workspace has one main root, the context folder. Its default is `.agents`. A c
 
 The host sections point to the selected loader. `CLAUDE.md` retains its `@AGENTS.md` bridge. The custom loader can list the native Skills catalogue using a relative link. A competing `skills` category inside a custom root is invalid. An absent native Skills folder is optional, while an inaccessible or unsafe existing folder is an observation failure.
 
-`SourceRoots` is `[.agents]` for the default layout and `[MainRoot, .agents/skills]` otherwise. These are primary content locations only. They neither select what agents load nor grant unrestricted write authority. Folder includes as maintained routes outside these locations belong to Task 87, not this delivery.
+`SourceRoots` is `[.agents]` for the default layout and `[MainRoot, .agents/skills]` otherwise. These are primary content locations only. They neither select what agents load nor grant unrestricted write authority. Outside-route registrations extend inventory and maintenance classification separately.
 
 ## Settings v4
 
-The optional `mainRoot` string in settings schema v4 names the canonical workspace-relative context folder. Absence means `.agents`. New settings files declare v4, including default installs. An absent default value is never inserted. Unrelated rewrites preserve existing schema declarations, unknown values and property order. Explicitly selecting a custom root may update the declaration to v4. Published schemas v1 through v3 remain unchanged, and CLI JSON results remain schema 3.
+The optional `mainRoot` string introduced in settings schema v4 names the canonical workspace-relative context folder. Absence means `.agents`. An absent default value is never inserted. Unrelated rewrites preserve existing schema declarations, unknown values and property order. New settings files and explicit custom-root changes declare the current settings version. Published schemas v1 through v4 remain unchanged, and CLI JSON results remain schema 3.
 
 `WorkspaceMainRootPath.IsCanonical` rejects empty or noncanonical paths, absolute paths, traversal, the workspace root, Git metadata, host filenames and their descendants, `.open-forge-state/` and its descendants, and descendants or case aliases of `.agents`. Exactly `.agents` remains valid. Physical observation separately rejects unsafe ancestry and collisions.
 
 `WorkspaceSettingsDocument.DeclaredMainRoot` retains the optional declaration and `MainRoot` exposes its effective value. `WorkspaceSettingsCodec.SetMainRoot` returns no change when the effective value is unchanged. Settings `roots` registrations are validated against both primary content locations. They remain literal workspace paths.
 
 Editing `mainRoot` moves no files. A disagreement with installation evidence is reported by readers and stops writers. Older CLIs do not support custom roots.
+
+## Outside Routes And Settings v5
+
+Settings v5 adds optional `outsideRoutes`, an ordered list of canonical workspace-relative directory paths. Absence means empty. The separate `roots` list still contains included files. Folder registrations may coexist with an independent file registration inside the folder.
+
+Outside-route maintenance requires a CLI that supports settings v5. Registration never makes an outside path an implicit package destination.
+
+Each outside route has its declared directory and canonical catalogue path. `WithOutsideRoutes` replaces the pure layout's registrations without changing primary mappings. It rejects portable duplicates, case aliases and overlaps in either ancestor direction with the main root, `.agents`, another outside route, Git metadata or workspace runtime storage. The workspace root is invalid.
+
+`InventoryRoots` combines primary source roots and outside directories in declaration order. It conveys discovery scope. `TryGetMaintenanceBoundary` classifies paths ordinally, checking native Skills before the encompassing default main root. An outside boundary ends at its registered directory and uses its canonical catalogue as anchor. Existing command restrictions, ownership, physical safety and explicit permissions remain separate checks.
+
+Adding a registration declares settings v5. Removing the last one retains an empty array and keeps the existing declaration. Both mutations return no change when the requested state already holds. Unrelated properties and their order survive rewrites. `WorkspaceRoutePath` owns canonical catalogue construction for layout and source classification.
 
 ## Pure Mapping
 
@@ -70,11 +82,19 @@ The final observation rules incorporate chair amendments 5 through 7:
 
 `WorkspaceLayoutRevalidator.ValidateAsync` uses the held physical-workspace lease and existing expected-state validation. It runs before settings grants as well as target effects. Post-effect verification compares intended state, not obsolete pre-effect settings. Runtime locking and recovery locations stay fixed under the [mutation and recovery design](mutation-and-recovery.md).
 
+Outside registrations come from that same settings snapshot. `WorkspaceLayoutRead.OutsideRoutes` retains their declaration order, descriptors, physical resolutions, directory and catalogue observations, failures and issues. Each outside observation is `Available`, `Missing`, `Unsafe` or `Unavailable`. A safe ordinary directory with a missing catalogue is available for later scaffolding. A missing directory or ancestor stays diagnosable. Unsupported mappings, reserved overlaps and inaccessible content are never treated as safe absence.
+
+Outside-only problems do not change the primary layout state. Maintenance within an outside boundary requires its safe available observation and command-specific protection checks. Deregistration can use the canonical registration and loader row without depending on available tree contents. The reader observes ancestry and the anchor without recursively scanning, creating or repairing anything.
+
+Safe directory, ancestry and catalogue expectations join the layout's existing expectations. Lease validation checks those facts and retained directory accessibility before effects. A changed expected state still blocks the planned operation. Each target mutation separately proves containment within the selected physical boundary. Registration grants no ownership or implicit package permission.
+
 ## Source Transport
 
-Catalogue requests, catalogues, read sessions, loading closure and mutation plans carry the selected layout. Sessions derive it from their catalogue. Default selection can contain both primary content locations. Catalogue reconstruction preserves included `./path` identities, aliases, conditions and order, including sources that have no inventory candidate. Loader links resolve relative to the actual loader directory.
+Catalogue requests, catalogues, read sessions, loading closure and mutation plans carry the selected layout. Sessions derive it from their catalogue. Read sessions scan `InventoryRoots` and retain explicit default-selection scopes for the primary content locations and registered directories. Included-file registrations do not scan siblings. Catalogue reconstruction preserves included `./path` identities, aliases, conditions and order, including sources that have no inventory candidate. Loader links resolve relative to the actual loader directory.
 
-Stable source IDs stay relative to the appropriate content location. Included files keep their literal identities. The [source-reference contracts](../contracts/shared/source-references/interface.md) define the public forms, and [generated navigation](generated-navigation.md) defines retained loader rows and projection.
+Primary source IDs stay relative to their primary content location. Outside sources keep exact `./path` identities, including catalogue filenames and extensions, before and after registration. Outside `SKILL.md` files are ordinary Markdown. Discovery retains readable lexical names independently from portable write eligibility. Inventory grants no loading membership, ownership or implicit package permission. The [source-reference contracts](../contracts/shared/source-references/interface.md) define the public forms, and [generated navigation](generated-navigation.md) defines retained loader rows and projection.
+
+An inventoried outside catalogue can also carry authored inclusion policy. Established traversal precedes inspection of disconnected registered catalogues, so discovery cannot replace the first-reaching row's metadata. The merge retains every row, condition, span and alias, including unresolved targets. Outside physical aliases merge without removing existing primary identities or separating an overwrite from its base. Explicit registered catalogue selection covers its inventory scope, while ordinary included catalogue selection follows retained edges without scanning siblings.
 
 ## Delivery Boundary
 

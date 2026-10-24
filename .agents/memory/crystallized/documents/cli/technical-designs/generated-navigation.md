@@ -11,6 +11,8 @@ open-forge:
 
 Formation retains the catalogue’s layout, aliases and included rows, including sources without inventory candidates. Loader destinations resolve from the selected loader directory. Native Skills remain at `.agents/skills` and may appear through the custom loader. Preserve direct loader rows to nested catalogues, their metadata and deliberate omissions. Neither reconstruction nor maintenance reactivates an omitted root. See [Workspace Layout](workspace-layout.md#source-transport).
 
+Registration adds outside anchors to structural topology and leaves loading membership to authored rows. An outside catalogue may retain its intrinsic form and row-owned loading policy together. Registration, inventory and prospective reconstruction preserve the authored rows, conditions and order. Existing primary identities remain intact when outside physical aliases merge, and an overwrite remains attached to its base.
+
 ## Boundary
 
 `Framework/GeneratedNavigation/` owns pure deterministic formation, projection,
@@ -73,9 +75,18 @@ temporary checkout, prospective source catalogue, or hidden Index.
 
 ## Loader And Topology Rules
 
-When a Loader is present, intended roots are the structurally valid, physically
+When a Loader is present, intended structural roots are the valid, physically
 unique recognized entrypoints that directly represent each primary category
-folder in the selected layout. Generated `Entries` remain comparison input only.
+folder, plus registered canonical outside anchors. Generated `Entries` remain
+comparison input only. Outside anchors stop structural ancestry at their
+registered directory.
+
+Structural roots and Loader listing are separate facts. Projection retains
+outside Loader rows as authored, with their metadata and conditions, and never
+inserts one merely because its anchor is registered. This remains true when
+membership preservation is disabled or an anchor is missing. Within an outside
+catalogue, existing authored descendant and leaving-link rows retain their
+bytes, while new eligible descendants may receive generated rows.
 
 A missing Loader produces zero roots. Operand-free Index selection blocks, while
 an explicit complete detached selection may still proceed. A missing

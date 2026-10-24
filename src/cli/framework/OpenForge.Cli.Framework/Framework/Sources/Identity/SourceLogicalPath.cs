@@ -48,6 +48,19 @@ internal static class SourceLogicalPath
         return false;
     }
 
+    internal static bool IsOutsideSource(WorkspaceLayout layout, [NotNullWhen(true)] string? path)
+    {
+        if (!IsCanonicalSource(path)) return false;
+        foreach (var route in layout.OutsideRoutes)
+            if (path == route.DirectoryPath || path.StartsWith(route.DirectoryPath + "/", StringComparison.Ordinal)) return true;
+        return false;
+    }
+
+    internal static bool IsInventoryPath(WorkspaceLayout layout, [NotNullWhen(true)] string? path)
+        => IsPrimarySource(layout, path)
+            || IsOutsideSource(layout, path)
+            || path is not null && layout.SourceRoots.Contains(path, StringComparer.Ordinal);
+
     internal static bool IsPrimaryMarkdownSource(SourceContentRoots roots, [NotNullWhen(true)] string? path)
         => IsPrimarySource(roots, path) && path.EndsWith(SourceFormClassifier.MarkdownExtension, StringComparison.Ordinal);
 

@@ -135,6 +135,7 @@ public sealed class PublishedTokensTests
         Assert.Equal(RouteExcludeDefinitions.DryRun.Name, PublishedTokens.RouteExclude.DryRun);
         Assert.Equal(CliSyntaxDefinitions.Format.FiniteSpellings.Single(pair => pair.Value == CliFormat.Text).Key, PublishedTokens.Syntax.TextFormat);
         Assert.Equal(WorkspaceSettingsDefinitions.RootsProperty, PublishedTokens.Settings.RootsProperty);
+        Assert.Equal(WorkspaceSettingsDefinitions.OutsideRoutesProperty, PublishedTokens.Settings.OutsideRoutesProperty);
         Assert.Equal(WorkspaceSettingsDefinitions.RemovedFilesProperty, PublishedTokens.Settings.RemovedFilesProperty);
         Assert.Equal(WorkspaceSettingsDefinitions.RemovedDirectoriesProperty, PublishedTokens.Settings.RemovedDirectoriesProperty);
         Assert.Equal(CliJsonFields.Effects, PublishedTokens.Json.Effects);

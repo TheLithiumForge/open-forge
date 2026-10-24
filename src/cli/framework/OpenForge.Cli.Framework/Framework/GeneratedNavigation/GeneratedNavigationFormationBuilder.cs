@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.GeneratedNavigation;
 
@@ -88,7 +89,7 @@ internal sealed partial class GeneratedNavigationFormationBuilder
     }
 
     private static IReadOnlyList<string> ReadStructuralRootPaths(
-        SourceContentRoots roots,
+        WorkspaceLayout layout,
         IReadOnlyList<SourceLogicalSource> intendedSources,
         IReadOnlyDictionary<string, SourceCandidate> observedCandidatesByPath,
         IReadOnlyList<GeneratedNavigationPhysicalAliasGroup> aliasGroups,
@@ -97,7 +98,7 @@ internal sealed partial class GeneratedNavigationFormationBuilder
     {
         var eligible = new List<SourceLogicalSource>();
         var rootCandidates = intendedSources
-            .Select(source => (Source: source, Folder: ReadRepresentedRootFolder(roots, source)))
+            .Select(source => (Source: source, Folder: ReadRepresentedRootFolder(layout, source)))
             .Where(candidate => candidate.Folder is not null)
             .Select(candidate => (
                 candidate.Source,
@@ -153,7 +154,7 @@ internal sealed partial class GeneratedNavigationFormationBuilder
             .ToArray();
     }
 
-    private static string? ReadRepresentedRootFolder(SourceContentRoots roots, SourceLogicalSource source)
+    private static string? ReadRepresentedRootFolder(WorkspaceLayout layout, SourceLogicalSource source)
     {
         if (!SourceFormClassifier.IsEntrypoint(source.Base.Form))
         {
@@ -161,7 +162,8 @@ internal sealed partial class GeneratedNavigationFormationBuilder
         }
 
         var representedFolder = SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath);
-        return SourceLogicalPath.IsPrimaryCategoryDirectory(roots, representedFolder)
+        return SourceLogicalPath.IsPrimaryCategoryDirectory(new SourceContentRoots(layout), representedFolder)
+            || layout.OutsideRoutes.Any(route => route.CataloguePath == source.Base.CanonicalPath)
             ? representedFolder
             : null;
     }
