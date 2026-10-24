@@ -12,6 +12,8 @@ internal static class InstallNextCommand
     internal static string Create(InstallBindingInput input, CliWorkspace? workspace, bool confirmationRequired = false, bool diagnostics = false)
     {
         var arguments = new List<string> { "install" };
+        if (input.RequestedMainRoot is { } mainRoot)
+            CliRetryCommand.Add(arguments, InstallDefinitions.MainRoot.Name, mainRoot);
         if (workspace is { SelectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace })
             CliRetryCommand.Add(arguments, "--workspace", workspace.LexicalRoot);
         var setup = input.Setup;
@@ -32,9 +34,9 @@ internal static class InstallNextCommand
         }
         if (setup is not null)
         {
-            if (setup.Configure) arguments.Add("--configure");
-            if (setup.Preset is { } preset) CliRetryCommand.Add(arguments, "--preset", InstallConfigurationChoices.Name(preset));
-            foreach (var row in setup.Overrides) CliRetryCommand.Add(arguments, "--route", $"{row.Id}={InstallConfigurationChoices.Name(row.Action)}");
+            if (setup.Configure) arguments.Add(InstallDefinitions.ConfigureOption);
+            if (setup.Preset is { } preset) CliRetryCommand.Add(arguments, InstallDefinitions.PresetOption, InstallConfigurationChoices.Name(preset));
+            foreach (var row in setup.Overrides) CliRetryCommand.Add(arguments, InstallDefinitions.RouteOption, $"{row.Id}={InstallConfigurationChoices.Name(row.Action)}");
             if ((input.ResolvedFrontmatter ?? setup.Frontmatter) is { } form)
                 CliRetryCommand.Add(arguments, "--frontmatter", WorkspaceSettingsDefinitions.ReadFrontmatterName(form));
         }

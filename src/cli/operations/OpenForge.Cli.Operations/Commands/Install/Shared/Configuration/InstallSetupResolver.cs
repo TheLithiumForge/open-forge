@@ -24,7 +24,10 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
 
     internal async ValueTask<InstallSetupResolution> ResolveAsync(InstallRequest request, CancellationToken token)
     {
-        var layoutRead = await new WorkspaceLayoutReader(paths).ReadAsync(request.Workspace, token).ConfigureAwait(false);
+        var selection = request.RequestedMainRoot is null ? null
+            : await new InstallLayoutPlanner(paths).ReadAsync(request, token).ConfigureAwait(false);
+        if (selection?.Boundary is { } layoutBoundary) return Stopped(layoutBoundary.Code, layoutBoundary.Cause);
+        var layoutRead = selection?.Observation ?? await new WorkspaceLayoutReader(paths).ReadAsync(request.Workspace, token).ConfigureAwait(false);
         var settings = layoutRead.Settings;
         if (layoutRead.Layout is not { } layout)
             return Stopped(settings.State == WorkspaceSettingsReadState.Invalid ? InstallFindingCode.InvalidInput : InstallFindingCode.LifecycleUnavailable,
@@ -44,12 +47,28 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
         if (settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
             return Stopped(settings.State == WorkspaceSettingsReadState.Invalid ? InstallFindingCode.InvalidInput : InstallFindingCode.LifecycleUnavailable, settings.Cause ?? "Workspace settings are unavailable for setup selection.");
         var canPrompt = request.AllowsInteractiveConfirmation && !request.Automatic && !request.IsDryRun && interaction is not null;
+        var requestedMainRoot = request.RequestedMainRoot;
+        if (selection?.IntendedLayout is { } intended) layout = intended;
+        if (layoutRead.State == WorkspaceLayoutReadState.Uninstalled && requestedMainRoot is null && canPrompt && interaction is { } rootInteraction)
+        {
+            var question = new InstallMainRootQuestion(layout.MainRoot);
+            var reply = await rootInteraction.MainRoot(question, new(true), token).ConfigureAwait(false);
+            if (reply.State == CliPromptState.Cancelled) return new(null, Cancelled: true);
+            if (reply.State == CliPromptState.Answered)
+            {
+                if (!question.IsValidAnswer(reply.Value))
+                    return Stopped(InstallFindingCode.InvalidInput, "The context folder must be a canonical workspace-relative content directory.");
+                if (reply.Value != layout.MainRoot) requestedMainRoot = reply.Value;
+                layout = WorkspaceLayout.Create(request.Workspace, reply.Value);
+            }
+        }
         var form = InstallFrontmatterResolver.Resolve(request.Setup, settings, installed, canPrompt);
         if (form.Boundary is { } formBoundary) return new(null, formBoundary);
         if (request.Setup?.Preset is null &&
             ((installed && request.Setup?.Configure != true) || !canPrompt || request.Setup is { Configure: true, Frontmatter: not null }))
             return new(null)
             {
+                RequestedMainRoot = requestedMainRoot,
                 Frontmatter = form.Selection,
                 Recap = !installed ? new(false, InstallPreset.FullCore, CurrentRoutes(layout, settings, []), []) : null,
             };
@@ -127,6 +146,7 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
             var routes = configuration?.Routes ?? CurrentRoutes(layout, settings, []);
             return new(configuration, resolved.Boundary)
             {
+                RequestedMainRoot = requestedMainRoot,
                 Frontmatter = resolved.Selection,
                 Recap = new(request.Setup?.Configure == true, configuration?.Preset ?? InstallPreset.FullCore, routes, previousRoutes),
             };

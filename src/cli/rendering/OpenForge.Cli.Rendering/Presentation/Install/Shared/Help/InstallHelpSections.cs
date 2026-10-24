@@ -2,6 +2,8 @@ using OpenForge.Cli.Core.Presentation.Shared.Help;
 using OpenForge.Cli.Core.Presentation.Shared.Help.Models;
 using OpenForge.Cli.Core.Presentation.Install.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
+using OpenForge.Cli.OutputText.Install;
 
 namespace OpenForge.Cli.Core.Presentation.Install.Shared.Help;
 
@@ -15,6 +17,7 @@ internal static class InstallHelpSections
             Behavior = global::OpenForge.Cli.OutputText.Install.InstallText.HelpBehavior(),
             Details =
             [
+                new CliHelpSection(InstallText.HelpContextFolderHeading(), InstallText.HelpContextFolder(InstallMainRootQuestion.DefaultRoot, InstallMainRootQuestion.SettingsDirectory)),
                 new CliHelpSection("Force boundary", global::OpenForge.Cli.OutputText.Install.InstallText.HelpForceBoundaryDetails()),
                 new CliHelpSection("Custom routes", global::OpenForge.Cli.OutputText.Install.InstallText.HelpCustomRoutesDetails()),
                 new CliHelpSection("Conversion and boundaries", global::OpenForge.Cli.OutputText.Install.InstallText.HelpConversionAndBoundariesDetails()),

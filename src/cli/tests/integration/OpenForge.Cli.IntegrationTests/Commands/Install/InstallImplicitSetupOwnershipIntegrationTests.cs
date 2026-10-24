@@ -31,7 +31,8 @@ public sealed class InstallImplicitSetupOwnershipIntegrationTests
                 Assert.Equal(installed ? InstallRouteAction.Add : InstallRouteAction.Remove, question.Routes.Single(row => row.Id == "guidance").Action);
                 return ValueTask.FromResult(CliPromptReply<ImmutableArray<InstallRouteSelection>>.Answered(
                     question.Routes.Select(row => row.Id == "guidance" ? row with { Action = InstallRouteAction.GitIgnore } : row).Reverse().ToImmutableArray()));
-            }, (question, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered(question.InitialForm)));
+            }, (question, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered(question.InitialForm)),
+            (initial, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered(initial.Initial)));
         var request = workspace.Request(automatic: false, allowsInteractiveConfirmation: true) with
         {
             Setup = new(installed, InstallPreset.Custom, [new("skills", InstallRouteAction.Remove)]),
@@ -66,7 +67,8 @@ public sealed class InstallImplicitSetupOwnershipIntegrationTests
                     _ => throw new ArgumentOutOfRangeException(nameof(scenario)),
                 };
                 return ValueTask.FromResult(CliPromptReply<ImmutableArray<InstallRouteSelection>>.Answered(rows));
-            }, (_, _, _) => throw new InvalidOperationException("Invalid routes cannot reach frontmatter selection."));
+            }, (_, _, _) => throw new InvalidOperationException("Invalid routes cannot reach frontmatter selection."),
+            (initial, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered(initial.Initial)));
         var request = workspace.Request(automatic: false, allowsInteractiveConfirmation: true) with
         {
             Setup = new(false, InstallPreset.Custom, [new("directives", InstallRouteAction.Add)]),
@@ -85,7 +87,8 @@ public sealed class InstallImplicitSetupOwnershipIntegrationTests
         var interaction = new InstallSetupInteraction((_, _, _) => throw new InvalidOperationException("The preset is explicit."),
             (_, _, _) => ValueTask.FromResult(cancelled ? CliPromptReply<ImmutableArray<InstallRouteSelection>>.Cancelled()
                 : CliPromptReply<ImmutableArray<InstallRouteSelection>>.Unavailable()),
-            (_, _, _) => throw new InvalidOperationException("A non-answer cannot reach frontmatter selection."));
+            (_, _, _) => throw new InvalidOperationException("A non-answer cannot reach frontmatter selection."),
+            (initial, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered(initial.Initial)));
         var request = workspace.Request(automatic: false, allowsInteractiveConfirmation: true) with { Setup = new(false, InstallPreset.Custom, []) };
         var result = await new InstallSetupResolver(new PhysicalPathResolver(), interaction).ResolveAsync(request, TestContext.Current.CancellationToken);
         Assert.True(result.Cancelled);
@@ -211,7 +214,8 @@ public sealed class InstallImplicitSetupOwnershipIntegrationTests
             observe();
             return ValueTask.FromResult(CliPromptReply<InstallPreset>.Answered(preset));
         }, (_, _, _) => throw new InvalidOperationException("No Custom route prompt is expected."),
-            (question, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered(question.InitialForm)));
+            (question, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered(question.InitialForm)),
+            (initial, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered(initial.Initial)));
 
     private static FileStream? SeedUnknownOwnership(InstallOperationWorkspace workspace, string state, bool installed = false)
     {

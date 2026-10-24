@@ -1,4 +1,5 @@
 using System.Text.Json;
+using OpenForge.Cli.TestSupport.Contracts;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 
@@ -18,7 +19,7 @@ public sealed class PublishedInstallFrontmatterProcessTests
             {
                 Size = new(80, 24),
                 TerminalName = "xterm",
-                Steps = [new("Choose your Open Forge setup", "\r"), new("How should Open Forge write file metadata?", "\u001b")],
+                Steps = [new(PublishedTokens.Install.MainRootQuestion, "\r"), new("Choose your Open Forge setup", "\r"), new("How should Open Forge write file metadata?", "\u001b")],
             });
         Assert.Equal(130, terminal.ExitCode);
         var preset = terminal.Transcript.IndexOf("Choose your Open Forge setup", StringComparison.Ordinal);
@@ -35,7 +36,7 @@ public sealed class PublishedInstallFrontmatterProcessTests
         using var workspace = Create("install-frontmatter-explicit");
         var before = workspace.SnapshotState();
         var terminal = await PublishedWindowsTerminal.RunAsync(workspace.Target, workspace.Path,
-            ["install", "--preset", "full-core", "--frontmatter", "scoped"], workspace.ProcessEnvironment,
+            ["install", "--preset", "full-core", "--frontmatter", "scoped", PublishedTokens.Install.MainRoot, PublishedTokens.Sources.AgentsRoot], workspace.ProcessEnvironment,
             new PublishedTerminalScenario
             {
                 Size = new(80, 24),

@@ -54,6 +54,6 @@ internal sealed class InstallRequestBinder(InstallSymbols symbols)
                 force: input.Force,
                 automatic: input.Automatic,
                 allowsInteractiveConfirmation: allowsInteractiveConfirmation)
-            { Setup = input.Setup, RetryOptions = input.RetryOptions });
+            { Setup = input.Setup, RetryOptions = input.RetryOptions, RequestedMainRoot = input.RequestedMainRoot });
     }
 }
