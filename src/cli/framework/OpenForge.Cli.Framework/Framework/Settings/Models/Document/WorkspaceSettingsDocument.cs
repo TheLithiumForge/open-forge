@@ -40,6 +40,8 @@ internal sealed record WorkspaceSettingsDocument(
     /// </summary>
     internal ImmutableArray<string> Roots { get; init; } = [];
 
+    internal ImmutableArray<string> OutsideRoutes { get; init; } = [];
+
     internal static readonly WorkspaceSettingsDocument Empty =
         new(WorkspaceSettingsDefinitions.SchemaVersion, [], [], []);
 

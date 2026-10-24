@@ -341,8 +341,9 @@ public static class PublishedTokens
         public const string RemovedFilesProperty = "removedFiles";
         public const string RemovedDirectoriesProperty = "removedDirectories";
         public const string RootsProperty = "roots";
+        public const string OutsideRoutesProperty = "outsideRoutes";
         public const string RelativePath = ".agents/open-forge.json";
-        public const int SchemaVersion = 4;
+        public const int SchemaVersion = 5;
         public const string SchemaVersionProperty = "schemaVersion";
         public const string MainRootProperty = "mainRoot";
         public const string FrontmatterProperty = "frontmatter";

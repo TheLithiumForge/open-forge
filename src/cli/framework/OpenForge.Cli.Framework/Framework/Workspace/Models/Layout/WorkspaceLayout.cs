@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Paths;
 
 namespace OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
@@ -8,18 +9,20 @@ internal sealed class WorkspaceLayout
     internal const string DefaultMainRoot = ".agents";
     internal const string NativeSkillsPath = DefaultMainRoot + "/" + WorkspaceLayoutNames.SkillsDirectoryName;
 
-    private WorkspaceLayout(CliWorkspace workspace, string mainRoot)
+    private WorkspaceLayout(CliWorkspace workspace, string mainRoot, ImmutableArray<WorkspaceOutsideRoute> outsideRoutes)
     {
         Workspace = workspace;
         MainRoot = mainRoot;
         SourceRoots = IsDefault ? [DefaultMainRoot] : [mainRoot, NativeSkillsPath];
+        OutsideRoutes = outsideRoutes;
+        InventoryRoots = [.. SourceRoots, .. outsideRoutes.Select(route => route.DirectoryPath)];
     }
 
     internal static WorkspaceLayout Create(CliWorkspace workspace, string mainRoot)
     {
         if (!WorkspaceMainRootPath.IsCanonical(mainRoot))
             throw new ArgumentException("The main root must be a canonical workspace content directory.", nameof(mainRoot));
-        return new(workspace, mainRoot);
+        return new(workspace, mainRoot, []);
     }
 
     internal CliWorkspace Workspace { get; }
@@ -32,6 +35,35 @@ internal sealed class WorkspaceLayout
     /// </summary>
     internal ImmutableArray<string> SourceRoots { get; }
     internal bool IsDefault => MainRoot == DefaultMainRoot;
+
+    internal ImmutableArray<WorkspaceOutsideRoute> OutsideRoutes { get; }
+    internal ImmutableArray<string> InventoryRoots { get; }
+
+    internal WorkspaceLayout WithOutsideRoutes(IEnumerable<string> directories)
+        => new(Workspace, MainRoot, WorkspaceOutsideRoutePath.Validate(MainRoot, directories));
+
+    /// <summary>Classifies maintenance scope without granting loading, ownership or package permission.</summary>
+    internal bool TryGetMaintenanceBoundary(string canonicalPath, out WorkspaceMaintenanceBoundary boundary)
+    {
+        boundary = new(WorkspaceMaintenanceBoundaryKind.Primary, MainRoot, LoaderPath);
+        if (!PortableWorkspacePath.TryNormalize(canonicalPath, out _)) return false;
+        if (IsOrdinallyAtOrBelow(canonicalPath, NativeSkillsPath))
+        {
+            boundary = new(WorkspaceMaintenanceBoundaryKind.NativeSkills, NativeSkillsPath, WorkspaceRoutePath.CanonicalEntrypointPath(NativeSkillsPath));
+            return true;
+        }
+        if (IsOrdinallyAtOrBelow(canonicalPath, MainRoot)) return true;
+        foreach (var route in OutsideRoutes)
+        {
+            if (!IsOrdinallyAtOrBelow(canonicalPath, route.DirectoryPath)) continue;
+            boundary = new(WorkspaceMaintenanceBoundaryKind.Outside, route.DirectoryPath, route.CataloguePath);
+            return true;
+        }
+        return false;
+    }
+
+    private static bool IsOrdinallyAtOrBelow(string path, string root)
+        => path == root || path.StartsWith(root + "/", StringComparison.Ordinal);
 
     /// <summary>Maps a category to its primary layout location without selecting other roots.</summary>
     internal string CategoryDirectory(string category)

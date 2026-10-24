@@ -9,6 +9,31 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Settings.Shared.Serialization
 [Trait("Feature", "workspace-settings"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
 public sealed class WorkspaceSettingsSchemaIntegrationTests
 {
+    [Fact(DisplayName = "Outside routes have an optional v5 schema and do not alter earlier published shapes"), Trait("Boundary", "Input")]
+    public void OutsideRoutesUseNewSchema()
+    {
+        using var current = ReadPublishedSchema();
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaUrl, current.RootElement.GetProperty("$id").GetString());
+        var property = current.RootElement.GetProperty("properties").GetProperty(WorkspaceSettingsDefinitions.OutsideRoutesProperty);
+        Assert.Equal(JsonValueKind.Array, SchemaType(property.GetProperty("type")));
+        Assert.Equal(JsonValueKind.String, SchemaType(property.GetProperty("items").GetProperty("type")));
+        Assert.True(property.GetProperty("uniqueItems").GetBoolean());
+        Assert.True(current.RootElement.GetProperty("additionalProperties").GetBoolean());
+        Assert.False(current.RootElement.TryGetProperty("required", out var required)
+            && required.EnumerateArray().Any(value => value.GetString() == WorkspaceSettingsDefinitions.OutsideRoutesProperty));
+        for (var version = 1; version < WorkspaceSettingsDefinitions.SchemaVersion; version++)
+        {
+            using var previous = ReadPublishedSchema(version);
+            Assert.False(previous.RootElement.GetProperty("properties").TryGetProperty(WorkspaceSettingsDefinitions.OutsideRoutesProperty, out _));
+        }
+        foreach (var example in current.RootElement.GetProperty("examples").EnumerateArray())
+        {
+            var document = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes(example.GetRawText())).Document);
+            Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersion, document.SchemaVersion);
+            Assert.NotEmpty(document.OutsideRoutes);
+        }
+    }
+
     [Fact(DisplayName = "Main root is optional in v4 and absent from published earlier schemas"), Trait("Boundary", "Input")]
     public void MainRootUsesNewSchema()
     {

@@ -51,7 +51,7 @@ public sealed class WorkspaceSettingsSchemaTests
     [Trait("Boundary", "Input")]
     [Theory(DisplayName = "An unrecognised schema version is still read")]
     [InlineData(0)]
-    [InlineData(5)]
+    [InlineData(WorkspaceSettingsDefinitions.SchemaVersion + 1)]
     [InlineData(4096)]
     public void ReadsUnrecognisedVersion(int version)
     {

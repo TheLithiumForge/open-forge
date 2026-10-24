@@ -28,17 +28,29 @@ A workspace has one main root, the context folder. Its default is `.agents`. A c
 
 The host sections point to the selected loader. `CLAUDE.md` retains its `@AGENTS.md` bridge. The custom loader can list the native Skills catalogue using a relative link. A competing `skills` category inside a custom root is invalid. An absent native Skills folder is optional, while an inaccessible or unsafe existing folder is an observation failure.
 
-`SourceRoots` is `[.agents]` for the default layout and `[MainRoot, .agents/skills]` otherwise. These are primary content locations only. They neither select what agents load nor grant unrestricted write authority. Folder includes as maintained routes outside these locations belong to Task 87, not this delivery.
+`SourceRoots` is `[.agents]` for the default layout and `[MainRoot, .agents/skills]` otherwise. These are primary content locations only. They neither select what agents load nor grant unrestricted write authority. Outside-route registrations extend inventory and maintenance classification separately.
 
 ## Settings v4
 
-The optional `mainRoot` string in settings schema v4 names the canonical workspace-relative context folder. Absence means `.agents`. New settings files declare v4, including default installs. An absent default value is never inserted. Unrelated rewrites preserve existing schema declarations, unknown values and property order. Explicitly selecting a custom root may update the declaration to v4. Published schemas v1 through v3 remain unchanged, and CLI JSON results remain schema 3.
+The optional `mainRoot` string introduced in settings schema v4 names the canonical workspace-relative context folder. Absence means `.agents`. An absent default value is never inserted. Unrelated rewrites preserve existing schema declarations, unknown values and property order. New settings files and explicit custom-root changes declare the current settings version. Published schemas v1 through v4 remain unchanged, and CLI JSON results remain schema 3.
 
 `WorkspaceMainRootPath.IsCanonical` rejects empty or noncanonical paths, absolute paths, traversal, the workspace root, Git metadata, host filenames and their descendants, `.open-forge-state/` and its descendants, and descendants or case aliases of `.agents`. Exactly `.agents` remains valid. Physical observation separately rejects unsafe ancestry and collisions.
 
 `WorkspaceSettingsDocument.DeclaredMainRoot` retains the optional declaration and `MainRoot` exposes its effective value. `WorkspaceSettingsCodec.SetMainRoot` returns no change when the effective value is unchanged. Settings `roots` registrations are validated against both primary content locations. They remain literal workspace paths.
 
 Editing `mainRoot` moves no files. A disagreement with installation evidence is reported by readers and stops writers. Older CLIs do not support custom roots.
+
+## Outside Routes And Settings v5
+
+Settings v5 adds optional `outsideRoutes`, an ordered list of canonical workspace-relative directory paths. Absence means empty. The separate `roots` list still contains included files. Folder registrations may coexist with an independent file registration inside the folder.
+
+Outside-route maintenance requires a CLI that supports settings v5. Registration never makes an outside path an implicit package destination.
+
+Each outside route has its declared directory and canonical catalogue path. `WithOutsideRoutes` replaces the pure layout's registrations without changing primary mappings. It rejects portable duplicates, case aliases and overlaps in either ancestor direction with the main root, `.agents`, another outside route, Git metadata or workspace runtime storage. The workspace root is invalid.
+
+`InventoryRoots` combines primary source roots and outside directories in declaration order. It conveys discovery scope. `TryGetMaintenanceBoundary` classifies paths ordinally, checking native Skills before the encompassing default main root. An outside boundary ends at its registered directory and uses its canonical catalogue as anchor. Existing command restrictions, ownership, physical safety and explicit permissions remain separate checks.
+
+Adding a registration declares settings v5. Removing the last one retains an empty array and keeps the existing declaration. Both mutations return no change when the requested state already holds. Unrelated properties and their order survive rewrites. `WorkspaceRoutePath` owns canonical catalogue construction for layout and source classification.
 
 ## Pure Mapping
 
