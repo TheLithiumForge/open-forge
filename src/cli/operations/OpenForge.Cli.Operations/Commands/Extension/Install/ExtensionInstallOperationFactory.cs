@@ -174,7 +174,8 @@ internal sealed class ExtensionInstallOperation(
                 changedPaths.Contains(requirement) ? ExtensionPermissionEffect.Copy : ExtensionPermissionEffect.Preserve));
             permission = await _permissions.DetermineAsync(new(request.Workspace, [.. targets], plan.SourceRead.Identity,
                 request.Mode == ExtensionInstallMode.Apply && !request.Automatic && request.AllowInteraction,
-                request.AllowPath) { LayoutRead = plan.LayoutRead }, cancellationToken).ConfigureAwait(false);
+                request.AllowPath)
+            { LayoutRead = plan.LayoutRead }, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

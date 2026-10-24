@@ -80,8 +80,11 @@ public sealed class ExtensionInstallLayoutTests
     private static ExtensionPackageFileFact File(string target, byte[] bytes)
         => ExtensionPackageFileFact.Create(new()
         {
-            Path = ExtensionPackageLayout.ContentPathPrefix + target, TargetPath = target,
-            State = ExtensionPackageFileReadState.Available, Bytes = bytes, ByteLength = bytes.Length,
+            Path = ExtensionPackageLayout.ContentPathPrefix + target,
+            TargetPath = target,
+            State = ExtensionPackageFileReadState.Available,
+            Bytes = bytes,
+            ByteLength = bytes.Length,
             Sha256 = FileExpectation.Hash(bytes),
         });
 }
