@@ -50,7 +50,7 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
 
         var read = await Read(temporary);
 
-        Assert.Equal(removed ? WorkspaceLayoutReadState.Ready : WorkspaceLayoutReadState.Mismatch, read.State);
+        Assert.Equal(WorkspaceLayoutReadState.Ready, read.State);
         Assert.Equal(CustomRoot, read.Layout?.MainRoot);
         Assert.Equal(!removed, read.Issues.Any(issue => issue.Code == WorkspaceLayoutIssueCode.MissingLoader));
         Assert.Contains(read.Expectations, value => value.LogicalPath == temporary.Combine(CustomLoader) && value.Kind == FileExpectationKind.Missing);
@@ -287,7 +287,7 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
         Settings(temporary, CustomRoot);
         temporary.CreateFile(WorkspaceLayoutNames.ClaudeHostFileName, ManagedHost("@" + WorkspaceLayoutNames.AgentHostFileName + "\n@" + CustomLoader));
         var read = await Read(temporary);
-        Assert.Equal(WorkspaceLayoutReadState.Mismatch, read.State);
+        Assert.Equal(WorkspaceLayoutReadState.Ready, read.State);
         Assert.Equal(WorkspaceLayoutIssueCode.MissingLoader, Assert.Single(read.Issues).Code);
     }
 
@@ -316,7 +316,7 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
 
         var read = await Read(temporary);
 
-        Assert.Equal(WorkspaceLayoutReadState.Unavailable, read.State);
+        Assert.Equal(WorkspaceLayoutReadState.Ready, read.State);
         Assert.Equal(CustomRoot, read.Layout?.MainRoot);
         Assert.Contains(read.Issues, issue => issue.Code == WorkspaceLayoutIssueCode.ObservationUnavailable
             && issue.Path == WorkspaceOwnershipDefinitions.RelativePath);

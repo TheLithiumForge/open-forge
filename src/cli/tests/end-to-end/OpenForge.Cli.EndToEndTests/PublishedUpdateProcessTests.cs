@@ -3,7 +3,7 @@ using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedUpdateProcessTests
+public sealed partial class PublishedUpdateProcessTests
 {
     [Fact(DisplayName = "Published Update help, invalid singleton repetition, and repeated Booleans are truthful and write-free"), Trait("Feature", "update-command"), Trait("Evidence", "EndToEnd")]
     public async Task HelpInvalidSingletonAndBooleanRepetitionJourney()

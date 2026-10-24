@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Context;
@@ -47,7 +48,6 @@ using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Shared.Runtime;
 using OpenForge.Cli.Core.Framework.Ownership;
-using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
@@ -78,12 +78,16 @@ public sealed class PublishedTokensTests
         Assert.Equal(InstallConfigurationChoices.Name(InstallPreset.Custom), PublishedTokens.Install.CustomPreset);
         Assert.Equal(UpdateDefinitions.UpdateCommand.Name, PublishedTokens.Update.Command);
         Assert.Equal(UpdateDefinitions.Automatic.Name, PublishedTokens.Update.Automatic);
+        Assert.Equal(UpdateDefinitions.DryRun.Name, PublishedTokens.Update.DryRun);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(FrameworkOwnership.Paths)), PublishedTokens.Ownership.Paths);
         Assert.Equal(RouteIncludeDefinitions.DryRun.Name, PublishedTokens.RouteInclude.DryRun);
         Assert.Equal(RouteIncludeDefinitions.Tag.Name, PublishedTokens.RouteInclude.Tag);
         Assert.Equal(RouteIncludeDefinitions.ApplyTo.Name, PublishedTokens.RouteInclude.ApplyTo);
         Assert.Equal(RouteExcludeDefinitions.DryRun.Name, PublishedTokens.RouteExclude.DryRun);
         Assert.Equal(CliSyntaxDefinitions.Format.FiniteSpellings.Single(pair => pair.Value == CliFormat.Text).Key, PublishedTokens.Syntax.TextFormat);
         Assert.Equal(WorkspaceSettingsDefinitions.RootsProperty, PublishedTokens.Settings.RootsProperty);
+        Assert.Equal(WorkspaceSettingsDefinitions.RemovedFilesProperty, PublishedTokens.Settings.RemovedFilesProperty);
+        Assert.Equal(WorkspaceSettingsDefinitions.RemovedDirectoriesProperty, PublishedTokens.Settings.RemovedDirectoriesProperty);
         Assert.Equal(CliJsonFields.Effects, PublishedTokens.Json.Effects);
         Assert.Equal(CliJsonFields.After, PublishedTokens.Json.After);
         Assert.Equal(InstallDefinitions.InstallCommand.Name, PublishedTokens.Install.Command);
@@ -152,7 +156,6 @@ public sealed class PublishedTokensTests
         Assert.Equal(RouteRemoveDefinitions.Automatic.Name, PublishedTokens.RouteRemove.Automatic);
         Assert.Equal(RouteRemoveDefinitions.DryRun.Name, PublishedTokens.RouteRemove.DryRun);
         Assert.Equal(WorkspaceSettingsDefinitions.RemovedCategoriesProperty, PublishedTokens.Settings.RemovedCategoriesProperty);
-        Assert.Equal(WorkspaceSettingsDefinitions.RemovedDirectoriesProperty, PublishedTokens.Settings.RemovedDirectoriesProperty);
 
         Assert.Equal(RouteInitDefinitions.InitCommand.Name, PublishedTokens.RouteInit.Command);
         Assert.Equal(RouteInitDefinitions.Description.Name, PublishedTokens.RouteInit.Description);

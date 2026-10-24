@@ -13,7 +13,9 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
@@ -30,33 +32,34 @@ internal sealed class RemoveNavigationPlanner
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
 
     internal async ValueTask<RemoveNavigationPlanningOutcome> BuildAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         IReadOnlyCollection<string> selectedPaths,
         CancellationToken cancellationToken,
         WorkspaceOwnershipRead? ownership = null)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(layout);
+        var workspace = layout.Workspace;
         ArgumentNullException.ThrowIfNull(selectedPaths);
         var sharing = ownership is not null ? NavigationSharingReader.FromOwnership(ownership)
             : await NavigationSharingReader.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
         if (!sharing.IsAvailable) return new RemoveNavigationPlanningOutcome.Unavailable(sharing.Cause);
-        if (selectedPaths.Count == 0 || selectedPaths.All(path => !path.StartsWith(".agents/", StringComparison.Ordinal)))
+        if (selectedPaths.Count == 0 || selectedPaths.All(path => !layout.IsImplicitContentDestination(path)))
         {
             return new RemoveNavigationPlanningOutcome.Available(RemoveNavigationPlan.Empty);
         }
 
         var catalogue = await _catalogueReader.ReadAsync(
-            new SourceCatalogueRequest(workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(layout, layout.SourceRoots),
             cancellationToken).ConfigureAwait(false);
         if (catalogue.IsCancelled)
         {
-            return new RemoveNavigationPlanningOutcome.Unavailable("The .agents source catalogue could not be completely read.");
+            return new RemoveNavigationPlanningOutcome.Unavailable($"The {layout.MainRoot} source catalogue could not be completely read.");
         }
 
         if (catalogue.Issues.Any(issue => issue.Stage == SourceCatalogueIssueStage.Root
                 && issue.Code != SourceCatalogueIssueCode.RootMissing))
         {
-            return new RemoveNavigationPlanningOutcome.Unavailable("The .agents source catalogue is unsafe or unavailable.");
+            return new RemoveNavigationPlanningOutcome.Unavailable($"The {layout.MainRoot} source catalogue is unsafe or unavailable.");
         }
 
         if (catalogue.Issues.Any(issue => issue.Stage == SourceCatalogueIssueStage.Root
@@ -68,7 +71,7 @@ internal sealed class RemoveNavigationPlanner
         if (catalogue.Issues.Count != 0)
         {
             return new RemoveNavigationPlanningOutcome.Unavailable(
-                "The .agents source catalogue contains unresolved candidates, so generated navigation cannot be projected safely.");
+                $"The {layout.MainRoot} source catalogue contains unresolved candidates, so generated navigation cannot be projected safely.");
         }
 
         var selected = selectedPaths.ToHashSet(StringComparer.Ordinal);
@@ -91,10 +94,21 @@ internal sealed class RemoveNavigationPlanner
         if (intendedFormation.IntendedTargetCollisions.Count != 0 || intendedFormation.Ambiguities.Count != 0)
         {
             return new RemoveNavigationPlanningOutcome.Unavailable(
-                "The intended remaining .agents catalogue has a route identity or physical target collision.");
+                $"The intended remaining {layout.MainRoot} catalogue has a route identity or physical target collision.");
         }
 
-        var affectedHosts = SelectAffectedHosts(removedSources, observedFormation, intendedFormation, selectedPaths);
+        SourceLoaderEntriesParseResult? loaderEntries = null;
+        if (observedFormation.Loader is { } loader)
+        {
+            var loaderRead = ReadSource(workspace, loader);
+            if (loaderRead is null)
+            {
+                return new RemoveNavigationPlanningOutcome.Unavailable(
+                    $"Generated navigation source '{loader.Identity.CanonicalBasePath}' could not retain exact UTF-8 bytes.");
+            }
+            loaderEntries = SourceLoaderEntriesParser.Parse(layout, loaderRead.Text);
+        }
+        var affectedHosts = SelectAffectedHosts(removedSources, observedFormation, intendedFormation, selectedPaths, loaderEntries);
         if (affectedHosts.Count == 0)
         {
             return new RemoveNavigationPlanningOutcome.Available(RemoveNavigationPlan.Empty);
@@ -172,9 +186,16 @@ internal sealed class RemoveNavigationPlanner
         IReadOnlyList<SourceLogicalSource> removedSources,
         GeneratedNavigationFormation observed,
         GeneratedNavigationFormation intended,
-        IReadOnlyCollection<string> selectedPaths)
+        IReadOnlyCollection<string> selectedPaths,
+        SourceLoaderEntriesParseResult? loaderEntries)
     {
         var paths = new SortedSet<string>(StringComparer.Ordinal);
+        if (observed.Loader is { } loader && intended.FindSource(loader.Identity.CanonicalBasePath) is not null
+            && loaderEntries?.Destinations.Any(destination => destination.State == SourceLoaderDestinationParseState.Valid
+                && destination.CanonicalPath is { } path && selectedPaths.Contains(path)) == true)
+        {
+            paths.Add(loader.Identity.CanonicalBasePath);
+        }
         foreach (var source in removedSources)
         {
             var node = observed.Topology.FindByPath(source.Identity.CanonicalBasePath);
@@ -197,7 +218,7 @@ internal sealed class RemoveNavigationPlanner
 
         foreach (var selectedPath in selectedPaths)
         {
-            if (!SourceLogicalPath.IsCanonicalSource(selectedPath))
+            if (!observed.Catalogue.Layout.IsImplicitContentDestination(selectedPath))
             {
                 continue;
             }
@@ -217,7 +238,7 @@ internal sealed class RemoveNavigationPlanner
                     }
                 }
 
-                if (directory == SourceLogicalPath.AgentsRoot)
+                if (!observed.Catalogue.Layout.IsImplicitContentDestination(directory))
                 {
                     break;
                 }

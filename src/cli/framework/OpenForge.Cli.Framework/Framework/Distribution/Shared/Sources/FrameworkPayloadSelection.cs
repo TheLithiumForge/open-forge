@@ -20,9 +20,9 @@ internal static class FrameworkPayloadSelection
         => IncludesPath(DefaultLayout, path, settings);
 
     internal static bool IncludesPath(WorkspaceLayout layout, string packagePath, WorkspaceSettingsDocument settings)
-        => IncludesDestination(layout, layout.MapPayloadPath(packagePath), settings);
+        => IncludesInstalledPath(layout, layout.MapPayloadPath(packagePath), settings);
 
-    private static bool IncludesDestination(WorkspaceLayout layout, string path, WorkspaceSettingsDocument settings)
+    internal static bool IncludesInstalledPath(WorkspaceLayout layout, string path, WorkspaceSettingsDocument settings)
     {
         if (WorkspaceRemovals.IsPathRemoved(layout, path, settings))
         {
@@ -55,13 +55,13 @@ internal static class FrameworkPayloadSelection
     {
         var selectedEntrypoints = payload.Assets
             .Select(asset => layout.MapPayloadPath(asset.Path))
-            .Where(path => IncludesDestination(layout, path, settings)
+            .Where(path => IncludesInstalledPath(layout, path, settings)
                 && SourceFormClassifier.TryClassify(layout, path, out var form)
                 && SourceFormClassifier.IsEntrypoint(form))
             .ToArray();
 
         foreach (var excluded in payload.Assets.Select(asset => layout.MapPayloadPath(asset.Path))
-                     .Where(path => !IncludesDestination(layout, path, settings)))
+                     .Where(path => !IncludesInstalledPath(layout, path, settings)))
         {
             if (formation.Sources.Any(source =>
                     string.Equals(source.Identity.CanonicalBasePath, excluded, StringComparison.Ordinal)))

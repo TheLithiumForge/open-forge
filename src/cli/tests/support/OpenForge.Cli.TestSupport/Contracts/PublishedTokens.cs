@@ -167,6 +167,7 @@ public static class PublishedTokens
 
     public static class Update
     {
+        public const string DryRun = "--dry-run";
         public const string Command = "update";
         public const string Automatic = "--automatic";
     }
@@ -279,15 +280,17 @@ public static class PublishedTokens
 
     public static class Ownership
     {
-        public const string RelativePath = ".agents/open-forge.lock.json";
         public const string Framework = "framework";
         public const string Source = "source";
+        public const string Paths = "paths";
+        public const string RelativePath = ".agents/open-forge.lock.json";
         public const string Id = "id";
     }
 
     public static class Settings
     {
         public const string RemovedCategoriesProperty = "removedCategories";
+        public const string RemovedFilesProperty = "removedFiles";
         public const string RemovedDirectoriesProperty = "removedDirectories";
         public const string RootsProperty = "roots";
         public const string RelativePath = ".agents/open-forge.json";
