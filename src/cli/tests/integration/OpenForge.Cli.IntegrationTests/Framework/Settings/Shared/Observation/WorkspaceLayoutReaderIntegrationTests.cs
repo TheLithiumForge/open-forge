@@ -102,6 +102,7 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
         var read = await Read(temporary);
         Assert.Equal(WorkspaceLayoutReadState.Invalid, read.State);
         Assert.Null(read.Layout);
+        Assert.Empty(read.OutsideRoutes);
         Assert.Contains(read.Issues, issue => issue.Code == WorkspaceLayoutIssueCode.InvalidSetting);
     }
 
@@ -299,6 +300,7 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
         var read = await Read(temporary);
         Assert.Equal(WorkspaceLayoutReadState.Unavailable, read.State);
         Assert.Null(read.Layout);
+        Assert.Empty(read.OutsideRoutes);
         Assert.Contains(read.Issues, issue => issue.Code == WorkspaceLayoutIssueCode.ObservationUnavailable);
     }
 

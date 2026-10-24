@@ -82,6 +82,12 @@ The final observation rules incorporate chair amendments 5 through 7:
 
 `WorkspaceLayoutRevalidator.ValidateAsync` uses the held physical-workspace lease and existing expected-state validation. It runs before settings grants as well as target effects. Post-effect verification compares intended state, not obsolete pre-effect settings. Runtime locking and recovery locations stay fixed under the [mutation and recovery design](mutation-and-recovery.md).
 
+Outside registrations come from that same settings snapshot. `WorkspaceLayoutRead.OutsideRoutes` retains their declaration order, descriptors, physical resolutions, directory and catalogue observations, failures and issues. Each outside observation is `Available`, `Missing`, `Unsafe` or `Unavailable`. A safe ordinary directory with a missing catalogue is available for later scaffolding. A missing directory or ancestor stays diagnosable. Unsupported mappings, reserved overlaps and inaccessible content are never treated as safe absence.
+
+Outside-only problems do not change the primary layout state. Maintenance within an outside boundary requires its safe available observation and command-specific protection checks. Deregistration can use the canonical registration and loader row without depending on available tree contents. The reader observes ancestry and the anchor without recursively scanning, creating or repairing anything.
+
+Safe directory, ancestry and catalogue expectations join the layout's existing expectations. Lease validation checks those facts and retained directory accessibility before effects. A changed expected state still blocks the planned operation. Each target mutation separately proves containment within the selected physical boundary. Registration grants no ownership or implicit package permission.
+
 ## Source Transport
 
 Catalogue requests, catalogues, read sessions, loading closure and mutation plans carry the selected layout. Sessions derive it from their catalogue. Default selection can contain both primary content locations. Catalogue reconstruction preserves included `./path` identities, aliases, conditions and order, including sources that have no inventory candidate. Loader links resolve relative to the actual loader directory.

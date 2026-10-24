@@ -11,6 +11,11 @@ internal enum WorkspaceLayoutIssueCode
     OwnershipMismatch,
     PointerMismatch,
     ObservationUnavailable,
+    OutsideDirectoryMissing,
+    OutsideDirectoryUnsafe,
+    OutsideCatalogueUnsafe,
+    OutsideObservationUnavailable,
+    OutsideOverlap,
 }
 
 internal sealed record WorkspaceLayoutIssue(
