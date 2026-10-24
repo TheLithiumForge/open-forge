@@ -23,6 +23,18 @@ internal sealed record WorkspaceLayoutRead
         WorkspaceLayout? layout,
         ImmutableArray<WorkspaceLayoutIssue> issues,
         ImmutableArray<FileExpectation> expectations)
+        : this(state, settings, ownership, layout, issues, expectations, [])
+    {
+    }
+
+    internal WorkspaceLayoutRead(
+        WorkspaceLayoutReadState state,
+        WorkspaceSettingsRead settings,
+        WorkspaceOwnershipRead ownership,
+        WorkspaceLayout? layout,
+        ImmutableArray<WorkspaceLayoutIssue> issues,
+        ImmutableArray<FileExpectation> expectations,
+        ImmutableArray<WorkspaceOutsideRouteRead> outsideRoutes)
     {
         if (!Enum.IsDefined(state)) throw new ArgumentOutOfRangeException(nameof(state));
         if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable && layout is not null)
@@ -35,6 +47,7 @@ internal sealed record WorkspaceLayoutRead
         Layout = layout;
         Issues = issues;
         Expectations = expectations;
+        OutsideRoutes = outsideRoutes;
     }
 
     internal WorkspaceLayoutReadState State { get; }
@@ -43,4 +56,5 @@ internal sealed record WorkspaceLayoutRead
     internal WorkspaceLayout? Layout { get; }
     internal ImmutableArray<WorkspaceLayoutIssue> Issues { get; }
     internal ImmutableArray<FileExpectation> Expectations { get; }
+    internal ImmutableArray<WorkspaceOutsideRouteRead> OutsideRoutes { get; }
 }
