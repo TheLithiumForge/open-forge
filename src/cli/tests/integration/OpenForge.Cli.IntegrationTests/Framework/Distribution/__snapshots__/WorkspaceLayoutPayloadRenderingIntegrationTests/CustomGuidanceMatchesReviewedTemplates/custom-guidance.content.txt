@@ -20,9 +20,31 @@ CLAUDE.md
 
 Context files live in `docs/context/`. Native Skills stay in `.agents/skills/`, and settings and ownership stay in `.agents/`. Use `./...` for exact workspace-relative CLI operands, such as `./docs/context/README.md`.
 
-**You may delete this page.** It is a guide for the people who run this project, and it describes the file formats agents follow when they write workspace files. Everything here is also in `open-forge help concepts`, so no rule depends on this page. To keep it deleted through `open-forge update`, add `docs/context/README.md` to `removedFiles` in `open-forge.json`.
+**You may delete this page.** It is a guide for the people who run this project, and it describes the file formats agents follow when they write workspace files. Everything here is also in `open-forge help concepts`, so no rule depends on this page. To keep it deleted through `open-forge update`, add `docs/context/README.md` to `removedFiles` in `.agents/open-forge.json`.
 
 Open Forge tells agents where your rules and knowledge live. You decide what they use with the list under `## Entries` in [loader.md](loader.md). Every file here is yours, and everything works without the CLI. The CLI's settings and ownership files support maintenance and give agents no authority.
+
+## Choose the context folder
+
+At first installation, `open-forge install --main-root <folder>` chooses the context folder. The default is `--main-root .agents`. A custom folder, such as `docs/context`, must be absent or empty. Interactive Install asks `Where should Open Forge keep its context files?` when the flag is omitted.
+
+The loader, this guide and ordinary categories live in the context folder. Native Skills stay in `.agents/skills/`, settings in `.agents/open-forge.json`, and ownership in `.agents/open-forge.lock.json`. New settings use schema version 4 for every layout. Workspace-root `AGENTS.md` and `CLAUDE.md` point to the selected loader.
+
+Use `./...` for an exact workspace-relative CLI path. Short source IDs, such as `memory/crystallized`, work with either layout. Older CLIs do not support custom roots. Relocating an established installation is not available yet, including through `install --configure`. Editing `mainRoot` in settings moves no files.
+
+Default installation preview:
+
+```sh
+open-forge install --preset essentials --dry-run
+```
+
+Custom context folder preview:
+
+```sh
+open-forge install --preset essentials --main-root docs/context --dry-run
+```
+
+Review the plan, then repeat the chosen request without `--dry-run` and with `--automatic` to apply it unattended.
 
 ## Use a document you already have
 
@@ -167,7 +189,7 @@ New routed files in the content folders (`docs/context/` and `.agents/skills/`) 
 - `applyTo` is optional. It holds glob patterns, as a list or a comma-separated string, that limit when the file applies.
 - `responsibility` is optional. It says what the file defines, so an editor knows what belongs there. It adds no authority.
 
-Follow the `frontmatter` setting in `open-forge.json`. `root` puts the fields at the top level, and `scoped` puts them under `open-forge:`, as in the examples above. A missing setting means scoped. Keep all Open Forge fields together. Both forms of `applyTo` are read. Equal pattern sets count once, and different sets are invalid.
+Follow the `frontmatter` setting in `.agents/open-forge.json`. `root` puts the fields at the top level, and `scoped` puts them under `open-forge:`, as in the examples above. A missing setting means scoped. Keep all Open Forge fields together. Both forms of `applyTo` are read. Equal pattern sets count once, and different sets are invalid.
 
 A native `SKILL.md` keeps its own metadata. A file outside the content folders (`docs/context/` and `.agents/skills/`) that the loader lists needs no frontmatter, because its line carries the description, tags and conditions.
 
@@ -204,6 +226,8 @@ description: Use the open-forge CLI to load workspace context, find sources, mai
 Context files live in `docs/context/`. Native Skills stay in `.agents/skills/`, and settings and ownership stay in `.agents/`. Use `./...` for exact workspace-relative CLI operands, such as `./docs/context/README.md`.
 
 Use the optional CLI to read and maintain Open Forge's Markdown, rules, and links. Read this guide before running commands other than `context`. Reading it grants no installation or package-change authority.
+
+First installation can select the context folder with `install --main-root <folder>`. The default is `--main-root .agents`. Native Skills stay in `.agents/skills/`, and settings and ownership stay in `.agents/open-forge.json` and `.agents/open-forge.lock.json`. Use `./...` for exact workspace-relative operands and source IDs for layout-independent selections. Older CLIs do not support custom roots. Relocating an established installation is not available yet. Read [installation details](references/packages.md#install) before an authorized setup change.
 
 Before you write workspace files or metadata, read the file formats in `docs/context/README.md`, or run `open-forge help concepts` if that page was deleted.
 
@@ -266,7 +290,9 @@ Use `open-forge --help` for the top-level inventory. `route --help`, `extension 
 
 `open-forge help` lists built-in topics. `open-forge help concepts` prints the concepts and the file formats from the shipped `docs/context/README.md`, without a workspace, so it still works after a project deletes its README.
 
-A source reference is an exact source ID, such as `memory/crystallized`, or an exact `./...` Markdown path. Use the exact path when an ID is ambiguous. Source IDs, Extension stable IDs, and Library management IDs identify different things. Examples assume their routes or packages exist. Substitute IDs from the selected workspace's inventory.
+A source reference is an exact source ID, such as `memory/crystallized`, or an exact `./...` workspace-relative Markdown path. Use the exact path when an ID is ambiguous. Exact paths stay literal and never move with the context folder. Source IDs, Extension stable IDs, and Library management IDs identify different things. Examples assume their routes or packages exist. Substitute IDs from the selected workspace's inventory.
+
+The context folder is chosen at first installation with `install --main-root <folder>`. The default is `--main-root .agents`. Native Skills stay in `.agents/skills/`, settings in `.agents/open-forge.json`, and ownership in `.agents/open-forge.lock.json`. See [Install](packages.md#install) for setup and relocation limits.
 
 ## Global Flags
 
@@ -473,7 +499,7 @@ Continue with [route maintenance](routes.md) for edits or [Framework and package
 
 In `.agents/open-forge.json`, `ignoreLinksFrom` skips links written inside listed paths and `ignoreLinksTo` skips links whose resolved targets lie inside them. Entries are workspace-relative paths, not patterns. Files match exactly and folders cover descendants, using the same comparison as `allowInstallPaths`. Missing lists mean no exclusions. Doctor names ignored counts and stale entries. Context omits ignored link expansion edges. References lists every link.
 
-An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
+A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands. Older CLIs do not support custom roots. Use a CLI that supports `install --main-root` for those workspaces.
 
 .agents/skills/open-forge-cli/references/routes.md
 ---
@@ -514,7 +540,7 @@ New metadata and quoted-string condition lists use the workspace's frontmatter f
 
 ## `route init <route-target>`
 
-Create every missing entrypoint in an exact route chain. Targets are route IDs or exact `./...` entrypoint paths. A missing exact path uses the canonical `_{folder-name}.md` filename. Init never creates the loader.
+Create every missing entrypoint in an exact route chain. Targets are route IDs or exact `./...` workspace-relative entrypoint paths within the context folder or native Skills. A missing exact path uses the canonical `_{folder-name}.md` filename. Init never creates the loader.
 
 | Flag                                                       | Meaning                                                                                             |
 | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -605,9 +631,11 @@ Repeated `--tag` replaces the complete ordered tag list, and `--apply-to` replac
 
 ## `route move <source-reference> <destination-target>`
 
-Relocate an unmanaged routed leaf or complete category, updating affected references and generated navigation. The destination is an exact workspace-relative `./...` path under an existing routable parent and must match the source's leaf or category form.
+Relocate an unmanaged routed leaf or complete category, updating affected references and generated navigation. The destination is an exact workspace-relative `./...` path under an existing routable parent in the context folder or native Skills and must match the source's leaf or category form.
 
 Its only command flag is `--dry-run`. Inspect the move and all reference changes. Move does not relocate lifecycle-managed content, create a missing parent route, or overwrite a destination.
+
+Moving the context folder of an established installation is not available yet. Route Move changes content within the existing layout.
 
 ## `route remove <source-reference>`
 
@@ -714,6 +742,7 @@ Establish or configure the Framework bundled in the running CLI. Install does no
 | Flag                                                | Meaning                                                                                                                                             |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--configure`                                       | Revisit an installed setup, restore eligible missing selected defaults, or convert unedited owned files to the selected frontmatter form            |
+| `--main-root <folder>`                               | Choose the context folder at first installation. Default: `--main-root .agents`. A custom folder must be absent or empty                             |
 | `--preset <minimal\|essentials\|full-core\|custom>` | Select built-in routes. On an installed workspace, an explicit preset also requires `--configure`                                                   |
 | `--frontmatter <root\|scoped>`                      | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
 | `--route <id>=<add\|remove\|git-ignore>`            | Override a Custom or Minimal row. Requires `--preset custom` or `--preset minimal`. Repeat for more rows                                            |
@@ -723,13 +752,17 @@ Establish or configure the Framework bundled in the running CLI. Install does no
 
 First interactive Install offers the recommended Minimal, then Essentials, Full Core and Custom. Each built-in preset includes the one before it. Configure offers the current choices. Ordinary repeated Install retains its quiet no-op or divergence behavior.
 
+Before route choices, first interactive Install asks `Where should Open Forge keep its context files?` unless `--main-root` supplied the folder. An unattended first installation defaults to `--main-root .agents`. The loader, human guide and ordinary categories use the selected folder. Native Skills stay in `.agents/skills/`, settings in `.agents/open-forge.json`, and ownership in `.agents/open-forge.lock.json`. The workspace-root host files point to the selected loader.
+
+An omitted or unchanged `--main-root` keeps ordinary Install behavior. A different root on an established installation is refused before changes, including with `--configure`. Relocation is not available yet. Editing `mainRoot` in settings moves no files. Older CLIs do not support custom roots.
+
 After the preset choice, first interactive Install asks `How should Open Forge write file metadata?` with root preselected. An explicit `--frontmatter` skips the question. A fresh Install keeps an explicit preference already in settings unless the flag overrides it. Without either, fresh unattended Install uses root. Interactive Configure offers the current form first. Ordinary repeated Install and Update retain the form and never ask.
 
 Install, Update, and Extension delivery use `frontmatter` in `.agents/open-forge.json`. A missing value means scoped. Both root and scoped frontmatter are read in every workspace. The plan shows the selected form, such as `Frontmatter: root`, or a change such as `Frontmatter: scoped -> root`.
 
-When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `["docs/context/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 4. Existing settings keep the version they declare.
+When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `["docs/context/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 4 for every layout. Unrelated rewrites preserve an existing schema declaration. Explicitly selecting a custom root can update it to v4.
 
-An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
+A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands. This does not make an older CLI compatible with custom roots.
 
 Root keys are recommended. Choose the scoped form when other tools already use top-level frontmatter keys. The interactive plan starts with `Review changes`. Plan and result recap the setup, added routes, Git-ignored contents, left-out routes, and frontmatter form. Configure also reports changed row choices and retention of existing files.
 
@@ -756,13 +789,25 @@ Git-ignore first adds or restores the ordinary route and records its policy in `
 
 Index uses the lock's recorded route policy to omit private child files and nested private entrypoints from shareable `Entries`. It still maintains the whitelisted entrypoint and its parent route link. Context, Find, and References can read local private files when selected. Git-ignore does not define loading authority. The CLI neither stages files nor untracks files already committed to Git.
 
-Dry-run, automatic, JSON, and redirected requests never ask setup questions. Noninteractive Configure requires an explicit `--preset` or `--frontmatter`. On an installed workspace, `--frontmatter` requires `--configure`. Form-only `install --configure --frontmatter <form>` keeps route choices unchanged. Ordinary unattended first Install uses Full Core and retains existing omissions. Name the preset in both a fresh installation preview and its apply request. An omitted preset uses Full Core in unattended mode, while the first interactive choice is Essentials.
+Dry-run, automatic, JSON, and redirected requests never ask setup questions. Noninteractive Configure requires an explicit `--preset` or `--frontmatter`. On an installed workspace, `--frontmatter` requires `--configure`. Form-only `install --configure --frontmatter <form>` keeps route choices unchanged. Ordinary unattended first Install uses Full Core and retains existing omissions. Name the preset in both a fresh installation preview and its apply request. An omitted preset uses Full Core in unattended mode, while the first interactive choice is Minimal.
+
+Default context folder example:
 
 ```sh
 open-forge install --preset essentials --dry-run
 # Review the plan before applying it.
 open-forge install --preset essentials --automatic
 ```
+
+Custom context folder example:
+
+```sh
+open-forge install --preset essentials --main-root docs/context --dry-run
+# Review the plan before applying it.
+open-forge install --preset essentials --main-root docs/context --automatic
+```
+
+Use `./...` for exact workspace-relative source operands. Short IDs such as `memory/crystallized` follow the selected layout.
 
 Use `open-forge install --configure` as the interactive way to change several setup choices. For a repeatable configuration change, preview and apply the reviewed request:
 

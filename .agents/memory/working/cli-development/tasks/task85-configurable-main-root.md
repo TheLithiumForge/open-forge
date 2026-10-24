@@ -183,9 +183,9 @@ Published journeys cover both frontmatter forms, offline hosts, lifecycle comman
 
 ## Overseer notes
 
-- Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.
+- Every new settings file declares schema v4, including default installs. The shipped README now says so, and the renderer no longer needs its schema-sentence special case.
 - The intentionally excluded missing loader E2 raised is resolved by chair amendments 6 and 7. The plan's `*LibrarySharedGrant*` filter selects nothing, because the shared-grant class has another name.
 - Static help still shows default-root wording in Route Create and Route Inspect. The final documentation packet and Z2 help changes decide whether it changes.
 - Fixed a bug that predates Task 85: regenerating navigation dropped a loader's direct rows to nested catalogues, such as a nested native Skills catalogue, in default and custom layouts. Shared generated navigation now keeps those rows and their metadata. Unit tests cover Skills, other categories and omission.
 - Extension Update recovery labels use the observed context folder, retain explicit targets and default wording, and use neutral wording when the layout is unknown.
-- Open fix from Z2: top-level Remove reports a no-op for a custom root's README where the default layout refuses.
+- Top-level Remove carries exact route references across layouts. Custom human guides now receive the default refusal, while loader behavior and ordinal content boundaries remain unchanged.

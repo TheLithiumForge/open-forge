@@ -1,8 +1,30 @@
 # Open Forge in this project
 
-**You may delete this page.** It is a guide for the people who run this project, and it describes the file formats agents follow when they write workspace files. Everything here is also in `open-forge help concepts`, so no rule depends on this page. To keep it deleted through `open-forge update`, add `.agents/README.md` to `removedFiles` in `open-forge.json`.
+**You may delete this page.** It is a guide for the people who run this project, and it describes the file formats agents follow when they write workspace files. Everything here is also in `open-forge help concepts`, so no rule depends on this page. To keep it deleted through `open-forge update`, add `.agents/README.md` to `removedFiles` in `.agents/open-forge.json`.
 
 Open Forge tells agents where your rules and knowledge live. You decide what they use with the list under `## Entries` in [loader.md](loader.md). Every file here is yours, and everything works without the CLI. The CLI's settings and ownership files support maintenance and give agents no authority.
+
+## Choose the context folder
+
+At first installation, `open-forge install --main-root <folder>` chooses the context folder. The default is `--main-root .agents`. A custom folder, such as `docs/context`, must be absent or empty. Interactive Install asks `Where should Open Forge keep its context files?` when the flag is omitted.
+
+The loader, this guide and ordinary categories live in the context folder. Native Skills stay in `.agents/skills/`, settings in `.agents/open-forge.json`, and ownership in `.agents/open-forge.lock.json`. New settings use schema version 4 for every layout. Workspace-root `AGENTS.md` and `CLAUDE.md` point to the selected loader.
+
+Use `./...` for an exact workspace-relative CLI path. Short source IDs, such as `memory/crystallized`, work with either layout. Older CLIs do not support custom roots. Relocating an established installation is not available yet, including through `install --configure`. Editing `mainRoot` in settings moves no files.
+
+Default installation preview:
+
+```sh
+open-forge install --preset essentials --dry-run
+```
+
+Custom context folder preview:
+
+```sh
+open-forge install --preset essentials --main-root docs/context --dry-run
+```
+
+Review the plan, then repeat the chosen request without `--dry-run` and with `--automatic` to apply it unattended.
 
 ## Use a document you already have
 
@@ -147,7 +169,7 @@ New routed files in `.agents/` start with YAML frontmatter:
 - `applyTo` is optional. It holds glob patterns, as a list or a comma-separated string, that limit when the file applies.
 - `responsibility` is optional. It says what the file defines, so an editor knows what belongs there. It adds no authority.
 
-Follow the `frontmatter` setting in `open-forge.json`. `root` puts the fields at the top level, and `scoped` puts them under `open-forge:`, as in the examples above. A missing setting means scoped. Keep all Open Forge fields together. Both forms of `applyTo` are read. Equal pattern sets count once, and different sets are invalid.
+Follow the `frontmatter` setting in `.agents/open-forge.json`. `root` puts the fields at the top level, and `scoped` puts them under `open-forge:`, as in the examples above. A missing setting means scoped. Keep all Open Forge fields together. Both forms of `applyTo` are read. Equal pattern sets count once, and different sets are invalid.
 
 A native `SKILL.md` keeps its own metadata. A file outside `.agents/` that the loader lists needs no frontmatter, because its line carries the description, tags and conditions.
 

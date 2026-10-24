@@ -93,7 +93,7 @@ internal static class InstallText
 
     // @OpenForgeText install.help.examples
     internal static string HelpExamples()
-        => "open-forge install --preset minimal --dry-run\nopen-forge install --main-root docs/context --automatic\nopen-forge install";
+        => "open-forge install --preset minimal --dry-run\nopen-forge install --preset essentials --dry-run\nopen-forge install --main-root docs/context --automatic";
 
     // @OpenForgeText install.help.contextfolderheading
     internal static string HelpContextFolderHeading() => "Context folder";

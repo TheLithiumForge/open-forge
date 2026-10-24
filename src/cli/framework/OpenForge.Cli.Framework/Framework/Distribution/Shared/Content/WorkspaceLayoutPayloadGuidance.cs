@@ -22,11 +22,7 @@ internal static class WorkspaceLayoutPayloadGuidance
     internal const string ExampleExcludedPath = WorkspaceLayout.DefaultMainRoot + "/patterns/_patterns.md";
     internal const string ExampleRepairNotePath = WorkspaceLayout.DefaultMainRoot + "/memory/crystallized/repair-note.md";
     internal const string ExampleRepairTargetPath = WorkspaceLayout.DefaultMainRoot + "/memory/crystallized/order-rule.md";
-    internal const string ContextExamplePrefix = "context ";
-    internal const string PreviousSchemaSentence = "New settings use schema version 3.";
-    internal const string ExactPathIntroduction = "An exact ";
-    internal const string InitPathIntroduction = "Targets are route IDs or exact ";
-    internal const string MovePathIntroduction = "The destination is an exact workspace-relative ";
+    internal const string ContextExamplePrefix = "context " + SourceWorkspaceRelativePath.LiteralReferencePrefix;
     internal const string OutsidePathIntroduction = "outside ";
     internal const string IncludeCategoryTemplate = "Inside `" + WorkspaceLayout.DefaultMainRoot + "/`, use only a direct child folder's catalogue.";
     internal const string ExcludeCategoryTemplate = "Inside `" + WorkspaceLayout.DefaultMainRoot + "/`, use a direct child folder's catalogue to remove its row from the loader.";
@@ -69,13 +65,6 @@ internal static class WorkspaceLayoutPayloadGuidance
             replacements[new MarkdownTextSpan(title.Span.End, 0)] = introduction;
         }
 
-        foreach (var visible in document.VisibleText)
-        {
-            var text = document.Source[visible.Span.Start..visible.Span.End];
-            if (text.Contains(PreviousSchemaSentence, StringComparison.Ordinal))
-                replacements[visible.Span] = text.Replace(PreviousSchemaSentence,
-                    $"New settings use schema version {WorkspaceSettingsDefinitions.SchemaVersion}.", StringComparison.Ordinal);
-        }
     }
 
     private static void AddTemplateReference(
@@ -95,11 +84,6 @@ internal static class WorkspaceLayoutPayloadGuidance
     {
         if (code == $"`{WorkspaceLayout.DefaultMainRoot}/{PathPlaceholder}`")
             return $"`{SourceWorkspaceRelativePath.LiteralReferencePrefix}{PathPlaceholder}`";
-        if ((code == $"`{WorkspaceLayout.DefaultMainRoot}`" || code == $"`{WorkspaceLayout.DefaultMainRoot}/`")
-            && (preceding.EndsWith(ExactPathIntroduction, StringComparison.Ordinal)
-                || preceding.EndsWith(InitPathIntroduction, StringComparison.Ordinal)
-                || preceding.EndsWith(MovePathIntroduction, StringComparison.Ordinal)))
-            return $"`{SourceWorkspaceRelativePath.LiteralReferencePrefix}{PathPlaceholder}`";
         if (code == $"`{WorkspaceLayout.DefaultMainRoot}/`")
             return $"the content folders (`{layout.MainRoot}/` and `{WorkspaceLayout.NativeSkillsPath}/`)";
         if (code == $"`{WorkspaceLayout.DefaultMainRoot}`")
@@ -109,7 +93,7 @@ internal static class WorkspaceLayoutPayloadGuidance
             return $"`{layout.MainRoot}`";
         }
         if (code == $"`{ContextExamplePrefix}{SourceLogicalPath.HumanGuidePath}`")
-            return $"`{ContextExamplePrefix}{SourceWorkspaceRelativePath.LiteralReferencePrefix}{layout.HumanGuidePath}`";
+            return $"`{ContextExamplePrefix}{layout.HumanGuidePath}`";
         if (packagePath == SourceLogicalPath.HumanGuidePath && code == $"`{ExampleExcludedPath}`")
             return $"`{SourceWorkspaceRelativePath.LiteralReferencePrefix}{layout.MapPayloadPath(ExampleExcludedPath)}`";
         if (code == $"`[\"{WorkspaceSettingsDefinitions.MemoryArchivePath}\"]`")
