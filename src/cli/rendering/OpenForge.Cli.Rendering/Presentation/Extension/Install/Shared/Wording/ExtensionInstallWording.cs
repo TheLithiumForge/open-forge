@@ -66,8 +66,8 @@ internal static class ExtensionInstallWording
     internal static string InitialForceRequired(int count)
         => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatAlreadyWhereThePackageWouldWrite(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{count}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{Plural(count, "file")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{(count == 1 ? "exists" : "exist")}"));
 
-    internal static string PermissionRequired(string id)
-        => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.PermissionRequired(id);
+    internal static string PermissionRequired(string id, string? contextFolder = null)
+        => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.PermissionRequired(id, contextFolder);
 
     internal static string PermissionAlternative(string path)
         => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.PermissionAlternative(path);

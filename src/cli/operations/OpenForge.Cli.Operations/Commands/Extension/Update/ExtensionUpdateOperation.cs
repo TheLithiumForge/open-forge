@@ -124,15 +124,16 @@ internal sealed class ExtensionUpdateOperation(
         {
             var selectedIds = plan.Packages.Select(package => package.Id).ToHashSet(StringComparer.Ordinal);
             var requirements = plan.Packages.SelectMany(package => package.Payload
-                .Where(file => file.TargetPath is { } path && !ExtensionDestinationPolicy.IsImplicit(path))
+                .Where(file => file.TargetPath is not null)
                 .Select(file => file.TargetPath ?? throw new InvalidOperationException("A planned Extension target requires its path.")))
                 .Concat(plan.Ownership.Document.Extensions.Where(package => selectedIds.Contains(package.Id))
-                    .SelectMany(package => package.Paths.Where(path => !ExtensionDestinationPolicy.IsImplicit(path))))
+                    .SelectMany(package => package.Paths))
                 .Distinct(StringComparer.Ordinal);
             var targets = requirements.Select(requirement => new ExtensionPermissionTarget(requirement, ReadPermissionEffect(plan, requirement)));
             permission = await _permissions.DetermineAsync(new(request.Workspace, [.. targets], plan.SourceRead.Identity,
                 request.Mode == ExtensionUpdateMode.Apply && !request.Automatic && request.AllowInteraction,
-                request.AllowPath), cancellationToken).ConfigureAwait(false);
+                request.AllowPath)
+            { LayoutRead = plan.LayoutRead }, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

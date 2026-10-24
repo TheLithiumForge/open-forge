@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 
@@ -18,6 +19,8 @@ internal sealed record RouteMoveResolvedLayer
 
 internal sealed record RouteMoveResolvedSubject
 {
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
     internal SourceSharing Sharing { get; init; } = new([]);
 
     public required RouteMoveRequest Request { get; init; }
@@ -84,6 +87,8 @@ internal sealed record RouteMoveSubjectCatalogueSelection
 
 internal sealed record RouteMoveSubjectDiscovery
 {
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
     public required RouteMoveRequest Request { get; init; }
 
     public required SourceCatalogue Catalogue { get; init; }

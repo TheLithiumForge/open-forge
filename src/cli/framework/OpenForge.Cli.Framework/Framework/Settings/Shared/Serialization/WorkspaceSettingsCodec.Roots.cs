@@ -2,20 +2,25 @@ using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 
 internal static partial class WorkspaceSettingsCodec
 {
-    private const string RootItemDescription = "canonical workspace-relative file paths outside .agents";
+    private static string RootItemDescription(string mainRoot)
+        => mainRoot == WorkspaceLayout.DefaultMainRoot
+            ? $"canonical workspace-relative file paths outside {WorkspaceLayout.DefaultMainRoot}"
+            : "canonical workspace-relative file paths outside the content locations";
 
-    /// <summary>
-    /// Whether a path can be registered in `roots`: canonical, outside `.agents/`, and not Git
-    /// metadata or a control file. Whether the file exists is the caller's question.
-    /// </summary>
-    internal static bool IsValidRootPath(string? path)
+    internal static bool IsValidRootPath(string? path, string mainRoot)
         => IsCanonicalRemovalPath(path)
-            && !path!.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.OrdinalIgnoreCase);
+            && path is not null
+            && WorkspaceMainRootPath.IsCanonical(mainRoot)
+            && !IsAtOrBelow(path, mainRoot)
+            && !IsAtOrBelow(mainRoot, path)
+            && !IsAtOrBelow(path, WorkspaceLayout.NativeSkillsPath)
+            && !IsAtOrBelow(WorkspaceLayout.NativeSkillsPath, path);
 
     /// <summary>
     /// The bytes of <paramref name="existing"/> with <paramref name="path"/> appended to `roots`,
@@ -23,8 +28,8 @@ internal static partial class WorkspaceSettingsCodec
     /// </summary>
     internal static byte[]? AddRoot(ReadOnlyMemory<byte> existing, string path)
     {
-        ValidateRoot(path);
         var settings = ReadRootsObject(existing);
+        ValidateRoot(path, settings[WorkspaceSettingsDefinitions.MainRootProperty]?.GetValue<string>() ?? WorkspaceLayout.DefaultMainRoot);
         if (settings[WorkspaceSettingsDefinitions.RootsProperty] is not JsonArray roots)
         {
             roots = [];
@@ -37,7 +42,7 @@ internal static partial class WorkspaceSettingsCodec
         }
 
         // The generic JsonArray.Add<T> is not AOT-safe because it can box a
-        // non-primitive; add an already-built JSON node through the list API.
+        // non-primitive. Add an already-built JSON node through the list API.
         ((IList<JsonNode?>)roots).Add(JsonValue.Create(path));
         return WriteRootsObject(settings);
     }
@@ -48,13 +53,13 @@ internal static partial class WorkspaceSettingsCodec
     /// </summary>
     internal static byte[]? RemoveRoot(ReadOnlyMemory<byte> existing, string path)
     {
-        ValidateRoot(path);
+        var settings = ReadRootsObject(existing);
+        ValidateRoot(path, settings[WorkspaceSettingsDefinitions.MainRootProperty]?.GetValue<string>() ?? WorkspaceLayout.DefaultMainRoot);
         if (existing.IsEmpty)
         {
             return null;
         }
 
-        var settings = ReadRootsObject(existing);
         if (settings[WorkspaceSettingsDefinitions.RootsProperty] is not JsonArray roots)
         {
             return null;
@@ -73,20 +78,20 @@ internal static partial class WorkspaceSettingsCodec
         return changed ? WriteRootsObject(settings) : null;
     }
 
-    private static ImmutableArray<string> ReadRoots(JsonElement root)
+    private static ImmutableArray<string> ReadRoots(JsonElement root, string mainRoot)
         => ReadValidatedArray(
             root,
             WorkspaceSettingsDefinitions.RootsProperty,
-            IsValidRootPath,
-            RootItemDescription,
+            path => IsValidRootPath(path, mainRoot),
+            RootItemDescription(mainRoot),
             nullIsEmpty: true);
 
-    private static void ValidateRoot(string path)
+    private static void ValidateRoot(string path, string mainRoot)
     {
-        if (!IsValidRootPath(path))
+        if (!IsValidRootPath(path, mainRoot))
         {
             throw new ArgumentException(
-                $"\"{WorkspaceSettingsDefinitions.RootsProperty}\" must contain only {RootItemDescription}.",
+                $"\"{WorkspaceSettingsDefinitions.RootsProperty}\" must contain only {RootItemDescription(mainRoot)}.",
                 nameof(path));
         }
     }

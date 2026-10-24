@@ -7,6 +7,12 @@ open-forge:
 
 # Cleanup Interface Contract
 
+## Workspace Layout
+
+Cleanup continues to inspect the fixed workspace and legacy recovery stores with a custom context folder. The folder choice adds no cleanup target.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for the

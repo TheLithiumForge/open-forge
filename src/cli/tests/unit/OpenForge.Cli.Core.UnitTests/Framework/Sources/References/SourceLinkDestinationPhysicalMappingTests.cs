@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.References;
 
@@ -14,7 +16,7 @@ public sealed class SourceLinkDestinationPhysicalMappingTests
     public async Task SessionBoundsPhysicalResolutionWork()
     {
         var workspace = SourceInventoryTestData.Workspace();
-        var catalogue = new SourceCatalogue(workspace, [], [], [], isCancelled: false);
+        var catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [], [], isCancelled: false);
         var calls = 0;
         var resolver = new SourceLinkDestinationResolver(
             physicalPathResolver: (_, path) =>
@@ -68,7 +70,7 @@ public sealed class SourceLinkDestinationPhysicalMappingTests
     public async Task NoncontainedStatesRetainExactFacts(int state, int expectedResolution, int expectedFinding, string expectedCause)
     {
         var workspace = SourceInventoryTestData.Workspace();
-        var catalogue = new SourceCatalogue(workspace: workspace, candidates: [], sources: [], issues: [], isCancelled: false);
+        var catalogue = new SourceCatalogue(layout: WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), candidates: [], sources: [], issues: [], isCancelled: false);
         var physicalCalls = 0;
         var resolver = new SourceLinkDestinationResolver(
             physicalPathResolver: (_, lexicalPath) =>

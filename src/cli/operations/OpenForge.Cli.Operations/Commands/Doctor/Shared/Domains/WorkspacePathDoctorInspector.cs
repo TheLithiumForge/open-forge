@@ -11,8 +11,8 @@ internal static class WorkspacePathDoctorInspector
         ICollection<DoctorFinding> findings)
     {
         Add(findings, view.Root, ReadRoot(view.Root));
-        Add(findings, view.Agents, ReadAgents(view.Agents));
-        Add(findings, view.Loader, ReadLoader(view.Loader));
+        if (view.Agents is { } agents) Add(findings, agents, ReadAgents(agents));
+        if (view.Loader is { } loader) Add(findings, loader, ReadLoader(loader));
         Add(findings, view.Entry, ReadEntry(view.Entry));
     }
 
@@ -44,11 +44,11 @@ internal static class WorkspacePathDoctorInspector
         => IsMissing(path)
             ? DoctorDomainSupport.Information(
                 DoctorFindingKind.WorkspaceAgentsMissing,
-                "The .agents boundary is missing.")
+                $"The {path.Path} boundary is missing.")
             : IsUnavailable(path)
                 ? DoctorDomainSupport.Error(
                     DoctorFindingKind.WorkspaceAgentsInaccessible,
-                    "The .agents boundary cannot be inspected safely.")
+                    $"The {path.Path} boundary cannot be inspected safely.")
                 : ReadUnsafePath(path);
 
     private static DoctorFindingDescriptor? ReadLoader(WorkspacePathObservation path)

@@ -9,6 +9,8 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Shared.WorkspaceAdoption;
 
@@ -364,7 +366,7 @@ public sealed class WorkspaceAdoptionDocumentPlannerTests
     public void CreatesParseableEntrypointAndPlanningItAgainIsUnchanged()
     {
         var planner = new WorkspaceAdoptionDocumentPlanner();
-        var created = planner.CreateEntrypoint(EntrypointPath, "\r\n", FrontmatterForm.Scoped);
+        var created = planner.CreateEntrypoint(DefaultWorkspaceLayout, EntrypointPath, "\r\n", FrontmatterForm.Scoped);
 
         Assert.NotNull(created.IntendedBytes);
         Assert.Equal([WorkspaceAdoptionAction.EntrypointCreated], created.Actions);
@@ -432,7 +434,7 @@ public sealed class WorkspaceAdoptionDocumentPlannerTests
             - none - No entries - #Empty
             """.ReplaceLineEndings(newline) + newline;
 
-        var created = new WorkspaceAdoptionDocumentPlanner().CreateEntrypoint(EntrypointPath, newline, form);
+        var created = new WorkspaceAdoptionDocumentPlanner().CreateEntrypoint(DefaultWorkspaceLayout, EntrypointPath, newline, form);
 
         Assert.Equal(Encode(expected), created.IntendedBytes);
         Assert.Null(created.Cause);
@@ -443,8 +445,8 @@ public sealed class WorkspaceAdoptionDocumentPlannerTests
     public void CreatesRequestedRootFormWithTheSameBody()
     {
         var planner = new WorkspaceAdoptionDocumentPlanner();
-        var scoped = planner.CreateEntrypoint(EntrypointPath, "\r\n", FrontmatterForm.Scoped);
-        var root = planner.CreateEntrypoint(EntrypointPath, "\r\n", FrontmatterForm.Root);
+        var scoped = planner.CreateEntrypoint(DefaultWorkspaceLayout, EntrypointPath, "\r\n", FrontmatterForm.Scoped);
+        var root = planner.CreateEntrypoint(DefaultWorkspaceLayout, EntrypointPath, "\r\n", FrontmatterForm.Root);
         var parser = new MarkdownDocumentParser();
         var scopedDocument = parser.Parse(Decode(Assert.IsType<byte[]>(scoped.IntendedBytes)));
         var rootDocument = parser.Parse(Decode(Assert.IsType<byte[]>(root.IntendedBytes)));
@@ -464,7 +466,7 @@ public sealed class WorkspaceAdoptionDocumentPlannerTests
     [Trait("Feature", "workspace-adoption"), Trait("Evidence", "Unit")]
     public void RejectsUnrecognizedEntrypointPaths(string path)
     {
-        var plan = new WorkspaceAdoptionDocumentPlanner().CreateEntrypoint(path, "\n", FrontmatterForm.Scoped);
+        var plan = new WorkspaceAdoptionDocumentPlanner().CreateEntrypoint(DefaultWorkspaceLayout, path, "\n", FrontmatterForm.Scoped);
 
         Assert.Null(plan.IntendedBytes);
         Assert.Contains(path, plan.Cause, StringComparison.Ordinal);
@@ -527,4 +529,11 @@ public sealed class WorkspaceAdoptionDocumentPlannerTests
         => Encoding.UTF8.GetString(bytes ?? throw new InvalidOperationException("The document plan is blocked."));
 
     private static string Quote(string value) => "\"" + value.Replace("\"", "\\\"", StringComparison.Ordinal) + "\"";
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(WorkspaceAdoptionDocumentPlannerTests)),
+                Path.GetFullPath(nameof(WorkspaceAdoptionDocumentPlannerTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

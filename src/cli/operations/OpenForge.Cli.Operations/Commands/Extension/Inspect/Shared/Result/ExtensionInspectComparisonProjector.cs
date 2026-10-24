@@ -26,7 +26,9 @@ internal static class ExtensionInspectComparisonProjector
         var installedPathCount = installedClosure.SelectMany(package => package.Paths)
             .Distinct(StringComparer.Ordinal)
             .Count();
-        var currentState = ReadCurrentState(installedPackage, current, installedPathCount);
+        var currentState = input.Layout is null && hasInstalled
+            ? ExtensionInspectComparisonSideState.Unavailable
+            : ReadCurrentState(installedPackage, current, installedPathCount);
         var intendedState = ReadIntendedState(availablePackage, intended, input.AvailableClosure, input.Frontmatter);
         var paths = ExtensionInspectPathComparisonBuilder.Build(
             new ExtensionInspectPathComparisonInput

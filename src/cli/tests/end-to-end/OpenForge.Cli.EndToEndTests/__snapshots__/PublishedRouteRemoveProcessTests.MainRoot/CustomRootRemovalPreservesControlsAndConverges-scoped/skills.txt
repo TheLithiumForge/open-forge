@@ -1,0 +1,12 @@
+Removed the route skills  (2 files)
+Workspace: <workspace>
+  Removed .agents/skills/index.md
+  Removed .agents/skills/workshop/SKILL.md
+  Entry removed from handbook/context/loader.md
+  Recorded persistent route removal for category .agents/skills, directory .agents/skills in .agents/open-forge.json.
+  No managed content ownership claims needed release.
+    Before: f863e1fa48c55e7a0b8fc3d75deb7a370c99db6ab456c0420326bd5d32261a4d
+    After: 87fa4377827431c7cbd58a3c43db1c29cbbd10af4d5353bb00ea0f95253f857b
+    Before: 68ed5239d9bda7a30ef5e3a29605b61c1f89f65a0f2fa3d0dbda54dcbc5715c3
+    Before: 95d236004f1947ecbfa9e20e1b1d7f0fcf500641f8fca2fcfb2fe4716f8762f0
+  Scanned 4 files and found 0 links.

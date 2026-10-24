@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
@@ -80,7 +81,7 @@ internal sealed record RouteInitCurrentCatalogueFacts(
         issue.Code == SourceCatalogueIssueCode.RootMissing
         && string.Equals(
             issue.AttemptedCanonicalPath,
-            SourceLogicalPath.AgentsRoot,
+            Catalogue.Layout.MainRoot,
             StringComparison.Ordinal));
 }
 
@@ -115,12 +116,12 @@ internal sealed class RouteInitCurrentStateReader
     private readonly GeneratedNavigationFormationBuilder _formationBuilder = new();
 
     internal async ValueTask<RouteInitCurrentCatalogueFacts> ReadCatalogueAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(layout);
         var catalogue = await _catalogueReader.ReadAsync(
-                new SourceCatalogueRequest(workspace, [SourceLogicalPath.AgentsRoot]),
+                new SourceCatalogueRequest(layout, layout.SourceRoots),
                 cancellationToken)
             .ConfigureAwait(false);
         return new RouteInitCurrentCatalogueFacts(
@@ -142,7 +143,7 @@ internal sealed class RouteInitCurrentStateReader
             ?? throw new ArgumentException(
                 "Route Init current-chain inspection requires an aligned target.",
                 nameof(target));
-        var canonicalPaths = RouteInitTargetPlanner.ReadChainPaths(target);
+        var canonicalPaths = RouteInitTargetPlanner.ReadChainPaths(current.Catalogue.Layout, target);
         var chain = Enumerable.Range(1, canonicalSegments.Count)
             .Select(index =>
             {

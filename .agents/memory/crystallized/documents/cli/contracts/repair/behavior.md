@@ -7,6 +7,12 @@ open-forge:
 
 # Repair Behavior Contract
 
+## Workspace Layout
+
+Carry Doctor’s layout observation through target checks, metadata, classification, planning and result projection. Revalidate it under the lease before effects. Recovery targets and historical bundle paths stay literal.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This file is the accepted current Crystallized Behavior Contract for
@@ -303,7 +309,7 @@ the resulting bytes and does not implement another quote or escape language.
 
 The source-location path must identify a supported authored Markdown source
 inside the selected workspace, and the occurrence must be outside a recognized
-generated `Entries` region. If it is outside `.agents`, Doctor's accepted
+generated `Entries` region. If it is outside the primary content locations, Doctor's accepted
 contained local-reference boundary must include it. The one-based line and
 column must identify the start of the authored destination token for exactly one
 current local-reference occurrence. Parsing uses the terminal
@@ -721,7 +727,7 @@ evidence, but Repair does not restore, revoke or widen grants.
 Preflight and application under the held workspace lease require current
 consumer permission for every selected external Library link effect. Revocation,
 an invalid or unavailable permission observation, or source-binding mismatch
-blocks the selected recovery. Existing `.agents` implicit permission remains;
+blocks the selected recovery. Implicit permission for primary-content destinations remains.
 protected controls, all selected/registered source trees, exact no-follow link
 identity and collision checks still apply to each actual effect. Recovery adds
 no permission prompt or broad grant. Original residual bytes remain unchanged.

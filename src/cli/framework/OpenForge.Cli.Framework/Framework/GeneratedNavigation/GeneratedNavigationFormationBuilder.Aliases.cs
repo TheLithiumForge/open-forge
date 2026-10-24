@@ -13,7 +13,8 @@ internal sealed partial class GeneratedNavigationFormationBuilder
         IReadOnlyList<SourceCandidate> observedCandidates,
         IReadOnlyDictionary<string, SourceLogicalSource> observedSourcesByCandidatePath,
         IReadOnlyDictionary<string, SourceLogicalSource> intendedSourcesByPath,
-        SourceRouteTopology topology)
+        SourceRouteTopology topology,
+        SourceContentRoots roots)
     {
         var groups = observedCandidates
             .Where(candidate => candidate.PhysicalState == PhysicalPathState.Contained
@@ -27,7 +28,7 @@ internal sealed partial class GeneratedNavigationFormationBuilder
                 group,
                 observedSourcesByCandidatePath,
                 intendedSourcesByPath,
-                topology))
+                topology, roots))
             .OrderBy(group => group.Candidates[0].CanonicalPath, StringComparer.Ordinal)
             .ToArray();
         return new ReadOnlyCollection<GeneratedNavigationPhysicalAliasGroup>(groups);
@@ -37,7 +38,8 @@ internal sealed partial class GeneratedNavigationFormationBuilder
         IEnumerable<SourceCandidate> group,
         IReadOnlyDictionary<string, SourceLogicalSource> observedSourcesByCandidatePath,
         IReadOnlyDictionary<string, SourceLogicalSource> intendedSourcesByPath,
-        SourceRouteTopology topology)
+        SourceRouteTopology topology,
+        SourceContentRoots roots)
     {
         var candidates = group.OrderBy(candidate => candidate.CanonicalPath, StringComparer.Ordinal).ToArray();
         var compatibility = candidates.Skip(1).All(candidate =>
@@ -46,7 +48,7 @@ internal sealed partial class GeneratedNavigationFormationBuilder
                 candidate,
                 observedSourcesByCandidatePath,
                 intendedSourcesByPath,
-                topology))
+                topology, roots))
             ? GeneratedNavigationPhysicalAliasCompatibility.Compatible
             : GeneratedNavigationPhysicalAliasCompatibility.Incompatible;
         return new GeneratedNavigationPhysicalAliasGroup(
@@ -61,7 +63,8 @@ internal sealed partial class GeneratedNavigationFormationBuilder
         SourceCandidate right,
         IReadOnlyDictionary<string, SourceLogicalSource> observedSourcesByCandidatePath,
         IReadOnlyDictionary<string, SourceLogicalSource> intendedSourcesByPath,
-        SourceRouteTopology topology)
+        SourceRouteTopology topology,
+        SourceContentRoots roots)
     {
         if (left.Form is null
             || left.Form != right.Form
@@ -96,8 +99,8 @@ internal sealed partial class GeneratedNavigationFormationBuilder
             && PhysicalIdentitiesEqual(leftNode.ParentPaths, rightNode.ParentPaths, intendedSourcesByPath)
             && PhysicalIdentitiesEqual(leftNode.ChildPaths, rightNode.ChildPaths, intendedSourcesByPath)
             && string.Equals(
-                ReadRepresentedRootFolder(leftSource),
-                ReadRepresentedRootFolder(rightSource),
+                ReadRepresentedRootFolder(roots, leftSource),
+                ReadRepresentedRootFolder(roots, rightSource),
                 StringComparison.Ordinal);
     }
 

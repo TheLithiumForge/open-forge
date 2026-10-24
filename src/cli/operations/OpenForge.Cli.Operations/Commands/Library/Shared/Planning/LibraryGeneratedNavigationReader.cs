@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Library.Shared.Planning.Models;
 using System.Collections.Immutable;
 using System.Text;
@@ -48,7 +49,7 @@ internal static class LibraryGeneratedNavigationReader
                 : await NavigationSharingReader.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
             if (!sharing.IsAvailable) return Blocked(path: null, sharing.Cause);
             var catalogue = await new SourceCatalogueReader().ReadAsync(
-                new SourceCatalogueRequest(workspace, [SourceLogicalPath.AgentsRoot]),
+                new SourceCatalogueRequest(request.Layout, request.Layout.SourceRoots),
                 cancellationToken).ConfigureAwait(false);
             if (catalogue.IsCancelled)
             {
@@ -61,12 +62,12 @@ internal static class LibraryGeneratedNavigationReader
             var intendedCatalogue = selectedPaths.Count == 0
                 ? catalogue
                 : new SourceCatalogue(
-                    workspace,
+                    catalogue.Layout,
                     catalogue.Candidates.Where(candidate => !selectedPaths.Contains(candidate.CanonicalPath)),
                     catalogue.Sources.Where(source => !selectedPaths.Contains(source.Identity.CanonicalBasePath)),
                     catalogue.Issues.Where(issue => !selectedPaths.Contains(issue.AttemptedCanonicalPath)
                         && !issue.RelatedPaths.Any(selectedPaths.Contains)),
-                    isCancelled: false);
+                    isCancelled: false, catalogue.Aliases, catalogue.IncludedRows);
             var intendedByPath = intendedCatalogue.Sources
                 .Where(source => !selectedPaths.Contains(source.Identity.CanonicalBasePath))
                 .ToDictionary(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal);
@@ -76,7 +77,7 @@ internal static class LibraryGeneratedNavigationReader
                 cancellationToken.ThrowIfCancellationRequested();
                 var path = LibraryPathIdentity.Map(request.SelectedLibrary.SourceRoot,
                     request.SelectedLibrary.DestinationRoot, entry.SourcePath).DestinationPath.Value;
-                if (TryCreateSelectedSource(path, entry.PhysicalPath) is not { } source)
+                if (TryCreateSelectedSource(request.Layout, path, entry.PhysicalPath) is not { } source)
                 {
                     continue;
                 }
@@ -188,15 +189,15 @@ internal static class LibraryGeneratedNavigationReader
         }
     }
 
-    private static SourceLogicalSource? TryCreateSelectedSource(string path, string physicalPath)
+    private static SourceLogicalSource? TryCreateSelectedSource(WorkspaceLayout layout, string path, string physicalPath)
     {
-        if (!SourceFormClassifier.TryClassify(path, out var form)
+        if (!SourceFormClassifier.TryClassify(layout, path, out var form)
             || form == SourceDocumentForm.OverwriteCompanion)
         {
             return null;
         }
 
-        var id = SourceIdentity.DeriveId(path);
+        var id = SourceIdentity.DeriveId(layout, path);
         if (id is null)
         {
             return null;
@@ -212,9 +213,10 @@ internal static class LibraryGeneratedNavigationReader
         IEnumerable<string> selectedPaths,
         OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument settings)
     {
+        var layout = intendedFormation.Catalogue.Layout;
         foreach (var path in selectedPaths.Order(StringComparer.Ordinal))
         {
-            if (!SourceFormClassifier.TryClassify(path, out var form)
+            if (!SourceFormClassifier.TryClassify(layout, path, out var form)
                 || form == SourceDocumentForm.Loader
                 || SourceFormClassifier.IsEntrypoint(form))
             {
@@ -222,7 +224,7 @@ internal static class LibraryGeneratedNavigationReader
             }
 
             var parent = SourceLogicalPath.ReadParent(path);
-            if (parent == SourceLogicalPath.AgentsRoot
+            if (layout.SourceRoots.Contains(parent, StringComparer.Ordinal)
                 || intendedFormation.Sources.Any(source =>
                     SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath) == parent
                     && SourceFormClassifier.IsEntrypoint(source.Base.Form)))
@@ -231,8 +233,8 @@ internal static class LibraryGeneratedNavigationReader
             }
 
             var parentName = SourceLogicalPath.ReadFileName(parent);
-            var hostPath = SourceLogicalPath.Combine(parent, $"_{parentName}.md");
-            if (WorkspaceRemovals.IsPathRemoved(hostPath, settings))
+            var hostPath = SourceLogicalPath.Combine(parent, SourceFormClassifier.CanonicalEntrypointFileName(parentName));
+            if (WorkspaceRemovals.IsPathRemoved(layout, hostPath, settings))
             {
                 return hostPath;
             }
@@ -260,7 +262,7 @@ internal static class LibraryGeneratedNavigationReader
         GeneratedNavigationFormation formation,
         string path)
     {
-        if (string.Equals(path, SourceLogicalPath.LoaderPath, StringComparison.Ordinal))
+        if (string.Equals(path, formation.Catalogue.Layout.LoaderPath, StringComparison.Ordinal))
         {
             return formation.Loader is null ? [] : formation.Topology.LoaderRootPaths;
         }

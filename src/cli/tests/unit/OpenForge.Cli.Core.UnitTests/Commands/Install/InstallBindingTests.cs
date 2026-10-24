@@ -20,12 +20,14 @@ public sealed class InstallBindingTests
     {
         var symbols = InstallBinding.CreateSymbols();
 
-        Assert.Equal("install", symbols.InstallCommand.Name);
+        Assert.Equal(InstallDefinitions.InstallCommand.Name, symbols.InstallCommand.Name);
         Assert.Empty(symbols.InstallCommand.Aliases);
         Assert.Empty(symbols.InstallCommand.Subcommands);
         Assert.Empty(symbols.InstallCommand.Arguments);
         Assert.Equal(
-            ["--configure", "--preset", "--frontmatter", "--route", "--force", "--automatic", "--dry-run"],
+            [InstallDefinitions.MainRoot.Name, InstallDefinitions.ConfigureOption, InstallDefinitions.PresetOption,
+                InstallDefinitions.Frontmatter.Name, InstallDefinitions.RouteOption, InstallDefinitions.Force.Name,
+                InstallDefinitions.Automatic.Name, InstallDefinitions.DryRun.Name],
             symbols.InstallCommand.Options.Select(option => option.Name));
         Assert.Equal(ArgumentArity.Zero, symbols.Force.Arity);
         Assert.Equal(ArgumentArity.Zero, symbols.Automatic.Arity);

@@ -44,7 +44,7 @@ internal sealed class InstallOperation(
                         ? InstallManagementState.Incomplete : InstallManagementState.Blocked;
                     return InitialResult(request, state, boundary.Code, boundary.Cause);
                 }
-                request = request with { Configuration = setup.Configuration, Frontmatter = setup.Frontmatter, SetupRecap = setup.Recap };
+                request = request with { Configuration = setup.Configuration, Frontmatter = setup.Frontmatter, SetupRecap = setup.Recap, RequestedMainRoot = setup.RequestedMainRoot };
             }
             build = await _planBuilder.BuildAsync(request, cancellationToken)
                 .ConfigureAwait(false);

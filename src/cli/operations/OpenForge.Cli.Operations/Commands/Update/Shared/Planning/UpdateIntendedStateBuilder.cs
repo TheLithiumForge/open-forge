@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
@@ -43,30 +45,32 @@ internal sealed class UpdateIntendedStateBuilder(
     internal async ValueTask<UpdateIntendedStateBuild> BuildAsync(
         UpdateRequest request,
         FrameworkPayload payload,
-        WorkspaceOwnershipRead ownership,
-        WorkspaceSettingsDocument settings,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
+        var layout = layoutRead.Layout ?? throw new InvalidOperationException("Update requires an observed layout.");
+        var ownership = layoutRead.Ownership;
+        var settings = layoutRead.Settings.Document;
         var framework = ownership.Document.Framework;
         var targets = (framework?.Paths.Select(path => new UpdateOwnedTarget(path,
                 path is FrameworkPayloadAsset.RootAgentPath or FrameworkPayloadAsset.RootClaudePath
                     ? WorkspaceOwnershipDefinitions.ManagedBlockRegion : null,
-                FrameworkSourceAlignment.ReadAsset(request.Workspace, path, payload)?.Path)) ?? [])
+                FrameworkSourceAlignment.ReadAsset(layout, path, payload)?.Path)) ?? [])
             .Concat(framework?.Regions.Select(region => new UpdateOwnedTarget(region.Path, region.Region,
-                region.Region == "entries" ? null
-                    : FrameworkSourceAlignment.ReadAsset(request.Workspace, region.Path, payload)?.Path)) ?? [])
-            .Where(target => FrameworkPayloadSelection.IncludesPath(target.Path, settings))
+                region.Region == WorkspaceOwnershipDefinitions.EntriesRegion ? null
+                    : FrameworkSourceAlignment.ReadAsset(layout, region.Path, payload)?.Path)) ?? [])
+            .Where(target => FrameworkPayloadSelection.IncludesInstalledPath(layout, target.Path, settings))
             .Distinct().ToArray();
-        var selectedAssets = payload.Assets.Where(asset => FrameworkPayloadSelection.IncludesPath(asset.Path, settings)).ToArray();
-        if (targets.Any(target => !IsAdmittedTarget(request, settings, target.Path)
-            || target.Region is not (null or "entries" or WorkspaceOwnershipDefinitions.ManagedBlockRegion)
+        var selectedAssets = payload.Assets.Where(asset => FrameworkPayloadSelection.IncludesPath(layout, asset.Path, settings)).ToArray();
+        if (targets.Any(target => !IsAdmittedTarget(layout, settings, target.Path)
+            || target.Region is not (null or WorkspaceOwnershipDefinitions.EntriesRegion or WorkspaceOwnershipDefinitions.ManagedBlockRegion)
             || target.Region == WorkspaceOwnershipDefinitions.ManagedBlockRegion
                 && target.Path is not (FrameworkPayloadAsset.RootAgentPath or FrameworkPayloadAsset.RootClaudePath))
             || targets.Select(target => target.Path).Distinct(StringComparer.Ordinal)
                 .GroupBy(PortableWorkspacePath.CreatePortableKey, StringComparer.Ordinal).Any(group => group.Count() != 1))
             return Blocked(UpdateFindingCode.OwnershipObservation, WorkspaceOwnershipDefinitions.RelativePath,
                 "Recorded Framework destinations could not be safely interpreted; no effects were inferred.");
-        var selectedPaths = targets.Select(target => target.Path).Concat(selectedAssets.Select(asset => asset.Path)).ToArray();
+        var selectedPaths = targets.Select(target => target.Path).Concat(selectedAssets.Select(asset => layout.MapPayloadPath(asset.Path))).ToArray();
         try
         {
             var otherPaths = ownership.Document.Extensions.SelectMany(extension => extension.Paths.Concat(extension.Regions.Select(region => region.Path)))
@@ -85,20 +89,21 @@ internal sealed class UpdateIntendedStateBuilder(
             ? targets.Where(target => target.Region is null && target.SourceAssetPath is null)
                 .Select(target => target.Path).ToHashSet(StringComparer.Ordinal)
             : new HashSet<string>(StringComparer.Ordinal);
-        var mappedAssets = selectedAssets.Concat(targets.Where(target => target.SourceAssetPath is not null
-                && target.Path != target.SourceAssetPath)
-            .Select(target => FrameworkPayloadAsset.Create(target.Path, payload.Find(target.SourceAssetPath!)!.Bytes.AsSpan())))
-            .DistinctBy(asset => asset.Path, StringComparer.Ordinal).ToArray();
+        var payloadTargets = selectedAssets.Select(asset => new UpdatePayloadTarget(asset, layout.MapPayloadPath(asset.Path))).ToList();
+        foreach (var target in targets)
+            if (target.SourceAssetPath is { } sourcePath && payload.Find(sourcePath) is { } asset
+                && target.Path != layout.MapPayloadPath(sourcePath))
+                payloadTargets.Add(new UpdatePayloadTarget(asset, target.Path));
+        var mappedAssets = payloadTargets.DistinctBy(target => target.Path, StringComparer.Ordinal).ToArray();
         var retiredWholeHosts = targets.Where(target => target.Region is null && target.SourceAssetPath is null)
             .Select(target => target.Path).ToHashSet(StringComparer.Ordinal);
-        targets = targets.Where(target => target.Region != "entries" || !retiredWholeHosts.Contains(target.Path)).ToArray();
-        var generatedHosts = targets.Where(target => target.Region == "entries").Select(target => target.Path).ToHashSet(StringComparer.Ordinal);
+        targets = targets.Where(target => target.Region != WorkspaceOwnershipDefinitions.EntriesRegion || !retiredWholeHosts.Contains(target.Path)).ToArray();
+        var generatedHosts = targets.Where(target => target.Region == WorkspaceOwnershipDefinitions.EntriesRegion).Select(target => target.Path).ToHashSet(StringComparer.Ordinal);
         var navigation = await _navigationPlanner
             .BuildAsync(
                 request,
                 payload,
-                ownership,
-                settings,
+                layoutRead,
                 mappedAssets,
                 retiredTargetPaths,
                 generatedHosts,
@@ -114,15 +119,15 @@ internal sealed class UpdateIntendedStateBuilder(
         }
 
         mappedAssets = mappedAssets
-            .Where(asset => !asset.Path.StartsWith(".agents/", StringComparison.Ordinal)
+            .Where(asset => !layout.IsContentPath(asset.Path)
                 || navigation.TargetBytes.ContainsKey(asset.Path))
             .ToArray();
         selectedAssets = selectedAssets
-            .Where(asset => !asset.Path.StartsWith(".agents/", StringComparison.Ordinal)
-                || navigation.TargetBytes.ContainsKey(asset.Path))
+            .Where(asset => !layout.IsContentPath(layout.MapPayloadPath(asset.Path))
+                || navigation.TargetBytes.ContainsKey(layout.MapPayloadPath(asset.Path)))
             .ToArray();
 
-        var generated = targets.Where(target => target.Region == "entries")
+        var generated = targets.Where(target => target.Region == WorkspaceOwnershipDefinitions.EntriesRegion)
             .Select(target => (target.Path, target.Region)).ToHashSet();
         var generatedPaths = generated.Select(target => target.Path).ToHashSet(StringComparer.Ordinal);
         var validatedGeneratedHosts = new HashSet<string>(StringComparer.Ordinal);
@@ -173,7 +178,7 @@ internal sealed class UpdateIntendedStateBuilder(
                     mappedAssets,
                     navigation.TargetBytes,
                     snapshot,
-                    settings));
+                    layoutRead));
             }
             catch (Exception exception) when (exception is ArgumentException
                 or InvalidDataException
@@ -199,9 +204,10 @@ internal sealed class UpdateIntendedStateBuilder(
 
         foreach (var asset in selectedAssets.Where(asset => !currentSources.Contains(asset.Path)))
         {
+            var destination = layout.MapPayloadPath(asset.Path);
             var read = await ReadTargetAsync(
                     request,
-                    asset.Path,
+                    destination,
                     snapshots,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -221,21 +227,22 @@ internal sealed class UpdateIntendedStateBuilder(
                     var identity = asset.Path is FrameworkPayloadAsset.RootAgentPath or FrameworkPayloadAsset.RootClaudePath
                         ? ReadManagedFingerprint(snapshot.Bytes.AsSpan())
                         : _contentIdentity.ReadSourceFingerprint(snapshot.Bytes.AsSpan()).Sha256;
-                    var intendedBytes = navigation.TargetBytes[asset.Path];
+                    var intendedBytes = navigation.TargetBytes[destination];
                     if (identity != _contentIdentity.ReadSourceFingerprint(intendedBytes).Sha256)
-                        return Blocked(UpdateFindingCode.OwnershipConflict, asset.Path,
+                        return Blocked(UpdateFindingCode.OwnershipConflict, destination,
                             "An unowned current Framework target differs from intended content; no ownership was inferred.");
                 }
                 catch (InvalidDataException exception)
                 {
-                    return Blocked(UpdateFindingCode.OwnershipConflict, asset.Path, exception.Message);
+                    return Blocked(UpdateFindingCode.OwnershipConflict, destination, exception.Message);
                 }
                 continue;
             }
 
             observations.Add(CreateNewObservation(
                 asset,
-                navigation.TargetBytes[asset.Path],
+                destination,
+                navigation.TargetBytes[destination],
                 snapshot));
         }
 
@@ -250,22 +257,22 @@ internal sealed class UpdateIntendedStateBuilder(
         };
     }
 
-    private static bool IsAdmittedTarget(UpdateRequest request, WorkspaceSettingsDocument settings, string path)
+    private static bool IsAdmittedTarget(WorkspaceLayout layout, WorkspaceSettingsDocument settings, string path)
     {
         if (!PortableWorkspacePath.TryNormalize(path, out var normalized) || normalized != path) return false;
         var key = PortableWorkspacePath.CreatePortableKey(path);
         string[] controls = [WorkspaceSettingsDefinitions.RelativePath, WorkspaceOwnershipDefinitions.RelativePath,
             ".agents/open-forge.lock"];
-        if (key.Split('/').Contains(".git", StringComparer.Ordinal) || SourceOverwritePath.HasSuffix(key)
+        if (key.Split('/').Contains(WorkspaceLayoutNames.GitMetadataDirectoryName, StringComparer.Ordinal) || SourceOverwritePath.HasSuffix(key)
             || controls.Any(control => key == control || key.StartsWith($"{control}/", StringComparison.Ordinal))) return false;
         var store = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.DoNotVerify);
         if (store is not null)
         {
-            var storeKey = PortableWorkspacePath.CreatePortableKey(Path.GetRelativePath(request.Workspace.PhysicalRoot, store).Replace(Path.DirectorySeparatorChar, '/'));
+            var storeKey = PortableWorkspacePath.CreatePortableKey(Path.GetRelativePath(layout.Workspace.PhysicalRoot, store).Replace(Path.DirectorySeparatorChar, '/'));
             if (storeKey == "." || key == storeKey || key.StartsWith($"{storeKey}/", StringComparison.Ordinal)) return false;
         }
         return path is FrameworkPayloadAsset.RootAgentPath or FrameworkPayloadAsset.RootClaudePath
-            || path.StartsWith(".agents/", StringComparison.Ordinal)
+            || layout.IsImplicitContentDestination(path)
             || WorkspaceAllowList.Admits(settings.AllowInstallPaths, path);
     }
 
@@ -292,11 +299,13 @@ internal sealed class UpdateIntendedStateBuilder(
     private UpdateComparisonObservation CreateExistingObservation(
         UpdateOwnedTarget target,
         bool generated,
-        IReadOnlyList<FrameworkPayloadAsset> assets,
+        IReadOnlyList<UpdatePayloadTarget> assets,
         IReadOnlyDictionary<string, byte[]> projectedTargetBytes,
         FileStateSnapshot snapshot,
-        WorkspaceSettingsDocument settings)
+        WorkspaceLayoutRead layoutRead)
     {
+        var layout = layoutRead.Layout ?? throw new InvalidOperationException("Update requires an observed layout.");
+        var settings = layoutRead.Settings.Document;
         UpdateComparisonTargetKind kind;
         if (generated)
         {
@@ -316,7 +325,7 @@ internal sealed class UpdateIntendedStateBuilder(
         var currentFingerprint = snapshot.Kind == FileExpectationKind.Missing
             ? null
             : ReadCurrentFingerprint(target, kind, snapshot.Bytes.AsSpan());
-        var asset = assets.FirstOrDefault(asset => asset.Path == (target.SourceAssetPath ?? target.Path));
+        var asset = assets.FirstOrDefault(asset => asset.Asset.Path == (target.SourceAssetPath ?? target.Path));
         var sourcePresent = generated ? (bool?)null : asset is not null;
         string? intendedFingerprint;
         byte[]? intendedDocumentBytes;
@@ -365,7 +374,7 @@ internal sealed class UpdateIntendedStateBuilder(
             intendedState,
             currentState,
             kind == UpdateComparisonTargetKind.File
-                && (target.Path.StartsWith(".agents/", StringComparison.Ordinal)
+                && (layout.IsImplicitContentDestination(target.Path)
                     || WorkspaceAllowList.Admits(settings.AllowInstallPaths, target.Path)));
         var comparison = new UpdateComparison
         {
@@ -394,6 +403,7 @@ internal sealed class UpdateIntendedStateBuilder(
 
     private UpdateComparisonObservation CreateNewObservation(
         FrameworkPayloadAsset asset,
+        string destination,
         byte[] intended,
         FileStateSnapshot snapshot)
     {
@@ -406,7 +416,7 @@ internal sealed class UpdateIntendedStateBuilder(
 
         var comparison = new UpdateComparison
         {
-            RelativePath = asset.Path,
+            RelativePath = destination,
             Kind = UpdateComparisonTargetKind.File,
             RegionIdentity = null,
             SourceAssetPath = asset.Path,

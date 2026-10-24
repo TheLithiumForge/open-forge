@@ -7,6 +7,10 @@ open-forge:
 
 # Shared Source-Universe Filters Interface Contract
 
+## Layout Selection
+
+A consumer’s default universe may span the main root and native Skills. Selectors retain the [shared source-reference grammar](../source-references/interface.md), including literal `./<workspace-path>` inputs for custom roots. An included catalogue keeps its existing listed-file expansion rather than granting an outside folder maintained-route status.
+
 ## Status And Authority
 
 This file is the accepted current Crystallized authority for the caller-visible
@@ -107,7 +111,7 @@ reference resolves to Loader, a recognized entrypoint, or `SKILL.md`.
 
 ## Identity, Collision, Safety, And Errors
 
-Each occurrence uses the shared exact source-ID or `.agents/...` path forms and
+Each occurrence uses the shared exact source-ID or `./<workspace-path>` path forms and
 their shared normalization and identity rules. Resolution never guesses
 whether a value meant a different ID, path, source, or physical layer.
 

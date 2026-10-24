@@ -1,0 +1,17 @@
+Would create 2 entrypoints and complete metadata in 1 file.
+Workspace: <workspace>
+  .agents/guidance/team/deep/note.md  metadata would be completed, your content would be kept
+  .agents/guidance/team/_team.md  entrypoint would be created
+  .agents/guidance/team/deep/_deep.md  entrypoint would be created
+  .agents/guidance/_guidance.md  0 -> 1 entries
+.agents/guidance/team/deep/note.md
+  description: Release notes
+  tags: [Guidance]
+--- .agents/guidance/_guidance.md  (Entries section)
+- - none - No entries - #Empty
++ - [Notes in guidance/team](team/_team.md) - #Guidance
+Selection: .agents/guidance/team/deep/note.md
+No recovery bundle was needed.
+No files were changed.
+  Apply the checked plan.
+Next: open-forge index

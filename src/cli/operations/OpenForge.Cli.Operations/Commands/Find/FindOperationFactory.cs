@@ -13,6 +13,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Selection;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Find;
 
@@ -33,6 +34,7 @@ internal static class FindOperationFactory
         FindMarkdownDocumentReader markdownDocumentReader = new MarkdownDocumentParser().Parse;
         FindFrontmatterFactsReader frontmatterFactsReader = new FindFrontmatterReader().Read;
         var sourceResolver = new FindSourceResolver(
+            layoutRead: new WorkspaceLayoutReader(physicalPathResolverImplementation).ReadAsync,
             sourceSessionRead: sourceSessionReader.ReadIncludedAsync,
             universeResolver: new FindUniverseResolver(universeFilterResolver),
             physicalPathResolver: physicalPathResolver,

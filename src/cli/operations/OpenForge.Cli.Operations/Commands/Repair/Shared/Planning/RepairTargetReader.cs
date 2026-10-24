@@ -33,9 +33,7 @@ internal sealed class RepairTargetReader(SourceCatalogue? catalogue = null, Acti
     {
         cancellationToken.ThrowIfCancellationRequested();
         targetResolutionStarted?.Invoke();
-        var selectedCatalogue = catalogue;
-        if (selectedCatalogue is null)
-            selectedCatalogue = (await new SourceReadSessionReader(_physicalPaths).ReadAsync(workspace, cancellationToken).ConfigureAwait(false)).Catalogue;
+        var selectedCatalogue = catalogue ?? throw new InvalidOperationException("Repair target resolution requires its source catalogue.");
         SourceLinkDestinationResolver resolver;
         lock (_physicalPaths)
         {
@@ -110,9 +108,10 @@ internal sealed class RepairTargetReader(SourceCatalogue? catalogue = null, Acti
     {
         var expectations = new List<FileExpectation>();
         var selectedCatalogue = catalogue;
-        if (selectedCatalogue is null && plan.Selection.Selected.Count > 0)
-            selectedCatalogue = (await new SourceReadSessionReader(_physicalPaths).ReadAsync(plan.Request.Workspace, cancellationToken).ConfigureAwait(false)).Catalogue;
-        var protection = await new RepairProtectionReader(_physicalPaths).ReadAsync(plan.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (plan.LayoutRead is not { } observation) return null;
+        if (selectedCatalogue is null && plan.Selection.Selected.Count > 0 && observation.Layout is { } layout)
+            selectedCatalogue = (await new SourceReadSessionReader(_physicalPaths).ReadAsync(layout, cancellationToken).ConfigureAwait(false)).Catalogue;
+        var protection = RepairProtectionReader.Read(observation);
         if (protection.Policy is not { } policy) return null;
         var reader = this;
         if (catalogue is null && selectedCatalogue is not null)

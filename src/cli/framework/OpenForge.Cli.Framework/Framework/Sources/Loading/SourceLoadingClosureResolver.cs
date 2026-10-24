@@ -11,6 +11,8 @@ namespace OpenForge.Cli.Core.Framework.Sources.Loading;
 
 internal sealed class SourceLoadingClosureResolver
 {
+    internal const string LoadNowTag = "LoadNow";
+    internal const string KeepInMindTag = "KeepInMind";
     internal SourceLoadingClosureResolution Resolve(SourceLoadingClosureRequest request)
         => new ClosureBuilder(request).Build();
 
@@ -51,7 +53,7 @@ internal sealed class SourceLoadingClosureResolver
             {
                 AddIssue(
                     SourceLoadingClosureIssueKind.LoaderUnavailable,
-                    SourceLogicalPath.LoaderPath,
+                    _request.Layout.LoaderPath,
                     "The canonical Loader source is unavailable.");
                 return Result();
             }
@@ -144,8 +146,8 @@ internal sealed class SourceLoadingClosureResolver
             SourceLoadingClosureSource parent,
             SourceGeneratedEntry generated)
         {
-            var loadNow = generated.HasTag("LoadNow");
-            var keepInMind = generated.HasTag("KeepInMind");
+            var loadNow = generated.HasTag(LoadNowTag);
+            var keepInMind = generated.HasTag(KeepInMindTag);
             var target = parent.IsLinked ? null : _graph.FindDirectChild(parent, generated.Destination);
             if (target is null)
             {
@@ -163,8 +165,8 @@ internal sealed class SourceLoadingClosureResolver
                     return null;
                 }
 
-                loadNow &= target.Metadata.Tags.Contains("LoadNow", StringComparer.Ordinal);
-                keepInMind &= target.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal);
+                loadNow &= target.Metadata.Tags.Contains(LoadNowTag, StringComparer.Ordinal);
+                keepInMind &= target.Metadata.Tags.Contains(KeepInMindTag, StringComparer.Ordinal);
             }
 
             var applicability = ReadApplicability(target, reportPending: loadNow || keepInMind);
@@ -172,7 +174,7 @@ internal sealed class SourceLoadingClosureResolver
             return new VisibleEntry(target, loadNow, keepInMind, autoSelect, applicability);
         }
 
-        // A link to a file outside `.agents/` takes its loading tags and conditions from the entry line,
+        // A link to a file outside the primary content locations takes its loading tags and conditions from the entry line,
         // so ordinary documents need no Open Forge frontmatter to take part.
         private VisibleEntry? ReadLinked(
             SourceLoadingClosureSource parent,
@@ -181,7 +183,7 @@ internal sealed class SourceLoadingClosureResolver
             bool keepInMind)
         {
             if (!_request.IncludeLinkedSources
-                || SourceLoadingClosureGraph.ReadLinkedPath(parent, generated.Destination) is not { } linkedPath)
+                || _graph.ReadLinkedPath(parent, generated.Destination) is not { } linkedPath)
             {
                 return null;
             }

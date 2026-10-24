@@ -76,8 +76,10 @@ internal static class ExtensionInstallWording
         => $"Package files belong under {source}/content/.agents/.";
 
     // @OpenForgeText extension.install.wording.cannot-install-it-writes-outside-agents-and-no-grant-allows-that
-    internal static string PermissionRequired(string id)
-        => $"Cannot install {id}: it writes outside .agents and no grant allows that.";
+    internal static string PermissionRequired(string id, string? contextFolder = null)
+        => contextFolder is null
+            ? $"Cannot install {id}: it writes outside .agents and no grant allows that."
+            : $"Cannot install {id}: it writes outside the configured context folders and no grant allows that.";
 
     // @OpenForgeText extension.install.wording.or-add-to-allow-install-paths-in-agents-open-forge-json
     internal static string PermissionAlternative(string path)

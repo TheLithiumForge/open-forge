@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
@@ -31,16 +33,17 @@ internal static class RenameMetadataIdentity
             && left.Tags.SequenceEqual(right.Tags, StringComparer.Ordinal)
             && left.ApplyTo.SequenceEqual(right.ApplyTo, StringComparer.Ordinal);
 
-    internal static bool IsDistinctLabel(RenameRecordedIdentity old, RenameCurrentCandidate candidate)
+    internal static bool IsDistinctLabel(WorkspaceLayout layout, RenameRecordedIdentity old, RenameCurrentCandidate candidate)
     {
         if (old.Metadata is not { Tags.IsEmpty: false } metadata) return false;
         var description = metadata.Description;
+        var relative = layout.TryGetSourceRelativePath(old.Path, out var sourcePath) ? sourcePath : old.Path;
         var stem = Path.GetFileNameWithoutExtension(old.Path);
         var title = old.Title ?? ReadTitle(candidate.Content.Document);
         return !EqualsLabel(description, stem)
             && !EqualsLabel(description, FrameworkMetadataDescriptionDeriver.SentenceCase(stem))
-            && !EqualsLabel(description, old.Path[..^3])
-            && !EqualsLabel(description, old.Path[(".agents/".Length)..^3])
+            && !EqualsLabel(description, old.Path[..^SourceFormClassifier.MarkdownExtension.Length])
+            && !EqualsLabel(description, relative[..^SourceFormClassifier.MarkdownExtension.Length])
             && (title is null || !EqualsLabel(description, title));
     }
 

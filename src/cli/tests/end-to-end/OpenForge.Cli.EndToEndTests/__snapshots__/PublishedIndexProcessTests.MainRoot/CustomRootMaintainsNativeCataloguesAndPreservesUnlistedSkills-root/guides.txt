@@ -1,0 +1,10 @@
+---
+open-forge:
+  description: Workspace guides
+  tags: [Docs]
+---
+# Root
+
+## Entries
+
+- [Release checklist](note.md) - #Workspace

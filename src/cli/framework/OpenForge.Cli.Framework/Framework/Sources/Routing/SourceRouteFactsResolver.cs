@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -25,7 +26,7 @@ internal sealed class SourceRouteFactsResolver
             .ToHashSet(StringComparer.Ordinal);
         var selectedSources = selection.Sources
             .Where(source => source.Base.Form != SourceDocumentForm.OverwriteCompanion)
-            .Where(source => source.IncludedEntry is null)
+            .Where(source => SourceLogicalPath.IsPrimarySource(catalogue.Layout, source.Identity.CanonicalBasePath))
             .ToArray();
         var routeIssues = new List<SourceRouteIssue>();
         var nextOccurrence = 0;
@@ -101,7 +102,7 @@ internal sealed class SourceRouteFactsResolver
 
                 var loaderContents = read.Read?.Value
                     ?? throw new InvalidOperationException("A complete Loader read requires a value.");
-                var parsed = SourceLoaderEntriesParser.Parse(loaderContents);
+                var parsed = SourceLoaderEntriesParser.Parse(catalogue.Layout, loaderContents);
                 if (parsed.State == SourceLoaderEntriesParseState.Malformed)
                 {
                     var parseCause = parsed.Cause
@@ -125,7 +126,7 @@ internal sealed class SourceRouteFactsResolver
                         break;
                     }
 
-                    // A linked destination is ordinary project material outside `.agents/`, not a root route.
+                    // A linked destination is ordinary project material outside the primary content locations.
                     if (destination.State == SourceLoaderDestinationParseState.Linked)
                     {
                         continue;
@@ -328,7 +329,7 @@ internal sealed class SourceRouteFactsResolver
                 continue;
             }
 
-            var expectedDirectory = ReadExpectedParentDirectory(source);
+            var expectedDirectory = ReadExpectedParentDirectory(catalogue.Layout, source);
             if (expectedDirectory is null)
             {
                 continue;
@@ -358,7 +359,7 @@ internal sealed class SourceRouteFactsResolver
         }
     }
 
-    private static string? ReadExpectedParentDirectory(SourceLogicalSource source)
+    private static string? ReadExpectedParentDirectory(WorkspaceLayout layout, SourceLogicalSource source)
     {
         var containingDirectory = SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath);
         if (source.Base.Form == SourceDocumentForm.Markdown)
@@ -366,7 +367,7 @@ internal sealed class SourceRouteFactsResolver
             return containingDirectory;
         }
 
-        return containingDirectory == SourceLogicalPath.AgentsRoot
+        return layout.SourceRoots.Contains(containingDirectory)
             ? null
             : SourceLogicalPath.ReadParent(containingDirectory);
     }

@@ -11,21 +11,22 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Library.Shared.Planning;
 
 internal static class LibraryDestinationPolicy
 {
-    private const string GitDirectory = ".git";
     private const string WorkspaceLockPath = ".agents/open-forge.lock";
 
     internal static string? FindConflict(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         LibraryRegistration selected,
         LibraryRegistrationSet? registered,
         IEnumerable<string> generatedTargets)
     {
+        var workspace = layout.Workspace;
         var others = registered?.Libraries.Where(library => library.Id != selected.Id).ToArray() ?? [];
         var owned = others.SelectMany(static library => LibraryPathIdentity.Mappings(library))
             .Select(mapping => PortableWorkspacePath.CreatePortableKey(mapping.DestinationPath.Value)).ToHashSet(StringComparer.Ordinal);
@@ -40,7 +41,7 @@ internal static class LibraryDestinationPolicy
         {
             var path = mapping.DestinationPath.Value;
             var key = PortableWorkspacePath.CreatePortableKey(path);
-            if (!IsAllowed(path) || IsRuntimeDestination(workspace, path) || owned.Contains(key)
+            if (!IsAllowed(layout, path) || IsRuntimeDestination(workspace, path) || owned.Contains(key)
                 || Parents(key).Any(parent => owned.Contains(parent) || selectedKeys.Contains(parent))
                 || sources.Any(root => Within(key, root))
                 || (recovery is not null && (recovery == "." || Within(key, recovery))))
@@ -91,31 +92,34 @@ internal static class LibraryDestinationPolicy
         return false;
     }
 
-    private static bool IsAllowed(string path)
+    private static bool IsAllowed(WorkspaceLayout layout, string path)
     {
         var key = PortableWorkspacePath.CreatePortableKey(path);
         if (key == WorkspaceSettingsDefinitions.DirectoryName
-            || key.Split('/').Contains(GitDirectory, StringComparer.Ordinal)
+            || layout.SourceRoots.Any(root => key == PortableWorkspacePath.CreatePortableKey(root))
+            || key.Split('/').Contains(WorkspaceLayoutNames.GitMetadataDirectoryName, StringComparer.Ordinal)
             || Within(key, WorkspaceSettingsDefinitions.RelativePath)
             || Within(key, WorkspaceOwnershipDefinitions.RelativePath)
             || Within(key, WorkspaceLockPath)
-            || Within(key, SourceLogicalPath.LoaderPath))
+            || Within(key, PortableWorkspacePath.CreatePortableKey(layout.LoaderPath)))
         {
             return false;
         }
-        if (!key.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.Ordinal))
+        if (!layout.IsContentPath(path))
         {
             return true;
         }
-        if (!path.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.Ordinal))
+        // A case alias of a content root is another folder on a case-sensitive filesystem, so it is refused.
+        if (!layout.IsImplicitContentDestination(path))
         {
             return false;
         }
-        var segments = key.Split('/');
+        if (!layout.TryGetSourceRelativePath(path, out var relative)) return false;
+        var segments = layout.SourcePath(PortableWorkspacePath.CreatePortableKey(relative)).Split('/');
         for (var length = 2; length <= segments.Length; length++)
         {
             var prefix = string.Join('/', segments.AsSpan(0, length).ToArray());
-            if (SourceFormClassifier.TryClassify(prefix, out var form)
+            if (SourceFormClassifier.TryClassify(layout, prefix, out var form)
                 && (form == SourceDocumentForm.OverwriteCompanion || SourceFormClassifier.IsEntrypoint(form)))
             {
                 return false;

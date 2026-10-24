@@ -145,6 +145,8 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
             var result = await inspector.InspectAsync(
                 new ExtensionInstallTargetInspectionInput
                 {
+                    Layout = OpenForge.Cli.Core.Framework.Workspace.Models.Layout.WorkspaceLayout.Create(request.Workspace,
+                        OpenForge.Cli.Core.Framework.Workspace.Models.Layout.WorkspaceLayout.DefaultMainRoot),
                     Request = request,
                     Packages = [package],
                     Settings = OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument.Empty,

@@ -1,12 +1,20 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Contracts;
+using OpenForge.Cli.TestSupport.Snapshots;
 using static OpenForge.Cli.EndToEndTests.Shared.PublishedProcess.PublishedProcessTestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedRouteListProcessTests
+public sealed partial class PublishedRouteListProcessTests
 {
+    private const string DefaultRoute = "root";
+    private const string WorkspaceDefinedRoute = "workspace-defined";
+    private const string DefaultCatalogue = PublishedTokens.Sources.AgentsRoot + "/" + DefaultRoute + "/_" + DefaultRoute + PublishedTokens.Layout.MarkdownExtension;
+    private const string ZeroDepth = "0";
+    private const string InvalidDepth = "-1";
+
     [Fact(DisplayName = "Published route list emits one structured result without mutating the workspace"),
      Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRouteListEmitsStructuredReadOnlyResult()
@@ -18,16 +26,16 @@ public sealed class PublishedRouteListProcessTests
         var result = await RunAsync(
             target,
             working.Path,
-            ["route", "list", "--format=json"]);
+            [PublishedTokens.Route.Command, PublishedTokens.RouteList.Command, PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat]);
 
-        Assert.Equal(0, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardError);
+        Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, result.ExitCode);
+        Assert.Empty(result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        Assert.Equal("route list", document.RootElement.GetProperty("command").GetString());
-        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
-        var resultBody = document.RootElement.GetProperty("data");
-        Assert.Equal(1, resultBody.GetProperty("depth").GetInt32());
-        Assert.Contains(resultBody.GetProperty("rows").EnumerateArray(), row => row.GetProperty("id").GetString() == "workspace-defined");
+        Assert.Equal(PublishedTokens.RouteList.CommandIdentity, document.RootElement.GetProperty(PublishedTokens.Json.Command).GetString());
+        Assert.Equal(PublishedTokens.Statuses.Complete, document.RootElement.GetProperty(PublishedTokens.Json.Status).GetString());
+        var resultBody = document.RootElement.GetProperty(PublishedTokens.Json.Data);
+        Assert.Equal(PublishedTokens.RouteList.DefaultDepth, resultBody.GetProperty(PublishedTokens.RouteListData.Depth).GetInt32());
+        Assert.Contains(resultBody.GetProperty(PublishedTokens.RouteListData.Rows).EnumerateArray(), row => row.GetProperty(PublishedTokens.Json.Id).GetString() == WorkspaceDefinedRoute);
         Assert.Equal(before, working.SnapshotHashes());
     }
 
@@ -37,15 +45,12 @@ public sealed class PublishedRouteListProcessTests
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedRouteWorkspace.CreateComplete();
         var result = await RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes,
-            ["route", "list", ".agents/root/_root.md", "--depth=0", "--detail=minimal"]);
+            [PublishedTokens.Route.Command, PublishedTokens.RouteList.Command, DefaultCatalogue,
+                PublishedTokens.RouteList.Depth, ZeroDepth, PublishedTokens.Syntax.DetailOption, PublishedTokens.Presentation.MinimalDetail]);
 
-        Assert.Equal(0, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardError);
-        Assert.DoesNotContain("Status:", result.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain("Coverage:", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("  root", result.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain(".agents/root/_root.md", result.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain("root/child", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, result.ExitCode);
+        Assert.Empty(result.StandardError);
+        CommandOutputSnapshot.MatchSnapshot(result.StandardOutput, nameof(PublishedRouteListExactPathUsesZeroDepthCompactView));
     }
 
     [Fact(DisplayName = "Published Route List rejects invalid depth with typed JSON and no writes"), Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
@@ -53,14 +58,17 @@ public sealed class PublishedRouteListProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedRouteWorkspace.CreateComplete();
-        var result = await RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes, ["route", "list", "--depth=-1", "--format=json"]);
+        var result = await RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes,
+            [PublishedTokens.Route.Command, PublishedTokens.RouteList.Command, PublishedTokens.RouteList.Depth, InvalidDepth,
+                PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat]);
 
-        Assert.Equal(4, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardError);
+        Assert.Equal(PublishedTokens.Statuses.InvalidExitCode, result.ExitCode);
+        Assert.Empty(result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
-        Assert.Equal("route-list.invalid-depth", document.RootElement.GetProperty("findings")[0].GetProperty("code").GetString());
-        Assert.Equal("open-forge route list --help", document.RootElement.GetProperty("next").GetProperty("command").GetString());
+        Assert.Equal(PublishedTokens.Statuses.Invalid, document.RootElement.GetProperty(PublishedTokens.Json.Status).GetString());
+        Assert.Equal(PublishedTokens.RouteList.InvalidDepthCode, document.RootElement.GetProperty(PublishedTokens.Json.Findings)[0].GetProperty(PublishedTokens.Json.Code).GetString());
+        CommandOutputSnapshot.MatchSnapshot(CommandOutputNormalization.ReplaceDelimitedPath(result.StandardOutput, workspace.Path, "<workspace>"),
+            nameof(PublishedRouteListInvalidDepthUsesTypedJson));
     }
 
 }

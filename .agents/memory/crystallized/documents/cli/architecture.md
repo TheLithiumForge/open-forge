@@ -12,6 +12,12 @@ layer model, dependency direction, and the invariants for serialization,
 testing, build and release. Each layer's inner workings live in its own record
 under [CLI Layers](layers/_layers.md).
 
+## Workspace Layout
+
+Framework Workspace owns the pure `WorkspaceLayout` below Sources. Framework Settings reads settings and installation evidence into one layout observation. Operations carries that observation through planning and revalidates it under the lease. Sources receives only the pure layout. Presentation receives projected paths and never infers a root from path segments.
+
+The layout has one context folder, defaulting to `.agents`, plus native Skills at `.agents/skills`. Settings, ownership, host files and `.open-forge-state/` retain fixed locations. The [Workspace Layout Technical Design](technical-designs/workspace-layout.md) defines mapping, observation states and ordinal authority checks. [Install](contracts/install/interface.md) defines first-install selection. Moving an established installation is reserved for Delivery 2.
+
 ## Status And Authority
 
 This document defines the accepted implementation architecture for the C#
@@ -424,7 +430,7 @@ records the optional executable and its boundaries. The
 The host also supplies optional Git ignored-path inventories to the shared Route
 Move and Route Remove reference catalogue. The shared host Git process runner
 owns launch, cancellation and cleanup. Operations owns exclusions, the complete
-`.agents` exception, fallback coverage and counts. Framework gains no process
+primary-content-location exception, fallback coverage and counts. Framework gains no process
 dependency. The local Move and Remove contracts define this scan.
 
 Presentation has its own checked direction. No `Presentation/**` file may import

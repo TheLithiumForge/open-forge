@@ -1,0 +1,1 @@
+'*.md': Use one workspace-relative text file without a glob, URL or fragment.

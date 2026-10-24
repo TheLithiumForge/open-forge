@@ -10,6 +10,9 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Ownership;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Install.Models.Planning;
 
@@ -135,10 +138,13 @@ public sealed class ExtensionInstallPlanOwnershipTests
                 ],
             });
         var selection = new ExtensionInstallSelection(ExtensionInstallSelectionKind.ExplicitIds, ["toolkit"]);
+        var settings = WorkspaceSettingsRead.Absent(Path.Combine(root, WorkspaceSettingsDefinitions.RelativePath));
+        var ownership = WorkspaceOwnershipRead.Absent(Path.Combine(root, WorkspaceOwnershipDefinitions.RelativePath));
         return new ExtensionInstallPlanInput
         {
+            LayoutRead = new(WorkspaceLayoutReadState.Uninstalled, settings, ownership,
+                WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], []),
             Request = new ExtensionInstallRequest(workspace, ExtensionInstallMode.DryRun, ["toolkit"], false, null, false, true, false),
-            SettingsObservation = WorkspaceSettingsRead.Absent(Path.Combine(root, ".agents", "open-forge.json")),
             SourceRead = new ExtensionSourceReadResult(ExtensionSourceReadState.Complete, ExtensionSourceKind.EmbeddedCatalogue, "embedded catalogue", [package], null),
             SourceSignature = "c581f9a147032eff59736cf45cbdee8708213aa0b4630f49c437a6130d75e3af",
             InferredRootId = null,
@@ -146,7 +152,7 @@ public sealed class ExtensionInstallPlanOwnershipTests
             Packages = [package],
             FrameworkPayload = payload,
             FrameworkOwnership = null,
-            Ownership = WorkspaceOwnershipRead.Absent(Path.Combine(root, ".agents", "open-forge.lock.json")),
+            Ownership = ownership,
             IntendedExtensions = Extensions(),
             Topology = topology,
             Facts = new ExtensionInstallResultFacts

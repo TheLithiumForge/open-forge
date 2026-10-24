@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
@@ -6,30 +7,30 @@ using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
-using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
 internal static class RepairContinuationReader
 {
-    internal static async ValueTask<bool> NeedsIndexAsync(CliWorkspace workspace, RouteDoctorView routes, CancellationToken token)
+    internal static bool NeedsIndex(DoctorObservation observation, CancellationToken token)
     {
+        var routes = observation.Routes;
+        if (routes.Catalogue is null || observation.LayoutRead?.Layout is not { } layout) return false;
+        var workspace = layout.Workspace;
         var paths = new PhysicalPathResolver();
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
+        var ownership = observation.LayoutRead.Ownership;
+        var settings = observation.LayoutRead.Settings;
         if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete)
             || settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete)) return false;
         var roots = routes.Routes.Topology.LoaderRootPaths.ToImmutableArray();
         var policy = new RoutedMetadataCompletionPolicy();
         var context = new RoutedMetadataPolicyContext
         {
+            Layout = layout,
             Settings = settings.Document,
             Ownership = ownership.Document,
         };

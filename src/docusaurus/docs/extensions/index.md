@@ -65,7 +65,7 @@ Project Documents and Planning also work together. Decisions record changes, and
 
 ## Where their files land
 
-Every package installs into the same `.agents/` tree as the Framework. Here's where each kind of file goes, and what it means there:
+Package content follows the Framework’s selected main root, with native Skills and workflow recipes fixed at `.agents/skills`. This table shows installed paths for the default `.agents` layout. See [installed path mapping](/guides/extensions#installed-paths) for custom roots.
 
 | Kind of file    | Lands in                                            | What it is                                                                                                             |
 | --------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |

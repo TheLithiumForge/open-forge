@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
@@ -51,6 +52,8 @@ internal sealed record RenamePathResolution(
 
 internal sealed record RenameEvidenceFacts
 {
+    public required WorkspaceLayout? Layout { get; init; }
+    public string? UnavailableCause { get; init; }
     public required ImmutableArray<RenameCurrentCandidate> Candidates { get; init; }
     public required ImmutableArray<RenameMissingPath> MissingPaths { get; init; }
     public required ImmutableArray<RenameRecordedIdentity> OldIdentities { get; init; }

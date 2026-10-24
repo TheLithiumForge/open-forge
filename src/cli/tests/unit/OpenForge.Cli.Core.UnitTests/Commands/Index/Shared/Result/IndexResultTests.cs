@@ -232,7 +232,7 @@ public sealed class IndexResultTests
             findings: [IndexTestData.Finding(IndexFindingCode.RecoveryArtifactRetained)],
             recovery: new IndexRecovery(IndexRecoveryState.Retained, IndexTestData.RecoveryPath("invalid-dry-run.zip")),
             mode: IndexMode.DryRun));
-        Assert.Throws<ArgumentException>(() => new IndexLogicalSource(
+        Assert.Throws<ArgumentException>(() => new IndexLogicalSource(IndexTestData.Layout(),
             "wrong-id",
             ".agents/memory/_memory.md",
             IndexLogicalSourceScope.Rooted));
@@ -291,7 +291,7 @@ public sealed class IndexResultTests
     {
         var source = IndexTestData.Source();
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexLogicalSource(
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexLogicalSource(IndexTestData.Layout(),
             source.Id,
             source.Path,
             (IndexLogicalSourceScope)int.MaxValue));

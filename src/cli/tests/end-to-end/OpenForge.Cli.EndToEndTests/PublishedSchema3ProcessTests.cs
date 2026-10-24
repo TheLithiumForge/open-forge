@@ -1,11 +1,47 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedSchema3ProcessTests
 {
+    private const string CustomRoot = "handbook/context";
+
+    [Fact(DisplayName = "Published Install and Status retain schema three while exposing an authored custom layout")]
+    [Trait("Feature", "cli-serialization"), Trait("Evidence", "EndToEnd")]
+    public async Task CustomLayoutSurvivesInstallAndStatus()
+    {
+        using var workspace = PublishedInstallWorkspace.Create(CustomRoot);
+        workspace.SeedSettings($$"""
+            {"{{PublishedTokens.Settings.SchemaVersionProperty}}":{{PublishedTokens.Settings.SchemaVersion}},"{{PublishedTokens.Settings.MainRootProperty}}":"{{CustomRoot}}"}
+            """);
+        var target = PublishedExecutableTarget.Discover();
+        var loader = CustomRoot + "/" + PublishedTokens.Layout.LoaderFileName;
+        var installed = await PublishedProcessTestSupport.RunAsync(target, workspace.Path,
+            [PublishedTokens.Install.Command, PublishedTokens.Install.Automatic, PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat], workspace.ProcessEnvironment);
+        Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, installed.ExitCode);
+        Assert.Empty(installed.StandardError);
+        Assert.True(File.Exists(workspace.Combine(loader)));
+        var settingsBytes = File.ReadAllBytes(workspace.Combine(PublishedTokens.Settings.RelativePath));
+        var loaderBytes = File.ReadAllBytes(workspace.Combine(loader));
+        var observed = await PublishedProcessTestSupport.RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotState,
+            [PublishedTokens.Status.Command, PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat], workspace.ProcessEnvironment);
+        Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, observed.ExitCode);
+        Assert.Empty(observed.StandardError);
+        Assert.Equal(settingsBytes, File.ReadAllBytes(workspace.Combine(PublishedTokens.Settings.RelativePath)));
+        Assert.Equal(loaderBytes, File.ReadAllBytes(workspace.Combine(loader)));
+        foreach (var result in new[] { installed, observed })
+        {
+            using var document = JsonDocument.Parse(result.StandardOutput);
+            Assert.Equal(PublishedTokens.Json.EnvelopeSchemaVersion, document.RootElement.GetProperty(PublishedTokens.Json.SchemaVersion).GetInt32());
+            var layout = document.RootElement.GetProperty(PublishedTokens.Json.Data).GetProperty(PublishedTokens.LayoutData.Layout);
+            Assert.Equal(CustomRoot, layout.GetProperty(PublishedTokens.LayoutData.MainRoot).GetString());
+            Assert.Equal(loader, layout.GetProperty(PublishedTokens.LayoutData.LoaderPath).GetString());
+        }
+    }
+
     [Theory(DisplayName = "Every published command preserves its unavailable-workspace result across formats and detail levels"),
      Trait("Feature", "cli-serialization"), Trait("Evidence", "EndToEnd")]
     [InlineData("install", 5, "blocked")]
@@ -138,7 +174,7 @@ public sealed class PublishedSchema3ProcessTests
         Assert.Equal(
             ["schemaVersion", "command", "status", "detail", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "data", "recovery", "next"],
             root.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(PublishedTokens.Json.EnvelopeSchemaVersion, root.GetProperty(PublishedTokens.Json.SchemaVersion).GetInt32());
         Assert.Equal(command, root.GetProperty("command").GetString());
         Assert.Equal(status, root.GetProperty("status").GetString());
         Assert.Equal(detail, root.GetProperty("detail").GetString());

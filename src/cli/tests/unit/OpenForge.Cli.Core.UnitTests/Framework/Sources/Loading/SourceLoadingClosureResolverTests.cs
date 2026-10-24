@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
@@ -572,6 +575,7 @@ public sealed class SourceLoadingClosureResolverTests
         bool workingPathsSupplied = false)
         => new SourceLoadingClosureResolver().Resolve(new SourceLoadingClosureRequest
         {
+            Layout = WorkspaceLayout.Create(SourceInventoryTestData.Workspace(), WorkspaceLayout.DefaultMainRoot),
             WorkspaceEntryPath = "AGENTS.md",
             Sources = sources,
             LoaderRootPaths = loaderRootPaths,

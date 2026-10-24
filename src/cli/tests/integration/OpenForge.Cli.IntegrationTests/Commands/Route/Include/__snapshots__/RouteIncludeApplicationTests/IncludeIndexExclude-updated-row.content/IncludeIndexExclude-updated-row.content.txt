@@ -1,0 +1,1 @@
+- [New guide](../guide.md) - #LoadNow #Docs - applies to `src/**`

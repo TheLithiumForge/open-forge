@@ -22,14 +22,14 @@ internal static class LibraryMutationPlanningPolicy
     {
         ArgumentNullException.ThrowIfNull(facts);
         var workspace = facts.Request.Workspace;
-        if (!facts.IsComplete
+        if (facts.Request.Layout is null || !facts.IsComplete
             || facts.ConsumerRoot is null
             || facts.Ancestors.Length != facts.Request.RequiredAncestorPaths.Length)
         {
             return Incomplete("The Library consumer-directory boundary was not observed completely.");
         }
 
-        var rootPath = Path.Combine(workspace.LexicalRoot, ".agents");
+        var rootPath = Path.Combine(workspace.LexicalRoot, facts.Request.Layout.MainRoot.Replace('/', Path.DirectorySeparatorChar));
         var root = EvaluateDirectory(facts.ConsumerRoot, rootPath, allowMissingConsumerRoot);
         if (root.State != LibraryPlanState.Complete)
         {
@@ -118,7 +118,7 @@ internal static class LibraryMutationPlanningPolicy
             for (var length = 1; length < segments.Length; length++)
             {
                 var ancestor = string.Join('/', segments.AsSpan(0, length).ToArray());
-                if (ancestor != WorkspaceSettingsDefinitions.DirectoryName)
+                if (ancestor != facts.Request.Layout?.MainRoot)
                 {
                     required.Add(ancestor);
                 }

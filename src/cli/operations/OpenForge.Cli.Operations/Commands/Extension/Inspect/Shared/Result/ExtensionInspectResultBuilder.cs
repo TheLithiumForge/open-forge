@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
 
@@ -17,11 +18,13 @@ internal sealed class ExtensionInspectResultBuilder(ExtensionInspectComparisonBu
     internal ExtensionInspectResult Build(
         ExtensionInspectRequest request,
         ExtensionSourceReadResult source,
-        WorkspaceOwnershipRead lifecycle,
-        IReadOnlyList<ExtensionInspectCurrentPath> currentSnapshot,
-        FrontmatterForm? form)
+        WorkspaceLayoutRead observation,
+        IReadOnlyList<ExtensionInspectCurrentPath> currentSnapshot)
     {
-        lifecycle = ExtensionInspectInstalledClosureReader.ReadOwnership(lifecycle);
+        var lifecycle = ExtensionInspectInstalledClosureReader.ReadOwnership(observation.Ownership);
+        var layout = observation.Layout;
+        FrontmatterForm? form = layout is null ? null : observation.Settings.Document.Frontmatter;
+        source = ExtensionInspectPackageLifecycleBuilder.MapDestinations(source, layout);
         var subjectId = request.StableId;
         var findings = new List<ExtensionInspectFinding>();
         var subjectPackageFacts = ExtensionInspectSubjectPackageBuilder.Build(
@@ -38,6 +41,7 @@ internal sealed class ExtensionInspectResultBuilder(ExtensionInspectComparisonBu
         var dependencyPathFacts = ExtensionInspectDependencyPathBuilder.Build(
             new ExtensionInspectDependencyPathInput
             {
+                Layout = layout,
                 Source = source,
                 AvailablePackage = availablePackage,
                 InstalledPackages = lifecycle.Document.Extensions,
@@ -54,6 +58,7 @@ internal sealed class ExtensionInspectResultBuilder(ExtensionInspectComparisonBu
         var comparisonFacts = _comparisonBuilder.Build(
             new ExtensionInspectComparisonBuildInput
             {
+                Layout = layout,
                 Ownership = lifecycle,
                 Frontmatter = form,
                 InstalledPackage = lifecyclePackage,

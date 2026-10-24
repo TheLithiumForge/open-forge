@@ -1,5 +1,7 @@
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
@@ -13,10 +15,10 @@ public sealed class SourceFormClassifierTests
 
         static long Allocated(string path)
         {
-            for (var index = 0; index < 100; index++) Assert.True(SourceFormClassifier.Matches(path, SourceDocumentForm.Markdown));
+            for (var index = 0; index < 100; index++) Assert.True(SourceFormClassifier.Matches(DefaultWorkspaceLayout, path, SourceDocumentForm.Markdown));
             var before = GC.GetAllocatedBytesForCurrentThread();
             var classified = 0;
-            for (var index = 0; index < 1000; index++) if (SourceFormClassifier.Matches(path, SourceDocumentForm.Markdown)) classified++;
+            for (var index = 0; index < 1000; index++) if (SourceFormClassifier.Matches(DefaultWorkspaceLayout, path, SourceDocumentForm.Markdown)) classified++;
             var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
             Assert.Equal(1000, classified);
             return allocated;
@@ -39,7 +41,7 @@ public sealed class SourceFormClassifierTests
         string canonicalPath,
         string expectedForm)
     {
-        var classified = SourceFormClassifier.TryClassify(canonicalPath, out var form);
+        var classified = SourceFormClassifier.TryClassify(DefaultWorkspaceLayout, canonicalPath, out var form);
 
         Assert.True(classified);
         Assert.Equal(Enum.Parse<SourceDocumentForm>(expectedForm), form);
@@ -58,7 +60,7 @@ public sealed class SourceFormClassifierTests
         string formName)
     {
         Assert.False(SourceFormClassifier.Matches(
-            canonicalPath,
+DefaultWorkspaceLayout, canonicalPath,
             Enum.Parse<SourceDocumentForm>(formName)));
     }
 
@@ -93,4 +95,11 @@ public sealed class SourceFormClassifierTests
     {
         Assert.Equal(expected, SourceFormClassifier.IsCompatibilityFileName(fileName));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(SourceFormClassifierTests)),
+                Path.GetFullPath(nameof(SourceFormClassifierTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

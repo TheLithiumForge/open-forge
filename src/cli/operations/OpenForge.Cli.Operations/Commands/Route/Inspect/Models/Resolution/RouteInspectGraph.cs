@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 
@@ -9,6 +10,7 @@ internal sealed class RouteInspectGraph
     private readonly SourceRouteFacts _routeFacts;
 
     internal RouteInspectGraph(
+        WorkspaceLayout layout,
         RouteSourceProjectionSet projectionSet,
         SourceRouteFacts routeFacts)
     {
@@ -53,11 +55,14 @@ internal sealed class RouteInspectGraph
             }
         }
 
+        Layout = layout;
         _projectionSet = projectionSet;
         _routeFacts = routeFacts;
     }
 
     internal RouteSourceProjectionSet ProjectionSet => _projectionSet;
+
+    internal WorkspaceLayout Layout { get; }
 
     internal SourceRouteFacts RouteFacts => _routeFacts;
 }

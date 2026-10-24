@@ -15,6 +15,11 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
@@ -35,8 +40,13 @@ internal static partial class RouteUpdateTestData
         var metadata = frontmatter is null
             ? metadataParser.Parse(markdown, FrameworkMetadataReadScope.RoutedSource)
             : metadataParser.Read(frontmatter, FrameworkMetadataReadScope.RoutedSource);
+        var settings = WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceSettingsDefinitions.RelativePath));
+        var ownership = WorkspaceOwnershipRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceOwnershipDefinitions.RelativePath));
         return new RouteUpdateObservation
         {
+            LayoutRead = new WorkspaceLayoutRead(WorkspaceLayoutReadState.Ready, settings, ownership,
+                WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [],
+                [FileExpectation.Missing(settings.LogicalPath), FileExpectation.Missing(ownership.LogicalPath)]),
             Request = Request(
                 patch,
                 templateReference,
@@ -150,7 +160,7 @@ internal static partial class RouteUpdateTestData
         CliWorkspace workspace,
         SourceLogicalSource source)
         => new(
-            workspace: workspace,
+layout: WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot),
             candidates: [Candidate(source)],
             sources: [source],
             issues: [],

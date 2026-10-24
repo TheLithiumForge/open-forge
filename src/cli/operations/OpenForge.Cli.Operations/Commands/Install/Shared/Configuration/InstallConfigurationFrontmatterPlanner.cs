@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
@@ -40,7 +43,7 @@ internal sealed class InstallConfigurationFrontmatterPlanner(PhysicalPathResolve
             .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!EligiblePath(path) || !FrameworkPayloadSelection.IncludesPath(path, input.IntendedSettings)
+            if (!EligiblePath(input.Layout, path) || !FrameworkPayloadSelection.IncludesPath(input.Layout, path, input.IntendedSettings)
                 || ownership.Libraries.Any(library => IsLibraryPath(path, library))) continue;
             var frameworkOwns = ownership.Framework?.Paths.Contains(path, StringComparer.Ordinal) == true;
             var extensionOwners = ownership.Extensions.Where(owner => owner.Paths.Contains(path, StringComparer.Ordinal)).ToArray();
@@ -53,25 +56,27 @@ internal sealed class InstallConfigurationFrontmatterPlanner(PhysicalPathResolve
             var sourcePath = path;
             if (frameworkOwns)
             {
-                var asset = FrameworkSourceAlignment.ReadAsset(input.Workspace, path, input.Payload);
-                if (asset is null || !FrameworkPayloadSelection.IncludesPath(asset.Path, input.IntendedSettings)) continue;
+                var asset = FrameworkSourceAlignment.ReadAsset(input.Layout, path, input.Payload);
+                if (asset is null || !FrameworkPayloadSelection.IncludesPath(input.Layout, asset.Path, input.IntendedSettings)) continue;
                 sourcePath = asset.Path;
                 canonical = asset.Bytes.AsMemory();
                 selected = input.RenderedPayload[asset.Path];
                 if (!otherPayload.TryGetValue(asset.Path, out other))
                 {
-                    other = InstallPayloadRendering.Render(path, canonical.Value, otherForm);
+                    other = InstallPayloadRendering.Render(input.Layout, asset.Path, canonical.Value, otherForm);
                     otherPayload.Add(asset.Path, other);
                 }
             }
             else
             {
-                canonical = ReadExtensionBytes(path, extensionOwners, extensions);
+                var file = ReadExtensionFile(input.Layout, path, extensionOwners, extensions);
+                canonical = file?.Bytes;
+                sourcePath = file?.TargetPath ?? path;
             }
             if (canonical is { } sourceBytes)
             {
-                selected ??= InstallPayloadRendering.Render(path, sourceBytes, input.Selection.Form);
-                other ??= InstallPayloadRendering.Render(path, sourceBytes, otherForm);
+                selected ??= InstallPayloadRendering.Render(input.Layout, sourcePath, sourceBytes, input.Selection.Form);
+                other ??= InstallPayloadRendering.Render(input.Layout, sourcePath, sourceBytes, otherForm);
                 if (selected.AsSpan().SequenceEqual(other)) continue;
             }
             var read = await _reader.ReadAsync(input.Workspace, path, cancellationToken).ConfigureAwait(false);
@@ -102,9 +107,10 @@ internal sealed class InstallConfigurationFrontmatterPlanner(PhysicalPathResolve
         return new() { Replacements = replacements.ToImmutable(), Kept = kept.ToImmutable(), Observations = observations.ToImmutable() };
     }
 
-    private static bool EligiblePath(string path)
-        => path.StartsWith(".agents/", StringComparison.Ordinal) && path.EndsWith(".md", StringComparison.Ordinal)
-            && !path.EndsWith("/SKILL.md", StringComparison.Ordinal) && !path.EndsWith(".overwrite.md", StringComparison.Ordinal);
+    private static bool EligiblePath(WorkspaceLayout layout, string path)
+        => SourceLogicalPath.IsPrimaryMarkdownSource(new SourceContentRoots(layout), path)
+            && !path.EndsWith("/" + SourceFormClassifier.NativeSkillFileName, StringComparison.Ordinal)
+            && !SourceLogicalPath.IsPrimaryOverwriteSource(new SourceContentRoots(layout), path);
 
     private static bool IsLibraryPath(string path, LibraryOwnership library)
     {
@@ -113,21 +119,21 @@ internal sealed class InstallConfigurationFrontmatterPlanner(PhysicalPathResolve
         return key == root || key.StartsWith(root + "/", StringComparison.Ordinal);
     }
 
-    private static ReadOnlyMemory<byte>? ReadExtensionBytes(string path, IReadOnlyList<ExtensionOwnership> owners,
+    private static ExtensionPackageFileFact? ReadExtensionFile(WorkspaceLayout layout, string path, IReadOnlyList<ExtensionOwnership> owners,
         IReadOnlyList<ExtensionSourceObservation> sources)
     {
-        ReadOnlyMemory<byte>? canonical = null;
+        ExtensionPackageFileFact? canonical = null;
         foreach (var owner in owners)
         {
             var matches = sources.Where(source => source.RecordedSource == owner.Source && source.Read.State == ExtensionSourceReadState.Complete).ToArray();
             if (matches.Length != 1) return null;
             var packages = matches[0].Read.Packages.Where(package => package.Id == owner.Id).ToArray();
             if (packages.Length != 1) return null;
-            var files = packages[0].Payload.Where(file => file.TargetPath == path).ToArray();
+            var files = packages[0].Payload.Where(file => file.TargetPath is { } target && layout.MapPayloadPath(target) == path).ToArray();
             if (files.Length != 1 || files[0].State != ExtensionPackageFileReadState.Available || files[0].Bytes is not { } bytes) return null;
-            if (canonical is { } previous && !previous.Span.SequenceEqual(bytes.Span))
+            if (canonical?.Bytes is { } previous && !previous.Span.SequenceEqual(bytes.Span))
                 throw new InvalidDataException($"Extension owners disagree about conversion source '{path}'.");
-            canonical = bytes;
+            canonical = files[0];
         }
         return canonical;
     }

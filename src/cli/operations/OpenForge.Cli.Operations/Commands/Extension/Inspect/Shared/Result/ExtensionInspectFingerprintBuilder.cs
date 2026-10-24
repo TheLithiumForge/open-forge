@@ -1,4 +1,6 @@
 using System.Security.Cryptography;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
@@ -15,6 +17,7 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
     private readonly MarkdownFingerprintReader _fingerprintReader = fingerprintReader;
 
     internal IReadOnlyList<ExtensionInspectFingerprintFact> ReadCurrentFingerprints(
+        WorkspaceLayout layout,
         IReadOnlyList<ExtensionInspectCurrentPath> paths,
         ICollection<ExtensionInspectFinding> findings,
         IDictionary<string, MarkdownFingerprintFacts> markdownFacts)
@@ -34,6 +37,7 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
             }
 
             var fingerprint = ReadOperationFingerprint(
+                layout,
                 path.Path,
                 bytes,
                 ExtensionInspectFingerprintOrigin.OperationTimeCurrent,
@@ -50,6 +54,7 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
     }
 
     internal IReadOnlyList<ExtensionInspectFingerprintFact> ReadIntendedFingerprints(
+        WorkspaceLayout layout,
         IReadOnlyList<ExtensionInspectDeclaredPathProjection> paths,
         FrontmatterForm form,
         ICollection<ExtensionInspectFinding> findings,
@@ -58,8 +63,8 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
         var values = new List<ExtensionInspectFingerprintFact>();
         foreach (var path in paths.Where(path => path.State == ExtensionInspectDeclaredPathState.Available))
         {
-            if (path.HasConflict
-                || path.Files.FirstOrDefault(file => file.State == ExtensionPackageFileReadState.Available)?.Bytes is not { } bytes)
+            var file = path.Files.FirstOrDefault(file => file.State == ExtensionPackageFileReadState.Available);
+            if (path.HasConflict || file?.Bytes is not { } bytes)
             {
                 ExtensionInspectFindingPolicy.Add(findings, new ExtensionInspectFindingInput
                 {
@@ -72,7 +77,9 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
                 continue;
             }
 
-            var rendered = WorkspacePayloadRenderer.Render(path.Path, bytes, form);
+            var packagePath = file.Path.StartsWith(ExtensionPackageLayout.ContentPathPrefix, StringComparison.Ordinal)
+                ? file.Path[ExtensionPackageLayout.ContentPathPrefix.Length..] : file.Path;
+            var rendered = WorkspacePayloadRenderer.Render(layout, packagePath, bytes, form);
             if (rendered.Bytes is not { } intendedBytes)
             {
                 ExtensionInspectFindingPolicy.Add(findings, new ExtensionInspectFindingInput
@@ -88,6 +95,7 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
             {
                 Path = path.Path,
                 Fingerprint = ReadOperationFingerprint(
+                    layout,
                     path.Path,
                     intendedBytes,
                     ExtensionInspectFingerprintOrigin.OperationTimeIntended,
@@ -100,13 +108,14 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
     }
 
     private ExtensionInspectFingerprint ReadOperationFingerprint(
+        WorkspaceLayout layout,
         string path,
         ReadOnlyMemory<byte> bytes,
         ExtensionInspectFingerprintOrigin origin,
         ICollection<ExtensionInspectFinding> findings,
         IDictionary<string, MarkdownFingerprintFacts> markdownFacts)
     {
-        if (ExtensionInspectFingerprintPolicy.ReadKind(path) == ExtensionInspectFingerprintKind.ExactBytes)
+        if (ExtensionInspectFingerprintPolicy.ReadKind(layout, path) == ExtensionInspectFingerprintKind.ExactBytes)
         {
             return new ExtensionInspectFingerprint
             {

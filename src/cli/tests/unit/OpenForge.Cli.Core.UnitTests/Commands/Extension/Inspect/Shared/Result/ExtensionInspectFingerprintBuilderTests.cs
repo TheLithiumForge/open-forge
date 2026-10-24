@@ -1,3 +1,8 @@
+using OpenForge.Cli.Core.Commands.Extension.Inspect;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Shell.Definitions;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
@@ -13,21 +18,25 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Inspect.Shared.Result;
 [Trait("Feature", "extension-inspect-fingerprint"), Trait("Evidence", "Unit")]
 public sealed class ExtensionInspectFingerprintBuilderTests
 {
-    private const string OpaquePath = ".agents/guidance/toolkit-support.bin";
+    private const string PackageId = "toolkit";
+    private const string OpaqueFile = "toolkit-support.bin";
+    private const string ToolkitFile = PackageId + SourceFormClassifier.MarkdownExtension;
+    private static WorkspaceLayout Layout => WorkspaceLayout.Create(new(AppContext.BaseDirectory, AppContext.BaseDirectory, CliWorkspaceSelectionMethod.ExplicitWorkspace), WorkspaceLayout.DefaultMainRoot);
+    private const string OpaquePath = WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceCategoryNames.Guidance + "/" + OpaqueFile;
     private const string OpaqueSha256 = "c4cbb7cbfda0feb8dde8cd2e8abfb0771fc2c04fe50720acc3b83971937b8ac3";
-    private const string UnsupportedMarkdownPath = ".agents/toolkit.md";
+    private const string UnsupportedMarkdownPath = WorkspaceLayout.DefaultMainRoot + "/" + ToolkitFile;
     private const string UnsupportedMarkdownSha256 = "1320b5dc13aa91dbac6eabc346cb655592aef8244a8ed04b8c4b3bdd59b8af4c";
 
     [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Extension Inspect path-kind policy uses semantic Markdown only for implicit Markdown destinations"), Trait("Feature", "extension-inspect-fingerprint"), Trait("Evidence", "Unit")]
-    [InlineData(".agents/guidance/toolkit.md", (int)ExtensionInspectFingerprintKind.Semantic)]
-    [InlineData(".agents/guidance/toolkit.markdown", (int)ExtensionInspectFingerprintKind.Semantic)]
-    [InlineData(".agents/guidance/toolkit-support.bin", (int)ExtensionInspectFingerprintKind.ExactBytes)]
-    [InlineData("package/toolkit.md", (int)ExtensionInspectFingerprintKind.ExactBytes)]
+    [InlineData(WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceCategoryNames.Guidance + "/" + ToolkitFile, (int)ExtensionInspectFingerprintKind.Semantic)]
+    [InlineData(WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceCategoryNames.Guidance + "/" + PackageId + ExtensionInspectFingerprintPolicy.LongMarkdownExtension, (int)ExtensionInspectFingerprintKind.Semantic)]
+    [InlineData(WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceCategoryNames.Guidance + "/" + OpaqueFile, (int)ExtensionInspectFingerprintKind.ExactBytes)]
+    [InlineData("package/" + ToolkitFile, (int)ExtensionInspectFingerprintKind.ExactBytes)]
     public void PathKindPolicyUsesOneSharedDecision(
         string path,
         int expectedValue)
-        => Assert.Equal((ExtensionInspectFingerprintKind)expectedValue, ExtensionInspectFingerprintPolicy.ReadKind(path));
+        => Assert.Equal((ExtensionInspectFingerprintKind)expectedValue, ExtensionInspectFingerprintPolicy.ReadKind(Layout, path));
 
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Inspect retains opaque exact-byte origins and hashes without a fallback finding"), Trait("Feature", "extension-inspect-fingerprint"), Trait("Evidence", "Unit")]
@@ -38,12 +47,12 @@ public sealed class ExtensionInspectFingerprintBuilderTests
         var markdownFacts = new Dictionary<string, OpenForge.Cli.Core.Framework.Documents.Markdown.Models.MarkdownFingerprintFacts>(StringComparer.Ordinal);
         var builder = new ExtensionInspectFingerprintBuilder(new MarkdownFingerprintReader());
 
-        var current = builder.ReadCurrentFingerprints(
+        var current = builder.ReadCurrentFingerprints(Layout,
             [CurrentPath(OpaquePath, bytes, OpaqueSha256)],
             findings,
             markdownFacts);
-        var intended = builder.ReadIntendedFingerprints(
-            [IntendedPath(OpaquePath, "toolkit-support.bin", bytes, OpaqueSha256)],
+        var intended = builder.ReadIntendedFingerprints(Layout,
+            [IntendedPath(OpaquePath, OpaqueFile, bytes, OpaqueSha256)],
             FrontmatterForm.Scoped,
             findings,
             markdownFacts);
@@ -52,7 +61,7 @@ public sealed class ExtensionInspectFingerprintBuilderTests
         var intendedFingerprint = Assert.Single(intended).Fingerprint!;
         Assert.Equal(ExtensionInspectFingerprintKind.ExactBytes, currentFingerprint.Kind);
         Assert.Equal(ExtensionInspectFingerprintKind.ExactBytes, intendedFingerprint.Kind);
-        Assert.Equal("open-forge-markdown-v1", currentFingerprint.Policy);
+        Assert.Equal(ExtensionInspectDefinitions.FingerprintPolicy, currentFingerprint.Policy);
         Assert.Equal(OpaqueSha256, currentFingerprint.Sha256);
         Assert.Equal(OpaqueSha256, intendedFingerprint.Sha256);
         Assert.Equal(ExtensionInspectFingerprintOrigin.OperationTimeCurrent, currentFingerprint.Origin);
@@ -69,7 +78,7 @@ public sealed class ExtensionInspectFingerprintBuilderTests
         var currentFingerprint = new ExtensionInspectFingerprint
         {
             Kind = ExtensionInspectFingerprintKind.ExactBytes,
-            Policy = "open-forge-markdown-v1",
+            Policy = ExtensionInspectDefinitions.FingerprintPolicy,
             Sha256 = OpaqueSha256,
             Origin = ExtensionInspectFingerprintOrigin.OperationTimeCurrent,
         };
@@ -78,15 +87,16 @@ public sealed class ExtensionInspectFingerprintBuilderTests
             Origin = ExtensionInspectFingerprintOrigin.OperationTimeIntended,
         };
         var findings = new List<ExtensionInspectFinding>();
-        var package = Package(OpaquePath, "toolkit-support.bin", bytes, OpaqueSha256);
+        var package = Package(OpaquePath, OpaqueFile, bytes, OpaqueSha256);
         var comparison = ExtensionInspectPathComparisonBuilder.Build(
             new ExtensionInspectPathComparisonInput
             {
                 ComparisonFacts = new ExtensionInspectComparisonInput
                 {
+                    Layout = Layout,
                     Frontmatter = FrontmatterForm.Scoped,
                     CurrentPaths = [CurrentPath(OpaquePath, bytes, OpaqueSha256)],
-                    Ownership = WorkspaceOwnershipRead.Absent(Path.GetFullPath(".agents/open-forge.lock.json")),
+                    Ownership = WorkspaceOwnershipRead.Absent(Path.GetFullPath(WorkspaceOwnershipDefinitions.RelativePath)),
                     InstalledPackage = null,
                     AvailablePackage = package,
                     AvailableClosure = [package],
@@ -119,7 +129,7 @@ public sealed class ExtensionInspectFingerprintBuilderTests
                 InstalledClosure =
                 [
                     new ExtensionOwnership(
-                        "toolkit",
+                        PackageId,
                         "1.0.0",
                         "catalogue",
                         ImmutableArray<string>.Empty,
@@ -142,12 +152,12 @@ public sealed class ExtensionInspectFingerprintBuilderTests
         var markdownFacts = new Dictionary<string, OpenForge.Cli.Core.Framework.Documents.Markdown.Models.MarkdownFingerprintFacts>(StringComparer.Ordinal);
         var builder = new ExtensionInspectFingerprintBuilder(new MarkdownFingerprintReader());
 
-        builder.ReadCurrentFingerprints(
+        builder.ReadCurrentFingerprints(Layout,
             [CurrentPath(UnsupportedMarkdownPath, bytes, UnsupportedMarkdownSha256)],
             findings,
             markdownFacts);
-        builder.ReadIntendedFingerprints(
-            [IntendedPath(UnsupportedMarkdownPath, "toolkit.md", bytes, UnsupportedMarkdownSha256)],
+        builder.ReadIntendedFingerprints(Layout,
+            [IntendedPath(UnsupportedMarkdownPath, ToolkitFile, bytes, UnsupportedMarkdownSha256)],
             FrontmatterForm.Scoped,
             findings,
             markdownFacts);
@@ -183,7 +193,7 @@ public sealed class ExtensionInspectFingerprintBuilderTests
             Path = path,
             SourcePath = sourcePath,
             State = ExtensionInspectDeclaredPathState.Available,
-            Owners = ["toolkit"],
+            Owners = [PackageId],
             Files =
             [
                 ExtensionPackageFileFact.Create(new ExtensionPackageFileSnapshot
@@ -207,7 +217,7 @@ public sealed class ExtensionInspectFingerprintBuilderTests
         => ExtensionPackageFact.Create(
             new ExtensionPackageManifestFact
             {
-                Id = "toolkit",
+                Id = PackageId,
                 Name = "Toolkit",
                 Description = "Guidance tools.",
                 Version = "1.0.0",

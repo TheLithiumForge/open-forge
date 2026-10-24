@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Recovery;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Ownership.Models;
@@ -110,10 +111,8 @@ internal sealed class ExtensionUpdatePlanner
         RecoveryBundlePreparation? allowedRecovery,
         CancellationToken cancellationToken)
     {
-        var settingsObservation = await WorkspaceSettingsReader.ReadAsync(
-            _physicalPathResolver,
-            request.Workspace,
-            cancellationToken).ConfigureAwait(false);
+        var layoutRead = await new WorkspaceLayoutReader(_physicalPathResolver).ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var settingsObservation = layoutRead.Settings;
         if (settingsObservation.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
         {
             return Stop(
@@ -126,13 +125,15 @@ internal sealed class ExtensionUpdatePlanner
                     settingsObservation.LogicalPath));
         }
 
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(
-            _physicalPathResolver,
-            request.Workspace,
-            cancellationToken).ConfigureAwait(false);
+        var ownership = layoutRead.Ownership;
 
         var sharing = NavigationSharingReader.FromOwnership(ownership);
         if (!sharing.IsAvailable) return Stop(request, ExtensionUpdateFindingCode.GeneratedRegionUnsafe, sharing.Cause);
+
+        if (layoutRead.Layout is not { } layout)
+            return Stop(request, ExtensionUpdateFindingCode.FrameworkUnavailable, layoutRead.Issues.First().Cause);
+        if (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+            return Stop(request, ExtensionUpdateFindingCode.FrameworkUnsafe, layoutRead.Issues.First().Cause);
 
         if (ReadUninterpretablePackage(ownership.Document.Extensions) is { } affectedPackage)
         {
@@ -175,7 +176,10 @@ internal sealed class ExtensionUpdatePlanner
                     ? ExtensionUpdateFindingCode.RecoveryUnavailable
                     : ExtensionUpdateFindingCode.RecoveryConflict,
                 recovery.Cause ?? "The current operation's recovery preparation is missing or changed.",
-                allowedRecovery?.BundlePath));
+                allowedRecovery?.BundlePath)
+            {
+                ContextFolder = layout.MainRoot,
+            });
         }
 
         var source = await _sourceReader.ReadAsync(
@@ -407,6 +411,7 @@ internal sealed class ExtensionUpdatePlanner
         }
 
         var (packages, excludedPayloadPaths) = FilterExcludedPayload(
+            layout,
             closure.Packages,
             settingsObservation.Document);
         policyFindings.AddRange(excludedPayloadPaths.Select(path => new ExtensionUpdateFinding(
@@ -449,6 +454,7 @@ internal sealed class ExtensionUpdatePlanner
         var topologyBuild = await BuildTopologyAsync(
             new TopologyBuildInput
             {
+                Layout = layout,
                 Request = request,
                 Packages = packages,
                 Ownership = ownership.Document,
@@ -473,7 +479,7 @@ internal sealed class ExtensionUpdatePlanner
             return Stop(request, ExtensionUpdateFindingCode.FrameworkUnavailable,
                 payloadRead.Cause ?? "The running Framework inventory is unavailable.", selection, SourceFact(source));
         }
-        var container = Path.Combine(request.Workspace.LexicalRoot, ".agents");
+        var container = Path.Combine(request.Workspace.LexicalRoot, layout.MainRoot.Replace('/', Path.DirectorySeparatorChar));
         var containerBoundary = _physicalPathResolver.ResolveCandidate(request.Workspace.LexicalRoot,
             request.Workspace.PhysicalRoot, container);
         if (containerBoundary.State != PhysicalPathState.Contained
@@ -481,12 +487,13 @@ internal sealed class ExtensionUpdatePlanner
             || (File.GetAttributes(container) & FileAttributes.ReparsePoint) != 0)
         {
             return Stop(request, ExtensionUpdateFindingCode.FrameworkUnsafe,
-                "The .agents Framework container is not a contained ordinary directory.", selection, SourceFact(source));
+                $"The {layout.MainRoot} Framework container is not a contained ordinary directory.", selection, SourceFact(source));
         }
 
         var reconciliation = await _reconciler.BuildAsync(
             new ExtensionUpdateReconciliationInput
             {
+                Layout = layout,
                 Request = request,
                 Packages = packages,
                 Ownership = ownership.Document,
@@ -502,6 +509,7 @@ internal sealed class ExtensionUpdatePlanner
             var admittedTopology = await BuildTopologyAsync(
                 new TopologyBuildInput
                 {
+                    Layout = layout,
                     Request = request,
                     Packages = packages,
                     Ownership = ownership.Document,
@@ -526,7 +534,7 @@ internal sealed class ExtensionUpdatePlanner
         if (reconciliation.Finding is null)
         {
             reconciliation = await _reconciler.ReprojectGeneratedAsync(
-                request,
+                layout,
                 topology,
                 reconciliation,
                 cancellationToken).ConfigureAwait(false);
@@ -617,7 +625,7 @@ internal sealed class ExtensionUpdatePlanner
         var plan = ExtensionUpdatePlan.Create(new ExtensionUpdatePlanInput
         {
             Request = request,
-            SettingsObservation = settingsObservation,
+            LayoutRead = layoutRead,
             SourceRead = source,
             SourceSignature = ReadSourceSignature(source),
             Selection = selection,
@@ -703,7 +711,7 @@ internal sealed class ExtensionUpdatePlanner
                 .Where(package => selectedIds.Contains(package.Id))
                 .SelectMany(package => package.Paths)
                 .Where(path => !intendedPaths.Contains(path)
-                    && !WorkspaceRemovals.IsPathRemoved(path, input.Settings))
+                    && !WorkspaceRemovals.IsPathRemoved(input.Layout, path, input.Settings))
                 .ToHashSet(StringComparer.Ordinal)
                 : new HashSet<string>(StringComparer.Ordinal);
             var topology = await _topologyBuilder.BuildAsync(
@@ -713,7 +721,7 @@ internal sealed class ExtensionUpdatePlanner
                     retiredPaths,
                     input.Admission,
                     input.Settings)
-                { Sharing = new SourceSharing(input.Ownership.Framework?.GitIgnoredRoutes ?? []) },
+                { Layout = input.Layout, Sharing = new SourceSharing(input.Ownership.Framework?.GitIgnoredRoutes ?? []) },
                 cancellationToken)
                 .ConfigureAwait(false);
             return new TopologyBuild(topology, Boundary: null);
@@ -811,6 +819,7 @@ internal sealed class ExtensionUpdatePlanner
 
     private static (IReadOnlyList<ExtensionPackageFact> Packages, IReadOnlyList<string> ExcludedPaths)
         FilterExcludedPayload(
+            WorkspaceLayout layout,
             IReadOnlyList<ExtensionPackageFact> packages,
             WorkspaceSettingsDocument settings)
     {
@@ -821,13 +830,13 @@ internal sealed class ExtensionUpdatePlanner
             foreach (var file in package.Payload)
             {
                 if (PortableWorkspacePath.TryNormalize(file.TargetPath, out var normalized)
-                    && WorkspaceRemovals.IsPathRemoved(normalized, settings))
+                    && WorkspaceRemovals.IsPathRemoved(layout, layout.MapPayloadPath(normalized), settings))
                 {
-                    excluded.Add(normalized);
+                    excluded.Add(layout.MapPayloadPath(normalized));
                     continue;
                 }
 
-                payload.Add(file);
+                payload.Add(file with { TargetPath = file.TargetPath is { } target ? layout.MapPayloadPath(target) : null });
             }
 
             return ExtensionPackageFact.Create(
@@ -1008,6 +1017,7 @@ internal sealed class ExtensionUpdatePlanner
 
     private sealed class TopologyBuildInput
     {
+        internal required WorkspaceLayout Layout { get; init; }
         internal required ExtensionUpdateRequest Request { get; init; }
 
         internal required IReadOnlyList<ExtensionPackageFact> Packages { get; init; }

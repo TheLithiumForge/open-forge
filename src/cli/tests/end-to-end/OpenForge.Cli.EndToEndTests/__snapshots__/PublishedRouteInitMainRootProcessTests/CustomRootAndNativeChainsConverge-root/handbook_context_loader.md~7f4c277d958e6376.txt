@@ -1,0 +1,8 @@
+# Root
+
+## Entries
+
+
+- [Draft route for skills; replace this description before relying on it for selection](../../.agents/skills/_skills.md) - #NeedsAuthoring
+- [Draft route for notes; replace this description before relying on it for selection](notes/_notes.md) - #NeedsAuthoring
+

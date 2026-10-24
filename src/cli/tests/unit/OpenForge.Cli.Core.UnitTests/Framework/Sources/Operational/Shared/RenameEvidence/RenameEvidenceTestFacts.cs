@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -36,6 +38,7 @@ internal static class RenameEvidenceTestFacts
     internal static RenameEvidenceFacts Facts(ImmutableArray<RenameCurrentCandidate> candidates, ImmutableArray<RenameRecordedIdentity> old)
         => new()
         {
+            Layout = WorkspaceLayout.Create(new CliWorkspace(Absolute(string.Empty), Absolute(string.Empty), CliWorkspaceSelectionMethod.ExplicitWorkspace), WorkspaceLayout.DefaultMainRoot),
             Candidates = candidates,
             OldIdentities = old,
             MissingPaths = old.Select(identity => new RenameMissingPath(identity.Path, FileExpectation.Missing(Absolute(identity.Path)))).DistinctBy(missing => missing.Path).ToImmutableArray(),

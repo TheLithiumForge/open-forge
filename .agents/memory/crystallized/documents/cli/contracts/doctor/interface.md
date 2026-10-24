@@ -7,6 +7,12 @@ open-forge:
 
 # Doctor Interface Contract
 
+## Workspace Layout
+
+Doctor diagnoses the selected context folder and native Skills together. It reports layout disagreements without assuming the default root.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This file is the accepted current Crystallized authority for the public `doctor`
@@ -141,7 +147,7 @@ The operation always uses these six diagnostic domains, in this order:
 
 | Order | Domain                                                   | Boundary                                                                                                                                                                                                                         |
 | ----- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1     | `workspace and entry`                                    | Establish the selected workspace, `.agents` boundary, Loader, entrypoints, source identity, parsing, reachable roots, and the Workspace Library record, every registered source-root inventory, and registered-projection facts. |
+| 1     | `workspace and entry`                                    | Establish the selected workspace, main-root boundary, Loader, entrypoints, source identity, parsing, reachable roots, and the Workspace Library record, every registered source-root inventory, and registered-projection facts. |
 | 2     | `recovery and residual state`                            | Report exact named workspace and legacy final bundles and incomplete drafts, with one semantic final-ZIP integrity check and Cleanup guidance.                                                                                               |
 | 3     | `routes, metadata, overwrites, and generated navigation` | Compare authored topology and metadata with derived route relationships and generated `Entries`.                                                                                                                                 |
 | 4     | `local references`                                       | Inspect supported authored local references, target and fragment resolution, containment, and bounded repair evidence.                                                                                                           |
@@ -252,7 +258,7 @@ A missing target uses `workspace.root-missing` with Error severity. A registered
 path with no loader row uses `workspace.detached` with Information severity.
 A registered path that Include would now reject uses `workspace.path-invalid`
 with Warning severity. This includes directories, files resolving inside
-`.agents/`, unsafe paths and files that are no longer UTF-8 text. Missing and
+the primary content locations, unsafe paths and files that are no longer UTF-8 text. Missing and
 rejected targets need a manual decision. Unlisted registrations remain informational.
 Restore or exclude missing targets and update or remove rejected registrations.
 Doctor never repairs these conditions.
@@ -336,8 +342,8 @@ does not prevent understood settings keys from taking effect.
 
 The local-reference domain admits supported Markdown source files and local
 target paths that are both lexically and physically contained by the selected
-workspace. The normal Open Forge source universe is below `.agents`. A source or
-target outside `.agents` is admitted only when it is a supported Markdown or
+workspace. The normal Open Forge source universe spans both primary content locations. A source or
+target outside the primary content locations is admitted only when it is a supported Markdown or
 contained local target within this same declared boundary. The boundary does not
 expand through a link, a Git root, a package root, or an external URL.
 
@@ -365,7 +371,7 @@ establish an emission path or a current document gate.
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `workspace.unavailable`                   | The selected workspace cannot be accessed.                                                                                                                                      | `blocked-repair`; correct the exact workspace or its access.                                                |
 | `workspace.not-directory`                 | The selected workspace value resolves to a non-directory.                                                                                                                       | `blocked-repair`; select an exact directory.                                                                |
-| `workspace.agents-missing`                | The `.agents` boundary is missing. Safe absence may be reported, while dependent domain coverage is `incomplete` or `blocked` when its checks require the boundary.             | `informational`; report the boundary and do not create it.                                                  |
+| `workspace.agents-missing`                | The main-root boundary is missing. Safe absence may be reported, while dependent domain coverage is `incomplete` or `blocked` when its checks require the boundary.             | `informational`. report the boundary and do not create it.                                                  |
 | `workspace.agents-inaccessible`           | `.agents` exists but cannot be inspected safely.                                                                                                                                | `blocked-repair`; restore access or use a valid workspace.                                                  |
 | `workspace.loader-missing`                | The required Loader is absent.                                                                                                                                                  | `blocked-repair`; restore the required Loader; do not adopt another Loader.                                 |
 | `workspace.loader-unreadable`             | The Loader exists but cannot be read.                                                                                                                                           | `blocked-repair`; restore readable evidence.                                                                |
@@ -658,7 +664,7 @@ contributor observation. No finding is synthesized without its required current
 facts.
 
 Neither legacy `open-forge.extensions.json`, package-source manifests, broad
-`.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
+primary-content recursion, payload/path/byte resemblance, nor Framework bridges may
 substitute for producer-owned facts. Static CLI composition is wiring only and
 cannot manufacture observations; dependency injection and a runtime registry
 are not observation substitutes.
@@ -1071,7 +1077,7 @@ Conformance evidence must cover:
 - The finite Workspace Library subcatalogue: safely absent records with zero
   Libraries and complete coverage without a finding; malformed or unavailable
   records,
-  invalid or aliased source roots and `.agents` boundaries, incomplete source
+  invalid or aliased source roots and primary content boundaries, incomplete source
   inventory, missing/dangling/retargeted projections, path collisions,
   unsupported proven link capability, Library/Extension collisions, and the
   safe-exact typed residual lane.

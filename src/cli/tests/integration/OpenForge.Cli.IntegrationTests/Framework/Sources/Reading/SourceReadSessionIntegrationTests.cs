@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Reading;
 
@@ -19,11 +20,11 @@ public sealed class SourceReadSessionIntegrationTests
         var workspace = Workspace(temporary.Path);
 
         var session = await new SourceReadSessionReader(new PhysicalPathResolver())
-            .ReadAsync(workspace, TestContext.Current.CancellationToken);
+            .ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), TestContext.Current.CancellationToken);
 
         Assert.Same(workspace, session.Catalogue.Workspace);
         Assert.Same(workspace, session.DocumentReader.Workspace);
-        var scope = Assert.IsType<SourceCatalogueSelectionScope>(session.DefaultSelectionScope);
+        var scope = Assert.Single(session.DefaultSelectionScopes);
         Assert.Equal(SourceLogicalPath.AgentsRoot, scope.CanonicalDirectoryPath);
         Assert.Equal(temporary.Combine(".agents"), scope.PhysicalDirectoryPath);
         Assert.NotNull(session.Catalogue.FindByPath(".agents/loader.md"));
@@ -37,9 +38,9 @@ public sealed class SourceReadSessionIntegrationTests
         var workspace = Workspace(temporary.Path);
 
         var session = await new SourceReadSessionReader(new PhysicalPathResolver())
-            .ReadAsync(workspace, TestContext.Current.CancellationToken);
+            .ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), TestContext.Current.CancellationToken);
 
-        Assert.Null(session.DefaultSelectionScope);
+        Assert.Empty(session.DefaultSelectionScopes);
         Assert.Contains(
             session.Catalogue.SelectAll().RootIssues,
             issue => issue.Code == SourceCatalogueIssueCode.RootMissing);

@@ -14,6 +14,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Detach.Models.Planning;
 
 internal sealed record LibraryDetachPlanningInput : ILibraryMutationObservation
 {
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
     public required LibraryDetachRequest Request { get; init; }
 
     public required LibraryConsumerBoundaryFacts ConsumerBoundary { get; init; }

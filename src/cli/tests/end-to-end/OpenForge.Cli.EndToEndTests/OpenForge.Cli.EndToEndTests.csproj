@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="xunit.v3.aot.mtp-v2" />
+    <PackageReference Include="Markdig" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +24,7 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <EmbeddedResource Include="Shared/MainRoot/Fixtures/default-layout.json" LogicalName="MainRoot.DefaultLayout" />
   </ItemGroup>
 
   <Target Name="GeneratePublishedExecutableBuildTarget" BeforeTargets="CoreCompile">

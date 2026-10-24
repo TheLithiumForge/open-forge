@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Commands.Shared.Models.Layout;
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
@@ -64,6 +65,8 @@ internal sealed record InstallResult : ICliCommandResult
 
     internal InstallResultFacts Facts { get; }
 
+    internal WorkspaceLayoutInfo? Layout => Facts.Layout;
+
     internal InstallFrontmatter? Frontmatter { get; init; }
 
     internal static InstallResult Invalid(
@@ -88,7 +91,7 @@ internal sealed record InstallResult : ICliCommandResult
                 Force: request.Force,
                 Automatic: request.Automatic,
                 Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration)
-            { RetryOptions = request.RetryOptions, SetupRecap = request.SetupRecap, ResolvedFrontmatter = request.Frontmatter?.Form },
+            { RetryOptions = request.RetryOptions, SetupRecap = request.SetupRecap, ResolvedFrontmatter = request.Frontmatter?.Form, RequestedMainRoot = request.RequestedMainRoot },
             findings: findings,
             summary: summary)
         { Frontmatter = InstallResultFactsFactory.Frontmatter(request.Frontmatter, []) };
@@ -106,7 +109,7 @@ internal sealed record InstallResult : ICliCommandResult
                 Force: request.Force,
                 Automatic: request.Automatic,
                 Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration)
-            { RetryOptions = request.RetryOptions, SetupRecap = request.SetupRecap, ResolvedFrontmatter = request.Frontmatter?.Form },
+            { RetryOptions = request.RetryOptions, SetupRecap = request.SetupRecap, ResolvedFrontmatter = request.Frontmatter?.Form, RequestedMainRoot = request.RequestedMainRoot },
             findings: findings,
             summary: summary,
             facts: facts)

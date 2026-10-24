@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Framework.Libraries.Shared.Paths;
 
@@ -48,7 +49,7 @@ internal static class LibraryEligiblePathPolicy
             kind = LibraryInventoryExclusionKind.ManagerControl;
             return true;
         }
-        if (SourceFormClassifier.TryClassify(originalPath, out var form))
+        if (SourceFormClassifier.TryClassify(SourceContentRoots.PackageCoordinates, originalPath, out var form))
         {
             if (form == SourceDocumentForm.OverwriteCompanion)
             {

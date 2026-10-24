@@ -17,7 +17,7 @@ public sealed class DoctorProjectionParityTests
     public async Task ProjectionsRetainTheSameTypedResult()
     {
         var support = new DoctorOperationTestSupport();
-        var result = await new DoctorOperation(support.Catalogue)
+        var result = await new DoctorOperation(support.Catalogue, readLayout: DoctorOperationTestSupport.ReadLayout)
             .ExecuteAsync(
                 new DoctorRequest(DoctorOperationTestSupport.Workspace()),
                 CancellationToken.None);

@@ -33,6 +33,7 @@ public sealed class ReferencesBindingTests
         ReferencesMarkdownParser markdownParser = _ => throw new InvalidOperationException("markdown parse must not run");
         var operation = new ReferencesOperation(
             new ReferencesSourceResolver(
+                layoutRead: (_, _) => { operationCalls++; throw new InvalidOperationException(); },
                 (_, _) =>
                 {
                     operationCalls++;

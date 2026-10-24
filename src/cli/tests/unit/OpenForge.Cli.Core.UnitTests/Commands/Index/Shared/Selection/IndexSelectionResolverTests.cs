@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.UnitTests.Commands.Index.Shared;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
@@ -458,7 +459,7 @@ public sealed class IndexSelectionResolverTests
     public void ResolutionRejectsNullFindingsAndImpossibleExecutableStates()
     {
         var target = Source(RootPath, SourceDocumentForm.CanonicalEntrypoint);
-        var projected = new IndexLogicalSource(
+        var projected = new IndexLogicalSource(IndexTestData.Layout(),
             target.Identity.AutomaticId,
             target.Identity.CanonicalBasePath,
             IndexLogicalSourceScope.Detached);
@@ -532,7 +533,7 @@ public sealed class IndexSelectionResolverTests
     {
         var resolvedPhysicalPath = physicalPath ?? Physical(canonicalPath);
         var identity = new SourceLogicalIdentity(
-            SourceIdentity.DeriveId(canonicalPath)
+            SourceIdentity.DeriveId(IndexTestData.Layout(), canonicalPath)
                 ?? throw new ArgumentException("An Index selection test source requires a derived ID.", nameof(canonicalPath)),
             canonicalPath);
         var baseLayer = new SourceLayer(

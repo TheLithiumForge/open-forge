@@ -1,18 +1,20 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Diagnostics.CodeAnalysis;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
 internal static class SourceLogicalPath
 {
-    internal const string WorkspaceEntryPath = "AGENTS.md";
-    internal const string AgentsRoot = ".agents";
-    internal const string LoaderPath = AgentsRoot + "/loader.md";
+    internal const string WorkspaceEntryPath = WorkspaceLayoutNames.AgentHostFileName;
+    internal const string AgentsRoot = WorkspaceLayout.DefaultMainRoot;
+    internal const string LoaderPath = AgentsRoot + "/" + WorkspaceLayoutNames.LoaderFileName;
 
     /// <summary>
     /// The guide for people at the top of `.agents/`. It is never a routed source, so agents do not
     /// read it at startup and maintenance commands neither index it nor ask it for frontmatter.
     /// </summary>
-    internal const string HumanGuidePath = AgentsRoot + "/README.md";
+    internal const string HumanGuidePath = AgentsRoot + "/" + WorkspaceLayoutNames.HumanGuideFileName;
 
     internal static bool IsCanonical([NotNullWhen(true)] string? path)
     {
@@ -20,28 +22,50 @@ internal static class SourceLogicalPath
     }
 
     internal static bool IsCanonicalRoot([NotNullWhen(true)] string? path)
-    {
-        if (path == AgentsRoot)
-        {
-            return true;
-        }
-
-        return IsCanonicalSource(path);
-    }
+        => IsCanonicalSource(path);
 
     internal static bool IsCanonicalSource([NotNullWhen(true)] string? path)
     {
-        if (path is null || path == AgentsRoot)
-        {
-            return false;
-        }
-
-        if (!path.StartsWith($"{AgentsRoot}/", StringComparison.Ordinal)) return false;
-        var segments = path.AsSpan(AgentsRoot.Length + 1);
+        if (string.IsNullOrWhiteSpace(path) || path[0] == '/' || (path.Length >= 2 && char.IsAsciiLetter(path[0]) && path[1] == ':')) return false;
+        var segments = path.AsSpan();
         foreach (var range in segments.Split('/'))
             if (!IsCanonicalSegment(segments[range])) return false;
         return true;
     }
+
+    // Source observations retain lexical names even when portable writes would reject them.
+    internal static bool IsPrimarySource(WorkspaceLayout layout, [NotNullWhen(true)] string? path)
+        => IsPrimarySource(new SourceContentRoots(layout), path);
+
+    internal static bool IsPrimarySource(SourceContentRoots roots, [NotNullWhen(true)] string? path)
+    {
+        if (!IsCanonicalSource(path)) return false;
+        if (path == WorkspaceLayout.NativeSkillsPath) return true;
+        if (!roots.IsDefault && (path == roots.MainRoot + "/" + WorkspaceLayoutNames.SkillsDirectoryName
+            || path.StartsWith(roots.MainRoot + "/" + WorkspaceLayoutNames.SkillsDirectoryName + "/", StringComparison.Ordinal))) return false;
+        foreach (var root in roots.SourceRoots)
+            if (path.Length > root.Length && path[root.Length] == '/' && path.StartsWith(root, StringComparison.Ordinal)) return true;
+        return false;
+    }
+
+    internal static bool IsPrimaryMarkdownSource(SourceContentRoots roots, [NotNullWhen(true)] string? path)
+        => IsPrimarySource(roots, path) && path.EndsWith(SourceFormClassifier.MarkdownExtension, StringComparison.Ordinal);
+
+    internal static bool IsPrimaryCategoryDirectory(SourceContentRoots roots, string path)
+        => IsPrimarySource(roots, path) && !ReadSourceCoordinate(roots, path).Contains('/');
+
+    internal static bool IsPrimaryNonMarkdownSource(SourceContentRoots roots, string? path)
+        => IsPrimarySource(roots, path) && !IsPrimaryMarkdownSource(roots, path);
+
+    internal static bool IsPrimaryOverwriteSource(SourceContentRoots roots, [NotNullWhen(true)] string? path)
+        => IsPrimarySource(roots, path) && SourceOverwritePath.HasSuffix(path);
+
+    internal static string ReadSourceCoordinate(WorkspaceLayout layout, string path)
+        => ReadSourceCoordinate(new SourceContentRoots(layout), path);
+
+    internal static string ReadSourceCoordinate(SourceContentRoots roots, string path)
+        => path[((path == WorkspaceLayout.NativeSkillsPath || path.StartsWith(WorkspaceLayout.NativeSkillsPath + "/", StringComparison.Ordinal))
+            ? WorkspaceLayout.DefaultMainRoot.Length + 1 : roots.MainRoot.Length + 1)..];
 
     internal static bool IsCanonicalSegment([NotNullWhen(true)] string? segment)
     {
@@ -63,7 +87,8 @@ internal static class SourceLogicalPath
             throw new ArgumentException("The logical path does not have a canonical parent.", nameof(logicalPath));
         }
 
-        return logicalPath[..logicalPath.LastIndexOf('/')];
+        var slash = logicalPath.LastIndexOf('/');
+        return slash < 0 ? "." : logicalPath[..slash];
     }
 
     internal static string ReadFileName(string logicalPath)

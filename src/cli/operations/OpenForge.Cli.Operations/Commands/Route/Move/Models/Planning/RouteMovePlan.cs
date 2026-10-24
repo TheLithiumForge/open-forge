@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 
@@ -31,6 +32,8 @@ internal sealed record RouteMovePlanProjectionInput
 
 internal sealed record RouteMovePlan
 {
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
     public required RouteMoveRequest Request { get; init; }
 
     public required RouteMoveResultFormation Preview { get; init; }

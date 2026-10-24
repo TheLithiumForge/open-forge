@@ -1,6 +1,7 @@
 using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.EndToEndTests;
 
@@ -39,14 +40,17 @@ internal sealed class PublishedInstallWorkspace : IDisposable
 
     private readonly TemporaryWorkspace _workspace;
     private readonly PublishedWorkspaceLockStore _lockStore;
+    private readonly string _mainRoot;
     private bool _disposed;
 
     private PublishedInstallWorkspace(
         TemporaryWorkspace workspace,
-        PublishedWorkspaceLockStore lockStore)
+        PublishedWorkspaceLockStore lockStore,
+        string mainRoot)
     {
         _workspace = workspace;
         _lockStore = lockStore;
+        _mainRoot = mainRoot;
         _ = _lockStore.Track(_workspace.Path);
     }
 
@@ -59,14 +63,18 @@ internal sealed class PublishedInstallWorkspace : IDisposable
 
     internal IReadOnlyDictionary<string, string> SnapshotState() => _workspace.SnapshotHashes();
 
-    internal static PublishedInstallWorkspace Create()
+    internal static PublishedInstallWorkspace Create(string mainRoot = PublishedTokens.Sources.AgentsRoot)
     {
         var workspace = TemporaryWorkspace.Create("e2e-install-workspace");
         var lockStore = PublishedWorkspaceLockStore.Create("e2e-install-lock-store");
         try
         {
             workspace.CreateFile("workspace-note.md", "preserve workspace sibling\n");
-            return new PublishedInstallWorkspace(workspace, lockStore);
+            if (mainRoot != PublishedTokens.Sources.AgentsRoot)
+            {
+                workspace.CreateDirectory(mainRoot);
+            }
+            return new PublishedInstallWorkspace(workspace, lockStore, mainRoot);
         }
         catch
         {
@@ -75,6 +83,14 @@ internal sealed class PublishedInstallWorkspace : IDisposable
             throw;
         }
     }
+
+    internal void SeedSettings(string contents)
+        => _workspace.WriteText(PublishedTokens.Settings.RelativePath, contents);
+
+    private string InstalledPath(string packagePath)
+        => packagePath.StartsWith(PublishedTokens.Layout.NativeSkillsPath + "/", StringComparison.Ordinal)
+            ? packagePath
+            : _mainRoot + packagePath[PublishedTokens.Sources.AgentsRoot.Length..];
 
     internal void SeedLegacyLeftovers()
     {
@@ -130,7 +146,7 @@ internal sealed class PublishedInstallWorkspace : IDisposable
 
     private void DeleteInstallArtifacts()
     {
-        foreach (var path in EmbeddedPayloadPaths
+        foreach (var path in EmbeddedPayloadPaths.Select(InstalledPath)
                      .Append(OwnershipPath)
                      .Append(SettingsPath)
                      .Append(AgentsPath)
@@ -140,6 +156,7 @@ internal sealed class PublishedInstallWorkspace : IDisposable
         }
 
         foreach (var directory in EmbeddedPayloadPaths
+                     .Select(InstalledPath)
                      .Select(path => System.IO.Path.GetDirectoryName(Combine(path)))
                      .Append(Combine(".agents"))
                      .Where(path => path is not null)

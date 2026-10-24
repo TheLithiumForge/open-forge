@@ -33,7 +33,29 @@ internal sealed class RouteCreateTargetInspector
                 isIncomplete: true);
         }
 
-        var resolution = _targetPlanner.Resolve(request);
+        var layoutRead = await new WorkspaceLayoutReader(_physicalPathResolver)
+            .ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (layoutRead.Layout is not { } layout
+            || layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+        {
+            var issue = layoutRead.Issues.FirstOrDefault();
+            var code = RouteCreateFindingCode.WorkspaceUnsafe;
+            if (layoutRead.Settings.State == WorkspaceSettingsReadState.Invalid)
+                code = RouteCreateFindingCode.InvalidInput;
+            if (layoutRead.State == WorkspaceLayoutReadState.Unavailable)
+                code = RouteCreateFindingCode.InspectionIncomplete;
+            return RouteCreateTargetInspectionBuild.Stop(new RouteCreatePlanningBoundary
+            {
+                Target = Target(request.FileTarget),
+                Finding = new RouteCreateFinding(
+                    code,
+                    issue?.Cause ?? "The workspace layout is unavailable.",
+                    issue?.Path ?? WorkspaceSettingsDefinitions.RelativePath),
+                IsIncomplete = layoutRead.State == WorkspaceLayoutReadState.Unavailable,
+            });
+        }
+
+        var resolution = _targetPlanner.Resolve(request, layout);
         if (resolution.State != RouteCreateTargetResolutionState.Resolved
             || resolution.Identity is not { } identity
             || resolution.Target.Path is not { } targetPath)
@@ -46,7 +68,7 @@ internal sealed class RouteCreateTargetInspector
         }
 
         var catalogue = await _catalogueReader.ReadAsync(
-                new SourceCatalogueRequest(request.Workspace, [SourceLogicalPath.AgentsRoot]),
+                new SourceCatalogueRequest(layout, layout.SourceRoots),
                 cancellationToken)
             .ConfigureAwait(false);
         if (catalogue.IsCancelled)
@@ -67,26 +89,8 @@ internal sealed class RouteCreateTargetInspector
             return Stop(
                 resolution.Target,
                 code,
-                rootIssue.Failure?.DirectCause ?? "The .agents workspace root is unavailable.",
+                rootIssue.Failure?.DirectCause ?? $"The {layout.MainRoot} workspace root is unavailable.",
                 isIncomplete: code == RouteCreateFindingCode.WorkspaceUnavailable);
-        }
-
-        var settings = await WorkspaceSettingsReader.ReadAsync(
-                _physicalPathResolver, request.Workspace, cancellationToken)
-            .ConfigureAwait(false);
-        if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
-        {
-            return RouteCreateTargetInspectionBuild.Stop(new RouteCreatePlanningBoundary
-            {
-                Target = resolution.Target,
-                Finding = new RouteCreateFinding(
-                    settings.State == WorkspaceSettingsReadState.Invalid
-                        ? RouteCreateFindingCode.InvalidInput
-                        : RouteCreateFindingCode.InspectionIncomplete,
-                    settings.Cause ?? "Workspace settings are unavailable.",
-                    WorkspaceSettingsDefinitions.RelativePath),
-                IsIncomplete = settings.State == WorkspaceSettingsReadState.Unavailable,
-            });
         }
 
         if (HasPhysicalAlias(catalogue, targetPath))
@@ -117,7 +121,7 @@ internal sealed class RouteCreateTargetInspector
                 Target = resolution.Target,
                 Identity = identity,
                 Catalogue = catalogue,
-                Settings = settings,
+                LayoutRead = layoutRead,
                 Snapshot = snapshot.Snapshot
                     ?? throw new InvalidOperationException(
                         "Successful Route Create target inspection requires a snapshot."),

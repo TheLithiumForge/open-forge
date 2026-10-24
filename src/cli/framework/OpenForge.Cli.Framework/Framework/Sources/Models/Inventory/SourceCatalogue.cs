@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
@@ -16,17 +18,28 @@ internal sealed class SourceCatalogue
     private readonly IReadOnlyDictionary<string, IReadOnlyList<(SourceLogicalSource Source, SourceLayer Layer)>> _layersByPhysicalPath;
 
     internal SourceCatalogue(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         IEnumerable<SourceCandidate> candidates,
         IEnumerable<SourceLogicalSource> sources,
         IEnumerable<SourceCatalogueIssue> issues,
         bool isCancelled,
         IReadOnlyDictionary<string, string>? aliases = null)
+        : this(layout, candidates, sources, issues, isCancelled, aliases, []) { }
+
+    internal SourceCatalogue(
+        WorkspaceLayout layout,
+        IEnumerable<SourceCandidate> candidates,
+        IEnumerable<SourceLogicalSource> sources,
+        IEnumerable<SourceCatalogueIssue> issues,
+        bool isCancelled,
+        IReadOnlyDictionary<string, string>? aliases,
+        IEnumerable<SourceIncludedEntryRow> includedRows)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(layout);
         ArgumentNullException.ThrowIfNull(candidates);
         ArgumentNullException.ThrowIfNull(sources);
         ArgumentNullException.ThrowIfNull(issues);
+        ArgumentNullException.ThrowIfNull(includedRows);
 
         var orderedCandidates = candidates
             .Select(candidate => candidate ?? throw new ArgumentException("A source catalogue cannot contain a null candidate.", nameof(candidates)))
@@ -51,6 +64,10 @@ internal sealed class SourceCatalogue
             throw new ArgumentException("A source catalogue requires unique logical source bases.", nameof(sources));
         }
 
+        if (orderedSources.Any(source => !SourceLogicalPath.IsPrimarySource(layout, source.Base.CanonicalPath)
+            && source.Identity.AutomaticId != SourceWorkspaceRelativePath.LiteralReferencePrefix + source.Base.CanonicalPath))
+            throw new ArgumentException("An included source outside the primary content locations requires its literal workspace identity.", nameof(sources));
+
         var orderedIssues = issues
             .Select(issue => issue ?? throw new ArgumentException("A source catalogue cannot contain a null issue.", nameof(issues)))
             .OrderBy(issue => issue.Stage)
@@ -59,7 +76,8 @@ internal sealed class SourceCatalogue
             .ThenBy(issue => string.Join("\u001f", issue.RelatedPaths), StringComparer.Ordinal)
             .ToArray();
 
-        Workspace = workspace;
+        Layout = layout;
+        IncludedRows = Array.AsReadOnly(includedRows.ToArray());
         Candidates = new ReadOnlyCollection<SourceCandidate>(orderedCandidates);
         Sources = new ReadOnlyCollection<SourceLogicalSource>(orderedSources);
         Issues = new ReadOnlyCollection<SourceCatalogueIssue>(orderedIssues);
@@ -99,10 +117,10 @@ internal sealed class SourceCatalogue
         var retainedAliases = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var alias in aliases ?? new Dictionary<string, string>())
         {
+            retainedAliases.Add(alias.Key, alias.Value);
             if (sourcesByPath.TryGetValue(alias.Value, out var source) && !sourcesByPath.ContainsKey(alias.Key))
             {
                 sourcesByPath.Add(alias.Key, source);
-                retainedAliases.Add(alias.Key, alias.Value);
             }
         }
 
@@ -119,7 +137,12 @@ internal sealed class SourceCatalogue
                     .ThenBy(item => item.Layer.Kind).ToArray()), PhysicalIdentityTracker.PathComparer);
     }
 
-    internal CliWorkspace Workspace { get; }
+    internal WorkspaceLayout Layout { get; }
+
+    /// <summary>Ordered authored edges, including aliases and unresolved targets, independently of inventory membership.</summary>
+    internal IReadOnlyList<SourceIncludedEntryRow> IncludedRows { get; }
+
+    internal CliWorkspace Workspace => Layout.Workspace;
 
     internal IReadOnlyList<SourceCandidate> Candidates { get; }
 

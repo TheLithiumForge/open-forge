@@ -18,10 +18,10 @@ internal sealed class RouteScaffoldChainDiscovery
     {
         var catalogue = request.Catalogue;
         var roots = request.RecognizedRootPaths
-            .Where(path => SourceFormClassifier.TryClassify(path, out var form) && SourceFormClassifier.IsEntrypoint(form)
+            .Where(path => SourceFormClassifier.TryClassify(catalogue.Layout, path, out var form) && SourceFormClassifier.IsEntrypoint(form)
                 && (catalogue.FindByPath(path) is not null || catalogue.FindCandidateByPath(path) is not null))
             .Select(SourceLogicalPath.ReadParent)
-            .Where(folder => SourceLogicalPath.ReadParent(folder) == SourceLogicalPath.AgentsRoot)
+            .Where(folder => SourceLogicalPath.IsPrimaryCategoryDirectory(new SourceContentRoots(catalogue.Layout), folder))
             .Distinct(StringComparer.Ordinal).ToArray();
         var entrypoints = catalogue.Candidates
             .Where(candidate => candidate.Form is { } form && SourceFormClassifier.IsEntrypoint(form))
@@ -53,7 +53,7 @@ internal sealed class RouteScaffoldChainDiscovery
             }
 
             if (chain.Any(item => IsExcluded(item, request)
-                || IsExcluded(RouteScaffoldSourceBuilder.CanonicalPath(FolderId(item)), request)))
+                || IsExcluded(RouteScaffoldSourceBuilder.CanonicalPath(catalogue.Layout, SourceLogicalPath.ReadSourceCoordinate(catalogue.Layout, item)), request)))
                 continue;
             folders.Add(root);
             folders.UnionWith(chain);
@@ -74,8 +74,8 @@ internal sealed class RouteScaffoldChainDiscovery
 
             if (roots.Contains(folder, StringComparer.Ordinal))
                 continue;
-            var id = FolderId(folder);
-            var path = RouteScaffoldSourceBuilder.CanonicalPath(id);
+            var id = SourceLogicalPath.ReadSourceCoordinate(catalogue.Layout, folder);
+            var path = RouteScaffoldSourceBuilder.CanonicalPath(catalogue.Layout, id);
             if (catalogue.FindAllById(id).Count != 0 || catalogue.FindAllCandidatesById(id).Count != 0)
                 boundaries.Add(new(RouteScaffoldBoundaryKind.IdentityOccupied, path));
             else if (catalogue.FindCandidateByPath(path) is not null || request.OccupiedPaths.Contains(path, StringComparer.Ordinal))
@@ -89,10 +89,9 @@ internal sealed class RouteScaffoldChainDiscovery
     }
 
     private static bool IsExcluded(string path, RouteScaffoldDiscoveryRequest request)
-        => WorkspaceRemovals.IsPathRemoved(path, request.Settings) || request.Sharing?.Includes(path) == false;
+        => WorkspaceRemovals.IsPathRemoved(request.Catalogue.Layout, path, request.Settings) || request.Sharing?.Includes(path) == false;
 
     private static bool IsWithin(string path, string folder)
         => path == folder || path.StartsWith(folder + "/", StringComparison.Ordinal);
 
-    private static string FolderId(string folder) => folder[(SourceLogicalPath.AgentsRoot.Length + 1)..];
 }

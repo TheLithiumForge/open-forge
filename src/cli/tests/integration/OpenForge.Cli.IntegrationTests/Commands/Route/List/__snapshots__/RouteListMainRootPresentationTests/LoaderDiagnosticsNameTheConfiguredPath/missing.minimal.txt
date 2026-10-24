@@ -1,0 +1,4 @@
+The listing is incomplete.
+  Warning  knowledge/team/context/loader.md  Loader is unavailable
+         knowledge/team/context/loader.md could not be read.
+Next: open-forge doctor

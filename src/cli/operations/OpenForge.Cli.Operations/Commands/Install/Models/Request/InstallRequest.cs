@@ -44,6 +44,8 @@ internal sealed record InstallRequest
 
     internal InstallSetupInput? Setup { get; init; }
 
+    internal string? RequestedMainRoot { get; init; }
+
     internal CliRetryOptions? RetryOptions { get; init; }
 
     internal InstallSetupRecap? SetupRecap { get; init; }

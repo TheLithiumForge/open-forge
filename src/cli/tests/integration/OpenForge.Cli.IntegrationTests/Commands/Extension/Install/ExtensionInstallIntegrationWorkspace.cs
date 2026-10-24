@@ -26,6 +26,7 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
 
     private readonly TemporaryWorkspace _workspace;
     private readonly WorkspaceLockTestStore _lockStore;
+    private string? _mainRoot;
 
     private ExtensionInstallIntegrationWorkspace(
         TemporaryWorkspace workspace,
@@ -48,14 +49,16 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
 
     internal bool LockInfrastructureExists => _lockStore.InfrastructureExists;
 
-    internal static ExtensionInstallIntegrationWorkspace Create(string purpose)
+    internal static ExtensionInstallIntegrationWorkspace Create(string purpose, string? mainRoot = null)
     {
         var workspace = TemporaryWorkspace.Create(purpose);
         var lockStore = WorkspaceLockTestStore.Create($"{purpose}-locks");
         try
         {
             workspace.CreateFile("workspace-note.md", "preserve workspace content\n");
-            return new ExtensionInstallIntegrationWorkspace(workspace, lockStore);
+            if (mainRoot is not null && System.IO.Path.GetDirectoryName(mainRoot) is { Length: > 0 } parent)
+                workspace.CreateDirectory(parent);
+            return new ExtensionInstallIntegrationWorkspace(workspace, lockStore) { _mainRoot = mainRoot };
         }
         catch
         {
@@ -213,6 +216,7 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
     public void Dispose()
     {
         DeleteRecoveryArtifacts();
+        if (_mainRoot is not null) DeleteOrdinaryTree(Combine(_mainRoot));
         DeleteOrdinaryFile(Combine("AGENTS.md"));
         DeleteOrdinaryFile(Combine("CLAUDE.md"));
         DeleteOrdinaryFile(Combine(".gitignore"));

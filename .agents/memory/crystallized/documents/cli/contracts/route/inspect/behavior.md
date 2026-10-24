@@ -7,6 +7,12 @@ open-forge:
 
 # route inspect Behavior Contract
 
+## Workspace Layout
+
+Use retained catalogue identities and the actual loader for loading and Axiom facts. Project paths into guidance instead of deriving them from fixed path segments.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral

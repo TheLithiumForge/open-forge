@@ -3,7 +3,7 @@ using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedContextProcessTests
+public sealed partial class PublishedContextProcessTests
 {
     [Fact(DisplayName = "Published Context default startup closure is ordered human output on stdout"),
      Trait("Feature", "context"), Trait("Evidence", "EndToEnd")]

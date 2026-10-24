@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Libraries;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
@@ -13,7 +15,7 @@ namespace OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
 
 internal static class StatusLibraryAggregator
 {
-    internal static StatusLibrary Build(LibraryStatusView observation)
+    internal static StatusLibrary Build(WorkspaceLayout? layout, LibraryStatusView observation)
     {
         ArgumentNullException.ThrowIfNull(observation);
         var findings = new List<StatusFinding>();
@@ -30,7 +32,7 @@ internal static class StatusLibraryAggregator
             findings.Add(Finding(
                 StatusFindingCode.LibraryRecordMalformed,
                 CliSemanticStatus.Blocked,
-                ".agents/open-forge.lock.json",
+                WorkspaceOwnershipDefinitions.RelativePath,
                 observation.Record.Cause ?? "The Library record is unsafe or malformed."));
         }
         else if (observation.Record.State == LibraryRegistrationReadState.Unavailable)
@@ -38,7 +40,7 @@ internal static class StatusLibraryAggregator
             findings.Add(Finding(
                 StatusFindingCode.LibraryRecordUnavailable,
                 CliSemanticStatus.Incomplete,
-                ".agents/open-forge.lock.json",
+                WorkspaceOwnershipDefinitions.RelativePath,
                 observation.Record.Cause ?? "The Library record is unavailable."));
         }
 
@@ -46,7 +48,7 @@ internal static class StatusLibraryAggregator
             && observation.Record.State == LibraryRegistrationReadState.Missing)
         {
             findings.Add(Finding(StatusFindingCode.LibraryOwnershipObservation, CliSemanticStatus.Complete,
-                ".agents/open-forge.lock.json", observationCause));
+                WorkspaceOwnershipDefinitions.RelativePath, observationCause));
         }
         var records = new List<StatusLibraryRegistration>();
         foreach (var library in observation.Record.Record?.Libraries ?? [])
@@ -76,7 +78,7 @@ internal static class StatusLibraryAggregator
                     AddMappingFinding(findings, library.Id.Value, mapping);
                     return new StatusLibraryLink(
                         mapping,
-                        SourceIdentity.DeriveId(mapping.Mapping.DestinationPath.Value))
+                        layout is null ? null : SourceIdentity.DeriveId(layout, mapping.Mapping.DestinationPath.Value))
                     {
                         State = StatusStateMap.LibraryTarget(mapping.State),
                     };
@@ -148,7 +150,7 @@ internal static class StatusLibraryAggregator
                 Finding(
                     StatusFindingCode.LibraryRecordUnavailable,
                     CliSemanticStatus.Incomplete,
-                    ".agents/open-forge.lock.json",
+                    WorkspaceOwnershipDefinitions.RelativePath,
                     cause),
             ],
         };

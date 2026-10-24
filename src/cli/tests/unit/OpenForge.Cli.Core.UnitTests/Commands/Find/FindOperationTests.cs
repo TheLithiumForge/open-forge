@@ -1,3 +1,8 @@
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Documents;
 using OpenForge.Cli.Core.Commands.Find.Models.Operation;
@@ -213,9 +218,9 @@ public sealed class FindOperationTests
                 return ValueTask.FromResult(new SourceReadSession(
                     fixture.Catalogue,
                     sourceReader,
-                    new SourceCatalogueSelectionScope(
-                        ".agents",
-                        Physical(fixture.Workspace.PhysicalRoot, ".agents"))));
+                    [new SourceCatalogueSelectionScope(
+                        WorkspaceLayout.DefaultMainRoot,
+                        Physical(fixture.Workspace.PhysicalRoot, WorkspaceLayout.DefaultMainRoot))]));
             });
         SourcePhysicalPathResolver physicalPathResolver = (_, path) =>
         {
@@ -262,6 +267,11 @@ public sealed class FindOperationTests
             new FindBodyTagScanner());
         return new FindOperation(
             new FindSourceResolver(
+                (workspace, _) => ValueTask.FromResult(new WorkspaceLayoutRead(
+                    WorkspaceLayoutReadState.Ready,
+                    WorkspaceSettingsRead.Absent(Physical(workspace.PhysicalRoot, WorkspaceSettingsDefinitions.RelativePath)),
+                    WorkspaceOwnershipRead.Absent(Physical(workspace.PhysicalRoot, WorkspaceOwnershipDefinitions.RelativePath)),
+                    fixture.Catalogue.Layout, [], [])),
                 sessionRead,
                 new FindUniverseResolver(new SourceUniverseFilterResolver(
                     new SourceReferenceResolver(physicalPathResolver))),
@@ -325,7 +335,7 @@ public sealed class FindOperationTests
 
         return new OperationFixture(
             workspace,
-            new SourceCatalogue(workspace, candidates, sources, [], false),
+            new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), candidates, sources, [], false),
             source);
     }
 
@@ -334,7 +344,7 @@ public sealed class FindOperationTests
         string path,
         bool withOverwrite = false)
     {
-        var id = SourceIdentity.DeriveId(path)
+        var id = SourceIdentity.DeriveId(DefaultWorkspaceLayout, path)
             ?? throw new InvalidOperationException("The operation source must have a derived ID.");
         var baseLayer = new SourceLayer(
             path,
@@ -452,4 +462,11 @@ public sealed class FindOperationTests
 
         internal int PhysicalPathCalls { get; set; }
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(FindOperationTests)),
+                Path.GetFullPath(nameof(FindOperationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

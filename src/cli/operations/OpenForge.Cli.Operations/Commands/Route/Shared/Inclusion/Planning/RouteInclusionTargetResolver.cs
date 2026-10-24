@@ -4,6 +4,10 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Planning;
@@ -12,7 +16,7 @@ internal static class RouteInclusionTargetResolver
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
-    internal static string Resolve(RouteInclusionRequest request)
+    internal static string Resolve(WorkspaceLayout layout, RouteInclusionRequest request)
     {
         var operand = request.File.Replace('\\', '/');
         if (string.IsNullOrWhiteSpace(operand) || Path.IsPathRooted(operand)
@@ -24,9 +28,10 @@ internal static class RouteInclusionTargetResolver
         var path = Path.GetRelativePath(request.Workspace.LexicalRoot, absolute).Replace('\\', '/');
         if (WorkspaceRuntimePaths.Contains(request.Workspace, Path.GetFullPath(path, request.Workspace.PhysicalRoot)))
             throw Invalid(request, "Choose a project document outside the reserved workspace runtime directory.");
-        if (path.Split('/').Any(segment => segment.Equals(".git", StringComparison.OrdinalIgnoreCase)))
+        if (path.Split('/').Any(segment => segment.Equals(WorkspaceLayoutNames.GitMetadataDirectoryName, StringComparison.OrdinalIgnoreCase)))
             throw Invalid(request, "Choose a project document outside Git metadata.");
-        if (new[] { ".agents/loader.md", ".agents/open-forge.json", ".agents/open-forge.lock.json" }.Contains(path, PhysicalIdentityTracker.PathComparer))
+        var controls = new[] { layout.LoaderPath, WorkspaceSettingsDefinitions.RelativePath, WorkspaceOwnershipDefinitions.RelativePath };
+        if (controls.Contains(path, PhysicalIdentityTracker.PathComparer))
             throw Invalid(request, "Choose a project document instead of a workspace control file.");
         var resolution = new PhysicalPathResolver().ResolveCandidate(request.Workspace.LexicalRoot, request.Workspace.PhysicalRoot, absolute);
         if (resolution.State is not (PhysicalPathState.Contained or PhysicalPathState.Missing))
@@ -40,11 +45,10 @@ internal static class RouteInclusionTargetResolver
             var physical = resolution.GetContainedPhysicalPath();
             if (WorkspaceRuntimePaths.Contains(request.Workspace, physical))
                 throw Invalid(request, "Choose a project document outside the reserved workspace runtime directory.");
-            var controls = new[] { ".agents/loader.md", ".agents/open-forge.json", ".agents/open-forge.lock.json" };
             if (controls.Any(control => PhysicalIdentityTracker.PathComparer.Equals(physical, Path.GetFullPath(control, request.Workspace.PhysicalRoot))))
                 throw Invalid(request, "Choose a project document instead of a workspace control file.");
             var relativePhysical = Path.GetRelativePath(request.Workspace.PhysicalRoot, physical).Replace('\\', '/');
-            if (relativePhysical.Split('/').Any(segment => segment.Equals(".git", StringComparison.OrdinalIgnoreCase)))
+            if (relativePhysical.Split('/').Any(segment => segment.Equals(WorkspaceLayoutNames.GitMetadataDirectoryName, StringComparison.OrdinalIgnoreCase)))
                 throw Invalid(request, "Choose a project document outside Git metadata.");
             if (Directory.Exists(physical))
             {
@@ -57,16 +61,21 @@ internal static class RouteInclusionTargetResolver
             try { StrictUtf8.GetString(File.ReadAllBytes(physical)); }
             catch (DecoderFallbackException) { throw Invalid(request, "Save the file as UTF-8 text, then retry."); }
         }
-        if (path.StartsWith(".agents/", StringComparison.Ordinal))
+        ValidateContentTarget(layout, request, path);
+        return path;
+    }
+
+    internal static void ValidateContentTarget(WorkspaceLayout layout, RouteInclusionRequest request, string path)
+    {
+        if (layout.IsImplicitContentDestination(path) && layout.TryGetSourceRelativePath(path, out var relative))
         {
-            var parts = path.Split('/');
-            if (parts.Length == 2) throw Invalid(request, "Use a direct child folder's catalogue instead. Files directly in .agents are not routed.");
-            var catalogue = $".agents/{parts[1]}/_{parts[1]}.md";
+            var parts = relative.Split('/');
+            if (parts.Length == 1) throw Invalid(request, $"Use a direct child folder's catalogue instead. Files directly in {layout.MainRoot} are not routed.");
+            var catalogue = $"{layout.CategoryDirectory(parts[0])}/_{parts[0]}{SourceFormClassifier.MarkdownExtension}";
             if (path != catalogue) throw Invalid(request, $"Use the catalogue '{catalogue}' that lists this file instead.");
             if (request.Description is not null || request.Tags is not null || request.ApplyTo is not null)
                 throw Invalid(request, $"Change the frontmatter in '{catalogue}' instead of supplying metadata options.");
         }
-        return path;
     }
 
     internal static ArgumentException Invalid(RouteInclusionRequest request, string cause)

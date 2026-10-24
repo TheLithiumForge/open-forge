@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
@@ -141,6 +143,12 @@ internal sealed class ExtensionRemoveApplicationOperation(
         CancellationToken cancellationToken)
     {
         var plan = execution.Content;
+        var layoutValidation = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver())
+            .ValidateAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+        if (layoutValidation.State != MutationValidationState.Valid)
+            return BeforeEffects(plan, planned,
+                layoutValidation.State == MutationValidationState.Cancelled ? ExtensionRemoveFindingCode.Interrupted : ExtensionRemoveFindingCode.TargetChanged,
+                "Lifecycle, ownership, topology, or target facts changed after planning.");
         ExtensionRemovePlanBuild rebuilt;
         try
         {

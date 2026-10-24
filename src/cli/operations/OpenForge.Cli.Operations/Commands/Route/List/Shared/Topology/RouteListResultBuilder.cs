@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -29,7 +30,21 @@ internal sealed class RouteListResultBuilder
             coverage,
             selection.Rows,
             selection.Findings,
-            ReadNextAction(selection.Status));
+            ReadNextAction(selection.Status),
+            input.Inventory.SourceCatalogue.Layout.IsDefault ? null : input.Inventory.SourceCatalogue.Layout.LoaderPath);
+    }
+
+    internal RouteListResult BuildLayoutUnavailable(
+        RouteListRequest request,
+        RouteListSelection selection,
+        WorkspaceLayoutRead layoutRead)
+    {
+        var findings = layoutRead.Issues.Select(issue => new RouteListFinding(
+            RouteListFindingCode.WorkspaceUnavailable, CliSemanticStatus.Blocked, issue.Path, issue.Cause)).ToArray();
+        var boundaries = findings.Select(finding => finding.Subject ?? finding.Cause).ToArray();
+        return RouteListResult.Create(CliSemanticStatus.Blocked, request.Workspace, selection,
+            RouteListCoverage.Blocked(request.RequestedDepth, null, 0, 0, [], boundaries),
+            [], findings, ReadNextAction(CliSemanticStatus.Blocked));
     }
 
     internal RouteListResult BuildFailure(

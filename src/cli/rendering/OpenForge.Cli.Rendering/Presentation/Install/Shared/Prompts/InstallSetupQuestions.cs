@@ -9,6 +9,18 @@ namespace OpenForge.Cli.Core.Presentation.Install.Shared.Prompts;
 
 internal static class InstallSetupQuestions
 {
+    internal static string MainRootQuestion => InstallSetupText.MainRootQuestion();
+
+    internal static CliTextQuestion<string> MainRoot(InstallMainRootQuestion question)
+        => new($"{MainRootQuestion} {InstallSetupText.MainRootExplanation(question.Initial, InstallMainRootQuestion.SettingsDirectory)}",
+            InstallSetupText.MainRootRule(), Required: false, answer =>
+            {
+                var value = answer.Length == 0 ? question.Initial : answer;
+                return question.IsValidAnswer(value)
+                    ? new(true, value, null)
+                    : new(false, null, InstallSetupText.MainRootRule());
+            });
+
     private static readonly InstallRouteAction[] MarkActions = [InstallRouteAction.Add, InstallRouteAction.GitIgnore, InstallRouteAction.Remove];
     private static readonly IReadOnlyDictionary<string, Func<string>> Summaries = new Dictionary<string, Func<string>>(StringComparer.Ordinal)
     {

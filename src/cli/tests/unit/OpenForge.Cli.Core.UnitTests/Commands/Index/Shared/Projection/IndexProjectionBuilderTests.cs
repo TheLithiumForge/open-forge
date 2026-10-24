@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.UnitTests.Commands.Index.Shared;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Index.Models.Projection;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
@@ -328,7 +329,7 @@ public sealed class IndexProjectionBuilderTests
             Metadata = [new GeneratedNavigationMetadata(
                 child,
                 SourceAuthoredMetadataFacts.Complete("Child", ["Docs"]))],
-            Readiness = new IndexProjectionReadiness([], []),
+            Readiness = new IndexProjectionReadiness(IndexTestData.Layout(), [], []),
         };
         var builder = new IndexProjectionBuilder();
 
@@ -414,7 +415,7 @@ public sealed class IndexProjectionBuilderTests
                     skippedChild,
                     SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed)),
             ],
-            Readiness = new IndexProjectionReadiness([], []),
+            Readiness = new IndexProjectionReadiness(IndexTestData.Layout(), [], []),
             MetadataFindings = [metadataFinding],
         });
 
@@ -448,7 +449,7 @@ public sealed class IndexProjectionBuilderTests
             Metadata = [new GeneratedNavigationMetadata(
                 child,
                 SourceAuthoredMetadataFacts.Complete("Child", ["Docs"]))],
-            Readiness = new IndexProjectionReadiness([], []),
+            Readiness = new IndexProjectionReadiness(IndexTestData.Layout(), [], []),
         });
 
         var projectedRegion = Assert.Single(result.Regions);
@@ -472,11 +473,11 @@ public sealed class IndexProjectionBuilderTests
             cause: "The exact projection is unavailable.",
             candidates: []);
 
-        Assert.Throws<ArgumentException>(() => new IndexProjectionReadiness([finding], []));
-        Assert.Throws<ArgumentException>(() => new IndexProjectionReadiness([], [RootPath]));
-        Assert.Throws<ArgumentException>(() => new IndexProjectionReadiness([finding], ["root.md"]));
-        Assert.Throws<ArgumentException>(() => new IndexProjectionReadiness(new IndexFinding[1], [RootPath]));
-        var valid = new IndexProjectionReadiness([finding], [RootPath]);
+        Assert.Throws<ArgumentException>(() => new IndexProjectionReadiness(IndexTestData.Layout(), [finding], []));
+        Assert.Throws<ArgumentException>(() => new IndexProjectionReadiness(IndexTestData.Layout(), [], [RootPath]));
+        Assert.Throws<ArgumentException>(() => new IndexProjectionReadiness(IndexTestData.Layout(), [finding], ["root.md"]));
+        Assert.Throws<ArgumentException>(() => new IndexProjectionReadiness(IndexTestData.Layout(), new IndexFinding[1], [RootPath]));
+        var valid = new IndexProjectionReadiness(IndexTestData.Layout(), [finding], [RootPath]);
         Assert.Equal(RootPath, Assert.Single(valid.UnavailableTargetPaths));
     }
 
@@ -546,7 +547,7 @@ public sealed class IndexProjectionBuilderTests
         => new(
             canonicalPath,
             SourceDocumentForm.Markdown,
-            SourceIdentity.DeriveId(canonicalPath),
+            SourceIdentity.DeriveId(IndexTestData.Layout(), canonicalPath),
             state,
             physicalPath: state == PhysicalPathState.Contained ? Physical(canonicalPath) : null,
             physicalParentPath: Physical(SourceLogicalPath.ReadParent(canonicalPath)));
@@ -611,7 +612,7 @@ public sealed class IndexProjectionBuilderTests
         string? physicalPath = null)
     {
         var identity = new SourceLogicalIdentity(
-            SourceIdentity.DeriveId(canonicalPath)
+            SourceIdentity.DeriveId(IndexTestData.Layout(), canonicalPath)
                 ?? throw new ArgumentException("An Index projection test source requires a derived ID.", nameof(canonicalPath)),
             canonicalPath);
         return new SourceLogicalSource(

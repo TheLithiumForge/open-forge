@@ -22,6 +22,8 @@ open-forge install --preset minimal --automatic
 
 Review the result with `git status` and `git diff`. Both folders start empty, so agents read only the loader and two short catalogues until you add something.
 
+The examples here use the default context folder, `.agents`. At first installation, choose another absent or empty folder with `install --main-root <folder>`. The wizard asks "Where should Open Forge keep its context files?" before route choices and defaults to `.agents`. Skills, settings and ownership stay in `.agents`. Older CLIs do not support custom roots, and relocating an established installation is not available yet. See the [context-folder reference](docs/cli.md#context-folder).
+
 ### Point agents at a document you already have
 
 Include a file you already have, where it lives:
@@ -194,7 +196,7 @@ I built Open Forge to work beside your harness, the tool that runs your agent. A
 
 ## What you get
 
-This is the Full Core inventory. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal keeps `AGENTS.md`, `CLAUDE.md`, the loader, the guide for people, Directives and Crystallized Memory. Custom follows your selection. No preset installs optional Extensions.
+This is the Full Core inventory with the default `.agents` context folder. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal keeps `AGENTS.md`, `CLAUDE.md`, the loader, the guide for people, Directives and Crystallized Memory. Custom follows your selection. No preset installs optional Extensions.
 
 ```text
 AGENTS.md                         <- tells the agent to read the loader first

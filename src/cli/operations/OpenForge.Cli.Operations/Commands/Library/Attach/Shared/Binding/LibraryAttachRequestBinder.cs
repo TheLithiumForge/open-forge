@@ -157,7 +157,7 @@ internal static class LibraryAttachRequestBinder
                 Permissions = LibraryPermissionView.NotEvaluated(),
                 Identity = LibraryMutationCompletionProjection.Identity(id, sourceRoot, destinationRoot: null, LibraryMode.Apply, sourceIndependent: false),
                 Record = LibraryMutationCompletionProjection.Record(read: null, id, intended: null),
-                Source = LibraryMutationCompletionProjection.Source(read: null, destinationRoot: null),
+                Source = LibraryMutationCompletionProjection.Source(read: null, destinationRoot: null, layout: null),
                 Projection = LibraryMutationCompletionProjection.Projection(
                     observation: null, id,
                     LibraryPlanState.NotStarted, sourceIndependent: false),

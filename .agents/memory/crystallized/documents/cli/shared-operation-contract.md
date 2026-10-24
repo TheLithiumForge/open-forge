@@ -7,6 +7,16 @@ open-forge:
 
 # Shared CLI Operation Contract
 
+## Workspace Layout
+
+Every workspace operation uses the context folder selected by the optional settings v4 `mainRoot`, defaulting to `.agents`, together with native Skills at `.agents/skills`. Settings and ownership stay at `.agents/open-forge.json` and `.agents/open-forge.lock.json`. Host files and `.open-forge-state/` stay at the workspace root. New settings declare v4 without inserting an absent default `mainRoot`. Unrelated rewrites preserve existing declarations. Older CLIs do not support custom roots.
+
+Literal workspace operands and recorded installed paths remain literal. Package coordinates map to installed destinations before exclusions, permissions, collisions and ownership checks. Loading membership and mutation permission remain separate from content placement.
+
+Readers retain the layout whenever settings supply one. Invalid or unavailable settings leave no fallback layout, and observers retain unavailable domains with the settings cause. A mismatch or unsafe layout stops writers. A lone missing loader remains command-owned drift, an intentionally removed loader is not missing, and unreadable ownership follows each command's existing policy. Writers revalidate the retained observation under the lease before grants and effects. The [Workspace Layout design](technical-designs/workspace-layout.md#observation-and-revalidation) defines the precise states.
+
+[Install](contracts/install/interface.md) selects an absent or empty custom folder at first installation. Changing an established installation's root is not available, including with `--configure`. JSON output remains schema 3. Unless explicitly marked as custom, path examples below use the default `.agents` layout.
+
 ## Status And Authority
 
 This is the accepted current `#Evergreen` Crystallized Document/Contract for the
@@ -47,7 +57,7 @@ output, not reading. Every workspace reads both forms under the [Markdown
 Syntax contract](../framework/markdown/syntax.md#frontmatter).
 
 New route metadata, new maintenance headers and Install adoption use the selected form. Index and affected-closure Repair complete a partial header in its existing form, keeping supplied fields and body bytes. Framework and
-Extension delivery renders `.md` files under `.agents/`, except `SKILL.md`,
+Extension delivery renders mapped content `.md` files, except `SKILL.md`,
 whose leading frontmatter has an `open-forge` mapping. Only that mapping moves.
 Scoped rendering preserves canonical bytes. Root rendering rejects collisions
 with foreign root `description`, `responsibility`, or `tags`, and conflicting
@@ -80,7 +90,7 @@ Route Move remaps list entries equal to or beneath the moved path. Route Remove
 drops entries equal to or beneath the removed path. Both preserve unknown
 settings. Each original entry is remapped once, with exact base and overwrite
 layer destinations taking precedence over the category folder mapping.
-Install adds `.agents/memory/archived` only when it installs that
+Install adds the selected layout’s `memory/archived` path only when it installs that
 route and the `ignoreLinksFrom` key is absent. An existing key, including an
 empty list, stays unchanged. Update leaves authored settings unchanged.
 
@@ -300,7 +310,7 @@ press Enter to cancel:`. An exact path or ID is its flag equivalent.
 - Text input is line mode only. A rejected value repeats the rule, such as
   `'My Tools' is not a valid ID. Use lowercase letters, digits, and hyphens.`
   The operand or option is its flag equivalent.
-- Permission selection asks `Allow <owner> to change these paths outside .agents?`,
+- Permission selection names the observed context folder and native Skills boundary. In the default layout it asks `Allow <owner> to change these paths outside .agents?`,
   lists each path, and shows `Allow always`, `Allow once`, and `Cancel` with a
   one-line description each, in key and line mode. Key mode keeps the order
   `1. Allow always`, `2. Allow once`, `3. Cancel` and starts focused on

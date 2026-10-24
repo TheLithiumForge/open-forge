@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using System.Collections.Immutable;
@@ -181,7 +183,7 @@ internal sealed class InstallEstablishmentPlanner
                 SourceAssetPath = isUserOwned
                         || (isGeneratedRegion && read.State == InstallTargetReadState.File)
                             ? null
-                            : target.Key,
+                            : FrameworkSourceAlignment.ReadAsset(context.IntendedLayout, target.Key, context.Payload)?.Path,
                 ContentChange = isUserOwned
                     ? InstallEffectContentChange.PreservedContent
                     : InstallEffectContentChange.WholeFile,
@@ -404,7 +406,7 @@ internal sealed class InstallEstablishmentPlanner
     {
         if (intended.Configuration is not { } configuration) return;
         if (configuration.SettingsChange is { } settingsChange)
-            effects.Add(ConfigurationEffect(".agents/open-forge.json", settingsChange,
+            effects.Add(ConfigurationEffect(WorkspaceSettingsDefinitions.RelativePath, settingsChange,
                 configuration.Settings.Snapshot ?? throw new InvalidOperationException("Settings require original bytes."),
                 captureMissing: configuration.FrontmatterPlan?.Replacements.Length > 0));
         if (configuration.IgnoreChange is { } ignoreChange)
@@ -412,7 +414,7 @@ internal sealed class InstallEstablishmentPlanner
             var snapshot = configuration.Ignore?.Snapshot ?? throw new InvalidOperationException("Ignore changes require original bytes.");
             effects.Add(ConfigurationEffect(InstallIgnoreSection.Path, ignoreChange,
                 snapshot,
-                contentChange: InstallIgnoreSection.Read(snapshot.Bytes.AsSpan()).IsEmpty
+                contentChange: InstallIgnoreSection.Read(snapshot.Bytes.AsSpan(), configuration.Layout).IsEmpty
                     ? InstallEffectContentChange.GitIgnoreRulesAdded
                     : InstallEffectContentChange.PreservedContent));
         }
@@ -449,10 +451,7 @@ internal sealed class InstallEstablishmentPlanner
             missing.Add(agentsPath);
         }
 
-        foreach (var change in changes.Where(change =>
-                     change.LogicalPath.StartsWith(
-                         agentsPath + Path.DirectorySeparatorChar,
-                         PathComparison())))
+        foreach (var change in changes)
         {
             var parent = Path.GetDirectoryName(change.LogicalPath);
             while (parent is not null

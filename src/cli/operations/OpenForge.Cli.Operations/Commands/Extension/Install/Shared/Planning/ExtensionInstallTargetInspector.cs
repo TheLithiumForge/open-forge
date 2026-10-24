@@ -63,7 +63,7 @@ internal sealed class ExtensionInstallTargetInspector
                     ? intendedBytes.ToArray()
                     : throw new InvalidDataException(
                         "A validated package file requires one final topology target.");
-                var identity = ExtensionDestinationPolicy.IsImplicit(path)
+                var identity = ExtensionDestinationPolicy.IsImplicit(input.Layout, path)
                     ? Fingerprint(bytes)
                     : (Fingerprint: FileExpectation.Hash(bytes), Kind: MarkdownFingerprintState.ExactBytes);
                 if (intendedByPath.TryGetValue(path, out var existing))
@@ -167,7 +167,7 @@ internal sealed class ExtensionInstallTargetInspector
                         intended.Path);
                 }
 
-                if (ExtensionDestinationPolicy.IsImplicit(intended.Path) && !input.InitialForceEligiblePaths.Contains(intended.Path))
+                if (ExtensionDestinationPolicy.IsImplicit(input.Layout, intended.Path) && !input.InitialForceEligiblePaths.Contains(intended.Path))
                 {
                     return Stop(
                         ExtensionInstallFindingCode.OwnershipConflict,
@@ -195,7 +195,7 @@ internal sealed class ExtensionInstallTargetInspector
 
             var intendedPaths = package.Payload
                 .Select(RequiredTargetPath)
-                .Concat(installed.Paths.Where(path => WorkspaceRemovals.IsPathRemoved(path, input.Settings)))
+                .Concat(installed.Paths.Where(path => WorkspaceRemovals.IsPathRemoved(input.Layout, path, input.Settings)))
                 .Distinct(StringComparer.Ordinal)
                 .Order(StringComparer.Ordinal)
                 .ToArray();
@@ -231,7 +231,7 @@ internal sealed class ExtensionInstallTargetInspector
                 [.. package.Dependencies.Order(StringComparer.Ordinal)],
                 [.. package.Payload.Select(RequiredTargetPath)
                     .Concat(currentPackages.TryGetValue(package.Id, out var prior)
-                        ? prior.Paths.Where(path => WorkspaceRemovals.IsPathRemoved(path, input.Settings))
+                        ? prior.Paths.Where(path => WorkspaceRemovals.IsPathRemoved(input.Layout, path, input.Settings))
                         : [])
                     .Distinct(StringComparer.Ordinal)
                     .Order(StringComparer.Ordinal)],

@@ -45,8 +45,7 @@ internal static class RouteUpdateOperationFactory
                 sourceSelectionPrompt),
             new RouteUpdateLayerObserver(new SourceDocumentSnapshotReader()),
             new MarkdownDocumentParser(),
-            yamlParser,
-            physicalPathResolver);
+            yamlParser);
         var planBuilder = new RouteUpdatePlanBuilder(
             targetObserver,
             destinationPlanner,

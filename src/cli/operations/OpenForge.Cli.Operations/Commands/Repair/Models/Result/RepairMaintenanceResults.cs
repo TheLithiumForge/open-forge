@@ -2,7 +2,11 @@ namespace OpenForge.Cli.Core.Commands.Repair.Models.Result;
 
 internal sealed record RepairRenameMetadata(string Description, IReadOnlyList<string> Tags, IReadOnlyList<string> ApplyTo);
 internal sealed record RepairRenameProof(string? Head, string? OldBlob, string? OldHash, string NewHash, RepairRenameMetadata? Metadata);
-internal sealed record RepairRename(string OldPath, string NewPath, string Evidence, int? Similarity, RepairRenameProof Proof, bool SameContent, bool Moved);
+internal sealed record RepairRename(string OldPath, string NewPath, string Evidence, int? Similarity, RepairRenameProof Proof, bool SameContent, bool Moved)
+{
+    internal string? DisplayOldPath { get; init; }
+    internal string? DisplayNewPath { get; init; }
+}
 internal sealed record RepairNavigation(string Path, int Before, int After, string Outcome);
 internal sealed record RepairCompletedMetadata(string Path, IReadOnlyList<string> Fields, string? Description, IReadOnlyList<string>? Tags, string Outcome);
 internal sealed record RepairCompletedEntrypoint(string Path, string Outcome);

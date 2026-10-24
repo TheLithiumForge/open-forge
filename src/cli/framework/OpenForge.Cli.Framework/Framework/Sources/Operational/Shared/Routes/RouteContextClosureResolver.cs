@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
@@ -6,7 +7,7 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
 internal sealed class RouteContextClosureResolver
 {
-    internal RouteContextClosure Resolve(RouteContextSet context)
+    internal RouteContextClosure Resolve(WorkspaceLayout layout, RouteContextSet context)
     {
         var sourcesByPath = context.Sources.ToDictionary(
             source => source.Path,
@@ -14,6 +15,7 @@ internal sealed class RouteContextClosureResolver
         var resolution = new SourceLoadingClosureResolver().Resolve(
             new SourceLoadingClosureRequest
             {
+                Layout = layout,
                 WorkspaceEntryPath = context.WorkspaceEntry.Path,
                 Sources = context.Sources.Select(source => new SourceLoadingClosureSource
                 {

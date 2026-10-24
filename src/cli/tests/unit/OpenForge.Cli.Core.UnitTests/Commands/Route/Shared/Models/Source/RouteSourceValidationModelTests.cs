@@ -1,7 +1,10 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
 
@@ -132,7 +135,7 @@ public sealed class RouteSourceValidationModelTests
             SourceDocumentForm.Markdown);
         var metadata = RouteSourceMetadata.Complete("Leaf", ["Route"], false, false);
         Assert.Throws<ArgumentException>(() => new RouteSource(
-            markdown,
+new SourceLogicalIdentity(SourceIdentity.DeriveId(DefaultWorkspaceLayout, markdown.CanonicalLogicalPath)!, markdown.CanonicalLogicalPath), markdown,
             metadata,
             RouteSourceKind.Entrypoint));
 
@@ -140,16 +143,19 @@ public sealed class RouteSourceValidationModelTests
             ".agents/root/leaf.overwrite.md",
             SourceDocumentForm.OverwriteCompanion);
         Assert.Throws<ArgumentException>(() => new RouteSource(
-            markdown,
+new SourceLogicalIdentity(SourceIdentity.DeriveId(DefaultWorkspaceLayout, markdown.CanonicalLogicalPath)!, markdown.CanonicalLogicalPath), markdown,
             metadata,
             RouteSourceKind.Markdown,
             companion));
 
         Assert.Throws<ArgumentException>(() => new RouteSourceDocument(
-            ".agents/root/leaf.md",
-            RouteSourceTestData.PhysicalPath(".agents/root/leaf.md"),
-            SourceDocumentForm.Markdown,
-            FileReadState.Missing,
-            "body"));
+new SourceLayer(".agents/root/leaf.md", RouteSourceTestData.PhysicalPath(".agents/root/leaf.md"), SourceDocumentForm.Markdown, SourceDocumentForm.Markdown == SourceDocumentForm.OverwriteCompanion ? SourceLayerKind.Overwrite : SourceLayerKind.Base), FileReadState.Missing, "body"));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                System.IO.Path.GetFullPath(nameof(RouteSourceValidationModelTests)),
+                System.IO.Path.GetFullPath(nameof(RouteSourceValidationModelTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

@@ -1,0 +1,3 @@
+The docs/forge folder is missing
+workspace has no docs/forge folder. Open Forge is not installed here.
+docs/forge/loader.md is missing.

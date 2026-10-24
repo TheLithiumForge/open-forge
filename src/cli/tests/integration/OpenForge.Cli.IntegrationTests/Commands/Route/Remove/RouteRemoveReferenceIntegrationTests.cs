@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Remove;
@@ -131,15 +132,16 @@ public sealed class RouteRemoveReferenceIntegrationTests
         using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-live-absence-scan");
         workspace.WriteText("absence-source.md", "An ordinary readable source.\n");
         var request = new RouteRemoveRequest(workspace.Workspace, "guidance/absent", RouteRemoveMode.DryRun);
-        var scope = Assert.IsType<RouteRemoveAbsenceScope>(RouteRemoveAbsenceScope.TryCreate(request));
+        var layout = WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot);
+        var scope = Assert.IsType<RouteRemoveAbsenceScope>(RouteRemoveAbsenceScope.TryCreate(request, layout));
         var sourceCatalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(workspace.Workspace, [".agents"]),
+            new SourceCatalogueRequest(layout, layout.SourceRoots),
             TestContext.Current.CancellationToken);
         var physical = new PhysicalPathResolver();
         var markdown = new MarkdownDocumentParser();
         var catalogue = await new RouteMarkdownCatalogueReader(physical).ReadAsync(
             new RouteMarkdownCatalogueRequest(
-                workspace.Workspace, ["absence-source.md"], [], new RouteMarkdownCatalogueFilters([".md"])),
+                layout, ["absence-source.md"], [], new RouteMarkdownCatalogueFilters([OpenForge.Cli.Core.Framework.Sources.Identity.SourceFormClassifier.MarkdownExtension])),
             TestContext.Current.CancellationToken);
         Assert.Equal(RouteMarkdownCatalogueCoverage.Complete, catalogue.Coverage);
         Assert.Equal(["absence-source.md"], catalogue.SelectedPaths);

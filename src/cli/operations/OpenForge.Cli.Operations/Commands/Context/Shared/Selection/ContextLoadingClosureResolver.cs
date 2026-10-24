@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
@@ -58,6 +59,7 @@ internal sealed class ContextLoadingClosureResolver
     {
         var loading = new SourceLoadingClosureResolver().Resolve(new SourceLoadingClosureRequest
         {
+            Layout = graph.Catalogue.Layout,
             WorkspaceEntryPath = graph.WorkspaceEntry.CanonicalPath,
             Sources = graph.Sources.Select(source => new SourceLoadingClosureSource
             {
@@ -314,7 +316,8 @@ internal sealed class ContextLoadingClosureResolver
         foreach (var generated in parent.GeneratedEntries.Entries)
         {
             var targetPath = SourceGeneratedDestinationResolver.ResolveLinked(
-                parent.CanonicalPath, parent.IsLoader, generated.Destination) ?? SourceGeneratedDestinationResolver.Resolve(
+                graph.Catalogue.Layout, parent.CanonicalPath, parent.IsLoader, generated.Destination) ?? SourceGeneratedDestinationResolver.Resolve(
+                graph.Catalogue.Layout,
                 parent.CanonicalPath,
                 parent.IsLoader,
                 generated.Destination);
@@ -457,14 +460,14 @@ internal sealed class ContextLoadingClosureResolver
                 _findings.Add(Finding(
                     code: ContextFindingCode.WorkspaceUnsafe,
                     subject: issue.AttemptedCanonicalPath,
-                    cause: "The .agents source root is unsafe.",
+                    cause: $"The {graph.Catalogue.Layout.MainRoot} source root is unsafe.",
                     reference: null,
                     source: null,
                     path: issue.AttemptedCanonicalPath));
             }
             else
             {
-                AddClosureFinding(issue.AttemptedCanonicalPath, "The .agents source root is unavailable.",
+                AddClosureFinding(issue.AttemptedCanonicalPath, $"The {graph.Catalogue.Layout.MainRoot} source root is unavailable.",
                     startupMissing: issue.Code == SourceCatalogueIssueCode.RootMissing);
             }
         }

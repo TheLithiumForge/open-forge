@@ -35,7 +35,7 @@ public sealed class InstallPresentationContractTests
     public void NativeDataPreservesPropertyOrderAndNullableBoundaries()
     {
         AssertProperties<InstallData>(
-            "Mode", "Force", "Automatic", "Classification", "Footprint", "LockPath", "Effects", "Source", "Lifecycle", "Verification", "Migrations", "Configuration", "Frontmatter");
+            nameof(InstallData.Layout), nameof(InstallData.Mode), nameof(InstallData.Force), nameof(InstallData.Automatic), nameof(InstallData.Classification), nameof(InstallData.Footprint), nameof(InstallData.LockPath), nameof(InstallData.Effects), nameof(InstallData.Source), nameof(InstallData.Lifecycle), nameof(InstallData.Verification), nameof(InstallData.Migrations), nameof(InstallData.Configuration), nameof(InstallData.Frontmatter));
         AssertProperties<InstallDataFootprint>("Files", "Directories", "Sections");
         AssertProperties<InstallDataSource>("InventoryFingerprint", "AssetCount");
         AssertProperties<InstallDataEffect>("Path", "Kind", "Action", "SourceAssetPath", "Outcome", "Residual");
@@ -43,6 +43,7 @@ public sealed class InstallPresentationContractTests
         AssertProperties<InstallDataMigration>("Path", "Actions", "Fields", "Derivation", "Outcome");
         AssertProperties<InstallDataMigrationDerivation>("Field", "Source");
 
+        AssertNullable<InstallData>(nameof(InstallData.Layout));
         AssertNotNullable<InstallData>(nameof(InstallData.Mode));
         AssertNotNullable<InstallData>(nameof(InstallData.Force));
         AssertNotNullable<InstallData>(nameof(InstallData.Automatic));

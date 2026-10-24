@@ -234,6 +234,12 @@ internal static class RepairLibraryRecoveryApplication
         var lease = acquired.Lease;
         try
         {
+            if (!await RepairPlanRevalidator.ValidateLayoutAsync(plan, lease, cancellationToken).ConfigureAwait(false))
+            {
+                await lease.DisposeAsync().ConfigureAwait(false);
+                return AtomicPreparationResult.BoundaryResult(Boundary(RepairPreflightState.Blocked, RepairFindingCode.TargetChanged,
+                    "The workspace layout changed after Repair planning."));
+            }
             foreach (var step in plan.LibrarySteps)
             {
                 var evidence = step.Selection.Proposal.Evidence;

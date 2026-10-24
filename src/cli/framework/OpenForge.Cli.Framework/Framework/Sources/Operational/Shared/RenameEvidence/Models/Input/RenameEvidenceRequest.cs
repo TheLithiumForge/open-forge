@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -23,6 +25,8 @@ internal sealed record RenameEvidenceRequest
 
 internal sealed record RenameEvidencePolicy
 {
+    public required WorkspaceLayout Layout { get; init; }
+    internal SourceContentRoots Roots => new(Layout);
     public ImmutableArray<string> ManagedPaths { get; init; } = [];
     public ImmutableArray<string> ExcludedPaths { get; init; } = [];
     public ImmutableArray<string> PrivatePaths { get; init; } = [];

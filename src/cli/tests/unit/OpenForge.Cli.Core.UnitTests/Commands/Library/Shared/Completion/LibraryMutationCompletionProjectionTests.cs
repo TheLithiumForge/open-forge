@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Observation;
 using OpenForge.Cli.Core.Commands.Library.Shared.Completion;
@@ -20,7 +22,7 @@ public sealed class LibraryMutationCompletionProjectionTests
     public void LinkEffectTargetsArePortable(bool delete, bool platformSeparators)
     {
         // The on-disk target uses the platform separator: a backslash on Windows, a slash elsewhere.
-        const string portable = "../../shared/team-knowledge/.agents/directives/review.md";
+        var portable = Path.GetRelativePath(Path.GetDirectoryName(LibraryMutationPlanningData.Absolute(LibraryMutationPlanningData.Leaf))!, LibraryMutationPlanningData.Absolute(LibraryMutationPlanningData.SourceRoot + "/" + LibraryMutationPlanningData.Leaf)).Replace(Path.DirectorySeparatorChar, '/');
         var rawTarget = platformSeparators ? portable.Replace('/', Path.DirectorySeparatorChar) : portable;
         var path = CanonicalRelativePath.Create(LibraryMutationPlanningData.Leaf);
         var identity = RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, rawTarget);
@@ -28,6 +30,7 @@ public sealed class LibraryMutationCompletionProjectionTests
         var result = LibraryMutationCompletionProjection.Plan(new LibraryMutationPlanProjectionInput
         {
             Workspace = LibraryMutationPlanningData.Workspace,
+            Layout = WorkspaceLayout.Create(LibraryMutationPlanningData.Workspace, WorkspaceLayout.DefaultMainRoot),
             State = LibraryPlanState.Complete,
             Effects = new LibraryMutationEffects
             {
@@ -40,7 +43,7 @@ public sealed class LibraryMutationCompletionProjectionTests
         });
 
         var link = Assert.Single(result.Links);
-        Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md", link.RelativeTarget);
+        Assert.Equal(portable, link.RelativeTarget);
         Assert.Equal(delete ? rawTarget : null, link.Expected.RawRelativeTarget);
         Assert.Equal(rawTarget, effect.RawRelativeTarget);
     }
@@ -56,14 +59,14 @@ public sealed class LibraryMutationCompletionProjectionTests
         Assert.Equal(LibraryMutationPlanningData.Leaf, mapping.SourcePath);
         Assert.Equal(LibraryComparisonRelation.Added, mapping.Relation);
         Assert.Equal(LibraryLinkViewState.Missing, mapping.State);
-        Assert.Equal("directives/review", mapping.SourceId);
+        Assert.Equal(WorkspaceCategoryNames.Directives + "/" + Path.GetFileNameWithoutExtension(LibraryMutationPlanningData.Leaf), mapping.SourceId);
     }
 
     [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void SyncObservationDistinguishesCurrentAndRetiredPaths()
     {
-        const string retired = ".agents/directives/retired.md";
+        const string retired = WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceCategoryNames.Directives + "/retired" + SourceFormClassifier.MarkdownExtension;
         var observation = LibraryMutationPlanningData.Sync([LibraryMutationPlanningData.Leaf], [LibraryMutationPlanningData.Leaf, retired]);
         var result = LibraryMutationCompletionProjection.Projection(observation, LibraryMutationPlanningData.Id, LibraryPlanState.Complete, sourceIndependent: false);
 

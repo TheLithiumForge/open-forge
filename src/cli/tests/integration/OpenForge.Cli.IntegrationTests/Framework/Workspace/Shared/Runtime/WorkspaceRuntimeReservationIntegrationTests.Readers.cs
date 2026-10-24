@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
@@ -16,6 +18,7 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Snapshots;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Workspace.Shared.Runtime;
 
@@ -35,9 +38,10 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         files.CreateFile(SafeChildFile, "# Safe child\n");
         var workspace = Workspace(files);
         var paths = new PhysicalPathResolver();
-        var inspection = await new RouteSourceInspector(new SourceReadSessionReader(paths), paths).ReadAsync(workspace, Token);
+        var observation = await new WorkspaceLayoutReader(paths).ReadAsync(workspace, Token);
+        var inspection = await new RouteSourceInspector(new SourceReadSessionReader(paths), paths).ReadAsync(Assert.IsType<WorkspaceLayout>(observation.Layout), Token);
 
-        var result = await new RouteIncludedFileReader(workspace).ReadAsync(inspection, Token);
+        var result = await new RouteIncludedFileReader(inspection.Catalogue.Layout).ReadAsync(inspection, observation.Settings, Token);
 
         Assert.NotNull(result);
         var rejected = Assert.Single(result.Files, file => file.Path == target);
@@ -66,9 +70,10 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         Assert.True(files.TryCreateFileSymbolicLink(SafeCompanionFile, files.Combine(RuntimeFile), out var cause), cause);
         var workspace = Workspace(files);
         var paths = new PhysicalPathResolver();
-        var inspection = await new RouteSourceInspector(new SourceReadSessionReader(paths), paths).ReadAsync(workspace, Token);
+        var observation = await new WorkspaceLayoutReader(paths).ReadAsync(workspace, Token);
+        var inspection = await new RouteSourceInspector(new SourceReadSessionReader(paths), paths).ReadAsync(Assert.IsType<WorkspaceLayout>(observation.Layout), Token);
 
-        var result = await new RouteIncludedFileReader(workspace).ReadAsync(inspection, Token);
+        var result = await new RouteIncludedFileReader(inspection.Catalogue.Layout).ReadAsync(inspection, observation.Settings, Token);
 
         Assert.NotNull(result);
         Assert.Equal(1L, result.Total.Files.Value);
@@ -85,7 +90,7 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         SeedWorkspace(files);
         SeedRuntimeLinks(files);
         var workspace = Workspace(files);
-        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(workspace, Token);
+        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), Token);
         var reads = new List<string>();
         var resolver = new SourceLinkDestinationResolver(new PhysicalPathResolver(), (physical, logical, token) =>
         {

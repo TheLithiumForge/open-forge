@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore;
@@ -131,6 +134,7 @@ internal sealed class LibrarySyncOperation
             Workspace = request.Workspace,
             LibraryId = request.LibraryId,
             SettingsObservation = observations.Settings,
+            LayoutRead = observations.LayoutRead,
             Targets = plan.GitIgnore is null ? targets : targets.Add(new LibraryPermissionTarget(
                 LibraryGitIgnoreSection.Path, LibraryPermissionTargetUse.Live)
             { Effect = LibraryPermissionEffect.WriteGitIgnore }),
@@ -190,25 +194,21 @@ internal sealed class LibrarySyncOperation
         LibrarySyncRequest request,
         CancellationToken cancellationToken)
     {
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(
-            resolver,
-            request.Workspace,
-            cancellationToken).ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(
-            resolver,
-            request.Workspace,
-            cancellationToken).ConfigureAwait(false);
+        var layoutRead = await new WorkspaceLayoutReader(resolver).ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var layout = layoutRead.Layout;
+        var ownership = layoutRead.Ownership;
+        var settings = layoutRead.Settings;
         var record = LibraryRegistrationReader.Read(ownership);
         var selected = record.Record?.Libraries.FirstOrDefault(library => library.Id == request.LibraryId);
         var source = selected is null
             ? NotObservedSource(request.Workspace)
             : await ReadSourceAsync(resolver, request.Workspace, selected.SourceRoot, cancellationToken).ConfigureAwait(false);
         var entries = (source.Inventory?.Entries ?? []).Where(entry => selected is not null
-            && !WorkspaceRemovals.IsPathRemoved(
+            && layout is not null && !WorkspaceRemovals.IsPathRemoved(layout,
                 LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, entry.SourcePath).DestinationPath.Value,
                 settings.Document)).ToImmutableArray();
         var activeRegisteredPaths = (selected?.Paths ?? []).Where(path => selected is not null
-            && !WorkspaceRemovals.IsPathRemoved(
+            && layout is not null && !WorkspaceRemovals.IsPathRemoved(layout,
                 LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, path).DestinationPath.Value,
                 settings.Document)).ToImmutableArray();
         var paths = activeRegisteredPaths
@@ -233,14 +233,14 @@ internal sealed class LibrarySyncOperation
             : LibraryRegistrationSet.Create([.. record.Record.Libraries.Select(library => library.Id == selected.Id
                 ? LibraryRegistration.Create(library.Id, library.SourceRoot, library.DestinationRoot, [.. activeRegisteredPaths], library.GitIgnore)
                 : library)]);
-        var navigation = record.State == LibraryRegistrationReadState.Complete
+        var navigation = layout is not null && record.State == LibraryRegistrationReadState.Complete
             && selected is not null
             && source.Inventory?.State == LibraryInventoryState.Complete
             ? await LibraryGeneratedNavigationReader.ReadAsync(
                 new LibraryGeneratedNavigationRequest
                 {
                     Ownership = ownership,
-                    Workspace = request.Workspace,
+                    Layout = layout!,
                     SelectedLibrary = LibraryRegistration.Create(selected.Id, selected.SourceRoot, selected.DestinationRoot, [.. activeRegisteredPaths], selected.GitIgnore),
                     CurrentRecord = navigationRecord,
                     IntendedEntries = entries,
@@ -250,7 +250,7 @@ internal sealed class LibrarySyncOperation
             : new LibraryGeneratedNavigationRead([], Issue: null);
 
         if (navigation.Issue is null && navigation.Changes.FirstOrDefault(change =>
-                WorkspaceRemovals.IsPathRemoved(
+                layout is not null && WorkspaceRemovals.IsPathRemoved(layout,
                     Path.GetRelativePath(request.Workspace.LexicalRoot, change.LogicalPath)
                         .Replace(Path.DirectorySeparatorChar, '/'),
                     settings.Document)) is { } excludedHost)
@@ -264,11 +264,12 @@ internal sealed class LibrarySyncOperation
 
         return new LibrarySyncPlanningInput
         {
+            LayoutRead = layoutRead,
             Request = request,
             ConsumerBoundary = Unobserved(
-                request.Workspace,
+                request.Workspace, layout,
                 LibraryMutationOperationSupport.ReadAncestors(
-                    request.Workspace,
+                    request.Workspace, layout,
                     mappings.Select(observation => observation.Mapping.DestinationPath.Value),
                     navigation.Changes)),
             Record = record,
@@ -339,7 +340,9 @@ internal sealed class LibrarySyncOperation
             }
             var permissions = plan.Permissions
                 ?? throw new InvalidOperationException("An admitted Library plan requires its permission observation.");
-            if (freshPlan.State != LibraryPlanState.Complete || !Matches(plan, freshPlan)
+            var layoutValidation = await new WorkspaceLayoutRevalidator(freshResolver).ValidateAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+            if (layoutValidation.State != MutationValidationState.Valid
+                || freshPlan.State != LibraryPlanState.Complete || !Matches(plan, freshPlan)
                 || !await LibraryPermissionOperation.RevalidateAsync(lease, permissions, cancellationToken).ConfigureAwait(false))
             {
                 return Complete(request, plan with
@@ -438,13 +441,14 @@ internal sealed class LibrarySyncOperation
         };
 
     private static LibraryConsumerBoundaryFacts Unobserved(
-        CliWorkspace workspace,
+        CliWorkspace workspace, WorkspaceLayout? layout,
         ImmutableArray<CanonicalRelativePath> ancestors)
         => new()
         {
             Request = new LibraryConsumerBoundaryRequest
             {
                 Workspace = workspace,
+                Layout = layout,
                 RequiredAncestorPaths = ancestors,
             },
             ConsumerRoot = null,
@@ -463,7 +467,7 @@ internal sealed class LibrarySyncOperation
                 Workspace = input.Request.Workspace,
                 Current = input.Record.Record,
                 Intended = plan.IntendedRecord,
-                IsExcluded = WorkspaceRemovals.IsPathRemoved(LibraryGitIgnoreSection.Path, input.Settings.Document),
+                IsExcluded = WorkspaceRemovals.IsPathRemoved(input.LayoutRead.Layout!, LibraryGitIgnoreSection.Path, input.Settings.Document),
                 IsRemoval = false,
             }, cancellationToken).ConfigureAwait(false),
         };

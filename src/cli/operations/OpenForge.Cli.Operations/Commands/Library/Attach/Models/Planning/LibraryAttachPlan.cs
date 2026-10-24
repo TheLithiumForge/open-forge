@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using System.Collections.Immutable;
@@ -15,6 +16,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Attach.Models.Planning;
 
 internal sealed record LibraryAttachPlan
 {
+    internal WorkspaceLayoutRead LayoutRead => Input.LayoutRead;
+
     internal LibraryMutationEffects Effects => new()
     {
         Directories = Directories,

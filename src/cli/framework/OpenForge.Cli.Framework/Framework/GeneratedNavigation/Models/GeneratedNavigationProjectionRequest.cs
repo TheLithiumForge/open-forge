@@ -61,6 +61,7 @@ internal sealed class GeneratedNavigationProjectionRequest
 
         Formation = formation;
         Sharing = sharing ?? new SourceSharing([]);
+        Sharing.ValidateMembership(formation.Catalogue);
         Regions = new ReadOnlyCollection<GeneratedNavigationRegionInput>(materializedRegions);
         Metadata = new ReadOnlyCollection<GeneratedNavigationMetadata>(materializedMetadata);
         _metadataByPath = new ReadOnlyDictionary<string, SourceAuthoredMetadataFacts>(

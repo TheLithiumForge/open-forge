@@ -5,6 +5,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
 using OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Shared.Destinations;
 
@@ -56,7 +58,7 @@ public sealed class SourceDestinationSpellingTests
     private static async Task AssertBothSpellingsResolveAsync(string filename)
     {
         var workspace = SourceInventoryTestData.Workspace();
-        var catalogue = new SourceCatalogue(workspace, [], [], [], isCancelled: false);
+        var catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [], [], isCancelled: false);
         // Resolve the logical identity before I/O, including names forbidden by this host's filesystem.
         var resolver = new SourceLinkDestinationResolver(
             physicalPathResolver: (_, path) => PhysicalPathResolution.Classified(PhysicalPathState.Missing, path),

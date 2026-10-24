@@ -23,6 +23,8 @@ using OpenForge.Cli.Core.Framework.Sources.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
@@ -107,6 +109,7 @@ public sealed class GeneratedNavigationProjectorTests
         var reorderedText = OpenForgeDocumentSeed.GeneratedEntries(entries: reorderedLine);
         var reorderedEntries = SourceGeneratedEntriesParser.Parse(new MarkdownDocumentParser().Parse(reorderedText));
         var reorderedComparisons = RouteGeneratedEntryComparisonReader.Read(
+            request.Formation.Catalogue.Layout,
             parent,
             reorderedEntries,
             region.Entries,
@@ -118,6 +121,7 @@ public sealed class GeneratedNavigationProjectorTests
         var staleText = OpenForgeDocumentSeed.GeneratedEntries(entries: staleLine);
         var staleEntries = SourceGeneratedEntriesParser.Parse(new MarkdownDocumentParser().Parse(staleText));
         var comparisons = RouteGeneratedEntryComparisonReader.Read(
+            request.Formation.Catalogue.Layout,
             parent,
             staleEntries,
             region.Entries,
@@ -235,7 +239,7 @@ public sealed class GeneratedNavigationProjectorTests
         Assert.Equal(
             child.Identity.CanonicalBasePath,
             SourceGeneratedDestinationResolver.Resolve(
-                parent.Identity.CanonicalBasePath,
+DefaultWorkspaceLayout, parent.Identity.CanonicalBasePath,
                 false,
             entry.Destination));
     }
@@ -283,7 +287,7 @@ public sealed class GeneratedNavigationProjectorTests
         Assert.Equal(
             child.Identity.CanonicalBasePath,
             SourceGeneratedDestinationResolver.Resolve(
-                parent.Identity.CanonicalBasePath,
+DefaultWorkspaceLayout, parent.Identity.CanonicalBasePath,
                 false,
                 Assert.Single(parsed.Entries).Destination));
     }
@@ -310,7 +314,7 @@ public sealed class GeneratedNavigationProjectorTests
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
         var entry = Assert.Single(region.Entries);
         var parsed = SourceLoaderEntriesParser.Parse(
-            OpenForgeDocumentSeed.GeneratedEntries(entries: entry.Line));
+DefaultWorkspaceLayout, OpenForgeDocumentSeed.GeneratedEntries(entries: entry.Line));
         var destination = Assert.Single(parsed.Destinations);
 
         Assert.Equal("root%28paren%29/_root.md", entry.Destination);
@@ -903,7 +907,7 @@ public sealed class GeneratedNavigationProjectorTests
             _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The document failure scenario is not defined."),
         };
 
-        var region = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(input, []);
+        var region = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(DefaultWorkspaceLayout, input, []);
 
         Assert.Equal(GeneratedNavigationRegionState.Unavailable, region.State);
         Assert.Equal((GeneratedNavigationRegionUnavailableReason)expectedReason, region.UnavailableReason);
@@ -974,7 +978,7 @@ public sealed class GeneratedNavigationProjectorTests
         var ordinary = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
         var ordinaryChange = Assert.IsType<GeneratedNavigationBoundedChange>(ordinary.Change);
         var projected = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(
-            Region(parent, document),
+DefaultWorkspaceLayout, Region(parent, document),
             ordinary.Entries);
         var projectedChange = Assert.IsType<GeneratedNavigationBoundedChange>(projected.Change);
 
@@ -987,7 +991,7 @@ public sealed class GeneratedNavigationProjectorTests
         var reparsedDocument = new MarkdownDocumentParser().Parse(
             Encoding.UTF8.GetString(projectedChange.ExpectedDocumentBytes.ToArray()));
         var reparsed = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(
-            Region(parent, reparsedDocument),
+DefaultWorkspaceLayout, Region(parent, reparsedDocument),
             ordinary.Entries);
 
         Assert.True(Assert.IsType<GeneratedNavigationBoundedChange>(reparsed.Change).IsUnchanged);
@@ -1227,4 +1231,11 @@ public sealed class GeneratedNavigationProjectorTests
             "generated-navigation-unit",
             canonicalPath.Replace('/', Path.DirectorySeparatorChar)));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(GeneratedNavigationProjectorTests)),
+                Path.GetFullPath(nameof(GeneratedNavigationProjectorTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

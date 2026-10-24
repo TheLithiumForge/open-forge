@@ -7,6 +7,12 @@ open-forge:
 
 # Update Behavior Contract
 
+## Workspace Layout
+
+Map current package paths before comparison and exclusions. Recorded and retired ownership paths already name installed destinations and stay literal. Revalidate the layout under the lease.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
 ## Ownership Receipt Formation
 
 Form whole-file and region receipts according to what the operation manages.
@@ -112,7 +118,7 @@ sections. A skipped publication reports none/not-requested; verification never
 claims skipped ownership was published. No legacy file is read, converted,
 rewritten or deleted.
 
-The `.agents` container must be an ordinary contained directory. Reserved paths,
+The main-root container must be an ordinary contained directory. Reserved paths,
 portable aliases, destination admission, other owners, target identity and
 managed/generated boundaries remain safety checks. Current payload alignment
 identifies intended source at operation time; no source path, baseline hash,
@@ -219,7 +225,7 @@ payload. Plan each directory creation, show it in preview and results, and
 revalidate its absence and contained ancestors under the same lease before
 creating it. A directory is not created when an exclusion covers it. Links,
 aliases, conflicting files and other unsafe ancestors block the plan. An empty
-`.agents` directory without Framework registration does not authorize this
+main-root directory without Framework registration does not authorize this
 restoration behavior. Schema or release metadata alone does not invalidate an
 otherwise readable registration.
 
@@ -235,7 +241,7 @@ blocks the complete plan.
 ### Prune
 
 `--prune` additionally removes retired whole-file receipts whose paths still
-exist, are admitted by shared `allowInstallPaths` (`.agents/` is implicit), and
+exist, are admitted by shared `allowInstallPaths` (the primary content locations are implicit), and
 pass reserved-path, physical identity, other-owner and recovery checks. Edited
 retired content remains eligible. An absent retired path has no deletion effect;
 its obsolete receipt may be released. A region receipt never authorizes deleting
@@ -324,7 +330,7 @@ journal, history, or progress record.
 ## Formatter Boundary
 
 The accepted conservative formatter direction allows Update to detect supported
-formatter configuration and advise the user to exclude `.agents` or intentionally
+formatter configuration and advise the user to exclude the primary content locations or intentionally
 format and review before commit. It does not execute a formatter, choose one,
 change files for formatting, or persist formatter state. Format-only semantic
 equality is an observation, not a lifecycle mutation.

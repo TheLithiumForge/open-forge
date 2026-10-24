@@ -6,4 +6,7 @@ internal sealed record RemoveTargetResolution(
     RemoveKind Kind,
     string Target,
     string? Cause,
-    bool IsEntrypointFile = false);
+    bool IsEntrypointFile = false)
+{
+    internal string? RouteReference { get; init; }
+}

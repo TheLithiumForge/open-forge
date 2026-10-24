@@ -7,6 +7,8 @@ description: The features that do the most work for particular kinds of users, s
 
 Open Forge is small, but a few of its features do most of the work for particular kinds of users. Not everyone needs all of them. Find the row that matches your situation.
 
+The file example uses the default `.agents` context folder. A [custom folder](getting-started/installation.md#choose-the-context-folder) changes its location without changing how the knowledge is used.
+
 | If you...                                              | Look at                                                                          | Because                                                               |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | Work on an existing codebase, or with other people     | [Decisions](#decisions-keep-the-why)                                             | The reason behind a change survives the person who made it            |

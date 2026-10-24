@@ -26,7 +26,7 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 internal interface ILocalReferenceOperationalContributor
 {
     ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(
-        CliWorkspace workspace,
+        WorkspaceLayoutRead observation,
         CancellationToken cancellationToken,
         RouteDoctorView? routes = null);
 }
@@ -36,16 +36,25 @@ internal sealed class LocalReferenceOperationalContributor(
     SourceLinkDestinationResolver destinationResolver,
     LocalReferenceCandidateReader candidateReader) : ILocalReferenceOperationalContributor
 {
+    internal async ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(CliWorkspace workspace, CancellationToken cancellationToken, RouteDoctorView? routes = null)
+    {
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        return await ReadDoctorAsync(observation, cancellationToken, routes).ConfigureAwait(false);
+    }
+
     internal const int MaximumConcurrentSources = 8;
     internal async ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(
-        CliWorkspace workspace,
+        WorkspaceLayoutRead observation,
         CancellationToken cancellationToken,
         RouteDoctorView? routes = null)
     {
+        if (observation.Layout is not { } layout)
+            return new(OperationalViewState.Incomplete, [], LocalReferenceCandidateScanState.Incomplete, [], [])
+            { UnavailableCause = observation.Issues.FirstOrDefault()?.Cause };
         var paths = new PhysicalPathResolver().CreateReadSession();
-        var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, cancellationToken).ConfigureAwait(false);
-        var inspection = routes is null
-            ? await sourceInspector.ReadAsync(workspace, cancellationToken).ConfigureAwait(false)
+        var settings = observation.Settings;
+        var inspection = routes?.Catalogue is null || routes.WorkspaceEntry is null
+            ? await sourceInspector.ReadAsync(layout, cancellationToken).ConfigureAwait(false)
             : new RouteSourceInspection
             {
                 Session = routes.Session,
@@ -110,10 +119,10 @@ internal sealed class LocalReferenceOperationalContributor(
     }
 
     ValueTask<LocalReferenceDoctorView> ILocalReferenceOperationalContributor.ReadDoctorAsync(
-        CliWorkspace workspace,
+        WorkspaceLayoutRead observation,
         CancellationToken cancellationToken,
         RouteDoctorView? routes)
-        => ReadDoctorAsync(workspace, cancellationToken, routes);
+        => ReadDoctorAsync(observation, cancellationToken, routes);
 
     private async ValueTask ReadSourceAsync(
         RouteSourceInspection inspection,
@@ -236,7 +245,7 @@ internal sealed class LocalReferenceOperationalContributor(
             var path = source.CanonicalPath;
             while (path.Length > 0 && known.Add(PortableWorkspacePath.CreatePortableKey(path)))
             {
-                if (path == SourceLogicalPath.AgentsRoot) break;
+                if (catalogue.Layout.SourceRoots.Contains(path, StringComparer.Ordinal)) break;
                 path = SourceLogicalPath.ReadParent(path);
             }
         }

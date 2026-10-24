@@ -12,6 +12,10 @@ current admission without prompting or publishing grants. The accepted
 [Workspace State Files decision](../../../../../decisions/framework/workspace-state-files.md)
 owns this boundary.
 
+## Content Admission
+
+Eligible destinations below the selected main root and `.agents/skills` need no external grant. Implicit admission uses exact case. A case alias needs explicit permission and still passes every ordinary safety check. Fixed controls remain protected. Authored grants are literal workspace paths and do not move when the context folder differs.
+
 ## Authored Settings
 
 There is no per-owner permission document. Grants are workspace-relative paths
@@ -21,7 +25,7 @@ transfer or replace a grant. Ownership and source selection remain independent
 command facts and keep their own safety checks.
 
 Entries are paths, not glob patterns. Exact paths and descendants of a named
-directory are admitted through the shared portable identity. `.agents/` is
+directory are admitted through the shared portable identity. The primary content locations are
 implicitly admitted. Reserved controls, `.git`, protected hosts, Library source
 boundaries, ownership and physical containment remain binding even with a grant.
 The retired permission file is ordinary unrelated content: no legacy reader,

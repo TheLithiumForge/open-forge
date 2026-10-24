@@ -241,13 +241,13 @@ internal sealed partial class RouteMoveReferenceScanner(
         return boundary is null
             ? ProjectReplacement(input, sourcePath, intendedSourcePath, link, facts) with
             {
-                Meaning = ProjectMeaning(input.MovedPaths, facts),
+                Meaning = ProjectMeaning(input, facts),
             }
             : new RouteMoveReferenceReplacementProjection { Boundary = boundary };
     }
 
     private static RouteMoveReferenceMeaning? ProjectMeaning(
-        IReadOnlyDictionary<string, string> movedPaths,
+        RouteMoveReferenceScanInput input,
         SourceLinkDestinationFacts facts)
     {
         if (facts.Target.Kind != SourceLinkTargetKind.Local
@@ -256,10 +256,11 @@ internal sealed partial class RouteMoveReferenceScanner(
             return null;
         }
 
-        var expectedPath = movedPaths.GetValueOrDefault(targetPath, targetPath);
+        var expectedPath = input.MovedPaths.GetValueOrDefault(targetPath, targetPath);
         return new RouteMoveReferenceMeaning
         {
-            TargetId = facts.Target.Id is null ? null : Framework.Sources.Identity.SourceIdentity.DeriveId(expectedPath),
+            TargetId = facts.Target.Id is null ? null : Framework.Sources.Identity.SourceIdentity.DeriveId(
+                input.Request.Destination.Inventory.Subject.Catalogue.Layout, expectedPath),
             TargetPath = expectedPath,
             Layer = facts.Target.Layer,
             Resolution = facts.Target.Resolution,

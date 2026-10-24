@@ -1,4 +1,5 @@
 using System.CommandLine;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
@@ -190,10 +191,9 @@ internal static class RouteInitBinding
         }
 
         var normalized = target.Replace('\\', '/');
-        var isExactPath = normalized.StartsWith(".agents/", StringComparison.Ordinal)
-            || normalized.StartsWith("./.agents/", StringComparison.Ordinal);
+        var isExactPath = SourceReferenceParser.Parse(normalized).Kind == SourceReferenceKind.SourcePath;
         var segments = normalized.Split('/', StringSplitOptions.None);
-        if (normalized.StartsWith("./.agents/", StringComparison.Ordinal))
+        if (normalized.StartsWith(SourceWorkspaceRelativePath.LiteralReferencePrefix, StringComparison.Ordinal))
         {
             var exactSegments = segments[1..];
             return exactSegments.All(IsSafeSegment)
@@ -207,13 +207,12 @@ internal static class RouteInitBinding
 
         return isExactPath
             ? IsValidExactPath(segments)
-            : segments.All(segment => !segment.EndsWith(".md", StringComparison.OrdinalIgnoreCase));
+            : segments.All(segment => !segment.EndsWith(SourceFormClassifier.MarkdownExtension, StringComparison.OrdinalIgnoreCase));
     }
 
     private static bool IsValidExactPath(IReadOnlyList<string> segments)
     {
-        if (segments.Count < 3
-            || !string.Equals(segments[0], ".agents", StringComparison.Ordinal))
+        if (segments.Count < 2)
         {
             return false;
         }
@@ -221,7 +220,7 @@ internal static class RouteInitBinding
         var folder = segments[^2];
         return string.Equals(
                 segments[^1],
-                $"_{folder}.md",
+                $"_{folder}{SourceFormClassifier.MarkdownExtension}",
                 StringComparison.Ordinal)
             || SourceFormClassifier.IsCompatibilityFileName(segments[^1]);
     }

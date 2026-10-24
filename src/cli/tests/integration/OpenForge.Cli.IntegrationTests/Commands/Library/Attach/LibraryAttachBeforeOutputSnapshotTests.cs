@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Commands.Library.Attach.Shared.Serialization;
 using OpenForge.Cli.Core.Commands.Library.Attach;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Planning;
@@ -71,6 +72,7 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
             Workspace = workspace.Workspace,
             LibraryId = request.LibraryId,
             SettingsObservation = observations.Settings,
+            LayoutRead = observations.LayoutRead,
             Targets = [new LibraryPermissionTarget(link.DestinationPath.Value, LibraryPermissionTargetUse.Live)
                 { Effect = LibraryPermissionEffect.CreateLink }],
             AllowPrompt = false,
@@ -160,7 +162,8 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
     {
         var cancellation = TestContext.Current.CancellationToken;
         var resolver = new PhysicalPathResolver();
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(resolver, workspace.Workspace, cancellation);
+        var layoutRead = await new WorkspaceLayoutReader(resolver).ReadAsync(workspace.Workspace, cancellation);
+        var ownership = layoutRead.Ownership;
         var record = LibraryRegistrationReader.Read(ownership);
         var sourceRoot = LibrarySourceRootReader.Read(resolver,
             new LibrarySourceRootRequest { Workspace = workspace.Workspace, SourceRoot = request.SourceRoot }, cancellation);
@@ -176,7 +179,7 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
         }, cancellation);
         var navigation = await LibraryGeneratedNavigationReader.ReadAsync(new LibraryGeneratedNavigationRequest
         {
-            Workspace = workspace.Workspace,
+            Layout = layoutRead.Layout!,
             SelectedLibrary = LibraryRegistration.Create(request.LibraryId, request.SourceRoot, request.DestinationRoot,
                 [.. inventory.Entries.Select(entry => entry.SourcePath)]),
             CurrentRecord = record.Record,
@@ -184,15 +187,17 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
             Settings = OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument.Empty,
         }, cancellation);
         Assert.Null(navigation.Issue);
-        var ancestors = LibraryMutationOperationSupport.ReadAncestors(workspace.Workspace,
+        var ancestors = LibraryMutationOperationSupport.ReadAncestors(workspace.Workspace, layoutRead.Layout,
             mappings.Select(mapping => mapping.Mapping.DestinationPath.Value), navigation.Changes);
         var boundary = await LibraryConsumerBoundaryReader.ReadAsync(resolver, new LibraryConsumerBoundaryRequest
         {
+            Layout = layoutRead.Layout,
             Workspace = workspace.Workspace,
             RequiredAncestorPaths = ancestors,
         }, cancellation);
         return new LibraryAttachPlanningInput
         {
+            LayoutRead = layoutRead,
             Request = request,
             ConsumerBoundary = boundary,
             Record = record,

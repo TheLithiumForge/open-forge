@@ -13,6 +13,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Selection;
 
@@ -456,7 +457,7 @@ public sealed class FindUniverseResolverTests
         var sourceSession = new SourceReadSession(
             fixture.Catalogue,
             new SourceDocumentReader(fixture.Workspace),
-            fixture.DefaultScope);
+            [fixture.DefaultScope]);
         return new FindUniverseInput(request, sourceSession);
     }
 
@@ -503,7 +504,7 @@ public sealed class FindUniverseResolverTests
 
         return new CatalogueFixture(
             workspace,
-            new SourceCatalogue(workspace, candidates, sources, issues, false),
+            new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), candidates, sources, issues, false),
             new SourceCatalogueSelectionScope(
                 ".agents",
                 Physical(workspace.PhysicalRoot, ".agents")));
@@ -629,7 +630,7 @@ public sealed class FindUniverseResolverTests
 
         return new CatalogueFixture(
             workspace,
-            new SourceCatalogue(workspace, candidates, sources, issues, false),
+            new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), candidates, sources, issues, false),
             new SourceCatalogueSelectionScope(
                 ".agents",
                 Physical(workspace.PhysicalRoot, ".agents")));

@@ -18,7 +18,9 @@ Use `open-forge --help` for the top-level inventory. `route --help`, `extension 
 
 `open-forge help` lists built-in topics. `open-forge help concepts` prints the concepts and the file formats from the shipped `.agents/README.md`, without a workspace, so it still works after a project deletes its README.
 
-A source reference is an exact source ID, such as `memory/crystallized`, or an exact `.agents/...` Markdown path. Use the exact path when an ID is ambiguous. Source IDs, Extension stable IDs, and Library management IDs identify different things. Examples assume their routes or packages exist. Substitute IDs from the selected workspace's inventory.
+A source reference is an exact source ID, such as `memory/crystallized`, or an exact `./...` workspace-relative Markdown path. Use the exact path when an ID is ambiguous. Exact paths stay literal and never move with the context folder. Source IDs, Extension stable IDs, and Library management IDs identify different things. Examples assume their routes or packages exist. Substitute IDs from the selected workspace's inventory.
+
+The context folder is chosen at first installation with `install --main-root <folder>`. The default is `--main-root .agents`. Native Skills stay in `.agents/skills/`, settings in `.agents/open-forge.json`, and ownership in `.agents/open-forge.lock.json`. See [Install](packages.md#install) for setup and relocation limits.
 
 ## Global Flags
 

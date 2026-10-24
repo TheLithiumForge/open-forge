@@ -54,8 +54,7 @@ internal sealed class ContextLinkExpander
             return ContextLinkExpansionFormation.NotRequested(closure);
         }
 
-        var settings = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), request.Workspace, cancellationToken).ConfigureAwait(false);
-        var scope = new ContextLinkReadScope(request, graph, settings.Document);
+        var scope = new ContextLinkReadScope(request, graph, graph.LayoutRead.Settings.Document);
         var startup = await ExpandSetAsync(
             scope,
             closure.StartupSources,

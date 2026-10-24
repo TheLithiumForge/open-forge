@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Status;
 
@@ -26,7 +27,7 @@ internal static class StatusRouteTotalAvailableSupport
         var workspace = Workspace();
         var source = installed ? Source(workspace) : null;
         var catalogue = new SourceCatalogue(
-            workspace,
+WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot),
             [],
             source is null ? [] : [source],
             installed ? [] : [MissingRootIssue(workspace)],

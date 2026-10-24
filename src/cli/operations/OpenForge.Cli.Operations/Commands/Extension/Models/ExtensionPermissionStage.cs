@@ -36,6 +36,8 @@ internal sealed record ExtensionPermissionRequest(
     bool AllowPrompt,
     ImmutableArray<string> ExplicitGrantPaths = default)
 {
+    internal required WorkspaceLayoutRead LayoutRead { get; init; }
+
     internal ImmutableArray<string> Grants => ExplicitGrantPaths.IsDefault ? [] : ExplicitGrantPaths;
 }
 
@@ -44,7 +46,10 @@ internal sealed record ExtensionPermissionStage(
     WorkspacePermissionResult Result,
     PlannedFileChange? Change,
     RecoveryBundleTarget? RecoveryTarget,
-    ExtensionPermissionFailure? Failure);
+    ExtensionPermissionFailure? Failure)
+{
+    internal WorkspaceLayoutRead? LayoutRead { get; init; }
+}
 
 internal sealed record ExtensionPermissionApplication(
     WorkspacePermissionResult Result,

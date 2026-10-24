@@ -5,6 +5,13 @@ namespace OpenForge.Cli.Core.Presentation.Route.Shared.Inclusion.Shared.Selectio
 
 internal static class RouteInclusionWireVocabulary
 {
+    internal static CliEffectKind Kind(RouteInclusionEffectKind kind) => kind switch
+    {
+        RouteInclusionEffectKind.LoaderEntries => CliEffectKind.Section,
+        RouteInclusionEffectKind.Settings => CliEffectKind.Setting,
+        _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The effect kind is not defined."),
+    };
+
     internal static string FindingCode(string prefix, RouteInclusionFindingCode code)
         => $"{prefix}.{Finding(code)}";
 

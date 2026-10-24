@@ -9,6 +9,8 @@ description: How Project Documents and Planning keep project knowledge top-down,
 
 This flow belongs to those Extensions. Core only asks that each detail live in the narrowest source that defines it, and that an accepted change reaches that source. [Memory](../concepts/memory.md) works the same with or without the flow. If your project wants a different one, edit the Documents and Decisions categories, or leave them out.
 
+Documents and Decisions follow the workspace’s selected context folder. Their links still connect the installed files in that layout. The [installed path guide](/guides/extensions#installed-paths) explains the mapping without changing this flow.
+
 ## Decisions update Documents
 
 A Decision and a Document answer different questions:

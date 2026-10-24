@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
@@ -28,6 +30,10 @@ internal enum InstallManagementState
 internal sealed record InstallPlan
 {
     public required InstallRequest Request { get; init; }
+
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
+    public required WorkspaceLayout IntendedLayout { get; init; }
 
     public required FrameworkPayload Payload { get; init; }
 
@@ -85,6 +91,8 @@ internal sealed record InstallPlanBuild
 
 internal sealed record InstallPlanningEvidence
 {
+    public WorkspaceLayout? Layout { get; init; }
+
     public required FrameworkPayload? Payload { get; init; }
 
     public required InstallIntendedState? IntendedState { get; init; }
@@ -213,6 +221,10 @@ internal sealed record InstallIntendedStateBuild
 internal sealed record InstallPlanContext
 {
     public required InstallRequest Request { get; init; }
+
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
+    public required WorkspaceLayout IntendedLayout { get; init; }
 
     public required FrameworkPayload Payload { get; init; }
 

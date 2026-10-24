@@ -20,6 +20,8 @@ For repository setup, build prerequisites, and a worktree-local executable,
 see [Development and setup](development.md). For package structure and manual
 Extension use, see [Extensions](extensions.md).
 
+The primary content locations are the selected context folder and native Skills at `.agents/skills`. Examples with `.agents` as the context folder use the default layout. For a custom folder, use the actual workspace path with `./`, or keep using short source IDs. See [Context folder](#context-folder).
+
 ## Command index
 
 Choose a task, then follow its command link. Each operation has the same shape:
@@ -354,9 +356,9 @@ recovery observations.
 
 Included files registered in settings `roots` are counted as listed, unlisted
 when no loader row lists them, or missing when no file exists. Missing takes precedence.
-Hand-written loader rows outside `.agents/` are counted separately. Required
+Hand-written loader rows outside the primary content locations are counted separately. Required
 included files and catalogue descendants contribute to startup once per physical
-file. The report names the part outside `.agents/`. Conditioned required files
+file. The report names the part outside the primary content locations. Conditioned required files
 stay pending and make the report incomplete. Supply working files to `context`
 to resolve their conditions for the task.
 
@@ -412,7 +414,7 @@ See [global options](#global-options) for shared flags.
 `context` returns ordered startup context or the selected sources added to it.
 It follows active included rows and their Markdown catalogues with the usual tags
 and conditions. Select an included file with `context ./CONTRIBUTING.md`.
-An exact `.agents/` path to an unrouted file, such as `context .agents/README.md`,
+An exact path within the selected context folder, such as `context ./docs/forge/README.md` for a custom root,
 returns it and its overwrite without adding either to startup context.
 With no source arguments it returns the startup files. Add source IDs or
 exact paths to include the context you select. An unresolved source reports why
@@ -511,7 +513,7 @@ See [global options](#global-options) for shared flags.
 `find` selects Markdown sources by authored tags and structural headings.
 It also searches active included leaves and listed catalogue descendants, using
 their row metadata and Markdown headings and tags. Including a file never scans
-its folder. Files outside `.agents/` use exact `./path` source references. It
+its folder. Files outside the primary content locations use exact `./path` source references. It
 does not treat arbitrary body text as a substitute for route or metadata
 meaning.
 
@@ -840,7 +842,7 @@ See [global options](#global-options) for shared flags.
 #### Behavior notes
 
 `route init <route-target>` initializes each missing entrypoint in one exact
-route chain. A target is a route ID or an exact canonical `.agents` entrypoint
+route chain. A target is a route ID or an exact canonical workspace entrypoint
 path. The generic scaffold accepts optional metadata for the final entrypoint.
 Without it, the new entrypoint gets a placeholder description and tags, and
 the result reminds you to edit them.
@@ -940,7 +942,7 @@ Use one workspace-relative UTF-8 text file. Both path separators and a leading
 `./` are accepted. A Markdown file with `## Entries` is followed as a catalogue.
 Other files are leaves. The file keeps its bytes and needs no Open Forge frontmatter.
 
-A new row outside `.agents/` requires `--description`. Repeat `--tag` in the
+A new row outside the primary content locations requires `--description`. Repeat `--tag` in the
 order to keep, with or without `#`. Without tags the document loads on demand.
 Repeat `--apply-to` for workspace-relative glob conditions. The file's own
 frontmatter never sets loading.
@@ -950,8 +952,8 @@ own field. An identical request is a verified no-op. Including a hand-written ro
 registers it without rewriting it. To clear tags or conditions, edit the row or
 exclude and include again. The preview shows the row before and after.
 
-Inside `.agents/`, include only a direct child folder's catalogue, such as
-`.agents/patterns/_patterns.md`. This switches its generated row on. Change its
+Within the main root, include only a direct child folder's catalogue, such as
+`.agents/patterns/_patterns.md` in the default layout. The fixed `.agents/skills/_skills.md` catalogue is also a primary category. This switches its generated row on. Change its
 frontmatter to change its description, tags or conditions. Metadata options on
 these catalogues are invalid. A deeper file belongs through its folder's catalogue.
 
@@ -959,7 +961,7 @@ Use a catalogue instead of a directory. Globs, URLs, fragments, paths that escap
 the workspace through `..` or a link, Git metadata, workspace control files and
 non-UTF-8 files are invalid. Errors name the operand and the supported next step.
 
-Only the loader and settings may change. Outside `.agents/`, the canonical path
+Only the loader and settings may change. Outside the primary content locations, the canonical path
 is recorded in settings `roots`. The loader row decides whether and when it loads.
 Deleting a row by hand leaves an unlisted registration. Index, Update, Configure
 and Extension installation keep it unlisted. Index preserves included rows in their order
@@ -981,7 +983,7 @@ open-forge route exclude .agents/patterns/_patterns.md
 
 Exclude removes every loader row for the target and its external `roots`
 registration. It works on hand-written rows and when the target is missing.
-A main-root catalogue's generated row is removed from the loader without deleting the catalogue.
+A primary category catalogue's generated row is removed from the loader without deleting the catalogue.
 The operand rules are the same as Include, except that a missing target is valid.
 
 When nothing lists or registers the target, the command reports nothing changed
@@ -1121,7 +1123,7 @@ at the removed file are detached: each keeps its visible text as plain text.
 The root [`remove`](#remove) command also handles ordinary
 files, directories, packages and Libraries.
 
-The same [reference scan](#reference-scans-for-moves-and-removals) and evidence boundaries apply as for Route Move. Framework- and Extension-managed content, including edited files, can be removed when safety checks allow it. Selecting a category by its entrypoint removes the whole category, including contained native and binary resources. The loader and `.agents` root are protected. A single native Skill or non-Markdown resource is not a routed Markdown leaf. Links, unsafe references, incomplete scans, and nested Git repositories block category removal. Review the plan before applying it.
+The same [reference scan](#reference-scans-for-moves-and-removals) and evidence boundaries apply as for Route Move. Framework- and Extension-managed content, including edited files, can be removed when safety checks allow it. Selecting a category by its entrypoint removes the whole category, including contained native and binary resources. The loader, main root and fixed controls are protected. A single native Skill or non-Markdown resource is not a routed Markdown leaf. Links, unsafe references, incomplete scans, and nested Git repositories block category removal. Review the plan before applying it.
 
 #### Next step
 
@@ -1133,7 +1135,7 @@ Both commands scan supported Markdown across the workspace for affected
 references. In a Git work tree, they skip paths Git ignores through standard
 exclude rules, including dependency and build folders such as `node_modules`,
 `bin`, `obj` and `artifacts`. Ignored Markdown is left unchanged. Tracked files
-remain covered, and the entire `.agents` tree is scanned, including Git-ignored
+remain covered, and both primary content locations are scanned, including Git-ignored
 private routes. Without a usable Git inventory, they keep the complete scan.
 `--detail debug` reports `gitIgnoredPaths=<count>` on stderr when paths were
 excluded. It counts skipped files and pruned directory roots, not their
@@ -1171,7 +1173,7 @@ See [global options](#global-options) for shared flags.
 
 `index` rebuilds bounded generated `Entries` regions from routed sources. With
 no operands it rebuilds the Loader and every reachable entrypoint. With
-operands it uses the supplied source IDs or exact `.agents` paths: an
+operands it uses the supplied source IDs or exact `./<workspace-path>` paths: an
 entrypoint selects its subtree and the parent that lists it, and a routed file
 selects the parent that lists it.
 
@@ -1372,6 +1374,7 @@ open-forge install --configure --frontmatter root --automatic
 
 | Option                                              | What it does                                                                                                                                        |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--main-root <folder>` | Choose an absent or empty context folder at first installation, defaulting to `.agents`. Existing installations cannot change roots. |
 | `--configure`                                       | Revisit route choices or the frontmatter form in an installed workspace                                                                             |
 | `--preset <minimal\|essentials\|full-core\|custom>` | Select built-in routes without the preset question                                                                                                  |
 | `--frontmatter <root\|scoped>`                      | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
@@ -1390,7 +1393,7 @@ and converts eligible owned files to the chosen frontmatter form.
 
 Install has no operands.
 
-First interactive Install offers Minimal, Essentials, Full Core, or Custom before
+After the context-folder question, first interactive Install offers Minimal, Essentials, Full Core, or Custom before
 showing the selected plan and asking for confirmation. An explicit preset
 skips the preset question. `--dry-run` changes nothing and never
 asks setup questions. Naming the preset makes a preview use the intended
@@ -1418,11 +1421,29 @@ and explains that existing files stay routable.
 Install's headline describes the result, with the path on a separate `Workspace:`
 line. Explanations wrap at spaces to fit the terminal width.
 
+##### Context folder
+
+At first installation, `install --main-root <folder>` selects where Open Forge keeps its context files. The wizard asks "Where should Open Forge keep its context files?" before route choices, with `.agents` as the default. Explicit `--main-root` input answers it. Previews, JSON output and unattended runs never ask.
+
+For example, choose an absent or empty `docs/forge` folder:
+
+```sh
+open-forge install --main-root docs/forge --preset minimal --dry-run
+# Review the plan before applying it.
+open-forge install --main-root docs/forge --preset minimal --automatic
+```
+
+The loader, guide and ordinary categories go under that folder. Native Skills stay at `.agents/skills`, settings at `.agents/open-forge.json` and ownership at `.agents/open-forge.lock.json`. `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader. `.open-forge-state/` also stays at the workspace root.
+
+An omitted or unchanged root preserves ordinary Install behavior. An established installation refuses a different root, including with `--configure`. Relocating an established installation is not available yet. Editing `mainRoot` moves nothing. Readers report a disagreement with the installed files and writers stop. Older CLIs do not support custom roots.
+
+Status names a custom context folder. Status and Install expose `data.layout` with `mainRoot` and `loaderPath` for a custom root and omit it for the default layout. JSON output remains schema 3.
+
 ##### Setup choices
 
 | Preset       | Supplied defaults                                                                                                                                           |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `minimal`    | Directives and Crystallized Memory, with the Memory catalogue, plus the loader, `.agents/README.md` and the managed sections in `AGENTS.md` and `CLAUDE.md` |
+| `minimal`    | Directives and Crystallized Memory, with the Memory catalogue, plus the loader, the guide at `<mainRoot>/README.md` and the managed sections in `AGENTS.md` and `CLAUDE.md` |
 | `essentials` | Everything in Minimal, plus Patterns, Skills and Emerging Memory, and Working Memory with private contents and a shared entrypoint                          |
 | `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                                          |
 | `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                                          |
@@ -1548,7 +1569,7 @@ companions, and narrower omissions. Missing private notes need your own copy or
 backup. Route configuration grants no general Update or deletion authority.
 
 Frontmatter conversion is a narrow exception: Configure converts unedited
-owned Framework and Extension Markdown under `.agents/` whose leading
+owned Framework and Extension Markdown in the primary content locations whose leading
 frontmatter has Open Forge metadata, except native `SKILL.md` files. It
 compares each file's authored content with the delivered content in both forms. A file already
 matching the selected form needs no change. A file matching the other form is
@@ -1728,11 +1749,11 @@ are in `.agents/open-forge.json`. Framework and Extension records share the lock
 but remain independent command domains.
 
 The settings key `frontmatter` accepts `root` or `scoped`. A missing key means
-scoped, and unsupported values are invalid settings. New settings use `schemaVersion` 2:
+scoped, and unsupported values are invalid settings. New settings use `schemaVersion` 4. Unrelated rewrites preserve existing declarations. The optional `mainRoot` names the context folder, with absence meaning `.agents`. The default value is not inserted:
 
 ```json
 {
-  "schemaVersion": 2,
+  "schemaVersion": 4,
   "frontmatter": "root"
 }
 ```
@@ -1754,8 +1775,8 @@ Add `ignoreLinksFrom` or `ignoreLinksTo` to `.agents/open-forge.json`:
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v2/open-forge.schema.json",
-  "schemaVersion": 2,
+  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v4/open-forge.schema.json",
+  "schemaVersion": 4,
   "ignoreLinksFrom": [".agents/memory/archived"],
   "ignoreLinksTo": []
 }
@@ -1825,7 +1846,7 @@ Removal records exclusions in `.agents/open-forge.json`:
 
 | Setting              | Keeps removed                                            |
 | -------------------- | -------------------------------------------------------- |
-| `removedCategories`  | Root categories under `.agents`                          |
+| `removedCategories`  | Root categories in the selected layout                          |
 | `removedFiles`       | Exact workspace-relative file destinations               |
 | `removedDirectories` | Directories and every descendant, including future files |
 | `removedExtensions`  | Packages, including requests through dependencies        |
@@ -1838,7 +1859,7 @@ need not survive. Deleting a file by hand does not infer an exclusion.
 
 ```json
 {
-  "schemaVersion": 2,
+  "schemaVersion": 4,
   "removedCategories": ["skills"],
   "removedFiles": [".agents/patterns/_patterns.md", "AGENTS.md"],
   "removedDirectories": ["docs/obsolete"],
@@ -1930,7 +1951,7 @@ resolve offline within the selected source and install first. There is no
 network, registry, cache, or fallback lookup.
 
 `--allow-path <path>` grants supported write permission for a destination outside
-`.agents` and records it in `.agents/open-forge.json`. It adds no task authority.
+the primary content locations and records it in `.agents/open-forge.json`. It adds no task authority.
 Unattended writing operations that confirm need `--automatic` and an explicit
 package selection or supported `--all`. With no IDs, interactive Install, Update,
 and Remove offer package selection.
@@ -2267,7 +2288,7 @@ Add `--dry-run` to `attach`, `sync`, or `detach` to inspect the complete plan
 before writing. They also accept `--automatic` and `--allow-path <path>`.
 `attach --to` selects the workspace-relative projection directory and defaults
 to the workspace root. Each projected file is a relative file symlink. A file
-that lands under `.agents` joins an existing route: its folder and entrypoint
+that lands in a primary content location joins an existing route: its folder and entrypoint
 must already exist, and the command updates that entrypoint's `Entries`. A
 Library ID is a management identity. It is not a source ID.
 Use `doctor` when a record, source root, link capability, permission, or
@@ -2419,7 +2440,7 @@ open-forge context .agents/memory/crystallized/documents/_documents.md
 open-forge context "memory/crystallized/documents/project alpha"
 ```
 
-An automatic source ID is derived from the canonical path below `.agents`:
+An automatic source ID is derived from the path relative to the main root. Native Skills keep the `skills/` prefix. The remaining rules apply to every layout:
 
 - `/` separates segments on every platform.
 - `.md` is removed from Markdown file names.
@@ -2428,8 +2449,8 @@ An automatic source ID is derived from the canonical path below `.agents`:
 - `SKILL.md` uses its containing Skill folder ID.
 - Exact case, spaces, and Unicode are preserved.
 
-The `.agents/` and `./` prefixes mean an exact workspace path. Any other value is an ID,
-even if it looks like a relative filesystem path. Use the exact `.agents/...`
+The `.agents/` and `./` prefixes mean a literal workspace path. For a custom root, use `./docs/forge/guidance/style.md`, for example. Any other value is an ID,
+even if it looks like a relative filesystem path. Use the exact `./<workspace-path>`
 form when an ID has more than one candidate. The CLI does not use fuzzy,
 case-correcting, or likely-intent matching.
 

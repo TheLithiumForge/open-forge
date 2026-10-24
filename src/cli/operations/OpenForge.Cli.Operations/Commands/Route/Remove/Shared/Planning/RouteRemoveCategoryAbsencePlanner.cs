@@ -35,26 +35,28 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
 
     internal async ValueTask<RouteRemovePlanBuild> BuildAsync(
         RouteRemoveAbsenceScope scope,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
-        => await BuildAsync(scope, postRemovePlan: null, allowPlannedClaims: false, cancellationToken)
+        => await BuildAsync(scope with { LinkScope = layoutRead.Settings.Document }, layoutRead, postRemovePlan: null, allowPlannedClaims: false, cancellationToken)
             .ConfigureAwait(false);
 
     internal async ValueTask<RouteRemovePlanBuild> BuildPostRemoveAsync(
         RouteRemoveAbsenceScope scope,
         RouteRemovePlan plan,
         CancellationToken cancellationToken)
-        => await BuildAsync(scope, plan, allowPlannedClaims: false, cancellationToken)
+        => await BuildAsync(scope, layoutRead: null, plan, allowPlannedClaims: false, cancellationToken)
             .ConfigureAwait(false);
 
     internal async ValueTask<RouteRemovePlanBuild> BuildPostContentAsync(
         RouteRemoveAbsenceScope scope,
         RouteRemovePlan plan,
         CancellationToken cancellationToken)
-        => await BuildAsync(scope, plan, allowPlannedClaims: true, cancellationToken)
+        => await BuildAsync(scope, layoutRead: null, plan, allowPlannedClaims: true, cancellationToken)
             .ConfigureAwait(false);
 
     private async ValueTask<RouteRemovePlanBuild> BuildAsync(
         RouteRemoveAbsenceScope scope,
+        WorkspaceLayoutRead? layoutRead,
         RouteRemovePlan? postRemovePlan,
         bool allowPlannedClaims,
         CancellationToken cancellationToken)
@@ -66,7 +68,7 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
             Subject = scope.Subject,
         };
         var catalogue = await _catalogueReader.ReadAsync(
-            new SourceCatalogueRequest(scope.Request.Workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(scope.Layout, scope.Layout.SourceRoots),
             cancellationToken).ConfigureAwait(false);
         if (catalogue.IsCancelled)
         {
@@ -126,7 +128,7 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
             }
         }
 
-        var settings = await WorkspaceSettingsReader.ReadAsync(
+        var settings = layoutRead?.Settings ?? await WorkspaceSettingsReader.ReadAsync(
             _physicalPathResolver,
             scope.Request.Workspace,
             cancellationToken).ConfigureAwait(false);
@@ -141,7 +143,7 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
                 settings.Cause ?? "The required workspace settings are unavailable or invalid.");
         }
 
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(
+        var ownership = layoutRead?.Ownership ?? await WorkspaceOwnershipReader.ReadAsync(
             _physicalPathResolver, scope.Request.Workspace,
             cancellationToken).ConfigureAwait(false);
         var projectedOwnership = RouteRemoveOwnershipProjector.Project(ownership, scope);
@@ -187,7 +189,7 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
             ? postRemovePlan.Projection.RemovalSelection.Files
                 .Concat(postRemovePlan.Projection.RemovalSelection.Directories)
                 .DefaultIfEmpty(scope.IntendedPath)
-                .All(path => WorkspaceRemovals.IsPathRemoved(path, settings.Document))
+                .All(path => WorkspaceRemovals.IsPathRemoved(scope.Layout, path, settings.Document))
             : new[]
                 {
                     scope.IntendedPath,
@@ -196,7 +198,7 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
                     scope.LeafOverwritePath,
                 }
                 .Distinct(StringComparer.Ordinal)
-                .Any(path => WorkspaceRemovals.IsPathRemoved(path, settings.Document));
+                .Any(path => WorkspaceRemovals.IsPathRemoved(scope.Layout, path, settings.Document));
         if (hasRemovalIntent)
         {
             formation = formation with
@@ -406,7 +408,7 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
         var categories = settings.Document.RemovedCategories
             .Where(category => string.Equals(
                 scope.CategoryRoot,
-                $"{SourceLogicalPath.AgentsRoot}/{category}",
+                scope.Layout.CategoryDirectory(category),
                 StringComparison.Ordinal))
             .ToImmutableArray();
         var files = settings.Document.RemovedFiles
@@ -423,6 +425,7 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
                 Outcome = RouteRemovePersistenceOutcome.Unchanged,
                 Path = WorkspaceSettingsDefinitions.RelativePath,
                 Categories = categories,
+                CategoryPaths = categories.Select(scope.Layout.CategoryDirectory).ToImmutableArray(),
                 Files = files,
                 Directories = directories,
             },

@@ -1,5 +1,7 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Routing;
 
@@ -31,7 +33,7 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void FailuresPreserveExactCause(string attempted, string expectedCause)
     {
-        var result = SourceLoaderDestinationParser.Parse(attempted);
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, attempted);
 
         Assert.Equal(SourceLoaderDestinationParseState.Malformed, result.State);
         Assert.Equal(attempted, result.AttemptedDestination);
@@ -49,7 +51,7 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void UnicodePreservesFrozenDecodedAndCanonicalValues(string attempted, string expectedDecoded, string expectedPath)
     {
-        var result = SourceLoaderDestinationParser.Parse(attempted);
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, attempted);
 
         Assert.Equal(SourceLoaderDestinationParseState.Valid, result.State);
         Assert.Equal(attempted, result.AttemptedDestination);
@@ -67,7 +69,7 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void PathPolicyPreservesDecodedEvidence(string attempted, string expectedDecoded, string expectedCause)
     {
-        var result = SourceLoaderDestinationParser.Parse(attempted);
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, attempted);
 
         Assert.Equal(SourceLoaderDestinationParseState.Unsafe, result.State);
         Assert.Equal(attempted, result.AttemptedDestination);
@@ -84,7 +86,7 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void WorkspaceLinksResolveOutsideAgents(string attempted, string expectedDecoded, string expectedPath)
     {
-        var result = SourceLoaderDestinationParser.Parse(attempted);
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, attempted);
 
         Assert.Equal(SourceLoaderDestinationParseState.Linked, result.State);
         Assert.Equal(expectedDecoded, result.DecodedDestination);
@@ -96,8 +98,8 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
     [Fact(DisplayName = "Loader destinations preserve literal unpaired UTF-16 surrogates"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void LiteralSurrogatesAreNotReencoded()
     {
-        var high = SourceLoaderDestinationParser.Parse("\uD800.md");
-        var low = SourceLoaderDestinationParser.Parse("\uDC00.md");
+        var high = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, "\uD800.md");
+        var low = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, "\uDC00.md");
 
         Assert.Equal(SourceLoaderDestinationParseState.Valid, high.State);
         Assert.Equal("\uD800.md", high.DecodedDestination);
@@ -113,7 +115,7 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
     [Fact(DisplayName = "An encoded space remains a nonempty lexical Loader destination"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EncodedWhitespaceOnlyRetainsDecodedLexicalDestination()
     {
-        var result = SourceLoaderDestinationParser.Parse("%20");
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, "%20");
 
         Assert.Equal(SourceLoaderDestinationParseState.Valid, result.State);
         Assert.Equal("%20", result.AttemptedDestination);
@@ -121,4 +123,11 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
         Assert.Equal(".agents/ ", result.CanonicalPath);
         Assert.Null(result.Cause);
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(SourceLoaderDestinationDecodingCharacterizationTests)),
+                Path.GetFullPath(nameof(SourceLoaderDestinationDecodingCharacterizationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

@@ -80,10 +80,7 @@ internal sealed partial class RouteMarkdownCatalogueReader
                 var canonicalPath = directory.CanonicalPath == "."
                     ? name
                     : $"{directory.CanonicalPath}/{name}";
-                if (directory.CanonicalPath == "." && ReadState.IsAgentsPath(canonicalPath))
-                {
-                    canonicalPath = SourceLogicalPath.AgentsRoot;
-                }
+                canonicalPath = state.NormalizeContentRoot(canonicalPath);
 
                 if (WorkspaceRuntimePaths.Contains(state.Request.Workspace,
                         ToLexicalPath(state.Request.Workspace.PhysicalRoot, canonicalPath))

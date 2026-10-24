@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Extensions;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
@@ -63,7 +65,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
             sharing = observation.Sharing ?? throw new InvalidDataException(observation.Cause);
         }
         var catalogue = await _catalogueReader.ReadAsync(
-            new SourceCatalogueRequest(request.Workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(input.Layout, input.Layout.SourceRoots),
             cancellationToken).ConfigureAwait(false);
         if (catalogue.IsCancelled)
         {
@@ -72,13 +74,13 @@ internal sealed class ExtensionUpdateTopologyBuilder
 
         var packageBytes = input.Packages
             .SelectMany(package => package.Payload)
-            .Where(file => !IsExcluded(file.TargetPath ?? file.Path, input.Settings))
-            .Select(ReadPayload)
+            .Where(file => !IsExcluded(input.Layout, file.TargetPath ?? file.Path, input.Settings))
+            .Select(file => ReadPayload(input.Layout, file))
             .GroupBy(payload => payload.PortableKey, StringComparer.Ordinal)
             .Select(ReadSharedPayload)
             .ToArray()
             .ToDictionary(payload => payload.Path,
-                payload => RenderPayload(payload, input.Settings.Frontmatter), StringComparer.Ordinal);
+                payload => RenderPayload(input.Layout, payload, input.Settings.Frontmatter), StringComparer.Ordinal);
         var packagePaths = packageBytes.Keys.ToHashSet(StringComparer.Ordinal);
         foreach (var excluded in input.Admission.Exclusions)
         {
@@ -87,7 +89,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
 
         foreach (var pair in input.Admission.Overrides)
         {
-            if (!WorkspaceRemovals.IsPathRemoved(pair.Key, input.Settings))
+            if (!WorkspaceRemovals.IsPathRemoved(input.Layout, pair.Key, input.Settings))
             {
                 packageBytes[pair.Key] = [.. pair.Value];
             }
@@ -102,8 +104,8 @@ internal sealed class ExtensionUpdateTopologyBuilder
         }
 
         var packageSources = packageBytes
-            .Where(pair => ExtensionDestinationPolicy.IsImplicit(pair.Key) && SourceFormClassifier.TryClassify(pair.Key, out _))
-            .Select(pair => CreatePackageSource(request, pair.Key))
+            .Where(pair => ExtensionDestinationPolicy.IsImplicit(input.Layout, pair.Key) && SourceFormClassifier.TryClassify(input.Layout, pair.Key, out _))
+            .Select(pair => CreatePackageSource(input.Layout, pair.Key))
             .ToDictionary(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal);
         var intendedSources = catalogue.Sources
             .Where(source => !input.RetiredPaths.Contains(source.Identity.CanonicalBasePath)
@@ -151,7 +153,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
             .ToArray();
         var excludedHosts = candidateRegionInputs
             .Where(value => WorkspaceRemovals.IsPathRemoved(
-                value.Source.Identity.CanonicalBasePath,
+                input.Layout, value.Source.Identity.CanonicalBasePath,
                 input.Settings))
             .Select(value => value.Source.Identity.CanonicalBasePath)
             .Distinct(StringComparer.Ordinal)
@@ -159,7 +161,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
             .ToArray();
         var regionInputs = candidateRegionInputs
             .Where(value => !WorkspaceRemovals.IsPathRemoved(
-                value.Source.Identity.CanonicalBasePath,
+                input.Layout, value.Source.Identity.CanonicalBasePath,
                 input.Settings))
             .Select(value => new GeneratedNavigationRegionInput(value.Source, value.Document))
             .ToArray();
@@ -212,7 +214,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
             var change = region.Change
                 ?? throw new InvalidDataException(
                     "An available generated region requires its bounded change.");
-            if (WorkspaceRemovals.IsPathRemoved(region.CanonicalPath, input.Settings))
+            if (WorkspaceRemovals.IsPathRemoved(input.Layout, region.CanonicalPath, input.Settings))
             {
                 _ = excludedHostPaths.Add(region.CanonicalPath);
                 continue;
@@ -225,7 +227,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
 
             regions.Add(new ExtensionUpdateGeneratedRegion(
                 region.CanonicalPath,
-                IsGeneratedRegionUnchanged(region, actual)
+                IsGeneratedRegionUnchanged(input.Layout, region, actual)
                     ? ExtensionUpdateGeneratedRegionState.Unchanged
                     : ExtensionUpdateGeneratedRegionState.Changed));
             generatedEntries.Add(region.CanonicalPath, region.Entries);
@@ -283,6 +285,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
     }
 
     private bool IsGeneratedRegionUnchanged(
+        WorkspaceLayout layout,
         GeneratedNavigationRegion region,
         FileStateSnapshot actual)
     {
@@ -310,23 +313,23 @@ internal sealed class ExtensionUpdateTopologyBuilder
         }
 
         var projected = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(
-            new GeneratedNavigationRegionInput(region.Source, document),
+            layout, new GeneratedNavigationRegionInput(region.Source, document),
             region.Entries);
         return projected.State == GeneratedNavigationRegionState.Available
             && projected.Change is { IsUnchanged: true };
     }
 
-    private static bool IsExcluded(string path, OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument settings)
+    private static bool IsExcluded(WorkspaceLayout layout, string path, OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument settings)
     {
         if (!PortableWorkspacePath.TryNormalize(path, out var normalized))
         {
             return false;
         }
 
-        return WorkspaceRemovals.IsPathRemoved(normalized, settings);
+        return WorkspaceRemovals.IsPathRemoved(layout, normalized, settings);
     }
 
-    private static PayloadBytes ReadPayload(ExtensionPackageFileFact file)
+    private static PayloadBytes ReadPayload(WorkspaceLayout layout, ExtensionPackageFileFact file)
     {
         if (!PortableWorkspacePath.TryNormalize(file.TargetPath, out var normalized)
             || file.Bytes is not { } bytes
@@ -339,7 +342,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
 
         var portableKey = PortableWorkspacePath.CreatePortableKey(normalized);
         if (portableKey == PortableWorkspacePath.CreatePortableKey(WorkspaceOwnershipDefinitions.RelativePath)
-            || SourceFormClassifier.TryClassify(portableKey, out var form)
+            || SourceFormClassifier.TryClassify(layout, portableKey, out var form)
             && form == SourceDocumentForm.OverwriteCompanion)
         {
             throw new InvalidDataException(
@@ -348,6 +351,8 @@ internal sealed class ExtensionUpdateTopologyBuilder
 
         return new PayloadBytes(
             normalized,
+            file.Path.StartsWith(ExtensionPackageLayout.ContentPathPrefix, StringComparison.Ordinal)
+                ? file.Path[ExtensionPackageLayout.ContentPathPrefix.Length..] : file.Path,
             portableKey,
             sha256,
             bytes.ToArray());
@@ -371,9 +376,9 @@ internal sealed class ExtensionUpdateTopologyBuilder
         return canonical;
     }
 
-    private static byte[] RenderPayload(PayloadBytes payload, FrontmatterForm form)
+    private static byte[] RenderPayload(WorkspaceLayout layout, PayloadBytes payload, FrontmatterForm form)
     {
-        var rendered = WorkspacePayloadRenderer.Render(payload.Path, payload.Bytes, form);
+        var rendered = WorkspacePayloadRenderer.Render(layout, payload.PackagePath, payload.Bytes, form);
         if (rendered.State == FrameworkFrontmatterTransformState.Invalid)
         {
             throw new ExtensionUpdatePayloadRenderingException(payload.Path,
@@ -385,19 +390,19 @@ internal sealed class ExtensionUpdateTopologyBuilder
     }
 
     internal static SourceLogicalSource CreatePackageSource(
-        ExtensionUpdateRequest request,
+        WorkspaceLayout layout,
         string path)
     {
-        if (!SourceFormClassifier.TryClassify(path, out var form))
+        if (!SourceFormClassifier.TryClassify(layout, path, out var form))
         {
             throw new ArgumentException("The Extension package path is not an authored source.", nameof(path));
         }
 
-        var id = SourceIdentity.DeriveId(path)
+        var id = SourceIdentity.DeriveId(layout, path)
             ?? throw new InvalidDataException(
                 $"The Extension package source '{path}' has no canonical identity.");
         var physical = Path.GetFullPath(Path.Combine(
-            request.Workspace.PhysicalRoot,
+            layout.Workspace.PhysicalRoot,
             path.Replace('/', Path.DirectorySeparatorChar)));
         return new SourceLogicalSource(
             new SourceLogicalIdentity(id, path),
@@ -406,6 +411,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
 
     private sealed record PayloadBytes(
         string Path,
+        string PackagePath,
         string PortableKey,
         string Sha256,
         byte[] Bytes);

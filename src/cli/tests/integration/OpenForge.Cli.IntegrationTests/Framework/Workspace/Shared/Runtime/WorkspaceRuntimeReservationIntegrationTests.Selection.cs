@@ -24,6 +24,8 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Snapshots;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Workspace.Shared.Runtime;
 
@@ -66,7 +68,8 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
             new RouteCreateMetadataInput(description: "New", tags: ["Docs"], responsibility: null), templateReference: null, RouteCreateMode.DryRun), Token);
         Assert.Equal(RouteCreateFindingCode.TargetUnsafe, create.Boundary?.Finding.Code);
         var init = new RouteInitTargetPlanner().Resolve(new RouteInitRequest(workspace, SourceAliasNewCatalogue,
-            RouteInitScaffold.Generic, RouteInitMode.DryRun, RouteInitMetadataInput.None));
+            RouteInitScaffold.Generic, RouteInitMode.DryRun, RouteInitMetadataInput.None), WorkspaceLayout.Create(new RouteInitRequest(workspace, SourceAliasNewCatalogue,
+            RouteInitScaffold.Generic, RouteInitMode.DryRun, RouteInitMetadataInput.None).Workspace, WorkspaceLayout.DefaultMainRoot));
         Assert.Equal(RouteInitTargetResolutionState.Invalid, init.State);
         Assert.False(File.Exists(files.Combine(RuntimeNewCatalogue)));
     }

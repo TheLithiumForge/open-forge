@@ -15,7 +15,7 @@ internal static class ExtensionInspectPathFactsBuilder
         var currentPaths = ReadCurrentPaths(input.CurrentSnapshot, input.SubjectId, input.Findings);
         return new ExtensionInspectPathFacts
         {
-            State = ReadPathState(
+            State = input.Layout is null ? ExtensionInspectPathState.Incomplete : ReadPathState(
                 input.AvailablePackage,
                 input.InstalledPackage,
                 currentPaths,

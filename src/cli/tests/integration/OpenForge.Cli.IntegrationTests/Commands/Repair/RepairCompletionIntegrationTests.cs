@@ -169,8 +169,7 @@ public sealed class RepairCompletionIntegrationTests
     {
         var diagnosis = await components.DiagnosisReader.ReadAsync(
             new DoctorRequest(workspace.Workspace), TestContext.Current.CancellationToken);
-        var catalogue = await components.CatalogueReader.ReadAsync(
-            workspace.Workspace, diagnosis.Observation.LocalReferences, TestContext.Current.CancellationToken);
-        return RepairPlanner.Build(workspace.Request(automatic: true), catalogue.Proposals);
+        var catalogue = await components.CatalogueReader.ReadAsync(Assert.IsType<OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceLayoutRead>(diagnosis.Observation.LayoutRead), diagnosis.Observation.LocalReferences, TestContext.Current.CancellationToken);
+        return RepairPlanner.Build(workspace.Request(automatic: true), catalogue.Proposals) with { LayoutRead = catalogue.LayoutRead };
     }
 }

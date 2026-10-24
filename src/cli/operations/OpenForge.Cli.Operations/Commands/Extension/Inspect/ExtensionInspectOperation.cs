@@ -6,11 +6,6 @@ using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Reading;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
-using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
-using OpenForge.Cli.Core.Framework.Ownership;
-using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
-using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
-using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -41,17 +36,15 @@ internal sealed class ExtensionInspectOperation(
                 .ReadAsync(request.Workspace, request.ExplicitSource, cancellationToken)
                 .ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
-            lifecycle = ExtensionInspectInstalledClosureReader.ReadOwnership(
-                await WorkspaceOwnershipReader.ReadAsync(_physicalPathResolver, request.Workspace, cancellationToken).ConfigureAwait(false));
+            var observation = await new WorkspaceLayoutReader(_physicalPathResolver)
+                .ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+            lifecycle = ExtensionInspectInstalledClosureReader.ReadOwnership(observation.Ownership);
             cancellationToken.ThrowIfCancellationRequested();
             currentPaths = await _currentPathReader
                 .ReadAsync(request.Workspace, lifecycle.Document.Extensions, request.StableId, cancellationToken)
                 .ConfigureAwait(false);
-            var settings = await WorkspaceSettingsReader.ReadAsync(_physicalPathResolver, request.Workspace, cancellationToken).ConfigureAwait(false);
-            FrontmatterForm? form = settings.State is WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete
-                ? settings.Document.Frontmatter : null;
             cancellationToken.ThrowIfCancellationRequested();
-            return _resultBuilder.Build(request, source, lifecycle, currentPaths, form);
+            return _resultBuilder.Build(request, source, observation, currentPaths);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

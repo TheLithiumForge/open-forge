@@ -7,6 +7,12 @@ open-forge:
 
 # route include Behavior Contract
 
+## Workspace Layout
+
+Resolve categories through the layout rather than a fixed path segment. Distinguish native Skills from external includes, retain literal registered paths and revalidate the layout before effects.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Authority
 
 The [Interface](interface.md) defines observable meaning.
@@ -29,7 +35,7 @@ Read rows through the shared Entries grammar. Match destinations by their
 canonical workspace path, including percent-encoded authored destinations.
 Keep omitted metadata and replace only supplied fields. Preserve an identical
 authored row exactly. Append a new external row after existing authored rows.
-Turn a main-root catalogue on through loader membership and use its own metadata.
+Turn a primary-category catalogue on through loader membership and use its own metadata.
 Plan external registration through the settings root-registration planner.
 
 Build loader bytes through the generated navigation planner. Preserve authored

@@ -4,7 +4,7 @@ using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedIndexProcessTests
+public sealed partial class PublishedIndexProcessTests
 {
     [Fact, Trait("Feature", "index-command"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedNavigationRenameIsOneRowAndKeepsRules()

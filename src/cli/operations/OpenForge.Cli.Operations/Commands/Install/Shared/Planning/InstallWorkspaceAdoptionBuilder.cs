@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
@@ -29,6 +30,7 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
     private readonly WorkspaceAdoptionDocumentPlanner _documentPlanner = new();
 
     internal WorkspaceAdoptionTopologyPlan PlanTopology(
+        WorkspaceLayout layout,
         IReadOnlyList<SourceLogicalSource> existingSources,
         IReadOnlyList<SourceLogicalSource> selectedPayloadSources,
         WorkspaceSettingsDocument settings,
@@ -40,11 +42,12 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
         ArgumentNullException.ThrowIfNull(ownership);
 
         var adoptionCandidates = existingSources
-            .Where(source => FrameworkPayloadSelection.IncludesPath(
+            .Where(source => FrameworkPayloadSelection.IncludesPath(layout,
                 source.Identity.CanonicalBasePath,
                 settings))
             .ToArray();
         var topology = WorkspaceAdoptionTopologyPlanner.Plan(
+            layout,
             adoptionCandidates,
             selectedPayloadSources,
             settings.RemovedFiles,
@@ -56,7 +59,7 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
 
         var excludedDestination = topology.ReusedEntrypoints.Values
             .Concat(topology.CreatedEntrypointPaths)
-            .FirstOrDefault(path => !FrameworkPayloadSelection.IncludesPath(path, settings));
+            .FirstOrDefault(path => !FrameworkPayloadSelection.IncludesPath(layout, path, settings));
         return excludedDestination is null
             ? topology
             : WorkspaceAdoptionTopologyPlan.Blocked(
@@ -67,7 +70,8 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
         InstallWorkspaceAdoptionSourceInput input)
     {
         ArgumentNullException.ThrowIfNull(input);
-        var workspace = input.Workspace;
+        var layout = input.Catalogue.Layout;
+        var workspace = layout.Workspace;
         var selectedPayloadAssets = input.SelectedPayloadAssets;
         var catalogue = input.Catalogue;
         var topology = input.Topology;
@@ -80,14 +84,14 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
             .Where(path => !preservedEntrypointPaths.Contains(path))
             .ToHashSet(StringComparer.Ordinal);
         var payloadAssets = selectedPayloadAssets
-            .Where(asset => !reusedPayloadPaths.Contains(asset.Path))
-            .Where(asset => !topology.EligibleSourcePaths.Contains(asset.Path)
-                || !SourceFormClassifier.TryClassify(asset.Path, out var form)
+            .Where(asset => !reusedPayloadPaths.Contains(layout.MapPayloadPath(asset.Path)))
+            .Where(asset => !topology.EligibleSourcePaths.Contains(layout.MapPayloadPath(asset.Path))
+                || !SourceFormClassifier.TryClassify(layout, layout.MapPayloadPath(asset.Path), out var form)
                 || form != SourceDocumentForm.Skill)
             .OrderBy(asset => asset.Path, StringComparer.Ordinal)
             .ToArray();
         var payloadSources = payloadAssets
-            .Select(asset => FrameworkPayloadSourceProjection.Create(workspace, asset))
+            .Select(asset => FrameworkPayloadSourceProjection.Create(layout, asset))
             .ToArray();
         var payloadSourcePaths = payloadSources
             .Select(source => source.Identity.CanonicalBasePath)
@@ -112,7 +116,7 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
                 };
             }
 
-            var source = CreateLocalEntrypointSource(workspace, path);
+            var source = CreateLocalEntrypointSource(layout, path);
             if (source.Cause is not null)
             {
                 return new InstallWorkspaceAdoptionSourcePlan
@@ -170,7 +174,8 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
         InstallWorkspaceAdoptionDocumentInput input)
     {
         ArgumentNullException.ThrowIfNull(input);
-        var workspace = input.Workspace;
+        var layout = input.Catalogue.Layout;
+        var workspace = layout.Workspace;
         var catalogue = input.Catalogue;
         var topology = input.Topology;
         var intendedSources = input.IntendedSources;
@@ -197,7 +202,7 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
 
         foreach (var path in topology.EligibleSourcePaths
                      .Where(path => !payloadSourcePaths.Contains(path))
-                     .Where(path => SourceFormClassifier.TryClassify(path, out var form)
+                     .Where(path => SourceFormClassifier.TryClassify(layout, path, out var form)
                          && SourceFormClassifier.IsEntrypoint(form)))
         {
             userOwnedPaths.Add(path);
@@ -275,7 +280,7 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
         foreach (var path in createdEntrypointPaths.Order(StringComparer.Ordinal))
         {
             var newline = ReadNewline(path, intendedSources, documents);
-            var plan = _documentPlanner.CreateEntrypoint(path, newline, input.Frontmatter);
+            var plan = _documentPlanner.CreateEntrypoint(layout, path, newline, input.Frontmatter);
             if (plan.Cause is { } cause)
             {
                 return Failed(documents, userOwnedPaths, cause);
@@ -317,10 +322,11 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
     }
 
     private InstallWorkspaceAdoptionLocalSource CreateLocalEntrypointSource(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         string canonicalPath)
     {
-        if (!SourceFormClassifier.TryClassify(canonicalPath, out var form)
+        var workspace = layout.Workspace;
+        if (!SourceFormClassifier.TryClassify(layout, canonicalPath, out var form)
             || !SourceFormClassifier.IsEntrypoint(form))
         {
             return new InstallWorkspaceAdoptionLocalSource
@@ -330,7 +336,7 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
             };
         }
 
-        var automaticId = SourceIdentity.DeriveId(canonicalPath);
+        var automaticId = SourceIdentity.DeriveId(layout, canonicalPath);
         if (automaticId is null)
         {
             return new InstallWorkspaceAdoptionLocalSource

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
@@ -25,7 +26,7 @@ internal static class RouteInitRestorationEffects
         foreach (var file in restoration.Files.Where(file => file.Source is null && file.Before.Kind == FileExpectationKind.Missing))
         {
             additions.Add(PlannedFileChange.Create(file.Before.Expectation, file.IntendedBytes.Span));
-            managed.Add(new RouteInitFrameworkManagedState(file.Asset.Path, file.Asset.Path, ownsGeneratedEntries: false));
+            managed.Add(new RouteInitFrameworkManagedState(file.TargetPath, file.Asset.Path, ownsGeneratedEntries: false));
         }
 
         if (restoration.SettingsChange is { } settingsChange)
@@ -43,9 +44,9 @@ internal static class RouteInitRestorationEffects
             changes.Where(recoveryByChange.ContainsKey).Select(change => recoveryByChange[change]), managed);
     }
 
-    internal static ReadOnlyMemory<byte> Render(FrameworkPayloadAsset asset, FrontmatterForm form)
+    internal static ReadOnlyMemory<byte> Render(WorkspaceLayout layout, FrameworkPayloadAsset asset, FrontmatterForm form)
     {
-        var rendered = WorkspacePayloadRenderer.Render(asset.Path, asset.Bytes.AsMemory(), form);
+        var rendered = WorkspacePayloadRenderer.Render(layout, asset.Path, asset.Bytes.AsMemory(), form);
         return rendered.Bytes ?? throw new RouteInitPlanningException(
             RouteInitFindingCode.FrameworkPayloadInvalid,
             rendered.Cause ?? "A Framework restoration asset cannot be delivered in the workspace frontmatter form.",

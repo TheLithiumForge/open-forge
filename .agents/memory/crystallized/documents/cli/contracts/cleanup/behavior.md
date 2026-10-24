@@ -7,6 +7,12 @@ open-forge:
 
 # Cleanup Behavior Contract
 
+## Workspace Layout
+
+Carry and revalidate the layout observation while retaining the recorded recovery locations and existing catalogue-validation rules. Never reinterpret a recovery path through the content layout.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This is the accepted current Crystallized Behavior Contract for the root

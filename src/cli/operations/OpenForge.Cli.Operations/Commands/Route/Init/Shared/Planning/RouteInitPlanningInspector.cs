@@ -10,10 +10,9 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
-using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -23,10 +22,10 @@ internal sealed class RouteInitPlanningInspector
     private readonly RouteInitCurrentStateReader _currentStateReader = new();
     private readonly RouteInitFrameworkAlignmentBuilder _alignmentBuilder = new();
     private readonly RouteInitFrameworkOwnershipBuilder _lifecycleBuilder = new();
-    private readonly PhysicalPathResolver _physicalPathResolver = new();
 
     internal async ValueTask<RouteInitInspectionResult> InspectAsync(
         RouteInitRequest request,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -38,7 +37,41 @@ internal sealed class RouteInitPlanningInspector
                 incomplete: true);
         }
 
-        var resolution = _targetPlanner.Resolve(request);
+        if (layoutRead.Layout is not { } layout
+            || layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+        {
+            var issue = layoutRead.Issues.FirstOrDefault();
+            var code = layoutRead.Settings.State == WorkspaceSettingsReadState.Invalid
+                ? RouteInitFindingCode.InvalidInput : RouteInitFindingCode.WorkspaceUnsafe;
+            var incomplete = layoutRead.State == WorkspaceLayoutReadState.Unavailable;
+            if (incomplete)
+                code = RouteInitFindingCode.InspectionIncomplete;
+            if (request.Scaffold == RouteInitScaffold.Framework
+                && layoutRead.Settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
+            {
+                code = RouteInitFindingCode.MetadataUnsafe;
+                incomplete = false;
+            }
+            else if (layoutRead.Ownership.State is WorkspaceOwnershipReadState.Invalid or WorkspaceOwnershipReadState.Unavailable)
+            {
+                code = RouteInitFindingCode.LifecycleBlocked;
+                incomplete = false;
+            }
+            else if (request.Scaffold == RouteInitScaffold.Framework
+                && issue?.Code == WorkspaceLayoutIssueCode.MissingLoader)
+            {
+                code = RouteInitFindingCode.FrameworkInstallRequired;
+                incomplete = false;
+            }
+            return new RouteInitInspectionStopped(new RouteInitPlanningBoundary(
+                code, issue?.Cause ?? "The workspace layout is unavailable.",
+                incomplete, Requested: request.RouteTarget)
+            {
+                FindingTarget = issue?.Path ?? WorkspaceSettingsDefinitions.RelativePath,
+            });
+        }
+
+        var resolution = _targetPlanner.Resolve(request, layout);
         if (!resolution.IsResolved || resolution.Target is not { } requestedTarget)
         {
             return Stopped(
@@ -79,7 +112,7 @@ internal sealed class RouteInitPlanningInspector
             IReadOnlyList<SourceLogicalSource> projected;
             try
             {
-                projected = new EmbeddedFrameworkSourceProjector().Project(request.Workspace, payload);
+                projected = new EmbeddedFrameworkSourceProjector().Project(layout, payload);
             }
             catch (Exception exception) when (exception is ArgumentException
                 or InvalidDataException
@@ -92,7 +125,7 @@ internal sealed class RouteInitPlanningInspector
                     requestedTarget);
             }
 
-            var aligned = _alignmentBuilder.Build(request.Workspace, requestedTarget, projected);
+            var aligned = _alignmentBuilder.Build(layout, requestedTarget, projected, payload);
             if (aligned.State != RouteInitFrameworkAlignmentState.Complete
                 || aligned.Alignment is not { } completeAlignment)
             {
@@ -110,35 +143,8 @@ internal sealed class RouteInitPlanningInspector
             target = alignment.Target;
         }
 
-        var settings = await WorkspaceSettingsReader.ReadAsync(
-                _physicalPathResolver, request.Workspace, cancellationToken)
-            .ConfigureAwait(false);
-        if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
-        {
-            var code = settings.State == WorkspaceSettingsReadState.Invalid
-                ? RouteInitFindingCode.InvalidInput
-                : RouteInitFindingCode.InspectionIncomplete;
-            var incomplete = settings.State == WorkspaceSettingsReadState.Unavailable;
-            if (alignment?.IsCanonicalRestoration == true)
-            {
-                code = RouteInitFindingCode.MetadataUnsafe;
-                incomplete = false;
-            }
-
-            return new RouteInitInspectionStopped(new RouteInitPlanningBoundary(
-                code,
-                settings.Cause ?? "Workspace settings are unavailable.",
-                incomplete,
-                target,
-                Alignment: alignment,
-                Payload: payload)
-            {
-                FindingTarget = WorkspaceSettingsDefinitions.RelativePath,
-            });
-        }
-
         var catalogue = await _currentStateReader.ReadCatalogueAsync(
-                request.Workspace,
+                layout,
                 cancellationToken)
             .ConfigureAwait(false);
         if (catalogue.IsCancelled)
@@ -168,7 +174,7 @@ internal sealed class RouteInitPlanningInspector
         if (payload is not null)
         {
             trust = await _lifecycleBuilder.ReadTrustAsync(
-                    request.Workspace,
+                    layoutRead,
                     payload,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -218,7 +224,7 @@ internal sealed class RouteInitPlanningInspector
         return new RouteInitInspectionCompleted(
             new RouteInitInspectionFacts(target, catalogue, current, framework)
             {
-                Settings = settings,
+                LayoutRead = layoutRead,
             });
     }
 
@@ -275,7 +281,7 @@ internal sealed class RouteInitPlanningInspector
     {
         if (target.Kind != RouteInitTargetKind.ExactPath
             || target.CanonicalPath is not { } requestedPath
-            || !SourceFormClassifier.TryClassify(requestedPath, out var requestedForm)
+            || !SourceFormClassifier.TryClassify(current.Catalogue.Layout, requestedPath, out var requestedForm)
             || !SourceFormClassifier.IsCompatibilityEntrypoint(requestedForm))
         {
             return null;

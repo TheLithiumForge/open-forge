@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
 
@@ -70,6 +71,7 @@ internal static class ExtensionInspectPathComparisonBuilder
             nowOwners ??= [];
             newOwners ??= [];
             var relation = ReadPathRelation(
+                facts.Layout,
                 input.Mode,
                 nowOwners.Length > 0,
                 intendedOwners.ContainsKey(path),
@@ -98,6 +100,7 @@ internal static class ExtensionInspectPathComparisonBuilder
     }
 
     private static ExtensionInspectPathRelation ReadPathRelation(
+        WorkspaceLayout? layout,
         ExtensionInspectComparisonMode mode,
         bool owned,
         bool declared,
@@ -108,6 +111,7 @@ internal static class ExtensionInspectPathComparisonBuilder
         string path)
     {
         if (mode == ExtensionInspectComparisonMode.None) return ExtensionInspectPathRelation.NotStarted;
+        if (layout is null) return ExtensionInspectPathRelation.Unavailable;
         if (mode == ExtensionInspectComparisonMode.AvailableOnly) return ExtensionInspectPathRelation.NotApplicable;
         if (mode == ExtensionInspectComparisonMode.InstalledOnly) return ExtensionInspectPathRelation.Unknown;
         if (!owned && intended is not null)
@@ -138,7 +142,7 @@ internal static class ExtensionInspectPathComparisonBuilder
             _ => ExtensionInspectPathRelation.Unavailable,
         };
         if (intended is null) return ExtensionInspectPathRelation.Unknown;
-        var comparableKind = ExtensionInspectFingerprintPolicy.ReadKind(path);
+        var comparableKind = ExtensionInspectFingerprintPolicy.ReadKind(layout, path);
         if (current.Kind != comparableKind || intended.Kind != comparableKind) return ExtensionInspectPathRelation.Unknown;
         if (Equivalent(current, intended)) return ExtensionInspectPathRelation.Unchanged;
         ExtensionInspectFindingPolicy.Add(findings, new ExtensionInspectFindingInput

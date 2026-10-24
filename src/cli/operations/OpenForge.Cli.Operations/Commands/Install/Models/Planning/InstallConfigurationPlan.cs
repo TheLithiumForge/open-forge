@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Sources.Models.Sharing;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
@@ -14,6 +15,7 @@ internal sealed record InstallConfigurationPlan(
     PlannedFileChange? IgnoreChange,
     bool UsesInitialAdoption = false)
 {
+    internal required WorkspaceLayout Layout { get; init; }
     internal InstallFrontmatterSelection? Frontmatter { get; init; }
     internal InstallConfigurationFrontmatterPlan? FrontmatterPlan { get; init; }
     internal ImmutableArray<SourceSharingRoute> GitIgnoredRoutes { get; init; } = [];

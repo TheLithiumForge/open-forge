@@ -7,6 +7,8 @@ description: How folder placement narrows where content applies, and how that ke
 
 A **scope** is a folder in a [route](../glossary.md#route) that narrows where the content after it applies. Scopes let Open Forge grow without every task reading more.
 
+The tree below uses the default `.agents` context folder. Scopes work the same beneath a custom main root, and native Skill scopes stay under `.agents/skills`. See [Choose the context folder](../getting-started/installation.md#choose-the-context-folder).
+
 ## A scope is just a folder with an entrypoint
 
 An [entrypoint](../glossary.md#entrypoint) makes the folder routable. There's no separate scope syntax. Any routed folder below a root route can act as a scope. Its entrypoint says what the scope means, and everything after it in the path applies only within that subject.

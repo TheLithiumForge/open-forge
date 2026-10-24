@@ -3,7 +3,7 @@ using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedReferencesProcessTests
+public sealed partial class PublishedReferencesProcessTests
 {
     [Fact(DisplayName = "Published References default invocation reports both directions in expanded view with unchanged bytes"), Trait("Feature", "references"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedReferencesDefaultIsBothExpandedAndReadOnly()

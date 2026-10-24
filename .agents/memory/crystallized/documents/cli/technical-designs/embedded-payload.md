@@ -7,6 +7,12 @@ open-forge:
 
 # Embedded Payload Technical Design
 
+## Package And Installed Coordinates
+
+Payload validation and inventory hashes use package coordinates. `WorkspaceLayout.MapPayloadPath` maps destinations once before exclusions, permissions, collisions and ownership. Rendering receives both the original package path and installed destination. Reverse alignment searches mapped destinations rather than equating installed and package paths.
+
+The layout renderer rebases parsed links and recognized host-template references, retaining Claude’s `@AGENTS.md` bridge. Custom README and CLI Skill variants describe the selected context folder, fixed native Skills and generic `./<workspace-path>` operands. Default layout rendering preserves original bytes, including line endings. Frontmatter rendering remains a separate transformation. See [Workspace Layout](workspace-layout.md#pure-mapping).
+
 ## Boundary
 
 `Framework/Distribution/` owns one neutral embedded Framework payload reader and

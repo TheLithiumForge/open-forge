@@ -160,6 +160,8 @@ internal sealed record ReferencesFinding
 
 internal sealed record ReferencesResult : ICliCommandResult
 {
+    internal string? CustomMainRoot { get; init; }
+
     internal ReferencesResult(
         CliWorkspace? workspace,
         ReferencesSource? source,

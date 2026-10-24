@@ -69,10 +69,12 @@ internal sealed class InstallPlanResultProjector
         {
             ManagementState = managementState,
             Findings = [],
-            Evidence = Evidence(context.Payload, context.IntendedState),
+            Evidence = Evidence(context.Payload, context.IntendedState) with { Layout = context.IntendedLayout },
             Plan = new InstallPlan
             {
                 Request = context.Request,
+                LayoutRead = context.LayoutRead,
+                IntendedLayout = context.IntendedLayout,
                 Payload = context.Payload,
                 IntendedState = context.IntendedState,
                 ManagementState = managementState,
@@ -92,10 +94,12 @@ internal sealed class InstallPlanResultProjector
         {
             ManagementState = managementState,
             Findings = findings,
-            Evidence = Evidence(context.Payload, context.IntendedState),
+            Evidence = Evidence(context.Payload, context.IntendedState) with { Layout = context.IntendedLayout },
             Plan = new InstallPlan
             {
                 Request = context.Request,
+                LayoutRead = context.LayoutRead,
+                IntendedLayout = context.IntendedLayout,
                 Payload = context.Payload,
                 IntendedState = context.IntendedState,
                 ManagementState = managementState,

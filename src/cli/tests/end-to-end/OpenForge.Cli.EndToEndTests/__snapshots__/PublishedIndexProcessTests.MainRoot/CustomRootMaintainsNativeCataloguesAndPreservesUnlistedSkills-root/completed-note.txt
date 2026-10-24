@@ -1,0 +1,8 @@
+---
+description: Release checklist
+tags: [Workspace]
+---
+
+# Release checklist
+
+Keep the authored body.

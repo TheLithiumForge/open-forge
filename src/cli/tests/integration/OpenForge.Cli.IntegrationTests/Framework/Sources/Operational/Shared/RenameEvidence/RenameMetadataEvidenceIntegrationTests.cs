@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Composition.Shared.Git;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -67,7 +68,7 @@ public sealed class RenameMetadataEvidenceIntegrationTests
     {
         var bytes = File.ReadAllBytes(repository.PathFor(Parent));
         var content = RenameContentReader.Read(bytes);
-        return RenameRecordedEntryReader.Read(Parent,
+        return RenameRecordedEntryReader.Read(WorkspaceLayout.Create(repository.Workspace, WorkspaceLayout.DefaultMainRoot), Parent,
             FileStateSnapshot.File(repository.PathFor(Parent), repository.PathFor(Parent), bytes), content.Document);
     }
 }

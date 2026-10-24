@@ -1,7 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Commands.Route.Shared.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
@@ -52,7 +51,7 @@ internal static class RouteInspectSourceProjectionBuilder
             var layer = ToLayer(candidate);
             var read = await reader.ReadAsync(layer, cancellationToken).ConfigureAwait(false);
             var relatedPaths = selection.Sources
-                .Where(source => string.Equals(source.Identity.AutomaticId, SourceIdentity.DeriveId(candidate.CanonicalPath), StringComparison.Ordinal))
+                .Where(source => string.Equals(source.Identity.AutomaticId, candidate.AutomaticId, StringComparison.Ordinal))
                 .Select(source => source.Identity.CanonicalBasePath).Order(StringComparer.Ordinal).ToArray();
             overwriteFacts.Add(new RouteOverwriteFact(RouteOverwriteState.Orphan, RouteSourceProjector.ReadOverwriteDocument(read), relatedPaths));
             sourceLessReads.Add(read);

@@ -1,0 +1,17 @@
+---
+open-forge:
+  description: Notes in guidance/team/deep
+  tags: [Guidance]
+---
+
+# Deep
+
+Notes in guidance/team/deep.
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- [Release notes](note.md) - #Guidance

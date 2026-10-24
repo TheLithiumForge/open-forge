@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using System.Collections.Immutable;
 using System.Text.Json;
@@ -28,6 +30,8 @@ internal sealed class ExtensionUpdateApplicationOperation(
     ExtensionPermissionOperation permissions,
     ExtensionUpdateEffectApplier effectApplier)
 {
+    private const string PlanChangedCause = "Workspace settings, source, lifecycle, Framework, topology, ownership, or plan facts changed after planning.";
+
     private readonly ExtensionPermissionOperation _permissions = permissions;
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly ExtensionUpdatePlanner _planner = planner;
@@ -91,6 +95,12 @@ internal sealed class ExtensionUpdateApplicationOperation(
         CancellationToken cancellationToken)
     {
         var plan = execution.Content;
+        var layoutValidation = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver())
+            .ValidateAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+        if (layoutValidation.State != MutationValidationState.Valid)
+            return Stop(execution,
+                layoutValidation.State == MutationValidationState.Cancelled ? ExtensionUpdateFindingCode.Interrupted : ExtensionUpdateFindingCode.TargetChanged,
+                PlanChangedCause);
         ExtensionUpdatePlanBuild rebuilt;
         try
         {
@@ -113,7 +123,7 @@ internal sealed class ExtensionUpdateApplicationOperation(
             return Stop(
                 execution,
                 ExtensionUpdateFindingCode.TargetChanged,
-                "Workspace settings, source, lifecycle, Framework, topology, ownership, or plan facts changed after planning.");
+                PlanChangedCause);
         }
 
         MutationValidationResult validation;
@@ -482,7 +492,10 @@ internal sealed class ExtensionUpdateApplicationOperation(
         string cause,
         string? target = null,
         ExtensionUpdateApplicationFailureContext? context = null)
-        => Stop(execution, new ExtensionUpdateFinding(code, cause, target), context);
+        => Stop(execution, new ExtensionUpdateFinding(code, cause, target)
+        {
+            ContextFolder = execution.Content.Layout.MainRoot,
+        }, context);
 
     private static ExtensionUpdateLifecycle Lifecycle(
         ExtensionUpdatePlan plan,

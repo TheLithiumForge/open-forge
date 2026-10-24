@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Shared.RoutedMaintenance;
 
@@ -26,7 +27,7 @@ public sealed class RoutedMaintenanceSnapshotIntegrationTests
         for (var index = 0; index < 32; index++) temporary.CreateFile($".agents/guidance/note-{index}.md", $"# Note {index}\n");
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var token = TestContext.Current.CancellationToken;
-        var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(workspace, [".agents"]), token);
+        var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [".agents"]), token);
         var reads = new ConcurrentDictionary<string, int>(StringComparer.Ordinal);
         var components = new Dictionary<string, int>(StringComparer.Ordinal);
         var paths = new PhysicalPathResolver(path =>
@@ -54,7 +55,7 @@ public sealed class RoutedMaintenanceSnapshotIntegrationTests
             Catalogue = catalogue,
             RootPaths = [root],
             SelectedSources = [.. catalogue.Sources],
-            Policy = new() { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty },
+            Policy = new() { Layout = catalogue.Layout, Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty },
         }, token);
 
         Assert.Equal(33, reads.Count);
@@ -72,7 +73,7 @@ public sealed class RoutedMaintenanceSnapshotIntegrationTests
             Catalogue = catalogue,
             RootPaths = [root],
             SelectedSources = [.. catalogue.Sources],
-            Policy = new() { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty },
+            Policy = new() { Layout = catalogue.Layout, Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty },
             ObservedDocuments = intent.Documents,
         }, token);
         Assert.Equal(33, reads.Count);

@@ -7,6 +7,12 @@ open-forge:
 
 # Repair Interface Contract
 
+## Workspace Layout
+
+Repair uses the selected layout for diagnosis and repairs. A missing loader can be restored when ordinary repair rules allow it. An intentional removal is respected, and a layout mismatch is not an instruction to relocate files.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This file is the accepted current Crystallized authority for the public `repair`
@@ -221,7 +227,7 @@ For example:
 The path uses canonical `/` separators and identifies the authored Markdown file
 that contains one local-reference occurrence. The line and column identify the
 occurrence in the current source. This value is not a source ID, opaque token, or
-finding code. A source outside `.agents` is admitted only when Doctor's accepted
+finding code. A source outside the primary content locations is admitted only when Doctor's accepted
 contained local-reference boundary includes it.
 
 The location is parsed from the terminal `@<line>:<column>` suffix. An `@`
@@ -255,7 +261,7 @@ with an optional Markdown fragment:
 It is a canonical workspace-relative path, not a URL, source ID, glob, query,
 fuzzy expression, or opaque choice token. The path and optional fragment must be
 inside the [Doctor accepted contained local-reference boundary](../doctor/interface.md#local-reference-boundary).
-A source or target outside `.agents` is allowed only within that boundary. A target that is missing,
+A source or target outside the primary content locations is allowed only within that boundary. A target that is missing,
 ambiguous, outside the workspace, physically aliased, or unsupported blocks the
 request.
 
@@ -973,7 +979,7 @@ evidence, but Repair does not restore, revoke or widen grants.
 Preflight and application under the held workspace lease require current
 consumer permission for every selected external Library link effect. Revocation,
 an invalid or unavailable permission observation, or source-binding mismatch
-blocks the selected recovery. Existing `.agents` implicit permission remains;
+blocks the selected recovery. Implicit permission for primary-content destinations remains.
 protected controls, all selected/registered source trees, exact no-follow link
 identity and collision checks still apply to each actual effect. Recovery adds
 no permission prompt or broad grant. Original residual bytes remain unchanged.

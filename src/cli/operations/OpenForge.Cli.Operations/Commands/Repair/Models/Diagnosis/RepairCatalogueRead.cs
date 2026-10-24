@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
@@ -13,6 +14,7 @@ internal sealed record RepairCatalogueRead(
     IReadOnlyList<RepairProposalInput> Proposals,
     IReadOnlyList<RepairFinding> Findings)
 {
+    internal WorkspaceLayoutRead? LayoutRead { get; init; }
     internal RenameEvidenceResult? RenameEvidence { get; init; }
     internal SourceCatalogue? Catalogue { get; init; }
     internal IReadOnlyDictionary<string, MarkdownDocumentFacts> Documents { get; init; } = new Dictionary<string, MarkdownDocumentFacts>();

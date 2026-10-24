@@ -16,6 +16,7 @@ internal static class IndexLogicalSourceProjector
         var rooted = source.Base.Form == SourceDocumentForm.Loader
             || formation.Topology.ReadAbsoluteDepth(source.Identity.CanonicalBasePath) is not null;
         return new IndexLogicalSource(
+            layout: formation.Catalogue.Layout,
             id: source.Identity.AutomaticId,
             path: source.Identity.CanonicalBasePath,
             scope: rooted ? IndexLogicalSourceScope.Rooted : IndexLogicalSourceScope.Detached);

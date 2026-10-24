@@ -7,6 +7,12 @@ open-forge:
 
 # Context Behavior Contract
 
+## Workspace Layout
+
+Use the catalogue’s retained layout and identities through closure, linked reads and result projection. Resolve loader links from its actual directory and preserve included aliases.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Authority
 
 This is the current Crystallized Behavior Contract for the accepted `context`
@@ -276,7 +282,7 @@ not rerun route selection, loading, link expansion, or completeness.
 
 When requested, traverse only explicit local Markdown destinations. Resolve a
 destination relative to its containing source and retain it only when its
-physical target is inside the selected workspace. A link may target `.agents`
+physical target is inside the selected workspace. A link may target primary
 content or another contained local source. Record external HTTP and HTTPS links
 as unchecked observations without selecting or fetching them.
 
@@ -301,7 +307,7 @@ When a link directly names an overwrite companion, resolve the complete logical
 source. Record the incoming link to the overwrite layer, then emit the base and
 overwrite in that order. Never emit or select the overwrite alone.
 
-A contained local target outside `.agents` is not an Open Forge source reference,
+A contained local target outside the primary content locations is not an Open Forge source reference,
 route, or managed source. It has no automatic ID, so the result uses the public
 `ID: none` and canonical workspace-relative path behavior defined by the
 [Interface Contract](interface.md#link-rules).

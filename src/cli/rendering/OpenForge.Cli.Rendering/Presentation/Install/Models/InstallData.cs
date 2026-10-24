@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Commands.Shared.Models.Layout;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -7,6 +8,9 @@ namespace OpenForge.Cli.Core.Presentation.Install.Models;
 
 internal sealed record InstallData
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public WorkspaceLayoutInfo? Layout { get; init; }
+
     [JsonIgnore]
     internal InstallInvalidRoute? InvalidRoute { get; init; }
     [JsonIgnore]

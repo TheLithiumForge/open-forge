@@ -168,7 +168,7 @@ internal sealed partial class RouteMoveReferenceScanner
                 },
                 ExpectedTarget = new RouteMoveReferenceTarget
                 {
-                    Id = SourceIdentity.DeriveId(replacement.NewTarget),
+                    Id = SourceIdentity.DeriveId(input.Request.Destination.Inventory.Subject.Catalogue.Layout, replacement.NewTarget),
                     Path = replacement.NewTarget,
                 },
             })];

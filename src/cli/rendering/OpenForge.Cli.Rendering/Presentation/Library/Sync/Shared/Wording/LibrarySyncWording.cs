@@ -234,6 +234,7 @@ internal static class LibrarySyncWording
         LibrarySyncFindingCode.RecordUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleLibraryRecordIsUnavailable(),
         LibrarySyncFindingCode.OwnershipObservation => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleOwnershipRecordIsMissing(),
         LibrarySyncFindingCode.RecordBlocked => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleLibraryRecordIsBlocked(),
+        LibrarySyncFindingCode.LayoutUnavailable => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleWorkspaceLayoutIsUnavailable(),
         LibrarySyncFindingCode.ConsumerBlocked => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.TitleConsumerPathIsManaged(),
         LibrarySyncFindingCode.MappingBlocked => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.TitleLibraryMappingIsBlocked(),
         LibrarySyncFindingCode.MappingUnavailable => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.TitleLibraryMappingIsUnavailable(),
@@ -278,6 +279,7 @@ internal static class LibrarySyncWording
             or LibrarySyncFindingCode.RegisteredLinkRestored
             or LibrarySyncFindingCode.ConsumerBlocked => "local",
         LibrarySyncFindingCode.UnknownId => "unknown-id",
+        LibrarySyncFindingCode.LayoutUnavailable => "workspace-settings",
         LibrarySyncFindingCode.LibraryRemoved => "workspace-settings",
         LibrarySyncFindingCode.PathExcluded => "workspace-settings",
         LibrarySyncFindingCode.OwnershipObservation => "ownership-observation",

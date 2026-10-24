@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -14,11 +15,15 @@ internal static class InstallDefinitions
 {
     internal const int SchemaVersion = 1;
     internal const string CommandIdentity = "install";
-    internal const string OwnershipRecordPath = ".agents/open-forge.lock.json";
+    internal const string OwnershipRecordPath = WorkspaceOwnershipDefinitions.RelativePath;
 
     internal static readonly CliSyntaxDefinition InstallCommand = new(
         CommandIdentity,
         "Install the bundled Framework, or change your built-in setup.");
+
+    internal const string ConfigureOption = "--configure";
+    internal const string PresetOption = "--preset";
+    internal const string RouteOption = "--route";
 
     internal static readonly CliOptionDefinition<bool> Force = new(
         "--force",
@@ -44,6 +49,13 @@ internal static class InstallDefinitions
         CliOptionArity.ExactlyOne,
         [],
         "root|scoped");
+
+    internal static readonly CliOptionDefinition<string[]> MainRoot = new(
+        "--main-root",
+        $"Choose an absent or empty context folder at first installation. Settings and Skills stay in {WorkspaceSettingsDefinitions.DirectoryName}. An established installation keeps its context folder.",
+        CliOptionArity.ExactlyOne,
+        [],
+        "folder");
 
     internal static readonly IReadOnlyList<InstallFindingCode> FindingCodes =
         Array.AsReadOnly(Enum.GetValues<InstallFindingCode>());

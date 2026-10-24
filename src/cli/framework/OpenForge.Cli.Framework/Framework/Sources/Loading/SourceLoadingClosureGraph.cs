@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
@@ -14,9 +15,10 @@ internal sealed class SourceLoadingClosureGraph
     {
         foreach (var source in request.Sources)
         {
-            ValidateSource(source);
+            ValidateSource(request.Layout, source);
         }
 
+        Layout = request.Layout;
         WorkspaceEntryPath = request.WorkspaceEntryPath;
         Sources = request.Sources;
         _loaderRootPaths = request.LoaderRootPaths;
@@ -32,6 +34,8 @@ internal sealed class SourceLoadingClosureGraph
         _sourcesByPath = byPath;
     }
 
+    internal WorkspaceLayout Layout { get; }
+
     internal string WorkspaceEntryPath { get; }
 
     internal IReadOnlyList<SourceLoadingClosureSource> Sources { get; }
@@ -41,7 +45,7 @@ internal sealed class SourceLoadingClosureGraph
         string destination)
     {
         var targetPath = SourceGeneratedDestinationResolver.Resolve(
-            parent.Path,
+            Layout, parent.Path,
             parent.IsLoader,
             destination);
         if (targetPath is null || !_sourcesByPath.TryGetValue(targetPath, out var target))
@@ -56,26 +60,26 @@ internal sealed class SourceLoadingClosureGraph
     }
 
     /// <summary>
-    /// Returns the workspace-relative path an Entries destination links to outside `.agents/`, or null.
+    /// Returns the workspace-relative path an Entries destination links to outside the primary content locations, or null.
     /// </summary>
-    internal static string? ReadLinkedPath(
+    internal string? ReadLinkedPath(
         SourceLoadingClosureSource parent,
         string destination)
-        => SourceGeneratedDestinationResolver.ResolveLinked(parent.Path, parent.IsLoader, destination);
+        => SourceGeneratedDestinationResolver.ResolveLinked(Layout, parent.Path, parent.IsLoader, destination);
 
     internal SourceLoadingClosureSource? FindLinked(string linkedPath)
         => _sourcesByPath.TryGetValue(linkedPath, out var target) && (target.IsLinked || target.Path != linkedPath) ? target : null;
 
-    private static void ValidateSource(SourceLoadingClosureSource source)
+    private static void ValidateSource(WorkspaceLayout layout, SourceLoadingClosureSource source)
     {
         if (source.IsLinked)
         {
             if (source.Form != SourceDocumentForm.Markdown
                 || source.ParentPath is null
-                || source.Path.StartsWith($"{SourceLogicalPath.AgentsRoot}/", StringComparison.Ordinal))
+                || SourceLogicalPath.IsPrimarySource(layout, source.Path) || layout.SourceRoots.Contains(source.Path))
             {
                 throw new ArgumentException(
-                    "A linked source must be Markdown outside .agents/ with its linking catalogue as parent.",
+                    "A linked source must be Markdown outside the primary content locations with its linking catalogue as parent.",
                     nameof(source));
             }
 
@@ -109,7 +113,7 @@ internal sealed class SourceLoadingClosureGraph
                 source.RouteState,
                 "The source route state is not defined."),
         };
-        if (!SourceFormClassifier.Matches(source.Path, source.Form))
+        if (!SourceFormClassifier.Matches(layout, source.Path, source.Form))
         {
             throw new ArgumentException(
                 "The source loading closure path does not match its document form.",

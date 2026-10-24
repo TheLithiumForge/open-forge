@@ -16,6 +16,8 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigatio
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Operational.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
 
@@ -428,7 +430,7 @@ public sealed class DoctorWorkspaceRouteMappingTests
         {
             State = state,
             SourceInventory = RouteSourceInventoryState.Present,
-            Catalogue = new SourceCatalogue(workspace, [], [], [], isCancelled: false),
+            Catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [], [], isCancelled: false),
             Routes = new SourceRouteFacts(
                 new SourceRouteTopology([], []),
                 [],

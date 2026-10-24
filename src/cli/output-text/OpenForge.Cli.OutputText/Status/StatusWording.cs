@@ -9,8 +9,8 @@ internal static class StatusWording
         => string.Create(CultureInfo.InvariantCulture, $"Included files: {listed} listed, {unlisted} unlisted, {missing} missing, {handWritten} hand-written loader {(handWritten == 1 ? "row" : "rows")}.");
 
     // @OpenForgeText status.wording.included-startup
-    internal static string IncludedStartup(string measurement)
-        => $"Startup outside .agents/: {measurement}";
+    internal static string IncludedStartup(string measurement, string? contextFolder = null)
+        => contextFolder is null ? $"Startup outside .agents/: {measurement}" : $"Startup outside the context folders: {measurement}";
 
     // @OpenForgeText status.wording.included-pending
     internal static string IncludedPending(string path)

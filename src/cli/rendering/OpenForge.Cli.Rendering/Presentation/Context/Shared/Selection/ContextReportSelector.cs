@@ -129,7 +129,7 @@ internal static class ContextReportSelector
     private static IReadOnlyList<string> Guidance(ContextResult result)
     {
         if (result.Findings.Any(finding => finding.StartupMissing))
-            return [global::OpenForge.Cli.OutputText.Context.ContextText.MissingLoader(), global::OpenForge.Cli.OutputText.Context.ContextText.InstallGuidance()];
+            return [global::OpenForge.Cli.OutputText.Context.ContextText.MissingLoader(result.SelectedLoaderPath), global::OpenForge.Cli.OutputText.Context.ContextText.InstallGuidance()];
         if (result.Findings.Any(finding => finding.MissingOptionValue))
             return [global::OpenForge.Cli.OutputText.Context.ContextText.ForExample()];
         return [];

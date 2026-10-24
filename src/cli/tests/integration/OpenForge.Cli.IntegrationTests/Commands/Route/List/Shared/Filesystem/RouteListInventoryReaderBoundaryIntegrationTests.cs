@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
@@ -30,7 +31,7 @@ public sealed class RouteListInventoryReaderBoundaryIntegrationTests
         var documentReader = new SourceDocumentReader(workspace);
 
         var facts = await new RouteListInventoryReader().ReadAsync(
-            new RouteListInventoryRequest(workspace, TestContext.Current.CancellationToken),
+            new RouteListInventoryRequest(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), TestContext.Current.CancellationToken),
             documentReader);
 
         Assert.Equal(RouteListInventoryState.Complete, facts.State);
@@ -92,7 +93,7 @@ public sealed class RouteListInventoryReaderBoundaryIntegrationTests
         var documentReader = new SourceDocumentReader(selectedWorkspace);
 
         var facts = await new RouteListInventoryReader().ReadAsync(
-            new RouteListInventoryRequest(selectedWorkspace, TestContext.Current.CancellationToken),
+            new RouteListInventoryRequest(WorkspaceLayout.Create(selectedWorkspace, WorkspaceLayout.DefaultMainRoot), TestContext.Current.CancellationToken),
             documentReader);
 
         Assert.Equal(RouteListInventoryState.Blocked, facts.State);

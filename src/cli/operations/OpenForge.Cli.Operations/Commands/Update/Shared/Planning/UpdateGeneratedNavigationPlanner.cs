@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
@@ -38,72 +40,27 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
     private readonly GeneratedNavigationProjector _projector = new();
     private readonly UpdateComparisonReader _targetReader = new(physicalPathResolver);
 
-    internal ValueTask<UpdateGeneratedNavigationBuild> BuildAsync(
+    internal async ValueTask<UpdateGeneratedNavigationBuild> BuildAsync(
         UpdateRequest request,
         FrameworkPayload payload,
-        WorkspaceOwnershipDocument ownershipDocument,
-        WorkspaceSettingsDocument settings,
-        IReadOnlyList<FrameworkPayloadAsset> selectedAssets,
-        IReadOnlySet<string> retiredTargetPaths,
-        IReadOnlySet<string> generatedHosts,
-        CancellationToken cancellationToken)
-        => BuildCoreAsync(
-            request,
-            payload,
-            ownershipDocument,
-            ownershipRead: null,
-            settings,
-            selectedAssets,
-            retiredTargetPaths,
-            generatedHosts,
-            cancellationToken);
-
-    internal ValueTask<UpdateGeneratedNavigationBuild> BuildAsync(
-        UpdateRequest request,
-        FrameworkPayload payload,
-        WorkspaceOwnershipRead ownership,
-        WorkspaceSettingsDocument settings,
-        IReadOnlyList<FrameworkPayloadAsset> selectedAssets,
+        WorkspaceLayoutRead layoutRead,
+        IReadOnlyList<UpdatePayloadTarget> selectedAssets,
         IReadOnlySet<string> retiredTargetPaths,
         IReadOnlySet<string> generatedHosts,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(ownership);
-        return BuildCoreAsync(
-            request,
-            payload,
-            ownership.Document,
-            ownership,
-            settings,
-            selectedAssets,
-            retiredTargetPaths,
-            generatedHosts,
-            cancellationToken);
-    }
-
-    private async ValueTask<UpdateGeneratedNavigationBuild> BuildCoreAsync(
-        UpdateRequest request,
-        FrameworkPayload payload,
-        WorkspaceOwnershipDocument ownershipDocument,
-        WorkspaceOwnershipRead? ownershipRead,
-        WorkspaceSettingsDocument settings,
-        IReadOnlyList<FrameworkPayloadAsset> selectedAssets,
-        IReadOnlySet<string> retiredTargetPaths,
-        IReadOnlySet<string> generatedHosts,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(ownershipDocument);
-        ArgumentNullException.ThrowIfNull(settings);
-        ArgumentNullException.ThrowIfNull(selectedAssets);
-        ArgumentNullException.ThrowIfNull(retiredTargetPaths);
+        var layout = layoutRead.Layout ?? throw new InvalidOperationException("Update requires an observed layout.");
+        var ownershipRead = layoutRead.Ownership;
+        var ownershipDocument = ownershipRead.Document;
+        var settings = layoutRead.Settings.Document;
         SourceCatalogue catalogue;
         try
         {
             catalogue = await _catalogueReader
                 .ReadAsync(
                     new SourceCatalogueRequest(
-                        request.Workspace,
-                        [SourceLogicalPath.AgentsRoot]),
+                        layout,
+                        layout.SourceRoots),
                     cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -127,7 +84,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
             var renderedAssets = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             foreach (var asset in selectedAssets)
             {
-                var rendered = WorkspacePayloadRenderer.Render(asset.Path, asset.Bytes.AsMemory(), settings.Frontmatter);
+                var rendered = WorkspacePayloadRenderer.Render(layout, asset.Asset.Path, asset.Asset.Bytes.AsMemory(), settings.Frontmatter);
                 if (rendered.State == FrameworkFrontmatterTransformState.Invalid)
                 {
                     return Blocked(UpdateFindingCode.SourceProvenanceInvalid, asset.Path,
@@ -138,7 +95,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                     ?? throw new InvalidOperationException("A valid Framework payload rendering requires bytes.")).ToArray());
             }
 
-            var adoptionBuilder = new UpdateWorkspaceAdoptionBuilder(physicalPathResolver, settings.Frontmatter);
+            var adoptionBuilder = new UpdateWorkspaceAdoptionBuilder(physicalPathResolver, layout, settings.Frontmatter);
             var sourcePlan = adoptionBuilder.PlanSources(
                 request.Workspace,
                 catalogue,
@@ -172,7 +129,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                     "The intended Update topology contains an ambiguous route, alias, or target collision.");
             }
 
-            if (FrameworkPayloadSelection.FindMissingRequiredAncestor(payload, settings, formation)
+            if (FrameworkPayloadSelection.FindMissingRequiredAncestor(layout, payload, settings, formation)
                 is { } missingRouteAncestor)
             {
                 return Blocked(
@@ -311,7 +268,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
                 .ToArray();
             string? observedLoader = null;
-            if (catalogue.FindByPath(SourceLogicalPath.LoaderPath) is { } loaderSource)
+            if (catalogue.FindByPath(layout.LoaderPath) is { } loaderSource)
             {
                 var loaderRead = await ReadProjectionInputAsync(request, loaderSource.Base, projectionInputReader, cancellationToken)
                     .ConfigureAwait(false);
@@ -352,7 +309,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 asset => asset.Path,
                 asset => renderedAssets[asset.Path],
                 StringComparer.Ordinal);
-            foreach (var asset in selectedAssets.Where(asset => !asset.Path.StartsWith(".agents/", StringComparison.Ordinal)))
+            foreach (var asset in selectedAssets.Where(asset => !layout.IsContentPath(asset.Path)))
             {
                 targetBytes.Add(asset.Path, renderedAssets[asset.Path]);
             }

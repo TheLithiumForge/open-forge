@@ -209,6 +209,6 @@ internal sealed class RouteListTopologySelectionFindings
     {
         return _input.Selection.Selection.AttemptedId
             ?? _input.Selection.Selection.AttemptedPath
-            ?? SourceLogicalPath.LoaderPath;
+            ?? _input.Inventory.SourceCatalogue.Layout.LoaderPath;
     }
 }

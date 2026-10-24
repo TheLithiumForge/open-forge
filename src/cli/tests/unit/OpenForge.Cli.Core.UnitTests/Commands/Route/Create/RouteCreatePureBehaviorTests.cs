@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
@@ -15,11 +16,12 @@ public sealed class RouteCreatePureBehaviorTests
     public void TargetPlannerResolvesOrdinaryIdAndExactPath()
     {
         var planner = new RouteCreateTargetPlanner();
+        var layout = WorkspaceLayout.Create(RouteCreateTestData.Workspace(), WorkspaceLayout.DefaultMainRoot);
 
-        var id = planner.Resolve(RouteCreateTestData.Request());
-        var path = planner.Resolve(RouteCreateTestData.Request(fileTarget: RouteCreateTestData.TargetPath));
+        var id = planner.Resolve(RouteCreateTestData.Request(), layout);
+        var path = planner.Resolve(RouteCreateTestData.Request(fileTarget: RouteCreateTestData.TargetPath), layout);
         var unicodePath = planner.Resolve(RouteCreateTestData.Request(
-            fileTarget: ".agents/memory/Überblick.md"));
+            fileTarget: ".agents/memory/Überblick.md"), layout);
 
         Assert.Equal(RouteCreateTestData.TargetId, id.Target.Id);
         Assert.Equal(RouteCreateTestData.TargetPath, id.Target.Path);
@@ -38,7 +40,7 @@ public sealed class RouteCreatePureBehaviorTests
             "../outside.md",
         })
         {
-            var invalid = planner.Resolve(RouteCreateTestData.Request(fileTarget: invalidTarget));
+            var invalid = planner.Resolve(RouteCreateTestData.Request(fileTarget: invalidTarget), layout);
             Assert.Equal(RouteCreateTargetResolutionState.Invalid, invalid.State);
         }
     }

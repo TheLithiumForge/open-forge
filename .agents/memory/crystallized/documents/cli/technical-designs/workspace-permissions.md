@@ -47,3 +47,6 @@ Only whole-file snapshots needed by current mutation/recovery are kept in memory
 No stored integrity baseline, source-root binding, grant-subject codec, migration,
 legacy reader or new presentation framework is introduced. Ownership, reserved
 paths, Library source containment and physical safety remain separate checks.
+## Layout Admission
+
+Implicit content admission follows the main root and native Skills at `.agents/skills`, using ordinal root prefixes. A case alias receives no implicit authority. Explicit grants stay literal. Fixed settings and ownership remain protected controls, and classification as content never bypasses containment or ownership checks. Permission prompts receive projected layout facts. Revalidate the retained layout observation under the lease before publishing a grant. See [Workspace Layout](workspace-layout.md#ordinal-authority-checks).

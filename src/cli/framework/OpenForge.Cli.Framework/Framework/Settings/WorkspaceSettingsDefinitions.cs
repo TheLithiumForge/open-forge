@@ -1,17 +1,18 @@
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Settings;
 
 /// <summary>
-/// The authored workspace settings file. A person writes and reviews this one;
+/// The authored workspace settings file. A person writes and reviews this one.
 /// its generated counterpart is the lock file, and the npm-shaped pair of names
 /// is what tells a reader which is which.
 /// </summary>
 internal static class WorkspaceSettingsDefinitions
 {
-    internal const string DirectoryName = ".agents";
+    internal const string DirectoryName = WorkspaceLayout.DefaultMainRoot;
     internal const string ImplicitPathPrefix = DirectoryName + "/";
-    internal const string FileName = "open-forge.json";
+    internal const string FileName = WorkspaceLayoutNames.SettingsFileName;
     internal const string RelativePath = DirectoryName + "/" + FileName;
 
     /// <summary>
@@ -21,32 +22,35 @@ internal static class WorkspaceSettingsDefinitions
     /// gains keys over releases, so a version that could refuse one would make a
     /// newer file unusable by an older CLI for no safety gained.
     /// </summary>
-    internal const int SchemaVersion = 3;
+    internal const int SchemaVersion = 4;
 
     /// <summary>
     /// The schema an editor uses for completion and validation. The CLI never
-    /// fetches it; it is written so the file documents itself in the tools people
+    /// fetches it. it is written so the file documents itself in the tools people
     /// already have open.
     /// </summary>
+    internal const string SchemaDirectoryName = "schemas";
+    internal const string SchemaFileName = "open-forge.schema.json";
     internal const string SchemaUrl =
-        "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v3/open-forge.schema.json";
+        "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/" + SchemaDirectoryName + "/v4/" + SchemaFileName;
 
     internal const string SchemaProperty = "$schema";
     internal const string SchemaVersionProperty = "schemaVersion";
+    internal const string MainRootProperty = "mainRoot";
     internal const string FrontmatterProperty = "frontmatter";
     internal const string FrontmatterRootName = "root";
     internal const string FrontmatterScopedName = "scoped";
     internal const string AllowInstallPathsProperty = "allowInstallPaths";
     internal const string IgnoreLinksFromProperty = "ignoreLinksFrom";
     internal const string IgnoreLinksToProperty = "ignoreLinksTo";
-    internal const string MemoryArchivePath = ".agents/memory/archived";
+    internal const string MemoryArchivePath = DirectoryName + "/memory/archived";
     internal const string RemovedCategoriesProperty = "removedCategories";
     internal const string RemovedFilesProperty = "removedFiles";
     internal const string RemovedDirectoriesProperty = "removedDirectories";
     internal const string RemovedExtensionsProperty = "removedExtensions";
     internal const string RemovedLibrariesProperty = "removedLibraries";
     internal const string RootsProperty = "roots";
-    internal const string GitMetadataDirectoryName = ".git";
+    internal const string GitMetadataDirectoryName = WorkspaceLayoutNames.GitMetadataDirectoryName;
 
     internal static string ReadFrontmatterName(FrontmatterForm form)
         => form switch

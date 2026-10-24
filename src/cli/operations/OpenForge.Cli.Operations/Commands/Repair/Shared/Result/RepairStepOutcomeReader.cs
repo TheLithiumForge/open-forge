@@ -11,7 +11,7 @@ internal static class RepairStepOutcomeReader
             input.Plan.Steps.Select(step => new RepairStep(
                 step.Ordinal, step.SelectedProposal, step.Dependency, step.Verification, step.Recovery,
                 step.Effect, step.NoOp, Read(step, input))), input.Plan.Conflicts, input.Plan.LibrarySteps)
-        { Maintenance = input.Plan.Maintenance, RenameEvidence = input.Plan.RenameEvidence };
+        { Maintenance = input.Plan.Maintenance, RenameEvidence = input.Plan.RenameEvidence, LayoutRead = input.Plan.LayoutRead };
 
     private static RepairStepOutcome Read(RepairStep step, RepairResultInput input)
     {

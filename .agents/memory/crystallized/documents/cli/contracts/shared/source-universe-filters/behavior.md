@@ -7,6 +7,10 @@ open-forge:
 
 # Shared Source-Universe Filters Behavior Contract
 
+## Layout Selection
+
+Resolve selectors against the supplied catalogue and its retained layout. Preserve every default selection scope, included identity, alias and condition when reconstructing a filtered catalogue. Do not infer loading membership from primary content locations alone.
+
 ## Status And Scope
 
 This file is the accepted current Crystallized authority for the

@@ -13,6 +13,8 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Route.Shared.References;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
@@ -72,7 +74,7 @@ public sealed class RouteMoveGitIgnoreIntegrationTests
         Assert.NotNull(ignored);
         Assert.Contains($"{physicalRoot}/guidance/topics", ignored.Value);
         var catalogue = await new RouteMarkdownCatalogueReader(new PhysicalPathResolver(), git.EnumerateAsync)
-            .ReadAsync(new RouteMarkdownCatalogueRequest(workspace.Workspace, ["."], [], new RouteMarkdownCatalogueFilters([".md"])),
+            .ReadAsync(new RouteMarkdownCatalogueRequest(WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot), ["."], [], new RouteMarkdownCatalogueFilters([".md"])),
                 TestContext.Current.CancellationToken);
         Assert.Equal(RouteMarkdownCatalogueCoverage.Complete, catalogue.Coverage);
         Assert.Contains(".agents/guidance/topics/child.md", catalogue.SelectedPaths);
@@ -142,7 +144,7 @@ public sealed class RouteMoveGitIgnoreIntegrationTests
         File.WriteAllText(workspace.Absolute(".git/info/exclude"), "info.md\n");
         var catalogue = await new RouteMarkdownCatalogueReader(new PhysicalPathResolver(),
                 new RouteGitIgnoredPathEnumerator(configureProcess: repository.Configure).EnumerateAsync)
-            .ReadAsync(new RouteMarkdownCatalogueRequest(workspace.Workspace, ["."], [], new RouteMarkdownCatalogueFilters([".md"])),
+            .ReadAsync(new RouteMarkdownCatalogueRequest(WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot), ["."], [], new RouteMarkdownCatalogueFilters([".md"])),
                 TestContext.Current.CancellationToken);
         Assert.Equal(RouteMarkdownCatalogueCoverage.Complete, catalogue.Coverage);
         Assert.Contains("tracked.md", catalogue.SelectedPaths);
@@ -195,7 +197,7 @@ public sealed class RouteMoveGitIgnoreIntegrationTests
         Assert.NotNull(ignored);
         Assert.Contains("Node_Modules", ignored.Value);
         var catalogue = await new RouteMarkdownCatalogueReader(new PhysicalPathResolver(), git.EnumerateAsync)
-            .ReadAsync(new RouteMarkdownCatalogueRequest(workspace.Workspace, ["node_modules"], [], new RouteMarkdownCatalogueFilters([".md"])),
+            .ReadAsync(new RouteMarkdownCatalogueRequest(WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot), ["node_modules"], [], new RouteMarkdownCatalogueFilters([".md"])),
                 TestContext.Current.CancellationToken);
         Assert.Equal(RouteMarkdownCatalogueCoverage.Complete, catalogue.Coverage);
         Assert.Empty(catalogue.SelectedPaths);

@@ -7,6 +7,12 @@ open-forge:
 
 # extension remove Interface Contract
 
+## Workspace Layout
+
+Package paths remain package coordinates. Installed paths follow the selected layout, with native Skills and controls fixed in `.agents`. Permission and ownership checks use those installed destinations.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for
@@ -44,14 +50,14 @@ explicit write is reported and prevents content application. Eligible interactiv
 approval offers always, once or cancel. Once saves no permission grant; removal
 still records its persistent exclusion. Invalid or unavailable settings block planning before permission approval,
 because removal exclusions cannot be determined safely. A missing settings file
-means no saved exclusions or external grants. Implicit `.agents/` destinations
+means no saved exclusions or external grants. Implicit primary-content destinations
 still require no permission grant.
 
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
 [Behavior](../../shared/workspace-permissions/behavior.md). Require shared allow-list admission for every selected owned external path, including
 shared-owner retention. Derive these requirements
 from trusted ownership without reading package source.
-Existing `.agents/` targets need no grant; their prior safety and ownership
+Eligible primary-content targets need no grant. Their prior safety and ownership
 checks remain. Revocation blocks the complete selected lifecycle operation,
 including ownership release, until exact explicit reapproval. Unrelated
 installed packages do not enter this request's required set.
@@ -86,8 +92,8 @@ consumer entries. Invalid storage directs to inspect and correct that file.
 `remove` releases selected Extension ownership recorded in
 `.agents/open-forge.lock.json`. Exact path receipts authorize eligible final-owner
 deletion. Region receipts authorize only changes to the generated region, never
-deletion of its host file. The shared allow list applies to all owners; `.agents/`
-is implicit, and existing reserved-path and physical-containment checks remain.
+deletion of its host file. The shared allow list applies to all owners. Primary-content destinations
+are implicit, and existing reserved-path and physical-containment checks remain.
 
 Package source bytes are not required and are never removed. Framework-owned,
 Library-owned, unowned, reserved, and route-unsafe content is protected.

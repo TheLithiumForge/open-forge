@@ -22,8 +22,8 @@ The named installed content files, the generated ownership control file
 `.agents/open-forge.lock.json`, and the managed host regions are separate
 populations. The lock is a generated state-file effect, not an installed
 content file; `AGENTS.md` and `CLAUDE.md` remain host regions rather than
-installed content files. The reported directory population contains only
-directories strictly below `.agents`; the `.agents` container itself is
+installed content files. In the default layout, the reported directory population contains only
+directories strictly below `.agents`. The `.agents` container itself is
 excluded from that count even though creating it is a real first filesystem
 effect when needed.
 
@@ -61,6 +61,16 @@ YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
 Native AOT, OS locking, isolated tests, and package journeys. The accepted
 lifecycle direction does not claim that implementation or proof.
 
+## Context Folder
+
+`--main-root <folder>` chooses the context folder at first installation. Before route choices, the wizard asks "Where should Open Forge keep its context files?" with `.agents` as the default, explaining that settings and Skills stay in `.agents`. Explicit input answers the question. Preview, JSON, automatic and redirected runs never ask.
+
+A custom destination must be absent or empty. Default-root adoption remains supported. An omitted or unchanged root preserves ordinary Install behavior. A different root in an established installation is refused before effects, including with `--configure`. Relocating an established installation is not available yet.
+
+The loader and human guide follow the selected root. Skills, settings and ownership retain their fixed `.agents` locations, and workspace-root host sections point to the selected loader. New settings declare v4 without inserting an absent default `mainRoot`. Older CLIs do not support custom roots. See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
+For custom roots, `data.layout` reports `mainRoot` and `loaderPath`. Default results omit it and retain the existing schema-3 envelope. Paths, counts and transcripts using `.agents` below describe the default layout.
+
 ## Help
 
 The purpose sentence is: Install the bundled Framework, or change your built-in setup.
@@ -73,11 +83,11 @@ open-forge install [options]
 
 Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
 
-Behavior states the fresh wizard's Essentials choice, the unattended and preview Full Core default, and the root metadata default unless settings declare a preference. Details includes Existing files, the exact first-installation force boundary, all ten Custom route IDs, omission and Git sharing rules, metadata conversion, and the absence of a successful-install undo bundle.
+Behavior states the context-folder question and the fresh wizard's recommended Minimal choice, the unattended and preview Full Core default, and the root metadata default unless settings declare a preference. Details includes Existing files, the exact first-installation force boundary, all ten Custom route IDs, omission and Git sharing rules, metadata conversion, and the absence of a successful-install undo bundle.
 
 ## Purpose And Boundary
 
-When Install includes Memory archive and `ignoreLinksFrom` is absent, it adds `.agents/memory/archived`. An existing key, even an empty list, remains the authored choice. See [Link Scope](../../shared-operation-contract.md#link-scope).
+When Install includes Memory archive and `ignoreLinksFrom` is absent, it adds the selected layout’s `memory/archived` path. An existing key, even an empty list, remains the authored choice. See [Link Scope](../../shared-operation-contract.md#link-scope).
 
 `install` establishes management of the embedded Framework in one exact
 workspace. It establishes a safely absent Framework state or completes the
@@ -106,8 +116,8 @@ result, or cancelled result does not publish lifecycle state.
 The complete public command form is:
 
 ```text
-open-forge install [--configure] [--preset <essentials|full-core|custom>]
-  [--frontmatter <root|scoped>]
+open-forge install [--configure] [--preset <minimal|essentials|full-core|custom>]
+  [--main-root <folder>] [--frontmatter <root|scoped>]
   [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global flags]
 ```
 
@@ -165,7 +175,7 @@ access. Install never reads the development checkout.
 The recognized footprint is closed. It contains only:
 
 1. The embedded current Framework payload's named installed content
-   destinations below `.agents`, including authored files and affected
+   destinations in the primary content locations, including authored files and affected
    generated `Entries` regions.
 2. The generated ownership control file `.agents/open-forge.lock.json` as a
    separate state-file population.
@@ -298,6 +308,7 @@ named flags below, not arbitrary destination paths.
 | `--dry-run`         | Preview write policy          | Boolean                             | Permits application after the same preflight                     | Repeats idempotently. It writes nothing and uses the same request, facts, plan, and status as apply.                                        |
 | `--configure`       | Explicit setup change         | Boolean                             | Ordinary Install verification                                    | Repeats idempotently. Selects additive route configuration and bounded frontmatter conversion without general Update or deletion authority. |
 | `--preset`          | Built-in setup selection      | `essentials`, `full-core`, `custom` | Interactive first setup or deterministic unattended defaults     | Repeated identical values are idempotent. Conflicting values are invalid. Existing setup requires `--configure`.                            |
+| `--main-root <folder>` | First-install context folder | Canonical workspace-relative folder | `.agents`, or the established selection | A custom destination must be absent or empty. An established root cannot change. |
 | `--frontmatter`     | Metadata output form          | `root`, `scoped`                    | Workspace preference, with root as the fresh unattended default  | Repeated identical values are idempotent. Conflicting values are invalid. An installed workspace requires `--configure`.                    |
 | `--route`           | Custom row override           | `<id>=<add\|remove\|git-ignore>`    | Retain the Custom base row                                       | Repeat for different rows. Requires Custom. Conflicting actions for one row are invalid.                                                    |
 | Shared global flags | Workspace and presentation    | Defined by the shared contract      | Shared defaults                                                  | Shared repetition and terminal rules apply.                                                                                                 |
@@ -529,7 +540,7 @@ is `incomplete` before effects; a collision or failed final verification is
 `blocked` before effects.
 
 Directory creation is a separate effect from file Create/Replace. If the fully
-preflighted plan starts without `.agents`, that exact path is the first ordinary
+default-layout preflighted plan starts without `.agents`, that exact path is the first ordinary
 visible planned and reported directory-create effect. Install first acquires the
 local workspace lease, then immediately revalidates the missing target and
 exact contained physical parent, calls ordinary `Directory.CreateDirectory`, and
@@ -913,7 +924,7 @@ The status and exit mapping above are unchanged by detail or format. Root effect
 | Effect                               | `minimal`                                                                    | `standard` row                                                   |
 | ------------------------------------ | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | create directory                     | counted                                                                      | counted (`<N> directories created`)                              |
-| create file under `.agents`          | counted named installed content file; the lock file is named separately      | `<path>  created`                                                |
+| create a primary-content file          | counted named installed content file. the lock file is named separately      | `<path>  created`                                                |
 | create `AGENTS.md` or `CLAUDE.md`    | `Created AGENTS.md and CLAUDE.md with an Open Forge section.`                | `<file>  created with an Open Forge section`                     |
 | append section to existing host file | `<file>   Open Forge section added; your content was kept`                   | same                                                             |
 | replace existing file (`--force`)    | `<path>  replaced (your previous file is in the recovery bundle)`            | same                                                             |
@@ -932,8 +943,8 @@ change. These informational lines do not change status or become findings.
 
 `filesCreated`, `directoriesCreated`, `sectionsAdded`, `filesReplaced`.
 `filesCreated` counts named installed content files and excludes the generated
-ownership control file and host regions. `directoriesCreated` counts only
-directories strictly below `.agents`; the `.agents` container is still an
+ownership control file and host regions. In the default layout, `directoriesCreated` counts only
+directories strictly below `.agents`. The `.agents` container is still an
 ordered filesystem effect but is excluded from that count. The lock file and
 host regions remain separate populations.
 
@@ -945,7 +956,7 @@ to `open-forge update`. Partial or retained recovery directs to
 
 Install retry commands come from typed request facts. They retain the explicitly
 selected workspace with shell quoting, `--configure`, `--preset`, every
-`--route`, `--frontmatter`, `--force`, and relevant format, detail and finding
+`--route`, `--main-root`, `--frontmatter`, `--force`, and relevant format, detail and finding
 filter options. Only a missing-confirmation reason adds `--automatic`.
 After setup is resolved, retries use the resolved preset, all Custom route
 choices and the resolved frontmatter form. An Essentials force preview therefore

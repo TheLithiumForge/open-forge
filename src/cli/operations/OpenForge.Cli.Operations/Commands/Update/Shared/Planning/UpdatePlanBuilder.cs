@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
@@ -101,20 +102,10 @@ internal sealed class UpdatePlanBuilder
                         UpdateLifecycleCoverage.NotRequested)));
         }
 
-        var container = Path.Combine(request.Workspace.LexicalRoot, ".agents");
-        var containerResolution = _physicalPathResolver.ResolveCandidate(request.Workspace.LexicalRoot, request.Workspace.PhysicalRoot, container);
-        if (containerResolution.State != PhysicalPathState.Contained || !Directory.Exists(container)
-            || (File.GetAttributes(container) & (FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)
-            return Boundary(UpdatePlanResultFactory.Boundary(request, UpdatePlanResultFactory.Source(payload), [],
-                new UpdateFinding(UpdateFindingCode.TargetUnsafe, ".agents", "The Framework container is not a contained ordinary directory."),
-                UpdatePlanResultFactory.UnstartedLifecycle(UpdateLifecycleTrust.NotRequested, UpdateLifecycleCoverage.Blocked)));
-
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(
-                _physicalPathResolver,
-                request.Workspace,
-                cancellationToken)
-            .ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(_physicalPathResolver, request.Workspace, cancellationToken).ConfigureAwait(false);
+        var layoutRead = await new WorkspaceLayoutReader(_physicalPathResolver)
+            .ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var ownership = layoutRead.Ownership;
+        var settings = layoutRead.Settings;
         if (settings.State == WorkspaceSettingsReadState.Invalid)
         {
             return Boundary(UpdatePlanResultFactory.Boundary(
@@ -153,8 +144,29 @@ internal sealed class UpdatePlanBuilder
                 "The workspace settings read state is not defined.");
         }
 
+        if (layoutRead.Layout is not { } layout
+            || layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+        {
+            var issue = layoutRead.Issues.FirstOrDefault();
+            var code = issue?.Code == WorkspaceLayoutIssueCode.PointerMismatch
+                ? UpdateFindingCode.SourceProvenanceInvalid
+                : UpdateFindingCode.TargetUnsafe;
+            return Boundary(UpdatePlanResultFactory.Boundary(request, UpdatePlanResultFactory.Source(payload), [],
+                new UpdateFinding(code, issue?.Path, issue?.Cause
+                    ?? "The workspace layout is not ready for Update."),
+                UpdatePlanResultFactory.UnstartedLifecycle(UpdateLifecycleTrust.NotRequested, UpdateLifecycleCoverage.Blocked)));
+        }
+
+        var container = Path.Combine(request.Workspace.LexicalRoot, layout.MainRoot);
+        var containerResolution = _physicalPathResolver.ResolveCandidate(request.Workspace.LexicalRoot, request.Workspace.PhysicalRoot, container);
+        if (containerResolution.State != PhysicalPathState.Contained || !Directory.Exists(container)
+            || (File.GetAttributes(container) & (FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)
+            return Boundary(UpdatePlanResultFactory.Boundary(request, UpdatePlanResultFactory.Source(payload), [],
+                new UpdateFinding(UpdateFindingCode.TargetUnsafe, layout.MainRoot, "The Framework container is not a contained ordinary directory."),
+                UpdatePlanResultFactory.UnstartedLifecycle(UpdateLifecycleTrust.NotRequested, UpdateLifecycleCoverage.Blocked)));
+
         var intended = await _intendedStateBuilder
-            .BuildAsync(request, payload, ownership, settings.Document, cancellationToken)
+            .BuildAsync(request, payload, layoutRead, cancellationToken)
             .ConfigureAwait(false);
         if (intended.Finding is { } finding)
         {
@@ -212,7 +224,7 @@ internal sealed class UpdatePlanBuilder
                 .ToArray(),
         };
         var directoryCreations = PlanRequiredDirectories(
-            request,
+            layout,
             ownership,
             settings.Document,
             effects,
@@ -234,7 +246,7 @@ internal sealed class UpdatePlanBuilder
             ? OwnershipWritePlanResult.Skipped("No verified Framework writes established ownership.")
             : _ownershipStore.PlanFrameworkOwnership(
                 ownership,
-                BuildOwnership(ownership, observations, plan, intended.AdoptionTargets));
+                BuildOwnership(layout, ownership, observations, plan, intended.AdoptionTargets));
         var ownershipChange = ownershipPlan.Change;
         var completion = new UpdatePlanCompletion
         {
@@ -263,13 +275,14 @@ internal sealed class UpdatePlanBuilder
                 directoryCreations,
                 ownershipChange)
             {
+                LayoutRead = layoutRead,
                 AdoptionTargets = intended.AdoptionTargets,
                 Migrations = intended.Migrations,
             });
     }
 
     private IReadOnlyList<PlannedDirectoryCreation> PlanRequiredDirectories(
-        UpdateRequest request,
+        WorkspaceLayout layout,
         WorkspaceOwnershipRead ownership,
         WorkspaceSettingsDocument settings,
         IReadOnlyList<UpdatePlannedEffect> effects,
@@ -291,26 +304,26 @@ internal sealed class UpdatePlanBuilder
                 return [];
             }
 
-            while (!PathComparer.Equals(parent, request.Workspace.LexicalRoot))
+            while (!PathComparer.Equals(parent, layout.Workspace.LexicalRoot))
             {
-                if (!PhysicalContainment.Contains(request.Workspace.LexicalRoot, parent))
+                if (!PhysicalContainment.Contains(layout.Workspace.LexicalRoot, parent))
                 {
                     finding = UnsafeDirectory(effect.ResultEffect.Path, "A required Update destination parent leaves the workspace.");
                     return [];
                 }
 
-                var relative = Path.GetRelativePath(request.Workspace.LexicalRoot, parent)
+                var relative = Path.GetRelativePath(layout.Workspace.LexicalRoot, parent)
                     .Replace(Path.DirectorySeparatorChar, '/')
                     .Replace(Path.AltDirectorySeparatorChar, '/');
-                if (!FrameworkPayloadSelection.IncludesPath(relative, settings))
+                if (!FrameworkPayloadSelection.IncludesInstalledPath(layout, relative, settings))
                 {
                     finding = UnsafeDirectory(relative, "A required Update destination parent is covered by a removal exclusion.");
                     return [];
                 }
 
                 var resolution = _physicalPathResolver.ResolveCandidate(
-                    request.Workspace.LexicalRoot,
-                    request.Workspace.PhysicalRoot,
+                    layout.Workspace.LexicalRoot,
+                    layout.Workspace.PhysicalRoot,
                     parent);
                 if (resolution.State == PhysicalPathState.Missing)
                 {
@@ -383,6 +396,7 @@ internal sealed class UpdatePlanBuilder
         : StringComparer.Ordinal;
 
     private static FrameworkOwnership BuildOwnership(
+        WorkspaceLayout layout,
         WorkspaceOwnershipRead ownership,
         IReadOnlyList<UpdateComparisonObservation> observations,
         UpdatePlanningPlan plan,
@@ -409,16 +423,16 @@ internal sealed class UpdatePlanBuilder
             if (comparison.Kind == UpdateComparisonTargetKind.File
                 && path is not (FrameworkPayloadAsset.RootAgentPath or FrameworkPayloadAsset.RootClaudePath)) paths.Add(path);
             else if (comparison.Kind == UpdateComparisonTargetKind.GeneratedRegion)
-                regions.Add(new OwnedRegion(path, "entries"));
+                regions.Add(new OwnedRegion(path, WorkspaceOwnershipDefinitions.EntriesRegion));
             else regions.Add(new OwnedRegion(path, WorkspaceOwnershipDefinitions.ManagedBlockRegion));
             var observation = byIdentity[Identity(comparison)];
-            if (path.StartsWith(".agents/", StringComparison.Ordinal) && observation.IntendedDocumentBytes is { } bytes
+            if (layout.IsImplicitContentDestination(path) && observation.IntendedDocumentBytes is { } bytes
                 && new MarkdownDocumentParser().Parse(Encoding.UTF8.GetString(bytes)).GeneratedRegion.State == MarkdownGeneratedRegionState.Complete)
-                regions.Add(new OwnedRegion(path, "entries"));
+                regions.Add(new OwnedRegion(path, WorkspaceOwnershipDefinitions.EntriesRegion));
         }
         foreach (var target in adoptionTargets.Where(target => target.OwnsGeneratedEntries))
         {
-            regions.Add(new OwnedRegion(target.Path, "entries"));
+            regions.Add(new OwnedRegion(target.Path, WorkspaceOwnershipDefinitions.EntriesRegion));
         }
         return new FrameworkOwnership(existing?.Source ?? new OwnedSource("framework", null),
             [.. paths.Order(StringComparer.Ordinal)],

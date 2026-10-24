@@ -1,8 +1,11 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
 
@@ -89,28 +92,20 @@ internal static class RouteSourceTestData
                 compatibility,
                 withOverwrite);
         var @base = new RouteSourceDocument(
-            logicalSource.Base.CanonicalPath,
-            logicalSource.Base.PhysicalPath,
-            form,
-            FileReadState.Complete,
-            "body");
+new SourceLayer(logicalSource.Base.CanonicalPath, logicalSource.Base.PhysicalPath, form, form == SourceDocumentForm.OverwriteCompanion ? SourceLayerKind.Overwrite : SourceLayerKind.Base), FileReadState.Complete, "body");
         RouteSourceDocument? overwrite;
         if (withOverwrite)
         {
             var overwriteLayer = logicalSource.Overwrite
                 ?? throw new InvalidOperationException("The fixed logical source must retain its overwrite layer.");
             overwrite = new RouteSourceDocument(
-                overwriteLayer.CanonicalPath,
-                overwriteLayer.PhysicalPath,
-                SourceDocumentForm.OverwriteCompanion,
-                FileReadState.Complete,
-                "overwrite");
+new SourceLayer(overwriteLayer.CanonicalPath, overwriteLayer.PhysicalPath, SourceDocumentForm.OverwriteCompanion, SourceLayerKind.Overwrite), FileReadState.Complete, "overwrite");
         }
         else
         {
             overwrite = null;
         }
-        return new RouteSource(@base, metadata, ToRouteKind(form), overwrite, isRouteAmbiguous);
+        return new RouteSource(new SourceLogicalIdentity(SourceIdentity.DeriveId(DefaultWorkspaceLayout, @base.CanonicalLogicalPath)!, @base.CanonicalLogicalPath), @base, metadata, ToRouteKind(form), overwrite, isRouteAmbiguous);
     }
 
     internal static RouteSource Source(
@@ -145,7 +140,7 @@ internal static class RouteSourceTestData
         var overwrite = overwritePath is null
             ? null
             : Document(overwritePath, SourceDocumentForm.OverwriteCompanion);
-        return new RouteSource(@base, metadata, kind, overwrite, isRouteAmbiguous);
+        return new RouteSource(new SourceLogicalIdentity(SourceIdentity.DeriveId(DefaultWorkspaceLayout, @base.CanonicalLogicalPath)!, @base.CanonicalLogicalPath), @base, metadata, kind, overwrite, isRouteAmbiguous);
     }
 
     internal static RouteSourceDocument Document(
@@ -155,11 +150,7 @@ internal static class RouteSourceTestData
         string? body = "body")
     {
         return new RouteSourceDocument(
-            path,
-            PhysicalPath(path),
-            form,
-            readState,
-            readState == FileReadState.Complete ? body ?? "body" : null);
+new SourceLayer(path, PhysicalPath(path), form, form == SourceDocumentForm.OverwriteCompanion ? SourceLayerKind.Overwrite : SourceLayerKind.Base), readState, readState == FileReadState.Complete ? body ?? "body" : null);
     }
 
     internal static string PhysicalPath(string canonicalPath)
@@ -246,4 +237,11 @@ internal static class RouteSourceTestData
             _ => throw new ArgumentOutOfRangeException(nameof(form), form, "The Route form is not a source base form."),
         };
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                System.IO.Path.GetFullPath(nameof(RouteSourceTestData)),
+                System.IO.Path.GetFullPath(nameof(RouteSourceTestData)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

@@ -42,6 +42,7 @@ internal sealed partial class RouteInspectSourceFactsResolver
             ReferenceEquals(fact.Identity, logicalSource.Identity));
         var routeState = ReadRouteState(logicalSource, routeFact, input.Resolution.Projections.ProjectionSet);
         var graph = new RouteInspectGraph(
+            input.Resolution.Catalogue.Layout,
             input.Resolution.Projections.ProjectionSet,
             routeFacts);
         var identity = new RouteInspectIdentity(

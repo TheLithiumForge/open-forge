@@ -12,6 +12,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.IntegrationTests.Framework.Sources.Shared;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.GeneratedNavigation;
 
@@ -234,7 +236,7 @@ public sealed class GeneratedNavigationIntegrationTests
         SourceIntegrationWorkspace workspace)
     {
         var catalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(workspace.Workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot), [SourceLogicalPath.AgentsRoot]),
             TestContext.Current.CancellationToken);
         Assert.False(catalogue.IsCancelled);
         return new GeneratedNavigationFormationBuilder().Build(catalogue);

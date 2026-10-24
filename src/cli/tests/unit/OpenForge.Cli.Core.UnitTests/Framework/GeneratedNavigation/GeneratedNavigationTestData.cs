@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
@@ -34,7 +35,7 @@ internal static class GeneratedNavigationTestData
             .ToArray();
         var root = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "generated-navigation-unit"));
         return new SourceCatalogue(
-            workspace: new CliWorkspace(root, root, CliWorkspaceSelectionMethod.ExplicitWorkspace),
+layout: WorkspaceLayout.Create(new CliWorkspace(root, root, CliWorkspaceSelectionMethod.ExplicitWorkspace), WorkspaceLayout.DefaultMainRoot),
             candidates: candidates,
             sources: materializedSources,
             issues: issues ?? [],
@@ -50,7 +51,7 @@ internal static class GeneratedNavigationTestData
         return new SourceCandidate(
             canonicalPath: canonicalPath,
             form: form,
-            automaticId: SourceIdentity.DeriveId(canonicalPath),
+            automaticId: SourceIdentity.DeriveId(DefaultWorkspaceLayout, canonicalPath),
             physicalState: PhysicalPathState.Contained,
             physicalPath: physicalPath,
             physicalParentPath: physicalParentPath ?? ReadParent(physicalPath));
@@ -93,7 +94,7 @@ internal static class GeneratedNavigationTestData
 
         return new SourceLogicalSource(
             identity: new SourceLogicalIdentity(
-                SourceIdentity.DeriveId(canonicalPath)
+                SourceIdentity.DeriveId(DefaultWorkspaceLayout, canonicalPath)
                     ?? throw new ArgumentException(
                         "A generated navigation test source requires an automatic ID.",
                         nameof(canonicalPath)),
@@ -149,4 +150,11 @@ internal static class GeneratedNavigationTestData
         return Path.GetDirectoryName(path)
             ?? throw new ArgumentException("A generated navigation test physical path requires a parent.", nameof(path));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(GeneratedNavigationTestData)),
+                Path.GetFullPath(nameof(GeneratedNavigationTestData)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

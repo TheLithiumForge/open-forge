@@ -18,8 +18,7 @@ internal sealed class RepairBoundaryDiagnosisReader(DoctorDiagnosisReader diagno
                 read.Observation.LocalReferences.References,
                 RepairAuthoredReferenceBoundary.ReadRouteDocuments(read.Observation.Routes.Sources));
             var findings = new List<RepairFinding>();
-            var catalogue = catalogueReader is null ? null : await catalogueReader.ReadAsync(request.Workspace,
-                read.Observation.LocalReferences, CancellationToken.None, maintenance: read.Observation.Maintenance).ConfigureAwait(false);
+            var catalogue = catalogueReader is null ? null : await catalogueReader.ReadAsync(read.Observation.LayoutRead ?? throw new InvalidOperationException("Doctor must retain its layout observation."), read.Observation.LocalReferences, CancellationToken.None, maintenance: read.Observation.Maintenance).ConfigureAwait(false);
             findings.AddRange(catalogue is null ? RepairRemainingFindingReader.Read(scope.References) : RepairRemainingFindingReader.ReadCatalogue(catalogue));
             findings.AddRange(RepairAuthoredReferenceBoundary.IncompleteFindings(scope.IncompleteSources));
             findings.AddRange(RepairRemainingFindingReader.ReadLibrary(read.Result.Diagnosis));
@@ -29,7 +28,7 @@ internal sealed class RepairBoundaryDiagnosisReader(DoctorDiagnosisReader diagno
                 findings)
             {
                 Proposals = catalogue?.Proposals.Select(input => input.Proposal).ToArray() ?? [],
-                NeedsIndex = await RepairContinuationReader.NeedsIndexAsync(request.Workspace, read.Observation.Routes, CancellationToken.None).ConfigureAwait(false),
+                NeedsIndex = RepairContinuationReader.NeedsIndex(read.Observation, CancellationToken.None),
             };
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)

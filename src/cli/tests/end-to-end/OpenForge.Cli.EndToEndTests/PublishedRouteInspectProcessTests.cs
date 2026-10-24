@@ -3,7 +3,7 @@ using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedRouteInspectProcessTests
+public sealed partial class PublishedRouteInspectProcessTests
 {
     [Fact(DisplayName = "Published Route Inspect help explains the matching-files boundary and fallback scope"),
      Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]

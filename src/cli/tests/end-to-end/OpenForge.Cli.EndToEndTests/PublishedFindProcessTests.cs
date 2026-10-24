@@ -3,7 +3,7 @@ using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedFindProcessTests
+public sealed partial class PublishedFindProcessTests
 {
     [Fact(DisplayName = "Published Find bare invocation uses the workspace current directory and default minimal detail"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindBareUsesCurrentDirectoryAndDefaultMinimalDetail()

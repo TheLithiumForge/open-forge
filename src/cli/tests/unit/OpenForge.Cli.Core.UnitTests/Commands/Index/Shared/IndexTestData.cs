@@ -12,15 +12,29 @@ using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+
 namespace OpenForge.Cli.Core.UnitTests.Commands.Index.Shared;
 
 internal static class IndexTestData
 {
+    internal static WorkspaceLayout Layout() => WorkspaceLayout.Create(Workspace(), WorkspaceLayout.DefaultMainRoot);
+
+    internal static WorkspaceLayoutRead LayoutRead()
+        => new(WorkspaceLayoutReadState.Uninstalled,
+            WorkspaceSettingsRead.Absent(Path.Combine(Workspace().LexicalRoot, WorkspaceSettingsDefinitions.RelativePath)),
+            WorkspaceOwnershipRead.Absent(Path.Combine(Workspace().LexicalRoot, WorkspaceOwnershipDefinitions.RelativePath)),
+            Layout(), [], []);
+
     internal static IndexLogicalSource Source(
         string id = "memory",
         string path = ".agents/memory/_memory.md",
         IndexLogicalSourceScope scope = IndexLogicalSourceScope.Rooted)
-        => new(id, path, scope);
+        => new(Layout(), id, path, scope);
 
     internal static IndexSelection Selection(params IndexLogicalSource[] sources)
         => new(

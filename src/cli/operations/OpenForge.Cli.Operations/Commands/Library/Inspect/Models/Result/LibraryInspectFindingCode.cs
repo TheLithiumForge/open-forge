@@ -18,6 +18,7 @@ internal enum LibraryInspectFindingCode
     LinkMissing,
     LinkChanged,
     LinkBlocked,
+    LayoutUnavailable,
     OperationFailed,
     Interrupted,
 }

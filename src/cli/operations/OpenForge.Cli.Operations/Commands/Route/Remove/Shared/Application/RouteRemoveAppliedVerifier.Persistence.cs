@@ -119,10 +119,10 @@ internal sealed partial class RouteRemoveAppliedVerifier
         }
 
         var selection = plan.Projection.RemovalSelection;
-        var paths = selection.Categories.Select(category => $".agents/{category}")
+        var paths = selection.Categories.Select(plan.Layout.CategoryDirectory)
             .Concat(selection.Files)
             .Concat(selection.Directories);
-        return paths.All(path => WorkspaceRemovals.IsPathRemoved(path, settings.Document))
+        return paths.All(path => WorkspaceRemovals.IsPathRemoved(plan.Layout, path, settings.Document))
             ? null
             : "The final settings do not retain every selected Route Remove exclusion.";
     }

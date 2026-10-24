@@ -166,7 +166,7 @@ internal sealed class ExtensionInstallOperation(
         try
         {
             var required = plan.Packages.SelectMany(package => package.Payload
-                .Where(file => file.TargetPath is { } path && !ExtensionDestinationPolicy.IsImplicit(path))
+                .Where(file => file.TargetPath is not null)
                 .Select(file => file.TargetPath ?? throw new InvalidOperationException("A planned Extension target requires its path.")));
             var changedPaths = plan.Effects.Where(effect => effect.FileChange is not null)
                 .Select(effect => effect.Result.Path).ToHashSet(StringComparer.Ordinal);
@@ -174,7 +174,8 @@ internal sealed class ExtensionInstallOperation(
                 changedPaths.Contains(requirement) ? ExtensionPermissionEffect.Copy : ExtensionPermissionEffect.Preserve));
             permission = await _permissions.DetermineAsync(new(request.Workspace, [.. targets], plan.SourceRead.Identity,
                 request.Mode == ExtensionInstallMode.Apply && !request.Automatic && request.AllowInteraction,
-                request.AllowPath), cancellationToken).ConfigureAwait(false);
+                request.AllowPath)
+            { LayoutRead = plan.LayoutRead }, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -306,6 +307,6 @@ internal sealed class ExtensionInstallOperation(
         var sourcePackage = plan.SourceRead.Packages.FirstOrDefault(package =>
             string.Equals(package.Id, packageId, StringComparison.Ordinal));
         return sourcePackage is not null
-            && ExtensionInstallPayloadNormalizer.IsEntirePayloadExcluded(sourcePackage, plan.SettingsObservation.Document);
+            && ExtensionInstallPayloadNormalizer.IsEntirePayloadExcluded(plan.Layout, sourcePackage, plan.SettingsObservation.Document);
     }
 }

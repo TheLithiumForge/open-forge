@@ -7,6 +7,10 @@ open-forge:
 
 # CLI Source References Behavior Contract
 
+## Layout Evidence
+
+Resolve identity from the catalogue’s selected layout, not from settings reads inside source resolution. Preserve layout, aliases, included `./path` identities and conditions during reconstruction. Literal paths never undergo package mapping. Membership does not grant mutation authority. See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This file is the accepted current Crystallized authority for technology-neutral
@@ -71,8 +75,8 @@ and [Path Resolution](interface.md#path-resolution).
 ## ID Derivation
 
 For each invocation, derivation enumerates supported files under the selected
-workspace's `.agents` boundary and starts each identity from its canonical
-workspace-relative path. It uses `/` between segments, removes `.md` from
+workspace’s primary content locations and starts each identity from its canonical
+layout-relative path, retaining `skills/` for native Skills. It uses `/` between segments, removes `.md` from
 Markdown files, applies recognized-entrypoint and `SKILL.md` folder identity,
 keeps meaningful non-Markdown extensions, preserves exact case, spaces, and
 Unicode, and rejects `.` and `..` segments.
@@ -110,11 +114,11 @@ realization within the CLI Architecture's filesystem boundary. It does not
 silently add compatibility behavior for them. The public boundary is in [Path
 Resolution](interface.md#path-resolution).
 
-A filesystem symlink projection at an eligible `.agents/...` destination is
+A filesystem symlink projection at an eligible primary-content destination is
 identified under the destination's canonical logical path and retains the
 normal automatic source ID derived from that destination. The resolver does not
 replace that ID with the source root or Library ID from a separate management
-record. Files outside `.agents/` have no short automatic ID. Active included
+record. Files outside the primary content locations have no short automatic ID. Active included
 files use the exact-reference display defined by the shared Interface Contract.
 Unlisted authored-link targets retain a null ID.
 
@@ -164,7 +168,7 @@ standalone source. These invariants implement [Overwrite Companions](interface.m
 
 ## Operand Resolution
 
-Existing `.agents` content uses the shared ID-or-exact-path resolution unless a
+Existing primary content uses the shared ID-or-exact-path resolution unless a
 command contract narrows the requirement. Creation may use either form only
 when the selected command defines one unambiguous target shape; otherwise an ID
 that could select several target shapes blocks and requests an exact path.
@@ -181,9 +185,9 @@ the mutation or ownership authority of the selected command. See [Command Use](i
 Result formation emits both the automatic ID and canonical workspace-relative
 path for a resolved source. Structured output exposes them as separate fields.
 An ID collision remains visible as ambiguous while each source retains its exact
-path. A filesystem symlink projection at an eligible `.agents/...` destination
+path. A filesystem symlink projection at an eligible primary-content destination
 keeps that canonical destination path and its normal destination-derived
-automatic ID. Files outside `.agents/` have no automatic short ID. Explicit
+automatic ID. Files outside the primary content locations have no automatic short ID. Explicit
 Context selections, Find, References and Route List put the exact `./path`
 reference in their existing `id` field. Other Context reads keep a null ID. The canonical workspace-relative path remains required. A Workspace Library ID remains a separate management identity
 and is never a source-reference operand.
@@ -218,9 +222,9 @@ Gate 5 executable proof must cover:
 - Base and overwrite selection from the ID, base path, and overwrite path.
 - Orphan overwrite behavior.
 - Results that show both ID and path.
-- Filesystem symlink projections under eligible `.agents/...` retaining their
+- Filesystem symlink projections at eligible primary-content destinations retaining their
   canonical destination path and destination-derived automatic ID, while an
-  authored local Markdown reference outside `.agents` reports `ID: none`.
+  authored local Markdown reference outside the primary content locations reports `ID: none`.
 - Repeat invocations producing the same identity result for unchanged input.
 
 ## Related Sources

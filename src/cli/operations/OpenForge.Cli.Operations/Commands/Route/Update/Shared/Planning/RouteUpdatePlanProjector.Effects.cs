@@ -125,10 +125,10 @@ internal sealed partial class RouteUpdatePlanProjector
 
         var directory = SourceLogicalPath.ReadParent(
             observation.TargetSource.Identity.CanonicalBasePath);
-        if (!string.Equals(directory, SourceLogicalPath.AgentsRoot, StringComparison.Ordinal))
+        if (!string.Equals(directory, observation.Catalogue.Layout.MainRoot, StringComparison.Ordinal))
         {
             var name = SourceLogicalPath.ReadFileName(directory);
-            yield return $"{directory}/_{name}.md";
+            yield return $"{directory}/{SourceFormClassifier.CanonicalEntrypointFileName(name)}";
         }
     }
 }

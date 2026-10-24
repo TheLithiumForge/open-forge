@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership;
@@ -9,6 +10,19 @@ namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
 
 internal static class ExtensionInspectPackageLifecycleBuilder
 {
+    internal static ExtensionSourceReadResult MapDestinations(ExtensionSourceReadResult source, WorkspaceLayout? layout)
+        => new(source.State, source.Kind, source.Identity,
+            source.Packages.Select(package => package with
+            {
+                Payload = Array.AsReadOnly(package.Payload.Select(file => file with
+                {
+                    TargetPath = file.TargetPath is { } target ? layout?.MapPayloadPath(target) : null,
+                }).ToArray()),
+            }), source.Cause, source.FailureKind)
+        {
+            FailureDetail = source.FailureDetail,
+        };
+
     internal static ExtensionInspectLifecycle ReadLifecycle(WorkspaceOwnershipRead ownership)
         => new()
         {

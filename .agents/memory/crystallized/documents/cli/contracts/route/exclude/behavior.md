@@ -7,6 +7,12 @@ open-forge:
 
 # route exclude Behavior Contract
 
+## Workspace Layout
+
+Use the same layout-aware target classification as Include. Preserve literal registrations and typed effect kinds, and revalidate the layout under the lease.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Authority
 
 The [Interface](interface.md) defines observable meaning.
@@ -27,7 +33,7 @@ the complete operation before effects.
 
 Read rows through the shared Entries grammar. Match destinations by their
 canonical workspace path, including percent-encoded authored destinations.
-Remove all matching declarations and turn a main-root catalogue off through
+Remove all matching declarations and turn a primary-category catalogue off through
 loader membership. Plan external deregistration through the settings
 root-deregistration planner. Preserve every unrelated authored row.
 

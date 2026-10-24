@@ -33,7 +33,7 @@ internal static class ReferencesWording
 
     internal static string UnknownSourceId(string reference) => global::OpenForge.Cli.OutputText.References.ReferencesWording.UnknownSourceId(reference);
 
-    internal static string SourceOutsideAgents(string path) => global::OpenForge.Cli.OutputText.References.ReferencesWording.SourceOutsideAgents(path);
+    internal static string SourceOutsideAgents(string path, string? mainRoot) => global::OpenForge.Cli.OutputText.References.ReferencesWording.SourceOutsideAgents(path, mainRoot);
 
     internal static string InvalidDirection() => global::OpenForge.Cli.OutputText.References.ReferencesText.MessageDirectionMustBeInOutOrBoth();
 

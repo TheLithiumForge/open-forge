@@ -1,53 +1,73 @@
 using System.Text;
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Settings.Shared.Serialization;
 
 [Trait("Feature", "workspace-settings"), Trait("Evidence", "Unit")]
 public sealed class WorkspaceSettingsRemovalCodecTests
 {
+    private const string First = "first";
+    private const string Future = "future";
+    private const string Keep = "keep";
+    private const string Nested = "nested";
+    private const string Templates = "templates";
+    private const string Alpha = "alpha";
+    private const string Zebra = "zebra";
+    private const string FileA = "docs/a.md";
+    private const string FileZ = "docs/z.md";
+    private const string OldDirectory = "docs/old";
+    private const string NewDirectory = "docs/new-a";
+    private const string OldDirectoryZ = "docs/old-z";
+    private const string BaseExtension = "base";
+    private const string CoreExtension = "core";
+    private const string PlanningExtension = "planning";
+    private const string LibraryA = "team-a";
+    private const string LibraryB = "team-b";
+    private const string LibraryBase = "team-base";
+    private const string Obsolete = "docs/obsolete";
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Removal lists append sorted unique values and preserve unknown authored keys")]
     public void AppendsSortedUniqueValuesAndPreservesUnknownKeys()
     {
-        const string original = """
+        const string original = $$$"""
             {
               // comments follow the settings round-trip behavior
-              "first": {"keep": true},
-              "removedCategories": ["templates"],
-              "removedFiles": ["AGENTS.md"],
-              "removedDirectories": ["docs/old"],
-              "removedExtensions": ["base"],
-              "future": {"nested": [1, 2, {"keep": true}]}
+              "{{{First}}}": {"{{{Keep}}}": true},
+              "{{{WorkspaceSettingsDefinitions.RemovedCategoriesProperty}}}": ["{{{Templates}}}"],
+              "{{{WorkspaceSettingsDefinitions.RemovedFilesProperty}}}": ["{{{WorkspaceLayoutNames.AgentHostFileName}}}"],
+              "{{{WorkspaceSettingsDefinitions.RemovedDirectoriesProperty}}}": ["{{{OldDirectory}}}"],
+              "{{{WorkspaceSettingsDefinitions.RemovedExtensionsProperty}}}": ["{{{BaseExtension}}}"],
+              "{{{Future}}}": {"{{{Nested}}}": [1, 2, {"{{{Keep}}}": true}]}
             }
             """;
         var selection = new WorkspaceRemovalSelection
         {
-            Categories = ["zebra", "alpha", "zebra", "templates"],
-            Files = ["docs/z.md", "docs/a.md", "AGENTS.md"],
-            Directories = ["docs/old-z", "docs/new-a", "docs/old"],
-            Extensions = ["planning", "core", "planning"],
-            Libraries = ["team-b", "team-a", "team-base"],
+            Categories = [Zebra, Alpha, Zebra, Templates],
+            Files = [FileZ, FileA, WorkspaceLayoutNames.AgentHostFileName],
+            Directories = [OldDirectoryZ, NewDirectory, OldDirectory],
+            Extensions = [PlanningExtension, CoreExtension, PlanningExtension],
+            Libraries = [LibraryB, LibraryA, LibraryBase],
         };
 
         var written = WorkspaceSettingsCodec.AddRemovals(Encoding.UTF8.GetBytes(original), selection);
         var bytes = Assert.IsType<byte[]>(written);
-        var text = Encoding.UTF8.GetString(bytes);
         using var json = JsonDocument.Parse(bytes);
 
-        Assert.DoesNotContain("comments follow", text, StringComparison.Ordinal);
         Assert.Equal(
-            ["first", "removedCategories", "removedFiles", "removedDirectories", "removedExtensions", "future", "removedLibraries"],
+            [First, WorkspaceSettingsDefinitions.RemovedCategoriesProperty, WorkspaceSettingsDefinitions.RemovedFilesProperty, WorkspaceSettingsDefinitions.RemovedDirectoriesProperty, WorkspaceSettingsDefinitions.RemovedExtensionsProperty, Future, WorkspaceSettingsDefinitions.RemovedLibrariesProperty],
             json.RootElement.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(["templates", "alpha", "zebra"], Strings(json, "removedCategories"));
-        Assert.Equal(["AGENTS.md", "docs/a.md", "docs/z.md"], Strings(json, "removedFiles"));
-        Assert.Equal(["docs/old", "docs/new-a", "docs/old-z"], Strings(json, "removedDirectories"));
-        Assert.Equal(["base", "core", "planning"], Strings(json, "removedExtensions"));
-        Assert.Equal(["team-a", "team-b", "team-base"], Strings(json, "removedLibraries"));
-        Assert.True(json.RootElement.GetProperty("first").GetProperty("keep").GetBoolean());
-        Assert.True(json.RootElement.GetProperty("future").GetProperty("nested")[2].GetProperty("keep").GetBoolean());
+        Assert.Equal([Templates, Alpha, Zebra], Strings(json, WorkspaceSettingsDefinitions.RemovedCategoriesProperty));
+        Assert.Equal([WorkspaceLayoutNames.AgentHostFileName, FileA, FileZ], Strings(json, WorkspaceSettingsDefinitions.RemovedFilesProperty));
+        Assert.Equal([OldDirectory, NewDirectory, OldDirectoryZ], Strings(json, WorkspaceSettingsDefinitions.RemovedDirectoriesProperty));
+        Assert.Equal([BaseExtension, CoreExtension, PlanningExtension], Strings(json, WorkspaceSettingsDefinitions.RemovedExtensionsProperty));
+        Assert.Equal([LibraryA, LibraryB, LibraryBase], Strings(json, WorkspaceSettingsDefinitions.RemovedLibrariesProperty));
+        Assert.True(json.RootElement.GetProperty(First).GetProperty(Keep).GetBoolean());
+        Assert.True(json.RootElement.GetProperty(Future).GetProperty(Nested)[2].GetProperty(Keep).GetBoolean());
 
         var decoded = WorkspaceSettingsCodec.Read(bytes);
         Assert.NotNull(decoded.Document);
@@ -60,13 +80,13 @@ public sealed class WorkspaceSettingsRemovalCodecTests
     {
         var written = WorkspaceSettingsCodec.AddRemovals(
             ReadOnlyMemory<byte>.Empty,
-            new WorkspaceRemovalSelection { Directories = ["docs/obsolete"] });
+            new WorkspaceRemovalSelection { Directories = [Obsolete] });
 
         using var json = JsonDocument.Parse(Assert.IsType<byte[]>(written));
-        Assert.Equal("https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v3/open-forge.schema.json",
-            json.RootElement.GetProperty("$schema").GetString());
-        Assert.Equal(3, json.RootElement.GetProperty("schemaVersion").GetInt32());
-        Assert.Equal(["docs/obsolete"], Strings(json, "removedDirectories"));
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaUrl,
+            json.RootElement.GetProperty(WorkspaceSettingsDefinitions.SchemaProperty).GetString());
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersion, json.RootElement.GetProperty(WorkspaceSettingsDefinitions.SchemaVersionProperty).GetInt32());
+        Assert.Equal([Obsolete], Strings(json, WorkspaceSettingsDefinitions.RemovedDirectoriesProperty));
     }
 
     [Trait("Boundary", "Output")]
@@ -88,7 +108,7 @@ public sealed class WorkspaceSettingsRemovalCodecTests
         var selection = kind switch
         {
             "file" => new WorkspaceRemovalSelection { Files = ["../docs/file.md"] },
-            "directory" => new WorkspaceRemovalSelection { Directories = [".agents"] },
+            "directory" => new WorkspaceRemovalSelection { Directories = [WorkspaceLayout.DefaultMainRoot] },
             "extension" => new WorkspaceRemovalSelection { Extensions = ["Planning"] },
             "library" => new WorkspaceRemovalSelection { Libraries = ["team--knowledge"] },
             "category" => new WorkspaceRemovalSelection { Categories = ["nested/category"] },

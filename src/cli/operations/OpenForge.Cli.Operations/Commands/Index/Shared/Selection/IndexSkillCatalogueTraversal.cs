@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -8,7 +9,7 @@ namespace OpenForge.Cli.Core.Commands.Index.Shared.Selection;
 
 internal sealed class IndexSkillCatalogueTraversal
 {
-    private const string SkillsRootDirectory = SourceLogicalPath.AgentsRoot + "/skills";
+    private const string SkillsRootDirectory = WorkspaceLayout.NativeSkillsPath;
 
     private readonly IReadOnlyDictionary<string, IReadOnlyList<string>> _cataloguePathsBySkillDirectory;
     private readonly IReadOnlySet<string> _rootedSkillPaths;

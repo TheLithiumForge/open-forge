@@ -51,4 +51,7 @@ internal sealed record CliTextQuestion<T>(string Label, string Rule, bool Requir
     where T : notnull;
 internal enum CliPermissionChoice { Always, Once, Cancel }
 internal sealed record CliPermissionPath(string Path, bool IsDirectory);
-internal sealed record CliPermissionQuestion(string Owner, IReadOnlyList<CliPermissionPath> Paths);
+internal sealed record CliPermissionQuestion(string Owner, IReadOnlyList<CliPermissionPath> Paths)
+{
+    internal string? ContextFolder { get; init; }
+}

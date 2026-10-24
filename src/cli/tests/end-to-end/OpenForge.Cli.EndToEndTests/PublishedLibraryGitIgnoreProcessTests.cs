@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport.Contracts;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
@@ -7,7 +8,7 @@ namespace OpenForge.Cli.EndToEndTests;
 [Trait("Feature", "library-git-ignore"), Trait("Evidence", "EndToEnd")]
 public sealed class PublishedLibraryGitIgnoreProcessTests
 {
-    private const string OwnershipPath = ".agents/open-forge.lock.json";
+    private const string OwnershipPath = PublishedTokens.Ownership.RelativePath;
     private const string SourceBody = "# Source-owned bytes\n";
     private const string Section = "# BEGIN OPEN FORGE LIBRARIES\n/docs/a.md\n# END OPEN FORGE LIBRARIES\n";
 
@@ -145,7 +146,7 @@ public sealed class PublishedLibraryGitIgnoreProcessTests
     private static PublishedJourneyWorkspace Create(string purpose)
     {
         var workspace = PublishedJourneyWorkspace.Create(purpose);
-        workspace.WriteText(".agents/placeholder.md", "# Workspace\n");
+        workspace.WriteText(PublishedTokens.Sources.LoaderPath, "# Loader\n");
         workspace.WriteText("source/a.md", SourceBody);
         workspace.ExpectFiles("docs/a.md", "docs/b.md", ".gitignore", OwnershipPath, ".agents/open-forge.json");
         return workspace;

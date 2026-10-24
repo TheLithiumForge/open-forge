@@ -17,6 +17,7 @@ internal enum LibrarySyncFindingCode
     RecordUnavailable,
     OwnershipObservation,
     RecordBlocked,
+    LayoutUnavailable,
     ConsumerBlocked,
     MappingBlocked,
     MappingUnavailable,

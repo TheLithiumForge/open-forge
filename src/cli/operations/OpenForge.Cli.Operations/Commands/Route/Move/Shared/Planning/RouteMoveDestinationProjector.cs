@@ -50,7 +50,8 @@ internal static class RouteMoveDestinationProjector
                 "The logical destination cannot preserve the selected source form.");
         }
 
-        if (!HasCompatibleForm(subject, destinationPath))
+        if (!subject.Catalogue.Layout.IsImplicitContentDestination(destinationPath)
+            || !HasCompatibleForm(subject, destinationPath))
         {
             return Stop(
                 inventory,
@@ -69,17 +70,17 @@ internal static class RouteMoveDestinationProjector
     {
         if (subject.Kind == RouteMoveSubjectKind.Leaf)
         {
-            return $"{SourceLogicalPath.AgentsRoot}/{destinationId}.md";
+            return subject.Catalogue.Layout.SourcePath(destinationId + SourceFormClassifier.MarkdownExtension);
         }
 
         var fileName = subject.SelectedSource.Base.Form switch
         {
             SourceDocumentForm.CanonicalEntrypoint =>
-                $"_{destinationId[(destinationId.LastIndexOf('/') + 1)..]}.md",
-            SourceDocumentForm.IndexEntrypoint => "index.md",
-            SourceDocumentForm.UnderscoreIndexEntrypoint => "_index.md",
-            SourceDocumentForm.ReferencesEntrypoint => "references.md",
-            SourceDocumentForm.UnderscoreReferencesEntrypoint => "_references.md",
+                SourceFormClassifier.CanonicalEntrypointFileName(destinationId[(destinationId.LastIndexOf('/') + 1)..]),
+            SourceDocumentForm.IndexEntrypoint => SourceFormClassifier.IndexFileName,
+            SourceDocumentForm.UnderscoreIndexEntrypoint => SourceFormClassifier.UnderscoreIndexFileName,
+            SourceDocumentForm.ReferencesEntrypoint => SourceFormClassifier.ReferencesFileName,
+            SourceDocumentForm.UnderscoreReferencesEntrypoint => SourceFormClassifier.UnderscoreReferencesFileName,
             _ => null,
         };
         if (fileName is null)
@@ -87,7 +88,7 @@ internal static class RouteMoveDestinationProjector
             return null;
         }
 
-        var destinationPath = $"{SourceLogicalPath.AgentsRoot}/{destinationId}/{fileName}";
+        var destinationPath = subject.Catalogue.Layout.SourcePath($"{destinationId}/{fileName}");
         return SourceLogicalPath.IsCanonicalSource(destinationPath)
             ? destinationPath
             : null;
@@ -98,7 +99,7 @@ internal static class RouteMoveDestinationProjector
         string destinationPath)
     {
         var subject = inventory.Subject;
-        var destinationId = SourceIdentity.DeriveId(destinationPath);
+        var destinationId = SourceIdentity.DeriveId(subject.Catalogue.Layout, destinationPath);
         if (destinationId is null)
         {
             return Stop(
@@ -180,7 +181,7 @@ internal static class RouteMoveDestinationProjector
         RouteMoveResolvedSubject subject,
         string path)
     {
-        if (!SourceFormClassifier.TryClassify(path, out var form))
+        if (!SourceFormClassifier.TryClassify(subject.Catalogue.Layout, path, out var form))
         {
             return false;
         }
@@ -265,7 +266,7 @@ internal static class RouteMoveDestinationProjector
         SourceLayerKind kind)
         => kind == SourceLayerKind.Base
             ? destinationPath
-            : destinationPath[..^".md".Length] + ".overwrite.md";
+            : SourceOverwritePath.ReadAdjacentPath(destinationPath);
 
     private static RouteMoveLayerKind ReadLayer(SourceLayerKind kind)
         => kind switch
@@ -286,9 +287,16 @@ internal static class RouteMoveDestinationProjector
         string cause)
     {
         var subject = inventory.Subject;
+        var layout = subject.Catalogue.Layout;
         var formation = RouteMoveBoundary.Start(subject.Request) with
         {
             Source = subject.Source,
+            Destination = new RouteMoveDestination
+            {
+                Requested = subject.Request.DestinationTarget,
+                CustomMainRoot = layout.IsDefault ? null : layout.MainRoot,
+                SuggestedParentReference = code == RouteMoveFindingCode.DestinationParentMissing ? ParentReference(subject) : null,
+            },
             Subject = new RouteMoveSubject { Kind = subject.Kind },
             Ownership = RouteMoveOwnershipProjector.Project(
                 inventory.Ownership,
@@ -297,5 +305,15 @@ internal static class RouteMoveDestinationProjector
         return new RouteMoveDestinationProjectionResult(
             projection: null,
             RouteMoveBoundary.Stop(formation, code, status, target, cause));
+    }
+
+    private static string ParentReference(RouteMoveResolvedSubject subject)
+    {
+        var requested = subject.Request.DestinationTarget.Replace('\\', '/');
+        var slash = requested.LastIndexOf('/');
+        var parent = slash > 0 ? requested[..slash] : requested;
+        return subject.Catalogue.Layout.TryGetSourceRelativePath(parent, out var relative)
+            ? relative
+            : parent;
     }
 }

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -5,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Selection;
 using OpenForge.Cli.Core.Framework.Sources.Selection;
 using OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Selection;
 
@@ -28,7 +30,7 @@ public sealed class SourceUniverseFilterResolverTests
         var resolver = CreateResolver();
         var resolution = resolver.Resolve(new SourceUniverseFilterRequest(
             catalogue,
-            Scope(".agents"),
+            [Scope(WorkspaceLayout.DefaultMainRoot)],
             [
                 new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "docs", 1),
                 new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Exclude, "docs/guide", 2),
@@ -77,14 +79,14 @@ public sealed class SourceUniverseFilterResolverTests
 
         var folder = resolver.Resolve(new SourceUniverseFilterRequest(
             catalogue,
-            Scope(".agents"),
+            [Scope(WorkspaceLayout.DefaultMainRoot)],
             [new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "skills/example", 1)]));
         Assert.Equal(SourceUniverseSelectorExpansion.Folder, folder.Selectors[0].Expansion);
         Assert.Equal(2, folder.Selection.Sources.Count);
 
         var overwrite = resolver.Resolve(new SourceUniverseFilterRequest(
             catalogue,
-            Scope(".agents"),
+            [Scope(WorkspaceLayout.DefaultMainRoot)],
             [new SourceUniverseSelectorOccurrence(
                 SourceUniverseSelectorRole.Include,
                 ".agents/ordinary.overwrite.md",
@@ -101,7 +103,7 @@ public sealed class SourceUniverseFilterResolverTests
         var catalogue = Catalogue(SourceInventoryTestData.Source(".agents/ordinary.md"));
         var resolution = CreateResolver().Resolve(new SourceUniverseFilterRequest(
             catalogue,
-            Scope(".agents"),
+            [Scope(WorkspaceLayout.DefaultMainRoot)],
             [new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "missing", 1)]));
 
         Assert.False(resolution.IsResolved);
@@ -116,7 +118,7 @@ public sealed class SourceUniverseFilterResolverTests
 
     private static SourceCatalogue Catalogue(params SourceLogicalSource[] sources)
         => new(
-            SourceInventoryTestData.Workspace(),
+WorkspaceLayout.Create(SourceInventoryTestData.Workspace(), WorkspaceLayout.DefaultMainRoot),
             sources.SelectMany(source =>
             {
                 var values = new List<SourceCandidate>

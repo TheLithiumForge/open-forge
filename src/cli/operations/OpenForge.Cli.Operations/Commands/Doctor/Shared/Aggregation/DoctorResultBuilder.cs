@@ -49,6 +49,11 @@ internal static class DoctorResultBuilder
             ExtensionLifecycleDoctorInspector.Inspect(observation.ExtensionLifecycle),
         };
         domains = DoctorMaintenanceGuidance.Apply(domains, observation);
+        var layout = observation.Routes.Catalogue?.Layout;
+        if (layout is not null) domains = domains.Select(domain => domain with
+        {
+            Findings = domain.Findings.Select(finding => DoctorLayoutPresentation.Project(layout, finding)).ToArray(),
+        }).ToArray();
         var coverage = domains.Max(domain => domain.Coverage);
         var status = DoctorResultPolicy.ReadStatus(coverage, domains);
         return new DoctorResult
@@ -166,14 +171,14 @@ internal static class DoctorResultBuilder
         {
             Checks = Enum.GetValues<DoctorDomainKind>().LongLength,
             ChecksComplete = domains.LongCount(domain => domain.Coverage == DoctorCoverageState.Complete),
-            LinksChecked = references.Count,
+            LinksChecked = observation.LocalReferences.UnavailableCause is null ? references.Count : null,
             LinksIgnored = observation.LocalReferences.IgnoredLinkCount,
-            LinksValid = references.LongCount(reference => reference.Facts.Target.Resolution
+            LinksValid = observation.LocalReferences.UnavailableCause is not null ? null : references.LongCount(reference => reference.Facts.Target.Resolution
                 == SourceLinkTargetResolution.Complete),
-            ExternalLinksNotChecked = references.LongCount(reference => reference.Facts.Target.Resolution
+            ExternalLinksNotChecked = observation.LocalReferences.UnavailableCause is not null ? null : references.LongCount(reference => reference.Facts.Target.Resolution
                 == SourceLinkTargetResolution.ExternalUnchecked),
-            ImageLinks = references.LongCount(reference => reference.Kind == LocalReferenceKind.Image),
-            RoutesChecked = observation.Routes.Routes.RouteFacts.Count,
+            ImageLinks = observation.LocalReferences.UnavailableCause is not null ? null : references.LongCount(reference => reference.Kind == LocalReferenceKind.Image),
+            RoutesChecked = observation.Routes.Catalogue is null ? null : observation.Routes.Routes.RouteFacts.Count,
             FrameworkFiles = lifecycle.State == OperationalViewState.Complete
                 ? lifecycle.Targets.Count
                 : null,

@@ -18,6 +18,8 @@ internal static class InstallDataTextRenderer
         ArgumentNullException.ThrowIfNull(style);
 
         var spans = new List<CliTextSpan>();
+        if (data.Layout is { } layout)
+            spans.Add(new CliTextSpan(global::OpenForge.Cli.OutputText.Shared.WorkspaceLayoutText.Describe(CliText.Escape(layout.MainRoot), CliText.Escape(layout.LoaderPath)) + "\n"));
         if (data.TextReviewHeadline is { } headline)
         {
             spans.Add(new CliTextSpan($"{InstallSetupText.ReviewCaption()}\n"));

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Git;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -33,15 +35,33 @@ internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReade
 
     internal async ValueTask<RenameEvidenceResult> ReadEvidenceAsync(CliWorkspace workspace, LocalReferenceDoctorView? references, CancellationToken token)
     {
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, token).ConfigureAwait(false);
+        return await ReadEvidenceAsync(observation, references, token).ConfigureAwait(false);
+    }
+
+    internal async ValueTask<RenameEvidenceResult> ReadEvidenceAsync(WorkspaceLayout layout, LocalReferenceDoctorView? references, CancellationToken token)
+    {
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(layout.Workspace, token).ConfigureAwait(false);
+        if (observation.Layout?.MainRoot != layout.MainRoot)
+            return Unavailable(observation, "The selected layout changed before rename evidence was acquired.");
+        observation = new WorkspaceLayoutRead(observation.State, observation.Settings, observation.Ownership, layout, observation.Issues, observation.Expectations);
+        return await ReadEvidenceAsync(observation, references, token).ConfigureAwait(false);
+    }
+
+    internal async ValueTask<RenameEvidenceResult> ReadEvidenceAsync(WorkspaceLayoutRead observation, LocalReferenceDoctorView? references, CancellationToken token)
+    {
+        if (observation.Layout is not { } layout) return Unavailable(observation, observation.Issues.FirstOrDefault()?.Cause);
+        var workspace = layout.Workspace;
         var paths = new PhysicalPathResolver().CreateReadSession();
         var catalogue = references?.Catalogue
-            ?? await new SourceCatalogueReader().ReadAsync(new(workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
+            ?? await new SourceCatalogueReader().ReadAsync(new(layout, layout.SourceRoots), token).ConfigureAwait(false);
+        var ownership = observation.Ownership;
+        var settings = observation.Settings;
         var policy = new RenameEvidencePolicy
         {
+            Layout = layout,
             ManagedPaths = [.. ownership.Document.ManagedPaths().Select(claim => claim.Path)],
-            ExcludedPaths = [.. catalogue.Candidates.Where(candidate => WorkspaceRemovals.IsPathRemoved(candidate.CanonicalPath, settings.Document))
+            ExcludedPaths = [.. catalogue.Candidates.Where(candidate => WorkspaceRemovals.IsPathRemoved(layout, candidate.CanonicalPath, settings.Document))
                 .Select(candidate => candidate.CanonicalPath), .. settings.Document.RemovedFiles, .. settings.Document.RemovedDirectories],
             PrivatePaths = [.. (ownership.Document.Framework?.GitIgnoredRoutes ?? []).Select(route => route.Directory)],
             ProjectionPaths = [.. ownership.Document.Libraries.SelectMany(library => library.Paths)],
@@ -53,7 +73,7 @@ internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReade
         foreach (var source in catalogue.Sources.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form) || source.Base.Form == SourceDocumentForm.Loader))
         {
             var path = source.Identity.CanonicalBasePath;
-            if (!RenameCandidateAdmission.Allows(path, recordPolicy) && path != SourceLogicalPath.LoaderPath) continue;
+            if (!RenameCandidateAdmission.Allows(path, recordPolicy) && path != layout.LoaderPath) continue;
             if (NoFollowLeafObserver.Observe(paths, workspace, SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, path), token).State != NoFollowLeafState.OrdinaryFile) continue;
             try
             {
@@ -62,7 +82,7 @@ internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReade
                 var text = Encoding.UTF8.GetString(bytes);
                 var document = references?.Documents.TryGetValue(path, out var retained) == true && string.Equals(retained.Source, text, StringComparison.Ordinal)
                     ? retained : parser.Parse(text);
-                identities.AddRange(RenameRecordedEntryReader.Read(path, snapshot, document));
+                identities.AddRange(RenameRecordedEntryReader.Read(layout, path, snapshot, document));
             }
             catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
             {
@@ -85,11 +105,24 @@ internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReade
         }, token).ConfigureAwait(false);
     }
 
-    public async ValueTask<RouteScaffoldRenameProof?> ReadAsync(CliWorkspace workspace, RouteScaffoldRenameCandidate candidate, CancellationToken token)
+    private static RenameEvidenceResult Unavailable(WorkspaceLayoutRead observation, string? cause)
+        => new(new RenameEvidenceFacts
+        {
+            Layout = null,
+            UnavailableCause = cause,
+            CandidateUniverseComplete = false,
+            Candidates = [],
+            MissingPaths = [],
+            OldIdentities = [],
+            Git = RenameGitObservation.Unavailable(RenameGitAvailability.Unavailable),
+            PolicyExpectations = observation.Expectations,
+        }, []);
+
+    public async ValueTask<RouteScaffoldRenameProof?> ReadAsync(WorkspaceLayout layout, RouteScaffoldRenameCandidate candidate, CancellationToken token)
     {
         if (candidate.OldSource is not { } source) return null;
-        var evidence = await ReadEvidenceAsync(workspace, token).ConfigureAwait(false);
-        var move = RenameCanonicalEntrypointEvidence.Read(evidence).SingleOrDefault(move => move.Proof.NewPath == source.Identity.CanonicalBasePath
+        var evidence = await ReadEvidenceAsync(layout, references: null, token).ConfigureAwait(false);
+        var move = RenameCanonicalEntrypointEvidence.Read(layout, evidence).SingleOrDefault(move => move.Proof.NewPath == source.Identity.CanonicalBasePath
             && move.CanonicalPath == candidate.Destination.Identity.CanonicalBasePath);
         if (move is null) return null;
         var proof = new RouteScaffoldRenameProof
@@ -104,7 +137,7 @@ internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReade
         return proof;
     }
 
-    public async ValueTask<bool> VerifyAsync(CliWorkspace workspace, RouteScaffoldRenameProof proof, CancellationToken token)
+    public async ValueTask<bool> VerifyAsync(WorkspaceLayout layout, RouteScaffoldRenameProof proof, CancellationToken token)
         => _observations.TryGetValue(proof, out var previous)
-            && RenameEvidenceRevalidator.IsCurrent(previous, await ReadEvidenceAsync(workspace, token).ConfigureAwait(false), proof.OldCanonicalPath);
+            && RenameEvidenceRevalidator.IsCurrent(previous, await ReadEvidenceAsync(layout, references: null, token).ConfigureAwait(false), proof.OldCanonicalPath);
 }

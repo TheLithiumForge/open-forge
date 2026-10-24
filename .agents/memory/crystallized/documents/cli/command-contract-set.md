@@ -18,6 +18,10 @@ the current release, and [CLI Distribution](distribution.md) defines what a
 release contains. The active [CLI Development](../../../working/cli-development/_cli-development.md)
 route records current implementation and release work.
 
+## Layout Across Contracts
+
+The [shared operation contract](shared-operation-contract.md#workspace-layout) defines the context-folder and fixed-control boundaries. Command contracts state only their changed selection, effects and reporting. The [Workspace Layout Technical Design](technical-designs/workspace-layout.md) defines pure mapping, observation transport and revalidation without introducing a second command grammar.
+
 ## Interface Contract
 
 An Interface Contract defines what a caller may enter and what the caller may

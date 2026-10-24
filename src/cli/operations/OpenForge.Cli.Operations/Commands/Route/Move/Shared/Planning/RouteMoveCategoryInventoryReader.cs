@@ -7,7 +7,6 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
-using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -23,16 +22,13 @@ internal sealed class RouteMoveCategoryInventoryReader(
     private readonly RouteCategoryFilesystemReader _filesystemReader = new(
         physicalPathResolver,
         expectationValidator);
-    private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
 
     internal async ValueTask<RouteMoveCategoryInventoryResult> ReadAsync(
         RouteMoveResolvedSubject subject,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(subject);
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(
-            _physicalPathResolver, subject.Request.Workspace,
-            cancellationToken).ConfigureAwait(false);
+        var ownership = subject.LayoutRead.Ownership;
         if (!RouteOwnershipEvidence.IsEstablished(ownership))
         {
             return OwnershipBoundary(subject, ownership);

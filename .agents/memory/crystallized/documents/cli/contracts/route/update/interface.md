@@ -7,6 +7,12 @@ open-forge:
 
 # route update Interface Contract
 
+## Workspace Layout
+
+Metadata and Template selection work in both primary content locations. Exact workspace operands remain literal.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
@@ -114,10 +120,11 @@ reference forms:
 <source-id>
 .agents/<path>
 ./.agents/<path>
+./<workspace-path>
 ```
 
 The prefix determines whether the value is an automatic source ID or an exact
-workspace-relative `.agents` path. The complete grammar, quoting, exact-match,
+workspace-relative path. The complete grammar, quoting, exact-match,
 collision, containment, and overwrite rules remain in [CLI Source References](../../shared/source-references/interface.md).
 
 ## Flags
@@ -129,7 +136,7 @@ collision, containment, and overwrite rules remain in [CLI Source References](..
 | `--tag=<tag>`                     | Selection of destination metadata  | One canonical tag without the `#` prefix                                                       | The destination tag list remains unchanged            | Repeatable. Supplied values replace the complete tag list in command-line order; duplicate exact tags and an empty supplied set are invalid.                |
 | `--apply-to <glob>`               | Selection of destination metadata  | One workspace-relative glob expression                                                         | The destination's local declarations remain unchanged | Repeatable. Each occurrence is one expression. Atomic patterns are appended in first-seen order with duplicates removed. Conflicts with `--clear-apply-to`. |
 | `--clear-apply-to`                | Selection of destination metadata  | Boolean flag with no value                                                                     | No local declaration is removed                       | Singleton. Conflicts with `--apply-to`. Removes only the target's local declarations.                                                                       |
-| `--template <template-reference>` | Selection of starting body content | One automatic Template ID or exact `.agents/...` path for an existing routed Markdown Template | No Template body is selected                          | Singleton. Any repetition is invalid, even when the repeated reference is equal. No last-wins behavior.                                                     |
+| `--template <template-reference>` | Selection of starting body content | One automatic Template ID or exact `./<workspace-path>` path for an existing routed Markdown Template | No Template body is selected                          | Singleton. Any repetition is invalid, even when the repeated reference is equal. No last-wins behavior.                                                     |
 | `--dry-run`                       | Write policy                       | Boolean flag with no value                                                                     | Application is selected                               | Repetition is accepted and idempotent; it does not add authority or precedence.                                                                             |
 
 All six [Global CLI Flags](../../shared/global-flags/interface.md) apply. Their complete spelling,
@@ -309,7 +316,7 @@ meaning-quality diagnostics separately.
 
 ## Template Body Completion
 
-`--template` accepts the automatic ID or exact `.agents/...` path of one existing
+`--template` accepts the automatic ID or exact `./<workspace-path>` path of one existing
 routed Markdown Template. Selection, collision, and overwrite behavior match
 the [route create Interface Contract](../create/interface.md).
 

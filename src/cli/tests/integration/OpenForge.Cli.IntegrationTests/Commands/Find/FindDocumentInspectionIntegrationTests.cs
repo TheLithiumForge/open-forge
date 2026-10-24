@@ -18,6 +18,7 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Find;
 
@@ -71,7 +72,7 @@ public sealed class FindDocumentInspectionIntegrationTests
         var cliWorkspace = CreateWorkspace(workspace);
         var cancellationToken = TestContext.Current.CancellationToken;
         var catalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(cliWorkspace, [".agents"]),
+            new SourceCatalogueRequest(WorkspaceLayout.Create(cliWorkspace, WorkspaceLayout.DefaultMainRoot), [".agents"]),
             cancellationToken);
 
         var source = Assert.Single(catalogue.Sources);
@@ -200,7 +201,7 @@ public sealed class FindDocumentInspectionIntegrationTests
         var cliWorkspace = CreateWorkspace(workspace);
         var cancellationToken = TestContext.Current.CancellationToken;
         var catalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(cliWorkspace, [".agents"]),
+            new SourceCatalogueRequest(WorkspaceLayout.Create(cliWorkspace, WorkspaceLayout.DefaultMainRoot), [".agents"]),
             cancellationToken);
         Assert.Equal(4, catalogue.Sources.Count);
         var invalidSource = FindSource(catalogue, ".agents/invalid.md");
