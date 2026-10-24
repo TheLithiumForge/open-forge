@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
@@ -12,6 +13,7 @@ internal sealed record ExtensionUpdateTopologyInput(
     ExtensionUpdateTopologyAdmission Admission,
     WorkspaceSettingsDocument Settings)
 {
+    internal required WorkspaceLayout Layout { get; init; }
     internal SourceSharing? Sharing { get; init; }
 }
 

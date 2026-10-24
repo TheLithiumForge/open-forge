@@ -174,7 +174,7 @@ internal sealed class ExtensionInstallOperation(
                 changedPaths.Contains(requirement) ? ExtensionPermissionEffect.Copy : ExtensionPermissionEffect.Preserve));
             permission = await _permissions.DetermineAsync(new(request.Workspace, [.. targets], plan.SourceRead.Identity,
                 request.Mode == ExtensionInstallMode.Apply && !request.Automatic && request.AllowInteraction,
-                request.AllowPath), cancellationToken).ConfigureAwait(false);
+                request.AllowPath) { LayoutRead = plan.LayoutRead }, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -306,6 +306,6 @@ internal sealed class ExtensionInstallOperation(
         var sourcePackage = plan.SourceRead.Packages.FirstOrDefault(package =>
             string.Equals(package.Id, packageId, StringComparison.Ordinal));
         return sourcePackage is not null
-            && ExtensionInstallPayloadNormalizer.IsEntirePayloadExcluded(sourcePackage, plan.SettingsObservation.Document);
+            && ExtensionInstallPayloadNormalizer.IsEntirePayloadExcluded(plan.Layout, sourcePackage, plan.SettingsObservation.Document);
     }
 }

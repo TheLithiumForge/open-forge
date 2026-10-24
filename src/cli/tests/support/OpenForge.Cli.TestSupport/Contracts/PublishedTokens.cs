@@ -228,6 +228,21 @@ public static class PublishedTokens
         public const string Automatic = "--automatic";
     }
 
+    public static class ExtensionInspect
+    {
+        public const string Command = "inspect";
+        public const string Source = "--source";
+        public const string Files = "files";
+        public const string Matches = "matches";
+    }
+
+    public static class ExtensionList
+    {
+        public const string Command = "list";
+        public const string Installed = "--installed";
+        public const string InstalledData = "installed";
+    }
+
     public static class Syntax
     {
         public const string TextFormat = "text";

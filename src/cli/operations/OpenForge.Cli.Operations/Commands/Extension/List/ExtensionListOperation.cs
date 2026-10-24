@@ -3,9 +3,8 @@ using OpenForge.Cli.Core.Commands.Extension.List.Models;
 using OpenForge.Cli.Core.Commands.Extension.List.Shared.Result;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
-using OpenForge.Cli.Core.Framework.Ownership;
-using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.List;
 
@@ -28,13 +27,13 @@ internal sealed class ExtensionListOperation(
             var source = await _sourceReader
                 .ReadAsync(request.Workspace, request.ExplicitSource, cancellationToken)
                 .ConfigureAwait(false);
-            var lifecycle = request.Selection.Installed
-                ? await WorkspaceOwnershipReader.ReadAsync(_physicalPathResolver, request.Workspace, cancellationToken).ConfigureAwait(false)
+            var observation = request.Selection.Installed
+                ? await new WorkspaceLayoutReader(_physicalPathResolver).ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false)
                 : null;
-            var doctor = lifecycle is { IsTrustworthy: true } && lifecycle.Document.Extensions.Length > 0
+            var lifecycle = observation?.Ownership;
+            var doctor = observation is { Ownership.IsTrustworthy: true } observed && observed.Ownership.Document.Extensions.Length > 0
                 ? await _doctorReader.ReadAsync(
-                    request.Workspace,
-                    lifecycle,
+                    observed,
                     includeEmbedded: false,
                     cancellationToken).ConfigureAwait(false)
                 : null;

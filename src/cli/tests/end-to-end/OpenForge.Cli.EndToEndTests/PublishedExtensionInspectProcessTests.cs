@@ -1,11 +1,45 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedExtensionInspectProcessTests
 {
+    private const string CustomRoot = "docs/forge";
+
+    [Theory(DisplayName = "Published Extension Inspect compares a directly configured custom root in both frontmatter forms")]
+    [InlineData(PublishedTokens.Settings.RootFrontmatter), InlineData(PublishedTokens.Settings.ScopedFrontmatter)]
+    [Trait("Feature", "extension-inspect"), Trait("Evidence", "EndToEnd")]
+    public async Task CustomRootInspection(string form)
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedExtensionInstallWorkspace.Create(CustomRoot, form);
+        var framework = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath,
+            [PublishedTokens.Install.Command, PublishedTokens.Install.Automatic], working.EnvironmentVariables);
+        Assert.True(framework.ExitCode == 0, framework.StandardOutput + framework.StandardError);
+        var installed = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath,
+            [PublishedTokens.Extension.Command, PublishedTokens.ExtensionInstall.Command, PublishedExtensionInstallWorkspace.ToolkitId,
+                PublishedTokens.ExtensionInstall.Source, working.CataloguePath, PublishedTokens.ExtensionInstall.Automatic], working.EnvironmentVariables);
+        Assert.True(installed.ExitCode == 0, installed.StandardOutput + installed.StandardError);
+        var before = Directory.GetFiles(working.WorkspacePath, "*", SearchOption.AllDirectories).ToDictionary(path => path, File.ReadAllBytes);
+        var sourceBytes = working.SourcePayloadBytes();
+        var inspected = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath,
+            [PublishedTokens.Extension.Command, PublishedTokens.ExtensionInspect.Command, PublishedExtensionInstallWorkspace.ToolkitId,
+                PublishedTokens.ExtensionInspect.Source, working.CataloguePath,
+                PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat], working.EnvironmentVariables);
+        Assert.True(inspected.ExitCode == 0, inspected.StandardOutput + inspected.StandardError);
+        using var document = JsonDocument.Parse(inspected.StandardOutput);
+        var data = document.RootElement.GetProperty(PublishedTokens.Json.Data);
+        Assert.True(data.GetProperty(PublishedTokens.ExtensionInspect.Matches).GetBoolean());
+        var file = Assert.Single(data.GetProperty(PublishedTokens.ExtensionInspect.Files).EnumerateArray());
+        Assert.Equal(CustomRoot + "/" + PublishedExtensionInstallWorkspace.RelativeTarget, file.GetProperty(PublishedTokens.Json.Path).GetString());
+        Assert.Equal(before.Keys.Order(), Directory.GetFiles(working.WorkspacePath, "*", SearchOption.AllDirectories).Order());
+        foreach (var (path, bytes) in before) Assert.Equal(bytes, File.ReadAllBytes(path));
+        Assert.Equal(sourceBytes, working.SourcePayloadBytes());
+    }
+
     [Fact(DisplayName = "Published Extension Inspect help bypasses workspace selection"), Trait("Feature", "extension-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedHelpIsTerminalAndReadOnly()
     {

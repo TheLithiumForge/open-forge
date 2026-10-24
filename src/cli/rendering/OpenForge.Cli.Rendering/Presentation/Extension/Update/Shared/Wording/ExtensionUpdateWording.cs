@@ -210,7 +210,7 @@ internal static class ExtensionUpdateWording
                 ExtensionUpdateFindingCode.RecoveryHistory => CliFindingWording.RecoveryHistory(finding.Target ?? throw new InvalidOperationException("Recovery history requires an artifact path.")),
                 ExtensionUpdateFindingCode.RecoveryCoverageUnavailable => CliFindingWording.RecoveryCoverageUnavailable(finding.Target, finding.Cause),
                 ExtensionUpdateFindingCode.RecoveryConflict => CliFindingWording.RecoveryConflict(finding.Target ?? recoveryPath ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheWorkspace()),
-                ExtensionUpdateFindingCode.RecoveryUnavailable => CliFindingWording.RecoveryUnavailable(finding.Target ?? ".agents"),
+                ExtensionUpdateFindingCode.RecoveryUnavailable => CliFindingWording.RecoveryUnavailable(finding.RecoveryDisplayPath),
                 ExtensionUpdateFindingCode.LifecycleObservation => finding.Target is { } observedId
                     ? global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdatePhrases.FormatIsNotRecordedAsInstalledSoItWasNotUpdated($"{observedId}")
                     : finding.Cause,

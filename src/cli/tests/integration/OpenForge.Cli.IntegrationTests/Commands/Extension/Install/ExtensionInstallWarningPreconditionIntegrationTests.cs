@@ -61,6 +61,7 @@ public sealed class ExtensionInstallWarningPreconditionIntegrationTests
         var currentObservation = await foundationReader.ReadAsync(
             plan.Request,
             plan.ValidationPackages,
+            plan.LayoutRead,
             TestContext.Current.CancellationToken);
         Assert.Null(currentObservation.Finding);
         Assert.NotNull(currentObservation.Foundation);
@@ -165,6 +166,7 @@ public sealed class ExtensionInstallWarningPreconditionIntegrationTests
         var currentObservation = await foundationReader.ReadAsync(
             plan.Request,
             plan.ValidationPackages,
+            plan.LayoutRead,
             TestContext.Current.CancellationToken);
         Assert.Null(currentObservation.Finding);
         Assert.NotNull(currentObservation.Foundation);

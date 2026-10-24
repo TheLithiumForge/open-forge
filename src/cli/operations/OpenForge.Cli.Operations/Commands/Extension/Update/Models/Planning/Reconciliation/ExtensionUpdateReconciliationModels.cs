@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
@@ -10,6 +11,7 @@ namespace OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning.Reconcili
 
 internal sealed class ExtensionUpdateReconciliationInput
 {
+    internal required WorkspaceLayout Layout { get; init; }
     internal required ExtensionUpdateRequest Request { get; init; }
 
     internal required IReadOnlyList<ExtensionPackageFact> Packages { get; init; }

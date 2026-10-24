@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.UnitTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -220,6 +221,7 @@ public sealed class ExtensionInstallContractTests
             });
 
         var result = ExtensionInstallPayloadNormalizer.Normalize(
+            WorkspaceLayout.Create(Workspace(), WorkspaceLayout.DefaultMainRoot),
             [package],
             WorkspaceSettingsDocument.Empty);
 

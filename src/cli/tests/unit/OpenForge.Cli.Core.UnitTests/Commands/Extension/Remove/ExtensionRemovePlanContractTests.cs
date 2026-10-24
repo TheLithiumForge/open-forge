@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
@@ -207,7 +211,10 @@ public sealed class ExtensionRemovePlanContractTests
         var input = new ExtensionRemovePlanInput
         {
             Request = request,
-            SettingsObservation = WorkspaceSettingsRead.Absent(Path.Combine(request.Workspace.LexicalRoot, ".agents", "open-forge.json")),
+            LayoutRead = new WorkspaceLayoutRead(WorkspaceLayoutReadState.Uninstalled,
+                WorkspaceSettingsRead.Absent(Path.Combine(request.Workspace.LexicalRoot, WorkspaceSettingsDefinitions.RelativePath)),
+                WorkspaceOwnershipRead.Absent(Path.Combine(request.Workspace.LexicalRoot, WorkspaceOwnershipDefinitions.RelativePath)),
+                WorkspaceLayout.Create(request.Workspace, WorkspaceLayout.DefaultMainRoot), [], []),
             RemovalSelection = new WorkspaceRemovalSelection { Extensions = [.. selection.Ids] },
             Selection = selection,
             Dependencies = dependencies,

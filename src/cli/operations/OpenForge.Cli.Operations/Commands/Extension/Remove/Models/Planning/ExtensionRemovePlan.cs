@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
@@ -82,7 +83,7 @@ internal sealed record ExtensionRemovePlanInput
 
     internal RecoveryBundleTarget? OwnershipRecoveryTarget { get; init; }
 
-    internal required WorkspaceSettingsRead SettingsObservation { get; init; }
+    internal required WorkspaceLayoutRead LayoutRead { get; init; }
 
     internal required WorkspaceRemovalSelection RemovalSelection { get; init; }
 
@@ -104,7 +105,7 @@ internal sealed class ExtensionRemovePlan
         ArgumentNullException.ThrowIfNull(input.Planning);
         ArgumentNullException.ThrowIfNull(input.Topology);
         ArgumentNullException.ThrowIfNull(input.Effects);
-        ArgumentNullException.ThrowIfNull(input.SettingsObservation);
+        ArgumentNullException.ThrowIfNull(input.LayoutRead);
         ArgumentNullException.ThrowIfNull(input.RemovalSelection);
         if (input.Request.RequestedIds.Count > 0
             && !input.Request.RequestedIds
@@ -172,7 +173,7 @@ internal sealed class ExtensionRemovePlan
             .ToArray());
         OwnershipChange = input.OwnershipChange;
         OwnershipRecoveryTarget = input.OwnershipRecoveryTarget;
-        SettingsObservation = input.SettingsObservation;
+        LayoutRead = input.LayoutRead;
         RemovalSelection = input.RemovalSelection;
         SettingsChange = input.SettingsChange;
         SettingsRecoveryTarget = input.SettingsRecoveryTarget;
@@ -200,7 +201,9 @@ internal sealed class ExtensionRemovePlan
 
     internal RecoveryBundleTarget? OwnershipRecoveryTarget { get; }
 
-    internal WorkspaceSettingsRead SettingsObservation { get; }
+    internal WorkspaceLayoutRead LayoutRead { get; }
+    internal WorkspaceLayout Layout => LayoutRead.Layout ?? throw new InvalidOperationException("An Extension Remove plan requires its observed layout.");
+    internal WorkspaceSettingsRead SettingsObservation => LayoutRead.Settings;
 
     internal WorkspaceRemovalSelection RemovalSelection { get; }
 

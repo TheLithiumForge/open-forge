@@ -178,7 +178,7 @@ internal static class ExtensionInstallReportSelector
                 => new(ExtensionInstallWording.Blocked(primaryId, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked when finding?.Code == ExtensionInstallFindingCode.PermissionRequired
                 => new(
-                    ExtensionInstallWording.PermissionRequired(primaryId),
+                    ExtensionInstallWording.PermissionRequired(primaryId, result.ContextFolder),
                     CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked when finding?.Code == ExtensionInstallFindingCode.InitialForceRequired
                 => new(
@@ -405,7 +405,7 @@ internal static class ExtensionInstallReportSelector
                 global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatOwnershipConflict(
                     finding.Cause,
                     target),
-            ExtensionInstallFindingCode.PermissionRequired => ExtensionInstallWording.PermissionRequired(primaryId),
+            ExtensionInstallFindingCode.PermissionRequired => ExtensionInstallWording.PermissionRequired(primaryId, result.ContextFolder),
             ExtensionInstallFindingCode.PermissionDeclined => CliFindingWording.PermissionDeclined(),
             ExtensionInstallFindingCode.PermissionsInvalid => CliFindingWording.PermissionsInvalid(
                 Sentence(finding.Cause)),
