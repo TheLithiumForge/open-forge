@@ -158,6 +158,7 @@ internal sealed class RouteUpdateSourceSelector(
             new RouteUpdateSourceSelection
             {
                 Request = operation,
+                LayoutRead = layoutRead,
                 Target = target,
                 Catalogue = catalogue,
                 Source = source,

@@ -320,8 +320,7 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
                 new PhysicalPathResolver()),
             new RouteUpdateLayerObserver(new SourceDocumentSnapshotReader()),
             new MarkdownDocumentParser(),
-            selectedYamlParser,
-            new PhysicalPathResolver());
+            selectedYamlParser);
     }
 
     private static RouteUpdateMetadataPatcher CreateMetadataPatcher(

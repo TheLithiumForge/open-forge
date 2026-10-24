@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -14,7 +15,7 @@ internal static class InstallDefinitions
 {
     internal const int SchemaVersion = 1;
     internal const string CommandIdentity = "install";
-    internal const string OwnershipRecordPath = ".agents/open-forge.lock.json";
+    internal const string OwnershipRecordPath = WorkspaceOwnershipDefinitions.RelativePath;
 
     internal static readonly CliSyntaxDefinition InstallCommand = new(
         CommandIdentity,

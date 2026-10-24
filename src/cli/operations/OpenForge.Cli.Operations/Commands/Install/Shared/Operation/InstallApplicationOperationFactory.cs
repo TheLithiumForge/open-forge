@@ -22,8 +22,7 @@ internal static class InstallApplicationOperationFactory
             preconditionValidator: new InstallApplicationPreconditionValidator(
                 mutationRevalidator: revalidator,
                 intendedStateBuilder: new InstallIntendedStateBuilder(physicalPathResolver),
-                layoutRevalidator: new WorkspaceLayoutRevalidator(physicalPathResolver),
-                expectationValidator: validator),
+                layoutRevalidator: new WorkspaceLayoutRevalidator(physicalPathResolver)),
             effectApplier: new InstallApplicationEffectApplier(
                 new DirectoryCreationApplier(revalidator, validator),
                 new FileChangeApplier(revalidator, validator)),

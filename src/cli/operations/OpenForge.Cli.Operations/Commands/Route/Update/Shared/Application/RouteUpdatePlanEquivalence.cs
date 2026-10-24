@@ -12,7 +12,10 @@ internal sealed class RouteUpdatePlanEquivalence
 {
     internal bool Matches(RouteUpdatePlan expected, RouteUpdatePlan actual)
         => MatchesTarget(expected.Preview.Target, actual.Preview.Target)
-            && expected.Observation.Catalogue.Layout.MainRoot == actual.Observation.Catalogue.Layout.MainRoot
+            && expected.LayoutRead.State == actual.LayoutRead.State
+            && expected.LayoutRead.Layout?.MainRoot == actual.LayoutRead.Layout?.MainRoot
+            && expected.LayoutRead.Settings.MatchesObservation(actual.LayoutRead.Settings)
+            && expected.LayoutRead.Expectations.SequenceEqual(actual.LayoutRead.Expectations)
             && expected.Navigation.SharingExpectation == actual.Navigation.SharingExpectation
             && expected.Observation.TargetSnapshot.Expectation
                 == actual.Observation.TargetSnapshot.Expectation
