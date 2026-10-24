@@ -145,6 +145,7 @@ public sealed class LibraryDetachApplicationIntegrationTests
         var before = Assert.IsType<FileStateSnapshot>(record.Snapshot);
         var input = new LibraryDetachPlanningInput
         {
+            LayoutRead = LibraryMutationApplicationData.LayoutObservation(workspace),
             Request = workspace.Detach(LibraryMode.Apply),
             Record = record,
             Mappings = LibraryMutationApplicationData.Mapping(workspace, linked: true),

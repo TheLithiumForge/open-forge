@@ -71,7 +71,7 @@ internal static class LibraryAttachCompletion
                     observations?.Record,
                     input.Request.LibraryId.Value,
                     plan?.IntendedRecord),
-                Source = LibraryMutationCompletionProjection.Source(observations?.Source, input.Request.DestinationRoot),
+                Source = LibraryMutationCompletionProjection.Source(observations?.Source, input.Request.DestinationRoot, observations?.LayoutRead.Layout),
                 Projection = LibraryMutationCompletionProjection.Projection(
                     observations,
                     input.Request.LibraryId.Value,
@@ -79,6 +79,7 @@ internal static class LibraryAttachCompletion
                     sourceIndependent: false),
                 Plan = LibraryMutationCompletionProjection.Plan(new()
                 {
+                    Layout = observations?.LayoutRead.Layout,
                     Workspace = input.Request.Workspace,
                     State = planState,
                     Effects = plan?.Effects,

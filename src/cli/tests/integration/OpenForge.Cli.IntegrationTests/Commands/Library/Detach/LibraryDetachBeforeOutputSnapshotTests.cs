@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Library.Detach.Shared.Serialization;
 using OpenForge.Cli.Core.Commands.Library.Detach;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
@@ -35,12 +37,12 @@ public sealed class LibraryDetachBeforeOutputSnapshotTests
     {
         if (situation == "write-failed-partial" && !OperatingSystem.IsWindows())
             Assert.Skip("This deterministic record replacement failure requires Windows file sharing.");
-        using var workspace = new LibraryMutationWorkspace();
+        using var workspace = new LibraryMutationWorkspace(createLoader: situation != "destination-protected");
         using var artifacts = new LibraryOutputArtifacts(workspace);
         var target = situation switch
         {
             "permission-required" => "docs/review.md",
-            "destination-protected" => ".agents/loader.md",
+            "destination-protected" => SourceLogicalPath.LoaderPath,
             _ => LibraryMutationWorkspace.Leaf,
         };
         workspace.Directory(situation switch
@@ -54,6 +56,9 @@ public sealed class LibraryDetachBeforeOutputSnapshotTests
         {
             if (situation == "destination-protected")
             {
+                workspace.Write(WorkspaceSettingsDefinitions.RelativePath, $$"""
+                    {"{{WorkspaceSettingsDefinitions.RemovedFilesProperty}}":["{{SourceLogicalPath.LoaderPath}}"]}
+                    """);
                 workspace.Record(target);
             }
             else

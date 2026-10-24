@@ -653,6 +653,7 @@ internal static class LibrarySyncReportSelector
             LibrarySyncFindingCode.RetiredLinkMissing => LibrarySyncWording.RetiredLinkMissing(path),
             LibrarySyncFindingCode.RegisteredLinkRestored => LibrarySyncWording.RegisteredLinkRestored(path),
             LibrarySyncFindingCode.LinkCapabilityUnavailable => LibrarySyncWording.LinkCapabilityUnavailable(),
+            LibrarySyncFindingCode.LayoutUnavailable => finding.Cause,
             LibrarySyncFindingCode.ConsumerBlocked => LibrarySyncWording.ConsumerBlocked(path),
             LibrarySyncFindingCode.LockUnavailable => LibrarySyncWording.LockUnavailable(),
             LibrarySyncFindingCode.Interrupted when IgnoreUnknown(result.Result)
@@ -727,6 +728,7 @@ internal static class LibrarySyncReportSelector
                     ? LibrarySyncWording.ChangedDestination(path)
                     : LibrarySyncWording.DestinationCollision(path),
             LibrarySyncFindingCode.RetiredLinkMissing => LibrarySyncWording.RetiredLinkMissing(path),
+            LibrarySyncFindingCode.LayoutUnavailable => finding.Cause,
             LibrarySyncFindingCode.ConsumerBlocked => LibrarySyncWording.ConsumerBlocked(path),
             _ => TrimSentence(finding.Cause),
         };

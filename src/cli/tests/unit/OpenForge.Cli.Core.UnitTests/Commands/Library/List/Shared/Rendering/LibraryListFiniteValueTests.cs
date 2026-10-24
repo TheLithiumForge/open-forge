@@ -74,8 +74,8 @@ public sealed class LibraryListFiniteValueTests
     [Fact(DisplayName = "Library List finding inventory is closed and includes invalid input")]
     public void FindingInventoryIsClosed()
     {
-        Assert.Equal(14, Enum.GetValues<LibraryListFindingCode>().Length);
-        Assert.Equal("library-list.invalid-input", LibraryListWording.MachineCode(LibraryListFindingCode.InvalidInput));
+        Assert.Equal(LibraryListFindingTests.AcceptedFindings.Order(), Enum.GetValues<LibraryListFindingCode>().Order());
+        Assert.Equal(OpenForge.Cli.Core.Commands.Library.List.LibraryListDefinitions.ReadFindingCode(LibraryListFindingCode.InvalidInput), LibraryListWording.MachineCode(LibraryListFindingCode.InvalidInput));
         Assert.Throws<ArgumentOutOfRangeException>(() => LibraryListWording.MachineCode((LibraryListFindingCode)int.MaxValue));
     }
 

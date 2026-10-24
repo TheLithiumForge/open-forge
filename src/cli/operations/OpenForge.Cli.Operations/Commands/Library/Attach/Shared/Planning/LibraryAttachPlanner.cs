@@ -54,6 +54,14 @@ internal static class LibraryAttachPlanner
                 input.Ownership.Cause ?? "The workspace ownership lock is not available for a safe Library operation.");
             return Empty(input, LibraryPlanState.Blocked, findings);
         }
+        if (input.LayoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+        {
+            var issue = input.LayoutRead.Issues.FirstOrDefault();
+            Add(findings, LibraryAttachFindingCode.LayoutUnavailable, CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value, issue?.Path,
+                issue?.Cause ?? "The workspace layout is not ready for a safe Library operation.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
         if (WorkspaceRemovals.IsLibraryRemoved(input.Request.LibraryId.Value, input.Settings.Document))
         {
             Add(findings, LibraryAttachFindingCode.LibraryRemoved, CliSemanticStatus.Blocked,
@@ -66,7 +74,7 @@ internal static class LibraryAttachPlanner
         {
             var path = Path.GetRelativePath(input.Request.Workspace.LexicalRoot, change.LogicalPath)
                 .Replace(Path.DirectorySeparatorChar, '/');
-            if (WorkspaceRemovals.IsPathRemoved(path, input.Settings.Document))
+            if (WorkspaceRemovals.IsPathRemoved(input.LayoutRead.Layout!, path, input.Settings.Document))
             {
                 Add(findings, LibraryAttachFindingCode.GeneratedNavigationBlocked, CliSemanticStatus.Blocked,
                     input.Request.LibraryId.Value, path,
@@ -116,7 +124,7 @@ internal static class LibraryAttachPlanner
         var newLibrary = LibraryRegistration.Create(input.Request.LibraryId, input.Request.SourceRoot,
             input.Request.DestinationRoot, [.. entries.Select(entry => entry.SourcePath)], input.Request.GitIgnore == true);
         var destinationPaths = LibraryPathIdentity.Mappings(newLibrary).Select(mapping => mapping.DestinationPath.Value).ToImmutableArray();
-        if (LibraryDestinationPolicy.FindConflict(input.Request.Workspace, newLibrary, currentRecord, RelativePaths(input)) is { } conflict)
+        if (LibraryDestinationPolicy.FindConflict(input.LayoutRead.Layout!, newLibrary, currentRecord, RelativePaths(input)) is { } conflict)
         {
             Add(findings, LibraryAttachFindingCode.DestinationCollision, CliSemanticStatus.Blocked,
                 input.Request.LibraryId.Value, conflict, "The Library destination is protected, source-owned, or registered to another Library.");
@@ -264,7 +272,7 @@ internal static class LibraryAttachPlanner
                 input.Request.SourceRoot,
                 input.Request.DestinationRoot,
                 entry.SourcePath).DestinationPath.Value;
-            if (WorkspaceRemovals.IsPathRemoved(destination, input.Settings.Document))
+            if (WorkspaceRemovals.IsPathRemoved(input.LayoutRead.Layout!, destination, input.Settings.Document))
             {
                 Add(findings, LibraryAttachFindingCode.PathExcluded, CliSemanticStatus.Complete,
                     input.Request.LibraryId.Value, destination,

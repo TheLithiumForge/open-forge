@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport.Contracts;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
@@ -9,7 +10,7 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
     internal const string Id = "team-knowledge";
     internal const string SourceRoot = "shared/team-knowledge";
     internal const string RecordPath = OwnershipPath;
-    internal const string OwnershipPath = ".agents/open-forge.lock.json";
+    internal const string OwnershipPath = PublishedTokens.Ownership.RelativePath;
     internal const string ReviewPath = ".agents/directives/review.md";
     internal const string RawReviewTarget = "../../shared/team-knowledge/.agents/directives/review.md";
     internal const string SourceBody = "---\nopen-forge:\n  description: Review\n  tags: [Directive]\n---\n# Review\n\nSource-owned bytes.\n";
@@ -19,7 +20,7 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
 
     internal PublishedLibraryWorkspace()
     {
-        _workspace.CreateDirectory(".agents");
+        _workspace.WriteText(PublishedTokens.Sources.LoaderPath, "# Loader\n\n## " + PublishedTokens.Metadata.Entries + "\n");
         _workspace.CreateDirectory($"{SourceRoot}/.agents");
         _store.Track(Path);
     }
@@ -39,7 +40,7 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
     internal void ConsumerRoute()
     {
         Write("AGENTS.md", "# Workspace\n\nRead `.agents/loader.md`.\n");
-        Write(".agents/loader.md", """
+        _workspace.ReplaceText(PublishedTokens.Sources.LoaderPath, """
             # Loader
             ## Entries
             - [Directives](directives/_directives.md) - #Directive

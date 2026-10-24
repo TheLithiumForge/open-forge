@@ -17,6 +17,7 @@ internal enum LibraryDetachFindingCode
     RecordUnavailable,
     OwnershipObservation,
     RecordBlocked,
+    LayoutUnavailable,
     ConsumerBlocked,
     MappingBlocked,
     DestinationProtected,

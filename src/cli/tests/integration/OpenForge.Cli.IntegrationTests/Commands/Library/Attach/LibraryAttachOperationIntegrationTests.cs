@@ -260,7 +260,7 @@ public sealed class LibraryAttachOperationIntegrationTests
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task SourceControlsAndLinksNeverBecomeProjections()
     {
-        using var workspace = new LibraryMutationWorkspace();
+        using var workspace = new LibraryMutationWorkspace(createLoader: false);
         workspace.Source();
         workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/loader.md", "# Loader");
         workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/directives/_directives.md", "# Directives");

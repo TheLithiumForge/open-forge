@@ -15,6 +15,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Library.Shared.Application;
 
@@ -159,7 +160,7 @@ internal static class LibraryMutationApplicationRunner
                 attempted.Add(Relative(input.Lease, permissionChange.LogicalPath));
             }
             permissionApplication = await LibraryPermissionOperation.ApplyAsync(
-                input.Lease, permissionStage, input.RecoveryPreparation, cancellationToken).ConfigureAwait(false);
+                input.Lease, AfterDirectoryCreation(permissionStage, directoryReceipts), input.RecoveryPreparation, cancellationToken).ConfigureAwait(false);
             if (permissionApplication.Failure is { } permissionFailure)
             {
                 if (permissionFailure == LibraryPermissionFailure.Interrupted)
@@ -290,6 +291,22 @@ internal static class LibraryMutationApplicationRunner
             RecordPublicationOrder = publicationOrder,
         };
         return execution;
+    }
+
+    private static LibraryPermissionStage AfterDirectoryCreation(
+        LibraryPermissionStage stage,
+        IReadOnlyList<DirectoryCreationReceipt> receipts)
+    {
+        if (stage.LayoutRead is not { } layout || receipts.Count == 0) return stage;
+        var expectations = layout.Expectations.Select(expectation =>
+            receipts.FirstOrDefault(receipt => receipt.Before.Expectation == expectation
+                && Verified(receipt.EffectState, receipt.VerificationState))?.After?.Expectation ?? expectation)
+            .ToImmutableArray();
+        return stage with
+        {
+            LayoutRead = new WorkspaceLayoutRead(state: layout.State, settings: layout.Settings, ownership: layout.Ownership,
+                layout: layout.Layout, issues: layout.Issues, expectations: expectations),
+        };
     }
 
     private static bool MatchesRecovery(LibraryMutationApplicationRequest input)

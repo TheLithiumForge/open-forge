@@ -6,6 +6,26 @@ namespace OpenForge.Cli.TestSupport.Contracts;
 // PublishedTokensTests checks every value against its production owner in the Unit suite.
 public static class PublishedTokens
 {
+    public static class Library
+    {
+        public const string Command = "library";
+        public const string Attach = "attach";
+        public const string Sync = "sync";
+        public const string Detach = "detach";
+        public const string Inspect = "inspect";
+        public const string List = "list";
+        public const string Destination = "--to";
+        public const string Automatic = "--automatic";
+    }
+
+    public static class LibraryData
+    {
+        public const string Current = "current";
+        public const string Libraries = "libraries";
+        public const string DestinationFolder = "destinationFolder";
+        public const string SourceFolder = "sourceFolder";
+    }
+
     public static class Context
     {
         public const string Command = "context";
@@ -47,6 +67,7 @@ public static class PublishedTokens
 
     public static class Metadata
     {
+        public const string Scope = "open-forge";
         public const string EmptyEntry = "- none - No entries - #Empty";
         public const string SkillName = "name";
         public const string Description = "description";

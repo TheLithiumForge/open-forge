@@ -495,6 +495,7 @@ internal static class LibraryAttachReportSelector
                 => LibraryAttachWording.MappingBlocked(finding.Path ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheDestinationPath(), finding.Cause),
             LibraryAttachFindingCode.LinkCapabilityUnavailable
                 => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.MessageThisSystemCannotCreateTheFileLinksLibrariesNeed(),
+            LibraryAttachFindingCode.LayoutUnavailable => finding.Cause,
             LibraryAttachFindingCode.ConsumerBlocked
                 => LibraryAttachWording.ConsumerBlocked(finding.Path ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheDestinationPath()),
             LibraryAttachFindingCode.OwnershipConflict
@@ -831,8 +832,8 @@ internal static class LibraryAttachReportSelector
         }
 
         return payload.Plan.Links
+            .Where(link => !link.IsImplicitContentDestination)
             .Select(link => link.Path.Replace('\\', '/'))
-            .Where(path => !path.StartsWith(".agents/", StringComparison.Ordinal))
             .Select(path => path.LastIndexOf('/') > 0 ? path[..path.LastIndexOf('/')] : ".")
             .Distinct(StringComparer.Ordinal)
             .ToArray();

@@ -22,6 +22,7 @@ internal static class LibraryListDefinitions
             LibraryListFindingCode.LinkChanged => "library-list.link-changed",
             LibraryListFindingCode.LinkUnavailable => "library-list.link-unavailable",
             LibraryListFindingCode.LinkBlocked => "library-list.link-blocked",
+            LibraryListFindingCode.LayoutUnavailable => "library-list.layout-unavailable",
             LibraryListFindingCode.OperationFailed => "library-list.operation-failed",
             LibraryListFindingCode.Interrupted => "library-list.interrupted",
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The Library finding code is not defined."),

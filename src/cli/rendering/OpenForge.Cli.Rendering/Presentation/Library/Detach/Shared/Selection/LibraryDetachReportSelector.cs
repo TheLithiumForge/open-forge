@@ -240,6 +240,7 @@ internal static class LibraryDetachReportSelector
             LibraryDetachFindingCode.DestinationProtected => DestinationProtectedMessage(path, finding),
             LibraryDetachFindingCode.MappingUnavailable => LibraryDetachWording.MappingUnavailable(path),
             LibraryDetachFindingCode.LinkCapabilityUnavailable => LibraryDetachWording.LinkCapabilityUnavailable(),
+            LibraryDetachFindingCode.LayoutUnavailable => finding.Cause,
             LibraryDetachFindingCode.ConsumerBlocked => LibraryDetachWording.ConsumerBlocked(path),
             LibraryDetachFindingCode.OwnershipConflict => LibraryDetachWording.OwnershipConflict(path),
             LibraryDetachFindingCode.PermissionRequired => LibraryDetachWording.PermissionRequired(),

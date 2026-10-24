@@ -54,6 +54,14 @@ internal static class LibraryDetachPlanner
                 input.Ownership.Cause ?? "The workspace ownership lock is not available for a safe Library operation.");
             return Empty(input, LibraryPlanState.Blocked, findings);
         }
+        if (input.LayoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+        {
+            var issue = input.LayoutRead.Issues.FirstOrDefault();
+            Add(findings, LibraryDetachFindingCode.LayoutUnavailable, CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value, issue?.Path,
+                issue?.Cause ?? "The workspace layout is not ready for a safe Library operation.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
         if (input.Record.OwnershipObservation is { } observation)
         {
             Add(findings, LibraryDetachFindingCode.OwnershipObservation, CliSemanticStatus.Complete,
@@ -79,7 +87,7 @@ internal static class LibraryDetachPlanner
         {
             var path = Path.GetRelativePath(input.Request.Workspace.LexicalRoot, change.LogicalPath)
                 .Replace(Path.DirectorySeparatorChar, '/');
-            if (WorkspaceRemovals.IsPathRemoved(path, input.Settings.Document))
+            if (WorkspaceRemovals.IsPathRemoved(input.LayoutRead.Layout!, path, input.Settings.Document))
             {
                 Add(findings, LibraryDetachFindingCode.GeneratedNavigationBlocked, CliSemanticStatus.Blocked,
                     input.Request.LibraryId.Value, path,
@@ -89,7 +97,7 @@ internal static class LibraryDetachPlanner
 
         var destinations = selected is null ? [] : LibraryPathIdentity.Mappings(selected)
             .Select(mapping => mapping.DestinationPath.Value).ToImmutableArray();
-        if (selected is not null && LibraryDestinationPolicy.FindConflict(input.Request.Workspace, selected, record, RelativePaths(input)) is { } conflict)
+        if (selected is not null && LibraryDestinationPolicy.FindConflict(input.LayoutRead.Layout!, selected, record, RelativePaths(input)) is { } conflict)
         {
             Add(findings, LibraryDetachFindingCode.DestinationProtected, CliSemanticStatus.Blocked,
                 input.Request.LibraryId.Value, conflict, "The Library destination is protected, source-owned, or registered to another Library.");
