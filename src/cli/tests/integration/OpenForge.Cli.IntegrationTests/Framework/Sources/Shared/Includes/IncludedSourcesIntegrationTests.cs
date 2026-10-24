@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Shared.Includes;
 
@@ -90,7 +91,7 @@ public sealed class IncludedSourcesIntegrationTests
 
         workspace.ReplaceText(".agents/loader.md", rows);
         var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(
-            new CliWorkspace(workspace.Path, workspace.Path, CliWorkspaceSelectionMethod.CurrentDirectory), CancellationToken.None);
+WorkspaceLayout.Create(new CliWorkspace(workspace.Path, workspace.Path, CliWorkspaceSelectionMethod.CurrentDirectory), WorkspaceLayout.DefaultMainRoot), CancellationToken.None);
         var included = await new SourceIncludedEntryReader().ReadAsync(session.Catalogue, session.DocumentReader, CancellationToken.None);
         Assert.Equal([".cursor/rules/testing.mdc", "docs/team/_team.md", "CONTRIBUTING.md", "docs/team/conditioned.md"],
             included.Select(source => source.Base.CanonicalPath));

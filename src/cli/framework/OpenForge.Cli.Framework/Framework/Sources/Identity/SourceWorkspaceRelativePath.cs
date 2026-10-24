@@ -8,9 +8,6 @@ internal static class SourceWorkspaceRelativePath
     internal static bool IsCanonical([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path)
         => SourceLogicalPath.IsCanonicalSource(path);
 
-    internal static string ReadReference(string path)
-        => ReadReference(SourceContentRoots.Default, path);
-
     internal static string ReadReference(WorkspaceLayout layout, string path)
         => ReadReference(new SourceContentRoots(layout), path);
 

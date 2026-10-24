@@ -8,6 +8,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
@@ -379,7 +381,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
 
         return new SourceLogicalSource(
             identity: new SourceLogicalIdentity(
-                SourceIdentity.DeriveId(canonicalPath)
+                SourceIdentity.DeriveId(DefaultWorkspaceLayout, canonicalPath)
                     ?? throw new ArgumentException("A recognized generated navigation test source requires an automatic ID.", nameof(canonicalPath)),
                 canonicalPath),
             @base: baseLayer,
@@ -393,4 +395,11 @@ public sealed class GeneratedNavigationFormationBuilderTests
             "generated-navigation-unit",
             relativePath.Replace('/', Path.DirectorySeparatorChar)));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(GeneratedNavigationFormationBuilderTests)),
+                Path.GetFullPath(nameof(GeneratedNavigationFormationBuilderTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

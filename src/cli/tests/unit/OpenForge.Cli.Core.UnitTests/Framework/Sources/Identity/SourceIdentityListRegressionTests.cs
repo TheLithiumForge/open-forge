@@ -1,4 +1,6 @@
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
@@ -22,7 +24,7 @@ public sealed class SourceIdentityListRegressionTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void DeriveIdUsesCanonicalIdentityRules(string canonicalPath, string expectedId)
     {
-        Assert.Equal(expectedId, SourceIdentity.DeriveId(canonicalPath));
+        Assert.Equal(expectedId, SourceIdentity.DeriveId(DefaultWorkspaceLayout, canonicalPath));
     }
 
     [Trait("Boundary", "Processing")]
@@ -30,16 +32,23 @@ public sealed class SourceIdentityListRegressionTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void DeriveIdRejectsUnusablePaths()
     {
-        Assert.Null(SourceIdentity.DeriveId(null));
-        Assert.Null(SourceIdentity.DeriveId(""));
-        Assert.Null(SourceIdentity.DeriveId("loader.md"));
-        Assert.Null(SourceIdentity.DeriveId("other/.agents/root.md"));
-        Assert.Null(SourceIdentity.DeriveId("./.agents/root.md"));
-        Assert.Null(SourceIdentity.DeriveId(".agents"));
-        Assert.Null(SourceIdentity.DeriveId(".agents/"));
-        Assert.Null(SourceIdentity.DeriveId(".agents//root.md"));
-        Assert.Null(SourceIdentity.DeriveId(".agents/./root.md"));
-        Assert.Null(SourceIdentity.DeriveId(".agents/../root.md"));
-        Assert.Null(SourceIdentity.DeriveId(".agents/root\\root.md"));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, null));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, ""));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, "loader.md"));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, "other/.agents/root.md"));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, "./.agents/root.md"));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, ".agents"));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, ".agents/"));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, ".agents//root.md"));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, ".agents/./root.md"));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, ".agents/../root.md"));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, ".agents/root\\root.md"));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(SourceIdentityListRegressionTests)),
+                Path.GetFullPath(nameof(SourceIdentityListRegressionTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

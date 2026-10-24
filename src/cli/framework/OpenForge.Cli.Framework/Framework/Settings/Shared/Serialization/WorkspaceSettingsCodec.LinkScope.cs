@@ -3,13 +3,12 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 
 internal static partial class WorkspaceSettingsCodec
 {
-    internal static byte[]? SeedArchiveLinkScope(ReadOnlyMemory<byte> existing)
-        => SeedArchiveLinkScope(existing, WorkspaceSettingsDefinitions.MemoryArchivePath);
 
     internal static byte[]? SeedArchiveLinkScope(ReadOnlyMemory<byte> existing, string archivePath)
     {

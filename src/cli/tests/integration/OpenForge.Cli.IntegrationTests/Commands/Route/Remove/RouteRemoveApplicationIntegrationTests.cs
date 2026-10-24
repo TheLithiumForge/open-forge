@@ -8,6 +8,8 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
@@ -47,8 +49,8 @@ public sealed class RouteRemoveApplicationIntegrationTests
         Assert.Equal(
             new[] { RouteRemoveIntegrationWorkspace.LeafPath, RouteRemoveIntegrationWorkspace.LeafOverwritePath }.Order(StringComparer.Ordinal),
             workspace.ReadSettings().RemovedFiles.Order(StringComparer.Ordinal));
-        Assert.False(FrameworkPayloadSelection.IncludesPath(RouteRemoveIntegrationWorkspace.LeafPath, workspace.ReadSettings()));
-        Assert.False(FrameworkPayloadSelection.IncludesPath(RouteRemoveIntegrationWorkspace.LeafOverwritePath, workspace.ReadSettings()));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, RouteRemoveIntegrationWorkspace.LeafPath, workspace.ReadSettings()));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, RouteRemoveIntegrationWorkspace.LeafOverwritePath, workspace.ReadSettings()));
         Assert.Contains("Recorded persistent route removal", output.ToString(), StringComparison.Ordinal);
     }
 
@@ -85,7 +87,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
             ".agents/guidance/topics",
             workspace.ReadSettings().RemovedDirectories,
             StringComparer.Ordinal);
-        Assert.False(FrameworkPayloadSelection.IncludesPath(".agents/guidance/topics/notes.md", workspace.ReadSettings()));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/guidance/topics/notes.md", workspace.ReadSettings()));
         Assert.Empty(workspace.ReadOwnership().Framework!.Paths);
         Assert.Equal(4, resourceBefore.Length);
     }
@@ -110,7 +112,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         Assert.Equal(string.Empty, error.ToString());
         Assert.Contains("loader-topics", workspace.ReadSettings().RemovedCategories, StringComparer.Ordinal);
         Assert.Contains(".agents/loader-topics", workspace.ReadSettings().RemovedDirectories, StringComparer.Ordinal);
-        Assert.False(FrameworkPayloadSelection.IncludesPath(RouteRemoveIntegrationWorkspace.LoaderCategoryChildPath, workspace.ReadSettings()));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, RouteRemoveIntegrationWorkspace.LoaderCategoryChildPath, workspace.ReadSettings()));
         var extension = Assert.Single(workspace.ReadOwnership().Extensions);
         Assert.Equal("toolkit", extension.Id);
         Assert.Empty(extension.Paths);
@@ -537,4 +539,11 @@ public sealed class RouteRemoveApplicationIntegrationTests
                 throw new ArgumentOutOfRangeException(nameof(receipt), receipt, "Unknown Route Remove receipt.");
         }
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(RouteRemoveApplicationIntegrationTests)),
+                Path.GetFullPath(nameof(RouteRemoveApplicationIntegrationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

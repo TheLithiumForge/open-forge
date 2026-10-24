@@ -170,9 +170,16 @@ Consumer and navigation adapters are removed. The destination workspace overload
 Repair takes Doctor's layout observation through planning, target checks, metadata, classification and result projection, and revalidates it under the lock. Cleanup carries the layout and keeps Task 86's recorded recovery locations.
 Doctor now recognizes native Skills rows across custom roots by resolving destinations before comparison. Default Skills rows remain unchanged, and all required managed suites and published Repair and Index journeys pass.
 
+## Wave 6 Z1 handoff
+
+Every temporary default-layout adapter is removed and its callers pass an explicit layout. The package-coordinate default stays as a named invariant.
+Status and Install expose optional layout facts through `WorkspaceLayoutInfo`, omitted for default workspaces, with the JSON envelope at schema 3.
+An audit accounts for every remaining production `.agents` literal as an owner, fixed control, package coordinate, documentation or default wording.
+
 ## Overseer notes
 
 - Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.
 - The intentionally excluded missing loader E2 raised is resolved by chair amendments 6 and 7. The plan's `*LibrarySharedGrant*` filter selects nothing, because the shared-grant class has another name.
 - Static help still shows default-root wording in Route Create and Route Inspect. The final documentation packet and Z2 help changes decide whether it changes.
 - Fixed a bug that predates Task 85: regenerating navigation dropped a loader's direct rows to nested catalogues, such as a nested native Skills catalogue, in default and custom layouts. Shared generated navigation now keeps those rows and their metadata. Unit tests cover Skills, other categories and omission.
+- Open fix from Z1: Extension Update's recovery label can name the default root when its target is unavailable.

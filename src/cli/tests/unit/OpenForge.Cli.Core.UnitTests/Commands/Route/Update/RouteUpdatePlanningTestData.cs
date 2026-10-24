@@ -15,6 +15,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
@@ -150,7 +151,7 @@ internal static partial class RouteUpdateTestData
         CliWorkspace workspace,
         SourceLogicalSource source)
         => new(
-            workspace: workspace,
+layout: WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot),
             candidates: [Candidate(source)],
             sources: [source],
             issues: [],

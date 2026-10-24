@@ -10,8 +10,6 @@ namespace OpenForge.Cli.Core.Framework.Sources.Routing;
 
 internal static class SourceLoaderDestinationParser
 {
-    internal static SourceLoaderDestinationParseResult Parse(string attemptedDestination)
-        => Parse(SourceContentRoots.Default, attemptedDestination);
 
     internal static SourceLoaderDestinationParseResult Parse(WorkspaceLayout layout, string attemptedDestination)
         => Parse(new SourceContentRoots(layout), attemptedDestination);

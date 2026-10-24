@@ -382,7 +382,7 @@ public sealed class FindSourceUniverseIntegrationTests
     private static async ValueTask<SourceCatalogue> ReadCatalogueAsync(CliWorkspace workspace)
     {
         return await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(workspace, [WorkspaceLayout.DefaultMainRoot]),
+            new SourceCatalogueRequest(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [WorkspaceLayout.DefaultMainRoot]),
             TestContext.Current.CancellationToken);
     }
 

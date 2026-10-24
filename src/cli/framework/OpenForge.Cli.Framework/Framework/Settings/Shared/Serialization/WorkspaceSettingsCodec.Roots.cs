@@ -13,13 +13,6 @@ internal static partial class WorkspaceSettingsCodec
             ? $"canonical workspace-relative file paths outside {WorkspaceLayout.DefaultMainRoot}"
             : "canonical workspace-relative file paths outside the content locations";
 
-    /// <summary>
-    /// Whether a path can be registered in `roots`: canonical, outside the content locations, and not Git
-    /// metadata or a control file. Whether the file exists is the caller's question.
-    /// </summary>
-    internal static bool IsValidRootPath(string? path)
-        => IsValidRootPath(path, WorkspaceLayout.DefaultMainRoot);
-
     internal static bool IsValidRootPath(string? path, string mainRoot)
         => IsCanonicalRemovalPath(path)
             && path is not null

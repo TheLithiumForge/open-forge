@@ -27,6 +27,7 @@ using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
@@ -178,7 +179,7 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
 
     internal async ValueTask<SourceCatalogue> ReadCatalogueAsync()
         => await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(Workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(WorkspaceLayout.Create(Workspace, WorkspaceLayout.DefaultMainRoot), [SourceLogicalPath.AgentsRoot]),
             TestContext.Current.CancellationToken);
 
     internal ValueTask<RouteUpdateObservationBuild> ObserveAsync(string reference)

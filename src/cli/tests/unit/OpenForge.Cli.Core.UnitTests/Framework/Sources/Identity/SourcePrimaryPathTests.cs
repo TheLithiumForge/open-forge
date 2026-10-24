@@ -17,9 +17,7 @@ public sealed class SourcePrimaryPathTests
     [InlineData(WorkspaceLayout.DefaultMainRoot), InlineData(CustomRoot)]
     public void ClassifiesPrimaryPathsWithoutPhysicalWorkspaceAccess(string mainRoot)
     {
-        var roots = mainRoot == WorkspaceLayout.DefaultMainRoot
-            ? SourceContentRoots.Default
-            : new SourceContentRoots(WorkspaceLayout.Create(SourceInventoryTestData.Workspace(), mainRoot));
+        var roots = new SourceContentRoots(WorkspaceLayout.Create(SourceInventoryTestData.Workspace(), mainRoot));
         var markdown = mainRoot + "/" + Name + SourceFormClassifier.MarkdownExtension;
         var overwrite = SourceOverwritePath.ReadAdjacentPath(markdown);
         var text = mainRoot + "/" + Name + TextExtension;

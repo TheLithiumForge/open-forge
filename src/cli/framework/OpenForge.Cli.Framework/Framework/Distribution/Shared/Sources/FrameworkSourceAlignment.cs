@@ -1,5 +1,4 @@
 using OpenForge.Cli.Core.Framework.Distribution.Models;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -8,8 +7,6 @@ namespace OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 
 internal static class FrameworkSourceAlignment
 {
-    internal static FrameworkPayloadAsset? ReadAsset(CliWorkspace workspace, string path, FrameworkPayload payload)
-        => ReadAsset(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), path, payload);
 
     internal static FrameworkPayloadAsset? ReadAsset(WorkspaceLayout layout, string path, FrameworkPayload payload)
     {

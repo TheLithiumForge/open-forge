@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Inventory;
 
@@ -189,7 +190,7 @@ public sealed class SourceCatalogueTests
             Physical(".agents/root"),
             null);
         var catalogue = new SourceCatalogue(
-            workspace,
+WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot),
             [firstCandidate, secondCandidate, aliasCandidate],
             [first, second],
             [aliasIssue, collisionIssue, directoryIssue, rootIssue],
@@ -270,7 +271,7 @@ public sealed class SourceCatalogueTests
             Physical(".agents/root"),
             null);
         return new SourceCatalogue(
-            workspace,
+WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot),
             candidates,
             [other, leaf],
             [collision, rootIssue],

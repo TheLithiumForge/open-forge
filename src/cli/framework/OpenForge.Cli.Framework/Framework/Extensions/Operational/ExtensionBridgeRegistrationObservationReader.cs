@@ -22,7 +22,6 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Operational;
@@ -428,6 +427,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
             && string.Equals(comparison.Expected, expected.Destination, StringComparison.Ordinal));
         var entries = current.Entries.Where(entry => string.Equals(
             SourceGeneratedDestinationResolver.Resolve(
+                layout,
                 region.CanonicalPath,
                 region.Source.Base.Form == SourceDocumentForm.Loader,
                 entry.Destination),

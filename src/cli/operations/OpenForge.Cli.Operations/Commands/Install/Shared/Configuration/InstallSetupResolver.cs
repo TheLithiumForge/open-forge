@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
@@ -23,18 +24,23 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
 
     internal async ValueTask<InstallSetupResolution> ResolveAsync(InstallRequest request, CancellationToken token)
     {
-        var loader = await _reader.ReadAsync(request.Workspace, FrameworkPayloadAsset.LoaderPath, token).ConfigureAwait(false);
+        var layoutRead = await new WorkspaceLayoutReader(paths).ReadAsync(request.Workspace, token).ConfigureAwait(false);
+        var settings = layoutRead.Settings;
+        if (layoutRead.Layout is not { } layout)
+            return Stopped(settings.State == WorkspaceSettingsReadState.Invalid ? InstallFindingCode.InvalidInput : InstallFindingCode.LifecycleUnavailable,
+                settings.Cause ?? "Workspace layout is unavailable for setup selection.");
+        var loader = await _reader.ReadAsync(request.Workspace, layout.LoaderPath, token).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         if (loader.State is not (InstallTargetReadState.Missing or InstallTargetReadState.File))
             return Stopped(ReadTargetCode(loader), loader.Cause ?? "The loader is unsafe or unavailable for setup selection.");
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(paths, request.Workspace, token).ConfigureAwait(false);
+        var ownership = layoutRead.Ownership;
         if (request.Setup?.Configure == true && ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete))
             return Stopped(ownership.State == WorkspaceOwnershipReadState.Unavailable ? InstallFindingCode.LifecycleUnavailable : InstallFindingCode.LifecycleBlocked, ownership.Cause ?? "Ownership is unavailable for setup selection.");
         var installed = loader.State == InstallTargetReadState.File || ownership.Document.Framework is not null;
         if (request.Setup is { Preset: not null, Configure: false } && installed)
             return Stopped(InstallFindingCode.InvalidInput, "An explicit preset on an installed workspace requires --configure.");
 
-        var settings = await WorkspaceSettingsReader.ReadAsync(paths, request.Workspace, token).ConfigureAwait(false);
+
         if (settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
             return Stopped(settings.State == WorkspaceSettingsReadState.Invalid ? InstallFindingCode.InvalidInput : InstallFindingCode.LifecycleUnavailable, settings.Cause ?? "Workspace settings are unavailable for setup selection.");
         var canPrompt = request.AllowsInteractiveConfirmation && !request.Automatic && !request.IsDryRun && interaction is not null;
@@ -45,17 +51,17 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
             return new(null)
             {
                 Frontmatter = form.Selection,
-                Recap = !installed ? new(false, InstallPreset.FullCore, CurrentRoutes(settings, []), []) : null,
+                Recap = !installed ? new(false, InstallPreset.FullCore, CurrentRoutes(layout, settings, []), []) : null,
             };
         var ignore = await _reader.ReadAsync(request.Workspace, InstallIgnoreSection.Path, token).ConfigureAwait(false);
         if (ignore.Snapshot is not { } ignoreSnapshot)
             return Stopped(ReadTargetCode(ignore), ignore.Cause ?? "The Git-ignore file is unsafe or unavailable.");
         ImmutableArray<string> ignored;
-        try { ignored = InstallIgnoreSection.Read(ignoreSnapshot.Bytes.AsSpan()); }
+        try { ignored = InstallIgnoreSection.Read(ignoreSnapshot.Bytes.AsSpan(), layout); }
         catch (Exception exception) when (exception is InvalidDataException or DecoderFallbackException)
         { return Stopped(InstallFindingCode.TargetUnsafe, exception.Message); }
 
-        var previousRoutes = installed ? CurrentRoutes(settings, ignored) : [];
+        var previousRoutes = installed ? CurrentRoutes(layout, settings, ignored) : [];
 
         var preset = request.Setup?.Preset;
         if (preset is null && canPrompt && interaction is { } presetInteraction)
@@ -118,7 +124,7 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
                 }
                 else resolved = InstallFrontmatterResolver.Resolve(request.Setup, settings, installed, canPrompt: false);
             }
-            var routes = configuration?.Routes ?? CurrentRoutes(settings, []);
+            var routes = configuration?.Routes ?? CurrentRoutes(layout, settings, []);
             return new(configuration, resolved.Boundary)
             {
                 Frontmatter = resolved.Selection,
@@ -135,12 +141,12 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
     private static ImmutableArray<InstallRouteSelection> Materialize(Dictionary<string, InstallRouteAction> rows)
         => InstallConfigurationChoices.RouteIds.Select(id => new InstallRouteSelection(id, rows[id])).ToImmutableArray();
 
-    private static ImmutableArray<InstallRouteSelection> CurrentRoutes(WorkspaceSettingsRead settings, ImmutableArray<string> ignored)
-        => InstallConfigurationChoices.RouteIds.Select(id => new InstallRouteSelection(id, CurrentAction(id, settings, ignored))).ToImmutableArray();
+    private static ImmutableArray<InstallRouteSelection> CurrentRoutes(WorkspaceLayout layout, WorkspaceSettingsRead settings, ImmutableArray<string> ignored)
+        => InstallConfigurationChoices.RouteIds.Select(id => new InstallRouteSelection(id, CurrentAction(layout, id, settings, ignored))).ToImmutableArray();
 
-    private static InstallRouteAction CurrentAction(string id, WorkspaceSettingsRead settings, ImmutableArray<string> ignored)
+    private static InstallRouteAction CurrentAction(WorkspaceLayout layout, string id, WorkspaceSettingsRead settings, ImmutableArray<string> ignored)
     {
-        if (WorkspaceRemovals.IsPathRemoved(InstallConfigurationChoices.Entrypoint(id), settings.Document)) return InstallRouteAction.Remove;
+        if (WorkspaceRemovals.IsPathRemoved(layout, InstallConfigurationChoices.Entrypoint(layout, id), settings.Document)) return InstallRouteAction.Remove;
         return ignored.Contains(id, StringComparer.Ordinal) ? InstallRouteAction.GitIgnore : InstallRouteAction.Add;
     }
 }

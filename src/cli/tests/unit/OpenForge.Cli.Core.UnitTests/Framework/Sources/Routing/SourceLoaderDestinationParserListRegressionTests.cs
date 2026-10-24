@@ -1,5 +1,7 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Routing;
 
@@ -18,7 +20,7 @@ public sealed class SourceLoaderDestinationParserListRegressionTests
         string decodedDestination,
         string canonicalPath)
     {
-        var result = SourceLoaderDestinationParser.Parse(attemptedDestination);
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, attemptedDestination);
 
         Assert.Equal(SourceLoaderDestinationParseState.Valid, result.State);
         Assert.Equal(attemptedDestination, result.AttemptedDestination);
@@ -40,7 +42,7 @@ public sealed class SourceLoaderDestinationParserListRegressionTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void MalformedDestinationRetainsAttemptAndCause(string attemptedDestination)
     {
-        var result = SourceLoaderDestinationParser.Parse(attemptedDestination);
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, attemptedDestination);
 
         Assert.Equal(SourceLoaderDestinationParseState.Malformed, result.State);
         Assert.Equal(attemptedDestination, result.AttemptedDestination);
@@ -72,7 +74,7 @@ public sealed class SourceLoaderDestinationParserListRegressionTests
         string attemptedDestination,
         string decodedDestination)
     {
-        var result = SourceLoaderDestinationParser.Parse(attemptedDestination);
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, attemptedDestination);
 
         Assert.Equal(SourceLoaderDestinationParseState.Unsafe, result.State);
         Assert.Equal(attemptedDestination, result.AttemptedDestination);
@@ -86,11 +88,18 @@ public sealed class SourceLoaderDestinationParserListRegressionTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EncodedPercentIsDecodedExactlyOnce()
     {
-        var result = SourceLoaderDestinationParser.Parse("encoded%2520name/_encoded%2520name.md");
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, "encoded%2520name/_encoded%2520name.md");
 
         Assert.Equal(SourceLoaderDestinationParseState.Valid, result.State);
         Assert.Equal("encoded%20name/_encoded%20name.md", result.DecodedDestination);
         Assert.DoesNotContain("encoded name", result.DecodedDestination, StringComparison.Ordinal);
         Assert.Equal(".agents/encoded%20name/_encoded%20name.md", result.CanonicalPath);
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(SourceLoaderDestinationParserListRegressionTests)),
+                Path.GetFullPath(nameof(SourceLoaderDestinationParserListRegressionTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

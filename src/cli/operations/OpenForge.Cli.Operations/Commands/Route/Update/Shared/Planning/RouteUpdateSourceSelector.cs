@@ -3,6 +3,8 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -39,10 +41,23 @@ internal sealed class RouteUpdateSourceSelector(
                 isIncomplete: true);
         }
 
+        var layoutRead = await new WorkspaceLayoutReader(_physicalPathResolver)
+            .ReadAsync(operation.Workspace, cancellationToken).ConfigureAwait(false);
+        if (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
+            || layoutRead.Layout is not { } layout)
+        {
+            var unavailable = layoutRead.State == WorkspaceLayoutReadState.Unavailable
+                && !layoutRead.Issues.Any(issue => issue.Code == WorkspaceLayoutIssueCode.UnsafeRoot);
+            return Stop(operation, RouteUpdateTarget.Unresolved(operation.SourceReference),
+                unavailable ? RouteUpdateFindingCode.WorkspaceUnavailable : RouteUpdateFindingCode.WorkspaceUnsafe,
+                layoutRead.Issues.FirstOrDefault()?.Cause ?? "Workspace layout observation is unavailable.",
+                isIncomplete: unavailable);
+        }
+
         var catalogue = await _catalogueReader.ReadAsync(
                 new SourceCatalogueRequest(
-                    operation.Workspace,
-                    [SourceLogicalPath.AgentsRoot]),
+                    layout,
+                    layout.SourceRoots),
                 cancellationToken)
             .ConfigureAwait(false);
         if (catalogue.IsCancelled)
@@ -211,8 +226,8 @@ internal sealed class RouteUpdateSourceSelector(
                 "A non-root issue cannot form a Route Update root boundary."),
         };
         var fallback = code == RouteUpdateFindingCode.WorkspaceUnsafe
-            ? "The workspace .agents root is unsafe."
-            : "The workspace .agents root is unavailable.";
+            ? $"The workspace {issue.AttemptedCanonicalPath} root is unsafe."
+            : $"The workspace {issue.AttemptedCanonicalPath} root is unavailable.";
         return Stop(
             request,
             RouteUpdateTarget.Unresolved(request.SourceReference),

@@ -14,9 +14,6 @@ internal static class SourceFormClassifier
     internal const string ReferencesFileName = "references" + MarkdownExtension;
     internal const string UnderscoreReferencesFileName = "_" + ReferencesFileName;
 
-    internal static bool TryClassify(string? canonicalPath, out SourceDocumentForm form)
-        => TryClassify(SourceContentRoots.Default, canonicalPath, out form);
-
     internal static bool TryClassify(WorkspaceLayout layout, string? canonicalPath, out SourceDocumentForm form)
         => TryClassify(new SourceContentRoots(layout), canonicalPath, out form);
 
@@ -65,17 +62,11 @@ internal static class SourceFormClassifier
         return true;
     }
 
-    internal static bool Matches(string canonicalPath, SourceDocumentForm form)
-        => Matches(SourceContentRoots.Default, canonicalPath, form);
-
     internal static bool Matches(WorkspaceLayout layout, string canonicalPath, SourceDocumentForm form)
         => Matches(new SourceContentRoots(layout), canonicalPath, form);
 
     internal static bool Matches(SourceContentRoots roots, string canonicalPath, SourceDocumentForm form)
         => TryClassify(roots, canonicalPath, out var classified) && classified == form;
-
-    internal static bool IsEntryDocument([NotNullWhen(true)] string? canonicalPath)
-        => IsEntryDocument(SourceContentRoots.Default, canonicalPath);
 
     internal static bool IsEntryDocument(WorkspaceLayout layout, [NotNullWhen(true)] string? canonicalPath)
         => IsEntryDocument(new SourceContentRoots(layout), canonicalPath);

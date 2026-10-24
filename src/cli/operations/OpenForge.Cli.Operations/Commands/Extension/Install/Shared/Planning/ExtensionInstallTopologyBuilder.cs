@@ -216,7 +216,7 @@ internal sealed class ExtensionInstallTopologyBuilder
                 && installedPaths.Contains(region.CanonicalPath))
             {
                 var currentHost = catalogue.Sources.FirstOrDefault(source => source.Identity.CanonicalBasePath == region.CanonicalPath);
-                change = await PreserveInstalledHostAsync(region, currentHost, canonicalBytes, cancellationToken)
+                change = await PreserveInstalledHostAsync(layout, region, currentHost, canonicalBytes, cancellationToken)
                     .ConfigureAwait(false);
             }
 
@@ -263,6 +263,7 @@ internal sealed class ExtensionInstallTopologyBuilder
     }
 
     private async ValueTask<GeneratedNavigationBoundedChange> PreserveInstalledHostAsync(
+        WorkspaceLayout layout,
         GeneratedNavigationRegion region,
         SourceLogicalSource? current,
         byte[] canonicalBytes,
@@ -285,6 +286,7 @@ internal sealed class ExtensionInstallTopologyBuilder
         }
 
         var projected = _regionPlanner.PlanProjectedEntries(
+            layout,
             new GeneratedNavigationRegionInput(current, _markdownParser.Parse(StrictUtf8.GetString(bytes))),
             region.Entries);
         return projected.Change

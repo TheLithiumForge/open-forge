@@ -2,25 +2,18 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 
 internal sealed class RouteSourceDocument
 {
-    internal RouteSourceDocument(
-        string canonicalLogicalPath,
-        string physicalPath,
-        SourceDocumentForm form,
-        FileReadState readState,
-        string? body)
-        : this(canonicalLogicalPath, physicalPath, form, readState, body, validateDefaultForm: true) { }
 
     internal RouteSourceDocument(SourceLayer layer, FileReadState readState, string? body)
-        : this(layer.CanonicalPath, layer.PhysicalPath, layer.Form, readState, body, validateDefaultForm: false) { }
-
-    private RouteSourceDocument(string canonicalLogicalPath, string physicalPath, SourceDocumentForm form,
-        FileReadState readState, string? body, bool validateDefaultForm)
     {
+        var canonicalLogicalPath = layer.CanonicalPath;
+        var physicalPath = layer.PhysicalPath;
+        var form = layer.Form;
         if (!SourceLogicalPath.IsCanonical(canonicalLogicalPath))
         {
             throw new ArgumentException("The source document logical path is not canonical.", nameof(canonicalLogicalPath));
@@ -39,10 +32,6 @@ internal sealed class RouteSourceDocument
             throw new ArgumentOutOfRangeException(nameof(form), form, "The source document form is not defined.");
         }
 
-        if (validateDefaultForm && !SourceFormClassifier.Matches(canonicalLogicalPath, form))
-        {
-            throw new ArgumentException("The source document form does not match its canonical logical path.", nameof(form));
-        }
         if (!Enum.IsDefined(readState))
         {
             throw new ArgumentOutOfRangeException(nameof(readState), readState, "The file read state is not defined.");

@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Sharing;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Shared.RouteScaffolding;
 
@@ -126,18 +127,18 @@ public sealed class RouteScaffoldChainTests
         var workspace = new CliWorkspace(root, root, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var sources = existingPaths.Concat(selectedPaths).Distinct(StringComparer.Ordinal)
             .Where(path => !path.EndsWith(".overwrite.md", StringComparison.Ordinal))
-            .Select(path => new RouteScaffoldSourceBuilder().Create(workspace, path)).ToImmutableArray();
+            .Select(path => new RouteScaffoldSourceBuilder().Create(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), path)).ToImmutableArray();
         var candidates = existingPaths.Concat(selectedPaths).Distinct(StringComparer.Ordinal).Select(path =>
         {
-            if (!SourceFormClassifier.TryClassify(path, out var form))
+            if (!SourceFormClassifier.TryClassify(DefaultWorkspaceLayout, path, out var form))
                 throw new InvalidOperationException();
             var physicalPath = Path.GetFullPath(SourceLogicalPath.ToLexicalPath(root, path));
-            return new SourceCandidate(path, form, SourceIdentity.DeriveId(path), PhysicalPathState.Contained,
+            return new SourceCandidate(path, form, SourceIdentity.DeriveId(DefaultWorkspaceLayout, path), PhysicalPathState.Contained,
                 physicalPath, Path.GetDirectoryName(physicalPath));
         });
         return new RouteScaffoldDiscoveryRequest
         {
-            Catalogue = new SourceCatalogue(workspace, candidates, sources, [], isCancelled: false),
+            Catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), candidates, sources, [], isCancelled: false),
             RecognizedRootPaths = sources.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form)
                 && SourceLogicalPath.ReadParent(SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath)) == ".agents")
                 .Select(source => source.Identity.CanonicalBasePath).ToImmutableArray(),
@@ -145,4 +146,11 @@ public sealed class RouteScaffoldChainTests
             Settings = WorkspaceSettingsDocument.Empty,
         };
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(RouteScaffoldChainTests)),
+                Path.GetFullPath(nameof(RouteScaffoldChainTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

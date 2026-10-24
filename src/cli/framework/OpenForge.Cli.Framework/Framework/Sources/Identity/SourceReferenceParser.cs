@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
@@ -8,8 +9,8 @@ internal static class SourceReferenceParser
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        const string agentsPrefix = ".agents/";
-        const string dotAgentsPrefix = "./.agents/";
+        const string agentsPrefix = WorkspaceLayout.DefaultMainRoot + "/";
+        const string dotAgentsPrefix = SourceWorkspaceRelativePath.LiteralReferencePrefix + agentsPrefix;
         if (value.StartsWith(agentsPrefix, StringComparison.Ordinal)
             || value.StartsWith(dotAgentsPrefix, StringComparison.Ordinal))
         {
@@ -23,9 +24,9 @@ internal static class SourceReferenceParser
                     "An exact source path must contain non-empty .agents segments without traversal or control characters.");
         }
 
-        if (value.StartsWith("./", StringComparison.Ordinal))
+        if (value.StartsWith(SourceWorkspaceRelativePath.LiteralReferencePrefix, StringComparison.Ordinal))
         {
-            var path = value[2..];
+            var path = value[SourceWorkspaceRelativePath.LiteralReferencePrefix.Length..];
             return SourceWorkspaceRelativePath.IsCanonical(path)
                 ? SourceReferenceParseResult.ValidPath(path)
                 : SourceReferenceParseResult.InvalidPath(path, "An exact source path must stay inside the workspace without traversal or control characters.");

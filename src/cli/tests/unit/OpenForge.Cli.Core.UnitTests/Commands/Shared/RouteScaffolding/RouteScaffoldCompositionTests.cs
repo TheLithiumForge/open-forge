@@ -3,6 +3,8 @@ using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding.Models.Rename;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Shared.RouteScaffolding;
 
@@ -40,7 +42,7 @@ public sealed class RouteScaffoldCompositionTests
             Basis = (RouteScaffoldRenameBasis)basis,
             Similarity = similarity,
         };
-        var intent = new RouteScaffoldRenamePlanner().Decide(candidate, proof);
+        var intent = new RouteScaffoldRenamePlanner().Decide(DefaultWorkspaceLayout, candidate, proof);
 
         Assert.Equal(expected, intent.IsRename);
         Assert.Equal(expected ? candidate.OldSnapshot?.Bytes : candidate.ScaffoldBytes, intent.IntendedBytes);
@@ -51,7 +53,7 @@ public sealed class RouteScaffoldCompositionTests
     public void UnprovenIdentityKeepsOldFile()
     {
         var candidate = Candidate();
-        var intent = new RouteScaffoldRenamePlanner().Decide(candidate, proof: null);
+        var intent = new RouteScaffoldRenamePlanner().Decide(DefaultWorkspaceLayout, candidate, proof: null);
         Assert.False(intent.IsRename);
         Assert.Null(intent.DeleteBefore);
         Assert.Equal(".agents/guidance/invoices/_billing.md", intent.OldNavigation?.Path);
@@ -63,7 +65,7 @@ public sealed class RouteScaffoldCompositionTests
             CurrentContentHash = FileExpectation.Hash("changed"u8),
             Basis = RouteScaffoldRenameBasis.CommittedContent,
         };
-        Assert.False(new RouteScaffoldRenamePlanner().Decide(candidate, wrongProof).IsRename);
+        Assert.False(new RouteScaffoldRenamePlanner().Decide(DefaultWorkspaceLayout, candidate, wrongProof).IsRename);
     }
 
     [Fact(DisplayName = "Scaffold rename rejects undefined proof bases and unrelated old filenames")]
@@ -78,8 +80,8 @@ public sealed class RouteScaffoldCompositionTests
             Basis = RouteScaffoldRenameBasis.CommittedContent,
         };
         var planner = new RouteScaffoldRenamePlanner();
-        Assert.False(planner.Decide(candidate, proof).IsRename);
-        Assert.Throws<ArgumentOutOfRangeException>(() => planner.Decide(candidate, proof with { Basis = (RouteScaffoldRenameBasis)int.MaxValue }));
+        Assert.False(planner.Decide(DefaultWorkspaceLayout, candidate, proof).IsRename);
+        Assert.Throws<ArgumentOutOfRangeException>(() => planner.Decide(DefaultWorkspaceLayout, candidate, proof with { Basis = (RouteScaffoldRenameBasis)int.MaxValue }));
     }
 
     internal static RouteScaffoldRenameCandidate Candidate()
@@ -89,7 +91,7 @@ public sealed class RouteScaffoldCompositionTests
         var builder = new RouteScaffoldSourceBuilder();
         var old = request.Catalogue.FindByPath(".agents/guidance/invoices/_billing.md")
             ?? throw new InvalidOperationException();
-        var destination = builder.Create(request.Catalogue.Workspace, ".agents/guidance/invoices/_invoices.md");
+        var destination = builder.Create(WorkspaceLayout.Create(request.Catalogue.Workspace, WorkspaceLayout.DefaultMainRoot), ".agents/guidance/invoices/_invoices.md");
         return new RouteScaffoldRenameCandidate
         {
             Destination = destination,
@@ -100,4 +102,11 @@ public sealed class RouteScaffoldCompositionTests
                 RouteScaffoldComposer.FolderDocument("guidance/invoices", "Invoices", ["Guidance"], FrontmatterForm.Scoped)),
         };
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(RouteScaffoldCompositionTests)),
+                Path.GetFullPath(nameof(RouteScaffoldCompositionTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

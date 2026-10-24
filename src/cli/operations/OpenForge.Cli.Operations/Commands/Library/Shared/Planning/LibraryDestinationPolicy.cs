@@ -21,13 +21,6 @@ internal static class LibraryDestinationPolicy
     private const string WorkspaceLockPath = ".agents/open-forge.lock";
 
     internal static string? FindConflict(
-        CliWorkspace workspace,
-        LibraryRegistration selected,
-        LibraryRegistrationSet? registered,
-        IEnumerable<string> generatedTargets)
-        => FindConflict(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), selected, registered, generatedTargets);
-
-    internal static string? FindConflict(
         WorkspaceLayout layout,
         LibraryRegistration selected,
         LibraryRegistrationSet? registered,

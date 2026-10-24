@@ -52,12 +52,6 @@ internal sealed record RouteMarkdownCatalogueFilters
 
 internal sealed record RouteMarkdownCatalogueRequest
 {
-    internal RouteMarkdownCatalogueRequest(
-        CliWorkspace workspace,
-        IEnumerable<string> includedRoots,
-        IEnumerable<string> excludedPaths,
-        RouteMarkdownCatalogueFilters filters)
-        : this(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), includedRoots, excludedPaths, filters) { }
 
     internal RouteMarkdownCatalogueRequest(WorkspaceLayout layout, IEnumerable<string> includedRoots,
         IEnumerable<string> excludedPaths, RouteMarkdownCatalogueFilters filters)

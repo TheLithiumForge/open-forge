@@ -8,6 +8,8 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
@@ -54,7 +56,7 @@ public sealed class RouteInspectSourceProjectionBuilderIntegrationTests
         workspace.Write(orphanPath, "orphan overwrite");
         var before = workspace.SnapshotHashes();
         var catalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(workspace.Workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot), [SourceLogicalPath.AgentsRoot]),
             TestContext.Current.CancellationToken);
         var selection = catalogue.SelectAll();
         var paired = Assert.Single(selection.Sources, source => source.Identity.CanonicalBasePath == basePath);

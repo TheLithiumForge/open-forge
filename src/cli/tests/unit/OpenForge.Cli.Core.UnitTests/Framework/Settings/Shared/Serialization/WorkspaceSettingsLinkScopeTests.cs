@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Settings.Shared.Serialization;
 
@@ -93,12 +94,12 @@ public sealed class WorkspaceSettingsLinkScopeTests
     [InlineData("null")]
     [InlineData("[\"my/archive\"]")]
     public void PreservesExistingChoice(string value)
-        => Assert.Null(WorkspaceSettingsCodec.SeedArchiveLinkScope(Encoding.UTF8.GetBytes($$$"""{"{{{WorkspaceSettingsDefinitions.IgnoreLinksFromProperty}}}":{{{value}}}}""")));
+        => Assert.Null(WorkspaceSettingsCodec.SeedArchiveLinkScope(Encoding.UTF8.GetBytes($$$"""{"{{{WorkspaceSettingsDefinitions.IgnoreLinksFromProperty}}}":{{{value}}}}"""), WorkspaceSettingsDefinitions.MemoryArchivePath));
 
     [Fact(DisplayName = "Archive seeding creates the versioned shape only when the key is absent")]
     public void SeedsAbsentChoice()
     {
-        var bytes = Assert.IsType<byte[]>(WorkspaceSettingsCodec.SeedArchiveLinkScope(ReadOnlyMemory<byte>.Empty));
+        var bytes = Assert.IsType<byte[]>(WorkspaceSettingsCodec.SeedArchiveLinkScope(ReadOnlyMemory<byte>.Empty, WorkspaceSettingsDefinitions.MemoryArchivePath));
         var settings = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(bytes).Document);
         Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersion, settings.SchemaVersion);
         Assert.Equal([WorkspaceSettingsDefinitions.MemoryArchivePath], settings.IgnoreLinksFrom);

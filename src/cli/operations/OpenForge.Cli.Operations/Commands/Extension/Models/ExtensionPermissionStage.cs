@@ -36,7 +36,7 @@ internal sealed record ExtensionPermissionRequest(
     bool AllowPrompt,
     ImmutableArray<string> ExplicitGrantPaths = default)
 {
-    internal WorkspaceLayoutRead? LayoutRead { get; init; }
+    internal required WorkspaceLayoutRead LayoutRead { get; init; }
 
     internal ImmutableArray<string> Grants => ExplicitGrantPaths.IsDefault ? [] : ExplicitGrantPaths;
 }

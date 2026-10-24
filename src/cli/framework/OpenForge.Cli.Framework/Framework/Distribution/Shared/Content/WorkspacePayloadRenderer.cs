@@ -3,7 +3,6 @@ using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Transformation;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Transformation.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
@@ -13,12 +12,6 @@ internal static class WorkspacePayloadRenderer
     // The Frontmatter Form section of .agents/memory/crystallized/documents/cli/shared-operation-contract.md defines delivery eligibility.
     private const string MarkdownExtension = SourceFormClassifier.MarkdownExtension;
     private const string NativeSkillFileName = SourceFormClassifier.NativeSkillFileName;
-    private static readonly WorkspaceLayout DefaultLayout = WorkspaceLayout.Create(
-        new CliWorkspace(AppContext.BaseDirectory, AppContext.BaseDirectory, CliWorkspaceSelectionMethod.CurrentDirectory),
-        WorkspaceLayout.DefaultMainRoot);
-
-    internal static FrameworkFrontmatterTransformResult Render(string destinationPath, ReadOnlyMemory<byte> sourceBytes, FrontmatterForm form)
-        => Render(DefaultLayout, destinationPath, sourceBytes, form);
 
     internal static FrameworkFrontmatterTransformResult Render(
         WorkspaceLayout layout, string packagePath, ReadOnlyMemory<byte> sourceBytes, FrontmatterForm form)

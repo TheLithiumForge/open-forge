@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
+using OpenForge.Cli.Core.Commands.Shared.Layout;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
@@ -243,6 +244,7 @@ internal static class InstallResultFactsFactory
             Verification = new InstallVerification(completion.Verification),
         })
         {
+            Layout = WorkspaceLayoutProjection.Project(evidence.Layout),
             Frontmatter = Frontmatter(evidence.IntendedState?.Frontmatter,
                 evidence.IntendedState?.Configuration?.FrontmatterPlan?.Kept ?? []),
         };
@@ -329,6 +331,7 @@ internal static class InstallResultFactsFactory
     private static InstallPlanningEvidence Evidence(InstallPlan plan)
         => new()
         {
+            Layout = plan.IntendedLayout,
             Payload = plan.Payload,
             IntendedState = plan.IntendedState,
         };

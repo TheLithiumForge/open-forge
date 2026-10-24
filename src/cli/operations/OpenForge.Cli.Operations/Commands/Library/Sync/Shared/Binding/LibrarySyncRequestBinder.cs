@@ -84,7 +84,7 @@ internal static class LibrarySyncRequestBinder
                 Permissions = LibraryPermissionView.NotEvaluated(),
                 Identity = LibraryMutationCompletionProjection.Identity(id, sourceRoot: null, destinationRoot: null, LibraryMode.Apply, sourceIndependent: false),
                 Record = LibraryMutationCompletionProjection.Record(read: null, id, intended: null),
-                Source = LibraryMutationCompletionProjection.Source(read: null, destinationRoot: null),
+                Source = LibraryMutationCompletionProjection.Source(read: null, destinationRoot: null, layout: null),
                 Projection = LibraryMutationCompletionProjection.Projection(
                     observation: null, id,
                     LibraryPlanState.NotStarted, sourceIndependent: false),

@@ -14,6 +14,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Operational;
 
@@ -82,7 +83,7 @@ public sealed class RouteDoctorFactReaderTests
         var workspace = OpenForge.Cli.Core.UnitTests.Commands.Doctor.DoctorOperationTestSupport.Workspace();
         var inspection = new RouteSourceInspection
         {
-            Catalogue = new SourceCatalogue(workspace, [], [], [], isCancelled: false),
+            Catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [], [], isCancelled: false),
             Routes = routes,
             WorkspaceEntry = new RouteSourceLayerObservation(
                 "AGENTS.md",
@@ -313,7 +314,7 @@ public sealed class RouteDoctorFactReaderTests
             Path.GetTempPath(),
             "route-doctor-fact-unit"));
         var catalogue = new SourceCatalogue(
-            DoctorOperationTestSupport.Workspace(),
+WorkspaceLayout.Create(DoctorOperationTestSupport.Workspace(), WorkspaceLayout.DefaultMainRoot),
             [new SourceCandidate(
                 overwritePath,
                 SourceDocumentForm.OverwriteCompanion,
@@ -350,7 +351,7 @@ public sealed class RouteDoctorFactReaderTests
             ?? DoctorOperationTestSupport.Workspace();
         return new RouteSourceInspection
         {
-            Catalogue = catalogue ?? new SourceCatalogue(workspace, [], [], [], isCancelled: false),
+            Catalogue = catalogue ?? new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [], [], isCancelled: false),
             Routes = routes ?? new SourceRouteFacts(
                 new SourceRouteTopology([], []),
                 [],

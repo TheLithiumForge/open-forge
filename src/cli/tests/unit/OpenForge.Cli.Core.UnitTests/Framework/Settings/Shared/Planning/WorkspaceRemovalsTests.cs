@@ -42,16 +42,16 @@ public sealed class WorkspaceRemovalsTests
             RemovedDirectories = ["docs/archive"],
         };
 
-        Assert.True(WorkspaceRemovals.IsPathRemoved(WorkspaceLayout.DefaultMainRoot + "/" + TemplateCategory, settings));
-        Assert.True(WorkspaceRemovals.IsPathRemoved(WorkspaceLayout.DefaultMainRoot + "/" + TemplateCategory + "/" + Note, settings));
-        Assert.False(WorkspaceRemovals.IsPathRemoved(WorkspaceLayout.DefaultMainRoot + "/" + TemplateCategory + "-old/" + Note, settings));
-        Assert.True(WorkspaceRemovals.IsPathRemoved(WorkspaceLayoutNames.HumanGuideFileName, settings));
-        Assert.False(WorkspaceRemovals.IsPathRemoved(WorkspaceLayoutNames.HumanGuideFileName + ".copy", settings));
-        Assert.True(WorkspaceRemovals.IsPathRemoved("docs/readme.md", settings));
-        Assert.False(WorkspaceRemovals.IsPathRemoved("docs/readme.md/child", settings));
-        Assert.True(WorkspaceRemovals.IsPathRemoved("docs/archive", settings));
-        Assert.True(WorkspaceRemovals.IsPathRemoved("docs/archive/future.md", settings));
-        Assert.False(WorkspaceRemovals.IsPathRemoved("docs/archived/future.md", settings));
+        Assert.True(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, WorkspaceLayout.DefaultMainRoot + "/" + TemplateCategory, settings));
+        Assert.True(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, WorkspaceLayout.DefaultMainRoot + "/" + TemplateCategory + "/" + Note, settings));
+        Assert.False(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, WorkspaceLayout.DefaultMainRoot + "/" + TemplateCategory + "-old/" + Note, settings));
+        Assert.True(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, WorkspaceLayoutNames.HumanGuideFileName, settings));
+        Assert.False(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, WorkspaceLayoutNames.HumanGuideFileName + ".copy", settings));
+        Assert.True(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, "docs/readme.md", settings));
+        Assert.False(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, "docs/readme.md/child", settings));
+        Assert.True(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, "docs/archive", settings));
+        Assert.True(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, "docs/archive/future.md", settings));
+        Assert.False(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, "docs/archived/future.md", settings));
     }
 
     [Trait("Boundary", "Selection")]
@@ -69,4 +69,11 @@ public sealed class WorkspaceRemovalsTests
         Assert.True(WorkspaceRemovals.IsLibraryRemoved("team-knowledge", settings));
         Assert.False(WorkspaceRemovals.IsLibraryRemoved("team", settings));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(WorkspaceRemovalsTests)),
+                Path.GetFullPath(nameof(WorkspaceRemovalsTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

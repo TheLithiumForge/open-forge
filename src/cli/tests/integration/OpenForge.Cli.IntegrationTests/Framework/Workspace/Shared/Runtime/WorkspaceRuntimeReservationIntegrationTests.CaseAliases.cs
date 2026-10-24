@@ -20,6 +20,8 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Workspace.Shared.Runtime;
 
@@ -44,7 +46,7 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         }
         var request = new RouteInclusionRequest { Workspace = Workspace(files), File = target, Action = RouteInclusionAction.Include };
 
-        var exception = Assert.Throws<ArgumentException>(() => RouteInclusionTargetResolver.Resolve(request));
+        var exception = Assert.Throws<ArgumentException>(() => RouteInclusionTargetResolver.Resolve(WorkspaceLayout.Create(request.Workspace, WorkspaceLayout.DefaultMainRoot), request));
 
         MatchSnapshot(exception.Message, $"linked-{linked}.content");
         Assert.Equal(new byte[] { 255 }, File.ReadAllBytes(files.Combine(CaseRuntimeFile)));
@@ -66,7 +68,7 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
             Assert.True(files.TryCreateFileSymbolicLink(target, files.Combine(CaseRuntimeFile), out var cause), cause);
         }
         var workspace = Workspace(files);
-        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(workspace, Token);
+        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), Token);
         var reads = new List<string>();
         var resolver = new SourceLinkDestinationResolver(new PhysicalPathResolver(), (physical, logical, token) =>
         {
@@ -105,7 +107,7 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
             LibraryDestinationRoot.Create("."), [SourceRelativeEligiblePath.Create(destination)]);
 
         Assert.False(ExtensionDestinationPolicy.IsAllowed(workspace, destination));
-        Assert.Equal(destination, LibraryDestinationPolicy.FindConflict(workspace, registration, registered: null, generatedTargets: []));
+        Assert.Equal(destination, LibraryDestinationPolicy.FindConflict(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), registration, registered: null, generatedTargets: []));
 
         if (existing) Assert.Equal(new byte[] { 255 }, File.ReadAllBytes(files.Combine(CaseRuntimeFile)));
         else Assert.False(Directory.Exists(files.Combine(CaseRuntimeDirectory)));

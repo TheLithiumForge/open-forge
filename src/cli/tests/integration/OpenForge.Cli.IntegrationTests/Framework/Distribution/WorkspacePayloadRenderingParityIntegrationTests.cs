@@ -9,6 +9,8 @@ using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Embedded;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Distribution;
 
@@ -58,11 +60,11 @@ public sealed class WorkspacePayloadRenderingParityIntegrationTests
 
     private static bool AssertParity(string path, ReadOnlyMemory<byte> source)
     {
-        var scoped = WorkspacePayloadRenderer.Render(path, source, FrontmatterForm.Scoped);
+        var scoped = WorkspacePayloadRenderer.Render(DefaultWorkspaceLayout, path, source, FrontmatterForm.Scoped);
         Assert.Equal(FrameworkFrontmatterTransformState.Unchanged, scoped.State);
         Assert.Null(scoped.Cause);
         Assert.Equal(source, scoped.Bytes);
-        var root = WorkspacePayloadRenderer.Render(path, source, FrontmatterForm.Root);
+        var root = WorkspacePayloadRenderer.Render(DefaultWorkspaceLayout, path, source, FrontmatterForm.Root);
         Assert.True(root.State != FrameworkFrontmatterTransformState.Invalid, $"{path}: {root.Cause}");
         Assert.Null(root.Cause);
         Assert.NotNull(root.Bytes);
@@ -145,4 +147,11 @@ public sealed class WorkspacePayloadRenderingParityIntegrationTests
             }
         }
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(WorkspacePayloadRenderingParityIntegrationTests)),
+                Path.GetFullPath(nameof(WorkspacePayloadRenderingParityIntegrationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

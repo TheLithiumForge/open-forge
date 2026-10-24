@@ -8,8 +8,6 @@ namespace OpenForge.Cli.Core.Framework.Sources.Loading;
 
 internal static class SourceGeneratedDestinationResolver
 {
-    internal static string? Resolve(string parentCanonicalPath, bool isLoader, string destination)
-        => Resolve(SourceContentRoots.Default, parentCanonicalPath, isLoader, destination);
 
     internal static string? Resolve(WorkspaceLayout layout, string parentCanonicalPath, bool isLoader, string destination)
         => Resolve(new SourceContentRoots(layout), parentCanonicalPath, isLoader, destination);
@@ -24,9 +22,6 @@ internal static class SourceGeneratedDestinationResolver
         => TryDecode(destination, out var decoded) && decoded.Split('/').Contains("..");
 
     internal static bool IsMarkdown(string path) => path.EndsWith(SourceFormClassifier.MarkdownExtension, StringComparison.OrdinalIgnoreCase);
-
-    internal static string? ResolveLinked(string parentPath, bool isLoader, string destination)
-        => ResolveLinked(SourceContentRoots.Default, parentPath, isLoader, destination);
 
     internal static string? ResolveLinked(WorkspaceLayout layout, string parentPath, bool isLoader, string destination)
         => ResolveLinked(new SourceContentRoots(layout), parentPath, isLoader, destination);

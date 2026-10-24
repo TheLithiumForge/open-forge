@@ -200,7 +200,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
         }
         foreach (var path in EmbeddedPayloadPaths
                      .Concat(EmbeddedPayloadPaths.Where(path =>
-                         SourceFormClassifier.TryClassify(path, out var form)
+                         SourceFormClassifier.TryClassify(DefaultWorkspaceLayout, path, out var form)
                          && SourceFormClassifier.IsEntrypoint(form))
                          .Select(SourceOverwritePath.ReadAdjacentPath))
                      .Append(".agents/open-forge.json")
@@ -295,4 +295,11 @@ internal sealed class InstallOperationWorkspace : IDisposable
             Directory.Delete(path);
         }
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(InstallOperationWorkspace)),
+                Path.GetFullPath(nameof(InstallOperationWorkspace)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

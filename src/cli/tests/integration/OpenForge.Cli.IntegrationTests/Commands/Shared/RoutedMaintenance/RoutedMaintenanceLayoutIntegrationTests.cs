@@ -44,7 +44,7 @@ public sealed class RoutedMaintenanceLayoutIntegrationTests
             Catalogue = session.Catalogue,
             RootPaths = [rootPath, skillRoot],
             SelectedSources = [.. session.Catalogue.Sources],
-            Policy = new() { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty },
+            Policy = new() { Layout = layout, Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty },
         }, TestContext.Current.CancellationToken);
 
         Assert.Empty(intent.Limitations);

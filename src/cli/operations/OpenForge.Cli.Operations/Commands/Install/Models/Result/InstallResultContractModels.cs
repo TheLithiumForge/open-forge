@@ -359,6 +359,7 @@ internal sealed record InstallVerification
 
 internal sealed record InstallResultFacts
 {
+    internal OpenForge.Cli.Core.Commands.Shared.Models.Layout.WorkspaceLayoutInfo? Layout { get; init; }
     internal InstallFrontmatter? Frontmatter { get; init; }
 
     internal InstallResultFacts(InstallResultFactsInput input)

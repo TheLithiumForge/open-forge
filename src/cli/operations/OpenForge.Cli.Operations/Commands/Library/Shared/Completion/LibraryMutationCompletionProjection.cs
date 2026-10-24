@@ -83,7 +83,7 @@ internal static class LibraryMutationCompletionProjection
             destinationRoot ?? throw new InvalidOperationException("An eligible source requires its selected destination root."),
             sourcePath);
 
-    internal static LibraryMutationSource Source(LibraryInventoryRead? read, LibraryDestinationRoot? destinationRoot, WorkspaceLayout? layout = null)
+    internal static LibraryMutationSource Source(LibraryInventoryRead? read, LibraryDestinationRoot? destinationRoot, WorkspaceLayout? layout)
     {
         var inventory = read?.Inventory;
         return new LibraryMutationSource

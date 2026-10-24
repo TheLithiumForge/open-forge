@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Commands.Shared.Models.Layout;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Presentation.Status.Shared.Rendering;
 
@@ -6,6 +7,9 @@ namespace OpenForge.Cli.Core.Presentation.Status.Models;
 
 internal sealed record StatusData
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public WorkspaceLayoutInfo? Layout { get; init; }
+
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public StatusDataIncludedFiles? IncludedFiles { get; init; }
 

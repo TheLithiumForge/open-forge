@@ -2,17 +2,12 @@ using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 
 internal static class FrameworkPayloadSourceProjection
 {
-    internal static SourceLogicalSource Create(
-        CliWorkspace workspace,
-        FrameworkPayloadAsset asset)
-        => Create(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), asset);
 
     internal static SourceLogicalSource Create(
         WorkspaceLayout layout,

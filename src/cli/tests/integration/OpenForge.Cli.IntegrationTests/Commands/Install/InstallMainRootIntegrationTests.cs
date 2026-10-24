@@ -32,6 +32,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -82,7 +83,7 @@ public sealed class InstallMainRootIntegrationTests
         Assert.Contains(agent.OpaqueSpans.Where(span => span.IsCode).Select(span => agent.Source[span.Span.Start..span.Span.End].Trim('`')), value => value == Loader);
 
         var payload = Assert.IsType<FrameworkPayload>(EmbeddedFrameworkPayloadReader.Read().Payload);
-        var skill = Assert.Single(payload.Assets, asset => SourceFormClassifier.Matches(asset.Path, SourceDocumentForm.Skill));
+        var skill = Assert.Single(payload.Assets, asset => SourceFormClassifier.Matches(DefaultWorkspaceLayout, asset.Path, SourceDocumentForm.Skill));
         Assert.True(File.Exists(workspace.Combine(skill.Path)));
         Assert.Contains(skill.Path, framework.Paths);
         Assert.Contains(result.Facts.Effects, effect => effect.Path == Loader && effect.SourceAssetPath == FrameworkPayloadAsset.LoaderPath);
@@ -243,4 +244,11 @@ public sealed class InstallMainRootIntegrationTests
         Assert.Equal(expected.Keys.Order(StringComparer.Ordinal), actual.Keys.Order(StringComparer.Ordinal));
         foreach (var pair in expected) Assert.Equal(pair.Value, actual[pair.Key]);
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(InstallMainRootIntegrationTests)),
+                Path.GetFullPath(nameof(InstallMainRootIntegrationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

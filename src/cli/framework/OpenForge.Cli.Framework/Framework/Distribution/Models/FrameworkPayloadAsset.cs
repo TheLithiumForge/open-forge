@@ -48,7 +48,7 @@ internal sealed class FrameworkPayloadAsset
         }
 
         // Payload validation always uses package coordinates, independently of the installed layout.
-        if (!SourceLogicalPath.IsPrimarySource(SourceContentRoots.Default, path))
+        if (!SourceLogicalPath.IsPrimarySource(SourceContentRoots.PackageCoordinates, path))
         {
             throw new ArgumentException("A Framework payload asset path must be canonical.", nameof(path));
         }

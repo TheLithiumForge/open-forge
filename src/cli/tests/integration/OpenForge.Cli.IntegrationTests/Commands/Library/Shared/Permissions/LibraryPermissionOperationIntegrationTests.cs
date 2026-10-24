@@ -176,7 +176,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         Assert.Equal(WorkspacePermissionDecision.Granted, stage.Result.Decision);
         var extensionPrompt = LibraryPermissionTestPrompt.Create(input, output, canPrompt: true);
         var extension = await new ExtensionPermissionOperation(extensionPrompt)
-            .DetermineAsync(new(workspace.Workspace, [new("docs/a.md", ExtensionPermissionEffect.Copy)], "different-extension-source", true), TestContext.Current.CancellationToken);
+            .DetermineAsync(new(workspace.Workspace, [new("docs/a.md", ExtensionPermissionEffect.Copy)], "different-extension-source", true) { LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Workspace, TestContext.Current.CancellationToken) }, TestContext.Current.CancellationToken);
         Assert.Null(extension.Failure);
         Assert.Equal(WorkspacePermissionDecision.Granted, extension.Result.Decision);
         Assert.Null(extension.Change);
@@ -352,7 +352,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         if (extension)
         {
             var stage = await new ExtensionPermissionOperation(interaction).DetermineAsync(
-                new(workspace.Workspace, [new("docs/a.md", ExtensionPermissionEffect.Copy)], null, true), TestContext.Current.CancellationToken);
+                new(workspace.Workspace, [new("docs/a.md", ExtensionPermissionEffect.Copy)], null, true) { LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Workspace, TestContext.Current.CancellationToken) }, TestContext.Current.CancellationToken);
             Assert.Null(stage.Failure);
             Assert.Equal(persistent, stage.Change is not null);
             Assert.Equal(persistent, stage.RecoveryTarget is not null);
@@ -395,7 +395,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         if (extension)
         {
             var operation = new ExtensionPermissionOperation(interaction);
-            var stage = await operation.DetermineAsync(new(workspace.Workspace, [new("docs/a.md", ExtensionPermissionEffect.Copy)], null, true), TestContext.Current.CancellationToken);
+            var stage = await operation.DetermineAsync(new(workspace.Workspace, [new("docs/a.md", ExtensionPermissionEffect.Copy)], null, true) { LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Workspace, TestContext.Current.CancellationToken) }, TestContext.Current.CancellationToken);
             Assert.NotNull(stage.Change);
             Assert.NotNull(stage.RecoveryTarget);
             var result = await operation.ApplyAsync(lease, stage, recovery: null, TestContext.Current.CancellationToken);
@@ -419,6 +419,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         => new()
         {
             Workspace = workspace.Workspace,
+            LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Workspace, TestContext.Current.CancellationToken),
             LibraryId = LibraryId.Create("team-knowledge"),
             SettingsObservation = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, TestContext.Current.CancellationToken),
             Targets = [new("docs/a.md", LibraryPermissionTargetUse.Live) { Effect = LibraryPermissionEffect.CreateLink }],

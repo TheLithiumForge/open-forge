@@ -91,8 +91,6 @@ internal sealed record RouteInitTargetResolution(
 
 internal sealed class RouteInitTargetPlanner
 {
-    internal RouteInitTargetResolution Resolve(RouteInitRequest request)
-        => Resolve(request, WorkspaceLayout.Create(request.Workspace, WorkspaceLayout.DefaultMainRoot));
 
     internal RouteInitTargetResolution Resolve(RouteInitRequest request, WorkspaceLayout layout)
     {

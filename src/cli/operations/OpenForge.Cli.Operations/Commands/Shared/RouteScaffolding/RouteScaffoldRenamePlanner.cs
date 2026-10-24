@@ -16,8 +16,6 @@ namespace OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 /// </summary>
 internal sealed class RouteScaffoldRenamePlanner
 {
-    internal RouteScaffoldEntrypointIntent Decide(RouteScaffoldRenameCandidate candidate, RouteScaffoldRenameProof? proof)
-        => Decide(SourceContentRoots.Default, candidate, proof);
 
     internal RouteScaffoldEntrypointIntent Decide(WorkspaceLayout layout, RouteScaffoldRenameCandidate candidate, RouteScaffoldRenameProof? proof)
         => Decide(new SourceContentRoots(layout), candidate, proof);

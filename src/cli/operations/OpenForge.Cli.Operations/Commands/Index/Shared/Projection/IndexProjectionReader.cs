@@ -109,6 +109,7 @@ internal sealed class IndexProjectionReader
             SelectedSources = selected,
             Policy = new()
             {
+                Layout = layout,
                 Settings = settings.Document,
                 Ownership = ownership.Document,
             },

@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Selection;
 using OpenForge.Cli.Core.Framework.Sources.Selection;
 using OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Selection;
 
@@ -117,7 +118,7 @@ public sealed class SourceUniverseFilterResolverTests
 
     private static SourceCatalogue Catalogue(params SourceLogicalSource[] sources)
         => new(
-            SourceInventoryTestData.Workspace(),
+WorkspaceLayout.Create(SourceInventoryTestData.Workspace(), WorkspaceLayout.DefaultMainRoot),
             sources.SelectMany(source =>
             {
                 var values = new List<SourceCandidate>

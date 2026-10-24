@@ -46,9 +46,7 @@ internal sealed class RoutedMetadataCompletionPolicy
         if ((context.Ownership.Framework?.Regions ?? []).Concat(context.Ownership.Extensions.SelectMany(owner => owner.Regions))
                 .Any(region => region.Path == path && region.Region != WorkspaceOwnershipDefinitions.EntriesRegion))
             return RoutedMetadataEligibility.GeneratedContent;
-        if (context.Layout is { } layout
-            ? WorkspaceRemovals.IsPathRemoved(layout, path, context.Settings)
-            : WorkspaceRemovals.IsPathRemoved(path, context.Settings)) return RoutedMetadataEligibility.SettingsExcluded;
+        if (WorkspaceRemovals.IsPathRemoved(context.Layout, path, context.Settings)) return RoutedMetadataEligibility.SettingsExcluded;
 
         var privateRoutes = context.Ownership.Framework?.GitIgnoredRoutes ?? [];
         if (!privateRoutes.IsEmpty && !new SourceSharing(privateRoutes).Includes(path))

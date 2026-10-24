@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Status;
+using OpenForge.Cli.Core.Commands.Shared.Models.Layout;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -97,8 +98,7 @@ internal sealed record StatusFacts
 
 internal sealed record StatusResult : ICliCommandResult
 {
-    internal string? CustomMainRoot { get; init; }
-    internal string? CustomLoaderPath { get; init; }
+    internal WorkspaceLayoutInfo? Layout { get; init; }
     public string Command => StatusDefinitions.CommandIdentity;
 
     public required CliSemanticStatus Status { get; init; }

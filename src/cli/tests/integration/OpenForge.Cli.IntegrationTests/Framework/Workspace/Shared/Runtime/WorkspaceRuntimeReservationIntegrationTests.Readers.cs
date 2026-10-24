@@ -18,6 +18,7 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Snapshots;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Workspace.Shared.Runtime;
 
@@ -89,7 +90,7 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         SeedWorkspace(files);
         SeedRuntimeLinks(files);
         var workspace = Workspace(files);
-        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(workspace, Token);
+        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), Token);
         var reads = new List<string>();
         var resolver = new SourceLinkDestinationResolver(new PhysicalPathResolver(), (physical, logical, token) =>
         {

@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 
@@ -14,13 +15,6 @@ internal enum RouteSourceKind
 
 internal sealed class RouteSource
 {
-    internal RouteSource(
-        RouteSourceDocument @base,
-        RouteSourceMetadata metadata,
-        RouteSourceKind kind,
-        RouteSourceDocument? overwrite = null,
-        bool isRouteAmbiguous = false)
-        : this(DefaultIdentity(@base), @base, metadata, kind, overwrite, isRouteAmbiguous) { }
 
     internal RouteSource(SourceLogicalIdentity identity, RouteSourceDocument @base, RouteSourceMetadata metadata,
         RouteSourceKind kind, RouteSourceDocument? overwrite = null, bool isRouteAmbiguous = false)
@@ -70,13 +64,6 @@ internal sealed class RouteSource
     internal string PhysicalPath => Base.PhysicalPath;
 
     internal string? OverwritePath => Overwrite?.CanonicalLogicalPath;
-
-    private static SourceLogicalIdentity DefaultIdentity(RouteSourceDocument @base)
-    {
-        ArgumentNullException.ThrowIfNull(@base);
-        return new(SourceIdentity.DeriveId(@base.CanonicalLogicalPath)
-            ?? throw new ArgumentException("The source base path does not have a derivable automatic ID.", nameof(@base)), @base.CanonicalLogicalPath);
-    }
 
     private static void ValidateKindAndForm(RouteSourceKind kind, SourceDocumentForm form)
     {

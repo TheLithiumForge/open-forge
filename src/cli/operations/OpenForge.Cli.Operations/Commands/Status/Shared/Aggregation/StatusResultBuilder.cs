@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Status.Models.Operation;
+using OpenForge.Cli.Core.Commands.Shared.Layout;
 using OpenForge.Cli.Core.Commands.Status.Models.Request;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
@@ -42,8 +43,7 @@ internal static class StatusResultBuilder
             Status = status,
             Workspace = request.Workspace,
             Next = StatusResultPolicy.ReadNext(status, findings),
-            CustomMainRoot = observations.Layout is { IsDefault: false } mainLayout ? mainLayout.MainRoot : null,
-            CustomLoaderPath = observations.Layout is { IsDefault: false } loaderLayout ? loaderLayout.LoaderPath : null,
+            Layout = WorkspaceLayoutProjection.Project(observations.Layout),
             Facts = facts,
             Findings = findings,
         };
