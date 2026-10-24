@@ -22,7 +22,7 @@ public sealed class DoctorLifecycleAbsenceTests
         var support = new DoctorOperationTestSupport();
         support.ExtensionLifecycle.View = MissingExtensionView();
 
-        var result = await new DoctorOperation(support.Catalogue)
+        var result = await new DoctorOperation(support.Catalogue, readLayout: DoctorOperationTestSupport.ReadLayout)
             .ExecuteAsync(
                 new DoctorRequest(DoctorOperationTestSupport.Workspace()),
                 CancellationToken.None);
@@ -57,7 +57,7 @@ public sealed class DoctorLifecycleAbsenceTests
         support.Routes.SourceInventory = RouteSourceInventoryState.Incomplete;
         support.ExtensionLifecycle.View = MissingExtensionView();
 
-        var result = await new DoctorOperation(support.Catalogue)
+        var result = await new DoctorOperation(support.Catalogue, readLayout: DoctorOperationTestSupport.ReadLayout)
             .ExecuteAsync(
                 new DoctorRequest(DoctorOperationTestSupport.Workspace()),
                 CancellationToken.None);
@@ -87,7 +87,7 @@ public sealed class DoctorLifecycleAbsenceTests
             Cause: null);
         support.ExtensionLifecycle.View = MissingExtensionView();
 
-        var result = await new DoctorOperation(support.Catalogue)
+        var result = await new DoctorOperation(support.Catalogue, readLayout: DoctorOperationTestSupport.ReadLayout)
             .ExecuteAsync(
                 new DoctorRequest(DoctorOperationTestSupport.Workspace()),
                 CancellationToken.None);

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Shared.NavigationSharing.Models;
@@ -41,27 +42,41 @@ namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Maintenance;
 internal sealed class DoctorMaintenanceReader(RenameEvidenceReader renames, Func<string, string>? readRouteParent = null,
     PhysicalPathResolver? physicalPaths = null)
 {
+    private static DoctorMaintenanceObservation Unavailable() => new()
+    {
+        Eligibility = ImmutableDictionary<string, RoutedMetadataEligibility>.Empty,
+        IndexablePaths = [],
+        ChainGapPaths = [],
+        OldNavigationPaths = ImmutableDictionary<string, string>.Empty,
+        Renames = null,
+    };
+
     internal const int MaximumConcurrentSources = 8;
     private readonly Func<string, string> _readRouteParent = readRouteParent ?? SourceLogicalPath.ReadParent;
     private readonly RoutedMetadataCompletionPolicy _metadata = new();
     private readonly FrameworkMetadataCompleter _completion = new();
 
-    internal ValueTask<DoctorMaintenanceObservation> ReadAsync(
+    internal async ValueTask<DoctorMaintenanceObservation> ReadAsync(
         RouteDoctorView routes, LocalReferenceDoctorView references, NavigationSharingRead sharing, CancellationToken token)
-        => ReadAsync(routes, Task.FromResult(references), sharing, token);
+    {
+        if (routes.Catalogue is not { } catalogue) return Unavailable();
+        var observation = await new WorkspaceLayoutReader(physicalPaths ?? new PhysicalPathResolver()).ReadAsync(catalogue.Workspace, token).ConfigureAwait(false);
+        return await ReadAsync(routes, Task.FromResult(references), sharing, observation, token).ConfigureAwait(false);
+    }
 
     internal async ValueTask<DoctorMaintenanceObservation> ReadAsync(
-        RouteDoctorView routes, Task<LocalReferenceDoctorView> referenceRead, NavigationSharingRead sharing, CancellationToken token)
+        RouteDoctorView routes, Task<LocalReferenceDoctorView> referenceRead, NavigationSharingRead sharing, WorkspaceLayoutRead observation, CancellationToken token)
     {
         var paths = (physicalPaths ?? new PhysicalPathResolver()).CreateReadSession();
-        var catalogue = routes.Catalogue;
+        if (routes.Catalogue is not { } catalogue) return Unavailable();
         var workspace = catalogue.Workspace;
-        var protection = await new ReferenceProtectionReader(paths).ReadAsync(workspace, token).ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
+        var protection = ReferenceProtectionReader.Read(observation);
+        var settings = observation.Settings;
         var policyAvailable = settings.State is WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete
             && sharing.Ownership.State is WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete;
         var context = new RoutedMetadataPolicyContext
         {
+            Layout = catalogue.Layout,
             Settings = settings.Document,
             Ownership = sharing.Ownership.Document,
         };
@@ -142,8 +157,9 @@ internal sealed class DoctorMaintenanceReader(RenameEvidenceReader renames, Func
         {
             var policy = new RenameEvidencePolicy
             {
+                Layout = catalogue.Layout,
                 ManagedPaths = [.. context.Ownership.ManagedPaths().Select(claim => claim.Path)],
-                ExcludedPaths = [.. catalogue.Candidates.Where(candidate => WorkspaceRemovals.IsPathRemoved(candidate.CanonicalPath, context.Settings))
+                ExcludedPaths = [.. catalogue.Candidates.Where(candidate => WorkspaceRemovals.IsPathRemoved(catalogue.Layout, candidate.CanonicalPath, context.Settings))
                     .Select(candidate => candidate.CanonicalPath), .. context.Settings.RemovedFiles, .. context.Settings.RemovedDirectories],
                 PrivatePaths = [.. context.Ownership.Framework?.GitIgnoredRoutes.Select(route => route.Directory) ?? []],
                 ProjectionPaths = [.. context.Ownership.Libraries.SelectMany(library => library.Paths)],
@@ -159,7 +175,7 @@ internal sealed class DoctorMaintenanceReader(RenameEvidenceReader renames, Func
             foreach (var source in catalogue.Sources.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form) || source.Base.Form == SourceDocumentForm.Loader))
             {
                 var path = source.Identity.CanonicalBasePath;
-                if (!RenameCandidateAdmission.Allows(path, recordPolicy) && path != SourceLogicalPath.LoaderPath) continue;
+                if (!RenameCandidateAdmission.Allows(path, recordPolicy) && path != catalogue.Layout.LoaderPath) continue;
                 if (NoFollowLeafObserver.Observe(paths, workspace, SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, path), token).State != NoFollowLeafState.OrdinaryFile) continue;
                 try
                 {
@@ -168,7 +184,7 @@ internal sealed class DoctorMaintenanceReader(RenameEvidenceReader renames, Func
                     var text = System.Text.Encoding.UTF8.GetString(bytes);
                     var document = documents.TryGetValue(path, out var retained) && retained is not null && string.Equals(retained.Source, text, StringComparison.Ordinal)
                         ? retained : parser.Parse(text);
-                    records.AddRange(RenameRecordedEntryReader.Read(path, snapshot, document));
+                    records.AddRange(RenameRecordedEntryReader.Read(catalogue.Layout, path, snapshot, document));
                 }
                 catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or System.Text.DecoderFallbackException or ArgumentException or InvalidOperationException) { }
             }

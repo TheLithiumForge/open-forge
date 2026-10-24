@@ -29,7 +29,9 @@ internal static class CliPromptWording
     internal static string RequiredBy(string labels) => $"Required by {labels}.";
 
     // @OpenForgeText shared.wording.writes-outside-agents
-    internal static string Permission(string owner) => $"Allow {owner} to change these paths outside .agents?";
+    internal static string Permission(string owner, string? contextFolder = null) => contextFolder is null
+        ? $"Allow {owner} to change these paths outside .agents?"
+        : $"Allow {owner} to change these paths outside the context folder ({contextFolder}) and native Skills?";
 
     // @OpenForgeText shared.wording.directory-everything-under-it
     internal static string Directory(string path) => $"{path} (folder and everything below it)";
@@ -87,5 +89,7 @@ internal static class CliPromptWording
         => string.Create(CultureInfo.InvariantCulture, $"Paths {page + 1}/{count}  pgup/pgdn review");
 
     // @OpenForgeText shared.wording.permission-heading
-    internal static string PermissionHeading() => "Allow changes outside .agents?";
+    internal static string PermissionHeading(string? contextFolder = null) => contextFolder is null
+        ? "Allow changes outside .agents?"
+        : $"Allow changes outside the context folder ({contextFolder}) and native Skills?";
 }

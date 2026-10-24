@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Git;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
@@ -33,19 +34,32 @@ internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReade
         => ReadEvidenceAsync(workspace, references: null, token);
 
     internal async ValueTask<RenameEvidenceResult> ReadEvidenceAsync(CliWorkspace workspace, LocalReferenceDoctorView? references, CancellationToken token)
-        => await ReadEvidenceAsync(references?.Catalogue?.Layout ?? WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), references, token).ConfigureAwait(false);
+    {
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, token).ConfigureAwait(false);
+        return await ReadEvidenceAsync(observation, references, token).ConfigureAwait(false);
+    }
 
     internal async ValueTask<RenameEvidenceResult> ReadEvidenceAsync(WorkspaceLayout layout, LocalReferenceDoctorView? references, CancellationToken token)
     {
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(layout.Workspace, token).ConfigureAwait(false);
+        if (observation.Layout?.MainRoot != layout.MainRoot)
+            return Unavailable(observation, "The selected layout changed before rename evidence was acquired.");
+        observation = new WorkspaceLayoutRead(observation.State, observation.Settings, observation.Ownership, layout, observation.Issues, observation.Expectations);
+        return await ReadEvidenceAsync(observation, references, token).ConfigureAwait(false);
+    }
+
+    internal async ValueTask<RenameEvidenceResult> ReadEvidenceAsync(WorkspaceLayoutRead observation, LocalReferenceDoctorView? references, CancellationToken token)
+    {
+        if (observation.Layout is not { } layout) return Unavailable(observation, observation.Issues.FirstOrDefault()?.Cause);
         var workspace = layout.Workspace;
         var paths = new PhysicalPathResolver().CreateReadSession();
         var catalogue = references?.Catalogue
             ?? await new SourceCatalogueReader().ReadAsync(new(layout, layout.SourceRoots), token).ConfigureAwait(false);
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
+        var ownership = observation.Ownership;
+        var settings = observation.Settings;
         var policy = new RenameEvidencePolicy
         {
-            Roots = new SourceContentRoots(layout),
+            Layout = layout,
             ManagedPaths = [.. ownership.Document.ManagedPaths().Select(claim => claim.Path)],
             ExcludedPaths = [.. catalogue.Candidates.Where(candidate => WorkspaceRemovals.IsPathRemoved(layout, candidate.CanonicalPath, settings.Document))
                 .Select(candidate => candidate.CanonicalPath), .. settings.Document.RemovedFiles, .. settings.Document.RemovedDirectories],
@@ -90,6 +104,19 @@ internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReade
                 settings.Snapshot?.Expectation ?? FileExpectation.Missing(settings.LogicalPath)],
         }, token).ConfigureAwait(false);
     }
+
+    private static RenameEvidenceResult Unavailable(WorkspaceLayoutRead observation, string? cause)
+        => new(new RenameEvidenceFacts
+        {
+            Layout = null,
+            UnavailableCause = cause,
+            CandidateUniverseComplete = false,
+            Candidates = [],
+            MissingPaths = [],
+            OldIdentities = [],
+            Git = RenameGitObservation.Unavailable(RenameGitAvailability.Unavailable),
+            PolicyExpectations = observation.Expectations,
+        }, []);
 
     public async ValueTask<RouteScaffoldRenameProof?> ReadAsync(WorkspaceLayout layout, RouteScaffoldRenameCandidate candidate, CancellationToken token)
     {

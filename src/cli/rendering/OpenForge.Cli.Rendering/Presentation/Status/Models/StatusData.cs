@@ -36,6 +36,7 @@ internal sealed record StatusData
 
 internal sealed record StatusDataTextFacts
 {
+    public string? CustomMainRoot { get; init; }
     public bool ShowOperationalSections { get; init; }
     public bool ShowStandard { get; init; }
     public bool ShowFull { get; init; }

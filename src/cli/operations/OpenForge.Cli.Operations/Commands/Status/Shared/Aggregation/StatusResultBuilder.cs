@@ -31,16 +31,19 @@ internal static class StatusResultBuilder
                     .Where(target => target.State == OperationalGeneratedNavigationState.Current)
                     .Select(target => target.Path)
                     .ToHashSet(StringComparer.Ordinal)),
-            Library = StatusLibraryAggregator.Build(observations.Libraries),
+            Library = StatusLibraryAggregator.Build(observations.Layout, observations.Libraries),
             Recovery = StatusRecoveryAggregator.Build(observations.RecoveryResiduals),
         };
-        var findings = StatusFindingAggregator.Build(observations, facts);
+        var findings = StatusFindingAggregator.Build(observations, facts)
+            .Select(finding => finding with { CustomLoaderPath = observations.Layout is { IsDefault: false } loaderLayout ? loaderLayout.LoaderPath : null }).ToArray();
         var status = StatusResultPolicy.ReadStatus(findings);
         return new StatusResult
         {
             Status = status,
             Workspace = request.Workspace,
             Next = StatusResultPolicy.ReadNext(status, findings),
+            CustomMainRoot = observations.Layout is { IsDefault: false } mainLayout ? mainLayout.MainRoot : null,
+            CustomLoaderPath = observations.Layout is { IsDefault: false } loaderLayout ? loaderLayout.LoaderPath : null,
             Facts = facts,
             Findings = findings,
         };

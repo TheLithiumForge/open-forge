@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
@@ -52,12 +54,12 @@ public sealed class OperationalContributorCatalogueTests
     private sealed class WorkspaceEntryContributor : IWorkspaceEntryOperationalContributor
     {
         public ValueTask<WorkspaceEntryStatusView> ReadStatusAsync(
-            CliWorkspace workspace,
+            CliWorkspace workspace, WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
             => throw NotInvoked();
 
         public ValueTask<WorkspaceEntryDoctorView> ReadDoctorAsync(
-            CliWorkspace workspace,
+            CliWorkspace workspace, WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
             => throw NotInvoked();
     }
@@ -78,13 +80,13 @@ public sealed class OperationalContributorCatalogueTests
     private sealed class RouteContributor : IRouteOperationalContributor
     {
         public ValueTask<RouteStatusView> ReadStatusAsync(
-            CliWorkspace workspace,
+            WorkspaceLayoutRead observation,
             SourceSharing? sharing,
             CancellationToken cancellationToken)
             => throw NotInvoked();
 
         public ValueTask<RouteDoctorView> ReadDoctorAsync(
-            CliWorkspace workspace,
+            WorkspaceLayoutRead observation,
             SourceSharing? sharing,
             CancellationToken cancellationToken)
             => throw NotInvoked();
@@ -93,7 +95,7 @@ public sealed class OperationalContributorCatalogueTests
     private sealed class LocalReferenceContributor : ILocalReferenceOperationalContributor
     {
         public ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(
-            CliWorkspace workspace,
+            WorkspaceLayoutRead observation,
             CancellationToken cancellationToken,
             RouteDoctorView? routes = null)
             => throw NotInvoked();
@@ -102,13 +104,12 @@ public sealed class OperationalContributorCatalogueTests
     private sealed class FrameworkLifecycleContributor : IFrameworkLifecycleOperationalContributor
     {
         public ValueTask<FrameworkLifecycleStatusView> ReadStatusAsync(
-            CliWorkspace workspace,
-            WorkspaceOwnershipRead ownership,
+            WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
             => throw NotInvoked();
 
         public ValueTask<FrameworkLifecycleDoctorView> ReadDoctorAsync(
-            CliWorkspace workspace,
+            WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
             => throw NotInvoked();
     }
@@ -116,13 +117,12 @@ public sealed class OperationalContributorCatalogueTests
     private sealed class ExtensionLifecycleContributor : IExtensionLifecycleOperationalContributor
     {
         public ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(
-            CliWorkspace workspace,
-            WorkspaceOwnershipRead ownership,
+            WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
             => throw NotInvoked();
 
         public ValueTask<ExtensionLifecycleDoctorView> ReadDoctorAsync(
-            CliWorkspace workspace,
+            WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
             => throw NotInvoked();
     }

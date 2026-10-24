@@ -37,6 +37,7 @@ internal sealed class RenameEvidenceReader(PhysicalPathResolver physicalPathReso
         {
             return new RenameEvidenceResult(new RenameEvidenceFacts
             {
+                Layout = request.Policy.Layout,
                 Candidates = [],
                 MissingPaths = [],
                 OldIdentities = [],
@@ -145,6 +146,7 @@ internal sealed class RenameEvidenceReader(PhysicalPathResolver physicalPathReso
 
         var facts = new RenameEvidenceFacts
         {
+            Layout = request.Policy.Layout,
             Candidates = candidates,
             MissingPaths = missingPaths.OfType<RenameMissingPath>().ToImmutableArray(),
             OldIdentities = old.ToImmutable(),

@@ -22,6 +22,10 @@ internal enum DoctorMaintenanceCondition
 internal sealed record DoctorMaintenanceAdvice
 {
     public required DoctorMaintenanceCondition Condition { get; init; }
+    internal string? DisplayOldPath { get; init; }
+    internal string? DisplayNewPath { get; init; }
+    internal string? GuidanceDirectory { get; init; }
+    internal string? LoaderPath { get; init; }
     public string? OldPath { get; init; }
     public string? NewPath { get; init; }
     public string? CanonicalName { get; init; }

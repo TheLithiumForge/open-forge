@@ -234,7 +234,7 @@ internal static class DoctorReportSelector
             Code = DoctorWording.MachineCode(finding.Kind),
             Title = finding.LinkRecreation is not null
                 ? global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Title()
-                : DoctorWording.Title(finding.Kind),
+                : DoctorWording.Title(finding),
             Message = DoctorWording.Message(finding),
             Subject = Subject(finding),
             Category = DoctorWording.Category(finding.Kind),

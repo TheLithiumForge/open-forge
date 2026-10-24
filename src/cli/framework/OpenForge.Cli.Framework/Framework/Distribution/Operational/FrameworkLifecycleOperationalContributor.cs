@@ -16,12 +16,11 @@ namespace OpenForge.Cli.Core.Framework.Distribution.Operational;
 internal interface IFrameworkLifecycleOperationalContributor
 {
     ValueTask<FrameworkLifecycleStatusView> ReadStatusAsync(
-        CliWorkspace workspace,
-        WorkspaceOwnershipRead ownership,
+        WorkspaceLayoutRead observation,
         CancellationToken cancellationToken);
 
     ValueTask<FrameworkLifecycleDoctorView> ReadDoctorAsync(
-        CliWorkspace workspace,
+        WorkspaceLayoutRead observation,
         CancellationToken cancellationToken);
 }
 
@@ -29,12 +28,22 @@ internal sealed class FrameworkLifecycleOperationalContributor(
     PhysicalPathResolver physicalPathResolver,
     FrameworkLifecycleTargetReader targetReader) : IFrameworkLifecycleOperationalContributor
 {
+    internal async ValueTask<FrameworkLifecycleDoctorView> ReadDoctorAsync(CliWorkspace workspace, CancellationToken cancellationToken)
+        => await ReadDoctorAsync(await new WorkspaceLayoutReader(physicalPathResolver).ReadAsync(workspace, cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+
+    internal async ValueTask<FrameworkLifecycleStatusView> ReadStatusAsync(CliWorkspace workspace, WorkspaceOwnershipRead ownership, CancellationToken cancellationToken)
+    {
+        var observed = await new WorkspaceLayoutReader(physicalPathResolver).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var retained = new WorkspaceLayoutRead(observed.State, observed.Settings, ownership, observed.Layout, observed.Issues, observed.Expectations);
+        return await ReadStatusAsync(retained, cancellationToken).ConfigureAwait(false);
+    }
+
     internal async ValueTask<FrameworkLifecycleStatusView> ReadStatusAsync(
-        CliWorkspace workspace,
-        WorkspaceOwnershipRead ownership,
+        WorkspaceLayoutRead observation,
         CancellationToken cancellationToken)
     {
-        var view = await ReadAsync(workspace, ownership, cancellationToken).ConfigureAwait(false);
+        var ownership = observation.Ownership;
+        var view = await ReadAsync(observation, cancellationToken).ConfigureAwait(false);
         return new FrameworkLifecycleStatusView
         {
             State = view.State,
@@ -52,24 +61,21 @@ internal sealed class FrameworkLifecycleOperationalContributor(
     }
 
     internal async ValueTask<FrameworkLifecycleDoctorView> ReadDoctorAsync(
-        CliWorkspace workspace,
+        WorkspaceLayoutRead observation,
         CancellationToken cancellationToken)
     {
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(
-            physicalPathResolver, workspace, cancellationToken).ConfigureAwait(false);
-        return await ReadAsync(workspace, ownership, cancellationToken).ConfigureAwait(false);
+        return await ReadAsync(observation, cancellationToken).ConfigureAwait(false);
     }
 
     ValueTask<FrameworkLifecycleStatusView> IFrameworkLifecycleOperationalContributor.ReadStatusAsync(
-        CliWorkspace workspace,
-        WorkspaceOwnershipRead ownership,
+        WorkspaceLayoutRead observation,
         CancellationToken cancellationToken)
-        => ReadStatusAsync(workspace, ownership, cancellationToken);
+        => ReadStatusAsync(observation, cancellationToken);
 
     ValueTask<FrameworkLifecycleDoctorView> IFrameworkLifecycleOperationalContributor.ReadDoctorAsync(
-        CliWorkspace workspace,
+        WorkspaceLayoutRead observation,
         CancellationToken cancellationToken)
-        => ReadDoctorAsync(workspace, cancellationToken);
+        => ReadDoctorAsync(observation, cancellationToken);
 
     internal static string? ReadOwnershipObservation(WorkspaceOwnershipRead ownership)
         => ownership.State != WorkspaceOwnershipReadState.Complete
@@ -79,21 +85,21 @@ internal sealed class FrameworkLifecycleOperationalContributor(
                 : null;
 
     private async ValueTask<FrameworkLifecycleDoctorView> ReadAsync(
-        CliWorkspace workspace,
-        WorkspaceOwnershipRead ownership,
+        WorkspaceLayoutRead observation,
         CancellationToken cancellationToken)
     {
+        var ownership = observation.Ownership;
         var payload = EmbeddedFrameworkPayloadReader.Read();
-        var settings = await WorkspaceSettingsReader.ReadAsync(physicalPathResolver, workspace, cancellationToken).ConfigureAwait(false);
+        var settings = observation.Settings;
         FrontmatterForm? form = settings.State is WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete
             ? settings.Document.Frontmatter : null;
         IReadOnlyList<FrameworkManagedTargetDoctorObservation> targets =
             ownership.Document.Framework is { } framework && payload.Payload is { } value
-                ? await targetReader.ReadDoctorAsync(workspace, framework, value, form, cancellationToken).ConfigureAwait(false)
+                ? await targetReader.ReadDoctorAsync(observation.Layout, framework, value, form, cancellationToken, observation.Issues.FirstOrDefault()?.Cause).ConfigureAwait(false)
                 : [];
         var sourceAvailability = ownership.Document.Framework is null
             ? OperationalSourceAvailability.NotApplicable
-            : payload.State == FrameworkPayloadReadState.Available
+            : observation.Layout is not null && payload.State == FrameworkPayloadReadState.Available
                 && targets.All(target => target.Target.Source.State == FrameworkTargetSourceState.Valid)
                 ? OperationalSourceAvailability.Available
                 : OperationalSourceAvailability.Unavailable;

@@ -11,6 +11,9 @@ internal sealed class RenameEvidenceEvaluator(Action<string, string>? contentCom
     internal RenameEvidenceResult Evaluate(RenameEvidenceFacts facts, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(facts);
+        if (facts.Layout is not { } layout)
+            return new(facts with { CandidateUniverseComplete = false }, [.. facts.MissingPaths.Select(missing =>
+                new RenamePathResolution(missing.Path, RenameResolution.IncompleteUniverse, [], [], []))]);
         var aliases = facts.Candidates;
         var physicalComparer = PhysicalIdentityTracker.PathComparer;
         var candidates = facts.Candidates.OrderBy(candidate => candidate.Path, StringComparer.Ordinal)
@@ -41,7 +44,7 @@ internal sealed class RenameEvidenceEvaluator(Action<string, string>? contentCom
             var weak = weakFilter.Read(facts.WeakCandidates, missing.Path);
             var guidedPaths = weak.Select(observation => observation.Candidate.Path)
                 .Concat(candidates.Where(candidate => oldByPath[missing.Path].Any(old =>
-                    RenameMetadataIdentity.Matches(old.Metadata, candidate.Metadata) && RenameMetadataIdentity.IsDistinctLabel(old, candidate)))
+                    RenameMetadataIdentity.Matches(old.Metadata, candidate.Metadata) && RenameMetadataIdentity.IsDistinctLabel(layout, old, candidate)))
                     .Select(candidate => candidate.Path))
                 .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToImmutableArray();
             resolutions.Add(new RenamePathResolution(missing.Path, Resolve(strong.Count, guidedPaths.Length, facts.CandidateUniverseComplete), strong.ToImmutable(), weak, guidedPaths));
@@ -61,6 +64,7 @@ internal sealed class RenameEvidenceEvaluator(Action<string, string>? contentCom
         RenameCurrentCandidate candidate,
         CancellationToken cancellationToken)
     {
+        if (facts.Layout is not { } layout) yield break;
         // A timeout leaves committed successor identities unknown, including identities that contradict stale metadata.
         if (facts.Git.Availability == RenameGitAvailability.TimedOut) yield break;
 
@@ -83,7 +87,7 @@ internal sealed class RenameEvidenceEvaluator(Action<string, string>? contentCom
             }
         }
 
-        if (RenameMetadataIdentity.Matches(old.Metadata, candidate.Metadata) && RenameMetadataIdentity.IsDistinctLabel(old, candidate)
+        if (RenameMetadataIdentity.Matches(old.Metadata, candidate.Metadata) && RenameMetadataIdentity.IsDistinctLabel(facts.Layout, old, candidate)
             && facts.Candidates.Count(current => RenameMetadataIdentity.Matches(current.Metadata, old.Metadata)) == 1
             && facts.OldIdentities.Where(record => RenameMetadataIdentity.Matches(record.Metadata, old.Metadata)).Select(record => record.Path).Distinct().Count() == 1
             && !facts.OldIdentities.Any(record => record.Path == candidate.Path && record.Path != old.Path))

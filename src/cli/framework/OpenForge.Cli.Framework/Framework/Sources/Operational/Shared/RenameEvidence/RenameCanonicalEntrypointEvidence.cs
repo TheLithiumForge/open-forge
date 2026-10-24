@@ -10,7 +10,7 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence
 internal static class RenameCanonicalEntrypointEvidence
 {
     internal static ImmutableArray<RenameCanonicalEntrypointMove> Read(RenameEvidenceResult result)
-        => Read(SourceContentRoots.Default, result);
+        => result.Facts.Layout is { } layout ? Read(layout, result) : [];
 
     internal static ImmutableArray<RenameCanonicalEntrypointMove> Read(WorkspaceLayout layout, RenameEvidenceResult result)
         => Read(new SourceContentRoots(layout), result);

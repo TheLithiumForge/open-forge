@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Reading;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
@@ -22,20 +23,22 @@ internal sealed class FrameworkLifecycleTargetReader(PhysicalPathResolver physic
         new ManagedTargetReader(physicalPathResolver));
 
     internal async ValueTask<IReadOnlyList<FrameworkManagedTargetObservation>> ReadAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout? layout,
         FrameworkOwnership ownership,
         FrameworkPayload payload,
         FrontmatterForm? form,
-        CancellationToken cancellationToken)
-        => (await ReadDoctorAsync(workspace, ownership, payload, form, cancellationToken).ConfigureAwait(false))
+        CancellationToken cancellationToken,
+        string? unavailableCause = null)
+        => (await ReadDoctorAsync(layout, ownership, payload, form, cancellationToken, unavailableCause).ConfigureAwait(false))
             .Select(observation => observation.Target).ToArray();
 
     internal async ValueTask<IReadOnlyList<FrameworkManagedTargetDoctorObservation>> ReadDoctorAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout? layout,
         FrameworkOwnership ownership,
         FrameworkPayload payload,
         FrontmatterForm? form,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string? unavailableCause = null)
     {
         var observations = new List<FrameworkManagedTargetDoctorObservation>();
         var identities = ownership.Paths.Select(path => (Path: path, Region: path is FrameworkPayloadAsset.RootAgentPath or FrameworkPayloadAsset.RootClaudePath
@@ -47,8 +50,10 @@ internal sealed class FrameworkLifecycleTargetReader(PhysicalPathResolver physic
         foreach (var (path, region) in identities)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var intent = ReadIntent(workspace, path, region, payload, form);
-            var read = await _targetStateReader.ReadAsync(workspace, intent, cancellationToken).ConfigureAwait(false);
+            var intent = ReadIntent(layout, path, region, payload, form, unavailableCause);
+            var read = layout is null
+                ? FrameworkManagedTargetDoctorRead.Unavailable(unavailableCause ?? intent.Source.Cause ?? "The intended Framework target is unavailable.")
+                : await _targetStateReader.ReadAsync(layout.Workspace, intent, cancellationToken).ConfigureAwait(false);
             var target = new FrameworkManagedTargetObservation
             {
                 Path = path,
@@ -75,7 +80,7 @@ internal sealed class FrameworkLifecycleTargetReader(PhysicalPathResolver physic
         return observations.ToArray();
     }
 
-    private FrameworkManagedTargetIntent ReadIntent(CliWorkspace workspace, string path, string? region, FrameworkPayload payload, FrontmatterForm? form)
+    private FrameworkManagedTargetIntent ReadIntent(WorkspaceLayout? layout, string path, string? region, FrameworkPayload payload, FrontmatterForm? form, string? unavailableCause)
     {
         var kind = FrameworkManagedTargetKind.File;
         if (region == WorkspaceOwnershipDefinitions.EntriesRegion)
@@ -86,10 +91,14 @@ internal sealed class FrameworkLifecycleTargetReader(PhysicalPathResolver physic
         {
             kind = FrameworkManagedTargetKind.ManagedRegion;
         }
-        var asset = kind == FrameworkManagedTargetKind.GeneratedRegion ? null : FrameworkSourceAlignment.ReadAsset(workspace, path, payload);
+        var asset = layout is null || kind == FrameworkManagedTargetKind.GeneratedRegion ? null : FrameworkSourceAlignment.ReadAsset(layout, path, payload);
         string? fingerprint = null;
         string? cause = null;
-        if (region is not null && region != WorkspaceOwnershipDefinitions.EntriesRegion
+        if (layout is null)
+        {
+            cause = unavailableCause;
+        }
+        else if (region is not null && region != WorkspaceOwnershipDefinitions.EntriesRegion
             && !(kind == FrameworkManagedTargetKind.ManagedRegion && region == WorkspaceOwnershipDefinitions.ManagedBlockRegion))
         {
             cause = "The recorded Framework region has no supported current comparison.";
@@ -108,7 +117,7 @@ internal sealed class FrameworkLifecycleTargetReader(PhysicalPathResolver physic
             {
                 try
                 {
-                    var rendered = WorkspacePayloadRenderer.Render(path, asset.Bytes.AsMemory(), form.Value);
+                    var rendered = WorkspacePayloadRenderer.Render(layout, asset.Path, asset.Bytes.AsMemory(), form.Value);
                     if (rendered.Bytes is { } bytes)
                     {
                         fingerprint = _targetStateReader.ReadFingerprint(kind, bytes.Span);

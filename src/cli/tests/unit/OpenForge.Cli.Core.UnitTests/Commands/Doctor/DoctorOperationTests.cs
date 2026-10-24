@@ -17,7 +17,7 @@ public sealed class DoctorOperationTests
     {
         var support = new DoctorOperationTestSupport();
         var workspace = DoctorOperationTestSupport.Workspace();
-        var result = await new DoctorOperation(support.Catalogue)
+        var result = await new DoctorOperation(support.Catalogue, readLayout: DoctorOperationTestSupport.ReadLayout)
             .ExecuteAsync(new DoctorRequest(workspace), CancellationToken.None);
 
         Assert.Equal(
@@ -54,7 +54,7 @@ public sealed class DoctorOperationTests
     {
         var support = new DoctorOperationTestSupport();
         support.ExtensionLifecycle.View = CreatePluralSourceView();
-        var result = await new DoctorOperation(support.Catalogue)
+        var result = await new DoctorOperation(support.Catalogue, readLayout: DoctorOperationTestSupport.ReadLayout)
             .ExecuteAsync(
                 new DoctorRequest(DoctorOperationTestSupport.Workspace()),
                 CancellationToken.None);

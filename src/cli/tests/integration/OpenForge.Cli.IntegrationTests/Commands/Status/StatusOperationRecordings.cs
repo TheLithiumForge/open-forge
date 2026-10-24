@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
@@ -99,15 +101,16 @@ internal sealed class StatusOperationRecordings
         : RecordingWorkspaceStatusContributor, IWorkspaceEntryOperationalContributor
     {
         public ValueTask<WorkspaceEntryStatusView> ReadStatusAsync(
-            CliWorkspace workspace,
+            CliWorkspace workspace, WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
         {
+
             Record(workspace, cancellationToken);
             return ValueTask.FromResult(StatusOperationViewSeeds.WorkspaceEntry());
         }
 
         public ValueTask<WorkspaceEntryDoctorView> ReadDoctorAsync(
-            CliWorkspace workspace,
+            CliWorkspace workspace, WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
             => throw DoctorViewException();
     }
@@ -133,16 +136,18 @@ internal sealed class StatusOperationRecordings
         : RecordingWorkspaceStatusContributor, IRouteOperationalContributor
     {
         public ValueTask<RouteStatusView> ReadStatusAsync(
-            CliWorkspace workspace,
+            WorkspaceLayoutRead observation,
             SourceSharing? sharing,
             CancellationToken cancellationToken)
         {
+            var workspace = observation.Layout?.Workspace ?? throw new InvalidOperationException();
+
             Record(workspace, cancellationToken);
             return ValueTask.FromResult(StatusOperationViewSeeds.Routes());
         }
 
         public ValueTask<RouteDoctorView> ReadDoctorAsync(
-            CliWorkspace workspace,
+            WorkspaceLayoutRead observation,
             SourceSharing? sharing,
             CancellationToken cancellationToken)
             => throw DoctorViewException();
@@ -153,10 +158,12 @@ internal sealed class StatusOperationRecordings
         internal int Calls { get; private set; }
 
         public ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(
-            CliWorkspace workspace,
+            WorkspaceLayoutRead observation,
             CancellationToken cancellationToken,
             RouteDoctorView? routes = null)
         {
+            var workspace = observation.Layout?.Workspace ?? throw new InvalidOperationException();
+
             Calls++;
             throw new InvalidOperationException("Status must not invoke local-reference facts.");
         }
@@ -166,16 +173,18 @@ internal sealed class StatusOperationRecordings
         : RecordingLifecycleStatusContributor(onObservation), IFrameworkLifecycleOperationalContributor
     {
         public ValueTask<FrameworkLifecycleStatusView> ReadStatusAsync(
-            CliWorkspace workspace,
-            WorkspaceOwnershipRead ownership,
+            WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
         {
+            var workspace = observation.Layout?.Workspace ?? throw new InvalidOperationException();
+            var ownership = observation.Ownership;
+
             Record(workspace, ownership, cancellationToken);
             return ValueTask.FromResult(StatusOperationViewSeeds.FrameworkLifecycle());
         }
 
         public ValueTask<FrameworkLifecycleDoctorView> ReadDoctorAsync(
-            CliWorkspace workspace,
+            WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
             => throw DoctorViewException();
     }
@@ -184,16 +193,18 @@ internal sealed class StatusOperationRecordings
         : RecordingLifecycleStatusContributor(onObservation), IExtensionLifecycleOperationalContributor
     {
         public ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(
-            CliWorkspace workspace,
-            WorkspaceOwnershipRead ownership,
+            WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
         {
+            var workspace = observation.Layout?.Workspace ?? throw new InvalidOperationException();
+            var ownership = observation.Ownership;
+
             Record(workspace, ownership, cancellationToken);
             return ValueTask.FromResult(StatusOperationViewSeeds.ExtensionLifecycle());
         }
 
         public ValueTask<ExtensionLifecycleDoctorView> ReadDoctorAsync(
-            CliWorkspace workspace,
+            WorkspaceLayoutRead observation,
             CancellationToken cancellationToken)
             => throw DoctorViewException();
     }

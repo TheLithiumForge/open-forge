@@ -16,6 +16,8 @@ internal static class LocalReferenceDoctorInspector
 
     internal static DoctorDomainReport Inspect(LocalReferenceDoctorView view, DoctorMaintenanceObservation? maintenance = null)
     {
+        if (view.UnavailableCause is { } cause)
+            return DoctorUnavailableDomain.Create(Domain, DoctorBoundaryKind.LocalReferenceUniverse, cause);
         var candidatesByOccurrence = view.Candidates.ToLookup(candidate => (candidate.SourcePath, candidate.Destination));
         var candidateFilter = maintenance?.Renames is { } evidence
             ? new RenameWeakCandidateFilter(evidence.Facts.Candidates, evidence.Facts.Candidates) : null;

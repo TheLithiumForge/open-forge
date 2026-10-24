@@ -19,6 +19,7 @@ internal enum LibraryPermissionFailure
 internal sealed record LibraryPermissionStage
 {
     public required WorkspaceSettingsRead Observation { get; init; }
+    public WorkspaceLayoutRead? LayoutRead { get; init; }
     public required LibraryPermissionApproval? Approval { get; init; }
     public required WorkspacePermissionResult Result { get; init; }
     public required PlannedFileChange? Change { get; init; }

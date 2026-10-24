@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Input;
@@ -36,12 +37,13 @@ public sealed class RenameCandidateReadWorkIntegrationTests
             finally { Interlocked.Decrement(ref active); }
         });
         var reader = new RenameEvidenceReader(paths);
+        var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var request = new RenameEvidenceRequest
         {
-            Workspace = new(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            Workspace = workspace,
             CandidatePaths = [],
             MissingPaths = [.. missing],
-            Policy = new(),
+            Policy = new() { Layout = WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot) },
             CandidateUniverseComplete = true,
         };
         var first = await reader.ReadAsync(request, token);
@@ -81,7 +83,7 @@ public sealed class RenameCandidateReadWorkIntegrationTests
             CandidatePaths = [.. paths],
             MissingPaths = [],
             CandidateUniverseComplete = true,
-            Policy = new(),
+            Policy = new() { Layout = WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot) },
         };
         var first = await reader.ReadAsync(request, TestContext.Current.CancellationToken);
         temporary.ReplaceText(paths[0], "# Changed\n");

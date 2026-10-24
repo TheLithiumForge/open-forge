@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
@@ -10,7 +13,8 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 
 namespace OpenForge.Cli.Core.Commands.Doctor;
 
-internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue contributors, RenameEvidenceReader? renames = null)
+internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue contributors, RenameEvidenceReader? renames = null,
+    Func<CliWorkspace, CancellationToken, ValueTask<WorkspaceLayoutRead>>? readLayout = null)
 {
     private readonly OperationalContributorCatalogue _contributors = contributors;
     private readonly DoctorMaintenanceReader _maintenance = new(renames ?? new RenameEvidenceReader(new PhysicalPathResolver()));
@@ -21,35 +25,36 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
     {
         ArgumentNullException.ThrowIfNull(request);
         cancellationToken.ThrowIfCancellationRequested();
+        var observation = await (readLayout ?? new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync)(request.Workspace, cancellationToken).ConfigureAwait(false);
         var workspace = await _contributors.WorkspaceEntry
-            .ReadDoctorAsync(request.Workspace, cancellationToken)
+            .ReadDoctorAsync(request.Workspace, observation, cancellationToken)
             .ConfigureAwait(false);
         var recovery = await _contributors.RecoveryResiduals
             .ReadDoctorAsync(request.Workspace, cancellationToken)
             .ConfigureAwait(false);
-        var sharing = await NavigationSharingReader.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var sharing = NavigationSharingReader.FromOwnership(observation.Ownership);
         var routes = await _contributors.Routes
-            .ReadDoctorAsync(request.Workspace, sharing.Sharing, cancellationToken)
+            .ReadDoctorAsync(observation, sharing.Sharing, cancellationToken)
             .ConfigureAwait(false);
         var referenceRead = _contributors.LocalReferences
-            .ReadDoctorAsync(request.Workspace, cancellationToken, routes)
+            .ReadDoctorAsync(observation, cancellationToken, routes)
             .AsTask();
-        var maintenanceRead = _maintenance.ReadAsync(routes, referenceRead, sharing, cancellationToken).AsTask();
+        var maintenanceRead = _maintenance.ReadAsync(routes, referenceRead, sharing, observation, cancellationToken).AsTask();
         await Task.WhenAll(referenceRead, maintenanceRead).ConfigureAwait(false);
         var references = await referenceRead.ConfigureAwait(false);
         var framework = await _contributors.FrameworkLifecycle
-            .ReadDoctorAsync(request.Workspace, cancellationToken)
+            .ReadDoctorAsync(observation, cancellationToken)
             .ConfigureAwait(false);
         var extensions = await _contributors.ExtensionLifecycle
-            .ReadDoctorAsync(request.Workspace, cancellationToken)
+            .ReadDoctorAsync(observation, cancellationToken)
             .ConfigureAwait(false);
-        var libraries = await _contributors.Libraries.ReadDoctorAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var libraries = await _contributors.Libraries.ReadDoctorAsync(request.Workspace, observation.Ownership, cancellationToken).ConfigureAwait(false);
         var libraryResiduals = await LibraryResidualAttributionReader.ReadAsync(
             request.Workspace, libraries, recovery, cancellationToken).ConfigureAwait(false);
         var maintenance = await maintenanceRead.ConfigureAwait(false);
         routes = DoctorMaintenanceRouteProjection.Read(routes, maintenance, sharing.Sharing);
         cancellationToken.ThrowIfCancellationRequested();
-        var observation = new DoctorObservation(
+        var resultObservation = new DoctorObservation(
             workspace,
             recovery,
             routes,
@@ -61,7 +66,7 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
         {
             Maintenance = maintenance,
         };
-        var result = DoctorResultBuilder.Build(request, observation);
-        return new DoctorDiagnosisRead(observation, result);
+        var result = DoctorResultBuilder.Build(request, resultObservation);
+        return new DoctorDiagnosisRead(resultObservation, result);
     }
 }

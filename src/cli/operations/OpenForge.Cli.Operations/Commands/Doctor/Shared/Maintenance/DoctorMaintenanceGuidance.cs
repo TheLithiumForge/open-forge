@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
@@ -15,6 +16,7 @@ internal static class DoctorMaintenanceGuidance
 {
     internal static DoctorDomainReport[] Apply(DoctorDomainReport[] domains, DoctorObservation observation)
     {
+        if (observation.Routes.Catalogue is not { } catalogue) return domains.ToArray();
         if (observation.Maintenance is not { } maintenance) return domains;
         var malformed = domains.SelectMany(domain => domain.Findings)
             .Where(finding => finding.Kind is DoctorFindingKind.WorkspaceFrontmatterMalformed or DoctorFindingKind.WorkspaceFrontmatterDuplicate)
@@ -24,7 +26,7 @@ internal static class DoctorMaintenanceGuidance
             var findings = domain.Findings.Where(finding => !(finding.Kind == DoctorFindingKind.RouteMetadataRequiredMissing
                     && finding.Subject.Path is { } path && (malformed.Contains(path)
                         || maintenance.Eligibility.GetValueOrDefault(path) == RoutedMetadataEligibility.OutsideRoot)))
-                .Select(finding => Project(finding, maintenance, observation.Routes.Catalogue.Workspace)).ToList();
+                .Select(finding => Project(finding, maintenance, catalogue.Layout)).ToList();
             var malformedPaths = new HashSet<string>(StringComparer.Ordinal);
             findings.RemoveAll(finding => finding.Kind == DoctorFindingKind.WorkspaceFrontmatterMalformed
                 && finding.Subject.Path is { } malformedPath && !malformedPaths.Add(malformedPath));
@@ -40,7 +42,7 @@ internal static class DoctorMaintenanceGuidance
                         DoctorDomainSupport.Subject(DoctorSubjectKind.Path, path) with { Location = location },
                         DoctorDomainSupport.Provenance(domain.Domain, DoctorProvenanceSource.RouteMetadata, path),
                         [new DoctorAuthoredValueEvidence(cause, location)]);
-                    findings.Add(Project(finding, maintenance, observation.Routes.Catalogue.Workspace));
+                    findings.Add(Project(finding, maintenance, observation.Routes.Catalogue.Layout));
                 }
             }
             if (domain.Domain == DoctorDomainKind.RoutesMetadataOverwritesGeneratedNavigation)
@@ -62,7 +64,7 @@ internal static class DoctorMaintenanceGuidance
                             Condition = DoctorMaintenanceCondition.OldNavigation,
                             CanonicalName = canonicalName,
                             ExistingCanonicalPath = maintenance.ExistingCanonicalNavigationPaths.Contains(canonicalPath) ? canonicalPath : null,
-                            IndexCommand = IndexCommand(observation.Routes.Catalogue.Workspace)
+                            IndexCommand = IndexCommand(catalogue.Workspace)
                         },
                     });
                 }
@@ -76,7 +78,7 @@ internal static class DoctorMaintenanceGuidance
         }).ToArray();
     }
 
-    internal static DoctorFinding Project(DoctorFinding finding, DoctorMaintenanceObservation maintenance, CliWorkspace workspace)
+    internal static DoctorFinding Project(DoctorFinding finding, DoctorMaintenanceObservation maintenance, WorkspaceLayout layout)
     {
         if (finding.Subject.Path is not { } path || !maintenance.Eligibility.TryGetValue(path, out var eligibility)) return finding;
         if (finding.Kind is DoctorFindingKind.WorkspaceFrontmatterMalformed or DoctorFindingKind.WorkspaceFrontmatterDuplicate
@@ -89,7 +91,7 @@ internal static class DoctorMaintenanceGuidance
                 Maintenance = new()
                 {
                     Condition = DoctorMaintenanceCondition.MalformedFrontmatter,
-                    IndexCommand = IndexCommand(workspace),
+                    IndexCommand = IndexCommand(layout.Workspace),
                     Cause = maintenance.MalformedMetadata.GetValueOrDefault(path),
                 }
             };
@@ -116,7 +118,7 @@ internal static class DoctorMaintenanceGuidance
         if (finding.Kind != DoctorFindingKind.RouteMetadataRequiredMissing) return finding;
         if (maintenance.IndexablePaths.Contains(path))
         {
-            var condition = SourceFormClassifier.TryClassify(path, out var form) && form == SourceDocumentForm.Skill
+            var condition = SourceFormClassifier.TryClassify(layout, path, out var form) && form == SourceDocumentForm.Skill
                 ? DoctorMaintenanceCondition.MissingSkillFields : DoctorMaintenanceCondition.MissingFields;
             return Explain(finding, condition, finding.Message, DoctorResolutionLane.TargetedOperation,
                 Command(DoctorNextOperation.Index, "open-forge index", "Complete the eligible missing metadata."));

@@ -85,9 +85,9 @@ internal sealed class WorkspaceLayoutReader(PhysicalPathResolver paths)
             }
 
             if (_issues.Any(issue => issue.Code == WorkspaceLayoutIssueCode.ObservationUnavailable))
-                return Result(WorkspaceLayoutReadState.Unavailable, null);
+                return Result(WorkspaceLayoutReadState.Unavailable, layout);
             if (_issues.Any(issue => issue.Code == WorkspaceLayoutIssueCode.UnsafeRoot))
-                return Result(WorkspaceLayoutReadState.Invalid, null);
+                return Result(WorkspaceLayoutReadState.Invalid, layout);
             if (_issues.Count != 0) return Result(WorkspaceLayoutReadState.Mismatch, layout);
             return Result(positive ? WorkspaceLayoutReadState.Ready : WorkspaceLayoutReadState.Uninstalled, layout);
 

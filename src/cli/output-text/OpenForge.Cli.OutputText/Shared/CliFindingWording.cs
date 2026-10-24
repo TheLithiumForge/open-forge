@@ -122,7 +122,9 @@ internal static class CliFindingWording
     internal static string ManagedDivergence(string path) => $"{path} has changed since it was installed.";
 
     // @OpenForgeText shared.wording.cannot-it-writes-outside-agents-and-no-grant-allows-that
-    internal static string PermissionRequired(string command) => $"Cannot {command}: it writes outside .agents and no grant allows that.";
+    internal static string PermissionRequired(string command, string? contextFolder = null) => contextFolder is null
+        ? $"Cannot {command}: it writes outside .agents and no grant allows that."
+        : $"Cannot {command}: it writes outside the context folder ({contextFolder}) and native Skills and no grant allows that.";
 
     // @OpenForgeText shared.wording.agents-open-forge-json-cannot-be-used
     internal static string PermissionsInvalid(string reason) => $".agents/open-forge.json cannot be used: {reason}.";

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.UnitTests.Commands.Doctor;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
@@ -35,7 +36,7 @@ public sealed class RouteDoctorFactReaderTests
             areLoaderRootFactsComplete: false,
             isCancelled: false);
 
-        var root = Assert.Single(RouteDoctorFactReader.ReadDeclaredRoots(routes));
+        var root = Assert.Single(RouteDoctorFactReader.ReadDeclaredRoots(WorkspaceLayout.Create(DoctorOperationTestSupport.Workspace(), WorkspaceLayout.DefaultMainRoot), routes));
 
         Assert.Equal(RouteDeclaredRootState.Missing, root.State);
         Assert.Equal(".agents/missing/AGENTS.md", root.Path);

@@ -17,6 +17,7 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 
@@ -47,8 +48,19 @@ internal sealed class ExtensionPermissionOperation
             return new(null, WorkspacePermissionResult.NotEvaluated with { Decision = WorkspacePermissionDecision.NotRequired }, null, null, null);
         }
 
-        var observation = await WorkspaceSettingsReader.ReadAsync(_resolver, request.Workspace, cancellationToken).ConfigureAwait(false);
-        var requirements = request.Targets.Select(target => target.Path).ToImmutableArray();
+        var layoutRead = request.LayoutRead;
+        var observation = layoutRead?.Settings
+            ?? await WorkspaceSettingsReader.ReadAsync(_resolver, request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (layoutRead is not null && (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
+            || layoutRead.Layout is null))
+        {
+            return new(observation, WorkspacePermissionResult.NotEvaluated, null, null,
+                layoutRead.State == WorkspaceLayoutReadState.Unavailable ? ExtensionPermissionFailure.Unavailable : ExtensionPermissionFailure.Invalid)
+            { LayoutRead = layoutRead };
+        }
+        var layout = layoutRead?.Layout ?? WorkspaceLayout.Create(request.Workspace, WorkspaceLayout.DefaultMainRoot);
+        var requirements = request.Targets.Select(target => target.Path)
+            .Where(path => !ExtensionDestinationPolicy.IsImplicit(layout, path)).ToImmutableArray();
         var evaluation = WorkspaceAllowList.Evaluate(observation.Document.AllowInstallPaths, requirements);
         var prospectiveAllowList = observation.Document.AllowInstallPaths
             .Concat(explicitGrants)
@@ -66,20 +78,21 @@ internal sealed class ExtensionPermissionOperation
                     request.SourceIdentity ?? "Extension",
                     [.. missingTargets.Select(target => new CliPermissionPath(
                         target.Path,
-                        IsDirectoryTarget(request.Workspace, target.Path)))]),
+                        IsDirectoryTarget(request.Workspace, target.Path)))])
+                { ContextFolder = layout.IsDefault ? null : layout.MainRoot },
                 new CliPromptPolicy(Allowed: true),
                 cancellationToken).ConfigureAwait(false);
             if (response.State == CliPromptState.Unavailable)
             {
-                return PermissionRequired(observation, evaluation);
+                return PermissionRequired(observation, evaluation) with { LayoutRead = layoutRead };
             }
             if (response.State == CliPromptState.Cancelled)
             {
-                return PermissionInterrupted(observation, evaluation);
+                return PermissionInterrupted(observation, evaluation) with { LayoutRead = layoutRead };
             }
             choice = response.Value;
             if (choice == CliPermissionChoice.Cancel)
-                return PermissionInterrupted(observation, evaluation);
+                return PermissionInterrupted(observation, evaluation) with { LayoutRead = layoutRead };
         }
         PlannedFileChange? change = null;
         var grantPaths = explicitGrants;
@@ -121,7 +134,8 @@ internal sealed class ExtensionPermissionOperation
             _ => throw new ArgumentOutOfRangeException(nameof(request), evaluation.Decision, "The permission decision is not defined."),
         };
         return new(observation, new(evaluation.Required, evaluation.Missing, decision, action,
-            change is null ? WorkspacePermissionOutcome.NotRequested : WorkspacePermissionOutcome.Planned), change, recovery, failure);
+            change is null ? WorkspacePermissionOutcome.NotRequested : WorkspacePermissionOutcome.Planned), change, recovery, failure)
+        { LayoutRead = layoutRead };
     }
 
     private static ExtensionPermissionStage PermissionRequired(
@@ -156,6 +170,11 @@ internal sealed class ExtensionPermissionOperation
         ExtensionPermissionStage stage,
         CancellationToken cancellationToken)
     {
+        if (stage.LayoutRead is { } layoutRead)
+        {
+            var validation = await new WorkspaceLayoutRevalidator(_resolver).ValidateAsync(lease, layoutRead, cancellationToken).ConfigureAwait(false);
+            return validation.State == MutationValidationState.Valid;
+        }
         if (stage.Observation is not { } before)
         {
             return stage.Result.Decision == WorkspacePermissionDecision.NotRequired;
@@ -183,6 +202,8 @@ internal sealed class ExtensionPermissionOperation
         FileExpectationValidationResult check;
         try
         {
+            if (!await RevalidateAsync(lease, stage, cancellationToken).ConfigureAwait(false))
+                return new(result, cancellationToken.IsCancellationRequested ? ExtensionPermissionFailure.Interrupted : ExtensionPermissionFailure.Changed);
             check = await validator.ValidateAsync(lease.Request.Workspace, change.Expectation, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

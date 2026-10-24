@@ -17,11 +17,14 @@ namespace OpenForge.Cli.Core.Framework.Libraries.Operational;
 internal interface ILibraryOperationalContributor
 {
     ValueTask<LibraryStatusView> ReadStatusAsync(CliWorkspace workspace, WorkspaceOwnershipRead ownership, CancellationToken cancellationToken);
-    ValueTask<LibraryDoctorView> ReadDoctorAsync(CliWorkspace workspace, CancellationToken cancellationToken);
+    ValueTask<LibraryDoctorView> ReadDoctorAsync(CliWorkspace workspace, WorkspaceOwnershipRead ownership, CancellationToken cancellationToken);
 }
 
 internal sealed class LibraryOperationalContributor : ILibraryOperationalContributor
 {
+    internal async ValueTask<LibraryDoctorView> ReadDoctorAsync(CliWorkspace workspace, CancellationToken cancellationToken)
+        => await ReadDoctorAsync(workspace, await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), workspace, cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+
     public async ValueTask<LibraryStatusView> ReadStatusAsync(
         CliWorkspace workspace,
         WorkspaceOwnershipRead ownership,
@@ -73,14 +76,13 @@ internal sealed class LibraryOperationalContributor : ILibraryOperationalContrib
 
     public async ValueTask<LibraryDoctorView> ReadDoctorAsync(
         CliWorkspace workspace,
+        WorkspaceOwnershipRead ownership,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         var resolver = new PhysicalPathResolver();
         try
         {
-            var ownership = await WorkspaceOwnershipReader.ReadAsync(resolver, workspace, cancellationToken)
-                .ConfigureAwait(false);
             var record = LibraryRegistrationReader.Read(ownership);
             var inventories = ImmutableArray.CreateBuilder<LibraryInventoryRead>();
             var mappings = ImmutableArray.CreateBuilder<LibraryMappingObservation>();

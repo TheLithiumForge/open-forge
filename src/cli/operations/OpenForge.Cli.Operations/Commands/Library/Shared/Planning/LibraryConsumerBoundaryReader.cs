@@ -23,7 +23,7 @@ internal static class LibraryConsumerBoundaryReader
         cancellationToken.ThrowIfCancellationRequested();
 
         var workspace = request.Workspace;
-        var consumerRootPath = Path.Combine(workspace.LexicalRoot, ".agents");
+        var consumerRootPath = Path.Combine(workspace.LexicalRoot, request.Layout.MainRoot.Replace('/', Path.DirectorySeparatorChar));
         var consumerRoot = Observe(
             physicalPathResolver,
             workspace,

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
@@ -27,9 +28,10 @@ public sealed class RepairTargetWorkTests
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var token = TestContext.Current.CancellationToken;
         var paths = new PhysicalPathResolver();
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, token);
         var contributors = RepairOperationalContributorFactory.Create(paths);
-        var routes = await contributors.Routes.ReadDoctorAsync(workspace, new SourceSharing([]), token);
-        var view = await contributors.LocalReferences.ReadDoctorAsync(workspace, token, routes);
+        var routes = await contributors.Routes.ReadDoctorAsync(observation, new SourceSharing([]), token);
+        var view = await contributors.LocalReferences.ReadDoctorAsync(observation, token, routes);
         var active = 0;
         var maximum = 0;
         var acquisition = new SourceFileAcquisition(read: async (physical, logical, cancellation) =>

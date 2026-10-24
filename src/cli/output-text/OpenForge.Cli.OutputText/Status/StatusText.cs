@@ -4,6 +4,9 @@ namespace OpenForge.Cli.OutputText.Status;
 
 internal static class StatusText
 {
+    internal static string RootCategoriesUnavailable(string loaderPath)
+        => $"The root categories could not be read from {loaderPath}.";
+
     // @OpenForgeText status.message.open-forge-is-installed-and-current
     internal static string MessageOpenForgeIsInstalledAndCurrent()
         => "Open Forge is installed and current.";
