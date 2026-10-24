@@ -79,6 +79,25 @@ Release build passed with zero warnings and errors. Unit: 5,252 total, 5,252 pas
 - Six temporary default-layout overloads remain: `EmbeddedFrameworkSourceProjector.Project`, `FrameworkPayloadSourceProjection.Create`, `FrameworkSourceAlignment.ReadAsset`, both `FrameworkPayloadSelection` methods and `WorkspacePayloadRenderer.Render`. Convert their callers before Z1 activation. `FrameworkPayloadAsset` must retain `SourceContentRoots.Default` as a package namespace invariant. Render callers supply the original package path and use mapped destinations for permissions and ownership.
 - C2 final counts (total/passed/failed/skipped): Unit 5264/5264/0/0, Integration 3758/3700/0/58, published payload 2/2/0/0. All skips are allowlisted.
 
+## Wave 3 D1 handoff
+
+D1 carries the observed layout and catalogue identities through Context, Find and References.
+Its default-session and Find result and selection adapters are removed. None remain in these command paths.
+Three published custom-root journeys prove nested roots, native Skills, overwrite projections and byte preservation.
+
+## Wave 3 D2 handoff
+
+D2 carries the observed layout through Index and rejects changed layout evidence before any effect.
+Its default adapters are removed from discovery, removal filtering, source identity and projection readiness.
+Custom-root tests prove nested native Skill catalogues, private routes and unlisted loader membership without reactivation.
+
+## Wave 3 D3 handoff
+
+D3 adds internal requested roots, mapped Install/configuration and lease-time layout checks while preserving default adoption.
+Install no longer calls C2 default payload overloads. Setup choices and IgnoreSection default adapters remain for Z2.
+The overseer must integrate D1/D2 and complete both Install → Context → Index cases, currently failing at Context. No public activation or snapshot changes.
+Release build passed. Unit 5268/5268/0/0. Integration 3782/3722/2/58, with both failures above and all skips allowlisted. Counts are total/passed/failed/skipped.
+
 ## Overseer notes
 
 - Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.

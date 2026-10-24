@@ -9,6 +9,11 @@ using OpenForge.Cli.Core.Commands.Install.Shared.Result;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Presentation.Install;
 using OpenForge.Cli.Core.Presentation.Install.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
@@ -360,15 +365,21 @@ public sealed class InstallMigrationPresentationTests
 
     private static InstallPlan NoOpPlan()
     {
+        var workspace = Workspace();
+        var layout = WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot);
         var payload = FrameworkPayload.Create(
         [
-            FrameworkPayloadAsset.Create("AGENTS.md", [1]),
-            FrameworkPayloadAsset.Create("CLAUDE.md", [2]),
-            FrameworkPayloadAsset.Create(".agents/loader.md", [3]),
+            FrameworkPayloadAsset.Create(FrameworkPayloadAsset.RootAgentPath, [1]),
+            FrameworkPayloadAsset.Create(FrameworkPayloadAsset.RootClaudePath, [2]),
+            FrameworkPayloadAsset.Create(FrameworkPayloadAsset.LoaderPath, [3]),
         ]);
         return new InstallPlan
         {
-            Request = new InstallRequest(Workspace(), InstallMode.Apply, force: false, automatic: true, allowsInteractiveConfirmation: false),
+            Request = new InstallRequest(workspace, InstallMode.Apply, force: false, automatic: true, allowsInteractiveConfirmation: false),
+            IntendedLayout = layout,
+            LayoutRead = new WorkspaceLayoutRead(WorkspaceLayoutReadState.Uninstalled,
+                WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceSettingsDefinitions.DirectoryName, WorkspaceSettingsDefinitions.FileName)),
+                WorkspaceOwnershipRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceOwnershipDefinitions.DirectoryName, WorkspaceOwnershipDefinitions.FileName)), layout, [], []),
             Payload = payload,
             IntendedState = new InstallIntendedState
             {

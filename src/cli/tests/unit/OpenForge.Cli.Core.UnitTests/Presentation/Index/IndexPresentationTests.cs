@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.UnitTests.Commands.Index.Shared;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Index.Models.Operation;
 using OpenForge.Cli.Core.Commands.Index.Models.Planning;
@@ -17,7 +18,7 @@ namespace OpenForge.Cli.Core.UnitTests.Presentation.Index;
 
 public sealed class IndexPresentationTests
 {
-    private static readonly IndexLogicalSource Source = new("memory", ".agents/memory/_memory.md", IndexLogicalSourceScope.Rooted);
+    private static readonly IndexLogicalSource Source = new(IndexTestData.Layout(), "memory", ".agents/memory/_memory.md", IndexLogicalSourceScope.Rooted);
 
     [Trait("Boundary", "Output")]
     [Fact, Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
@@ -85,7 +86,7 @@ public sealed class IndexPresentationTests
     [Fact, Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
     public void FilesCheckedAlwaysEqualsUpdatedPlusCurrent()
     {
-        var currentSource = new IndexLogicalSource("patterns", ".agents/patterns/_patterns.md", IndexLogicalSourceScope.Rooted);
+        var currentSource = new IndexLogicalSource(IndexTestData.Layout(), "patterns", ".agents/patterns/_patterns.md", IndexLogicalSourceScope.Rooted);
         var results = new[]
         {
             Result([IndexRegion.Unchanged(Source, 1, 1)]),
@@ -165,7 +166,7 @@ public sealed class IndexPresentationTests
     public void AllStalePreviewStylesAlignedSubjectPathsAndPreservesPlainAuthoredSpans(int detailValue)
     {
         var regions = new[] { "a", "aa" }.Select(id => IndexRegion.Update(
-            new IndexLogicalSource(id, $".agents/{id}.md", IndexLogicalSourceScope.Rooted),
+            new IndexLogicalSource(IndexTestData.Layout(), id, $".agents/{id}.md", IndexLogicalSourceScope.Rooted),
             new IndexRegionUpdate
             {
                 BeforeEntryCount = 0,
@@ -206,7 +207,7 @@ public sealed class IndexPresentationTests
     public void PartialUnknownIsListedOnceAndNeverCountsAsCurrent()
     {
         var unknown = Change(IndexRegionOutcome.Unknown);
-        var currentSource = new IndexLogicalSource("patterns", ".agents/patterns/_patterns.md", IndexLogicalSourceScope.Rooted);
+        var currentSource = new IndexLogicalSource(IndexTestData.Layout(), "patterns", ".agents/patterns/_patterns.md", IndexLogicalSourceScope.Rooted);
         var result = Result([unknown, IndexRegion.Unchanged(currentSource, 1, 1)],
             findings: [new IndexFinding(IndexFindingCode.WriteFailed, null, Source, "The write failed.", [])],
             recovery: new IndexRecovery(IndexRecoveryState.Unknown, null));
@@ -227,10 +228,10 @@ public sealed class IndexPresentationTests
     [Fact, Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
     public void BlockedHeadlineNamesParentAndFindingNamesMalformedLeaf()
     {
-        var child = new IndexLogicalSource("skills/pdf", ".agents/skills/pdf/SKILL.md", IndexLogicalSourceScope.Rooted);
-        var parent = new IndexLogicalSource("skills", ".agents/skills/_skills.md", IndexLogicalSourceScope.Rooted);
+        var child = new IndexLogicalSource(IndexTestData.Layout(), "skills/pdf", ".agents/skills/pdf/SKILL.md", IndexLogicalSourceScope.Rooted);
+        var parent = new IndexLogicalSource(IndexTestData.Layout(), "skills", ".agents/skills/_skills.md", IndexLogicalSourceScope.Rooted);
         var current = Enumerable.Range(0, 19).Select(index => IndexRegion.Unchanged(
-            new IndexLogicalSource($"current{index}", $".agents/current{index}/_current{index}.md", IndexLogicalSourceScope.Rooted), 1, 1));
+            new IndexLogicalSource(IndexTestData.Layout(), $"current{index}", $".agents/current{index}/_current{index}.md", IndexLogicalSourceScope.Rooted), 1, 1));
         var result = Result(new[] { IndexRegion.NotEstablished(parent) }.Concat(current).ToArray(), findings:
         [
             new IndexFinding(IndexFindingCode.MetadataUnsafe, null, child, "The frontmatter block is not closed.", [])

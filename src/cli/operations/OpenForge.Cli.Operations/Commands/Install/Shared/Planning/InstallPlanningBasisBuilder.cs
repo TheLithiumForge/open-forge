@@ -52,6 +52,8 @@ internal sealed class InstallPlanningBasisBuilder
         var context = new InstallPlanContext
         {
             Request = inspection.Request,
+            LayoutRead = inspection.LayoutRead,
+            IntendedLayout = inspection.IntendedLayout,
             Payload = inspection.Payload,
             IntendedState = inspection.IntendedState,
             AgentsDirectoryExpectation = agentsDirectoryExpectation,

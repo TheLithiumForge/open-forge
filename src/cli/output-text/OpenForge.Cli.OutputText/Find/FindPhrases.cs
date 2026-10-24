@@ -69,6 +69,7 @@ internal static class FindPhrases
         => $"--within {valueText} is not a known region.";
 
     // @OpenForgeText find.phrase.is-not-a-source-id-or-a-path-under-agents
-    internal static string FormatIsNotASourceIdOrAPathUnderAgents(string optionText, string valueText)
-        => $"{optionText} {valueText} is not a source ID or a path under .agents.";
+    internal static string FormatIsNotASourceIdOrAPathUnderAgents(string optionText, string valueText, string? mainRoot)
+        => mainRoot is null ? $"{optionText} {valueText} is not a source ID or a path under .agents."
+            : $"{optionText} {valueText} is not a source ID or an exact source path in this workspace.";
 }

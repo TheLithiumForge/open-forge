@@ -1,0 +1,10 @@
+---
+open-forge:
+  description: Workshop references
+  tags: [Docs]
+---
+# Root
+
+## Entries
+
+- [Nested procedures](nested/_nested.md) - #Docs

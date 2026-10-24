@@ -29,7 +29,7 @@ public sealed class IndexRecoveryIdentityIntegrationTests
         var read = await new IndexProjectionReader(resolver).ReadAsync(request, TestContext.Current.CancellationToken);
         Assert.Equal(IndexProjectionReadState.Projected, read.State);
         Assert.NotNull(read.Projection);
-        var plan = new IndexPlanBuilder().Build(new IndexPlanningInput { Request = request, Projection = read.Projection });
+        var plan = new IndexPlanBuilder().Build(new IndexPlanningInput { Request = request, Projection = read.Projection, LayoutRead = read.Projection.LayoutRead ?? throw new InvalidOperationException() });
         var operationId = Guid.NewGuid();
         var application = new IndexApplicationContext(plan, operationId);
         var lockResult = await new WorkspaceLockManager(workspace.LockStoreRoot).AcquireAsync(

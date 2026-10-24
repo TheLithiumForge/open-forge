@@ -11,7 +11,9 @@ internal static class ContextText
     internal static string StartupUnavailable(string path) => $"Startup context is unavailable in {path}.";
 
     // @OpenForgeText context.wording.startup-missing-loader
-    internal static string MissingLoader() => "This folder has no .agents/loader.md.";
+    internal static string MissingLoader(string? loaderPath) => loaderPath is null
+        ? "This folder has no .agents/loader.md."
+        : $"This folder has no {loaderPath}.";
 
     // @OpenForgeText context.wording.startup-install-guidance
     internal static string InstallGuidance() => "Choose your project with --workspace, or preview an installation here.";

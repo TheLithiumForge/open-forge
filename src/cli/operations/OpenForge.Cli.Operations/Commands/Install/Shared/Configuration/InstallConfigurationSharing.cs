@@ -17,14 +17,14 @@ internal static class InstallConfigurationSharing
         var routes = configuration.Routes.Where(row => row.Action == InstallRouteAction.GitIgnore)
             .Select(row =>
             {
-                var directory = InstallConfigurationChoices.Directory(row.Id);
+                var directory = InstallConfigurationChoices.Directory(plan.Layout, row.Id);
                 var entrypoint = sources.Single(source => SourceFormClassifier.IsEntrypoint(source.Base.Form)
                     && SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath) == directory);
                 return new SourceSharingRoute(directory, entrypoint.Identity.CanonicalBasePath);
             }).ToImmutableArray();
         var ignore = plan.Ignore ?? throw new InvalidDataException("Route configuration requires its Git-ignore observation.");
         var snapshot = ignore.Snapshot ?? throw new InvalidDataException("The Git-ignore file is unavailable.");
-        var bytes = InstallIgnoreSection.Rewrite(snapshot.Bytes.AsSpan(), configuration.Routes, routes);
+        var bytes = InstallIgnoreSection.Rewrite(snapshot.Bytes.AsSpan(), configuration.Routes, routes, plan.Layout);
         PlannedFileChange? change = null;
         if (!snapshot.Bytes.AsSpan().SequenceEqual(bytes))
             change = ignore.State == InstallTargetReadState.Missing

@@ -21,6 +21,11 @@ using OpenForge.Cli.Core.Presentation.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Mutation.Locking;
+using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Index;
 
@@ -103,7 +108,7 @@ public sealed class IndexCompletionIntegrationTests
         var reader = new IndexProjectionReader(new PhysicalPathResolver(), proven ? new RenameEvidence() : null);
         var preview = await reader.ReadAsync(request, TestContext.Current.CancellationToken);
         var projection = preview.Projection ?? throw new InvalidOperationException();
-        var plan = new IndexPlanBuilder().Build(new() { Request = request, Projection = projection });
+        var plan = new IndexPlanBuilder().Build(new() { Request = request, Projection = projection, LayoutRead = projection.LayoutRead ?? throw new InvalidOperationException() });
         Assert.Equal(proven, plan.Updates.Any(change => change.Kind == PlannedFileChangeKind.Delete));
         Assert.Equal(proven ? 0 : 1, projection.Maintenance?.OldNavigation.Length);
         Assert.Equal(old, File.ReadAllText(workspace.Combine(oldPath)));
@@ -147,13 +152,21 @@ public sealed class IndexCompletionIntegrationTests
         var reader = new IndexProjectionReader(new PhysicalPathResolver());
         var read = await reader.ReadAsync(request, TestContext.Current.CancellationToken);
         var projection = read.Projection ?? throw new InvalidOperationException();
-        var plan = new IndexPlanBuilder().Build(new() { Request = request, Projection = projection });
+        var plan = new IndexPlanBuilder().Build(new() { Request = request, Projection = projection, LayoutRead = projection.LayoutRead ?? throw new InvalidOperationException() });
         var effect = Assert.Single(plan.Updates, change => change.LogicalPath == workspace.Combine(root));
         Assert.Equal(OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files.PlannedFileChangeKind.Replace, effect.Kind);
         Assert.Equal(3, plan.RecoveryTargets.Count);
         Assert.Single(plan.RecoveryTargets, target => target.Change.LogicalPath == workspace.Combine(root));
-        workspace.CreateFile(".agents/open-forge.json", "{\"schemaVersion\":1,\"frontmatter\":\"root\"}");
-        Assert.False(await reader.VerifyOwnershipAsync(plan, TestContext.Current.CancellationToken));
+        workspace.CreateFile(WorkspaceSettingsDefinitions.RelativePath,
+            $$"""{"{{WorkspaceSettingsDefinitions.SchemaVersionProperty}}":{{WorkspaceSettingsDefinitions.SchemaVersion}},"{{WorkspaceSettingsDefinitions.FrontmatterProperty}}":"{{WorkspaceSettingsDefinitions.FrontmatterRootName}}"}""");
+        var acquired = await WorkspaceLockManager.CreateForCurrentUser().AcquireAsync(
+            new(request.Workspace, IndexDefinitions.CommandIdentity, Guid.NewGuid()), TestContext.Current.CancellationToken);
+        await using (var lease = Assert.IsType<WorkspaceLockLease>(acquired.Lease))
+        {
+            var validation = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver()).ValidateAsync(
+                lease, plan.LayoutRead, TestContext.Current.CancellationToken);
+            Assert.Equal(MutationValidationState.Mismatched, validation.State);
+        }
         var apply = await CliHostCapture.RunAsync(["index"], workspace.Path);
         Assert.True(apply.ExitCode == 0, apply.Output + apply.Error);
         var final = File.ReadAllText(workspace.Combine(root));
@@ -218,7 +231,7 @@ public sealed class IndexCompletionIntegrationTests
         var direct = await new IndexProjectionReader(new PhysicalPathResolver()).ReadAsync(new(new CliWorkspace(workspace.Path, workspace.Path,
             CliWorkspaceSelectionMethod.ExplicitWorkspace), [path], IndexMode.DryRun), TestContext.Current.CancellationToken);
         Assert.NotNull(direct.Projection);
-        var plan = new IndexPlanBuilder().Build(new() { Request = new(new CliWorkspace(workspace.Path, workspace.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace), [path], IndexMode.DryRun), Projection = direct.Projection });
+        var plan = new IndexPlanBuilder().Build(new() { Request = new(new CliWorkspace(workspace.Path, workspace.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace), [path], IndexMode.DryRun), Projection = direct.Projection, LayoutRead = direct.Projection.LayoutRead ?? throw new InvalidOperationException() });
         Assert.Equal(plan.Updates.Count, plan.Updates.Select(item => item.LogicalPath).Distinct(StringComparer.Ordinal).Count());
         var preview = await CliHostCapture.RunAsync(["index", path, "--dry-run", "--format", "json"], workspace.Path);
         Assert.Equal(0, preview.ExitCode);

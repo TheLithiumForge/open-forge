@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Documents;
@@ -263,6 +267,11 @@ public sealed class FindOperationTests
             new FindBodyTagScanner());
         return new FindOperation(
             new FindSourceResolver(
+                (workspace, _) => ValueTask.FromResult(new WorkspaceLayoutRead(
+                    WorkspaceLayoutReadState.Ready,
+                    WorkspaceSettingsRead.Absent(Physical(workspace.PhysicalRoot, WorkspaceSettingsDefinitions.RelativePath)),
+                    WorkspaceOwnershipRead.Absent(Physical(workspace.PhysicalRoot, WorkspaceOwnershipDefinitions.RelativePath)),
+                    fixture.Catalogue.Layout, [], [])),
                 sessionRead,
                 new FindUniverseResolver(new SourceUniverseFilterResolver(
                     new SourceReferenceResolver(physicalPathResolver))),

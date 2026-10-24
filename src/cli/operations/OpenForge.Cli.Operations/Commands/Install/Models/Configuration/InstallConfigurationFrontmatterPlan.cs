@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
@@ -11,7 +12,8 @@ namespace OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 
 internal sealed record InstallConfigurationFrontmatterInput
 {
-    public required CliWorkspace Workspace { get; init; }
+    public required WorkspaceLayout Layout { get; init; }
+    public CliWorkspace Workspace => Layout.Workspace;
     public required WorkspaceOwnershipRead Ownership { get; init; }
     public required FrameworkPayload Payload { get; init; }
     public required IReadOnlyDictionary<string, byte[]> RenderedPayload { get; init; }

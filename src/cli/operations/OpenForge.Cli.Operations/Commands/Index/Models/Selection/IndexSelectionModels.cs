@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Index.Models.Selection;
 
@@ -26,13 +27,14 @@ internal enum IndexLogicalSourceScope
 internal sealed record IndexLogicalSource
 {
     internal IndexLogicalSource(
+        WorkspaceLayout layout,
         string id,
         string path,
         IndexLogicalSourceScope scope)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         if (!SourceLogicalPath.IsCanonicalSource(path)
-            || !string.Equals(SourceIdentity.DeriveId(path), id, StringComparison.Ordinal))
+            || !string.Equals(SourceIdentity.DeriveId(layout, path), id, StringComparison.Ordinal))
         {
             throw new ArgumentException(
                 "An Index logical source requires its canonical source path and derived source ID.",
@@ -47,10 +49,13 @@ internal sealed record IndexLogicalSource
                 "The Index logical source scope is not defined."),
         };
 
+        IsLoader = path == layout.LoaderPath;
         Id = id;
         Path = path;
         Scope = scope;
     }
+
+    internal bool IsLoader { get; }
 
     internal string Id { get; }
 
@@ -138,7 +143,7 @@ internal sealed record IndexSelection
         }
 
         if (sources.Count != 1
-            || sources[0].Path != SourceLogicalPath.LoaderPath
+            || !sources[0].IsLoader
             || sources[0].Scope != IndexLogicalSourceScope.Rooted)
         {
             throw new ArgumentException(

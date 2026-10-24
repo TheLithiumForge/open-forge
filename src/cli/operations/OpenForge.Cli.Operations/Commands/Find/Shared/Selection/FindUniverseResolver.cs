@@ -226,7 +226,7 @@ internal sealed class FindUniverseResolver
                 code.Value,
                 FindDefinitions.ReadFindingStatus(code.Value),
                 issue.AttemptedCanonicalPath,
-                ReadCatalogueCause(issue.Code),
+                ReadCatalogueCause(issue.Code, catalogue.Layout.MainRoot),
                 null,
                 null,
                 null,
@@ -318,12 +318,12 @@ internal sealed class FindUniverseResolver
             _ => throw new ArgumentOutOfRangeException(nameof(code), code, "The source catalogue issue code is not defined."),
         };
 
-    private static string ReadCatalogueCause(SourceCatalogueIssueCode code)
+    private static string ReadCatalogueCause(SourceCatalogueIssueCode code, string mainRoot)
         => code switch
         {
-            SourceCatalogueIssueCode.RootMissing => "The .agents source root is missing.",
-            SourceCatalogueIssueCode.RootUnsafe => "The .agents source root is outside the safe workspace boundary.",
-            SourceCatalogueIssueCode.RootUnavailable => "The .agents source root is unavailable.",
+            SourceCatalogueIssueCode.RootMissing => $"The {mainRoot} source root is missing.",
+            SourceCatalogueIssueCode.RootUnsafe => $"The {mainRoot} source root is outside the safe workspace boundary.",
+            SourceCatalogueIssueCode.RootUnavailable => $"The {mainRoot} source root is unavailable.",
             SourceCatalogueIssueCode.DirectoryUnavailable => "A source directory could not be inspected.",
             SourceCatalogueIssueCode.CandidateUnsafe => "A source candidate is outside the safe workspace boundary.",
             SourceCatalogueIssueCode.CandidateUnavailable => "A source candidate could not be inspected.",

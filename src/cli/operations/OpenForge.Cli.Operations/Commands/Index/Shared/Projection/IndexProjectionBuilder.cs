@@ -163,6 +163,7 @@ internal sealed class IndexProjectionBuilder
         }
 
         var readiness = new IndexProjectionReadiness(
+            context.Formation.Catalogue.Layout,
             DeduplicateFindings(findings.Where(finding => finding.Code != IndexFindingCode.MetadataSkipped)),
             unavailableTargetPaths,
             hasMetadataLimitations: findings.Any(finding => finding.Code == IndexFindingCode.MetadataSkipped));
@@ -266,6 +267,7 @@ internal sealed class IndexProjectionBuilder
         }
 
         return new IndexProjectionReadiness(
+            formation.Catalogue.Layout,
             DeduplicateFindings(findings),
             unavailableTargetPaths);
     }

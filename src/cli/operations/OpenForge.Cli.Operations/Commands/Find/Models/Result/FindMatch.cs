@@ -24,17 +24,11 @@ internal sealed record FindMatch
 
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        if (!SourceWorkspaceRelativePath.IsCanonical(path)
-            || SourceLogicalPath.IsPrimaryNonMarkdownSource(SourceContentRoots.Default, path)
-            || SourceLogicalPath.IsPrimaryOverwriteSource(SourceContentRoots.Default, path))
+        if (!SourceWorkspaceRelativePath.IsCanonical(path))
         {
             throw new ArgumentException("Find match paths must be canonical base Markdown source paths.", nameof(path));
         }
 
-        if (!string.Equals(SourceWorkspaceRelativePath.ReadReference(path), id, StringComparison.Ordinal))
-        {
-            throw new ArgumentException("A Find match ID must be derived from its canonical base path.", nameof(id));
-        }
 
         ArgumentNullException.ThrowIfNull(evidence);
         ArgumentNullException.ThrowIfNull(projections);

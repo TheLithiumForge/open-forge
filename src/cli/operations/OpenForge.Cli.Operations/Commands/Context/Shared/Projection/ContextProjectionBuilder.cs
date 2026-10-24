@@ -193,7 +193,7 @@ internal sealed class ContextProjectionBuilder
             // A linked document takes its metadata from the Entries line that links it, and the guide
             // for people sits outside routing.
             if (!source.IsEntryDocument && !source.IsLinked && layer.Kind != SourceLayerKind.Overwrite
-                && !string.Equals(source.CanonicalPath, SourceLogicalPath.HumanGuidePath, StringComparison.Ordinal))
+                && !source.IsHumanGuide)
             {
                 state.Attention = true;
                 state.Findings.Add(Finding(

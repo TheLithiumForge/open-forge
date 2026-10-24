@@ -7,7 +7,9 @@ internal static class ReferencesWording
     internal static string UnknownSourceId(string reference) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.UnknownSource(reference);
 
     // @OpenForgeText references.wording.is-not-under-agents
-    internal static string SourceOutsideAgents(string path) => $"{path} is not under .agents.";
+    internal static string SourceOutsideAgents(string path, string? mainRoot) => mainRoot is null
+        ? $"{path} is not under .agents."
+        : $"{path} does not identify a source in this workspace.";
 
     internal static string FilterNotASource(string value)
         => global::OpenForge.Cli.OutputText.Shared.CanonicalPhrases.FilterNotASource(value);

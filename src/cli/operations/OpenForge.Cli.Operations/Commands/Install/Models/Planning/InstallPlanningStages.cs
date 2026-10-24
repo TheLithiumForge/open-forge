@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
@@ -20,7 +22,9 @@ internal sealed record InstallInspectionFacts(
     InstallIntendedState IntendedState,
     WorkspaceOwnershipRead Ownership,
     IReadOnlyDictionary<string, InstallTargetRead> CurrentTargets,
-    FrameworkOwnership? CurrentFramework);
+    FrameworkOwnership? CurrentFramework,
+    WorkspaceLayoutRead LayoutRead,
+    WorkspaceLayout IntendedLayout);
 
 internal abstract record InstallInspectionResult;
 

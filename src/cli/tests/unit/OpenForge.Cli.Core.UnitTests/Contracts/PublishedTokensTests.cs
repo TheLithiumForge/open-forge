@@ -1,3 +1,15 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Context;
+using OpenForge.Cli.Core.Commands.Find;
+using OpenForge.Cli.Core.Commands.References;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Reading;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Sources.Loading;
+using OpenForge.Cli.Core.Presentation.Context.Models;
+using OpenForge.Cli.Core.Presentation.Find.Models;
+using OpenForge.Cli.Core.Presentation.References.Models;
 using OpenForge.Cli.Core.Commands.Cleanup;
 using OpenForge.Cli.Core.Commands.Doctor;
 using OpenForge.Cli.Core.Commands.Extension;
@@ -47,6 +59,17 @@ public sealed class PublishedTokensTests
         Assert.Equal(InstallDefinitions.DryRun.Name, PublishedTokens.Install.DryRun);
         Assert.Equal(InstallDefinitions.Frontmatter.Name, PublishedTokens.Install.Frontmatter);
         Assert.Equal(InstallDefinitions.ReadMachineName(InstallFindingCode.WorkspaceUnsafe), PublishedTokens.Install.WorkspaceUnsafeCode);
+
+        Assert.Equal(WorkspaceLayoutNames.LoaderFileName, PublishedTokens.Layout.LoaderFileName);
+        Assert.Equal(WorkspaceLayout.NativeSkillsPath, PublishedTokens.Layout.NativeSkillsPath);
+        Assert.Equal(SourceFormClassifier.NativeSkillFileName, PublishedTokens.Layout.NativeSkillFileName);
+        Assert.Equal(SourceFormClassifier.UnderscoreReferencesFileName, PublishedTokens.Layout.UnderscoreReferencesFileName);
+        Assert.Equal(WorkspaceSettingsDefinitions.RelativePath, PublishedTokens.Settings.RelativePath);
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersion, PublishedTokens.Settings.SchemaVersion);
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersionProperty, PublishedTokens.Settings.SchemaVersionProperty);
+        Assert.Equal(WorkspaceSettingsDefinitions.MainRootProperty, PublishedTokens.Settings.MainRootProperty);
+        Assert.Equal(WorkspaceSettingsDefinitions.FrontmatterProperty, PublishedTokens.Settings.FrontmatterProperty);
+        Assert.Equal(WorkspaceSettingsDefinitions.FrontmatterRootName, PublishedTokens.Settings.RootFrontmatter);
 
         Assert.Equal(IndexDefinitions.IndexCommand.Name, PublishedTokens.Index.Command);
         Assert.Equal(IndexDefinitions.DryRun.Name, PublishedTokens.Index.DryRun);
@@ -113,9 +136,6 @@ public sealed class PublishedTokensTests
 
         Assert.Equal(WorkspaceOwnershipDefinitions.RelativePath, PublishedTokens.Ownership.RelativePath);
 
-        Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersion, PublishedTokens.Settings.SchemaVersion);
-        Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersionProperty, PublishedTokens.Settings.SchemaVersionProperty);
-        Assert.Equal(WorkspaceSettingsDefinitions.FrontmatterProperty, PublishedTokens.Settings.FrontmatterProperty);
         Assert.Equal(WorkspaceSettingsDefinitions.FrontmatterScopedName, PublishedTokens.Settings.ScopedFrontmatter);
 
         Assert.Equal(ExtensionPackageLayout.ContentDirectoryName, PublishedTokens.ExtensionPackage.ContentDirectory);
@@ -161,6 +181,39 @@ public sealed class PublishedTokensTests
         Assert.Equal(CleanupDataJsonFields.Path, PublishedTokens.CleanupData.Path);
         Assert.Equal(CleanupDataJsonFields.Candidates, PublishedTokens.CleanupData.Candidates);
         Assert.Equal(CleanupDataJsonFields.Cause, PublishedTokens.CleanupData.Cause);
+        Assert.Equal(ContextDefinitions.CommandIdentity, PublishedTokens.Context.Command);
+        Assert.Equal(ContextDefinitions.Content.Name, PublishedTokens.Context.Content);
+        Assert.Equal(ContextDefinitions.FollowLinks.Name, PublishedTokens.Context.FollowLinks);
+        Assert.Equal(ContextDefinitions.All, PublishedTokens.Context.All);
+        Assert.Equal(ContextDefinitions.Frontmatter, PublishedTokens.Context.Frontmatter);
+        Assert.Equal(FindDefinitions.Metadata, PublishedTokens.Find.Metadata);
+        Assert.Equal(FindDefinitions.CommandIdentity, PublishedTokens.Find.Command);
+        Assert.Equal(FindDefinitions.Heading.Name, PublishedTokens.Find.Heading);
+        Assert.Equal(FindDefinitions.Content.Name, PublishedTokens.Find.Content);
+        Assert.Equal(FindDefinitions.Exclude.Name, PublishedTokens.Find.Exclude);
+        Assert.Equal(FindDefinitions.Body, PublishedTokens.Find.Body);
+        Assert.Equal(ReferencesDefinitions.CommandIdentity, PublishedTokens.References.Command);
+        Assert.Equal(SourceFormClassifier.IndexFileName, PublishedTokens.Layout.IndexFile);
+        Assert.Equal(SourceWorkspaceRelativePath.LiteralReferencePrefix, PublishedTokens.Layout.LiteralReferencePrefix);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ReferencesData.Scanned)), PublishedTokens.ReferencesData.Scanned);
+        Assert.Equal(WorkspaceLayoutNames.HumanGuideFileName, PublishedTokens.Layout.GuideFile);
+        Assert.Equal(WorkspaceLayoutNames.AgentHostFileName, PublishedTokens.Layout.AgentHost);
+        Assert.Equal(WorkspaceLayoutNames.SkillsDirectoryName, PublishedTokens.Layout.SkillsDirectory);
+        Assert.Equal(SourceFormClassifier.MarkdownExtension, PublishedTokens.Layout.MarkdownExtension);
+        Assert.Equal(SourceOverwritePath.ReadAdjacentPath(SourceFormClassifier.MarkdownExtension), PublishedTokens.Layout.OverwriteSuffix);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(FrameworkSkillMetadataYamlDocument.Name)), PublishedTokens.Metadata.SkillName);
+        Assert.Equal(FrameworkMetadataFieldReader.Description, PublishedTokens.Metadata.Description);
+        Assert.Equal(FrameworkMetadataFieldReader.Tags, PublishedTokens.Metadata.Tags);
+        Assert.Equal(MarkdownEntriesSectionReader.EntriesHeadingText, PublishedTokens.Metadata.Entries);
+        Assert.Equal(SourceLoadingClosureResolver.LoadNowTag, PublishedTokens.Metadata.LoadNow);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ContextData.Sources)), PublishedTokens.ContextData.Sources);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(FindData.Matches)), PublishedTokens.FindData.Matches);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(FindDataMatch.Parts)), PublishedTokens.FindData.Parts);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ReferencesData.Source)), PublishedTokens.ReferencesData.Source);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ReferencesData.Incoming)), PublishedTokens.ReferencesData.Incoming);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ReferencesData.Outgoing)), PublishedTokens.ReferencesData.Outgoing);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ReferencesDataOutgoing.ResolvedPath)), PublishedTokens.ReferencesData.ResolvedPath);
+        Assert.Equal(CliJsonFields.Id, PublishedTokens.Json.Id);
 #pragma warning restore xUnit2000
     }
 }

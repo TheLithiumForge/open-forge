@@ -56,6 +56,9 @@ internal static class InstallConfigurationChoices
 
     internal static string Directory(string id) => $"{WorkspaceLayout.DefaultMainRoot}/{id}";
     internal static string Entrypoint(string id) => $"{Directory(id)}/{SourceFormClassifier.CanonicalEntrypointFileName(id.Split('/')[^1])}";
+    internal static string Directory(WorkspaceLayout layout, string id) => layout.MapPayloadPath(Directory(id));
+    internal static string Entrypoint(WorkspaceLayout layout, string id) => layout.MapPayloadPath(Entrypoint(id));
+    internal static string LoaderRoot(WorkspaceLayout layout, string id) => layout.MapPayloadPath(LoaderRoot(id));
     internal static bool Contains(string id, string path) => path.StartsWith($"{Directory(id)}/", StringComparison.Ordinal);
 
     // The Loader line that switches a route on. A Memory state is reached through the Memory catalogue.

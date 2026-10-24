@@ -56,16 +56,13 @@ internal sealed class InstallPlanningInspector
                 payloadRead.Cause ?? "The embedded Framework payload is unavailable.");
         }
 
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(
-                _physicalPathResolver,
-                request.Workspace,
-                cancellationToken)
-            .ConfigureAwait(false);
+        var layout = await new InstallLayoutPlanner(_physicalPathResolver).ReadAsync(request, cancellationToken).ConfigureAwait(false);
+        if (layout.Boundary is { } layoutBoundary) return new InstallInspectionStopped(layoutBoundary);
+        var intendedLayout = layout.IntendedLayout ?? throw new InvalidOperationException("Install requires its intended layout.");
+        var ownership = layout.Observation.Ownership;
 
         var intendedBuild = await _intendedStateBuilder.BuildAsync(
-                request,
-                payload,
-                ownership,
+                new InstallPlanningInput(request, payload, layout.Observation, intendedLayout),
                 cancellationToken)
             .ConfigureAwait(false);
         if (intendedBuild.State != InstallIntendedStateBuildState.Complete
@@ -99,7 +96,9 @@ internal sealed class InstallPlanningInspector
             intendedState,
             ownership,
             currentTargets,
-            ownership.Document.Framework));
+            ownership.Document.Framework,
+            layout.Observation,
+            intendedLayout));
     }
 
     private async ValueTask<IReadOnlyDictionary<string, InstallTargetRead>> ReadTargetsAsync(

@@ -69,7 +69,7 @@ internal static class FindReportSelector
             Workspace = result.WorkspacePath is { } path
                 ? new CliWorkspaceEcho(path, result.WorkspaceExplicit)
                 : null,
-            Findings = result.Findings.Select(Finding).ToArray(),
+            Findings = result.Findings.Select(finding => Finding(finding, result.CustomMainRoot)).ToArray(),
             Counts = Counts(result),
             Data = data,
             Next = Next(result),
@@ -84,7 +84,7 @@ internal static class FindReportSelector
         {
             CliSemanticStatus.Complete or CliSemanticStatus.Attention when result.Matches.Count == 0
                 => new(
-                    FindWording.NoMatches(query, query.Length == 0 && result.Universe.CandidateCount == 0),
+                    FindWording.NoMatches(query, query.Length == 0 && result.Universe.CandidateCount == 0, result.CustomMainRoot),
                     CliHeadlineKind.NothingToDo),
             CliSemanticStatus.Complete
                 => new(FindWording.Completed(result.Matches.Count, query), CliHeadlineKind.Done),
@@ -109,7 +109,7 @@ internal static class FindReportSelector
         var finding = result.Findings.FirstOrDefault();
         return finding is null
             ? global::OpenForge.Cli.OutputText.Find.FindText.LabelTheRequestedSearchCouldNotBeStarted()
-            : FindWording.FindingMessage(finding).TrimEnd('.');
+            : FindWording.FindingMessage(finding, result.CustomMainRoot).TrimEnd('.');
     }
 
     private static string FirstCause(FindResult result)
@@ -142,7 +142,7 @@ internal static class FindReportSelector
             new CliCount("sourcesCandidates", global::OpenForge.Cli.OutputText.Find.FindText.LabelSourceCandidates(), result.Universe.CandidateCount),
         ];
 
-    private static CliFinding Finding(FindFinding finding)
+    private static CliFinding Finding(FindFinding finding, string? mainRoot)
     {
         var path = finding.Path ?? finding.Source?.Path;
         var id = finding.Source?.Id ?? finding.Subject ?? (path is null ? "find" : null);
@@ -161,7 +161,7 @@ internal static class FindReportSelector
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = FindWording.FindingCode(finding.Code),
             Title = FindWording.FindingTitle(finding.Code),
-            Message = FindWording.FindingMessage(finding),
+            Message = FindWording.FindingMessage(finding, mainRoot),
             Subject = subject,
             Candidates = finding.Candidates
                 .Select(candidate => new CliCandidate(

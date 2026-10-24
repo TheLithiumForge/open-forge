@@ -18,6 +18,8 @@ using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Includes;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Context.Shared.Graph;
 
@@ -31,8 +33,11 @@ internal sealed class ContextGraphBuilder
     {
         ArgumentNullException.ThrowIfNull(workspace);
         cancellationToken.ThrowIfCancellationRequested();
-        var session = await new SourceReadSessionReader(new PhysicalPathResolver())
-            .ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var paths = new PhysicalPathResolver();
+        var observation = await new WorkspaceLayoutReader(paths).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var layout = observation.Layout ?? throw new InvalidOperationException("The workspace layout is unavailable.");
+        var session = await new SourceReadSessionReader(paths)
+            .ReadAsync(layout, cancellationToken).ConfigureAwait(false);
         var catalogue = session.Catalogue;
         cancellationToken.ThrowIfCancellationRequested();
         var reader = session.DocumentReader;
@@ -67,6 +72,7 @@ internal sealed class ContextGraphBuilder
                 : SourceGeneratedEntriesParser.Parse(baseDocument);
             var route = routeFacts.RouteFacts.SingleOrDefault(fact => ReferenceEquals(fact.Identity, source.Identity));
             sources.Add(new ContextGraphSource(
+                layout: layout,
                 logicalSource: source,
                 id: source.Identity.AutomaticId,
                 canonicalPath: source.Identity.CanonicalBasePath,
@@ -84,7 +90,7 @@ internal sealed class ContextGraphBuilder
             var layer = await ReadLayerAsync(reader, source.Base, cancellationToken).ConfigureAwait(false);
             var document = layer.Document ?? throw new InvalidOperationException("An included source requires a readable document.");
             var entry = source.IncludedEntry ?? throw new InvalidOperationException("An included source requires its catalogue row.");
-            sources.Add(new ContextGraphSource(logicalSource: null, id: null, canonicalPath: source.Base.CanonicalPath,
+            sources.Add(new ContextGraphSource(layout: layout, logicalSource: null, id: null, canonicalPath: source.Base.CanonicalPath,
                 form: SourceDocumentForm.Markdown, routeState: SourceRouteState.Unrouted, route: null,
                 metadata: _metadataParser.Parse(document, SourceDocumentForm.Markdown),
                 generatedEntries: SourceGeneratedDestinationResolver.IsMarkdown(source.Base.CanonicalPath)
@@ -97,13 +103,15 @@ internal sealed class ContextGraphBuilder
 
         catalogue = SourceIncludedEntryReader.Extend(catalogue, included.Sources, included.Rows);
         return new ContextGraph(
+            layoutRead: observation,
             catalogue: catalogue,
             routeFacts: routeFacts,
-            workspaceEntry: await ReadWorkspaceEntryAsync(reader, cancellationToken).ConfigureAwait(false),
+            workspaceEntry: await ReadWorkspaceEntryAsync(layout, reader, cancellationToken).ConfigureAwait(false),
             sources: sources);
     }
 
     private async ValueTask<ContextGraphSource> ReadWorkspaceEntryAsync(
+        WorkspaceLayout layout,
         SourceDocumentReader reader,
         CancellationToken cancellationToken)
     {
@@ -133,6 +141,7 @@ internal sealed class ContextGraphBuilder
             ? reader.ParseDocument(read.Value)
             : null;
         return new ContextGraphSource(
+            layout: layout,
             logicalSource: null,
             id: null,
             canonicalPath: logicalPath,

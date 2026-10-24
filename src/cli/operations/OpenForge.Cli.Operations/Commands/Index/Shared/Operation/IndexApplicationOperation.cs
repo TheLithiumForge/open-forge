@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Index.Models.Operation;
@@ -22,6 +24,7 @@ internal sealed class IndexApplicationOperation(
     FileChangeApplier fileChangeApplier,
     IndexProjectionReader projectionReader)
 {
+    private readonly WorkspaceLayoutRevalidator _layoutRevalidator = new(new PhysicalPathResolver());
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly MutationRevalidator _revalidator = revalidator;
     private readonly FileChangeApplier _fileChangeApplier = fileChangeApplier;
@@ -78,7 +81,11 @@ internal sealed class IndexApplicationOperation(
         MutationValidationResult validation;
         try
         {
-            if (!await _projectionReader.VerifyOwnershipAsync(application.Plan, cancellationToken).ConfigureAwait(false))
+            var layoutValidation = await _layoutRevalidator.ValidateAsync(lease, application.Plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (layoutValidation.State != MutationValidationState.Valid)
+                return FinishBeforePreparation(application, IndexFindingCode.TargetChanged, cause: layoutValidation.Cause);
+            if (!await _projectionReader.VerifyMaintenanceAsync(application.Plan, cancellationToken).ConfigureAwait(false))
                 return FinishBeforePreparation(application, IndexFindingCode.TargetChanged,
                     cause: "Workspace inputs or selected rename evidence changed after Index planning.");
             validation = await _revalidator.ValidateAsync(
@@ -226,6 +233,10 @@ internal sealed class IndexApplicationOperation(
                 regions,
                 IndexFindingCode.VerificationFailed);
         }
+
+        if (fresh.Projection is { } freshProjection
+            && freshProjection.LayoutRead?.Layout?.MainRoot != prepared.Application.Plan.LayoutRead.Layout?.MainRoot)
+            return FinishPrepared(prepared, regions, IndexFindingCode.VerificationFailed);
 
         var verification = IndexMutationMapper.ReadFreshVerification(
             new IndexFreshVerificationInput

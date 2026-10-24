@@ -117,6 +117,8 @@ internal sealed record ContextFinding
 
 internal sealed record ContextResult : ICliCommandResult
 {
+    internal string? SelectedLoaderPath { get; init; }
+
     internal ContextResult(
         CliWorkspace? workspace,
         ContextSelection selection,

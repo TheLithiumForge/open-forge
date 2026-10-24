@@ -18,14 +18,15 @@ internal static class InstallConfigurationOwnership
         var configuration = context.Request.Configuration ?? throw new InvalidOperationException("Configuration is required.");
         var omitted = context.Payload.Assets.Where(asset => configuration.Routes.Any(row => row.Action == InstallRouteAction.Remove
             && InstallConfigurationChoices.Contains(row.Id, asset.Path)))
-            .Select(asset => asset.Path).ToHashSet(StringComparer.Ordinal);
+            .Select(asset => context.IntendedLayout.MapPayloadPath(asset.Path)).ToHashSet(StringComparer.Ordinal);
+        var payloadPaths = context.Payload.Assets.Select(asset => context.IntendedLayout.MapPayloadPath(asset.Path)).ToHashSet(StringComparer.Ordinal);
         var initialEstablishment = context.IntendedState.Configuration?.UsesInitialAdoption == true;
         var userOwnedPaths = context.IntendedState.UserOwnedPaths
             .Select(PortableWorkspacePath.CreatePortableKey).ToHashSet(StringComparer.Ordinal);
         var paths = (input.Ownership.Document.Framework?.Paths ?? [])
             .Concat(effects.Where(effect => effect.Identity.Kind == InstallEffectKind.File
                 && (initialEstablishment || effect.Change.Kind == PlannedFileChangeKind.Create)
-                && context.Payload.Find(effect.RelativePath) is not null
+                && payloadPaths.Contains(effect.RelativePath)
                 && effect.RelativePath is not (FrameworkPayloadAsset.RootAgentPath or FrameworkPayloadAsset.RootClaudePath))
                 .Select(effect => effect.RelativePath))
             .Concat(initialEstablishment ? context.IntendedState.PreservedEntrypointPaths : [])

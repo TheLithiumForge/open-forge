@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Shared.Selection;
@@ -87,6 +89,7 @@ public sealed class ContextSelectionAccumulatorTests
 
     private static ContextGraphSource Source(string canonicalPath, string text)
         => new(
+            layout: WorkspaceLayout.Create(new CliWorkspace(Path.GetTempPath(), Path.GetTempPath(), CliWorkspaceSelectionMethod.CurrentDirectory), WorkspaceLayout.DefaultMainRoot),
             logicalSource: null,
             id: null,
             canonicalPath: canonicalPath,
