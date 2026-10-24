@@ -116,7 +116,7 @@ internal sealed record SourceLoadingClosureSource
     public required SourceGeneratedEntriesFacts GeneratedEntries { get; init; }
 
     /// <summary>
-    /// True for an ordinary Markdown file outside the primary content locations reached through an Entries link. Its
+    /// True for ordinary Markdown or a registered catalogue outside the primary content locations reached through an Entries link. Its
     /// parent is the linking catalogue, and the linking entry line supplies its loading tags and
     /// conditions.
     /// </summary>

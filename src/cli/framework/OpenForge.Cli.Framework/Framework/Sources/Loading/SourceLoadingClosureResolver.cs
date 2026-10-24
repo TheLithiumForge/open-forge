@@ -149,7 +149,7 @@ internal sealed class SourceLoadingClosureResolver
             var loadNow = generated.HasTag(LoadNowTag);
             var keepInMind = generated.HasTag(KeepInMindTag);
             var target = parent.IsLinked ? null : _graph.FindDirectChild(parent, generated.Destination);
-            if (target is null)
+            if (target is null || target.IsLinked)
             {
                 return ReadLinked(parent, generated, loadNow, keepInMind);
             }

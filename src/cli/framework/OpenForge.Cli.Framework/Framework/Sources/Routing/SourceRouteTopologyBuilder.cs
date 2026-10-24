@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Routing;
 
@@ -10,6 +11,12 @@ internal sealed class SourceRouteTopologyBuilder
     internal SourceRouteTopology Build(
         IEnumerable<SourceLogicalSource> sources,
         IReadOnlyList<string> loaderRootPaths)
+        => BuildCore(null, sources, loaderRootPaths);
+
+    internal SourceRouteTopology Build(WorkspaceLayout layout, IEnumerable<SourceLogicalSource> sources, IReadOnlyList<string> loaderRootPaths)
+        => BuildCore(layout, sources, loaderRootPaths);
+
+    private static SourceRouteTopology BuildCore(WorkspaceLayout? layout, IEnumerable<SourceLogicalSource> sources, IReadOnlyList<string> loaderRootPaths)
     {
         var candidateSources = sources
             .Select(source => source ?? throw new ArgumentException("Topology sources cannot contain null.", nameof(sources)))
@@ -40,7 +47,7 @@ internal sealed class SourceRouteTopologyBuilder
             .ToArray();
         var relationships = materializedSources.ToDictionary(
             source => source.Identity.CanonicalBasePath,
-            source => ReadParentRelationship(source, entrypointsByDirectory),
+            source => ReadParentRelationship(layout, source, entrypointsByDirectory),
             StringComparer.Ordinal);
         var childrenByParent = materializedSources
             .Select(source => (Source: source, Parent: relationships[source.Identity.CanonicalBasePath]))
@@ -90,9 +97,12 @@ internal sealed class SourceRouteTopologyBuilder
     }
 
     private static SourceRouteParentRelationship ReadParentRelationship(
+        WorkspaceLayout? layout,
         SourceLogicalSource source,
         IReadOnlyDictionary<string, SourceLogicalSource[]> entrypointsByDirectory)
     {
+        if (layout is not null && layout.OutsideRoutes.Any(route => route.CataloguePath == source.Base.CanonicalPath))
+            return SourceRouteParentRelationship.None;
         var containingDirectory = SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath);
         var representedParentDirectory = source.Base.Form == SourceDocumentForm.Markdown
             ? containingDirectory
@@ -104,6 +114,9 @@ internal sealed class SourceRouteTopologyBuilder
 
         var candidatePaths = candidates
             .Select(candidate => candidate.Identity.CanonicalBasePath)
+            .Where(candidatePath => layout is null || !SourceLogicalPath.IsOutsideSource(layout, source.Base.CanonicalPath)
+                || layout.OutsideRoutes.Any(route => source.Base.CanonicalPath.StartsWith(route.DirectoryPath + "/", StringComparison.Ordinal)
+                    && candidatePath.StartsWith(route.DirectoryPath + "/", StringComparison.Ordinal)))
             .Where(candidatePath => !string.Equals(
                 candidatePath,
                 source.Identity.CanonicalBasePath,

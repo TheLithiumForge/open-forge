@@ -74,12 +74,14 @@ internal sealed class SourceLoadingClosureGraph
     {
         if (source.IsLinked)
         {
-            if (source.Form != SourceDocumentForm.Markdown
+            var registeredCatalogue = SourceLogicalPath.IsOutsideSource(layout, source.Path)
+                && SourceFormClassifier.IsEntrypoint(source.Form) && SourceFormClassifier.Matches(layout, source.Path, source.Form);
+            if (source.Form != SourceDocumentForm.Markdown && !registeredCatalogue
                 || source.ParentPath is null
                 || SourceLogicalPath.IsPrimarySource(layout, source.Path) || layout.SourceRoots.Contains(source.Path))
             {
                 throw new ArgumentException(
-                    "A linked source must be Markdown outside the primary content locations with its linking catalogue as parent.",
+                    "A linked source must be ordinary Markdown or a registered catalogue outside the primary content locations with its linking catalogue as parent.",
                     nameof(source));
             }
 

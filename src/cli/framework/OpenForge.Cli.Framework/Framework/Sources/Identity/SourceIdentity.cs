@@ -8,7 +8,16 @@ internal static class SourceIdentity
 {
 
     internal static string? DeriveId(WorkspaceLayout layout, string? canonicalPath)
-        => DeriveId(new SourceContentRoots(layout), canonicalPath);
+    {
+        if (SourceLogicalPath.IsOutsideSource(layout, canonicalPath))
+        {
+            var basePath = SourceOverwritePath.HasSuffix(canonicalPath)
+                ? SourceOverwritePath.ReadBasePath(canonicalPath)
+                : canonicalPath;
+            return SourceWorkspaceRelativePath.LiteralReferencePrefix + basePath;
+        }
+        return DeriveId(new SourceContentRoots(layout), canonicalPath);
+    }
 
     internal static string? DeriveId(SourceContentRoots roots, string? canonicalPath)
     {
@@ -67,7 +76,8 @@ internal static class SourceIdentity
     }
 
     internal static bool IsRecognizedEntrypointPath(WorkspaceLayout layout, string canonicalPath)
-        => IsRecognizedEntrypointPath(new SourceContentRoots(layout), canonicalPath);
+        => SourceFormClassifier.TryClassify(layout, canonicalPath, out var form)
+            && SourceFormClassifier.IsEntrypoint(form);
 
     internal static bool IsRecognizedEntrypointPath(SourceContentRoots roots, string canonicalPath)
     {
