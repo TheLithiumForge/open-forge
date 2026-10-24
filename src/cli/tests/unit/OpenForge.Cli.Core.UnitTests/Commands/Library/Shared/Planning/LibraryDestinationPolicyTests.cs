@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Planning;
 
@@ -11,6 +12,8 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Planning;
 public sealed class LibraryDestinationPolicyTests
 {
     private const string ArchiveName = "archive.zip";
+    private const string CustomRoot = "docs/forge";
+    private const string AliasNote = "notes/team.md";
 
     public static TheoryData<string> RuntimeDestinations
     {
@@ -76,6 +79,18 @@ public sealed class LibraryDestinationPolicyTests
         selected = Record(id: "team", sourceRoot: ".agents/directives", destination: "docs/a.md");
         Assert.Equal(".agents/directives/_directives.md", LibraryDestinationPolicy.FindConflict(Workspace(), selected, registered,
             generatedTargets: [".agents/directives/_directives.md"]));
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact]
+    public void CustomRootCaseAliasesAreRefused()
+    {
+        var layout = WorkspaceLayout.Create(Workspace(), CustomRoot);
+        var alias = CustomRoot.ToUpperInvariant() + "/" + AliasNote;
+        Assert.Equal(alias, LibraryDestinationPolicy.FindConflict(layout, Record(id: "team", sourceRoot: "shared/team", destination: alias),
+            registered: null, generatedTargets: []));
+        Assert.Null(LibraryDestinationPolicy.FindConflict(layout, Record(id: "team", sourceRoot: "shared/team", destination: CustomRoot + "/" + AliasNote),
+            registered: null, generatedTargets: []));
     }
 
     private static LibraryRegistration Record(string id, string sourceRoot, string destination)

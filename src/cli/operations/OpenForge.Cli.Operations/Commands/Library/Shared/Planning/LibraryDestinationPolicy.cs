@@ -116,8 +116,8 @@ internal static class LibraryDestinationPolicy
         {
             return true;
         }
-        if (key.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.Ordinal)
-            && !path.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.Ordinal))
+        // A case alias of a content root is another folder on a case-sensitive filesystem, so it is refused.
+        if (!layout.IsImplicitContentDestination(path))
         {
             return false;
         }
