@@ -448,14 +448,14 @@ internal sealed class IndexSelectionResolver
             {
                 SourceCatalogueIssueCode.RootMissing when !request.HasExplicitSources => Finding(
                     IndexFindingCode.TargetUnexposed,
-                    "The .agents source root is missing, so the required Loader source cannot be established."),
+                    $"The {issue.AttemptedCanonicalPath} source root is missing, so the required Loader source cannot be established."),
                 SourceCatalogueIssueCode.RootMissing => null,
                 SourceCatalogueIssueCode.RootUnsafe => Finding(
                     IndexFindingCode.WorkspaceUnsafe,
-                    "The .agents source root does not have a safe workspace boundary."),
+                    $"The {issue.AttemptedCanonicalPath} source root does not have a safe workspace boundary."),
                 SourceCatalogueIssueCode.RootUnavailable => Finding(
                     IndexFindingCode.DiscoveryIncomplete,
-                    "The .agents source root could not be completely inspected."),
+                    $"The {issue.AttemptedCanonicalPath} source root could not be completely inspected."),
                 _ => throw new ArgumentOutOfRangeException(
                     nameof(formation),
                     issue.Code,

@@ -6,6 +6,74 @@ namespace OpenForge.Cli.TestSupport.Contracts;
 // PublishedTokensTests checks every value against its production owner in the Unit suite.
 public static class PublishedTokens
 {
+    public static class Context
+    {
+        public const string Command = "context";
+        public const string Content = "--content";
+        public const string FollowLinks = "--follow-links";
+        public const string All = "all";
+        public const string Frontmatter = "frontmatter";
+    }
+
+    public static class Find
+    {
+        public const string Metadata = "metadata";
+        public const string Command = "find";
+        public const string Heading = "--heading";
+        public const string Content = "--content";
+        public const string Exclude = "--exclude";
+        public const string Body = "body";
+    }
+
+    public static class References
+    {
+        public const string Command = "references";
+    }
+
+    public static class Layout
+    {
+        public const string IndexFile = "index.md";
+        public const string LiteralReferencePrefix = "./";
+        public const string LoaderFileName = "loader.md";
+        public const string GuideFile = "README.md";
+        public const string AgentHost = "AGENTS.md";
+        public const string NativeSkillsPath = ".agents/skills";
+        public const string SkillsDirectory = "skills";
+        public const string NativeSkillFileName = "SKILL.md";
+        public const string UnderscoreReferencesFileName = "_references.md";
+        public const string MarkdownExtension = ".md";
+        public const string OverwriteSuffix = ".overwrite.md";
+    }
+
+    public static class Metadata
+    {
+        public const string SkillName = "name";
+        public const string Description = "description";
+        public const string Tags = "tags";
+        public const string Entries = "Entries";
+        public const string LoadNow = "LoadNow";
+    }
+
+    public static class ContextData
+    {
+        public const string Sources = "sources";
+    }
+
+    public static class FindData
+    {
+        public const string Matches = "matches";
+        public const string Parts = "parts";
+    }
+
+    public static class ReferencesData
+    {
+        public const string Scanned = "scanned";
+        public const string Source = "source";
+        public const string Incoming = "incoming";
+        public const string Outgoing = "outgoing";
+        public const string ResolvedPath = "resolvedPath";
+    }
+
     public static class Install
     {
         public const string Command = "install";
@@ -151,9 +219,12 @@ public static class PublishedTokens
 
     public static class Settings
     {
+        public const string RelativePath = ".agents/open-forge.json";
         public const int SchemaVersion = 4;
         public const string SchemaVersionProperty = "schemaVersion";
+        public const string MainRootProperty = "mainRoot";
         public const string FrontmatterProperty = "frontmatter";
+        public const string RootFrontmatter = "root";
         public const string ScopedFrontmatter = "scoped";
     }
 
@@ -191,6 +262,7 @@ public static class PublishedTokens
 
     public static class Json
     {
+        public const string Id = "id";
         public const string Data = "data";
         public const string Command = "command";
         public const string Status = "status";

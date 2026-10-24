@@ -1,0 +1,10 @@
+---
+open-forge:
+  description: Nested procedures
+  tags: [Docs]
+---
+# Root
+
+## Entries
+
+- [Nested procedures](note.md) - #Docs

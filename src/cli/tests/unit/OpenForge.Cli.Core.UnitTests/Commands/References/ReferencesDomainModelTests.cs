@@ -325,6 +325,7 @@ public sealed class ReferencesDomainModelTests
         ReferencesMarkdownParser markdownParser = static _ => throw new InvalidOperationException("not reached");
         var operation = new ReferencesOperation(
             new ReferencesSourceResolver(
+                layoutRead: (_, _) => throw new InvalidOperationException(),
                 static (_, _) => throw new InvalidOperationException("boundary failure"),
                 sourceReferenceResolver,
                 new SourceUniverseFilterResolver(sourceReferenceResolver)),
@@ -387,6 +388,7 @@ public sealed class ReferencesDomainModelTests
         ReferencesMarkdownParser markdownParser = static _ => throw new InvalidOperationException("not reached");
         var operation = new ReferencesOperation(
             new ReferencesSourceResolver(
+                layoutRead: (_, _) => throw new InvalidOperationException(),
                 static (_, _) => throw new InvalidOperationException("boundary failure"),
                 sourceReferenceResolver,
                 new SourceUniverseFilterResolver(sourceReferenceResolver)),

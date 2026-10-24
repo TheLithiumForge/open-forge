@@ -41,17 +41,11 @@ internal sealed record FindSourceIdentity
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        if (!SourceWorkspaceRelativePath.IsCanonical(path)
-            || SourceLogicalPath.IsPrimaryNonMarkdownSource(SourceContentRoots.Default, path)
-            || SourceLogicalPath.IsPrimaryOverwriteSource(SourceContentRoots.Default, path))
+        if (!SourceWorkspaceRelativePath.IsCanonical(path))
         {
             throw new ArgumentException("A Find source identity requires a canonical base source path.", nameof(path));
         }
 
-        if (!string.Equals(SourceWorkspaceRelativePath.ReadReference(path), id, StringComparison.Ordinal))
-        {
-            throw new ArgumentException("A Find source identity ID must be derived from its canonical base path.", nameof(id));
-        }
 
         Id = id;
         Path = path;

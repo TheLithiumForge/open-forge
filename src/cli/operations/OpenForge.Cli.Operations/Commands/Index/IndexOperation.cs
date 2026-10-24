@@ -66,6 +66,7 @@ internal sealed class IndexOperation(
         var plan = _planBuilder.Build(new IndexPlanningInput
         {
             Request = request,
+            LayoutRead = projection.LayoutRead ?? throw new InvalidOperationException("An Index plan requires its layout observation."),
             Projection = projection,
         });
         if (!plan.IsExecutable || request.Mode == IndexMode.DryRun || plan.IsNoOp)

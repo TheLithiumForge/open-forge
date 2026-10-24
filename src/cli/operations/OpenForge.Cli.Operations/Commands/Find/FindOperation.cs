@@ -325,7 +325,10 @@ internal sealed class FindOperation(
             findings,
             new FindStageCompletion(matchingCoverage, projectionCoverage),
             terminalEvent);
-        return _resultBuilder.Build(resultInput);
+        return _resultBuilder.Build(resultInput) with
+        {
+            CustomMainRoot = sourceSession?.Layout is { IsDefault: false } layout ? layout.MainRoot : null,
+        };
     }
 
     private async ValueTask<FindTerminalEvent?> InspectSelectedLayers(

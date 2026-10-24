@@ -10,8 +10,6 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Selection;
-using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
-using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Commands.Index.Models.Selection;
 using OpenForge.Cli.Core.Commands.Index.Models.Planning;
@@ -58,16 +56,16 @@ internal sealed class IndexProjectionReader
         CancellationToken cancellationToken,
         IReadOnlyList<string>? verificationTargets = null)
     {
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(_paths, request.Workspace, cancellationToken).ConfigureAwait(false);
-        if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete))
-            return IndexProjectionReadResult.SelectionIncomplete(new IndexSelectionResolution(
-                IndexSelection.NotEstablished(request.HasExplicitSources ? IndexSelectionOrigin.ExplicitSources : IndexSelectionOrigin.AutomaticLoader),
-                [], [new IndexFinding(IndexFindingCode.SourceUnsafe, sourceOccurrence: null, source: null,
-                    cause: "The route-sharing lock is unreadable or invalid. Restore it before indexing shared navigation.", candidates: [])]));
+        var layoutRead = await new WorkspaceLayoutReader(_paths).ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
+            || layoutRead.Layout is not { } layout)
+            return Boundary(request, IndexFindingCode.SourceUnsafe,
+                layoutRead.Issues.FirstOrDefault()?.Cause ?? "Workspace layout is unavailable.");
+        var ownership = layoutRead.Ownership;
         var catalogue = await _catalogueReader.ReadAsync(
                 new SourceCatalogueRequest(
-                    request.Workspace,
-                    [SourceLogicalPath.AgentsRoot]),
+                    layout,
+                    layout.SourceRoots),
                 cancellationToken)
             .ConfigureAwait(false);
         if (catalogue.IsCancelled)
@@ -88,9 +86,7 @@ internal sealed class IndexProjectionReader
                 IndexSelection.NotEstablished(request.HasExplicitSources ? IndexSelectionOrigin.ExplicitSources : IndexSelectionOrigin.AutomaticLoader),
                 [], [new IndexFinding(IndexFindingCode.SourceUnsafe, sourceOccurrence: null, source: null,
                     cause: $"The recorded shared entrypoint '{unavailable}' is missing or ambiguous. Restore its route before indexing.", candidates: [])]));
-        var settings = await WorkspaceSettingsReader.ReadAsync(_paths, request.Workspace, cancellationToken).ConfigureAwait(false);
-        if (settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
-            return Boundary(request, IndexFindingCode.SourceUnsafe, settings.Cause ?? "Workspace settings are unavailable.");
+        var settings = layoutRead.Settings;
         catalogue = sharing.Project(catalogue);
         var formation = _formationBuilder.Build(catalogue);
         var roots = formation.Loader is null ? [] : formation.Topology.LoaderRootPaths.ToImmutableArray();
@@ -99,7 +95,7 @@ internal sealed class IndexProjectionReader
             return IndexProjectionReadResult.SelectionIncomplete(_selectionResolver.Resolve(request, formation));
         var selected = SelectMaintenanceSources(formation, request.HasExplicitSources
             ? explicitSources.Select(resolution => resolution.Source ?? throw new InvalidOperationException()).ToArray() : []);
-        selected = selected.Where(source => !WorkspaceRemovals.IsPathRemoved(source.Identity.CanonicalBasePath, settings.Document)).ToImmutableArray();
+        selected = selected.Where(source => !WorkspaceRemovals.IsPathRemoved(layout, source.Identity.CanonicalBasePath, settings.Document)).ToImmutableArray();
         var intent = await _maintenance.PrepareAsync(new()
         {
             Catalogue = catalogue,
@@ -152,21 +148,14 @@ internal sealed class IndexProjectionReader
             .ConfigureAwait(false);
         return IndexProjectionReadResult.Projected(projection with
         {
-            OwnershipExpectation = ownership.Snapshot?.Expectation,
-            SettingsExpectation = settings.Snapshot?.Expectation ?? OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files.FileExpectation.Missing(settings.LogicalPath),
+            LayoutRead = layoutRead,
             Maintenance = intent,
         });
     }
 
-    internal async ValueTask<bool> VerifyOwnershipAsync(IndexPlan plan, CancellationToken token)
+    internal async ValueTask<bool> VerifyMaintenanceAsync(IndexPlan plan, CancellationToken token)
     {
         var expectations = new FileExpectationValidator(_paths.CreateReadSession());
-        foreach (var expectation in new[] { plan.Input.Projection.OwnershipExpectation, plan.Input.Projection.SettingsExpectation }.Where(item => item is not null))
-        {
-            var result = await expectations.ValidateAsync(plan.Input.Request.Workspace, expectation ?? throw new InvalidOperationException(), token).ConfigureAwait(false);
-            token.ThrowIfCancellationRequested();
-            if (result.State != FileExpectationValidationState.Matched) return false;
-        }
         foreach (var snapshot in plan.Input.Projection.Maintenance?.Originals.Values ?? [])
         {
             var result = await expectations.ValidateAsync(plan.Input.Request.Workspace, snapshot.Expectation, token).ConfigureAwait(false);

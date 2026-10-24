@@ -102,16 +102,6 @@ internal sealed record FindEvidence
             throw new ArgumentException("Find evidence paths must be canonical .agents source paths.", nameof(path));
         }
 
-        if (SourceLogicalPath.IsPrimaryNonMarkdownSource(SourceContentRoots.Default, path))
-        {
-            throw new ArgumentException("Find evidence paths must identify Markdown layers.", nameof(path));
-        }
-
-        var isOverwrite = SourceLogicalPath.IsPrimaryOverwriteSource(SourceContentRoots.Default, path);
-        if ((layer == SourceLayerKind.Overwrite) != isOverwrite)
-        {
-            throw new ArgumentException("The Find evidence path and layer must agree.", nameof(path));
-        }
         ArgumentNullException.ThrowIfNull(location);
         if (occurrence < 1)
         {

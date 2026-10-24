@@ -32,9 +32,7 @@ internal sealed record FindMetadataLayer
         }
 
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        if (!SourceWorkspaceRelativePath.IsCanonical(path)
-            || SourceLogicalPath.IsPrimaryNonMarkdownSource(SourceContentRoots.Default, path)
-            || (kind == SourceLayerKind.Overwrite) != SourceLogicalPath.IsPrimaryOverwriteSource(SourceContentRoots.Default, path))
+        if (!SourceWorkspaceRelativePath.IsCanonical(path))
         {
             throw new ArgumentException("The Find metadata layer path and kind must agree.", nameof(path));
         }
@@ -64,15 +62,9 @@ internal sealed record FindMetadata
 
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        if (!SourceWorkspaceRelativePath.IsCanonical(path)
-            || SourceLogicalPath.IsPrimaryNonMarkdownSource(SourceContentRoots.Default, path)
-            || SourceLogicalPath.IsPrimaryOverwriteSource(SourceContentRoots.Default, path))
+        if (!SourceWorkspaceRelativePath.IsCanonical(path))
         {
             throw new ArgumentException("Find metadata requires a canonical base source path.", nameof(path));
-        }
-        if (!string.Equals(SourceWorkspaceRelativePath.ReadReference(path), id, StringComparison.Ordinal))
-        {
-            throw new ArgumentException("A Find metadata ID must be derived from its canonical base path.", nameof(id));
         }
         if (!Enum.IsDefined(routeState))
         {
@@ -238,11 +230,7 @@ internal sealed record FindProjection
             throw new ArgumentException("A physical Find projection requires layer and path identity.");
         }
 
-        if (path is not null
-            && (!SourceWorkspaceRelativePath.IsCanonical(path)
-                || SourceLogicalPath.IsPrimaryNonMarkdownSource(SourceContentRoots.Default, path)
-                || layer is { } pathLayer
-                    && (pathLayer == SourceLayerKind.Overwrite) != SourceLogicalPath.IsPrimaryOverwriteSource(SourceContentRoots.Default, path)))
+        if (path is not null && !SourceWorkspaceRelativePath.IsCanonical(path))
         {
             throw new ArgumentException("The Find projection path and layer must agree.", nameof(path));
         }

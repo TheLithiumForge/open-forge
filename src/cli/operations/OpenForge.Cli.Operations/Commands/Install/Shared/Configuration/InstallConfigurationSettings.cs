@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -14,48 +17,51 @@ namespace OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 
 internal static class InstallConfigurationSettings
 {
-    internal static PlannedFileChange? Plan(WorkspaceSettingsRead settings, InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter)
+    internal static PlannedFileChange? Plan(WorkspaceLayout layout, WorkspaceSettingsRead settings,
+        InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter)
     {
-        var change = PlanChoices(settings, configuration, frontmatter);
-        ReadOnlyMemory<byte> bytes = change?.IntendedBytes.ToArray() ?? settings.Snapshot?.Bytes.ToArray()
-            ?? throw new InvalidOperationException("Install settings require their observed bytes.");
-        var intended = WorkspaceSettingsCodec.Read(bytes.IsEmpty ? "{}"u8.ToArray() : bytes).Document
-            ?? throw new InvalidOperationException("Planned Install settings must decode.");
-        if (!FrameworkPayloadSelection.IncludesPath(WorkspaceSettingsDefinitions.MemoryArchivePath + "/_archived.md", intended)) return change;
-        var seeded = WorkspaceSettingsCodec.SeedArchiveLinkScope(bytes);
-        if (seeded is null) return change;
         var snapshot = settings.Snapshot ?? throw new InvalidOperationException("Install settings require their observed snapshot.");
+        var change = PlanChoices(layout, settings, configuration, frontmatter);
+        ReadOnlyMemory<byte> bytes = change?.IntendedBytes.ToArray() ?? snapshot.Bytes.ToArray();
+        bytes = WorkspaceSettingsCodec.SetMainRoot(bytes, layout.MainRoot) ?? bytes;
+        var intended = bytes.IsEmpty ? WorkspaceSettingsDocument.Empty : WorkspaceSettingsCodec.Read(bytes).Document
+            ?? throw new InvalidOperationException("Planned Install settings must decode.");
+        var archive = layout.MapPayloadPath(WorkspaceSettingsDefinitions.MemoryArchivePath);
+        var entrypoint = $"{archive}/{SourceFormClassifier.CanonicalEntrypointFileName(SourceLogicalPath.ReadFileName(archive))}";
+        if (FrameworkPayloadSelection.IncludesPath(layout, entrypoint, intended))
+            bytes = WorkspaceSettingsCodec.SeedArchiveLinkScope(bytes, archive) ?? bytes;
+        if (snapshot.Bytes.AsSpan().SequenceEqual(bytes.Span)) return null;
         return snapshot.Kind == FileExpectationKind.Missing
-            ? PlannedFileChange.Create(snapshot.Expectation, seeded)
-            : PlannedFileChange.Replace(snapshot.Expectation, seeded);
+            ? PlannedFileChange.Create(snapshot.Expectation, bytes.ToArray())
+            : PlannedFileChange.Replace(snapshot.Expectation, bytes.ToArray());
     }
 
-    private static PlannedFileChange? PlanChoices(WorkspaceSettingsRead settings, InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter)
+    private static PlannedFileChange? PlanChoices(WorkspaceLayout layout, WorkspaceSettingsRead settings, InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter)
     {
         if (configuration is null)
             return WorkspaceSettingsChangePlanner.PlanConfiguration(settings, new(), new(), frontmatter?.Persist == true ? frontmatter.Form : null);
         var included = configuration.Routes.Where(row => row.Action != InstallRouteAction.Remove).ToArray();
         var removed = configuration.Routes.Where(row => row.Action == InstallRouteAction.Remove).ToArray();
-        var includesMemory = included.Any(row => row.Id.StartsWith("memory/", StringComparison.Ordinal));
+        var includesMemory = included.Any(row => row.Id.StartsWith(WorkspaceCategoryNames.Memory + "/", StringComparison.Ordinal));
         var categories = included.Where(row => !row.Id.Contains('/')).Select(row => row.Id).ToList();
-        var directories = included.Select(row => InstallConfigurationChoices.Directory(row.Id)).ToList();
-        var files = included.Select(row => InstallConfigurationChoices.Entrypoint(row.Id))
+        var directories = included.Select(row => InstallConfigurationChoices.Directory(layout, row.Id)).ToList();
+        var files = included.Select(row => InstallConfigurationChoices.Entrypoint(layout, row.Id))
             .Concat(directories).ToList();
-        if (included.Length > 0) files.Add(".agents/loader.md");
+        if (included.Length > 0) files.Add(layout.LoaderPath);
         if (includesMemory)
         {
-            categories.Add("memory");
-            directories.Add(".agents/memory");
-            files.Add(".agents/memory/_memory.md");
-            files.Add(".agents/memory");
+            categories.Add(WorkspaceCategoryNames.Memory);
+            directories.Add(layout.CategoryDirectory(WorkspaceCategoryNames.Memory));
+            files.Add(InstallConfigurationChoices.Entrypoint(layout, WorkspaceCategoryNames.Memory));
+            files.Add(layout.CategoryDirectory(WorkspaceCategoryNames.Memory));
         }
         // Every Memory state needs the Memory catalogue, and the catalogue is only useful with a state.
         var removedCategories = removed.Where(row => !row.Id.Contains('/')).Select(row => row.Id).ToList();
-        if (!includesMemory) removedCategories.Add("memory");
+        if (!includesMemory) removedCategories.Add(WorkspaceCategoryNames.Memory);
         var additions = new WorkspaceRemovalSelection
         {
             Categories = removedCategories.ToImmutableArray(),
-            Directories = removed.Where(row => row.Id.Contains('/')).Select(row => InstallConfigurationChoices.Directory(row.Id)).ToImmutableArray(),
+            Directories = removed.Where(row => row.Id.Contains('/')).Select(row => InstallConfigurationChoices.Directory(layout, row.Id)).ToImmutableArray(),
         };
         var clear = new WorkspaceRemovalSelection
         {

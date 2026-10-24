@@ -76,13 +76,6 @@ internal sealed record FindFinding
             throw new ArgumentException("Find finding paths must be canonical .agents paths.", nameof(path));
         }
 
-        if (path is not null && layer is { } pathLayer
-            && (SourceLogicalPath.IsPrimaryNonMarkdownSource(SourceContentRoots.Default, path)
-                || (pathLayer == SourceLayerKind.Overwrite) != SourceLogicalPath.IsPrimaryOverwriteSource(SourceContentRoots.Default, path)))
-        {
-            throw new ArgumentException("The Find finding path and layer must agree.", nameof(path));
-        }
-
         if (layer is not null && (source is null || path is null))
         {
             throw new ArgumentException("A Find finding layer requires source and path identity.", nameof(layer));

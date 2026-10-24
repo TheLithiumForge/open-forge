@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Isolation;
@@ -49,6 +50,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
 
     private readonly TemporaryWorkspace _temporary;
     private readonly WorkspaceLockTestStore _lockStore;
+    private WorkspaceLayout? _cleanupLayout;
     private bool _disposed;
 
     private InstallOperationWorkspace(
@@ -73,13 +75,15 @@ internal sealed class InstallOperationWorkspace : IDisposable
     internal string Combine(string relativePath)
         => _temporary.Combine(relativePath);
 
-    internal static InstallOperationWorkspace Create(string purpose)
+    internal static InstallOperationWorkspace Create(string purpose, string? mainRoot = null)
     {
         var temporary = TemporaryWorkspace.Create(purpose);
         var lockStore = WorkspaceLockTestStore.Create($"{purpose}-lock-store");
         try
         {
-            return new InstallOperationWorkspace(temporary, lockStore);
+            var result = new InstallOperationWorkspace(temporary, lockStore);
+            if (mainRoot is not null) result._cleanupLayout = WorkspaceLayout.Create(result.Workspace, mainRoot);
+            return result;
         }
         catch
         {
@@ -183,6 +187,17 @@ internal sealed class InstallOperationWorkspace : IDisposable
 
     private void DeleteInstallArtifacts()
     {
+        if (_cleanupLayout is { } layout)
+        {
+            var paths = EmbeddedPayloadPaths.Select(layout.MapPayloadPath).ToArray();
+            foreach (var path in paths) DeleteOrdinaryFileIfPresent(_temporary.Combine(path));
+            var directories = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var path in paths)
+                for (var parent = Path.GetDirectoryName(path); !string.IsNullOrEmpty(parent); parent = Path.GetDirectoryName(parent))
+                    directories.Add(parent);
+            foreach (var directory in directories.OrderByDescending(path => path.Length))
+                DeleteEmptyOrdinaryDirectoryIfPresent(_temporary.Combine(directory));
+        }
         foreach (var path in EmbeddedPayloadPaths
                      .Concat(EmbeddedPayloadPaths.Where(path =>
                          SourceFormClassifier.TryClassify(path, out var form)

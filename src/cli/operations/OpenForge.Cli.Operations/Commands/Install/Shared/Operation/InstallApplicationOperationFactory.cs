@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
@@ -20,7 +21,9 @@ internal static class InstallApplicationOperationFactory
                 : new WorkspaceLockManager(lockStoreRoot),
             preconditionValidator: new InstallApplicationPreconditionValidator(
                 mutationRevalidator: revalidator,
-                intendedStateBuilder: new InstallIntendedStateBuilder(physicalPathResolver)),
+                intendedStateBuilder: new InstallIntendedStateBuilder(physicalPathResolver),
+                layoutRevalidator: new WorkspaceLayoutRevalidator(physicalPathResolver),
+                expectationValidator: validator),
             effectApplier: new InstallApplicationEffectApplier(
                 new DirectoryCreationApplier(revalidator, validator),
                 new FileChangeApplier(revalidator, validator)),

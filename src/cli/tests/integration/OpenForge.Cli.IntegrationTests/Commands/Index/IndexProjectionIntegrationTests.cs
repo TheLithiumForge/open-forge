@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Index.Models.Projection;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
@@ -224,8 +225,9 @@ public sealed class IndexProjectionIntegrationTests
             workspace.Path,
             workspace.Path,
             CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        var layout = WorkspaceLayout.Create(cliWorkspace, WorkspaceLayout.DefaultMainRoot);
         var catalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(cliWorkspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(layout, layout.SourceRoots),
             TestContext.Current.CancellationToken);
         var formation = new GeneratedNavigationFormationBuilder().Build(catalogue);
         var selection = CreateSelection(
