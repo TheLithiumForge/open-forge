@@ -1,0 +1,1 @@
+{"mode":"apply","target":{"id":"skills/workshop/references/checklist","path":".agents/skills/workshop/references/checklist.md"},"listedIn":".agents/skills/workshop/references/_references.md","template":null}

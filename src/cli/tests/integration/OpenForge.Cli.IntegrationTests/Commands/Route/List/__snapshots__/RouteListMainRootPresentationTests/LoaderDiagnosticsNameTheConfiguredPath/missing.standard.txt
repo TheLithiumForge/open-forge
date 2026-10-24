@@ -1,0 +1,6 @@
+The listing is incomplete.
+Workspace: <workspace>
+  Warning  knowledge/team/context/loader.md  Loader is unavailable
+         knowledge/team/context/loader.md could not be read.
+  Inspect the route boundary with open-forge doctor.
+Next: open-forge doctor

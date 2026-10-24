@@ -1,25 +1,25 @@
-using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 
 internal sealed record RouteListInventoryRequest
 {
     internal RouteListInventoryRequest(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         CancellationToken cancellationToken)
-        : this(workspace, [SourceLogicalPath.AgentsRoot], cancellationToken)
+        : this(layout, layout.SourceRoots, cancellationToken)
     {
     }
 
     internal RouteListInventoryRequest(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         IEnumerable<string> logicalRoots,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(layout);
         ArgumentNullException.ThrowIfNull(logicalRoots);
         var roots = logicalRoots.ToArray();
         if (roots.Length == 0)
@@ -27,9 +27,9 @@ internal sealed record RouteListInventoryRequest
             throw new ArgumentException("Route-list inventory requires at least one logical root.", nameof(logicalRoots));
         }
 
-        if (roots.Any(root => root != SourceLogicalPath.AgentsRoot && !SourceLogicalPath.IsPrimarySource(SourceContentRoots.Default, root)))
+        if (roots.Any(root => !layout.SourceRoots.Contains(root) && !SourceLogicalPath.IsPrimarySource(layout, root)))
         {
-            throw new ArgumentException("Every route-list inventory root must be a canonical .agents logical path.", nameof(logicalRoots));
+            throw new ArgumentException("Every route-list inventory root must be a canonical primary content path.", nameof(logicalRoots));
         }
 
         var orderedRoots = roots.OrderBy(root => root, StringComparer.Ordinal).ToArray();
@@ -41,12 +41,14 @@ internal sealed record RouteListInventoryRequest
             }
         }
 
-        Workspace = workspace;
+        Layout = layout;
         LogicalRoots = new ReadOnlyCollection<string>(orderedRoots);
         CancellationToken = cancellationToken;
     }
 
-    internal CliWorkspace Workspace { get; }
+    internal WorkspaceLayout Layout { get; }
+
+    internal CliWorkspace Workspace => Layout.Workspace;
 
     internal IReadOnlyList<string> LogicalRoots { get; }
 

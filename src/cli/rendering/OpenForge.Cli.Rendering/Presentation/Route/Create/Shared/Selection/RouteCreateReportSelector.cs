@@ -647,28 +647,9 @@ internal static class RouteCreateReportSelector
 
     private static string ParentId(RouteCreateResult result)
     {
-        var folder = ParentFolder(result);
-        return folder.StartsWith(".agents/", StringComparison.Ordinal)
-            ? folder[".agents/".Length..]
-            : folder;
-    }
-
-    private static string TargetId(RouteCreateResult result)
-    {
-        if (result.Target.Id is { } id)
-        {
-            return id;
-        }
-
-        var path = (result.Target.Path ?? result.Target.Requested).Replace('\\', '/');
-        if (path.StartsWith(".agents/", StringComparison.Ordinal))
-        {
-            path = path[".agents/".Length..];
-        }
-
-        return path.EndsWith(".md", StringComparison.Ordinal)
-            ? path[..^".md".Length]
-            : path;
+        if (result.Target.Id is not { } id) return ParentFolder(result);
+        var slash = id.LastIndexOf('/');
+        return slash > 0 ? id[..slash] : ParentFolder(result);
     }
 
     private static bool IsSpecialTarget(string target)

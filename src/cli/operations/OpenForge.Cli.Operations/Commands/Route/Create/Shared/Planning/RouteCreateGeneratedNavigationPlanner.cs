@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
@@ -243,7 +244,7 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         }
 
         var targetDirectory = SourceLogicalPath.ReadParent(targetPath);
-        var directories = ReadDirectoryChain(targetDirectory);
+        var directories = ReadDirectoryChain(inspection.Catalogue.Layout, targetDirectory);
         if (directories.Length == 0)
         {
             return StopChain(
@@ -416,7 +417,8 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
                     isIncomplete: false);
             }
 
-            var entrypointPath = EntrypointPath(directory);
+            var entrypointPath = RouteScaffoldSourceBuilder.CanonicalPath(inspection.Catalogue.Layout,
+                SourceLogicalPath.ReadSourceCoordinate(inspection.Catalogue.Layout, directory));
             if (entrypointsByDirectory.TryGetValue(directory, out var existing)
                 && existing is [{ } source])
             {
@@ -470,10 +472,10 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
                     isIncomplete: false);
             }
 
-            var id = SourceIdentity.DeriveId(entrypointPath)
+            var id = SourceIdentity.DeriveId(inspection.Catalogue.Layout, entrypointPath)
                 ?? throw new InvalidOperationException(
                     "A synthetic Route Create entrypoint requires a stable automatic ID.");
-            var synthetic = _sourceBuilder.Create(inspection.Request.Workspace, entrypointPath);
+            var synthetic = _sourceBuilder.Create(inspection.Catalogue.Layout, entrypointPath);
             parents.Add(synthetic);
             syntheticBytes.Add(
                 entrypointPath,
@@ -571,11 +573,12 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         SourceAuthoredMetadataFacts facts)
         => values[source.Identity.CanonicalBasePath] = new GeneratedNavigationMetadata(source, facts);
 
-    private static string[] ReadDirectoryChain(string targetDirectory)
+    private static string[] ReadDirectoryChain(WorkspaceLayout layout, string targetDirectory)
     {
         var values = new List<string>();
         var current = targetDirectory;
-        while (!string.Equals(current, SourceLogicalPath.AgentsRoot, StringComparison.Ordinal))
+        while (layout.IsImplicitContentDestination(current)
+            || string.Equals(current, WorkspaceLayout.NativeSkillsPath, StringComparison.Ordinal))
         {
             values.Add(current);
             current = SourceLogicalPath.ReadParent(current);
@@ -667,9 +670,6 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
                 && directories.Contains(
                     SourceLogicalPath.ReadParent(path),
                     StringComparer.Ordinal));
-
-    private static string EntrypointPath(string directory)
-        => RouteScaffoldSourceBuilder.CanonicalPath(directory[(SourceLogicalPath.AgentsRoot.Length + 1)..]);
 
     private static bool TryReadText(
         SourceDocumentReadResult read,

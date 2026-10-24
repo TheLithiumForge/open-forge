@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
@@ -16,6 +17,21 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Filesystem;
 
 public sealed class RouteListInventoryFactsTests
 {
+    private const string MainRoot = "knowledge/team/context";
+    private const string Child = "child";
+
+    [Fact, Trait("Boundary", "Processing"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    public void CustomRequestUsesBothContentLocationsAndRejectsDefaultContent()
+    {
+        var layout = WorkspaceLayout.Create(Workspace(), MainRoot);
+        var request = new RouteListInventoryRequest(layout, default);
+
+        Assert.Same(layout, request.Layout);
+        Assert.Equal(new[] { WorkspaceLayout.NativeSkillsPath, MainRoot }, request.LogicalRoots);
+        Assert.Throws<ArgumentException>(() => new RouteListInventoryRequest(layout, [WorkspaceLayout.DefaultMainRoot], default));
+        Assert.Throws<ArgumentException>(() => new RouteListInventoryRequest(layout, [MainRoot, MainRoot + "/" + Child], default));
+    }
+
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list inventory request defaults, validates, sorts, and snapshots logical roots")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
@@ -23,17 +39,17 @@ public sealed class RouteListInventoryFactsTests
     {
         using var cancellation = new CancellationTokenSource();
         var roots = new List<string> { ".agents/z", ".agents/a" };
-        var request = new RouteListInventoryRequest(Workspace(), roots, cancellation.Token);
+        var request = new RouteListInventoryRequest(WorkspaceLayout.Create(Workspace(), WorkspaceLayout.DefaultMainRoot), roots, cancellation.Token);
         roots.Clear();
-        var defaultRequest = new RouteListInventoryRequest(Workspace(), cancellation.Token);
+        var defaultRequest = new RouteListInventoryRequest(WorkspaceLayout.Create(Workspace(), WorkspaceLayout.DefaultMainRoot), cancellation.Token);
 
         Assert.Equal([".agents/a", ".agents/z"], request.LogicalRoots);
         Assert.Equal([".agents"], defaultRequest.LogicalRoots);
         Assert.Equal(cancellation.Token, request.CancellationToken);
-        Assert.Throws<ArgumentException>(() => new RouteListInventoryRequest(Workspace(), [], default));
-        Assert.Throws<ArgumentException>(() => new RouteListInventoryRequest(Workspace(), ["agents"], default));
+        Assert.Throws<ArgumentException>(() => new RouteListInventoryRequest(WorkspaceLayout.Create(Workspace(), WorkspaceLayout.DefaultMainRoot), [], default));
+        Assert.Throws<ArgumentException>(() => new RouteListInventoryRequest(WorkspaceLayout.Create(Workspace(), WorkspaceLayout.DefaultMainRoot), ["agents"], default));
         Assert.Throws<ArgumentException>(() => new RouteListInventoryRequest(
-            Workspace(),
+            WorkspaceLayout.Create(Workspace(), WorkspaceLayout.DefaultMainRoot),
             [".agents/a", ".agents/a/child"],
             default));
     }

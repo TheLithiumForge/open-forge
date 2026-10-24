@@ -16,7 +16,9 @@ internal sealed record RouteCreatePlan
 
     public required RouteCreateRequest Request { get; init; }
 
-    public required WorkspaceSettingsRead Settings { get; init; }
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
+    internal WorkspaceSettingsRead Settings => LayoutRead.Settings;
 
     public required RouteCreateResultFormation Preview { get; init; }
 

@@ -4,12 +4,14 @@ using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Shared.Planning;
 
 internal sealed class RouteCreateTargetPlanner
 {
-    internal RouteCreateTargetResolution Resolve(RouteCreateRequest request)
+    internal RouteCreateTargetResolution Resolve(RouteCreateRequest request, WorkspaceLayout layout)
     {
         var parsed = SourceReferenceParser.Parse(request.FileTarget);
         if (parsed.State != SourceReferenceParseState.Valid)
@@ -17,19 +19,26 @@ internal sealed class RouteCreateTargetPlanner
             return Invalid(request.FileTarget, parsed.Cause ?? "The Route Create target is invalid.");
         }
 
+        if (parsed.Kind == SourceReferenceKind.SourceId
+            && !PortableWorkspacePath.TryNormalize(parsed.AttemptedId + SourceFormClassifier.MarkdownExtension, out _))
+        {
+            return Invalid(request.FileTarget, "Route Create requires one ordinary Markdown file target.");
+        }
+
         var path = parsed.Kind switch
         {
             SourceReferenceKind.SourceId when parsed.AttemptedId is { } id =>
-                $"{SourceLogicalPath.AgentsRoot}/{id}.md",
+                layout.SourcePath(id + SourceFormClassifier.MarkdownExtension),
             SourceReferenceKind.SourcePath when parsed.AttemptedPath is { } exactPath => exactPath,
             _ => throw new ArgumentOutOfRangeException(
                 nameof(parsed),
                 parsed.Kind,
                 "The Route Create target reference kind is not defined."),
         };
-        if (!SourceFormClassifier.TryClassify(path, out var form)
+        if (!layout.IsImplicitContentDestination(path)
+            || !SourceFormClassifier.TryClassify(layout, path, out var form)
             || form != SourceDocumentForm.Markdown
-            || SourceIdentity.DeriveId(path) is not { } targetId)
+            || SourceIdentity.DeriveId(layout, path) is not { } targetId)
         {
             return Invalid(
                 request.FileTarget,

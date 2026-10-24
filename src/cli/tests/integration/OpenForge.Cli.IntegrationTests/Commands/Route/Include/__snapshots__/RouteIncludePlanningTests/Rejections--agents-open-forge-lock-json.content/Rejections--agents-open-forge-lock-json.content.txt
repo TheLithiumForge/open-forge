@@ -1,0 +1,1 @@
+'.agents/open-forge.lock.json': Choose a project document instead of a workspace control file.

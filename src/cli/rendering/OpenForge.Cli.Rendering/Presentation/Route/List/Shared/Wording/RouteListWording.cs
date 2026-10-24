@@ -37,9 +37,13 @@ internal static class RouteListWording
     internal static string PhysicalBoundary(string path)
         => global::OpenForge.Cli.OutputText.Route.List.RouteListWording.PhysicalBoundary(path);
 
-    internal static string LoaderUnavailable() => global::OpenForge.Cli.OutputText.Route.List.RouteListText.MessageAgentsLoaderMdCouldNotBeRead();
+    internal static string LoaderUnavailable(string? customLoaderPath) => customLoaderPath is null
+        ? global::OpenForge.Cli.OutputText.Route.List.RouteListText.MessageAgentsLoaderMdCouldNotBeRead()
+        : global::OpenForge.Cli.OutputText.Route.List.RouteListText.MessageLoaderCouldNotBeRead(customLoaderPath);
 
-    internal static string LoaderMalformed() => global::OpenForge.Cli.OutputText.Route.List.RouteListText.MessageAgentsLoaderMdHasNoUsableEntriesSection();
+    internal static string LoaderMalformed(string? customLoaderPath) => customLoaderPath is null
+        ? global::OpenForge.Cli.OutputText.Route.List.RouteListText.MessageAgentsLoaderMdHasNoUsableEntriesSection()
+        : global::OpenForge.Cli.OutputText.Route.List.RouteListText.MessageLoaderHasNoUsableEntriesSection(customLoaderPath);
 
     internal static string UnsupportedSource(string path)
         => global::OpenForge.Cli.OutputText.Route.List.RouteListWording.UnsupportedSource(path);

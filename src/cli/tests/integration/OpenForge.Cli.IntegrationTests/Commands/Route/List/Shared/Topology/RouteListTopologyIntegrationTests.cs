@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
@@ -245,7 +246,7 @@ public sealed class RouteListTopologyIntegrationTests
         var cancellationToken = TestContext.Current.CancellationToken;
         var documentReader = new SourceDocumentReader(workspace.Workspace);
         var inventory = await new RouteListInventoryReader().ReadAsync(
-            new RouteListInventoryRequest(workspace.Workspace, cancellationToken),
+            new RouteListInventoryRequest(WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot), cancellationToken),
             documentReader);
         var routeFacts = await new SourceRouteFactsResolver().ResolveAsync(
             new SourceRouteFactsRequest(

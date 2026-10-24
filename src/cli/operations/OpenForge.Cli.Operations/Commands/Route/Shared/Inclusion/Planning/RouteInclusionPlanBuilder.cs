@@ -20,6 +20,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Planning;
@@ -44,15 +45,20 @@ internal sealed class RouteInclusionPlanBuilder
     private static async ValueTask<RouteInclusionPlanBuild> BuildCoreAsync(RouteInclusionRequest request, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
-        var path = RouteInclusionTargetResolver.Resolve(request);
+        var layoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(request.Workspace, token).ConfigureAwait(false);
+        if (layoutRead.Layout is not { } layout)
+            return Stop(CliSemanticStatus.Blocked, RouteInclusionFindingCode.WorkspaceUnsafe, layoutRead.Issues.FirstOrDefault()?.Cause ?? "Repair the workspace settings, then retry.");
+        var path = RouteInclusionTargetResolver.Resolve(layout, request);
+        if (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+            return Stop(CliSemanticStatus.Blocked, RouteInclusionFindingCode.WorkspaceUnsafe, layoutRead.Issues.FirstOrDefault()?.Cause ?? "Repair the workspace layout, then retry.");
         var include = request.Action == RouteInclusionAction.Include;
-        var external = !path.StartsWith(".agents/", StringComparison.Ordinal);
-        var loader = await RouteInclusionTargetResolver.ReadAsync(request.Workspace, SourceLogicalPath.LoaderPath, token).ConfigureAwait(false);
+        var external = !layout.IsImplicitContentDestination(path);
+        var loader = await RouteInclusionTargetResolver.ReadAsync(request.Workspace, layout.LoaderPath, token).ConfigureAwait(false);
         if (loader.Kind != FileExpectationKind.File)
             return Stop(CliSemanticStatus.Blocked, RouteInclusionFindingCode.WorkspaceUnsafe, "The workspace loader is missing. Install Open Forge first.");
         var source = StrictUtf8.GetString(loader.Bytes.AsSpan());
         var document = new MarkdownDocumentParser().Parse(source);
-        var parsed = SourceLoaderEntriesParser.Parse(source);
+        var parsed = SourceLoaderEntriesParser.Parse(layout, source);
         if (parsed.State != SourceLoaderEntriesParseState.Valid
             || parsed.Destinations.Any(destination => destination.State is not (SourceLoaderDestinationParseState.Valid or SourceLoaderDestinationParseState.Linked))
             || document.GeneratedRegion.EntriesBlock is not { } block)
@@ -62,7 +68,7 @@ internal sealed class RouteInclusionPlanBuilder
         var matching = rows.Where(line =>
         {
             MarkdownEntryRowParser.TryParse(line, out var row, out _);
-            return row is not null && SourceLoaderDestinationParser.Parse(row.Destination).CanonicalPath == path;
+            return row is not null && SourceLoaderDestinationParser.Parse(layout, row.Destination).CanonicalPath == path;
         }).ToArray();
         if (include && matching.Length > 1)
             throw RouteInclusionTargetResolver.Invalid(request, "Several loader rows list this target. Exclude it, then include it again with the intended metadata.");
@@ -72,10 +78,10 @@ internal sealed class RouteInclusionPlanBuilder
         {
             MarkdownEntryRow? existing = null;
             if (matching.Length > 0) MarkdownEntryRowParser.TryParse(matching[0], out existing, out _);
-            after = MergeRow(request, path, existing);
+            after = MergeRow(layout, request, path, existing);
             if (existing is not null && SameFields(request, existing)) after = matching[0];
         }
-        var settings = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), request.Workspace, token).ConfigureAwait(false);
+        var settings = layoutRead.Settings;
         if (settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete)
             || settings.Snapshot is not { } settingsSnapshot)
             return Stop(CliSemanticStatus.Blocked, RouteInclusionFindingCode.WorkspaceUnsafe, settings.Cause ?? "Repair the workspace settings, then retry.");
@@ -94,9 +100,9 @@ internal sealed class RouteInclusionPlanBuilder
         if (!(include && external && matching.Length > 0 && after == matching[0])
             && (include || matching.Length > 0))
         {
-            var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(request.Workspace, [".agents"]), token).ConfigureAwait(false);
+            var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(layout, layout.SourceRoots), token).ConfigureAwait(false);
             var formation = new GeneratedNavigationFormationBuilder().Build(catalogue);
-            var loaderSource = formation.FindSource(SourceLogicalPath.LoaderPath)
+            var loaderSource = formation.FindSource(layout.LoaderPath)
                 ?? throw new IOException("The loader could not be identified. Repair its route before retrying.");
             var metadata = new List<GeneratedNavigationMetadata>();
             var activeRoots = parsed.Destinations.Select(destination => destination.CanonicalPath).ToHashSet(StringComparer.Ordinal);
@@ -158,11 +164,13 @@ internal sealed class RouteInclusionPlanBuilder
             Effects = changes.Select(change => new RouteInclusionEffect(
                 Path.GetRelativePath(request.Workspace.LexicalRoot, change.LogicalPath).Replace('\\', '/'),
                 change.Kind == PlannedFileChangeKind.Create ? null : StrictUtf8.GetString(observations.First(item => item.LogicalPath == change.LogicalPath).Bytes.AsSpan()),
-                StrictUtf8.GetString(change.IntendedBytes.AsSpan()), RouteInclusionEffectState.Planned)).ToImmutableArray(),
+                StrictUtf8.GetString(change.IntendedBytes.AsSpan()), RouteInclusionEffectState.Planned,
+                change.LogicalPath == loader.LogicalPath ? RouteInclusionEffectKind.LoaderEntries : RouteInclusionEffectKind.Settings)).ToImmutableArray(),
         };
         return new RouteInclusionPlanBuild(preview, new RouteInclusionPlan
         {
             Request = request,
+            LayoutRead = layoutRead,
             Preview = preview,
             Changes = changes.ToImmutable(),
             RecoveryTargets = recovery.ToImmutable(),
@@ -175,14 +183,16 @@ internal sealed class RouteInclusionPlanBuilder
             && (request.Tags is null || request.Tags.Value.SequenceEqual(row.Tags))
             && (request.ApplyTo is null || request.ApplyTo.Value.Select(pattern => pattern.Text).SequenceEqual(row.ApplyTo.Select(pattern => pattern.Text)));
 
-    private static string MergeRow(RouteInclusionRequest request, string path, MarkdownEntryRow? existing)
+    private static string MergeRow(WorkspaceLayout layout, RouteInclusionRequest request, string path, MarkdownEntryRow? existing)
     {
         if (request.Description is null && existing is null)
             throw RouteInclusionTargetResolver.Invalid(request, "Supply --description for a new loader row.");
         var description = request.Description is { } supplied ? EncodeDescription(supplied) : existing?.Description;
         var tags = request.Tags is { } suppliedTags ? suppliedTags.ToArray() : existing?.Tags ?? [];
         var patterns = request.ApplyTo is { } suppliedPatterns ? suppliedPatterns.ToArray() : existing?.ApplyTo ?? [];
-        var destination = SourceDestinationEncoder.EncodePath($"../{path}");
+        var destination = SourceDestinationEncoder.EncodePath(Path.GetRelativePath(
+            Path.GetFullPath(layout.MainRoot, request.Workspace.LexicalRoot),
+            Path.GetFullPath(path, request.Workspace.LexicalRoot)).Replace('\\', '/'));
         var suffix = tags.Count == 0 ? string.Empty : $" - {string.Join(' ', tags.Select(tag => $"#{tag}"))}";
         return $"- [{description}]({destination}){suffix}{MarkdownEntryRowFormatter.FormatApplyToSuffix(patterns)}";
     }

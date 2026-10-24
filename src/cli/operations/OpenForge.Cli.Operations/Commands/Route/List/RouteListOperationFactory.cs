@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
@@ -28,6 +29,7 @@ internal static class RouteListOperationFactory
             coverageBuilder: coverageBuilder,
             resultBuilder: resultBuilder);
         var coordinator = new RouteListOperationCoordinator(
+            layoutReader: new WorkspaceLayoutReader(physicalPathResolver),
             sourceResolver: sourceResolver,
             resultComposer: resultComposer);
         return coordinator.ExecuteAsync;
@@ -35,6 +37,7 @@ internal static class RouteListOperationFactory
 }
 
 internal sealed class RouteListOperationCoordinator(
+    WorkspaceLayoutReader layoutReader,
     RouteListSourceResolver sourceResolver,
     RouteListResultComposer resultComposer)
 {
@@ -49,8 +52,14 @@ internal sealed class RouteListOperationCoordinator(
         var attemptedSelection = RouteListSelectionFactory.Attempted(request.SourceReference);
         try
         {
+            var layoutRead = await layoutReader.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+            if (layoutRead.Layout is null)
+            {
+                return _resultComposer.BuildLayoutUnavailable(request, attemptedSelection, layoutRead);
+            }
+
             var source = await _sourceResolver
-                .ResolveAsync(request, cancellationToken)
+                .ResolveAsync(request, cancellationToken, layoutRead)
                 .ConfigureAwait(false);
             attemptedSelection = source.Selection.Selection;
             var loaderRootSelection = await _sourceResolver

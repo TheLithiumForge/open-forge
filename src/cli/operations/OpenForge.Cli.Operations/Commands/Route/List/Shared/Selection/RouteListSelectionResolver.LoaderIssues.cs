@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
@@ -12,7 +14,7 @@ namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 
 internal sealed partial class RouteListSelectionResolver
 {
-    private static RouteListSelectionIssue MapCatalogueRootIssue(SourceCatalogueIssue issue)
+    private static RouteListSelectionIssue MapCatalogueRootIssue(WorkspaceLayout layout, SourceCatalogueIssue issue)
     {
         var cause = issue.Failure?.DirectCause
             ?? (issue.Code switch
@@ -23,8 +25,8 @@ internal sealed partial class RouteListSelectionResolver
                 _ => throw new ArgumentOutOfRangeException(nameof(issue), issue.Code, "The catalogue root issue code is not defined."),
             });
         return issue.Code == SourceCatalogueIssueCode.RootUnsafe
-            ? new RouteListSelectionIssue(RouteListFindingCode.PhysicalBoundary, LoaderPath, cause)
-            : new RouteListSelectionIssue(RouteListFindingCode.LoaderUnavailable, LoaderPath, cause);
+            ? new RouteListSelectionIssue(RouteListFindingCode.PhysicalBoundary, layout.LoaderPath, cause)
+            : new RouteListSelectionIssue(RouteListFindingCode.LoaderUnavailable, layout.LoaderPath, cause);
     }
 
     private static RouteListSelectionIssue MapLoaderIssue(
@@ -33,13 +35,14 @@ internal sealed partial class RouteListSelectionResolver
         RouteSourceProjectionSet projectionSet,
         IReadOnlyList<SourceLoaderDestinationParseResult> loaderDestinations)
     {
-        var subject = ReadLoaderIssueSubject(issue, loaderDestinations);
+        var layout = catalogue.Layout;
+        var subject = ReadLoaderIssueSubject(layout, issue, loaderDestinations);
         return issue.Code switch
         {
             SourceRouteIssueCode.LoaderUnavailable
                 or SourceRouteIssueCode.LoaderUnreadable
                 or SourceRouteIssueCode.LoaderDestinationMissing
-                when IsMalformedLoaderRead(issue, projectionSet) =>
+                when IsMalformedLoaderRead(layout, issue, projectionSet) =>
                 new RouteListSelectionIssue(RouteListFindingCode.LoaderMalformed, subject, issue.Cause),
             SourceRouteIssueCode.LoaderUnavailable
                 or SourceRouteIssueCode.LoaderUnreadable
@@ -50,7 +53,7 @@ internal sealed partial class RouteListSelectionResolver
                 or SourceRouteIssueCode.LoaderUnreadable
                 or SourceRouteIssueCode.LoaderDestinationMissing
                 when IsUnsafeCandidate(issue.CanonicalPath, catalogue)
-                    || IsUnsafeLoaderProjection(issue, projectionSet) =>
+                    || IsUnsafeLoaderProjection(layout, issue, projectionSet) =>
                 new RouteListSelectionIssue(RouteListFindingCode.PhysicalBoundary, subject, issue.Cause),
             SourceRouteIssueCode.LoaderUnavailable
                 or SourceRouteIssueCode.LoaderUnreadable
@@ -68,6 +71,7 @@ internal sealed partial class RouteListSelectionResolver
     }
 
     private static IReadOnlyList<SourceLoaderDestinationParseResult> ReadLoaderDestinations(
+        WorkspaceLayout layout,
         RouteSourceProjectionSet projectionSet)
     {
         var loader = projectionSet.Projections.SingleOrDefault(projection =>
@@ -80,10 +84,11 @@ internal sealed partial class RouteListSelectionResolver
 
         var body = read.Value
             ?? throw new InvalidOperationException("A complete Loader read requires its body.");
-        return SourceLoaderEntriesParser.Parse(body).Destinations;
+        return SourceLoaderEntriesParser.Parse(layout, body).Destinations;
     }
 
     private static string ReadLoaderIssueSubject(
+        WorkspaceLayout layout,
         SourceRouteIssue issue,
         IReadOnlyList<SourceLoaderDestinationParseResult> destinations)
     {
@@ -93,19 +98,19 @@ internal sealed partial class RouteListSelectionResolver
                     destination.State == SourceLoaderDestinationParseState.Unsafe
                     && string.Equals(destination.Cause, issue.Cause, StringComparison.Ordinal))
                 ?.AttemptedDestination
-                ?? LoaderPath;
+                ?? layout.LoaderPath;
         }
 
         var relatedPath = issue.RelatedPaths.FirstOrDefault();
         var canonicalPath = issue.CanonicalPath;
         if (issue.Code != SourceRouteIssueCode.LoaderDestinationMissing
-            && relatedPath?.StartsWith(".agents/", StringComparison.Ordinal) == true)
+            && relatedPath is not null && layout.IsContentPath(relatedPath))
         {
             canonicalPath = relatedPath;
         }
         if (issue.Code == SourceRouteIssueCode.LoaderMalformed
             && relatedPath is not null
-            && !relatedPath.StartsWith(".agents/", StringComparison.Ordinal))
+            && !layout.IsContentPath(relatedPath))
         {
             return relatedPath;
         }
@@ -115,32 +120,34 @@ internal sealed partial class RouteListSelectionResolver
             return destinations.LastOrDefault(destination =>
                     string.Equals(destination.CanonicalPath, canonicalPath, StringComparison.Ordinal))
                 ?.AttemptedDestination
-                ?? ReadLoaderDestination(canonicalPath);
+                ?? ReadLoaderDestination(layout, canonicalPath);
         }
 
-        return ReadLoaderAttempt(canonicalPath, destinations);
+        return ReadLoaderAttempt(layout, canonicalPath, destinations);
     }
 
     private static string ReadLoaderAttempt(
+        WorkspaceLayout layout,
         string canonicalPath,
         IReadOnlyList<SourceLoaderDestinationParseResult> destinations)
     {
         return destinations.FirstOrDefault(destination =>
                 string.Equals(destination.CanonicalPath, canonicalPath, StringComparison.Ordinal))
             ?.AttemptedDestination
-            ?? ReadLoaderDestination(canonicalPath);
+            ?? ReadLoaderDestination(layout, canonicalPath);
     }
 
     private static bool IsMalformedLoaderRead(
+        WorkspaceLayout layout,
         SourceRouteIssue issue,
         RouteSourceProjectionSet projectionSet)
     {
-        if (!string.Equals(issue.CanonicalPath, LoaderPath, StringComparison.Ordinal))
+        if (!string.Equals(issue.CanonicalPath, layout.LoaderPath, StringComparison.Ordinal))
         {
             return false;
         }
 
-        var loader = projectionSet.FindByPath(LoaderPath);
+        var loader = projectionSet.FindByPath(layout.LoaderPath);
         return loader?.Base.ReadState == FileReadState.InvalidEncoding;
     }
 
@@ -150,10 +157,11 @@ internal sealed partial class RouteListSelectionResolver
     }
 
     private static bool IsUnsafeLoaderProjection(
+        WorkspaceLayout layout,
         SourceRouteIssue issue,
         RouteSourceProjectionSet projectionSet)
     {
-        if (!string.Equals(issue.CanonicalPath, LoaderPath, StringComparison.Ordinal))
+        if (!string.Equals(issue.CanonicalPath, layout.LoaderPath, StringComparison.Ordinal))
         {
             return false;
         }
@@ -179,19 +187,23 @@ internal sealed partial class RouteListSelectionResolver
                 || canonicalPath.StartsWith(issue.AttemptedCanonicalPath + "/", StringComparison.Ordinal)));
     }
 
-    private static bool IsDeferredEntriesIssue(SourceRouteIssue issue)
+    private static bool IsDeferredEntriesIssue(WorkspaceLayout layout, SourceRouteIssue issue)
     {
         return issue.Code == SourceRouteIssueCode.LoaderMalformed
-            && string.Equals(issue.CanonicalPath, LoaderPath, StringComparison.Ordinal)
+            && string.Equals(issue.CanonicalPath, layout.LoaderPath, StringComparison.Ordinal)
             && (issue.RelatedPaths.Count == 0
-                || !issue.RelatedPaths[0].StartsWith(".agents/", StringComparison.Ordinal));
+                || !layout.IsContentPath(issue.RelatedPaths[0]));
     }
 
-    private static string ReadLoaderDestination(string path)
+    private static string ReadLoaderDestination(WorkspaceLayout layout, string path)
     {
-        return path.StartsWith(".agents/", StringComparison.Ordinal)
-            && !string.Equals(path, LoaderPath, StringComparison.Ordinal)
-            ? path[".agents/".Length..]
-            : path;
+        if (!layout.IsContentPath(path) || string.Equals(path, layout.LoaderPath, StringComparison.Ordinal))
+        {
+            return path;
+        }
+
+        return Path.GetRelativePath(
+            SourceLogicalPath.ToLexicalPath(layout.Workspace.LexicalRoot, layout.MainRoot),
+            SourceLogicalPath.ToLexicalPath(layout.Workspace.LexicalRoot, path)).Replace('\\', '/');
     }
 }

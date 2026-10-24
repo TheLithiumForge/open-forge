@@ -36,7 +36,9 @@ internal sealed record RouteCreateTargetInspection
 
     public required FileStateSnapshot Snapshot { get; init; }
 
-    public required WorkspaceSettingsRead Settings { get; init; }
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
+    internal WorkspaceSettingsRead Settings => LayoutRead.Settings;
 }
 
 internal sealed class RouteCreateTargetInspectionBuild

@@ -1,7 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -61,7 +60,7 @@ internal sealed partial class RouteInspectAxiomsProfileBuilder
         }
 
         var sources = new List<string>();
-        var loader = _graph.ProjectionSet.FindByPath(SourceLogicalPath.LoaderPath);
+        var loader = _graph.ProjectionSet.FindByPath(_graph.Layout.LoaderPath);
         if (loader is null && _graph.RouteFacts.Topology.LoaderRootPaths.Count != 0)
         {
             return RouteInspectFact<RouteInspectAxiomsSources>.Unavailable(

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.List.Models;
 using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
@@ -59,8 +60,8 @@ internal static class RouteListIncludedResultBuilder
         var selectedPaths = rows.Select(row => row.Path).ToHashSet(StringComparer.Ordinal);
         if (request.SourceReference is null)
         {
-            selectedPaths.Add(SourceLogicalPath.LoaderPath);
-            foreach (var root in byParent.GetValueOrDefault(SourceLogicalPath.LoaderPath) ?? [])
+            selectedPaths.Add(source.Inventory.SourceCatalogue.Layout.LoaderPath);
+            foreach (var root in byParent.GetValueOrDefault(source.Inventory.SourceCatalogue.Layout.LoaderPath) ?? [])
             {
                 Add(root, 0, RouteListSelectionProvenance.LoaderRoot);
             }
@@ -108,7 +109,7 @@ internal static class RouteListIncludedResultBuilder
                 rows[rows.IndexOf(parent)] = parent.WithDirectChildCount(null);
             }
 
-            if (parent is not null && CanDescend(parent.RelativeDepth) || item.ParentPath == SourceLogicalPath.LoaderPath && request.SourceReference is null)
+            if (parent is not null && CanDescend(parent.RelativeDepth) || item.ParentPath == source.Inventory.SourceCatalogue.Layout.LoaderPath && request.SourceReference is null)
             {
                 rows.Add(RouteListRow.RoutedLeaf($"./{item.Path}", item.Path, parent?.Id, parent?.Path,
                     parent is null ? 0 : parent.AbsoluteDepth + 1, parent is null ? 0 : parent.RelativeDepth + 1,
@@ -145,13 +146,13 @@ internal static class RouteListIncludedResultBuilder
                 result.Coverage.Evidence, result.Coverage.UnresolvedBoundaries.Concat(findings
                     .Where(finding => finding.Status == CliSemanticStatus.Incomplete).Select(finding => finding.Subject ?? finding.Cause)))
             : RouteListCoverage.Complete(request.RequestedDepth, effectiveDepth, rootCount, ordered.Count, result.Coverage.Evidence);
-        return RouteListResult.Create(status, request.Workspace, selection, coverage, ordered, findings, next);
+        return RouteListResult.Create(status, request.Workspace, selection, coverage, ordered, findings, next, result.CustomLoaderPath);
 
         bool CanDescend(int depth) => request.RequestedDepth.Kind == RouteListDepthKind.All || depth < request.RequestedDepth.FiniteValue;
 
         int? ReadAbsoluteDepth(SourceLogicalSource item)
         {
-            if (item.IncludedParentPath == SourceLogicalPath.LoaderPath)
+            if (item.IncludedParentPath == source.Inventory.SourceCatalogue.Layout.LoaderPath)
             {
                 return 0;
             }
@@ -175,7 +176,7 @@ internal static class RouteListIncludedResultBuilder
             cancellationToken.ThrowIfCancellationRequested();
             var path = item.Base.CanonicalPath;
             var children = byParent.GetValueOrDefault(path) ?? [];
-            var parentPath = item.IncludedParentPath == SourceLogicalPath.LoaderPath ? null : item.IncludedParentPath;
+            var parentPath = item.IncludedParentPath == source.Inventory.SourceCatalogue.Layout.LoaderPath ? null : item.IncludedParentPath;
             var parent = parentPath is null ? null : byPath.GetValueOrDefault(parentPath) ?? source.Inventory.SourceCatalogue.FindByPath(parentPath);
             var entry = item.IncludedEntry ?? throw new InvalidOperationException("An included source requires its catalogue row.");
             var rowProvenance = new RouteListProvenance(provenance,

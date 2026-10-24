@@ -16,6 +16,9 @@ internal static class RouteCreatePlanEquivalence
         RouteCreatePlan actual)
         => MatchesRequest(expected, actual)
             && expected.Settings.MatchesObservation(actual.Settings)
+            && expected.LayoutRead.State == actual.LayoutRead.State
+            && string.Equals(expected.LayoutRead.Layout?.MainRoot, actual.LayoutRead.Layout?.MainRoot, StringComparison.Ordinal)
+            && expected.LayoutRead.Expectations.SequenceEqual(actual.LayoutRead.Expectations)
             && expected.SharingExpectation == actual.SharingExpectation
             && MatchesPreview(expected.Preview, actual.Preview)
             && RouteCreateFormationEquivalence.Matches(
