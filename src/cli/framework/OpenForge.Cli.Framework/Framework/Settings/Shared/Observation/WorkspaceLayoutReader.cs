@@ -31,6 +31,30 @@ internal sealed class WorkspaceLayoutReader(PhysicalPathResolver paths)
         => installationEvidence && loaderKind == FileExpectationKind.Missing
             && !WorkspaceRemovals.IsPathRemoved(layout, layout.LoaderPath, settings);
 
+    internal static (WorkspaceLayoutReadState State, ImmutableArray<WorkspaceLayoutIssue> Issues) Classify(
+        bool installationEvidence,
+        IReadOnlyCollection<WorkspaceLayoutIssue> layoutIssues,
+        WorkspaceOwnershipRead ownership)
+    {
+        var state = installationEvidence ? WorkspaceLayoutReadState.Ready : WorkspaceLayoutReadState.Uninstalled;
+        if (layoutIssues.Any(issue => issue.Code == WorkspaceLayoutIssueCode.ObservationUnavailable))
+            state = WorkspaceLayoutReadState.Unavailable;
+        else if (layoutIssues.Any(issue => issue.Code == WorkspaceLayoutIssueCode.UnsafeRoot))
+            state = WorkspaceLayoutReadState.Invalid;
+        else if (layoutIssues.Any(issue => issue.Code != WorkspaceLayoutIssueCode.MissingLoader))
+            state = WorkspaceLayoutReadState.Mismatch;
+
+        return (state, RecordOwnershipIssue(layoutIssues, ownership));
+    }
+
+    private static ImmutableArray<WorkspaceLayoutIssue> RecordOwnershipIssue(
+        IReadOnlyCollection<WorkspaceLayoutIssue> layoutIssues,
+        WorkspaceOwnershipRead ownership)
+        => ownership.State is WorkspaceOwnershipReadState.Invalid or WorkspaceOwnershipReadState.Unavailable
+            ? [.. layoutIssues, new(WorkspaceLayoutIssueCode.ObservationUnavailable,
+                WorkspaceOwnershipDefinitions.RelativePath, ownership.Cause ?? "Ownership is unavailable.", [])]
+            : [.. layoutIssues];
+
     private sealed class Observation(PhysicalPathResolver paths, CliWorkspace workspace)
     {
         private static readonly UTF8Encoding StrictUtf8 = new(false, true);
@@ -51,8 +75,6 @@ internal sealed class WorkspaceLayoutReader(PhysicalPathResolver paths)
                 Issue(WorkspaceLayoutIssueCode.InvalidSetting, WorkspaceSettingsDefinitions.RelativePath, settings.Cause ?? "Settings are invalid.");
             if (settings.State == WorkspaceSettingsReadState.Unavailable)
                 Issue(WorkspaceLayoutIssueCode.ObservationUnavailable, WorkspaceSettingsDefinitions.RelativePath, settings.Cause ?? "Settings are unavailable.");
-            if (ownership.State is WorkspaceOwnershipReadState.Invalid or WorkspaceOwnershipReadState.Unavailable)
-                Issue(WorkspaceLayoutIssueCode.ObservationUnavailable, WorkspaceOwnershipDefinitions.RelativePath, ownership.Cause ?? "Ownership is unavailable.");
 
             if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
                 return Result(settings.State == WorkspaceSettingsReadState.Invalid ? WorkspaceLayoutReadState.Invalid : WorkspaceLayoutReadState.Unavailable, null);
@@ -76,7 +98,7 @@ internal sealed class WorkspaceLayoutReader(PhysicalPathResolver paths)
 
             if (!layout.IsDefault && defaultLoader?.Kind == FileExpectationKind.File)
                 Issue(WorkspaceLayoutIssueCode.ConflictingLoader, WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceLayoutNames.LoaderFileName, "The default loader conflicts with the selected main root.", layout.LoaderPath);
-            if (ownership.Document.Framework is { } framework)
+            if (ownership.IsTrustworthy && ownership.Document.Framework is { } framework)
             {
                 var recordedLoaders = framework.Paths.Concat(framework.Regions.Select(region => region.Path))
                     .Where(path => path.EndsWith("/" + WorkspaceLayoutNames.LoaderFileName, StringComparison.OrdinalIgnoreCase)).Distinct(StringComparer.Ordinal);
@@ -94,15 +116,11 @@ internal sealed class WorkspaceLayoutReader(PhysicalPathResolver paths)
                     Issue(WorkspaceLayoutIssueCode.ObservationUnavailable, Relative(expectation.LogicalPath), "The layout changed while it was being observed.");
             }
 
-            if (_issues.Any(issue => issue.Code == WorkspaceLayoutIssueCode.ObservationUnavailable))
-                return Result(WorkspaceLayoutReadState.Unavailable, layout);
-            if (_issues.Any(issue => issue.Code == WorkspaceLayoutIssueCode.UnsafeRoot))
-                return Result(WorkspaceLayoutReadState.Invalid, layout);
-            if (_issues.Count != 0) return Result(WorkspaceLayoutReadState.Mismatch, layout);
-            return Result(positive ? WorkspaceLayoutReadState.Ready : WorkspaceLayoutReadState.Uninstalled, layout);
+            var classification = Classify(positive, _issues, ownership);
+            return new(classification.State, settings, ownership, layout, classification.Issues, [.. _expectations.Values]);
 
             WorkspaceLayoutRead Result(WorkspaceLayoutReadState state, WorkspaceLayout? selected)
-                => new(state, settings, ownership, selected, [.. _issues], [.. _expectations.Values]);
+                => new(state, settings, ownership, selected, RecordOwnershipIssue(_issues, ownership), [.. _expectations.Values]);
         }
 
         private FileExpectation? ObserveDirectory(string relative, CancellationToken cancellationToken)

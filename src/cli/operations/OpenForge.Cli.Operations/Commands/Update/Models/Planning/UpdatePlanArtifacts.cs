@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
@@ -45,6 +46,8 @@ internal sealed record UpdatePlanExecution(
     IReadOnlyList<PlannedDirectoryCreation> DirectoryCreations,
     PlannedFileChange? OwnershipChange)
 {
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
     public IReadOnlyList<UpdateAdoptionTarget> AdoptionTargets { get; init; } = [];
 
     public IReadOnlyList<UpdateMigrationPlan> Migrations { get; init; } = [];

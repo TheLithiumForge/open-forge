@@ -23,6 +23,7 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Index.Shared.Projection;
 
@@ -62,6 +63,11 @@ internal sealed class IndexProjectionReader
             return Boundary(request, IndexFindingCode.SourceUnsafe,
                 layoutRead.Issues.FirstOrDefault()?.Cause ?? "Workspace layout is unavailable.");
         var ownership = layoutRead.Ownership;
+        if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete))
+            return IndexProjectionReadResult.SelectionIncomplete(new IndexSelectionResolution(
+                IndexSelection.NotEstablished(request.HasExplicitSources ? IndexSelectionOrigin.ExplicitSources : IndexSelectionOrigin.AutomaticLoader),
+                [], [new IndexFinding(IndexFindingCode.SourceUnsafe, sourceOccurrence: null, source: null,
+                    cause: "The route-sharing lock is unreadable or invalid. Restore it before indexing shared navigation.", candidates: [])]));
         var catalogue = await _catalogueReader.ReadAsync(
                 new SourceCatalogueRequest(
                     layout,

@@ -7,7 +7,9 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Remove.Shared.Selection;
@@ -44,9 +46,7 @@ internal static class RemoveTargetResolver
                 current = Path.GetDirectoryName(current);
             }
         }
-        if (!isPathSelection
-            && !(selection.State == RemoveSelectionState.Route
-                && selection.Target.StartsWith(".agents/", StringComparison.Ordinal)))
+        if (selection.State is RemoveSelectionState.Extension or RemoveSelectionState.Library)
         {
             var explicitKind = selection.State switch
             {
@@ -58,8 +58,17 @@ internal static class RemoveTargetResolver
             return new RemoveTargetResolution(explicitKind, selection.Target, null);
         }
 
+        var layoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver())
+            .ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        if (layoutRead.Layout is not { } layout)
+        {
+            if (isPathSelection) return new RemoveTargetResolution(RemoveKind.Path, selection.Target, null);
+            return new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, selection.Target,
+                layoutRead.Settings.Cause ?? "The workspace layout is unavailable, so this target cannot be classified safely.");
+        }
         var target = selection.Target;
-        if (!target.StartsWith(".agents/", StringComparison.Ordinal))
+        if (!layout.IsImplicitContentDestination(target)
+            && !string.Equals(target, WorkspaceLayout.NativeSkillsPath, StringComparison.Ordinal))
         {
             return new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, target, null);
         }
@@ -93,7 +102,7 @@ internal static class RemoveTargetResolver
         }
 
         var catalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(layout, layout.SourceRoots),
             cancellationToken).ConfigureAwait(false);
         if (catalogue.IsCancelled)
         {
@@ -102,12 +111,12 @@ internal static class RemoveTargetResolver
         if (catalogue.Issues.Any(issue => issue.Stage == SourceCatalogueIssueStage.Root))
         {
             return new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, target,
-                "The .agents source catalogue is unavailable, so this target cannot be classified safely.");
+                $"The {layout.MainRoot} source catalogue is unavailable, so this target cannot be classified safely.");
         }
 
         if (observed.State == NoFollowLeafState.OrdinaryFile)
         {
-            if (isPathSelection && SourceIdentity.IsRecognizedEntrypointPath(target))
+            if (isPathSelection && SourceIdentity.IsRecognizedEntrypointPath(layout, target))
             {
                 return new RemoveTargetResolution(RemoveKind.Path, target, null, IsEntrypointFile: true);
             }

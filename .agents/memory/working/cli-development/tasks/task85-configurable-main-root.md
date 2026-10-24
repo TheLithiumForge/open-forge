@@ -150,9 +150,19 @@ One runtime-reservation test adapter remains for Z1, and help and binding wordin
 Route Move carries and revalidates the selected layout, keeps literal paths literal and gives custom-root guidance.
 Five default-only fixture adapter calls remain for Z1, and static help keeps default-root wording.
 
+## Wave 5 EU handoff
+
+Top-level Update maps installed destinations, keeps package identities and revalidates the layout. Its default-layout adapters are removed.
+Chair amendment 7 makes a lone missing loader restorable drift, records unreadable ownership without gating the layout, and matches retired and ownership paths literally. Index keeps its own ownership guard, which the old reader gate had covered.
+
+## Wave 5 ER handoff
+
+Top-level Remove carries and revalidates the layout, keeps fixed settings storage apart from content selection and updates custom-root and native Skills navigation.
+Its runtime adapters are removed. The shared adapter definitions remain for Z1.
+
 ## Overseer notes
 
 - Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.
-- Before Z1 removes the permission adapters, resolve how maintenance treats an intentionally excluded missing loader against the frozen revalidator (from E2). The plan's `*LibrarySharedGrant*` filter selects nothing, because the shared-grant class has another name.
+- The intentionally excluded missing loader E2 raised is resolved by chair amendments 6 and 7. The plan's `*LibrarySharedGrant*` filter selects nothing, because the shared-grant class has another name.
 - Static help still shows default-root wording in Route Create and Route Inspect. The final documentation packet and Z2 help changes decide whether it changes.
 - Fixed a bug that predates Task 85: regenerating navigation dropped a loader's direct rows to nested catalogues, such as a nested native Skills catalogue, in default and custom layouts. Shared generated navigation now keeps those rows and their metadata. Unit tests cover Skills, other categories and omission.

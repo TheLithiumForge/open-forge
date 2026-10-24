@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using System.Text;
@@ -18,7 +20,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 
-internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physicalPathResolver, FrontmatterForm frontmatter)
+internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physicalPathResolver, WorkspaceLayout layout, FrontmatterForm frontmatter)
 {
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
@@ -26,11 +28,12 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
 
     private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
     private readonly WorkspaceAdoptionDocumentPlanner _documentPlanner = new();
+    private readonly RouteScaffoldSourceBuilder _sourceBuilder = new();
 
     internal UpdateWorkspaceAdoptionSourcePlan PlanSources(
         CliWorkspace workspace,
         SourceCatalogue catalogue,
-        IReadOnlyList<FrameworkPayloadAsset> selectedAssets,
+        IReadOnlyList<UpdatePayloadTarget> selectedAssets,
         WorkspaceSettingsDocument settings,
         IReadOnlySet<string> retiredTargetPaths,
         WorkspaceOwnershipRead? ownership)
@@ -42,12 +45,12 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
         ArgumentNullException.ThrowIfNull(retiredTargetPaths);
 
         var allPayloadAssets = selectedAssets
-            .Where(asset => asset.Path.StartsWith(".agents/", StringComparison.Ordinal))
-            .Where(asset => FrameworkPayloadSelection.IncludesPath(asset.Path, settings))
+            .Where(asset => layout.IsContentPath(asset.Path))
+            .Where(asset => FrameworkPayloadSelection.IncludesInstalledPath(layout, asset.Path, settings))
             .OrderBy(asset => asset.Path, StringComparer.Ordinal)
             .ToArray();
         var allPayloadSources = allPayloadAssets
-            .Select(asset => FrameworkPayloadSourceProjection.Create(workspace, asset))
+            .Select(asset => _sourceBuilder.Create(layout, asset.Path))
             .ToArray();
 
         var topology = ownership is { State: WorkspaceOwnershipReadState.Complete }
@@ -55,7 +58,7 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
                 ? WorkspaceAdoptionTopologyPlanner.Plan(
                     catalogue.Layout,
                     catalogue.Sources
-                        .Where(source => FrameworkPayloadSelection.IncludesPath(
+                        .Where(source => FrameworkPayloadSelection.IncludesInstalledPath(layout,
                             source.Identity.CanonicalBasePath,
                             settings))
                         .Where(source => !retiredTargetPaths.Contains(
@@ -73,7 +76,7 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
         var excludedDestination = topology.ReusedEntrypoints.Keys
             .Concat(topology.ReusedEntrypoints.Values)
             .Concat(topology.CreatedEntrypointPaths)
-            .FirstOrDefault(path => !FrameworkPayloadSelection.IncludesPath(path, settings));
+            .FirstOrDefault(path => !FrameworkPayloadSelection.IncludesInstalledPath(layout, path, settings));
         if (excludedDestination is not null)
         {
             return Failed(
@@ -87,7 +90,7 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
             .Where(asset => !replacedPayloadPaths.Contains(asset.Path))
             .ToArray();
         var payloadSources = payloadAssets
-            .Select(asset => FrameworkPayloadSourceProjection.Create(workspace, asset))
+            .Select(asset => _sourceBuilder.Create(layout, asset.Path))
             .ToArray();
         var payloadSourcePaths = payloadSources
             .Select(source => source.Identity.CanonicalBasePath)
@@ -129,7 +132,7 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
         var adoptionSourcePaths = topology.EligibleSourcePaths
             .Concat(topology.ReusedEntrypoints.Values)
             .Concat(topology.CreatedEntrypointPaths)
-            .Where(path => FrameworkPayloadSelection.IncludesPath(path, settings))
+            .Where(path => FrameworkPayloadSelection.IncludesInstalledPath(layout, path, settings))
             .Distinct(StringComparer.Ordinal)
             .Order(StringComparer.Ordinal)
             .ToHashSet(StringComparer.Ordinal);
@@ -189,6 +192,7 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
                 }
 
                 var create = _documentPlanner.CreateEntrypoint(
+                    layout,
                     path,
                     ReadNewline(
                         path,
@@ -280,7 +284,7 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
         CliWorkspace workspace,
         string canonicalPath)
     {
-        if (!SourceFormClassifier.TryClassify(canonicalPath, out var form)
+        if (!SourceFormClassifier.TryClassify(layout, canonicalPath, out var form)
             || !SourceFormClassifier.IsEntrypoint(form))
         {
             return new UpdateWorkspaceAdoptionLocalSource(
@@ -288,7 +292,7 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
                 Cause: $"The planned local route '{canonicalPath}' is not a recognized entrypoint.");
         }
 
-        var automaticId = SourceIdentity.DeriveId(canonicalPath);
+        var automaticId = SourceIdentity.DeriveId(layout, canonicalPath);
         if (automaticId is null)
         {
             return new UpdateWorkspaceAdoptionLocalSource(
@@ -411,27 +415,6 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
             [],
             cause);
 }
-
-internal sealed record UpdateWorkspaceAdoptionSourcePlan(
-    IReadOnlyList<FrameworkPayloadAsset> PayloadAssets,
-    IReadOnlyList<SourceLogicalSource> PayloadSources,
-    IReadOnlyList<SourceLogicalSource> IntendedSources,
-    IReadOnlySet<string> PayloadSourcePaths,
-    IReadOnlySet<string> AdoptionSourcePaths,
-    IReadOnlySet<string> CreatedEntrypointPaths,
-    WorkspaceAdoptionTopologyPlan Topology,
-    string? Cause);
-
-internal sealed record UpdateWorkspaceAdoptionDocumentBuild(
-    IReadOnlyDictionary<string, string> Documents,
-    IReadOnlyDictionary<string, byte[]> TargetBytes,
-    IReadOnlyDictionary<string, FileStateSnapshot> OriginalSnapshots,
-    IReadOnlyList<UpdateMigrationPlan> Migrations,
-    string? Cause);
-
-internal sealed record UpdateWorkspaceAdoptionLocalSource(
-    SourceLogicalSource? Source,
-    string? Cause);
 
 internal sealed class UpdateMigrationPlanAccumulator
 {

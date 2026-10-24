@@ -1,3 +1,9 @@
+using System.Security.Cryptography;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Commands.Update.Models.Planning;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Update;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
@@ -16,14 +22,18 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Update.Shared.Planning;
 
 public sealed class UpdateGeneratedNavigationPlannerIntegrationTests
 {
+    private const string LocalName = "local-note";
+    private const string LocalPath = WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceCategoryNames.Memory + "/" + LocalName + SourceFormClassifier.MarkdownExtension;
+    private static readonly string LocalOverwrite = SourceOverwritePath.ReadAdjacentPath(LocalPath);
+    private const string MemoryCatalogue = WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceCategoryNames.Memory + "/_" + WorkspaceCategoryNames.Memory + SourceFormClassifier.MarkdownExtension;
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update generated planning observes invalid UTF-8 overwrite bytes without selecting them for projection"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task RetainsExactOverwriteSnapshotWithoutDecodingUnselectedBytes()
     {
         using var workspace = UpdateIntegrationWorkspace.Create("update-unselected-overwrite");
         await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
-        var basePath = Path.Combine(workspace.PhysicalPath, ".agents", "memory", "local-note.md");
-        var overwritePath = Path.Combine(workspace.PhysicalPath, ".agents", "memory", "local-note.overwrite.md");
+        var basePath = Path.GetFullPath(Path.Combine(workspace.PhysicalPath, LocalPath));
+        var overwritePath = Path.GetFullPath(Path.Combine(workspace.PhysicalPath, LocalOverwrite));
         const string baseText = """
             ---
             open-forge:
@@ -44,18 +54,15 @@ public sealed class UpdateGeneratedNavigationPlannerIntegrationTests
             var build = await new UpdateGeneratedNavigationPlanner(new PhysicalPathResolver()).BuildAsync(
                 workspace.Request(UpdateMode.DryRun),
                 payload,
-                WorkspaceOwnershipDocument.Empty,
-                WorkspaceSettingsDocument.Empty,
-                payload.Assets,
+                await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Workspace, TestContext.Current.CancellationToken),
+                payload.Assets.Select(asset => new UpdatePayloadTarget(asset, asset.Path)).ToArray(),
                 new HashSet<string>(StringComparer.Ordinal),
                 new HashSet<string>(StringComparer.Ordinal),
                 TestContext.Current.CancellationToken);
 
             Assert.Null(build.Finding);
-            Assert.Contains(
-                "- [Local projection input](local-note.md) - #Memory",
-                Encoding.UTF8.GetString(build.TargetBytes[".agents/memory/_memory.md"]),
-                StringComparison.Ordinal);
+            var document = new MarkdownDocumentParser().Parse(Encoding.UTF8.GetString(build.TargetBytes[MemoryCatalogue]));
+            Assert.Contains(document.Links, link => link.RawDestination == LocalName + SourceFormClassifier.MarkdownExtension);
             Assert.Equal(
                 [basePath, overwritePath],
                 build.ProjectionInputs.Select(input => input.LogicalPath).ToArray());
@@ -67,15 +74,15 @@ public sealed class UpdateGeneratedNavigationPlannerIntegrationTests
             Assert.True(overwrite.HasBytes);
             Assert.Equal(overwriteBytes, overwrite.Bytes.ToArray());
             Assert.Equal(
-                "d2b4465a410ab73d19480230dd87c2f5caa50197a14be0d0d726937d6ac6d76d",
+                Convert.ToHexStringLower(SHA256.HashData(overwriteBytes)),
                 overwrite.ContentHash);
             Assert.Equal(overwriteBytes, File.ReadAllBytes(overwritePath));
             Assert.Equal(before, workspace.SnapshotHashes());
         }
         finally
         {
-            workspace.RemoveFile(".agents/memory/local-note.overwrite.md");
-            workspace.RemoveFile(".agents/memory/local-note.md");
+            workspace.RemoveFile(LocalOverwrite);
+            workspace.RemoveFile(LocalPath);
         }
     }
 

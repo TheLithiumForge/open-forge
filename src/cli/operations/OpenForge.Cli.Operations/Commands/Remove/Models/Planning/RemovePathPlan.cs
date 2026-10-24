@@ -16,6 +16,7 @@ internal sealed record RemovePathPlan(
     string Target,
     bool TargetIsDirectory,
     bool IsMissing,
+    WorkspaceLayoutRead LayoutRead,
     WorkspaceSettingsRead Settings,
     WorkspaceOwnershipRead Ownership,
     RemovePathMetadataChange? SettingsChange,
@@ -48,6 +49,9 @@ internal sealed record RemovePathPlan(
         return Target == actual.Target
             && TargetIsDirectory == actual.TargetIsDirectory
             && IsMissing == actual.IsMissing
+            && LayoutRead.State == actual.LayoutRead.State
+            && LayoutRead.Layout?.MainRoot == actual.LayoutRead.Layout?.MainRoot
+            && LayoutRead.Expectations.SequenceEqual(actual.LayoutRead.Expectations)
             && Settings.MatchesObservation(actual.Settings)
             && Ownership.State == actual.Ownership.State
             && MatchesSnapshot(Ownership.Snapshot, actual.Ownership.Snapshot)
