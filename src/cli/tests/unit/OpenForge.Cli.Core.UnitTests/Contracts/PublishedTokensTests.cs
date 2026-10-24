@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Commands.Extension.Remove;
 using OpenForge.Cli.Core.Commands.Extension.Update;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Install;
+using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Remove;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.Create;
@@ -45,6 +46,7 @@ public sealed class PublishedTokensTests
         Assert.Equal(InstallDefinitions.Automatic.Name, PublishedTokens.Install.Automatic);
         Assert.Equal(InstallDefinitions.DryRun.Name, PublishedTokens.Install.DryRun);
         Assert.Equal(InstallDefinitions.Frontmatter.Name, PublishedTokens.Install.Frontmatter);
+        Assert.Equal(InstallDefinitions.ReadMachineName(InstallFindingCode.WorkspaceUnsafe), PublishedTokens.Install.WorkspaceUnsafeCode);
 
         Assert.Equal(IndexDefinitions.IndexCommand.Name, PublishedTokens.Index.Command);
         Assert.Equal(IndexDefinitions.DryRun.Name, PublishedTokens.Index.DryRun);

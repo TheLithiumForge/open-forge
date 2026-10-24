@@ -12,6 +12,7 @@ public static class PublishedTokens
         public const string Automatic = "--automatic";
         public const string DryRun = "--dry-run";
         public const string Frontmatter = "--frontmatter";
+        public const string WorkspaceUnsafeCode = "install.workspace-unsafe";
     }
 
     public static class Index

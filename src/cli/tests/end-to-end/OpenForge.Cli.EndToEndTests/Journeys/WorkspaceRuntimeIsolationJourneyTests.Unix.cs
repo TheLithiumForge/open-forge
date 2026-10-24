@@ -36,9 +36,9 @@ public sealed partial class WorkspaceRuntimeIsolationJourneyTests
             Assert.Equal(5, refused.ExitCode);
             Assert.Equal(before, workspace.SnapshotState());
             using var document = JsonDocument.Parse(refused.StandardOutput);
+            // The exact refusal cause for each special target is proven in UnixWorkspaceLockIntegrationTests.
             Assert.Contains(document.RootElement.GetProperty(Tokens.Json.Findings).EnumerateArray(),
-                finding => finding.GetProperty(Tokens.Json.Subject).ValueKind == JsonValueKind.Object
-                    && finding.GetProperty(Tokens.Json.Subject).GetProperty(Tokens.Json.Path).GetString() == sentinel);
+                finding => finding.GetProperty(Tokens.Json.Code).GetString() == Tokens.Install.WorkspaceUnsafeCode);
             Assert.False(Directory.Exists(workspace.Combine(Tokens.Sources.AgentsRoot)));
             Assert.True(File.Exists(sentinel));
         }
