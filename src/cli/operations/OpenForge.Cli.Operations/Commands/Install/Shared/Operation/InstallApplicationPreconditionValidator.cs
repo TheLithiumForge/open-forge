@@ -9,15 +9,13 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
-using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 
 internal sealed class InstallApplicationPreconditionValidator(
     MutationRevalidator mutationRevalidator,
     InstallIntendedStateBuilder intendedStateBuilder,
-    WorkspaceLayoutRevalidator layoutRevalidator,
-    FileExpectationValidator expectationValidator)
+    WorkspaceLayoutRevalidator layoutRevalidator)
 {
     private readonly MutationRevalidator _mutationRevalidator = mutationRevalidator;
     private readonly InstallIntendedStateBuilder _intendedStateBuilder = intendedStateBuilder;
@@ -27,9 +25,7 @@ internal sealed class InstallApplicationPreconditionValidator(
         InstallPlan plan,
         CancellationToken cancellationToken)
     {
-        var layoutValidation = InstallLayoutPlanner.IsDefaultAdoption(plan.LayoutRead)
-            ? await ValidateAdoptionAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false)
-            : await layoutRevalidator.ValidateAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+        var layoutValidation = await layoutRevalidator.ValidateAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false);
         if (layoutValidation.State != MutationValidationState.Valid)
             return InstallApplicationPreconditionResult.Boundary(layoutValidation,
                 layoutValidation.State == MutationValidationState.Cancelled ? InstallFindingCode.Interrupted : InstallFindingCode.TargetUnsafe);
@@ -86,27 +82,6 @@ internal sealed class InstallApplicationPreconditionValidator(
                     InstallFindingCode.TargetUnsafe),
             _ => throw InvalidValidationState(validation.State),
         };
-    }
-
-    private async ValueTask<MutationValidationResult> ValidateAdoptionAsync(
-        WorkspaceLockLease lease,
-        WorkspaceLayoutRead observation,
-        CancellationToken cancellationToken)
-    {
-        var layout = observation.Layout ?? throw new InvalidOperationException("Default adoption requires its observed layout.");
-        var workspace = layout.Workspace;
-        if (!lease.IsHeldFor(workspace) || observation.Expectations.IsDefaultOrEmpty)
-            return MutationValidationResult.Blocked("Default adoption requires its workspace lease and layout evidence.");
-        var checks = new List<FileExpectationValidationResult>();
-        foreach (var expectation in observation.Expectations)
-        {
-            var check = await expectationValidator.ValidateAsync(workspace, expectation, cancellationToken).ConfigureAwait(false);
-            checks.Add(check);
-            if (check.State != FileExpectationValidationState.Matched) break;
-        }
-        if (!lease.IsHeldFor(workspace))
-            return MutationValidationResult.Blocked("The workspace lease was released during adoption revalidation.", checks);
-        return MutationValidationResult.FromChecks(checks);
     }
 
     private static ArgumentOutOfRangeException InvalidValidationState(

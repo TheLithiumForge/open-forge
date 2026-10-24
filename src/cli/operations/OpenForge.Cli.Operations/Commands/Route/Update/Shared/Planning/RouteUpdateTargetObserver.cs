@@ -1,7 +1,5 @@
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
@@ -17,15 +15,13 @@ internal sealed class RouteUpdateTargetObserver(
     RouteUpdateSourceSelector sourceSelector,
     RouteUpdateLayerObserver layerObserver,
     MarkdownDocumentParser markdownParser,
-    YamlDocumentParser yamlParser,
-    PhysicalPathResolver physicalPathResolver)
+    YamlDocumentParser yamlParser)
 {
     private readonly RouteUpdateSourceSelector _sourceSelector = sourceSelector;
     private readonly RouteUpdateLayerObserver _layerObserver = layerObserver;
     private readonly MarkdownDocumentParser _markdownParser = markdownParser;
     private readonly YamlDocumentParser _yamlParser = yamlParser;
 
-    private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
     private readonly FrameworkDocumentMetadataParser _metadataParser = new();
 
     internal async ValueTask<RouteUpdateObservationBuild> ObserveAsync(
@@ -91,8 +87,7 @@ internal sealed class RouteUpdateTargetObserver(
                     "The intended document requires complete description and tag metadata.");
             }
 
-            settings = await WorkspaceSettingsReader.ReadAsync(
-                _physicalPathResolver, operation.Workspace, cancellationToken).ConfigureAwait(false);
+            settings = selection.LayoutRead.Settings;
             if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
             {
                 return Stop(selection, RouteUpdateFindingCode.FrontmatterUnsafe,
@@ -123,6 +118,7 @@ internal sealed class RouteUpdateTargetObserver(
             new RouteUpdateObservation
             {
                 Request = operation,
+                LayoutRead = selection.LayoutRead,
                 Target = target,
                 Catalogue = selection.Catalogue,
                 TargetSource = source,

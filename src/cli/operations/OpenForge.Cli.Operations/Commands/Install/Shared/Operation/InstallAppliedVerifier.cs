@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 
@@ -51,7 +52,7 @@ internal sealed class InstallAppliedVerifier(
             return targetBoundary;
         }
 
-        foreach (var effect in plan.TargetEffects.Where(effect => effect.RelativePath == ".agents/open-forge.json"))
+        foreach (var effect in plan.TargetEffects.Where(effect => effect.RelativePath == WorkspaceSettingsDefinitions.RelativePath))
         {
             var read = await _targetReader.ReadAsync(plan.Request.Workspace, effect.RelativePath, cancellationToken).ConfigureAwait(false);
             if (read.State != InstallTargetReadState.File || read.Snapshot is not { } snapshot

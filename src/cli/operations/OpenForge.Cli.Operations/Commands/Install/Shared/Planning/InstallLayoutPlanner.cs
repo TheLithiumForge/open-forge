@@ -5,8 +5,6 @@ using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
-using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
@@ -30,8 +28,7 @@ internal sealed class InstallLayoutPlanner(PhysicalPathResolver paths)
         var intended = WorkspaceLayout.Create(request.Workspace, request.RequestedMainRoot ?? current.MainRoot);
         if (observed.State != WorkspaceLayoutReadState.Uninstalled && intended.MainRoot != current.MainRoot)
             return Stop(InstallFindingCode.InvalidInput, "An established installation cannot change its main root in this delivery.", intended.MainRoot);
-        if (observed.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
-            && !IsDefaultAdoption(observed))
+        if (observed.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
             return Stop(InstallFindingCode.LifecycleBlocked, observed.Issues.FirstOrDefault()?.Cause ?? "The workspace layout is inconsistent.");
         if (intended.IsDefault || observed.State == WorkspaceLayoutReadState.Ready)
             return new(observed, intended, null);
@@ -75,9 +72,4 @@ internal sealed class InstallLayoutPlanner(PhysicalPathResolver paths)
                 code, cause, subject));
     }
 
-    // Default adoption can establish a loader after a managed host or package receipt already exists.
-    internal static bool IsDefaultAdoption(WorkspaceLayoutRead observation)
-        => observation.Layout is { IsDefault: true }
-            && observation.State == WorkspaceLayoutReadState.Mismatch
-            && observation.Issues.All(issue => issue.Code == WorkspaceLayoutIssueCode.MissingLoader);
 }

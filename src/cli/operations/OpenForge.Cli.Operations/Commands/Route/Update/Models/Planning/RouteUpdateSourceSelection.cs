@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -9,6 +10,7 @@ namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 internal sealed record RouteUpdateSourceSelection
 {
     public required RouteUpdateRequest Request { get; init; }
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
     public required RouteUpdateTarget Target { get; init; }
     public required SourceCatalogue Catalogue { get; init; }
     public required SourceLogicalSource Source { get; init; }
