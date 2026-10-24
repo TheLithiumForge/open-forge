@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Reading;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
@@ -20,35 +21,37 @@ internal sealed class ExtensionLifecycleTargetReader(
     private readonly ManagedTargetReader _managedTargetReader = new(physicalPathResolver);
 
     internal async ValueTask<IReadOnlyList<ExtensionManagedTargetObservation>> ReadAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout? layout,
         WorkspaceOwnershipDocument ownership,
         IReadOnlyList<ExtensionSourceObservation> sources,
         FrontmatterForm? form,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken, string? unavailableCause = null)
     {
         var detailed = await ReadDoctorAsync(
-            workspace,
+            layout,
             ownership,
             sources,
             form,
-            cancellationToken).ConfigureAwait(false);
+            cancellationToken, unavailableCause).ConfigureAwait(false);
         return detailed.Select(observation => observation.Target).ToArray();
     }
 
     internal async ValueTask<IReadOnlyList<ExtensionManagedTargetDoctorObservation>> ReadDoctorAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout? layout,
         WorkspaceOwnershipDocument ownership,
         IReadOnlyList<ExtensionSourceObservation> sources,
         FrontmatterForm? form,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken, string? unavailableCause = null)
     {
         var observations = new List<ExtensionManagedTargetDoctorObservation>();
         foreach (var path in ownership.Extensions.SelectMany(package => package.Paths).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var intended = ReadIntendedFingerprint(path, ownership, sources, form);
-            var read = await ReadStateAsync(
-                workspace,
+            var intended = layout is null ? null : ReadIntendedFingerprint(layout, path, ownership, sources, form);
+            var read = layout is null
+                ? ExtensionManagedTargetDoctorRead.Unavailable(unavailableCause ?? "The intended Extension target is unavailable.", ExtensionManagedTargetUnavailableReason.IntendedComparisonUnavailable)
+                : await ReadStateAsync(
+                layout.Workspace,
                 path,
                 intended,
                 cancellationToken).ConfigureAwait(false);
@@ -116,7 +119,7 @@ internal sealed class ExtensionLifecycleTargetReader(
     }
 
     private string? ReadIntendedFingerprint(
-        string path, WorkspaceOwnershipDocument ownership, IReadOnlyList<ExtensionSourceObservation> sources, FrontmatterForm? form)
+        WorkspaceLayout layout, string path, WorkspaceOwnershipDocument ownership, IReadOnlyList<ExtensionSourceObservation> sources, FrontmatterForm? form)
     {
         if (form is null)
         {
@@ -137,16 +140,16 @@ internal sealed class ExtensionLifecycleTargetReader(
             {
                 return null;
             }
-            var files = packages[0].Payload.Where(file => file.TargetPath == path).ToArray();
+            var files = packages[0].Payload.Where(file => file.TargetPath is { } target && layout.MapPayloadPath(target) == path).ToArray();
             if (files.Length != 1 || files[0].State != ExtensionPackageFileReadState.Available
-                || files[0].Bytes is not { } bytes)
+                || files[0].Bytes is not { } bytes || files[0].TargetPath is not { } packagePath)
             {
                 return null;
             }
             string fingerprint;
             try
             {
-                var rendered = WorkspacePayloadRenderer.Render(path, bytes, form.Value);
+                var rendered = WorkspacePayloadRenderer.Render(layout, packagePath, bytes, form.Value);
                 if (rendered.Bytes is not { } intendedBytes)
                 {
                     return null;

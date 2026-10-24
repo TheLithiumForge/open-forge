@@ -15,7 +15,7 @@ public sealed class DoctorOperationEventTests
         var support = new DoctorOperationTestSupport();
         support.WorkspaceEntry.Failure = new IOException("Injected contributor failure.");
 
-        var result = await new DoctorOperation(support.Catalogue)
+        var result = await new DoctorOperation(support.Catalogue, readLayout: DoctorOperationTestSupport.ReadLayout)
             .ExecuteAsync(
                 new DoctorRequest(DoctorOperationTestSupport.Workspace()),
                 CancellationToken.None);
@@ -33,7 +33,7 @@ public sealed class DoctorOperationEventTests
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
-        var result = await new DoctorOperation(support.Catalogue)
+        var result = await new DoctorOperation(support.Catalogue, readLayout: DoctorOperationTestSupport.ReadLayout)
             .ExecuteAsync(
                 new DoctorRequest(DoctorOperationTestSupport.Workspace()),
                 cancellation.Token);

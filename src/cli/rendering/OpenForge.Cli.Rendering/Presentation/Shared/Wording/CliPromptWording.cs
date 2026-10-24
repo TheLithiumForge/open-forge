@@ -43,7 +43,7 @@ internal static class CliPromptWording
     internal static string NeededBy(string labels) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.NeededBy(labels);
     internal static string RequiredBy(string labels) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.RequiredBy(labels);
     internal static string Installed() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelInstalled();
-    internal static string Permission(string owner) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.Permission(owner);
+    internal static string Permission(string owner, string? contextFolder) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.Permission(owner, contextFolder);
     internal static string Directory(string path) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.Directory(path);
     internal static string Always() => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleAllowAlways();
     internal static string AlwaysReason() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelSaveThesePathsToAgentsOpenForgeJson();
@@ -80,5 +80,5 @@ internal static class CliPromptWording
     internal static string InstalledSummary() => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.InstalledSummary();
     internal static string MultiControls() => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.MultiControls();
     internal static string PathPage(int page, int count) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.PathPage(page, count);
-    internal static string PermissionHeading() => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.PermissionHeading();
+    internal static string PermissionHeading(string? contextFolder) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.PermissionHeading(contextFolder);
 }

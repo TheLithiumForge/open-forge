@@ -11,6 +11,23 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Operational.Shared.Rena
 [Trait("Feature", "rename-evidence"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
 public sealed class RenameEvidenceEvaluatorTests
 {
+    [Fact(DisplayName = "Unavailable layout cannot produce rename evidence from retained candidates")]
+    public void UnavailableLayoutAdmitsNoProof()
+    {
+        var facts = RenameEvidenceTestFacts.Facts([RenameEvidenceTestFacts.Candidate()], [RenameEvidenceTestFacts.Old()])
+            with
+        { Layout = null };
+
+        var result = Evaluate(facts);
+
+        Assert.False(result.Facts.CandidateUniverseComplete);
+        var resolution = Assert.Single(result.Resolutions);
+        Assert.Equal(RenameResolution.IncompleteUniverse, resolution.Resolution);
+        Assert.Null(resolution.Proven);
+        Assert.Empty(resolution.StrongEvidence);
+        Assert.Empty(RenameCanonicalEntrypointEvidence.Read(result));
+    }
+
     [Theory(DisplayName = "Timed-out Git admits no strong proof even when stale metadata matches")]
     [InlineData("committed"), InlineData("edited"), InlineData("metadata")]
     public void GitTimeoutAdmitsNoStrongProof(string identity)

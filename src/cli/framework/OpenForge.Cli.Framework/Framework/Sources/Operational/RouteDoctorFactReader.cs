@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
@@ -16,7 +17,7 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 internal static class RouteDoctorFactReader
 {
     internal static IReadOnlyList<RouteDeclaredRootObservation> ReadDeclaredRoots(
-        SourceRouteFacts routes)
+        WorkspaceLayout layout, SourceRouteFacts routes)
     {
         var observations = routes.Issues
             .Where(issue => issue.Code == SourceRouteIssueCode.LoaderDestinationMissing)
@@ -32,7 +33,7 @@ internal static class RouteDoctorFactReader
                 || fact.State != SourceRouteState.Routed)
             .Select(path => RouteDeclaredRootObservation.Unreachable(
                 path,
-                SourceLogicalPath.LoaderPath)));
+                layout.LoaderPath)));
         return observations
             .OrderBy(observation => observation.State)
             .ThenBy(observation => observation.Path, StringComparer.Ordinal)
@@ -43,7 +44,7 @@ internal static class RouteDoctorFactReader
         RouteSourceInspection inspection)
     {
         return inspection.Sources
-            .Where(source => !IsValidNativeSkill(source) && !IsHumanGuide(source.Source.Identity.CanonicalBasePath))
+            .Where(source => !IsValidNativeSkill(source) && !IsHumanGuide(inspection.Catalogue.Layout, source.Source.Identity.CanonicalBasePath))
             .Select(source => new RouteMetadataObservation(
                 source.Source.Identity.CanonicalBasePath,
                 source.FrameworkMetadata))
@@ -69,7 +70,7 @@ internal static class RouteDoctorFactReader
         var turnedOffFolders = ReadTurnedOffRootFolders(inspection);
         foreach (var fact in inspection.Routes.RouteFacts.Where(fact =>
                      fact.State == SourceRouteState.Unrouted
-                     && !IsHumanGuide(fact.Identity.CanonicalBasePath)
+                     && !IsHumanGuide(inspection.Catalogue.Layout, fact.Identity.CanonicalBasePath)
                      && !turnedOffFolders.Any(folder => fact.Identity.CanonicalBasePath.StartsWith(folder + "/", StringComparison.Ordinal))))
         {
             if (IsNativeSkillResourcePath(
@@ -97,6 +98,7 @@ internal static class RouteDoctorFactReader
             foreach (var entry in source.GeneratedEntries.Entries)
             {
                 var resolved = SourceGeneratedDestinationResolver.Resolve(
+                    inspection.Catalogue.Layout,
                     source.Source.Identity.CanonicalBasePath,
                     source.Source.Base.Form == SourceDocumentForm.Loader,
                     entry.Destination);
@@ -123,7 +125,7 @@ internal static class RouteDoctorFactReader
     }
 
     // The Loader's Entries are the user's on and off switch. A complete category folder at the top of
-    // `.agents/` whose entrypoint the Loader does not list is turned off, not lost, so its files are not
+    // the context folder whose entrypoint the Loader does not list is turned off, not lost, so its files are not
     // reported as unreachable. An empty list keeps the old behavior, as for a fresh workspace.
     private static IReadOnlyList<string> ReadTurnedOffRootFolders(RouteSourceInspection inspection)
     {
@@ -135,22 +137,23 @@ internal static class RouteDoctorFactReader
         }
 
         var listed = loader.GeneratedEntries.Entries
-            .Select(entry => SourceLoaderDestinationParser.Parse(entry.Destination))
+            .Select(entry => SourceLoaderDestinationParser.Parse(inspection.Catalogue.Layout, entry.Destination))
             .Where(destination => destination.State == SourceLoaderDestinationParseState.Valid)
             .Select(destination => destination.CanonicalPath)
             .ToHashSet(StringComparer.Ordinal);
         return inspection.Sources
             .Select(source => source.Source)
             .Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form)
-                && SourceLogicalPath.ReadParent(SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath)) == SourceLogicalPath.AgentsRoot
+                && (SourceLogicalPath.ReadParent(SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath)) == inspection.Catalogue.Layout.MainRoot
+                    || SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath) == WorkspaceLayout.NativeSkillsPath)
                 && !listed.Contains(source.Identity.CanonicalBasePath))
             .Select(source => SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath))
             .ToArray();
     }
 
     // The guide for people is deliberately outside routing, so it is neither unreachable nor missing metadata.
-    private static bool IsHumanGuide(string canonicalPath)
-        => string.Equals(canonicalPath, SourceLogicalPath.HumanGuidePath, StringComparison.Ordinal);
+    private static bool IsHumanGuide(WorkspaceLayout layout, string canonicalPath)
+        => string.Equals(canonicalPath, layout.HumanGuidePath, StringComparison.Ordinal);
 
     private static bool IsValidNativeSkill(RouteSourceObservation source)
     {

@@ -17,14 +17,16 @@ internal sealed record WorkspaceEntryDoctorSummary(
 
 internal sealed record WorkspacePathObservationSet(
     WorkspacePathObservation Root,
-    WorkspacePathObservation Agents,
+    WorkspacePathObservation? Agents,
     WorkspacePathObservation Entry,
-    WorkspacePathObservation Loader);
+    WorkspacePathObservation? Loader);
 
 internal sealed record WorkspaceEntryDoctorView(
     WorkspaceEntryDoctorSummary Summary,
     WorkspacePathObservationSet Paths)
 {
+    internal string? UnavailableCause { get; init; }
+
     internal OperationalViewState State => Summary.State;
 
     internal OperationalInstallationState Installation => Summary.Installation;
@@ -33,13 +35,13 @@ internal sealed record WorkspaceEntryDoctorView(
 
     internal string? LoaderPath => Summary.LoaderPath;
 
-    internal WorkspacePathObservation Agents => Paths.Agents;
+    internal WorkspacePathObservation? Agents => Paths.Agents;
 
     internal WorkspacePathObservation Root => Paths.Root;
 
     internal WorkspacePathObservation Entry => Paths.Entry;
 
-    internal WorkspacePathObservation Loader => Paths.Loader;
+    internal WorkspacePathObservation? Loader => Paths.Loader;
 }
 
 internal sealed class WorkspacePathObservation

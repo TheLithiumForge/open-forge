@@ -21,6 +21,7 @@ internal static class RepairContinuationReader
 {
     internal static async ValueTask<bool> NeedsIndexAsync(CliWorkspace workspace, RouteDoctorView routes, CancellationToken token)
     {
+        if (routes.Catalogue is null) return false;
         var paths = new PhysicalPathResolver();
         var ownership = await WorkspaceOwnershipReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
         var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);

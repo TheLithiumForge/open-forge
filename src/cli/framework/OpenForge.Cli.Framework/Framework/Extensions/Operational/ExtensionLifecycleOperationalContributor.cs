@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
@@ -10,10 +12,10 @@ namespace OpenForge.Cli.Core.Framework.Extensions.Operational;
 internal interface IExtensionLifecycleOperationalContributor
 {
     ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(
-        CliWorkspace workspace, WorkspaceOwnershipRead ownership, CancellationToken cancellationToken);
+        WorkspaceLayoutRead observation, CancellationToken cancellationToken);
 
     ValueTask<ExtensionLifecycleDoctorView> ReadDoctorAsync(
-        CliWorkspace workspace, CancellationToken cancellationToken);
+        WorkspaceLayoutRead observation, CancellationToken cancellationToken);
 }
 
 internal sealed class ExtensionLifecycleOperationalContributor(
@@ -21,14 +23,25 @@ internal sealed class ExtensionLifecycleOperationalContributor(
     ExtensionSourceReader sourceReader,
     ExtensionLifecycleTargetReader targetReader) : IExtensionLifecycleOperationalContributor
 {
+    internal async ValueTask<ExtensionLifecycleDoctorView> ReadDoctorAsync(CliWorkspace workspace, CancellationToken cancellationToken)
+        => await ReadDoctorAsync(await new WorkspaceLayoutReader(physicalPathResolver).ReadAsync(workspace, cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+
+    internal async ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(CliWorkspace workspace, WorkspaceOwnershipRead ownership, CancellationToken cancellationToken)
+    {
+        var observed = await new WorkspaceLayoutReader(physicalPathResolver).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var retained = new WorkspaceLayoutRead(observed.State, observed.Settings, ownership, observed.Layout, observed.Issues, observed.Expectations);
+        return await ReadStatusAsync(retained, cancellationToken).ConfigureAwait(false);
+    }
+
     private readonly ExtensionLifecycleDoctorReader _reader = new(
         new ExtensionSourceObservationReader(sourceReader), targetReader,
-        new ExtensionBridgeRegistrationObservationReader(), physicalPathResolver);
+        new ExtensionBridgeRegistrationObservationReader());
 
     public async ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(
-        CliWorkspace workspace, WorkspaceOwnershipRead ownership, CancellationToken cancellationToken)
+        WorkspaceLayoutRead observation, CancellationToken cancellationToken)
     {
-        var view = await _reader.ReadAsync(workspace, ownership, includeEmbedded: false, cancellationToken)
+        var ownership = observation.Ownership;
+        var view = await _reader.ReadAsync(observation, includeEmbedded: false, cancellationToken)
             .ConfigureAwait(false);
         return new ExtensionLifecycleStatusView
         {
@@ -48,11 +61,9 @@ internal sealed class ExtensionLifecycleOperationalContributor(
     }
 
     public async ValueTask<ExtensionLifecycleDoctorView> ReadDoctorAsync(
-        CliWorkspace workspace, CancellationToken cancellationToken)
+        WorkspaceLayoutRead observation, CancellationToken cancellationToken)
     {
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(physicalPathResolver, workspace, cancellationToken)
-            .ConfigureAwait(false);
-        return await _reader.ReadAsync(workspace, ownership, includeEmbedded: true, cancellationToken)
+        return await _reader.ReadAsync(observation, includeEmbedded: true, cancellationToken)
             .ConfigureAwait(false);
     }
 

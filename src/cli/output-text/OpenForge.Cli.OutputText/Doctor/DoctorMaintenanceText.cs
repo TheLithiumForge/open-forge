@@ -21,8 +21,10 @@ internal static class DoctorMaintenanceText
         => $"{path} is inside folders without navigation files. Index can create the missing chain.";
     internal static string OutsideFolders(string path)
         => $"{path} is outside the folders Open Forge routes.";
-    internal static string MoveIntoRoute(string path)
-        => $"Move {path} into a category such as .agents/guidance/, or add its folder to .agents/loader.md.";
+    internal static string MoveIntoRoute(string path, string? guidanceDirectory = null, string? loaderPath = null)
+        => guidanceDirectory is null || loaderPath is null
+            ? $"Move {path} into a category such as .agents/guidance/, or add its folder to .agents/loader.md."
+            : $"Move {path} into a category such as {guidanceDirectory}/, or add its folder to {loaderPath}.";
     internal static string SeveralStrong(string path)
         => $"{path} is missing. More than one file looks like its new location.";
     internal static string WeakOnly(string path)

@@ -32,21 +32,6 @@ internal sealed class RouteGeneratedNavigationReader
         _physicalPathResolver = physicalPathResolver;
     }
 
-    internal async ValueTask<IReadOnlyList<GeneratedNavigationTargetObservation>> ReadAsync(
-        CliWorkspace workspace,
-        FrameworkPayloadReadResult payload,
-        RouteSourceInspection inspection,
-        SourceSharing? sharing,
-        CancellationToken cancellationToken)
-    {
-        // Routes a workspace removed, such as the categories Essentials omits, are not
-        // delivered, so their payload entrypoints are not expected Entries targets.
-        var settings = await WorkspaceSettingsReader.ReadAsync(_physicalPathResolver, workspace, cancellationToken)
-            .ConfigureAwait(false);
-        return Read(workspace, payload, inspection, sharing,
-            settings.State == WorkspaceSettingsReadState.Complete ? settings.Document : null);
-    }
-
     internal IReadOnlyList<GeneratedNavigationTargetObservation> Read(
         CliWorkspace workspace,
         FrameworkPayloadReadResult payload,
@@ -95,15 +80,15 @@ internal sealed class RouteGeneratedNavigationReader
             try
             {
                 foreach (var asset in value.Assets.Where(asset =>
-                             SourceFormClassifier.TryClassify(asset.Path, out var form)
+                             SourceFormClassifier.TryClassify(inspection.Catalogue.Layout, inspection.Catalogue.Layout.MapPayloadPath(asset.Path), out var form)
                              && form != SourceDocumentForm.OverwriteCompanion
-                             && (settings is null || FrameworkPayloadSelection.IncludesPath(asset.Path, settings))))
+                             && (settings is null || FrameworkPayloadSelection.IncludesPath(inspection.Catalogue.Layout, asset.Path, settings))))
                 {
                     var document = _markdownParser.Parse(
                         StrictUtf8.GetString(asset.Bytes.AsSpan()));
                     if (document.GeneratedRegion.State != MarkdownGeneratedRegionState.Absent)
                     {
-                        paths.Add(asset.Path);
+                        paths.Add(inspection.Catalogue.Layout.MapPayloadPath(asset.Path));
                     }
                 }
             }

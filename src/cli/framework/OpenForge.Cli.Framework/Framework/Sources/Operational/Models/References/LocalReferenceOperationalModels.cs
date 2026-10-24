@@ -136,6 +136,8 @@ internal sealed record LocalReferenceDoctorView(
 {
     internal SourceCatalogue? Catalogue { get; init; }
 
+    internal string? UnavailableCause { get; init; }
+
     internal int IgnoredLinkCount { get; init; }
 
     internal int? UnrecognizedSettingsSchemaVersion { get; init; }

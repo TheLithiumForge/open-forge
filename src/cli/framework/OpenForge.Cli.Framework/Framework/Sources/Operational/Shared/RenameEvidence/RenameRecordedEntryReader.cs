@@ -12,9 +12,6 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence
 
 internal static class RenameRecordedEntryReader
 {
-    internal static ImmutableArray<RenameRecordedIdentity> Read(string parentPath, FileStateSnapshot snapshot, MarkdownDocumentFacts document)
-        => Read(SourceContentRoots.Default, parentPath, snapshot, document);
-
     internal static ImmutableArray<RenameRecordedIdentity> Read(WorkspaceLayout layout, string parentPath, FileStateSnapshot snapshot, MarkdownDocumentFacts document)
         => Read(new SourceContentRoots(layout), parentPath, snapshot, document);
 

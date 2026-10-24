@@ -100,6 +100,14 @@ internal static class DoctorWording
             _ => "workspace",
         };
 
+    internal static string Title(DoctorFinding finding)
+        => finding.CustomMainRoot is { } root ? finding.Kind switch
+        {
+            DoctorFindingKind.WorkspaceAgentsMissing => global::OpenForge.Cli.OutputText.Doctor.DoctorText.ContextFolderMissing(root),
+            DoctorFindingKind.WorkspaceAgentsInaccessible => global::OpenForge.Cli.OutputText.Doctor.DoctorText.ContextFolderUnreadable(root),
+            _ => Title(finding.Kind),
+        } : Title(finding.Kind);
+
     internal static string Title(DoctorFindingKind kind)
         => kind switch
         {
@@ -222,11 +230,21 @@ internal static class DoctorWording
         {
             DoctorFindingKind.WorkspaceUnavailable => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatDoesNotExistOrCannotBeRead($"{path}"),
             DoctorFindingKind.WorkspaceNotDirectory => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatIsAFileNotADirectory($"{path}"),
-            DoctorFindingKind.WorkspaceAgentsMissing => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatHasNoAgentsFolderOpenForgeIsNotInstalledHere($"{path}"),
-            DoctorFindingKind.WorkspaceAgentsInaccessible => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatAgentsExistsButCannotBeRead($"{Cause(finding, "the reason is unavailable")}"),
-            DoctorFindingKind.WorkspaceLoaderMissing => global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageAgentsLoaderMdIsMissing(),
-            DoctorFindingKind.WorkspaceLoaderUnreadable => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatAgentsLoaderMdCannotBeRead($"{Cause(finding, "the reason is unavailable")}"),
-            DoctorFindingKind.WorkspaceLoaderMalformed => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatAgentsLoaderMdCouldNotBeUnderstood($"{Cause(finding, "the content is invalid")}"),
+            DoctorFindingKind.WorkspaceAgentsMissing => finding.CustomMainRoot is { } root
+                ? global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.ContextFolderMissing(path, root)
+                : global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatHasNoAgentsFolderOpenForgeIsNotInstalledHere($"{path}"),
+            DoctorFindingKind.WorkspaceAgentsInaccessible => finding.CustomMainRoot is { } unreadableRoot
+                ? global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.ContextFolderUnreadable(unreadableRoot, Cause(finding, "the reason is unavailable"))
+                : global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatAgentsExistsButCannotBeRead($"{Cause(finding, "the reason is unavailable")}"),
+            DoctorFindingKind.WorkspaceLoaderMissing => finding.CustomLoaderPath is { } missingLoader
+                ? global::OpenForge.Cli.OutputText.Doctor.DoctorText.LoaderMissing(missingLoader)
+                : global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageAgentsLoaderMdIsMissing(),
+            DoctorFindingKind.WorkspaceLoaderUnreadable => finding.CustomLoaderPath is { } unreadableLoader
+                ? global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.LoaderUnreadable(unreadableLoader, Cause(finding, "the reason is unavailable"))
+                : global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatAgentsLoaderMdCannotBeRead($"{Cause(finding, "the reason is unavailable")}"),
+            DoctorFindingKind.WorkspaceLoaderMalformed => finding.CustomLoaderPath is { } malformedLoader
+                ? global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.LoaderMalformed(malformedLoader, Cause(finding, "the content is invalid"))
+                : global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatAgentsLoaderMdCouldNotBeUnderstood($"{Cause(finding, "the content is invalid")}"),
             DoctorFindingKind.WorkspaceEntryMissing => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatIsRoutedButHasNoEntrypointFile($"{path}"),
             DoctorFindingKind.WorkspaceEntryAmbiguous => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatHasMoreThanOneEntrypointFileKeepOne($"{path}", $"{Cause(finding, "several names")}"),
             DoctorFindingKind.WorkspaceEntryCompatibilityCollision => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatHasIncompatibleEntrypointFormsKeepOne($"{path}"),

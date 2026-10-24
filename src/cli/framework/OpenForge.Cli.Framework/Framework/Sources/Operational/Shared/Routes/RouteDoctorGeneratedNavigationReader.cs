@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
@@ -30,12 +31,12 @@ internal sealed class RouteDoctorGeneratedNavigationReader
         var projection = RouteGeneratedNavigationProjection.Project(formation, observations, regionSources, sharing);
         return projection.Regions
             .OrderBy(region => region.CanonicalPath, StringComparer.Ordinal)
-            .Select(region => Project(region, observations[region.CanonicalPath]))
+            .Select(region => Project(inspection.Catalogue.Layout, region, observations[region.CanonicalPath]))
             .ToArray();
     }
 
     private static DoctorGeneratedNavigationTargetObservation Project(
-        GeneratedNavigationRegion region,
+        WorkspaceLayout layout, GeneratedNavigationRegion region,
         RouteSourceObservation source)
     {
         if (region.State == GeneratedNavigationRegionState.Available)
@@ -44,6 +45,7 @@ internal sealed class RouteDoctorGeneratedNavigationReader
                 source.GeneratedEntries,
                 region.Entries,
                 RouteGeneratedEntryComparisonReader.Read(
+                    layout,
                     source.Source,
                     source.GeneratedEntries,
                     region.Entries,

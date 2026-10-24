@@ -169,6 +169,7 @@ internal static class StatusReportSelector
             Libraries = libraries,
             TextFacts = new StatusDataTextFacts
             {
+                CustomMainRoot = result.CustomMainRoot,
                 ShowOperationalSections = facts.Installation.State == StatusInstallationState.Installed,
                 ShowStandard = includeStandard,
                 ShowFull = includeFull,
@@ -509,7 +510,7 @@ internal static class StatusReportSelector
             StatusFindingCode.ContextInventoryIncomplete => StatusWording.StartupUnavailable(finding.Subject),
             StatusFindingCode.StartupContextUnavailable => StatusWording.CurrentStartupUnavailable(),
             StatusFindingCode.ContinuityContextUnavailable => StatusWording.ContinuityUnavailable(),
-            StatusFindingCode.RootCategoriesUnavailable => StatusWording.RootCategoriesUnavailable(),
+            StatusFindingCode.RootCategoriesUnavailable => StatusWording.RootCategoriesUnavailable(finding.CustomLoaderPath),
             StatusFindingCode.GeneratedNavigationChanged or StatusFindingCode.GeneratedNavigationMissing
                 or StatusFindingCode.GeneratedNavigationUnavailable or StatusFindingCode.GeneratedNavigationBlocked
                 => StatusWording.GeneratedNavigation(finding.Code, subject),

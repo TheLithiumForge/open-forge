@@ -17,12 +17,21 @@ internal sealed class ReferenceProtectionReader(PhysicalPathResolver paths)
     private static readonly RoutedMetadataCompletionPolicy ProtectionPolicy = new();
     internal async ValueTask<ReferenceProtectionRead> ReadAsync(CliWorkspace workspace, CancellationToken token)
     {
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
+        var observation = await new WorkspaceLayoutReader(paths).ReadAsync(workspace, token).ConfigureAwait(false);
+        return Read(observation);
+    }
+
+    internal static ReferenceProtectionRead Read(WorkspaceLayoutRead observation)
+    {
+        var ownership = observation.Ownership;
+        var settings = observation.Settings;
+        if (observation.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
+            || observation.Layout is not { } layout) return new(null, []);
         if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete)
             || settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete)) return new(null, []);
         return new(new()
         {
+            Layout = layout,
             Settings = settings.Document,
             Ownership = ownership.Document,
         }, [ownership.Snapshot?.Expectation ?? FileExpectation.Missing(ownership.LogicalPath),

@@ -26,13 +26,14 @@ internal static class LibraryRecoveryPermissionReader
         var selected = evidence.CurrentRecord.Record?.Libraries.SingleOrDefault(library => library.Id == evidence.LibraryId)
             ?? evidence.VerifiedPriorRecord?.Record.Libraries.SingleOrDefault(library => library.Id == evidence.LibraryId)
             ?? throw new InvalidOperationException("Library recovery requires current or verified prior record membership.");
-        var current = await LibraryRegistrationReader.ReadAsync(new PhysicalPathResolver(), workspace, cancellationToken).ConfigureAwait(false);
+        var layoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var current = LibraryRegistrationReader.Read(layoutRead.Ownership);
         var target = evidence.Entry.Input.Context.Entry.TargetPath;
         var paths = target == WorkspaceOwnershipDefinitions.RelativePath
             ? LibraryPathIdentity.Mappings(selected).Select(mapping => mapping.DestinationPath.Value)
             : [target];
-        var required = paths.Where(path => !path.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.Ordinal)).ToImmutableArray();
-        var observation = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), workspace, cancellationToken).ConfigureAwait(false);
+        var required = paths.Where(path => layoutRead.Layout?.IsImplicitContentDestination(path) != true).ToImmutableArray();
+        var observation = layoutRead.Settings;
         var evaluation = WorkspaceAllowList.Evaluate(observation.Document.AllowInstallPaths, required);
         var targetKey = PortableWorkspacePath.CreatePortableKey(target);
         var sourceRoots = (current.Record?.Libraries ?? []).Select(library => library.SourceRoot).Append(selected.SourceRoot);
@@ -42,7 +43,8 @@ internal static class LibraryRecoveryPermissionReader
             return targetKey != sourceKey && !targetKey.StartsWith($"{sourceKey}/", StringComparison.Ordinal);
         });
         var recordSafe = current.State is LibraryRegistrationReadState.Complete or LibraryRegistrationReadState.Missing;
-        return new(observation, evaluation, evaluation.Missing.IsEmpty && recordSafe && outsideSources);
+        var layoutReady = layoutRead.Layout is not null;
+        return new(observation, evaluation, layoutReady && evaluation.Missing.IsEmpty && recordSafe && outsideSources);
     }
 
     internal static ValueTask<LibraryRecoveryPermissionRead> ReadAsync(

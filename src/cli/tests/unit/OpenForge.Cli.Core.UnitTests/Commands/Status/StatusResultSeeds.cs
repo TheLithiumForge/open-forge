@@ -152,7 +152,7 @@ internal static class StatusResultSeeds
                             ],
                         },
                     }),
-                Library = StatusLibraryAggregator.Build(StatusAggregationObservationSeed.Create().Libraries),
+                Library = StatusLibraryAggregator.Build(StatusAggregationObservationSeed.Create().Layout, StatusAggregationObservationSeed.Create().Libraries),
                 Recovery = new StatusRecovery
                 {
                     VerifiedFinals = Available(status == CliSemanticStatus.Attention ? 1 : 0),

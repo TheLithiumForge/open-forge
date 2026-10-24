@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -8,22 +12,46 @@ namespace OpenForge.Cli.Core.Framework.Workspace.Operational;
 internal interface IWorkspaceEntryOperationalContributor
 {
     ValueTask<WorkspaceEntryStatusView> ReadStatusAsync(
-        CliWorkspace workspace,
+        CliWorkspace workspace, WorkspaceLayoutRead observation,
         CancellationToken cancellationToken);
 
     ValueTask<WorkspaceEntryDoctorView> ReadDoctorAsync(
-        CliWorkspace workspace,
+        CliWorkspace workspace, WorkspaceLayoutRead observation,
         CancellationToken cancellationToken);
 }
 
 internal sealed class WorkspaceEntryOperationalContributor(
     WorkspacePathObserver pathObserver) : IWorkspaceEntryOperationalContributor
 {
+    internal async ValueTask<WorkspaceEntryDoctorView> ReadDoctorAsync(CliWorkspace workspace, CancellationToken cancellationToken)
+    {
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        return await ReadDoctorAsync(workspace, observation, cancellationToken).ConfigureAwait(false);
+    }
+
+    internal async ValueTask<WorkspaceEntryStatusView> ReadStatusAsync(CliWorkspace workspace, CancellationToken cancellationToken)
+    {
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        return await ReadStatusAsync(workspace, observation, cancellationToken).ConfigureAwait(false);
+    }
+
+    internal ValueTask<WorkspaceEntryStatusView> ReadStatusAsync(CliWorkspace workspace, WorkspaceLayoutRead observation, CancellationToken token)
+        => observation.Layout is { } layout ? ReadStatusAsync(layout, token)
+            : ValueTask.FromResult(new WorkspaceEntryStatusView(OperationalViewState.Incomplete, OperationalInstallationState.Incomplete,
+                SourceLogicalPath.WorkspaceEntryPath, null));
+
+    internal ValueTask<WorkspaceEntryDoctorView> ReadDoctorAsync(CliWorkspace workspace, WorkspaceLayoutRead observation, CancellationToken token)
+        => observation.Layout is { } layout ? ReadDoctorAsync(layout, token)
+            : ValueTask.FromResult(new WorkspaceEntryDoctorView(
+                new(OperationalViewState.Incomplete, OperationalInstallationState.Incomplete, SourceLogicalPath.WorkspaceEntryPath, null),
+                new(pathObserver.ObserveRoot(workspace), null, pathObserver.Observe(workspace, SourceLogicalPath.WorkspaceEntryPath), null))
+            { UnavailableCause = observation.Issues.FirstOrDefault()?.Cause });
+
     internal ValueTask<WorkspaceEntryStatusView> ReadStatusAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         CancellationToken cancellationToken)
     {
-        var observation = Read(workspace, cancellationToken);
+        var observation = Read(layout, cancellationToken);
         return ValueTask.FromResult(new WorkspaceEntryStatusView(
             observation.State,
             observation.Installation,
@@ -32,13 +60,13 @@ internal sealed class WorkspaceEntryOperationalContributor(
     }
 
     internal ValueTask<WorkspaceEntryDoctorView> ReadDoctorAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         CancellationToken cancellationToken)
     {
-        var root = pathObserver.ObserveRoot(workspace);
-        var agents = pathObserver.Observe(workspace, SourceLogicalPath.AgentsRoot);
-        var entry = pathObserver.Observe(workspace, SourceLogicalPath.WorkspaceEntryPath);
-        var loader = pathObserver.Observe(workspace, SourceLogicalPath.LoaderPath);
+        var root = pathObserver.ObserveRoot(layout.Workspace);
+        var agents = pathObserver.Observe(layout.Workspace, layout.MainRoot);
+        var entry = pathObserver.Observe(layout.Workspace, SourceLogicalPath.WorkspaceEntryPath);
+        var loader = pathObserver.Observe(layout.Workspace, layout.LoaderPath);
         var observation = ReadDoctorObservation(
             agents,
             entry,
@@ -54,17 +82,17 @@ internal sealed class WorkspaceEntryOperationalContributor(
     }
 
     ValueTask<WorkspaceEntryStatusView> IWorkspaceEntryOperationalContributor.ReadStatusAsync(
-        CliWorkspace workspace,
+        CliWorkspace workspace, WorkspaceLayoutRead observation,
         CancellationToken cancellationToken)
-        => ReadStatusAsync(workspace, cancellationToken);
+        => ReadStatusAsync(workspace, observation, cancellationToken);
 
     ValueTask<WorkspaceEntryDoctorView> IWorkspaceEntryOperationalContributor.ReadDoctorAsync(
-        CliWorkspace workspace,
+        CliWorkspace workspace, WorkspaceLayoutRead observation,
         CancellationToken cancellationToken)
-        => ReadDoctorAsync(workspace, cancellationToken);
+        => ReadDoctorAsync(workspace, observation, cancellationToken);
 
     private WorkspaceEntryObservation Read(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
@@ -77,7 +105,7 @@ internal sealed class WorkspaceEntryOperationalContributor(
         }
 
         var loader = WorkspacePathObserver.ReadFileState(
-            pathObserver.Observe(workspace, SourceLogicalPath.LoaderPath));
+            pathObserver.Observe(layout.Workspace, layout.LoaderPath));
         if (loader == WorkspaceObservedPathState.Missing)
         {
             return new WorkspaceEntryObservation(
@@ -88,7 +116,7 @@ internal sealed class WorkspaceEntryOperationalContributor(
         }
 
         var entry = WorkspacePathObserver.ReadFileState(
-            pathObserver.Observe(workspace, SourceLogicalPath.WorkspaceEntryPath));
+            pathObserver.Observe(layout.Workspace, SourceLogicalPath.WorkspaceEntryPath));
         if (loader == WorkspaceObservedPathState.Present
             && entry == WorkspaceObservedPathState.Present)
         {
@@ -96,7 +124,7 @@ internal sealed class WorkspaceEntryOperationalContributor(
                 OperationalViewState.Complete,
                 OperationalInstallationState.Installed,
                 SourceLogicalPath.WorkspaceEntryPath,
-                SourceLogicalPath.LoaderPath);
+                layout.LoaderPath);
         }
 
         var blocked = loader == WorkspaceObservedPathState.Blocked
@@ -105,7 +133,7 @@ internal sealed class WorkspaceEntryOperationalContributor(
             blocked ? OperationalViewState.Blocked : OperationalViewState.Incomplete,
             blocked ? OperationalInstallationState.Blocked : OperationalInstallationState.Incomplete,
             entry == WorkspaceObservedPathState.Present ? SourceLogicalPath.WorkspaceEntryPath : null,
-            loader == WorkspaceObservedPathState.Present ? SourceLogicalPath.LoaderPath : null);
+            loader == WorkspaceObservedPathState.Present ? layout.LoaderPath : null);
     }
 
     private static WorkspaceEntryObservation ReadDoctorObservation(
@@ -145,7 +173,7 @@ internal sealed class WorkspaceEntryOperationalContributor(
                 OperationalViewState.Complete,
                 OperationalInstallationState.Installed,
                 SourceLogicalPath.WorkspaceEntryPath,
-                SourceLogicalPath.LoaderPath);
+                loader.Path);
         }
 
         var blocked = agentsState == WorkspaceObservedPathState.Blocked
@@ -155,7 +183,7 @@ internal sealed class WorkspaceEntryOperationalContributor(
             blocked ? OperationalViewState.Blocked : OperationalViewState.Incomplete,
             blocked ? OperationalInstallationState.Blocked : OperationalInstallationState.Incomplete,
             entryState == WorkspaceObservedPathState.Present ? SourceLogicalPath.WorkspaceEntryPath : null,
-            loaderState == WorkspaceObservedPathState.Present ? SourceLogicalPath.LoaderPath : null);
+            loaderState == WorkspaceObservedPathState.Present ? loader.Path : null);
     }
 
     private sealed record WorkspaceEntryObservation(

@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
@@ -14,6 +17,18 @@ internal sealed class RouteObservationReader
     private readonly RouteDoctorGeneratedNavigationReader _doctorGeneratedNavigationReader;
     private readonly RouteSourceInspector _sourceInspector;
 
+    internal async ValueTask<RouteDoctorView> ReadDoctorAsync(CliWorkspace workspace, SourceSharing? sharing, CancellationToken cancellationToken)
+    {
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        return await ReadDoctorAsync(observation, sharing, cancellationToken).ConfigureAwait(false);
+    }
+
+    internal async ValueTask<RouteStatusView> ReadStatusAsync(CliWorkspace workspace, SourceSharing? sharing, CancellationToken cancellationToken)
+    {
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        return await ReadStatusAsync(observation, sharing, cancellationToken).ConfigureAwait(false);
+    }
+
     internal RouteObservationReader(
         RouteSourceInspector sourceInspector,
         RouteGeneratedNavigationReader generatedNavigationReader,
@@ -25,17 +40,17 @@ internal sealed class RouteObservationReader
     }
 
     internal async ValueTask<RouteStatusView> ReadStatusAsync(
-        CliWorkspace workspace,
+        WorkspaceLayoutRead observation,
         SourceSharing? sharing,
         CancellationToken cancellationToken)
     {
+        if (observation.Layout is null) return RouteUnavailableObservation.Status(observation);
         var payload = EmbeddedFrameworkPayloadReader.Read();
-        var inspection = await _sourceInspector.ReadAsync(workspace, cancellationToken)
+        var inspection = await _sourceInspector.ReadAsync(observation.Layout, cancellationToken)
             .ConfigureAwait(false);
         var context = new RouteContextReader().Read(payload, inspection);
-        var included = await new RouteIncludedFileReader(workspace).ReadAsync(inspection, cancellationToken).ConfigureAwait(false);
-        var generated = await _generatedNavigationReader.ReadAsync(workspace, payload, inspection, sharing, cancellationToken)
-            .ConfigureAwait(false);
+        var included = await new RouteIncludedFileReader(inspection.Catalogue.Layout).ReadAsync(inspection, observation.Settings, cancellationToken).ConfigureAwait(false);
+        var generated = _generatedNavigationReader.Read(inspection.Catalogue.Workspace, payload, inspection, sharing, observation.Settings.Document);
         var state = ReadState(inspection.State, context.IsIncomplete);
         var contextIssue = ReadContextIssue(inspection);
         return new RouteStatusView
@@ -57,14 +72,15 @@ internal sealed class RouteObservationReader
     }
 
     internal async ValueTask<RouteDoctorView> ReadDoctorAsync(
-        CliWorkspace workspace,
+        WorkspaceLayoutRead observation,
         SourceSharing? sharing,
         CancellationToken cancellationToken)
     {
-        var inspection = await _sourceInspector.ReadAsync(workspace, cancellationToken)
+        if (observation.Layout is null) return RouteUnavailableObservation.Doctor(observation);
+        var inspection = await _sourceInspector.ReadAsync(observation.Layout, cancellationToken)
             .ConfigureAwait(false);
         var generated = _doctorGeneratedNavigationReader.Read(inspection, sharing);
-        var included = await new RouteIncludedFileReader(workspace).ReadAsync(inspection, cancellationToken).ConfigureAwait(false);
+        var included = await new RouteIncludedFileReader(inspection.Catalogue.Layout).ReadAsync(inspection, observation.Settings, cancellationToken).ConfigureAwait(false);
         return new RouteDoctorView
         {
             IncludedFiles = included,
@@ -77,7 +93,7 @@ internal sealed class RouteObservationReader
             WorkspaceEntry = inspection.WorkspaceEntry,
             Sources = inspection.Sources,
             GeneratedNavigation = generated,
-            DeclaredRoots = RouteDoctorFactReader.ReadDeclaredRoots(inspection.Routes),
+            DeclaredRoots = RouteDoctorFactReader.ReadDeclaredRoots(inspection.Catalogue.Layout, inspection.Routes),
             Shape = RouteDoctorFactReader.ReadShape(inspection),
         };
     }

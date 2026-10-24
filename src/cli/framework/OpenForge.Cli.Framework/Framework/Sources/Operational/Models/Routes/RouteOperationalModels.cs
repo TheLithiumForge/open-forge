@@ -60,13 +60,15 @@ internal sealed record RouteDoctorView
 
     public required RouteSourceInventoryState SourceInventory { get; init; }
 
-    public required SourceCatalogue Catalogue { get; init; }
+    public required SourceCatalogue? Catalogue { get; init; }
+
+    public string? UnavailableCause { get; init; }
 
     public required SourceRouteFacts Routes { get; init; }
 
     public required IReadOnlyList<RouteMetadataObservation> Metadata { get; init; }
 
-    public required RouteSourceLayerObservation WorkspaceEntry { get; init; }
+    public required RouteSourceLayerObservation? WorkspaceEntry { get; init; }
 
     public required IReadOnlyList<RouteSourceObservation> Sources { get; init; }
 

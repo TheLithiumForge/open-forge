@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Distribution.Operational.Models;
@@ -8,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Operational.Models;
 namespace OpenForge.Cli.Core.Commands.Status.Models.Operation;
 
 internal sealed record StatusObservationSet(
+    WorkspaceLayout? Layout,
     WorkspaceEntryStatusView WorkspaceEntry,
     RecoveryResidualStatusView RecoveryResiduals,
     RouteStatusView Routes,

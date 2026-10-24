@@ -107,6 +107,7 @@ public sealed class GeneratedNavigationProjectorTests
         var reorderedText = OpenForgeDocumentSeed.GeneratedEntries(entries: reorderedLine);
         var reorderedEntries = SourceGeneratedEntriesParser.Parse(new MarkdownDocumentParser().Parse(reorderedText));
         var reorderedComparisons = RouteGeneratedEntryComparisonReader.Read(
+            request.Formation.Catalogue.Layout,
             parent,
             reorderedEntries,
             region.Entries,
@@ -118,6 +119,7 @@ public sealed class GeneratedNavigationProjectorTests
         var staleText = OpenForgeDocumentSeed.GeneratedEntries(entries: staleLine);
         var staleEntries = SourceGeneratedEntriesParser.Parse(new MarkdownDocumentParser().Parse(staleText));
         var comparisons = RouteGeneratedEntryComparisonReader.Read(
+            request.Formation.Catalogue.Layout,
             parent,
             staleEntries,
             region.Entries,

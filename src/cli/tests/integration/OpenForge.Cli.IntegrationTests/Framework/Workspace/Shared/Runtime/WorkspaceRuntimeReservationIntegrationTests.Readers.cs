@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
@@ -35,9 +37,10 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         files.CreateFile(SafeChildFile, "# Safe child\n");
         var workspace = Workspace(files);
         var paths = new PhysicalPathResolver();
-        var inspection = await new RouteSourceInspector(new SourceReadSessionReader(paths), paths).ReadAsync(workspace, Token);
+        var observation = await new WorkspaceLayoutReader(paths).ReadAsync(workspace, Token);
+        var inspection = await new RouteSourceInspector(new SourceReadSessionReader(paths), paths).ReadAsync(Assert.IsType<WorkspaceLayout>(observation.Layout), Token);
 
-        var result = await new RouteIncludedFileReader(workspace).ReadAsync(inspection, Token);
+        var result = await new RouteIncludedFileReader(inspection.Catalogue.Layout).ReadAsync(inspection, observation.Settings, Token);
 
         Assert.NotNull(result);
         var rejected = Assert.Single(result.Files, file => file.Path == target);
@@ -66,9 +69,10 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         Assert.True(files.TryCreateFileSymbolicLink(SafeCompanionFile, files.Combine(RuntimeFile), out var cause), cause);
         var workspace = Workspace(files);
         var paths = new PhysicalPathResolver();
-        var inspection = await new RouteSourceInspector(new SourceReadSessionReader(paths), paths).ReadAsync(workspace, Token);
+        var observation = await new WorkspaceLayoutReader(paths).ReadAsync(workspace, Token);
+        var inspection = await new RouteSourceInspector(new SourceReadSessionReader(paths), paths).ReadAsync(Assert.IsType<WorkspaceLayout>(observation.Layout), Token);
 
-        var result = await new RouteIncludedFileReader(workspace).ReadAsync(inspection, Token);
+        var result = await new RouteIncludedFileReader(inspection.Catalogue.Layout).ReadAsync(inspection, observation.Settings, Token);
 
         Assert.NotNull(result);
         Assert.Equal(1L, result.Total.Files.Value);

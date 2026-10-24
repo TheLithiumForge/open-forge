@@ -1,0 +1,13 @@
+Allow changes outside the context folder (docs/forge) and native Skills?
+
+toolkit
+external (folder and everything below it)
+toolkit
+external (folder and everything below it)
+Paths 1/1  pgup/pgdn review
+  1. Allow always
+> 2. Allow once
+  3. Cancel
+Allow for this run only.
+
+up/down move   1-3 choose   enter choose   esc cancel

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
@@ -32,6 +33,10 @@ internal sealed record LibraryPermissionRequest
     public required CliWorkspace Workspace { get; init; }
     public required LibraryId LibraryId { get; init; }
     public required WorkspaceSettingsRead SettingsObservation { get; init; }
+    public WorkspaceLayoutRead? LayoutRead { get; init; }
+    internal WorkspaceLayout Layout => LayoutRead is null
+        ? WorkspaceLayout.Create(Workspace, WorkspaceLayout.DefaultMainRoot)
+        : LayoutRead.Layout ?? throw new InvalidOperationException("Permission planning requires an observed workspace layout.");
     public required ImmutableArray<LibraryPermissionTarget> Targets { get; init; }
     public WorkspaceRemovalSelection? RemovalSelection { get; init; }
 

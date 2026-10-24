@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
@@ -11,7 +12,7 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 internal static class RouteGeneratedEntryComparisonReader
 {
     internal static IReadOnlyList<RouteGeneratedEntryComparison> Read(
-        SourceLogicalSource parent,
+        WorkspaceLayout layout, SourceLogicalSource parent,
         SourceGeneratedEntriesFacts current,
         IReadOnlyList<GeneratedNavigationEntry> expected,
         Utf8SourceMap? locations)
@@ -29,6 +30,7 @@ internal static class RouteGeneratedEntryComparisonReader
         {
             var location = locations.Map(entry.Span.Start, entry.Span.Length);
             var resolved = SourceGeneratedDestinationResolver.Resolve(
+                layout,
                 parent.Identity.CanonicalBasePath,
                 parent.Base.Form == SourceDocumentForm.Loader,
                 entry.Destination);

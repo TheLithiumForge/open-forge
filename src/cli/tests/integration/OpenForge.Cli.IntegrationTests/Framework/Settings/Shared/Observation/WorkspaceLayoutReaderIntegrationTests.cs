@@ -32,6 +32,8 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
     private const string Operation = "layout-test";
     private const string Package = "fixture-framework";
     private const string Version = "1";
+    private const string InvalidOwnership = "{broken";
+    private const string ChangedSettings = "{}";
 
     [Theory(DisplayName = "Missing and empty destinations are uninstalled observations without effects")]
     [InlineData(WorkspaceLayout.DefaultMainRoot, false), InlineData(WorkspaceLayout.DefaultMainRoot, true)]
@@ -149,7 +151,7 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
         else temporary.CreateFile(path, "not a directory");
         var read = await Read(temporary);
         Assert.Equal(WorkspaceLayoutReadState.Invalid, read.State);
-        Assert.Null(read.Layout);
+        Assert.Equal(CustomRoot, read.Layout?.MainRoot);
         Assert.Contains(read.Issues, issue => issue.Code == WorkspaceLayoutIssueCode.UnsafeRoot);
     }
 
@@ -163,7 +165,7 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
         temporary.CreateDirectorySymbolicLink(path, target);
         var read = await Read(temporary);
         Assert.Equal(WorkspaceLayoutReadState.Invalid, read.State);
-        Assert.Null(read.Layout);
+        Assert.Equal(CustomRoot, read.Layout?.MainRoot);
         Assert.Contains(read.Issues, issue => issue.Code == WorkspaceLayoutIssueCode.UnsafeRoot);
     }
 
@@ -239,7 +241,7 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
             File.SetUnixFileMode(directory, UnixFileMode.None);
             var read = await Read(temporary);
             Assert.Equal(WorkspaceLayoutReadState.Unavailable, read.State);
-            Assert.Null(read.Layout);
+            Assert.Equal(CustomRoot, read.Layout?.MainRoot);
             Assert.Contains(read.Issues, issue => issue.Code == WorkspaceLayoutIssueCode.ObservationUnavailable && issue.Path == WorkspaceLayout.NativeSkillsPath);
         }
         finally { File.SetUnixFileMode(directory, mode); }
@@ -275,6 +277,54 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
         Assert.Equal(WorkspaceLayoutReadState.Unavailable, read.State);
         Assert.Null(read.Layout);
         Assert.Contains(read.Issues, issue => issue.Code == WorkspaceLayoutIssueCode.ObservationUnavailable);
+    }
+
+    [Theory(DisplayName = "Invalid and unavailable ownership retain the selected diagnostic layout")]
+    [InlineData(false), InlineData(true)]
+    public async Task UnavailableOwnershipRetainsLayout(bool unavailable)
+    {
+        using var temporary = TemporaryWorkspace.Create(Operation);
+        Settings(temporary, CustomRoot);
+        temporary.CreateFile(CustomLoader, LoaderContent);
+        if (unavailable) temporary.CreateDirectory(WorkspaceOwnershipDefinitions.RelativePath);
+        else temporary.CreateFile(WorkspaceOwnershipDefinitions.RelativePath, InvalidOwnership);
+        var before = Directory.GetFiles(temporary.Path, "*", SearchOption.AllDirectories)
+            .ToDictionary(path => path, File.ReadAllBytes);
+
+        var read = await Read(temporary);
+
+        Assert.Equal(WorkspaceLayoutReadState.Unavailable, read.State);
+        Assert.Equal(CustomRoot, read.Layout?.MainRoot);
+        Assert.Contains(read.Issues, issue => issue.Code == WorkspaceLayoutIssueCode.ObservationUnavailable
+            && issue.Path == WorkspaceOwnershipDefinitions.RelativePath);
+        Assert.Equal(before.Keys.Order(), Directory.GetFiles(temporary.Path, "*", SearchOption.AllDirectories).Order());
+        foreach (var (path, bytes) in before) Assert.Equal(bytes, File.ReadAllBytes(path));
+    }
+
+    [Fact(DisplayName = "A layout changed during observation retains the root selected from its settings snapshot")]
+    public async Task ChangedObservationRetainsLayout()
+    {
+        using var temporary = TemporaryWorkspace.Create(Operation);
+        Settings(temporary, CustomRoot);
+        temporary.CreateFile(CustomLoader, LoaderContent);
+        var changed = false;
+        var paths = new PhysicalPathResolver(path =>
+        {
+            if (!changed && PhysicalIdentityTracker.PathComparer.Equals(path, temporary.Combine(CustomLoader)))
+            {
+                changed = true;
+                temporary.ReplaceText(WorkspaceSettingsDefinitions.RelativePath, ChangedSettings);
+            }
+            return LinkTargetReader.Read(path);
+        });
+
+        var read = await new WorkspaceLayoutReader(paths).ReadAsync(Workspace(temporary), TestContext.Current.CancellationToken);
+
+        Assert.True(changed);
+        Assert.Equal(WorkspaceLayoutReadState.Unavailable, read.State);
+        Assert.Equal(CustomRoot, read.Layout?.MainRoot);
+        Assert.Contains(read.Issues, issue => issue.Code == WorkspaceLayoutIssueCode.ObservationUnavailable
+            && issue.Path == WorkspaceSettingsDefinitions.RelativePath);
     }
 
     private static string ManagedHost(string pointer)

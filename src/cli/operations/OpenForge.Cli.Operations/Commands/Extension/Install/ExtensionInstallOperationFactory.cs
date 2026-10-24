@@ -166,7 +166,7 @@ internal sealed class ExtensionInstallOperation(
         try
         {
             var required = plan.Packages.SelectMany(package => package.Payload
-                .Where(file => file.TargetPath is { } path && !ExtensionDestinationPolicy.IsImplicit(path))
+                .Where(file => file.TargetPath is not null)
                 .Select(file => file.TargetPath ?? throw new InvalidOperationException("A planned Extension target requires its path.")));
             var changedPaths = plan.Effects.Where(effect => effect.FileChange is not null)
                 .Select(effect => effect.Result.Path).ToHashSet(StringComparer.Ordinal);

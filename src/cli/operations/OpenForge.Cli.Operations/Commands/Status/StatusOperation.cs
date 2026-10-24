@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Commands.Status.Models.Operation;
 using OpenForge.Cli.Core.Commands.Status.Models.Request;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
@@ -19,26 +20,29 @@ internal sealed class StatusOperation(
     {
         try
         {
-            var ownership = await WorkspaceOwnershipReader
-                .ReadAsync(physicalPathResolver, request.Workspace, cancellationToken)
+            var observation = await new WorkspaceLayoutReader(physicalPathResolver)
+                .ReadAsync(request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
+            var layout = observation.Layout;
+            var ownership = observation.Ownership;
             var workspaceEntry = await contributors.WorkspaceEntry
-                .ReadStatusAsync(request.Workspace, cancellationToken)
+                .ReadStatusAsync(request.Workspace, observation, cancellationToken)
                 .ConfigureAwait(false);
             var recoveryResiduals = await contributors.RecoveryResiduals
                 .ReadStatusAsync(request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
             var routes = await contributors.Routes
-                .ReadStatusAsync(request.Workspace, NavigationSharingReader.FromOwnership(ownership).Sharing, cancellationToken)
+                .ReadStatusAsync(observation, NavigationSharingReader.FromOwnership(ownership).Sharing, cancellationToken)
                 .ConfigureAwait(false);
             var frameworkLifecycle = await contributors.FrameworkLifecycle
-                .ReadStatusAsync(request.Workspace, ownership, cancellationToken)
+                .ReadStatusAsync(observation, cancellationToken)
                 .ConfigureAwait(false);
             var extensionLifecycle = await contributors.ExtensionLifecycle
-                .ReadStatusAsync(request.Workspace, ownership, cancellationToken)
+                .ReadStatusAsync(observation, cancellationToken)
                 .ConfigureAwait(false);
             var libraries = await contributors.Libraries.ReadStatusAsync(request.Workspace, ownership, cancellationToken).ConfigureAwait(false);
             var observations = new StatusObservationSet(
+                layout,
                 workspaceEntry,
                 recoveryResiduals,
                 routes,

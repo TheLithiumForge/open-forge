@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
@@ -239,13 +241,13 @@ public sealed class DoctorMaintenanceGuidanceTests
             DoctorDomainSupport.Subject(DoctorSubjectKind.Path, path),
             DoctorDomainSupport.Provenance(DoctorDomainKind.RoutesMetadataOverwritesGeneratedNavigation, DoctorProvenanceSource.RouteMetadata),
             [new DoctorStateEvidence(DoctorObservedState.Missing)]);
-        var finding = DoctorMaintenanceGuidance.Project(original, view, DoctorOperationTestSupport.Workspace());
+        var finding = DoctorMaintenanceGuidance.Project(original, view, WorkspaceLayout.Create(DoctorOperationTestSupport.Workspace(), WorkspaceLayout.DefaultMainRoot));
         Assert.Equal(Enum.Parse<DoctorResolutionLane>(laneName), finding.Resolution);
         Assert.Equal(indexes, finding.Actions.Any(action => action.Operation == DoctorNextOperation.Index));
         Snapshot(finding, $"{eligibilityName}.{kindName}");
         if (kind == DoctorFindingKind.RouteUnreachable && eligibility == RoutedMetadataEligibility.Eligible)
         {
-            var unlisted = DoctorMaintenanceGuidance.Project(original, view with { ChainGapPaths = [] }, DoctorOperationTestSupport.Workspace());
+            var unlisted = DoctorMaintenanceGuidance.Project(original, view with { ChainGapPaths = [] }, WorkspaceLayout.Create(DoctorOperationTestSupport.Workspace(), WorkspaceLayout.DefaultMainRoot));
             Assert.Equal(DoctorResolutionLane.TargetedOperation, unlisted.Resolution);
             Assert.Null(unlisted.Maintenance);
             Assert.Equal("open-forge index", Assert.Single(unlisted.Actions).Command);
@@ -269,7 +271,7 @@ public sealed class DoctorMaintenanceGuidanceTests
             DoctorDomainSupport.Provenance(DoctorDomainKind.RoutesMetadataOverwritesGeneratedNavigation, DoctorProvenanceSource.RouteMetadata),
             [new DoctorStateEvidence(DoctorObservedState.Missing)]);
 
-        var finding = DoctorMaintenanceGuidance.Project(original, view, DoctorOperationTestSupport.Workspace());
+        var finding = DoctorMaintenanceGuidance.Project(original, view, WorkspaceLayout.Create(DoctorOperationTestSupport.Workspace(), WorkspaceLayout.DefaultMainRoot));
 
         Assert.Equal(DoctorResolutionLane.TargetedOperation, finding.Resolution);
         Assert.Equal($"{path} needs its Skill name or description. Index can fill them from the folder name and heading and keep your content.", DoctorWording.Message(finding));
@@ -319,6 +321,7 @@ public sealed class DoctorMaintenanceGuidanceTests
 
     private static void Snapshot(DoctorFinding finding, string name)
     {
+        finding = DoctorLayoutPresentation.Project(WorkspaceLayout.Create(DoctorOperationTestSupport.Workspace(), WorkspaceLayout.DefaultMainRoot), finding);
         var content = $"{DoctorWording.Message(finding)}\n{finding.Resolution}\n{DoctorWording.Actions(finding)[0].Command}\n";
         content = CommandOutputNormalization.ReplaceDelimitedPath(content, DoctorOperationTestSupport.Workspace().LexicalRoot, "<workspace>");
         CommandOutputSnapshot.MatchSnapshot(content, name);

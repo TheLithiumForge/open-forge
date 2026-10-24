@@ -61,6 +61,7 @@ internal enum StatusFindingCode
 }
 internal sealed record StatusFinding
 {
+    internal string? CustomLoaderPath { get; init; }
     public required StatusFindingCode Code { get; init; }
 
     public required CliSemanticStatus Status { get; init; }
@@ -96,6 +97,8 @@ internal sealed record StatusFacts
 
 internal sealed record StatusResult : ICliCommandResult
 {
+    internal string? CustomMainRoot { get; init; }
+    internal string? CustomLoaderPath { get; init; }
     public string Command => StatusDefinitions.CommandIdentity;
 
     public required CliSemanticStatus Status { get; init; }

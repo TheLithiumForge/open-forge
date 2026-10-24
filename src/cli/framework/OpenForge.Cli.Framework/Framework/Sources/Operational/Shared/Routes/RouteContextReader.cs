@@ -11,7 +11,7 @@ internal sealed class RouteContextReader
         RouteSourceInspection inspection)
     {
         var initial = new RouteInitialContextReader().Read(
-            inspection.Catalogue.Workspace,
+            inspection.Catalogue.Layout,
             payload);
         var current = RouteCurrentContextReader.Read(inspection);
         var initialClosure = initial is null

@@ -1,0 +1,1 @@
+Cannot toolkit: it writes outside the context folder (docs/forge) and native Skills and no grant allows that.

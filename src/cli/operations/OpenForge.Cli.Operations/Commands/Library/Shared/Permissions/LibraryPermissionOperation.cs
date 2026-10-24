@@ -38,7 +38,28 @@ internal sealed class LibraryPermissionOperation
             .Where(path => !string.IsNullOrWhiteSpace(path))
             .Distinct(StringComparer.Ordinal)
             .ToImmutableArray();
-        var observation = request.SettingsObservation;
+        var layoutRead = request.LayoutRead;
+        var observation = layoutRead?.Settings ?? request.SettingsObservation;
+        if (layoutRead is not null && (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
+            || layoutRead.Layout is null))
+        {
+            var failure = layoutRead.State == WorkspaceLayoutReadState.Unavailable ? LibraryPermissionFailure.Unavailable : LibraryPermissionFailure.Invalid;
+            return CreateStage(request, new LibraryPermissionApproval
+            {
+                Leaves = WorkspaceAllowList.Evaluate([], []),
+                ProposedScopes = [],
+                ApprovedScopes = [],
+            }, change: null, grantChange: null, failure);
+        }
+        if (!request.SettingsObservation.MatchesObservation(observation))
+        {
+            return CreateStage(request, new LibraryPermissionApproval
+            {
+                Leaves = WorkspaceAllowList.Evaluate([], []),
+                ProposedScopes = [],
+                ApprovedScopes = [],
+            }, change: null, grantChange: null, LibraryPermissionFailure.Changed);
+        }
         var approvedPaths = observation.Document.AllowInstallPaths.Concat(explicitPaths).ToImmutableArray();
         var approval = LibraryPermissionScopePlanner.Plan(request, approvedPaths);
         if (observation.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
@@ -46,10 +67,9 @@ internal sealed class LibraryPermissionOperation
             var settingsFailure = observation.State == WorkspaceSettingsReadState.Unavailable
                 ? LibraryPermissionFailure.Unavailable
                 : LibraryPermissionFailure.Invalid;
-            return CreateStage(observation, approval, change: null, grantChange: null, settingsFailure);
+            return CreateStage(request, approval, change: null, grantChange: null, settingsFailure);
         }
 
-        approval = LibraryPermissionScopePlanner.Plan(request, approvedPaths);
         var explicitChange = explicitPaths.IsEmpty ? null : WorkspaceSettingsChangePlanner.PlanGrant(observation, explicitPaths);
         var explicitRemoval = request.RemovalSelection is null
             ? null
@@ -90,13 +110,13 @@ internal sealed class LibraryPermissionOperation
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                return CreateStage(observation, approval, explicitCombined, explicitChange, LibraryPermissionFailure.Interrupted);
+                return CreateStage(request, approval, explicitCombined, explicitChange, LibraryPermissionFailure.Interrupted);
             }
         }
 
         if (promptUnavailable)
         {
-            return CreateStage(observation, approval, explicitCombined, explicitChange, LibraryPermissionFailure.Required);
+            return CreateStage(request, approval, explicitCombined, explicitChange, LibraryPermissionFailure.Required);
         }
 
         var grantPaths = explicitPaths
@@ -119,7 +139,7 @@ internal sealed class LibraryPermissionOperation
             WorkspacePermissionDecision.NotEvaluated => throw new InvalidOperationException("A complete permission evaluation requires a decision."),
             _ => throw new ArgumentOutOfRangeException(nameof(request), approval.Leaves.Decision, "The permission decision is not defined."),
         };
-        return CreateStage(observation, approval, change, grantChange, permissionFailure);
+        return CreateStage(request, approval, change, grantChange, permissionFailure);
     }
 
     private static CliPermissionQuestion CreateQuestion(
@@ -129,13 +149,19 @@ internal sealed class LibraryPermissionOperation
             request.LibraryId.Value,
             [.. approval.ProposedScopes.Select(scope => new CliPermissionPath(
                 scope.Path,
-                scope.Kind == LibraryPermissionScopeKind.Directory))]);
+                scope.Kind == LibraryPermissionScopeKind.Directory))])
+        { ContextFolder = request.Layout.IsDefault ? null : request.Layout.MainRoot };
 
     internal static async ValueTask<bool> RevalidateAsync(WorkspaceLockLease lease, LibraryPermissionStage stage, CancellationToken cancellationToken)
     {
         if (!lease.IsHeldFor(lease.Request.Workspace))
         {
             throw new ArgumentException("Library permission revalidation requires a live same-workspace lease.", nameof(lease));
+        }
+        if (stage.LayoutRead is { } layoutRead)
+        {
+            var validation = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver()).ValidateAsync(lease, layoutRead, cancellationToken).ConfigureAwait(false);
+            return validation.State == MutationValidationState.Valid;
         }
         var current = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), lease.Request.Workspace, cancellationToken).ConfigureAwait(false);
         return stage.Observation.MatchesObservation(current);
@@ -160,6 +186,8 @@ internal sealed class LibraryPermissionOperation
         FileExpectationValidationResult check;
         try
         {
+            if (!await RevalidateAsync(lease, stage, cancellationToken).ConfigureAwait(false))
+                return new(result, Receipt: null, cancellationToken.IsCancellationRequested ? LibraryPermissionFailure.Interrupted : LibraryPermissionFailure.Changed);
             check = await validator.ValidateAsync(lease.Request.Workspace, change.Expectation, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -187,16 +215,18 @@ internal sealed class LibraryPermissionOperation
 
 
     private static LibraryPermissionStage CreateStage(
-        WorkspaceSettingsRead observation,
+        LibraryPermissionRequest request,
         LibraryPermissionApproval approval,
         PlannedFileChange? change,
         PlannedFileChange? grantChange,
         LibraryPermissionFailure? failure)
     {
+        var observation = request.LayoutRead?.Settings ?? request.SettingsObservation;
         var (action, recovery) = WorkspaceSettingsChangePlanner.ReadActionAndRecovery(observation, change);
         return new()
         {
             Observation = observation,
+            LayoutRead = request.LayoutRead,
             Approval = approval,
             Result = new(approval.Leaves.Required, approval.Leaves.Missing, approval.Leaves.Decision, action,
                 change is null ? WorkspacePermissionOutcome.NotRequested : WorkspacePermissionOutcome.Planned),

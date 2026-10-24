@@ -98,6 +98,18 @@ Install no longer calls C2 default payload overloads. Setup choices and IgnoreSe
 The overseer must integrate D1/D2 and complete both Install → Context → Index cases, currently failing at Context. No public activation or snapshot changes.
 Release build passed. Unit 5268/5268/0/0. Integration 3782/3722/2/58, with both failures above and all skips allowlisted. Counts are total/passed/failed/skipped.
 
+## Wave 4 E1 handoff
+
+E1 shares one layout observation across Status, Doctor, route context, lifecycle comparisons and rename evidence. Ownership comparisons map package paths, and recovery stays fixed to the workspace and Task 86's recorded stores.
+Its default-layout adapters are removed. Standalone workspace overloads observe the layout instead.
+Valid settings keep a diagnostic layout even when other evidence is unsafe, and only invalid or unavailable settings make layout-dependent domains unavailable (chair amendment 5).
+
+## Wave 4 E2 handoff
+
+E2 makes implicit admission follow the content locations, keeps explicit grants literal, gives permission prompts projected context-folder facts and revalidates the layout before writing grants.
+Extension caller prefilters are removed. Default permission carriers, Extension path-only admission and Library destination and consumer-boundary adapters remain for Wave 5.
+
 ## Overseer notes
 
 - Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.
+- Before Z1 removes the permission adapters, resolve how maintenance treats an intentionally excluded missing loader against the frozen revalidator (from E2). The plan's `*LibrarySharedGrant*` filter selects nothing, because the shared-grant class has another name.
