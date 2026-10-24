@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
@@ -8,17 +9,20 @@ namespace OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 internal static class FrameworkSourceAlignment
 {
     internal static FrameworkPayloadAsset? ReadAsset(CliWorkspace workspace, string path, FrameworkPayload payload)
+        => ReadAsset(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), path, payload);
+
+    internal static FrameworkPayloadAsset? ReadAsset(WorkspaceLayout layout, string path, FrameworkPayload payload)
     {
-        if (payload.Find(path) is { } exact)
+        if (FindMappedAsset(layout, path, payload) is { } exact)
         {
             return exact;
         }
-        if (!SourceFormClassifier.TryClassify(path, out var form) || !SourceFormClassifier.IsEntrypoint(form)
-            || SourceIdentity.DeriveId(path) is not { } id)
+        if (!SourceFormClassifier.TryClassify(layout, path, out var form) || !SourceFormClassifier.IsEntrypoint(form)
+            || SourceIdentity.DeriveId(layout, path) is not { } id)
         {
             return null;
         }
-        var sources = new EmbeddedFrameworkSourceProjector().Project(workspace, payload);
+        var sources = new EmbeddedFrameworkSourceProjector().Project(layout, payload);
         var segments = id.Split('/');
         if (segments.Length < 2)
         {
@@ -32,8 +36,11 @@ internal static class FrameworkSourceAlignment
         var canonicalId = string.Join('/', candidates[0].ManagedSegments);
         var matches = sources.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form)
             && source.Identity.AutomaticId == canonicalId).ToArray();
-        return matches.Length == 1 ? payload.Find(matches[0].Identity.CanonicalBasePath) : null;
+        return matches.Length == 1 ? FindMappedAsset(layout, matches[0].Identity.CanonicalBasePath, payload) : null;
     }
+
+    private static FrameworkPayloadAsset? FindMappedAsset(WorkspaceLayout layout, string destination, FrameworkPayload payload)
+        => payload.Assets.SingleOrDefault(asset => string.Equals(layout.MapPayloadPath(asset.Path), destination, StringComparison.Ordinal));
 
     internal static IReadOnlyList<Candidate> ReadCandidates(
         IReadOnlyList<string> requestedSegments,
