@@ -1,10 +1,12 @@
 using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Presentation.Doctor.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Presentation.Doctor.Models;
 
 internal sealed record DoctorData
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName(DoctorDataJsonFields.RecoveryStores)]
     public IReadOnlyList<DoctorDataRecoveryStore>? RecoveryStores { get; init; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -33,6 +35,7 @@ internal sealed record DoctorDataCategory
 {
     public required string Name { get; init; }
 
+    [JsonPropertyName(DoctorDataJsonFields.Coverage)]
     public required string Coverage { get; init; }
 
     public required DoctorDataCounts Counts { get; init; }
@@ -66,7 +69,13 @@ internal sealed record DoctorDataLanes
 }
 
 internal sealed record DoctorDataRecoveryStore(
-    string Kind, string? Path, string Coverage,
-    IReadOnlyList<DoctorDataRecoveryCandidate> Candidates, string? Cause);
+    [property: JsonPropertyName(DoctorDataJsonFields.Kind)] string Kind,
+    [property: JsonPropertyName(DoctorDataJsonFields.Path)] string? Path,
+    [property: JsonPropertyName(DoctorDataJsonFields.Coverage)] string Coverage,
+    [property: JsonPropertyName(DoctorDataJsonFields.Candidates)] IReadOnlyList<DoctorDataRecoveryCandidate> Candidates,
+    [property: JsonPropertyName(DoctorDataJsonFields.Cause)] string? Cause);
 
-internal sealed record DoctorDataRecoveryCandidate(string Path, string Kind, string Integrity, string? Cause);
+internal sealed record DoctorDataRecoveryCandidate([property: JsonPropertyName(DoctorDataJsonFields.Path)] string Path,
+    [property: JsonPropertyName(DoctorDataJsonFields.Kind)] string Kind,
+    [property: JsonPropertyName(DoctorDataJsonFields.Integrity)] string Integrity,
+    [property: JsonPropertyName(DoctorDataJsonFields.Cause)] string? Cause);

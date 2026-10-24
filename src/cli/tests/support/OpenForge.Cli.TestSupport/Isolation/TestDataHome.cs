@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.TestSupport.Isolation;
 
@@ -87,6 +88,12 @@ public sealed class TestDataHome : IDisposable
 
     public static string LocalRecoveryStoreRoot(string workspacePath)
         => System.IO.Path.Combine(LocalRuntimeDirectory(workspacePath), RecoveryDirectoryName, StoreVersionName);
+
+    public static string RecoveryFinalFileName(Guid operationId)
+        => $"{PublishedTokens.RecoveryFormat.FinalFilePrefix}{operationId.ToString(PublishedTokens.RecoveryFormat.OperationIdFormat)}{PublishedTokens.RecoveryFormat.FinalFileExtension}";
+
+    public static string RecoveryDraftFileName(Guid operationId)
+        => $"{PublishedTokens.RecoveryFormat.FinalFilePrefix}{operationId.ToString(PublishedTokens.RecoveryFormat.OperationIdFormat)}{PublishedTokens.RecoveryFormat.DraftFileExtension}";
 
     public static string LocalRecoveryWorkspaceDirectory(string workspacePath)
         => System.IO.Path.Combine(LocalRecoveryStoreRoot(workspacePath), WorkspaceKey(workspacePath));

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
@@ -17,6 +18,37 @@ public sealed class WorkspaceRuntimeIntegrationTests
     private const string IgnoreTarget = "ignore";
     private const string SentinelTarget = "sentinel";
     private const string PartialContent = "partial";
+
+    [Fact(DisplayName = "Runtime initialization creates the ignore file before the sentinel")]
+    public async Task IgnoreCreationPrecedesSentinel()
+    {
+        using var temporary = TemporaryWorkspace.Create("runtime-creation-order");
+        using var store = WorkspaceLockTestStore.Create("runtime-creation-order-store");
+        var workspace = Workspace(temporary);
+        var runtime = Directory.CreateDirectory(WorkspaceRuntimePaths.DirectoryPath(workspace));
+        var created = new ConcurrentQueue<string>();
+        var sentinelSeen = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var watcher = new FileSystemWatcher(runtime.FullName)
+        {
+            NotifyFilter = NotifyFilters.FileName,
+        };
+        watcher.Created += (_, change) =>
+        {
+            created.Enqueue(change.FullPath);
+            if (change.FullPath == WorkspaceRuntimePaths.LockPath(workspace))
+            {
+                sentinelSeen.TrySetResult();
+            }
+        };
+        watcher.Error += (_, error) => sentinelSeen.TrySetException(error.GetException());
+        watcher.EnableRaisingEvents = true;
+
+        var result = await store.AcquireAsync(Request(workspace), TestContext.Current.CancellationToken);
+        await using var lease = Assert.IsType<WorkspaceLockLease>(result.Lease);
+        await sentinelSeen.Task.WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
+        watcher.EnableRaisingEvents = false;
+        Assert.Equal(WorkspaceRuntimePaths.IgnorePath(workspace), created.First());
+    }
 
     [Fact(DisplayName = "Local ownership contends across legacy homes and physical aliases but permits another worktree")]
     public async Task LocalOwnershipUsesPhysicalWorkspace()

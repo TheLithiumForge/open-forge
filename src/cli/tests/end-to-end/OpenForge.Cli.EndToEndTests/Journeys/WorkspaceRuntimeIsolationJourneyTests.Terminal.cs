@@ -1,5 +1,8 @@
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
+using OpenForge.Cli.TestSupport.Isolation;
+
+using Tokens = OpenForge.Cli.TestSupport.Contracts.PublishedTokens;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -12,18 +15,18 @@ public sealed partial class WorkspaceRuntimeIsolationJourneyTests
         if (!OperatingSystem.IsWindows()) Assert.Skip("This confirmation journey requires the repository's Windows ConPTY harness.");
         using var workspace = PublishedJourneyWorkspace.Create("runtime-prompt");
         workspace.ExpectCoreInstall();
-        Assert.Equal(0, (await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"))).ExitCode);
-        workspace.WriteText("remove-me.md", "Keep these bytes after declining\n");
-        var runtime = workspace.Combine(Runtime);
-        File.Delete(Path.Combine(runtime, "workspace.lock"));
-        File.Delete(Path.Combine(runtime, ".gitignore"));
+        Assert.Equal(0, (await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, Tokens.Install.Automatic))).ExitCode);
+        workspace.WriteText(RemovalPath, "Keep these bytes after declining\n");
+        var runtime = TestDataHome.LocalRuntimeDirectory(workspace.Path);
+        File.Delete(TestDataHome.LocalWorkspaceLockPath(workspace.Path));
+        File.Delete(TestDataHome.LocalRuntimeIgnorePath(workspace.Path));
         Directory.Delete(runtime, recursive: false);
         var before = workspace.SnapshotState(includeRuntime: true);
         var creations = 0;
         using var watcher = new FileSystemWatcher(workspace.Path) { NotifyFilter = NotifyFilters.DirectoryName };
         watcher.Created += (_, change) =>
         {
-            if (change.Name == Runtime)
+            if (change.FullPath == runtime)
             {
                 Interlocked.Increment(ref creations);
             }
@@ -31,7 +34,7 @@ public sealed partial class WorkspaceRuntimeIsolationJourneyTests
         watcher.EnableRaisingEvents = true;
         var environment = new Dictionary<string, string>(workspace.ProcessEnvironment) { ["TERM"] = "dumb" };
         var result = await PublishedWindowsTerminal.RunAsync(workspace.Target, workspace.Path,
-            ["remove", "remove-me.md"], environment,
+            [Tokens.Remove.Command, RemovalPath], environment,
             new PublishedTerminalScenario { Steps = [new("Apply these changes, including deleting 1 file? [y/N]", "n\r")] });
         Assert.Equal(130, result.ExitCode);
 

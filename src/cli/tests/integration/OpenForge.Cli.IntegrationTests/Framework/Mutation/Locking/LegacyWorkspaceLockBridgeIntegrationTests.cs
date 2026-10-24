@@ -14,6 +14,20 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 [Trait("Boundary", "OS"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
 public sealed class LegacyWorkspaceLockBridgeIntegrationTests
 {
+    [Theory(DisplayName = "Legacy read-only and read-write handles exclude each other in both directions")]
+    [InlineData(false), InlineData(true)]
+    public void LegacyAccessDirectionsExcludeEachOther(bool readOnly)
+    {
+        using var temporary = TemporaryWorkspace.Create("legacy-access-directions");
+        using var store = WorkspaceLockTestStore.Create("legacy-access-directions-store");
+        var path = store.Track(Workspace(temporary));
+        Directory.CreateDirectory(Path.GetDirectoryName(path) ?? throw new InvalidOperationException());
+        File.WriteAllBytes(path, []);
+        using var holder = new FileStream(path, FileMode.Open, readOnly ? FileAccess.Read : FileAccess.ReadWrite, FileShare.None);
+        Assert.Throws<IOException>(() => new FileStream(
+            path, FileMode.Open, readOnly ? FileAccess.ReadWrite : FileAccess.Read, FileShare.None));
+    }
+
     [Theory(DisplayName = "Legacy readers and writers exclude composite acquisition and failure releases local ownership")]
     [InlineData(false)]
     [InlineData(true)]

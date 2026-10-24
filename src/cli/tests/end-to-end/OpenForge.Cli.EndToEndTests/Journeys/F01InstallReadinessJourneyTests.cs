@@ -4,6 +4,7 @@ using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -105,7 +106,8 @@ public sealed class F01InstallReadinessJourneyTests
         Assert.Contains(".agents", createdDirectories, StringComparer.Ordinal);
         Assert.Equal(ExpectedPayloadDirectories(), createdDirectoriesBelowAgents);
         Assert.Equal([AgentsPath, ClaudePath], createdHosts);
-        Assert.Equal([".open-forge-state/.gitignore", ".open-forge-state/workspace.lock"],
+        Assert.Equal([Path.GetRelativePath(workspace.Path, TestDataHome.LocalRuntimeIgnorePath(workspace.Path)).Replace(Path.DirectorySeparatorChar, '/'),
+            Path.GetRelativePath(workspace.Path, TestDataHome.LocalWorkspaceLockPath(workspace.Path)).Replace(Path.DirectorySeparatorChar, '/')],
             createdFiles
                 .Except(ExpectedPayloadPaths().Append(OwnershipPath).Append(SettingsPath).Append(AgentsPath).Append(ClaudePath),
                     StringComparer.Ordinal));

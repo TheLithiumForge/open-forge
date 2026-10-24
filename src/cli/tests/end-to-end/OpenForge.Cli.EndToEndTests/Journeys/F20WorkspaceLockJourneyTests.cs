@@ -4,6 +4,9 @@ using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Filesystem;
+using OpenForge.Cli.TestSupport.Isolation;
+
+using Tokens = OpenForge.Cli.TestSupport.Contracts.PublishedTokens;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -15,7 +18,7 @@ public sealed class F20WorkspaceLockJourneyTests
     private const string BNotePath = ".agents/guidance/f20-b.md";
     private const string AChangedNotePath = ".agents/guidance/f20-a-after-block.md";
     private const string MarkerPath = "first-writer.txt";
-    private const string DataHomeVariable = "OPENFORGE_DATA_HOME";
+    private const string RelativeDataHome = "relative-data-home";
 
     [Fact(DisplayName = "F20 X21 C05-09 a live OS writer blocks A, leaves B independent, and permits a real retry")]
     [Trait("Feature", Feature)]
@@ -30,7 +33,7 @@ public sealed class F20WorkspaceLockJourneyTests
         var aNoteBefore = File.ReadAllBytes(workspaceA.Combine(ANotePath));
         var bNoteBefore = File.ReadAllBytes(workspaceB.Combine(BNotePath));
 
-        var lockPath = workspaceA.Combine(".open-forge-state/workspace.lock");
+        var lockPath = TestDataHome.LocalWorkspaceLockPath(workspaceA.Path);
         workspaceA.LockStore.AssertPersistentZeroByteLock(workspaceA.Path);
         var markerPath = ReserveMarker(workspaceA);
         using var holder = await PublishedLockHolder.StartAsync(lockPath, markerPath);
@@ -89,7 +92,7 @@ public sealed class F20WorkspaceLockJourneyTests
         var aNoteBefore = File.ReadAllBytes(workspaceA.Combine(ANotePath));
         var bNoteBefore = File.ReadAllBytes(workspaceB.Combine(BNotePath));
 
-        var lockPath = workspaceA.Combine(".open-forge-state/workspace.lock");
+        var lockPath = TestDataHome.LocalWorkspaceLockPath(workspaceA.Path);
         var markerPath = ReserveMarker(workspaceA);
         using var holder = await PublishedLockHolder.StartAsync(lockPath, markerPath);
         AssertHolderIsAlive(holder);
@@ -128,7 +131,7 @@ public sealed class F20WorkspaceLockJourneyTests
         var aNoteBefore = File.ReadAllBytes(workspaceA.Combine(ANotePath));
         var bNoteBefore = File.ReadAllBytes(workspaceB.Combine(BNotePath));
 
-        var lockPath = workspaceA.Combine(".open-forge-state/workspace.lock");
+        var lockPath = TestDataHome.LocalWorkspaceLockPath(workspaceA.Path);
         var markerPath = ReserveMarker(workspaceA);
         using var holder = await PublishedLockHolder.StartAsync(lockPath, markerPath);
         AssertHolderIsAlive(holder);
@@ -171,11 +174,11 @@ public sealed class F20WorkspaceLockJourneyTests
     {
         using var workspace = PublishedJourneyWorkspace.Create("e2e-f20-data-home");
         workspace.ExpectCoreInstall();
-        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, Tokens.Install.Automatic));
         AssertCompleted(install, "install");
-        File.Delete(workspace.Combine(".open-forge-state/workspace.lock"));
-        File.Delete(workspace.Combine(".open-forge-state/.gitignore"));
-        Directory.Delete(workspace.Combine(".open-forge-state"), recursive: false);
+        File.Delete(TestDataHome.LocalWorkspaceLockPath(workspace.Path));
+        File.Delete(TestDataHome.LocalRuntimeIgnorePath(workspace.Path));
+        Directory.Delete(TestDataHome.LocalRuntimeDirectory(workspace.Path), recursive: false);
         workspace.WriteText(
             ANotePath,
             OpenForgeDocumentSeed.Metadata(
@@ -185,19 +188,19 @@ public sealed class F20WorkspaceLockJourneyTests
 
         var environment = new Dictionary<string, string>(workspace.ProcessEnvironment)
         {
-            [DataHomeVariable] = "relative-data-home",
+            [Tokens.DataHome.Variable] = RelativeDataHome,
         };
         var indexed = await PublishedJourneyProcess.RunAsync(
             workspace.Target,
             workspace.Path,
-            ["index"],
+            [Tokens.Index.Command],
             environment);
 
         AssertCompleted(indexed, "index with a relative data home");
         Assert.Contains(Path.GetFileName(ANotePath), File.ReadAllText(workspace.Combine(GuidanceEntrypointPath)), StringComparison.Ordinal);
-        Assert.Equal("*\n", File.ReadAllText(workspace.Combine(".open-forge-state/.gitignore")));
-        Assert.True(File.Exists(workspace.Combine(".open-forge-state/workspace.lock")));
-        Assert.False(Directory.Exists(workspace.Combine("relative-data-home")));
+        Assert.Equal(Tokens.Runtime.IgnoreContent, File.ReadAllText(TestDataHome.LocalRuntimeIgnorePath(workspace.Path)));
+        Assert.True(File.Exists(TestDataHome.LocalWorkspaceLockPath(workspace.Path)));
+        Assert.False(Directory.Exists(workspace.Combine(RelativeDataHome)));
     }
 
     private static async Task InstallPairAsync(
@@ -208,9 +211,9 @@ public sealed class F20WorkspaceLockJourneyTests
         workspaceB.ExpectCoreInstall();
         _ = workspaceA.LockStore.Track(workspaceB.Path);
 
-        var installA = await workspaceA.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
+        var installA = await workspaceA.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, Tokens.Install.Automatic));
         AssertCompleted(installA, "A install");
-        var installB = await RunOnADataHomeAsync(workspaceA, workspaceB, JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
+        var installB = await RunOnADataHomeAsync(workspaceA, workspaceB, JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, Tokens.Install.Automatic));
         AssertCompleted(installB, "B install using A's data home");
     }
 

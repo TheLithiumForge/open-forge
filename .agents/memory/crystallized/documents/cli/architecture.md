@@ -247,6 +247,7 @@ the host. Integration references those libraries and the host. Both retain the
 existing callable seams and have no direct OutputText reference or friend access.
 EndToEnd references TestSupport and exercises the published process; TestSupport
 has no production reference.
+EndToEnd and TestSupport use a small tracked projection of owned public tokens, and an in-memory Unit drift check compares every projected value with its production owner.
 
 No assembly is a supported third-party library API. Friend access does not
 authorize Rendering to invoke Operations behavior: semantic boundary checks

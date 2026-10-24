@@ -12,6 +12,9 @@ internal sealed class PublishedLockHolder : IDisposable
     internal const string ChildArgument = "--workspace-lock-holder";
     private const string LockedMarker = "LOCKED";
     private const string ReleasedMarker = "RELEASED";
+    private const string ReadWriteAccess = "read-write";
+    private const string ReadOnlyAccess = "read-only";
+    private const string ReleaseCommand = "release";
     private static readonly TimeSpan HandshakeTimeout = TimeSpan.FromSeconds(60);
 
     internal static int RunChild(string[] arguments)
@@ -25,8 +28,8 @@ internal sealed class PublishedLockHolder : IDisposable
 
             var access = arguments[3] switch
             {
-                "read-write" => FileAccess.ReadWrite,
-                "read-only" => FileAccess.Read,
+                ReadWriteAccess => FileAccess.ReadWrite,
+                ReadOnlyAccess => FileAccess.Read,
                 _ => throw new ArgumentException("Invalid lock holder access."),
             };
             ValidateAbsoluteOrdinaryFile(arguments[1], nameof(arguments));
@@ -36,7 +39,7 @@ internal sealed class PublishedLockHolder : IDisposable
                 File.WriteAllText(arguments[2], "Open Forge first-writer marker");
                 Console.Out.WriteLine(LockedMarker);
                 Console.Out.Flush();
-                if (Console.In.ReadLine() != "release")
+                if (Console.In.ReadLine() != ReleaseCommand)
                 {
                     throw new InvalidOperationException("The lock holder received an unexpected command.");
                 }
@@ -107,7 +110,7 @@ internal sealed class PublishedLockHolder : IDisposable
         startInfo.ArgumentList.Add(ChildArgument);
         startInfo.ArgumentList.Add(lockPath);
         startInfo.ArgumentList.Add(ownedMutationPath);
-        startInfo.ArgumentList.Add(readOnly ? "read-only" : "read-write");
+        startInfo.ArgumentList.Add(readOnly ? ReadOnlyAccess : ReadWriteAccess);
 
         var process = Process.Start(startInfo)
             ?? throw new InvalidOperationException("Unable to start the owned test lock holder.");
@@ -152,11 +155,11 @@ internal sealed class PublishedLockHolder : IDisposable
 
         try
         {
-            await _standardInput.WriteLineAsync("release").ConfigureAwait(false);
+            await _standardInput.WriteLineAsync(ReleaseCommand).ConfigureAwait(false);
             await _released.Task.WaitAsync(HandshakeTimeout).ConfigureAwait(false);
             await WaitForExitAsync().ConfigureAwait(false);
             await DrainAsync().ConfigureAwait(false);
-            EnsureSuccessfulExit("release");
+            EnsureSuccessfulExit(ReleaseCommand);
             _terminalCommandSent = true;
         }
         catch (Exception releaseFailure)

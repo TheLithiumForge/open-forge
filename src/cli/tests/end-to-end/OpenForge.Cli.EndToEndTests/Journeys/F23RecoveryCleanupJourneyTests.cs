@@ -6,6 +6,9 @@ using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport.Filesystem;
+using OpenForge.Cli.TestSupport.Snapshots;
+
+using Tokens = OpenForge.Cli.TestSupport.Contracts.PublishedTokens;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -76,20 +79,25 @@ public sealed class F23RecoveryCleanupJourneyTests
         using var workspace = await CreateInstalledWorkspaceAsync("f23-both-stores");
         using var local = RecoveryFixture.Create(workspace, legacyStore: false);
         using var legacy = RecoveryFixture.Create(workspace, legacyStore: true);
-        var preview = await workspace.RunAsync("cleanup", "--dry-run", "--format", "json", "--detail", "full");
+        var preview = await workspace.RunAsync(Tokens.Cleanup.Command, Tokens.Cleanup.DryRun, Tokens.Syntax.FormatOption, Tokens.Syntax.JsonFormat, Tokens.Syntax.DetailOption, Tokens.Presentation.FullDetail);
         Assert.Equal(0, preview.ExitCode);
         using (var document = JsonDocument.Parse(preview.StandardOutput))
         {
-            var stores = document.RootElement.GetProperty("data").GetProperty("stores").EnumerateArray().ToArray();
-            Assert.Equal(["workspace", "legacy"], stores.Select(store => store.GetProperty("kind").GetString()));
-            Assert.Equal(local.SelectedRecoveryDirectory, stores[0].GetProperty("path").GetString());
-            Assert.Equal(legacy.SelectedRecoveryDirectory, stores[1].GetProperty("path").GetString());
-            Assert.All(stores, store => Assert.Equal(3, store.GetProperty("candidates").GetArrayLength()));
+            var stores = document.RootElement.GetProperty(Tokens.Json.Data).GetProperty(Tokens.CleanupData.Stores).EnumerateArray().ToArray();
+            Assert.Equal([Tokens.Recovery.WorkspaceStore, Tokens.Recovery.LegacyStore], stores.Select(store => store.GetProperty(Tokens.CleanupData.Kind).GetString()));
+            Assert.Equal(local.SelectedRecoveryDirectory, stores[0].GetProperty(Tokens.CleanupData.Path).GetString());
+            Assert.Equal(legacy.SelectedRecoveryDirectory, stores[1].GetProperty(Tokens.CleanupData.Path).GetString());
+            Assert.All(stores, store => Assert.Equal(3, store.GetProperty(Tokens.CleanupData.Candidates).GetArrayLength()));
         }
 
-        var applied = await workspace.RunAsync("cleanup");
+        var applied = await workspace.RunAsync(Tokens.Cleanup.Command);
         Assert.Equal(0, applied.ExitCode);
-        Assert.Contains("Removed 4 recovery bundles and 2 unfinished drafts.", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Empty(applied.StandardError);
+        // Store prefixes contain temporary roots and the workspace identity hash.
+        var output = applied.StandardOutput
+            .Replace(local.SelectedRecoveryDirectory + Path.DirectorySeparatorChar, "<workspace-recovery>/", StringComparison.Ordinal)
+            .Replace(legacy.SelectedRecoveryDirectory + Path.DirectorySeparatorChar, "<legacy-recovery>/", StringComparison.Ordinal);
+        CommandOutputSnapshot.MatchSnapshot(output, "mixed-store-apply");
         foreach (var fixture in new[] { local, legacy })
         {
             Assert.False(File.Exists(fixture.FirstBundlePath));
