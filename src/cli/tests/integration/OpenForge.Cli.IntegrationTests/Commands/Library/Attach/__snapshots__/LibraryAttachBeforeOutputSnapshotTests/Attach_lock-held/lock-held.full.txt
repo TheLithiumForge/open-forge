@@ -1,7 +1,7 @@
-Cannot attach team-knowledge: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot attach team-knowledge: another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   Error  .agents/open-forge.lock.json  Workspace lock is unavailable [library-attach.lock-unavailable]
-         Another Open Forge command holds the workspace lock. Nothing was changed.
+         Another Open Forge command holds the lock at <lock-path>. Nothing was changed.
   Info  .  Ownership record is missing [library-attach.ownership-observation]
          No ownership record exists, so the team-knowledge Library cannot be read from it.
   Permission evaluation: no outside permission was needed. Required paths: none. Missing paths: none. No grant was saved.

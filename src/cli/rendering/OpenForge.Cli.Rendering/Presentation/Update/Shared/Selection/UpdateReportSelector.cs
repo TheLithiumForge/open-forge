@@ -626,7 +626,10 @@ internal static class UpdateReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = UpdateWording.MachineCode(finding.Code),
-            Title = UpdateWording.FindingTitle(finding.Code),
+            LockFailure = finding.LockFailure,
+            Title = finding.LockFailure is not null
+                ? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable()
+                : UpdateWording.FindingTitle(finding.Code),
             Message = Message(result, finding, data, path),
             Subject = new CliSubject(subjectKind, subjectKind == CliSubjectKind.Identifier ? null : path, subjectKind == CliSubjectKind.Identifier ? path : null),
             Resolution = Resolution(finding),
@@ -656,42 +659,44 @@ internal static class UpdateReportSelector
         };
 
     private static string Message(UpdateResult result, UpdateFinding finding, UpdateData data, string path)
-        => CodeName(finding) switch
-        {
-            "InvalidInput" => CliFindingWording.InvalidInput(global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpdate(), TrimSentence(finding.Cause)),
-            "ConfirmationRequired" => CliFindingWording.ConfirmationRequired(global::OpenForge.Cli.OutputText.Update.UpdateText.TitleUpdate()),
-            "WorkspaceUnavailable" => CliFindingWording.WorkspaceUnavailable(path),
-            "WorkspaceUnsafe" => CliFindingWording.WorkspaceUnsafe(path, TrimSentence(finding.Cause)),
-            "PayloadUnavailable" => CliFindingWording.PayloadUnavailable(),
-            "PayloadInvalid" => CliFindingWording.PayloadInvalid(),
-            "LifecycleMissing" => UpdateWording.LifecycleMissing(),
-            "LifecycleUnavailable" => CliFindingWording.LifecycleUnavailable(),
-            "LifecycleBlocked" => CliFindingWording.LifecycleBlocked(TrimSentence(finding.Cause)),
-            "OwnershipObservation" => UpdateWording.OwnershipObservation(),
-            "OwnershipConflict" => CliFindingWording.CauseSentence(finding.Cause),
-            "TargetUnavailable" => UpdateWording.TargetUnavailable(path),
-            "TargetUnsafe" => CliFindingWording.TargetUnsafe(path, TrimSentence(finding.Cause)),
-            "SourceProvenanceInvalid" => UpdateWording.SourceProvenanceInvalid(path),
-            "FingerprintUnsupported" => UpdateWording.FingerprintUnsupported(path),
-            "RetiredContentPreserved" => UpdateWording.RetiredPreserved(path),
-            "RetirementIneligible" => UpdateWording.RetirementIneligible(path, TrimSentence(finding.Cause)),
-            "ProjectionUnavailable" => CliFindingWording.ProjectionUnavailable(path, TrimSentence(finding.Cause)),
-            "GeneratedRegionUnsafe" => CliFindingWording.GeneratedRegionUnsafe(path, TrimSentence(finding.Cause)),
-            "PlanBlocked" => UpdateWording.PlanBlocked(path, TrimSentence(finding.Cause)),
-            "RecoveryConflict" => CliFindingWording.RecoveryConflict(path),
-            "RecoveryUnavailable" => CliFindingWording.RecoveryUnavailable(path),
-            "RecoveryArtifactRetained" when data.RecoveryPath is { } recovery => CliFindingWording.RecoveryRetained(recovery),
-            "RecoveryArtifactRetained" => CliFindingWording.CauseSentence(finding.Cause),
-            "WriteFailed" => UpdateWording.WriteFailed(path, finding.Cause),
-            "VerificationFailed" => UpdateWording.VerificationFailed(path, finding.Cause),
-            "LifecyclePublicationFailed" => CliFindingWording.LifecyclePublicationFailed(),
-            "RecoveryFailed" => CliFindingWording.RecoveryFailed(),
-            "OperationFailed" => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Update.UpdateText.TitleUpdate(), TrimSentence(finding.Cause)),
-            "Interrupted" => data.SuppressInterruptedFinding
-                ? UpdateWording.Cancelled()
-                : UpdateWording.CancelledAfter(data.CompletedChanges, data.TotalChanges),
-            _ => CliFindingWording.CauseSentence(finding.Cause),
-        };
+        => finding.LockFailure is { } lockFailure
+            ? CliFindingWording.WorkspaceLockUnavailable(lockFailure)
+            : CodeName(finding) switch
+            {
+                "InvalidInput" => CliFindingWording.InvalidInput(global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpdate(), TrimSentence(finding.Cause)),
+                "ConfirmationRequired" => CliFindingWording.ConfirmationRequired(global::OpenForge.Cli.OutputText.Update.UpdateText.TitleUpdate()),
+                "WorkspaceUnavailable" => CliFindingWording.WorkspaceUnavailable(path),
+                "WorkspaceUnsafe" => CliFindingWording.WorkspaceUnsafe(path, TrimSentence(finding.Cause)),
+                "PayloadUnavailable" => CliFindingWording.PayloadUnavailable(),
+                "PayloadInvalid" => CliFindingWording.PayloadInvalid(),
+                "LifecycleMissing" => UpdateWording.LifecycleMissing(),
+                "LifecycleUnavailable" => CliFindingWording.LifecycleUnavailable(),
+                "LifecycleBlocked" => CliFindingWording.LifecycleBlocked(TrimSentence(finding.Cause)),
+                "OwnershipObservation" => UpdateWording.OwnershipObservation(),
+                "OwnershipConflict" => CliFindingWording.CauseSentence(finding.Cause),
+                "TargetUnavailable" => UpdateWording.TargetUnavailable(path),
+                "TargetUnsafe" => CliFindingWording.TargetUnsafe(path, TrimSentence(finding.Cause)),
+                "SourceProvenanceInvalid" => UpdateWording.SourceProvenanceInvalid(path),
+                "FingerprintUnsupported" => UpdateWording.FingerprintUnsupported(path),
+                "RetiredContentPreserved" => UpdateWording.RetiredPreserved(path),
+                "RetirementIneligible" => UpdateWording.RetirementIneligible(path, TrimSentence(finding.Cause)),
+                "ProjectionUnavailable" => CliFindingWording.ProjectionUnavailable(path, TrimSentence(finding.Cause)),
+                "GeneratedRegionUnsafe" => CliFindingWording.GeneratedRegionUnsafe(path, TrimSentence(finding.Cause)),
+                "PlanBlocked" => UpdateWording.PlanBlocked(path, TrimSentence(finding.Cause)),
+                "RecoveryConflict" => CliFindingWording.RecoveryConflict(path),
+                "RecoveryUnavailable" => CliFindingWording.RecoveryUnavailable(path),
+                "RecoveryArtifactRetained" when data.RecoveryPath is { } recovery => CliFindingWording.RecoveryRetained(recovery),
+                "RecoveryArtifactRetained" => CliFindingWording.CauseSentence(finding.Cause),
+                "WriteFailed" => UpdateWording.WriteFailed(path, finding.Cause),
+                "VerificationFailed" => UpdateWording.VerificationFailed(path, finding.Cause),
+                "LifecyclePublicationFailed" => CliFindingWording.LifecyclePublicationFailed(),
+                "RecoveryFailed" => CliFindingWording.RecoveryFailed(),
+                "OperationFailed" => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Update.UpdateText.TitleUpdate(), TrimSentence(finding.Cause)),
+                "Interrupted" => data.SuppressInterruptedFinding
+                    ? UpdateWording.Cancelled()
+                    : UpdateWording.CancelledAfter(data.CompletedChanges, data.TotalChanges),
+                _ => CliFindingWording.CauseSentence(finding.Cause),
+            };
 
     private static CliResolution? Resolution(UpdateFinding finding)
         => CodeName(finding) switch

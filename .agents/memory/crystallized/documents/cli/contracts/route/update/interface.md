@@ -460,12 +460,8 @@ not inspect or report repository state.
 
 When the plan contains an existing-target effect (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`), orchestration selects only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a
-pre-effect `incomplete` result. It prepares exactly one immutable ZIP bundle
-outside the workspace. An operation containing only Create effects or
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a
+pre-effect `incomplete` result. It prepares exactly one immutable ZIP bundle in the workspace runtime folder. An operation containing only Create effects or
 no-ops creates no bundle. Its source-generated
 versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
@@ -477,7 +473,7 @@ final name, and reopened and verified. Only the valid final ZIP forms the opaque
 `RecoveryBundlePreparation`; the draft remains `Incomplete`.
 `FileChangeApplier` requires that preparation for every existing-target effect and
 performs one final effect per target. All preparation completes before the first
-target effect; unknown, malformed, mismatched, or colliding bundles block.
+target effect. A missing, malformed, mismatched or colliding current-operation preparation blocks.
 
 Immediately before application, the command rechecks every target, source,
 Template, route, and generated fact. It applies complete planned bytes through
@@ -639,6 +635,8 @@ The finding catalogue is:
 | route-update.projection-incomplete        | warning  | projection-unavailable      |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
 | route-update.template-unavailable         | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.template-unavailable`).         | none                                |
 | route-update.recovery-unavailable         | warning  | recovery-unavailable        |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.recovery-history | warning | recovery-history | Recovery data from an earlier run remains at {path}. It does not block this operation. | |
+| route-update.recovery-coverage-unavailable | warning | recovery-coverage-unavailable | Recovery history at {path} could not be checked completely: {cause}. Current workspace validation still applies. | |
 | route-update.recovery-artifact-retained   | warning  | recovery-artifact-retained  |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
 | route-update.target-changed-during-apply  | error    | target-changed-during-apply |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
 | route-update.write-failed                 | error    | write-failed                |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
@@ -768,3 +766,7 @@ Exact wording is owned by the linked typed factories. Selection, output coordina
 CLI help syntax: [`route.update.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Update/RouteUpdateText.cs).
 
 <!-- @OpenForgeTextRef route.update.help.syntax -->
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

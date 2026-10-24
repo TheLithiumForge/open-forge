@@ -3,6 +3,7 @@ using System.Text;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery.Shared.LibraryResiduals;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
@@ -52,7 +53,7 @@ public sealed class LibrarySelectedFinalReadIntegrationTests
                 break;
             case "changed-entry":
                 ChangeManifestTarget(path);
-                var healthyChanged = await RecoveryBundleReader.ReadFinalAsync(fixture.Workspace, path, TestContext.Current.CancellationToken);
+                var healthyChanged = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(fixture.Workspace), path, TestContext.Current.CancellationToken);
                 Assert.Equal(RecoveryBundleReadState.Valid, healthyChanged.State);
                 Assert.Equal(".agents/other.md", Assert.Single(Assert.IsType<RecoveryBundleVerifiedRead>(healthyChanged.Verified).Entries).TargetPath);
                 break;

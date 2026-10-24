@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
@@ -63,27 +64,24 @@ internal static class RecoveryBundleDeletionValidation
         RecoveryBundleCandidateSnapshot candidate,
         WorkspaceLockLease lease)
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None);
-        if (storeRoot is null)
-        {
-            return false;
-        }
-
-        var expectedDirectory = RecoveryBundlePathIdentity.WorkspaceDirectory(
-            storeRoot,
-            lease.Request.Workspace.PhysicalRoot);
-        return string.Equals(
-            Path.GetDirectoryName(candidate.Path),
-            expectedDirectory,
-            PathComparison());
+        return HasAuthority(candidate.Location, lease)
+            && string.Equals(
+                Path.GetDirectoryName(candidate.Path),
+                candidate.Location.WorkspaceDirectory,
+                PathComparison());
     }
+
+    internal static bool HasAuthority(RecoveryStoreLocation location, WorkspaceLockLease lease)
+        => lease.IsHeldFor(location.Workspace)
+            && (location.Kind == RecoveryStoreKind.Workspace
+                || location.LegacyLockStoreRoot is { } legacyRoot && lease.HoldsLegacyLock(legacyRoot));
 
     internal static bool MatchesExactSnapshot(
         RecoveryBundleCandidateSnapshot expected,
         RecoveryBundleCandidateSnapshot actual)
     {
-        if (!string.Equals(expected.Path, actual.Path, PathComparison())
+        if (expected.Location != actual.Location
+            || !string.Equals(expected.Path, actual.Path, PathComparison())
             || expected.Kind != actual.Kind
             || expected.Integrity != actual.Integrity)
         {

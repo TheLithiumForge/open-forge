@@ -92,6 +92,7 @@ internal enum CleanupFindingCode
     WorkspaceNotDirectory,
     WorkspaceUnsafe,
     CatalogueIncomplete,
+    StoreValidationUnavailable,
     RecoveryFinalMalformed,
     RecoveryFinalUnsupported,
     RecoveryFinalUnavailable,

@@ -11,11 +11,11 @@ internal static class CliCancellationSelection
         if (selected.Report.Status != CliSemanticStatus.Interrupted
             || selected.Report.Effects.Any(effect => effect.Outcome is CliEffectOutcome.Done or CliEffectOutcome.Unknown or CliEffectOutcome.Failed))
             return selected;
-        var interruptions = selected.Report.Findings.Count(finding => finding.Code == interruptionCode && finding.Severity == CliSeverity.Error);
+        var interruptions = selected.Report.Findings.Count(finding => finding.Code == interruptionCode && finding.Severity == CliSeverity.Error && finding.LockFailure is null);
         if (interruptions == 0) return selected;
         return selected with
         {
-            TextFindings = selected.TextFindings.Where(finding => finding.Code != interruptionCode).ToArray(),
+            TextFindings = selected.TextFindings.Where(finding => finding.Code != interruptionCode || finding.LockFailure is not null).ToArray(),
             TextDiagnostics = [],
             TextCounts = selected.TextCounts.Select(count => count.Name == "errors" && count.Value is { } value
                 ? count with { Value = Math.Max(0, value - interruptions) } : count).ToArray(),

@@ -44,7 +44,7 @@ Unrecognized command or argument 'unexpected-operand'.
 Original contract: `.agents/memory/crystallized/documents/cli/contracts/cleanup/interface.md`.
 
 ```text
-Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.
+Cannot clean up: another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was removed.
   <recovery-bundle-1>    not started
   <recovery-bundle-2>    not started
   <recovery-bundle-3>  not started
@@ -458,7 +458,7 @@ Next: open-forge extension list
 Original contract: `.agents/memory/crystallized/documents/cli/contracts/extension/install/interface.md`.
 
 ```text
-Cannot install toolkit: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot install toolkit: Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
 Workspace: <workspace>
 ```
 
@@ -686,7 +686,7 @@ Next: open-forge extension list --installed
 Original contract: `.agents/memory/crystallized/documents/cli/contracts/extension/update/interface.md`.
 
 ```text
-Cannot update toolkit: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot update toolkit: Another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
 ```
 
 ## extension-update-failed
@@ -1051,7 +1051,7 @@ Unrecognized command or argument 'unexpected-operand'.
 Original contract: `.agents/memory/crystallized/documents/cli/contracts/repair/interface.md`.
 
 ```text
-Cannot repair: another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot repair: another Open Forge command holds the workspace lock, or the Open Forge data folder (OPENFORGE_DATA_HOME) cannot be written. Nothing was changed.
   Warning  .agents/docs/source.md:10:10  Broken link
          Broken link; 4 possible targets
   .agents/docs/source.md:9:8  ./guide.md -> guide.md

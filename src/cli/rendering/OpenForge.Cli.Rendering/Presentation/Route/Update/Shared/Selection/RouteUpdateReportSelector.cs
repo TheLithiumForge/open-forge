@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Route.Shared.Recovery;
 using OpenForge.Cli.Core.Presentation.Route.Shared.NextActions;
 using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Globalization;
@@ -33,7 +34,10 @@ internal static class RouteUpdateReportSelector
             Workspace = result.WorkspacePath is { } workspace
                 ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit)
                 : null,
-            Findings = result.Findings.Select(finding => Finding(result, finding)).ToArray(),
+            Findings = result.Findings.Select(finding => Finding(result, finding))
+                .Concat(RouteRecoveryHistoryFindings.Read(result.RecoveryHistory,
+                    result.RecoveryHistoryCode,
+                    result.RecoveryCoverageUnavailableCode)).ToArray(),
             Effects = result.Effects.Select(effect => Effect(effect, selection.Detail)).ToArray(),
             Counts =
             [
@@ -278,6 +282,8 @@ internal static class RouteUpdateReportSelector
                 => new(RouteUpdateWording.Incomplete(id, Message(result, first)), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid
                 => new(RouteUpdateWording.Invalid(id, Message(result, first)), CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when first?.LockFailure is { } lockFailure
+                => new(RouteUpdateWording.Blocked(id, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(RouteUpdateWording.Blocked(id, Message(result, first)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed
@@ -313,6 +319,7 @@ internal static class RouteUpdateReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = code,
+            LockFailure = finding.LockFailure,
             Title = RouteUpdateWording.FindingTitle(finding.Code),
             Message = Message(result, finding),
             Subject = Subject(result, finding),
@@ -366,6 +373,11 @@ internal static class RouteUpdateReportSelector
 
     private static string Message(RouteUpdateResult result, RouteUpdateFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateText.MessageTheRouteUpdateResultDidNotContainAFinding();

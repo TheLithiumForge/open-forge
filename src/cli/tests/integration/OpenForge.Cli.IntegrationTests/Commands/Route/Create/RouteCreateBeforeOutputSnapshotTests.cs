@@ -75,7 +75,8 @@ public sealed class RouteCreateBeforeOutputSnapshotTests
             }
 
             CaptureRecovery(workspace, result);
-            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
@@ -108,7 +109,8 @@ public sealed class RouteCreateBeforeOutputSnapshotTests
             Assert.Equal(status, result.Status);
             Assert.Equal(before, workspace.SnapshotHashes());
             CaptureRecovery(workspace, result);
-            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);

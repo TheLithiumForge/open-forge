@@ -112,6 +112,7 @@ public sealed class LibrarySyncBeforeOutputSnapshotTests
             result,
             situation,
             result.Result.Application.Recovery.Path,
-            testName: $"{nameof(Synchronize)}_{situation}");
+            testName: $"{nameof(Synchronize)}_{situation}",
+            lockFailurePath: result.Result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 }

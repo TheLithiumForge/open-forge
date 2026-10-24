@@ -27,6 +27,7 @@ internal sealed record StatusData
     public required IReadOnlyList<StatusDataLibrary> Libraries { get; init; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName(StatusRecoveryJsonFields.Recovery)]
     public StatusDataRecovery? Recovery { get; init; }
 
     [JsonIgnore]
@@ -244,20 +245,34 @@ internal sealed record StatusDataLibraryLink
 
 internal sealed record StatusDataRecovery
 {
+    [JsonPropertyName(StatusRecoveryJsonFields.Stores)]
+    public IReadOnlyList<StatusDataRecoveryStore> Stores { get; init; } = [];
+
+    [JsonPropertyName(StatusRecoveryJsonFields.Candidates)]
     public required IReadOnlyList<StatusDataRecoveryCandidate> Candidates { get; init; }
 }
 
 internal sealed record StatusDataRecoveryCandidate
 {
+    [JsonPropertyName(StatusRecoveryJsonFields.Path)]
     public required string Path { get; init; }
 
+    [JsonPropertyName(StatusRecoveryJsonFields.Kind)]
     public required string Kind { get; init; }
 
     [JsonIgnore]
     internal StatusRecoveryCandidateKind CandidateKind { get; init; }
 
+    [JsonPropertyName(StatusRecoveryJsonFields.Integrity)]
     public required string Integrity { get; init; }
 
     [JsonIgnore]
     internal StatusRecoveryIntegrity IntegrityState { get; init; }
 }
+
+internal sealed record StatusDataRecoveryStore(
+    [property: JsonPropertyName(StatusRecoveryJsonFields.Kind)] string Kind,
+    [property: JsonPropertyName(StatusRecoveryJsonFields.Path)] string? Path,
+    [property: JsonPropertyName(StatusRecoveryJsonFields.Coverage)] string Coverage,
+    [property: JsonPropertyName(StatusRecoveryJsonFields.Candidates)] IReadOnlyList<StatusDataRecoveryCandidate> Candidates,
+    [property: JsonPropertyName(StatusRecoveryJsonFields.Cause)] string? Cause);

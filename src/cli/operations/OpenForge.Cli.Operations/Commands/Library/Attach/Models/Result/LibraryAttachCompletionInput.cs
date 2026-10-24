@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
@@ -6,6 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
 
 internal sealed record LibraryAttachCompletionInput
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     public required LibraryAttachRequest Request { get; init; }
     public required LibraryAttachPlan? Plan { get; init; }
     public required LibraryAttachPlanningInput? Observations { get; init; }

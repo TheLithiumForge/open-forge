@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Remove.Shared.Selection;
 
@@ -21,6 +22,28 @@ internal static class RemoveTargetResolver
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(selection);
         var isPathSelection = selection.State == RemoveSelectionState.Path;
+        if (selection.State is RemoveSelectionState.Path or RemoveSelectionState.Route
+            && PortableWorkspacePath.TryNormalize(selection.Target, out var candidate))
+        {
+            var lexical = Path.GetFullPath(candidate, workspace.PhysicalRoot);
+            var runtimeResolver = new PhysicalPathResolver();
+            var current = Path.GetFullPath(candidate, workspace.LexicalRoot);
+            while (current is not null)
+            {
+                var physical = runtimeResolver.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, current);
+                if (WorkspaceRuntimePaths.Contains(workspace, lexical)
+                    || (physical.ResolvedPhysicalPath is { } resolved && WorkspaceRuntimePaths.Contains(workspace, resolved)))
+                {
+                    return new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, selection.Target,
+                        "The selected target is inside the reserved workspace runtime directory.");
+                }
+                if (physical.State != PhysicalPathState.Missing)
+                {
+                    break;
+                }
+                current = Path.GetDirectoryName(current);
+            }
+        }
         if (!isPathSelection
             && !(selection.State == RemoveSelectionState.Route
                 && selection.Target.StartsWith(".agents/", StringComparison.Ordinal)))

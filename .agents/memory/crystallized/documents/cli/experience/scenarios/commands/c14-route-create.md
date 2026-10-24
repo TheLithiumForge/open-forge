@@ -449,3 +449,7 @@ Route Create writes description and tags at the frontmatter root and projects th
 **State:** Read the destination bytes and verify the exact description and ordered tags at the root. Independently verify the new parent entry, preserve text outside the generated region, and check settings and unrelated ownership.
 
 **Output:** Check the destination and generated effect identities against the actual changes. A root setting alone does not prove where creation wrote metadata.
+
+## Task 86 Runtime Expectations
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

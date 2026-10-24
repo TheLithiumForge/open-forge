@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Recovery;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using System.Security.Cryptography;
 using System.Text;
@@ -95,28 +96,25 @@ internal sealed class ExtensionInstallFoundationReader(
                 "Recorded Extension identities are duplicated; no ownership or file effects were inferred.");
         }
 
-        var recovery = await RecoveryBundleCatalogue.ReadAsync(
+        var stores = await RecoveryBundleCatalogue.ReadStoresAsync(
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
-        var blockingCandidate = recovery.Candidates.FirstOrDefault(candidate => !IsVerifiedFinal(candidate));
-        if (recovery.State != RecoveryBundleCatalogueState.Available
-            || blockingCandidate is not null)
+        if (stores.Any(store => store.Catalogue.State == RecoveryBundleCatalogueState.Cancelled))
         {
-            return Stop(
-                recovery.State switch
-                {
-                    RecoveryBundleCatalogueState.Cancelled => ExtensionInstallFindingCode.Interrupted,
-                    RecoveryBundleCatalogueState.Available => ExtensionInstallFindingCode.RecoveryConflict,
-                    RecoveryBundleCatalogueState.Unavailable => ExtensionInstallFindingCode.RecoveryUnavailable,
-                    _ => throw new ArgumentOutOfRangeException(
-                        null,
-                        recovery.State,
-                        "The recovery catalogue state is not defined."),
-                },
-                blockingCandidate?.Cause
-                    ?? recovery.Cause
-                    ?? "Recognized recovery residuals block Extension Install.",
-                blockingCandidate?.Path);
+            return Stop(ExtensionInstallFindingCode.Interrupted,
+                "Extension Install recovery inspection was interrupted.");
+        }
+
+        var historyFindings = stores.SelectMany(store => store.Catalogue.Candidates)
+            .Where(ExtensionRecoveryHistory.RequiresWarning).Select(candidate => new ExtensionInstallFinding(
+            ExtensionInstallFindingCode.RecoveryHistory,
+            "Recovery data from an earlier run remains.", candidate.Path)).ToList();
+        foreach (var store in stores.Where(store => store.Catalogue.State == RecoveryBundleCatalogueState.Unavailable))
+        {
+            historyFindings.Add(new ExtensionInstallFinding(
+                ExtensionInstallFindingCode.RecoveryCoverageUnavailable,
+                store.Catalogue.Cause ?? "Recovery history could not be checked.",
+                store.Location?.WorkspaceDirectory));
         }
 
         return new ExtensionInstallFoundationObservation(
@@ -124,7 +122,10 @@ internal sealed class ExtensionInstallFoundationReader(
                 frameworkPayload,
                 ownership,
                 topologyBuild.Topology,
-                topologyBuild.Findings),
+                topologyBuild.Findings)
+            {
+                HistoryFindings = historyFindings.ToArray(),
+            },
             Finding: null);
     }
 
@@ -137,11 +138,6 @@ internal sealed class ExtensionInstallFoundationReader(
     private static ExtensionInstallFoundationObservation Stop(
         ExtensionInstallFinding finding)
         => new(Foundation: null, finding);
-
-    private static bool IsVerifiedFinal(RecoveryBundleCandidateSnapshot candidate)
-        => candidate.Kind == RecoveryBundleCandidateKind.Final
-            && candidate.Integrity == RecoveryBundleIntegrity.Verified
-            && candidate.Verified is not null;
 
     internal static string SourceSignature(ExtensionSourceReadResult source)
     {

@@ -123,13 +123,16 @@ internal sealed class LibraryObservationWorkspace : IDisposable
         ]);
 
     internal SortedDictionary<string, string> Snapshot()
+        => Snapshot(includeRuntime: false);
+
+    internal SortedDictionary<string, string> Snapshot(bool includeRuntime)
     {
         var entries = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        foreach (var pair in Files.SnapshotHashes())
+        foreach (var pair in Files.SnapshotHashes(includeRuntime))
         {
             entries.Add(pair.Key, pair.Value);
         }
-        Capture(new DirectoryInfo(Files.Path), entries);
+        Capture(new DirectoryInfo(Files.Path), entries, includeRuntime);
         var lockRoot = WorkspaceLockStoreRoot.ResolveForCurrentUser(Environment.SpecialFolderOption.DoNotVerify);
         var recoveryRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.DoNotVerify);
         Assert.NotNull(lockRoot);
@@ -153,19 +156,24 @@ internal sealed class LibraryObservationWorkspace : IDisposable
         return entries;
     }
 
-    private void Capture(DirectoryInfo directory, SortedDictionary<string, string> entries)
+    private void Capture(DirectoryInfo directory, SortedDictionary<string, string> entries, bool includeRuntime)
     {
         foreach (var entry in directory.EnumerateFileSystemInfos())
         {
+            if (!includeRuntime && TemporaryWorkspace.IsRuntimeEntry(Files.Path, entry.FullName))
+            {
+                continue;
+            }
+
             var path = Path.GetRelativePath(Files.Path, entry.FullName).Replace('\\', '/');
             if (entry.LinkTarget is { } target)
             {
-                entries.Add(path, $"link:{target}");
+                entries[path] = $"link:{target}";
             }
             else if (entry is DirectoryInfo child)
             {
                 entries.Add($"{path}/", "directory");
-                Capture(child, entries);
+                Capture(child, entries, includeRuntime);
             }
         }
     }

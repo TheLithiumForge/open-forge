@@ -2,7 +2,6 @@ using OpenForge.Cli.Core.Commands.Route.Move.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -22,18 +21,6 @@ internal static partial class RouteMoveRecoveryLifecycle
                 input.Plan,
                 RouteMoveRecoveryPreparationState.NotRequired,
                 RouteMoveRecoveryState.NotRequired);
-        }
-
-        var catalogue = await ReadCatalogueAsync(input.Plan, cancellationToken)
-            .ConfigureAwait(false);
-        if (catalogue.State != RecoveryBundleCatalogueState.Available)
-        {
-            return FromCatalogue(input.Plan, catalogue);
-        }
-
-        if (!catalogue.Candidates.IsEmpty)
-        {
-            return Conflict(input.Plan, catalogue.Candidates[0].Path);
         }
 
         return await PrepareBundleAsync(input, cancellationToken).ConfigureAwait(false);
@@ -67,54 +54,6 @@ internal static partial class RouteMoveRecoveryLifecycle
             return FailedPreparation(input.Plan, residualPath: null);
         }
     }
-
-    private static async ValueTask<RecoveryBundleCatalogueResult> ReadCatalogueAsync(
-        RouteMovePlan plan,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            return await RecoveryBundleCatalogue.ReadAsync(plan.Request.Workspace, cancellationToken)
-                .ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            return RecoveryBundleCatalogueResult.Cancelled();
-        }
-        catch (Exception)
-        {
-            return RecoveryBundleCatalogueResult.Unavailable(
-                "The Route Move recovery catalogue failed unexpectedly.");
-        }
-    }
-
-    private static RouteMoveRecoveryPreparationResult Conflict(RouteMovePlan plan, string path)
-        => StopPreparation(
-            plan,
-            RouteMoveRecoveryPreparationState.Blocked,
-            RouteMoveRecoveryState.Retained,
-            path,
-            new RouteMoveFinding(
-                RouteMoveFindingCode.RecoveryConflict,
-                CliSemanticStatus.Blocked,
-                path,
-                "An existing recovery candidate conflicts with this Route Move application."));
-
-    private static RouteMoveRecoveryPreparationResult FromCatalogue(
-        RouteMovePlan plan,
-        RecoveryBundleCatalogueResult catalogue)
-        => catalogue.State == RecoveryBundleCatalogueState.Cancelled
-            ? InterruptedPreparation(plan, residualPath: null)
-            : StopPreparation(
-                plan,
-                RouteMoveRecoveryPreparationState.Incomplete,
-                RouteMoveRecoveryState.Unknown,
-                residualPath: null,
-                Finding(
-                    plan,
-                    RouteMoveFindingCode.RecoveryUnavailable,
-                    CliSemanticStatus.Incomplete,
-                    catalogue.Cause ?? "The Route Move recovery catalogue is unavailable."));
 
     internal static RouteMoveRecoveryPreparationResult FromStored(
         RouteMovePlan plan,

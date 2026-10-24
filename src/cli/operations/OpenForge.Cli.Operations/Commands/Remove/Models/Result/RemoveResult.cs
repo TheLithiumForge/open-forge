@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -28,7 +29,10 @@ internal sealed record RemoveFinding(
     RemoveFindingCode Code,
     CliSemanticStatus Status,
     string Message,
-    string? Target);
+    string? Target)
+{
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+}
 
 internal sealed record RemoveEffect(
     string Path,
@@ -128,9 +132,10 @@ internal sealed record RemoveResult : ICliCommandResult
         IReadOnlyList<RemoveEffect>? effects = null,
         string? recoveryPath = null,
         string recoveryDisposition = "not-required",
-        IReadOnlyList<string>? removed = null)
+        IReadOnlyList<string>? removed = null,
+        WorkspaceLockFailureInfo? lockFailure = null)
     {
-        var finding = new RemoveFinding(code, status, message, target);
+        var finding = new RemoveFinding(code, status, message, target) { LockFailure = lockFailure };
         var next = nextCommand is null
             ? new CliNextAction("open-forge remove --help", "Correct the Remove target and review its safety boundary.")
             : new CliNextAction(nextCommand, nextReason ?? message);

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Presentation.Route.Create.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Commands.Route.Create;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
@@ -18,11 +20,11 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Create;
 public sealed class RouteCreateRecoveryConflictCoordinateIntegrationTests
 {
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Route Create keeps the observed recovery candidate coordinate and blocks without effects"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationSafety")]
+    [Theory(DisplayName = "Route Create keeps the observed recovery candidate coordinate while unrelated work proceeds"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationSafety")]
     [InlineData("valid-final")]
     [InlineData("draft")]
     [InlineData("malformed-final")]
-    public async Task ExistingRecoveryCandidateUsesObservedPathWithoutApplying(
+    public async Task ExistingRecoveryCandidateIsWarnedWithoutBlocking(
         string candidateKind)
     {
         using var workspace = RouteCreateIntegrationWorkspace.Create(
@@ -33,24 +35,30 @@ public sealed class RouteCreateRecoveryConflictCoordinateIntegrationTests
 
         try
         {
+            workspace.OwnApplicationCreatedTarget();
             var result = await RouteCreateOperationFactory.Create(workspace.LockStoreRoot)
                 .ExecuteAsync(
                     workspace.Request(),
                     TestContext.Current.CancellationToken);
 
-            Assert.Equal(CliSemanticStatus.Blocked, result.Status);
-            Assert.Equal(5, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
-            Assert.Equal(RouteCreateIntegrationWorkspace.TargetId, result.Target.Requested);
-            var finding = Assert.Single(
-                result.Findings,
-                item => item.Code == RouteCreateFindingCode.RecoveryConflict);
-            Assert.Equal(candidate.Path, finding.Target);
-            Assert.Equal(RouteCreateRecoveryState.Retained, result.Recovery.State);
-            Assert.Equal(candidate.Path, result.Recovery.ResidualPath);
-            Assert.All(
-                result.Effects,
-                effect => Assert.Equal(RouteCreateEffectOutcome.NotStarted, effect.Outcome));
-            Assert.Equal(before, workspace.SnapshotHashes());
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            Assert.Equal(0, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
+            Assert.DoesNotContain(result.Findings, item => item.Code == RouteCreateFindingCode.RecoveryConflict);
+            var report = RouteCreateReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
+            if (candidateKind == "valid-final")
+            {
+                Assert.Empty(result.RecoveryHistory.Paths);
+                Assert.DoesNotContain(report.Findings, item => item.Subject.Path == candidate.Path);
+            }
+            else
+            {
+                Assert.Contains(candidate.Path, result.RecoveryHistory.Paths);
+                Assert.Contains(report.Findings, item => item.Code == RouteCreateDefinitions.RecoveryHistoryCode
+                    && item.Subject.Path == candidate.Path && item.Severity == CliSeverity.Warning);
+            }
+            Assert.NotEqual(candidate.Path, result.Recovery.ResidualPath);
+            Assert.NotEmpty(result.Effects);
+            Assert.Equal(RouteCreateVerificationState.Verified, result.Verification);
             Assert.Equal(
                 candidate.Bytes,
                 await File.ReadAllBytesAsync(candidate.Path, TestContext.Current.CancellationToken));
@@ -136,7 +144,7 @@ public sealed class RouteCreateRecoveryConflictCoordinateIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Route Create reports the first catalogue candidate when several are retained"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationSafety")]
+    [Fact(DisplayName = "Route Create warns about unverified catalogue candidates while applying"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationSafety")]
     public async Task MultipleCandidatesPreserveCatalogueOrdering()
     {
         using var workspace = RouteCreateIntegrationWorkspace.Create(
@@ -156,21 +164,18 @@ public sealed class RouteCreateRecoveryConflictCoordinateIntegrationTests
 
         try
         {
+            workspace.OwnApplicationCreatedTarget();
             var result = await RouteCreateOperationFactory.Create(workspace.LockStoreRoot)
                 .ExecuteAsync(
                     workspace.Request(),
                     TestContext.Current.CancellationToken);
 
-            var finding = Assert.Single(
-                result.Findings,
-                item => item.Code == RouteCreateFindingCode.RecoveryConflict);
-            Assert.Equal(CliSemanticStatus.Blocked, result.Status);
-            Assert.Equal(expected, finding.Target);
-            Assert.Equal(expected, result.Recovery.ResidualPath);
-            Assert.All(
-                result.Effects,
-                effect => Assert.Equal(RouteCreateEffectOutcome.NotStarted, effect.Outcome));
-            Assert.Equal(before, workspace.SnapshotHashes());
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            Assert.Equal(new[] { second.Path }, result.RecoveryHistory.Paths);
+            var report = RouteCreateReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
+            Assert.Equal(new[] { second.Path },
+                report.Findings.Where(item => item.Code == RouteCreateDefinitions.RecoveryHistoryCode).Select(item => item.Subject.Path));
+            Assert.Equal(RouteCreateVerificationState.Verified, result.Verification);
             Assert.Equal(
                 expectedBytes,
                 await File.ReadAllBytesAsync(expected, TestContext.Current.CancellationToken));

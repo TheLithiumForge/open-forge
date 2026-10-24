@@ -490,6 +490,18 @@ internal static class ExtensionUpdateReportSelector
         var changed = result.Effects.Count > 0;
         var count = selectedIds.Count == 0 ? result.Packages.Count : selectedIds.Count;
         var version = result.Packages.FirstOrDefault(package => package.Id == primaryId)?.ToVersion ?? global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.LabelTheSelectedVersion();
+        if (result.Status == CliSemanticStatus.Attention && result.Findings.All(finding =>
+            finding.Code is ExtensionUpdateFindingCode.RecoveryHistory or ExtensionUpdateFindingCode.RecoveryCoverageUnavailable))
+        {
+            if (!changed)
+            {
+                return new(count > 1 ? ExtensionUpdateWording.AllUpToDate(count)
+                    : ExtensionUpdateWording.UpToDate(primaryId), CliHeadlineKind.Warnings);
+            }
+            return new(result.Mode == ExtensionUpdateMode.DryRun
+                ? ExtensionUpdateWording.WouldUpdate(primaryId, version)
+                : ExtensionUpdateWording.Updated(primaryId, version), CliHeadlineKind.Warnings);
+        }
         if (result.Status == CliSemanticStatus.Complete && !changed && kept == 0)
         {
             return count > 1
@@ -537,6 +549,11 @@ internal static class ExtensionUpdateReportSelector
         ExtensionUpdateFinding? finding,
         string id)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.MessageTheExtensionUpdateCouldNotBeClassified();
@@ -572,6 +589,11 @@ internal static class ExtensionUpdateReportSelector
         ExtensionUpdateFinding? finding,
         string id)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailableReason(lockFailure);
+        }
+
         var message = FindingMessage(result, finding, id);
         const string prefix = "Cannot update: ";
         return message.StartsWith(prefix, StringComparison.Ordinal)
@@ -683,6 +705,7 @@ internal static class ExtensionUpdateReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = ExtensionUpdateWording.FindingCode(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = ExtensionUpdateWording.FindingTitle(finding.Code),
             Message = FindingMessage(result, finding, id),
             Subject = new CliSubject(

@@ -35,6 +35,16 @@ Every command accepts these flags. Extension Create accepts `--workspace` but cr
 
 Quote values containing spaces and glob expressions. Repeat flags only where the command supports repetition. Route List accepts both `--depth=2` and `--depth 2`. Content and region selectors take one comma-separated value, such as `--content frontmatter,body`.
 
+## Worktrees And Sandboxes
+
+Each directory is its own workspace, so every Git worktree has its own lock and recovery bundles. Writing commands keep both in `.open-forge-state/` inside the workspace, which ignores itself in Git. A sandbox only needs write access to the workspace.
+
+The open file handle is the lock. A leftover `workspace.lock` blocks nothing, so never delete it. A lock failure names the exact path and its cause. Only a busy lock means another command is running, so retry after it finishes. Access denied, unsupported locking, an invalid target or an I/O error each need the path fixed, not a retry. If access is denied on a lock under the per-user `OpenForge/locks/v1` folder, the sandbox cannot read that folder: allow read access, or set `OPENFORGE_DATA_HOME` to an absolute folder the sandbox can write.
+
+Bundles left by unrelated earlier runs never block a command. Drafts, damaged bundles and unreadable stores appear as warnings. Install still stops on an unverified bundle, an unreadable workspace store or a partly applied change.
+
+`git clean -x` and `-X` delete `.open-forge-state/` and its recovery bundles. Review them with `status --format json --detail full` first.
+
 ## Preview And Apply
 
 `--dry-run` reports the complete checked mutation plan without writing files. Review destinations, replacements, deletions, reference changes, and recovery effects. Apply the same authorized request without `--dry-run` after review.

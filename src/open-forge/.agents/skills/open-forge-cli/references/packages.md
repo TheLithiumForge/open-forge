@@ -256,3 +256,9 @@ Remove registration and projected links, preserving source files. Accepts `--dry
 Individual-link Remove cleans up its owned ignore rule within its removal plan. Other Libraries' rules survive. An explicitly removed ignore file stays removed. Library operations never follow links to change source targets.
 
 For result handling or permission questions, use [shared options and results](common.md). For reference repair or retained recovery data, use [route maintenance](routes.md).
+
+## Workspace Runtime And Recovery
+
+Install, Update, Remove and Library mutations use the workspace lock and prepare new bundles in `.open-forge-state/`. Package destinations cannot enter that reserved folder, including through links. Extension Create keeps its separate create-only destination and takes no workspace lock.
+
+Extension Install, Update and Remove warn about drafts, damaged or invalid history and unavailable coverage. Verified bundles from earlier runs produce no warning. Current ownership, permission, target and preparation checks still apply.

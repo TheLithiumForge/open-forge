@@ -8,7 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 public sealed class RouteUpdateRecoveryIntegrationTests
 {
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Route Update recovery prepares one external bundle and rejects deterministic collision")]
+    [Fact(DisplayName = "Route Update recovery still rejects its own deterministic publication collision")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task RecoveryCollisionStopsBeforeApplication()
     {
@@ -28,6 +28,8 @@ public sealed class RouteUpdateRecoveryIntegrationTests
         var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             prepared.Preparation);
         workspace.TrackRecovery(preparation);
+        var originalBytes = await File.ReadAllBytesAsync(preparation.BundlePath, TestContext.Current.CancellationToken);
+        var before = workspace.SnapshotHashes();
         var collision = await RouteUpdateRecoveryPreparer.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
@@ -35,8 +37,11 @@ public sealed class RouteUpdateRecoveryIntegrationTests
         Assert.Equal(RouteUpdateRecoveryPreparationState.Prepared, prepared.State);
         Assert.Equal(RouteUpdateRecoveryState.NotCreated, prepared.Recovery.State);
         Assert.Equal(RouteUpdateRecoveryPreparationState.Blocked, collision.State);
-        Assert.Equal(RouteUpdateRecoveryState.Retained, collision.Recovery.State);
+        Assert.Equal(RouteUpdateRecoveryState.Unknown, collision.Recovery.State);
+        Assert.Null(collision.Preparation);
         Assert.Equal(preparation.BundlePath, collision.Recovery.ResidualPath);
+        Assert.Equal(originalBytes, await File.ReadAllBytesAsync(preparation.BundlePath, TestContext.Current.CancellationToken));
+        Assert.Equal(before, workspace.SnapshotHashes());
     }
 
     [Trait("Boundary", "OS")]

@@ -1,9 +1,12 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 
 internal sealed record LibrarySyncFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     public required LibrarySyncFindingCode Code { get; init; }
 
     public required CliSemanticStatus Status { get; init; }

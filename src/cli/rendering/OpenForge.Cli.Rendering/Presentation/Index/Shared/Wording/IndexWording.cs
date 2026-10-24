@@ -32,7 +32,7 @@ internal static class IndexWording
         OpenForge.Cli.Core.Commands.Index.Models.Result.IndexFindingCode.MetadataUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleFrontmatterIsInvalid(),
         OpenForge.Cli.Core.Commands.Index.Models.Result.IndexFindingCode.MetadataOptional => global::OpenForge.Cli.OutputText.Index.IndexText.TitleOptionalMetadataIsMissing(),
         OpenForge.Cli.Core.Commands.Index.Models.Result.IndexFindingCode.GeneratedRegionUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionIsUnsafe(),
-        OpenForge.Cli.Core.Commands.Index.Models.Result.IndexFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsHeld(),
+        OpenForge.Cli.Core.Commands.Index.Models.Result.IndexFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable(),
         OpenForge.Cli.Core.Commands.Index.Models.Result.IndexFindingCode.TargetChanged => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetChanged(),
         OpenForge.Cli.Core.Commands.Index.Models.Result.IndexFindingCode.RecoveryConflict => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryDataBlocksTheChange(),
         OpenForge.Cli.Core.Commands.Index.Models.Result.IndexFindingCode.DiscoveryIncomplete => global::OpenForge.Cli.OutputText.Index.IndexText.TitleRoutesCouldNotBeRead(),

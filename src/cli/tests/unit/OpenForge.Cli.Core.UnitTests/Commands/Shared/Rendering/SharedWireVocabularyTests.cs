@@ -1,9 +1,11 @@
+using OpenForge.Cli.TestSupport.Snapshots;
 using OpenForge.Cli.Core.Commands.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
@@ -19,6 +21,9 @@ public sealed class SharedWireVocabularyTests
     [Fact(DisplayName = "Recovery wire names cover every member of every recovery enum"), Trait("Feature", "command-presentation"), Trait("Evidence", "UnitContract")]
     public void RecoveryNamesAreComplete()
     {
+        Assert.Equal([RecoveryStoreKind.Workspace, RecoveryStoreKind.Legacy], Enum.GetValues<RecoveryStoreKind>());
+        CommandOutputSnapshot.MatchSnapshot(string.Join("\n", Enum.GetValues<RecoveryStoreKind>().Select(kind =>
+            $"{kind}: {RecoveryWireVocabulary.StoreKind(kind)}")), "recovery-store-kinds");
         Assert.Equal(
             ["framework", "extension", "index", "route", "repair", "library", "workspace"],
             Enum.GetValues<RecoveryBundleProducer>().Select(RecoveryWireVocabulary.Producer));
@@ -73,6 +78,7 @@ public sealed class SharedWireVocabularyTests
     [Fact(DisplayName = "Every shared wire mapping rejects an undefined enum value"), Trait("Feature", "command-presentation"), Trait("Evidence", "UnitContract")]
     public void UndefinedValuesFailClosed()
     {
+        Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryWireVocabulary.StoreKind((RecoveryStoreKind)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryWireVocabulary.Producer((RecoveryBundleProducer)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryWireVocabulary.Operation((RecoveryBundleOperation)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryWireVocabulary.CandidateKind((RecoveryBundleCandidateKind)int.MaxValue));

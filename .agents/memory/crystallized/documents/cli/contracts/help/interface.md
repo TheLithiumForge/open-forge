@@ -90,3 +90,7 @@ The shared result contract governs unexpected failures and cancellation.
 - [Help Command Contract Set](_help.md)
 - [Help Behavior Contract](behavior.md)
 - [CLI Command Contract Set](../../command-contract-set.md)
+
+## Runtime State
+
+Help reads no workspace state, creates no `.open-forge-state/` folder and takes neither a workspace lock nor a legacy lock.

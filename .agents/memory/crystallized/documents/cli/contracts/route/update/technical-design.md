@@ -133,3 +133,11 @@ do not expand `CLI-EDGE-016`.
 - [route update Behavior Contract](behavior.md)
 - [CLI Architecture](../../../architecture.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
+
+## Runtime And History
+
+Route Update acquires the fixed workspace sentinel before revalidating its plan.
+Its recovery preparer writes to the typed local store and validates the exact
+current-operation preparation. History is read separately from both stores.
+Drafts, invalid bundles and unavailable coverage warn without vetoing unrelated
+updates. Verified historical finals do not produce warnings.

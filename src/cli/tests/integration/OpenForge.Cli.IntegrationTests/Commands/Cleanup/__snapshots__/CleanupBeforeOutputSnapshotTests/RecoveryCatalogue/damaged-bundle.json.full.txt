@@ -47,6 +47,35 @@
   },
   "limitations": [],
   "data": {
+    "stores": [
+      {
+        "kind": "workspace",
+        "path": "<workspace-recovery-store>",
+        "coverage": "complete",
+        "safety": "safe",
+        "candidates": [
+          {
+            "path": "<recovery-bundle-1>",
+            "kind": "bundle",
+            "outcome": "retained",
+            "integrity": "malformed"
+          }
+        ],
+        "cause": null,
+        "revalidation": "not-requested",
+        "verification": "verified"
+      },
+      {
+        "kind": "legacy",
+        "path": "<legacy-recovery-store>",
+        "coverage": "complete",
+        "safety": "safe",
+        "candidates": [],
+        "cause": null,
+        "revalidation": "not-requested",
+        "verification": "verified"
+      }
+    ],
     "mode": "apply",
     "items": [],
     "notEligible": [

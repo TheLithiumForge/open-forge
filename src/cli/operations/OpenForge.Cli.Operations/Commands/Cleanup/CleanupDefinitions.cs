@@ -74,7 +74,7 @@ internal static class CleanupDefinitions
                 or CleanupFindingCode.CatalogueChangedDuringApply
                 or CleanupFindingCode.CandidateChangedDuringApply => CliSemanticStatus.Blocked,
             CleanupFindingCode.RecoveryFinalMalformed => CliSemanticStatus.Attention,
-            CleanupFindingCode.CatalogueIncomplete => CliSemanticStatus.Incomplete,
+            CleanupFindingCode.CatalogueIncomplete or CleanupFindingCode.StoreValidationUnavailable => CliSemanticStatus.Incomplete,
             CleanupFindingCode.DeletionFailed
                 or CleanupFindingCode.VerificationFailed
                 or CleanupFindingCode.OperationFailed => CliSemanticStatus.Failed,

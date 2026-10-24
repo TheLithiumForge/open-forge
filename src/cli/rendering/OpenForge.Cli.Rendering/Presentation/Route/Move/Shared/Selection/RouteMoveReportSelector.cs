@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Route.Shared.Recovery;
 using OpenForge.Cli.Core.Presentation.Route.Shared.NextActions;
 using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Globalization;
@@ -36,7 +37,10 @@ internal static class RouteMoveReportSelector
             Workspace = result.WorkspacePath is { } workspace
                 ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit)
                 : null,
-            Findings = result.Findings.Select(finding => Finding(result, finding)).ToArray(),
+            Findings = result.Findings.Select(finding => Finding(result, finding))
+                .Concat(RouteRecoveryHistoryFindings.Read(result.RecoveryHistory,
+                    result.RecoveryHistoryCode,
+                    result.RecoveryCoverageUnavailableCode)).ToArray(),
             Effects = result.Effects.Select(effect => Effect(effect, selection.Detail)).ToArray(),
             Counts = Counts(result),
             Data = Data(result, selection.Detail),
@@ -280,6 +284,8 @@ internal static class RouteMoveReportSelector
                 => new(RouteMoveWording.Incomplete(id, Message(result, first)), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid
                 => new(RouteMoveWording.Invalid(result.Source.Requested, Problem(result, first)), CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when first?.LockFailure is { } lockFailure
+                => new(RouteMoveWording.Blocked(id, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(RouteMoveWording.Blocked(id, Problem(result, first)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed
@@ -320,6 +326,7 @@ internal static class RouteMoveReportSelector
                 ? CliSeverity.Warning
                 : CliReportVocabulary.Severity(finding.Status),
             Code = RouteMoveWireVocabulary.Name(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = RouteMoveWording.FindingTitle(finding.Code),
             Message = Message(result, finding),
             Subject = Subject(result, finding),
@@ -378,6 +385,11 @@ internal static class RouteMoveReportSelector
 
     private static string Message(RouteMoveResult result, RouteMoveFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.LabelTheBlockingConditionIsNotDefined();

@@ -1,0 +1,7 @@
+memory/project-alpha/documents is already initialized. Nothing to do.
+  Warning  legacy/recovery  Recovery history is unavailable
+         Recovery history at legacy/recovery could not be checked completely: Access was denied. Current workspace validation still applies.
+  Warning  recovery/prior-draft.tmp  Recovery history is retained
+         Recovery data from an earlier run remains at recovery/prior-draft.tmp. It does not block this operation.
+  Warning  recovery/prior-final.zip  Recovery history is retained
+         Recovery data from an earlier run remains at recovery/prior-final.zip. It does not block this operation.

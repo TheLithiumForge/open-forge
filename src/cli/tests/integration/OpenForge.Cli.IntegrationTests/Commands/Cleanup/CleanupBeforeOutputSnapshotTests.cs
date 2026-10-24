@@ -3,7 +3,6 @@ using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
 using OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
 using OpenForge.Cli.Core.Commands.Cleanup.Shared.Planning;
-using OpenForge.Cli.Core.Presentation.Cleanup;
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
@@ -11,8 +10,11 @@ using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
+using OpenForge.Cli.Core.Presentation.Cleanup;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
@@ -103,9 +105,12 @@ public sealed class CleanupBeforeOutputSnapshotTests
 
             var renderers = CommandOutputRenderers<CleanupResult>.From(
                 CleanupPresentation.Rendering,
-                output => CommandOutputNormalization.NormalizeRecoveryPaths(output, paths),
-                output => CommandOutputNormalization.NormalizeRecoveryPaths(output, paths));
-            renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+                output => CommandOutputNormalization.NormalizeRecoveryStoreLocations(
+                    CommandOutputNormalization.NormalizeRecoveryPaths(output, paths), workspace.Path),
+                output => CommandOutputNormalization.NormalizeRecoveryStoreLocations(
+                    CommandOutputNormalization.NormalizeRecoveryPaths(output, paths), workspace.Path));
+            renderers.MatchDetails(result, situation, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: testName);
@@ -138,7 +143,7 @@ public sealed class CleanupBeforeOutputSnapshotTests
             TestContext.Current.CancellationToken);
         Assert.Equal(WorkspaceLockState.Acquired, acquired.State);
         await using var lease = Assert.IsType<WorkspaceLockLease>(acquired.Lease);
-        var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, frozen, TestContext.Current.CancellationToken);
+        var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, new RecoveryStoreObservation(RecoveryStoreKind.Workspace, RecoveryStoreLocator.Local(lease.Request.Workspace), frozen), TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleDeletionSessionOpenState.Opened, opened.State);
         var session = Assert.IsType<RecoveryBundleDeletionSession>(opened.Session);
         var progress = new CleanupDeletionProgress(plan);
@@ -185,8 +190,10 @@ public sealed class CleanupBeforeOutputSnapshotTests
         Assert.Equal(recoveryBefore[Path.GetFileName(paths[2])], workspace.SnapshotRecovery()[Path.GetFileName(paths[2])]);
         var renderers = CommandOutputRenderers<CleanupResult>.From(
             CleanupPresentation.Rendering,
-            output => CommandOutputNormalization.NormalizeRecoveryPaths(output, paths),
-            output => CommandOutputNormalization.NormalizeRecoveryPaths(output, paths));
+            output => CommandOutputNormalization.NormalizeRecoveryStoreLocations(
+                    CommandOutputNormalization.NormalizeRecoveryPaths(output, paths), workspace.Path),
+            output => CommandOutputNormalization.NormalizeRecoveryStoreLocations(
+                    CommandOutputNormalization.NormalizeRecoveryPaths(output, paths), workspace.Path));
         renderers.MatchDetails(result, "cancelled-partial");
     }
 
@@ -228,7 +235,8 @@ public sealed class CleanupBeforeOutputSnapshotTests
 
         string NormalizeStore(string output)
             => CommandOutputNormalization.NormalizeRecoveryPaths(
-                CommandOutputNormalization.NormalizeRecoveryPaths(output, [], store), [], reportedStore);
+                CommandOutputNormalization.NormalizeRecoveryStoreLocations(
+                    CommandOutputNormalization.NormalizeRecoveryPaths(output, [], store), workspace.Path), [], reportedStore);
     }
 
 }

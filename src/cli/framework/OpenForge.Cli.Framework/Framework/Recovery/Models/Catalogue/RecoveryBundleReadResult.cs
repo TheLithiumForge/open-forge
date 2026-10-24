@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 
@@ -17,6 +18,8 @@ internal enum RecoveryBundleReadState
 
 internal sealed record RecoveryBundleVerifiedRead
 {
+    public required RecoveryStoreLocation Location { get; init; }
+
     public required string BundlePath { get; init; }
 
     public required string WorkspacePhysicalPath { get; init; }

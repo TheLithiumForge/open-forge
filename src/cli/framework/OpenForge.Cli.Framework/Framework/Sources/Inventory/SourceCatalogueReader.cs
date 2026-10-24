@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Inventory;
 
@@ -37,6 +38,12 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
                 return new ValueTask<SourceCatalogue>(state.FormCatalogue(isCancelled: true));
             }
 
+            if (WorkspaceRuntimePaths.Contains(request.Workspace,
+                SourceLogicalPath.ToLexicalPath(request.Workspace.PhysicalRoot, logicalRoot)))
+            {
+                continue;
+            }
+
             var rootResolution = Resolve(state, logicalRoot);
             if (rootResolution.State != PhysicalPathState.Contained)
             {
@@ -45,6 +52,10 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
             }
 
             var rootPhysicalPath = rootResolution.GetContainedPhysicalPath();
+            if (WorkspaceRuntimePaths.Contains(request.Workspace, rootPhysicalPath))
+            {
+                continue;
+            }
             var rootComponent = LinkTargetReader.Read(rootPhysicalPath);
             if (rootComponent.State != PathComponentState.Ordinary
                 || rootComponent.Attributes is not { } rootAttributes
@@ -133,6 +144,11 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
                 }
 
                 var canonicalPath = SourceLogicalPath.Combine(directory.CanonicalPath, name);
+                if (WorkspaceRuntimePaths.Contains(state.Workspace,
+                    SourceLogicalPath.ToLexicalPath(state.Workspace.PhysicalRoot, canonicalPath)))
+                {
+                    continue;
+                }
                 var recognized = SourceFormClassifier.TryClassify(canonicalPath, out var form);
                 var resolution = Resolve(state, canonicalPath);
                 if (resolution.State != PhysicalPathState.Contained)
@@ -148,6 +164,10 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
                 }
 
                 var resolvedPhysicalPath = resolution.GetContainedPhysicalPath();
+                if (WorkspaceRuntimePaths.Contains(state.Workspace, resolvedPhysicalPath))
+                {
+                    continue;
+                }
                 var component = LinkTargetReader.Read(resolvedPhysicalPath);
                 if (component.State != PathComponentState.Ordinary
                     || component.Attributes is not { } attributes)

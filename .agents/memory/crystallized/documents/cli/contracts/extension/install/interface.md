@@ -26,7 +26,7 @@ the runtime meaning of installed files.
 
 The generated lock is the only state-file input and output. Its ownership and
 publication semantics are defined below. Exact prior bytes for planned
-replacements remain in the verified external recovery bundle defined by the
+replacements remain in the verified local recovery bundle defined by the
 [Mutation And Recovery Technical Design](../../../technical-designs/mutation-and-recovery.md).
 
 The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
@@ -191,7 +191,7 @@ established, this command may use it only for explicitly planned missing
 descendant directories beneath the workspace for admitted targets.
 
 Before a workspace effect, the implementation must hold the persistent reusable
-zero-byte external lock under `LocalApplicationData/OpenForge/locks/v1` defined
+ordinary workspace lock under `.open-forge-state/workspace.lock` defined
 by the [Mutation And Recovery Technical
 Design](../../../technical-designs/mutation-and-recovery.md). It holds one read/write `FileShare.None`
 handle and never writes metadata, deletes, or truncates the lock file. Another process holding
@@ -365,12 +365,8 @@ advice only.
 
 Before any existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or
 `Delete`), install uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
-`incomplete` result. The operation prepares exactly one immutable ZIP bundle
-outside the workspace under a deterministic normalized
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a pre-effect
+`incomplete` result. The operation prepares exactly one immutable ZIP bundle in the workspace runtime folder under a deterministic normalized
 physical workspace path key and operation ID when it contains one or more
 existing-target effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`). An operation containing only ordinary content Create effects or no-ops
 creates no bundle. Permission-file Create requires its prior-absence bundle
@@ -598,6 +594,8 @@ The findings catalogue below is the command's finite error and warning vocabular
 | extension-install.recovery-conflict            | error    | recovery-conflict            |                                                                                                                                                                                                                                                                                                                                                                                   |                                                                  |
 | extension-install.recovery-unavailable         | warning  | recovery-unavailable         |                                                                                                                                                                                                                                                                                                                                                                                   |                                                                  |
 | extension-install.recovery-artifact-retained   | warning  | recovery-artifact-retained   |                                                                                                                                                                                                                                                                                                                                                                                   |                                                                  |
+| extension-install.recovery-history             | warning  | recovery-history             | Recovery data from an earlier run remains at {path}. It does not block this operation.                                                                                                                                                                                                                                                                                            |                                                                  |
+| extension-install.recovery-coverage-unavailable | warning  | recovery-coverage-unavailable | Recovery history at {path} could not be checked completely: {cause}. Current workspace validation still applies.                                                                                                                                                                                                                                                                  |                                                                  |
 | extension-install.write-failed                 | error    | write-failed                 |                                                                                                                                                                                                                                                                                                                                                                                   |                                                                  |
 | extension-install.topology-verification-failed | error    | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Install/Shared/Wording/ExtensionInstallWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-install.topology-verification-failed`). | `open-forge doctor`                                              |
 | extension-install.lifecycle-publication-failed | error    | lifecycle-publication-failed |                                                                                                                                                                                                                                                                                                                                                                                   |                                                                  |
@@ -660,7 +658,7 @@ workspace-relative payload targets, rejection before planning, directory effects
 limited to missing descendants beneath the workspace for admitted targets,
 reserved paths, exact occupied target paths in minimal refusal output, complete planning, dependency-first target/generated effects, topology
 verification, last-effect Extension lifecycle publication, final target and
-lifecycle rereads, external recovery-bundle storage and verification, typed
+lifecycle rereads, local recovery-bundle storage and verification, typed
 post-verification deletion state/disposition facts, dry-run parity, the exact
 ordered result and finite findings, seven statuses/streams, JSON, no mutation of
 sources, and no runtime or shipping claim. The [Shared Result
@@ -703,3 +701,7 @@ To add its files, restore Templates and update the package:
 Substitute the actual categories and package ID from plan facts. Print a Route Init preview for each category, followed by that package's Update preview. File-only or directory-only exclusions retain their destination explanation without guessing a category.
 
 After restoring the category, Install still blocks and directs to Update. When the selected package has the same recorded source, version and dependencies, its record has no paths or regions, and all its current package destinations are absent, say `core-templates is already installed without its files. Update it to add them.` with `Next: open-forge extension update core-templates`. This describes the empty file record without claiming historical exclusion evidence. Other file or dependency mismatches retain their existing explanation and update action. Exclusions, ownership, JSON facts, statuses and exits stay unchanged. A declined reviewed Install plan reports cancellation with no completed Entries-update row unless an effect was verified.
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

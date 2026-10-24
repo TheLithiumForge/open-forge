@@ -1,4 +1,4 @@
-Cannot remove toolkit: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot remove toolkit: another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   .agents/open-forge.json  not started
   .agents/toolkit.md       not started

@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
@@ -25,17 +26,25 @@ internal sealed class RecoveryBundleDeletionSession
 
     internal static async ValueTask<RecoveryBundleDeletionSessionOpenResult> OpenAsync(
         WorkspaceLockLease lease,
-        RecoveryBundleCatalogueResult frozenCatalogue,
+        RecoveryStoreObservation frozenStore,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(lease);
-        ArgumentNullException.ThrowIfNull(frozenCatalogue);
+        ArgumentNullException.ThrowIfNull(frozenStore);
+        var frozenCatalogue = frozenStore.Catalogue;
+        if (frozenStore.Location is not { } location
+            || frozenStore.Kind != location.Kind
+            || !RecoveryBundleDeletionValidation.HasAuthority(location, lease))
+        {
+            return Closed(RecoveryBundleDeletionSessionOpenState.Blocked, "A deletion session requires authority for its recorded store.");
+        }
+
         if (!lease.IsHeldFor(lease.Request.Workspace))
         {
             return Closed(RecoveryBundleDeletionSessionOpenState.Blocked, "A deletion session requires a held workspace lease.");
         }
 
-        var storageFailure = RecoveryDeletionStorageBoundary.ReadWorkspace(lease.Request.Workspace);
+        var storageFailure = RecoveryDeletionStorageBoundary.ReadLocation(location);
         if (storageFailure is not null)
         {
             return Closed(RecoveryBundleDeletionSessionOpenState.Blocked, storageFailure.DirectCause, failure: storageFailure);
@@ -43,7 +52,7 @@ internal sealed class RecoveryBundleDeletionSession
 
         if (frozenCatalogue.State != RecoveryBundleCatalogueState.Available
             || frozenCatalogue.Candidates.IsDefault
-            || frozenCatalogue.Candidates.Any(candidate => !IsCatalogueMember(candidate, lease)))
+            || frozenCatalogue.Candidates.Any(candidate => candidate.Location != location || !IsCatalogueMember(candidate, lease)))
         {
             return Closed(RecoveryBundleDeletionSessionOpenState.Blocked, "A deletion session requires a complete validated frozen catalogue.");
         }
@@ -53,13 +62,13 @@ internal sealed class RecoveryBundleDeletionSession
             return Closed(RecoveryBundleDeletionSessionOpenState.Cancelled);
         }
 
-        var observed = await RecoveryBundleCatalogue.ReadAsync(lease.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        var observed = await RecoveryBundleCatalogue.ReadAsync(location, cancellationToken).ConfigureAwait(false);
         if (!lease.IsHeldFor(lease.Request.Workspace))
         {
             return Closed(RecoveryBundleDeletionSessionOpenState.Blocked, "The workspace lease was released during session opening.", observed);
         }
 
-        storageFailure = RecoveryDeletionStorageBoundary.ReadWorkspace(lease.Request.Workspace);
+        storageFailure = RecoveryDeletionStorageBoundary.ReadLocation(location);
         if (storageFailure is not null)
         {
             return Closed(RecoveryBundleDeletionSessionOpenState.Blocked, storageFailure.DirectCause, failure: storageFailure);
@@ -108,7 +117,7 @@ internal sealed class RecoveryBundleDeletionSession
             return RecoveryBundleDeletionResult.BlockedUnknown("Deletion requires an unchanged session member and its live workspace lease.");
         }
 
-        var storageFailure = RecoveryDeletionStorageBoundary.ReadWorkspace(_lease.Request.Workspace);
+        var storageFailure = RecoveryDeletionStorageBoundary.ReadLocation(candidate.Location);
         if (storageFailure is not null)
         {
             return RecoveryBundleDeletionResult.BlockedUnknown(storageFailure.DirectCause, candidate.Path);
@@ -127,13 +136,13 @@ internal sealed class RecoveryBundleDeletionSession
 
         if (candidate.Kind == RecoveryBundleCandidateKind.Final)
         {
-            var read = await RecoveryBundleReader.ReadFinalAsync(_lease.Request.Workspace, candidate.Path, cancellationToken).ConfigureAwait(false);
+            var read = await RecoveryBundleReader.ReadFinalAsync(candidate.Location, candidate.Path, cancellationToken).ConfigureAwait(false);
             if (!_lease.IsHeldFor(_lease.Request.Workspace))
             {
                 return RecoveryBundleDeletionResult.BlockedUnknown("The workspace lease was released during semantic validation.", candidate.Path);
             }
 
-            storageFailure = RecoveryDeletionStorageBoundary.ReadWorkspace(_lease.Request.Workspace);
+            storageFailure = RecoveryDeletionStorageBoundary.ReadLocation(candidate.Location);
             if (storageFailure is not null)
             {
                 return RecoveryBundleDeletionResult.BlockedUnknown(storageFailure.DirectCause, candidate.Path);
@@ -157,7 +166,7 @@ internal sealed class RecoveryBundleDeletionSession
             return RecoveryBundleDeletionResult.BlockedUnknown("The workspace lease was released before deletion.", candidate.Path);
         }
 
-        storageFailure = RecoveryDeletionStorageBoundary.ReadWorkspace(_lease.Request.Workspace);
+        storageFailure = RecoveryDeletionStorageBoundary.ReadLocation(candidate.Location);
         if (storageFailure is not null)
         {
             return RecoveryBundleDeletionResult.BlockedUnknown(storageFailure.DirectCause, candidate.Path);

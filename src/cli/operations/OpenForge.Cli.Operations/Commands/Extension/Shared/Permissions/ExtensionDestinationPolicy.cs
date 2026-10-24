@@ -1,10 +1,13 @@
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 
@@ -21,6 +24,25 @@ internal static class ExtensionDestinationPolicy
         if (!IsAllowed(path))
         {
             return false;
+        }
+        if (WorkspaceRuntimePaths.Contains(workspace, Path.GetFullPath(path, workspace.PhysicalRoot)))
+        {
+            return false;
+        }
+        var resolver = new PhysicalPathResolver();
+        var current = Path.GetFullPath(path, workspace.LexicalRoot);
+        while (current is not null)
+        {
+            var resolution = resolver.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, current);
+            if (resolution.ResolvedPhysicalPath is { } physical && WorkspaceRuntimePaths.Contains(workspace, physical))
+            {
+                return false;
+            }
+            if (resolution.State != PhysicalPathState.Missing)
+            {
+                break;
+            }
+            current = Path.GetDirectoryName(current);
         }
         var store = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.DoNotVerify);
         if (store is null)

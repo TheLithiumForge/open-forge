@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using System.Collections.Immutable;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
@@ -66,10 +67,14 @@ internal sealed class ExtensionUpdateApplicationOperation(
         {
             return Stop(
                 execution,
-                lockResult.State == WorkspaceLockState.Cancelled
+                new ExtensionUpdateFinding(
+                    lockResult.State == WorkspaceLockState.Cancelled
                     ? ExtensionUpdateFindingCode.Interrupted
                     : ExtensionUpdateFindingCode.WorkspaceLockUnavailable,
-                lockResult.Cause ?? "The persistent Extension Update workspace lease could not be acquired.");
+                lockResult.Cause ?? "The persistent Extension Update workspace lease could not be acquired.")
+                {
+                    LockFailure = WorkspaceLockFailureProjection.From(lockResult.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")),
+                });
         }
 
         await using (lease.ConfigureAwait(false))
@@ -558,7 +563,12 @@ internal sealed class ExtensionUpdateApplicationOperation(
             && expected.DirectoryCreations.Select(value => value.Expectation)
                 .SequenceEqual(actual.DirectoryCreations.Select(value => value.Expectation))
             && ChangesEqual(expected.AllFileChanges, actual.AllFileChanges)
-            && expected.Result.Findings.SequenceEqual(actual.Result.Findings);
+            && expected.Result.Findings.Where(IsCurrentFinding)
+                .SequenceEqual(actual.Result.Findings.Where(IsCurrentFinding));
+
+    private static bool IsCurrentFinding(ExtensionUpdateFinding finding)
+        => finding.Code is not (ExtensionUpdateFindingCode.RecoveryHistory
+            or ExtensionUpdateFindingCode.RecoveryCoverageUnavailable);
 
     private static bool AppliedMatches(ExtensionUpdatePlan expected, ExtensionUpdatePlan actual)
         => string.Equals(expected.SourceSignature, actual.SourceSignature, StringComparison.Ordinal)

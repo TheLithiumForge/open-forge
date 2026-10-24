@@ -1,0 +1,7 @@
+Removed 4 recovery bundles and 2 unfinished drafts.
+  <legacy-recovery>/operation-11111111111111111111111111111111.zip
+  <legacy-recovery>/operation-22222222222222222222222222222222.zip
+  <legacy-recovery>/operation-33333333333333333333333333333333.draft
+  <workspace-recovery>/operation-11111111111111111111111111111111.zip
+  <workspace-recovery>/operation-22222222222222222222222222222222.zip
+  <workspace-recovery>/operation-33333333333333333333333333333333.draft

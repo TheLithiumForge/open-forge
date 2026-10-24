@@ -500,3 +500,7 @@ Marks the `none` placeholder in an entrypoint with no entries. It is not a loadi
 Example: `- none - No entries - #Empty`
 
 Next: [Routing](concepts/routing.md), or [choose an Extension](extensions/index.md#choose-by-need).
+
+## Workspace runtime folder
+
+The fixed `.open-forge-state/` folder holds the workspace lock and new recovery bundles. Its own `.gitignore` keeps it out of ordinary Git tracking. `git clean -x` and `git clean -X` can delete it. The live handle owns the lock, so a leftover file does not mean it is held. `OPENFORGE_DATA_HOME` selects only the legacy per-user store.

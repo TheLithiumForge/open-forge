@@ -1,3 +1,9 @@
+using OpenForge.Cli.Core.Commands.Extension;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Install;
 using OpenForge.Cli.Core.Framework.Recovery;
@@ -13,6 +19,9 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
 public sealed class ExtensionInstallRecoveryHistoryIntegrationTests
 {
+    private const string Target = SourceLogicalPath.AgentsRoot + "/toolkit.md";
+    private const string PackageId = "toolkit";
+    private const string Heading = "Toolkit";
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Install preserves an existing verified recovery final")]
     [Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
@@ -23,8 +32,7 @@ public sealed class ExtensionInstallRecoveryHistoryIntegrationTests
         Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         using var source = ExtensionInstallCatalogue.Create(
             "extension-install-verified-recovery-history-source");
-        const string payload = ".agents/toolkit.md";
-        source.AddPackage("toolkit", [], (payload, Document("Toolkit")));
+        source.AddPackage(PackageId, [], (Target, Document(Heading)));
         var preparation = await ExtensionRecoveryHistoryFixture.CreateVerifiedFinalAsync(
             workspace,
             ExtensionInstallDefinitions.CommandIdentity,
@@ -41,64 +49,71 @@ public sealed class ExtensionInstallRecoveryHistoryIntegrationTests
 
         var run = await workspace.RunAsync(
         [
-            "extension", "install", "toolkit",
-            "--source", source.Path,
-            "--automatic", "--format", "json",
+            ExtensionDefinitions.ExtensionGroup.Name, ExtensionInstallDefinitions.InstallCommand.Name, PackageId,
+            ExtensionInstallDefinitions.Source.Name, source.Path,
+            ExtensionInstallDefinitions.Automatic.Name, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat,
         ]);
 
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
-        Assert.Equal(Document("Toolkit"), workspace.ReadText(payload));
+        using var document = JsonDocument.Parse(run.StandardOutput);
+        Assert.Empty(document.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray());
+        Assert.Equal(Document(Heading), workspace.ReadText(Target));
         Assert.True(File.Exists(preparation.BundlePath));
         Assert.Equal(priorBytes, await File.ReadAllBytesAsync(preparation.BundlePath, TestContext.Current.CancellationToken));
         Assert.Equal(sourceBefore, source.Snapshot());
     }
 
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Extension Install blocks unverified recovery history at its exact path")]
+    [Theory(DisplayName = "Extension Install warns about unverified recovery history at its exact path")]
     [InlineData("malformed")]
     [InlineData("draft")]
     [Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
-    public async Task UnverifiedRecoveryHistoryBlocksWriteFree(string candidateKind)
+    public async Task UnverifiedRecoveryHistoryWarnsAndAllowsChanges(string candidateKind)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             $"extension-install-unverified-recovery-{candidateKind}");
         await workspace.SeedFrameworkAsync();
         using var source = ExtensionInstallCatalogue.Create(
             $"extension-install-unverified-recovery-{candidateKind}-source");
-        source.AddPackage("toolkit", [], (".agents/toolkit.md", Document("Toolkit")));
+        source.AddPackage(PackageId, [], (Target, Document(Heading)));
         var kind = candidateKind == "draft"
             ? RecoveryBundleCandidateKind.Draft
             : RecoveryBundleCandidateKind.Final;
         var candidatePath = ExtensionRecoveryHistoryFixture.CandidatePath(
             workspace.Workspace,
-            Guid.NewGuid(),
+            Guid.Parse("11111111-1111-1111-1111-111111111111"),
             kind);
         var candidateBytes = candidateKind == "draft"
             ? "incomplete draft"u8.ToArray()
             : [0x01, 0x02, 0x03, 0x04];
         await File.WriteAllBytesAsync(candidatePath, candidateBytes, TestContext.Current.CancellationToken);
-        var beforeWorkspace = workspace.Snapshot();
         var beforeSource = source.Snapshot();
+
+        await ExtensionRecoveryHistoryFixture.MatchHistoryAsync(workspace, source.Path,
+            new ReadOutputScenario
+            {
+                Situation = candidateKind,
+                Arguments = [ExtensionDefinitions.ExtensionGroup.Name, ExtensionInstallDefinitions.InstallCommand.Name, PackageId, ExtensionInstallDefinitions.Source.Name, source.Path, ExtensionInstallDefinitions.DryRun.Name],
+                ExitCode = 2,
+            }, testName: $"UnverifiedHistory.{candidateKind}");
 
         var run = await workspace.RunAsync(
         [
-            "extension", "install", "toolkit",
-            "--source", source.Path,
-            "--automatic", "--format", "json",
+            ExtensionDefinitions.ExtensionGroup.Name, ExtensionInstallDefinitions.InstallCommand.Name, PackageId,
+            ExtensionInstallDefinitions.Source.Name, source.Path,
+            ExtensionInstallDefinitions.Automatic.Name, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat,
         ]);
 
-        Assert.Equal(5, run.ExitCode);
-        Assert.Equal(CliSemanticStatus.Blocked, run.Status);
+        Assert.Equal(2, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Attention, run.Status);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
-        Assert.Equal("extension-install.recovery-conflict", finding.GetProperty("code").GetString());
-        Assert.Equal(candidatePath, finding.GetProperty("subject").GetProperty("path").GetString());
-        Assert.Empty(document.RootElement.GetProperty("effects").EnumerateArray());
-        Assert.Equal(beforeWorkspace, workspace.Snapshot());
+        var finding = Assert.Single(document.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray());
+        Assert.Equal(ExtensionInstallDefinitions.ReadMachineName(ExtensionInstallFindingCode.RecoveryHistory), finding.GetProperty(CliJsonFields.Code).GetString());
+        Assert.Equal(candidatePath, finding.GetProperty(CliJsonFields.Subject).GetProperty(CliJsonFields.Path).GetString());
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(candidateBytes, await File.ReadAllBytesAsync(candidatePath, TestContext.Current.CancellationToken));
-        Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
+        Assert.True(File.Exists(workspace.Combine(Target)));
     }
 
     private static string Document(string heading)

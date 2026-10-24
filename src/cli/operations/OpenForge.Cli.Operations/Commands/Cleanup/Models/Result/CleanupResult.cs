@@ -20,6 +20,8 @@ internal sealed record CleanupResult : ICliCommandResult
 
     public required CliNextAction? Next { get; init; }
 
+    internal IReadOnlyList<CleanupStoreResult> Stores { get; init; } = [];
+
     internal required CleanupResultFacts Facts { get; init; }
 
     internal CleanupMode Mode => Facts.Mode;
@@ -42,3 +44,5 @@ internal sealed record CleanupResult : ICliCommandResult
 
     internal ImmutableArray<CleanupFinding> Findings => Facts.Findings;
 }
+
+internal sealed record CleanupStoreResult(string Kind, string? Path, string? Cause, CleanupResultFacts Facts);

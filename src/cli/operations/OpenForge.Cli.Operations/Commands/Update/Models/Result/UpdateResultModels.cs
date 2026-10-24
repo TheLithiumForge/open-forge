@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
@@ -141,6 +142,8 @@ internal sealed record UpdateRecovery
 
 internal sealed class UpdateFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     internal UpdateFinding(
         UpdateFindingCode code,
         string? target,

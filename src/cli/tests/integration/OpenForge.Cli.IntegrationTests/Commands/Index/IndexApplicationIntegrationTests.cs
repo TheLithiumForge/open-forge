@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Index;
 
@@ -295,7 +296,7 @@ public sealed class IndexApplicationIntegrationTests
         var lockStore = WorkspaceLockStoreRoot.ResolveForCurrentUser(Environment.SpecialFolderOption.DoNotVerify);
         Assert.NotNull(lockStore);
         AssertAbsent(WorkspaceLockPathIdentity.LockPath(lockStore, workspace));
-        var recoveryStore = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.DoNotVerify);
+        var recoveryStore = TestDataHome.LocalRecoveryStoreRoot(workspace.PhysicalRoot);
         Assert.NotNull(recoveryStore);
         AssertAbsent(RecoveryBundlePathIdentity.WorkspaceDirectory(recoveryStore, workspace.PhysicalRoot));
     }

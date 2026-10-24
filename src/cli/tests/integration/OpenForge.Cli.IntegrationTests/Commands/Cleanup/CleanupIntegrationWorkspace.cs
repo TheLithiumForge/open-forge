@@ -23,6 +23,7 @@ using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Cleanup;
 
@@ -57,10 +58,7 @@ internal sealed class CleanupIntegrationWorkspace : IDisposable
     {
         get
         {
-            var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-                Environment.SpecialFolderOption.None)
-                ?? throw new InvalidOperationException(
-                    "LocalApplicationData must remain observable for Cleanup integration evidence.");
+            var storeRoot = TestDataHome.LocalRecoveryStoreRoot(Workspace.PhysicalRoot);
             return RecoveryBundlePathIdentity.WorkspaceDirectory(
                 storeRoot,
                 Workspace.PhysicalRoot);

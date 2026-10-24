@@ -9,6 +9,9 @@ namespace OpenForge.Cli.Core.Commands.Route.Remove;
 
 internal static class RouteRemoveDefinitions
 {
+    internal const string RecoveryHistoryCode = "route-remove.recovery-history";
+    internal const string RecoveryCoverageUnavailableCode = "route-remove.recovery-coverage-unavailable";
+
     internal const int SchemaVersion = 1;
     internal const string CommandIdentity = "route remove";
 

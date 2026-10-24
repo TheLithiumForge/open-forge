@@ -1,3 +1,6 @@
 The recovery store could not be read completely. Nothing was removed.
 Workspace: <workspace>
+  items left in place: The recovery storage directory chain contains a
+  non-directory:
+  <recovery-store>
 Next: open-forge doctor --workspace <workspace>

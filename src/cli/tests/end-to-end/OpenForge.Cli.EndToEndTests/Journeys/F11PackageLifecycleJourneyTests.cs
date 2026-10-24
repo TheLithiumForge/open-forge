@@ -530,7 +530,7 @@ public sealed class F11PackageLifecycleJourneyTests
     {
         AssertPersistentLifecycleEvidence(workspace);
 
-        var recoveryDirectory = workspace.LockStore.RecoveryWorkspaceDirectory(workspace.Path);
+        var recoveryDirectory = PublishedWorkspaceLockStore.LocalRecoveryWorkspaceDirectory(workspace.Path);
         Assert.True(Directory.Exists(recoveryDirectory));
         var artifacts = Directory.EnumerateFileSystemEntries(
                 recoveryDirectory,

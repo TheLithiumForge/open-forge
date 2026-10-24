@@ -31,7 +31,7 @@ internal static class CleanupPresentation
             TextFindings = selected.Selection.Detail == CliDetail.Minimal
                 && selected.Report.HeadlineFindingCode is not null
                     ? selected.TextFindings
-                        .Where(finding => finding.Code != selected.Report.HeadlineFindingCode)
+                        .Where(finding => finding.Code != selected.Report.HeadlineFindingCode || finding.LockFailure is not null)
                         .ToArray()
                     : selected.TextFindings,
             TextEffects = [],

@@ -55,12 +55,12 @@ internal static class RemoveSelectionResolver
 
     private static bool TryReadKind(string? value, out RemoveKind kind)
     {
-        switch (value ?? "path")
+        switch (value ?? RemoveDefinitions.PathKind)
         {
-            case "path": kind = RemoveKind.Path; return true;
-            case "route": kind = RemoveKind.Route; return true;
-            case "extension": kind = RemoveKind.Extension; return true;
-            case "library": kind = RemoveKind.Library; return true;
+            case RemoveDefinitions.PathKind: kind = RemoveKind.Path; return true;
+            case RemoveDefinitions.RouteKind: kind = RemoveKind.Route; return true;
+            case RemoveDefinitions.ExtensionKind: kind = RemoveKind.Extension; return true;
+            case RemoveDefinitions.LibraryKind: kind = RemoveKind.Library; return true;
             default: kind = default; return false;
         }
     }

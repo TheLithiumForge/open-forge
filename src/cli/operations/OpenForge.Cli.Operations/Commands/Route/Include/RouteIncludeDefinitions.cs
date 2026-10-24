@@ -5,6 +5,9 @@ namespace OpenForge.Cli.Core.Commands.Route.Include;
 
 internal static class RouteIncludeDefinitions
 {
+    internal const string RecoveryHistoryCode = "route-include.recovery-history";
+    internal const string RecoveryCoverageUnavailableCode = "route-include.recovery-coverage-unavailable";
+
     internal const int SchemaVersion = 1;
     internal const string CommandIdentity = "route include";
     internal static readonly CliSyntaxDefinition Command = new("include", "List an existing workspace file in the loader where it lives.");

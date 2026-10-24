@@ -111,7 +111,7 @@ entry and supported `.agents` Markdown, settings registrations and loader-listed
 included text files with their catalogue descendants, the embedded Framework payload, the
 route and loading facts needed for startup and continuity, direct Loader root
 categories, one shared per-invocation `.agents/open-forge.lock.json` snapshot
-for Framework, Extension, and Library ownership, and the current user's external recovery store containing exact-name final
+for Framework, Extension, and Library ownership, and the current user's local recovery store containing exact-name final
 and draft candidates for the selected normalized physical workspace path.
 
 Enumeration is closed. The ledger records each canonical workspace-relative path,
@@ -411,19 +411,10 @@ a blocked ownership fact and never invokes either lifecycle command.
 
 ### Recovery-Bundle Accounting
 
-The recovery stage resolves only the current user's
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.None)/OpenForge/recovery/v1` store. This
-observer-only lookup never creates the OS application-data root or the Open Forge
-subtree. It uses the deterministic key for the selected normalized physical
-workspace path and reports every exact-name final and draft candidate. It never
-falls back to the workspace, a repository, a temporary directory, or a target's
-adjacent files. Unknown, lookalike, mismatched, and differently keyed items do
-not enter the candidate catalogue. A malformed exact-name final remains a
-reported candidate.
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
 
-If the application-data root or recovery store is absent, the stage reports zero
-verified finals and zero incomplete drafts. If an existing root or selected
+If a store is absent, the stage reports zero
+verified finals and zero incomplete drafts for that store. If an existing root or selected
 workspace bucket cannot be read, it records the recovery fact as unavailable and
 forms the locally contracted `incomplete` result. It never treats access failure
 as absence.
@@ -710,3 +701,9 @@ Status observes current source metadata and generated navigation without invokin
 - [Routing model](../../../framework/routing/model.md)
 - [Route scope and inheritance](../../../framework/routing/scope.md)
 - [Overwrite customization](../../../framework/routing/overwrites.md)
+
+## Recovery Stores
+
+At full and debug detail, `data.recovery.stores` reports ordered store records with `kind`, `path`, `coverage`, `candidates` and `cause`. Existing aggregate recovery fields remain. Store kinds are `workspace` and `legacy`. Text lists candidate paths together and adds warnings for unavailable stores. Empty readable stores do not get separate text rows.
+
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.

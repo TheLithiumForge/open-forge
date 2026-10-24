@@ -46,6 +46,10 @@ internal sealed record CleanupPlanEntry
 
     public RecoveryBundleCandidateKind Kind => Candidate.Kind;
 
+    internal Enum KindValue => Kind;
+
+    internal Enum IntegrityValue => Integrity;
+
     public RecoveryBundleIntegrity Integrity => Candidate.Integrity;
 
     public CleanupArtifactFileKind FileKind => Candidate.FileKind;
@@ -110,6 +114,33 @@ internal sealed record CleanupPlan
         DeletionEntries = [];
         Safety = CleanupPlanSafety.NotEstablished;
     }
+
+    private CleanupPlan(CleanupRequest request, ImmutableArray<CleanupPlan> stores)
+    {
+        if (stores.IsDefaultOrEmpty || stores.Any(store => store.Request != request))
+        {
+            throw new ArgumentException("Store plans must belong to the selected request.", nameof(stores));
+        }
+
+        Request = request;
+        var coverage = stores.All(store => store.Catalogue.Coverage == CleanupCatalogueCoverage.Complete)
+            ? CleanupCatalogueCoverage.Complete : CleanupCatalogueCoverage.Incomplete;
+        if (stores.Any(store => store.Catalogue.Coverage == CleanupCatalogueCoverage.Interrupted))
+        {
+            coverage = CleanupCatalogueCoverage.Interrupted;
+        }
+
+        Catalogue = CleanupCatalogue.Create(coverage,
+            [.. stores.SelectMany(store => store.Catalogue.Candidates).OrderBy(candidate => candidate.Path, StringComparer.Ordinal)]);
+        Entries = [.. Catalogue.Candidates.Select((candidate, ordinal) => CleanupPlanEntry.Create(
+            ordinal, candidate, stores.SelectMany(store => store.Entries).Single(entry => ReferenceEquals(entry.Candidate, candidate)).ResultEffect))];
+        var deletable = stores.SelectMany(store => store.DeletionEntries).Select(entry => entry.Candidate).ToHashSet();
+        DeletionEntries = [.. Entries.Where(entry => deletable.Contains(entry.Candidate))];
+        Safety = stores.All(store => store.Safety == CleanupPlanSafety.Safe) ? CleanupPlanSafety.Safe : CleanupPlanSafety.Blocked;
+    }
+
+    internal static CleanupPlan Aggregate(CleanupRequest request, ImmutableArray<CleanupPlan> stores)
+        => new(request, stores);
 
     internal static CleanupPlan NotEstablished()
         => new();

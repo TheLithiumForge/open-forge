@@ -42,11 +42,39 @@
   "counts": {
     "bundlesRemoved": 0,
     "draftsRemoved": 0,
-    "itemsLeftInPlace": 0,
+    "itemsLeftInPlace": null,
     "warnings": 1
   },
-  "limitations": [],
+  "limitations": [
+    {
+      "what": "items left in place",
+      "why": "The recovery storage directory chain contains a non-directory: <recovery-store>",
+      "subject": null
+    }
+  ],
   "data": {
+    "stores": [
+      {
+        "kind": "workspace",
+        "path": "<recovery-store>",
+        "coverage": "incomplete",
+        "safety": "blocked",
+        "candidates": [],
+        "cause": "The recovery storage directory chain contains a non-directory: <recovery-store>",
+        "revalidation": "not-requested",
+        "verification": "not-requested"
+      },
+      {
+        "kind": "legacy",
+        "path": "<legacy-recovery-store>",
+        "coverage": "complete",
+        "safety": "safe",
+        "candidates": [],
+        "cause": null,
+        "revalidation": "not-requested",
+        "verification": "verified"
+      }
+    ],
     "mode": "apply",
     "items": [],
     "notEligible": [],

@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
-using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 
 namespace OpenForge.Cli.Core.Commands.Shared.Serialization;
 
@@ -10,6 +11,17 @@ namespace OpenForge.Cli.Core.Commands.Shared.Serialization;
 /// </summary>
 internal static class RecoveryWireVocabulary
 {
+    internal const string CompleteCoverage = "complete";
+    internal const string IncompleteCoverage = "incomplete";
+
+    internal static string StoreKind(RecoveryStoreKind value)
+        => value switch
+        {
+            RecoveryStoreKind.Workspace => "workspace",
+            RecoveryStoreKind.Legacy => "legacy",
+            _ => Undefined(nameof(value), value),
+        };
+
     internal static string Producer(RecoveryBundleProducer value)
         => value switch
         {

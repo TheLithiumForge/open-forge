@@ -136,21 +136,29 @@ internal sealed class LibraryMutationWorkspace : IDisposable
         => new() { Workspace = Workspace, LibraryId = LibraryId.Create(libraryId), AllowPrompt = false, Automatic = mode == LibraryMode.Apply, Mode = mode };
 
     internal IReadOnlyDictionary<string, string> Snapshot()
+        => Snapshot(includeRuntime: false);
+
+    internal IReadOnlyDictionary<string, string> Snapshot(bool includeRuntime)
     {
         var result = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        foreach (var pair in _workspace.SnapshotHashes())
+        foreach (var pair in _workspace.SnapshotHashes(includeRuntime))
         {
             result.Add(pair.Key, pair.Value);
         }
 
-        Observe(new DirectoryInfo(Path), result);
+        Observe(new DirectoryInfo(Path), result, includeRuntime);
         return result;
     }
 
-    private void Observe(DirectoryInfo directory, IDictionary<string, string> result)
+    private void Observe(DirectoryInfo directory, IDictionary<string, string> result, bool includeRuntime)
     {
         foreach (var entry in directory.EnumerateFileSystemInfos())
         {
+            if (!includeRuntime && TemporaryWorkspace.IsRuntimeEntry(Path, entry.FullName))
+            {
+                continue;
+            }
+
             var relative = System.IO.Path.GetRelativePath(Path, entry.FullName).Replace('\\', '/');
             if ((entry.Attributes & FileAttributes.ReparsePoint) != 0)
             {
@@ -159,7 +167,7 @@ internal sealed class LibraryMutationWorkspace : IDisposable
             else if (entry is DirectoryInfo child)
             {
                 result[relative] = "directory";
-                Observe(child, result);
+                Observe(child, result, includeRuntime);
             }
         }
     }

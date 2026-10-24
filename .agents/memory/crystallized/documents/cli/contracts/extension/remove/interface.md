@@ -133,8 +133,8 @@ ownership-record subject and raw cause. Other missing required facts remain
 `incomplete` or `blocked` and perform no managed mutation.
 
 Before a workspace effect, the implementation must hold the actual OS lock for
-the persistent external zero-byte path under
-`LocalApplicationData/OpenForge/locks/v1` defined by the [Mutation And Recovery
+the persistent local path under
+`.open-forge-state/workspace.lock` defined by the [Mutation And Recovery
 Technical Design](../../../technical-designs/mutation-and-recovery.md). The lock file is persistent and reusable: write no metadata,
 timestamp, or ownership record. Hold a
 `FileShare.None` handle for the operation; file existence is not lock
@@ -156,14 +156,13 @@ are not read, rewritten, migrated, or deleted.
 Before the first target effect, application prepares and verifies exactly one
 immutable ZIP recovery bundle for the complete operation when the plan contains
 an existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) or a permission-file Create. The bundle
-is outside the workspace under
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`; no temporary,
+stored in the workspace under
+`.open-forge-state/recovery/v1/<workspace key>/`. No temporary,
 repository, `HOME`, or custom platform fallback is permitted. Unavailable
 storage makes the operation `incomplete` before any target effect.
 
 The final bundle name is deterministic from the normalized physical workspace
-path key and operation ID. A `CreateNew` draft in the same external directory
+path key and operation ID. A `CreateNew` draft in the same local directory
 is closed and reopened for semantic manifest, exact ordered entry, length,
 hash, and payload-byte validation, moved within that directory to the final
 name, and reopened and verified again. Only the valid final ZIP forms the opaque
@@ -187,8 +186,7 @@ from recovery provenance, or stores a journal, progress receipt, or history.
 After final verification, re-read and verify the prepared bundle, retain it,
 and report recovery state `retained` with its exact `residualPath`. Successful
 retention does not by itself change the result to `completed-with-warnings` or imply a failure. The bundle contains edited
-bytes that Git may never have recorded. Existing recovery-catalogue rules block
-later mutations until the user reviews the bundle and runs Cleanup. An absent-ID
+bytes that Git may never have recorded. Retained history does not block later unrelated mutations. An absent-ID
 Remove no-op requires no mutation and may still complete. Missing or invalid
 prepared recovery at final verification is a failure.
 
@@ -201,7 +199,7 @@ automatic guarantee: deterministic rediscovery uses the same normalized
 physical path, while Doctor/Cleanup may report orphan bundles for the original
 root and never auto-bind or restore them.
 
-Recovery storage is ordinary current-user `LocalApplicationData` under the
+New recovery storage is inside `.open-forge-state/` under the
 stable workspace and cooperating-client threat model. No special platform-
 permission or encryption behavior is promised. Recovery reads use semantic
 schema and exact ordered-entry validation; the
@@ -426,6 +424,8 @@ The findings catalogue below is the command's finite error and warning vocabular
 | extension-remove.recovery-conflict            | error    | recovery-conflict            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                            |
 | extension-remove.recovery-unavailable         | warning  | recovery-unavailable         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                            |
 | extension-remove.recovery-artifact-retained   | warning  | recovery-artifact-retained   | (only when cleanup after success failed; an intentionally kept bundle is not this)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                            |
+| extension-remove.recovery-history             | warning  | recovery-history             | Recovery data from an earlier run remains at {path}. It does not block this operation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                                                                            |
+| extension-remove.recovery-coverage-unavailable | warning  | recovery-coverage-unavailable | Recovery history at {path} could not be checked completely: {cause}. Current workspace validation still applies.                                                                                                                                                                                                                                                                                                                                                                                                                                                   |                                                                            |
 | extension-remove.write-failed                 | error    | write-failed                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                            |
 | extension-remove.topology-verification-failed | error    | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Remove/Shared/Wording/ExtensionRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-remove.topology-verification-failed`).                                                                                                                                                                                     | `open-forge doctor`                                                        |
 | extension-remove.lifecycle-publication-failed | error    | lifecycle-publication-failed |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                            |
@@ -498,3 +498,7 @@ remain the output evidence.
 ### Human Removal Preview
 
 The preview names every Extension in the selected removal closure. One package keeps `Would remove the planning Extension.` Multiple packages use `Would remove 2 Extensions: planning, workflows.` in the same order as the selected IDs. The result, deletion effects, dependency rules, structured output, statuses and exits remain unchanged.
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

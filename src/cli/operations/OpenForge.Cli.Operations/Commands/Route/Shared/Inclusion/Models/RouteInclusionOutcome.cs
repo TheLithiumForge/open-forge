@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -10,6 +11,7 @@ internal sealed record RouteInclusionEffect(string Path, string? Before, string 
 
 internal sealed record RouteInclusionOutcome
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
     public CliSemanticStatus Status { get; init; } = CliSemanticStatus.Complete;
     public string? Path { get; init; }
     public string? Before { get; init; }

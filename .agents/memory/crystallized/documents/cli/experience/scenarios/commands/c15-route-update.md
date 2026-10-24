@@ -461,3 +461,7 @@ The complete supplied description and valid tags allow Route Update to create ro
 **State:** Inspect the created root fields and ordered tags, compare the original title and body bytes, and check the parent entry independently. Verify that settings bytes and unrelated files remain unchanged.
 
 **Output:** Check reported field changes and actual generated effects separately from preservation. The new metadata must come from the explicit values, without inferred descriptions or tags.
+
+## Task 86 Runtime Expectations
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

@@ -137,7 +137,10 @@ internal sealed class PublishedJourneyWorkspace : IDisposable
     }
 
     internal IReadOnlyDictionary<string, string> SnapshotState()
-        => PublishedWorkspaceTreeSnapshot.Capture(Path);
+        => PublishedWorkspaceTreeSnapshot.Capture(Path, workspacePaths: _lockStore.WorkspacePaths);
+
+    internal IReadOnlyDictionary<string, string> SnapshotState(bool includeRuntime)
+        => PublishedWorkspaceTreeSnapshot.Capture(Path, includeRuntime, _lockStore.WorkspacePaths);
 
     public void Dispose()
     {
@@ -319,6 +322,18 @@ internal sealed class PublishedJourneyWorkspace : IDisposable
     private void DeleteReservedParentDirectories()
     {
         _ = _workspace.Combine("journey-ownership-check");
+        foreach (var selected in _lockStore.WorkspacePaths)
+        {
+            var relative = System.IO.Path.GetRelativePath(Path, selected);
+            if (relative == "." || relative == ".." || System.IO.Path.IsPathRooted(relative)
+                || relative.StartsWith(".." + System.IO.Path.DirectorySeparatorChar, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            _workspace.DeleteRuntimeState(relative);
+        }
+
         foreach (var path in _reservedParentDirectories
                      .OrderByDescending(path => path.Length)
                      .ThenByDescending(path => path, PathComparer))
@@ -330,6 +345,7 @@ internal sealed class PublishedJourneyWorkspace : IDisposable
             }
 
             EnsureOrdinaryDirectory(path, attributes);
+            _workspace.DeleteRuntimeState(System.IO.Path.GetRelativePath(Path, path));
             if (Directory.EnumerateFileSystemEntries(path).Any())
             {
                 throw new InvalidOperationException(

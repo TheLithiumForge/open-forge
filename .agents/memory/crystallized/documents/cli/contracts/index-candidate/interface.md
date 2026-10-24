@@ -434,13 +434,9 @@ CRLF line ending. Prettier and repeated Index runs produce stable bytes for
 canonical Markdown. Whole-file formatting remains outside Index authority.
 
 Before replacing an existing generated target, application preparation uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a
 pre-effect `incomplete` result. When the operation has one or more existing
-targets to replace, it gets exactly one immutable ZIP bundle
-outside the workspace. An operation containing only Create effects or no-ops
+targets to replace, it gets exactly one immutable ZIP bundle in the workspace runtime folder. An operation containing only Create effects or no-ops
 creates no bundle. Its source-generated
 schema-v1 `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
@@ -774,3 +770,7 @@ remain the output evidence.
 - [IndexText.cs](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Index/IndexText.cs)
   <!-- @OpenForgeTextRef index.title.optional-metadata-is-missing -->
   <!-- @OpenForgeTextRef index.title.metadata-was-skipped -->
+
+## Workspace Runtime Boundary
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.

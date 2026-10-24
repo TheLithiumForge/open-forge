@@ -410,7 +410,7 @@ Keep directory creation separate from file Create/Replace/Delete and limit it
 to directories in the intended route chain or selected canonical payload
 subtree. A generic plan that starts without
 `.agents` exposes that exact path as its first ordinary directory-create effect.
-After acquiring the external workspace lease, the shared applier confirms the
+After acquiring the local workspace lease, the shared applier confirms the
 path is missing, creates and verifies it, and reports its actual residual state.
 Cancellation or lock contention before acquisition creates nothing. Framework
 mode requires an existing safe Framework root and therefore never creates an
@@ -457,9 +457,9 @@ containment fact, expected-state condition, and recovery-bundle condition
 required by the Interface Contract. A verified no-op has no affected mutation
 path and therefore does not need a bundle.
 
-Application first acquires the persistent external workspace lease, then
+Application first acquires the persistent local workspace lease, then
 immediately revalidates the complete plan and prepares and verifies the complete
-external recovery bundle when an existing-target effect requires one. It applies
+local recovery bundle when an existing-target effect requires one. It applies
 and verifies the separate parent-first directory effects, beginning with missing
 `.agents` in generic mode, and only then begins the planned file and
 bounded-region effects with their own immediate target revalidation. Bundle
@@ -478,12 +478,8 @@ remains `completed` when no other status condition applies.
 The command does not inspect or report repository state. When the plan contains
 an existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`),
 orchestration uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
-`incomplete` result. It prepares exactly one immutable ZIP bundle outside
-the workspace. An operation containing only
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle in the workspace runtime folder. An operation containing only
 Create effects or no-ops creates no bundle. Its source-generated
 versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
@@ -496,7 +492,7 @@ and reopened and verified. Only the valid final ZIP forms the opaque
 `RecoveryBundlePreparation`; the draft remains `Incomplete`. Every planned
 existing-target effect must match the preparation; `FileChangeApplier` performs
 one final effect per target. All preparation completes before the first target
-effect; unknown, malformed, mismatched, or colliding bundles block.
+effect. A missing, malformed, mismatched or colliding current-operation preparation blocks.
 
 ### Revalidation and bounded writes
 
@@ -544,8 +540,8 @@ Caller cancellation or interruption is `cancelled` only when no stronger
 failure remains. An `incomplete` or `blocked` result never begins a write.
 
 Expected-state revalidation and preservation of unexpected concurrent edits are
-current safety meaning. The persistent reusable zero-byte external workspace
-lock below `LocalApplicationData/OpenForge/locks/v1` is held with one read/write
+current safety meaning. The persistent reusable workspace
+lock below `.open-forge-state/workspace.lock` is held with one read/write
 `FileShare.None` handle; it never receives metadata writes, deletion, or
 truncation. The BCL-first filesystem boundary is defined by the [CLI
 Architecture](../../../architecture.md), and exact recovery-bundle identity
@@ -708,3 +704,7 @@ requirements.
 - [Routing Paths And Identity](../../../../framework/routing/paths.md)
 - [Overwrite Customization](../../../../framework/routing/overwrites.md)
 - [Templates](../../../../framework/primitives/templates.md)
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

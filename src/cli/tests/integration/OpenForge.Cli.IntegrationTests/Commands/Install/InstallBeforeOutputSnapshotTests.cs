@@ -2,14 +2,15 @@ using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
-using OpenForge.Cli.Core.Presentation.Install;
-using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
+using OpenForge.Cli.Core.Presentation.Install;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
+using OpenForge.Cli.TestSupport.Isolation;
 using OpenForge.Cli.TestSupport.Snapshots;
 
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
@@ -68,8 +69,7 @@ public sealed class InstallBeforeOutputSnapshotTests
     {
         using var workspace = InstallOperationWorkspace.Create("install-output-recovery-store");
         SeedOccupiedGeneratedRegion(workspace);
-        var root = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.None)
-            ?? throw new InvalidOperationException("The Install recovery fixture requires a store root.");
+        var root = TestDataHome.LocalRecoveryStoreRoot(workspace.PhysicalPath);
         var bucket = RecoveryBundlePathIdentity.WorkspaceDirectory(root, workspace.PhysicalPath);
         Assert.False(File.Exists(bucket));
         Assert.False(Directory.Exists(bucket));

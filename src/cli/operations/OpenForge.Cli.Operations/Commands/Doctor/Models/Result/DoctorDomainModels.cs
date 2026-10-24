@@ -56,6 +56,8 @@ internal sealed record DoctorLimitation
 
 internal sealed record DoctorDomainReport
 {
+    public IReadOnlyList<DoctorRecoveryStore> RecoveryStores { get; init; } = [];
+
     public LibraryDoctorView? Libraries { get; init; }
 
     public required DoctorDomainKind Domain { get; init; }
@@ -156,3 +158,9 @@ internal sealed record DoctorCoverageCounts
 
     public required long? LibrariesRegistered { get; init; }
 }
+
+internal sealed record DoctorRecoveryStore(
+    string Kind, string? Path, DoctorCoverageState Coverage,
+    IReadOnlyList<DoctorRecoveryCandidate> Candidates, string? Cause);
+
+internal sealed record DoctorRecoveryCandidate(string Path, string Kind, string Integrity, string? Cause);

@@ -401,12 +401,8 @@ generated-region effects, any exact skipped projection observation,
 Extension-section publication, expected-state guards, recovery-bundle
 readiness, verification, and preservation. Before the first
 existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`), use only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
-`incomplete` result. It prepares exactly one immutable ZIP bundle outside the
-workspace. An operation containing only ordinary content Create effects or no-ops
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle in the workspace runtime folder. An operation containing only ordinary content Create effects or no-ops
 does not resolve recovery storage and creates no bundle. Permission-file Create
 requires its prior-absence bundle entry even without an existing-target effect.
 Its source-generated
@@ -421,15 +417,14 @@ final name, and reopened and verified. Only the valid final ZIP forms the opaque
 `RecoveryBundlePreparation`; the draft remains `Incomplete`.
 `FileChangeApplier` requires the matching preparation for every existing-target effect
 and performs one final effect per target. All preparation completes before the
-first target effect; unknown, malformed, mismatched, or colliding bundles block.
-The persistent reusable zero-byte external workspace lock is held with one
+first target effect. A missing, malformed, mismatched or colliding current-operation preparation blocks.
+The persistent reusable workspace lock is held with one
 read/write `FileShare.None` handle; it never receives metadata writes, deletion,
 or truncation.
 
 Verified final recovery bundles retained by earlier operations do not block a
 fresh Install plan. Preserve them unchanged and derive current target state from
-the workspace, not those bundles. Incomplete drafts and malformed, unsupported
-or unavailable candidates still block. Preparation must independently protect
+the workspace, not those bundles. Drafts, invalid candidates and unavailable history coverage warn without blocking unrelated work. Preparation must independently protect
 the new operation's exact bundle identity.
 
 Dry-run uses the same request, facts, intended state, plan, and preflight as
@@ -504,7 +499,7 @@ workspace-relative payload validation before planning, directory effects limited
 to missing descendants beneath the workspace for admitted targets, reserved paths,
 complete planning, dependency-first target/generated application,
 target-topology verification, last-effect Extension lifecycle publication,
-final target, Extension lifecycle, and Framework lifecycle rereads, external
+final target, Extension lifecycle, and Framework lifecycle rereads, local
 recovery-bundle storage and verification, typed post-verification deletion
 state/disposition facts, dry-run no-effects, revalidation, retained partial
 state without restoration, no-op repetition, exact result/finding formation,
@@ -513,3 +508,7 @@ Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
 result schema and exit mapping. Gate 5 must
 prove source-generated serialization, fixed Markdig where used, real
 `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

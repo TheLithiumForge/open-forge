@@ -7,6 +7,9 @@ internal enum CliOutputTarget { StandardOutput, StandardError }
 
 internal static class CliPresentationDefinitions
 {
+    internal const string JsonFormat = "json";
+    internal const string TextFormat = "text";
+
     internal const int MaximumDiagnosticLength = 4096;
 
     internal const string Minimal = "minimal";

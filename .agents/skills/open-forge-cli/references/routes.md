@@ -207,3 +207,9 @@ Delete every recognized completed recovery bundle and draft for the selected wor
 Unknown, malformed, unsupported, unavailable, and unsafe artifacts remain preserved. Cleanup has no selectors, age or glob filters, force mode, or confirmation prompt. Use `status` to review recovery candidates before the preview.
 
 Use [discovery](discovery.md) to select sources and [Framework and packages](packages.md) for installation or package management.
+
+## Recovery Stores And History
+
+Route Include, Exclude, Create, Init, Update, Move and Remove warn about drafts, damaged or invalid bundles and unavailable history coverage. Verified bundles from earlier runs do not produce writer warnings. Current target validation and required local recovery preparation still apply.
+
+Cleanup reads workspace and legacy stores separately. A store without coverage or deletion authority does not prevent eligible removal in the other store. Use `--detail full` to see each store's path, coverage and candidates. Preview before deleting recovery evidence.

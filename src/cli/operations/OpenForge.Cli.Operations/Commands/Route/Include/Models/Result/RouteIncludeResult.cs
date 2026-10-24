@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Recovery.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -7,6 +8,12 @@ namespace OpenForge.Cli.Core.Commands.Route.Include.Models.Result;
 
 internal sealed record RouteIncludeResult : ICliCommandResult
 {
+    internal RouteRecoveryHistory RecoveryHistory { get; init; } = RouteRecoveryHistory.Empty;
+
+    internal string RecoveryHistoryCode => RouteIncludeDefinitions.RecoveryHistoryCode;
+
+    internal string RecoveryCoverageUnavailableCode => RouteIncludeDefinitions.RecoveryCoverageUnavailableCode;
+
     public string Command => RouteIncludeDefinitions.CommandIdentity;
     public CliSemanticStatus Status => Outcome.Status;
     public required CliWorkspace? Workspace { get; init; }

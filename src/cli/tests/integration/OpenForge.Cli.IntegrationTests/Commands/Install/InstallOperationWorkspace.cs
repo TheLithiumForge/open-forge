@@ -6,10 +6,11 @@ using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -141,8 +142,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
 
     internal bool RecoveryDirectoryExists()
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None);
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(Workspace.PhysicalRoot);
         return storeRoot is not null
             && Directory.Exists(RecoveryBundlePathIdentity.WorkspaceDirectory(
                 storeRoot,
@@ -211,8 +211,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
 
     private void DeleteRecoveryArtifacts()
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None);
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(Workspace.PhysicalRoot);
         if (storeRoot is null)
         {
             return;

@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -30,6 +31,7 @@ public sealed class DoctorTypedFactMappingTests
         var bundlePath = Path.Combine(workspace.PhysicalRoot, "framework-recovery.zip");
         var verified = new RecoveryBundleVerifiedRead
         {
+            Location = RecoveryStoreLocator.Local(workspace),
             BundlePath = bundlePath,
             WorkspacePhysicalPath = workspace.PhysicalRoot,
             WorkspaceKey = WorkspaceIdentity.Key(workspace.PhysicalRoot),

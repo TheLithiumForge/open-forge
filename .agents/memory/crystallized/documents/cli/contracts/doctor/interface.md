@@ -142,7 +142,7 @@ The operation always uses these six diagnostic domains, in this order:
 | Order | Domain                                                   | Boundary                                                                                                                                                                                                                         |
 | ----- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1     | `workspace and entry`                                    | Establish the selected workspace, `.agents` boundary, Loader, entrypoints, source identity, parsing, reachable roots, and the Workspace Library record, every registered source-root inventory, and registered-projection facts. |
-| 2     | `recovery and residual state`                            | Report exact named external final bundles and incomplete drafts, with one semantic final-ZIP integrity check and Cleanup guidance.                                                                                               |
+| 2     | `recovery and residual state`                            | Report exact named workspace and legacy final bundles and incomplete drafts, with one semantic final-ZIP integrity check and Cleanup guidance.                                                                                               |
 | 3     | `routes, metadata, overwrites, and generated navigation` | Compare authored topology and metadata with derived route relationships and generated `Entries`.                                                                                                                                 |
 | 4     | `local references`                                       | Inspect supported authored local references, target and fragment resolution, containment, and bounded repair evidence.                                                                                                           |
 | 5     | `Framework lifecycle`                                    | Diagnose the installed or absent Framework payload, Framework ownership claims, managed files and regions, trust, ownership boundaries, and recovery evidence.                                                                   |
@@ -421,14 +421,7 @@ unregistered source root, and unsafe ambiguity remains blocked.
 
 ### Recovery And Residual State
 
-Doctor inspects the current user's external recovery root at
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`. This
-observer-only lookup never creates the OS application-data root or the Open Forge
-subtree. If the application-data root or recovery store is absent, Doctor reports
-zero recovery bundles or drafts. If the selected workspace bucket cannot be
-read, Doctor reports recovery coverage as unavailable or incomplete; it does not
-treat access failure as absence or search the workspace recursively.
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
 
 Doctor enumerates only exact deterministic final and draft names directly under
 the selected workspace bucket. It performs at most one semantic integrity check
@@ -1155,3 +1148,9 @@ The report's Next action prefers a copyable command and otherwise retains the
 explicit sentence instruction. Finding kinds, resolution lanes, status, exits,
 JSON shape and read-only effects are unchanged. Other findings retain their
 existing fallback behavior.
+
+## Recovery Stores
+
+At full and debug detail, `data.recoveryStores` reports ordered store records with `kind`, `path`, `coverage`, `candidates` and `cause`. Existing diagnosis fields remain. Producer-specific target comparison keeps its existing scope. Store kinds are `workspace` and `legacy`. Text reports candidate findings and warnings for unavailable stores. It does not print a separate inventory row for every readable store.
+
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.

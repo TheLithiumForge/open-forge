@@ -9,15 +9,15 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Cannot initialize .agents/documents/_documents.md: Another Open Forge command holds the workspace lock. Nothing was changed.",
+    "headline": "Cannot initialize .agents/documents/_documents.md: another Open Forge command holds the lock at <lock-path>. Nothing was changed.",
     "kind": "blocked"
   },
   "findings": [
     {
       "severity": "error",
       "code": "route-init.workspace-lock-unavailable",
-      "title": "Workspace lock is held",
-      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "title": "Workspace lock is unavailable",
+      "message": "Another Open Forge command holds the lock at <lock-path>. Nothing was changed.",
       "subject": {
         "kind": "identifier",
         "path": null,

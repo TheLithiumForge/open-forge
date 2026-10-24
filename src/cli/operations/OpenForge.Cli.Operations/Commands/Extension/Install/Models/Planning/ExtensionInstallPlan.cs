@@ -39,6 +39,7 @@ internal sealed record ExtensionInstallPlanInput
     internal required ImmutableArray<ExtensionOwnership> IntendedExtensions { get; init; }
     internal required ExtensionInstallTopology Topology { get; init; }
     internal IReadOnlyList<ExtensionInstallFinding> TopologyFindings { get; init; } = [];
+    internal IReadOnlyList<ExtensionInstallFinding> HistoryFindings { get; init; } = [];
     internal IReadOnlyList<string> ForceEligiblePaths { get; init; } = [];
     internal required ExtensionInstallResultFacts Facts { get; init; }
     internal required IReadOnlyList<ExtensionInstallPlannedEffect> Effects { get; init; }
@@ -66,6 +67,7 @@ internal sealed class ExtensionInstallPlan
         IntendedExtensions = input.IntendedExtensions;
         Topology = input.Topology;
         TopologyFindings = Snapshot(input.TopologyFindings, nameof(input.TopologyFindings));
+        HistoryFindings = Snapshot(input.HistoryFindings, nameof(input.HistoryFindings));
         ArgumentNullException.ThrowIfNull(input.ForceEligiblePaths);
         ForceEligiblePaths = new ReadOnlyCollection<string>([.. input.ForceEligiblePaths
             .Select(path => path ?? throw new ArgumentException(
@@ -108,6 +110,7 @@ internal sealed class ExtensionInstallPlan
     internal ImmutableArray<ExtensionOwnership> IntendedExtensions { get; }
     internal ExtensionInstallTopology Topology { get; }
     internal IReadOnlyList<ExtensionInstallFinding> TopologyFindings { get; }
+    internal IReadOnlyList<ExtensionInstallFinding> HistoryFindings { get; init; } = [];
     internal IReadOnlyList<string> ForceEligiblePaths { get; }
     internal ExtensionInstallResultFacts Facts { get; }
     internal IReadOnlyList<ExtensionInstallPlannedEffect> Effects { get; }
@@ -333,6 +336,7 @@ internal sealed class ExtensionInstallFoundation
     internal WorkspaceOwnershipRead Ownership { get; }
     internal ExtensionInstallTopology Topology { get; }
     internal IReadOnlyList<ExtensionInstallFinding> TopologyFindings { get; }
+    internal IReadOnlyList<ExtensionInstallFinding> HistoryFindings { get; init; } = [];
 }
 
 internal sealed record ExtensionInstallFoundationObservation(

@@ -14,6 +14,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 
@@ -62,6 +63,15 @@ internal sealed class RouteRemoveCategoryInventoryReader(
         if (subject.Kind == RouteRemoveSubjectKind.Leaf)
         {
             return ReadLeaf(subject, ownership, settings);
+        }
+
+        if (subject.Layers.Any(layer =>
+            WorkspaceRuntimePaths.Contains(subject.Request.Workspace,
+                SourceLogicalPath.ToLexicalPath(subject.Request.Workspace.PhysicalRoot, layer.Layer.CanonicalPath))
+            || WorkspaceRuntimePaths.Contains(subject.Request.Workspace, layer.Layer.PhysicalPath)))
+        {
+            return Stop(subject, ownership, RouteRemoveFindingCode.CategoryUnsafe, CliSemanticStatus.Blocked,
+                "The selected category is inside the reserved workspace runtime directory.");
         }
 
         var read = await _filesystemReader.ReadAsync(

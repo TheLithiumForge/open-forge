@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.IntegrationTests.Framework.Libraries.Operational.Shared.Reading;
 
@@ -45,8 +46,11 @@ internal static class LibraryResidualArchive
             RecoveryEntryState.RelativeLink(RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, linkTarget)), RecoveryEntryState.Missing));
         var operationId = Guid.NewGuid();
         var path = fixture.CreateRecoveryArchive(operationId);
+        var location = RecoveryStoreLocator.Legacy(fixture.Workspace)
+            ?? throw new InvalidOperationException("The legacy fixture requires its isolated store.");
         var manifestFacts = new RecoveryBundleVerifiedRead
         {
+            Location = location,
             BundlePath = path,
             WorkspacePhysicalPath = WorkspaceIdentity.NormalizePhysicalPath(fixture.Workspace.PhysicalRoot),
             WorkspaceKey = WorkspaceIdentity.Key(fixture.Workspace.PhysicalRoot),
@@ -68,7 +72,7 @@ internal static class LibraryResidualArchive
                 stream.Write(Encoding.UTF8.GetBytes(expectedPriorRecord));
             }
         }
-        var read = await RecoveryBundleReader.ReadFinalAsync(fixture.Workspace, path, TestContext.Current.CancellationToken);
+        var read = await RecoveryBundleReader.ReadFinalAsync(location, path, TestContext.Current.CancellationToken);
         Assert.True(read.State == RecoveryBundleReadState.Valid, $"Independent archive qualification failed: {read.State}: {read.Cause}");
         var verified = Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified);
         if (expectedPriorRecord is not null && (!includePayload || storedPayload is not null))

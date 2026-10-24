@@ -1,0 +1,9 @@
+status=blocked
+mode=apply
+source=guidance/old guide
+subject=file
+effects=4
+removed=2
+detached=1
+findings=1
+IOException (0x80070020): The filesystem operation failed.

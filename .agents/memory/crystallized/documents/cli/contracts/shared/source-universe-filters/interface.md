@@ -191,3 +191,7 @@ options do not change the shared source-selector grammar or set algebra.
 - [CLI Architecture](../../../architecture.md)
 - [CLI Source References Interface Contract](../source-references/interface.md)
 - [CLI Source References Behavior Contract](../source-references/behavior.md)
+
+## Reserved Runtime Storage
+
+The fixed `.open-forge-state/` subtree is reserved runtime storage. Exclude it before source reads and traversal, even without Git ignore rules. Direct paths and links into it do not admit its files as sources or writable package destinations.

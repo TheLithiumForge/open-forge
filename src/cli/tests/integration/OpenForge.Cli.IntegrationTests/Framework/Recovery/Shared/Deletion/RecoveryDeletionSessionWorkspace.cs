@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
@@ -110,7 +111,7 @@ internal sealed class RecoveryDeletionSessionWorkspace : IDisposable
             }
         }
 
-        var read = await RecoveryBundleReader.ReadFinalAsync(Workspace, path, TestContext.Current.CancellationToken);
+        var read = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(Workspace), path, TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, read.State);
         Assert.Equal(RecoveryBundleProducer.Repair, Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified).Attribution.Producer);
     }

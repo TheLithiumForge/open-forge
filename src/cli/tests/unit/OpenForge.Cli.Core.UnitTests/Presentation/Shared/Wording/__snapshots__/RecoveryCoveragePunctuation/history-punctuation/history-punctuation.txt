@@ -1,0 +1,10 @@
+Punctuation [], path present False: Recovery history could not be checked completely: History is unavailable. Current workspace validation still applies.
+Punctuation [], path present True: Recovery history at <workspace>/.open-forge-state/workspace.lock could not be checked completely: History is unavailable. Current workspace validation still applies.
+Punctuation [.], path present False: Recovery history could not be checked completely: History is unavailable. Current workspace validation still applies.
+Punctuation [.], path present True: Recovery history at <workspace>/.open-forge-state/workspace.lock could not be checked completely: History is unavailable. Current workspace validation still applies.
+Punctuation [!], path present False: Recovery history could not be checked completely: History is unavailable. Current workspace validation still applies.
+Punctuation [!], path present True: Recovery history at <workspace>/.open-forge-state/workspace.lock could not be checked completely: History is unavailable. Current workspace validation still applies.
+Punctuation [?], path present False: Recovery history could not be checked completely: History is unavailable. Current workspace validation still applies.
+Punctuation [?], path present True: Recovery history at <workspace>/.open-forge-state/workspace.lock could not be checked completely: History is unavailable. Current workspace validation still applies.
+Punctuation [. ], path present False: Recovery history could not be checked completely: History is unavailable. Current workspace validation still applies.
+Punctuation [. ], path present True: Recovery history at <workspace>/.open-forge-state/workspace.lock could not be checked completely: History is unavailable. Current workspace validation still applies.

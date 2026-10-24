@@ -49,7 +49,7 @@ consulted. Current/intended comparison is computed within the invocation, with
 no stored baseline. Shared allow-list admission, physical containment, reserved
 paths and cross-owner checks apply before effects.
 
-Prior bytes are captured in the verified external recovery bundle before
+Prior bytes are captured in the verified workspace-local recovery bundle before
 reversible effects. Update retains that bundle and supplies review advice under
 its command contract. Standalone Extension Create remains a create-only
 operation without a workspace lease or recovery bundle. Authored settings stay

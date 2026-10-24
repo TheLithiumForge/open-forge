@@ -38,6 +38,14 @@ internal static class DoctorReportSelector
         var infos = findings.LongCount(finding => finding.Severity == DoctorFindingSeverity.Information);
         var data = new DoctorData
         {
+            RecoveryStores = selection.Detail >= CliDetail.Full ? result.Diagnosis.Domains.SelectMany(domain => domain.RecoveryStores)
+                .Select(store => new DoctorDataRecoveryStore(
+                    store.Kind, store.Path,
+                    CliReportVocabulary.Name(store.Coverage),
+                    store.Candidates.Select(candidate => new DoctorDataRecoveryCandidate(
+                        candidate.Path, candidate.Kind,
+                        candidate.Integrity, candidate.Cause)).ToArray(), store.Cause))
+                .ToArray() : null,
             Categories = selection.Detail >= CliDetail.Standard
                 ? domains.Select((domain, index) => Category(
                     domain,

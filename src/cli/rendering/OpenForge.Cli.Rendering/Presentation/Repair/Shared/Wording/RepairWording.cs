@@ -82,7 +82,7 @@ internal static class RepairWording
         "TargetChanged" => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetChanged(),
         "TargetUnsafe" => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetIsUnsafe(),
         "PlanConflict" => global::OpenForge.Cli.OutputText.Repair.RepairText.TitleRepairPlanConflict(),
-        "WorkspaceLockUnavailable" => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsHeld(),
+        "WorkspaceLockUnavailable" => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable(),
         "RecoveryUnavailable" => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryDataIsUnavailable(),
         "RecoveryConflict" => global::OpenForge.Cli.OutputText.Repair.RepairText.TitleRecoveryDataBlocksRepair(),
         "GuidedFindingRemaining" => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleBrokenLink(),

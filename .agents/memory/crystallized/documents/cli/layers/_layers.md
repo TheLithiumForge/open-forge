@@ -50,6 +50,10 @@ graph:
 | No file under `Commands/` or `Framework/` references `Presentation/`             | Data and behavior do not depend on rendering        |
 | Commands reference Framework and Shell, never another command's private `Shared` | Command meaning stays local                         |
 
+The shared finding model and its wording may import
+`Commands.Shared.Models.Mutation` for the typed lock failure. This adds a typed lock-failure
+exception to the command-owner model rule. Presentation still cannot import Framework.
+
 A shared owner extracted during deduplication goes at the narrowest scope that
 covers **every** consumer, measured against this graph rather than the folder
 tree. Placing one a layer too low inverts a dependency silently: a wire

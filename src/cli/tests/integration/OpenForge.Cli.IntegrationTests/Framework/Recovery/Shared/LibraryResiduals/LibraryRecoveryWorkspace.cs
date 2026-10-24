@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
@@ -108,7 +109,7 @@ internal sealed class LibraryRecoveryWorkspace : IDisposable
         var prepared = await RecoveryBundleStore.PrepareAsync(input, TestContext.Current.CancellationToken);
         _bundlePath = prepared.Preparation?.BundlePath ?? prepared.ResidualPath;
         _preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
-        var read = await RecoveryBundleReader.ReadFinalAsync(Workspace, Preparation.BundlePath, TestContext.Current.CancellationToken);
+        var read = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(Workspace), Preparation.BundlePath, TestContext.Current.CancellationToken);
         _candidate = RecoveryBundleCandidateSnapshot.VerifiedFinal(Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified));
     }
 

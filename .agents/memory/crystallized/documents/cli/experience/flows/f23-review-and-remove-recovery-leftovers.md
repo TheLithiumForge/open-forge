@@ -14,7 +14,7 @@ open-forge:
 
 Retain an unrecognized or damaged recovery candidate with a warning while independently identified eligible leftovers can be removed. Never delete an ambiguous candidate merely to complete cleanup.
 
-This desired behavior is pending flow validation before test implementation. A current CLI disagreement is recorded as evidence, not copied into the expectation.
+Task 86 implements separate store coverage and cleanup authority. A readable ordinary malformed final is retained with a warning. Unsupported, unavailable or unsafe candidates block deletion in their own store. This expectation is not a test receipt.
 
 ## Starting point
 
@@ -34,13 +34,13 @@ Run the steps on the actual resulting state. A linked scenario supplies a verifi
 
 ### Damaged candidate
 
-Retain and name the damaged candidate; continue only independently verified eligible removals and report both results.
+Retain and name a readable ordinary malformed final while removing independently eligible candidates. An unsupported, unavailable or unsafe candidate prevents deletion in its store.
 
 Scenarios: [C07-04](../scenarios/commands/c07-cleanup.md#c07-04).
 
 ### Store unreadable
 
-Unknown inventory is not an empty catalogue.
+Unknown inventory is not an empty catalogue. Report its store and cause. Eligible deletion in the other store can still complete.
 
 Scenarios: [C07-06](../scenarios/commands/c07-cleanup.md#c07-06).
 
@@ -57,3 +57,7 @@ The user knows which recovery material was removed and that source content was n
 ## Verification
 
 Observe the resulting files and links independently of printed output. Record actions, stdout, stderr, exit, preserved bytes, and separate outcome/state/communication verdicts in a run record. Carry real state between steps; fork only at an explicit alternative.
+
+## Task 86 Runtime Expectations
+
+Observe both workspace and legacy stores. Each has separate coverage and deletion authority. An unavailable legacy store does not prevent eligible local cleanup. Retain unsafe or invalid candidates and report actual partial effects. Status and Doctor continue to report verified bundles.

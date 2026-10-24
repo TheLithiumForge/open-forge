@@ -1,4 +1,3 @@
-using OpenForge.Cli.TestSupport.Isolation;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -14,6 +13,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Recovery.Models;
 
@@ -227,6 +227,7 @@ public sealed class RecoveryBundleContractTests
     {
         var verified = new RecoveryBundleVerifiedRead
         {
+            Location = RecoveryStoreLocator.Local(Workspace()),
             BundlePath = Path.Combine(Path.GetTempPath(), "operation.zip"),
             WorkspacePhysicalPath = Path.GetTempPath(),
             WorkspaceKey = new string('0', 64),

@@ -1,0 +1,15 @@
+Would update the toolkit Extension to 1.0.0.
+Workspace: <workspace>
+  Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.zip  Recovery bundle was retained [extension-update.recovery-history]
+         Recovery data from an earlier run remains at <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.zip. It does not block this operation.
+         cause: Recovery data from an earlier run remains.
+         read from <extension-source>
+  .agents/toolkit.txt  replace (you had changed it and this version changes it)
+    Before SHA-256: <sha256>; After SHA-256: <sha256>; source asset: content/.agents/toolkit.txt; verification: Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked; recovery: No recovery bundle was created.
+  Source: <extension-source>
+  Dependency closure: toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked
+  No recovery bundle was created.
+No files were changed.

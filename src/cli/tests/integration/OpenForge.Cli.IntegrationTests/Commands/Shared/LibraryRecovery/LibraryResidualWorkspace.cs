@@ -15,6 +15,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Shared.LibraryRecovery;
@@ -151,7 +152,7 @@ internal sealed class LibraryResidualWorkspace : IDisposable
             else Files.Write(".gitignore", ignoreIntended);
         }
 
-        var read = await RecoveryBundleReader.ReadFinalAsync(Files.Workspace, Preparation.BundlePath, token);
+        var read = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(Files.Workspace), Preparation.BundlePath, token);
         Assert.Equal(RecoveryBundleReadState.Valid, read.State);
         var verified = Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified);
         Assert.Equal(1 + (includeUnselectedHost ? 1 : 0) + (includeIgnore ? 1 : 0), verified.Entries.Length);

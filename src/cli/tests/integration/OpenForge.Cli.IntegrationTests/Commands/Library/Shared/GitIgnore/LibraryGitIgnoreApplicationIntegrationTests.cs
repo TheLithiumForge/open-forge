@@ -13,6 +13,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
@@ -52,7 +53,7 @@ public sealed class LibraryGitIgnoreApplicationIntegrationTests
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         try
         {
-            var read = await RecoveryBundleReader.ReadFinalAsync(workspace.Workspace, preparation.BundlePath, TestContext.Current.CancellationToken);
+            var read = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(workspace.Workspace), preparation.BundlePath, TestContext.Current.CancellationToken);
             var verified = Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified);
             if (scenario != "missing-ignore-recovery")
             {
@@ -109,7 +110,7 @@ public sealed class LibraryGitIgnoreApplicationIntegrationTests
             Assert.False(File.Exists(workspace.Absolute(LibraryMutationWorkspace.OwnershipPath)));
             Assert.Null(result.Result.Application.RecordPublication.PublishedLast);
             Assert.True(File.Exists(recovery));
-            var read = await RecoveryBundleReader.ReadFinalAsync(workspace.Workspace, recovery, TestContext.Current.CancellationToken);
+            var read = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(workspace.Workspace), recovery, TestContext.Current.CancellationToken);
             var entries = Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified).Entries;
             Assert.Equal(RecoveryEntryKind.OrdinaryReplace, Assert.Single(entries, entry => entry.TargetPath == ".gitignore").Kind);
             Assert.Equal(LibraryMutationWorkspace.SourceBytes, File.ReadAllText(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/a.md")));

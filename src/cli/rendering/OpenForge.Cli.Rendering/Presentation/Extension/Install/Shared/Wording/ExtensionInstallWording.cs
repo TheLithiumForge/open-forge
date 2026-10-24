@@ -164,6 +164,8 @@ internal static class ExtensionInstallWording
         ExtensionInstallFindingCode.TargetChanged => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetChanged(),
         ExtensionInstallFindingCode.RecoveryConflict => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitleRecoveryBundleBlocksInstallation(),
         ExtensionInstallFindingCode.RecoveryUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsUnavailable(),
+        ExtensionInstallFindingCode.RecoveryHistory => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleWasRetained(),
+        ExtensionInstallFindingCode.RecoveryCoverageUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsUnavailable(),
         ExtensionInstallFindingCode.RecoveryArtifactRetained => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleWasRetained(),
         ExtensionInstallFindingCode.PackageContentMissing => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitlePackageContentIsMissing(),
         ExtensionInstallFindingCode.WriteFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWritingFailed(),

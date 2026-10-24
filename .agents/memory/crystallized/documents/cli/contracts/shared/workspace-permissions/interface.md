@@ -92,3 +92,7 @@ include settings when an interactive grant has a planned create/replace.
 
 See [Behavior](behavior.md) for ordering and
 [Technical Design](../../../technical-designs/workspace-permissions.md) for owners.
+
+## Reserved Runtime Storage
+
+A grant never admits `.open-forge-state/` as an Extension or Library destination. Check lexical and resolved physical paths. The CLI itself uses this fixed folder for locks and recovery with ordinary workspace write access. No `--allow-path` grant is needed for runtime storage.

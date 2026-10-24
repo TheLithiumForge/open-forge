@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
 
@@ -75,9 +76,29 @@ internal sealed class RecoveryDoctorCandidateObservation
 
 internal sealed record RecoveryResidualStatusView(
     OperationalViewState State,
-    IReadOnlyList<RecoveryCandidateObservation> Candidates);
+    IReadOnlyList<RecoveryCandidateObservation> Candidates)
+{
+    internal IReadOnlyList<RecoveryStoreStatusView> Stores { get; init; } = [];
+}
 
 internal sealed record RecoveryResidualDoctorView(
+    OperationalViewState State,
+    IReadOnlyList<RecoveryDoctorCandidateObservation> Candidates,
+    string? Cause)
+{
+    internal IReadOnlyList<RecoveryStoreDoctorView> Stores { get; init; } = [];
+}
+
+internal sealed record RecoveryStoreStatusView(
+    RecoveryStoreKind Kind,
+    RecoveryStoreLocation? Location,
+    OperationalViewState State,
+    IReadOnlyList<RecoveryCandidateObservation> Candidates,
+    string? Cause);
+
+internal sealed record RecoveryStoreDoctorView(
+    RecoveryStoreKind Kind,
+    RecoveryStoreLocation? Location,
     OperationalViewState State,
     IReadOnlyList<RecoveryDoctorCandidateObservation> Candidates,
     string? Cause);

@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Presentation.Doctor.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Presentation.Shared.Text.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Wording;
 
 namespace OpenForge.Cli.Core.Presentation.Doctor.Shared.Rendering;
 
@@ -18,6 +19,14 @@ internal static class DoctorDataTextRenderer
         foreach (var line in data.IncompleteLines)
         {
             Append(builder, line);
+        }
+
+        foreach (var store in data.RecoveryStores ?? [])
+        {
+            if (store.Coverage != "complete")
+            {
+                Append(builder, CliFindingWording.RecoveryCoverageUnavailable(store.Path, CliFindingWording.PlainCause(store.Cause ?? "Coverage is unavailable")));
+            }
         }
 
         Append(builder, data.LaneLine);

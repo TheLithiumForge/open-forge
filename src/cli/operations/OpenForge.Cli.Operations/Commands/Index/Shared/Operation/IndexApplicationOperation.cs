@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Index.Models.Operation;
 using OpenForge.Cli.Core.Commands.Index.Models.Planning;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
@@ -56,7 +58,7 @@ internal sealed class IndexApplicationOperation(
         var lockFinding = IndexMutationMapper.ReadLockFindingCode(lockResult);
         if (lockFinding is { } findingCode)
         {
-            return FinishBeforePreparation(application, findingCode);
+            return FinishBeforePreparation(application, findingCode, lockFailure: WorkspaceLockFailureProjection.From(lockResult.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")));
         }
 
         var lease = lockResult.Lease
@@ -258,7 +260,8 @@ internal sealed class IndexApplicationOperation(
         IndexApplicationContext application,
         IndexFindingCode findingCode,
         string? cause = null,
-        IndexLogicalSource? source = null)
+        IndexLogicalSource? source = null,
+        WorkspaceLockFailureInfo? lockFailure = null)
         => Finish(
             application: application,
             regions: application.Plan.Regions,
@@ -266,7 +269,8 @@ internal sealed class IndexApplicationOperation(
             finding: IndexMutationMapper.CreateFinding(
                 code: findingCode,
                 cause: cause,
-                source: source));
+                source: source) with
+            { LockFailure = lockFailure });
 
     private static IndexOperationOutcome FinishPrepared(
         IndexPreparedApplication prepared,

@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 
@@ -20,6 +21,7 @@ internal enum RecoveryBundleIntegrity
 internal sealed record RecoveryBundleCandidateSnapshot
 {
     private RecoveryBundleCandidateSnapshot(
+        RecoveryStoreLocation location,
         string path,
         RecoveryBundleCandidateKind kind,
         RecoveryBundleIntegrity integrity,
@@ -27,6 +29,7 @@ internal sealed record RecoveryBundleCandidateSnapshot
         FilesystemFailure? failure,
         string? cause)
     {
+        Location = location;
         Path = path;
         Kind = kind;
         Integrity = integrity;
@@ -34,6 +37,8 @@ internal sealed record RecoveryBundleCandidateSnapshot
         Failure = failure;
         Cause = cause;
     }
+
+    internal RecoveryStoreLocation Location { get; }
 
     internal string Path { get; }
 
@@ -51,6 +56,7 @@ internal sealed record RecoveryBundleCandidateSnapshot
     {
         ArgumentNullException.ThrowIfNull(verified);
         return new(
+            location: verified.Location,
             path: verified.BundlePath,
             kind: RecoveryBundleCandidateKind.Final,
             integrity: RecoveryBundleIntegrity.Verified,
@@ -59,8 +65,9 @@ internal sealed record RecoveryBundleCandidateSnapshot
             cause: null);
     }
 
-    internal static RecoveryBundleCandidateSnapshot IncompleteDraft(string path)
+    internal static RecoveryBundleCandidateSnapshot IncompleteDraft(RecoveryStoreLocation location, string path)
         => new(
+            location: location,
             path: System.IO.Path.GetFullPath(path),
             kind: RecoveryBundleCandidateKind.Draft,
             integrity: RecoveryBundleIntegrity.Incomplete,
@@ -69,6 +76,7 @@ internal sealed record RecoveryBundleCandidateSnapshot
             cause: "The exact-name recovery draft is incomplete and its contents are not trusted.");
 
     internal static RecoveryBundleCandidateSnapshot Classified(
+        RecoveryStoreLocation location,
         string path,
         RecoveryBundleCandidateKind kind,
         RecoveryBundleIntegrity integrity,
@@ -87,6 +95,7 @@ internal sealed record RecoveryBundleCandidateSnapshot
 
         ArgumentException.ThrowIfNullOrWhiteSpace(cause);
         return new RecoveryBundleCandidateSnapshot(
+            location: location,
             path: System.IO.Path.GetFullPath(path),
             kind: kind,
             integrity: integrity,

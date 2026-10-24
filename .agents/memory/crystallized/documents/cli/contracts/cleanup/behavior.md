@@ -41,7 +41,7 @@ Cleanup follows one complete typed flow:
 
 ```text
 validated command input
-  -> exact selected workspace and external recovery root
+  -> exact selected workspace and local recovery root
   -> complete current filtered exact-name candidate catalogue
   -> deterministic ordered candidate plan
   -> preflight
@@ -81,7 +81,7 @@ The operation satisfies these invariants:
   preserved; when it is a readable ordinary final, it is a warning preservation
   entry that may coexist with independently eligible removals, but it is never
   deleted. An unreadable or non-ordinary malformed final, and every unsupported
-  or unavailable final, remains a blocking preserved candidate. No final is
+  or unavailable final, remains a blocking preserved candidate in its store. No final is
   migrated, rewritten, repaired, adopted, or inferred. An unknown schema version
   is unsupported. Cleanup recognizes only current schema-v1 and has no v2, dual
   reader, compatibility, or migration path. Attribution is an integrity fact,
@@ -99,7 +99,7 @@ The operation satisfies these invariants:
 - A readable ordinary malformed exact-name final is reported and preserved as a
   warning and does not block independently eligible deletion. Unsupported,
   unavailable, unreadable, non-ordinary, or unsafe exact-name candidates are
-  reported and preserved and block deletion. Unknown, user-created, or
+  reported and preserved and block deletion in their store. Unknown, user-created, or
   differently named items remain outside the filtered catalogue and its equality
   checks. If Cleanup cannot acquire the workspace lease because of contention,
   it performs no deletion.
@@ -117,7 +117,7 @@ The operation satisfies these invariants:
   selected bucket once, filters exact final and draft names, and compares that
   candidate set and its relevant path, kind, and integrity facts with the planned
   catalogue. A new, removed, or changed exact-name candidate or failure to acquire
-  the lease produces no deletion; unknown names remain outside the comparison.
+  the lease prevents deletion in that store. Unknown names remain outside the comparison.
 - Once deletion begins, verified deletion is monotonic. Cleanup does not create
   a recovery bundle, staging copy, receipt, journal, or tombstone merely to delete
   an eligible bundle or draft and does not reverse a deletion it has verified.
@@ -146,19 +146,7 @@ Human, TTY, JSON, and other non-interactive requests reach the same normalized
 domain request. No request mode prompts or supplies a missing selector because
 cleanup has no selector.
 
-The selected workspace must be a safely accessible directory when cleanup needs
-to inspect its association facts. Recovery storage is exactly
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`. This
-observer-only lookup never creates the OS application-data root or the Open Forge
-subtree. No temporary, workspace, `HOME`, or custom platform fallback is
-permitted. An absent application-data root or recovery store produces an empty
-catalogue and a verified complete no-op. An existing root or store that is
-unavailable or unsafe to inspect is `incomplete` and prevents deletion; access
-failure is not absence. The operation reports the workspace and selection method
-in its typed result. It does not
-treat workspace selection as proof of installation, health, ownership, or
-artifact provenance.
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
 
 Cleanup uses the existing `WorkspaceLockLease` for cooperating-process
 exclusion. It writes no marker, PID, journal, or lock metadata, never deletes
@@ -221,7 +209,7 @@ final remains in the catalogue, is excluded from the deletion plan, and is a
 warning preservation entry; independently eligible deletion may continue. An
 unsupported, unavailable, unreadable, non-ordinary, or unsafe exact-name
 candidate remains in the catalogue, is excluded from the deletion plan, and
-blocks every deletion.
+blocks every deletion in that store.
 
 Cleanup does not require interpretation of user content. The exact selected
 workspace bucket, deterministic direct-child name, semantic final validation
@@ -257,8 +245,8 @@ No exact-name candidate is silently omitted. A readable ordinary malformed final
 remains reported and preserved, is excluded from the deletion plan, and does not
 block independently eligible deletion. An unsupported, unavailable, unreadable,
 non-ordinary, or unsafe candidate remains reported and preserved, is excluded
-from the deletion plan, and blocks all deletion. A catalogue coverage failure
-before effects is `incomplete` and has no write.
+from the deletion plan, and blocks deletion in that store. A catalogue coverage failure
+before effects is `incomplete` and prevents writes in that store.
 
 ## Preflight And Dry Run
 
@@ -280,14 +268,16 @@ form `completed-with-warnings`.
 
 ## Application, Revalidation, And Verification
 
-When application is selected:
+When application is selected, use one lease across the stores and one frozen
+deletion session per store. Apply the following checks separately to each store:
 
-1. If the current candidate catalogue is empty, return the verified complete
-   no-op without acquiring a lease.
+1. If both stores are available and empty, return the verified complete
+   no-op without acquiring a lease. Keep unavailable coverage visible.
 2. Acquire one live `WorkspaceLockLease` for the exact selected workspace and
    hold it through all deletion and verification work. If acquisition fails or a
    cooperating mutator owns the lease, perform no deletion.
-3. Under that lease, re-enumerate the selected workspace bucket once, filter the
+3. Require matching legacy lock authority before deleting from the legacy store.
+   Under the lease, re-enumerate each selected store's workspace bucket once, filter the
    same exact final and draft names, and compare the candidate set and its
    relevant path, kind, and integrity facts with the planned catalogue. A new,
    removed, or changed exact-name candidate blocks; unknown or differently named
@@ -295,9 +285,10 @@ When application is selected:
 4. Immediately before each deletion, repeat semantic validation for a final ZIP
    or the exact path/name/kind check for a draft.
 5. If the filtered under-lease candidate set differs from the planned catalogue
-   or validation fails before the first deletion, stop with `blocked` and no
-   deletion. A later ordinary deletion or verification failure stops further
-   effects and reports prior verified deletions and remaining paths.
+   or validation fails before the first deletion, stop deletion in that store.
+   The result keeps its blocked or incomplete cause. A later ordinary deletion
+   or verification failure stops further effects in that store and reports
+   prior verified deletions and remaining paths.
 6. Delete only the exact current path with ordinary `File.Delete`.
 7. Verify absence immediately after each effect, then retain the exact deleted,
    remaining, preserved, and residual paths in the typed result.
@@ -408,8 +399,8 @@ A conforming implementation must demonstrate:
   command;
 - exact dry-run/application candidate-plan parity and no persistent dry-run
   effects;
-- unavailable external recovery storage, deterministic bundle identity, and no
-  workspace-local support-artifact scan;
+- unavailable local recovery storage, deterministic bundle identity, and no
+  recursive workspace scan.
 - no-lease empty no-op, one live same-workspace `WorkspaceLockLease` before every
   deletion, one under-lease filtered-candidate and relevant-fact comparison, no
   effect from unknown names, no deletion on lease contention, and no marker,
@@ -442,3 +433,7 @@ and schema; this Behavior Contract does not select another implementation.
 - [CLI Command Contract Set — Behavior Contract](../../command-contract-set.md#behavior-contract)
 - [Historical CLI Decision Agenda](../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
+
+## Recovery Stores
+
+At full and debug detail, `data.stores` reports ordered store records with kind, path, coverage, candidates, cause and `safety`, `revalidation` and `verification`. Candidate rows carry their integrity and outcome. Existing aggregate fields remain. Each store has a frozen plan and deletion session. Local deletion can complete when legacy coverage or matching legacy lock authority is unavailable. The result reports completed effects and retained or unknown items even when its aggregate status is incomplete or blocked. Store kinds are `workspace` and `legacy`. Text reports planned or completed deletions, retained items and findings. The separate store records are JSON data.

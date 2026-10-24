@@ -1,9 +1,12 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 
 internal sealed record RouteMoveFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     private const int MaximumCauseLength = 256;
 
     internal RouteMoveFinding(

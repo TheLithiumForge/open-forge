@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 
@@ -9,8 +10,7 @@ internal sealed class LibraryRecoveryBucketFile : IDisposable
 
     internal LibraryRecoveryBucketFile(LibraryMutationWorkspace workspace)
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.None)
-            ?? throw new InvalidOperationException("The recovery bucket fixture requires a local application-data root.");
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(workspace.Workspace.PhysicalRoot);
         Directory.CreateDirectory(storeRoot);
         _path = RecoveryBundlePathIdentity.WorkspaceDirectory(storeRoot, workspace.Workspace.PhysicalRoot);
         _sentinel = Guid.NewGuid().ToByteArray();

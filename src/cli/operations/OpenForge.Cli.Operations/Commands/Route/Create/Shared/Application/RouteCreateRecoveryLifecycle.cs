@@ -30,53 +30,6 @@ internal static class RouteCreateRecoveryLifecycle
             };
         }
 
-        RecoveryBundleCatalogueResult catalogue;
-        try
-        {
-            catalogue = await RecoveryBundleCatalogue.ReadAsync(
-                    plan.Request.Workspace,
-                    cancellationToken)
-                .ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            return Cancelled(residualPath: null);
-        }
-        catch (Exception)
-        {
-            return Failed(
-                "The Route Create recovery catalogue failed unexpectedly.",
-                residualPath: null);
-        }
-
-        if (catalogue.State == RecoveryBundleCatalogueState.Cancelled)
-        {
-            return Cancelled(residualPath: null);
-        }
-
-        if (catalogue.State == RecoveryBundleCatalogueState.Unavailable)
-        {
-            return new RouteCreateRecoveryPreparationResult
-            {
-                State = RouteCreateRecoveryPreparationState.Incomplete,
-                Preparation = null,
-                Recovery = Unknown(residualPath: null),
-                Cause = catalogue.Cause
-                    ?? "The Route Create recovery catalogue is unavailable.",
-            };
-        }
-
-        if (catalogue.Candidates.Length != 0)
-        {
-            return new RouteCreateRecoveryPreparationResult
-            {
-                State = RouteCreateRecoveryPreparationState.Blocked,
-                Preparation = null,
-                Recovery = Retained(catalogue.Candidates[0].Path),
-                Cause = "An existing recovery candidate conflicts with this Route Create application.",
-            };
-        }
-
         RecoveryBundlePreparationResult preparation;
         try
         {

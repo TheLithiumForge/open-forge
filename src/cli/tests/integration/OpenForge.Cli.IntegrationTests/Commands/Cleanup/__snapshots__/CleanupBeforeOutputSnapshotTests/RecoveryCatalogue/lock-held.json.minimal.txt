@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.",
+    "headline": "Another Open Forge command holds the lock at <lock-path>. Nothing was changed.",
     "kind": "blocked"
   },
   "findings": [
@@ -17,7 +17,7 @@
       "severity": "error",
       "code": "cleanup.workspace-lock-unavailable",
       "title": "Workspace lock is unavailable",
-      "message": "Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.",
+      "message": "Another Open Forge command holds the lock at <lock-path>. Nothing was changed.",
       "subject": {
         "kind": "identifier",
         "path": "cleanup",
@@ -40,7 +40,7 @@
       "kind": "file",
       "action": "deleted",
       "outcome": "unknown",
-      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "reason": "No deletion was attempted. The candidate's current disposition was not established.",
       "owner": "open-forge index"
     },
     {
@@ -48,7 +48,7 @@
       "kind": "file",
       "action": "deleted",
       "outcome": "unknown",
-      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "reason": "No deletion was attempted. The candidate's current disposition was not established.",
       "owner": "open-forge repair"
     },
     {
@@ -56,7 +56,7 @@
       "kind": "file",
       "action": "deleted",
       "outcome": "unknown",
-      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "reason": "No deletion was attempted. The candidate's current disposition was not established.",
       "owner": null
     }
   ],

@@ -28,8 +28,27 @@ internal static class DoctorBeforeOutputFixtures
             "stale-entries" => Diagnosis([StaleEntries()]),
             "library-drift" => Diagnosis([MissingLibraryLink()]),
             "recovery-bundle" => Diagnosis([RecoveryBundle()]),
+            "recovery-stores" => RecoveryStores(unavailableLegacy: false),
+            "recovery-legacy-unavailable" => RecoveryStores(unavailableLegacy: true),
             _ => throw new ArgumentOutOfRangeException(nameof(situation), situation, "Unknown Doctor output fixture."),
         };
+
+    private static DoctorResult RecoveryStores(bool unavailableLegacy)
+    {
+        var coverage = unavailableLegacy ? DoctorCoverageState.Incomplete : DoctorCoverageState.Complete;
+        var result = Diagnosis([RecoveryBundle()], coverage);
+        var domain = Assert.Single(result.Diagnosis.Domains) with
+        {
+            RecoveryStores =
+            [
+                new("workspace", "workspace-recovery", DoctorCoverageState.Complete,
+                    [new("recovery/operation.ofr", "final", "verified", null)], null),
+                new("legacy", unavailableLegacy ? null : "legacy-recovery", coverage, [],
+                    unavailableLegacy ? "The legacy recovery store location is unavailable." : null),
+            ],
+        };
+        return result with { Diagnosis = result.Diagnosis with { Domains = [domain] } };
+    }
 
     private static DoctorResult Diagnosis(DoctorFinding[] findings, DoctorCoverageState coverage = DoctorCoverageState.Complete)
     {

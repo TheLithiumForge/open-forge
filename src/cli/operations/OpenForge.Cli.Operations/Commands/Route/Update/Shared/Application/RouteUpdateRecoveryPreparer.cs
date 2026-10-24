@@ -1,6 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
@@ -21,42 +20,6 @@ internal static class RouteUpdateRecoveryPreparer
             || operationId == Guid.Empty)
         {
             return RouteUpdateRecoveryResultProjector.InvalidOperationId();
-        }
-
-        RecoveryBundleCatalogueResult catalogue;
-        try
-        {
-            catalogue = await RecoveryBundleCatalogue.ReadAsync(
-                    input.Plan.Request.Workspace,
-                    cancellationToken)
-                .ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            return RouteUpdateRecoveryResultProjector.Cancelled(residualPath: null);
-        }
-        catch (Exception)
-        {
-            return RouteUpdateRecoveryResultProjector.CatalogueFailed(
-                "The Route Update recovery catalogue failed unexpectedly.");
-        }
-
-        if (catalogue.State == RecoveryBundleCatalogueState.Cancelled)
-        {
-            return RouteUpdateRecoveryResultProjector.Cancelled(residualPath: null);
-        }
-
-        if (catalogue.State == RecoveryBundleCatalogueState.Unavailable)
-        {
-            return RouteUpdateRecoveryResultProjector.CatalogueUnavailable(
-                catalogue.Cause ?? "The Route Update recovery catalogue is unavailable.");
-        }
-
-        if (!catalogue.Candidates.IsEmpty)
-        {
-            return RouteUpdateRecoveryResultProjector.Conflict(
-                catalogue.Candidates[0].Path,
-                "An existing recovery candidate conflicts with this Route Update application.");
         }
 
         RecoveryBundlePreparationResult result;

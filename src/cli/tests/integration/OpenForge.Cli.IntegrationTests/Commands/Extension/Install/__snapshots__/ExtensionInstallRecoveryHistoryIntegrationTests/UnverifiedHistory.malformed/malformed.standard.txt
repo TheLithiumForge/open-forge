@@ -1,0 +1,7 @@
+Would install the toolkit Extension.
+Workspace: <workspace>
+  Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.zip  Recovery bundle was retained
+         Recovery data from an earlier run remains at <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.zip. It does not block this operation.
+  .agents/toolkit.md  Would create (toolkit)
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  ownership record would be updated

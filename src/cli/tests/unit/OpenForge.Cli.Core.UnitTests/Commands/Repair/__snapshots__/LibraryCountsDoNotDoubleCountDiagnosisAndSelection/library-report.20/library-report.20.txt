@@ -1,0 +1,64 @@
+Would restore 1 Library link. 19 Library links would still need recovery.
+Workspace: <workspace>
+  Warning  .agents/directives/item-1.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-10.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-11.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-12.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-13.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-14.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-15.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-16.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-17.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-18.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-19.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-2.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-3.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-4.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-5.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-6.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-7.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-8.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  Warning  .agents/directives/item-9.md  Library diagnosis remains
+         The projection is missing. The Library residual needs recovery.
+  .agents/directives/item-0.md   restored from recovery
+  .agents/directives/item-1.md   skipped
+  .agents/directives/item-10.md  skipped
+  .agents/directives/item-11.md  skipped
+  .agents/directives/item-12.md  skipped
+  .agents/directives/item-13.md  skipped
+  .agents/directives/item-14.md  skipped
+  .agents/directives/item-15.md  skipped
+  .agents/directives/item-16.md  skipped
+  .agents/directives/item-17.md  skipped
+  .agents/directives/item-18.md  skipped
+  .agents/directives/item-19.md  skipped
+  .agents/directives/item-2.md   skipped
+  .agents/directives/item-3.md   skipped
+  .agents/directives/item-4.md   skipped
+  .agents/directives/item-5.md   skipped
+  .agents/directives/item-6.md   skipped
+  .agents/directives/item-7.md   skipped
+  .agents/directives/item-8.md   skipped
+  .agents/directives/item-9.md   skipped
+No files were changed.
+1 Library link to restore, 19 Library links would still need recovery.
+  Apply the previewed repairs.
+Next: open-forge repair --automatic

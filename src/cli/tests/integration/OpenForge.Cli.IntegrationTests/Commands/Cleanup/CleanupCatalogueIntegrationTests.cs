@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Cleanup.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Cleanup.Shared.Wording;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -190,7 +193,9 @@ public sealed class CleanupCatalogueIntegrationTests
         Assert.Equal([indexFinal, repairFinal, draft], CleanupJsonAssertions.Paths(result.GetProperty("items")));
         Assert.All(
             result.GetProperty("items").EnumerateArray(),
-            item => Assert.Equal("would-be-removed", item.GetProperty("outcome").GetString()));
+            item => Assert.Equal(CleanupWording.NotStartedOutcome, item.GetProperty(CleanupDataJsonFields.Outcome).GetString()));
+        Assert.Equal(0, document.RootElement.GetProperty(CliJsonFields.Counts).GetProperty(CleanupDataJsonFields.BundlesRemoved).GetInt32());
+        Assert.Equal(0, document.RootElement.GetProperty(CliJsonFields.Counts).GetProperty(CleanupDataJsonFields.DraftsRemoved).GetInt32());
         Assert.Equal(
             blocked.Order(StringComparer.Ordinal),
             CleanupJsonAssertions.Paths(result.GetProperty("notEligible")));

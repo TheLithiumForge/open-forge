@@ -1,10 +1,11 @@
 using System.IO.Compression;
 using System.Text;
-using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
-using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Recovery;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 using OpenForge.Cli.TestSupport;
@@ -312,7 +313,7 @@ public sealed class ExtensionUpdateMutationIntegrationTests
     private static async Task AssertPriorAsync(ExtensionInstallIntegrationWorkspace workspace,
         string bundlePath, string target, string expected)
     {
-        var read = await RecoveryBundleReader.ReadFinalAsync(workspace.Workspace, bundlePath, TestContext.Current.CancellationToken);
+        var read = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(workspace.Workspace), bundlePath, TestContext.Current.CancellationToken);
         var entry = Assert.Single(Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified).Entries, value => value.TargetPath == target);
         using var archive = ZipFile.OpenRead(bundlePath);
         using var prior = new StreamReader(Assert.IsType<ZipArchiveEntry>(archive.GetEntry(entry.PriorPayload!)).Open());

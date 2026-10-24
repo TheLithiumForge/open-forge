@@ -1,6 +1,3 @@
-using OpenForge.Cli.Core.Framework.Ownership;
-using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
-using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Install;
@@ -10,6 +7,9 @@ using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
@@ -17,6 +17,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 
@@ -138,7 +139,7 @@ public sealed class InstallPreservationIntegrationTests
             TestContext.Current.CancellationToken);
 
         var candidateBefore = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             preparation.BundlePath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, candidateBefore.State);
@@ -170,7 +171,7 @@ public sealed class InstallPreservationIntegrationTests
                 preparation.BundlePath,
                 TestContext.Current.CancellationToken));
         var candidateAfter = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             preparation.BundlePath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, candidateAfter.State);
@@ -184,9 +185,7 @@ public sealed class InstallPreservationIntegrationTests
     public async Task AutomaticInstallPreservesUnrecognizedRecoveryLookalike()
     {
         using var workspace = InstallOperationWorkspace.Create("install-recovery-lookalike");
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-                Environment.SpecialFolderOption.Create)
-            ?? throw new InvalidOperationException("Recovery storage is unavailable for lookalike evidence.");
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(workspace.Workspace.PhysicalRoot);
         var workspaceDirectory = RecoveryBundlePathIdentity.WorkspaceDirectory(
             storeRoot,
             workspace.Workspace.PhysicalRoot);

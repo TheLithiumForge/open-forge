@@ -473,7 +473,7 @@ every effect. The command has no best-effort or partial-application mode.
 Directory creation is a separate effect from file Create/Replace/Delete and is
 limited to the intended route chain. In generic mode, when a fully preflighted
 plan starts without `.agents`, that exact container is the one visible planned
-and reported ordinary directory-create effect after the external workspace
+and reported ordinary directory-create effect after the workspace
 lease is acquired. The shared applier confirms it is missing, creates and
 verifies it, and leaves it as reported residual state on later failure or
 interruption. Cancellation or lock contention before acquisition creates
@@ -508,12 +508,8 @@ paths. The command does not inspect or report repository state.
 
 When the plan contains an existing-target effect (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`), orchestration selects only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
-`incomplete` result. It prepares exactly one immutable ZIP bundle outside
-the workspace. An operation containing only
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle in the workspace runtime folder. An operation containing only
 Create effects or no-ops creates no bundle. Its source-generated
 versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
@@ -551,8 +547,8 @@ completed. A closed final ZIP may remain after abrupt process termination,
 without an executable crash or power-loss guarantee.
 Recovery provenance does not classify current target state. Cleanup owns exact
 named final and draft deletion under its separate lease-bound contract. The
-persistent reusable zero-byte external workspace lock below
-`LocalApplicationData/OpenForge/locks/v1` is held with one read/write
+persistent reusable workspace lock below
+`.open-forge-state/workspace.lock` is held with one read/write
 `FileShare.None` handle; it never receives metadata writes, deletion, or
 truncation.
 
@@ -715,6 +711,8 @@ The finding catalogue is:
 | route-init.projection-incomplete         | warning  | projection-unavailable       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
 | route-init.lifecycle-unavailable         | warning  | lifecycle-unavailable        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
 | route-init.recovery-unavailable          | warning  | recovery-unavailable         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.recovery-history | warning | recovery-history | Recovery data from an earlier run remains at {path}. It does not block this operation. | |
+| route-init.recovery-coverage-unavailable | warning | recovery-coverage-unavailable | Recovery history at {path} could not be checked completely: {cause}. Current workspace validation still applies. | |
 | route-init.needs-authoring               | info     | local                        | `Its description and tags are placeholders. Edit them before relying on this route.` (rendered as the advisory line, not as an Info row)                                                                                                                                                                                                                                                                                                                                                                                                                                                         | none                           |
 | route-init.recovery-artifact-retained    | warning  | recovery-artifact-retained   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
 | route-init.target-changed-during-apply   | error    | target-changed-during-apply  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
@@ -855,3 +853,7 @@ CLI help syntax: [`route.init.help.syntax`](../../../../../../../../src/cli/outp
 <!-- @OpenForgeTextRef route.init.message.the-framework-scaffold-needs-an-installed-framework -->
 <!-- @OpenForgeTextRef route.init.message.the-installed-framework-does-not-match-the-version-this-cli-ships-so-the-framework-scaffold-cannot-be-used -->
 <!-- @OpenForgeTextRef route.init.message.the-installed-framework-is-older-than-the-one-this-cli-ships -->
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

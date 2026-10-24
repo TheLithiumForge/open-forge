@@ -71,6 +71,8 @@ internal sealed record CleanupCatalogue
 
     public CleanupCatalogueCoverage Coverage { get; }
 
+    internal bool IsComplete => Coverage == CleanupCatalogueCoverage.Complete;
+
     public ImmutableArray<CleanupCandidate> Candidates { get; }
 }
 

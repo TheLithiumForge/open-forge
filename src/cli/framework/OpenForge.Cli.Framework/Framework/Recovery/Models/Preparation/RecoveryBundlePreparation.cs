@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
@@ -20,6 +21,8 @@ internal sealed record RecoveryBundlePreparation
     }
 
     internal RecoveryBundleVerifiedRead Verified { get; }
+
+    internal RecoveryStoreLocation Location => Verified.Location;
 
     internal string BundlePath => Verified.BundlePath;
 

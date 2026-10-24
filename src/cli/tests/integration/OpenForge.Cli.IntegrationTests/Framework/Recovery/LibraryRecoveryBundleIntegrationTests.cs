@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 
@@ -16,7 +17,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 public sealed class LibraryRecoveryBundleIntegrationTests
 {
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Library recovery prepares one verified external schema-v1 bundle with link and prior-missing record identities and no source payload")]
+    [Fact(DisplayName = "Library recovery prepares one verified local schema-v1 bundle with link and prior-missing record identities and no source payload")]
     public async Task PreparesTypedBundleWithoutSourceBytes()
     {
         using var temporary = TemporaryWorkspace.Create("library-recovery-bundle");
@@ -44,7 +45,7 @@ public sealed class LibraryRecoveryBundleIntegrationTests
 
             Assert.Equal(RecoveryBundlePreparationState.Prepared, result.State);
             preparation = Assert.IsType<RecoveryBundlePreparation>(result.Preparation);
-            Assert.False(preparation.BundlePath.StartsWith(temporary.Path, StringComparison.Ordinal));
+            Assert.Equal(TestDataHome.LocalRecoveryWorkspaceDirectory(workspace.PhysicalRoot), Path.GetDirectoryName(preparation.BundlePath));
             Assert.Equal(3, preparation.Entries.Length);
             Assert.All(preparation.Entries, entry => Assert.Null(entry.PriorPayload));
             using var archive = ZipFile.OpenRead(preparation.BundlePath);

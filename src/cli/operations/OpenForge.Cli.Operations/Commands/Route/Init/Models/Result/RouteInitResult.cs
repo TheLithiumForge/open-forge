@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Recovery.Models;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Result;
@@ -36,6 +37,12 @@ internal sealed record RouteInitResult : ICliCommandResult
         RequestCommand = formation.Request is { } request ? RouteInitRetryCommand.From(request) : null;
         DebugCommand = formation.Request is { } debugRequest ? RouteInitRetryCommand.From(debugRequest, diagnostics: true) : null;
     }
+
+    internal RouteRecoveryHistory RecoveryHistory { get; init; } = RouteRecoveryHistory.Empty;
+
+    internal string RecoveryHistoryCode => RouteInitDefinitions.RecoveryHistoryCode;
+
+    internal string RecoveryCoverageUnavailableCode => RouteInitDefinitions.RecoveryCoverageUnavailableCode;
 
     public string Command => RouteInitDefinitions.CommandIdentity;
 

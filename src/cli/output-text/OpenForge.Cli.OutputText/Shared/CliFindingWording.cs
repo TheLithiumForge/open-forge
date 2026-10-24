@@ -4,6 +4,36 @@ namespace OpenForge.Cli.OutputText.Shared;
 
 internal static class CliFindingWording
 {
+    // @OpenForgeText shared.wording.another-open-forge-command-holds-the-lock-at-nothing-was-changed
+    internal static string AnotherOpenForgeCommandHoldsTheLockAtNothingWasChanged(string path) => $"Another Open Forge command holds the lock at {path}. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.cannot-open-the-lock-at-access-denied-nothing-was-changed
+    internal static string CannotOpenTheLockAtAccessDeniedNothingWasChanged(string path) => $"Cannot open the lock at {path}: access denied. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.cannot-lock-this-filesystem-does-not-support-file-locks-nothing-was-changed
+    internal static string CannotLockThisFilesystemDoesNotSupportFileLocksNothingWasChanged(string path) => $"Cannot lock {path}: this filesystem does not support file locks. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.cannot-use-as-the-lock-it-is-not-an-ordinary-file-nothing-was-changed
+    internal static string CannotUseAsTheLockItIsNotAnOrdinaryFileNothingWasChanged(string path) => $"Cannot use {path} as the lock: it is not an ordinary file. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.cannot-open-the-lock-at-nothing-was-changed
+    internal static string CannotOpenTheLockAtNothingWasChanged(string path) => $"Cannot open the lock at {path}. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.cancelled-before-taking-the-lock-at-nothing-was-changed
+    internal static string CancelledBeforeTakingTheLockAtNothingWasChanged(string path) => $"Cancelled before taking the lock at {path}. Nothing was changed.";
+
+    // @OpenForgeText shared.wording.recovery-history
+    internal static string RecoveryHistory(string path) => $"Recovery data from an earlier run remains at {path}. It does not block this operation.";
+
+    // @OpenForgeText shared.wording.recovery-coverage-unavailable
+    internal static string RecoveryCoverageUnavailable(string? path, string cause)
+    {
+        var reason = cause.TrimEnd().TrimEnd('.', '!', '?');
+        return path is null
+            ? $"Recovery history could not be checked completely: {reason}. Current workspace validation still applies."
+            : $"Recovery history at {path} could not be checked completely: {reason}. Current workspace validation still applies.";
+    }
+
     // @OpenForgeText shared.wording.before
     internal static string BeforeHash(string hash) => $"Before: {hash}";
 

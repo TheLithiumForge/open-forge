@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
@@ -5,6 +6,7 @@ namespace OpenForge.Cli.Core.Presentation.Shared.Models;
 
 internal sealed record CliFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
     public required CliSeverity Severity { get; init; }
     public required string Code { get; init; }
     public required string Title { get; init; }

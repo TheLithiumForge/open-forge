@@ -1,7 +1,8 @@
-using System.Text.Json;
-using System.Text.Encodings.Web;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.RegularExpressions;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.TestSupport.Snapshots;
 
@@ -65,6 +66,15 @@ public static partial class CommandOutputNormalization
         }
 
         return Sha256().Replace(normalized, "<sha256>");
+    }
+
+    public static string NormalizeRecoveryStoreLocations(string output, string workspacePath)
+    {
+        output = ReplacePath(output, TestDataHome.LocalRecoveryWorkspaceDirectory(workspacePath), "<workspace-recovery-store>");
+        var dataHome = Environment.GetEnvironmentVariable(TestDataHome.Variable);
+        return dataHome is not null && Path.IsPathFullyQualified(dataHome)
+            ? ReplacePath(output, TestDataHome.LegacyRecoveryWorkspaceDirectory(dataHome, workspacePath), "<legacy-recovery-store>")
+            : output;
     }
 
     public static string NormalizeRecoveryPaths(string output, IReadOnlyList<string> candidates, string? store = null)

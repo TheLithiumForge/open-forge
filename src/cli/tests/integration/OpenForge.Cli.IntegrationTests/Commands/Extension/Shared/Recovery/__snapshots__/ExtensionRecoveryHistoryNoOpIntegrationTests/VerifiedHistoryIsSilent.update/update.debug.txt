@@ -1,0 +1,8 @@
+The toolkit Extension is up to date. Nothing to do.
+Workspace: <workspace>
+  Source: <extension-source>
+  Dependency closure: toolkit
+  1 file unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was needed.

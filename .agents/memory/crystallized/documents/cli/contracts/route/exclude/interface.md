@@ -64,7 +64,7 @@ and verified no-ops are `completed`. Rejected input is `invalid-input`.
 Unsafe or stale plans are `blocked`. Unavailable required recovery facts are
 `incomplete`. Application or verification failure is `failed`.
 Cancellation is `cancelled`. A verified result with a positively retained recovery
-artifact is `completed-with-warnings`.
+artifact or a historical recovery warning is `completed-with-warnings`.
 
 Command data version 1 uses the shared schema-3 envelope with command `route exclude`.
 The data has `mode`, `target`, `before`, `after`, `registeredBefore`,
@@ -78,10 +78,12 @@ A successful no-op uses the existing `nothing-to-do` headline and an empty effec
 | --- | --- |
 | `route-exclude.invalid-input` | Correct the named operand or option |
 | `route-exclude.workspace-unsafe` | Repair the loader, settings or catalogue boundary |
-| `route-exclude.workspace-lock-unavailable` | Wait for the other operation |
+| `route-exclude.workspace-lock-unavailable` | Use the exact cause and path from the shared lock-failure wording |
 | `route-exclude.target-changed` | Review a fresh preview |
 | `route-exclude.recovery-unavailable` | Restore access to recovery storage |
-| `route-exclude.recovery-conflict` | Resolve the existing recovery artifact |
+| `route-exclude.recovery-history` | Warning. A draft, damaged or invalid bundle is retained at the reported path. It does not block unrelated work |
+| `route-exclude.recovery-coverage-unavailable` | Warning. History could not be checked for the reported store. Current workspace validation still applies |
+| `route-exclude.recovery-conflict` | Current-operation recovery identity or preparation conflict |
 | `route-exclude.write-failed` | Review retained recovery and partial effects |
 | `route-exclude.verification-failed` | Review final bytes and retained recovery |
 | `route-exclude.recovery-failed` | Review the recovery artifact |
@@ -94,3 +96,7 @@ Prove the accepted operand forms and every rejection, previews without effects,
 text and source-generated JSON, no-change output, main-root membership, target
 byte preservation, and the mutation and recovery boundary.
 Prove all matching rows are removed, missing targets work, and unrelated rows keep their order.
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

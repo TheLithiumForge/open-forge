@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.EndToEndTests;
@@ -11,5 +12,15 @@ namespace OpenForge.Cli.EndToEndTests;
 internal static class TestProcessIsolation
 {
     [ModuleInitializer]
-    internal static void Redirect() => TestDataHome.RedirectCurrentProcess("OpenForge.Cli.EndToEndTests");
+    internal static void Redirect()
+    {
+        var arguments = Environment.GetCommandLineArgs().Skip(1).ToArray();
+        if (arguments.Length > 0 && arguments[0] == PublishedLockHolder.ChildArgument)
+        {
+            Environment.Exit(PublishedLockHolder.RunChild(arguments));
+            return;
+        }
+
+        TestDataHome.RedirectCurrentProcess("OpenForge.Cli.EndToEndTests");
+    }
 }

@@ -27,12 +27,17 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
 
     internal IReadOnlyDictionary<string, string> EnvironmentVariables { get; }
 
+    internal IReadOnlyCollection<string> WorkspacePaths => _lockPaths.Keys;
+
     internal string LocalApplicationDataDirectory => LocalApplicationDataPath();
 
     internal string RecoveryStoreRoot => _dataHome.RecoveryStoreRoot;
 
     internal string RecoveryWorkspaceDirectory(string workspacePath)
         => _dataHome.RecoveryWorkspaceDirectory(workspacePath);
+
+    internal static string LocalRecoveryWorkspaceDirectory(string workspacePath)
+        => TestDataHome.LocalRecoveryWorkspaceDirectory(workspacePath);
 
     internal static string RecoveryWorkspaceKey(string workspacePath)
         => TestDataHome.WorkspaceKey(workspacePath);
@@ -42,9 +47,7 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
         var temporary = TemporaryWorkspace.Create(purpose);
         try
         {
-            // The data home is this test's own, beside the workspace rather than inside it: the
-            // published process writes locks and recovery bundles there, and those entries belong
-            // to the child process, which the workspace's ownership rules reject.
+            // Legacy locks and recovery are isolated from the signed-in user's data home.
             var dataHome = TestDataHome.Create(purpose);
             try
             {
@@ -91,7 +94,12 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
 
     internal void AssertNoRecoveryArtifacts(string workspacePath)
     {
-        var recoveryWorkspaceDirectory = RecoveryWorkspaceDirectory(workspacePath);
+        AssertEmptyRecoveryDirectory(LocalRecoveryWorkspaceDirectory(workspacePath));
+        AssertEmptyRecoveryDirectory(RecoveryWorkspaceDirectory(workspacePath));
+    }
+
+    private static void AssertEmptyRecoveryDirectory(string recoveryWorkspaceDirectory)
+    {
         var attributes = AttributesIfPresent(recoveryWorkspaceDirectory);
         if (attributes is null)
         {

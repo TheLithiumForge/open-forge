@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
+using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -33,7 +34,7 @@ public sealed class RootRemoveRecoveryConsumerJourneyTests
         Assert.Empty(removed.StandardError);
         Assert.False(File.Exists(workspace.Combine(targetPath)));
 
-        var recoveryDirectory = workspace.LockStore.RecoveryWorkspaceDirectory(workspace.Path);
+        var recoveryDirectory = PublishedWorkspaceLockStore.LocalRecoveryWorkspaceDirectory(workspace.Path);
         var bundlePath = Assert.Single(Directory.EnumerateFiles(
             recoveryDirectory,
             "*.zip",

@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
@@ -28,6 +29,15 @@ internal sealed partial class RouteMoveSubjectSelector
                 CliSemanticStatus.Interrupted,
                 discovery.SelectedSource.Identity.CanonicalBasePath,
                 "Route Move route inspection was interrupted.");
+        }
+
+        if (WorkspaceRuntimePaths.Contains(discovery.Request.Workspace,
+                SourceLogicalPath.ToLexicalPath(discovery.Request.Workspace.PhysicalRoot, discovery.SelectedSource.Base.CanonicalPath))
+            || WorkspaceRuntimePaths.Contains(discovery.Request.Workspace, discovery.SelectedSource.Base.PhysicalPath))
+        {
+            return Boundary(formation, RouteMoveFindingCode.SourceUnsafe, CliSemanticStatus.Blocked,
+                discovery.SelectedSource.Identity.CanonicalBasePath,
+                "The selected source is inside the reserved workspace runtime directory.");
         }
 
         var route = routeFacts.RouteFacts.Single(fact => string.Equals(

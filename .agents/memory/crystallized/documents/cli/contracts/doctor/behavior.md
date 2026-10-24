@@ -328,14 +328,7 @@ entry repair proposal.
 
 ## Domain 2: Recovery And Residual State
 
-The recovery stage resolves only the current user's external
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.None)/OpenForge/recovery/v1` root. This
-observer-only lookup never creates the OS application-data root or the Open Forge
-subtree. An absent root or store produces zero recovery items. An unreadable
-selected workspace bucket produces unavailable or incomplete recovery coverage;
-it is never absence. The stage does not recursively inspect the workspace or
-arbitrary private artifacts.
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
 
 The stage enumerates exact deterministic final and draft names directly under
 the selected workspace bucket. It performs at most one semantic integrity check
@@ -751,7 +744,7 @@ through an interactive or structured renderer.
 
 Bounded payload streaming serves only semantic length/hash validation. Doctor never
 extracts, discloses, retains, or materializes payload bytes and never turns the
-persistent external lock file into activity evidence.
+persistent workspace lock file into activity evidence.
 
 Library checks are equally read-only and no-follow. They never invoke a Library
 or Extension operation, create or remove a projection, read source-target bytes,
@@ -862,3 +855,9 @@ not the repair target. A missing-entry finding uses the expected destination as
 its identifier while preserving actual/expected evidence. Formatting and manual
 quoting fallback follow the Interface. Neither advice construction nor Rendering
 reads the filesystem or broadens Index selection.
+
+## Recovery Stores
+
+At full and debug detail, `data.recoveryStores` reports ordered store records with `kind`, `path`, `coverage`, `candidates` and `cause`. Existing diagnosis fields remain. Producer-specific target comparison keeps its existing scope. Store kinds are `workspace` and `legacy`. Text reports candidate findings and warnings for unavailable stores. It does not print a separate inventory row for every readable store.
+
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.

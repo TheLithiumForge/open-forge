@@ -1,0 +1,6 @@
+Would remove the toolkit Extension.
+  Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.draft  Recovery bundle was retained
+         Recovery data from an earlier run remains at <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.draft. It does not block this operation.
+  .agents/open-forge.json  would record the removal in workspace settings
+  .agents/toolkit.md       would delete
+  No files were changed.

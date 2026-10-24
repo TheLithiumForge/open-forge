@@ -78,6 +78,47 @@
   },
   "limitations": [],
   "data": {
+    "stores": [
+      {
+        "kind": "workspace",
+        "path": "<workspace-recovery-store>",
+        "coverage": "complete",
+        "safety": "safe",
+        "candidates": [
+          {
+            "path": "<recovery-bundle-1>",
+            "kind": "bundle",
+            "outcome": "removed",
+            "integrity": "verified"
+          },
+          {
+            "path": "<recovery-bundle-2>",
+            "kind": "bundle",
+            "outcome": "final-state-unknown",
+            "integrity": "verified"
+          },
+          {
+            "path": "<recovery-bundle-3>",
+            "kind": "draft",
+            "outcome": "not-started",
+            "integrity": "incomplete"
+          }
+        ],
+        "cause": "The recovery candidate disposition is unknown after deletion failed: IOException (0x80070020): The filesystem operation failed.",
+        "revalidation": "matched",
+        "verification": "unknown"
+      },
+      {
+        "kind": "legacy",
+        "path": "<legacy-recovery-store>",
+        "coverage": "complete",
+        "safety": "safe",
+        "candidates": [],
+        "cause": null,
+        "revalidation": "not-requested",
+        "verification": "verified"
+      }
+    ],
     "mode": "apply",
     "items": [
       {

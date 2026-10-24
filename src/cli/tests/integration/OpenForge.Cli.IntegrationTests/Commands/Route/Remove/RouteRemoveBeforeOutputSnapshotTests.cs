@@ -78,7 +78,8 @@ public sealed class RouteRemoveBeforeOutputSnapshotTests
         if (situation == "leaf-with-detached-links") Assert.Equal("Prefix Old guide suffix.\n", workspace.ReadText("README.md"));
         AssertRecovery(result);
         Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath,
-            testName: $"{nameof(Removal)}_{situation}");
+            testName: $"{nameof(Removal)}_{situation}",
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 
     [Trait("Boundary", "Output")]
@@ -118,7 +119,8 @@ public sealed class RouteRemoveBeforeOutputSnapshotTests
         Assert.Equal(before, workspace.SnapshotHashes());
         AssertRecovery(result);
         Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath,
-            testName: $"{nameof(SafetyBoundary)}_{situation}");
+            testName: $"{nameof(SafetyBoundary)}_{situation}",
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 
     private static void AssertRecovery(RouteRemoveResult result)

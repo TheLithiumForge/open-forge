@@ -240,7 +240,7 @@ public sealed class F19PartialOperationJourneyTests
         PublishedJourneyWorkspace workspace,
         IReadOnlyDictionary<string, string> preRecovery)
     {
-        var recoveryDirectory = workspace.LockStore.RecoveryWorkspaceDirectory(workspace.Path);
+        var recoveryDirectory = PublishedWorkspaceLockStore.LocalRecoveryWorkspaceDirectory(workspace.Path);
         Assert.True(Directory.Exists(recoveryDirectory));
         var zipPaths = Directory.EnumerateFiles(recoveryDirectory, "*.zip", SearchOption.TopDirectoryOnly)
             .Order(StringComparer.Ordinal)
@@ -286,7 +286,7 @@ public sealed class F19PartialOperationJourneyTests
     private static IReadOnlyDictionary<string, string> CaptureRecoveryInventory(
         PublishedJourneyWorkspace workspace)
     {
-        var recoveryDirectory = workspace.LockStore.RecoveryWorkspaceDirectory(workspace.Path);
+        var recoveryDirectory = PublishedWorkspaceLockStore.LocalRecoveryWorkspaceDirectory(workspace.Path);
         if (!Directory.Exists(recoveryDirectory))
         {
             return new Dictionary<string, string> { ["<root>"] = "absent" };

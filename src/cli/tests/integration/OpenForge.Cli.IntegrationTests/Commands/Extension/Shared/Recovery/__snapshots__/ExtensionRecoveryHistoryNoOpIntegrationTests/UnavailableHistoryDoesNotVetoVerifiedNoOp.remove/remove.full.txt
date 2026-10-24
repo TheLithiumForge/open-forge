@@ -1,0 +1,9 @@
+No files are recorded for toolkit, so there is nothing to remove.
+Workspace: <workspace>
+  Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>  Recovery bundle is unavailable [extension-remove.recovery-coverage-unavailable]
+         Recovery history at <workspace>/.open-forge-state/recovery/v1/<workspace-key> could not be checked completely: The recovery workspace storage path is not a directory. Current workspace validation still applies.
+  Removal order: toolkit
+  .agents/open-forge.lock.json  unchanged
+  Entries sections unchanged: none
+  Verification: targets verified; Entries verified; Extension record verified
+  Recovery: not-required.
