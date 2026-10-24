@@ -23,7 +23,7 @@ public sealed class SourceReadSessionIntegrationTests
 
         Assert.Same(workspace, session.Catalogue.Workspace);
         Assert.Same(workspace, session.DocumentReader.Workspace);
-        var scope = Assert.IsType<SourceCatalogueSelectionScope>(session.DefaultSelectionScope);
+        var scope = Assert.Single(session.DefaultSelectionScopes);
         Assert.Equal(SourceLogicalPath.AgentsRoot, scope.CanonicalDirectoryPath);
         Assert.Equal(temporary.Combine(".agents"), scope.PhysicalDirectoryPath);
         Assert.NotNull(session.Catalogue.FindByPath(".agents/loader.md"));
@@ -39,7 +39,7 @@ public sealed class SourceReadSessionIntegrationTests
         var session = await new SourceReadSessionReader(new PhysicalPathResolver())
             .ReadAsync(workspace, TestContext.Current.CancellationToken);
 
-        Assert.Null(session.DefaultSelectionScope);
+        Assert.Empty(session.DefaultSelectionScopes);
         Assert.Contains(
             session.Catalogue.SelectAll().RootIssues,
             issue => issue.Code == SourceCatalogueIssueCode.RootMissing);

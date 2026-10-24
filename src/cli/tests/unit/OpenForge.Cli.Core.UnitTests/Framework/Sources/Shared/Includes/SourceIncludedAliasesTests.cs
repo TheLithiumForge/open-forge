@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
@@ -48,6 +50,7 @@ public sealed class SourceIncludedAliasesTests
             """));
         var result = new SourceLoadingClosureResolver().Resolve(new SourceLoadingClosureRequest
         {
+            Layout = WorkspaceLayout.Create(SourceInventoryTestData.Workspace(), WorkspaceLayout.DefaultMainRoot),
             WorkspaceEntryPath = "AGENTS.md",
             LoaderRootPaths = [],
             IncludeLinkedSources = true,

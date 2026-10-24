@@ -16,8 +16,8 @@ internal sealed class RouteContextReader
         var current = RouteCurrentContextReader.Read(inspection);
         var initialClosure = initial is null
             ? null
-            : new RouteContextClosureResolver().Resolve(initial);
-        var currentClosure = new RouteContextClosureResolver().Resolve(current);
+            : new RouteContextClosureResolver().Resolve(inspection.Catalogue.Layout, initial);
+        var currentClosure = new RouteContextClosureResolver().Resolve(inspection.Catalogue.Layout, current);
         var safelyAbsentSourceInventory = RouteSourceInspectionPolicy.IsSafelyAbsentSourceInventory(
             inspection.Catalogue);
         var totalInventory = SelectTotalInventory(current, inspection);

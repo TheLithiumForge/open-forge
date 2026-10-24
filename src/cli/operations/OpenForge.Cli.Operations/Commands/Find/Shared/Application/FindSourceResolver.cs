@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Find.Models.Operation;
 using OpenForge.Cli.Core.Commands.Find.Models.Request;
 using OpenForge.Cli.Core.Commands.Find.Shared.Selection;
@@ -25,7 +26,7 @@ internal sealed class FindSourceResolver(
     internal ValueTask<SourceReadSession> ReadAsync(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
-        => _sourceSessionRead(workspace, cancellationToken);
+        => _sourceSessionRead(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), cancellationToken);
 
     internal void ProbePairedOverwritePaths(
         FindRequest request,

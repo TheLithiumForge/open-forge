@@ -1,15 +1,21 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
 internal static class SourceWorkspaceRelativePath
 {
-    internal static bool IsCanonical(string? path)
-        => !string.IsNullOrWhiteSpace(path)
-            && !path.StartsWith("/", StringComparison.Ordinal)
-            && !IsDriveQualified(path)
-            && path.Split('/').All(SourceLogicalPath.IsCanonicalSegment);
+    internal const string LiteralReferencePrefix = "./";
+    internal static bool IsCanonical([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path)
+        => SourceLogicalPath.IsCanonicalSource(path);
 
     internal static string ReadReference(string path)
-        => SourceIdentity.DeriveId(path) ?? $"./{path}";
+        => ReadReference(SourceContentRoots.Default, path);
+
+    internal static string ReadReference(WorkspaceLayout layout, string path)
+        => ReadReference(new SourceContentRoots(layout), path);
+
+    internal static string ReadReference(SourceContentRoots roots, string path)
+        => SourceIdentity.DeriveId(roots, path) ?? LiteralReferencePrefix + path;
 
     internal static string Validate(
         string path,
@@ -40,7 +46,7 @@ internal static class SourceWorkspaceRelativePath
     internal static string ValidateMarkdown(string path, string parameterName)
     {
         var validated = Validate(path, parameterName, allowWorkspaceRoot: false);
-        if (!validated.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+        if (!validated.EndsWith(SourceFormClassifier.MarkdownExtension, StringComparison.OrdinalIgnoreCase))
         {
             throw new ArgumentException(
                 "The workspace-relative source path must identify a Markdown file.",

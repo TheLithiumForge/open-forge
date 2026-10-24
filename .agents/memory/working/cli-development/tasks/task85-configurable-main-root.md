@@ -35,3 +35,30 @@ The [main root council](../../../emerging/analysis/main-root-council/record.md) 
 
 - Start Delivery 1 only after [Task 86](task86-workspace-runtime-lock.md) merges, and reconcile the plan's line numbers against that baseline.
 - Keep `.open-forge-state/` from Task 86 at the workspace root. A configured main root never moves it, and a main root can never be placed inside it.
+
+## Wave 1 handoff
+
+B1 separates source syntax from membership and derives IDs from the selected content location.
+B2 carries Layout through catalogue requests, catalogues, sessions, filtering and loading closure.
+Inventory reads the main root and native Skills, treating absent optional Skills correctly.
+IncludedRows retains aliases, conditions, order and unresolved targets even for pre-inventoried sources.
+The frozen WorkspaceLayout signatures remain available and loader destinations use the actual loader directory.
+SourceContentRoots carries only logical roots, without a workspace or physical paths.
+Its Default value supports legacy path-only adapters and must be removed in Z1.
+
+Remaining default overloads to convert before activation:
+
+- SourceIdentity, SourceFormClassifier and SourceWorkspaceRelativePath path-only overloads
+- SourceLoaderDestinationParser, SourceLoaderEntriesParser and SourceGeneratedDestinationResolver
+- SourceCatalogueRequest and SourceCatalogue workspace overloads
+- SourceReadSessionReader workspace overloads and Find/References entry adapters
+- Legacy membership callers using SourceContentRoots.Default
+- Wave 0 WorkspaceRemovals.IsPathRemoved, WorkspaceSettingsCodec.IsValidRootPath and SeedArchiveLinkScope
+
+W1-01 remains with Wave 2: navigation formation assumes every observed source has a candidate, so candidate-free includes can trigger KeyNotFoundException.
+No new Wave 1 command path activates that existing case.
+
+Follow-up solution build passed in Release with 0 warnings and 0 errors.
+Complete Unit suite: total 5,245, passed 5,245, failed 0, skipped 0.
+Complete Integration suite: total 3,752, passed 3,694, failed 0, skipped 58, all allowlisted.
+The diff stays uncommitted. No snapshot baseline or public command activation is changed.

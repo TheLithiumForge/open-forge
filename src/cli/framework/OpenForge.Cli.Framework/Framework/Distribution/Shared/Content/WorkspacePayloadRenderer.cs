@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Transformation;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Transformation.Models;
@@ -9,8 +10,8 @@ internal static class WorkspacePayloadRenderer
 {
     // The Frontmatter Form section of .agents/memory/crystallized/documents/cli/shared-operation-contract.md defines delivery eligibility.
     private const string AgentsPrefix = ".agents/";
-    private const string MarkdownExtension = ".md";
-    private const string NativeSkillFileName = "SKILL.md";
+    private const string MarkdownExtension = SourceFormClassifier.MarkdownExtension;
+    private const string NativeSkillFileName = SourceFormClassifier.NativeSkillFileName;
 
     internal static FrameworkFrontmatterTransformResult Render(string destinationPath, ReadOnlyMemory<byte> sourceBytes, FrontmatterForm form)
     {

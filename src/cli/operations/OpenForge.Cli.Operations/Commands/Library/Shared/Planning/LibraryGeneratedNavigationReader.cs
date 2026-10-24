@@ -61,12 +61,12 @@ internal static class LibraryGeneratedNavigationReader
             var intendedCatalogue = selectedPaths.Count == 0
                 ? catalogue
                 : new SourceCatalogue(
-                    workspace,
+                    catalogue.Layout,
                     catalogue.Candidates.Where(candidate => !selectedPaths.Contains(candidate.CanonicalPath)),
                     catalogue.Sources.Where(source => !selectedPaths.Contains(source.Identity.CanonicalBasePath)),
                     catalogue.Issues.Where(issue => !selectedPaths.Contains(issue.AttemptedCanonicalPath)
                         && !issue.RelatedPaths.Any(selectedPaths.Contains)),
-                    isCancelled: false);
+                    isCancelled: false, catalogue.Aliases, catalogue.IncludedRows);
             var intendedByPath = intendedCatalogue.Sources
                 .Where(source => !selectedPaths.Contains(source.Identity.CanonicalBasePath))
                 .ToDictionary(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal);

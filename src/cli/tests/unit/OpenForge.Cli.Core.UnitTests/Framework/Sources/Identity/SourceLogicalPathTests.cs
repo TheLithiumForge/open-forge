@@ -46,7 +46,7 @@ public sealed class SourceLogicalPathTests
         InlineData(".agents/loader.md", true),
         InlineData(".agents/project alpha/工作.md", true),
         InlineData(".agents/root/encoded%20name.md", true),
-        InlineData(".agents", false),
+        InlineData(SourceLogicalPath.AgentsRoot, true),
         InlineData(".agents/", false),
         InlineData("./.agents/root.md", false),
         InlineData(".agents/root//file.md", false),
@@ -117,11 +117,11 @@ public sealed class SourceLogicalPathTests
     }
 
     [Trait("Boundary", "Processing")]
-    [Fact(DisplayName = "Neutral logical path conversion rejects root parents and unsafe source shapes")]
+    [Fact(DisplayName = "Neutral logical path conversion permits workspace top-level names")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void ParentAndFileConversionKeepSourceOnlyPreconditions()
     {
-        Assert.ThrowsAny<ArgumentException>(() => SourceLogicalPath.ReadParent(".agents"));
-        Assert.ThrowsAny<ArgumentException>(() => SourceLogicalPath.ReadFileName(".agents"));
+        Assert.Equal(Path.GetFileName(SourceLogicalPath.AgentsRoot), SourceLogicalPath.ReadFileName(SourceLogicalPath.AgentsRoot));
+        Assert.Equal(Path.GetRelativePath(AppContext.BaseDirectory, AppContext.BaseDirectory), SourceLogicalPath.ReadParent(SourceLogicalPath.AgentsRoot));
     }
 }

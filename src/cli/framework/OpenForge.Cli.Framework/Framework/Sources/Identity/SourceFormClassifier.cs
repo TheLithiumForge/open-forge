@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Diagnostics.CodeAnalysis;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
@@ -5,15 +7,30 @@ namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
 internal static class SourceFormClassifier
 {
+    internal const string MarkdownExtension = ".md";
+    internal const string NativeSkillFileName = "SKILL.md";
+    internal const string IndexFileName = "index" + MarkdownExtension;
+    internal const string UnderscoreIndexFileName = "_" + IndexFileName;
+    internal const string ReferencesFileName = "references" + MarkdownExtension;
+    internal const string UnderscoreReferencesFileName = "_" + ReferencesFileName;
+
     internal static bool TryClassify(string? canonicalPath, out SourceDocumentForm form)
+        => TryClassify(SourceContentRoots.Default, canonicalPath, out form);
+
+    internal static bool TryClassify(WorkspaceLayout layout, string? canonicalPath, out SourceDocumentForm form)
+        => TryClassify(new SourceContentRoots(layout), canonicalPath, out form);
+
+    internal static bool TryClassify(SourceContentRoots roots, string? canonicalPath, out SourceDocumentForm form)
     {
         form = default;
-        if (!SourceLogicalPath.IsCanonicalSource(canonicalPath))
+        if (!SourceLogicalPath.IsPrimarySource(roots, canonicalPath))
         {
             return false;
         }
 
-        if (string.Equals(canonicalPath, SourceLogicalPath.LoaderPath, StringComparison.Ordinal))
+        if (canonicalPath.Length == roots.MainRoot.Length + 1 + WorkspaceLayoutNames.LoaderFileName.Length
+            && canonicalPath.StartsWith(roots.MainRoot, StringComparison.Ordinal)
+            && canonicalPath.AsSpan(roots.MainRoot.Length + 1).SequenceEqual(WorkspaceLayoutNames.LoaderFileName))
         {
             form = SourceDocumentForm.Loader;
             return true;
@@ -26,37 +43,47 @@ internal static class SourceFormClassifier
             return true;
         }
 
-        if (!fileName.EndsWith(".md", StringComparison.Ordinal))
+        if (!fileName.EndsWith(MarkdownExtension, StringComparison.Ordinal))
         {
             return false;
         }
 
-        if (fileName == "SKILL.md")
+        if (fileName == NativeSkillFileName && (roots.IsDefault || canonicalPath.StartsWith(WorkspaceLayout.NativeSkillsPath + "/", StringComparison.Ordinal)))
         {
             form = SourceDocumentForm.Skill;
             return true;
         }
 
-        if (!fileName.StartsWith('_') && fileName is not ("index.md" or "references.md"))
+        if (!fileName.StartsWith('_') && fileName is not (IndexFileName or ReferencesFileName))
         {
             form = SourceDocumentForm.Markdown;
             return true;
         }
 
         var parent = SourceLogicalPath.ReadParent(canonicalPath);
-        form = ReadEntrypointForm(fileName, parent) ?? SourceDocumentForm.Markdown;
+        form = ReadEntrypointForm(roots, fileName, parent) ?? SourceDocumentForm.Markdown;
         return true;
     }
 
     internal static bool Matches(string canonicalPath, SourceDocumentForm form)
-    {
-        return TryClassify(canonicalPath, out var classified) && classified == form;
-    }
+        => Matches(SourceContentRoots.Default, canonicalPath, form);
+
+    internal static bool Matches(WorkspaceLayout layout, string canonicalPath, SourceDocumentForm form)
+        => Matches(new SourceContentRoots(layout), canonicalPath, form);
+
+    internal static bool Matches(SourceContentRoots roots, string canonicalPath, SourceDocumentForm form)
+        => TryClassify(roots, canonicalPath, out var classified) && classified == form;
 
     internal static bool IsEntryDocument([NotNullWhen(true)] string? canonicalPath)
+        => IsEntryDocument(SourceContentRoots.Default, canonicalPath);
+
+    internal static bool IsEntryDocument(WorkspaceLayout layout, [NotNullWhen(true)] string? canonicalPath)
+        => IsEntryDocument(new SourceContentRoots(layout), canonicalPath);
+
+    internal static bool IsEntryDocument(SourceContentRoots roots, [NotNullWhen(true)] string? canonicalPath)
     {
         return string.Equals(canonicalPath, SourceLogicalPath.WorkspaceEntryPath, StringComparison.Ordinal)
-            || string.Equals(canonicalPath, SourceLogicalPath.LoaderPath, StringComparison.Ordinal);
+            || string.Equals(canonicalPath, roots.LoaderPath, StringComparison.Ordinal);
     }
 
     internal static bool IsEntrypoint(SourceDocumentForm form)
@@ -78,22 +105,22 @@ internal static class SourceFormClassifier
 
     internal static bool IsCompatibilityFileName(string fileName)
     {
-        return fileName is "index.md" or "_index.md" or "references.md" or "_references.md";
+        return fileName is IndexFileName or UnderscoreIndexFileName or ReferencesFileName or UnderscoreReferencesFileName;
     }
 
-    private static SourceDocumentForm? ReadEntrypointForm(string fileName, string parent)
+    private static SourceDocumentForm? ReadEntrypointForm(SourceContentRoots roots, string fileName, string parent)
     {
-        if (parent == SourceLogicalPath.AgentsRoot)
+        if (parent == roots.MainRoot)
         {
             return null;
         }
 
         var compatibility = fileName switch
         {
-            "index.md" => SourceDocumentForm.IndexEntrypoint,
-            "_index.md" => SourceDocumentForm.UnderscoreIndexEntrypoint,
-            "references.md" => SourceDocumentForm.ReferencesEntrypoint,
-            "_references.md" => SourceDocumentForm.UnderscoreReferencesEntrypoint,
+            IndexFileName => SourceDocumentForm.IndexEntrypoint,
+            UnderscoreIndexFileName => SourceDocumentForm.UnderscoreIndexEntrypoint,
+            ReferencesFileName => SourceDocumentForm.ReferencesEntrypoint,
+            UnderscoreReferencesFileName => SourceDocumentForm.UnderscoreReferencesEntrypoint,
             _ => (SourceDocumentForm?)null,
         };
         if (compatibility is not null)
@@ -102,7 +129,7 @@ internal static class SourceFormClassifier
         }
 
         var parentName = SourceLogicalPath.ReadFileName(parent);
-        return fileName == $"_{parentName}.md"
+        return fileName == $"_{parentName}{MarkdownExtension}"
             ? SourceDocumentForm.CanonicalEntrypoint
             : null;
     }

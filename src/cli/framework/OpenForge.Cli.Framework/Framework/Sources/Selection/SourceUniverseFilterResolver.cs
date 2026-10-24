@@ -126,7 +126,7 @@ internal sealed class SourceUniverseFilterResolver
             .ToArray();
 
         var includedScopes = includes.Length == 0
-            ? ReadDefaultScope(request.DefaultSelectionScope)
+            ? request.DefaultSelectionScopes
             : ReadScopes(includes);
         var excludedScopes = ReadScopes(excludes);
         return request.Catalogue.Select(new SourceCatalogueSelectionRequest(
@@ -134,10 +134,6 @@ internal sealed class SourceUniverseFilterResolver
             includedScopes,
             excludedScopes));
     }
-
-    private static IReadOnlyList<SourceCatalogueSelectionScope> ReadDefaultScope(
-        SourceCatalogueSelectionScope? scope)
-        => scope is null ? [] : [scope];
 
     private static IReadOnlyList<SourceCatalogueSelectionScope> ReadScopes(
         IEnumerable<SourceUniverseSelectorResolution> selectors)

@@ -36,7 +36,7 @@ internal sealed class FindUniverseResolver
             request.UniverseFilter.Exclude);
         var resolution = _filterResolver.Resolve(new SourceUniverseFilterRequest(
             catalogue,
-            input.SourceSession.DefaultSelectionScope,
+            input.SourceSession.DefaultSelectionScopes,
             occurrences));
         var selectors = resolution.Selectors
             .Select(selector => ProjectSelector(selector, catalogue))

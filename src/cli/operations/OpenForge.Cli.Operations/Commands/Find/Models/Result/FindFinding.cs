@@ -77,8 +77,8 @@ internal sealed record FindFinding
         }
 
         if (path is not null && layer is { } pathLayer
-            && ((SourceLogicalPath.IsCanonicalSource(path) && !path.EndsWith(".md", StringComparison.Ordinal))
-                || (pathLayer == SourceLayerKind.Overwrite) != (SourceLogicalPath.IsCanonicalSource(path) && path.EndsWith(".overwrite.md", StringComparison.Ordinal))))
+            && (SourceLogicalPath.IsPrimaryNonMarkdownSource(SourceContentRoots.Default, path)
+                || (pathLayer == SourceLayerKind.Overwrite) != SourceLogicalPath.IsPrimaryOverwriteSource(SourceContentRoots.Default, path)))
         {
             throw new ArgumentException("The Find finding path and layer must agree.", nameof(path));
         }
@@ -93,7 +93,7 @@ internal sealed record FindFinding
             var expectedPath = identifiedLayer switch
             {
                 SourceLayerKind.Base => source.Path,
-                SourceLayerKind.Overwrite => $"{source.Path[..^3]}.overwrite.md",
+                SourceLayerKind.Overwrite => SourceOverwritePath.ReadAdjacentPath(source.Path),
                 _ => throw new ArgumentOutOfRangeException(nameof(layer), identifiedLayer, "The Find finding layer is not defined."),
             };
             if (!string.Equals(path, expectedPath, StringComparison.Ordinal))

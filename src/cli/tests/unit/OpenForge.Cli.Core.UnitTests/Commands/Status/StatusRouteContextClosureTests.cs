@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
@@ -191,7 +193,7 @@ public sealed class StatusRouteContextClosureTests
     private static RouteContextClosure Resolve(
         IReadOnlyList<RouteContextSource> sources,
         IReadOnlyList<string> rootPaths)
-        => new RouteContextClosureResolver().Resolve(new RouteContextSet
+        => new RouteContextClosureResolver().Resolve(WorkspaceLayout.Create(SourceInventoryTestData.Workspace(), WorkspaceLayout.DefaultMainRoot), new RouteContextSet
         {
             WorkspaceEntry = Source(
                 "AGENTS.md",

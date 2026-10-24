@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Documents;
 using OpenForge.Cli.Core.Commands.Find.Models.Operation;
@@ -213,9 +214,9 @@ public sealed class FindOperationTests
                 return ValueTask.FromResult(new SourceReadSession(
                     fixture.Catalogue,
                     sourceReader,
-                    new SourceCatalogueSelectionScope(
-                        ".agents",
-                        Physical(fixture.Workspace.PhysicalRoot, ".agents"))));
+                    [new SourceCatalogueSelectionScope(
+                        WorkspaceLayout.DefaultMainRoot,
+                        Physical(fixture.Workspace.PhysicalRoot, WorkspaceLayout.DefaultMainRoot))]));
             });
         SourcePhysicalPathResolver physicalPathResolver = (_, path) =>
         {
