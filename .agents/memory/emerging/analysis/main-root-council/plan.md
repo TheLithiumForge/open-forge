@@ -8,6 +8,14 @@ open-forge:
 
 The test and qualification engineer of the [main root council](record.md) wrote this plan from the chair decisions. It is frozen for Delivery 1 of [Task 85](../../../working/cli-development/tasks/task85-configurable-main-root.md) and starts after [Task 86](../../../working/cli-development/tasks/task86-workspace-runtime-lock.md) merges. It replaces the [2026-10-21 plan](../route-include-council/main-root-plan.md).
 
+## Chair amendments
+
+These override the plan below where they differ.
+
+1. **No magic strings and no literal-string assertions.** The maintainer set this on 2026-10-24. A folder or file name, finding code, environment variable or layout segment is referenced through its production owner, in tests as in production code. No test asserts user-facing text with a literal, substring or pattern. Exact text is checked only through reviewed snapshots. Semantic facts stay direct assertions. See `.agents/directives/open-forge/testing/evidence-integrity.md`.
+2. **Clean test tiers.** Unit tests stay in memory. Integration tests cross one real boundary in process. EndToEnd tests drive the published executable and do not repeat lower-tier branches. Traits match what each test really does.
+3. **Multiple roots.** The maintainer asked that Task 85 support one main root and multiple roots, possibly by extending `route include`. A council is deciding the design. Until it reports, keep `WorkspaceLayout` able to hold more than one content location beyond the main root and native Skills, and do not hard-code exactly two.
+
 Delivery 1 adds a context folder selected at first installation and supports its complete lifecycle. It does not move an established installation. An omitted or unchanged `--main-root` preserves ordinary Install behavior. A different root refuses before effects, including with `--configure`.
 
 Implement after Task 86 merges. The baseline citations below refer to the supplied snapshot. Reconcile moved lines against Task 86 before dispatch, preserving the APIs and decisions in this plan. Task 85 remains open after Delivery 1.
