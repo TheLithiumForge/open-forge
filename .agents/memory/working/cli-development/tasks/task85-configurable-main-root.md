@@ -168,7 +168,7 @@ Consumer and navigation adapters are removed. The destination workspace overload
 ## Wave 5 RP handoff
 
 Repair takes Doctor's layout observation through planning, target checks, metadata, classification and result projection, and revalidates it under the lock. Cleanup carries the layout and keeps Task 86's recorded recovery locations.
-Two published custom-root Repair journeys stay failing until Index and Doctor agree on a custom loader's row to a native Skills catalogue named `index.md`.
+Doctor now recognizes native Skills rows across custom roots by resolving destinations before comparison. Default Skills rows remain unchanged, and all required managed suites and published Repair and Index journeys pass.
 
 ## Overseer notes
 
