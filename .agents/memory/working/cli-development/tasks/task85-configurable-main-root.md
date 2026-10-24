@@ -78,3 +78,7 @@ Release build passed with zero warnings and errors. Unit: 5,252 total, 5,252 pas
 - C2 delivers mapped projection, exclusions, collisions and reverse alignment while retaining package-coordinate validation. Parsed links and recognized host references follow the layout, Claude retains `@AGENTS.md`, and reviewed README/CLI Skill variants describe both content folders, native Skills catalogues and generic `./...` operands. Default bytes and existing snapshots remain unchanged.
 - Six temporary default-layout overloads remain: `EmbeddedFrameworkSourceProjector.Project`, `FrameworkPayloadSourceProjection.Create`, `FrameworkSourceAlignment.ReadAsset`, both `FrameworkPayloadSelection` methods and `WorkspacePayloadRenderer.Render`. Convert their callers before Z1 activation. `FrameworkPayloadAsset` must retain `SourceContentRoots.Default` as a package namespace invariant. Render callers supply the original package path and use mapped destinations for permissions and ownership.
 - C2 final counts (total/passed/failed/skipped): Unit 5264/5264/0/0, Integration 3758/3700/0/58, published payload 2/2/0/0. All skips are allowlisted.
+
+## Overseer notes
+
+- Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.

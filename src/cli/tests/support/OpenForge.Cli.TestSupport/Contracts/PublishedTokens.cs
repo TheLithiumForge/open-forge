@@ -151,6 +151,9 @@ public static class PublishedTokens
 
     public static class Settings
     {
+        public const int SchemaVersion = 4;
+        public const string SchemaVersionProperty = "schemaVersion";
+        public const string FrontmatterProperty = "frontmatter";
         public const string ScopedFrontmatter = "scoped";
     }
 

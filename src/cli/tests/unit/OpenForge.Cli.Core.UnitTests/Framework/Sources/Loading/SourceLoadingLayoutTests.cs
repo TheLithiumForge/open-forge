@@ -70,7 +70,10 @@ public sealed class SourceLoadingLayoutTests
     private static SourceLoadingClosureSource Source(string path, SourceDocumentForm form, string? parent, params SourceGeneratedEntry[] entries)
         => new()
         {
-            Path = path, Form = form, ParentPath = parent, RouteState = SourceRouteState.Routed,
+            Path = path,
+            Form = form,
+            ParentPath = parent,
+            RouteState = SourceRouteState.Routed,
             Metadata = SourceAuthoredMetadataFacts.Complete(Description, [SourceLoadingClosureResolver.LoadNowTag]),
             GeneratedEntries = SourceGeneratedEntriesFacts.Complete(entries),
         };
