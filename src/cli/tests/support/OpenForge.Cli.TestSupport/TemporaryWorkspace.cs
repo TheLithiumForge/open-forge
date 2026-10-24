@@ -23,6 +23,7 @@ public sealed class TemporaryWorkspace : IDisposable
 
     private const string OwnershipMarkerName = ".open-forge-test-workspace-owner";
     private const string WorkspaceNamePrefix = "open-forge-";
+    private const string CaseSensitivityProbePrefix = "case-sensitivity-probe-";
     private const int OwnershipTokenByteLength = 32;
     private const int WorkspacePurposeMaxLength = 48;
     private const int FileBufferSize = 4096;
@@ -121,6 +122,22 @@ public sealed class TemporaryWorkspace : IDisposable
         var path = ResolveRelativePath([relativePath]);
         CreateOwnedDirectories(path);
         return path;
+    }
+
+    public bool IsFileSystemCaseSensitive()
+    {
+        var relativePath = $"{CaseSensitivityProbePrefix}{Guid.NewGuid():N}";
+        var directory = CreateDirectory(relativePath);
+        try
+        {
+            return !Directory.Exists(Combine(relativePath.ToUpperInvariant()));
+        }
+        finally
+        {
+            EnsureOrdinaryDirectory(directory);
+            Directory.Delete(directory, recursive: false);
+            _ownedEntries.Remove(directory);
+        }
     }
 
     /// <summary>
