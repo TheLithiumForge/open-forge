@@ -72,3 +72,9 @@ Z1 adapters also remain in RoutedMetadataPolicyContext and RoutedMetadataDefault
 RenameEvidencePolicy.Roots, RenameRecordedEntryReader.Read, RenameCanonicalEntrypointEvidence.Read and the composition adapter's workspace ReadEvidenceAsync overloads retain default adapters for later command conversion.
 The overseer owns C2 integration, later command conversion and fresh published/native and non-Windows qualification. C2 files and snapshot baselines are untouched.
 Release build passed with zero warnings and errors. Unit: 5,252 total, 5,252 passed, 0 failed, 0 skipped. Integration: 3,757 total, 3,699 passed, 0 failed, 58 allowlisted skips. The diff remains uncommitted.
+
+## Wave 2 C2 handoff
+
+- C2 delivers mapped projection, exclusions, collisions and reverse alignment while retaining package-coordinate validation. Parsed links and recognized host references follow the layout, Claude retains `@AGENTS.md`, and reviewed README/CLI Skill variants describe both content folders, native Skills catalogues and generic `./...` operands. Default bytes and existing snapshots remain unchanged.
+- Six temporary default-layout overloads remain: `EmbeddedFrameworkSourceProjector.Project`, `FrameworkPayloadSourceProjection.Create`, `FrameworkSourceAlignment.ReadAsset`, both `FrameworkPayloadSelection` methods and `WorkspacePayloadRenderer.Render`. Convert their callers before Z1 activation. `FrameworkPayloadAsset` must retain `SourceContentRoots.Default` as a package namespace invariant. Render callers supply the original package path and use mapped destinations for permissions and ownership.
+- C2 final counts (total/passed/failed/skipped): Unit 5264/5264/0/0, Integration 3758/3700/0/58, published payload 2/2/0/0. All skips are allowlisted.
