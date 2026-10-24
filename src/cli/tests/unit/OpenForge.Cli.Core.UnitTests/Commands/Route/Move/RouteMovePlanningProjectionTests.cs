@@ -11,11 +11,39 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Move;
 
 public sealed class RouteMovePlanningProjectionTests
 {
+    private const string MissingParentId = "missing-parent";
+    private const string CategoryName = "new-category";
+
+    [Fact(DisplayName = "Route Move projects default missing-parent references without expanding category IDs")]
+    [Trait("Feature", "route-move"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
+    public void MissingParentReferencesPreserveDefaultOperands()
+    {
+        var categoryId = MissingParentId + "/" + CategoryName;
+        var categoryPath = WorkspaceLayout.DefaultMainRoot + "/" + categoryId + "/" + SourceFormClassifier.IndexFileName;
+        foreach (var (target, parent) in new[]
+        {
+            (categoryId, MissingParentId),
+            (categoryPath, categoryId),
+            (SourceWorkspaceRelativePath.LiteralReferencePrefix + categoryPath,
+                SourceWorkspaceRelativePath.LiteralReferencePrefix + WorkspaceLayout.DefaultMainRoot + "/" + categoryId),
+        })
+        {
+            var result = RouteMoveDestinationProjector.Project(CategoryInventory(SourceDocumentForm.IndexEntrypoint, target));
+            var boundary = Assert.IsType<RouteMoveResultFormation>(result.Boundary);
+            Assert.Equal(RouteMoveFindingCode.DestinationParentMissing, Assert.Single(boundary.Findings).Code);
+            Assert.Equal(parent, boundary.Destination.SuggestedParentReference);
+        }
+    }
+
     [Fact(DisplayName = "Route Move public ownership omits an unrelated Framework claim")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitProjection"), Trait("Boundary", "Processing")]
     public void PublicOwnershipOmitsUnrelatedClaim()
@@ -175,6 +203,7 @@ public sealed class RouteMovePlanningProjectionTests
         var parent = ParentSource(workspace);
         return new RouteMoveResolvedSubject
         {
+            LayoutRead = LayoutRead(workspace),
             Request = new RouteMoveRequest(
                 workspace,
                 RouteMoveTestData.SourceId,
@@ -182,7 +211,7 @@ public sealed class RouteMovePlanningProjectionTests
                 RouteMoveMode.DryRun),
             Source = RouteMoveTestData.Formation(RouteMoveMode.DryRun).Source,
             Kind = RouteMoveSubjectKind.Leaf,
-            Catalogue = new SourceCatalogue(workspace, [], [source, parent], [], isCancelled: false),
+            Catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [source, parent], [], isCancelled: false),
             SelectedSource = source,
             RouteFacts = RouteFacts(parent),
             Layers =
@@ -217,6 +246,7 @@ public sealed class RouteMovePlanningProjectionTests
         var parent = ParentSource(workspace);
         var subject = new RouteMoveResolvedSubject
         {
+            LayoutRead = LayoutRead(workspace),
             Request = new RouteMoveRequest(
                 workspace,
                 sourceId,
@@ -224,7 +254,7 @@ public sealed class RouteMovePlanningProjectionTests
                 RouteMoveMode.DryRun),
             Source = new RouteMoveSource { Requested = sourceId },
             Kind = RouteMoveSubjectKind.Category,
-            Catalogue = new SourceCatalogue(workspace, [], [source, parent], [], isCancelled: false),
+            Catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [source, parent], [], isCancelled: false),
             SelectedSource = source,
             RouteFacts = RouteFacts(source, parent),
         };
@@ -242,6 +272,11 @@ public sealed class RouteMovePlanningProjectionTests
             new SourceLogicalIdentity("memory/archive", path),
             Layer(workspace, path, SourceDocumentForm.CanonicalEntrypoint));
     }
+
+    private static WorkspaceLayoutRead LayoutRead(CliWorkspace workspace)
+        => new(WorkspaceLayoutReadState.Ready,
+            WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceSettingsDefinitions.RelativePath)),
+            Ownership(), WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], []);
 
     private static SourceLayer Layer(
         CliWorkspace workspace,

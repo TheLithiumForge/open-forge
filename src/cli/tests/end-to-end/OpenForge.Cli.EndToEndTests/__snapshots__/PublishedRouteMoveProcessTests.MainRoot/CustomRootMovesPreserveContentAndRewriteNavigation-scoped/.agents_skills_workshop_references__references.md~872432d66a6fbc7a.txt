@@ -1,0 +1,12 @@
+---
+open-forge:
+  description: Move fixture
+  tags: [Docs]
+---
+# Root
+
+## Entries
+
+
+- [Move fixture](guide.md) - #Docs
+

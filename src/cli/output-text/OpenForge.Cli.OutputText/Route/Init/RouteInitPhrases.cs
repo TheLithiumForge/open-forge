@@ -28,6 +28,10 @@ internal static class RouteInitPhrases
     internal static string FormatRecoveryTheRecoveryBundleWasRetainedAt(string pathText)
         => $"Recovery: the recovery bundle was retained at {pathText}.";
 
+    // @OpenForgeText route.init.phrase.is-not-a-route-id-or-an-entrypoint-path-in-content-folders
+    internal static string FormatIsNotARouteIdOrAnEntrypointPathInContentFolders(string target, string mainRoot)
+        => $"{target} is not a route ID or an entrypoint path in {mainRoot} or the native Skills folder.";
+
     // @OpenForgeText route.init.phrase.is-not-a-route-id-or-an-entrypoint-path-under-agents
     internal static string FormatIsNotARouteIdOrAnEntrypointPathUnderAgents(string targetText)
         => $"{targetText} is not a route ID or an entrypoint path under .agents.";

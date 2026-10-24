@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
@@ -110,7 +111,7 @@ internal sealed class RouteInitProspectivePlanBuilder
         IReadOnlyList<FileStateSnapshot> directoryStates;
         try
         {
-            directoryStates = ReadMissingDirectories(request, intended, inspection.Restoration);
+            directoryStates = ReadMissingDirectories(inspection.Catalogue.Catalogue.Layout, intended, inspection.Restoration);
         }
         catch (RouteInitPlanningException exception)
         {
@@ -231,7 +232,7 @@ internal sealed class RouteInitProspectivePlanBuilder
         {
             foreach (var file in restoration.Files.Where(file => file.Before.Kind == FileExpectationKind.Missing && file.Source is not null))
             {
-                documents.Add(file.Asset.Path, StrictUtf8.GetString(file.IntendedBytes.Span));
+                documents.Add(file.TargetPath, StrictUtf8.GetString(file.IntendedBytes.Span));
             }
         }
         foreach (var entry in intended.Entries)
@@ -331,26 +332,39 @@ internal sealed class RouteInitProspectivePlanBuilder
     }
 
     private IReadOnlyList<FileStateSnapshot> ReadMissingDirectories(
-        RouteInitRequest request,
+        WorkspaceLayout layout,
         RouteInitIntendedChain intended,
         RouteInitRestoration? restoration)
     {
-        var canonicalDirectories = new List<string> { SourceLogicalPath.AgentsRoot };
+        var requestWorkspace = layout.Workspace;
+        var canonicalDirectories = new List<string>();
         foreach (var entry in intended.Entries)
         {
             canonicalDirectories.Add(
                 SourceLogicalPath.ReadParent(entry.Source.Identity.CanonicalBasePath));
+            canonicalDirectories.Add(layout.SourceRoots.Single(root =>
+                entry.Source.Identity.CanonicalBasePath.StartsWith(root + "/", StringComparison.Ordinal)));
         }
         if (restoration is not null)
         {
             foreach (var file in restoration.Files)
             {
-                var parent = SourceLogicalPath.ReadParent(file.Asset.Path);
-                while (parent != SourceLogicalPath.AgentsRoot)
+                var parent = SourceLogicalPath.ReadParent(file.TargetPath);
+                while (layout.IsImplicitContentDestination(parent))
                 {
                     canonicalDirectories.Add(parent);
                     parent = SourceLogicalPath.ReadParent(parent);
                 }
+            }
+        }
+
+        foreach (var directory in canonicalDirectories.ToArray())
+        {
+            var parent = SourceLogicalPath.ReadParent(directory);
+            while (layout.IsImplicitContentDestination(parent))
+            {
+                canonicalDirectories.Add(parent);
+                parent = SourceLogicalPath.ReadParent(parent);
             }
         }
 
@@ -359,11 +373,11 @@ internal sealed class RouteInitProspectivePlanBuilder
             .OrderBy(path => path.Count(character => character == '/')).ThenBy(path => path, StringComparer.Ordinal))
         {
             var logical = SourceLogicalPath.ToLexicalPath(
-                request.Workspace.LexicalRoot,
+                requestWorkspace.LexicalRoot,
                 canonical);
             var resolution = _physicalPathResolver.ResolveCandidate(
-                request.Workspace.LexicalRoot,
-                request.Workspace.PhysicalRoot,
+                requestWorkspace.LexicalRoot,
+                requestWorkspace.PhysicalRoot,
                 logical);
             if (resolution.State == PhysicalPathState.Missing)
             {

@@ -342,19 +342,20 @@ internal static class RouteInitReportSelector
         if (finding.Code == RouteInitFindingCode.InvalidTarget
             && string.Equals(result.Target.Requested, "loader", StringComparison.Ordinal))
         {
-            return RouteInitWording.InvalidTarget(result.Target.Requested);
+            return RouteInitWording.InvalidTarget(result.Target.Requested, result.CustomRoot);
         }
 
         return RouteInitWording.Invalid(
             result.Target.Requested,
             finding.Code == RouteInitFindingCode.InvalidTarget
-                ? global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.LabelNotARouteIdOrAnEntrypointPathUnderAgents()
+                ? RouteInitWording.InvalidTargetLabel(result.CustomRoot)
                 : Message(result, finding));
     }
 
     private static string Message(
         RouteInitResult result,
-        RouteInitFinding? finding)
+        RouteInitFinding? finding,
+        string? projectedTarget = null)
     {
         if (finding?.LockFailure is { } lockFailure)
         {
@@ -371,11 +372,15 @@ internal static class RouteInitReportSelector
             return CliFindingWording.RecoveryConflict(RecoveryConflictPath(finding));
         }
 
-        var target = finding.Target ?? result.Target.Requested;
+        var target = projectedTarget ?? finding.Target ?? result.Target.Requested;
+        if (finding.Code == RouteInitFindingCode.InvalidTarget)
+            return RouteInitWording.InvalidTarget(target, result.CustomRoot);
+        if (finding.Code == RouteInitFindingCode.LoaderUnsafe)
+            return RouteInitWording.LoaderUnsafe(result.LoaderPath);
         return RouteInitWording.Message(
             finding.Code,
             target,
-            result.WorkspacePath ?? finding.Target ?? result.Target.Requested,
+            result.WorkspacePath ?? target,
             finding.Cause,
             ProgressedCount(result),
             result.Effects.Length,
@@ -411,16 +416,7 @@ internal static class RouteInitReportSelector
             Code = RouteInitWireVocabulary.Name(finding.Code),
             LockFailure = finding.LockFailure,
             Title = RouteInitWording.FindingTitle(finding.Code),
-            Message = finding.LockFailure is not null || finding.Code == RouteInitFindingCode.RecoveryConflict
-                ? Message(result, finding)
-                : RouteInitWording.Message(
-                    finding.Code,
-                    target,
-                    result.WorkspacePath ?? target,
-                    finding.Cause,
-                    ProgressedCount(result),
-                    result.Effects.Length,
-                    result.Recovery.ResidualPath),
+            Message = Message(result, finding, target),
             Subject = Subject(result, finding, target),
             Resolution = finding.Code == RouteInitFindingCode.NeedsAuthoring
                 ? CliResolution.Informational

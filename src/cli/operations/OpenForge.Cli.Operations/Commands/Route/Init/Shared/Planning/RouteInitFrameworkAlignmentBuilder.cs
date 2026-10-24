@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Distribution.Models;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using System.Text;
@@ -18,11 +20,12 @@ internal sealed class RouteInitFrameworkAlignmentBuilder
     private readonly RouteInitTargetPlanner _targetPlanner = new();
 
     internal RouteInitFrameworkAlignmentBuild Build(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         RouteInitTargetFacts requested,
-        IReadOnlyList<SourceLogicalSource> payloadSources)
+        IReadOnlyList<SourceLogicalSource> payloadSources,
+        FrameworkPayload payload)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(layout);
         ArgumentNullException.ThrowIfNull(requested);
         ArgumentNullException.ThrowIfNull(payloadSources);
         var requestedId = string.Join('/', requested.RequestedSegments);
@@ -31,7 +34,7 @@ internal sealed class RouteInitFrameworkAlignmentBuilder
             && source.Identity.AutomaticId == requestedId);
         var isRestoration = canonical is not null
             && (requested.RequestedSegments.Count == 1
-                || requested.RequestedSegments.Count == 2 && requested.RequestedSegments[0] == "memory")
+                || requested.RequestedSegments.Count == 2 && requested.RequestedSegments[0] == WorkspaceCategoryNames.Memory)
             && (requested.Kind != RouteInitTargetKind.ExactPath
                 || requested.CanonicalPath == canonical.Identity.CanonicalBasePath);
         if (requested.RequestedSegments.Count < 2 && !isRestoration)
@@ -52,14 +55,13 @@ internal sealed class RouteInitFrameworkAlignmentBuilder
 
         var candidate = candidates[0];
         var concreteSegments = requested.RequestedSegments.ToArray();
-        var managedByPosition = candidate.ManagedPositions
-            .Select((position, index) => (position, index))
-            .ToDictionary(item => item.position, item => item.index);
+        var managedPositions = candidate.ManagedPositions.ToArray();
         for (var index = 0; index < concreteSegments.Length; index++)
         {
-            if (managedByPosition.ContainsKey(index))
+            var managedIndex = Array.IndexOf(managedPositions, index);
+            if (managedIndex >= 0)
             {
-                concreteSegments[index] = candidate.ManagedSegments[managedByPosition[index]];
+                concreteSegments[index] = candidate.ManagedSegments[managedIndex];
                 continue;
             }
 
@@ -74,13 +76,13 @@ internal sealed class RouteInitFrameworkAlignmentBuilder
             }
         }
 
-        var alignedTarget = _targetPlanner.ResolveAlignedFrameworkTarget(requested, concreteSegments);
+        var alignedTarget = _targetPlanner.ResolveAlignedFrameworkTarget(layout, requested, concreteSegments);
         var alignedSegments = BuildSegments(
-            workspace,
+            layout,
             alignedTarget,
             candidate,
-            managedByPosition,
-            payloadSources);
+            payloadSources,
+            payload);
         return new RouteInitFrameworkAlignmentBuild(
             RouteInitFrameworkAlignmentState.Complete,
             new RouteInitFrameworkAlignment(
@@ -93,15 +95,16 @@ internal sealed class RouteInitFrameworkAlignmentBuilder
     }
 
     private static IReadOnlyList<RouteInitFrameworkAlignedSegment> BuildSegments(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         RouteInitTargetFacts target,
         FrameworkSourceAlignment.Candidate candidate,
-        IReadOnlyDictionary<int, int> managedByPosition,
-        IReadOnlyList<SourceLogicalSource> payloadSources)
+        IReadOnlyList<SourceLogicalSource> payloadSources,
+        FrameworkPayload payload)
     {
         var concrete = target.CanonicalSegments
             ?? throw new InvalidOperationException("A complete Framework alignment requires concrete segments.");
         var results = new List<RouteInitFrameworkAlignedSegment>(concrete.Count);
+        var managedPositions = candidate.ManagedPositions.ToArray();
         for (var position = 0; position < concrete.Count; position++)
         {
             var destinationSegments = concrete.Take(position + 1).ToArray();
@@ -111,7 +114,7 @@ internal sealed class RouteInitFrameworkAlignmentBuilder
                     ?? throw new InvalidOperationException(
                         "An exact Framework alignment requires its requested entrypoint path.")
                 : RouteInitTargetPlanner.ReadChainPaths(
-                    new RouteInitTargetFacts(
+                    layout, new RouteInitTargetFacts(
                         target.Requested,
                         target.Kind,
                         target.RequestedSegments,
@@ -119,12 +122,13 @@ internal sealed class RouteInitFrameworkAlignmentBuilder
                         string.Join('/', destinationSegments),
                         canonicalPath: null))[^1];
 
-            if (!managedByPosition.TryGetValue(position, out var managedIndex))
+            var managedIndex = Array.IndexOf(managedPositions, position);
+            if (managedIndex < 0)
             {
                 results.Add(new RouteInitFrameworkAlignedSegment(
                     concrete[position],
                     RouteInitFrameworkSegmentRole.Scope,
-                    CreateDestinationSource(workspace, destinationPath, source: null),
+                    CreateDestinationSource(layout, destinationPath, source: null),
                     SourceAssetPath: null));
                 continue;
             }
@@ -138,38 +142,39 @@ internal sealed class RouteInitFrameworkAlignmentBuilder
                 managedIndex == 0
                     ? RouteInitFrameworkSegmentRole.InstalledRoot
                     : RouteInitFrameworkSegmentRole.Managed,
-                CreateDestinationSource(workspace, destinationPath, source),
-                source.Identity.CanonicalBasePath));
+                CreateDestinationSource(layout, destinationPath, source),
+                FrameworkSourceAlignment.ReadAsset(layout, source.Identity.CanonicalBasePath, payload)?.Path
+                    ?? throw new InvalidOperationException("A Framework source requires its package asset.")));
         }
 
         return results;
     }
 
     private static SourceLogicalSource CreateDestinationSource(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         string canonicalPath,
         SourceLogicalSource? source)
     {
-        if (!SourceFormClassifier.TryClassify(canonicalPath, out var form)
+        if (!SourceFormClassifier.TryClassify(layout, canonicalPath, out var form)
             || !SourceFormClassifier.IsEntrypoint(form))
         {
             throw new InvalidOperationException("A Framework Route Init destination must be one canonical entrypoint.");
         }
 
-        var id = SourceIdentity.DeriveId(canonicalPath)
+        var id = SourceIdentity.DeriveId(layout, canonicalPath)
             ?? throw new InvalidOperationException("A Framework Route Init destination requires one source identity.");
         var baseLayer = new SourceLayer(
             canonicalPath,
-            Path.GetFullPath(SourceLogicalPath.ToLexicalPath(workspace.PhysicalRoot, canonicalPath)),
+            Path.GetFullPath(SourceLogicalPath.ToLexicalPath(layout.Workspace.PhysicalRoot, canonicalPath)),
             form,
             SourceLayerKind.Base);
         SourceLayer? overwrite = null;
         if (source?.Overwrite is not null)
         {
-            var overwritePath = canonicalPath[..^".md".Length] + ".overwrite.md";
+            var overwritePath = SourceOverwritePath.ReadAdjacentPath(canonicalPath);
             overwrite = new SourceLayer(
                 overwritePath,
-                Path.GetFullPath(SourceLogicalPath.ToLexicalPath(workspace.PhysicalRoot, overwritePath)),
+                Path.GetFullPath(SourceLogicalPath.ToLexicalPath(layout.Workspace.PhysicalRoot, overwritePath)),
                 OpenForge.Cli.Core.Framework.Sources.Models.Identity.SourceDocumentForm.OverwriteCompanion,
                 SourceLayerKind.Overwrite);
         }

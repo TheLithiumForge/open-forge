@@ -140,8 +140,19 @@ EX no longer calls the payload and admission adapters. The optional permission l
 Route Remove expands category exclusions through the layout, including absent targets, checks content ordinally and revalidates the layout under the lock.
 Its command adapters are removed. Two static help sentences keep default-root wording, like Route Create's.
 
+## Wave 5 N handoff
+
+Route Init carries and revalidates the layout, accepts literal custom-root paths, maps restoration and enforces ordinal content boundaries.
+One runtime-reservation test adapter remains for Z1, and help and binding wording keep the default root.
+
+## Wave 5 M handoff
+
+Route Move carries and revalidates the selected layout, keeps literal paths literal and gives custom-root guidance.
+Five default-only fixture adapter calls remain for Z1, and static help keeps default-root wording.
+
 ## Overseer notes
 
 - Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.
 - Before Z1 removes the permission adapters, resolve how maintenance treats an intentionally excluded missing loader against the frozen revalidator (from E2). The plan's `*LibrarySharedGrant*` filter selects nothing, because the shared-grant class has another name.
 - Static help still shows default-root wording in Route Create and Route Inspect. The final documentation packet and Z2 help changes decide whether it changes.
+- Open fix from M: a loader row that links straight to a nested native Skills catalogue can disappear when navigation regenerates and no enclosing catalogue exists. Reproduce in shared generated navigation and fix before Z1.

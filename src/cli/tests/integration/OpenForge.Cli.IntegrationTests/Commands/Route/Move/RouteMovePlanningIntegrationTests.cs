@@ -132,6 +132,7 @@ public sealed class RouteMovePlanningIntegrationTests
         var subject = plan.Projection.Destination.Inventory.Subject;
         var discovery = new RouteMoveSubjectDiscovery
         {
+            LayoutRead = subject.LayoutRead,
             Request = subject.Request,
             Catalogue = subject.Catalogue,
             SelectedSource = subject.SelectedSource,

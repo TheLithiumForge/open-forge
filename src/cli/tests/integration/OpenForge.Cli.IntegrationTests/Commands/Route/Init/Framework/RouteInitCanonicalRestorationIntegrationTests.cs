@@ -14,6 +14,7 @@ using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Hosting;
@@ -45,7 +46,7 @@ public sealed class RouteInitCanonicalRestorationIntegrationTests
         foreach (var asset in payload.Assets.Where(asset => asset.Path.StartsWith(directory + "/", StringComparison.Ordinal)))
         {
             Assert.True(workspace.Exists(asset.Path), asset.Path);
-            if (!SourceFormClassifier.TryClassify(asset.Path, out var form) || !SourceFormClassifier.IsEntrypoint(form))
+            if (!SourceFormClassifier.TryClassify(SourceContentRoots.Default, asset.Path, out var form) || !SourceFormClassifier.IsEntrypoint(form))
             {
                 Assert.Equal(asset.Bytes.ToArray(), await File.ReadAllBytesAsync(workspace.Combine(asset.Path), TestContext.Current.CancellationToken));
             }

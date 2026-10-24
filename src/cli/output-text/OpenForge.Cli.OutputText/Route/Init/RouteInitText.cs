@@ -72,6 +72,14 @@ internal static class RouteInitText
     internal static string LabelTheRouteInitResultDidNotContainAFinding()
         => "the Route Init result did not contain a finding";
 
+    // @OpenForgeText route.init.label.not-a-route-id-or-an-entrypoint-path-in-content-folders
+    internal static string LabelNotARouteIdOrAnEntrypointPathInContentFolders(string mainRoot)
+        => $"not a route ID or an entrypoint path in {mainRoot} or the native Skills folder";
+
+    // @OpenForgeText route.init.message.loader-could-not-be-verified-safely
+    internal static string MessageLoaderCouldNotBeVerifiedSafely(string loaderPath)
+        => $"{loaderPath} could not be verified safely.";
+
     // @OpenForgeText route.init.label.agents-open-forge-lock-json-would-update
     internal static string LabelAgentsOpenForgeLockJsonWouldUpdate()
         => ".agents/open-forge.lock.json  would update";

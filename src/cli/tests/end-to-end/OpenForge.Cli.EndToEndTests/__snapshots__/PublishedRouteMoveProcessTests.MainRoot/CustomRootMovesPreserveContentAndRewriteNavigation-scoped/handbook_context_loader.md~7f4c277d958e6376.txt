@@ -1,0 +1,7 @@
+# Root
+
+## Entries
+
+- [Move fixture](../../.agents/skills/index.md) - #Docs
+- [Move fixture](archive/index.md) - #Docs
+- [Move fixture](notes/index.md) - #Docs

@@ -254,6 +254,7 @@ internal sealed class RouteInitAppliedVerifier(
 
     private static bool MatchesRequest(RouteInitPlan expected, RouteInitPlan actual)
         => ReferenceEquals(expected.Request.Workspace, actual.Request.Workspace)
+            && string.Equals(expected.LayoutRead.Layout?.MainRoot, actual.LayoutRead.Layout?.MainRoot, StringComparison.Ordinal)
             && string.Equals(
                 expected.Request.RouteTarget,
                 actual.Request.RouteTarget,

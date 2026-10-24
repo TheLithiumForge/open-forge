@@ -160,7 +160,7 @@ public sealed class RouteInitModelsTests
             recovery,
             ownership: null)
         {
-            Settings = WorkspaceSettingsRead.Absent(Path.Combine(request.Workspace.LexicalRoot, ".agents", "open-forge.json")),
+            LayoutRead = RouteInitRedTestData.LayoutRead(request.Workspace),
         };
         directories.Clear();
         changes.Clear();
@@ -180,7 +180,7 @@ public sealed class RouteInitModelsTests
             [],
             ownership: null)
         {
-            Settings = plan.Settings,
+            LayoutRead = plan.LayoutRead,
         };
         Assert.True(noOp.IsNoOp);
     }

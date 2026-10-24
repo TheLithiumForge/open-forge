@@ -53,12 +53,15 @@ internal sealed class RouteInitRestorationInspector
         var targetPath = inspection.Target.CanonicalPath ?? throw new InvalidOperationException("Restoration requires a canonical target.");
         var directory = SourceLogicalPath.ReadParent(targetPath);
         var settings = inspection.Settings;
+        var layout = inspection.Catalogue.Catalogue.Layout;
 
         var ancestor = FindExcludedAncestor(directory, inspection, settings);
         if (ancestor is not null)
         {
+            var ancestorTarget = layout.TryGetSourceRelativePath(ancestor, out var relative)
+                ? relative : SourceWorkspaceRelativePath.LiteralReferencePrefix + ancestor;
             throw new RouteInitPlanningException(RouteInitFindingCode.LifecycleBlocked,
-                $"The ancestor '{ancestor}' is excluded. Explicitly restore it first with 'open-forge route init {ancestor[".agents/".Length..]} --framework'.",
+                $"The ancestor '{ancestor}' is excluded. Explicitly restore it first with 'open-forge route init {ancestorTarget} --framework'.",
                 incomplete: false);
         }
 
@@ -73,21 +76,22 @@ internal sealed class RouteInitRestorationInspector
             : WorkspaceSettingsCodec.Read(settingsChange.IntendedBytes.AsMemory()).Document
                 ?? throw new InvalidOperationException("A planned restoration settings change must remain valid.");
         var assets = framework.Payload.Assets.Where(asset =>
-            asset.Path.StartsWith(directory + "/", StringComparison.Ordinal)
-            && FrameworkPayloadSelection.IncludesPath(asset.Path, effective)).ToArray();
+            layout.MapPayloadPath(asset.Path).StartsWith(directory + "/", StringComparison.Ordinal)
+            && FrameworkPayloadSelection.IncludesPath(layout, asset.Path, effective)).ToArray();
         var chain = inspection.Current.Chain.ToList();
         var aligned = framework.Alignment.Segments.ToList();
         var files = ImmutableArray.CreateBuilder<RouteInitRestorationFile>();
         var validator = new FileExpectationValidator(_resolver);
         foreach (var asset in assets)
         {
-            var source = framework.Alignment.PayloadSources.SingleOrDefault(value => value.Identity.CanonicalBasePath == asset.Path);
+            var target = layout.MapPayloadPath(asset.Path);
+            var source = framework.Alignment.PayloadSources.SingleOrDefault(value => value.Identity.CanonicalBasePath == target);
             if (source is not null && SourceFormClassifier.IsEntrypoint(source.Base.Form))
             {
                 if (!chain.Any(entry => entry.Id == source.Identity.AutomaticId))
                 {
                     var occupants = inspection.Catalogue.Catalogue.FindAllById(source.Identity.AutomaticId);
-                    var entry = new RouteInitCurrentChainEntry(source.Identity.AutomaticId, asset.Path, occupants,
+                    var entry = new RouteInitCurrentChainEntry(source.Identity.AutomaticId, target, occupants,
                         occupants.Where(value => SourceFormClassifier.IsEntrypoint(value.Base.Form)));
                     if (entry.IsAmbiguous || entry.IsMissing && entry.IdentityOccupants.Count > 0)
                     {
@@ -101,7 +105,7 @@ internal sealed class RouteInitRestorationInspector
                 continue;
             }
 
-            var logical = SourceLogicalPath.ToLexicalPath(request.Workspace.LexicalRoot, asset.Path);
+            var logical = SourceLogicalPath.ToLexicalPath(request.Workspace.LexicalRoot, target);
             var observed = await validator.ValidateAsync(request.Workspace, FileExpectation.Missing(logical), cancellationToken).ConfigureAwait(false);
             if (observed.State == FileExpectationValidationState.Cancelled)
             {
@@ -112,12 +116,12 @@ internal sealed class RouteInitRestorationInspector
                 || observed.Actual is not { } snapshot || snapshot.Kind == FileExpectationKind.Directory)
             {
                 throw new RouteInitPlanningException(RouteInitFindingCode.TargetUnsafe,
-                    observed.Cause ?? $"The restoration payload target '{asset.Path}' is unsafe.", incomplete: false);
+                    observed.Cause ?? $"The restoration payload target '{target}' is unsafe.", incomplete: false);
             }
             var intendedBytes = snapshot.Kind == FileExpectationKind.Missing
-                ? RouteInitRestorationEffects.Render(asset, settings.Document.Frontmatter)
+                ? RouteInitRestorationEffects.Render(layout, asset, settings.Document.Frontmatter)
                 : asset.Bytes.AsMemory();
-            files.Add(new RouteInitRestorationFile(asset, snapshot, source, intendedBytes));
+            files.Add(new RouteInitRestorationFile(asset, target, snapshot, source, intendedBytes));
         }
 
         var alignment = new RouteInitFrameworkAlignment(framework.Alignment.Target, aligned,
@@ -148,7 +152,7 @@ internal sealed class RouteInitRestorationInspector
 
     private static string? FindExcludedAncestor(string directory, RouteInitInspectionFacts inspection, WorkspaceSettingsRead settings)
     {
-        var categories = settings.Document.RemovedCategories.Select(category => $".agents/{category}");
+        var categories = settings.Document.RemovedCategories.Select(inspection.Catalogue.Catalogue.Layout.CategoryDirectory);
         var ancestor = categories.Concat(settings.Document.RemovedDirectories).FirstOrDefault(path =>
             directory.StartsWith(path + "/", StringComparison.Ordinal));
         if (ancestor is not null)
@@ -157,7 +161,7 @@ internal sealed class RouteInitRestorationInspector
         }
 
         return inspection.Current.Chain.Take(inspection.Current.Chain.Count - 1).FirstOrDefault(entry =>
-            WorkspaceRemovals.IsPathRemoved(entry.CanonicalMissingPath, settings.Document)) is { } excluded
+            WorkspaceRemovals.IsPathRemoved(inspection.Catalogue.Catalogue.Layout, entry.CanonicalMissingPath, settings.Document)) is { } excluded
             ? SourceLogicalPath.ReadParent(excluded.CanonicalMissingPath) : null;
     }
 }

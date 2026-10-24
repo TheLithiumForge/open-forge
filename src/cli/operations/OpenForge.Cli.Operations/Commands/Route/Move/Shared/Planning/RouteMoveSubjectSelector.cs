@@ -14,6 +14,9 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
@@ -34,7 +37,28 @@ internal sealed partial class RouteMoveSubjectSelector(
         RouteMoveRequest request,
         CancellationToken cancellationToken)
     {
-        var catalogueSelection = await ReadCatalogueAsync(request, cancellationToken)
+        if (cancellationToken.IsCancellationRequested)
+            return new RouteMoveSubjectSelection(null, Boundary(RouteMoveBoundary.Start(request),
+                RouteMoveFindingCode.Interrupted, CliSemanticStatus.Interrupted, request.SourceReference,
+                "Route Move subject resolution was interrupted."));
+
+        var layoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver())
+            .ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (layoutRead.Layout is null
+            || layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
+                && !layoutRead.Issues.All(issue => issue.Path == Framework.Ownership.WorkspaceOwnershipDefinitions.RelativePath))
+        {
+            var issue = layoutRead.Issues.FirstOrDefault();
+            var unavailable = layoutRead.State == WorkspaceLayoutReadState.Unavailable;
+            return new RouteMoveSubjectSelection(null, Boundary(
+                RouteMoveBoundary.Start(request),
+                unavailable ? RouteMoveFindingCode.WorkspaceUnavailable : RouteMoveFindingCode.WorkspaceUnsafe,
+                unavailable ? CliSemanticStatus.Incomplete : CliSemanticStatus.Blocked,
+                issue?.Path,
+                issue?.Cause ?? "The workspace layout is unavailable."));
+        }
+
+        var catalogueSelection = await ReadCatalogueAsync(request, layoutRead, cancellationToken)
             .ConfigureAwait(false);
         if (catalogueSelection.Boundary is { } catalogueBoundary)
         {
@@ -44,7 +68,7 @@ internal sealed partial class RouteMoveSubjectSelector(
         var catalogue = catalogueSelection.Catalogue
             ?? throw new InvalidOperationException(
                 "A successful Route Move catalogue selection requires its catalogue.");
-        var discovery = await DiscoverAsync(request, catalogue, cancellationToken)
+        var discovery = await DiscoverAsync(request, catalogue, layoutRead, cancellationToken)
             .ConfigureAwait(false);
         if (discovery.Boundary is { } discoveryBoundary)
         {
@@ -60,6 +84,7 @@ internal sealed partial class RouteMoveSubjectSelector(
 
     private async ValueTask<RouteMoveSubjectCatalogueSelection> ReadCatalogueAsync(
         RouteMoveRequest request,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
         var formation = RouteMoveBoundary.Start(request);
@@ -75,8 +100,10 @@ internal sealed partial class RouteMoveSubjectSelector(
                     "Route Move subject resolution was interrupted."));
         }
 
+        var layout = layoutRead.Layout
+            ?? throw new InvalidOperationException("Route Move discovery requires the selected layout.");
         var catalogue = await _catalogueReader.ReadAsync(
-            new SourceCatalogueRequest(request.Workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(layout, layout.SourceRoots),
             cancellationToken).ConfigureAwait(false);
         if (catalogue.IsCancelled)
         {
@@ -104,6 +131,7 @@ internal sealed partial class RouteMoveSubjectSelector(
     private async ValueTask<RouteMoveSubjectDiscoveryResult> DiscoverAsync(
         RouteMoveRequest request,
         SourceCatalogue catalogue,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
         var formation = RouteMoveBoundary.Start(request);
@@ -161,6 +189,7 @@ internal sealed partial class RouteMoveSubjectSelector(
         return new RouteMoveSubjectDiscoveryResult(
             new RouteMoveSubjectDiscovery
             {
+                LayoutRead = layoutRead,
                 Request = request,
                 Catalogue = catalogue,
                 SelectedSource = source,
@@ -227,7 +256,7 @@ internal sealed partial class RouteMoveSubjectSelector(
             discovery.Catalogue,
             cancellationToken)
             .ConfigureAwait(false);
-        var sharing = await NavigationSharingReader.ReadAsync(discovery.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        var sharing = NavigationSharingReader.FromOwnership(discovery.LayoutRead.Ownership);
         if (!sharing.IsAvailable)
             return new RouteMoveSubjectSelection(subject: null, Boundary(
                 RouteMoveBoundary.Start(discovery.Request) with { Source = discovery.Source },
@@ -240,6 +269,7 @@ internal sealed partial class RouteMoveSubjectSelector(
             : new RouteMoveSubjectSelection(
                 new RouteMoveResolvedSubject
                 {
+                    LayoutRead = discovery.LayoutRead,
                     Request = discovery.Request,
                     Source = discovery.Source,
                     Kind = discovery.Kind,

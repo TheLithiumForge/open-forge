@@ -92,10 +92,25 @@ internal static class RouteInitWording
                 "The Route Init recovery state is not defined."),
         };
 
-    internal static string InvalidTarget(string target)
+    internal static string InvalidTarget(string target, string? customRoot = null)
         => string.Equals(target, "loader", StringComparison.Ordinal)
             ? global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.MessageTheLoaderCannotBeInitialized()
-            : global::OpenForge.Cli.OutputText.Route.Init.RouteInitPhrases.FormatIsNotARouteIdOrAnEntrypointPathUnderAgents($"{target}");
+            : InvalidTargetPath(target, customRoot);
+
+    private static string InvalidTargetPath(string target, string? customRoot)
+        => customRoot is null
+            ? global::OpenForge.Cli.OutputText.Route.Init.RouteInitPhrases.FormatIsNotARouteIdOrAnEntrypointPathUnderAgents(target)
+            : global::OpenForge.Cli.OutputText.Route.Init.RouteInitPhrases.FormatIsNotARouteIdOrAnEntrypointPathInContentFolders(target, customRoot);
+
+    internal static string InvalidTargetLabel(string? customRoot)
+        => customRoot is null
+            ? global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.LabelNotARouteIdOrAnEntrypointPathUnderAgents()
+            : global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.LabelNotARouteIdOrAnEntrypointPathInContentFolders(customRoot);
+
+    internal static string LoaderUnsafe(string? loaderPath)
+        => loaderPath is null
+            ? global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.MessageAgentsLoaderMdCouldNotBeVerifiedSafely()
+            : global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.MessageLoaderCouldNotBeVerifiedSafely(loaderPath);
 
     internal static string InvalidMetadata(string cause)
         => cause.StartsWith("--", StringComparison.Ordinal)
@@ -195,7 +210,7 @@ internal static class RouteInitWording
             RouteInitFindingCode.TargetUnsafe => CliFindingWording.TargetUnsafe(target, TrimSentence(cause)),
             RouteInitFindingCode.RouteAmbiguous => CliFindingWording.RouteAmbiguous(target),
             RouteInitFindingCode.IdentityCollision => IdentityCollision(target),
-            RouteInitFindingCode.LoaderUnsafe => global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.MessageAgentsLoaderMdCouldNotBeVerifiedSafely(),
+            RouteInitFindingCode.LoaderUnsafe => LoaderUnsafe(loaderPath: null),
             RouteInitFindingCode.FrameworkPayloadInvalid => CliFindingWording.PayloadInvalid(),
             RouteInitFindingCode.FrameworkInstallRequired => global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.MessageTheFrameworkScaffoldNeedsAnInstalledFramework(),
             RouteInitFindingCode.FrameworkUpdateRequired => global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.MessageTheInstalledFrameworkIsOlderThanTheOneThisCliShips(),

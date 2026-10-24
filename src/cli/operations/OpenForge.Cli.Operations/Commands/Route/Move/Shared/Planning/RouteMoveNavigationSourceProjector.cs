@@ -61,7 +61,7 @@ internal sealed class RouteMoveNavigationSourceProjector
             return source;
         }
 
-        var destinationId = SourceIdentity.DeriveId(destinationPath)
+        var destinationId = SourceIdentity.DeriveId(destination.Inventory.Subject.Catalogue.Layout, destinationPath)
             ?? throw new InvalidOperationException(
                 "Every resolved Route Move destination source requires one canonical identity.");
         return new SourceLogicalSource(
