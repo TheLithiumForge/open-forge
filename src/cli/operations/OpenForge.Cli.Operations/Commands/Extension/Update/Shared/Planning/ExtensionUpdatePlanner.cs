@@ -176,7 +176,10 @@ internal sealed class ExtensionUpdatePlanner
                     ? ExtensionUpdateFindingCode.RecoveryUnavailable
                     : ExtensionUpdateFindingCode.RecoveryConflict,
                 recovery.Cause ?? "The current operation's recovery preparation is missing or changed.",
-                allowedRecovery?.BundlePath));
+                allowedRecovery?.BundlePath)
+            {
+                ContextFolder = layout.MainRoot,
+            });
         }
 
         var source = await _sourceReader.ReadAsync(
