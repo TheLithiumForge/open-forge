@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
@@ -7,6 +10,12 @@ namespace OpenForge.Cli.Core.Framework.Sources.Routing;
 internal static class SourceLoaderEntriesParser
 {
     internal static SourceLoaderEntriesParseResult Parse(string loaderContents)
+        => Parse(SourceContentRoots.Default, loaderContents);
+
+    internal static SourceLoaderEntriesParseResult Parse(WorkspaceLayout layout, string loaderContents)
+        => Parse(new SourceContentRoots(layout), loaderContents);
+
+    internal static SourceLoaderEntriesParseResult Parse(SourceContentRoots roots, string loaderContents)
     {
         ArgumentNullException.ThrowIfNull(loaderContents);
         var normalized = loaderContents.Replace("\r\n", "\n", StringComparison.Ordinal);
@@ -52,7 +61,7 @@ internal static class SourceLoaderEntriesParser
                     destinations: destinations);
             }
 
-            var parsedDestination = SourceLoaderDestinationParser.Parse(destination);
+            var parsedDestination = SourceLoaderDestinationParser.Parse(roots, destination);
             if (parsedDestination.State == SourceLoaderDestinationParseState.Malformed)
             {
                 var cause = parsedDestination.Cause

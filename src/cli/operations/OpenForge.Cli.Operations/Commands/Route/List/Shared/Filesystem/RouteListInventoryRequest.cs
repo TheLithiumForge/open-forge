@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -26,7 +27,7 @@ internal sealed record RouteListInventoryRequest
             throw new ArgumentException("Route-list inventory requires at least one logical root.", nameof(logicalRoots));
         }
 
-        if (roots.Any(root => !SourceLogicalPath.IsCanonicalRoot(root)))
+        if (roots.Any(root => root != SourceLogicalPath.AgentsRoot && !SourceLogicalPath.IsPrimarySource(SourceContentRoots.Default, root)))
         {
             throw new ArgumentException("Every route-list inventory root must be a canonical .agents logical path.", nameof(logicalRoots));
         }

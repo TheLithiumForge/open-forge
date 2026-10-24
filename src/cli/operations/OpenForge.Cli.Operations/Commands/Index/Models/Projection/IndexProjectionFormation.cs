@@ -162,7 +162,7 @@ internal sealed record IndexProjectionReadiness
                 nameof(unavailableTargetPaths)))
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
-        if (pathValues.Any(path => !SourceLogicalPath.IsCanonical(path))
+        if (pathValues.Any(path => !SourceLogicalPath.IsPrimarySource(SourceContentRoots.Default, path))
             || pathValues.Distinct(StringComparer.Ordinal).Count() != pathValues.Length)
         {
             throw new ArgumentException(

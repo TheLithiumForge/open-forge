@@ -17,7 +17,7 @@ internal sealed class SourceLayer
         SourceDocumentForm form,
         SourceLayerKind kind)
     {
-        if (!SourceWorkspaceRelativePath.IsCanonical(canonicalPath) || canonicalPath == SourceLogicalPath.AgentsRoot)
+        if (!SourceWorkspaceRelativePath.IsCanonical(canonicalPath))
         {
             throw new ArgumentException("The source layer path must be canonical and workspace-relative.", nameof(canonicalPath));
         }
@@ -40,9 +40,9 @@ internal sealed class SourceLayer
             throw new ArgumentOutOfRangeException(nameof(kind), kind, "The source layer kind is not defined.");
         }
 
-        var isOverwritePath = SourceLogicalPath.IsCanonicalSource(canonicalPath) && SourceOverwritePath.HasSuffix(canonicalPath);
-        if ((form == SourceDocumentForm.OverwriteCompanion) != isOverwritePath
-            || (kind == SourceLayerKind.Overwrite) != isOverwritePath)
+        var isOverwritePath = SourceOverwritePath.HasSuffix(canonicalPath);
+        if ((form == SourceDocumentForm.OverwriteCompanion) != (kind == SourceLayerKind.Overwrite)
+            || kind == SourceLayerKind.Overwrite && !isOverwritePath)
         {
             throw new ArgumentException("The source layer form and kind do not match its canonical path.", nameof(kind));
         }

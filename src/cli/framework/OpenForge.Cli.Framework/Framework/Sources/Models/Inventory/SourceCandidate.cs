@@ -16,7 +16,7 @@ internal sealed class SourceCandidate
     {
         if (!SourceLogicalPath.IsCanonicalSource(canonicalPath))
         {
-            throw new ArgumentException("The source candidate path is not a canonical .agents source path.", nameof(canonicalPath));
+            throw new ArgumentException("The source candidate path is not a canonical workspace-relative source path.", nameof(canonicalPath));
         }
 
         if (form is not null && !Enum.IsDefined(form.Value))

@@ -25,8 +25,8 @@ internal sealed record FindMatch
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         if (!SourceWorkspaceRelativePath.IsCanonical(path)
-            || (SourceLogicalPath.IsCanonicalSource(path) && !path.EndsWith(".md", StringComparison.Ordinal))
-            || (SourceLogicalPath.IsCanonicalSource(path) && path.EndsWith(".overwrite.md", StringComparison.Ordinal)))
+            || SourceLogicalPath.IsPrimaryNonMarkdownSource(SourceContentRoots.Default, path)
+            || SourceLogicalPath.IsPrimaryOverwriteSource(SourceContentRoots.Default, path))
         {
             throw new ArgumentException("Find match paths must be canonical base Markdown source paths.", nameof(path));
         }
@@ -90,7 +90,7 @@ internal sealed record FindMatch
         IReadOnlyList<FindEvidence> evidence,
         IReadOnlyList<FindProjection> projections)
     {
-        var overwritePath = $"{basePath[..^3]}.overwrite.md";
+        var overwritePath = SourceOverwritePath.ReadAdjacentPath(basePath);
         if (evidence.Any(value => !(id.StartsWith("./", StringComparison.Ordinal) && value.Region.Kind == FindRegionKind.Frontmatter)
             && !string.Equals(
                 value.Path,

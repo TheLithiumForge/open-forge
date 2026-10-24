@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -46,7 +47,7 @@ internal sealed class FrameworkPayloadAsset
             return;
         }
 
-        if (!SourceLogicalPath.IsCanonical(path))
+        if (!SourceLogicalPath.IsPrimarySource(SourceContentRoots.Default, path))
         {
             throw new ArgumentException("A Framework payload asset path must be canonical.", nameof(path));
         }

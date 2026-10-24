@@ -456,7 +456,7 @@ public sealed class FindUniverseResolverTests
         var sourceSession = new SourceReadSession(
             fixture.Catalogue,
             new SourceDocumentReader(fixture.Workspace),
-            fixture.DefaultScope);
+            [fixture.DefaultScope]);
         return new FindUniverseInput(request, sourceSession);
     }
 

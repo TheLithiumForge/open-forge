@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models;
@@ -9,6 +11,12 @@ namespace OpenForge.Cli.Core.Framework.Sources.Routing;
 internal static class SourceLoaderDestinationParser
 {
     internal static SourceLoaderDestinationParseResult Parse(string attemptedDestination)
+        => Parse(SourceContentRoots.Default, attemptedDestination);
+
+    internal static SourceLoaderDestinationParseResult Parse(WorkspaceLayout layout, string attemptedDestination)
+        => Parse(new SourceContentRoots(layout), attemptedDestination);
+
+    internal static SourceLoaderDestinationParseResult Parse(SourceContentRoots roots, string attemptedDestination)
     {
         ArgumentNullException.ThrowIfNull(attemptedDestination);
         if (attemptedDestination.Length == 0)
@@ -42,7 +50,7 @@ internal static class SourceLoaderDestinationParser
         var segments = decodedDestination.Split('/', StringSplitOptions.None);
         if (segments.Contains("..")
             && SourceGeneratedDestinationResolver.ResolveLinked(
-                SourceLogicalPath.LoaderPath,
+                roots, roots.LoaderPath,
                 isLoader: true,
                 attemptedDestination) is { } linkedPath)
         {
@@ -50,6 +58,13 @@ internal static class SourceLoaderDestinationParser
                 attemptedDestination: attemptedDestination,
                 decodedDestination: decodedDestination,
                 workspacePath: linkedPath);
+        }
+
+        if (segments.Contains("..")
+            && SourceGeneratedDestinationResolver.Resolve(roots, roots.LoaderPath, true, attemptedDestination) is { } primaryPath
+            && !primaryPath.StartsWith(roots.MainRoot + "/", StringComparison.Ordinal))
+        {
+            return SourceLoaderDestinationParseResult.Valid(attemptedDestination, decodedDestination, primaryPath);
         }
 
         if (segments.Any(segment => segment.Length == 0 || segment is "." or ".."))
@@ -63,7 +78,7 @@ internal static class SourceLoaderDestinationParser
         return SourceLoaderDestinationParseResult.Valid(
             attemptedDestination: attemptedDestination,
             decodedDestination: decodedDestination,
-            canonicalPath: $".agents/{decodedDestination}");
+            canonicalPath: $"{roots.MainRoot}/{decodedDestination}");
     }
 
     private static bool ContainsUnsafeDestinationCharacter(string value)

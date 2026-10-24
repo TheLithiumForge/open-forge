@@ -1,121 +1,63 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Diagnostics.CodeAnalysis;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Loading;
 
 internal static class SourceGeneratedDestinationResolver
 {
-    private const string MarkdownExtension = ".md";
+    internal static string? Resolve(string parentCanonicalPath, bool isLoader, string destination)
+        => Resolve(SourceContentRoots.Default, parentCanonicalPath, isLoader, destination);
 
-    internal static string? Resolve(
-        string parentCanonicalPath,
-        bool isLoader,
-        string destination)
+    internal static string? Resolve(WorkspaceLayout layout, string parentCanonicalPath, bool isLoader, string destination)
+        => Resolve(new SourceContentRoots(layout), parentCanonicalPath, isLoader, destination);
+
+    internal static string? Resolve(SourceContentRoots roots, string parentCanonicalPath, bool isLoader, string destination)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(parentCanonicalPath);
-        ArgumentNullException.ThrowIfNull(destination);
-        if (!TryDecode(destination, out var decoded))
-        {
-            return null;
-        }
-
-        var basePath = isLoader ? SourceLogicalPath.AgentsRoot : SourceLogicalPath.ReadParent(parentCanonicalPath);
-        var segments = basePath.Split('/').ToList();
-        foreach (var segment in decoded.Split('/', StringSplitOptions.None))
-        {
-            if (segment.Length == 0 || segment == ".")
-            {
-                continue;
-            }
-
-            if (segment == "..")
-            {
-                if (segments.Count <= 1)
-                {
-                    return null;
-                }
-
-                segments.RemoveAt(segments.Count - 1);
-                continue;
-            }
-
-            if (!SourceLogicalPath.IsCanonicalSegment(segment))
-            {
-                return null;
-            }
-
-            segments.Add(segment);
-        }
-
-        var path = string.Join('/', segments);
-        return SourceLogicalPath.IsCanonical(path) ? path : null;
+        var path = ResolveWorkspacePath(roots, parentCanonicalPath, isLoader, destination, minimumDepth: roots.IsDefault ? 1 : 0);
+        return path is not null && SourceLogicalPath.IsPrimarySource(roots, path) ? path : null;
     }
 
-    /// <summary>
-    /// True when an Entries destination climbs with `..`. Generated rows always name direct children, so
-    /// such a row was written by a person, usually to link a document outside `.agents/`. Maintenance keeps
-    /// these rows as written and never treats them as stale generated navigation.
-    /// </summary>
     internal static bool IsAuthoredLink(string destination)
         => TryDecode(destination, out var decoded) && decoded.Split('/').Contains("..");
 
-    /// <summary>
-    /// Resolves an Entries destination that leaves `.agents/` but stays inside the workspace, such as
-    /// `../docs/architecture.md` or `../.cursor/rules/testing.mdc`. Returns the workspace-relative path,
-    /// or null when the destination stays inside `.agents/` or escapes the workspace. Any text file may be
-    /// linked. Only Markdown files are read as catalogues.
-    /// </summary>
-    internal static bool IsMarkdown(string path) => path.EndsWith(MarkdownExtension, StringComparison.OrdinalIgnoreCase);
+    internal static bool IsMarkdown(string path) => path.EndsWith(SourceFormClassifier.MarkdownExtension, StringComparison.OrdinalIgnoreCase);
 
-    internal static string? ResolveLinked(
-        string parentPath,
-        bool isLoader,
-        string destination)
+    internal static string? ResolveLinked(string parentPath, bool isLoader, string destination)
+        => ResolveLinked(SourceContentRoots.Default, parentPath, isLoader, destination);
+
+    internal static string? ResolveLinked(WorkspaceLayout layout, string parentPath, bool isLoader, string destination)
+        => ResolveLinked(new SourceContentRoots(layout), parentPath, isLoader, destination);
+
+    internal static string? ResolveLinked(SourceContentRoots roots, string parentPath, bool isLoader, string destination)
+    {
+        var path = ResolveWorkspacePath(roots, parentPath, isLoader, destination, minimumDepth: 0);
+        return path is not null && !SourceLogicalPath.IsPrimarySource(roots, path) && !roots.SourceRoots.Contains(path) ? path : null;
+    }
+
+    private static string? ResolveWorkspacePath(SourceContentRoots roots, string parentPath, bool isLoader, string destination, int minimumDepth)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(parentPath);
         ArgumentNullException.ThrowIfNull(destination);
-        if (!TryDecode(destination, out var decoded))
-        {
-            return null;
-        }
-
-        var segments = (isLoader ? SourceLogicalPath.AgentsRoot : ReadFolder(parentPath))
-            .Split('/', StringSplitOptions.RemoveEmptyEntries)
-            .ToList();
+        if (!TryDecode(destination, out var decoded)) return null;
+        var segments = ReadFolder(isLoader ? roots.LoaderPath : parentPath)
+            .Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
         foreach (var segment in decoded.Split('/', StringSplitOptions.None))
         {
-            if (segment.Length == 0 || segment == ".")
-            {
-                continue;
-            }
-
+            if (segment.Length == 0 || segment == ".") continue;
             if (segment == "..")
             {
-                if (segments.Count == 0)
-                {
-                    return null;
-                }
-
+                if (segments.Count <= minimumDepth) return null;
                 segments.RemoveAt(segments.Count - 1);
                 continue;
             }
-
-            if (!SourceLogicalPath.IsCanonicalSegment(segment))
-            {
-                return null;
-            }
-
+            if (!SourceLogicalPath.IsCanonicalSegment(segment)) return null;
             segments.Add(segment);
         }
-
-        if (segments.Count == 0
-            || segments[0] == SourceLogicalPath.AgentsRoot)
-        {
-            return null;
-        }
-
-        return string.Join('/', segments);
+        var path = string.Join('/', segments);
+        return SourceWorkspaceRelativePath.IsCanonical(path) ? path : null;
     }
 
     private static string ReadFolder(string path)

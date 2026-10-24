@@ -52,13 +52,18 @@ internal sealed class SourceSharing
     }
 
     internal SourceCatalogue Project(SourceCatalogue catalogue)
-        => new(catalogue.Workspace,
+        => new(catalogue.Layout,
             catalogue.Candidates.Where(candidate => Includes(candidate.CanonicalPath)),
             catalogue.Sources.Where(source => Includes(source.Identity.CanonicalBasePath))
                 .Select(source => source.Overwrite is { } overwrite && !Includes(overwrite.CanonicalPath)
-                    ? new SourceLogicalSource(source.Identity, source.Base) : source),
+                    ? new SourceLogicalSource(source.Identity, source.Base)
+                    {
+                        IncludedParentPath = source.IncludedParentPath,
+                        IncludedEntry = source.IncludedEntry,
+                        IsIncludedCatalogue = source.IsIncludedCatalogue,
+                    } : source),
             catalogue.Issues.Where(issue => Includes(issue.AttemptedCanonicalPath)
-                || issue.RelatedPaths.Any(Includes)), catalogue.IsCancelled);
+                || issue.RelatedPaths.Any(Includes)), catalogue.IsCancelled, catalogue.Aliases, catalogue.IncludedRows);
 
     private static bool IsCanonicalPath(string path)
         => PortableWorkspacePath.TryNormalize(path, out var normalized) && normalized == path;

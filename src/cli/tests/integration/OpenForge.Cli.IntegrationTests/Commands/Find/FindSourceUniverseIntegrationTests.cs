@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Operation;
 using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
@@ -28,7 +29,7 @@ public sealed class FindSourceUniverseIntegrationTests
     public async Task RealWorkspaceEnumeratesEveryEligibleFormAndAppliesPhysicalFilterExpansion()
     {
         using var workspace = TemporaryWorkspace.Create("find-source-universe-forms");
-        workspace.CreateDirectory(".agents");
+        workspace.CreateDirectory(WorkspaceLayout.DefaultMainRoot);
         WriteEveryEligibleSourceForm(workspace);
         var cliWorkspace = CreateWorkspace(workspace);
         var before = workspace.SnapshotHashes();
@@ -233,7 +234,7 @@ public sealed class FindSourceUniverseIntegrationTests
         var excludedTarget = outside.CreateFile("excluded-unreadable.md", [0xFF, 0xFE]);
         var retainedTarget = outside.CreateFile("retained-unreadable.md", [0xFF, 0xFE]);
         using var workspace = TemporaryWorkspace.Create("find-source-universe-excluded");
-        workspace.CreateDirectory(".agents");
+        workspace.CreateDirectory(WorkspaceLayout.DefaultMainRoot);
         workspace.WriteText(".agents/excluded/_excluded.md", "# Excluded\n");
         workspace.WriteText(".agents/excluded/safe.md", "# Excluded safe\n");
         workspace.WriteText(".agents/excluded/orphan.overwrite.md", "excluded orphan\n");
@@ -381,7 +382,7 @@ public sealed class FindSourceUniverseIntegrationTests
     private static async ValueTask<SourceCatalogue> ReadCatalogueAsync(CliWorkspace workspace)
     {
         return await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(workspace, [".agents"]),
+            new SourceCatalogueRequest(workspace, [WorkspaceLayout.DefaultMainRoot]),
             TestContext.Current.CancellationToken);
     }
 
@@ -394,9 +395,9 @@ public sealed class FindSourceUniverseIntegrationTests
         var sourceSession = new SourceReadSession(
             catalogue,
             new SourceDocumentReader(workspace),
-            new SourceCatalogueSelectionScope(
-                ".agents",
-                SourceLogicalPath.ToLexicalPath(workspace.PhysicalRoot, ".agents")));
+            [new SourceCatalogueSelectionScope(
+                WorkspaceLayout.DefaultMainRoot,
+                SourceLogicalPath.ToLexicalPath(workspace.PhysicalRoot, WorkspaceLayout.DefaultMainRoot))]);
         var input = new FindUniverseInput(
             CreateRequest(workspace, include, exclude),
             sourceSession);

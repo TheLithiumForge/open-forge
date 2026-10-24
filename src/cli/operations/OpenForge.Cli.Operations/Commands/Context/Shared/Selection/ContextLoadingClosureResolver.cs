@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
@@ -58,6 +59,7 @@ internal sealed class ContextLoadingClosureResolver
     {
         var loading = new SourceLoadingClosureResolver().Resolve(new SourceLoadingClosureRequest
         {
+            Layout = graph.Catalogue.Layout,
             WorkspaceEntryPath = graph.WorkspaceEntry.CanonicalPath,
             Sources = graph.Sources.Select(source => new SourceLoadingClosureSource
             {

@@ -18,13 +18,13 @@ public sealed class SourceReadSessionTests
         var scope = new SourceCatalogueSelectionScope(
             SourceLogicalPath.AgentsRoot,
             Path.Combine(workspace.PhysicalRoot, ".agents"));
-        var session = new SourceReadSession(catalogue, documentReader, scope);
+        var session = new SourceReadSession(catalogue, documentReader, [scope]);
 
         Assert.Same(catalogue, session.Catalogue);
         Assert.Same(documentReader, session.DocumentReader);
-        Assert.Same(scope, session.DefaultSelectionScope);
-        Assert.Throws<ArgumentNullException>(() => new SourceReadSession(null!, documentReader, scope));
-        Assert.Throws<ArgumentNullException>(() => new SourceReadSession(catalogue, null!, scope));
+        Assert.Same(scope, Assert.Single(session.DefaultSelectionScopes));
+        Assert.Throws<ArgumentNullException>(() => new SourceReadSession(null!, documentReader, [scope]));
+        Assert.Throws<ArgumentNullException>(() => new SourceReadSession(catalogue, null!, [scope]));
     }
 
     private static CliWorkspace Workspace(string path)

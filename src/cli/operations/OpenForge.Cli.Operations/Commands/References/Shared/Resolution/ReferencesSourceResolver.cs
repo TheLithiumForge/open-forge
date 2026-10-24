@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -31,7 +32,7 @@ internal sealed class ReferencesSourceResolver
     internal ValueTask<SourceReadSession> ReadAsync(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
-        => _sourceSessionRead(workspace, cancellationToken);
+        => _sourceSessionRead(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), cancellationToken);
 
     internal SourceReferenceResolution ResolveReference(
         string sourceReference,
@@ -49,7 +50,7 @@ internal sealed class ReferencesSourceResolver
         return _universeFilterResolver.Resolve(
             new SourceUniverseFilterRequest(
                 session.Catalogue,
-                session.DefaultSelectionScope,
+                session.DefaultSelectionScopes,
                 selectorOccurrences));
     }
 }
