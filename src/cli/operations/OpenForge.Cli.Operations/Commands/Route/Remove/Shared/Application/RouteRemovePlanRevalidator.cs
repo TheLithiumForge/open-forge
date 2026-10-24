@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
@@ -25,6 +28,13 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
         {
             return Failed("Route Remove revalidation does not hold the selected workspace lease.");
         }
+
+        var layoutCheck = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver())
+            .ValidateAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+        if (layoutCheck.State == MutationValidationState.Cancelled) return Interrupted();
+        if (layoutCheck.State != MutationValidationState.Valid)
+            return new RouteRemovePlanRevalidation(RouteRemovePlanRevalidationState.Changed,
+                layoutCheck.Cause ?? "The workspace layout changed before Route Remove application.");
 
         RouteRemovePlanBuild fresh;
         try
@@ -60,6 +70,9 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
 
     private static bool Matches(RouteRemovePlan expected, RouteRemovePlan actual)
         => expected.Request == actual.Request
+            && expected.LayoutRead.State == actual.LayoutRead.State
+            && expected.Layout.MainRoot == actual.Layout.MainRoot
+            && expected.LayoutRead.Expectations.SequenceEqual(actual.LayoutRead.Expectations)
             && SubjectMatches(expected.Projection.Subject, actual.Projection.Subject)
             && OwnershipMatches(expected, actual)
             && expected.Projection.Settings.MatchesObservation(actual.Projection.Settings)
@@ -98,6 +111,7 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
 
     private static bool CatalogueMatches(SourceCatalogue expected, SourceCatalogue actual)
         => expected.Workspace == actual.Workspace
+            && expected.Layout.MainRoot == actual.Layout.MainRoot
             && expected.IsCancelled == actual.IsCancelled
             && expected.Candidates.Count == actual.Candidates.Count
             && expected.Candidates.Zip(actual.Candidates).All(pair =>
@@ -228,6 +242,7 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
         => expected.Settings.Outcome == actual.Settings.Outcome
             && expected.Settings.Path == actual.Settings.Path
             && expected.Settings.Categories.SequenceEqual(actual.Settings.Categories, StringComparer.Ordinal)
+            && expected.Settings.CategoryPaths.SequenceEqual(actual.Settings.CategoryPaths, StringComparer.Ordinal)
             && expected.Settings.Files.SequenceEqual(actual.Settings.Files, StringComparer.Ordinal)
             && expected.Settings.Directories.SequenceEqual(actual.Settings.Directories, StringComparer.Ordinal)
             && expected.Ownership.Outcome == actual.Ownership.Outcome

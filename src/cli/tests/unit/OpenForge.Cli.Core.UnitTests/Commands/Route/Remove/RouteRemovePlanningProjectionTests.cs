@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
@@ -55,6 +59,7 @@ public sealed class RouteRemovePlanningProjectionTests
         var emptyProjection = Projection();
         var noOp = new RouteRemovePlan
         {
+            LayoutRead = LayoutRead(),
             Request = RouteRemoveTestData.Request(),
             Preview = RouteRemoveTestData.Formation(),
             Projection = emptyProjection,
@@ -78,6 +83,7 @@ public sealed class RouteRemovePlanningProjectionTests
     {
         var plan = new RouteRemovePlan
         {
+            LayoutRead = LayoutRead(),
             Request = RouteRemoveTestData.Request(mode: RouteRemoveMode.Apply),
             Preview = RouteRemoveTestData.Formation(mode: RouteRemoveMode.Apply),
             Projection = Projection(),
@@ -105,6 +111,15 @@ public sealed class RouteRemovePlanningProjectionTests
 
         Assert.Equal(RouteRemoveNavigationPostRemoveState.Failed, navigation.State);
         Assert.Equal("The generated region could not be verified.", navigation.Cause);
+    }
+
+    private static WorkspaceLayoutRead LayoutRead()
+    {
+        var workspace = RouteRemoveTestData.Workspace();
+        return new WorkspaceLayoutRead(WorkspaceLayoutReadState.Uninstalled,
+            WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceSettingsDefinitions.RelativePath)),
+            WorkspaceOwnershipRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceOwnershipDefinitions.RelativePath)),
+            WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], []);
     }
 
     private static RouteRemovePlanProjectionInput Projection(

@@ -43,6 +43,11 @@ internal sealed record RouteRemovePlanProjectionInput
 
 internal sealed record RouteRemovePlan
 {
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
+    internal Framework.Workspace.Models.Layout.WorkspaceLayout Layout => LayoutRead.Layout
+        ?? throw new InvalidOperationException("An accepted Route Remove plan requires its layout.");
+
     public required RouteRemoveRequest Request { get; init; }
 
     public required RouteRemoveResultFormation Preview { get; init; }

@@ -4,7 +4,7 @@ using OpenForge.Cli.EndToEndTests.Shared.Route;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedRouteRemoveProcessTests
+public sealed partial class PublishedRouteRemoveProcessTests
 {
     [Fact(DisplayName = "Published Route Remove help and invalid input remain write-free and truthful"), Trait("Feature", "route-remove"), Trait("Evidence", "EndToEnd")]
     public async Task HelpAndInvalidInputHaveExactPublicBoundaries()

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
@@ -25,10 +26,9 @@ internal static class RouteRemovePersistencePlanner
 {
     private static readonly string[] ProtectedPaths =
     [
-        ".agents",
-        ".git",
-        ".agents/open-forge.json",
-        ".agents/open-forge.lock.json",
+        WorkspaceLayoutNames.GitMetadataDirectoryName,
+        WorkspaceSettingsDefinitions.RelativePath,
+        WorkspaceOwnershipDefinitions.RelativePath,
     ];
 
     internal static RouteRemoveFinding? ValidateObservedState(
@@ -70,12 +70,15 @@ internal static class RouteRemovePersistencePlanner
                 "The selected route boundary is not a canonical workspace-relative path.");
         }
 
-        if (scope.Paths.Any(path => ProtectedPaths.Any(protectedPath => IsAtOrBelow(protectedPath, path))))
+        var protectedTarget = scope.Paths.FirstOrDefault(path =>
+            string.Equals(path, subject.Catalogue.Layout.MainRoot, StringComparison.Ordinal)
+            || ProtectedPaths.Any(protectedPath => IsAtOrBelow(protectedPath, path)));
+        if (protectedTarget is not null)
         {
             return Finding(
                 RouteRemoveFindingCode.ProtectedTarget,
                 CliSemanticStatus.Blocked,
-                scope.Paths.First(path => ProtectedPaths.Any(protectedPath => IsAtOrBelow(protectedPath, path))),
+                protectedTarget,
                 "The selected route overlaps protected workspace control state.");
         }
 
@@ -178,8 +181,9 @@ internal static class RouteRemovePersistencePlanner
         }
 
         ImmutableArray<string> rootCategory = categoryRoot is not null
-            && string.Equals(SourceLogicalPath.ReadParent(categoryRoot), SourceLogicalPath.AgentsRoot, StringComparison.Ordinal)
-            ? ImmutableArray.Create(categoryRoot[(categoryRoot.LastIndexOf('/') + 1)..])
+            && subject.Catalogue.Layout.TryGetSourceRelativePath(categoryRoot, out var category)
+            && !category.Contains('/')
+            ? ImmutableArray.Create(category)
             : ImmutableArray<string>.Empty;
         var removalSelection = new WorkspaceRemovalSelection
         {
@@ -303,7 +307,7 @@ internal static class RouteRemovePersistencePlanner
             var segments = path.Split('/');
             var gitSegmentIndex = Array.FindIndex(
                 segments,
-                segment => string.Equals(segment, ".git", StringComparison.OrdinalIgnoreCase));
+                segment => string.Equals(segment, WorkspaceLayoutNames.GitMetadataDirectoryName, StringComparison.OrdinalIgnoreCase));
             if (gitSegmentIndex >= 0)
             {
                 return string.Join("/", segments.Take(gitSegmentIndex + 1));

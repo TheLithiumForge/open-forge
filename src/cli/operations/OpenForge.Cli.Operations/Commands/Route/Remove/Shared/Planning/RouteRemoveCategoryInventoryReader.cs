@@ -7,12 +7,10 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
-using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
-using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
@@ -25,20 +23,15 @@ internal sealed class RouteRemoveCategoryInventoryReader(
     private readonly RouteCategoryFilesystemReader _filesystemReader = new(
         physicalPathResolver,
         expectationValidator);
-    private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
 
     internal async ValueTask<RouteRemoveCategoryInventoryResult> ReadAsync(
         RouteRemoveResolvedSubject subject,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(subject);
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(
-            _physicalPathResolver, subject.Request.Workspace,
-            cancellationToken).ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(
-            _physicalPathResolver,
-            subject.Request.Workspace,
-            cancellationToken).ConfigureAwait(false);
+        var ownership = layoutRead.Ownership;
+        var settings = layoutRead.Settings;
         if (RouteRemovePersistencePlanner.ValidateObservedState(subject, ownership, settings) is { } persistenceFinding)
         {
             return Stop(

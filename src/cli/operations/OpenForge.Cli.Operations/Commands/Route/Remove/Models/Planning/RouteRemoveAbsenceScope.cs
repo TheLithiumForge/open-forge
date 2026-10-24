@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
@@ -9,6 +10,8 @@ namespace OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 
 internal sealed record RouteRemoveAbsenceScope
 {
+    public required WorkspaceLayout Layout { get; init; }
+
     internal WorkspaceSettingsDocument? LinkScope { get; init; }
     public required RouteRemoveRequest Request { get; init; }
 
@@ -51,7 +54,7 @@ internal sealed record RouteRemoveAbsenceScope
                 : [CategoryRoot]
             : [LeafPath, LeafOverwritePath, CategoryRoot];
 
-    internal static RouteRemoveAbsenceScope? TryCreate(RouteRemoveRequest request)
+    internal static RouteRemoveAbsenceScope? TryCreate(RouteRemoveRequest request, WorkspaceLayout layout)
     {
         ArgumentNullException.ThrowIfNull(request);
         var parsed = SourceReferenceParser.Parse(request.SourceReference);
@@ -64,11 +67,13 @@ internal sealed record RouteRemoveAbsenceScope
         {
             SourceReferenceKind.SourceId => FromId(
                 request,
+                layout,
                 parsed.AttemptedId
                     ?? throw new InvalidOperationException(
                         "A valid Route Remove source ID requires its attempted identity.")),
             SourceReferenceKind.SourcePath => FromPath(
                 request,
+                layout,
                 parsed.AttemptedPath
                     ?? throw new InvalidOperationException(
                         "A valid Route Remove source path requires its attempted identity.")),
@@ -104,6 +109,7 @@ internal sealed record RouteRemoveAbsenceScope
                 "An accepted Route Remove leaf plan requires its exact source layer paths.");
         }
 
+        var layout = plan.Layout;
         var categoryRoot = SourceLogicalPath.ReadParent(intendedPath);
         var leafPath = subjectKind == RouteRemoveSubjectKind.Leaf
             ? physicalPaths.FirstOrDefault(path => plan.Preview.Subject.Layers
@@ -111,15 +117,16 @@ internal sealed record RouteRemoveAbsenceScope
                 .Any(layer => layer.Layer == RouteRemoveLayerKind.Base))
                 ?? throw new InvalidOperationException(
                     "An accepted Route Remove leaf plan requires its exact base source path.")
-            : $"{SourceLogicalPath.AgentsRoot}/{id}.md";
+            : layout.SourcePath(id + SourceFormClassifier.MarkdownExtension);
         var leafOverwritePath = subjectKind == RouteRemoveSubjectKind.Leaf
             ? physicalPaths.FirstOrDefault(path => plan.Preview.Subject.Layers
                 .Where(layer => string.Equals(layer.SourcePath, path, StringComparison.Ordinal))
                 .Any(layer => layer.Layer == RouteRemoveLayerKind.Overwrite))
                 ?? SourceOverwritePath.ReadAdjacentPath(leafPath)
-            : $"{SourceLogicalPath.AgentsRoot}/{id}.overwrite.md";
+            : SourceOverwritePath.ReadAdjacentPath(layout.SourcePath(id + SourceFormClassifier.MarkdownExtension));
         return new RouteRemoveAbsenceScope
         {
+            Layout = layout,
             Request = plan.Request,
             Id = id,
             CategoryRoot = categoryRoot,
@@ -134,18 +141,19 @@ internal sealed record RouteRemoveAbsenceScope
         };
     }
 
-    private static RouteRemoveAbsenceScope FromId(RouteRemoveRequest request, string id)
+    private static RouteRemoveAbsenceScope FromId(RouteRemoveRequest request, WorkspaceLayout layout, string id)
     {
-        var categoryRoot = $"{SourceLogicalPath.AgentsRoot}/{id}";
+        var categoryRoot = layout.SourcePath(id);
         var name = id[(id.LastIndexOf('/') + 1)..];
-        var intendedPath = $"{categoryRoot}/_{name}.md";
+        var intendedPath = $"{categoryRoot}/_{name}{SourceFormClassifier.MarkdownExtension}";
         return new RouteRemoveAbsenceScope
         {
+            Layout = layout,
             Request = request,
             Id = id,
             CategoryRoot = categoryRoot,
-            LeafPath = $"{SourceLogicalPath.AgentsRoot}/{id}.md",
-            LeafOverwritePath = $"{SourceLogicalPath.AgentsRoot}/{id}.overwrite.md",
+            LeafPath = layout.SourcePath(id + SourceFormClassifier.MarkdownExtension),
+            LeafOverwritePath = SourceOverwritePath.ReadAdjacentPath(layout.SourcePath(id + SourceFormClassifier.MarkdownExtension)),
             IntendedPath = intendedPath,
             Source = new RouteRemoveSource
             {
@@ -161,15 +169,16 @@ internal sealed record RouteRemoveAbsenceScope
         };
     }
 
-    private static RouteRemoveAbsenceScope? FromPath(RouteRemoveRequest request, string path)
+    private static RouteRemoveAbsenceScope? FromPath(RouteRemoveRequest request, WorkspaceLayout layout, string path)
     {
-        if (!SourceFormClassifier.TryClassify(path, out var form)
+        if (!layout.IsImplicitContentDestination(path)
+            || !SourceFormClassifier.TryClassify(layout, path, out var form)
             || !SourceFormClassifier.IsEntrypoint(form))
         {
             return null;
         }
 
-        var id = SourceIdentity.DeriveId(path);
+        var id = SourceIdentity.DeriveId(layout, path);
         if (id is null)
         {
             return null;
@@ -178,11 +187,12 @@ internal sealed record RouteRemoveAbsenceScope
         var categoryRoot = SourceLogicalPath.ReadParent(path);
         return new RouteRemoveAbsenceScope
         {
+            Layout = layout,
             Request = request,
             Id = id,
             CategoryRoot = categoryRoot,
-            LeafPath = $"{SourceLogicalPath.AgentsRoot}/{id}.md",
-            LeafOverwritePath = $"{SourceLogicalPath.AgentsRoot}/{id}.overwrite.md",
+            LeafPath = layout.SourcePath(id + SourceFormClassifier.MarkdownExtension),
+            LeafOverwritePath = SourceOverwritePath.ReadAdjacentPath(layout.SourcePath(id + SourceFormClassifier.MarkdownExtension)),
             IntendedPath = path,
             Source = new RouteRemoveSource
             {
