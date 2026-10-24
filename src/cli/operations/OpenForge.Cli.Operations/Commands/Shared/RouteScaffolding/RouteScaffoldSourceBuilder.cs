@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -12,24 +13,35 @@ internal sealed class RouteScaffoldSourceBuilder
     private readonly GeneratedNavigationFormationBuilder _formationBuilder = new();
 
     internal static string CanonicalPath(string folderId)
+        => EntrypointPath(WorkspaceLayout.DefaultMainRoot + "/" + ValidateFolderId(folderId));
+
+    internal static string CanonicalPath(WorkspaceLayout layout, string folderId)
+        => EntrypointPath(layout.SourcePath(ValidateFolderId(folderId)));
+
+    private static string ValidateFolderId(string folderId)
     {
         if (!SourceIdentity.IsValidId(folderId))
             throw new ArgumentException("A scaffold folder requires a canonical source ID.", nameof(folderId));
-        var folder = $"{SourceLogicalPath.AgentsRoot}/{folderId}";
-        return $"{folder}/_{SourceLogicalPath.ReadFileName(folder)}.md";
+        return folderId;
     }
 
+    private static string EntrypointPath(string folder)
+        => $"{folder}/{SourceFormClassifier.CanonicalEntrypointFileName(SourceLogicalPath.ReadFileName(folder))}";
+
     internal SourceLogicalSource Create(CliWorkspace workspace, string canonicalPath)
+        => Create(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), canonicalPath);
+
+    internal SourceLogicalSource Create(WorkspaceLayout layout, string canonicalPath)
     {
-        if (!SourceFormClassifier.TryClassify(canonicalPath, out var form)
+        if (!SourceFormClassifier.TryClassify(layout, canonicalPath, out var form)
             || form == SourceDocumentForm.OverwriteCompanion
-            || SourceIdentity.DeriveId(canonicalPath) is not { } id)
+            || SourceIdentity.DeriveId(layout, canonicalPath) is not { } id)
             throw new ArgumentException("An intended scaffold source requires a recognized path and identity.", nameof(canonicalPath));
         return new SourceLogicalSource(
             new SourceLogicalIdentity(id, canonicalPath),
             new SourceLayer(
                 canonicalPath,
-                Path.GetFullPath(SourceLogicalPath.ToLexicalPath(workspace.PhysicalRoot, canonicalPath)),
+                Path.GetFullPath(SourceLogicalPath.ToLexicalPath(layout.Workspace.PhysicalRoot, canonicalPath)),
                 form,
                 SourceLayerKind.Base));
     }

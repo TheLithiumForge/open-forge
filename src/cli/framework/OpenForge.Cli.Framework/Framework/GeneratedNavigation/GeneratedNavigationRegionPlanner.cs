@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
@@ -53,7 +54,7 @@ internal sealed class GeneratedNavigationRegionPlanner
                 entryProjection.ReadCause());
         }
 
-        return BuildRegion(input.Source, document.ReadValue(), entryProjection.ReadValue(), ReadObservedLoader(request, input.Source),
+        return BuildRegion(new SourceContentRoots(request.Formation.Catalogue.Layout), input.Source, document.ReadValue(), entryProjection.ReadValue(), ReadObservedLoader(request, input.Source),
             input.Source.Base.Form == SourceDocumentForm.Loader ? request.LoaderEdit : null);
     }
 
@@ -71,6 +72,14 @@ internal sealed class GeneratedNavigationRegionPlanner
     internal GeneratedNavigationRegion PlanProjectedEntries(
         GeneratedNavigationRegionInput input,
         IReadOnlyList<GeneratedNavigationEntry> entries)
+        => PlanProjectedEntries(SourceContentRoots.Default, input, entries);
+
+    internal GeneratedNavigationRegion PlanProjectedEntries(WorkspaceLayout layout, GeneratedNavigationRegionInput input,
+        IReadOnlyList<GeneratedNavigationEntry> entries)
+        => PlanProjectedEntries(new SourceContentRoots(layout), input, entries);
+
+    private static GeneratedNavigationRegion PlanProjectedEntries(SourceContentRoots roots, GeneratedNavigationRegionInput input,
+        IReadOnlyList<GeneratedNavigationEntry> entries)
     {
         var document = ReadRegionDocument(input);
         if (!document.IsComplete)
@@ -81,7 +90,7 @@ internal sealed class GeneratedNavigationRegionPlanner
                 document.ReadCause());
         }
 
-        return BuildRegion(input.Source, document.ReadValue(), entries, observedLoader: null);
+        return BuildRegion(roots, input.Source, document.ReadValue(), entries, observedLoader: null);
     }
 
     private static GeneratedNavigationProjectionStage<MarkdownDocumentFacts> ReadRegionDocument(
@@ -123,6 +132,7 @@ internal sealed class GeneratedNavigationRegionPlanner
     }
 
     private static GeneratedNavigationRegion BuildRegion(
+        SourceContentRoots roots,
         SourceLogicalSource source,
         MarkdownDocumentFacts document,
         IReadOnlyList<GeneratedNavigationEntry> entries,
@@ -132,10 +142,10 @@ internal sealed class GeneratedNavigationRegionPlanner
         try
         {
             var linkSource = observedLoader ?? document;
-            var authoredLinks = linkSource.GeneratedRegion.EntriesBlock is { } linkBlock ? ReadAuthoredLinks(linkSource, linkBlock) : [];
+            var authoredLinks = linkSource.GeneratedRegion.EntriesBlock is { } linkBlock ? ReadAuthoredLinks(roots, source, linkSource, linkBlock) : [];
             if (loaderEdit is not null)
             {
-                authoredLinks = ApplyLoaderEdit(authoredLinks, loaderEdit);
+                authoredLinks = ApplyLoaderEdit(roots, authoredLinks, loaderEdit);
             }
             var expectedBody = BuildExpectedBlock(document, entries, authoredLinks);
             var change = BuildGeneratedChange(document, expectedBody);
@@ -163,7 +173,7 @@ internal sealed class GeneratedNavigationRegionPlanner
             return structural;
         }
 
-        var listed = SourceLoaderEntriesParser.Parse(request.ObservedLoaderSource ?? document.Source);
+        var listed = SourceLoaderEntriesParser.Parse(request.Formation.Catalogue.Layout, request.ObservedLoaderSource ?? document.Source);
         if (listed.State != SourceLoaderEntriesParseState.Valid)
         {
             return structural;
@@ -295,7 +305,7 @@ internal sealed class GeneratedNavigationRegionPlanner
                 tags = metadata.ObservedTags;
             }
 
-            if (!TryReadDestination(parent, child, out var destination, out var cause))
+            if (!TryReadDestination(request, parent, child, out var destination, out var cause))
             {
                 return GeneratedNavigationProjectionStage<IReadOnlyList<GeneratedNavigationEntry>>.Unavailable(
                     GeneratedNavigationRegionUnavailableReason.DestinationUnsafe,
@@ -378,6 +388,7 @@ internal sealed class GeneratedNavigationRegionPlanner
         => description.Replace("\\", "\\\\", StringComparison.Ordinal);
 
     private static bool TryReadDestination(
+        GeneratedNavigationProjectionRequest request,
         SourceLogicalSource parent,
         SourceLogicalSource child,
         out string destination,
@@ -388,13 +399,18 @@ internal sealed class GeneratedNavigationRegionPlanner
         var parentDirectory = SourceLogicalPath.ReadParent(parent.Identity.CanonicalBasePath);
         var prefix = parentDirectory + "/";
         var childPath = child.Identity.CanonicalBasePath;
-        if (!childPath.StartsWith(prefix, StringComparison.Ordinal))
+        if (parent.Base.Form != SourceDocumentForm.Loader && !childPath.StartsWith(prefix, StringComparison.Ordinal))
         {
             cause = "A direct routed child does not have a safe containing-file-relative destination.";
             return false;
         }
 
-        var relative = childPath[prefix.Length..];
+        var layout = request.Formation.Catalogue.Layout;
+        var relative = childPath.StartsWith(prefix, StringComparison.Ordinal)
+            ? childPath[prefix.Length..]
+            : Path.GetRelativePath(
+                SourceLogicalPath.ToLexicalPath(layout.Workspace.LexicalRoot, parentDirectory),
+                SourceLogicalPath.ToLexicalPath(layout.Workspace.LexicalRoot, childPath)).Replace('\\', '/');
         if (relative.Length == 0)
         {
             cause = "A direct routed child does not have a non-empty destination.";
@@ -402,7 +418,8 @@ internal sealed class GeneratedNavigationRegionPlanner
         }
 
         var segments = relative.Split('/');
-        if (segments.Any(segment => !SourceLogicalPath.IsCanonicalSegment(segment)))
+        if (segments.Any(segment => !SourceLogicalPath.IsCanonicalSegment(segment)
+                && !(segment == ".." && parent.Base.Form == SourceDocumentForm.Loader)))
         {
             cause = "A direct routed child destination contains a non-canonical path segment.";
             return false;
@@ -411,7 +428,7 @@ internal sealed class GeneratedNavigationRegionPlanner
         try
         {
             destination = SourceDestinationEncoder.EncodePath(relative);
-            return true;
+            return SourceGeneratedDestinationResolver.Resolve(layout, parent.Identity.CanonicalBasePath, parent.Base.Form == SourceDocumentForm.Loader, destination) == childPath;
         }
         catch (EncoderFallbackException)
         {
@@ -447,6 +464,8 @@ internal sealed class GeneratedNavigationRegionPlanner
 
     // Index keeps authored link rows as written, after the generated rows and in their original order.
     private static IReadOnlyList<string> ReadAuthoredLinks(
+        SourceContentRoots roots,
+        SourceLogicalSource source,
         MarkdownDocumentFacts document,
         MarkdownEntriesBlock block)
     {
@@ -460,7 +479,9 @@ internal sealed class GeneratedNavigationRegionPlanner
         foreach (var line in text.Split('\n'))
         {
             if (MarkdownEntryRowParser.TryParse(line, out var row, out _)
-                && SourceGeneratedDestinationResolver.IsAuthoredLink(row.Destination))
+                && SourceGeneratedDestinationResolver.IsAuthoredLink(row.Destination)
+                && (roots.IsDefault || source.Base.Form != SourceDocumentForm.Loader
+                    || SourceGeneratedDestinationResolver.Resolve(roots, source.Identity.CanonicalBasePath, true, row.Destination) is null))
             {
                 authored.Add(line);
             }
@@ -469,14 +490,14 @@ internal sealed class GeneratedNavigationRegionPlanner
         return authored;
     }
 
-    private static IReadOnlyList<string> ApplyLoaderEdit(IReadOnlyList<string> rows, GeneratedNavigationLoaderEdit edit)
+    private static IReadOnlyList<string> ApplyLoaderEdit(SourceContentRoots roots, IReadOnlyList<string> rows, GeneratedNavigationLoaderEdit edit)
     {
         var result = new List<string>();
         var replaced = false;
         foreach (var line in rows)
         {
             if (MarkdownEntryRowParser.TryParse(line, out var row, out _)
-                && string.Equals(SourceLoaderDestinationParser.Parse(row.Destination).CanonicalPath, edit.Path, StringComparison.Ordinal))
+                && string.Equals(SourceLoaderDestinationParser.Parse(roots, row.Destination).CanonicalPath, edit.Path, StringComparison.Ordinal))
             {
                 if (!replaced && edit.Row is { } replacement) result.Add(replacement);
                 replaced = true;

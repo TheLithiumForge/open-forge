@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Shared.Entries;
@@ -11,6 +13,12 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence
 internal static class RenameRecordedEntryReader
 {
     internal static ImmutableArray<RenameRecordedIdentity> Read(string parentPath, FileStateSnapshot snapshot, MarkdownDocumentFacts document)
+        => Read(SourceContentRoots.Default, parentPath, snapshot, document);
+
+    internal static ImmutableArray<RenameRecordedIdentity> Read(WorkspaceLayout layout, string parentPath, FileStateSnapshot snapshot, MarkdownDocumentFacts document)
+        => Read(new SourceContentRoots(layout), parentPath, snapshot, document);
+
+    private static ImmutableArray<RenameRecordedIdentity> Read(SourceContentRoots roots, string parentPath, FileStateSnapshot snapshot, MarkdownDocumentFacts document)
     {
         ArgumentNullException.ThrowIfNull(snapshot);
         ArgumentNullException.ThrowIfNull(document);
@@ -19,7 +27,7 @@ internal static class RenameRecordedEntryReader
         foreach (var line in document.Source.AsSpan(block.Span.Start, block.Span.Length).EnumerateLines())
         {
             if (!MarkdownEntryRowParser.TryParse(line.ToString(), out var row, out _) || row.Tags.Count == 0) continue;
-            var path = SourceGeneratedDestinationResolver.Resolve(parentPath, parentPath == SourceLogicalPath.LoaderPath, row.Destination);
+            var path = SourceGeneratedDestinationResolver.Resolve(roots, parentPath, parentPath == roots.LoaderPath, row.Destination);
             if (path is null) continue;
             records.Add(new RenameRecordedIdentity
             {

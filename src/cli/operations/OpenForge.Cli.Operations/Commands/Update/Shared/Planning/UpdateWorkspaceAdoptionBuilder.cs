@@ -53,6 +53,7 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
         var topology = ownership is { State: WorkspaceOwnershipReadState.Complete }
             && ownership.Document.Framework is not null
                 ? WorkspaceAdoptionTopologyPlanner.Plan(
+                    catalogue.Layout,
                     catalogue.Sources
                         .Where(source => FrameworkPayloadSelection.IncludesPath(
                             source.Identity.CanonicalBasePath,

@@ -61,7 +61,7 @@ internal static class SourceFormClassifier
         }
 
         var parent = SourceLogicalPath.ReadParent(canonicalPath);
-        form = ReadEntrypointForm(roots, fileName, parent) ?? SourceDocumentForm.Markdown;
+        form = parent == roots.MainRoot ? SourceDocumentForm.Markdown : ReadEntrypointForm(fileName, parent) ?? SourceDocumentForm.Markdown;
         return true;
     }
 
@@ -108,13 +108,18 @@ internal static class SourceFormClassifier
         return fileName is IndexFileName or UnderscoreIndexFileName or ReferencesFileName or UnderscoreReferencesFileName;
     }
 
-    private static SourceDocumentForm? ReadEntrypointForm(SourceContentRoots roots, string fileName, string parent)
-    {
-        if (parent == roots.MainRoot)
-        {
-            return null;
-        }
+    internal static string CanonicalEntrypointFileName(string directoryName)
+        => $"_{directoryName}{MarkdownExtension}";
 
+    internal static bool IsEntrypointPath(string path)
+    {
+        return SourceLogicalPath.IsCanonicalSource(path)
+            && SourceLogicalPath.ReadParent(path) is { } parent && parent != "."
+            && ReadEntrypointForm(SourceLogicalPath.ReadFileName(path), parent) is not null;
+    }
+
+    private static SourceDocumentForm? ReadEntrypointForm(string fileName, string parent)
+    {
         var compatibility = fileName switch
         {
             IndexFileName => SourceDocumentForm.IndexEntrypoint,
@@ -129,7 +134,7 @@ internal static class SourceFormClassifier
         }
 
         var parentName = SourceLogicalPath.ReadFileName(parent);
-        return fileName == $"_{parentName}{MarkdownExtension}"
+        return fileName == CanonicalEntrypointFileName(parentName)
             ? SourceDocumentForm.CanonicalEntrypoint
             : null;
     }

@@ -62,3 +62,13 @@ Follow-up solution build passed in Release with 0 warnings and 0 errors.
 Complete Unit suite: total 5,245, passed 5,245, failed 0, skipped 0.
 Complete Integration suite: total 3,752, passed 3,694, failed 0, skipped 58, all allowlisted.
 The diff stays uncommitted. No snapshot baseline or public command activation is changed.
+
+## Wave 2 C1 handoff
+
+C1 carries layout through navigation, scaffolding, metadata, adoption, rename evidence and shared route transport. Sharing records are structural and catalogue consumers validate membership.
+W1-01 is closed by real included-session tests. Formation preserves candidate-free sources, aliases and every included row without inventing candidates.
+Z1 adapters remain in GeneratedNavigationRegionPlanner.PlanProjectedEntries, RouteScaffoldSourceBuilder.CanonicalPath/Create, RouteScaffoldRenamePlanner.Decide and the adoption Plan/Create/CreateEntrypoint overloads without layout.
+Z1 adapters also remain in RoutedMetadataPolicyContext and RoutedMetadataDefaults.Tags, RouteSource and RouteSourceDocument legacy constructors, and RouteMarkdownCatalogueRequest's workspace constructor.
+RenameEvidencePolicy.Roots, RenameRecordedEntryReader.Read, RenameCanonicalEntrypointEvidence.Read and the composition adapter's workspace ReadEvidenceAsync overloads retain default adapters for later command conversion.
+The overseer owns C2 integration, later command conversion and fresh published/native and non-Windows qualification. C2 files and snapshot baselines are untouched.
+Release build passed with zero warnings and errors. Unit: 5,252 total, 5,252 passed, 0 failed, 0 skipped. Integration: 3,757 total, 3,699 passed, 0 failed, 58 allowlisted skips. The diff remains uncommitted.

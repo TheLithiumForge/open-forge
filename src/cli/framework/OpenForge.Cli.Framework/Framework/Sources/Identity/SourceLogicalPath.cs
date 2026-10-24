@@ -51,6 +51,9 @@ internal static class SourceLogicalPath
     internal static bool IsPrimaryMarkdownSource(SourceContentRoots roots, [NotNullWhen(true)] string? path)
         => IsPrimarySource(roots, path) && path.EndsWith(SourceFormClassifier.MarkdownExtension, StringComparison.Ordinal);
 
+    internal static bool IsPrimaryCategoryDirectory(SourceContentRoots roots, string path)
+        => IsPrimarySource(roots, path) && !ReadSourceCoordinate(roots, path).Contains('/');
+
     internal static bool IsPrimaryNonMarkdownSource(SourceContentRoots roots, string? path)
         => IsPrimarySource(roots, path) && !IsPrimaryMarkdownSource(roots, path);
 

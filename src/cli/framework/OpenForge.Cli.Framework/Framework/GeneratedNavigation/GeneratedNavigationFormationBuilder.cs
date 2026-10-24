@@ -88,6 +88,7 @@ internal sealed partial class GeneratedNavigationFormationBuilder
     }
 
     private static IReadOnlyList<string> ReadStructuralRootPaths(
+        SourceContentRoots roots,
         IReadOnlyList<SourceLogicalSource> intendedSources,
         IReadOnlyDictionary<string, SourceCandidate> observedCandidatesByPath,
         IReadOnlyList<GeneratedNavigationPhysicalAliasGroup> aliasGroups,
@@ -96,7 +97,7 @@ internal sealed partial class GeneratedNavigationFormationBuilder
     {
         var eligible = new List<SourceLogicalSource>();
         var rootCandidates = intendedSources
-            .Select(source => (Source: source, Folder: ReadRepresentedRootFolder(source)))
+            .Select(source => (Source: source, Folder: ReadRepresentedRootFolder(roots, source)))
             .Where(candidate => candidate.Folder is not null)
             .Select(candidate => (
                 candidate.Source,
@@ -152,7 +153,7 @@ internal sealed partial class GeneratedNavigationFormationBuilder
             .ToArray();
     }
 
-    private static string? ReadRepresentedRootFolder(SourceLogicalSource source)
+    private static string? ReadRepresentedRootFolder(SourceContentRoots roots, SourceLogicalSource source)
     {
         if (!SourceFormClassifier.IsEntrypoint(source.Base.Form))
         {
@@ -160,7 +161,7 @@ internal sealed partial class GeneratedNavigationFormationBuilder
         }
 
         var representedFolder = SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath);
-        return SourceLogicalPath.ReadParent(representedFolder) == SourceLogicalPath.AgentsRoot
+        return SourceLogicalPath.IsPrimaryCategoryDirectory(roots, representedFolder)
             ? representedFolder
             : null;
     }

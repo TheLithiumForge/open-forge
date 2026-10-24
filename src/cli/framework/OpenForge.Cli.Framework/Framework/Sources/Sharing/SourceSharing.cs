@@ -20,11 +20,9 @@ internal sealed class SourceSharing
         {
             if (route is null
                 || !IsCanonicalPath(route.Directory)
-                || !route.Directory.StartsWith($"{SourceLogicalPath.AgentsRoot}/", StringComparison.Ordinal)
                 || !IsCanonicalPath(route.Entrypoint)
                 || SourceLogicalPath.ReadParent(route.Entrypoint) != route.Directory
-                || !SourceFormClassifier.TryClassify(route.Entrypoint, out var form)
-                || !SourceFormClassifier.IsEntrypoint(form))
+                || !SourceFormClassifier.IsEntrypointPath(route.Entrypoint))
                 throw new ArgumentException("A Gitignored route requires a workspace-relative directory and its direct recognized entrypoint.", nameof(routes));
         }
         var directories = routes.Select(route => PortableWorkspacePath.CreatePortableKey(route.Directory)).ToArray();
@@ -42,8 +40,10 @@ internal sealed class SourceSharing
     {
         foreach (var route in _routes)
         {
-            var candidates = catalogue.Candidates.Where(candidate => candidate.Form is { } form
-                && SourceFormClassifier.IsEntrypoint(form)
+            if (!SourceFormClassifier.TryClassify(catalogue.Layout, route.Entrypoint, out var form)
+                || !SourceFormClassifier.IsEntrypoint(form)) return route.Entrypoint;
+            var candidates = catalogue.Candidates.Where(candidate => candidate.Form is { } candidateForm
+                && SourceFormClassifier.IsEntrypoint(candidateForm)
                 && SourceLogicalPath.ReadParent(candidate.CanonicalPath) == route.Directory).ToArray();
             if (candidates.Length != 1 || candidates[0].CanonicalPath != route.Entrypoint
                 || catalogue.FindByPath(route.Entrypoint) is null) return route.Entrypoint;
@@ -51,8 +51,17 @@ internal sealed class SourceSharing
         return null;
     }
 
+    internal void ValidateMembership(SourceCatalogue catalogue)
+    {
+        if (_routes.Any(route => !SourceFormClassifier.TryClassify(catalogue.Layout, route.Entrypoint, out var form)
+            || !SourceFormClassifier.IsEntrypoint(form)))
+            throw new ArgumentException("Sharing routes must belong to the catalogue layout.", nameof(catalogue));
+    }
+
     internal SourceCatalogue Project(SourceCatalogue catalogue)
-        => new(catalogue.Layout,
+    {
+        ValidateMembership(catalogue);
+        return new(catalogue.Layout,
             catalogue.Candidates.Where(candidate => Includes(candidate.CanonicalPath)),
             catalogue.Sources.Where(source => Includes(source.Identity.CanonicalBasePath))
                 .Select(source => source.Overwrite is { } overwrite && !Includes(overwrite.CanonicalPath)
@@ -64,6 +73,7 @@ internal sealed class SourceSharing
                     } : source),
             catalogue.Issues.Where(issue => Includes(issue.AttemptedCanonicalPath)
                 || issue.RelatedPaths.Any(Includes)), catalogue.IsCancelled, catalogue.Aliases, catalogue.IncludedRows);
+    }
 
     private static bool IsCanonicalPath(string path)
         => PortableWorkspacePath.TryNormalize(path, out var normalized) && normalized == path;

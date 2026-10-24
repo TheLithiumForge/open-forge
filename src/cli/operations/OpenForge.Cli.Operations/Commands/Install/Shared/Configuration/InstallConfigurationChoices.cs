@@ -1,13 +1,21 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 
 internal static class InstallConfigurationChoices
 {
+    private const string MemoryWorkingRouteId = WorkspaceCategoryNames.Memory + "/working";
+    private const string MemoryEmergingRouteId = WorkspaceCategoryNames.Memory + "/emerging";
+    private const string MemoryCrystallizedRouteId = WorkspaceCategoryNames.Memory + "/crystallized";
+    private const string MemoryArchivedRouteId = WorkspaceCategoryNames.Memory + "/archived";
+
     internal static readonly ImmutableArray<string> RouteIds =
-        ["directives", "guidance", "maps", "patterns", "skills", "templates",
-         "memory/working", "memory/emerging", "memory/crystallized", "memory/archived"];
+        [WorkspaceCategoryNames.Directives, WorkspaceCategoryNames.Guidance, WorkspaceCategoryNames.Maps, WorkspaceCategoryNames.Patterns,
+         WorkspaceLayoutNames.SkillsDirectoryName, WorkspaceCategoryNames.Templates,
+         MemoryWorkingRouteId, MemoryEmergingRouteId, MemoryCrystallizedRouteId, MemoryArchivedRouteId];
 
     internal static string Name(InstallPreset preset) => preset switch
     {
@@ -46,8 +54,8 @@ internal static class InstallConfigurationChoices
     internal static ImmutableArray<InstallRouteSelection> Defaults(InstallPreset preset)
         => RouteIds.Select(id => new InstallRouteSelection(id, DefaultAction(id, preset))).ToImmutableArray();
 
-    internal static string Directory(string id) => $".agents/{id}";
-    internal static string Entrypoint(string id) => $"{Directory(id)}/_{id.Split('/')[^1]}.md";
+    internal static string Directory(string id) => $"{WorkspaceLayout.DefaultMainRoot}/{id}";
+    internal static string Entrypoint(string id) => $"{Directory(id)}/{SourceFormClassifier.CanonicalEntrypointFileName(id.Split('/')[^1])}";
     internal static bool Contains(string id, string path) => path.StartsWith($"{Directory(id)}/", StringComparison.Ordinal);
 
     // The Loader line that switches a route on. A Memory state is reached through the Memory catalogue.
@@ -58,11 +66,11 @@ internal static class InstallConfigurationChoices
         return preset switch
         {
             InstallPreset.FullCore => InstallRouteAction.Add,
-            InstallPreset.Minimal => id is "directives" or "memory/crystallized" ? InstallRouteAction.Add : InstallRouteAction.Remove,
+            InstallPreset.Minimal => id is WorkspaceCategoryNames.Directives or MemoryCrystallizedRouteId ? InstallRouteAction.Add : InstallRouteAction.Remove,
             InstallPreset.Essentials or InstallPreset.Custom => id switch
             {
-                "guidance" or "maps" or "templates" or "memory/archived" => InstallRouteAction.Remove,
-                "memory/working" => InstallRouteAction.GitIgnore,
+                WorkspaceCategoryNames.Guidance or WorkspaceCategoryNames.Maps or WorkspaceCategoryNames.Templates or MemoryArchivedRouteId => InstallRouteAction.Remove,
+                MemoryWorkingRouteId => InstallRouteAction.GitIgnore,
                 _ => InstallRouteAction.Add,
             },
             _ => throw new ArgumentOutOfRangeException(nameof(preset), preset, "The Install preset is not defined."),

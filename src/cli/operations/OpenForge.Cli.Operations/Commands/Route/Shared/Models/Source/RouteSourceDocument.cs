@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -12,6 +13,13 @@ internal sealed class RouteSourceDocument
         SourceDocumentForm form,
         FileReadState readState,
         string? body)
+        : this(canonicalLogicalPath, physicalPath, form, readState, body, validateDefaultForm: true) { }
+
+    internal RouteSourceDocument(SourceLayer layer, FileReadState readState, string? body)
+        : this(layer.CanonicalPath, layer.PhysicalPath, layer.Form, readState, body, validateDefaultForm: false) { }
+
+    private RouteSourceDocument(string canonicalLogicalPath, string physicalPath, SourceDocumentForm form,
+        FileReadState readState, string? body, bool validateDefaultForm)
     {
         if (!SourceLogicalPath.IsCanonical(canonicalLogicalPath))
         {
@@ -31,7 +39,7 @@ internal sealed class RouteSourceDocument
             throw new ArgumentOutOfRangeException(nameof(form), form, "The source document form is not defined.");
         }
 
-        if (!SourceFormClassifier.Matches(canonicalLogicalPath, form))
+        if (validateDefaultForm && !SourceFormClassifier.Matches(canonicalLogicalPath, form))
         {
             throw new ArgumentException("The source document form does not match its canonical logical path.", nameof(form));
         }
