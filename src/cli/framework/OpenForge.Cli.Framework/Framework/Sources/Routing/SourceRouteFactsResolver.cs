@@ -26,7 +26,7 @@ internal sealed class SourceRouteFactsResolver
             .ToHashSet(StringComparer.Ordinal);
         var selectedSources = selection.Sources
             .Where(source => source.Base.Form != SourceDocumentForm.OverwriteCompanion)
-            .Where(source => SourceLogicalPath.IsPrimarySource(catalogue.Layout, source.Identity.CanonicalBasePath))
+            .Where(source => SourceLogicalPath.IsInventoryPath(catalogue.Layout, source.Identity.CanonicalBasePath))
             .ToArray();
         var routeIssues = new List<SourceRouteIssue>();
         var nextOccurrence = 0;
@@ -126,8 +126,8 @@ internal sealed class SourceRouteFactsResolver
                         break;
                     }
 
-                    // A linked destination is ordinary project material outside the primary content locations.
-                    if (destination.State == SourceLoaderDestinationParseState.Linked)
+                    if (destination.State == SourceLoaderDestinationParseState.Linked
+                        && !catalogue.Layout.OutsideRoutes.Any(route => route.CataloguePath == destination.CanonicalPath))
                     {
                         continue;
                     }
@@ -222,7 +222,7 @@ internal sealed class SourceRouteFactsResolver
         var topologySources = selectedSources
             .Where(source => source.Base.Form != SourceDocumentForm.Loader)
             .ToArray();
-        var topology = new SourceRouteTopologyBuilder().Build(topologySources, loaderRootPaths);
+        var topology = new SourceRouteTopologyBuilder().Build(catalogue.Layout, topologySources, loaderRootPaths);
         AddExcludedSupportIssues(
             catalogue,
             selectedSources,
@@ -361,6 +361,7 @@ internal sealed class SourceRouteFactsResolver
 
     private static string? ReadExpectedParentDirectory(WorkspaceLayout layout, SourceLogicalSource source)
     {
+        if (layout.OutsideRoutes.Any(route => route.CataloguePath == source.Base.CanonicalPath)) return null;
         var containingDirectory = SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath);
         if (source.Base.Form == SourceDocumentForm.Markdown)
         {

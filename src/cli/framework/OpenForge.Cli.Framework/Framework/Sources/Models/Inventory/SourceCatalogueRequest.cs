@@ -18,9 +18,9 @@ internal sealed class SourceCatalogueRequest
             throw new ArgumentException("A source catalogue requires at least one logical root.", nameof(logicalRoots));
         }
 
-        if (roots.Any(root => !SourceLogicalPath.IsCanonicalRoot(root) || !layout.SourceRoots.Contains(root) && !SourceLogicalPath.IsPrimarySource(layout, root)))
+        if (roots.Any(root => !SourceLogicalPath.IsInventoryPath(layout, root)))
         {
-            throw new ArgumentException("Every source catalogue root must be a canonical primary content location or descendant.", nameof(logicalRoots));
+            throw new ArgumentException("Every source catalogue root must be a canonical inventory location or descendant.", nameof(logicalRoots));
         }
 
         Layout = layout;

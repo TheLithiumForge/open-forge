@@ -16,7 +16,11 @@ internal static class SourceFormClassifier
     internal const string UnderscoreReferencesFileName = "_" + ReferencesFileName;
 
     internal static bool TryClassify(WorkspaceLayout layout, string? canonicalPath, out SourceDocumentForm form)
-        => TryClassify(new SourceContentRoots(layout), canonicalPath, out form);
+    {
+        if (SourceLogicalPath.IsOutsideSource(layout, canonicalPath))
+            return TryClassifyDocument(canonicalPath, nativeSkill: false, mainRoot: null, out form);
+        return TryClassify(new SourceContentRoots(layout), canonicalPath, out form);
+    }
 
     internal static bool TryClassify(SourceContentRoots roots, string? canonicalPath, out SourceDocumentForm form)
     {
@@ -34,6 +38,14 @@ internal static class SourceFormClassifier
             return true;
         }
 
+        return TryClassifyDocument(canonicalPath,
+            nativeSkill: roots.IsDefault || canonicalPath.StartsWith(WorkspaceLayout.NativeSkillsPath + "/", StringComparison.Ordinal),
+            mainRoot: roots.MainRoot, out form);
+    }
+
+    private static bool TryClassifyDocument(string canonicalPath, bool nativeSkill, string? mainRoot, out SourceDocumentForm form)
+    {
+        form = default;
         var fileName = SourceLogicalPath.ReadFileName(canonicalPath);
         if (SourceOverwritePath.HasSuffix(fileName))
         {
@@ -46,7 +58,7 @@ internal static class SourceFormClassifier
             return false;
         }
 
-        if (fileName == NativeSkillFileName && (roots.IsDefault || canonicalPath.StartsWith(WorkspaceLayout.NativeSkillsPath + "/", StringComparison.Ordinal)))
+        if (fileName == NativeSkillFileName && nativeSkill)
         {
             form = SourceDocumentForm.Skill;
             return true;
@@ -59,12 +71,12 @@ internal static class SourceFormClassifier
         }
 
         var parent = SourceLogicalPath.ReadParent(canonicalPath);
-        form = parent == roots.MainRoot ? SourceDocumentForm.Markdown : ReadEntrypointForm(fileName, parent) ?? SourceDocumentForm.Markdown;
+        form = parent == mainRoot ? SourceDocumentForm.Markdown : ReadEntrypointForm(fileName, parent) ?? SourceDocumentForm.Markdown;
         return true;
     }
 
     internal static bool Matches(WorkspaceLayout layout, string canonicalPath, SourceDocumentForm form)
-        => Matches(new SourceContentRoots(layout), canonicalPath, form);
+        => TryClassify(layout, canonicalPath, out var classified) && classified == form;
 
     internal static bool Matches(SourceContentRoots roots, string canonicalPath, SourceDocumentForm form)
         => TryClassify(roots, canonicalPath, out var classified) && classified == form;

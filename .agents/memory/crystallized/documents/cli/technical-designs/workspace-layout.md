@@ -90,9 +90,11 @@ Safe directory, ancestry and catalogue expectations join the layout's existing e
 
 ## Source Transport
 
-Catalogue requests, catalogues, read sessions, loading closure and mutation plans carry the selected layout. Sessions derive it from their catalogue. Default selection can contain both primary content locations. Catalogue reconstruction preserves included `./path` identities, aliases, conditions and order, including sources that have no inventory candidate. Loader links resolve relative to the actual loader directory.
+Catalogue requests, catalogues, read sessions, loading closure and mutation plans carry the selected layout. Sessions derive it from their catalogue. Read sessions scan `InventoryRoots` and retain explicit default-selection scopes for the primary content locations and registered directories. Included-file registrations do not scan siblings. Catalogue reconstruction preserves included `./path` identities, aliases, conditions and order, including sources that have no inventory candidate. Loader links resolve relative to the actual loader directory.
 
-Stable source IDs stay relative to the appropriate content location. Included files keep their literal identities. The [source-reference contracts](../contracts/shared/source-references/interface.md) define the public forms, and [generated navigation](generated-navigation.md) defines retained loader rows and projection.
+Primary source IDs stay relative to their primary content location. Outside sources keep exact `./path` identities, including catalogue filenames and extensions, before and after registration. Outside `SKILL.md` files are ordinary Markdown. Discovery retains readable lexical names independently from portable write eligibility. Inventory grants no loading membership, ownership or implicit package permission. The [source-reference contracts](../contracts/shared/source-references/interface.md) define the public forms, and [generated navigation](generated-navigation.md) defines retained loader rows and projection.
+
+An inventoried outside catalogue can also carry authored inclusion policy. Established traversal precedes inspection of disconnected registered catalogues, so discovery cannot replace the first-reaching row's metadata. The merge retains every row, condition, span and alias, including unresolved targets. Outside physical aliases merge without removing existing primary identities or separating an overwrite from its base. Explicit registered catalogue selection covers its inventory scope, while ordinary included catalogue selection follows retained edges without scanning siblings.
 
 ## Delivery Boundary
 

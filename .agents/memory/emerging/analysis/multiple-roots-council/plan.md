@@ -26,6 +26,8 @@ These override packet size, ownership and execution order below without changing
 
 A1 also moves canonical catalogue filename construction into Workspace route paths and updates the existing classifier to reuse it. B1 and C1 consume that owner after integration. This is the direct dependency needed to keep Workspace below Sources. Every packet owns its associated focused tests and snapshots. Other shared-file edits require coordinator reassignment before parallel work resumes.
 
+2. **Preserve primary identities and paired layers during the outside merge.** Physical collapse in B applies to outside and included sources. Existing primary inventory members keep their identities and short IDs, including physical aliases. Overwrite physical paths retain their logical base owner. New outside inventory must not take precedence over an established authored target. Keep candidates, issues and every row while merging outside physical sources. The B2-R1 regressions demonstrated these preservation boundaries under default and custom layouts. This narrows the broad deduplication step below to honor the required Delivery 1 compatibility, without changing outside command behavior or the frozen API.
+
 ## Authority and baseline
 
 Implement frozen `council/decisions.md`, especially R2 through R5. Task 87 follows Task 85 Delivery 1. It does not implement main-root migration or introduce another maintenance command.

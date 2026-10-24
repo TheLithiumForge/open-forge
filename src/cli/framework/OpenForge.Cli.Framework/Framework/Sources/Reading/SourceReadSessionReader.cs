@@ -33,12 +33,12 @@ internal sealed class SourceReadSessionReader
         var documentReader = new SourceDocumentReader(workspace, paths);
         var catalogue = await new SourceCatalogueReader()
             .ReadSessionAsync(
-                new SourceCatalogueRequest(layout, layout.SourceRoots),
+                new SourceCatalogueRequest(layout, layout.InventoryRoots),
                 paths,
                 cancellationToken)
             .ConfigureAwait(false);
         var scopes = new List<SourceCatalogueSelectionScope>();
-        foreach (var root in layout.SourceRoots)
+        foreach (var root in layout.InventoryRoots)
         {
             var resolution = paths.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot,
                 SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, root));
