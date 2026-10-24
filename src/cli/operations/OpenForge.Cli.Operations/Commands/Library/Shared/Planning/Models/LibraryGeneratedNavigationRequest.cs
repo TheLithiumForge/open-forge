@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
@@ -13,7 +14,8 @@ internal sealed record LibraryGeneratedNavigationRequest
 {
     internal WorkspaceOwnershipRead? Ownership { get; init; }
 
-    public required CliWorkspace Workspace { get; init; }
+    public required WorkspaceLayout Layout { get; init; }
+    public CliWorkspace Workspace => Layout.Workspace;
     public required LibraryRegistration SelectedLibrary { get; init; }
     public required LibraryRegistrationSet? CurrentRecord { get; init; }
     public required ImmutableArray<EligibleSourceFile> IntendedEntries { get; init; }

@@ -9,13 +9,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Models.Planning;
 
 internal sealed record LibraryConsumerBoundaryRequest
 {
-    private WorkspaceLayout? _layout;
     public required CliWorkspace Workspace { get; init; }
-    public WorkspaceLayout Layout
-    {
-        get => _layout ?? WorkspaceLayout.Create(Workspace, WorkspaceLayout.DefaultMainRoot);
-        init => _layout = value;
-    }
+    public required WorkspaceLayout? Layout { get; init; }
     public required ImmutableArray<CanonicalRelativePath> RequiredAncestorPaths { get; init; }
 
     internal void Validate()

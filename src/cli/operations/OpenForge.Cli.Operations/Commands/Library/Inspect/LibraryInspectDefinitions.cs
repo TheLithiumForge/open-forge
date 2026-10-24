@@ -25,6 +25,7 @@ internal static class LibraryInspectDefinitions
             LibraryInspectFindingCode.LinkMissing => "library-inspect.link-missing",
             LibraryInspectFindingCode.LinkChanged => "library-inspect.link-changed",
             LibraryInspectFindingCode.LinkBlocked => "library-inspect.link-blocked",
+            LibraryInspectFindingCode.LayoutUnavailable => "library-inspect.layout-unavailable",
             LibraryInspectFindingCode.OperationFailed => "library-inspect.operation-failed",
             LibraryInspectFindingCode.Interrupted => "library-inspect.interrupted",
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The Library finding code is not defined."),

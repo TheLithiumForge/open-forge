@@ -193,6 +193,7 @@ internal static class LibraryInspectReportSelector
         LibraryInspectFindingCode.LinkMissing => LibraryInspectWording.LinkMissing(finding.Path ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheDestinationPath()),
         LibraryInspectFindingCode.LinkChanged => LibraryInspectWording.LinkChanged(finding.Path ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheDestinationPath(), finding.LibraryId ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheLibrary()),
         LibraryInspectFindingCode.LinkBlocked => LibraryInspectWording.LinkBlocked(finding.Path ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheDestinationPath(), finding.Cause),
+        LibraryInspectFindingCode.LayoutUnavailable => finding.Cause,
         LibraryInspectFindingCode.OperationFailed => LibraryInspectWording.Failed(finding.Cause),
         LibraryInspectFindingCode.Interrupted => LibraryInspectWording.Cancelled(),
         _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code, "The Library Inspect finding code is not defined."),

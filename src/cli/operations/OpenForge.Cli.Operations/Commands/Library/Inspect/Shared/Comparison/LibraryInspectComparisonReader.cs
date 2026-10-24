@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Comparison.Models;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Observation;
@@ -15,16 +16,16 @@ using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Comparison;
 
-internal sealed class LibraryInspectComparisonReader(PhysicalPathResolver resolver, CliWorkspace workspace)
+internal sealed class LibraryInspectComparisonReader(PhysicalPathResolver resolver, CliWorkspace workspace, WorkspaceLayout? layout)
 {
     private readonly PhysicalPathResolver _resolver = resolver;
     private readonly CliWorkspace _workspace = workspace;
 
     internal LibraryInspectComparisonRead Read(LibraryRegistration selected, LibraryInventory? inventory, CancellationToken cancellationToken)
     {
-        var registered = RegisteredPaths(selected);
+        var registered = RegisteredPaths(selected, layout);
         var eligible = (inventory?.Entries ?? [])
-            .Select(entry => Eligible(LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, entry.SourcePath)))
+            .Select(entry => Eligible(LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, entry.SourcePath), layout))
             .ToArray();
         var inventoryComplete = inventory?.State == LibraryInventoryState.Complete;
         var findings = new List<LibraryInspectFinding>();
@@ -61,7 +62,7 @@ internal sealed class LibraryInspectComparisonReader(PhysicalPathResolver resolv
             {
                 SourcePath = path,
                 DestinationPath = observation.Mapping.DestinationPath.Value,
-                SourceId = SourceIdentity.DeriveId(observation.Mapping.DestinationPath.Value),
+                SourceId = layout is null ? null : SourceIdentity.DeriveId(layout, observation.Mapping.DestinationPath.Value),
                 Relation = relation,
                 Registered = registeredPath,
                 ObservedRelativeLink = observation.Leaf.RelativeFileLink?.RawRelativeTarget,
@@ -91,8 +92,8 @@ internal sealed class LibraryInspectComparisonReader(PhysicalPathResolver resolv
         };
     }
 
-    internal static LibraryRegisteredPath[] RegisteredPaths(LibraryRegistration selected)
-        => [.. selected.Paths.Select(sourcePath => Registered(selected, sourcePath))];
+    internal static LibraryRegisteredPath[] RegisteredPaths(LibraryRegistration selected, WorkspaceLayout? layout)
+        => [.. selected.Paths.Select(sourcePath => Registered(selected, sourcePath, layout))];
 
     private static LibraryComparisonRelation ReadRelation(
         LibraryMappingObservationState observation,
@@ -133,7 +134,7 @@ internal sealed class LibraryInspectComparisonReader(PhysicalPathResolver resolv
 
     private static LibraryRegisteredPath Registered(
         LibraryRegistration selected,
-        Framework.Libraries.Models.Identity.SourceRelativeEligiblePath sourcePath)
+        Framework.Libraries.Models.Identity.SourceRelativeEligiblePath sourcePath, WorkspaceLayout? layout)
     {
         var mapping = LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, sourcePath);
         return new LibraryRegisteredPath
@@ -141,17 +142,17 @@ internal sealed class LibraryInspectComparisonReader(PhysicalPathResolver resolv
             SourcePath = sourcePath.Value,
             DestinationPath = mapping.DestinationPath.Value,
             ExpectedRelativeLink = mapping.ExpectedRelativeLink.Value,
-            SourceId = SourceIdentity.DeriveId(mapping.DestinationPath.Value),
+            SourceId = layout is null ? null : SourceIdentity.DeriveId(layout, mapping.DestinationPath.Value),
         };
     }
 
     private static LibraryEligiblePath Eligible(
-        LibraryMapping mapping)
+        LibraryMapping mapping, WorkspaceLayout? layout)
         => new()
         {
             SourcePath = mapping.SourcePath.Value,
             DestinationPath = mapping.DestinationPath.Value,
-            SourceId = SourceIdentity.DeriveId(mapping.DestinationPath.Value),
+            SourceId = layout is null ? null : SourceIdentity.DeriveId(layout, mapping.DestinationPath.Value),
         };
 
     private static void AddComparisonFinding(

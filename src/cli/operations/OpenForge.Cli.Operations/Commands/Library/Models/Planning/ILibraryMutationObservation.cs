@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
@@ -9,6 +10,7 @@ namespace OpenForge.Cli.Core.Commands.Library.Models.Planning;
 
 internal interface ILibraryMutationObservation
 {
+    WorkspaceLayoutRead LayoutRead { get; }
     LibraryRegistrationRead Record { get; }
     LibraryInventoryRead? Source { get; }
     ImmutableArray<LibraryMappingObservation> Mappings { get; }

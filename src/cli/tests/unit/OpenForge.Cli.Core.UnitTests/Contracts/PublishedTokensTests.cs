@@ -1,4 +1,12 @@
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Commands.Library;
+using OpenForge.Cli.Core.Commands.Library.Attach;
+using OpenForge.Cli.Core.Commands.Library.Sync;
+using OpenForge.Cli.Core.Commands.Library.Detach;
+using OpenForge.Cli.Core.Commands.Library.Inspect;
+using OpenForge.Cli.Core.Commands.Library.List;
+using OpenForge.Cli.Core.Presentation.Library.Inspect.Models;
+using OpenForge.Cli.Core.Presentation.Library.List.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Context;
@@ -68,6 +76,18 @@ public sealed class PublishedTokensTests
     public void EveryTokenMatchesItsOwner()
     {
 #pragma warning disable xUnit2000 // The projected constants are under test, and the production owners supply the expected values.
+        Assert.Equal(LibraryDefinitions.Group.Name, PublishedTokens.Library.Command);
+        Assert.Equal(LibraryAttachDefinitions.Command.Name, PublishedTokens.Library.Attach);
+        Assert.Equal(LibrarySyncDefinitions.Command.Name, PublishedTokens.Library.Sync);
+        Assert.Equal(LibraryDetachDefinitions.Command.Name, PublishedTokens.Library.Detach);
+        Assert.Equal(LibraryInspectDefinitions.Command.Name, PublishedTokens.Library.Inspect);
+        Assert.Equal(LibraryListDefinitions.Command.Name, PublishedTokens.Library.List);
+        Assert.Equal(LibraryDefinitions.DestinationRoot.Name, PublishedTokens.Library.Destination);
+        Assert.Equal(LibraryAttachDefinitions.Automatic.Name, PublishedTokens.Library.Automatic);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(LibraryInspectData.Current)), PublishedTokens.LibraryData.Current);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(LibraryListData.Libraries)), PublishedTokens.LibraryData.Libraries);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(LibraryListDataLibrary.SourceFolder)), PublishedTokens.LibraryData.SourceFolder);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(LibraryListDataLibrary.DestinationFolder)), PublishedTokens.LibraryData.DestinationFolder);
         var install = InstallSymbols.Create();
         Assert.Equal(RouteMoveDefinitions.DryRun.Name, PublishedTokens.RouteMove.DryRun);
         Assert.Equal(WorkspaceOwnershipDefinitions.FrameworkProperty, PublishedTokens.Ownership.Framework);
@@ -269,6 +289,9 @@ public sealed class PublishedTokensTests
         Assert.Equal(SourceOverwritePath.ReadAdjacentPath(SourceFormClassifier.MarkdownExtension), PublishedTokens.Layout.OverwriteSuffix);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(FrameworkSkillMetadataYamlDocument.Name)), PublishedTokens.Metadata.SkillName);
         Assert.Equal(FrameworkMetadataFieldReader.Description, PublishedTokens.Metadata.Description);
+        var scope = typeof(FrameworkAuthoredMetadataYamlDocument).GetProperty(nameof(FrameworkAuthoredMetadataYamlDocument.OpenForge))!;
+        Assert.Equal(((YamlDotNet.Serialization.YamlMemberAttribute)Attribute.GetCustomAttribute(scope,
+            typeof(YamlDotNet.Serialization.YamlMemberAttribute))!).Alias, PublishedTokens.Metadata.Scope);
         Assert.Equal(FrameworkMetadataFieldReader.Tags, PublishedTokens.Metadata.Tags);
         Assert.Equal(MarkdownEntriesSectionReader.EntriesHeadingText, PublishedTokens.Metadata.Entries);
         Assert.Equal(MarkdownEntriesSectionReader.EmptyEntry, PublishedTokens.Metadata.EmptyEntry);

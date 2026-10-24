@@ -30,6 +30,7 @@ internal static class LibraryDetachDefinitions
             LibraryDetachFindingCode.OwnershipObservation => "library-detach.ownership-observation",
             LibraryDetachFindingCode.RecordUnavailable => "library-detach.record-unavailable",
             LibraryDetachFindingCode.RecordBlocked => "library-detach.record-blocked",
+            LibraryDetachFindingCode.LayoutUnavailable => "library-detach.layout-unavailable",
             LibraryDetachFindingCode.ConsumerBlocked => "library-detach.consumer-blocked",
             LibraryDetachFindingCode.MappingBlocked => "library-detach.mapping-blocked",
             LibraryDetachFindingCode.DestinationProtected => "library-detach.destination-protected",

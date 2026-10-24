@@ -137,6 +137,7 @@ public sealed class LibraryAttachApplicationIntegrationTests
         var before = Assert.IsType<FileStateSnapshot>(record.Snapshot);
         var input = new LibraryAttachPlanningInput
         {
+            LayoutRead = LibraryMutationApplicationData.LayoutObservation(workspace),
             Request = workspace.Attach(LibraryMode.Apply),
             Record = record,
             Source = LibraryMutationApplicationData.Inventory(workspace),

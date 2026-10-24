@@ -227,6 +227,7 @@ internal static class LibraryListReportSelector
         LibraryListFindingCode.LinkChanged => LibraryListWording.LinkChanged(finding.Path ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheRegisteredLink(), finding.LibraryId ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheLibrary()),
         LibraryListFindingCode.LinkUnavailable => LibraryListWording.LinkUnavailable(finding.Path ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheRegisteredLink()),
         LibraryListFindingCode.LinkBlocked => LibraryListWording.LinkBlocked(finding.Path ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheRegisteredLink(), finding.Cause),
+        LibraryListFindingCode.LayoutUnavailable => finding.Cause,
         LibraryListFindingCode.OperationFailed => LibraryListWording.Failed(finding.Cause),
         LibraryListFindingCode.Interrupted => LibraryListWording.Interrupted(),
         _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code, "The Library List finding code is not defined."),

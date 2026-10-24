@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,6 +25,11 @@ internal static class LibraryMutationApplicationData
 
     internal static void FrameworkFile(LibraryMutationWorkspace workspace)
         => workspace.Write(ManagedPath, ManagedBody);
+
+    internal static WorkspaceLayoutRead LayoutObservation(LibraryMutationWorkspace workspace)
+        => new(WorkspaceLayoutReadState.Ready,
+            WorkspaceSettingsRead.Absent(workspace.Absolute(WorkspaceSettingsDefinitions.RelativePath)),
+            WorkspaceOwnership(workspace), WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot), [], []);
 
     internal static LibraryRegistrationRead ReadRecord(LibraryMutationWorkspace workspace, bool exists, bool registered)
     {
@@ -70,6 +78,7 @@ internal static class LibraryMutationApplicationData
             Request = new LibraryConsumerBoundaryRequest
             {
                 Workspace = workspace.Workspace,
+                Layout = WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot),
                 RequiredAncestorPaths = [CanonicalRelativePath.Create(".agents/directives")],
             },
             ConsumerRoot = Directory(workspace.Absolute(".agents")),

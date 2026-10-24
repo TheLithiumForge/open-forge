@@ -87,6 +87,7 @@ internal static class LibraryDetachCompletion
                     sourceIndependent: true),
                 Plan = LibraryMutationCompletionProjection.Plan(new()
                 {
+                    Layout = observations?.LayoutRead.Layout,
                     Workspace = input.Request.Workspace,
                     State = planState,
                     Effects = plan?.Effects,

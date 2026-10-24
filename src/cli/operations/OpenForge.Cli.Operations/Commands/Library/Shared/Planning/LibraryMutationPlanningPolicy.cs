@@ -22,7 +22,7 @@ internal static class LibraryMutationPlanningPolicy
     {
         ArgumentNullException.ThrowIfNull(facts);
         var workspace = facts.Request.Workspace;
-        if (!facts.IsComplete
+        if (facts.Request.Layout is null || !facts.IsComplete
             || facts.ConsumerRoot is null
             || facts.Ancestors.Length != facts.Request.RequiredAncestorPaths.Length)
         {
@@ -118,7 +118,7 @@ internal static class LibraryMutationPlanningPolicy
             for (var length = 1; length < segments.Length; length++)
             {
                 var ancestor = string.Join('/', segments.AsSpan(0, length).ToArray());
-                if (ancestor != facts.Request.Layout.MainRoot)
+                if (ancestor != facts.Request.Layout?.MainRoot)
                 {
                     required.Add(ancestor);
                 }

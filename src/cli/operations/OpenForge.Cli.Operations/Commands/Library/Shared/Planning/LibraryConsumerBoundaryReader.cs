@@ -22,6 +22,15 @@ internal static class LibraryConsumerBoundaryReader
         request.Validate();
         cancellationToken.ThrowIfCancellationRequested();
 
+        if (request.Layout is null)
+            return ValueTask.FromResult(new LibraryConsumerBoundaryFacts
+            {
+                Request = request,
+                ConsumerRoot = null,
+                Ancestors = [],
+                IsComplete = false,
+            });
+
         var workspace = request.Workspace;
         var consumerRootPath = Path.Combine(workspace.LexicalRoot, request.Layout.MainRoot.Replace('/', Path.DirectorySeparatorChar));
         var consumerRoot = Observe(

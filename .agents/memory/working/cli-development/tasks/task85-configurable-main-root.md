@@ -160,6 +160,11 @@ Chair amendment 7 makes a lone missing loader restorable drift, records unreadab
 Top-level Remove carries and revalidates the layout, keeps fixed settings storage apart from content selection and updates custom-root and native Skills navigation.
 Its runtime adapters are removed. The shared adapter definitions remain for Z1.
 
+## Wave 5 LB handoff
+
+Libraries keep registrations, sources and suffixes literal and use the observed layout for identity, navigation, admission and revalidation under the lock.
+Consumer and navigation adapters are removed. The destination workspace overload and the optional permission layout fallback remain for Z1. Linux and macOS relative-link journeys run in CI.
+
 ## Overseer notes
 
 - Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.

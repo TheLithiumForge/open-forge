@@ -14,6 +14,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Attach.Models.Planning;
 
 internal sealed record LibraryAttachPlanningInput : ILibraryMutationObservation
 {
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
     public required LibraryAttachRequest Request { get; init; }
 
     public required LibraryConsumerBoundaryFacts ConsumerBoundary { get; init; }
