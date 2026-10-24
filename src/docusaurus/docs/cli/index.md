@@ -11,6 +11,8 @@ defines every operation and option, and [Everyday flows](flows.md) gives complet
 procedures. For a first walkthrough, use the
 [ten-minute guide](../getting-started/ten-minute-guide.md).
 
+Commands follow the [context folder chosen at installation](../getting-started/installation.md#choose-the-context-folder). Path examples here use the default `.agents` layout.
+
 ## Start with these commands
 
 | When you want to                               | Run                                                   |
@@ -60,7 +62,7 @@ examples before its behavior notes and options.
 | Manage optional Extension packages                         | [extension list](/guides/cli#extension-list), [extension inspect](/guides/cli#extension-inspect), [extension create](/guides/cli#extension-create), [extension install](/guides/cli#extension-install), [extension update](/guides/cli#extension-update), [extension remove](/guides/cli#extension-remove) |
 | Share files through a Library                              | [library list](/guides/cli#library-list), [library inspect](/guides/cli#library-inspect), [library attach](/guides/cli#library-attach), [library sync](/guides/cli#library-sync), [library detach](/guides/cli#library-detach)                                                                             |
 
-A source can be named by an ID such as `guidance`, an exact `.agents` path, or `./<path>` for an included file outside `.agents/`.
+A source can be named by an ID such as `guidance`, an exact `./<workspace-path>` path, or the literal `.agents/` path form. Custom-root files keep the same short IDs.
 See [source references](/guides/cli#source-references) when selecting a target.
 To restore one left-out built-in category, preview
 `open-forge route init <category> --framework --dry-run`, review it, then run the
@@ -99,7 +101,7 @@ use its fixed `.open-forge-state/` folder, so a sandbox needs only workspace wri
 access. See [worktrees, sandboxes and the runtime folder](/guides/cli#worktrees-sandboxes-and-the-runtime-folder)
 for lock failures, recovery stores and the bridge to older CLIs.
 
-When an Extension or Library asks to change paths outside `.agents`, key mode
+When an Extension or Library asks to change paths outside the primary content locations, key mode
 starts focused on `Allow once`. Enter approves only this run without saving a
 grant. The numbered order stays `1. Allow always`, `2. Allow once`, `3. Cancel`.
 Choose `Allow always` deliberately to save a grant for later operations. Line

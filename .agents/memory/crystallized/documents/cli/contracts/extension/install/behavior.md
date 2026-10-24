@@ -7,6 +7,12 @@ open-forge:
 
 # extension install Behavior Contract
 
+## Workspace Layout
+
+Map package destinations before exclusions, permissions, collisions, rendering and ownership. Record actual `TargetPath` values, keep retired recorded paths literal and revalidate the layout under the lease.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This is the accepted current Crystallized Behavior Contract for current
@@ -84,7 +90,7 @@ nothing. The shared contract owns the exact reader, authoring and receipt rules.
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
 [Behavior](../../shared/workspace-permissions/behavior.md). Require shared destination admission for every external target in the complete
 selected dependency closure.
-Existing `.agents/` targets need no grant; their prior safety and ownership
+Eligible primary-content targets need no grant. Their prior safety and ownership
 checks remain. Revocation blocks the complete selected lifecycle operation,
 including ownership release, until exact explicit reapproval. Unrelated
 installed packages do not enter this request's required set.
@@ -252,7 +258,7 @@ a proven runtime implementation.
 ## Framework Anchor And Route Hosts
 
 Before forming a mutation plan, establish the actual contained ordinary
-`.agents` Framework container for the exact workspace. No persisted Framework
+selected main-root container for the exact workspace. No persisted Framework
 source version or target hash participates in this admission check. Establish
 complete facts for every affected authored host, generated `Entries` boundary,
 ownership relationship, route relationship, and cross-section preservation
@@ -262,10 +268,10 @@ unsafe or ambiguous, return `blocked` and write nothing. A readable malformed
 ordinary-metadata host is skippable only when it is outside the selected
 package's affected ancestor closure and an independent safe projection remains;
 retain its exact source, reason, and cause as a visible Attention2 finding.
-The installed anchor includes the existing `.agents` Framework container. A
+The installed anchor includes the existing selected main-root container. A
 safely absent container is therefore an unavailable anchor and produces
 `incomplete` before planning; an unsafe or ambiguous container remains
-`blocked`. Extension Install never plans creation of `.agents` itself. The
+`blocked`. Extension Install never plans creation of the main root itself. The
 shared directory-creation capability remains unchanged; after the anchor is
 established, this command may consume it for explicitly planned missing ordinary
 parents of admitted workspace-relative targets.
@@ -281,7 +287,7 @@ cycles, unsafe paths, conflicting source identities, and incomplete closure.
 
 Validate every target in the complete closure as a canonical portable
 workspace-relative file. Require exact consumer permission for each external
-target under the shared permission contract. Reject `.agents` itself, protected
+target under the shared permission contract. Reject the main root itself, protected
 paths, linked ancestry and collisions before effects. A grant does not widen
 ownership or permit unsafe targets. Only explicitly planned missing ordinary
 parents beneath the workspace enter the command-local directory effect set.

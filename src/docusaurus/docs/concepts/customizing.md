@@ -7,6 +7,8 @@ description: Edit shipped files, keep local changes through updates with overwri
 
 Every installed file is yours. Add, adapt, replace, or remove the defaults as your needs change. The only question is how your change interacts with later updates.
 
+Examples below use the default `.agents` context folder. Choose a custom folder only at first installation. Relocating an established installation is not available yet. See [Choose the context folder](../getting-started/installation.md#choose-the-context-folder).
+
 ## Three ways to change a shipped file
 
 | You want to...                               | Do this                                   | What `open-forge update` does                                              |
@@ -54,7 +56,7 @@ The CLI records [exclusions](../glossary.md#exclusion) in `.agents/open-forge.js
 
 ```json
 {
-  "schemaVersion": 2,
+  "schemaVersion": 4,
   "removedCategories": ["skills"],
   "removedFiles": [".agents/patterns/_patterns.md"],
   "removedDirectories": ["docs/obsolete"],
@@ -71,8 +73,8 @@ Add `ignoreLinksFrom` or `ignoreLinksTo` to `.agents/open-forge.json`:
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v2/open-forge.schema.json",
-  "schemaVersion": 2,
+  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v4/open-forge.schema.json",
+  "schemaVersion": 4,
   "ignoreLinksFrom": [".agents/memory/archived"],
   "ignoreLinksTo": []
 }
@@ -84,14 +86,14 @@ Entries name workspace-relative files or folders, not patterns. A file entry cov
 
 Doctor shows how many links it ignored and notes listed paths that no longer exist. Route Move updates matching entries. Route Remove drops them. Both preserve ignored links as written. Install adds the archive entry when it installs Memory archive and the key is absent. An existing key, even `[]`, is your choice. Update leaves your settings unchanged. Add the entry by hand in an existing workspace.
 
-An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
+Older CLIs do not support custom roots. An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
 
 ## Files the CLI keeps for itself
 
 | File                           | Purpose                                                                                                          | Agent context? |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------- | -------------- |
 | `.agents/open-forge.lock.json` | Records files and generated navigation regions managed by the Framework and each Extension.                      | No             |
-| `.agents/open-forge.json`      | Your settings, including the frontmatter form, removal exclusions, and path grants for files outside `.agents/`. | No             |
+| `.agents/open-forge.json`      | Your settings, including `mainRoot`, the frontmatter form, removal exclusions and path grants outside the primary content locations. | No             |
 
 Neither file gives content any authority. They exist for file maintenance only.
 

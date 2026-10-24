@@ -7,6 +7,10 @@ open-forge:
 
 # Context Technical Design
 
+## Layout Transport
+
+Carry the layout through graph construction, loading closure, linked reads and projection. Result constructors use established catalogue identities instead of deriving IDs from fixed-root paths. See [Workspace Layout](../../technical-designs/workspace-layout.md).
+
 ## Status And Authority
 
 This is the accepted Technical Design for `context`. It is subordinate to the

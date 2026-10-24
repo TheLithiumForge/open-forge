@@ -11,6 +11,8 @@ has every option, and the [glossary](../glossary.md) defines the terms. Shell
 blocks use `\` for line continuation. In PowerShell, put a wrapped command on
 one line or use a backtick.
 
+These flows use the default `.agents` context folder. With a [custom folder](../getting-started/installation.md#choose-the-context-folder), keep short IDs and use the actual context paths. Native Skills, settings and ownership stay in `.agents`.
+
 Start with the base Framework. Later flows use Documents from Project Documents,
 and Decisions and their Template from Planning. `development-toolkit` installs
 both. Essentials leaves Templates out, so restore that category before installing
@@ -42,7 +44,7 @@ Use this when adding Open Forge to a new or existing project.
    git diff
    ```
 
-   Check that `.agents/loader.md`, settings, and the ownership lock exist. Status
+   Check that the selected loader, settings, and the ownership lock exist. Status
    shows context, installed Extensions, and anything needing attention. Plain
    interactive Install offers Minimal, Essentials, Full Core, or Custom instead. New
    private Working records stay out of ordinary Git commits.
@@ -317,8 +319,8 @@ workflow guides link to the supplied Document Templates.
 To delete instead, preview and review [`route remove`](/guides/cli#route-remove),
 then apply the same request. It records the removal and turns supported incoming
 links into plain text. Move and Remove scan supported workspace Markdown, retain
-tracked-file coverage, and include private `.agents` routes. Ignored files outside
-`.agents` stay unchanged. See the [reference scan rules](/guides/cli#reference-scans-for-moves-and-removals)
+tracked-file coverage, and include private routes in both primary content locations. Ignored files outside
+the primary content locations stay unchanged. See the [reference scan rules](/guides/cli#reference-scans-for-moves-and-removals)
 for Git exclusions, fallback behavior, and debug counts.
 
 ## Keep the workspace healthy
@@ -518,10 +520,10 @@ Its destination needs an existing route.
 
 These commands need `.gitignore` permission when changing it. The explicit Attach
 grant above is saved for later operations. Add destination grants when files land
-outside `.agents`. Library Detach and removal release their owned ignore rules.
+outside the primary content locations. Library Detach and removal release their owned ignore rules.
 See [Library permissions](/guides/cli#keep-projected-links-out-of-git).
 
-If an interactive operation asks to change paths outside `.agents`, key mode
+If an interactive operation asks to change paths outside the primary content locations, key mode
 starts focused on `Allow once`. Press Enter to approve only this run, or
 deliberately choose `1. Allow always` to save the displayed grant. Line mode
 accepts `always`, `once`, or `cancel`, and an empty line cancels.

@@ -9,9 +9,13 @@ Look up a term used in a page, a workspace file, or a CLI result. Each definitio
 
 ## Routing and files
 
+### Main root
+
+The workspace’s context folder, chosen at first installation and defaulting to `.agents`. It holds the loader, guide and ordinary categories. Native Skills stay at `.agents/skills`, with settings and ownership also fixed in `.agents`. See [Choose the context folder](getting-started/installation.md#choose-the-context-folder).
+
 ### Loader
 
-`.agents/loader.md` tells the agent how to select and load context. `AGENTS.md` asks the agent to read it before starting a task. It defines the core terms, rules, tags, and root routes.
+The selected loader, `.agents/loader.md` by default, tells the agent how to select and load context. `AGENTS.md` asks the agent to read it before starting a task. It defines the core terms, rules, tags, and root routes.
 
 Example: The loader exposes Directives and Memory.
 
@@ -107,7 +111,7 @@ Example: The CLI updates an installed category entrypoint it manages.
 
 ### Source reference
 
-A source ID, an exact `.agents` Markdown path, or `./<path>` for an included file outside `.agents/`, that selects content in commands. Extension and Library IDs identify different things.
+A source ID or an exact workspace path, using `./<path>` for a custom root or included file, that selects content in commands. Extension and Library IDs identify different things.
 
 Example: `skills/open-forge-cli` selects `.agents/skills/open-forge-cli/SKILL.md`.
 
@@ -383,7 +387,7 @@ Example: The architecture document defines current component boundaries.
 
 ### Path grant
 
-A workspace setting allowing Extension or Library files at specified destinations outside `.agents/`. It grants an agent no new tools.
+A workspace setting allowing Extension or Library files at specified destinations outside the primary content locations. It grants an agent no new tools.
 
 Example: An `allowInstallPaths` entry admits a support-file destination.
 

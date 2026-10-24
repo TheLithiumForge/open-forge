@@ -7,6 +7,12 @@ open-forge:
 
 # route create Interface Contract
 
+## Workspace Layout
+
+Short target IDs map to the selected layout. Exact `./<workspace-path>` operands stay literal and must satisfy this command’s content boundary.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
@@ -267,7 +273,7 @@ dry run; the warning alone is not a file or directory effect.
 
 ## Template Selection
 
-`--template` accepts the automatic ID or exact `.agents/...` path of one existing
+`--template` accepts the automatic ID or exact `./<workspace-path>` path of one existing
 routed Markdown Template:
 
 ```text

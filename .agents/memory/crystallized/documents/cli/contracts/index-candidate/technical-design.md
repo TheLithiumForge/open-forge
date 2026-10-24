@@ -7,6 +7,10 @@ open-forge:
 
 # Index Technical Design
 
+## Layout Transport
+
+Carry the layout observation through discovery, selection and planning, then revalidate it under the lease. Derive primary category destinations from the layout while keeping native Skill traversal fixed. See [Workspace Layout](../../technical-designs/workspace-layout.md).
+
 ## Status And Authority
 
 This is the current accepted Technical Design for the current `index`
@@ -175,7 +179,7 @@ bytes, canonical containing-file-relative destinations, and no query strings or
 fragments.
 
 Formation admits Loader roots only from structurally valid, physically unique
-recognized entrypoints directly representing `.agents/<slug>` folders. Missing
+recognized entrypoints directly representing primary category folders in the selected layout. Missing
 Loader means zero roots; missing intermediate entrypoints remain detached; and
 multiple recognized entrypoints representing one root folder are ambiguous.
 Only aliases proven on the current host collapse, and only when route and

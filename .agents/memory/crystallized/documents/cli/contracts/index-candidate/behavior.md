@@ -7,6 +7,12 @@ open-forge:
 
 # Index Behavior Contract
 
+## Workspace Layout
+
+Retain the layout through discovery, selection and navigation projection. Validate the original observation under the lease before applying changes. Native Skill traversal stays at `.agents/skills`.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This is the current Crystallized technology-neutral Behavior Contract for the
@@ -122,7 +128,7 @@ Projection](interface.md#authoritative-projection) sections.
 Operand-free resolution applies the [Rooted selection](interface.md#rooted-selection)
 rules. When the Loader is present, intended roots are the structurally valid,
 physically unique recognized entrypoints that directly represent
-`.agents/<slug>` folders. The resolver establishes the selected Loader and
+primary category folders in the selected layout. The resolver establishes the selected Loader and
 reachable entrypoint regions from that topology before projection. Multiple
 recognized entrypoints representing one root folder are ambiguous and block.
 

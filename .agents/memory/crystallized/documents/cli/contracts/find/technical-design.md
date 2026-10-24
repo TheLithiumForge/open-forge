@@ -7,6 +7,10 @@ open-forge:
 
 # Find Technical Design
 
+## Layout Transport
+
+Carry the layout through source inventory and universe resolution. Reconstruct catalogues with their layout and aliases, and build results from retained identities. See [Workspace Layout](../../technical-designs/workspace-layout.md).
+
 ## Status And Authority
 
 This is the current Crystallized Technical Design for the `find`

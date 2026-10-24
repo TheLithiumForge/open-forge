@@ -10,10 +10,14 @@ The [Interface](interface.md) owns syntax and result coordinates. Authorization
 uses the same authored settings reader as the rest of `.agents/open-forge.json`.
 There is no independent grant parser, persisted subject graph or legacy reader.
 
+## Content Admission
+
+Use the operation’s retained layout for implicit admission, with ordinal root-prefix checks. Keep explicit grants literal and preserve their existing portable comparison. Before grant publication, revalidate the layout under the same lease as target effects. See [Workspace Layout](../../../technical-designs/workspace-layout.md#ordinal-authority-checks).
+
 ## Admission
 
 Determine actual destination paths from the consuming command's checked plan.
-Implicit `.agents/` paths need no external grant. Apply existing portable path,
+Implicit primary-content paths need no external grant. Apply existing portable path,
 reserved-control, source, ownership and physical-containment checks independently.
 An allow-list entry can never authorize overwriting the settings or ownership
 controls, deleting a region's host file, or writing into a Library source.

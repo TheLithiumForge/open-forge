@@ -7,6 +7,10 @@ open-forge:
 
 # Ownership And Source Alignment Technical Design
 
+## Installed Destinations
+
+Ownership storage stays at `.agents/open-forge.lock.json` for every layout. Framework and Extension receipts record actual installed destinations. Package identities remain separate. Compare current payloads after layout mapping, but match recorded and retired paths against exclusions literally. Never map an ownership path a second time. Invalid or unreadable ownership retains command-local handling under the [layout observation rules](workspace-layout.md#observation-and-revalidation).
+
 ## Boundary
 
 The generated `.agents/open-forge.lock.json` records Framework, Extension and

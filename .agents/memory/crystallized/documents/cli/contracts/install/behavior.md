@@ -7,6 +7,12 @@ open-forge:
 
 # Install Behavior Contract
 
+## Layout Planning
+
+Read one layout observation and plan an intended layout from the first-installation choice. Refuse a populated custom destination or an established-root change before acquiring the lease. Map payload destinations before exclusions, ownership and rendering, while preserving fixed native Skills and controls. Default adoption keeps its existing rules.
+
+Carry both observed and intended layouts in the plan. Validate the observation under the lease before settings or target effects, then verify the intended layout after application. A hand edit moves nothing. Shared drift and ownership handling follows the [layout contract](../../shared-operation-contract.md#workspace-layout). Counts and first-directory examples below describe the default layout.
+
 ## Ownership Receipt Formation
 
 Form whole-file and region receipts according to what the operation manages.
@@ -22,8 +28,8 @@ route-sharing registration before applying Gitignore.
 The named installed content-file population is separate from the generated
 `.agents/open-forge.lock.json` ownership control file and from the managed
 host regions. `filesCreated` counts only the named installed content files.
-`directoriesCreated` counts only directories strictly below `.agents`;
-creating the `.agents` container is still the first ordinary directory effect
+In the default layout, `directoriesCreated` counts only directories strictly below `.agents`.
+Creating the `.agents` container is still the first ordinary directory effect
 when needed, but it is excluded from that count.
 
 ## Status And Boundary
@@ -244,7 +250,7 @@ reads the repository source tree.
 
 The closed current-fact universe includes:
 
-- named installed content destinations below `.agents`;
+- named installed content destinations in the primary content locations.
 - the generated `.agents/open-forge.lock.json` ownership control file as a
   separate state-file population;
 - the canonical `AGENTS.md` managed region;
@@ -635,7 +641,7 @@ When application is selected:
    contains an existing-target effect. Complete preparation before any workspace
    effect.
 5. Apply every explicitly planned missing directory parent-first through the
-   shared directory capability. Missing `.agents` is the first ordinary
+   shared directory capability. In the default layout, missing `.agents` is the first ordinary
    directory-create effect; its later planned directories are descendants.
    Immediately revalidate each missing target and its exact contained physical
    parent, call ordinary `Directory.CreateDirectory`, then verify the exact
@@ -680,7 +686,7 @@ existing-target effect must match the preparation; Create and no-op effects crea
 no bundle. All preparation is complete before the first target effect.
 
 Directory creation remains a distinct effect from file Create/Replace and has no
-recovery entry. Missing `.agents` is the first ordinary lease-bound directory
+recovery entry. In the default layout, missing `.agents` is the first ordinary lease-bound directory
 effect. A directory created by this operation is retained and reported as
 residual state after later failure or cancellation. Install never rolls it back,
 compensates for it, or removes it. The shared capability uses ordinary BCL
@@ -711,7 +717,7 @@ the Interface: mode, force, automatic, atomic nullable embedded-source identity,
 atomic nullable destination classification, atomic nullable managed-footprint
 counts, exact ordered effects, the internal migration collection, lifecycle,
 recovery, verification, and ordered findings. Managed-footprint counts distinguish
-named installed content files from child directories below `.agents`; the
+named installed content files from child directories below `.agents` in the default layout. The
 `.agents` container effect is
 not included in the directory count, and the generated lock file and host
 regions remain separate populations. All required top-level properties are

@@ -7,6 +7,12 @@ open-forge:
 
 # extension install Interface Contract
 
+## Workspace Layout
+
+Package paths remain package coordinates. Installed paths follow the selected layout, with native Skills and controls fixed in `.agents`. Permission and ownership checks use those installed destinations.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for
@@ -85,13 +91,13 @@ It persists in non-interactive execution; `--dry-run` never writes it. A refused
 explicit write is reported and prevents content application. Eligible interactive
 approval offers always, once or cancel. Once changes no settings. Invalid or unavailable settings block planning before permission approval,
 because removal exclusions cannot be determined safely. A missing settings file
-means no saved exclusions or external grants. Implicit `.agents/` destinations
+means no saved exclusions or external grants. Implicit primary-content destinations
 still require no permission grant.
 
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
 [Behavior](../../shared/workspace-permissions/behavior.md). Require shared destination admission for every external target in the complete
 selected dependency closure.
-Existing `.agents/` targets need no grant; their prior safety and ownership
+Eligible primary-content targets need no grant. Their prior safety and ownership
 checks remain. Revocation blocks the complete selected lifecycle operation,
 including ownership release, until exact explicit reapproval. Unrelated
 installed packages do not enter this request's required set.
@@ -184,8 +190,8 @@ plan. The selected package is still applied with a visible
 `extension-install.metadata-projection-skipped` Attention2 finding. This narrow
 skip never covers unreadable or unsafe metadata, native Skill malformed
 requirements, selected/affected hosts, or a missing anchor. The installed anchor
-includes the existing `.agents` Framework container, so Extension Install
-cannot form a plan or create `.agents` when that container is absent. This does
+includes the existing selected main-root container, so Extension Install
+cannot form a plan or create the main root when that container is absent. This does
 not change the shared directory-creation capability: after the anchor is
 established, this command may use it only for explicitly planned missing
 descendant directories beneath the workspace for admitted targets.
@@ -324,7 +330,7 @@ projection and effect rather than rewriting topology to the selected package.
 Every package payload target must be a canonical portable workspace-relative
 file. Validate complete closure, exact consumer grants for external files, and
 all protected destination rules before permission or content effects. The
-established Framework anchor keeps `.agents` itself outside both payload and
+established Framework anchor keeps the main root itself outside both payload and
 directory-effect sets. Only declared missing ordinary parents beneath the
 workspace can be directory-create effects; an external grant covers the exact
 file and does not grant ownership of its parents or siblings.
@@ -479,7 +485,7 @@ unsafe boundary as skippable.
 
 Per [04](../../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md), when applicable the prompt order is:
 multi-select when the source has several packages and no ID was given; Permission
-for paths outside `.agents`; initial-force consent for eligible existing files
+for paths outside the primary content locations. initial-force consent for eligible existing files
 (`Allow replacing the 1 existing file listed above? [y/N]`). Plan review and
 final apply confirmation follow. The final question is `Apply these changes? [y/N]`,
 or `Apply these changes, including replacing <N> existing files? [y/N]` when the

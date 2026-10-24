@@ -7,6 +7,12 @@ open-forge:
 
 # Find Interface Contract
 
+## Workspace Layout
+
+The default inventory covers the selected main root, native Skills and active included files. A custom root does not change short IDs or literal path operands.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This file is the current Crystallized authority for the caller-visible `find`
@@ -97,7 +103,7 @@ Follow the [shared help template](../shared/global-flags/interface.md#--help): c
 
 | Flag                              | Role          | Accepted value                            | Omission                                                            | Repetition, ordering, and composition                                                                |
 | --------------------------------- | ------------- | ----------------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `--include=<source-reference>`    | Selection     | One shared source reference               | Start from the normal complete eligible `.agents` Markdown and active included-file universe | Repeatable. Occurrences form a union of source selections.                                           |
+| `--include=<source-reference>`    | Selection     | One shared source reference               | Start from the normal complete eligible primary-content Markdown and active included-file universe | Repeatable. Occurrences form a union of source selections.                                           |
 | `--exclude=<source-reference>`    | Selection     | One shared source reference               | Subtract nothing                                                    | Repeatable. Occurrences form a union of exclusions, and exclusions win overlap.                      |
 | `--for=<workspace-relative-path>` | Applicability | One workspace-relative file path          | Keep the existing candidate universe when omitted                   | Repeatable. Paths form one normalized working set; duplicates have no additional effect.             |
 | `--tag=<tag>`                     | Selection     | One tag query value                       | No tag predicate is added                                           | Repeatable. Each occurrence adds one scalar predicate in command-line order.                         |
@@ -504,7 +510,7 @@ Each status has one representative native text transcript above. JSON uses the s
   tags.
 - `find` does not infer applicability, scope, authority,
   loading, or current truth from a match.
-- `find` does not follow ordinary outgoing links. Outside `.agents/`, it searches
+- `find` does not follow ordinary outgoing links. Outside the primary content locations, it searches
   only active included files and listed catalogue descendants.
 - `find` does not build the complete context graph.
 - `find` does not support grouped Boolean expressions,
@@ -596,7 +602,7 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
   `--workspace <path>` value. It does not search parent directories, choose a Git
   root, or infer another workspace from nearby files.
 - The candidate universe covers every ordinary file with a
-  `.md` suffix physically contained below the selected workspace's `.agents`
+  `.md` suffix physically contained below the selected workspace’s primary content locations
   directory. A candidate must contain valid UTF-8 before it can become an
   inspectable Markdown layer.
 - The universe includes routed and unrouted Markdown files.
@@ -895,7 +901,7 @@ predicates using AND.
   universe regardless of argument order. Equivalent or overlapping selectors
   have no additional effect.
 - When `--include` is omitted, Find starts from its existing
-  normal complete eligible `.agents` Markdown and active included-file universe defined in [Workspace
+  normal complete eligible primary-content Markdown and active included-file universe defined in [Workspace
   And Source Universe](#workspace-and-source-universe). When `--exclude` is
   omitted, it subtracts nothing. An invocation with neither flag therefore
   selects the same universe and operation as before these filters were added.
@@ -922,7 +928,7 @@ predicates using AND.
   source filtering or satisfy the predicate requirement. Source filtering is valid for bare
   inventory with no `--tag` or `--heading` predicate; predicates then operate
   only on the effective universe.
-- Every selector uses the shared exact source-ID or `.agents/...`
+- Every selector uses the shared exact source-ID or `./<workspace-path>`
   path grammar and its normalization, identity, collision, disambiguation, and
   safety rules. Find does not guess between an ID and a path or add another
   selector syntax.
@@ -932,7 +938,7 @@ predicates using AND.
   non-interactive uses do not prompt. An unsafe or escaping physical boundary
   is blocked; no selector resolution guesses or bypasses it.
 
-For an included catalogue outside `.agents/`, expansion follows only its listed
+For an included catalogue outside the primary content locations, expansion follows only its listed
 parent-child tree. A leaf expands to itself. This does not scan a physical folder.
 
 ### Filtered Coverage, Results, And Ordering
@@ -1088,7 +1094,7 @@ parent-child tree. A leaf expands to itself. This does not scan a physical folde
 ### Filter-Specific Public Verification
 
 - Verify that omitted filters use the prior complete eligible
-  `.agents` Markdown universe and that filtered bare inventory remains valid.
+  primary-content Markdown universe and that filtered bare inventory remains valid.
 - Verify one-scalar-per-occurrence parsing, rejection of comma
   lists, globs, arbitrary directories, positional operands, and unaccepted
   qualifier or inference forms.

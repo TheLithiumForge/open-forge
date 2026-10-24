@@ -7,6 +7,12 @@ open-forge:
 
 # route include Interface Contract
 
+## Workspace Layout
+
+Include changes the selected loader. The native Skills catalogue remains a primary category even when it is outside the main root.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This contract implements the maintainer's frozen route include decision.
@@ -41,10 +47,10 @@ Reject directories, globs, URLs, fragments, lexical or linked workspace escapes,
 Git metadata, the loader, settings and lock files as invalid input.
 A directory error names its `_<folder>.md` catalogue and says whether to create it first.
 
-Outside `.agents/`, any text file is eligible. A Markdown file with
+Outside the primary content locations, any text file is eligible. A Markdown file with
 `## Entries` is followed as a catalogue. Its own frontmatter never sets loading.
-Inside `.agents/`, accept only a direct child folder's canonical catalogue.
-A deeper file error names that folder's catalogue. Files directly in `.agents/` are invalid.
+Within the main root, accept only a direct child folder's canonical catalogue. The fixed `.agents/skills/_skills.md` catalogue is also a primary category.
+A deeper file error names that category's catalogue. Other files directly in the main root are invalid.
 
 ## Metadata And Existing Rows
 
@@ -57,7 +63,7 @@ Each omitted field keeps its current value. A supplied option replaces only its
 own field. An identical request is a verified no-op. Duplicate matching rows are invalid and
 point to Exclude followed by Include to choose one policy. An existing hand-written row
 is registered without rewriting it. To clear tags or conditions, edit the row or
-exclude and include again. Metadata options on a main-root catalogue are invalid
+exclude and include again. Metadata options on a primary-category catalogue are invalid
 and name its frontmatter as the editing location.
 
 New rows follow the existing loader shape, use Index's percent-encoding form

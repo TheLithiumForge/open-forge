@@ -7,6 +7,12 @@ open-forge:
 
 # route init Behavior Contract
 
+## Workspace Layout
+
+Map package restoration destinations through the layout, bound ancestry at the relevant root and apply ordinal content checks. Retain and revalidate the layout observation before effects.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Ownership Receipt Formation
 
 Form whole-file and region receipts according to what the operation manages.
@@ -113,10 +119,10 @@ last-wins behavior. Invalid input stops before route resolution.
 ### Target normalization
 
 The resolver uses the shared source-reference interpretation for an automatic ID
-or an exact `.agents/...` path, then applies the selected `route init` target mapping in
+or an exact `./<workspace-path>` path, then applies the selected `route init` target mapping in
 [Route Target](interface.md#route-target):
 
-- An ID resolves to the intended folder ID below `.agents` and its final
+- An ID resolves to the intended folder ID in the selected layout and its final
   canonical `_{folder-name}.md` entrypoint path.
 - An exact canonical path identifies a missing target only when its filename is
   the final folder's canonical entrypoint filename.
@@ -151,7 +157,7 @@ missing roots are allowed. Other Framework targets follow sparse alignment below
 
 When `--framework` is selected, resolve the embedded Framework payload and
 canonical topology through the neutral distribution capability. Require the
-actual installed root route, a contained ordinary `.agents` directory, readable
+actual installed root route, a contained ordinary main-root directory, readable
 selected sources, and safe current route/generated-region boundaries. Missing
 or unsafe required workspace structure blocks; stored hashes, release metadata,
 and ownership availability do not establish or deny that physical boundary.
@@ -183,7 +189,7 @@ invariantly, preserving digits, collapsing whitespace plus ASCII `_` and `-` to
 one `-`, and trimming that separator. Reject other punctuation, control
 characters, path separators, empty output, `.` and `..`. Then apply ordinary
 portable collision, physical-identity, and containment checks. Exact
-`.agents/...` input is already concrete and is never slugged, but its concrete
+`./<workspace-path>` input is already concrete and is never slugged, but its concrete
 segments must pass the same unique topology alignment.
 
 The intended Framework chain contains only the requested sparse path. Missing
@@ -216,7 +222,7 @@ make two route subjects indistinguishable, blocks. Exact path input can resolve
 which source reference was selected, but it cannot make an ambiguous route
 structurally valid.
 
-The chain may be detached below `.agents`. Never create `.agents/loader.md`. If a
+The chain may be detached below the relevant primary content root. Never create the loader. If a
 valid Loader exposes or can expose the first route folder, include the Loader's
 generated region in the same parent mutation. If no Loader exists, keep the first
 entrypoint detached. A present Loader relationship that is ambiguous or unsafe
@@ -409,16 +415,16 @@ all effects. There is no partial or best-effort application.
 Keep directory creation separate from file Create/Replace/Delete and limit it
 to directories in the intended route chain or selected canonical payload
 subtree. A generic plan that starts without
-`.agents` exposes that exact path as its first ordinary directory-create effect.
+the selected main root exposes that exact path as its first ordinary directory-create effect.
 After acquiring the local workspace lease, the shared applier confirms the
 path is missing, creates and verifies it, and reports its actual residual state.
 Cancellation or lock contention before acquisition creates nothing. Framework
 mode requires an existing safe Framework root and therefore never creates an
-absent `.agents` root.
+absent main root.
 
 While holding the workspace lease, apply every explicitly planned missing
-directory parent-first through the shared capability. Each is a descendant below
-`.agents`: immediately revalidate the missing target and its exact contained
+directory parent-first through the shared capability. Each belongs to the intended ancestry for
+the relevant content location: immediately revalidate the missing target and its exact contained
 physical parent, call ordinary `Directory.CreateDirectory`, then verify the
 resulting contained ordinary directory. Do not remove, rename, claim, or format
 existing user content. A directory has no recovery entry; after contention,
@@ -461,7 +467,7 @@ Application first acquires the persistent local workspace lease, then
 immediately revalidates the complete plan and prepares and verifies the complete
 local recovery bundle when an existing-target effect requires one. It applies
 and verifies the separate parent-first directory effects, beginning with missing
-`.agents` in generic mode, and only then begins the planned file and
+the main root in generic mode, and only then begins the planned file and
 bounded-region effects with their own immediate target revalidation. Bundle
 preparation completes before every workspace effect.
 
@@ -615,7 +621,7 @@ in addition to the caller-visible [Interface Contract](interface.md):
 - One missing target, several missing ancestors, and a complete verified no-op
   chain.
 - Detached chains, valid Loader exposure, absent Loader handling, and proof that
-  the operation never creates `.agents/loader.md`.
+  the operation never creates the loader.
 - Existing canonical and each recognized compatibility entrypoint filename,
   including preservation without canonical sibling creation.
 - Multiple-entrypoint, ordinary-file automatic-ID, portable-path, and physical
@@ -651,7 +657,7 @@ in addition to the caller-visible [Interface Contract](interface.md):
   creation, post-verification, retained residuals, and no rollback,
   compensation, removal, recovery protocol, P/Invoke, or hostile same-user
   creator-identity guarantee.
-- Generic-mode missing-`.agents` planning/reporting as the first ordinary
+- Generic-mode missing-main-root planning/reporting as the first ordinary
   lease-bound directory effect, cancellation/contention before workspace
   effects, later residual behavior, and Framework-mode refusal when trusted
   Install state is absent.

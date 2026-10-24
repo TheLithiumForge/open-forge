@@ -7,6 +7,12 @@ open-forge:
 
 # Find Behavior Contract
 
+## Workspace Layout
+
+Carry the observed layout through inventory, selection and result projection. Default selection spans both primary content locations. Preserve included identities and aliases during filtering.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Authority
 
 This file is the current Crystallized authority for the technology-neutral
@@ -54,7 +60,7 @@ copying the public contract.
   selection without upward or marker-based discovery, as specified by [Workspace
   And Source Universe](interface.md#workspace-and-source-universe).
 - Required evidence covers complete deterministic enumeration of eligible
-  `.agents` Markdown and every candidate class in [Workspace And Source
+  primary-content Markdown and every candidate class in [Workspace And Source
   Universe](interface.md#workspace-and-source-universe).
 - Required evidence covers bare inventory at minimal detail and explicit
   ID-and-path results in [Bare Inventory](interface.md#bare-inventory) and
@@ -269,7 +275,7 @@ requiring one implementation stage or one source module.
   lists, globs, arbitrary directories, or a new qualifier language. Invalid
   flag shape produces the public `invalid-input` result.
 - Selector resolution runs against the exact selected
-  workspace and delegates source-ID or `.agents/...` path classification,
+  workspace and delegates source-ID or `./<workspace-path>` path classification,
   identity, normalization, containment, collision, and interactive
   disambiguation to the shared filter and source-reference rules. It preserves
   the supplied occurrence and its resolution outcome. It never chooses a
@@ -287,7 +293,7 @@ requiring one implementation stage or one source module.
   which is not a defect.
 - Effective-universe formation applies the shared set
   algebra: it uses the union of all include expansions, or Find's normal
-  complete eligible `.agents` Markdown and active included-file universe when no include occurs, then
+  complete eligible primary-content Markdown and active included-file universe when no include occurs, then
   subtracts the union of all exclude expansions. It deduplicates equivalent and
   overlapping selections, gives exclusion priority over inclusion, and produces
   the same effective universe regardless of include/exclude argument order.

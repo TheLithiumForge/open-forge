@@ -7,6 +7,10 @@ open-forge:
 
 # Generated Navigation Technical Design
 
+## Layout And Included Rows
+
+Formation retains the catalogue’s layout, aliases and included rows, including sources without inventory candidates. Loader destinations resolve from the selected loader directory. Native Skills remain at `.agents/skills` and may appear through the custom loader. Preserve direct loader rows to nested catalogues, their metadata and deliberate omissions. Neither reconstruction nor maintenance reactivates an omitted root. See [Workspace Layout](workspace-layout.md#source-transport).
+
 ## Boundary
 
 `Framework/GeneratedNavigation/` owns pure deterministic formation, projection,
@@ -70,8 +74,8 @@ temporary checkout, prospective source catalogue, or hidden Index.
 ## Loader And Topology Rules
 
 When a Loader is present, intended roots are the structurally valid, physically
-unique recognized entrypoints that directly represent each `.agents/<slug>`
-folder. Generated `Entries` remain comparison input only.
+unique recognized entrypoints that directly represent each primary category
+folder in the selected layout. Generated `Entries` remain comparison input only.
 
 A missing Loader produces zero roots. Operand-free Index selection blocks, while
 an explicit complete detached selection may still proceed. A missing

@@ -10,6 +10,8 @@ import TabItem from "@theme/TabItem"
 
 Routing is how an agent finds the right context. Instead of reading every file, it starts at the loader and follows short links whose descriptions tell it whether a branch is worth opening.
 
+Examples below use the default `.agents` context folder. The installed host instructions and relative loader links follow the selected folder, while native Skills stay at `.agents/skills`. See [Choose the context folder](../getting-started/installation.md#choose-the-context-folder).
+
 Here is an illustrative route from the [loader](../glossary.md#loader) to a file:
 
 ```text
@@ -26,7 +28,7 @@ The Directives entrypoint links to the file with one line under `Entries`:
 
 ## The loader
 
-An agent enters through `AGENTS.md`, which tells it to read `.agents/loader.md` before starting a task. In Claude Code, `CLAUDE.md` imports both files. The loader defines:
+An agent enters through `AGENTS.md`, which tells it to read the selected loader before starting a task. In Claude Code, `CLAUDE.md` imports both files. The loader defines:
 
 - the terms used everywhere else, such as `entrypoint`, `route`, and `scope`
 - the rules (called **Axioms**) that apply to the whole workspace
@@ -137,9 +139,9 @@ An entrypoint with no children has a placeholder line so the section is never am
 
 After a folder rename, Index keeps a compatibility entrypoint or renames a proven old canonical navigation file while preserving its rules. Without proof, Doctor explains how to keep the rules in the current entrypoint. Index completes only folders below existing roots and preserves exclusions and protected content.
 
-## Documents outside `.agents/`
+## Documents outside the context folder
 
-The loader can list any text file in the workspace, not only catalogues under `.agents/`. Agents then use the documents a project already has, where they live:
+The loader can list any text file in the workspace, including files outside the primary content locations. Agents then use the documents a project already has, where they live:
 
 ```sh
 open-forge route include CONTRIBUTING.md --description "Contribution rules to follow" --tag LoadNow
