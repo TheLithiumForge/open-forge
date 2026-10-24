@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Shell.Parsing;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Binding;
@@ -65,6 +66,18 @@ internal static class InstallBindingInputReader
                 error = "Repeated frontmatter values must agree.";
             frontmatter = form;
         }
+        var mainRootFacts = CliOptionResultFactsReader.Read(result, symbols.MainRoot);
+        string? mainRoot = null;
+        if (mainRootFacts.IsExplicit && mainRootFacts.ValueCount != mainRootFacts.IdentifierCount)
+            error = $"Each {InstallDefinitions.MainRoot.Name} requires a workspace-relative folder.";
+        foreach (var value in CliOptionResultFactsReader.ReadValues(result, symbols.MainRoot))
+        {
+            if (!WorkspaceMainRootPath.IsCanonical(value))
+                error = "The context folder must be a canonical workspace-relative content directory.";
+            if (mainRoot is not null && mainRoot != value)
+                error = "Repeated context folder values must agree.";
+            mainRoot = value;
+        }
         InstallSetupInput? setup = null;
         if (configure || presetText is not null || overrides.Count > 0 || frontmatterFacts.IsExplicit)
             setup = new InstallSetupInput(configure, preset, InstallConfigurationChoices.RouteIds
@@ -74,6 +87,6 @@ internal static class InstallBindingInputReader
             Force: result.GetValue(symbols.Force),
             Automatic: result.GetValue(symbols.Automatic),
             Mode: dryRun ? InstallMode.DryRun : InstallMode.Apply, Setup: setup, SetupError: error)
-        { InvalidRoute = invalidRoute, InvalidOption = invalidOption };
+        { InvalidRoute = invalidRoute, InvalidOption = invalidOption, RequestedMainRoot = mainRoot };
     }
 }

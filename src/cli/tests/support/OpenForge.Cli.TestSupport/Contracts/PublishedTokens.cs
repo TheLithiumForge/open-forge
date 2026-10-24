@@ -59,6 +59,14 @@ public static class PublishedTokens
 
     public static class Layout
     {
+        public const string ClaudeHost = "CLAUDE.md";
+        public const string GitIgnore = ".gitignore";
+        public const string CliSkillDirectory = ".agents/skills/open-forge-cli";
+        public const string DirectivesDirectory = "directives";
+        public const string DirectivesEntrypoint = "_directives.md";
+        public const string GuidanceDirectory = "guidance";
+        public const string GuidanceEntrypoint = "_guidance.md";
+        public const string SkillsEntrypoint = "_skills.md";
         public const string IndexFile = "index.md";
         public const string LiteralReferencePrefix = "./";
         public const string LoaderFileName = "loader.md";
@@ -105,6 +113,11 @@ public static class PublishedTokens
 
     public static class Install
     {
+        public const string MainRootQuestion = "Where should Open Forge keep its context files?";
+        public const string MinimalPreset = "minimal";
+        public const string FullCorePreset = "full-core";
+        public const string Force = "--force";
+        public const string MainRoot = "--main-root";
         public const string Configure = "--configure";
         public const string Preset = "--preset";
         public const string CustomPreset = "custom";
@@ -339,6 +352,12 @@ public static class PublishedTokens
 
     public static class ExtensionPackage
     {
+        public const string Id = "id";
+        public const string Name = "name";
+        public const string Description = "description";
+        public const string Version = "version";
+        public const string Dependencies = "dependencies";
+        public const string ManifestFile = "extension.json";
         public const string ContentDirectory = "content";
     }
 
@@ -359,6 +378,7 @@ public static class PublishedTokens
 
     public static class Statuses
     {
+        public const int BlockedExitCode = 5;
         public const int CompleteExitCode = 0;
         public const int InvalidExitCode = 4;
         public const string Invalid = "invalid-input";

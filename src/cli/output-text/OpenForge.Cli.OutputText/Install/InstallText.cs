@@ -93,7 +93,14 @@ internal static class InstallText
 
     // @OpenForgeText install.help.examples
     internal static string HelpExamples()
-        => "open-forge install --preset minimal --dry-run\nopen-forge install --preset essentials --dry-run\nopen-forge install";
+        => "open-forge install --preset minimal --dry-run\nopen-forge install --main-root docs/context --automatic\nopen-forge install";
+
+    // @OpenForgeText install.help.contextfolderheading
+    internal static string HelpContextFolderHeading() => "Context folder";
+
+    // @OpenForgeText install.help.contextfolder
+    internal static string HelpContextFolder(string defaultRoot, string controls)
+        => $"Choose --main-root <folder> at first installation, or answer the wizard before route choices. The default is {defaultRoot}. A custom folder must be absent or empty. Settings and Skills stay in {controls}. Preview, JSON, automatic and redirected runs never ask. An omitted or unchanged value keeps ordinary Install behavior. A different root on an established installation is refused, including with --configure.";
 
     // @OpenForgeText install.help.notes
     internal static string HelpNotes()

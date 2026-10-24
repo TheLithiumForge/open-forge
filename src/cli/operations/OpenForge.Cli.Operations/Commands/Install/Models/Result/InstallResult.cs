@@ -91,7 +91,7 @@ internal sealed record InstallResult : ICliCommandResult
                 Force: request.Force,
                 Automatic: request.Automatic,
                 Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration)
-            { RetryOptions = request.RetryOptions, SetupRecap = request.SetupRecap, ResolvedFrontmatter = request.Frontmatter?.Form },
+            { RetryOptions = request.RetryOptions, SetupRecap = request.SetupRecap, ResolvedFrontmatter = request.Frontmatter?.Form, RequestedMainRoot = request.RequestedMainRoot },
             findings: findings,
             summary: summary)
         { Frontmatter = InstallResultFactsFactory.Frontmatter(request.Frontmatter, []) };
@@ -109,7 +109,7 @@ internal sealed record InstallResult : ICliCommandResult
                 Force: request.Force,
                 Automatic: request.Automatic,
                 Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration)
-            { RetryOptions = request.RetryOptions, SetupRecap = request.SetupRecap, ResolvedFrontmatter = request.Frontmatter?.Form },
+            { RetryOptions = request.RetryOptions, SetupRecap = request.SetupRecap, ResolvedFrontmatter = request.Frontmatter?.Form, RequestedMainRoot = request.RequestedMainRoot },
             findings: findings,
             summary: summary,
             facts: facts)

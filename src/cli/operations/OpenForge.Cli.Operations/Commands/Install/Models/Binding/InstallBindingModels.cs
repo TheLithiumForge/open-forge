@@ -14,7 +14,8 @@ internal sealed record InstallSymbols(
     Option<bool> Configure,
     Option<string?> Preset,
     Option<string[]> Route,
-    Option<string[]> Frontmatter)
+    Option<string[]> Frontmatter,
+    Option<string[]> MainRoot)
 {
     internal static InstallSymbols Create()
     {
@@ -36,15 +37,23 @@ internal sealed record InstallSymbols(
             Description = InstallDefinitions.DryRun.Description,
             Arity = ArgumentArity.Zero,
         };
-        var configure = new Option<bool>("--configure") { Description = "Configure built-in routes while retaining existing files.", Arity = ArgumentArity.Zero };
-        var preset = new Option<string?>("--preset") { Description = "Select minimal, essentials, full-core, or custom.", Arity = ArgumentArity.ExactlyOne };
-        var route = new Option<string[]>("--route") { Description = "Set a Custom or Minimal route: <id>=<add|remove|git-ignore>.", Arity = ArgumentArity.OneOrMore, AllowMultipleArgumentsPerToken = false };
+        var configure = new Option<bool>(InstallDefinitions.ConfigureOption) { Description = "Configure built-in routes while retaining existing files.", Arity = ArgumentArity.Zero };
+        var preset = new Option<string?>(InstallDefinitions.PresetOption) { Description = "Select minimal, essentials, full-core, or custom.", Arity = ArgumentArity.ExactlyOne };
+        var route = new Option<string[]>(InstallDefinitions.RouteOption) { Description = "Set a Custom or Minimal route: <id>=<add|remove|git-ignore>.", Arity = ArgumentArity.OneOrMore, AllowMultipleArgumentsPerToken = false };
         var frontmatter = new Option<string[]>(InstallDefinitions.Frontmatter.Name)
         {
             Description = InstallDefinitions.Frontmatter.Description,
             Arity = ArgumentArity.OneOrMore,
             AllowMultipleArgumentsPerToken = false,
         };
+        var mainRoot = new Option<string[]>(InstallDefinitions.MainRoot.Name)
+        {
+            Description = InstallDefinitions.MainRoot.Description,
+            HelpName = InstallDefinitions.MainRoot.ValueName,
+            Arity = ArgumentArity.OneOrMore,
+            AllowMultipleArgumentsPerToken = false,
+        };
+        command.Options.Add(mainRoot);
         command.Options.Add(configure);
         command.Options.Add(preset);
         command.Options.Add(frontmatter);
@@ -56,7 +65,7 @@ internal sealed record InstallSymbols(
             InstallCommand: command,
             Force: force,
             Automatic: automatic,
-            DryRun: dryRun, Configure: configure, Preset: preset, Route: route, Frontmatter: frontmatter);
+            DryRun: dryRun, Configure: configure, Preset: preset, Route: route, Frontmatter: frontmatter, MainRoot: mainRoot);
     }
 }
 
@@ -68,6 +77,7 @@ internal sealed record InstallBindingInput(
     InstallConfiguration? Configuration = null,
     string? SetupError = null)
 {
+    internal string? RequestedMainRoot { get; init; }
     internal OpenForge.Cli.Core.Framework.Documents.Metadata.Models.FrontmatterForm? ResolvedFrontmatter { get; init; }
     internal CliRetryOptions? RetryOptions { get; init; }
 

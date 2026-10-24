@@ -20,6 +20,10 @@ internal static class InstallDefinitions
         CommandIdentity,
         "Install the bundled Framework, or change your built-in setup.");
 
+    internal const string ConfigureOption = "--configure";
+    internal const string PresetOption = "--preset";
+    internal const string RouteOption = "--route";
+
     internal static readonly CliOptionDefinition<bool> Force = new(
         "--force",
         "Allow eligible existing items to be replaced during first installation.",
@@ -44,6 +48,13 @@ internal static class InstallDefinitions
         CliOptionArity.ExactlyOne,
         [],
         "root|scoped");
+
+    internal static readonly CliOptionDefinition<string[]> MainRoot = new(
+        "--main-root",
+        $"Choose an absent or empty context folder at first installation. Settings and Skills stay in {WorkspaceSettingsDefinitions.DirectoryName}. An established installation keeps its context folder.",
+        CliOptionArity.ExactlyOne,
+        [],
+        "folder");
 
     internal static readonly IReadOnlyList<InstallFindingCode> FindingCodes =
         Array.AsReadOnly(Enum.GetValues<InstallFindingCode>());

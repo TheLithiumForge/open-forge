@@ -176,6 +176,11 @@ Every temporary default-layout adapter is removed and its callers pass an explic
 Status and Install expose optional layout facts through `WorkspaceLayoutInfo`, omitted for default workspaces, with the JSON envelope at schema 3.
 An audit accounts for every remaining production `.agents` literal as an owner, fixed control, package coordinate, documentation or default wording.
 
+## Wave 6 Z2 handoff
+
+Install offers `--main-root <folder>` and the first-install question, keeps unattended behavior, and refuses an established-root change before any effect.
+Published journeys cover both frontmatter forms, offline hosts, lifecycle commands and exact default bytes. Only the install help snapshot changed by design.
+
 ## Overseer notes
 
 - Every new settings file now declares schema v4, as decided, including default installs. The shipped README still says new settings use schema version 3. The final documentation packet corrects it, and C2's schema-sentence anchor then goes away.
@@ -183,3 +188,4 @@ An audit accounts for every remaining production `.agents` literal as an owner, 
 - Static help still shows default-root wording in Route Create and Route Inspect. The final documentation packet and Z2 help changes decide whether it changes.
 - Fixed a bug that predates Task 85: regenerating navigation dropped a loader's direct rows to nested catalogues, such as a nested native Skills catalogue, in default and custom layouts. Shared generated navigation now keeps those rows and their metadata. Unit tests cover Skills, other categories and omission.
 - Extension Update recovery labels use the observed context folder, retain explicit targets and default wording, and use neutral wording when the layout is unknown.
+- Open fix from Z2: top-level Remove reports a no-op for a custom root's README where the default layout refuses.
