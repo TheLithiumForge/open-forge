@@ -182,4 +182,4 @@ An audit accounts for every remaining production `.agents` literal as an owner, 
 - The intentionally excluded missing loader E2 raised is resolved by chair amendments 6 and 7. The plan's `*LibrarySharedGrant*` filter selects nothing, because the shared-grant class has another name.
 - Static help still shows default-root wording in Route Create and Route Inspect. The final documentation packet and Z2 help changes decide whether it changes.
 - Fixed a bug that predates Task 85: regenerating navigation dropped a loader's direct rows to nested catalogues, such as a nested native Skills catalogue, in default and custom layouts. Shared generated navigation now keeps those rows and their metadata. Unit tests cover Skills, other categories and omission.
-- Open fix from Z1: Extension Update's recovery label can name the default root when its target is unavailable.
+- Extension Update recovery labels use the observed context folder, retain explicit targets and default wording, and use neutral wording when the layout is unknown.

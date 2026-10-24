@@ -492,11 +492,10 @@ internal sealed class ExtensionUpdateApplicationOperation(
         string cause,
         string? target = null,
         ExtensionUpdateApplicationFailureContext? context = null)
-    {
-        if (target is null && code == ExtensionUpdateFindingCode.RecoveryUnavailable && !execution.Content.Layout.IsDefault)
-            target = OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime.WorkspaceRuntimePaths.DirectoryName;
-        return Stop(execution, new ExtensionUpdateFinding(code, cause, target), context);
-    }
+        => Stop(execution, new ExtensionUpdateFinding(code, cause, target)
+        {
+            ContextFolder = execution.Content.Layout.MainRoot,
+        }, context);
 
     private static ExtensionUpdateLifecycle Lifecycle(
         ExtensionUpdatePlan plan,
