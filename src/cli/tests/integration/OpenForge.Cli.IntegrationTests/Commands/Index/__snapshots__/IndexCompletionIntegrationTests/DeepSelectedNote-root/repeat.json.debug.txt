@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "The Entries section is current in 1 file. Nothing to do.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "filesChecked": 1,
+    "filesUpdated": 0,
+    "filesCurrent": 1,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": [],
+    "unchanged": [
+      {
+        "path": ".agents/guidance/team/deep/_deep.md"
+      }
+    ],
+    "selection": {
+      "origin": "explicit-sources",
+      "scope": "rooted",
+      "sources": [
+        {
+          "id": "guidance/team/deep/note",
+          "path": ".agents/guidance/team/deep/note.md"
+        }
+      ]
+    },
+    "regions": [
+      {
+        "path": ".agents/guidance/team/deep/_deep.md",
+        "action": "unchanged",
+        "outcome": "already-current"
+      }
+    ],
+    "metadata": [],
+    "entrypoints": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Check the workspace after indexing."
+  }
+}

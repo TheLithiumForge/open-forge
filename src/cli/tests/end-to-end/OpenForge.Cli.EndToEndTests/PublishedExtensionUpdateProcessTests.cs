@@ -1,7 +1,9 @@
+using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Contracts;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.EndToEndTests;
 
@@ -35,6 +37,10 @@ public sealed class PublishedExtensionUpdateProcessTests
         Assert.True(updated.ExitCode == 0, updated.StandardOutput + updated.StandardError);
         var after = File.ReadAllBytes(working.TargetPath);
         Assert.False(before.AsSpan().SequenceEqual(after));
+        var expectedBody = Encoding.UTF8.GetBytes(UpdatedBody);
+        Assert.True(after.Length >= expectedBody.Length);
+        Assert.Equal(expectedBody, after[^expectedBody.Length..]);
+        CommandOutputSnapshot.MatchSnapshot(Encoding.UTF8.GetString(after), form);
         Assert.False(File.Exists(Path.Combine(working.WorkspacePath, PublishedTokens.Sources.AgentsRoot, PublishedExtensionInstallWorkspace.RelativeTarget)));
         var ownershipPath = Path.Combine(working.WorkspacePath, PublishedTokens.Ownership.RelativePath);
         var ownership = File.ReadAllBytes(ownershipPath);

@@ -35,7 +35,7 @@ public sealed class PublishedSchema3ProcessTests
         foreach (var result in new[] { installed, observed })
         {
             using var document = JsonDocument.Parse(result.StandardOutput);
-            Assert.Equal(3, document.RootElement.GetProperty(PublishedTokens.Json.SchemaVersion).GetInt32());
+            Assert.Equal(PublishedTokens.Json.EnvelopeSchemaVersion, document.RootElement.GetProperty(PublishedTokens.Json.SchemaVersion).GetInt32());
             var layout = document.RootElement.GetProperty(PublishedTokens.Json.Data).GetProperty(PublishedTokens.LayoutData.Layout);
             Assert.Equal(CustomRoot, layout.GetProperty(PublishedTokens.LayoutData.MainRoot).GetString());
             Assert.Equal(loader, layout.GetProperty(PublishedTokens.LayoutData.LoaderPath).GetString());
@@ -174,7 +174,7 @@ public sealed class PublishedSchema3ProcessTests
         Assert.Equal(
             ["schemaVersion", "command", "status", "detail", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "data", "recovery", "next"],
             root.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(PublishedTokens.Json.EnvelopeSchemaVersion, root.GetProperty(PublishedTokens.Json.SchemaVersion).GetInt32());
         Assert.Equal(command, root.GetProperty("command").GetString());
         Assert.Equal(status, root.GetProperty("status").GetString());
         Assert.Equal(detail, root.GetProperty("detail").GetString());

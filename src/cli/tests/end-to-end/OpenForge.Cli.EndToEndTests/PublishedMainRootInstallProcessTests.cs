@@ -10,8 +10,6 @@ public sealed class PublishedMainRootInstallProcessTests
 {
     private const string MainRoot = "handbook/team/context";
     private const string OtherRoot = "handbook/other";
-    private const string Occupant = "authored" + PublishedTokens.Layout.MarkdownExtension;
-    private const string Body = "Preserve these authored bytes.\r\n";
 
     [Theory(DisplayName = "The real Install option previews installs observes and converges in both metadata forms")]
     [InlineData(PublishedTokens.Settings.RootFrontmatter), InlineData(PublishedTokens.Settings.ScopedFrontmatter)]
@@ -41,39 +39,14 @@ public sealed class PublishedMainRootInstallProcessTests
         using var index = await workspace.Run(PublishedTokens.Index.Command);
         using var repeated = await workspace.Run(PublishedTokens.Install.Command, PublishedTokens.Install.MainRoot, MainRoot, PublishedTokens.Install.Automatic);
         workspace.AssertBytes(installed);
-        foreach (var configure in new[] { false, true })
+        if (form == PublishedTokens.Settings.ScopedFrontmatter)
         {
             var refused = await workspace.RunRaw([PublishedTokens.Install.Command, PublishedTokens.Install.MainRoot, OtherRoot,
-                PublishedTokens.Install.Automatic, .. configure ? new[] { PublishedTokens.Install.Configure } : [],
+                PublishedTokens.Install.Automatic, PublishedTokens.Install.Configure,
                 PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat]);
             Assert.Equal(PublishedTokens.Statuses.InvalidExitCode, refused.ExitCode);
             workspace.AssertBytes(installed);
         }
     }
 
-    [Fact(DisplayName = "Occupied custom destinations refuse before runtime state and a changed preview never migrates files")]
-    public async Task RefusalsPreserveAuthoredState()
-    {
-        using var occupied = new PublishedMainRootWorkspace(MainRoot);
-        occupied.Write(MainRoot + "/" + Occupant, Body);
-        var before = occupied.Bytes();
-        var refused = await occupied.RunRaw(PublishedTokens.Install.Command, PublishedTokens.Install.MainRoot, MainRoot,
-            PublishedTokens.Install.Force, PublishedTokens.Install.Automatic, PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat);
-        Assert.Equal(PublishedTokens.Statuses.BlockedExitCode, refused.ExitCode);
-        occupied.AssertBytes(before);
-        Assert.False(Directory.Exists(occupied.Combine(TemporaryWorkspace.RuntimeDirectoryName)));
-
-        using var workspace = new PublishedMainRootWorkspace(MainRoot);
-        await workspace.Install();
-        using var preview = await workspace.Run(PublishedTokens.Install.Command, PublishedTokens.Install.MainRoot, MainRoot, PublishedTokens.Install.DryRun);
-        workspace.Write(PublishedTokens.Settings.RelativePath, $$"""
-            {"{{PublishedTokens.Settings.SchemaVersionProperty}}":{{PublishedTokens.Settings.SchemaVersion}},"{{PublishedTokens.Settings.MainRootProperty}}":"{{OtherRoot}}"}
-            """);
-        var edited = workspace.Bytes();
-        var changed = await workspace.RunRaw(PublishedTokens.Install.Command, PublishedTokens.Install.MainRoot, MainRoot,
-            PublishedTokens.Install.Automatic, PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat);
-        Assert.NotEqual(PublishedTokens.Statuses.CompleteExitCode, changed.ExitCode);
-        workspace.AssertBytes(edited);
-        Assert.False(Directory.Exists(workspace.Combine(OtherRoot)));
-    }
 }

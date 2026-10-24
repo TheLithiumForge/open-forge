@@ -33,7 +33,7 @@ public sealed class PublishedStatusProcessTests
         Assert.Equal(loaderBytes, File.ReadAllBytes(workspace.Combine(loader)));
         using var document = JsonDocument.Parse(result.StandardOutput);
         var root = document.RootElement;
-        Assert.Equal(3, root.GetProperty(PublishedTokens.Json.SchemaVersion).GetInt32());
+        Assert.Equal(PublishedTokens.Json.EnvelopeSchemaVersion, root.GetProperty(PublishedTokens.Json.SchemaVersion).GetInt32());
         var layout = root.GetProperty(PublishedTokens.Json.Data).GetProperty(PublishedTokens.LayoutData.Layout);
         Assert.Equal(CustomRoot, layout.GetProperty(PublishedTokens.LayoutData.MainRoot).GetString());
         Assert.Equal(loader, layout.GetProperty(PublishedTokens.LayoutData.LoaderPath).GetString());
@@ -122,7 +122,7 @@ public sealed class PublishedStatusProcessTests
 
         using var document = JsonDocument.Parse(result.StandardOutput);
         var root = document.RootElement;
-        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(PublishedTokens.Json.EnvelopeSchemaVersion, root.GetProperty(PublishedTokens.Json.SchemaVersion).GetInt32());
         Assert.Equal("status", root.GetProperty("command").GetString());
         Assert.Equal("incomplete", root.GetProperty("status").GetString());
         var candidates = root.GetProperty("data").GetProperty("recovery").GetProperty("candidates");

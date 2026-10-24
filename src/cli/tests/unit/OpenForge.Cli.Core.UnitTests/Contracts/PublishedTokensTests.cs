@@ -81,6 +81,7 @@ public sealed class PublishedTokensTests
     {
 #pragma warning disable xUnit2000 // The projected constants are under test, and the production owners supply the expected values.
         Assert.Equal(CliJsonFields.SchemaVersion, PublishedTokens.Json.SchemaVersion);
+        Assert.Equal(CliJsonEnvelopeDefinitions.SchemaVersion, PublishedTokens.Json.EnvelopeSchemaVersion);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusData.Layout)), PublishedTokens.LayoutData.Layout);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(InstallData.Layout)), PublishedTokens.LayoutData.Layout);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(WorkspaceLayoutInfo.MainRoot)), PublishedTokens.LayoutData.MainRoot);

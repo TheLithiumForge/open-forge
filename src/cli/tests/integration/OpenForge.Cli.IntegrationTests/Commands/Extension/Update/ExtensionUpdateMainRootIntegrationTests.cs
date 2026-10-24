@@ -1,7 +1,9 @@
+using System.Text;
 using OpenForge.Cli.Core.Commands.Extension;
 using OpenForge.Cli.Core.Commands.Extension.Install;
 using OpenForge.Cli.Core.Commands.Extension.Update;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -54,8 +56,11 @@ public sealed class ExtensionUpdateMainRootIntegrationTests
         var bytes = File.ReadAllBytes(workspace.Combine(InstalledNote));
         Assert.False(original.AsSpan().SequenceEqual(bytes));
         Assert.False(File.Exists(workspace.Combine(PackagedNote)));
-        var parsed = new FrameworkDocumentMetadataParser().Parse(
-            new MarkdownDocumentParser().Parse(workspace.ReadText(InstalledNote)), FrameworkMetadataReadScope.RoutedSource);
+        var document = new MarkdownDocumentParser().Parse(Encoding.UTF8.GetString(bytes));
+        var body = Assert.IsType<MarkdownTextSpan>(document.BodySpan);
+        var bodyStart = Encoding.UTF8.GetByteCount(document.Source.AsSpan(0, body.Start));
+        Assert.Equal(Encoding.UTF8.GetBytes(UpdatedBody), bytes[bodyStart..]);
+        var parsed = new FrameworkDocumentMetadataParser().Parse(document, FrameworkMetadataReadScope.RoutedSource);
         Assert.Equal(rootForm ? FrontmatterForm.Root : FrontmatterForm.Scoped, parsed.Syntax.AuthoredForm);
         var ownership = await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, TestContext.Current.CancellationToken);
         Assert.Contains(InstalledNote, Assert.Single(ownership.Document.Extensions).Paths);
