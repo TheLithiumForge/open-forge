@@ -1,3 +1,7 @@
+using System.Text;
+using OpenForge.Cli.Core.Commands.Index.Models.Result;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
+using OpenForge.Cli.TestSupport.Snapshots;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.IntegrationTests.Framework.Sources.Operational.Shared.RenameEvidence;
@@ -215,47 +219,67 @@ public sealed class IndexCompletionIntegrationTests
     }
 
     [Theory(DisplayName = "Index previews and completes a selected deep plain note in one final plan")]
-    [InlineData("scoped")]
-    [InlineData("root")]
+    [InlineData(WorkspaceSettingsDefinitions.FrontmatterScopedName)]
+    [InlineData(WorkspaceSettingsDefinitions.FrontmatterRootName)]
     public async Task DeepSelectedNote(string form)
     {
         using var workspace = TemporaryWorkspace.Create("index-completion-deep");
-        using var created = new CreatedFiles(workspace, GuidanceDirectory + "/team/_team.md", GuidanceDirectory + "/team/deep/_deep.md");
+        var teamEntrypoint = GuidanceDirectory + "/team/" + SourceFormClassifier.CanonicalEntrypointFileName("team");
+        var deepEntrypoint = GuidanceDirectory + "/team/deep/" + SourceFormClassifier.CanonicalEntrypointFileName("deep");
+        using var created = new CreatedFiles(workspace, teamEntrypoint, deepEntrypoint);
         Seed(workspace);
-        workspace.CreateFile(".agents/open-forge.json", $"{{\"schemaVersion\":1,\"frontmatter\":\"{form}\"}}");
-        const string path = GuidanceDirectory + "/team/deep/note.md";
+        workspace.CreateFile(WorkspaceSettingsDefinitions.RelativePath, $$"""
+            {"{{WorkspaceSettingsDefinitions.SchemaVersionProperty}}":{{WorkspaceSettingsDefinitions.SchemaVersion}},"{{WorkspaceSettingsDefinitions.FrontmatterProperty}}":"{{form}}"}
+            """);
+        const string path = GuidanceDirectory + "/team/deep/note" + SourceFormClassifier.MarkdownExtension;
+        const string unselectedPath = GuidanceDirectory + "/unselected/deep/note" + SourceFormClassifier.MarkdownExtension;
         const string body = "# Release notes\r\n\r\nKeep my words.\r\n";
         workspace.CreateFile(path, body);
-        workspace.CreateFile(GuidanceDirectory + "/unselected/deep/note.md", "# Other\n");
+        workspace.CreateFile(unselectedPath, "# Other\n");
+        var unselectedBytes = File.ReadAllBytes(workspace.Combine(unselectedPath));
         var before = workspace.SnapshotHashes();
-        var direct = await new IndexProjectionReader(new PhysicalPathResolver()).ReadAsync(new(new CliWorkspace(workspace.Path, workspace.Path,
-            CliWorkspaceSelectionMethod.ExplicitWorkspace), [path], IndexMode.DryRun), TestContext.Current.CancellationToken);
+        var cliWorkspace = new CliWorkspace(workspace.Path, workspace.Path, CliWorkspaceSelectionMethod.CurrentDirectory);
+        var operation = IndexOperationFactory.Create();
+        var direct = await new IndexProjectionReader(new PhysicalPathResolver()).ReadAsync(new(cliWorkspace, [path], IndexMode.DryRun), TestContext.Current.CancellationToken);
         Assert.NotNull(direct.Projection);
-        var plan = new IndexPlanBuilder().Build(new() { Request = new(new CliWorkspace(workspace.Path, workspace.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace), [path], IndexMode.DryRun), Projection = direct.Projection, LayoutRead = direct.Projection.LayoutRead ?? throw new InvalidOperationException() });
-        Assert.Equal(plan.Updates.Count, plan.Updates.Select(item => item.LogicalPath).Distinct(StringComparer.Ordinal).Count());
-        var preview = await CliHostCapture.RunAsync(["index", path, "--dry-run", "--format", "json"], workspace.Path);
-        Assert.Equal(0, preview.ExitCode);
-        using (var json = JsonDocument.Parse(preview.Output))
+        var plan = new IndexPlanBuilder().Build(new()
         {
-            Assert.Equal("Would create 2 entrypoints and complete metadata in 1 file.", json.RootElement.GetProperty("summary").GetProperty("headline").GetString());
-            Assert.Single(json.RootElement.GetProperty("data").GetProperty("metadata").EnumerateArray());
-            Assert.Equal(2, json.RootElement.GetProperty("data").GetProperty("entrypoints").GetArrayLength());
-        }
+            Request = new(cliWorkspace, [path], IndexMode.DryRun),
+            Projection = direct.Projection,
+            LayoutRead = direct.Projection.LayoutRead ?? throw new InvalidOperationException(),
+        });
+        Assert.Equal(plan.Updates.Count, plan.Updates.Select(item => item.LogicalPath).Distinct(StringComparer.Ordinal).Count());
+        var preview = await operation.ExecuteAsync(new(cliWorkspace, [path], IndexMode.DryRun), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, preview.Status);
+        Assert.Equal(path, Assert.Single(preview.Metadata).Path);
+        Assert.Equal(2, preview.Entrypoints.Count);
+        Assert.Equal(new[] { teamEntrypoint, deepEntrypoint }.Order(StringComparer.Ordinal),
+            preview.Entrypoints.Select(entrypoint => entrypoint.Path).Order(StringComparer.Ordinal));
         Assert.Equal(before, workspace.SnapshotHashes());
-        var apply = await CliHostCapture.RunAsync(["index", path], workspace.Path);
-        Assert.Equal(0, apply.ExitCode);
-        Assert.Contains("Created 2 entrypoints and completed metadata in 1 file.", apply.Output, StringComparison.Ordinal);
-        Assert.Contains("metadata completed, your content was kept", apply.Output, StringComparison.Ordinal);
-        Assert.Contains("entrypoint created", apply.Output, StringComparison.Ordinal);
-        Assert.EndsWith(body, File.ReadAllText(workspace.Combine(path)), StringComparison.Ordinal);
-        Assert.Contains("[Release notes](note.md) - #Guidance", File.ReadAllText(workspace.Combine(GuidanceDirectory + "/team/deep/_deep.md")), StringComparison.Ordinal);
-        Assert.Contains($"[Notes in {WorkspaceCategoryNames.Guidance}/team](team/_team.md) - #Guidance", File.ReadAllText(workspace.Combine(GuidanceEntrypoint)), StringComparison.Ordinal);
-        Assert.False(File.Exists(workspace.Combine(GuidanceDirectory + "/unselected/_unselected.md")));
+        var apply = await operation.ExecuteAsync(new(cliWorkspace, [path], IndexMode.Apply), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, apply.Status);
+        Assert.True(File.Exists(workspace.Combine(teamEntrypoint)));
+        Assert.True(File.Exists(workspace.Combine(deepEntrypoint)));
+        var completedBytes = File.ReadAllBytes(workspace.Combine(path));
+        var expectedBody = Encoding.UTF8.GetBytes(body);
+        Assert.True(completedBytes.Length >= expectedBody.Length);
+        Assert.Equal(expectedBody, completedBytes[^expectedBody.Length..]);
+        Assert.Equal(unselectedBytes, File.ReadAllBytes(workspace.Combine(unselectedPath)));
+        Assert.False(File.Exists(workspace.Combine(GuidanceDirectory + "/unselected/" + SourceFormClassifier.CanonicalEntrypointFileName("unselected"))));
         var completed = workspace.SnapshotHashes();
-        var repeat = await CliHostCapture.RunAsync(["index", path], workspace.Path);
-        Assert.Equal(0, repeat.ExitCode);
-        Assert.Contains("Nothing to do.", repeat.Output, StringComparison.Ordinal);
+        var repeat = await operation.ExecuteAsync(new(cliWorkspace, [path], IndexMode.Apply), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, repeat.Status);
         Assert.Equal(completed, workspace.SnapshotHashes());
+        var captures = new Dictionary<string, string>
+        {
+            ["deep-catalogue.content"] = File.ReadAllText(workspace.Combine(deepEntrypoint)),
+            ["guidance-catalogue.content"] = File.ReadAllText(workspace.Combine(GuidanceEntrypoint)),
+        };
+        var renderers = CommandOutputRenderers<IndexResult>.From(IndexPresentation.Rendering);
+        renderers.MatchDetails(preview, "preview", snapshotCollector: captures);
+        renderers.MatchDetails(apply, "applied", apply.Recovery.ResidualPath, snapshotCollector: captures);
+        renderers.MatchDetails(repeat, "repeat", snapshotCollector: captures);
+        CommandOutputSnapshot.MatchDetailSnapshot(captures, testName: nameof(DeepSelectedNote) + "-" + form);
     }
 
     [Theory(DisplayName = "Malformed ordinary metadata stays exact and admits same-parent and independent Index work")]

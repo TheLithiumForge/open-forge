@@ -6,7 +6,7 @@ open-forge:
 
 # Task 85: Configurable main root
 
-Status: Selected by the maintainer on 2026-10-23, to start after [Task 86](task86-workspace-runtime-lock.md). It was deferred on 2026-10-22 while `route include` covered reusing project documents.
+Status: Delivery 1 implementation and documentation are complete on the branch stacked on [Task 86](task86-workspace-runtime-lock.md). Review fixes pass focused managed verification and await commit, push and six-platform CI. Delivery 2 has not started.
 
 ## Outcome
 
@@ -190,3 +190,9 @@ Published journeys cover both frontmatter forms, offline hosts, lifecycle comman
 - Extension Update recovery labels use the observed context folder, retain explicit targets and default wording, and use neutral wording when the layout is unknown.
 - Top-level Remove carries exact route references across layouts. Custom human guides now receive the default refusal, while loader behavior and ordinal content boundaries remain unchanged.
 - Default snapshots that changed on purpose: the install help (Z2), and after the shipped README and CLI Skill gained custom-root guidance, 56 Status snapshots whose startup token totals measure those files, 10 help and concepts snapshots that read the README, and the custom-guidance rendering. No other default output changed.
+
+## Review-test handoff, 2026-10-24
+
+R1, R2, R3 and R5 are fixed against `8c73fdc21`: independent Extension Update body bytes, reviewed Index output and catalogue snapshots, one published refusal checkpoint with branches retained in Integration, and one JSON envelope-version owner with a checked public-token projection. The patch has 11 C# files and 66 new snapshots. Existing snapshots are unchanged.
+Using the [focused helpers](../../../emerging/analysis/main-root-council/plan.md#build-in-the-sandbox), run `tu` with `*PublishedTokensTests`, `*CliReportRenderingTests`, `*CliCountNumericTests`, `*HelpJsonSerializationTests`, `*RouteIncludeJsonSerializationTests`, `*RouteExcludeJsonSerializationTests`, `*CleanupJsonSchemaContractTests`, `*RouteRemoveJsonSchemaContractTests`, `*RouteInspectJsonPresentationTests` and `*WorkspacePermissionJsonProjectionTests`. Run `ti` with `*ExtensionUpdateMainRootIntegrationTests`, `*IndexCompletionIntegrationTests`, `*InstallMainRootIntegrationTests`, `*CliReportInvariantsTests`, `*LayerBoundaryTests`, `*GeneratedSerializationTests` and `*Schema3CommandIntegrationTests`. Run `te` with `*PublishedExtensionUpdateProcessTests`, `*PublishedMainRootInstallProcessTests`, `*PublishedSchema3ProcessTests`, `*PublishedStatusProcessTests`, `*PublishedIndexProcessTests` and `*PublishedInstallProcessTests`.
+Fresh Windows x64 managed evidence passed 164 Unit, 100 Integration and 52 EndToEnd tests with no failures or skips. `dotnet build OpenForge.Cli.slnx -c Release --no-restore --disable-build-servers -m:1` refreshed the development executable with no warnings. Both `dotnet format whitespace OpenForge.Cli.slnx --no-restore` and `dotnet format OpenForge.Cli.slnx --no-restore --verify-no-changes --severity warn` passed. [Build 40115960520](https://github.com/TheLithiumForge/open-forge/actions/runs/40115960520) still runs on the preceding head. Commit and push these fixes, then verify all six platforms before marking PR 9 ready. Delivery 2 remains open.

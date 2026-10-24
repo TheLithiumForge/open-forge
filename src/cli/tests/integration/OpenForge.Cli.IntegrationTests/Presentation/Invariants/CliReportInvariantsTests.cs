@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Extension.Install;
+using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Route.Remove;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -449,7 +450,7 @@ public sealed class CliReportInvariantsTests
         bool checkCatalogue)
     {
         Assert.Equal(JsonValueKind.Object, root.ValueKind);
-        Assert.Equal(3, Required(root, "schemaVersion").GetInt32());
+        Assert.Equal(CliJsonEnvelopeDefinitions.SchemaVersion, Required(root, CliJsonFields.SchemaVersion).GetInt32());
         Assert.False(string.IsNullOrWhiteSpace(RequiredString(root, "command")));
         Assert.False(string.IsNullOrWhiteSpace(RequiredString(root, "status")));
         var detailName = RequiredString(root, "detail");
@@ -722,7 +723,17 @@ public sealed class CliReportInvariantsTests
             || path.Contains(
                 "RouteUpdateFrontmatterOutputSnapshotTests",
                 StringComparison.Ordinal);
-        foreach (var effect in Required(root, "effects").EnumerateArray())
+        IEnumerable<JsonElement> effects = Required(root, CliJsonFields.Effects).EnumerateArray();
+        if (RequiredString(root, CliJsonFields.Command) == IndexDefinitions.CommandIdentity)
+        {
+            // Index text places file receipts before catalogue updates, while
+            // JSON groups section effects first. Preserve order within both
+            // groups and require every effect path in the text projection.
+            effects = effects.OrderBy(effect => RequiredString(effect, CliJsonFields.Kind)
+                == CliReportVocabulary.Name(CliEffectKind.Section));
+        }
+
+        foreach (var effect in effects)
         {
             var effectPath = TextIdentity(RequiredString(effect, "path"));
             if (routeMoveCatalogueProjection && detail == "minimal")

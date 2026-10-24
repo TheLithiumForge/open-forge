@@ -394,6 +394,7 @@ public static class PublishedTokens
 
     public static class Json
     {
+        public const int EnvelopeSchemaVersion = 3;
         public const string SchemaVersion = "schemaVersion";
         public const string Effects = "effects";
         public const string After = "after";

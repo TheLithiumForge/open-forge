@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Created 2 entrypoints and completed metadata in 1 file.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/team/deep/note.md",
+      "kind": "file",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/team/_team.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/team/deep/_deep.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesChecked": 1,
+    "filesUpdated": 1,
+    "filesCurrent": 0,
+    "metadataCompleted": 1,
+    "entrypointsCreated": 2,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": [
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "before": 0,
+        "after": 1,
+        "diff": [
+          "- - none - No entries - #Empty\n",
+          "+ - [Notes in guidance/team](team/_team.md) - #Guidance\n"
+        ]
+      }
+    ],
+    "unchanged": [],
+    "selection": {
+      "origin": "explicit-sources",
+      "scope": "rooted",
+      "sources": [
+        {
+          "id": "guidance/team/deep/note",
+          "path": ".agents/guidance/team/deep/note.md"
+        }
+      ]
+    },
+    "regions": [
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "action": "update",
+        "outcome": "verified"
+      }
+    ],
+    "metadata": [
+      {
+        "path": ".agents/guidance/team/deep/note.md",
+        "fields": [
+          "description",
+          "tags"
+        ],
+        "description": "Release notes",
+        "tags": [
+          "Guidance"
+        ],
+        "outcome": "done"
+      }
+    ],
+    "entrypoints": [
+      {
+        "path": ".agents/guidance/team/_team.md",
+        "outcome": "done"
+      },
+      {
+        "path": ".agents/guidance/team/deep/_deep.md",
+        "outcome": "done"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Check the workspace after indexing."
+  }
+}
