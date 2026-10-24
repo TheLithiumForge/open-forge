@@ -14,7 +14,7 @@ internal static class ExtensionInspectDependencyPathBuilder
             input.Source,
             input.AvailablePackage,
             dependencies);
-        var sourcePathProjections = ExtensionInspectPathFactsBuilder.ReadSourcePathProjections(
+        var sourcePathProjections = input.Layout is null ? [] : ExtensionInspectPathFactsBuilder.ReadSourcePathProjections(
             availableClosure,
             input.Findings);
         var pathFacts = ExtensionInspectPathFactsBuilder.Build(input, sourcePathProjections);

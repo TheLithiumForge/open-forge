@@ -66,7 +66,7 @@ public sealed class ExtensionUpdatePlanOwnershipIntegrationTests
         var accepted = ExtensionUpdatePlan.Create(new ExtensionUpdatePlanInput
         {
             Request = baseline.Request,
-            SettingsObservation = baseline.SettingsObservation,
+            LayoutRead = baseline.LayoutRead,
             SourceRead = baseline.SourceRead,
             SourceSignature = baseline.SourceSignature,
             Selection = baseline.Selection,

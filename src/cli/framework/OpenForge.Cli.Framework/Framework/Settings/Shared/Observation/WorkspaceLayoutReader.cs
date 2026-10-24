@@ -11,6 +11,8 @@ using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
@@ -20,6 +22,14 @@ internal sealed class WorkspaceLayoutReader(PhysicalPathResolver paths)
 {
     internal ValueTask<WorkspaceLayoutRead> ReadAsync(CliWorkspace workspace, CancellationToken cancellationToken)
         => new Observation(paths, workspace).ReadAsync(cancellationToken);
+
+    internal static bool IsUnexpectedMissingLoader(
+        WorkspaceLayout layout,
+        WorkspaceSettingsDocument settings,
+        bool installationEvidence,
+        FileExpectationKind? loaderKind)
+        => installationEvidence && loaderKind == FileExpectationKind.Missing
+            && !WorkspaceRemovals.IsPathRemoved(layout, layout.LoaderPath, settings);
 
     private sealed class Observation(PhysicalPathResolver paths, CliWorkspace workspace)
     {
@@ -73,7 +83,7 @@ internal sealed class WorkspaceLayoutReader(PhysicalPathResolver paths)
                 foreach (var recorded in recordedLoaders.Where(path => path != layout.LoaderPath))
                     Issue(WorkspaceLayoutIssueCode.OwnershipMismatch, recorded, "Recorded Framework ownership names another loader.", layout.LoaderPath);
             }
-            if (positive && loader?.Kind == FileExpectationKind.Missing)
+            if (IsUnexpectedMissingLoader(layout, settings.Document, positive, loader?.Kind))
                 Issue(WorkspaceLayoutIssueCode.MissingLoader, layout.LoaderPath, "The selected loader is missing despite installation evidence.");
 
             foreach (var expectation in _expectations.Values)

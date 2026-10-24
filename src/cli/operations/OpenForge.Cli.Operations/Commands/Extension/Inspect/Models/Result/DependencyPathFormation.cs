@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 
@@ -6,6 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 
 internal sealed record ExtensionInspectDependencyPathInput
 {
+    public required WorkspaceLayout? Layout { get; init; }
+
     public required ExtensionSourceReadResult Source { get; init; }
 
     public required ExtensionPackageFact? AvailablePackage { get; init; }

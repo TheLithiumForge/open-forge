@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
@@ -30,17 +31,18 @@ internal sealed class ExtensionRemoveTopologyBuilder
     private readonly GeneratedNavigationProjector _projector = new();
 
     internal async ValueTask<ExtensionRemoveTopologyBuild> BuildAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         WorkspaceSettingsDocument settings,
         IReadOnlySet<string> removedPaths,
         CancellationToken cancellationToken,
         WorkspaceOwnershipRead? ownership = null)
     {
+        var workspace = layout.Workspace;
         var sharing = ownership is not null ? NavigationSharingReader.FromOwnership(ownership)
             : await NavigationSharingReader.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
         if (!sharing.IsAvailable) throw new ExtensionRemoveTopologyBlockedException(sharing.Cause);
         var catalogue = await _catalogueReader.ReadAsync(
-            new SourceCatalogueRequest(workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(layout, layout.SourceRoots),
             cancellationToken).ConfigureAwait(false);
         if (catalogue.IsCancelled)
         {
@@ -153,7 +155,7 @@ internal sealed class ExtensionRemoveTopologyBuilder
             var change = region.Change
                 ?? throw new InvalidDataException(
                     "An available generated region requires its bounded change.");
-            if (WorkspaceRemovals.IsPathRemoved(region.CanonicalPath, settings))
+            if (WorkspaceRemovals.IsPathRemoved(layout, region.CanonicalPath, settings))
             {
                 excludedPaths.Add(region.CanonicalPath);
                 continue;

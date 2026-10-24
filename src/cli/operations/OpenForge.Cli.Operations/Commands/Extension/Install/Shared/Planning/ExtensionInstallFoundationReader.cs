@@ -16,6 +16,7 @@ using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 
@@ -28,10 +29,10 @@ internal sealed class ExtensionInstallFoundationReader(
     internal async ValueTask<ExtensionInstallFoundationObservation> ReadAsync(
         ExtensionInstallRequest request,
         IReadOnlyList<ExtensionPackageFact> packages,
-        CancellationToken cancellationToken,
-        WorkspaceOwnershipRead? ownershipObservation = null,
-        WorkspaceSettingsDocument? settings = null)
+        WorkspaceLayoutRead layoutRead,
+        CancellationToken cancellationToken)
     {
+        var layout = layoutRead.Layout ?? throw new InvalidOperationException("Extension Install requires its observed layout.");
         var payloadRead = EmbeddedFrameworkPayloadReader.Read();
         if (payloadRead.State != FrameworkPayloadReadState.Available
             || payloadRead.Payload is not { } frameworkPayload)
@@ -41,34 +42,31 @@ internal sealed class ExtensionInstallFoundationReader(
                 payloadRead.Cause ?? "The running Framework inventory is unavailable.");
         }
 
-        var container = Path.Combine(request.Workspace.LexicalRoot, ".agents");
+        var container = Path.Combine(request.Workspace.LexicalRoot, layout.MainRoot.Replace('/', Path.DirectorySeparatorChar));
         var boundary = _physicalPathResolver.ResolveCandidate(request.Workspace.LexicalRoot,
             request.Workspace.PhysicalRoot, container);
         if (boundary.State == PhysicalPathState.Missing)
         {
             return Stop(ExtensionInstallFindingCode.FrameworkUnavailable,
-                "The .agents Framework container is missing.", ".agents");
+                $"The {layout.MainRoot} Framework container is missing.", layout.MainRoot);
         }
         if (boundary.State != PhysicalPathState.Contained
             || !Directory.Exists(boundary.GetContainedPhysicalPath())
             || (File.GetAttributes(container) & FileAttributes.ReparsePoint) != 0)
         {
             return Stop(ExtensionInstallFindingCode.FrameworkUnsafe,
-                "The .agents Framework container is not a contained ordinary directory.", ".agents");
+                $"The {layout.MainRoot} Framework container is not a contained ordinary directory.", layout.MainRoot);
         }
 
-        var ownership = ownershipObservation ?? await WorkspaceOwnershipReader.ReadAsync(
-            _physicalPathResolver,
-            request.Workspace,
-            cancellationToken).ConfigureAwait(false);
+        var ownership = layoutRead.Ownership;
 
         ExtensionInstallTopologyBuild topologyBuild;
         try
         {
             topologyBuild = await _topologyBuilder.BuildWithFindingsAsync(
-                    request,
+                    layout,
                     packages,
-                    settings ?? OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument.Empty,
+                    layoutRead.Settings.Document,
                     cancellationToken, ownership)
                 .ConfigureAwait(false);
         }

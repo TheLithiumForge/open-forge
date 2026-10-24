@@ -1,11 +1,43 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedExtensionInstallProcessTests
 {
+    private const string CustomRoot = "docs/forge";
+
+    [Theory(DisplayName = "Published Extension Install follows an authored custom root and repeats without byte changes")]
+    [InlineData(PublishedTokens.Settings.RootFrontmatter), InlineData(PublishedTokens.Settings.ScopedFrontmatter)]
+    [Trait("Feature", "extension-install"), Trait("Evidence", "EndToEnd")]
+    public async Task CustomRootInstallAndRepeat(string form)
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedExtensionInstallWorkspace.Create(CustomRoot, form);
+        var seeded = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath,
+            [PublishedTokens.Install.Command, PublishedTokens.Install.Automatic], working.EnvironmentVariables);
+        Assert.True(seeded.ExitCode == 0, seeded.StandardOutput + seeded.StandardError);
+        var sourceBytes = working.SourcePayloadBytes();
+        string[] arguments = [PublishedTokens.Extension.Command, PublishedTokens.ExtensionInstall.Command,
+            PublishedExtensionInstallWorkspace.ToolkitId, PublishedTokens.ExtensionInstall.Source, working.CataloguePath,
+            PublishedTokens.ExtensionInstall.Automatic];
+        var installed = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath, arguments, working.EnvironmentVariables);
+        Assert.True(installed.ExitCode == 0, installed.StandardOutput + installed.StandardError);
+        Assert.True(File.Exists(working.TargetPath));
+        Assert.False(File.Exists(Path.Combine(working.WorkspacePath, PublishedTokens.Sources.AgentsRoot,
+            PublishedExtensionInstallWorkspace.RelativeTarget)));
+        var bytes = File.ReadAllBytes(working.TargetPath);
+        var ownershipPath = Path.Combine(working.WorkspacePath, PublishedTokens.Ownership.RelativePath);
+        var ownershipBytes = File.ReadAllBytes(ownershipPath);
+        var repeated = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath, arguments, working.EnvironmentVariables);
+        Assert.True(repeated.ExitCode == 0, repeated.StandardOutput + repeated.StandardError);
+        Assert.Equal(bytes, File.ReadAllBytes(working.TargetPath));
+        Assert.Equal(ownershipBytes, File.ReadAllBytes(ownershipPath));
+        Assert.Equal(sourceBytes, working.SourcePayloadBytes());
+    }
+
     [Fact(DisplayName = "Published Extension Install help is read-only"), Trait("Feature", "extension-install"), Trait("Evidence", "EndToEnd")]
     public static async Task PublishedHelpIsTruthfulAndReadOnly()
     {
@@ -131,6 +163,9 @@ public sealed class PublishedExtensionInstallProcessTests
 
 internal sealed class PublishedExtensionInstallWorkspace : IDisposable
 {
+    internal const string ToolkitId = "toolkit";
+    internal const string RelativeTarget = ToolkitId + "/_" + ToolkitId + PublishedTokens.Layout.MarkdownExtension;
+    private string _mainRoot = PublishedTokens.Sources.AgentsRoot;
     private readonly TemporaryWorkspace _workspace;
     private readonly TemporaryWorkspace _source;
     private readonly PublishedWorkspaceLockStore _lockStore;
@@ -151,13 +186,13 @@ internal sealed class PublishedExtensionInstallWorkspace : IDisposable
 
     internal string CataloguePath => _source.Path;
 
-    internal string TargetPath => _workspace.Combine(".agents/toolkit/_toolkit.md");
+    internal string TargetPath => _workspace.Combine(_mainRoot + "/" + RelativeTarget);
 
     internal IReadOnlyDictionary<string, string> EnvironmentVariables => _lockStore.EnvironmentVariables;
 
     internal IReadOnlyDictionary<string, string> SourceSnapshot { get; }
 
-    internal static PublishedExtensionInstallWorkspace Create()
+    internal static PublishedExtensionInstallWorkspace Create(string? mainRoot = null, string? form = null)
     {
         var workspace = TemporaryWorkspace.Create("e2e-extension-install-workspace");
         var source = TemporaryWorkspace.Create("e2e-extension-install-source");
@@ -166,8 +201,17 @@ internal sealed class PublishedExtensionInstallWorkspace : IDisposable
         {
             workspace.CreateFile("workspace-note.md", "preserve workspace content\n");
             WritePackage(source, "alpha", ".agents/alpha/_alpha.md");
-            WritePackage(source, "toolkit", ".agents/toolkit/_toolkit.md");
-            return new PublishedExtensionInstallWorkspace(workspace, source, lockStore);
+            WritePackage(source, ToolkitId, PublishedTokens.Sources.AgentsRoot + "/" + RelativeTarget);
+            var result = new PublishedExtensionInstallWorkspace(workspace, source, lockStore);
+            if (mainRoot is not null)
+            {
+                result._mainRoot = mainRoot;
+                if (Path.GetDirectoryName(mainRoot) is { Length: > 0 } parent) workspace.CreateDirectory(parent);
+                workspace.WriteText(PublishedTokens.Settings.RelativePath, $$"""
+                    {"{{PublishedTokens.Settings.SchemaVersionProperty}}":{{PublishedTokens.Settings.SchemaVersion}},"{{PublishedTokens.Settings.MainRootProperty}}":"{{mainRoot}}","{{PublishedTokens.Settings.FrontmatterProperty}}":"{{form}}"}
+                    """);
+            }
+            return result;
         }
         catch
         {
@@ -183,7 +227,7 @@ internal sealed class PublishedExtensionInstallWorkspace : IDisposable
     internal IReadOnlyDictionary<string, string> SnapshotSource() => _source.SnapshotHashes();
 
     internal byte[] SourcePayloadBytes()
-        => File.ReadAllBytes(_source.Combine("toolkit/content/.agents/toolkit/_toolkit.md"));
+        => File.ReadAllBytes(_source.Combine(ToolkitId + "/" + PublishedTokens.ExtensionPackage.ContentDirectory + "/" + PublishedTokens.Sources.AgentsRoot + "/" + RelativeTarget));
 
     internal void AssertPersistentLock() => _lockStore.AssertPersistentZeroByteLock(WorkspacePath);
 
@@ -192,6 +236,7 @@ internal sealed class PublishedExtensionInstallWorkspace : IDisposable
     public void Dispose()
     {
         _ = _lockStore.RemoveRecoveryArtifacts(WorkspacePath);
+        if (_mainRoot != PublishedTokens.Sources.AgentsRoot) DeleteOrdinaryTree(_workspace.Combine(_mainRoot));
         DeleteOrdinaryFile(_workspace.Combine("AGENTS.md"));
         DeleteOrdinaryFile(_workspace.Combine("CLAUDE.md"));
         DeleteOrdinaryTree(_workspace.Combine(".agents"));

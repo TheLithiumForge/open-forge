@@ -1,11 +1,45 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedExtensionRemoveProcessTests
 {
+    private const string CustomRoot = "docs/forge";
+
+    [Theory(DisplayName = "Published Extension Remove follows an authored custom root and converges without its source")]
+    [InlineData(PublishedTokens.Settings.RootFrontmatter), InlineData(PublishedTokens.Settings.ScopedFrontmatter)]
+    [Trait("Feature", "extension-remove"), Trait("Evidence", "EndToEnd")]
+    public async Task CustomRootRemoveAndRepeat(string form)
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedExtensionInstallWorkspace.Create(CustomRoot, form);
+        var framework = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath,
+            [PublishedTokens.Install.Command, PublishedTokens.Install.Automatic], working.EnvironmentVariables);
+        Assert.True(framework.ExitCode == 0, framework.StandardOutput + framework.StandardError);
+        var installed = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath,
+            [PublishedTokens.Extension.Command, PublishedTokens.ExtensionInstall.Command, PublishedExtensionInstallWorkspace.ToolkitId,
+                PublishedTokens.ExtensionInstall.Source, working.CataloguePath, PublishedTokens.ExtensionInstall.Automatic], working.EnvironmentVariables);
+        Assert.True(installed.ExitCode == 0, installed.StandardOutput + installed.StandardError);
+        Assert.True(File.Exists(working.TargetPath));
+        var sourceBytes = working.SourcePayloadBytes();
+        string[] arguments = [PublishedTokens.Extension.Command, PublishedTokens.ExtensionRemove.Command,
+            PublishedExtensionInstallWorkspace.ToolkitId, PublishedTokens.ExtensionRemove.Automatic];
+        var removed = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath, arguments, working.EnvironmentVariables);
+        Assert.True(removed.ExitCode == 0, removed.StandardOutput + removed.StandardError);
+        Assert.False(File.Exists(working.TargetPath));
+        var settingsPath = Path.Combine(working.WorkspacePath, PublishedTokens.Settings.RelativePath);
+        using var settings = System.Text.Json.JsonDocument.Parse(File.ReadAllBytes(settingsPath));
+        Assert.Equal(CustomRoot, settings.RootElement.GetProperty(PublishedTokens.Settings.MainRootProperty).GetString());
+        var settingsBytes = File.ReadAllBytes(settingsPath);
+        var repeated = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath, arguments, working.EnvironmentVariables);
+        Assert.True(repeated.ExitCode == 0, repeated.StandardOutput + repeated.StandardError);
+        Assert.Equal(settingsBytes, File.ReadAllBytes(settingsPath));
+        Assert.Equal(sourceBytes, working.SourcePayloadBytes());
+    }
+
     [Fact(DisplayName = "Published Extension Remove rejects the removed prune option before any writes"), Trait("Feature", "extension-remove"), Trait("Evidence", "EndToEnd")]
     public async Task RemovedPruneIsAnUnknownOption()
     {

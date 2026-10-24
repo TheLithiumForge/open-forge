@@ -35,6 +35,29 @@ public sealed class WorkspaceLayoutReaderIntegrationTests
     private const string InvalidOwnership = "{broken";
     private const string ChangedSettings = "{}";
 
+    [Theory(DisplayName = "Recorded loader removal remains ready without concealing an unexpected missing loader")]
+    [InlineData(false), InlineData(true)]
+    public async Task MissingSelectedLoader(bool removed)
+    {
+        using var temporary = TemporaryWorkspace.Create(Operation);
+        var exclusions = removed ? $"\"{CustomLoader}\"" : string.Empty;
+        temporary.CreateFile(WorkspaceSettingsDefinitions.RelativePath, $$"""
+            {"{{WorkspaceSettingsDefinitions.SchemaVersionProperty}}":{{WorkspaceSettingsDefinitions.SchemaVersion}},"{{WorkspaceSettingsDefinitions.MainRootProperty}}":"{{CustomRoot}}","{{WorkspaceSettingsDefinitions.RemovedFilesProperty}}":[{{exclusions}}]}
+            """);
+        temporary.CreateDirectory(CustomRoot);
+        temporary.CreateFile(WorkspaceLayoutNames.AgentHostFileName, ManagedHost($"Read `{CustomLoader}`."));
+        var before = Directory.GetFiles(temporary.Path, "*", SearchOption.AllDirectories).ToDictionary(path => path, File.ReadAllBytes);
+
+        var read = await Read(temporary);
+
+        Assert.Equal(removed ? WorkspaceLayoutReadState.Ready : WorkspaceLayoutReadState.Mismatch, read.State);
+        Assert.Equal(CustomRoot, read.Layout?.MainRoot);
+        Assert.Equal(!removed, read.Issues.Any(issue => issue.Code == WorkspaceLayoutIssueCode.MissingLoader));
+        Assert.Contains(read.Expectations, value => value.LogicalPath == temporary.Combine(CustomLoader) && value.Kind == FileExpectationKind.Missing);
+        Assert.Equal(before.Keys.Order(), Directory.GetFiles(temporary.Path, "*", SearchOption.AllDirectories).Order());
+        foreach (var (path, bytes) in before) Assert.Equal(bytes, File.ReadAllBytes(path));
+    }
+
     [Theory(DisplayName = "Missing and empty destinations are uninstalled observations without effects")]
     [InlineData(WorkspaceLayout.DefaultMainRoot, false), InlineData(WorkspaceLayout.DefaultMainRoot, true)]
     [InlineData(CustomRoot, false), InlineData(CustomRoot, true)]

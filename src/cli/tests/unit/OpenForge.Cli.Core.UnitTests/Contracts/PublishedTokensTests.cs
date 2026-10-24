@@ -14,6 +14,10 @@ using OpenForge.Cli.Core.Commands.Cleanup;
 using OpenForge.Cli.Core.Commands.Doctor;
 using OpenForge.Cli.Core.Commands.Extension;
 using OpenForge.Cli.Core.Commands.Extension.Install;
+using OpenForge.Cli.Core.Commands.Extension.Inspect;
+using OpenForge.Cli.Core.Commands.Extension.List;
+using OpenForge.Cli.Core.Presentation.Extension.Inspect.Models;
+using OpenForge.Cli.Core.Presentation.Extension.List.Models;
 using OpenForge.Cli.Core.Commands.Extension.Remove;
 using OpenForge.Cli.Core.Commands.Extension.Update;
 using OpenForge.Cli.Core.Commands.Index;
@@ -158,6 +162,13 @@ public sealed class PublishedTokensTests
 
         Assert.Equal(ExtensionRemoveDefinitions.RemoveCommand.Name, PublishedTokens.ExtensionRemove.Command);
         Assert.Equal(ExtensionRemoveDefinitions.Automatic.Name, PublishedTokens.ExtensionRemove.Automatic);
+        Assert.Equal(ExtensionInspectDefinitions.InspectCommand.Name, PublishedTokens.ExtensionInspect.Command);
+        Assert.Equal(ExtensionInspectDefinitions.Source.Name, PublishedTokens.ExtensionInspect.Source);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ExtensionInspectData.Files)), PublishedTokens.ExtensionInspect.Files);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ExtensionInspectData.Matches)), PublishedTokens.ExtensionInspect.Matches);
+        Assert.Equal(ExtensionListDefinitions.ListCommand.Name, PublishedTokens.ExtensionList.Command);
+        Assert.Equal(ExtensionListDefinitions.Installed.Name, PublishedTokens.ExtensionList.Installed);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ExtensionListData.Installed)), PublishedTokens.ExtensionList.InstalledData);
 
         Assert.Equal(CliSyntaxDefinitions.Format.Name, PublishedTokens.Syntax.FormatOption);
         Assert.Equal(CliSyntaxDefinitions.Detail.Name, PublishedTokens.Syntax.DetailOption);

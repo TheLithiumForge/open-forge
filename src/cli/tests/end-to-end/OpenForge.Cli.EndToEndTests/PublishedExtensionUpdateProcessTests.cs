@@ -1,11 +1,50 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedExtensionUpdateProcessTests
 {
+    private const string CustomRoot = "docs/forge";
+    private const string UpdatedBody = "# Updated custom-root toolkit\n";
+
+    [Theory(DisplayName = "Published Extension Update follows an authored custom root and repeats without byte changes")]
+    [InlineData(PublishedTokens.Settings.RootFrontmatter), InlineData(PublishedTokens.Settings.ScopedFrontmatter)]
+    [Trait("Feature", "extension-update"), Trait("Evidence", "EndToEnd")]
+    public async Task CustomRootUpdateAndRepeat(string form)
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedExtensionInstallWorkspace.Create(CustomRoot, form);
+        var framework = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath,
+            [PublishedTokens.Install.Command, PublishedTokens.Install.Automatic], working.EnvironmentVariables);
+        Assert.True(framework.ExitCode == 0, framework.StandardOutput + framework.StandardError);
+        var installed = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath,
+            [PublishedTokens.Extension.Command, PublishedTokens.ExtensionInstall.Command, PublishedExtensionInstallWorkspace.ToolkitId,
+                PublishedTokens.ExtensionInstall.Source, working.CataloguePath, PublishedTokens.ExtensionInstall.Automatic], working.EnvironmentVariables);
+        Assert.True(installed.ExitCode == 0, installed.StandardOutput + installed.StandardError);
+        var before = File.ReadAllBytes(working.TargetPath);
+        var packagePath = Path.Combine(working.CataloguePath, PublishedExtensionInstallWorkspace.ToolkitId,
+            PublishedTokens.ExtensionPackage.ContentDirectory, PublishedTokens.Sources.AgentsRoot, PublishedExtensionInstallWorkspace.RelativeTarget);
+        File.WriteAllText(packagePath, OpenForgeDocumentSeed.Metadata(PublishedExtensionInstallWorkspace.ToolkitId, [], UpdatedBody));
+        var sourceBytes = File.ReadAllBytes(packagePath);
+        string[] arguments = [PublishedTokens.Extension.Command, PublishedTokens.ExtensionUpdate.Command, PublishedExtensionInstallWorkspace.ToolkitId,
+            PublishedTokens.ExtensionUpdate.Source, working.CataloguePath, PublishedTokens.ExtensionUpdate.Automatic];
+        var updated = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath, arguments, working.EnvironmentVariables);
+        Assert.True(updated.ExitCode == 0, updated.StandardOutput + updated.StandardError);
+        var after = File.ReadAllBytes(working.TargetPath);
+        Assert.False(before.AsSpan().SequenceEqual(after));
+        Assert.False(File.Exists(Path.Combine(working.WorkspacePath, PublishedTokens.Sources.AgentsRoot, PublishedExtensionInstallWorkspace.RelativeTarget)));
+        var ownershipPath = Path.Combine(working.WorkspacePath, PublishedTokens.Ownership.RelativePath);
+        var ownership = File.ReadAllBytes(ownershipPath);
+        var repeated = await PublishedProcessTestSupport.RunAsync(target, working.WorkspacePath, arguments, working.EnvironmentVariables);
+        Assert.True(repeated.ExitCode == 0, repeated.StandardOutput + repeated.StandardError);
+        Assert.Equal(after, File.ReadAllBytes(working.TargetPath));
+        Assert.Equal(ownership, File.ReadAllBytes(ownershipPath));
+        Assert.Equal(sourceBytes, File.ReadAllBytes(packagePath));
+    }
+
     [Fact(DisplayName = "Published Extension Update help is reachable without workspace inspection or writes"), Trait("Feature", "extension-update"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedHelpIsReachableWithoutWorkspaceInspectionOrWrites()
     {

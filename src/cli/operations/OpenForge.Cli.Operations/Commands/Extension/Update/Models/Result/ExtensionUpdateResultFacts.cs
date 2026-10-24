@@ -383,6 +383,8 @@ internal sealed record ExtensionUpdateFinding
 
     internal string? Target { get; }
 
+    internal string RecoveryDisplayPath => Target ?? OpenForge.Cli.Core.Framework.Workspace.Models.Layout.WorkspaceLayout.DefaultMainRoot;
+
     internal string Cause { get; }
 }
 

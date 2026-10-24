@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 
@@ -25,8 +26,8 @@ internal sealed record ExtensionInstallPlannedEffect
 
 internal sealed record ExtensionInstallPlanInput
 {
+    internal required WorkspaceLayoutRead LayoutRead { get; init; }
     internal required ExtensionInstallRequest Request { get; init; }
-    internal required WorkspaceSettingsRead SettingsObservation { get; init; }
     internal required ExtensionSourceReadResult SourceRead { get; init; }
     internal required string SourceSignature { get; init; }
     internal required string? InferredRootId { get; init; }
@@ -52,7 +53,7 @@ internal sealed class ExtensionInstallPlan
     private ExtensionInstallPlan(ExtensionInstallPlanInput input)
     {
         Request = input.Request;
-        SettingsObservation = input.SettingsObservation;
+        LayoutRead = input.LayoutRead;
         SourceRead = input.SourceRead;
         SourceSignature = input.SourceSignature;
         InferredRootId = input.InferredRootId;
@@ -97,7 +98,9 @@ internal sealed class ExtensionInstallPlan
     }
 
     internal ExtensionInstallRequest Request { get; }
-    internal WorkspaceSettingsRead SettingsObservation { get; }
+    internal WorkspaceLayoutRead LayoutRead { get; }
+    internal WorkspaceLayout Layout => LayoutRead.Layout ?? throw new InvalidOperationException("An Extension Install plan requires its observed layout.");
+    internal WorkspaceSettingsRead SettingsObservation => LayoutRead.Settings;
     internal ExtensionSourceReadResult SourceRead { get; }
     internal string SourceSignature { get; }
     internal string? InferredRootId { get; }
@@ -401,6 +404,7 @@ internal sealed record ExtensionInstallTargetInspection(
 
 internal sealed record ExtensionInstallTargetInspectionInput
 {
+    internal required WorkspaceLayout Layout { get; init; }
     internal required ExtensionInstallRequest Request { get; init; }
     internal required IReadOnlyList<ExtensionPackageFact> Packages { get; init; }
     internal IReadOnlySet<string> MutationPackageIds { get; init; }
@@ -418,6 +422,7 @@ internal sealed record ExtensionInstallTargetInspectionInput
 
 internal sealed record ExtensionInstallEffectPlanningInput
 {
+    internal required WorkspaceLayout Layout { get; init; }
     internal required ExtensionInstallRequest Request { get; init; }
     internal required IReadOnlyList<ExtensionPackageFact> Packages { get; init; }
     internal required ExtensionInstallTopology Topology { get; init; }
