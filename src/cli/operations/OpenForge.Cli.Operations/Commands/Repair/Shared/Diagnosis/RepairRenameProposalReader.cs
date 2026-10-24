@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -11,9 +12,9 @@ using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
-internal sealed class RepairRenameProposalReader(PhysicalPathResolver paths, RepairTargetReader? targets = null, RenameWeakCandidateFilter? candidateFilter = null)
+internal sealed class RepairRenameProposalReader(WorkspaceLayout layout, PhysicalPathResolver paths, RepairTargetReader targets, RenameWeakCandidateFilter? candidateFilter = null)
 {
-    private readonly RepairTargetReader _targets = targets ?? new();
+    private readonly RepairTargetReader _targets = targets;
     internal async ValueTask<RepairProposal?> ReadAsync(CliWorkspace workspace, LocalReferenceObservation reference,
         LocalReferenceDoctorView view, RenameEvidenceResult evidence, CancellationToken token)
     {
@@ -28,10 +29,10 @@ internal sealed class RepairRenameProposalReader(PhysicalPathResolver paths, Rep
         {
             var currentTarget = new RepairTargetSelection(Encode(currentPath), reference.Facts.Fragment);
             var facts = await _targets.ResolveAsync(workspace, reference.SourcePath, currentTarget, token).ConfigureAwait(false);
-            var canonical = RenameCanonicalEntrypointEvidence.Read(evidence).FirstOrDefault(item => item.Proof.NewPath == currentPath);
+            var canonical = RenameCanonicalEntrypointEvidence.Read(layout, evidence).FirstOrDefault(item => item.Proof.NewPath == currentPath);
             var finalPath = currentPath;
             if (canonical is not null && !evidence.Facts.Candidates.Any(candidate => SourceLogicalPath.ReadParent(candidate.Path) == SourceLogicalPath.ReadParent(currentPath)
-                && SourceFormClassifier.TryClassify(candidate.Path, out var form) && SourceFormClassifier.IsEntrypoint(form))) finalPath = canonical.CanonicalPath;
+                && SourceFormClassifier.TryClassify(layout, candidate.Path, out var form) && SourceFormClassifier.IsEntrypoint(form))) finalPath = canonical.CanonicalPath;
             if (facts.Target.Resolution != SourceLinkTargetResolution.Complete && facts.CanonicalFragment is null)
             {
                 if (facts.Target.Resolution != SourceLinkTargetResolution.FragmentMissing) return null;

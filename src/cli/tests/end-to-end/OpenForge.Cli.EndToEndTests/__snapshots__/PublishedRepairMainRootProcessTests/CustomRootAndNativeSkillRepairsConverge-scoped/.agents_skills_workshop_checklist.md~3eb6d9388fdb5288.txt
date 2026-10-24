@@ -1,0 +1,8 @@
+---
+open-forge:
+  description: Native checklist
+  tags: [Docs]
+---
+# Native checklist
+
+Read [Guide](guide.md).

@@ -1,0 +1,10 @@
+# Notes
+
+## Axioms
+
+- Preserve authored content.
+
+## Entries
+
+- [Skills](../../.agents/skills/index.md) - #Docs
+- [Notes](notes/index.md) - #Docs

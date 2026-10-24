@@ -7,6 +7,9 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
 
@@ -63,6 +66,24 @@ internal sealed class CleanupApplicationOperation(WorkspaceLockManager lockManag
     {
         var result = store.Result;
         var request = result.Plan.Request ?? throw new InvalidOperationException("A store plan requires a request.");
+        var validation = result.Plan.LayoutRead is { } layoutRead
+            ? await new WorkspaceLayoutRevalidator(new PhysicalPathResolver()).ValidateAsync(lease, layoutRead, cancellationToken).ConfigureAwait(false)
+            : MutationValidationResult.Blocked("The Cleanup plan has no workspace layout observation.");
+        if (validation.State != MutationValidationState.Valid)
+        {
+            result.Revalidation = new CleanupCatalogueComparison
+            {
+                State = validation.State == MutationValidationState.Cancelled
+                    ? CleanupCatalogueComparisonState.Cancelled : CleanupCatalogueComparisonState.Blocked,
+                Planned = result.Plan.Catalogue,
+                Cause = validation.Cause,
+            };
+            result.PreserveUnattempted(observed: null);
+            result.AddFinding(validation.State == MutationValidationState.Cancelled
+                ? CleanupFindingCode.Interrupted : CleanupFindingCode.StoreValidationUnavailable,
+                validation.Cause ?? "The planned workspace layout changed.");
+            return;
+        }
         var frozenStore = store.Observation;
         var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, frozenStore, cancellationToken).ConfigureAwait(false);
         result.Revalidation = new CleanupCatalogueComparison

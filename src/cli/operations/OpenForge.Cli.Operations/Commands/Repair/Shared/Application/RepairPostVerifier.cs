@@ -160,8 +160,7 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader, 
     {
         var coverage = RepairCoverageMapper.Read(read);
         var findings = ReadCoverageFindings(coverage).ToList();
-        var catalogue = catalogueReader is null ? null : await catalogueReader.ReadAsync(plan.Request.Workspace,
-            read.Observation.LocalReferences, cancellationToken, maintenance: read.Observation.Maintenance).ConfigureAwait(false);
+        var catalogue = catalogueReader is null ? null : await catalogueReader.ReadAsync(read.Observation.LayoutRead ?? throw new InvalidOperationException("Doctor must retain its layout observation."), read.Observation.LocalReferences, cancellationToken, maintenance: read.Observation.Maintenance).ConfigureAwait(false);
         var scope = RepairAuthoredReferenceBoundary.Filter(
             read.Observation.LocalReferences.References,
             RepairAuthoredReferenceBoundary.ReadRouteDocuments(read.Observation.Routes.Sources));
@@ -231,7 +230,7 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader, 
             verification,
             new RepairPostDiagnosis(RepairCoverageMapper.ReadPostDiagnosisState(coverage), coverage, findings)
             {
-                NeedsIndex = await RepairContinuationReader.NeedsIndexAsync(plan.Request.Workspace, read.Observation.Routes, cancellationToken).ConfigureAwait(false),
+                NeedsIndex = RepairContinuationReader.NeedsIndex(read.Observation, cancellationToken),
                 Proposals = catalogue?.Proposals.Select(input => input.Proposal).ToArray() ?? [],
             },
             findings);

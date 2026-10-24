@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Commands.Doctor;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
@@ -14,6 +18,10 @@ internal sealed class RepairPlanRevalidator(
     RepairCatalogueReader catalogueReader,
     RepairMaintenancePlanner? maintenance = null)
 {
+    internal static async ValueTask<bool> ValidateLayoutAsync(RepairPlan plan, WorkspaceLockLease lease, CancellationToken token)
+        => plan.LayoutRead is { } observation
+            && (await new WorkspaceLayoutRevalidator(new PhysicalPathResolver()).ValidateAsync(lease, observation, token).ConfigureAwait(false)).State == MutationValidationState.Valid;
+
     internal async ValueTask<bool> ValidateAsync(RepairPlan plan, CancellationToken cancellationToken)
     {
         var diagnosis = await diagnosisReader.ReadAsync(new DoctorRequest(plan.Request.Workspace), cancellationToken)
@@ -28,7 +36,7 @@ internal sealed class RepairPlanRevalidator(
             return false;
         }
 
-        var catalogue = await catalogueReader.ReadAsync(plan.Request.Workspace, diagnosis.Observation.LocalReferences, cancellationToken,
+        var catalogue = await catalogueReader.ReadAsync(diagnosis.Observation.LayoutRead ?? throw new InvalidOperationException("Doctor must retain its layout observation."), diagnosis.Observation.LocalReferences, cancellationToken,
             plan.Request.Relinks, diagnosis.Observation.Maintenance)
             .ConfigureAwait(false);
         foreach (var proof in plan.Selection.Selected.SelectMany(selected => new[] { selected.Proposal.RenameProof, selected.Proposal.SourceMoveProof }).OfType<OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Observations.RenameEvidenceObservation>())
@@ -55,6 +63,7 @@ internal sealed class RepairPlanRevalidator(
         var current = plan.Request.SelectionMode == RepairSelectionMode.InteractivePrompt
             ? RepairPlanner.Build(plan.Request, catalogue.Proposals, choices)
             : RepairPlanner.Build(plan.Request, catalogue.Proposals);
+        current = current with { LayoutRead = catalogue.LayoutRead };
         if (maintenance is not null)
             current = await maintenance.CompleteAsync(current, catalogue, cancellationToken).ConfigureAwait(false);
         if (plan.Maintenance is not null)

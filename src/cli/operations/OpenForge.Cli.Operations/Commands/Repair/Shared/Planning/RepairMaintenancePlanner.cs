@@ -10,9 +10,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
-using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
-using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
@@ -29,18 +27,20 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
 
     internal async ValueTask<RepairPlan> CompleteAsync(RepairPlan plan, RepairCatalogueRead repairCatalogue, CancellationToken token)
     {
-        plan = plan with { RenameEvidence = repairCatalogue.RenameEvidence };
+        plan = plan with { RenameEvidence = repairCatalogue.RenameEvidence, LayoutRead = repairCatalogue.LayoutRead };
         if (plan.IsBlocked || plan.Effects.Count == 0) return plan;
+        if (plan.LayoutRead?.Layout is not { } layout) return Block(plan, "Repair requires the observed workspace layout.");
         var workspace = plan.Request.Workspace;
         var catalogue = repairCatalogue.Catalogue
-            ?? await new SourceCatalogueReader().ReadAsync(new(workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
+            ?? await new SourceCatalogueReader().ReadAsync(new(layout, layout.SourceRoots), token).ConfigureAwait(false);
+        var ownership = plan.LayoutRead.Ownership;
+        var settings = plan.LayoutRead.Settings;
         if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete)
             || settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
             return Block(plan, "Affected navigation settings or ownership could not be established.");
         var policy = new RoutedMetadataPolicyContext
         {
+            Layout = layout,
             Settings = settings.Document,
             Ownership = ownership.Document,
         };
@@ -70,7 +70,7 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
             .Select(source => source.Identity.CanonicalBasePath).ToHashSet(StringComparer.Ordinal);
         var selectedSources = catalogue.Sources.Where(source => folders.Contains(SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath), StringComparer.Ordinal)
             || regionPaths.Contains(source.Identity.CanonicalBasePath)
-            || regionPaths.Any(parent => parent != SourceLogicalPath.LoaderPath
+            || regionPaths.Any(parent => parent != layout.LoaderPath
                 && formation.Topology.FindByPath(parent)?.ChildPaths.Contains(source.Identity.CanonicalBasePath) == true)).ToImmutableArray();
         var intended = plan.Effects.ToDictionary(effect => effect.SourceCanonicalPath, effect => effect.IntendedState.Bytes, StringComparer.Ordinal);
         var intent = await _maintenance.PrepareAsync(new()
@@ -150,5 +150,5 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
 
     private static RepairPlan Block(RepairPlan plan, string cause)
         => new(plan.Request, plan.Selection, plan.Steps, [.. plan.Conflicts, new(RepairConflictKind.UnsafeBoundary, null, null, cause)], plan.LibrarySteps)
-        { RenameEvidence = plan.RenameEvidence };
+        { RenameEvidence = plan.RenameEvidence, LayoutRead = plan.LayoutRead };
 }

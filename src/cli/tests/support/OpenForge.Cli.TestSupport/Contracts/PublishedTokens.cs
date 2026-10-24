@@ -124,6 +124,13 @@ public static class PublishedTokens
         public const string Command = "doctor";
     }
 
+    public static class Repair
+    {
+        public const string Command = "repair";
+        public const string Automatic = "--automatic";
+        public const string DryRun = "--dry-run";
+    }
+
     public static class Cleanup
     {
         public const string Command = "cleanup";

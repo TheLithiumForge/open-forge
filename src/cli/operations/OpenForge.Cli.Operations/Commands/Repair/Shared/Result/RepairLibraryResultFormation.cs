@@ -59,7 +59,7 @@ internal static class RepairLibraryResultFormation
             {
                 Outcome = ReadOutcome(step, execution, effects),
             })])
-        { Maintenance = plan.Maintenance, RenameEvidence = plan.RenameEvidence };
+        { Maintenance = plan.Maintenance, RenameEvidence = plan.RenameEvidence, LayoutRead = plan.LayoutRead };
     }
 
     private static RepairStepOutcome ReadOutcome(
