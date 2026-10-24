@@ -7,8 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
 
 internal sealed record RoutedMetadataPolicyContext
 {
-    public WorkspaceLayout? Layout { get; init; }
-    internal SourceContentRoots Roots => Layout is { } layout ? new SourceContentRoots(layout) : SourceContentRoots.Default;
+    public required WorkspaceLayout Layout { get; init; }
+    internal SourceContentRoots Roots => new(Layout);
     public required WorkspaceSettingsDocument Settings { get; init; }
     public required WorkspaceOwnershipDocument Ownership { get; init; }
 }

@@ -14,6 +14,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Topology;
 
@@ -965,7 +967,7 @@ public sealed class RouteListTopologyTests
             })
             .ToArray();
         var sourceCatalogue = new SourceCatalogue(
-            RouteListContractTestData.Workspace(),
+WorkspaceLayout.Create(RouteListContractTestData.Workspace(), WorkspaceLayout.DefaultMainRoot),
             candidates,
             sourcePairs.Select(pair => pair.Logical),
             issues,

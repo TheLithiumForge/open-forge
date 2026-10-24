@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Reading;
 
@@ -27,7 +28,7 @@ public sealed class SourceReadSessionWorkTests
         });
         var token = TestContext.Current.CancellationToken;
         var reader = new SourceReadSessionReader(paths);
-        var session = await reader.ReadAsync(workspace, token);
+        var session = await reader.ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), token);
         var target = session.Catalogue.FindByPath(".agents/nested/target.md") ?? throw new InvalidOperationException();
         var read = await session.DocumentReader.ReadAsync(target.Base, token);
         var text = read.Read?.Value ?? throw new InvalidOperationException();
@@ -48,7 +49,7 @@ public sealed class SourceReadSessionWorkTests
         Assert.Equal(1, observations[temporary.Combine(".agents/nested")]);
 
         temporary.ReplaceText(".agents/nested/target.md", "# Changed\n");
-        var next = await reader.ReadAsync(workspace, token);
+        var next = await reader.ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), token);
         var refreshed = await next.DocumentReader.ReadAsync(target.Base, token);
         Assert.Equal("# Changed\n", refreshed.Read?.Value);
         Assert.Equal(2, observations[temporary.Combine(".agents/nested")]);

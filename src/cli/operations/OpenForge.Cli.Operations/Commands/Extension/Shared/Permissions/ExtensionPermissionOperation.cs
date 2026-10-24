@@ -49,16 +49,15 @@ internal sealed class ExtensionPermissionOperation
         }
 
         var layoutRead = request.LayoutRead;
-        var observation = layoutRead?.Settings
-            ?? await WorkspaceSettingsReader.ReadAsync(_resolver, request.Workspace, cancellationToken).ConfigureAwait(false);
-        if (layoutRead is not null && (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
-            || layoutRead.Layout is null))
+        var observation = layoutRead.Settings;
+        if (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
+            || layoutRead.Layout is null)
         {
             return new(observation, WorkspacePermissionResult.NotEvaluated, null, null,
                 layoutRead.State == WorkspaceLayoutReadState.Unavailable ? ExtensionPermissionFailure.Unavailable : ExtensionPermissionFailure.Invalid)
             { LayoutRead = layoutRead };
         }
-        var layout = layoutRead?.Layout ?? WorkspaceLayout.Create(request.Workspace, WorkspaceLayout.DefaultMainRoot);
+        var layout = layoutRead.Layout;
         var requirements = request.Targets.Select(target => target.Path)
             .Where(path => !ExtensionDestinationPolicy.IsImplicit(layout, path)).ToImmutableArray();
         var evaluation = WorkspaceAllowList.Evaluate(observation.Document.AllowInstallPaths, requirements);

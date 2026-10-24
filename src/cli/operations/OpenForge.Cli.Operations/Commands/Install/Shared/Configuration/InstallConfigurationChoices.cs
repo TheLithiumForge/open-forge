@@ -7,10 +7,10 @@ namespace OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 
 internal static class InstallConfigurationChoices
 {
-    private const string MemoryWorkingRouteId = WorkspaceCategoryNames.Memory + "/working";
-    private const string MemoryEmergingRouteId = WorkspaceCategoryNames.Memory + "/emerging";
-    private const string MemoryCrystallizedRouteId = WorkspaceCategoryNames.Memory + "/crystallized";
-    private const string MemoryArchivedRouteId = WorkspaceCategoryNames.Memory + "/archived";
+    internal const string MemoryWorkingRouteId = WorkspaceCategoryNames.Memory + "/working";
+    internal const string MemoryEmergingRouteId = WorkspaceCategoryNames.Memory + "/emerging";
+    internal const string MemoryCrystallizedRouteId = WorkspaceCategoryNames.Memory + "/crystallized";
+    internal const string MemoryArchivedRouteId = WorkspaceCategoryNames.Memory + "/archived";
 
     internal static readonly ImmutableArray<string> RouteIds =
         [WorkspaceCategoryNames.Directives, WorkspaceCategoryNames.Guidance, WorkspaceCategoryNames.Maps, WorkspaceCategoryNames.Patterns,
@@ -54,16 +54,12 @@ internal static class InstallConfigurationChoices
     internal static ImmutableArray<InstallRouteSelection> Defaults(InstallPreset preset)
         => RouteIds.Select(id => new InstallRouteSelection(id, DefaultAction(id, preset))).ToImmutableArray();
 
-    internal static string Directory(string id) => $"{WorkspaceLayout.DefaultMainRoot}/{id}";
-    internal static string Entrypoint(string id) => $"{Directory(id)}/{SourceFormClassifier.CanonicalEntrypointFileName(id.Split('/')[^1])}";
-    internal static string Directory(WorkspaceLayout layout, string id) => layout.MapPayloadPath(Directory(id));
-    internal static string Entrypoint(WorkspaceLayout layout, string id) => layout.MapPayloadPath(Entrypoint(id));
-    internal static string LoaderRoot(WorkspaceLayout layout, string id) => layout.MapPayloadPath(LoaderRoot(id));
-    internal static bool Contains(string id, string path) => path.StartsWith($"{Directory(id)}/", StringComparison.Ordinal);
-
-    // The Loader line that switches a route on. A Memory state is reached through the Memory catalogue.
-    internal static string LoaderRoot(string id) => Entrypoint(id.Split('/')[0]);
-
+    internal static string Directory(WorkspaceLayout layout, string id) => layout.SourcePath(id);
+    internal static string Entrypoint(WorkspaceLayout layout, string id)
+        => $"{Directory(layout, id)}/{SourceFormClassifier.CanonicalEntrypointFileName(id.Split('/')[^1])}";
+    internal static string LoaderRoot(WorkspaceLayout layout, string id) => Entrypoint(layout, id.Split('/')[0]);
+    internal static bool ContainsPackagePath(string id, string path)
+        => path.StartsWith($"{WorkspaceLayout.DefaultMainRoot}/{id}/", StringComparison.Ordinal);
     private static InstallRouteAction DefaultAction(string id, InstallPreset preset)
     {
         return preset switch

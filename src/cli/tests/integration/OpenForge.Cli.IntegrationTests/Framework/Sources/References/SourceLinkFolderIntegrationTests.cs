@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.References;
 
@@ -47,7 +48,7 @@ public sealed class SourceLinkFolderIntegrationTests
         temporary.CreateDirectory("outside");
         temporary.CreateDirectorySymbolicLink("workspace/alias", "target");
         var workspace = new CliWorkspace(temporary.Combine("workspace"), temporary.Combine("workspace"), CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(workspace, TestContext.Current.CancellationToken);
+        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), TestContext.Current.CancellationToken);
         var resolver = Resolver().CreateSession(session);
         var input = new SourceLinkDestinationInput
         {
@@ -69,7 +70,7 @@ public sealed class SourceLinkFolderIntegrationTests
     private static async Task<SourceLinkDestinationFacts> Resolve(TemporaryWorkspace temporary, string destination)
     {
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(workspace, TestContext.Current.CancellationToken);
+        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), TestContext.Current.CancellationToken);
         return await Resolver().ResolveAsync(new SourceLinkDestinationInput
         {
             Workspace = workspace,

@@ -91,6 +91,8 @@ internal sealed record InstallPlanBuild
 
 internal sealed record InstallPlanningEvidence
 {
+    public WorkspaceLayout? Layout { get; init; }
+
     public required FrameworkPayload? Payload { get; init; }
 
     public required InstallIntendedState? IntendedState { get; init; }

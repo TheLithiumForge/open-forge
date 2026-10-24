@@ -1,9 +1,16 @@
 using OpenForge.Cli.Core.Framework.Sources.Loading;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Loading;
 
 public sealed class SourceGeneratedDestinationResolverCharacterizationTests
 {
+    private const string FixtureCategory = "root";
+    private const string HighSurrogate = "\uD800";
+    private const string LowSurrogate = "\uDC00";
+
     [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Generated destinations preserve literal characters and decode escaped runs exactly once"),
         InlineData("space%20name.md", ".agents/root/space name.md"),
@@ -16,7 +23,7 @@ public sealed class SourceGeneratedDestinationResolverCharacterizationTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void DecodingPreservesFrozenCanonicalPaths(string destination, string expectedPath)
     {
-        var actual = SourceGeneratedDestinationResolver.Resolve(".agents/root/_root.md", false, destination);
+        var actual = SourceGeneratedDestinationResolver.Resolve(DefaultWorkspaceLayout, ".agents/root/_root.md", false, destination);
 
         Assert.Equal(expectedPath, actual);
     }
@@ -43,7 +50,7 @@ public sealed class SourceGeneratedDestinationResolverCharacterizationTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void InvalidDecodingReturnsNoCanonicalPath(string destination)
     {
-        Assert.Null(SourceGeneratedDestinationResolver.Resolve(".agents/root/_root.md", false, destination));
+        Assert.Null(SourceGeneratedDestinationResolver.Resolve(DefaultWorkspaceLayout, ".agents/root/_root.md", false, destination));
     }
 
     [Trait("Boundary", "Input")]
@@ -66,14 +73,26 @@ public sealed class SourceGeneratedDestinationResolverCharacterizationTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void PathPolicyRemainsLocal(bool isLoader, string destination, string? expectedPath)
     {
-        Assert.Equal(expectedPath, SourceGeneratedDestinationResolver.Resolve(".agents/root/_root.md", isLoader, destination));
+        Assert.Equal(expectedPath, SourceGeneratedDestinationResolver.Resolve(DefaultWorkspaceLayout, ".agents/root/_root.md", isLoader, destination));
     }
 
     [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Generated destinations preserve literal unpaired UTF-16 surrogates"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void LiteralSurrogatesAreNotReencoded()
     {
-        Assert.Equal(".agents/root/\uD800.md", SourceGeneratedDestinationResolver.Resolve(".agents/root/_root.md", false, "\uD800.md"));
-        Assert.Equal(".agents/root/\uDC00.md", SourceGeneratedDestinationResolver.Resolve(".agents/root/_root.md", false, "\uDC00.md"));
+        var directory = WorkspaceLayout.DefaultMainRoot + "/" + FixtureCategory + "/";
+        var source = directory + SourceFormClassifier.CanonicalEntrypointFileName(FixtureCategory);
+        foreach (var surrogate in new[] { HighSurrogate, LowSurrogate })
+        {
+            var destination = surrogate + SourceFormClassifier.MarkdownExtension;
+            Assert.Equal(directory + destination, SourceGeneratedDestinationResolver.Resolve(DefaultWorkspaceLayout, source, false, destination));
+        }
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(SourceGeneratedDestinationResolverCharacterizationTests)),
+                Path.GetFullPath(nameof(SourceGeneratedDestinationResolverCharacterizationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

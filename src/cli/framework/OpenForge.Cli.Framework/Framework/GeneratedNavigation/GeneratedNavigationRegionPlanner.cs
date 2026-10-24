@@ -69,11 +69,6 @@ internal sealed class GeneratedNavigationRegionPlanner
             : null;
     }
 
-    internal GeneratedNavigationRegion PlanProjectedEntries(
-        GeneratedNavigationRegionInput input,
-        IReadOnlyList<GeneratedNavigationEntry> entries)
-        => PlanProjectedEntries(SourceContentRoots.Default, input, entries);
-
     internal GeneratedNavigationRegion PlanProjectedEntries(WorkspaceLayout layout, GeneratedNavigationRegionInput input,
         IReadOnlyList<GeneratedNavigationEntry> entries)
         => PlanProjectedEntries(new SourceContentRoots(layout), input, entries);

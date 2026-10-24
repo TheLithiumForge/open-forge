@@ -6,6 +6,8 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
@@ -36,7 +38,7 @@ public sealed class RouteMoveSharedFoundationIntegrationTests
         }
 
         var request = new RouteMarkdownCatalogueRequest(
-            workspace.Workspace,
+WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot),
             scenario == "missing-root" ? ["missing"] : ["."],
             scenario == "explicit-exclusion" ? [".agents"] : [],
             new RouteMarkdownCatalogueFilters([".md"]));
@@ -78,7 +80,7 @@ public sealed class RouteMoveSharedFoundationIntegrationTests
         var catalogue = await new RouteMarkdownCatalogueReader(new PhysicalPathResolver())
             .ReadAsync(
                 new RouteMarkdownCatalogueRequest(
-                    workspace.Workspace,
+WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot),
                     ["."],
                     [],
                     new RouteMarkdownCatalogueFilters([".md"])),

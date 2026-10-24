@@ -1,0 +1,6 @@
+# authored
+# BEGIN OPEN FORGE INSTALL
+/.agents/memory/working/*
+!/.agents/memory/working/index.md
+# END OPEN FORGE INSTALL
+*.local

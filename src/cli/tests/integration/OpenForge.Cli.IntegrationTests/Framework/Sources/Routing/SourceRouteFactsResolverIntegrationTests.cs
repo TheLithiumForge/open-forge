@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Routing;
 
@@ -415,7 +417,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
             Path.GetDirectoryName(source.Base.PhysicalPath)
                 ?? throw new InvalidOperationException("The integration source must have a physical parent."))).ToArray();
         var catalogue = new SourceCatalogue(
-            workspace.Workspace,
+WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot),
             candidates,
             sources,
             [],

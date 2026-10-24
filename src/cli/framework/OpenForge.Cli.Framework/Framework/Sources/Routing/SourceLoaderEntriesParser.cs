@@ -9,8 +9,6 @@ namespace OpenForge.Cli.Core.Framework.Sources.Routing;
 
 internal static class SourceLoaderEntriesParser
 {
-    internal static SourceLoaderEntriesParseResult Parse(string loaderContents)
-        => Parse(SourceContentRoots.Default, loaderContents);
 
     internal static SourceLoaderEntriesParseResult Parse(WorkspaceLayout layout, string loaderContents)
         => Parse(new SourceContentRoots(layout), loaderContents);

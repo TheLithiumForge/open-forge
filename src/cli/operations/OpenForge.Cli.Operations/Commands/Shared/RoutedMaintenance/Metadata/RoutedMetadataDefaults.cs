@@ -53,9 +53,6 @@ internal static class RoutedMetadataDefaults
             ? tags
             : throw new ArgumentOutOfRangeException(nameof(category), category, "The metadata category is not defined.");
 
-    internal static ImmutableArray<string> Tags(RoutedMetadataFileFacts file)
-        => Tags(SourceContentRoots.Default, file);
-
     internal static ImmutableArray<string> Tags(SourceContentRoots roots, RoutedMetadataFileFacts file)
     {
         var root = file.LoaderRootEntrypointPath

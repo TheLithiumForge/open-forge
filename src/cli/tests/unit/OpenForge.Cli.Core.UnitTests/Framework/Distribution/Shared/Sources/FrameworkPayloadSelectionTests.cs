@@ -45,11 +45,11 @@ public sealed class FrameworkPayloadSelectionTests
     {
         var settings = Settings([".agents/skills/cli/SKILL.md"]);
         const string resource = ".agents/skills/cli/references/commands.md";
-        Assert.False(FrameworkPayloadSelection.IncludesPath(resource, settings));
-        Assert.False(FrameworkPayloadSelection.IncludesPath(".agents/skills/cli/assets/example.json", settings));
-        Assert.True(FrameworkPayloadSelection.IncludesPath(".agents/skills/cli-extra/references/commands.md", settings));
-        Assert.True(FrameworkPayloadSelection.IncludesPath(".agents/skills/CLI/references/commands.md", settings));
-        Assert.False(WorkspaceRemovals.IsPathRemoved(resource, settings));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, resource, settings));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/skills/cli/assets/example.json", settings));
+        Assert.True(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/skills/cli-extra/references/commands.md", settings));
+        Assert.True(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/skills/CLI/references/commands.md", settings));
+        Assert.False(WorkspaceRemovals.IsPathRemoved(DefaultWorkspaceLayout, resource, settings));
     }
 
     [Trait("Boundary", "Selection")]
@@ -58,9 +58,9 @@ public sealed class FrameworkPayloadSelectionTests
     {
         var settings = Settings([".agents/memory/working/_working.md"]);
 
-        Assert.False(FrameworkPayloadSelection.IncludesPath(".agents/memory/working/_working.md", settings));
-        Assert.True(FrameworkPayloadSelection.IncludesPath(".agents/memory/working/local-note.md", settings));
-        Assert.True(FrameworkPayloadSelection.IncludesPath(".agents/memory/team/working/_working.md", settings));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/memory/working/_working.md", settings));
+        Assert.True(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/memory/working/local-note.md", settings));
+        Assert.True(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/memory/team/working/_working.md", settings));
     }
 
     [Trait("Boundary", "Selection")]
@@ -69,7 +69,7 @@ public sealed class FrameworkPayloadSelectionTests
     {
         var settings = Settings([".agents/memory/working/_working.md"]);
 
-        Assert.True(FrameworkPayloadSelection.IncludesPath(".agents/Memory/working/_working.md", settings));
+        Assert.True(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/Memory/working/_working.md", settings));
     }
 
     [Trait("Boundary", "Selection")]
@@ -78,9 +78,9 @@ public sealed class FrameworkPayloadSelectionTests
     {
         var settings = Settings(categories: ["skills"]);
 
-        Assert.False(FrameworkPayloadSelection.IncludesPath(".agents/skills", settings));
-        Assert.False(FrameworkPayloadSelection.IncludesPath(".agents/skills/use-workflow/SKILL.md", settings));
-        Assert.True(FrameworkPayloadSelection.IncludesPath(".agents/patterns/_patterns.md", settings));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/skills", settings));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/skills/use-workflow/SKILL.md", settings));
+        Assert.True(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, ".agents/patterns/_patterns.md", settings));
     }
 
     [Trait("Boundary", "Selection")]
@@ -89,9 +89,9 @@ public sealed class FrameworkPayloadSelectionTests
     {
         var settings = Settings() with { RemovedDirectories = ["docs/archive"] };
 
-        Assert.False(FrameworkPayloadSelection.IncludesPath("docs/archive", settings));
-        Assert.False(FrameworkPayloadSelection.IncludesPath("docs/archive/guide.md", settings));
-        Assert.True(FrameworkPayloadSelection.IncludesPath("docs/archived/guide.md", settings));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, "docs/archive", settings));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, "docs/archive/guide.md", settings));
+        Assert.True(FrameworkPayloadSelection.IncludesPath(DefaultWorkspaceLayout, "docs/archived/guide.md", settings));
     }
 
     private static WorkspaceSettingsDocument Settings(
@@ -102,4 +102,11 @@ public sealed class FrameworkPayloadSelectionTests
             RemovedFiles = files.IsDefault ? [] : files,
             RemovedCategories = categories.IsDefault ? [] : categories,
         };
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(FrameworkPayloadSelectionTests)),
+                Path.GetFullPath(nameof(FrameworkPayloadSelectionTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

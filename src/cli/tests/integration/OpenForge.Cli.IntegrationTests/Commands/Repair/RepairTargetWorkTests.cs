@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
@@ -73,7 +74,7 @@ public sealed class RepairTargetWorkTests
         using var temporary = TemporaryWorkspace.Create("repair-target-work");
         temporary.WriteText(".agents/target.md", "# Details\n");
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        var catalogue = await new SourceCatalogueReader().ReadAsync(new(workspace, [".agents"]), TestContext.Current.CancellationToken);
+        var catalogue = await new SourceCatalogueReader().ReadAsync(new(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [".agents"]), TestContext.Current.CancellationToken);
         var resolutions = 0;
         var formats = 0;
         var parses = 0;

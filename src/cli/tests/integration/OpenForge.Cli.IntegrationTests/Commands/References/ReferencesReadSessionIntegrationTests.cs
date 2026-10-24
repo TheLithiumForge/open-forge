@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.References;
 
@@ -22,7 +23,7 @@ public sealed class ReferencesReadSessionIntegrationTests
         temporary.CreateFile(".agents/docs/target.md", "# First\n\n## Second\n");
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var token = TestContext.Current.CancellationToken;
-        var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(workspace, [".agents"]), token);
+        var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [".agents"]), token);
         var source = catalogue.FindByPath(".agents/docs/source.md") ?? throw new InvalidOperationException();
         var resolutions = 0;
         var reads = 0;

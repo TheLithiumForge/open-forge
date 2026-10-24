@@ -16,9 +16,6 @@ internal static class RouteInclusionTargetResolver
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
-    internal static string Resolve(RouteInclusionRequest request)
-        => Resolve(WorkspaceLayout.Create(request.Workspace, WorkspaceLayout.DefaultMainRoot), request);
-
     internal static string Resolve(WorkspaceLayout layout, RouteInclusionRequest request)
     {
         var operand = request.File.Replace('\\', '/');

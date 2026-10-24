@@ -7,6 +7,8 @@ using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Commands.Shared.ReferenceMaintenance;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Shared.RoutedMaintenance.Metadata;
 
@@ -260,7 +262,7 @@ public sealed class RoutedMetadataCompletionTests
 
     [Fact(DisplayName = "Directive entrypoint completion keeps the route on demand")]
     public void DirectiveEntrypointIsOnDemand()
-        => Assert.Equal(["Directive"], RoutedMetadataDefaults.Tags(Facts("directives") with { CanonicalPath = ".agents/directives/team/_team.md" }));
+        => Assert.Equal(["Directive"], RoutedMetadataDefaults.Tags(new OpenForge.Cli.Core.Framework.Sources.Models.Inventory.SourceContentRoots(DefaultWorkspaceLayout), Facts("directives") with { CanonicalPath = ".agents/directives/team/_team.md" }));
 
     [Fact(DisplayName = "Metadata defaults reject an undefined category")]
     public void RejectsUndefinedCategory()
@@ -300,7 +302,7 @@ public sealed class RoutedMetadataCompletionTests
         => new() { File = facts, Bytes = [.. Encoding.UTF8.GetBytes("# Note\nKeep body\n")] };
 
     private static RoutedMetadataPolicyContext Context()
-        => new() { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty };
+        => new() { Layout = DefaultWorkspaceLayout, Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty };
 
     private static RoutedMetadataFileFacts Facts(string root = "guidance", string state = "")
     {
@@ -335,4 +337,11 @@ public sealed class RoutedMetadataCompletionTests
                 Framework = new(new("framework", null), [], []) { GitIgnoredRoutes = [new(".agents/guidance", ".agents/guidance/_guidance.md")] },
             },
         };
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(RoutedMetadataCompletionTests)),
+                Path.GetFullPath(nameof(RoutedMetadataCompletionTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

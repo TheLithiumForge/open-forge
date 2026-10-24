@@ -124,6 +124,7 @@ internal static class StatusReportSelector
 
         return new StatusData
         {
+            Layout = result.Layout,
             IncludedFiles = facts.Context.IncludedFiles is { } included ? new StatusDataIncludedFiles(
                 Listed: included.Listed,
                 Unlisted: included.Unlisted,
@@ -169,7 +170,7 @@ internal static class StatusReportSelector
             Libraries = libraries,
             TextFacts = new StatusDataTextFacts
             {
-                CustomMainRoot = result.CustomMainRoot,
+                CustomMainRoot = result.Layout?.MainRoot,
                 ShowOperationalSections = facts.Installation.State == StatusInstallationState.Installed,
                 ShowStandard = includeStandard,
                 ShowFull = includeFull,

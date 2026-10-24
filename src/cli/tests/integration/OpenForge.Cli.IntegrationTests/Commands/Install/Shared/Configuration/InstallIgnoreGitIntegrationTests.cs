@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Configuration;
 
@@ -13,6 +15,7 @@ public sealed class InstallIgnoreGitIntegrationTests
     {
         // Git creates its own inventory, so this test owns the complete temporary tree.
         var root = Directory.CreateTempSubdirectory("open-forge-sharing-git-").FullName;
+        var layout = WorkspaceLayout.Create(new CliWorkspace(root, root, CliWorkspaceSelectionMethod.ExplicitWorkspace), WorkspaceLayout.DefaultMainRoot);
         try
         {
             const string directory = ".agents/memory/working";
@@ -25,7 +28,7 @@ public sealed class InstallIgnoreGitIntegrationTests
                 await File.WriteAllTextAsync(absolute, "owned fixture", TestContext.Current.CancellationToken);
             }
             await File.WriteAllBytesAsync(Path.Combine(root, ".gitignore"), InstallIgnoreSection.Rewrite([], InstallConfigurationChoices.Defaults(InstallPreset.Essentials),
-                [new(directory, host)]), TestContext.Current.CancellationToken);
+                [new(directory, host)], layout), TestContext.Current.CancellationToken);
             Assert.Equal(0, (await Git(root, ["init", "--quiet"])).ExitCode);
             var candidates = privatePaths.Append(host).Append(".agents/open-forge.json").Append(".agents/open-forge.lock.json").ToArray();
             var result = await Git(root, ["check-ignore", "--no-index", "-z", "--stdin"], string.Join('\0', candidates) + '\0');
@@ -61,6 +64,7 @@ public sealed class InstallIgnoreGitIntegrationTests
         var error = process.StandardError.ReadToEndAsync(CancellationToken.None);
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         deadline.CancelAfter(TimeSpan.FromSeconds(30));
+
         try
         {
             if (input is not null) await process.StandardInput.WriteAsync(input);
@@ -73,6 +77,7 @@ public sealed class InstallIgnoreGitIntegrationTests
         {
             if (!process.HasExited)
             {
+
                 try
                 {
                     process.Kill(entireProcessTree: true);
@@ -87,4 +92,5 @@ public sealed class InstallIgnoreGitIntegrationTests
             await Task.WhenAll(output, error);
         }
     }
+
 }

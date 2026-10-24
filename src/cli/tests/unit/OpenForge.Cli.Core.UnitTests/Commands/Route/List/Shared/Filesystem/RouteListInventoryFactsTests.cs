@@ -289,17 +289,9 @@ public sealed class RouteListInventoryFactsTests
         var nonNormalized = Path.Combine(Path.GetTempPath(), "route-list", "..", "file.md");
 
         Assert.Throws<ArgumentException>(() => new RouteSourceDocument(
-            ".agents/file.md",
-            "relative.md",
-            SourceDocumentForm.Markdown,
-            FileReadState.Complete,
-            "body"));
+new SourceLayer(".agents/file.md", "relative.md", SourceDocumentForm.Markdown, SourceDocumentForm.Markdown == SourceDocumentForm.OverwriteCompanion ? SourceLayerKind.Overwrite : SourceLayerKind.Base), FileReadState.Complete, "body"));
         Assert.Throws<ArgumentException>(() => new RouteSourceDocument(
-            ".agents/file.md",
-            nonNormalized,
-            SourceDocumentForm.Markdown,
-            FileReadState.Complete,
-            "body"));
+new SourceLayer(".agents/file.md", nonNormalized, SourceDocumentForm.Markdown, SourceDocumentForm.Markdown == SourceDocumentForm.OverwriteCompanion ? SourceLayerKind.Overwrite : SourceLayerKind.Base), FileReadState.Complete, "body"));
     }
 
     private static (
@@ -349,7 +341,7 @@ public sealed class RouteListInventoryFactsTests
             automaticId: null)));
 
         var sourceCatalogue = new SourceCatalogue(
-            CatalogueWorkspace(),
+WorkspaceLayout.Create(CatalogueWorkspace(), WorkspaceLayout.DefaultMainRoot),
             candidates,
             logicalSources,
             [],

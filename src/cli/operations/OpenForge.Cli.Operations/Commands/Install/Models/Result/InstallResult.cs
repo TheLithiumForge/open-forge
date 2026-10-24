@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Commands.Shared.Models.Layout;
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
@@ -63,6 +64,8 @@ internal sealed record InstallResult : ICliCommandResult
     internal InstallOperationSummary? Summary { get; }
 
     internal InstallResultFacts Facts { get; }
+
+    internal WorkspaceLayoutInfo? Layout => Facts.Layout;
 
     internal InstallFrontmatter? Frontmatter { get; init; }
 

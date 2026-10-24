@@ -16,7 +16,7 @@ internal static class InstallIgnoreSection
     internal const string End = "# END OPEN FORGE INSTALL";
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
-    internal static ImmutableArray<string> Read(ReadOnlySpan<byte> bytes, WorkspaceLayout? layout = null)
+    internal static ImmutableArray<string> Read(ReadOnlySpan<byte> bytes, WorkspaceLayout layout)
     {
         var section = Locate(Utf8.GetString(bytes));
         if (section.Start < 0) return [];
@@ -33,7 +33,7 @@ internal static class InstallIgnoreSection
                     throw new InvalidDataException("The Install Git-ignore section requires a shared entrypoint after each contents pattern.");
                 var entrypoint = lines[index][2..];
                 if (SourceLogicalPath.ReadParent(entrypoint) != Directory(layout, id)
-                    || !SourceFormClassifier.TryClassify(layout is null ? SourceContentRoots.Default : new SourceContentRoots(layout), entrypoint, out var form) || !SourceFormClassifier.IsEntrypoint(form))
+                    || !SourceFormClassifier.TryClassify(new SourceContentRoots(layout), entrypoint, out var form) || !SourceFormClassifier.IsEntrypoint(form))
                     throw new InvalidDataException("The Install Git-ignore section contains an unsupported shared entrypoint.");
             }
             routes.Add(id);
@@ -42,7 +42,7 @@ internal static class InstallIgnoreSection
     }
 
     internal static byte[] Rewrite(ReadOnlySpan<byte> bytes, ImmutableArray<InstallRouteSelection> routes,
-        IReadOnlyList<SourceSharingRoute>? sharedRoutes = null, WorkspaceLayout? layout = null)
+        IReadOnlyList<SourceSharingRoute>? sharedRoutes, WorkspaceLayout layout)
     {
         var text = Utf8.GetString(bytes);
         _ = Read(bytes, layout);
@@ -60,13 +60,13 @@ internal static class InstallIgnoreSection
         return Utf8.GetBytes(text + separator + replacement);
     }
 
-    private static string Pattern(WorkspaceLayout? layout, string id) => $"/{Directory(layout, id)}/";
-    private static string ContentsPattern(WorkspaceLayout? layout, string id) => $"/{Directory(layout, id)}/*";
+    private static string Pattern(WorkspaceLayout layout, string id) => $"/{Directory(layout, id)}/";
+    private static string ContentsPattern(WorkspaceLayout layout, string id) => $"/{Directory(layout, id)}/*";
 
-    private static string Directory(WorkspaceLayout? layout, string id)
-        => layout is null ? InstallConfigurationChoices.Directory(id) : InstallConfigurationChoices.Directory(layout, id);
-    private static string Entrypoint(WorkspaceLayout? layout, string id)
-        => layout is null ? InstallConfigurationChoices.Entrypoint(id) : InstallConfigurationChoices.Entrypoint(layout, id);
+    private static string Directory(WorkspaceLayout layout, string id)
+        => InstallConfigurationChoices.Directory(layout, id);
+    private static string Entrypoint(WorkspaceLayout layout, string id)
+        => InstallConfigurationChoices.Entrypoint(layout, id);
 
     private static InstallIgnoreSectionSpan Locate(string text)
     {

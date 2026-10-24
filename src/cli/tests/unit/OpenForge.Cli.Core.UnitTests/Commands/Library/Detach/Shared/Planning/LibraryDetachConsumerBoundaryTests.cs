@@ -102,6 +102,7 @@ public sealed class LibraryDetachConsumerBoundaryTests
                 Workspace = input.Request.Workspace,
                 LibraryId = input.Request.LibraryId,
                 SettingsObservation = input.Settings,
+                LayoutRead = input.LayoutRead,
                 Targets = [],
                 RemovalSelection = new WorkspaceRemovalSelection
                 {

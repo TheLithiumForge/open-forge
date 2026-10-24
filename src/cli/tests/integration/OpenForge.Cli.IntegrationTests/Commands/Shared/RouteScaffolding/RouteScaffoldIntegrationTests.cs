@@ -20,6 +20,7 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Shared.RouteScaffolding;
 
@@ -48,7 +49,7 @@ public sealed class RouteScaffoldIntegrationTests
         var composer = new RouteScaffoldComposer();
         var intents = discovery.Gaps.Select(gap => new RouteScaffoldEntrypointIntent
         {
-            Source = builder.Create(request.Catalogue.Workspace, gap.CanonicalPath),
+            Source = builder.Create(WorkspaceLayout.Create(request.Catalogue.Workspace, WorkspaceLayout.DefaultMainRoot), gap.CanonicalPath),
             Before = FileStateSnapshot.Missing(temporary.Combine(gap.CanonicalPath)),
             IntendedBytes = composer.Compose(RouteScaffoldComposer.FolderDocument(
                 gap.FolderId,
@@ -145,7 +146,7 @@ public sealed class RouteScaffoldIntegrationTests
         var request = await ReadRequestAsync(temporary);
         var builder = new RouteScaffoldSourceBuilder();
         var oldSource = request.Catalogue.FindByPath(".agents/memory/invoices/_billing.md") ?? throw new InvalidOperationException();
-        var destination = builder.Create(request.Catalogue.Workspace, ".agents/memory/invoices/_invoices.md");
+        var destination = builder.Create(WorkspaceLayout.Create(request.Catalogue.Workspace, WorkspaceLayout.DefaultMainRoot), ".agents/memory/invoices/_invoices.md");
         var candidate = new RouteScaffoldRenameCandidate
         {
             Destination = destination,
@@ -162,7 +163,7 @@ public sealed class RouteScaffoldIntegrationTests
             Basis = RouteScaffoldRenameBasis.CommittedContent,
         };
         var planner = new RouteScaffoldRenamePlanner();
-        var intent = planner.Decide(candidate, proven ? proof : null);
+        var intent = planner.Decide(DefaultWorkspaceLayout, candidate, proven ? proof : null);
         var formation = builder.Replace(request.Catalogue, [destination], proven ? [oldSource.Identity.CanonicalBasePath] : []);
         var documents = await ReadDocumentsAsync(request.Catalogue);
         documents[destination.Identity.CanonicalBasePath] = new MarkdownDocumentParser().Parse(Encoding.UTF8.GetString(intent.IntendedBytes.AsSpan()));
@@ -203,7 +204,7 @@ public sealed class RouteScaffoldIntegrationTests
 
     private static void WriteScaffold(TemporaryWorkspace temporary, string id, string title, string[] tags, FrontmatterForm form, string? fileName = null)
     {
-        var path = fileName is null ? RouteScaffoldSourceBuilder.CanonicalPath(id) : $".agents/{id}/{fileName}";
+        var path = fileName is null ? RouteScaffoldSourceBuilder.CanonicalPath(DefaultWorkspaceLayout, id) : $".agents/{id}/{fileName}";
         temporary.CreateFile(path, new RouteScaffoldComposer().Compose(RouteScaffoldComposer.FolderDocument(id, title, tags, form)).ToArray());
     }
 
@@ -216,7 +217,7 @@ public sealed class RouteScaffoldIntegrationTests
     private static async Task<RouteScaffoldDiscoveryRequest> ReadRequestAsync(TemporaryWorkspace temporary)
     {
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(workspace, [".agents"]), TestContext.Current.CancellationToken);
+        var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [".agents"]), TestContext.Current.CancellationToken);
         return new RouteScaffoldDiscoveryRequest
         {
             Catalogue = catalogue,
@@ -237,4 +238,11 @@ public sealed class RouteScaffoldIntegrationTests
         }
         return documents;
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(RouteScaffoldIntegrationTests)),
+                Path.GetFullPath(nameof(RouteScaffoldIntegrationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

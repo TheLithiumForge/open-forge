@@ -15,6 +15,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Result;
 
@@ -578,7 +579,7 @@ public sealed class FindResultBuilderTests
     private static SourceLogicalSource CreateSource(string path)
     {
         var root = CreateWorkspace().PhysicalRoot;
-        var id = SourceIdentity.DeriveId(path)
+        var id = SourceIdentity.DeriveId(DefaultWorkspaceLayout, path)
             ?? throw new InvalidOperationException("The result source must have a derived ID.");
         return new SourceLogicalSource(
             new SourceLogicalIdentity(id, path),
@@ -609,4 +610,11 @@ public sealed class FindResultBuilderTests
         FindTerminalEvent? TerminalEvent,
         string? ExpectedNextCommand,
         string? ExpectedNextReason);
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(FindResultBuilderTests)),
+                Path.GetFullPath(nameof(FindResultBuilderTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

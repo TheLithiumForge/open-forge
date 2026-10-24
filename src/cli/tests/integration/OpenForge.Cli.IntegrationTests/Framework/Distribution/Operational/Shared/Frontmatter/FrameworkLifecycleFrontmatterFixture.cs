@@ -5,6 +5,8 @@ using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Distribution.Operational.Shared.Frontmatter;
 
@@ -17,7 +19,7 @@ internal static class FrameworkLifecycleFrontmatterFixture
         var payload = EmbeddedFrameworkPayloadReader.Read().Payload
             ?? throw new InvalidOperationException("The embedded Framework payload is unavailable.");
         var asset = payload.Assets.Single(asset => asset.Path == TargetPath);
-        var rendered = WorkspacePayloadRenderer.Render(TargetPath, asset.Bytes.AsMemory(), form);
+        var rendered = WorkspacePayloadRenderer.Render(DefaultWorkspaceLayout, TargetPath, asset.Bytes.AsMemory(), form);
         var bytes = rendered.Bytes ?? throw new InvalidOperationException(rendered.Cause);
         workspace.WriteBytes(TargetPath, bytes.ToArray());
         workspace.WriteBytes(WorkspaceOwnershipDefinitions.RelativePath,
@@ -26,4 +28,11 @@ internal static class FrameworkLifecycleFrontmatterFixture
                 Framework = new FrameworkOwnership(new("test-framework", "1.0.0"), [TargetPath], []),
             }));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(FrameworkLifecycleFrontmatterFixture)),
+                Path.GetFullPath(nameof(FrameworkLifecycleFrontmatterFixture)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

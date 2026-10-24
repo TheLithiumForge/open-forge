@@ -1,5 +1,7 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Routing;
 
@@ -17,7 +19,7 @@ public sealed class SourceLoaderParserTests
         string decoded,
         string canonical)
     {
-        var result = SourceLoaderDestinationParser.Parse(attempted);
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, attempted);
 
         Assert.Equal(SourceLoaderDestinationParseState.Valid, result.State);
         Assert.Equal(attempted, result.AttemptedDestination);
@@ -37,7 +39,7 @@ public sealed class SourceLoaderParserTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void MalformedDestinationRetainsCause(string attempted)
     {
-        var result = SourceLoaderDestinationParser.Parse(attempted);
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, attempted);
 
         Assert.Equal(SourceLoaderDestinationParseState.Malformed, result.State);
         Assert.Equal(attempted, result.AttemptedDestination);
@@ -69,7 +71,7 @@ public sealed class SourceLoaderParserTests
         string attempted,
         string decoded)
     {
-        var result = SourceLoaderDestinationParser.Parse(attempted);
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, attempted);
 
         Assert.Equal(SourceLoaderDestinationParseState.Unsafe, result.State);
         Assert.Equal(attempted, result.AttemptedDestination);
@@ -83,7 +85,7 @@ public sealed class SourceLoaderParserTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EncodedPercentIsDecodedExactlyOnce()
     {
-        var result = SourceLoaderDestinationParser.Parse("encoded%2520name/_encoded%2520name.md");
+        var result = SourceLoaderDestinationParser.Parse(DefaultWorkspaceLayout, "encoded%2520name/_encoded%2520name.md");
 
         Assert.Equal(SourceLoaderDestinationParseState.Valid, result.State);
         Assert.Equal("encoded%20name/_encoded%20name.md", result.DecodedDestination);
@@ -110,7 +112,7 @@ public sealed class SourceLoaderParserTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EntriesParserPreservesOrderAndEarlierSafeDestinations()
     {
-        var result = SourceLoaderEntriesParser.Parse(LoaderContents(
+        var result = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, LoaderContents(
             "\n- [Second](second/_second.md) - #Second\n"
             + "- [First](first/_first.md) - #First\n"));
 
@@ -129,7 +131,7 @@ public sealed class SourceLoaderParserTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EmptyEntriesAreACompleteEmptySet(string entriesBody)
     {
-        var result = SourceLoaderEntriesParser.Parse(LoaderContents(entriesBody));
+        var result = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, LoaderContents(entriesBody));
 
         Assert.Equal(SourceLoaderEntriesParseState.Valid, result.State);
         Assert.Empty(result.Destinations);
@@ -146,7 +148,7 @@ public sealed class SourceLoaderParserTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void MalformedEntriesRetainAParseCause(string contents)
     {
-        var result = SourceLoaderEntriesParser.Parse(contents);
+        var result = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, contents);
 
         Assert.Equal(SourceLoaderEntriesParseState.Malformed, result.State);
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
@@ -161,4 +163,11 @@ public sealed class SourceLoaderParserTests
             {entriesBody}
             """;
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(SourceLoaderParserTests)),
+                Path.GetFullPath(nameof(SourceLoaderParserTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

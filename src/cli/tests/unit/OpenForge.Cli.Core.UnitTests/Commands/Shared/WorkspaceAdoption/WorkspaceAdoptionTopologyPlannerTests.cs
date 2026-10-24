@@ -6,6 +6,8 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Shared.WorkspaceAdoption;
 
@@ -109,7 +111,7 @@ public sealed class WorkspaceAdoptionTopologyPlannerTests
     public void RemovedRootIsNotSelected()
     {
         var plan = WorkspaceAdoptionTopologyPlanner.Plan(
-            [Source(".agents/directives/guide.md")],
+DefaultWorkspaceLayout, [Source(".agents/directives/guide.md")],
             [Source(".agents/directives/_directives.md")],
             [".AGENTS/DIRECTIVES/_DIRECTIVES.md"],
             WorkspaceOwnershipRead.Absent(LockPath));
@@ -126,7 +128,7 @@ public sealed class WorkspaceAdoptionTopologyPlannerTests
     public void RemovedFileDoesNotExpandToItsPathPrefix()
     {
         var plan = WorkspaceAdoptionTopologyPlanner.Plan(
-            [Source(".agents/directives/nested.md/guide.md")],
+DefaultWorkspaceLayout, [Source(".agents/directives/nested.md/guide.md")],
             [Source(".agents/directives/_directives.md")],
             [".agents/directives/nested.md"],
             WorkspaceOwnershipRead.Absent(LockPath));
@@ -144,7 +146,7 @@ public sealed class WorkspaceAdoptionTopologyPlannerTests
     {
         const string removedHost = ".agents/directives/nested/_nested.md";
         var plan = WorkspaceAdoptionTopologyPlanner.Plan(
-            [Source(".agents/directives/nested/guide.md")],
+DefaultWorkspaceLayout, [Source(".agents/directives/nested/guide.md")],
             [Source(".agents/directives/_directives.md")],
             [removedHost],
             WorkspaceOwnershipRead.Absent(LockPath));
@@ -304,7 +306,7 @@ public sealed class WorkspaceAdoptionTopologyPlannerTests
             Snapshot: null,
             Cause: "ownership could not be established");
         var plan = WorkspaceAdoptionTopologyPlanner.Plan(
-            [Source(".agents/directives/guide.md")],
+DefaultWorkspaceLayout, [Source(".agents/directives/guide.md")],
             [Source(".agents/directives/_directives.md")],
             [],
             ownership);
@@ -423,7 +425,7 @@ public sealed class WorkspaceAdoptionTopologyPlannerTests
         IReadOnlyList<SourceLogicalSource> payloadSources,
         WorkspaceOwnershipRead? ownership = null)
         => WorkspaceAdoptionTopologyPlanner.Plan(
-            existingSources,
+DefaultWorkspaceLayout, existingSources,
             payloadSources,
             [],
             ownership ?? WorkspaceOwnershipRead.Absent(LockPath));
@@ -448,7 +450,7 @@ public sealed class WorkspaceAdoptionTopologyPlannerTests
 
     private static SourceLogicalSource Source(string canonicalPath, bool withOverwrite = false)
     {
-        if (!SourceFormClassifier.TryClassify(canonicalPath, out var form))
+        if (!SourceFormClassifier.TryClassify(DefaultWorkspaceLayout, canonicalPath, out var form))
         {
             throw new ArgumentException("The test source must be a recognized Markdown source.", nameof(canonicalPath));
         }
@@ -486,4 +488,11 @@ public sealed class WorkspaceAdoptionTopologyPlannerTests
         Assert.Empty(plan.EligibleSourcePaths);
         Assert.Empty(plan.CreatedEntrypointPaths);
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(WorkspaceAdoptionTopologyPlannerTests)),
+                Path.GetFullPath(nameof(WorkspaceAdoptionTopologyPlannerTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

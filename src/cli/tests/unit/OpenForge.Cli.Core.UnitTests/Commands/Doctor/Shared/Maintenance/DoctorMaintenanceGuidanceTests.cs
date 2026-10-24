@@ -1,5 +1,6 @@
-using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
@@ -29,7 +30,17 @@ public sealed class DoctorMaintenanceGuidanceTests
     public void UserOwnedSkillPackageIsNotProtected()
     {
         var reference = Reference() with { SourcePath = ".agents/skills/checks/SKILL.md" };
-        var policy = new RoutedMetadataPolicyContext { Settings = WorkspaceSettingsDocument.Empty, Ownership = WorkspaceOwnershipDocument.Empty };
+        var policy = new RoutedMetadataPolicyContext
+        {
+            Layout = WorkspaceLayout.Create(
+        new CliWorkspace(
+            Path.GetFullPath(nameof(DoctorMaintenanceGuidanceTests)),
+            Path.GetFullPath(nameof(DoctorMaintenanceGuidanceTests)),
+            CliWorkspaceSelectionMethod.ExplicitWorkspace),
+        WorkspaceLayout.DefaultMainRoot),
+            Settings = WorkspaceSettingsDocument.Empty,
+            Ownership = WorkspaceOwnershipDocument.Empty
+        };
         Assert.Null(DoctorReferenceProtectionFindingFactory.Read(reference, policy));
     }
 
@@ -44,6 +55,12 @@ public sealed class DoctorMaintenanceGuidanceTests
         var path = targetOwned ? RenameEvidenceTestFacts.OldPath : reference.SourcePath;
         var policy = new RoutedMetadataPolicyContext
         {
+            Layout = WorkspaceLayout.Create(
+        new CliWorkspace(
+            Path.GetFullPath(nameof(DoctorMaintenanceGuidanceTests)),
+            Path.GetFullPath(nameof(DoctorMaintenanceGuidanceTests)),
+            CliWorkspaceSelectionMethod.ExplicitWorkspace),
+        WorkspaceLayout.DefaultMainRoot),
             Settings = WorkspaceSettingsDocument.Empty,
             Ownership = WorkspaceOwnershipDocument.Empty with { Framework = new(new("open-forge", null), [path], []) },
         };

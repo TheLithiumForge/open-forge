@@ -1,11 +1,44 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Contracts;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedStatusProcessTests
 {
+    private const string CustomRoot = "docs/context";
+
+    [Fact(DisplayName = "Published Status reports the authored custom layout without changing workspace bytes")]
+    [Trait("Feature", "status-command"), Trait("Evidence", "EndToEnd")]
+    public async Task CustomRootFactsAreObservedWithoutWrites()
+    {
+        using var workspace = TemporaryWorkspace.Create("published-status-layout");
+        using var store = PublishedWorkspaceLockStore.Create("published-status-layout-store");
+        store.Track(workspace.Path);
+        workspace.WriteText(PublishedTokens.Settings.RelativePath, $$"""
+            {"{{PublishedTokens.Settings.SchemaVersionProperty}}":{{PublishedTokens.Settings.SchemaVersion}},"{{PublishedTokens.Settings.MainRootProperty}}":"{{CustomRoot}}"}
+            """);
+        var loader = CustomRoot + "/" + PublishedTokens.Layout.LoaderFileName;
+        workspace.WriteText(loader, "# Loader\n\n## " + PublishedTokens.Metadata.Entries + "\n" + PublishedTokens.Metadata.EmptyEntry + "\n");
+        var settingsBytes = File.ReadAllBytes(workspace.Combine(PublishedTokens.Settings.RelativePath));
+        var loaderBytes = File.ReadAllBytes(workspace.Combine(loader));
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
+            PublishedExecutableTarget.Discover(), workspace.Path, workspace.SnapshotHashes,
+            [PublishedTokens.Status.Command, PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat],
+            store.EnvironmentVariables);
+        Assert.Empty(result.StandardError);
+        Assert.Equal(settingsBytes, File.ReadAllBytes(workspace.Combine(PublishedTokens.Settings.RelativePath)));
+        Assert.Equal(loaderBytes, File.ReadAllBytes(workspace.Combine(loader)));
+        using var document = JsonDocument.Parse(result.StandardOutput);
+        var root = document.RootElement;
+        Assert.Equal(3, root.GetProperty(PublishedTokens.Json.SchemaVersion).GetInt32());
+        var layout = root.GetProperty(PublishedTokens.Json.Data).GetProperty(PublishedTokens.LayoutData.Layout);
+        Assert.Equal(CustomRoot, layout.GetProperty(PublishedTokens.LayoutData.MainRoot).GetString());
+        Assert.Equal(loader, layout.GetProperty(PublishedTokens.LayoutData.LoaderPath).GetString());
+    }
+
     private static readonly string[] ExpectedRootLeafOrder =
         ["install", "status", "context", "find", "references", "index"];
 
@@ -93,6 +126,7 @@ public sealed class PublishedStatusProcessTests
         Assert.Equal("status", root.GetProperty("command").GetString());
         Assert.Equal("incomplete", root.GetProperty("status").GetString());
         var candidates = root.GetProperty("data").GetProperty("recovery").GetProperty("candidates");
+        Assert.False(root.GetProperty(PublishedTokens.Json.Data).TryGetProperty(PublishedTokens.LayoutData.Layout, out _));
         Assert.Equal(JsonValueKind.Array, candidates.ValueKind);
         var candidate = Assert.Single(candidates.EnumerateArray());
         Assert.Equal("draft", candidate.GetProperty("kind").GetString());

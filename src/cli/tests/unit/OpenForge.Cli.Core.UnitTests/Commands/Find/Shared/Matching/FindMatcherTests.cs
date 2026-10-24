@@ -17,6 +17,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Matching;
 
@@ -566,7 +567,7 @@ public sealed class FindMatcherTests
             ? path
             : $".agents/{path}";
         var root = CreateWorkspace().PhysicalRoot;
-        var id = SourceIdentity.DeriveId(path)
+        var id = SourceIdentity.DeriveId(DefaultWorkspaceLayout, path)
             ?? throw new InvalidOperationException("The matcher source must have a derived ID.");
         var baseLayer = new SourceLayer(
             path,
@@ -803,4 +804,11 @@ public sealed class FindMatcherTests
         int Length,
         MarkdownHeadingForm Form,
         bool Canonical);
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(FindMatcherTests)),
+                Path.GetFullPath(nameof(FindMatcherTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

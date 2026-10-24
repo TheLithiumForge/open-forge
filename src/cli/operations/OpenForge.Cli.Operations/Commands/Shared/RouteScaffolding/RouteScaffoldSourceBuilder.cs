@@ -4,16 +4,12 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 
 internal sealed class RouteScaffoldSourceBuilder
 {
     private readonly GeneratedNavigationFormationBuilder _formationBuilder = new();
-
-    internal static string CanonicalPath(string folderId)
-        => EntrypointPath(WorkspaceLayout.DefaultMainRoot + "/" + ValidateFolderId(folderId));
 
     internal static string CanonicalPath(WorkspaceLayout layout, string folderId)
         => EntrypointPath(layout.SourcePath(ValidateFolderId(folderId)));
@@ -27,9 +23,6 @@ internal sealed class RouteScaffoldSourceBuilder
 
     private static string EntrypointPath(string folder)
         => $"{folder}/{SourceFormClassifier.CanonicalEntrypointFileName(SourceLogicalPath.ReadFileName(folder))}";
-
-    internal SourceLogicalSource Create(CliWorkspace workspace, string canonicalPath)
-        => Create(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), canonicalPath);
 
     internal SourceLogicalSource Create(WorkspaceLayout layout, string canonicalPath)
     {

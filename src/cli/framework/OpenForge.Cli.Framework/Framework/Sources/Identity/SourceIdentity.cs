@@ -6,7 +6,6 @@ namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
 internal static class SourceIdentity
 {
-    internal static string? DeriveId(string? canonicalPath) => DeriveId(SourceContentRoots.Default, canonicalPath);
 
     internal static string? DeriveId(WorkspaceLayout layout, string? canonicalPath)
         => DeriveId(new SourceContentRoots(layout), canonicalPath);
@@ -66,9 +65,6 @@ internal static class SourceIdentity
 
         return id.Split('/', StringSplitOptions.None).All(SourceLogicalPath.IsCanonicalSegment);
     }
-
-    internal static bool IsRecognizedEntrypointPath(string canonicalPath)
-        => IsRecognizedEntrypointPath(SourceContentRoots.Default, canonicalPath);
 
     internal static bool IsRecognizedEntrypointPath(WorkspaceLayout layout, string canonicalPath)
         => IsRecognizedEntrypointPath(new SourceContentRoots(layout), canonicalPath);

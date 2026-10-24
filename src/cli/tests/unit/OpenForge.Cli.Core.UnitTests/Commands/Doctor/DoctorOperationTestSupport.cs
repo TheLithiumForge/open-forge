@@ -156,7 +156,7 @@ internal sealed class DoctorOperationTestSupport
             {
                 State = OperationalViewState.Complete,
                 SourceInventory = SourceInventory,
-                Catalogue = new SourceCatalogue(workspace, [], [], [], isCancelled: false),
+                Catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [], [], isCancelled: false),
                 Routes = new SourceRouteFacts(
                     new SourceRouteTopology([], []),
                     [],

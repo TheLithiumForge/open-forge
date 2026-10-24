@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
@@ -10,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.List;
 
@@ -89,21 +91,13 @@ internal sealed class RouteListSelectionIntegrationWorkspace : IDisposable
                 IsCompatibility(form),
                 overwritePath is not null);
         var baseDocument = new RouteSourceDocument(
-            canonicalPath,
-            physicalPath,
-            form,
-            FileReadState.Complete,
-            "body");
+new SourceLayer(canonicalPath, physicalPath, form, form == SourceDocumentForm.OverwriteCompanion ? SourceLayerKind.Overwrite : SourceLayerKind.Base), FileReadState.Complete, "body");
         var overwrite = overwritePath is null
             ? null
             : new RouteSourceDocument(
-                overwritePath,
-                _temporary.Combine(overwritePath),
-            SourceDocumentForm.OverwriteCompanion,
-                FileReadState.Complete,
-                "overwrite");
+new SourceLayer(overwritePath, _temporary.Combine(overwritePath), SourceDocumentForm.OverwriteCompanion, SourceLayerKind.Overwrite), FileReadState.Complete, "overwrite");
         var source = new RouteSource(
-            baseDocument,
+new SourceLogicalIdentity(SourceIdentity.DeriveId(DefaultWorkspaceLayout, baseDocument.CanonicalLogicalPath)!, baseDocument.CanonicalLogicalPath), baseDocument,
             metadata,
             sourceKind,
             overwrite,
@@ -138,7 +132,7 @@ internal sealed class RouteListSelectionIntegrationWorkspace : IDisposable
 
     internal SourceCatalogueRequest Request(params string[] logicalRoots)
     {
-        return new SourceCatalogueRequest(Workspace, logicalRoots);
+        return new SourceCatalogueRequest(WorkspaceLayout.Create(Workspace, WorkspaceLayout.DefaultMainRoot), logicalRoots);
     }
 
     internal RouteListRequest RouteRequest(string? sourceReference = null)
@@ -210,6 +204,13 @@ internal sealed class RouteListSelectionIntegrationWorkspace : IDisposable
             or SourceDocumentForm.ReferencesEntrypoint
             or SourceDocumentForm.UnderscoreReferencesEntrypoint;
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                System.IO.Path.GetFullPath(nameof(RouteListSelectionIntegrationWorkspace)),
+                System.IO.Path.GetFullPath(nameof(RouteListSelectionIntegrationWorkspace)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }
 
 internal sealed record RouteListSelectionIntegrationBoundary(

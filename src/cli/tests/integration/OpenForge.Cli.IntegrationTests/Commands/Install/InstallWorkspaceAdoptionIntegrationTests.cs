@@ -27,6 +27,8 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -826,7 +828,7 @@ public sealed class InstallWorkspaceAdoptionIntegrationTests
             ?? throw new InvalidOperationException("The selected native Skill payload asset is unavailable.");
         Assert.Equal(occupiedPath, payloadAsset.Path);
         Assert.Contains(occupiedPath, InstallOperationWorkspace.EmbeddedPayloadPaths);
-        Assert.True(SourceFormClassifier.TryClassify(payloadAsset.Path, out var payloadForm));
+        Assert.True(SourceFormClassifier.TryClassify(DefaultWorkspaceLayout, payloadAsset.Path, out var payloadForm));
         Assert.Equal(SourceDocumentForm.Skill, payloadForm);
         Assert.False(SourceFormClassifier.IsEntrypoint(payloadForm));
         Assert.False(SourceFormClassifier.IsCompatibilityEntrypoint(payloadForm));
@@ -940,4 +942,11 @@ public sealed class InstallWorkspaceAdoptionIntegrationTests
         Assert.Equal(InstallIntendedStateBuildState.Complete, build.State);
         return Assert.IsType<InstallIntendedState>(build.IntendedState).Migrations;
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(InstallWorkspaceAdoptionIntegrationTests)),
+                Path.GetFullPath(nameof(InstallWorkspaceAdoptionIntegrationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

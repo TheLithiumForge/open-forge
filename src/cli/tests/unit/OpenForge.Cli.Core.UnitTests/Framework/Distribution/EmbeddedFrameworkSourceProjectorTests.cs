@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Distribution;
 
@@ -27,7 +29,7 @@ public sealed class EmbeddedFrameworkSourceProjectorTests
             Asset(".agents/memory/notes.md", "notes\n"),
         ]);
 
-        var sources = new EmbeddedFrameworkSourceProjector().Project(workspace, payload);
+        var sources = new EmbeddedFrameworkSourceProjector().Project(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), payload);
 
         Assert.False(sources.IsDefault);
         Assert.Equal(
@@ -78,10 +80,10 @@ public sealed class EmbeddedFrameworkSourceProjectorTests
         var source = Asset(".agents/memory/_memory.md", "memory");
 
         var first = new EmbeddedFrameworkSourceProjector().Project(
-            workspace,
+WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot),
             FrameworkPayload.Create([agents, claude, loader, source]));
         var second = new EmbeddedFrameworkSourceProjector().Project(
-            workspace,
+WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot),
             FrameworkPayload.Create([source, loader, claude, agents]));
 
         Assert.Equal(

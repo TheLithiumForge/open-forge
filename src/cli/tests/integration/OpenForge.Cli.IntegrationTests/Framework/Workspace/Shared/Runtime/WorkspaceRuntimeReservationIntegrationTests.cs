@@ -21,6 +21,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Snapshots;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Workspace.Shared.Runtime;
 
@@ -94,7 +95,7 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         using var files = TemporaryWorkspace.Create("runtime-catalogue");
         files.CreateFile(RuntimeFile, new byte[] { 255 });
         Assert.True(files.TryCreateDirectorySymbolicLink(alias, files.Combine(WorkspaceRuntimePaths.DirectoryName), out var cause), cause);
-        var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(Workspace(files), [alias]), Token);
+        var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(WorkspaceLayout.Create(Workspace(files), WorkspaceLayout.DefaultMainRoot), [alias]), Token);
         Assert.Empty(catalogue.Candidates);
         Assert.Empty(catalogue.Issues);
         Assert.False(File.Exists(WorkspaceRuntimePaths.IgnorePath(Workspace(files))));
@@ -107,7 +108,7 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         files.CreateFile(RuntimeFile, new byte[] { 255 });
         files.CreateFile(SourceSafeFile, "safe");
         Assert.True(files.TryCreateFileSymbolicLink(SourceHiddenFile, files.Combine(RuntimeFile), out var cause), cause);
-        var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(Workspace(files), [SourceLogicalPath.AgentsRoot]), Token);
+        var catalogue = await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(WorkspaceLayout.Create(Workspace(files), WorkspaceLayout.DefaultMainRoot), [SourceLogicalPath.AgentsRoot]), Token);
         Assert.Equal([SourceSafeFile], catalogue.Candidates.Select(candidate => candidate.CanonicalPath));
         Assert.Empty(catalogue.Issues);
     }
@@ -141,7 +142,7 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         Assert.True(files.TryCreateDirectorySymbolicLink(AliasDirectory, files.Combine(WorkspaceRuntimePaths.DirectoryName), out var directoryCause), directoryCause);
         Assert.True(files.TryCreateFileSymbolicLink(AliasFile, files.Combine(RuntimeFile), out var fileCause), fileCause);
         var result = await new RouteMarkdownCatalogueReader(new PhysicalPathResolver()).ReadAsync(
-            new RouteMarkdownCatalogueRequest(Workspace(files), [root], [], new RouteMarkdownCatalogueFilters([".md"])), Token);
+            new RouteMarkdownCatalogueRequest(WorkspaceLayout.Create(Workspace(files), WorkspaceLayout.DefaultMainRoot), [root], [], new RouteMarkdownCatalogueFilters([".md"])), Token);
         Assert.Equal(RouteMarkdownCatalogueCoverage.Complete, result.Coverage);
         Assert.Empty(result.Findings);
         Assert.Equal(root == "." ? [SiblingSafeFile] : Array.Empty<string>(), result.SelectedPaths);
@@ -161,7 +162,7 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
             Assert.True(files.TryCreateFileSymbolicLink(path, files.Combine(RuntimeFile), out var cause), cause);
         }
         var request = new RouteInclusionRequest { Workspace = Workspace(files), File = path, Action = RouteInclusionAction.Include };
-        var exception = Assert.Throws<ArgumentException>(() => RouteInclusionTargetResolver.Resolve(request));
+        var exception = Assert.Throws<ArgumentException>(() => RouteInclusionTargetResolver.Resolve(WorkspaceLayout.Create(request.Workspace, WorkspaceLayout.DefaultMainRoot), request));
         MatchSnapshot(exception.Message, $"alias-{alias}.content");
     }
 
@@ -176,7 +177,7 @@ public sealed partial class WorkspaceRuntimeReservationIntegrationTests
         Assert.False(ExtensionDestinationPolicy.IsAllowed(workspace, destination));
         var registration = LibraryRegistration.Create(LibraryId.Create(LibraryName), WorkspaceRelativeDirectory.Create(LibrarySourceDirectory),
             LibraryDestinationRoot.Create("."), [SourceRelativeEligiblePath.Create(destination)]);
-        Assert.Equal(destination, LibraryDestinationPolicy.FindConflict(workspace, registration, registered: null, generatedTargets: []));
+        Assert.Equal(destination, LibraryDestinationPolicy.FindConflict(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), registration, registered: null, generatedTargets: []));
         Assert.True(ExtensionDestinationPolicy.IsAllowed(workspace, SiblingFile));
     }
 

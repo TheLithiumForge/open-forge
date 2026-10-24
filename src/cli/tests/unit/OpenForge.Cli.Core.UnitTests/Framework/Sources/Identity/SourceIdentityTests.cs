@@ -1,4 +1,6 @@
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
@@ -23,7 +25,7 @@ public sealed class SourceIdentityTests
         string canonicalPath,
         string expectedId)
     {
-        Assert.Equal(expectedId, SourceIdentity.DeriveId(canonicalPath));
+        Assert.Equal(expectedId, SourceIdentity.DeriveId(DefaultWorkspaceLayout, canonicalPath));
     }
 
     [Trait("Boundary", "Processing")]
@@ -42,7 +44,7 @@ public sealed class SourceIdentityTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void DeriveIdDoesNotInventIdentityForUnsafePaths(string canonicalPath)
     {
-        Assert.Null(SourceIdentity.DeriveId(canonicalPath));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, canonicalPath));
     }
 
     [Trait("Boundary", "Processing")]
@@ -50,7 +52,7 @@ public sealed class SourceIdentityTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void NullPathHasNoIdentity()
     {
-        Assert.Null(SourceIdentity.DeriveId(null));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, null));
     }
 
     [Trait("Boundary", "Processing")]
@@ -87,6 +89,13 @@ public sealed class SourceIdentityTests
         string canonicalPath,
         bool expected)
     {
-        Assert.Equal(expected, SourceIdentity.IsRecognizedEntrypointPath(canonicalPath));
+        Assert.Equal(expected, SourceIdentity.IsRecognizedEntrypointPath(DefaultWorkspaceLayout, canonicalPath));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(SourceIdentityTests)),
+                Path.GetFullPath(nameof(SourceIdentityTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

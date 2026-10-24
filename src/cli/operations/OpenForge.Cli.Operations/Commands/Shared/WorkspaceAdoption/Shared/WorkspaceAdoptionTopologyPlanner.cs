@@ -23,13 +23,6 @@ internal static class WorkspaceAdoptionTopologyPlanner
          WorkspaceLayoutNames.SkillsDirectoryName, WorkspaceCategoryNames.Templates, WorkspaceCategoryNames.Memory],
         StringComparer.Ordinal);
 
-    internal static WorkspaceAdoptionTopologyPlan Plan(
-        IReadOnlyList<SourceLogicalSource> existingSources,
-        IReadOnlyList<SourceLogicalSource> payloadSources,
-        IReadOnlyCollection<string> removedPaths,
-        WorkspaceOwnershipRead ownership)
-        => Plan(SourceContentRoots.Default, existingSources, payloadSources, removedPaths, ownership);
-
     internal static WorkspaceAdoptionTopologyPlan Plan(WorkspaceLayout layout,
         IReadOnlyList<SourceLogicalSource> existingSources, IReadOnlyList<SourceLogicalSource> payloadSources,
         IReadOnlyCollection<string> removedPaths, WorkspaceOwnershipRead ownership)

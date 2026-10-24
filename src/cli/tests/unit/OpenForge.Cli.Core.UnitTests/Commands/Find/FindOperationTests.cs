@@ -335,7 +335,7 @@ public sealed class FindOperationTests
 
         return new OperationFixture(
             workspace,
-            new SourceCatalogue(workspace, candidates, sources, [], false),
+            new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), candidates, sources, [], false),
             source);
     }
 
@@ -344,7 +344,7 @@ public sealed class FindOperationTests
         string path,
         bool withOverwrite = false)
     {
-        var id = SourceIdentity.DeriveId(path)
+        var id = SourceIdentity.DeriveId(DefaultWorkspaceLayout, path)
             ?? throw new InvalidOperationException("The operation source must have a derived ID.");
         var baseLayer = new SourceLayer(
             path,
@@ -462,4 +462,11 @@ public sealed class FindOperationTests
 
         internal int PhysicalPathCalls { get; set; }
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(FindOperationTests)),
+                Path.GetFullPath(nameof(FindOperationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

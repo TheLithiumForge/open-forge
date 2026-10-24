@@ -11,10 +11,6 @@ namespace OpenForge.Cli.Core.Framework.Distribution;
 
 internal sealed class EmbeddedFrameworkSourceProjector
 {
-    internal ImmutableArray<SourceLogicalSource> Project(
-        CliWorkspace workspace,
-        FrameworkPayload payload)
-        => Project(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), payload);
 
     internal ImmutableArray<SourceLogicalSource> Project(
         WorkspaceLayout layout,

@@ -72,6 +72,7 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
             Workspace = workspace.Workspace,
             LibraryId = request.LibraryId,
             SettingsObservation = observations.Settings,
+            LayoutRead = observations.LayoutRead,
             Targets = [new LibraryPermissionTarget(link.DestinationPath.Value, LibraryPermissionTargetUse.Live)
                 { Effect = LibraryPermissionEffect.CreateLink }],
             AllowPrompt = false,

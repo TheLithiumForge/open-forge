@@ -6,7 +6,6 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Includes;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Reading;
 
@@ -23,12 +22,6 @@ internal sealed class SourceReadSessionReader
         ArgumentNullException.ThrowIfNull(physicalPathResolver);
         _physicalPathResolver = physicalPathResolver;
     }
-
-    internal ValueTask<SourceReadSession> ReadAsync(CliWorkspace workspace, CancellationToken cancellationToken)
-        => ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), cancellationToken);
-
-    internal ValueTask<SourceReadSession> ReadIncludedAsync(CliWorkspace workspace, CancellationToken cancellationToken)
-        => ReadIncludedAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), cancellationToken);
 
     internal async ValueTask<SourceReadSession> ReadAsync(
         WorkspaceLayout layout,

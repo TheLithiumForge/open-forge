@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
@@ -26,7 +28,7 @@ public sealed class SourceReferenceResolverPhysicalMappingTests
     public void ReturnedPhysicalStatesRetainExactCauses(int state, int expectedResolution, string expectedCause)
     {
         var catalogue = new SourceCatalogue(
-            workspace: SourceInventoryTestData.Workspace(),
+layout: WorkspaceLayout.Create(SourceInventoryTestData.Workspace(), WorkspaceLayout.DefaultMainRoot),
             candidates: [],
             sources: [],
             issues: [],
@@ -72,7 +74,7 @@ public sealed class SourceReferenceResolverPhysicalMappingTests
             physicalPath: physicalState == PhysicalPathState.Contained ? SourceInventoryTestData.Physical(CanonicalPath) : null,
             physicalParentPath: SourceInventoryTestData.Physical(".agents"));
         var catalogue = new SourceCatalogue(
-            workspace: SourceInventoryTestData.Workspace(),
+layout: WorkspaceLayout.Create(SourceInventoryTestData.Workspace(), WorkspaceLayout.DefaultMainRoot),
             candidates: [candidate],
             sources: [],
             issues: [],

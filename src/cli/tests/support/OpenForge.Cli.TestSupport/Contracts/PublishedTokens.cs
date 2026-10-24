@@ -6,6 +6,13 @@ namespace OpenForge.Cli.TestSupport.Contracts;
 // PublishedTokensTests checks every value against its production owner in the Unit suite.
 public static class PublishedTokens
 {
+    public static class LayoutData
+    {
+        public const string Layout = "layout";
+        public const string MainRoot = "mainRoot";
+        public const string LoaderPath = "loaderPath";
+    }
+
     public static class Library
     {
         public const string Command = "library";
@@ -367,6 +374,7 @@ public static class PublishedTokens
 
     public static class Json
     {
+        public const string SchemaVersion = "schemaVersion";
         public const string Effects = "effects";
         public const string After = "after";
         public const string Id = "id";

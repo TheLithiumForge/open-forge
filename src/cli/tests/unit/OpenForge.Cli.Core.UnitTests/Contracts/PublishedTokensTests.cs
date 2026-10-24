@@ -10,6 +10,9 @@ using OpenForge.Cli.Core.Presentation.Library.List.Models;
 using OpenForge.Cli.Core.Commands.Repair;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Shared.Models.Layout;
+using OpenForge.Cli.Core.Presentation.Status.Models;
+using OpenForge.Cli.Core.Presentation.Install.Models;
 using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.References;
@@ -77,6 +80,11 @@ public sealed class PublishedTokensTests
     public void EveryTokenMatchesItsOwner()
     {
 #pragma warning disable xUnit2000 // The projected constants are under test, and the production owners supply the expected values.
+        Assert.Equal(CliJsonFields.SchemaVersion, PublishedTokens.Json.SchemaVersion);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusData.Layout)), PublishedTokens.LayoutData.Layout);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(InstallData.Layout)), PublishedTokens.LayoutData.Layout);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(WorkspaceLayoutInfo.MainRoot)), PublishedTokens.LayoutData.MainRoot);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(WorkspaceLayoutInfo.LoaderPath)), PublishedTokens.LayoutData.LoaderPath);
         Assert.Equal(LibraryDefinitions.Group.Name, PublishedTokens.Library.Command);
         Assert.Equal(LibraryAttachDefinitions.Command.Name, PublishedTokens.Library.Attach);
         Assert.Equal(LibrarySyncDefinitions.Command.Name, PublishedTokens.Library.Sync);

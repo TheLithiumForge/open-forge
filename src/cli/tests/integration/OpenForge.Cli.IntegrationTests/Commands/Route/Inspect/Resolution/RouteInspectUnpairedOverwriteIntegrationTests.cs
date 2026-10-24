@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
@@ -23,7 +25,7 @@ public sealed class RouteInspectUnpairedOverwriteIntegrationTests
         workspace.Write(overwritePath, "unpaired overwrite");
         var before = workspace.SnapshotHashes();
         var catalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(workspace.Workspace, [SourceLogicalPath.AgentsRoot]), TestContext.Current.CancellationToken);
+            new SourceCatalogueRequest(WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot), [SourceLogicalPath.AgentsRoot]), TestContext.Current.CancellationToken);
         var selection = catalogue.SelectAll();
         Assert.Equal(2, selection.Sources.Count(source => source.Identity.AutomaticId == "root/leaf"));
         Assert.All(selection.Sources, source => Assert.Null(source.Overwrite));

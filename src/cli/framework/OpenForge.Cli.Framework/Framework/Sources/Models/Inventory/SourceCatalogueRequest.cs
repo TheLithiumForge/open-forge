@@ -7,8 +7,6 @@ namespace OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 internal sealed class SourceCatalogueRequest
 {
-    internal SourceCatalogueRequest(CliWorkspace workspace, IEnumerable<string> logicalRoots)
-        : this(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), logicalRoots) { }
 
     internal SourceCatalogueRequest(WorkspaceLayout layout, IEnumerable<string> logicalRoots)
     {

@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.Framework.Sources.Shared;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.References;
 
@@ -409,7 +410,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
     private static async ValueTask<SourceCatalogue> ReadCatalogueAsync(CliWorkspace workspace)
     {
         var catalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(workspace, [".agents"]),
+            new SourceCatalogueRequest(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [".agents"]),
             TestContext.Current.CancellationToken);
         Assert.False(catalogue.IsCancelled);
         Assert.NotNull(catalogue.FindByPath(SourcePath));

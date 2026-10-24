@@ -14,7 +14,8 @@ internal readonly record struct SourceContentRoots
 
     internal SourceContentRoots(WorkspaceLayout layout) : this(layout.MainRoot, layout.SourceRoots) { }
 
-    internal static SourceContentRoots Default { get; } = new(WorkspaceLayout.DefaultMainRoot, [WorkspaceLayout.DefaultMainRoot]);
+    /// <summary>The portable source coordinates used by shipped packages, independent of any consumer workspace.</summary>
+    internal static SourceContentRoots PackageCoordinates { get; } = new(WorkspaceLayout.DefaultMainRoot, [WorkspaceLayout.DefaultMainRoot]);
 
     internal string MainRoot { get; }
     internal ImmutableArray<string> SourceRoots { get; }

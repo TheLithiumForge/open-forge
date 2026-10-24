@@ -46,7 +46,7 @@ public sealed class RouteInitCanonicalRestorationIntegrationTests
         foreach (var asset in payload.Assets.Where(asset => asset.Path.StartsWith(directory + "/", StringComparison.Ordinal)))
         {
             Assert.True(workspace.Exists(asset.Path), asset.Path);
-            if (!SourceFormClassifier.TryClassify(SourceContentRoots.Default, asset.Path, out var form) || !SourceFormClassifier.IsEntrypoint(form))
+            if (!SourceFormClassifier.TryClassify(SourceContentRoots.PackageCoordinates, asset.Path, out var form) || !SourceFormClassifier.IsEntrypoint(form))
             {
                 Assert.Equal(asset.Bytes.ToArray(), await File.ReadAllBytesAsync(workspace.Combine(asset.Path), TestContext.Current.CancellationToken));
             }

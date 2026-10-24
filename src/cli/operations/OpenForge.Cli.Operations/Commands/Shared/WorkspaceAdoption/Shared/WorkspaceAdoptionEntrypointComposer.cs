@@ -17,9 +17,6 @@ internal sealed class WorkspaceAdoptionEntrypointComposer
 
     private readonly FrameworkDocumentMetadataEmitter _metadataEmitter = new();
 
-    internal WorkspaceAdoptionDocumentPlan Create(string canonicalPath, string newline, FrontmatterForm form)
-        => Create(SourceContentRoots.Default, canonicalPath, newline, form);
-
     internal WorkspaceAdoptionDocumentPlan Create(WorkspaceLayout layout, string canonicalPath, string newline, FrontmatterForm form)
         => Create(new SourceContentRoots(layout), canonicalPath, newline, form);
 

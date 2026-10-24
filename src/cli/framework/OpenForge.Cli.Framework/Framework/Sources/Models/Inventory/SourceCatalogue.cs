@@ -18,15 +18,6 @@ internal sealed class SourceCatalogue
     private readonly IReadOnlyDictionary<string, IReadOnlyList<(SourceLogicalSource Source, SourceLayer Layer)>> _layersByPhysicalPath;
 
     internal SourceCatalogue(
-        CliWorkspace workspace,
-        IEnumerable<SourceCandidate> candidates,
-        IEnumerable<SourceLogicalSource> sources,
-        IEnumerable<SourceCatalogueIssue> issues,
-        bool isCancelled,
-        IReadOnlyDictionary<string, string>? aliases = null)
-        : this(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), candidates, sources, issues, isCancelled, aliases) { }
-
-    internal SourceCatalogue(
         WorkspaceLayout layout,
         IEnumerable<SourceCandidate> candidates,
         IEnumerable<SourceLogicalSource> sources,

@@ -3,6 +3,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.References;
 
@@ -14,7 +16,7 @@ public sealed class SourceLinkFolderDestinationTests
     public async Task MissingFolderUsesFolderWording(string destination)
     {
         var workspace = SourceInventoryTestData.Workspace();
-        var catalogue = new SourceCatalogue(workspace, [], [], [], isCancelled: false);
+        var catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [], [], isCancelled: false);
         var resolver = new SourceLinkDestinationResolver(
             physicalPathResolver: (_, path) => PhysicalPathResolution.Classified(PhysicalPathState.Missing, path),
             strictUtf8Reader: (_, _, _) => throw new InvalidOperationException("Missing folders have no bytes to acquire."),
@@ -38,7 +40,7 @@ public sealed class SourceLinkFolderDestinationTests
     public async Task FolderEscapeRetainsFileBoundary()
     {
         var workspace = SourceInventoryTestData.Workspace();
-        var catalogue = new SourceCatalogue(workspace, [], [], [], isCancelled: false);
+        var catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [], [], isCancelled: false);
         var resolver = new SourceLinkDestinationResolver(
             physicalPathResolver: (_, path) => PhysicalPathResolution.Classified(PhysicalPathState.External, path),
             strictUtf8Reader: (_, _, _) => throw new InvalidOperationException(),
