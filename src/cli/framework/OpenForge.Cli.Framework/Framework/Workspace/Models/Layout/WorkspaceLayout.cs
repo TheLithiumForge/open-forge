@@ -84,7 +84,12 @@ internal sealed class WorkspaceLayout
             || SourceRoots.Any(root => string.Equals(path, root, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>Identifies implicit content destinations independently of any outside-route permission.</summary>
-    internal bool IsImplicitContentDestination(string path) => IsContentPath(path);
+    /// <remarks>Roots match ordinally, so a case alias of a content root needs explicit permission. On a
+    /// case-sensitive filesystem that alias is another folder outside the content locations.</remarks>
+    internal bool IsImplicitContentDestination(string path)
+        => TryGetSourceRelativePath(path, out _)
+            && (path.StartsWith(MainRoot + "/", StringComparison.Ordinal)
+                || path.StartsWith(NativeSkillsPath + "/", StringComparison.Ordinal));
 
     private static bool IsFixedControl(string path)
         => IsAtOrBelow(path, DefaultMainRoot + "/" + WorkspaceLayoutNames.SettingsFileName)

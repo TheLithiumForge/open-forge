@@ -51,7 +51,7 @@ public sealed class WorkspaceLayoutTests
         Assert.Equal(RelativeNote, relative);
         Assert.True(layout.TryGetSourceRelativePath(WorkspaceLayout.NativeSkillsPath + "/" + Note, out relative));
         Assert.Equal(Skill, relative);
-        Assert.True(layout.IsImplicitContentDestination(CustomRoot.ToUpperInvariant() + "/" + RelativeNote));
+        Assert.True(layout.IsImplicitContentDestination(CustomRoot + "/" + RelativeNote));
         foreach (var path in new[] { CustomRoot + "-old/" + Note, CustomRoot + "/" + Skill, DefaultLoader, Settings, CustomRoot + "/" + WorkspaceLayoutNames.GitMetadataDirectoryName + "/" + Note, OtherRoot + "/" + Note })
             Assert.False(layout.IsContentPath(path));
     }
@@ -73,6 +73,22 @@ public sealed class WorkspaceLayoutTests
             Assert.Equal(OtherRoot + "/" + RelativeNote, layout.MapPayloadPath(OtherRoot + "/" + RelativeNote));
         }
         Assert.False(Create(WorkspaceLayout.DefaultMainRoot).IsImplicitContentDestination(Settings));
+    }
+
+    [Fact(DisplayName = "Implicit admission matches content roots exactly, so a case alias needs permission")]
+    public void CaseAliasesAreNotImplicit()
+    {
+        foreach (var root in new[] { WorkspaceLayout.DefaultMainRoot, CustomRoot })
+        {
+            var layout = Create(root);
+            Assert.True(layout.IsImplicitContentDestination(root + "/" + RelativeNote));
+            Assert.True(layout.IsImplicitContentDestination(WorkspaceLayout.NativeSkillsPath + "/" + Note));
+            Assert.False(layout.IsImplicitContentDestination(root.ToUpperInvariant() + "/" + RelativeNote));
+        }
+        var custom = Create(CustomRoot);
+        Assert.False(custom.IsImplicitContentDestination(WorkspaceLayout.NativeSkillsPath.ToUpperInvariant() + "/" + Note));
+        Assert.False(custom.IsImplicitContentDestination(
+            WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceLayoutNames.SkillsDirectoryName.ToUpperInvariant() + "/" + Note));
     }
 
     public static TheoryData<string?> InvalidRoots => new()
