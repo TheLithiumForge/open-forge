@@ -1,5 +1,6 @@
-using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
@@ -9,11 +10,18 @@ namespace OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 /// </summary>
 internal static class WorkspaceRemovals
 {
+    private static readonly WorkspaceLayout DefaultLayout = WorkspaceLayout.Create(
+        new CliWorkspace(AppContext.BaseDirectory, AppContext.BaseDirectory, CliWorkspaceSelectionMethod.CurrentDirectory),
+        WorkspaceLayout.DefaultMainRoot);
+
     internal static bool IsPathRemoved(string path, WorkspaceSettingsDocument settings)
+        => IsPathRemoved(DefaultLayout, path, settings);
+
+    internal static bool IsPathRemoved(WorkspaceLayout layout, string path, WorkspaceSettingsDocument settings)
     {
         if (!settings.RemovedCategories.IsDefaultOrEmpty
             && settings.RemovedCategories.Any(category =>
-                IsSameOrDescendant(path, WorkspaceSettingsDefinitions.ImplicitPathPrefix + category)))
+                IsSameOrDescendant(path, layout.CategoryDirectory(category))))
         {
             return true;
         }

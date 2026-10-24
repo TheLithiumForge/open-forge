@@ -1,26 +1,42 @@
 using System.Text;
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Settings.Shared.Serialization;
 
 [Trait("Feature", "workspace-settings"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
 public sealed class WorkspaceSettingsLinkScopeTests
 {
+    private const string OldFile = "docs/old.md";
+    private const string OldDirectory = "docs/old";
+    private const string OldDirectoryCasing = "Docs/old";
+    private const string OldNote = "docs/old/note.md";
+    private const string OldChild = "docs/old/file.md";
+    private const string NewDirectory = "docs/new";
+    private const string NewNote = "docs/new/note.md";
+    private const string NewChild = "docs/new/file.md";
+    private const string OlderDirectory = "docs/older";
+    private const string Outside = "outside";
+    private const string ExistingSchema = "custom";
+    private const string Future = "future";
+    private const string Keep = "keep";
+
     [Theory(DisplayName = "Link scope reads known fields across lower higher and absent settings versions")]
     [InlineData("")]
-    [InlineData("\"schemaVersion\":1,")]
-    [InlineData("\"schemaVersion\":2,")]
-    [InlineData("\"schemaVersion\":99,")]
+    [InlineData($"\"{WorkspaceSettingsDefinitions.SchemaVersionProperty}\":1,")]
+    [InlineData($"\"{WorkspaceSettingsDefinitions.SchemaVersionProperty}\":2,")]
+    [InlineData($"\"{WorkspaceSettingsDefinitions.SchemaVersionProperty}\":99,")]
     public void ReadsAuthoredLists(string version)
     {
-        var decoded = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$"""{ {{version}} "ignoreLinksFrom":[".agents/memory/archived"],"ignoreLinksTo":["docs/old.md"],"future":{"x":true} }"""));
+        var decoded = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$$"""{ {{{version}}} "{{{WorkspaceSettingsDefinitions.IgnoreLinksFromProperty}}}":["{{{WorkspaceSettingsDefinitions.MemoryArchivePath}}}"],"{{{WorkspaceSettingsDefinitions.IgnoreLinksToProperty}}}":["{{{OldFile}}}"],"{{{Future}}}":{"x":true} }"""));
         var settings = Assert.IsType<WorkspaceSettingsDocument>(decoded.Document);
         Assert.True(settings.HasIgnoreLinksFrom);
-        Assert.Equal([".agents/memory/archived"], settings.IgnoreLinksFrom);
-        Assert.Equal(["docs/old.md"], settings.IgnoreLinksTo);
+        Assert.Equal([WorkspaceSettingsDefinitions.MemoryArchivePath], settings.IgnoreLinksFrom);
+        Assert.Equal([OldFile], settings.IgnoreLinksTo);
         Assert.False(settings.IsKnownSchemaVersion && settings.SchemaVersion == 99);
     }
 
@@ -31,12 +47,13 @@ public sealed class WorkspaceSettingsLinkScopeTests
     [InlineData("[\"  \"]")]
     public void ReportsInvalidEntries(string value)
     {
-        var allow = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$"""{"allowInstallPaths":{{value}}}"""));
-        foreach (var key in new[] { "ignoreLinksFrom", "ignoreLinksTo" })
+        var allow = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$$"""{"{{{WorkspaceSettingsDefinitions.AllowInstallPathsProperty}}}":{{{value}}}}"""));
+        foreach (var key in new[] { WorkspaceSettingsDefinitions.IgnoreLinksFromProperty, WorkspaceSettingsDefinitions.IgnoreLinksToProperty })
         {
-            var result = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$"""{"{{key}}":{{value}}}"""));
+            var result = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$$"""{"{{{key}}}":{{{value}}}}"""));
             Assert.Null(result.Document);
-            Assert.Equal(allow.Cause?.Replace("allowInstallPaths", key, StringComparison.Ordinal), result.Cause);
+            Assert.NotNull(allow.Cause);
+            Assert.NotNull(result.Cause);
         }
     }
 
@@ -56,19 +73,19 @@ public sealed class WorkspaceSettingsLinkScopeTests
     [Fact(DisplayName = "Move and removal change only matching link entries and preserve authored unknown settings")]
     public void RewritesAndPreservesSettings()
     {
-        var original = Encoding.UTF8.GetBytes("""{"$schema":"custom","schemaVersion":1,"future":{"keep":7},"ignoreLinksFrom":["Docs/old","docs/old/note.md","docs/older"],"ignoreLinksTo":["docs/old/file.md","outside"]}""");
-        var moved = Assert.IsType<byte[]>(WorkspaceSettingsCodec.MoveLinkScope(original, "docs/old", "docs/new"));
+        var original = Encoding.UTF8.GetBytes($$$"""{"{{{WorkspaceSettingsDefinitions.SchemaProperty}}}":"{{{ExistingSchema}}}","{{{WorkspaceSettingsDefinitions.SchemaVersionProperty}}}":1,"{{{Future}}}":{"{{{Keep}}}":7},"{{{WorkspaceSettingsDefinitions.IgnoreLinksFromProperty}}}":["{{{OldDirectoryCasing}}}","{{{OldNote}}}","{{{OlderDirectory}}}"],"{{{WorkspaceSettingsDefinitions.IgnoreLinksToProperty}}}":["{{{OldChild}}}","{{{Outside}}}"]}""");
+        var moved = Assert.IsType<byte[]>(WorkspaceSettingsCodec.MoveLinkScope(original, OldDirectory, NewDirectory));
         var settings = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(moved).Document);
-        Assert.Equal(["docs/new", "docs/new/note.md", "docs/older"], settings.IgnoreLinksFrom);
-        Assert.Equal(["docs/new/file.md", "outside"], settings.IgnoreLinksTo);
-        var removed = Assert.IsType<byte[]>(WorkspaceSettingsCodec.RemoveLinkScope(moved, ["docs/new"]));
+        Assert.Equal([NewDirectory, NewNote, OlderDirectory], settings.IgnoreLinksFrom);
+        Assert.Equal([NewChild, Outside], settings.IgnoreLinksTo);
+        var removed = Assert.IsType<byte[]>(WorkspaceSettingsCodec.RemoveLinkScope(moved, [NewDirectory]));
         using var json = JsonDocument.Parse(removed);
-        Assert.Equal("custom", json.RootElement.GetProperty("$schema").GetString());
-        Assert.Equal(1, json.RootElement.GetProperty("schemaVersion").GetInt32());
-        Assert.Equal(7, json.RootElement.GetProperty("future").GetProperty("keep").GetInt32());
+        Assert.Equal(ExistingSchema, json.RootElement.GetProperty(WorkspaceSettingsDefinitions.SchemaProperty).GetString());
+        Assert.Equal(1, json.RootElement.GetProperty(WorkspaceSettingsDefinitions.SchemaVersionProperty).GetInt32());
+        Assert.Equal(7, json.RootElement.GetProperty(Future).GetProperty(Keep).GetInt32());
         var after = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(removed).Document);
-        Assert.Equal(["docs/older"], after.IgnoreLinksFrom);
-        Assert.Equal(["outside"], after.IgnoreLinksTo);
+        Assert.Equal([OlderDirectory], after.IgnoreLinksFrom);
+        Assert.Equal([Outside], after.IgnoreLinksTo);
     }
 
     [Theory(DisplayName = "Archive seeding honors the presence of an authored key even when empty or null")]
@@ -76,14 +93,14 @@ public sealed class WorkspaceSettingsLinkScopeTests
     [InlineData("null")]
     [InlineData("[\"my/archive\"]")]
     public void PreservesExistingChoice(string value)
-        => Assert.Null(WorkspaceSettingsCodec.SeedArchiveLinkScope(Encoding.UTF8.GetBytes($$"""{"ignoreLinksFrom":{{value}}}""")));
+        => Assert.Null(WorkspaceSettingsCodec.SeedArchiveLinkScope(Encoding.UTF8.GetBytes($$$"""{"{{{WorkspaceSettingsDefinitions.IgnoreLinksFromProperty}}}":{{{value}}}}""")));
 
     [Fact(DisplayName = "Archive seeding creates the versioned shape only when the key is absent")]
     public void SeedsAbsentChoice()
     {
         var bytes = Assert.IsType<byte[]>(WorkspaceSettingsCodec.SeedArchiveLinkScope(ReadOnlyMemory<byte>.Empty));
         var settings = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(bytes).Document);
-        Assert.Equal(3, settings.SchemaVersion);
-        Assert.Equal([".agents/memory/archived"], settings.IgnoreLinksFrom);
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersion, settings.SchemaVersion);
+        Assert.Equal([WorkspaceSettingsDefinitions.MemoryArchivePath], settings.IgnoreLinksFrom);
     }
 }

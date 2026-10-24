@@ -1,26 +1,35 @@
+using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Settings.Shared.Mutation;
 
 [Trait("Feature", "workspace-settings"), Trait("Evidence", "Unit")]
 public sealed class WorkspaceSettingsConfigurationTests
 {
+    private const string Foreign = "foreign";
+    private const string Keep = "keep";
+    private const string OldFile = "docs/old.md";
+    private const string NewFile = "docs/new.md";
+    private const string KeptFile = "docs/keep.md";
+
     [Theory(DisplayName = "Configuration combines removals and the frontmatter preference in one settings effect"), Trait("Boundary", "Processing")]
     [InlineData(false), InlineData(true)]
     public void ConfigurationCombinesRemovalsAndFormInOneEffect(bool present)
     {
-        var path = Path.GetFullPath("settings-unit/open-forge.json");
+        var path = Path.GetFullPath("settings-unit/" + WorkspaceSettingsDefinitions.FileName);
         var observation = WorkspaceSettingsRead.Absent(path);
         if (present)
         {
-            var bytes = """{"foreign":{"keep":true},"frontmatter":"scoped","removedFiles":["docs/old.md","docs/keep.md"]}"""u8.ToArray();
+            var bytes = Encoding.UTF8.GetBytes($$$"""{"{{{Foreign}}}":{"{{{Keep}}}":true},"{{{WorkspaceSettingsDefinitions.FrontmatterProperty}}}":"{{{WorkspaceSettingsDefinitions.FrontmatterScopedName}}}","{{{WorkspaceSettingsDefinitions.RemovedFilesProperty}}}":["{{{OldFile}}}","{{{KeptFile}}}"]}""").ToArray();
             observation = observation with
             {
                 State = WorkspaceSettingsReadState.Complete,
@@ -31,33 +40,33 @@ public sealed class WorkspaceSettingsConfigurationTests
 
         var change = Assert.IsType<PlannedFileChange>(WorkspaceSettingsChangePlanner.PlanConfiguration(
             observation,
-            additions: new WorkspaceRemovalSelection { Files = ["docs/new.md"] },
-            clear: new WorkspaceRemovalSelection { Files = ["docs/old.md"] },
+            additions: new WorkspaceRemovalSelection { Files = [NewFile] },
+            clear: new WorkspaceRemovalSelection { Files = [OldFile] },
             frontmatter: FrontmatterForm.Root));
 
         Assert.Equal(present ? PlannedFileChangeKind.Replace : PlannedFileChangeKind.Create, change.Kind);
         Assert.Equal(observation.Snapshot!.Expectation, change.Expectation);
         var document = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(change.IntendedBytes.AsMemory()).Document);
         Assert.Equal(FrontmatterForm.Root, document.DeclaredFrontmatter);
-        string[] expectedFiles = present ? ["docs/keep.md", "docs/new.md"] : ["docs/new.md"];
+        string[] expectedFiles = present ? [KeptFile, NewFile] : [NewFile];
         Assert.Equal(expectedFiles, document.RemovedFiles);
         using var json = JsonDocument.Parse(change.IntendedBytes.AsMemory());
         if (present)
         {
-            Assert.True(json.RootElement.GetProperty("foreign").GetProperty("keep").GetBoolean());
-            Assert.Equal(["foreign", "frontmatter", "removedFiles"], json.RootElement.EnumerateObject().Select(property => property.Name));
+            Assert.True(json.RootElement.GetProperty(Foreign).GetProperty(Keep).GetBoolean());
+            Assert.Equal([Foreign, WorkspaceSettingsDefinitions.FrontmatterProperty, WorkspaceSettingsDefinitions.RemovedFilesProperty], json.RootElement.EnumerateObject().Select(property => property.Name));
         }
         else
         {
-            Assert.Equal(3, json.RootElement.GetProperty("schemaVersion").GetInt32());
+            Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersion, json.RootElement.GetProperty(WorkspaceSettingsDefinitions.SchemaVersionProperty).GetInt32());
         }
     }
 
     [Fact(DisplayName = "Configuration with no requested settings changes retains authored bytes"), Trait("Boundary", "Processing")]
     public void ConfigurationWithoutFrontmatterChangePreservesExistingBehavior()
     {
-        var path = Path.GetFullPath("settings-unit/open-forge.json");
-        var bytes = "{ /* keep */ \"frontmatter\":\"root\", \"foreign\":true }\r\n"u8.ToArray();
+        var path = Path.GetFullPath("settings-unit/" + WorkspaceSettingsDefinitions.FileName);
+        var bytes = Encoding.UTF8.GetBytes($"{{ /* keep */ \"{WorkspaceSettingsDefinitions.FrontmatterProperty}\":\"{WorkspaceSettingsDefinitions.FrontmatterRootName}\", \"{Foreign}\":true }}\r\n").ToArray();
         var observation = WorkspaceSettingsRead.Absent(path) with
         {
             State = WorkspaceSettingsReadState.Complete,
@@ -74,7 +83,7 @@ public sealed class WorkspaceSettingsConfigurationTests
     [InlineData(false), InlineData(true)]
     public void FormOnlyConfigurationAuthorsMissingScopedKey(bool present)
     {
-        var path = Path.GetFullPath("settings-unit/open-forge.json");
+        var path = Path.GetFullPath("settings-unit/" + WorkspaceSettingsDefinitions.FileName);
         var observation = WorkspaceSettingsRead.Absent(path);
         if (present)
         {

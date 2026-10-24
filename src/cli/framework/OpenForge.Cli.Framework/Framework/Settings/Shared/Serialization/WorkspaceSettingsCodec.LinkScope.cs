@@ -9,10 +9,15 @@ namespace OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 internal static partial class WorkspaceSettingsCodec
 {
     internal static byte[]? SeedArchiveLinkScope(ReadOnlyMemory<byte> existing)
+        => SeedArchiveLinkScope(existing, WorkspaceSettingsDefinitions.MemoryArchivePath);
+
+    internal static byte[]? SeedArchiveLinkScope(ReadOnlyMemory<byte> existing, string archivePath)
     {
+        if (!PortableWorkspacePath.TryNormalize(archivePath, out _))
+            throw new ArgumentException("The archive path must be canonical and relative.", nameof(archivePath));
         var settings = ReadSettingsObject(existing);
         if (settings.ContainsKey(WorkspaceSettingsDefinitions.IgnoreLinksFromProperty)) return null;
-        settings[WorkspaceSettingsDefinitions.IgnoreLinksFromProperty] = new JsonArray(JsonValue.Create(WorkspaceSettingsDefinitions.MemoryArchivePath));
+        settings[WorkspaceSettingsDefinitions.IgnoreLinksFromProperty] = new JsonArray(JsonValue.Create(archivePath));
         return WriteSettingsObject(settings);
     }
 

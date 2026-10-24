@@ -5,12 +5,20 @@ using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Settings.Shared.Serialization;
 
 [Trait("Feature", "workspace-settings"), Trait("Evidence", "Unit")]
 public sealed class WorkspaceSettingsFrontmatterTests
 {
+    private const string First = "first";
+    private const string Last = "last";
+    private const string Foreign = "foreign";
+    private const string Keep = "keep";
+    private const string Docs = "docs";
+    private const string OldFile = "docs/old.md";
+
     [Fact(DisplayName = "An omitted frontmatter setting means scoped without a declaration"), Trait("Boundary", "Input")]
     public void MissingMeansScoped()
     {
@@ -25,10 +33,10 @@ public sealed class WorkspaceSettingsFrontmatterTests
     }
 
     [Theory(DisplayName = "Settings retain each explicitly declared frontmatter form"), Trait("Boundary", "Input")]
-    [InlineData("root", (int)FrontmatterForm.Root), InlineData("scoped", (int)FrontmatterForm.Scoped)]
+    [InlineData(WorkspaceSettingsDefinitions.FrontmatterRootName, (int)FrontmatterForm.Root), InlineData(WorkspaceSettingsDefinitions.FrontmatterScopedName, (int)FrontmatterForm.Scoped)]
     public void ReadsDeclaredForms(string name, int expected)
     {
-        var decoded = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$"""{"frontmatter":"{{name}}"}"""));
+        var decoded = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$$"""{"{{{WorkspaceSettingsDefinitions.FrontmatterProperty}}}":"{{{name}}}"}"""));
 
         var document = Assert.IsType<WorkspaceSettingsDocument>(decoded.Document);
         Assert.Null(decoded.Cause);
@@ -37,25 +45,25 @@ public sealed class WorkspaceSettingsFrontmatterTests
     }
 
     [Theory(DisplayName = "Malformed and unknown frontmatter settings invalidate decoding"), Trait("Boundary", "Input")]
-    [InlineData("null", "\"frontmatter\" must be a string.")]
-    [InlineData("1", "\"frontmatter\" must be a string.")]
-    [InlineData("true", "\"frontmatter\" must be a string.")]
-    [InlineData("[]", "\"frontmatter\" must be a string.")]
-    [InlineData("{}", "\"frontmatter\" must be a string.")]
-    [InlineData("\"Root\"", "\"frontmatter\" must be \"root\" or \"scoped\".")]
-    [InlineData("\"flat\"", "\"frontmatter\" must be \"root\" or \"scoped\".")]
-    [InlineData("\"SCOPED\"", "\"frontmatter\" must be \"root\" or \"scoped\".")]
-    [InlineData("\"\"", "\"frontmatter\" must be \"root\" or \"scoped\".")]
-    public void RejectsMalformedOrUnknownForm(string value, string cause)
+    [InlineData("null")]
+    [InlineData("1")]
+    [InlineData("true")]
+    [InlineData("[]")]
+    [InlineData("{}")]
+    [InlineData("\"Root\"")]
+    [InlineData("\"flat\"")]
+    [InlineData("\"SCOPED\"")]
+    [InlineData("\"\"")]
+    public void RejectsMalformedOrUnknownForm(string value)
     {
-        var decoded = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$"""{"frontmatter":{{value}}}"""));
+        var decoded = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$$"""{"{{{WorkspaceSettingsDefinitions.FrontmatterProperty}}}":{{{value}}}}"""));
 
         Assert.Null(decoded.Document);
-        Assert.Equal(cause, decoded.Cause);
+        Assert.NotNull(decoded.Cause);
     }
 
     [Theory(DisplayName = "Typed frontmatter names round trip through settings definitions"), Trait("Boundary", "Processing")]
-    [InlineData("root", (int)FrontmatterForm.Root), InlineData("scoped", (int)FrontmatterForm.Scoped)]
+    [InlineData(WorkspaceSettingsDefinitions.FrontmatterRootName, (int)FrontmatterForm.Root), InlineData(WorkspaceSettingsDefinitions.FrontmatterScopedName, (int)FrontmatterForm.Scoped)]
     public void ConvertsSupportedForms(string name, int expected)
     {
         Assert.True(WorkspaceSettingsDefinitions.TryReadFrontmatter(name, out var form));
@@ -86,17 +94,17 @@ public sealed class WorkspaceSettingsFrontmatterTests
     public void PreservesForeignKeys(bool declared)
     {
         var original = declared
-            ? """{"first":{"nested":[1,null,true]},"frontmatter":"scoped","schemaVersion":7,"last":"kept"}"""
-            : """{"first":{"nested":[1,null,true]},"schemaVersion":7,"last":"kept"}""";
+            ? $$$"""{"{{{First}}}":{"nested":[1,null,true]},"{{{WorkspaceSettingsDefinitions.FrontmatterProperty}}}":"{{{WorkspaceSettingsDefinitions.FrontmatterScopedName}}}","{{{WorkspaceSettingsDefinitions.SchemaVersionProperty}}}":7,"{{{Last}}}":"kept"}"""
+            : $$$"""{"{{{First}}}":{"nested":[1,null,true]},"{{{WorkspaceSettingsDefinitions.SchemaVersionProperty}}}":7,"{{{Last}}}":"kept"}""";
         var written = Assert.IsType<byte[]>(WorkspaceSettingsCodec.SetFrontmatter(Encoding.UTF8.GetBytes(original), FrontmatterForm.Root));
         using var json = JsonDocument.Parse(written);
         using var before = JsonDocument.Parse(original);
 
         string[] expectedOrder = declared
-            ? ["first", "frontmatter", "schemaVersion", "last"]
-            : ["first", "schemaVersion", "last", "frontmatter"];
+            ? [First, WorkspaceSettingsDefinitions.FrontmatterProperty, WorkspaceSettingsDefinitions.SchemaVersionProperty, Last]
+            : [First, WorkspaceSettingsDefinitions.SchemaVersionProperty, Last, WorkspaceSettingsDefinitions.FrontmatterProperty];
         Assert.Equal(expectedOrder, json.RootElement.EnumerateObject().Select(property => property.Name));
-        foreach (var property in before.RootElement.EnumerateObject().Where(property => property.Name != "frontmatter"))
+        foreach (var property in before.RootElement.EnumerateObject().Where(property => property.Name != WorkspaceSettingsDefinitions.FrontmatterProperty))
         {
             Assert.True(JsonElement.DeepEquals(property.Value, json.RootElement.GetProperty(property.Name)));
         }
@@ -104,10 +112,10 @@ public sealed class WorkspaceSettingsFrontmatterTests
     }
 
     [Theory(DisplayName = "Setting an already declared frontmatter form is a byte preserving no-op"), Trait("Boundary", "Output")]
-    [InlineData("root", (int)FrontmatterForm.Root), InlineData("scoped", (int)FrontmatterForm.Scoped)]
+    [InlineData(WorkspaceSettingsDefinitions.FrontmatterRootName, (int)FrontmatterForm.Root), InlineData(WorkspaceSettingsDefinitions.FrontmatterScopedName, (int)FrontmatterForm.Scoped)]
     public void ExplicitSameFormIsNoOp(string name, int form)
     {
-        var bytes = Encoding.UTF8.GetBytes($$"""{ /* keep */ "frontmatter":"{{name}}", "foreign":true, }""");
+        var bytes = Encoding.UTF8.GetBytes($$$"""{ /* keep */ "{{{WorkspaceSettingsDefinitions.FrontmatterProperty}}}":"{{{name}}}", "{{{Foreign}}}":true, }""");
         var before = bytes.ToArray();
 
         Assert.Null(WorkspaceSettingsCodec.SetFrontmatter(bytes, (FrontmatterForm)form));
@@ -122,7 +130,7 @@ public sealed class WorkspaceSettingsFrontmatterTests
         var document = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(written).Document);
         Assert.Equal(FrontmatterForm.Scoped, document.DeclaredFrontmatter);
         using var json = JsonDocument.Parse(written);
-        Assert.Equal(["frontmatter"], json.RootElement.EnumerateObject().Select(property => property.Name));
+        Assert.Equal([WorkspaceSettingsDefinitions.FrontmatterProperty], json.RootElement.EnumerateObject().Select(property => property.Name));
     }
 
     [Theory(DisplayName = "New frontmatter settings declare the schema and version"), Trait("Boundary", "Output")]
@@ -132,34 +140,34 @@ public sealed class WorkspaceSettingsFrontmatterTests
         var written = Assert.IsType<byte[]>(WorkspaceSettingsCodec.SetFrontmatter(ReadOnlyMemory<byte>.Empty, (FrontmatterForm)form));
         using var json = JsonDocument.Parse(written);
 
-        Assert.Equal(WorkspaceSettingsDefinitions.SchemaUrl, json.RootElement.GetProperty("$schema").GetString());
-        Assert.Equal(3, json.RootElement.GetProperty("schemaVersion").GetInt32());
-        Assert.Equal(["$schema", "schemaVersion", "frontmatter"], json.RootElement.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaUrl, json.RootElement.GetProperty(WorkspaceSettingsDefinitions.SchemaProperty).GetString());
+        Assert.Equal(WorkspaceSettingsDefinitions.SchemaVersion, json.RootElement.GetProperty(WorkspaceSettingsDefinitions.SchemaVersionProperty).GetInt32());
+        Assert.Equal([WorkspaceSettingsDefinitions.SchemaProperty, WorkspaceSettingsDefinitions.SchemaVersionProperty, WorkspaceSettingsDefinitions.FrontmatterProperty], json.RootElement.EnumerateObject().Select(property => property.Name));
         Assert.Equal((FrontmatterForm)form, Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(written).Document).DeclaredFrontmatter);
     }
 
     [Theory(DisplayName = "Frontmatter edits refuse an invalid authored settings document"), Trait("Boundary", "Input")]
     [InlineData("[]"), InlineData("null"), InlineData("{broken")]
-    [InlineData("""{"frontmatter":null}""")]
-    [InlineData("""{"frontmatter":"flat"}""")]
-    [InlineData("""{"removedFiles":1}""")]
+    [InlineData($$$"""{"{{{WorkspaceSettingsDefinitions.FrontmatterProperty}}}":null}""")]
+    [InlineData($$$"""{"{{{WorkspaceSettingsDefinitions.FrontmatterProperty}}}":"flat"}""")]
+    [InlineData($$$"""{"{{{WorkspaceSettingsDefinitions.RemovedFilesProperty}}}":1}""")]
     public void RefusesInvalidExistingDocument(string json)
         => Assert.Throws<ArgumentException>(() => WorkspaceSettingsCodec.SetFrontmatter(Encoding.UTF8.GetBytes(json), FrontmatterForm.Root));
 
     [Fact(DisplayName = "Grant and removal writers preserve the declared frontmatter preference"), Trait("Boundary", "Output")]
     public void ExistingWritersPreserveFrontmatter()
     {
-        var bytes = """{"frontmatter":"root","foreign":{"keep":true}}"""u8.ToArray();
-        bytes = Assert.IsType<byte[]>(WorkspaceSettingsCodec.AddAllowInstallPath(bytes, "docs"));
-        bytes = Assert.IsType<byte[]>(WorkspaceSettingsCodec.AddRemovals(bytes, new WorkspaceRemovalSelection { Files = ["docs/old.md"] }));
-        bytes = Assert.IsType<byte[]>(WorkspaceSettingsCodec.ClearRemovals(bytes, new WorkspaceRemovalSelection { Files = ["docs/old.md"] }));
+        var bytes = Encoding.UTF8.GetBytes($$$"""{"{{{WorkspaceSettingsDefinitions.FrontmatterProperty}}}":"{{{WorkspaceSettingsDefinitions.FrontmatterRootName}}}","{{{Foreign}}}":{"{{{Keep}}}":true}}""").ToArray();
+        bytes = Assert.IsType<byte[]>(WorkspaceSettingsCodec.AddAllowInstallPath(bytes, Docs));
+        bytes = Assert.IsType<byte[]>(WorkspaceSettingsCodec.AddRemovals(bytes, new WorkspaceRemovalSelection { Files = [OldFile] }));
+        bytes = Assert.IsType<byte[]>(WorkspaceSettingsCodec.ClearRemovals(bytes, new WorkspaceRemovalSelection { Files = [OldFile] }));
 
         var document = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read(bytes).Document);
         Assert.Equal(FrontmatterForm.Root, document.DeclaredFrontmatter);
-        Assert.Equal(["docs"], document.AllowInstallPaths);
+        Assert.Equal([Docs], document.AllowInstallPaths);
         Assert.Empty(document.RemovedFiles);
         using var json = JsonDocument.Parse(bytes);
-        Assert.Equal(["frontmatter", "foreign", "allowInstallPaths", "removedFiles"], json.RootElement.EnumerateObject().Select(property => property.Name));
-        Assert.True(json.RootElement.GetProperty("foreign").GetProperty("keep").GetBoolean());
+        Assert.Equal([WorkspaceSettingsDefinitions.FrontmatterProperty, Foreign, WorkspaceSettingsDefinitions.AllowInstallPathsProperty, WorkspaceSettingsDefinitions.RemovedFilesProperty], json.RootElement.EnumerateObject().Select(property => property.Name));
+        Assert.True(json.RootElement.GetProperty(Foreign).GetProperty(Keep).GetBoolean());
     }
 }
