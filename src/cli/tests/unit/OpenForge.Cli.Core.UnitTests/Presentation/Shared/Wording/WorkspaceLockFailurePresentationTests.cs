@@ -27,6 +27,7 @@ using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 using OpenForge.Cli.Core.Commands.Remove.Models.Result;
+using OpenForge.Cli.Core.Commands.Remove;
 using OpenForge.Cli.Core.Commands.Repair;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
@@ -71,7 +72,6 @@ public sealed partial class WorkspaceLockFailurePresentationTests
     private const string WorkspaceName = "lock-presentation";
     private const string WorkspacePlaceholder = "<workspace>";
     private const string TopicName = "topic.md";
-    private const string TargetKind = "path";
     private const string BundleName = "bundle.zip";
     private const string DeniedCause = "Access was denied";
     private const string LegacyUnavailableCause = "The legacy location is unavailable";
@@ -141,7 +141,7 @@ public sealed partial class WorkspaceLockFailurePresentationTests
             { LockFailure = failure }],
         }), UpdatePresentation.Rendering, failure, UpdateDefinitions.ReadMachineName(cancelled ? UpdateFindingCode.Interrupted : UpdateFindingCode.WorkspaceUnsafe), status);
 
-        Verify(RemoveResult.Refused(Workspace, $"{SourceLogicalPath.AgentsRoot}/{TopicName}", TargetKind,
+        Verify(RemoveResult.Refused(Workspace, $"{SourceLogicalPath.AgentsRoot}/{TopicName}", RemoveDefinitions.PathKind,
             cancelled ? RemoveFindingCode.Interrupted : RemoveFindingCode.WorkspaceLockUnavailable,
             status, rawCause, lockFailure: failure), RemovePresentation.Rendering, failure,
             RemoveReportSelector.FindingCode(cancelled ? RemoveFindingCode.Interrupted : RemoveFindingCode.WorkspaceLockUnavailable), status);

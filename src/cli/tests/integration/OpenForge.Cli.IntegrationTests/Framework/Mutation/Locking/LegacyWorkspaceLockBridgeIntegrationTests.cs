@@ -14,6 +14,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 [Trait("Boundary", "OS"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
 public sealed class LegacyWorkspaceLockBridgeIntegrationTests
 {
+    // The legacy bridge relies on read-only and read-write exclusive handles excluding each other on every OS, and the next test covers Open Forge's use of that contract.
     [Theory(DisplayName = "Legacy read-only and read-write handles exclude each other in both directions")]
     [InlineData(false), InlineData(true)]
     public void LegacyAccessDirectionsExcludeEachOther(bool readOnly)

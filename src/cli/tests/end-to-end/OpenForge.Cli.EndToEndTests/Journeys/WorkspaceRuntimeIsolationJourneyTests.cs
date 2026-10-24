@@ -26,6 +26,13 @@ public sealed partial class WorkspaceRuntimeIsolationJourneyTests
         Assert.Equal(before, workspace.SnapshotState(includeRuntime: true));
         Assert.False(Directory.Exists(TestDataHome.LocalRuntimeDirectory(workspace.Path)));
 
+        var runtime = Directory.CreateDirectory(TestDataHome.LocalRuntimeDirectory(workspace.Path));
+        var emptyRuntimePreview = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, Tokens.Install.Automatic, Tokens.Install.DryRun));
+        Assert.Equal(0, emptyRuntimePreview.ExitCode);
+        Assert.Equal(preview.StandardOutput, emptyRuntimePreview.StandardOutput);
+        Assert.Equal(preview.StandardError, emptyRuntimePreview.StandardError);
+        Assert.Empty(Directory.EnumerateFileSystemEntries(runtime.FullName));
+
         var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, Tokens.Install.Automatic));
         Assert.Equal(0, installed.ExitCode);
         Assert.Equal(Tokens.Runtime.IgnoreContent, File.ReadAllText(TestDataHome.LocalRuntimeIgnorePath(workspace.Path)));
