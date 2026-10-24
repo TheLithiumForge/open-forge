@@ -8,7 +8,7 @@ namespace OpenForge.Cli.EndToEndTests;
 [Trait("Feature", "install-main-root"), Trait("Evidence", "EndToEnd")]
 public sealed class PublishedMainRootDefaultCompatibilityProcessTests
 {
-    [Theory(DisplayName = "Omitted and explicit default roots preserve pre-activation paths bytes ownership regions and output")]
+    [Theory(DisplayName = "Omitted and explicit default roots preserve reviewed paths bytes ownership regions and output")]
     [InlineData(false), InlineData(true)]
     public async Task ExactDefaultCompatibility(bool explicitRoot)
     {

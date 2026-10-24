@@ -15,6 +15,7 @@ Establish or configure the Framework bundled in the running CLI. Install does no
 | Flag                                                | Meaning                                                                                                                                             |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--configure`                                       | Revisit an installed setup, restore eligible missing selected defaults, or convert unedited owned files to the selected frontmatter form            |
+| `--main-root <folder>`                               | Choose the context folder at first installation. Default: `--main-root .agents`. A custom folder must be absent or empty                             |
 | `--preset <minimal\|essentials\|full-core\|custom>` | Select built-in routes. On an installed workspace, an explicit preset also requires `--configure`                                                   |
 | `--frontmatter <root\|scoped>`                      | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
 | `--route <id>=<add\|remove\|git-ignore>`            | Override a Custom or Minimal row. Requires `--preset custom` or `--preset minimal`. Repeat for more rows                                            |
@@ -24,13 +25,17 @@ Establish or configure the Framework bundled in the running CLI. Install does no
 
 First interactive Install offers the recommended Minimal, then Essentials, Full Core and Custom. Each built-in preset includes the one before it. Configure offers the current choices. Ordinary repeated Install retains its quiet no-op or divergence behavior.
 
+Before route choices, first interactive Install asks `Where should Open Forge keep its context files?` unless `--main-root` supplied the folder. An unattended first installation defaults to `--main-root .agents`. The loader, human guide and ordinary categories use the selected folder. Native Skills stay in `.agents/skills/`, settings in `.agents/open-forge.json`, and ownership in `.agents/open-forge.lock.json`. The workspace-root host files point to the selected loader.
+
+An omitted or unchanged `--main-root` keeps ordinary Install behavior. A different root on an established installation is refused before changes, including with `--configure`. Relocation is not available yet. Editing `mainRoot` in settings moves no files. Older CLIs do not support custom roots.
+
 After the preset choice, first interactive Install asks `How should Open Forge write file metadata?` with root preselected. An explicit `--frontmatter` skips the question. A fresh Install keeps an explicit preference already in settings unless the flag overrides it. Without either, fresh unattended Install uses root. Interactive Configure offers the current form first. Ordinary repeated Install and Update retain the form and never ask.
 
 Install, Update, and Extension delivery use `frontmatter` in `.agents/open-forge.json`. A missing value means scoped. Both root and scoped frontmatter are read in every workspace. The plan shows the selected form, such as `Frontmatter: root`, or a change such as `Frontmatter: scoped -> root`.
 
-When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `[".agents/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 3. Existing settings keep the version they declare.
+When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `[".agents/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 4 for every layout. Unrelated rewrites preserve an existing schema declaration. Explicitly selecting a custom root can update it to v4.
 
-An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
+A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands. This does not make an older CLI compatible with custom roots.
 
 Root keys are recommended. Choose the scoped form when other tools already use top-level frontmatter keys. The interactive plan starts with `Review changes`. Plan and result recap the setup, added routes, Git-ignored contents, left-out routes, and frontmatter form. Configure also reports changed row choices and retention of existing files.
 
@@ -57,13 +62,25 @@ Git-ignore first adds or restores the ordinary route and records its policy in `
 
 Index uses the lock's recorded route policy to omit private child files and nested private entrypoints from shareable `Entries`. It still maintains the whitelisted entrypoint and its parent route link. Context, Find, and References can read local private files when selected. Git-ignore does not define loading authority. The CLI neither stages files nor untracks files already committed to Git.
 
-Dry-run, automatic, JSON, and redirected requests never ask setup questions. Noninteractive Configure requires an explicit `--preset` or `--frontmatter`. On an installed workspace, `--frontmatter` requires `--configure`. Form-only `install --configure --frontmatter <form>` keeps route choices unchanged. Ordinary unattended first Install uses Full Core and retains existing omissions. Name the preset in both a fresh installation preview and its apply request. An omitted preset uses Full Core in unattended mode, while the first interactive choice is Essentials.
+Dry-run, automatic, JSON, and redirected requests never ask setup questions. Noninteractive Configure requires an explicit `--preset` or `--frontmatter`. On an installed workspace, `--frontmatter` requires `--configure`. Form-only `install --configure --frontmatter <form>` keeps route choices unchanged. Ordinary unattended first Install uses Full Core and retains existing omissions. Name the preset in both a fresh installation preview and its apply request. An omitted preset uses Full Core in unattended mode, while the first interactive choice is Minimal.
+
+Default context folder example:
 
 ```sh
 open-forge install --preset essentials --dry-run
 # Review the plan before applying it.
 open-forge install --preset essentials --automatic
 ```
+
+Custom context folder example:
+
+```sh
+open-forge install --preset essentials --main-root docs/context --dry-run
+# Review the plan before applying it.
+open-forge install --preset essentials --main-root docs/context --automatic
+```
+
+Use `./...` for exact workspace-relative source operands. Short IDs such as `memory/crystallized` follow the selected layout.
 
 Use `open-forge install --configure` as the interactive way to change several setup choices. For a repeatable configuration change, preview and apply the reviewed request:
 

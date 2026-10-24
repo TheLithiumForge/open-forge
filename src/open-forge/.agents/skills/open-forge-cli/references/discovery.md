@@ -27,7 +27,7 @@ open-forge context directives/order-rules --for src/Order.cs --follow-links 1
 The loader can list an existing workspace file where it lives. Context follows
 those rows with their tags and conditions. Select a file outside `.agents/` by
 exact path, such as `context ./CONTRIBUTING.md`. It has no short source ID.
-An exact `.agents/` path to an unrouted file, such as `context .agents/README.md`,
+An exact `./...` path to an unrouted file, such as `context ./.agents/README.md`,
 reads it and its overwrite without making them startup reads.
 
 Find searches included leaves and the listed descendants of included catalogues
@@ -141,4 +141,4 @@ Continue with [route maintenance](routes.md) for edits or [Framework and package
 
 In `.agents/open-forge.json`, `ignoreLinksFrom` skips links written inside listed paths and `ignoreLinksTo` skips links whose resolved targets lie inside them. Entries are workspace-relative paths, not patterns. Files match exactly and folders cover descendants, using the same comparison as `allowInstallPaths`. Missing lists mean no exclusions. Doctor names ignored counts and stale entries. Context omits ignored link expansion edges. References lists every link.
 
-An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
+A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands. Older CLIs do not support custom roots. Use a CLI that supports `install --main-root` for those workspaces.

@@ -194,7 +194,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
                 return await _routePipeline.ExecuteAsync(
                     new RouteRemoveRequest(
                         workspace,
-                        dispatch.Target,
+                        dispatch.RouteReference ?? dispatch.Target,
                         dryRun ? RouteRemoveMode.DryRun : RouteRemoveMode.Apply,
                         automatic,
                         allowInteractiveSourceSelection: false,

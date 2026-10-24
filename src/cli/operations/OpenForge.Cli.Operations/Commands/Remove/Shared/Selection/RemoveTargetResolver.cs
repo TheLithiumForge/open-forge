@@ -122,9 +122,9 @@ internal static class RemoveTargetResolver
             }
             var source = catalogue.FindByPath(target);
             var routedMarkdown = source?.Base.Form == SourceDocumentForm.Markdown;
-            return routedMarkdown
-                ? new RemoveTargetResolution(RemoveKind.Route, target, null)
-                : new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, target, null);
+            return routedMarkdown || !isPathSelection
+                ? RoutePath(target)
+                : new RemoveTargetResolution(RemoveKind.Path, target, null);
         }
 
         var entrypoints = catalogue.Sources
@@ -141,7 +141,15 @@ internal static class RemoveTargetResolver
                 "The selected category has more than one recognized route entrypoint.");
         }
         return entrypoints.Length == 1
-            ? new RemoveTargetResolution(RemoveKind.Route, entrypoints[0].Identity.CanonicalBasePath, null)
+            ? RoutePath(entrypoints[0].Identity.CanonicalBasePath)
             : new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, target, null);
     }
+
+    private static RemoveTargetResolution RoutePath(string path)
+        => new(RemoveKind.Route, path, null)
+        {
+            RouteReference = SourceReferenceParser.Parse(path).Kind == SourceReferenceKind.SourcePath
+                ? path
+                : SourceWorkspaceRelativePath.LiteralReferencePrefix + path,
+        };
 }

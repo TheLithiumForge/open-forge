@@ -11,7 +11,6 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Distribution.Shared.Content;
 public sealed class WorkspaceLayoutPayloadGuidanceTests
 {
     private const string RootCode = "`" + WorkspaceLayout.DefaultMainRoot + "`";
-    private const string RootDirectoryCode = "`" + WorkspaceLayout.DefaultMainRoot + "/`";
     private static readonly string CommonPath = Reference(CommonReferenceName);
     private static readonly string DiscoveryPath = Reference(DiscoveryReferenceName);
     private static readonly string RoutesPath = Reference(RoutesReferenceName);
@@ -28,10 +27,6 @@ public sealed class WorkspaceLayoutPayloadGuidanceTests
             (nameof(ExampleRepairNotePath), RoutesPath, ExampleRepairNotePath),
             (nameof(ExampleRepairTargetPath), RoutesPath, ExampleRepairTargetPath),
             (nameof(ContextExamplePrefix), DiscoveryPath, ContextExamplePrefix + SourceLogicalPath.HumanGuidePath),
-            (nameof(PreviousSchemaSentence), PackagesPath, PreviousSchemaSentence),
-            (nameof(ExactPathIntroduction), DiscoveryPath, ExactPathIntroduction + RootDirectoryCode),
-            (nameof(InitPathIntroduction), RoutesPath, InitPathIntroduction + RootCode),
-            (nameof(MovePathIntroduction), RoutesPath, MovePathIntroduction + RootCode),
             (nameof(OutsidePathIntroduction), CommonPath, OutsidePathIntroduction + RootCode),
             (nameof(OutsidePathIntroduction), PackagesPath, OutsidePathIntroduction + RootCode),
             (nameof(IncludeCategoryTemplate), RoutesPath, IncludeCategoryTemplate),
