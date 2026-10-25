@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Paths;
 
 namespace OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 
@@ -18,10 +20,8 @@ internal sealed class RouteScaffoldChainDiscovery
     {
         var catalogue = request.Catalogue;
         var roots = request.RecognizedRootPaths
-            .Where(path => SourceFormClassifier.TryClassify(catalogue.Layout, path, out var form) && SourceFormClassifier.IsEntrypoint(form)
-                && (catalogue.FindByPath(path) is not null || catalogue.FindCandidateByPath(path) is not null))
+            .Where(path => IsSelectedRoot(path, catalogue))
             .Select(SourceLogicalPath.ReadParent)
-            .Where(folder => SourceLogicalPath.IsPrimaryCategoryDirectory(new SourceContentRoots(catalogue.Layout), folder))
             .Distinct(StringComparer.Ordinal).ToArray();
         var entrypoints = catalogue.Candidates
             .Where(candidate => candidate.Form is { } form && SourceFormClassifier.IsEntrypoint(form))
@@ -53,7 +53,9 @@ internal sealed class RouteScaffoldChainDiscovery
             }
 
             if (chain.Any(item => IsExcluded(item, request)
-                || IsExcluded(RouteScaffoldSourceBuilder.CanonicalPath(catalogue.Layout, SourceLogicalPath.ReadSourceCoordinate(catalogue.Layout, item)), request)))
+                || IsExcluded(WorkspaceRoutePath.CanonicalEntrypointPath(item), request))
+                || catalogue.Layout.TryGetMaintenanceBoundary(root, out var selectedRoot) && selectedRoot.Kind == WorkspaceMaintenanceBoundaryKind.Outside
+                    && IsExcluded(WorkspaceRoutePath.CanonicalEntrypointPath(root), request))
                 continue;
             folders.Add(root);
             folders.UnionWith(chain);
@@ -72,10 +74,12 @@ internal sealed class RouteScaffoldChainDiscovery
                 continue;
             }
 
-            if (roots.Contains(folder, StringComparer.Ordinal))
+            if (roots.Contains(folder, StringComparer.Ordinal)
+                && (!catalogue.Layout.TryGetMaintenanceBoundary(folder, out var boundary) || boundary.Kind != WorkspaceMaintenanceBoundaryKind.Outside))
                 continue;
-            var id = SourceLogicalPath.ReadSourceCoordinate(catalogue.Layout, folder);
-            var path = RouteScaffoldSourceBuilder.CanonicalPath(catalogue.Layout, id);
+            var outside = catalogue.Layout.TryGetMaintenanceBoundary(folder, out var selectedBoundary) && selectedBoundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside;
+            var path = WorkspaceRoutePath.CanonicalEntrypointPath(folder);
+            var id = outside ? SourceWorkspaceRelativePath.LiteralReferencePrefix + path : SourceLogicalPath.ReadSourceCoordinate(catalogue.Layout, folder);
             if (catalogue.FindAllById(id).Count != 0 || catalogue.FindAllCandidatesById(id).Count != 0)
                 boundaries.Add(new(RouteScaffoldBoundaryKind.IdentityOccupied, path));
             else if (catalogue.FindCandidateByPath(path) is not null || request.OccupiedPaths.Contains(path, StringComparer.Ordinal))
@@ -93,5 +97,16 @@ internal sealed class RouteScaffoldChainDiscovery
 
     private static bool IsWithin(string path, string folder)
         => path == folder || path.StartsWith(folder + "/", StringComparison.Ordinal);
+
+    private static bool IsSelectedRoot(string path, SourceCatalogue catalogue)
+    {
+        if (!SourceFormClassifier.TryClassify(catalogue.Layout, path, out var form) || !SourceFormClassifier.IsEntrypoint(form)) return false;
+        var folder = SourceLogicalPath.ReadParent(path);
+        if (catalogue.Layout.TryGetMaintenanceBoundary(path, out var boundary) && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside)
+            return folder == boundary.DirectoryPath && (path == boundary.AnchorPath
+                || catalogue.FindByPath(path) is not null || catalogue.FindCandidateByPath(path) is not null);
+        return SourceLogicalPath.IsPrimaryCategoryDirectory(new SourceContentRoots(catalogue.Layout), folder)
+            && (catalogue.FindByPath(path) is not null || catalogue.FindCandidateByPath(path) is not null);
+    }
 
 }

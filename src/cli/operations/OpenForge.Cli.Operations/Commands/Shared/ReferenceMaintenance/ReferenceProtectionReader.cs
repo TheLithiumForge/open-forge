@@ -32,6 +32,7 @@ internal sealed class ReferenceProtectionReader(PhysicalPathResolver paths)
         return new(new()
         {
             Layout = layout,
+            LayoutRead = observation,
             Settings = settings.Document,
             Ownership = ownership.Document,
         }, [ownership.Snapshot?.Expectation ?? FileExpectation.Missing(ownership.LogicalPath),

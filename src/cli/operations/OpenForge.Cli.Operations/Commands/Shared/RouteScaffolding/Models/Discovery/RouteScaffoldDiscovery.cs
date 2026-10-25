@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.Commands.Shared.RouteScaffolding.Models.Discovery;
 internal sealed record RouteScaffoldDiscoveryRequest
 {
     public required SourceCatalogue Catalogue { get; init; }
+    // These are caller-selected roots, including explicitly selected outside anchors.
     public required ImmutableArray<string> RecognizedRootPaths { get; init; }
     public required ImmutableArray<SourceLogicalSource> EligibleSources { get; init; }
     public required WorkspaceSettingsDocument Settings { get; init; }

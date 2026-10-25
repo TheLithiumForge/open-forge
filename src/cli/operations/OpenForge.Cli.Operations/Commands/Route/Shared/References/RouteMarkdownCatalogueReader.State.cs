@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.References;
 
@@ -36,7 +37,9 @@ internal sealed partial class RouteMarkdownCatalogueReader
         internal bool MarkDirectory(string physicalPath) => _physicalDirectories.Add(physicalPath);
 
         internal bool IsExcluded(string path)
-            => Request.ExcludedPaths.Any(excluded => path == excluded
+            => SourceLogicalPath.IsOutsideSource(Request.Layout, path)
+                && path.Split('/').Contains(WorkspaceLayoutNames.GitMetadataDirectoryName, StringComparer.OrdinalIgnoreCase)
+                || Request.ExcludedPaths.Any(excluded => path == excluded
                 || excluded != "." && path.StartsWith($"{excluded}/", StringComparison.Ordinal)
                 || excluded == ".");
 
@@ -46,7 +49,10 @@ internal sealed partial class RouteMarkdownCatalogueReader
         {
             var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
             return Request.Layout.SourceRoots.Any(root => string.Equals(root, path, comparison)
-                || path.StartsWith(root + "/", comparison) || root.StartsWith(path + "/", comparison));
+                || path.StartsWith(root + "/", comparison) || root.StartsWith(path + "/", comparison))
+                || Request.Layout.OutsideRoutes.Any(route => path == route.DirectoryPath
+                    || path.StartsWith(route.DirectoryPath + "/", StringComparison.Ordinal)
+                    || route.DirectoryPath.StartsWith(path + "/", StringComparison.Ordinal));
         }
 
         internal string NormalizeContentRoot(string path)

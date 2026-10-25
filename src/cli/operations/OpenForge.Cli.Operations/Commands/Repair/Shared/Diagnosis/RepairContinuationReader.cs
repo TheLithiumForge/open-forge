@@ -31,6 +31,7 @@ internal static class RepairContinuationReader
         var context = new RoutedMetadataPolicyContext
         {
             Layout = layout,
+            LayoutRead = observation.LayoutRead,
             Settings = settings.Document,
             Ownership = ownership.Document,
         };
@@ -39,6 +40,7 @@ internal static class RepairContinuationReader
         foreach (var source in routes.Sources.Where(source => source.IsReadable && source.Document is not null))
         {
             var path = source.Source.Identity.CanonicalBasePath;
+            if (!RepairOutsideAdmission.Allows(path, context, token)) continue;
             var file = new RoutedMetadataFileFacts
             {
                 CanonicalPath = path,
@@ -67,6 +69,9 @@ internal static class RepairContinuationReader
             Sharing = new SourceSharing(ownership.Document.Framework?.GitIgnoredRoutes ?? []),
         });
         return metadataMissing || !chain.IsBlocked && !chain.Gaps.IsEmpty
-            || routes.GeneratedNavigation.Any(target => target.State == OpenForge.Cli.Core.Framework.OperationalContributors.Models.OperationalGeneratedNavigationState.Changed);
+            || routes.GeneratedNavigation.Any(target => target.State == OpenForge.Cli.Core.Framework.OperationalContributors.Models.OperationalGeneratedNavigationState.Changed
+                && (!SourceLogicalPath.IsOutsideSource(layout, target.Path)
+                    || roots.Any(root => target.Path.StartsWith(SourceLogicalPath.ReadParent(root) + "/", StringComparison.Ordinal))
+                    && RepairOutsideAdmission.Allows(target.Path, context, token)));
     }
 }

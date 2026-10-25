@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata;
 
@@ -22,7 +23,7 @@ internal sealed class RoutedMetadataCompletionPolicy
         ArgumentNullException.ThrowIfNull(context);
         if (!file.IsSelected) return RoutedMetadataEligibility.NotSelected;
         var path = file.CanonicalPath;
-        if (!SourceFormClassifier.TryClassify(context.Roots, path, out var form)
+        if (!SourceFormClassifier.TryClassify(context.Layout, path, out var form)
             || form is SourceDocumentForm.Loader or SourceDocumentForm.OverwriteCompanion)
             return RoutedMetadataEligibility.UnsupportedForm;
         if (!file.IsReadable) return RoutedMetadataEligibility.Unreadable;
@@ -31,16 +32,20 @@ internal sealed class RoutedMetadataCompletionPolicy
         if (protection != RoutedMetadataEligibility.Eligible) return protection;
         if (file.IsGeneratedFile || file.HasManagedAuthoredRegions) return RoutedMetadataEligibility.GeneratedContent;
         if (file.LoaderRootEntrypointPath is not { } root
-            || !SourceFormClassifier.TryClassify(context.Roots, root, out var rootForm) || !SourceFormClassifier.IsEntrypoint(rootForm)
-            || !SourceLogicalPath.IsPrimaryCategoryDirectory(context.Roots, SourceLogicalPath.ReadParent(root))
+            || !SourceFormClassifier.TryClassify(context.Layout, root, out var rootForm) || !SourceFormClassifier.IsEntrypoint(rootForm)
             || !RoutedMetadataDefaults.IsAncestor(path, SourceLogicalPath.ReadParent(root)))
+            return RoutedMetadataEligibility.OutsideRoot;
+        if (context.Layout.TryGetMaintenanceBoundary(path, out var boundary) && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside)
+            return SourceLogicalPath.ReadParent(root) == boundary.DirectoryPath && context.AvailableOutsideBoundary(boundary) is not null
+                ? RoutedMetadataEligibility.Eligible : RoutedMetadataEligibility.OutsideRoot;
+        if (!SourceLogicalPath.IsPrimaryCategoryDirectory(context.Roots, SourceLogicalPath.ReadParent(root)))
             return RoutedMetadataEligibility.OutsideRoot;
         return RoutedMetadataEligibility.Eligible;
     }
 
     internal RoutedMetadataEligibility Protection(string path, RoutedMetadataPolicyContext context)
     {
-        if (!SourceFormClassifier.TryClassify(context.Roots, path, out var form) || form == SourceDocumentForm.OverwriteCompanion)
+        if (!SourceFormClassifier.TryClassify(context.Layout, path, out var form) || form == SourceDocumentForm.OverwriteCompanion)
             return RoutedMetadataEligibility.UnsupportedForm;
         if (context.Ownership.HasManagedPath(path)) return RoutedMetadataEligibility.ManagedContent;
         if ((context.Ownership.Framework?.Regions ?? []).Concat(context.Ownership.Extensions.SelectMany(owner => owner.Regions))
@@ -61,7 +66,7 @@ internal sealed class RoutedMetadataCompletionPolicy
         ArgumentNullException.ThrowIfNull(input);
         var eligibility = Evaluate(input.File, context);
         var completion = FrameworkMetadataCompletionResult.Unchanged(input.Bytes);
-        if (eligibility == RoutedMetadataEligibility.Eligible && SourceFormClassifier.TryClassify(context.Roots, input.File.CanonicalPath, out var form)
+        if (eligibility == RoutedMetadataEligibility.Eligible && SourceFormClassifier.TryClassify(context.Layout, input.File.CanonicalPath, out var form)
             && form == SourceDocumentForm.Skill)
         {
             completion = _skills.Complete(input);
@@ -74,7 +79,7 @@ internal sealed class RoutedMetadataCompletionPolicy
                 Bytes = input.Bytes,
                 Document = input.Document,
                 Form = context.Settings.Frontmatter,
-                DefaultTags = RoutedMetadataDefaults.Tags(context.Roots, input.File),
+                DefaultTags = RoutedMetadataDefaults.Tags(context.Layout, input.File),
             });
         }
 

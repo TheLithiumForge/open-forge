@@ -11,6 +11,8 @@ open-forge:
 
 Repair uses the selected layout for diagnosis and repairs. A missing loader can be restored when ordinary repair rules allow it. An intentional removal is respected, and a layout mismatch is not an instruction to relocate files.
 
+Selected relinks can maintain their affected registered outside closure under the existing diagnosis and protection gates. The registration must be available and each outside effect must remain physically inside its boundary. Unlisted registration does not prevent explicit affected maintenance and never causes relisting. File inclusion alone grants no maintenance authority. Registration adds no bypass for a blocked required diagnosis domain.
+
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
 ## Status And Authority

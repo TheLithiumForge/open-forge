@@ -78,6 +78,13 @@ internal static class RoutedMetadataDefaults
         return Tags(category);
     }
 
+    internal static ImmutableArray<string> Tags(WorkspaceLayout layout, RoutedMetadataFileFacts file)
+    {
+        if (layout.TryGetMaintenanceBoundary(file.CanonicalPath, out var boundary) && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside)
+            return Tags(RoutedMetadataCategory.Workspace);
+        return Tags(new SourceContentRoots(layout), file);
+    }
+
     internal static bool IsAncestor(string path, string directory)
         => path.StartsWith($"{directory}/", StringComparison.Ordinal);
 }

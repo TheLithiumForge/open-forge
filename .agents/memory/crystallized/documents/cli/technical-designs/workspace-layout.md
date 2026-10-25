@@ -96,6 +96,8 @@ Primary source IDs stay relative to their primary content location. Outside sour
 
 An inventoried outside catalogue can also carry authored inclusion policy. Established traversal precedes inspection of disconnected registered catalogues, so discovery cannot replace the first-reaching row's metadata. The merge retains every row, condition, span and alias, including unresolved targets. Outside physical aliases merge without removing existing primary identities or separating an overwrite from its base. Explicit registered catalogue selection covers its inventory scope, while ordinary included catalogue selection follows retained edges without scanning siblings.
 
+Shared maintenance carries the exact selected logical coordinates separately from physically merged sources. Its retained layout observation must use the catalogue's layout instance. A selected alias cannot substitute another source coordinate for mutation. Selected anchors determine the bounded chain, while structural registration and authored loading remain separate. [Forgiving maintenance](forgiving-maintenance.md#eligible-files) defines completion admission and defaults.
+
 ## Delivery Boundary
 
 Delivery 1 supports choosing an absent or empty custom destination at first installation and using it through every command family. Default-root adoption remains supported. An omitted or unchanged root preserves ordinary Install behavior. Changing an established installation's root is refused before effects, including with `--configure`.

@@ -11,6 +11,8 @@ open-forge:
 
 Doctor, Repair and Index use the observed context folder and fixed native Skills location for classification, route ancestry, metadata completion and navigation. Repair carries Doctor’s layout observation into its plan and revalidates it under the lease. A lone missing loader remains restorable drift, while a recorded removal remains intentional. Layout mismatch is not repaired by guessing another root. See [Workspace Layout](workspace-layout.md#observation-and-revalidation).
 
+The shared maintenance planner also accepts caller-selected registered outside boundaries. Its roots are selection facts, distinct from structural registration and Loader listing. Command clients retain their selection, findings, application and verification responsibilities.
+
 Wording examples below use the default `.agents` layout. Custom-root guidance receives projected paths.
 
 ## Boundary
@@ -70,7 +72,11 @@ The Framework metadata completion API inserts absent fields using parsed source 
 
 ### Eligible files
 
-Complete readable ordinary routed Markdown and user-owned recognized entrypoints below existing Loader-recognized root routes. Include files reached through the prospective completed chain. Apply existing explicit-source selection boundaries. A leaf selection includes the missing chain to that leaf and the exposing parent, without selecting unrelated roots. Detached maintenance retains its existing behavior and receives no automatic chain or metadata completion.
+Complete readable ordinary routed Markdown and user-owned recognized entrypoints below existing Loader-recognized root routes. Include files reached through the prospective completed chain. Apply existing explicit-source selection boundaries. A leaf selection includes the missing chain to that leaf and the exposing parent, without selecting unrelated roots. Unregistered detached maintenance retains its existing behavior and receives no automatic chain or metadata completion.
+
+For outside completion, the caller supplies selected anchors in `RootPaths`, exact canonical closure coordinates in `SelectedSourcePaths`, and the retained observation in `Policy.LayoutRead`. Its layout instance must match the catalogue. A matching available outside observation and bounded physical target proof precede snapshot acquisition. An included row or a merged physical representative supplies no admission. Ownership, removals, private routes, Library projections and ordinary-leaf checks remain effective. A null selected-path array preserves existing primary callers.
+
+Index and Repair keep readonly metadata acquisition and bounded Entries maintenance separate from completion eligibility. Their command plans retain exact read expectations for admitted outside inputs and verify them under the workspace lease. Reading protected metadata does not permit repairing its authored links or changing Entries owned by a Library.
 
 | Excluded source                                                                             | Reason                                                                                                                     |
 | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
@@ -109,6 +115,8 @@ Category follows recognized route roles, not an arbitrary folder with a familiar
 
 These tags aid selection. They do not establish acceptance or add loading authority. A maintainer may refine prefilled values later. An existing valid tag list stays byte-exact, including its order.
 
+Outside content always uses the generic `[Workspace]` defaults. Registered directories named `directives`, `memory` or `skills`, including their nested scope and state folders, acquire no primary category semantics. An outside `SKILL.md` is ordinary Markdown.
+
 ### Form and preservation
 
 Read both supported forms through the existing metadata reader. Write absent fields in the form selected by `.agents/open-forge.json`, defaulting to scoped when the setting is absent. A partial header already in the selected form is completed in its existing mapping. Do not convert the file or add a second declaration of an existing field. Existing scoped precedence and dual-location `applyTo` validation remain unchanged. A partial header in the other form is completed in its existing declaration form, because inserting the missing fields in the workspace form would not be read together with the supplied ones and moving supplied fields would break byte preservation. All supplied bytes stay exact. New headers and new entrypoints still use the workspace form. No reader merge or form conversion is added. (Overseer decision, 2026-10-13.)
@@ -140,6 +148,8 @@ This narrow exclusion makes Index `incomplete`, exit 3, even if no independent w
 ## Entrypoint Chain Completion in Index
 
 Find gaps only below an existing recognized root route in the selected closure. Each qualifying folder lies on a path to at least one eligible routed Markdown source. Empty folders and folders with only resources receive no entrypoint. Never create a root, Loader, removed category, excluded path or entrypoint inside a native Skill package. A missing recorded shared entrypoint remains a restoration boundary rather than permission to recreate it.
+
+A selected outside boundary can instead restore its missing canonical anchor from the registered descriptor when its ordinary directory is available. Its chain stops at that directory and never creates an ancestor above it. Existing compatibility entrypoints and ambiguity checks remain effective. Outside gaps retain full literal source IDs, including catalogue filenames. `WorkspaceRoutePath` owns canonical path construction. Proposed outside entrypoints receive protection and physical containment checks before composition, and formation never adds an outside Loader row.
 
 Preserve one existing canonical or compatibility entrypoint. Two recognized entrypoints or an occupied proposed identity block the selected plan. Derive the missing canonical path as `_{folder-name}.md`. Use the folder's sentence-case name as title and `Notes in <folder-id>` as description. Tags use the table above, except that a new Directives entrypoint uses `[Directive]` without `LoadNow`. A child scope remains on demand under the existing Directive rules. Omit responsibility and applicability. Reuse Route Init's scaffold composer with these explicit metadata facts:
 

@@ -11,6 +11,8 @@ open-forge:
 
 Retain the layout through discovery, selection and navigation projection. Validate the original observation under the lease before applying changes. Native Skill traversal stays at `.agents/skills`.
 
+Discover registered outside inventory through that same observation. Keep exact selected logical coordinates distinct from physical aliases. Outside effects require the selected available registration, ordinary target safety and physical containment within it. Registration grants no package ownership or implicit package destination.
+
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
 
 ## Status And Boundary
@@ -78,6 +80,8 @@ Coalesce all edits to one physical target into one final effect. Create entrypoi
 
 Completion extends application authority only to absent fields and required canonical entrypoint creates. It does not grant whole-document formatting, supplied-value replacement, native package editing, managed authored-content editing or restoration. JSON and text use the Interface's exact new rows and additive values.
 
+An outside registration supplies the boundary for its selected chain, including a missing anchor, without inventing loading membership. Use generic Workspace metadata defaults there. Keep readonly metadata acquisition and bounded Entries authority separate from eligibility for absent-field completion, preserving the existing managed-content policy. Authored leaving links and file-only inclusions confer no maintenance authority.
+
 ## Route Sharing
 
 Read `framework.gitIgnoredRoutes` from the ownership lock before formation.
@@ -128,13 +132,15 @@ Projection](interface.md#authoritative-projection) sections.
 Operand-free resolution applies the [Rooted selection](interface.md#rooted-selection)
 rules. When the Loader is present, intended roots are the structurally valid,
 physically unique recognized entrypoints that directly represent
-primary category folders in the selected layout. The resolver establishes the selected Loader and
+primary category folders in the selected layout. Registered outside anchors join automatic selection only through their authored Loader listing. The resolver establishes the selected Loader and
 reachable entrypoint regions from that topology before projection. Multiple
 recognized entrypoints representing one root folder are ambiguous and block.
 
 When the Loader is missing, formation returns zero intended roots. Operand-free
 resolution blocks without an alternate root or detached-tree fallback. An
 explicit selection whose detached closure is complete may proceed.
+
+Exact explicit selection within a registered outside boundary can also complete its required chain without a Loader. Registration provides the known boundary, not an inferred root. Do not add the Loader as an exposing parent of an outside anchor or acquire unrelated outside metadata through structural roots. An unlisted outside tree and its bytes stay untouched during bare execution. Relevant unavailable boundaries block selected effects without replacing the primary layout or broadening selection.
 
 Explicit entrypoint resolution applies the [Entrypoint selection](interface.md#entrypoint-selection)
 closure and parent rules. It computes that closure from direct routed

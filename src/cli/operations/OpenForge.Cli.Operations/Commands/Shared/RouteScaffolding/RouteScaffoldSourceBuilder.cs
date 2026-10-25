@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Paths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -12,7 +13,16 @@ internal sealed class RouteScaffoldSourceBuilder
     private readonly GeneratedNavigationFormationBuilder _formationBuilder = new();
 
     internal static string CanonicalPath(WorkspaceLayout layout, string folderId)
-        => EntrypointPath(layout.SourcePath(ValidateFolderId(folderId)));
+    {
+        if (folderId.StartsWith(SourceWorkspaceRelativePath.LiteralReferencePrefix, StringComparison.Ordinal))
+        {
+            var folder = folderId[SourceWorkspaceRelativePath.LiteralReferencePrefix.Length..];
+            if (!layout.TryGetMaintenanceBoundary(folder, out var boundary) || boundary.Kind != WorkspaceMaintenanceBoundaryKind.Outside)
+                throw new ArgumentException("An exact scaffold folder requires a registered outside boundary.", nameof(folderId));
+            return WorkspaceRoutePath.CanonicalEntrypointPath(folder);
+        }
+        return WorkspaceRoutePath.CanonicalEntrypointPath(layout.SourcePath(ValidateFolderId(folderId)));
+    }
 
     private static string ValidateFolderId(string folderId)
     {
@@ -20,9 +30,6 @@ internal sealed class RouteScaffoldSourceBuilder
             throw new ArgumentException("A scaffold folder requires a canonical source ID.", nameof(folderId));
         return folderId;
     }
-
-    private static string EntrypointPath(string folder)
-        => $"{folder}/{SourceFormClassifier.CanonicalEntrypointFileName(SourceLogicalPath.ReadFileName(folder))}";
 
     internal SourceLogicalSource Create(WorkspaceLayout layout, string canonicalPath)
     {
