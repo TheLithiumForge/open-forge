@@ -171,3 +171,7 @@ with predicates or projections. Those dimensions are not redefined here.
 - [CLI Source References Interface Contract](../source-references/interface.md)
 - [CLI Source References Behavior Contract](../source-references/behavior.md)
 - [CLI Architecture](../../../architecture.md)
+
+## Reserved Runtime Storage
+
+The fixed `.open-forge-state/` subtree is reserved runtime storage. Exclude it before source reads and traversal, even without Git ignore rules. Direct paths and links into it do not admit its files as sources or writable package destinations.

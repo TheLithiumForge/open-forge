@@ -126,3 +126,7 @@ Management and meaning are separate:
 An Extension's files mean exactly what their route says, whether they were installed by the CLI or copied by hand.
 
 Next: [Extensions](../extensions/index.md), or look up a term in the [Glossary](../glossary.md).
+
+## Runtime files
+
+Keep `.open-forge-state/` for CLI locks and recovery. It is fixed, ignores itself in Git and is excluded from source scans, inclusion, package destinations and removal. Git clean with `-x` or `-X` can delete its recovery evidence. Use [Cleanup](/guides/cli#cleanup) to preview eligible bundle removal.

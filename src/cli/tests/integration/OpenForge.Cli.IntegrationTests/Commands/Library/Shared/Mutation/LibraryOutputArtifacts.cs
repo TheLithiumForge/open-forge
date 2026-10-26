@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 
@@ -21,8 +22,7 @@ internal sealed class LibraryOutputArtifacts : IDisposable
         var locks = WorkspaceLockStoreRoot.ResolveForCurrentUser(Environment.SpecialFolderOption.None)
             ?? throw new InvalidOperationException("Library output fixtures require a lock root.");
         _lockPath = WorkspaceLockPathIdentity.LockPath(locks, workspace.Workspace);
-        var recovery = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.None)
-            ?? throw new InvalidOperationException("Library output fixtures require a recovery root.");
+        var recovery = TestDataHome.LocalRecoveryStoreRoot(workspace.Path);
         _recoveryDirectory = RecoveryBundlePathIdentity.WorkspaceDirectory(recovery, workspace.Path);
         Assert.False(File.Exists(_lockPath));
         Assert.False(Directory.Exists(_recoveryDirectory));

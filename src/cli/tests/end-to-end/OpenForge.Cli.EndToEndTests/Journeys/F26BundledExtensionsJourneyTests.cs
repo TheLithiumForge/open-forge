@@ -223,7 +223,7 @@ public sealed class F26BundledExtensionsJourneyTests
             CollaborationPayloadPaths.Order(StringComparer.Ordinal),
             expectedPreimages.Keys.Order(StringComparer.Ordinal));
 
-        var recoveryDirectory = workspace.LockStore.RecoveryWorkspaceDirectory(workspace.Path);
+        var recoveryDirectory = PublishedWorkspaceLockStore.LocalRecoveryWorkspaceDirectory(workspace.Path);
         Assert.True(Directory.Exists(recoveryDirectory));
         var artifacts = Directory.EnumerateFileSystemEntries(
                 recoveryDirectory,

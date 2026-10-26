@@ -67,14 +67,17 @@ internal sealed class LibraryReadWorkspace : IDisposable
         => await new LibraryInspectOperation().ExecuteAsync(InspectRequest(id), cancellationToken);
 
     internal SortedDictionary<string, string> Snapshot()
+        => Snapshot(includeRuntime: false);
+
+    internal SortedDictionary<string, string> Snapshot(bool includeRuntime)
     {
         var entries = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        foreach (var pair in _temporary.SnapshotHashes())
+        foreach (var pair in _temporary.SnapshotHashes(includeRuntime))
         {
             entries.Add(pair.Key, pair.Value);
         }
 
-        CaptureEntries(new DirectoryInfo(Path), entries);
+        CaptureEntries(new DirectoryInfo(Path), entries, includeRuntime);
         return entries;
     }
 
@@ -88,19 +91,24 @@ internal sealed class LibraryReadWorkspace : IDisposable
         Assert.False(Directory.Exists(RecoveryBundlePathIdentity.WorkspaceDirectory(recoveryRoot, Path)));
     }
 
-    private void CaptureEntries(DirectoryInfo directory, SortedDictionary<string, string> entries)
+    private void CaptureEntries(DirectoryInfo directory, SortedDictionary<string, string> entries, bool includeRuntime)
     {
         foreach (var entry in directory.EnumerateFileSystemInfos())
         {
+            if (!includeRuntime && TemporaryWorkspace.IsRuntimeEntry(Path, entry.FullName))
+            {
+                continue;
+            }
+
             var relative = System.IO.Path.GetRelativePath(Path, entry.FullName).Replace('\\', '/');
             if (entry.LinkTarget is { } target)
             {
-                entries.Add(relative, $"link:{target}");
+                entries[relative] = $"link:{target}";
             }
             else if (entry is DirectoryInfo child)
             {
                 entries.Add($"{relative}/", "directory");
-                CaptureEntries(child, entries);
+                CaptureEntries(child, entries, includeRuntime);
             }
         }
     }

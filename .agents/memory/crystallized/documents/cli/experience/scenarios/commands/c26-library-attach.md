@@ -248,7 +248,7 @@ Show proposed links, directories and permission scope without creating or saving
 
 ### Verification
 
-Compare workspace and settings bytes and external recovery; no prompt is allowed.
+Compare workspace and settings bytes and local recovery. No prompt is allowed.
 
 ## C26-10
 
@@ -403,3 +403,7 @@ Verify no normalization, inferred identity or settings write.
 **Disposition:** Deferred; not selected yet. Repeated cancellation outcome without a concrete signal boundary; retain X09 as the shared invariant until a distinct fixture earns coverage.
 
 **Required before reconsideration:** Use a real signal-capable process and deterministic observed boundary; a timeout or invalid argument is not cancellation. Use a genuine capability-appropriate terminal and preserve actual prompt/signal evidence.
+
+## Task 86 Runtime Expectations
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the mutation and recovery design for the bridge gap and typed failures.

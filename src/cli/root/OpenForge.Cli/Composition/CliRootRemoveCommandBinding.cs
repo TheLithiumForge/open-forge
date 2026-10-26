@@ -9,8 +9,8 @@ using OpenForge.Cli.Core.Commands.Remove;
 using OpenForge.Cli.Core.Commands.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Remove.Models.Selection;
-using OpenForge.Cli.Core.Commands.Remove.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Remove.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Remove.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
@@ -63,13 +63,13 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
         ArgumentNullException.ThrowIfNull(libraryOperation);
         ArgumentNullException.ThrowIfNull(help);
 
-        Command = new Command("remove", "Remove one exact path, route, Extension, or Library and remember supported exclusions.");
+        Command = new Command(RemoveDefinitions.CommandIdentity, "Remove one exact path, route, Extension, or Library and remember supported exclusions.");
         _target = new Argument<string?>("target")
         {
             Description = "One exact path, route reference, Extension ID, or Library ID.",
             Arity = ArgumentArity.ZeroOrOne,
         };
-        _kind = new Option<string?>("--kind")
+        _kind = new Option<string?>(RemoveDefinitions.KindOption)
         {
             Description = "Target kind: path, route, extension, or library. Defaults to path.",
             Arity = ArgumentArity.ZeroOrOne,
@@ -79,7 +79,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
             Description = "Preview the selected removal without writing workspace files.",
             Arity = ArgumentArity.Zero,
         };
-        _automatic = new Option<bool>("--automatic")
+        _automatic = new Option<bool>(RemoveDefinitions.AutomaticOption)
         {
             Description = "Run without confirmation prompts.",
             Arity = ArgumentArity.Zero,
@@ -135,7 +135,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
         if (selection.State == RemoveSelectionState.Invalid)
         {
             return await PresentResultAsync(
-                RemoveResult.Refused(invocation.Workspace, selection.Target, rawKind ?? "path",
+                RemoveResult.Refused(invocation.Workspace, selection.Target, rawKind ?? RemoveDefinitions.PathKind,
                     RemoveFindingCode.InvalidInput, CliSemanticStatus.Invalid,
                     selection.Cause ?? "The Remove input is invalid."),
                 invocation.Presentation,
@@ -164,11 +164,11 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
             return await PresentResultAsync(RemoveResult.Refused(
                 workspace,
                 dispatch.Target,
-                "path",
+                RemoveDefinitions.PathKind,
                 RemoveFindingCode.EntryPointRequiresRoute,
                 CliSemanticStatus.Blocked,
                 "This file is a routed category entrypoint. Select its category directory or use --kind route.",
-                RemoveRetryCommand.From(retryRequest, directory, "route"),
+                RemoveRetryCommand.From(retryRequest, directory, RemoveDefinitions.RouteKind),
                 "Remove the category through its routed entrypoint so companions and navigation are handled together."), invocation.Presentation, writers).ConfigureAwait(false);
         }
         if (allowPaths.Length > 0 && dispatch.Kind is not (RemoveKind.Extension or RemoveKind.Library))
@@ -260,7 +260,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
         return PresentResultAsync(RemoveResult.Refused(
             workspace: null,
             target: "<target>",
-            kind: "path",
+            kind: RemoveDefinitions.PathKind,
             code: RemoveFindingCode.TargetUnavailable,
             status: CliSemanticStatus.Blocked,
             message: reason), input.GlobalInput.Presentation, writers);
@@ -277,7 +277,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
         var source = RouteRemovePresentation.Rendering;
         return new CliReportRendering<RootRouteRemoveResult, RouteRemoveData>
         {
-            Selector = (result, selection) => source.Selector(result.Operation, selection) with { Command = "remove" },
+            Selector = (result, selection) => source.Selector(result.Operation, selection) with { Command = RemoveDefinitions.CommandIdentity },
             DataTextRenderer = source.DataTextRenderer,
             DataJsonTypeInfo = source.DataJsonTypeInfo,
             Shape = source.Shape,
@@ -290,7 +290,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
         var source = ExtensionRemovePresentation.Rendering;
         return new CliReportRendering<RootExtensionRemoveResult, ExtensionRemoveData>
         {
-            Selector = (result, selection) => source.Selector(result.Operation, selection) with { Command = "remove" },
+            Selector = (result, selection) => source.Selector(result.Operation, selection) with { Command = RemoveDefinitions.CommandIdentity },
             DataTextRenderer = source.DataTextRenderer,
             DataJsonTypeInfo = source.DataJsonTypeInfo,
             Shape = source.Shape,
@@ -303,7 +303,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
         var source = LibraryDetachPresentation.Rendering;
         return new CliReportRendering<RootLibraryRemoveResult, LibraryDetachData>
         {
-            Selector = (result, selection) => source.Selector(result.Operation, selection) with { Command = "remove" },
+            Selector = (result, selection) => source.Selector(result.Operation, selection) with { Command = RemoveDefinitions.CommandIdentity },
             DataTextRenderer = source.DataTextRenderer,
             DataJsonTypeInfo = source.DataJsonTypeInfo,
             Shape = source.Shape,

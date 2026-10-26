@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
@@ -62,8 +63,7 @@ internal sealed class RepairIntegrationWorkspace : IDisposable
     {
         get
         {
-            var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-                Environment.SpecialFolderOption.None);
+            var storeRoot = TestDataHome.LocalRecoveryStoreRoot(Workspace.PhysicalRoot);
             return storeRoot is null
                 ? _temporary.Combine(".repair-recovery-unavailable")
                 : RecoveryBundlePathIdentity.WorkspaceDirectory(

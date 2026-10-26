@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
@@ -14,17 +15,24 @@ internal static class InstallRecoveryCatalogueReader
         CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
-        var catalogue = await RecoveryBundleCatalogue.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
-        if (catalogue.State != RecoveryBundleCatalogueState.Available || catalogue.Candidates.IsEmpty)
+        var stores = await RecoveryBundleCatalogue.ReadStoresAsync(workspace, cancellationToken).ConfigureAwait(false);
+        if (stores.Any(store => store.Catalogue.State == RecoveryBundleCatalogueState.Cancelled))
         {
-            return catalogue;
+            return RecoveryBundleCatalogueResult.Cancelled();
+        }
+
+        var local = stores.Single(store => store.Kind == RecoveryStoreKind.Workspace).Catalogue;
+        if (local.State != RecoveryBundleCatalogueState.Available)
+        {
+            return local;
         }
 
         var resolver = new PhysicalPathResolver();
         var blocking = ImmutableArray.CreateBuilder<RecoveryBundleCandidateSnapshot>();
         try
         {
-            foreach (var candidate in catalogue.Candidates)
+            foreach (var candidate in stores.Where(store => store.Catalogue.State == RecoveryBundleCatalogueState.Available)
+                .SelectMany(store => store.Catalogue.Candidates))
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 if (candidate.Verified is null)

@@ -247,6 +247,7 @@ the host. Integration references those libraries and the host. Both retain the
 existing callable seams and have no direct OutputText reference or friend access.
 EndToEnd references TestSupport and exercises the published process; TestSupport
 has no production reference.
+EndToEnd and TestSupport use a small tracked projection of owned public tokens, and an in-memory Unit drift check compares every projected value with its production owner.
 
 No assembly is a supported third-party library API. Friend access does not
 authorize Rendering to invoke Operations behavior: semantic boundary checks
@@ -650,3 +651,7 @@ publication boundary live in [CLI Distribution](distribution.md). New RIDs,
 architectures, operating systems, libc variants, channels, signatures, SBOM,
 provenance, OIDC attestation, or support-floor claims require a later explicit
 maintainer decision.
+
+## Workspace Runtime Storage
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the mutation and recovery design for the bridge gap and typed failures.

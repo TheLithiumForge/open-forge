@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.",
+    "headline": "Another Open Forge command holds the lock at <lock-path>. Nothing was changed.",
     "kind": "blocked"
   },
   "findings": [
@@ -17,7 +17,7 @@
       "severity": "error",
       "code": "cleanup.workspace-lock-unavailable",
       "title": "Workspace lock is unavailable",
-      "message": "Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.",
+      "message": "Another Open Forge command holds the lock at <lock-path>. Nothing was changed.",
       "subject": {
         "kind": "identifier",
         "path": "cleanup",
@@ -44,7 +44,7 @@
       "kind": "file",
       "action": "deleted",
       "outcome": "unknown",
-      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "reason": "No deletion was attempted. The candidate's current disposition was not established.",
       "owner": "open-forge index",
       "before": null,
       "after": null
@@ -54,7 +54,7 @@
       "kind": "file",
       "action": "deleted",
       "outcome": "unknown",
-      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "reason": "No deletion was attempted. The candidate's current disposition was not established.",
       "owner": "open-forge repair",
       "before": null,
       "after": null
@@ -64,7 +64,7 @@
       "kind": "file",
       "action": "deleted",
       "outcome": "unknown",
-      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "reason": "No deletion was attempted. The candidate's current disposition was not established.",
       "owner": null,
       "before": null,
       "after": null
@@ -78,6 +78,47 @@
   },
   "limitations": [],
   "data": {
+    "stores": [
+      {
+        "kind": "workspace",
+        "path": "<workspace-recovery-store>",
+        "coverage": "complete",
+        "safety": "safe",
+        "candidates": [
+          {
+            "path": "<recovery-bundle-1>",
+            "kind": "bundle",
+            "outcome": "not-started",
+            "integrity": "verified"
+          },
+          {
+            "path": "<recovery-bundle-2>",
+            "kind": "bundle",
+            "outcome": "not-started",
+            "integrity": "verified"
+          },
+          {
+            "path": "<recovery-bundle-3>",
+            "kind": "draft",
+            "outcome": "not-started",
+            "integrity": "incomplete"
+          }
+        ],
+        "cause": null,
+        "revalidation": "not-requested",
+        "verification": "not-requested"
+      },
+      {
+        "kind": "legacy",
+        "path": "<legacy-recovery-store>",
+        "coverage": "complete",
+        "safety": "safe",
+        "candidates": [],
+        "cause": null,
+        "revalidation": "not-requested",
+        "verification": "verified"
+      }
+    ],
     "mode": "apply",
     "items": [
       {

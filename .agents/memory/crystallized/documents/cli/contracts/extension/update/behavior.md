@@ -288,8 +288,7 @@ facts, current/intended fingerprints, current exact bytes, owner sets,
 route and generated effects, lifecycle publication, expected-state guards,
 affected paths, recovery-bundle readiness, per-effect verification, and final
 cleanup handling. One failed selected condition blocks all effects. Before the
-first workspace effect, obtain the actual OS lock for the persistent external
-zero-byte path under `LocalApplicationData/OpenForge/locks/v1` defined by the
+first workspace effect, obtain the actual OS lock for the persistent path under `.open-forge-state/workspace.lock` defined by the
 [Mutation And Recovery Technical
 Design](../../../technical-designs/mutation-and-recovery.md). The lock file is persistent and reusable: write no
 metadata, timestamp, or ownership record. Hold one read/write `FileShare.None` handle;
@@ -313,17 +312,16 @@ effects retain their own event meaning.
 Preflight checks the exact source, workspace, Framework anchor, lifecycle
 section, package IDs, dependency closure, paths, owners, routes, generated
 markers, containment, and expected bytes. For an applying plan, it also
-prepares exactly one immutable ZIP recovery bundle outside the workspace whenever
+prepares exactly one immutable ZIP recovery bundle in the workspace runtime folder whenever
 the plan contains an existing-target effect (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`) or a permission-file Create.
 The storage root is
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`; there is no
+`.open-forge-state/recovery/v1/<workspace key>/`. There is no
 temporary, repository, `HOME`, or custom platform fallback. Unavailable storage
 is `incomplete` before any target effect.
 
 The bundle is keyed by the normalized physical workspace path and operation ID.
-Write a `CreateNew` draft under its exact name in the same external directory,
+Write a `CreateNew` draft under its exact name in the same local directory,
 stream one source-generated schema-v1 `manifest.json` and ordered ordinal payload
 entries, close and reopen it, validate the semantic schema, exact ordered entry
 names and counts, lengths, hashes, and exact prior bytes, then move it within the
@@ -359,8 +357,7 @@ termination without a crash or power-loss guarantee.
 Verified final bundles from earlier operations may coexist with the current
 operation's bundle. Preserve that history unchanged. Once current preparation
 exists, exactly one catalogue candidate must match its identity; other verified
-final bundles do not invalidate it. Incomplete drafts and malformed, unsupported
-or unavailable candidates still block the fresh plan. Recovery history never
+final bundles do not invalidate it. Drafts, invalid candidates and unavailable history coverage warn without blocking unrelated work. Recovery history never
 supplies current target state or ownership.
 
 Explicit Cleanup owns exact named final and draft deletion under its separate
@@ -398,7 +395,9 @@ result schema and exit mapping. Gate 5 must prove source-generated serialization
 where used, real `System.IO`, Native AOT, OS locking, isolated tests, and package
 journeys.
 
-A recognized recovery residual does not block an effect-free repeat. Recovery
-inspection must remain available and in-flight preparation must still match.
-A plan containing new content or ownership effects retains the existing recovery
-conflict check. A write-free repeat leaves the retained review bundle untouched.
+A recognized recovery residual does not block an effect-free repeat. Unavailable history coverage warns without blocking unrelated work.
+The current operation's preparation must still match exactly. A write-free repeat leaves the retained review bundle untouched.
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

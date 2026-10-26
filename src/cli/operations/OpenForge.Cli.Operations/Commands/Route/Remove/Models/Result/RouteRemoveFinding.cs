@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Shared.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
@@ -6,6 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 
 internal sealed record RouteRemoveFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     private const int MaximumCauseLength = 256;
 
     internal RouteRemoveFinding(

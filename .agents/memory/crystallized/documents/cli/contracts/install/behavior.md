@@ -584,7 +584,7 @@ verified bundle preparation; a `Create` or semantic/byte no-op has none. A
 verified no-op has no mutation path and needs no bundle.
 
 Before the first workspace effect, the implementation obtains the actual OS lock
-for the persistent reusable zero-byte external path defined by the [Mutation And
+for the persistent reusable path defined by the [Mutation And
 Recovery Technical Design](../../technical-designs/mutation-and-recovery.md). The operation holds one read/write `FileShare.None` handle and
 never writes metadata, truncates, or deletes the lock file. An active handle
 blocks the plan; lock state is not lifecycle authority, history, or recovery
@@ -626,14 +626,12 @@ When application is selected:
 1. If this is a prompt-capable human application that would write, ask the one
    confirmation after complete preflight. A refusal, end of input, or caller
    cancellation stops with no effects.
-2. Acquire the persistent external workspace lease. The zero-byte ordinary lock
-   lives under `LocalApplicationData/OpenForge/locks/v1`, with a display-only
-   friendly workspace prefix and the authoritative full SHA-256 key of the
-   normalized physical workspace path. Cancellation before acquisition creates
+2. Acquire the persistent local workspace lease. The ordinary ordinary lock
+   lives under `.open-forge-state/workspace.lock`. The local filename has no path hash. Cancellation before acquisition creates
    no workspace effect.
 3. Revalidate the complete plan and all volatile source, target, ownership,
    containment, managed-host boundary, section, and expected-state facts.
-4. Prepare and verify the one complete external recovery bundle when the plan
+4. Prepare and verify the one complete local recovery bundle when the plan
    contains an existing-target effect. Complete preparation before any workspace
    effect.
 5. Apply every explicitly planned missing directory parent-first through the
@@ -665,13 +663,9 @@ When application is selected:
 
 Install has no target deletion effect. Before any existing byte or bounded region
 is replaced, orchestration selects only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is
 pre-effect `incomplete`. For an operation with one or more existing replacement
-targets, it creates one immutable ZIP bundle outside the
-workspace for the complete operation. Its deterministic external directory key
+targets, it creates one immutable ZIP bundle in the workspace runtime folder for the complete operation. Its deterministic workspace directory key
 and final name use the normalized physical workspace path and operation ID. An
 operation containing only creates or no-ops creates no bundle. A source-generated schema-v1
 `manifest.json` and streamed ordinal payload entries record operation and
@@ -691,8 +685,7 @@ effect. A directory created by this operation is retained and reported as
 residual state after later failure or cancellation. Install never rolls it back,
 compensates for it, or removes it. The shared capability uses ordinary BCL
 filesystem behavior; it adds no P/Invoke, recovery protocol, or hostile same-user
-creator-identity guarantee. Lock and recovery data use separate
-application-owned versioned subtrees under `LocalApplicationData`.
+creator-identity guarantee. Lock and recovery data share the fixed `.open-forge-state/` folder.
 
 Before post-verification deletion begins, an application, verification,
 lifecycle-publication, or cancellation outcome stops new effects and reports
@@ -884,7 +877,7 @@ A conforming implementation must demonstrate:
   legacy boundary input, source/dogfood parity, unchanged bytes outside the
   managed span, and blocked incomplete, reversed, duplicate, mixed, or
   ambiguous boundaries;
-- complete preflight, external schema-v1 recovery-bundle preparation and verification,
+- complete preflight, local schema-v1 recovery-bundle preparation and verification,
   exact prior-byte preservation, expected-state revalidation, per-effect and
   whole-operation verification, typed post-verification deletion
   state/disposition facts, residual reporting, and fresh rerun;
@@ -896,7 +889,7 @@ A conforming implementation must demonstrate:
   creation, post-verification, retained residuals, and no rollback,
   compensation, removal, or recovery entry;
 - the exact visible missing-`.agents` first ordinary directory effect after
-  external lease acquisition, including planning/reporting, immediate
+  local lease acquisition, including planning/reporting, immediate
   revalidation and verification, pre-effect cancellation/contention, and
   retained residuals after later failure;
 - dry-run/application parity with no persistent dry-run effects;
@@ -933,3 +926,7 @@ receipts outside actual selected effects
 remain preserved. If an excluded missing entrypoint makes another selected route
 unreachable, report a structural blocker instead of recreating it. Required loader
 and root host anchors are otherwise not categories.
+
+## Workspace Runtime Boundary
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.

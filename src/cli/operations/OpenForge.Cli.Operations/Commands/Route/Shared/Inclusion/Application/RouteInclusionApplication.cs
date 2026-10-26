@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Models;
@@ -32,11 +33,19 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
         try
         {
             var acquired = await manager.AcquireAsync(new WorkspaceLockRequest(plan.Request.Workspace, plan.Request.Command, operationId), token).ConfigureAwait(false);
-            token.ThrowIfCancellationRequested();
             if (acquired.Lease is not { } lease)
-                return Stop(result, CliSemanticStatus.Blocked, RouteInclusionFindingCode.WorkspaceLockUnavailable, acquired.Cause ?? "Wait for the other workspace operation, then retry.");
+            {
+                return Stop(result,
+                    acquired.State == WorkspaceLockState.Cancelled ? CliSemanticStatus.Interrupted : CliSemanticStatus.Blocked,
+                    acquired.State == WorkspaceLockState.Cancelled ? RouteInclusionFindingCode.Interrupted : RouteInclusionFindingCode.WorkspaceLockUnavailable,
+                    acquired.Cause ?? "The workspace lock could not be acquired.") with
+                {
+                    LockFailure = WorkspaceLockFailureProjection.From(acquired.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")),
+                };
+            }
             await using (lease.ConfigureAwait(false))
             {
+                token.ThrowIfCancellationRequested();
                 var fresh = await new RouteInclusionPlanBuilder().BuildAsync(plan.Request, token).ConfigureAwait(false);
                 if (fresh.Plan is not { } current || !Equivalent(plan, current))
                     return Stop(result, CliSemanticStatus.Blocked, RouteInclusionFindingCode.TargetChanged, "The plan changed. Review a fresh preview and retry.");
@@ -51,13 +60,6 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
                 var validation = await revalidator.ValidateAsync(lease, plan.Changes, token).ConfigureAwait(false);
                 if (validation.State != MutationValidationState.Valid || validation.Checks.Count != plan.Changes.Length)
                     return Stop(result, CliSemanticStatus.Blocked, RouteInclusionFindingCode.TargetChanged, validation.Cause ?? "Review a fresh preview and retry.");
-                var catalogue = await RecoveryBundleCatalogue.ReadAsync(plan.Request.Workspace, token).ConfigureAwait(false);
-                token.ThrowIfCancellationRequested();
-                if (catalogue.State != RecoveryBundleCatalogueState.Available)
-                    return Stop(result, CliSemanticStatus.Incomplete, RouteInclusionFindingCode.RecoveryUnavailable, catalogue.Cause ?? "Recovery storage is unavailable. Retry when it is readable.");
-                if (!catalogue.Candidates.IsEmpty)
-                    return Stop(result with { Recovery = RouteInclusionRecoveryState.Retained, RecoveryPath = catalogue.Candidates[0].Path },
-                        CliSemanticStatus.Blocked, RouteInclusionFindingCode.RecoveryConflict, "Resolve the existing recovery artifact before retrying.");
                 var operation = plan.Request.Action == RouteInclusionAction.Include ? RecoveryBundleOperation.Include : RecoveryBundleOperation.Exclude;
                 result = result with { Recovery = RouteInclusionRecoveryState.Unknown };
                 var prepared = await RecoveryBundleStore.PrepareAsync(RecoveryBundleInput.Create(

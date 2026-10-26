@@ -8,7 +8,8 @@ internal static class RecoveryBundleIdentity
     internal static bool Matches(
         RecoveryBundleVerifiedRead selected,
         RecoveryBundleVerifiedRead observed)
-        => string.Equals(selected.BundlePath, observed.BundlePath, PathComparison())
+        => selected.Location == observed.Location
+            && string.Equals(selected.BundlePath, observed.BundlePath, PathComparison())
             && string.Equals(
                 selected.WorkspacePhysicalPath,
                 observed.WorkspacePhysicalPath,

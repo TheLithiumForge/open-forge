@@ -141,6 +141,8 @@ internal static class LibraryDetachReportSelector
             CliSemanticStatus.Invalid => new(
                 LibraryDetachWording.Cannot(id, finding is null ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheRequestIsInvalid() : Problem(result, finding)),
                 CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when finding?.LockFailure is { } lockFailure => new(
+                LibraryDetachWording.Cannot(id, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked => new(
                 LibraryDetachWording.Blocked(id, BlockedReason(result, finding)),
                 CliHeadlineKind.Blocked),
@@ -159,6 +161,11 @@ internal static class LibraryDetachReportSelector
 
     private static string BlockedReason(LibraryDetachResult result, LibraryDetachFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachText.LabelTheDetachIsBlocked();
@@ -196,6 +203,7 @@ internal static class LibraryDetachReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = LibraryDetachWording.FindingCode(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = LibraryDetachWording.FindingTitle(finding.Code),
             Message = Message(result, finding),
             Subject = kind == CliSubjectKind.Identifier
@@ -208,6 +216,11 @@ internal static class LibraryDetachReportSelector
 
     private static string Message(LibraryDetachResult result, LibraryDetachFinding finding)
     {
+        if (finding.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         var path = DisplayPath(result, finding) ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheRegisteredLink();
         var id = finding.LibraryId
             ?? result.Result.Identity.LibraryId

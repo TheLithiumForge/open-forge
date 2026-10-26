@@ -1,0 +1,1 @@
+The selected file is inside the reserved workspace runtime directory.

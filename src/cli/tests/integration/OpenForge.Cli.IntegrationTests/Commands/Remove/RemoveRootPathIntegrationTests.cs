@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
@@ -84,7 +85,7 @@ public sealed class RemoveRootPathIntegrationTests
         var recoveryPath = ReadRecoveryPath(applyOutput.ToString());
         Assert.True(File.Exists(recoveryPath));
         var finalRead = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             recoveryPath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, finalRead.State);
@@ -218,7 +219,7 @@ public sealed class RemoveRootPathIntegrationTests
             && effect.GetProperty("kind").GetString() == "file");
         var recoveryPath = ReadRecoveryPath(output.ToString());
         var finalRead = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             recoveryPath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, finalRead.State);

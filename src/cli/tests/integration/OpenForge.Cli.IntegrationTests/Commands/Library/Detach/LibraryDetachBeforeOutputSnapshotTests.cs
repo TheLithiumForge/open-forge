@@ -140,6 +140,7 @@ public sealed class LibraryDetachBeforeOutputSnapshotTests
             result,
             situation,
             result.Result.Application.Recovery.Path,
-            testName: $"{nameof(Detach)}_{situation}");
+            testName: $"{nameof(Detach)}_{situation}",
+            lockFailurePath: result.Result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 }

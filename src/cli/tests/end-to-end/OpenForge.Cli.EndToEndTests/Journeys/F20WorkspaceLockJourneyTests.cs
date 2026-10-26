@@ -4,6 +4,9 @@ using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Filesystem;
+using OpenForge.Cli.TestSupport.Isolation;
+
+using Tokens = OpenForge.Cli.TestSupport.Contracts.PublishedTokens;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -15,6 +18,7 @@ public sealed class F20WorkspaceLockJourneyTests
     private const string BNotePath = ".agents/guidance/f20-b.md";
     private const string AChangedNotePath = ".agents/guidance/f20-a-after-block.md";
     private const string MarkerPath = "first-writer.txt";
+    private const string RelativeDataHome = "relative-data-home";
 
     [Fact(DisplayName = "F20 X21 C05-09 a live OS writer blocks A, leaves B independent, and permits a real retry")]
     [Trait("Feature", Feature)]
@@ -22,7 +26,6 @@ public sealed class F20WorkspaceLockJourneyTests
     [Trait("Journey", "F20")]
     public async Task LiveWriterBlocksOnlyItsWorkspaceAndReleasePermitsRetry()
     {
-        SkipUnlessWindows();
         using var workspaceA = PublishedJourneyWorkspace.Create("e2e-f20-live-lock-a");
         using var workspaceB = PublishedJourneyWorkspace.Create("e2e-f20-live-lock-b");
         await InstallPairAsync(workspaceA, workspaceB);
@@ -30,10 +33,9 @@ public sealed class F20WorkspaceLockJourneyTests
         var aNoteBefore = File.ReadAllBytes(workspaceA.Combine(ANotePath));
         var bNoteBefore = File.ReadAllBytes(workspaceB.Combine(BNotePath));
 
-        var lockPath = workspaceA.LockStore.Track(workspaceA.Path);
+        var lockPath = TestDataHome.LocalWorkspaceLockPath(workspaceA.Path);
         workspaceA.LockStore.AssertPersistentZeroByteLock(workspaceA.Path);
         var markerPath = ReserveMarker(workspaceA);
-        AssertWindowsPowerShellExists();
         using var holder = await PublishedLockHolder.StartAsync(lockPath, markerPath);
         AssertHolderIsAlive(holder);
         AssertExclusiveOpenIsDenied(lockPath);
@@ -83,7 +85,6 @@ public sealed class F20WorkspaceLockJourneyTests
     [Trait("Journey", "F20")]
     public async Task CrashedWriterLeavesPersistentPathnameForFreshRetry()
     {
-        SkipUnlessWindows();
         using var workspaceA = PublishedJourneyWorkspace.Create("e2e-f20-crash-a");
         using var workspaceB = PublishedJourneyWorkspace.Create("e2e-f20-crash-b");
         await InstallPairAsync(workspaceA, workspaceB);
@@ -91,9 +92,8 @@ public sealed class F20WorkspaceLockJourneyTests
         var aNoteBefore = File.ReadAllBytes(workspaceA.Combine(ANotePath));
         var bNoteBefore = File.ReadAllBytes(workspaceB.Combine(BNotePath));
 
-        var lockPath = workspaceA.LockStore.Track(workspaceA.Path);
+        var lockPath = TestDataHome.LocalWorkspaceLockPath(workspaceA.Path);
         var markerPath = ReserveMarker(workspaceA);
-        AssertWindowsPowerShellExists();
         using var holder = await PublishedLockHolder.StartAsync(lockPath, markerPath);
         AssertHolderIsAlive(holder);
 
@@ -124,7 +124,6 @@ public sealed class F20WorkspaceLockJourneyTests
     [Trait("Journey", "F20")]
     public async Task ChangedInputIsRevalidatedAfterContention()
     {
-        SkipUnlessWindows();
         using var workspaceA = PublishedJourneyWorkspace.Create("e2e-f20-changed-a");
         using var workspaceB = PublishedJourneyWorkspace.Create("e2e-f20-changed-b");
         await InstallPairAsync(workspaceA, workspaceB);
@@ -132,9 +131,8 @@ public sealed class F20WorkspaceLockJourneyTests
         var aNoteBefore = File.ReadAllBytes(workspaceA.Combine(ANotePath));
         var bNoteBefore = File.ReadAllBytes(workspaceB.Combine(BNotePath));
 
-        var lockPath = workspaceA.LockStore.Track(workspaceA.Path);
+        var lockPath = TestDataHome.LocalWorkspaceLockPath(workspaceA.Path);
         var markerPath = ReserveMarker(workspaceA);
-        AssertWindowsPowerShellExists();
         using var holder = await PublishedLockHolder.StartAsync(lockPath, markerPath);
         AssertHolderIsAlive(holder);
 
@@ -168,6 +166,43 @@ public sealed class F20WorkspaceLockJourneyTests
         workspaceA.LockStore.AssertNoRecoveryArtifacts(workspaceA.Path);
     }
 
+    [Fact(DisplayName = "F20 a relative data home skips legacy locking and permits a local writer")]
+    [Trait("Feature", Feature)]
+    [Trait("Evidence", "EndToEnd")]
+    [Trait("Journey", "F20")]
+    public async Task RelativeDataHomePermitsLocalWriter()
+    {
+        using var workspace = PublishedJourneyWorkspace.Create("e2e-f20-data-home");
+        workspace.ExpectCoreInstall();
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, Tokens.Install.Automatic));
+        AssertCompleted(install, "install");
+        File.Delete(TestDataHome.LocalWorkspaceLockPath(workspace.Path));
+        File.Delete(TestDataHome.LocalRuntimeIgnorePath(workspace.Path));
+        Directory.Delete(TestDataHome.LocalRuntimeDirectory(workspace.Path), recursive: false);
+        workspace.WriteText(
+            ANotePath,
+            OpenForgeDocumentSeed.Metadata(
+                description: "F20 A note",
+                tags: ["Guidance", "F20"],
+                body: "\n# F20 A Note\n\nA note that index would list.\n"));
+
+        var environment = new Dictionary<string, string>(workspace.ProcessEnvironment)
+        {
+            [Tokens.DataHome.Variable] = RelativeDataHome,
+        };
+        var indexed = await PublishedJourneyProcess.RunAsync(
+            workspace.Target,
+            workspace.Path,
+            [Tokens.Index.Command],
+            environment);
+
+        AssertCompleted(indexed, "index with a relative data home");
+        Assert.Contains(Path.GetFileName(ANotePath), File.ReadAllText(workspace.Combine(GuidanceEntrypointPath)), StringComparison.Ordinal);
+        Assert.Equal(Tokens.Runtime.IgnoreContent, File.ReadAllText(TestDataHome.LocalRuntimeIgnorePath(workspace.Path)));
+        Assert.True(File.Exists(TestDataHome.LocalWorkspaceLockPath(workspace.Path)));
+        Assert.False(Directory.Exists(workspace.Combine(RelativeDataHome)));
+    }
+
     private static async Task InstallPairAsync(
         PublishedJourneyWorkspace workspaceA,
         PublishedJourneyWorkspace workspaceB)
@@ -176,9 +211,9 @@ public sealed class F20WorkspaceLockJourneyTests
         workspaceB.ExpectCoreInstall();
         _ = workspaceA.LockStore.Track(workspaceB.Path);
 
-        var installA = await workspaceA.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
+        var installA = await workspaceA.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, Tokens.Install.Automatic));
         AssertCompleted(installA, "A install");
-        var installB = await RunOnADataHomeAsync(workspaceA, workspaceB, JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
+        var installB = await RunOnADataHomeAsync(workspaceA, workspaceB, JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, Tokens.Install.Automatic));
         AssertCompleted(installB, "B install using A's data home");
     }
 
@@ -249,7 +284,7 @@ public sealed class F20WorkspaceLockJourneyTests
     {
         Assert.True(
             result.ExitCode == 0 && result.StandardError.Length == 0,
-            $"{operation} was not completed. Exit: {result.ExitCode}; stdout: {result.StandardOutput}; stderr: {result.StandardError}");
+            $"{operation} was not completed. Exit: {result.ExitCode}. stdout: {result.StandardOutput}. stderr: {result.StandardError}");
     }
 
     private static void AssertBlocked(ProcessRunResult result, string operation)
@@ -260,16 +295,6 @@ public sealed class F20WorkspaceLockJourneyTests
         Assert.False(
             result.StandardError.TrimStart().StartsWith("{", StringComparison.Ordinal),
             $"{operation} did not report a human-readable blocked diagnostic: {result.StandardError}");
-    }
-
-    private static void AssertWindowsPowerShellExists()
-    {
-        var path = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.System),
-            "WindowsPowerShell",
-            "v1.0",
-            "powershell.exe");
-        Assert.True(File.Exists(path), $"The OS-provided Windows PowerShell executable is missing: {path}");
     }
 
     private static IReadOnlyDictionary<string, string> CaptureRecoveryInventory(
@@ -300,13 +325,5 @@ public sealed class F20WorkspaceLockJourneyTests
         IReadOnlyDictionary<string, string> actual)
     {
         AssertSnapshotEqual(expected, actual);
-    }
-
-    private static void SkipUnlessWindows()
-    {
-        if (!OperatingSystem.IsWindows())
-        {
-            Assert.Skip("F20 requires the Windows PowerShell and Windows file-sharing capabilities.");
-        }
     }
 }

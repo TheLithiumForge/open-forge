@@ -175,7 +175,8 @@ public sealed class ExtensionRemoveBeforeOutputSnapshotTests
             situation,
             result.Recovery.ResidualPath,
             source.Path,
-            testName: $"{nameof(PackageRemoval)}_{situation}");
+            testName: $"{nameof(PackageRemoval)}_{situation}",
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 
     [Trait("Boundary", "Output")]

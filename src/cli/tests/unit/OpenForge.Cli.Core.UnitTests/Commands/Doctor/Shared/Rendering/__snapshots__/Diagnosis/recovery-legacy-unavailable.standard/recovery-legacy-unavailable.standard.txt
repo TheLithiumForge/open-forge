@@ -1,0 +1,4 @@
+Doctor could not finish 1 check. 1 info finding was recorded.
+  21 links and 20 routes checked.
+  Recovery data was not checked: A recovery bundle from an earlier command is kept at recovery/operation.ofr.
+  To list the info findings: open-forge doctor --detail full

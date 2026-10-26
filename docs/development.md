@@ -519,7 +519,7 @@ git diff
 
 Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. The current base has 20 Markdown files, with 7 read at startup through `AGENTS.md`.
 
-The README uses the CLI's estimate method: divide each file's character count by four, round up, and sum. The current base gives about 4.0k estimated tokens for the 7 startup files and about 25.0k for all 20. The startup files are `AGENTS.md`, the loader, the Directives and Memory entrypoints, and the Crystallized, Emerging and Working entrypoints. The `open-forge-cli` Skill entry file, about 1.1k, is read before CLI commands other than `context`, and its reference files load only when the Skill points to them.
+The README uses the CLI's estimate method: divide each file's character count by four, round up, and sum. The current base gives about 4.0k estimated tokens for the 7 startup files and about 25.7k for all 20. The startup files are `AGENTS.md`, the loader, the Directives and Memory entrypoints, and the Crystallized, Emerging and Working entrypoints. The `open-forge-cli` Skill entry file, about 1.1k, is read before CLI commands other than `context`, and its reference files load only when the Skill points to them.
 
 `open-forge status` reports the loading-tag closure: the same 7 files, about 4.0k tokens, with Emerging counted again as a file that may load later. It does not interpret required-read instructions in prose. `open-forge context` returns that closure in one batch. Account for any further reads required by your workspace's loaded rules. Installed Extensions and your own content can change these numbers.
 

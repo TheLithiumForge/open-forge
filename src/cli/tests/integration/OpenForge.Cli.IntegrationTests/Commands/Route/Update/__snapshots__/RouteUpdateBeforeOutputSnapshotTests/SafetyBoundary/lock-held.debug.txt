@@ -1,7 +1,7 @@
-Cannot update memory/project-alpha/overview: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot update memory/project-alpha/overview: another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
-  Error  .agents/memory/project-alpha/overview.md  Workspace lock is held [route-update.workspace-lock-unavailable]
-         Another Open Forge command holds the workspace lock. Nothing was changed.
+  Error  .agents/memory/project-alpha/overview.md  Workspace lock is unavailable [route-update.workspace-lock-unavailable]
+         Another Open Forge command holds the lock at <lock-path>. Nothing was changed.
          open-forge route update memory/project-alpha/overview --description 'After overview' --workspace <workspace>
          Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan.
   Path: .agents/memory/project-alpha/overview.md

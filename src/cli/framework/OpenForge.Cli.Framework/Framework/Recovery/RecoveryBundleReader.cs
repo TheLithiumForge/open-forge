@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
@@ -40,13 +41,14 @@ internal static class RecoveryBundleReader
 
     internal static ValueTask<RecoveryBundleReadResult> VerifyExpectedAsync(
         RecoveryBundleInput input,
+        RecoveryStoreLocation location,
         string bundlePath,
         RecoveryBundleCandidateKind kind,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(input);
         return ReadCoreAsync(
-            input.Workspace,
+            location,
             bundlePath,
             input,
             kind,
@@ -60,7 +62,7 @@ internal static class RecoveryBundleReader
     {
         Models.Comparison.RecoveryEntrySetObservation.ValidateCandidate(workspace, candidate);
         var read = await ReadFinalAsync(
-            workspace,
+            candidate.Location,
             candidate.Path,
             cancellationToken).ConfigureAwait(false);
         if (read.Verified is not { } verified
@@ -87,13 +89,13 @@ internal static class RecoveryBundleReader
     }
 
     internal static ValueTask<RecoveryBundleReadResult> ReadFinalAsync(
-        CliWorkspace workspace,
+        RecoveryStoreLocation location,
         string bundlePath,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(location);
         return ReadCoreAsync(
-            workspace,
+            location,
             bundlePath,
             expectedInput: null,
             RecoveryBundleCandidateKind.Final,
@@ -102,12 +104,13 @@ internal static class RecoveryBundleReader
 
     internal static async ValueTask<RecoveryBundleFinalReadResult> ReadExpectedFinalAsync(
         RecoveryBundleInput input,
+        RecoveryStoreLocation location,
         string bundlePath,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(input);
         var read = await ReadCoreAsync(
-            input.Workspace,
+            location,
             bundlePath,
             input,
             RecoveryBundleCandidateKind.Final,
@@ -123,7 +126,7 @@ internal static class RecoveryBundleReader
     }
 
     private static async ValueTask<RecoveryBundleReadResult> ReadCoreAsync(
-        CliWorkspace workspace,
+        RecoveryStoreLocation location,
         string bundlePath,
         RecoveryBundleInput? expectedInput,
         RecoveryBundleCandidateKind kind,
@@ -176,7 +179,7 @@ internal static class RecoveryBundleReader
             }
 
             var identityFailure = ValidateIdentity(
-                workspace,
+                location,
                 normalizedPath,
                 document,
                 expectedInput,
@@ -228,6 +231,7 @@ internal static class RecoveryBundleReader
             _ = RecoveryBundleManifestCodec.TryParseOperationId(document, out var operationId);
             return RecoveryBundleReadResult.Valid(new RecoveryBundleVerifiedRead
             {
+                Location = location,
                 BundlePath = normalizedPath,
                 WorkspacePhysicalPath = WorkspaceIdentity.NormalizePhysicalPath(
                     document.WorkspacePath),
@@ -267,13 +271,13 @@ internal static class RecoveryBundleReader
     }
 
     private static string? ValidateIdentity(
-        CliWorkspace workspace,
+        RecoveryStoreLocation location,
         string bundlePath,
         RecoveryBundleManifestV1 document,
         RecoveryBundleInput? expectedInput,
         RecoveryBundleCandidateKind kind)
     {
-        var workspacePath = WorkspaceIdentity.NormalizePhysicalPath(workspace.PhysicalRoot);
+        var workspacePath = WorkspaceIdentity.NormalizePhysicalPath(location.Workspace.PhysicalRoot);
         var workspaceKey = WorkspaceIdentity.Key(workspacePath);
         if (!string.Equals(document.WorkspacePath, workspacePath, PathComparison())
             || !string.Equals(document.WorkspaceKey, workspaceKey, StringComparison.Ordinal)
@@ -283,7 +287,8 @@ internal static class RecoveryBundleReader
         }
 
         if (expectedInput is not null
-            && (operationId != expectedInput.OperationId
+            && (!string.Equals(workspacePath, WorkspaceIdentity.NormalizePhysicalPath(expectedInput.Workspace.PhysicalRoot), PathComparison())
+                || operationId != expectedInput.OperationId
                 || !string.Equals(document.Command, expectedInput.Command, StringComparison.Ordinal)
                 || !RecoveryBundleAttributionCodec.TryRead(
                     document.Attribution,
@@ -293,12 +298,7 @@ internal static class RecoveryBundleReader
             return "The recovery bundle does not match the expected operation.";
         }
 
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None);
-        if (storeRoot is null)
-        {
-            return "The recovery store cannot be observed after the bundle was opened.";
-        }
+        var storeRoot = location.RootPath;
 
         var expectedPath = kind == RecoveryBundleCandidateKind.Final
             ? RecoveryBundlePathIdentity.FinalPath(storeRoot, workspacePath, operationId)

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Recovery.Models;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -57,6 +58,12 @@ internal sealed record RouteUpdateResult : ICliCommandResult
         Status = status;
         Next = next;
     }
+
+    internal RouteRecoveryHistory RecoveryHistory { get; init; } = RouteRecoveryHistory.Empty;
+
+    internal string RecoveryHistoryCode => RouteUpdateDefinitions.RecoveryHistoryCode;
+
+    internal string RecoveryCoverageUnavailableCode => RouteUpdateDefinitions.RecoveryCoverageUnavailableCode;
 
     public string Command => RouteUpdateDefinitions.CommandIdentity;
 

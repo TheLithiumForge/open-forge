@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
@@ -30,7 +32,9 @@ internal static class RouteMoveApplicationProgressProjector
             plan,
             boundary.Item1,
             boundary.Item2,
-            result.Cause ?? "The persistent Route Move workspace lease could not be acquired.");
+            result.Cause ?? "The persistent Route Move workspace lease could not be acquired.",
+            WorkspaceLockFailureProjection.From(result.LockFailure
+                ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")));
     }
 
     internal static RouteMoveApplicationProgress RevalidationBoundary(
@@ -109,12 +113,13 @@ internal static class RouteMoveApplicationProgressProjector
         RouteMovePlan plan,
         RouteMoveFindingCode code,
         CliSemanticStatus status,
-        string cause)
+        string cause,
+        WorkspaceLockFailureInfo? lockFailure = null)
         => new()
         {
             Recovery = plan.Preview.Recovery,
             Verification = RouteMoveVerificationState.NotRequested,
-            Findings = [Finding(plan, code, status, cause)],
+            Findings = [Finding(plan, code, status, cause) with { LockFailure = lockFailure }],
         };
 
     internal static RouteMoveApplicationProgress LockReleaseFailed(

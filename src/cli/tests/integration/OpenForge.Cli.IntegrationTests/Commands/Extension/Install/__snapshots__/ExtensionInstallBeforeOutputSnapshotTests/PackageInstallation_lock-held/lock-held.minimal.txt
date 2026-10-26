@@ -1,2 +1,2 @@
-Cannot install toolkit: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot install toolkit: another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>

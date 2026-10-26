@@ -120,6 +120,7 @@ public sealed class CleanupDefinitionsAndBindingContractTests
             [CleanupFindingCode.WorkspaceNotDirectory] = CliSemanticStatus.Blocked,
             [CleanupFindingCode.WorkspaceUnsafe] = CliSemanticStatus.Blocked,
             [CleanupFindingCode.CatalogueIncomplete] = CliSemanticStatus.Incomplete,
+            [CleanupFindingCode.StoreValidationUnavailable] = CliSemanticStatus.Incomplete,
             [CleanupFindingCode.RecoveryFinalMalformed] = CliSemanticStatus.Attention,
             [CleanupFindingCode.RecoveryFinalUnsupported] = CliSemanticStatus.Blocked,
             [CleanupFindingCode.RecoveryFinalUnavailable] = CliSemanticStatus.Blocked,

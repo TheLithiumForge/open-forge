@@ -543,3 +543,7 @@ suite, schema, exit mapping, or packaged implementation already exists.
 - [Route Scope And Inheritance](../../../framework/routing/scope.md)
 - [Routing Paths And Identity](../../../framework/routing/paths.md)
 - [Overwrite Customization](../../../framework/routing/overwrites.md)
+
+## Reserved Runtime Storage
+
+The fixed `.open-forge-state/` subtree is reserved runtime storage. Exclude it before source reads and traversal, even without Git ignore rules. Direct paths and links into it do not admit its files as sources or writable package destinations.

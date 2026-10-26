@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
@@ -352,6 +353,8 @@ internal sealed record ExtensionUpdateVerification
 
 internal sealed record ExtensionUpdateFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     internal ExtensionUpdateFinding(
         ExtensionUpdateFindingCode code,
         string cause,

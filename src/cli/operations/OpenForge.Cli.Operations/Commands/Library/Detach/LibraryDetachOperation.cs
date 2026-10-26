@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.GitIgnore;
@@ -263,6 +264,8 @@ internal sealed class LibraryDetachOperation
             cancellationToken).ConfigureAwait(false);
         if (lockResult.State != WorkspaceLockState.Acquired || lockResult.Lease is not { } lease)
         {
+            var lockFailure = WorkspaceLockFailureProjection.From(lockResult.LockFailure
+                ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure."));
             var evidence = lockResult.State == WorkspaceLockState.Cancelled
                 ? LibraryMutationOperationSupport.Empty(new LibraryCancellationFact(LibraryExecutionStage.Preflight))
                 : LibraryMutationOperationSupport.Empty();
@@ -278,11 +281,15 @@ internal sealed class LibraryDetachOperation
                         LibraryId = request.LibraryId.Value,
                         Path = null,
                         Cause = lockResult.Cause ?? "The Library workspace lock is unavailable.",
+                        LockFailure = lockFailure,
                         OccupantKind = null,
                     }),
                 };
             }
-            return Complete(request, plan, observations, evidence);
+            return Complete(request, plan, observations, evidence) with
+            {
+                LockFailure = lockFailure,
+            };
         }
 
         await using (lease.ConfigureAwait(false))

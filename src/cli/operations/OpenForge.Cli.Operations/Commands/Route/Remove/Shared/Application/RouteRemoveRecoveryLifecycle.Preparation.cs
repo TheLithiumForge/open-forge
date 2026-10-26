@@ -2,7 +2,6 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -22,19 +21,6 @@ internal static partial class RouteRemoveRecoveryLifecycle
                 input.Plan,
                 RouteRemoveRecoveryPreparationState.NotRequired,
                 RouteRemoveRecoveryState.NotRequired);
-        }
-
-        var catalogue = await ReadCatalogueAsync(input.Plan, cancellationToken)
-            .ConfigureAwait(false);
-        if (catalogue.State != RecoveryBundleCatalogueState.Available)
-        {
-            return FromCatalogue(input.Plan, catalogue);
-        }
-
-        var blockingCandidate = catalogue.Candidates.FirstOrDefault(candidate => !IsVerifiedFinal(candidate));
-        if (blockingCandidate is not null)
-        {
-            return Conflict(input.Plan, blockingCandidate.Path);
         }
 
         return await PrepareBundleAsync(input, cancellationToken).ConfigureAwait(false);
@@ -68,55 +54,6 @@ internal static partial class RouteRemoveRecoveryLifecycle
             return FailedPreparation(input.Plan, residualPath: null);
         }
     }
-
-    private static async ValueTask<RecoveryBundleCatalogueResult> ReadCatalogueAsync(
-        RouteRemovePlan plan,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            return await RecoveryBundleCatalogue.ReadAsync(plan.Request.Workspace, cancellationToken)
-                .ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            return RecoveryBundleCatalogueResult.Cancelled();
-        }
-        catch (Exception)
-        {
-            return RecoveryBundleCatalogueResult.Unavailable(
-                "The Route Remove recovery catalogue failed unexpectedly.");
-        }
-    }
-
-    private static RouteRemoveRecoveryPreparationResult Conflict(RouteRemovePlan plan, string path)
-        => StopPreparation(
-            plan,
-            RouteRemoveRecoveryPreparationState.Blocked,
-            RouteRemoveRecoveryState.Retained,
-            path,
-            Finding(
-                plan,
-                RouteRemoveFindingCode.RecoveryConflict,
-                CliSemanticStatus.Blocked,
-                "An existing recovery candidate conflicts with this Route Remove application.",
-                path));
-
-    private static RouteRemoveRecoveryPreparationResult FromCatalogue(
-        RouteRemovePlan plan,
-        RecoveryBundleCatalogueResult catalogue)
-        => catalogue.State == RecoveryBundleCatalogueState.Cancelled
-            ? InterruptedPreparation(plan, residualPath: null)
-            : StopPreparation(
-                plan,
-                RouteRemoveRecoveryPreparationState.Incomplete,
-                RouteRemoveRecoveryState.Unknown,
-                residualPath: null,
-                Finding(
-                    plan,
-                    RouteRemoveFindingCode.RecoveryUnavailable,
-                    CliSemanticStatus.Incomplete,
-                    catalogue.Cause ?? "The Route Remove recovery catalogue is unavailable."));
 
     private static RouteRemoveRecoveryPreparationResult FromStored(
         RouteRemovePlan plan,
@@ -210,11 +147,6 @@ internal static partial class RouteRemoveRecoveryLifecycle
             Recovery = Recovery(plan, recoveryState, residualPath: null),
             Finding = null,
         };
-
-    private static bool IsVerifiedFinal(RecoveryBundleCandidateSnapshot candidate)
-        => candidate.Kind == RecoveryBundleCandidateKind.Final
-            && candidate.Integrity == RecoveryBundleIntegrity.Verified
-            && candidate.Verified is not null;
 
     private static RouteRemoveRecoveryPreparationResult StopPreparation(
         RouteRemovePlan plan,

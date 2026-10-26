@@ -511,14 +511,9 @@ authority.
 For application with one or more existing-target effects (`Replace` or
 `ReplaceGeneratedRegion`),
 orchestration uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree, with no temporary-directory, repository, `HOME`,
-or custom-platform fallback. An operation containing only `Create` effects or
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. An operation containing only `Create` effects or
 semantic or byte no-ops does not resolve recovery storage and creates no bundle.
-Otherwise it prepares exactly one immutable ZIP recovery bundle
-outside the workspace for the complete operation. Its deterministic external
-directory key and final name use the normalized physical workspace path and
+Otherwise it prepares exactly one immutable ZIP recovery bundle in the workspace runtime folder for the complete operation. Its deterministic workspace directory key and final name use the normalized physical workspace path and
 operation ID. The
 source-generated schema-v1 `manifest.json` and streamed ordinal payload
 entries identify the operation and normalized physical workspace, and record exact prior bytes,
@@ -536,7 +531,7 @@ is `incomplete` before effects; a collision or failed final verification is
 Directory creation is a separate effect from file Create/Replace. If the fully
 preflighted plan starts without `.agents`, that exact path is the first ordinary
 visible planned and reported directory-create effect. Install first acquires the
-external workspace lease, then immediately revalidates the missing target and
+local workspace lease, then immediately revalidates the missing target and
 exact contained physical parent, calls ordinary `Directory.CreateDirectory`, and
 verifies the resulting contained ordinary directory. Every later missing
 directory is applied parent-first through the same shared capability. A verified
@@ -544,10 +539,8 @@ created directory remains and is reported as residual state if a later effect
 fails or is interrupted. Directories have no recovery entry and are never rolled
 back, compensated for, or removed by Install.
 
-Workspace mutation uses the persistent reusable zero-byte external lock under
-`LocalApplicationData/OpenForge/locks/v1`, named with a display-only friendly
-workspace prefix and the authoritative full SHA-256 key of the normalized
-physical workspace path. The operation holds one read/write `FileShare.None`
+Workspace mutation uses the persistent reusable lock under
+`.open-forge-state/workspace.lock`. Its local filename is fixed and has no path hash. The operation holds one read/write `FileShare.None`
 handle and never writes metadata, truncates, or deletes the lock file. File
 existence is not lock ownership. An active handle blocks mutation; lock behavior
 is concurrency safety, not lifecycle authority or recovery history. The
@@ -1076,7 +1069,7 @@ Future evidence must cover:
 - exact migration rows in schema 3, omitted public no-op migrations, planned dry-run
   outcomes, verified-only applied outcomes, and informational text that never
   changes status;
-- one verified immutable external schema-v1 ZIP bundle for the complete
+- one verified immutable local schema-v1 ZIP bundle for the complete
   operation, exact prior-byte and provenance facts, expected-state
   revalidation, per-effect and whole-operation verification, all three
   post-verification deletion state/disposition facts, residual reporting, and fresh rerun
@@ -1110,3 +1103,7 @@ Exact wording is owned by the linked typed factories. Selection, output coordina
 CLI help syntax: [`install.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Install/InstallText.cs).
 
 <!-- @OpenForgeTextRef install.help.syntax -->
+
+## Workspace Runtime Boundary
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.

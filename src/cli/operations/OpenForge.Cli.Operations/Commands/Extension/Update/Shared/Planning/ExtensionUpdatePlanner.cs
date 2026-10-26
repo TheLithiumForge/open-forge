@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Recovery;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Ownership.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
@@ -36,6 +37,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
@@ -140,10 +142,10 @@ internal sealed class ExtensionUpdatePlanner
                 affectedPackage));
         }
 
-        RecoveryBundleCatalogueResult recovery;
+        ImmutableArray<RecoveryStoreObservation> stores;
         try
         {
-            recovery = await RecoveryBundleCatalogue.ReadAsync(
+            stores = await RecoveryBundleCatalogue.ReadStoresAsync(
                 request.Workspace,
                 cancellationToken).ConfigureAwait(false);
         }
@@ -156,44 +158,24 @@ internal sealed class ExtensionUpdatePlanner
         }
         catch (Exception)
         {
-            return Stop(
-                request,
-                ExtensionUpdateFindingCode.RecoveryUnavailable,
+            stores = ExtensionRecoveryHistory.Unavailable(request.Workspace,
                 "Extension Update recovery inspection failed unexpectedly.");
         }
 
-        var recoveryIsExpected = IsExpectedRecovery(recovery, allowedRecovery);
-        if (!recoveryIsExpected)
+        if (stores.Any(store => store.Catalogue.State == RecoveryBundleCatalogueState.Cancelled))
         {
-            var recoveryFinding = recovery.State switch
-            {
-                RecoveryBundleCatalogueState.Cancelled => ExtensionUpdateFindingCode.Interrupted,
-                RecoveryBundleCatalogueState.Available => ExtensionUpdateFindingCode.RecoveryConflict,
-                RecoveryBundleCatalogueState.Unavailable => ExtensionUpdateFindingCode.RecoveryUnavailable,
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(recovery),
-                    recovery.State,
-                    "The recovery catalogue state is not defined."),
-            };
-            var blockingCandidate = recovery.Candidates.FirstOrDefault(candidate => !IsVerifiedFinal(candidate));
-            var recoveryTarget = blockingCandidate?.Path;
-            if (blockingCandidate is null && allowedRecovery is not null)
-            {
-                recoveryTarget = recovery.Candidates.FirstOrDefault(candidate =>
-                    RecoveryBundleIdentity.Matches(candidate, allowedRecovery))?.Path;
-                if (recoveryTarget is null)
-                {
-                    recoveryTarget = allowedRecovery.BundlePath;
-                }
-            }
-            return Stop(
-                request,
-                new ExtensionUpdateFinding(
-                    recoveryFinding,
-                    blockingCandidate?.Cause
-                        ?? recovery.Cause
-                        ?? "Recognized recovery residuals block Extension Update.",
-                    recoveryTarget));
+            return Stop(request, ExtensionUpdateFindingCode.Interrupted,
+                "Extension Update recovery inspection was interrupted.");
+        }
+        var recovery = stores.Single(store => store.Kind == RecoveryStoreKind.Workspace).Catalogue;
+        if (!IsExpectedRecovery(recovery, allowedRecovery))
+        {
+            return Stop(request, new ExtensionUpdateFinding(
+                recovery.State == RecoveryBundleCatalogueState.Unavailable
+                    ? ExtensionUpdateFindingCode.RecoveryUnavailable
+                    : ExtensionUpdateFindingCode.RecoveryConflict,
+                recovery.Cause ?? "The current operation's recovery preparation is missing or changed.",
+                allowedRecovery?.BundlePath));
         }
 
         var source = await _sourceReader.ReadAsync(
@@ -323,7 +305,19 @@ internal sealed class ExtensionUpdatePlanner
                 : null);
         var bulkSelection = selectionKind is ExtensionUpdateSelectionKind.ExplicitAll
             or ExtensionUpdateSelectionKind.InteractiveAll;
-        var policyFindings = new List<ExtensionUpdateFinding>();
+        var policyFindings = stores.SelectMany(store => store.Catalogue.Candidates)
+            .Where(ExtensionRecoveryHistory.RequiresWarning)
+            .Where(candidate => allowedRecovery is null || !RecoveryBundleIdentity.Matches(candidate, allowedRecovery))
+            .Select(candidate => new ExtensionUpdateFinding(
+                ExtensionUpdateFindingCode.RecoveryHistory,
+                "Recovery data from an earlier run remains.", candidate.Path)).ToList();
+        foreach (var store in stores.Where(store => store.Catalogue.State == RecoveryBundleCatalogueState.Unavailable))
+        {
+            policyFindings.Add(new ExtensionUpdateFinding(
+                ExtensionUpdateFindingCode.RecoveryCoverageUnavailable,
+                store.Catalogue.Cause ?? "Recovery history could not be checked.",
+                store.Location?.WorkspaceDirectory));
+        }
         var installed = ownership.Document.Extensions.Select(package => package.Id)
             .ToHashSet(StringComparer.Ordinal);
         var absentInstalled = selectedIds.FirstOrDefault(id => !installed.Contains(id));
@@ -593,11 +587,6 @@ internal sealed class ExtensionUpdatePlanner
 
         var hasChanges = reconciliation.Effects.Count > 0
             || ownershipPlan.Change is not null;
-        if (hasChanges && !recoveryIsExpected)
-        {
-            return Stop(request, ExtensionUpdateFindingCode.RecoveryConflict,
-                "Recognized recovery residuals block new Extension Update effects.");
-        }
         var facts = ExtensionUpdateResultFormationFactory.Facts(new ExtensionUpdateResultFactsInput
         {
             Selection = selection,
@@ -811,24 +800,14 @@ internal sealed class ExtensionUpdatePlanner
         RecoveryBundleCatalogueResult catalogue,
         RecoveryBundlePreparation? allowed)
     {
-        if (catalogue.State != RecoveryBundleCatalogueState.Available
-            || !catalogue.Candidates.All(IsVerifiedFinal))
-        {
-            return false;
-        }
-
         if (allowed is null)
         {
             return true;
         }
 
-        return catalogue.Candidates.Count(candidate => RecoveryBundleIdentity.Matches(candidate, allowed)) == 1;
+        return catalogue.State == RecoveryBundleCatalogueState.Available
+            && catalogue.Candidates.Count(candidate => RecoveryBundleIdentity.Matches(candidate, allowed)) == 1;
     }
-
-    private static bool IsVerifiedFinal(RecoveryBundleCandidateSnapshot candidate)
-        => candidate.Kind == RecoveryBundleCandidateKind.Final
-            && candidate.Integrity == RecoveryBundleIntegrity.Verified
-            && candidate.Verified is not null;
 
     private static (IReadOnlyList<ExtensionPackageFact> Packages, IReadOnlyList<string> ExcludedPaths)
         FilterExcludedPayload(

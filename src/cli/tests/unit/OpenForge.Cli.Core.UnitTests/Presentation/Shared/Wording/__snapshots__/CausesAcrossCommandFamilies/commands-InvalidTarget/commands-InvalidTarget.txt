@@ -1,0 +1,1046 @@
+## route create Minimal Text
+Cannot create .agents/memory/project-alpha/overview.md: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+Next: open-forge route create --help
+
+
+## route create Minimal Json
+{"severity":"error","code":"route-create.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/project-alpha/overview.md","id":null,"location":null},"category":null,"actions":[]}
+
+## route create Standard Text
+Cannot create .agents/memory/project-alpha/overview.md: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/memory/project-alpha/overview.md  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Wait for the blocking condition or inspect the changed target, then rerun Route Create from a fresh plan.
+Next: open-forge route create --help
+
+
+## route create Standard Json
+{"severity":"error","code":"route-create.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/project-alpha/overview.md","id":null,"location":null},"category":null,"resolution":null,"actions":[]}
+
+## route create Full Text
+Cannot create .agents/memory/project-alpha/overview.md: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/memory/project-alpha/overview.md  Workspace lock is unavailable [route-create.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         cause: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Wait for the blocking condition or inspect the changed target, then rerun Route Create from a fresh plan.
+Next: open-forge route create --help
+
+
+## route create Full Json
+{"severity":"error","code":"route-create.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/project-alpha/overview.md","id":null,"location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[{"label":"cause","value":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}],"provenance":null}
+
+## route create Debug Text
+Cannot create .agents/memory/project-alpha/overview.md: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/memory/project-alpha/overview.md  Workspace lock is unavailable [route-create.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         cause: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Wait for the blocking condition or inspect the changed target, then rerun Route Create from a fresh plan.
+Next: open-forge route create --help
+
+
+## route create Debug Json
+{"severity":"error","code":"route-create.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/project-alpha/overview.md","id":null,"location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[{"label":"cause","value":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}],"provenance":null}
+
+## route init Minimal Text
+Cannot initialize <workspace>/.agents/memory/project-alpha/documents/_documents.md: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Its description and tags are placeholders. Edit them before relying on this route.
+Next: open-forge route init --help
+
+
+## route init Minimal Json
+{"severity":"error","code":"route-init.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"<workspace>/.agents/memory/project-alpha/documents/_documents.md","location":null},"category":null,"actions":[{"kind":"command","command":"open-forge route init --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan."}]}
+
+## route init Standard Text
+Cannot initialize <workspace>/.agents/memory/project-alpha/documents/_documents.md: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  <workspace>/.agents/memory/project-alpha/documents/_documents.md  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route init --help
+         Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.
+  Scaffold: generic
+  description: Draft route for memory/project-alpha/documents
+  tags: NeedsAuthoring
+  <workspace>/.agents/memory/project-alpha/documents/_documents.md  would create
+  Its description and tags are placeholders. Edit them before relying on this route.
+  Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.
+Next: open-forge route init --help
+
+
+## route init Standard Json
+{"severity":"error","code":"route-init.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"<workspace>/.agents/memory/project-alpha/documents/_documents.md","location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route init --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan."}]}
+
+## route init Full Text
+Cannot initialize <workspace>/.agents/memory/project-alpha/documents/_documents.md: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  <workspace>/.agents/memory/project-alpha/documents/_documents.md  Workspace lock is unavailable [route-init.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route init --help
+         Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.
+  Scaffold: generic
+  description: Draft route for memory/project-alpha/documents
+  tags: NeedsAuthoring
+  <workspace>/.agents/memory/project-alpha/documents/_documents.md  would create
+  Its description and tags are placeholders. Edit them before relying on this route.
+  Recovery: no recovery bundle was needed.
+  Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.
+Next: open-forge route init --help
+
+
+## route init Full Json
+{"severity":"error","code":"route-init.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"<workspace>/.agents/memory/project-alpha/documents/_documents.md","location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route init --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan."}],"candidates":[],"evidence":[],"provenance":null}
+
+## route init Debug Text
+Cannot initialize <workspace>/.agents/memory/project-alpha/documents/_documents.md: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  <workspace>/.agents/memory/project-alpha/documents/_documents.md  Workspace lock is unavailable [route-init.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route init --help
+         Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.
+  Scaffold: generic
+  description: Draft route for memory/project-alpha/documents
+  tags: NeedsAuthoring
+  <workspace>/.agents/memory/project-alpha/documents/_documents.md  would create
+  Its description and tags are placeholders. Edit them before relying on this route.
+  Recovery: no recovery bundle was needed.
+  Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.
+Next: open-forge route init --help
+
+
+## route init Debug Json
+{"severity":"error","code":"route-init.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"<workspace>/.agents/memory/project-alpha/documents/_documents.md","location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route init --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan."}],"candidates":[],"evidence":[],"provenance":null}
+
+## route move Minimal Text
+Cannot move memory/guides/old guide: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  .agents/memory/guides/old guide.md -> .agents/memory/archive/new guide.md
+Next: open-forge route move --help
+
+
+## route move Minimal Json
+{"severity":"error","code":"route-move.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/guides/old guide.md","id":null,"location":null},"category":null,"actions":[]}
+
+## route move Standard Text
+Cannot move memory/guides/old guide: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/memory/guides/old guide.md  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  .agents/memory/guides/old guide.md -> .agents/memory/archive/new guide.md
+  Wait for the blocking condition or inspect the changed target, then rerun Route Move from a fresh plan.
+Next: open-forge route move --help
+
+
+## route move Standard Json
+{"severity":"error","code":"route-move.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/guides/old guide.md","id":null,"location":null},"category":null,"resolution":null,"actions":[]}
+
+## route move Full Text
+Cannot move memory/guides/old guide: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/memory/guides/old guide.md  Workspace lock is unavailable [route-move.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  .agents/memory/guides/old guide.md -> .agents/memory/archive/new guide.md
+  Effects:
+  3 files scanned; 1 link found.
+  Wait for the blocking condition or inspect the changed target, then rerun Route Move from a fresh plan.
+Next: open-forge route move --help
+
+
+## route move Full Json
+{"severity":"error","code":"route-move.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/guides/old guide.md","id":null,"location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## route move Debug Text
+Cannot move memory/guides/old guide: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/memory/guides/old guide.md  Workspace lock is unavailable [route-move.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  .agents/memory/guides/old guide.md -> .agents/memory/archive/new guide.md
+  Effects:
+  3 files scanned; 1 link found.
+  Wait for the blocking condition or inspect the changed target, then rerun Route Move from a fresh plan.
+Next: open-forge route move --help
+
+
+## route move Debug Json
+{"severity":"error","code":"route-move.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/guides/old guide.md","id":null,"location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## route remove Minimal Text
+Cannot remove guidance/old guide: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Detached 1 link that pointed at it; the link text was kept:
+    README.md:3:5
+Next: open-forge route remove --help
+
+
+## route remove Minimal Json
+{"severity":"error","code":"route-remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/guidance/old guide.md","id":null,"location":null},"category":null,"actions":[{"kind":"command","command":"open-forge route remove --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan."}]}
+
+## route remove Standard Text
+Cannot remove guidance/old guide: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/guidance/old guide.md  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route remove --help
+         Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan.
+  Detached 1 link that pointed at it; the link text was kept:
+    README.md:3:5
+    [Old guide](.agents/guidance/old%20guide.md#part) -> Old guide
+  Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan.
+Next: open-forge route remove --help
+
+
+## route remove Standard Json
+{"severity":"error","code":"route-remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/guidance/old guide.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route remove --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan."}]}
+
+## route remove Full Text
+Cannot remove guidance/old guide: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/guidance/old guide.md  Workspace lock is unavailable [route-remove.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route remove --help
+         Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan.
+  Detached 1 link that pointed at it; the link text was kept:
+    README.md:3:5
+    [Old guide](.agents/guidance/old%20guide.md#part) -> Old guide
+  Scanned 4 files and found 1 link.
+  Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan.
+Next: open-forge route remove --help
+
+
+## route remove Full Json
+{"severity":"error","code":"route-remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/guidance/old guide.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route remove --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan."}],"candidates":[],"evidence":[],"provenance":null}
+
+## route remove Debug Text
+Cannot remove guidance/old guide: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/guidance/old guide.md  Workspace lock is unavailable [route-remove.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route remove --help
+         Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan.
+  Detached 1 link that pointed at it; the link text was kept:
+    README.md:3:5
+    [Old guide](.agents/guidance/old%20guide.md#part) -> Old guide
+  Scanned 4 files and found 1 link.
+  Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan.
+Next: open-forge route remove --help
+
+
+## route remove Debug Json
+{"severity":"error","code":"route-remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/guidance/old guide.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route remove --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan."}],"candidates":[],"evidence":[],"provenance":null}
+
+## extension update Minimal Text
+Cannot update the selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+
+
+## extension update Minimal Json
+{"severity":"error","code":"extension-update.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"the selected","location":null},"category":null,"actions":[]}
+
+## extension update Standard Text
+Cannot update the selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  the selected  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  Dependency closure: none
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded
+
+
+## extension update Standard Json
+{"severity":"error","code":"extension-update.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"the selected","location":null},"category":null,"resolution":"manual-decision","actions":[]}
+
+## extension update Full Text
+Cannot update the selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  the selected  Workspace lock is unavailable [extension-update.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         fix by hand
+         cause: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  Dependency closure: none
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was needed.
+
+
+## extension update Full Json
+{"severity":"error","code":"extension-update.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"the selected","location":null},"category":null,"resolution":"manual-decision","actions":[],"candidates":[],"evidence":[{"label":"cause","value":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}],"provenance":null}
+
+## extension update Debug Text
+Cannot update the selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  the selected  Workspace lock is unavailable [extension-update.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         fix by hand
+         cause: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  Dependency closure: none
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was needed.
+
+
+## extension update Debug Json
+{"severity":"error","code":"extension-update.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"the selected","location":null},"category":null,"resolution":"manual-decision","actions":[],"candidates":[],"evidence":[{"label":"cause","value":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}],"provenance":null}
+
+## extension remove Minimal Text
+Cannot remove the selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+
+
+## extension remove Minimal Json
+{"severity":"error","code":"extension-remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"the selected","location":null},"category":null,"actions":[]}
+
+## extension remove Standard Text
+Cannot remove the selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  the selected  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  .agents/open-forge.lock.json  unchanged
+
+
+## extension remove Standard Json
+{"severity":"error","code":"extension-remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"the selected","location":null},"category":null,"resolution":null,"actions":[]}
+
+## extension remove Full Text
+Cannot remove the selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  the selected  Workspace lock is unavailable [extension-remove.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  .agents/open-forge.lock.json  unchanged
+  Entries sections unchanged: none
+  Verification: targets not checked; Entries not checked; Extension record not checked
+  Recovery: not-required.
+
+
+## extension remove Full Json
+{"severity":"error","code":"extension-remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"the selected","location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## extension remove Debug Text
+Cannot remove the selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  the selected  Workspace lock is unavailable [extension-remove.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  .agents/open-forge.lock.json  unchanged
+  Entries sections unchanged: none
+  Verification: targets not checked; Entries not checked; Extension record not checked
+  Recovery: not-required.
+
+
+## extension remove Debug Json
+{"severity":"error","code":"extension-remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"the selected","location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## library attach Minimal Text
+Cannot attach team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+
+
+## library attach Minimal Json
+{"severity":"error","code":"library-attach.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/open-forge.lock.json","id":null,"location":null},"category":null,"actions":[]}
+
+## library attach Standard Text
+Cannot attach team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+
+
+## library attach Standard Json
+{"severity":"error","code":"library-attach.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/open-forge.lock.json","id":null,"location":null},"category":null,"resolution":null,"actions":[]}
+
+## library attach Full Text
+Cannot attach team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Workspace lock is unavailable [library-attach.lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  Permission evaluation: permission was not evaluated. Required paths: none. Missing paths: none. No grant was saved.
+  Verification: verification has not started; 0 of 0 links created; the Library was not recorded
+  No recovery data was requested.
+
+
+## library attach Full Json
+{"severity":"error","code":"library-attach.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/open-forge.lock.json","id":null,"location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## library attach Debug Text
+Cannot attach team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Workspace lock is unavailable [library-attach.lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  Permission evaluation: permission was not evaluated. Required paths: none. Missing paths: none. No grant was saved.
+  Verification: verification has not started; 0 of 0 links created; the Library was not recorded
+  No recovery data was requested.
+
+
+## library attach Debug Json
+{"severity":"error","code":"library-attach.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/open-forge.lock.json","id":null,"location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## library detach Minimal Text
+Cannot detach team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+Next: open-forge doctor --workspace <workspace>
+
+
+## library detach Minimal Json
+{"severity":"error","code":"library-detach.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"team-knowledge","location":null},"category":null,"actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>","reason":"Inspect the reported Library state."}]}
+
+## library detach Standard Text
+Cannot detach team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  team-knowledge  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge doctor --workspace <workspace>
+         Inspect the reported Library state.
+  Inspect the reported Library state.
+Next: open-forge doctor --workspace <workspace>
+
+
+## library detach Standard Json
+{"severity":"error","code":"library-detach.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"team-knowledge","location":null},"category":null,"resolution":"targeted-operation","actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>","reason":"Inspect the reported Library state."}]}
+
+## library detach Full Text
+Cannot detach team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  team-knowledge  Workspace lock is unavailable [library-detach.lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         use open-forge doctor --workspace <workspace>
+         open-forge doctor --workspace <workspace>
+         Inspect the reported Library state.
+  Verification: was not requested; registration was not published.
+  Recovery: no recovery bundle was required; no residual effects.
+  Inspect the reported Library state.
+Next: open-forge doctor --workspace <workspace>
+
+
+## library detach Full Json
+{"severity":"error","code":"library-detach.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"team-knowledge","location":null},"category":null,"resolution":"targeted-operation","actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>","reason":"Inspect the reported Library state."}],"candidates":[],"evidence":[],"provenance":null}
+
+## library detach Debug Text
+Cannot detach team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  team-knowledge  Workspace lock is unavailable [library-detach.lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         use open-forge doctor --workspace <workspace>
+         open-forge doctor --workspace <workspace>
+         Inspect the reported Library state.
+  Verification: was not requested; registration was not published.
+  Recovery: no recovery bundle was required; no residual effects.
+  Inspect the reported Library state.
+Next: open-forge doctor --workspace <workspace>
+
+
+## library detach Debug Json
+{"severity":"error","code":"library-detach.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"team-knowledge","location":null},"category":null,"resolution":"targeted-operation","actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>","reason":"Inspect the reported Library state."}],"candidates":[],"evidence":[],"provenance":null}
+
+## index Minimal Text
+Cannot rebuild the Entries section of <workspace>/..
+Workspace: <workspace>/.
+  Error  <workspace>/.  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Next: open-forge doctor --workspace <workspace>/.
+
+
+## index Minimal Json
+{"severity":"error","code":"index.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"<workspace>/.","location":null},"category":null,"actions":[]}
+
+## index Standard Text
+Cannot rebuild the Entries section of <workspace>/..
+Workspace: <workspace>/.
+  Error  <workspace>/.  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  Inspect the reported problem before rerunning Index.
+Next: open-forge doctor --workspace <workspace>/.
+
+
+## index Standard Json
+{"severity":"error","code":"index.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"<workspace>/.","location":null},"category":null,"resolution":null,"actions":[]}
+
+## index Full Text
+Cannot rebuild the Entries section of <workspace>/..
+Workspace: <workspace>/.
+  Error  <workspace>/.  Workspace lock is unavailable [index.workspace-unsafe]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+No recovery bundle was needed.
+  Inspect the reported problem before rerunning Index.
+Next: open-forge doctor --workspace <workspace>/.
+
+
+## index Full Json
+{"severity":"error","code":"index.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"<workspace>/.","location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## index Debug Text
+Cannot rebuild the Entries section of <workspace>/..
+Workspace: <workspace>/.
+  Error  <workspace>/.  Workspace lock is unavailable [index.workspace-unsafe]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+No recovery bundle was needed.
+  Inspect the reported problem before rerunning Index.
+Next: open-forge doctor --workspace <workspace>/.
+
+
+## index Debug Json
+{"severity":"error","code":"index.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"<workspace>/.","location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## install Minimal Text
+Cannot install: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+Workspace: <workspace>/.
+  Error  <workspace>/.  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge doctor --workspace <workspace>/.
+Next: open-forge doctor --workspace <workspace>/.
+
+
+## install Minimal Json
+{"severity":"error","code":"install.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"workspace","path":null,"id":"<workspace>/.","location":null},"category":null,"actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>/.","reason":"Inspect the reported Install boundary before rerunning it."}]}
+
+## install Standard Text
+Cannot install: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+Workspace: <workspace>/.
+  Error  <workspace>/.  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge doctor --workspace <workspace>/.
+         Inspect the reported Install boundary before rerunning it.
+  Inspect the reported Install boundary before rerunning it.
+Next: open-forge doctor --workspace <workspace>/.
+
+
+## install Standard Json
+{"severity":"error","code":"install.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"workspace","path":null,"id":"<workspace>/.","location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>/.","reason":"Inspect the reported Install boundary before rerunning it."}]}
+
+## install Full Text
+Cannot install: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+Workspace: <workspace>/.
+  Error  <workspace>/.  Workspace lock is unavailable [install.workspace-unsafe]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge doctor --workspace <workspace>/.
+         Inspect the reported Install boundary before rerunning it.
+  No ownership record change was requested.
+  No recovery bundle was required.
+  Verification was not requested.
+  Inspect the reported Install boundary before rerunning it.
+Next: open-forge doctor --workspace <workspace>/.
+
+
+## install Full Json
+{"severity":"error","code":"install.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"workspace","path":null,"id":"<workspace>/.","location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>/.","reason":"Inspect the reported Install boundary before rerunning it."}],"candidates":[],"evidence":[],"provenance":null}
+
+## install Debug Text
+Cannot install: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+Workspace: <workspace>/.
+  Error  <workspace>/.  Workspace lock is unavailable [install.workspace-unsafe]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge doctor --workspace <workspace>/.
+         Inspect the reported Install boundary before rerunning it.
+  No ownership record change was requested.
+  No recovery bundle was required.
+  Verification was not requested.
+  Inspect the reported Install boundary before rerunning it.
+Next: open-forge doctor --workspace <workspace>/.
+
+
+## install Debug Json
+{"severity":"error","code":"install.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"workspace","path":null,"id":"<workspace>/.","location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>/.","reason":"Inspect the reported Install boundary before rerunning it."}],"candidates":[],"evidence":[],"provenance":null}
+
+## update Minimal Text
+Cannot update: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge doctor --workspace <workspace>
+Next: open-forge doctor --workspace <workspace>
+
+
+## update Minimal Json
+{"severity":"error","code":"update.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"workspace","path":".agents/open-forge.lock.json","id":null,"location":null},"category":null,"actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>","reason":"Inspect the blocked, unavailable, or incomplete Update facts before rerunning."}]}
+
+## update Standard Text
+Cannot update: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge doctor --workspace <workspace>
+         Inspect the blocked, unavailable, or incomplete Update facts before rerunning.
+  Inspect the blocked workspace, lifecycle, ownership, projection, or safety boundary before rerunning Update.
+Next: open-forge doctor --workspace <workspace>
+
+
+## update Standard Json
+{"severity":"error","code":"update.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"workspace","path":".agents/open-forge.lock.json","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>","reason":"Inspect the blocked, unavailable, or incomplete Update facts before rerunning."}]}
+
+## update Full Text
+Cannot update: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Workspace lock is unavailable [update.workspace-unsafe]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge doctor --workspace <workspace>
+         Inspect the blocked, unavailable, or incomplete Update facts before rerunning.
+  Verification was not requested.
+  Inspect the blocked workspace, lifecycle, ownership, projection, or safety boundary before rerunning Update.
+Next: open-forge doctor --workspace <workspace>
+
+
+## update Full Json
+{"severity":"error","code":"update.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"workspace","path":".agents/open-forge.lock.json","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>","reason":"Inspect the blocked, unavailable, or incomplete Update facts before rerunning."}],"candidates":[],"evidence":[],"provenance":null}
+
+## update Debug Text
+Cannot update: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Workspace lock is unavailable [update.workspace-unsafe]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge doctor --workspace <workspace>
+         Inspect the blocked, unavailable, or incomplete Update facts before rerunning.
+  Verification was not requested.
+  Inspect the blocked workspace, lifecycle, ownership, projection, or safety boundary before rerunning Update.
+Next: open-forge doctor --workspace <workspace>
+
+
+## update Debug Json
+{"severity":"error","code":"update.workspace-unsafe","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"workspace","path":".agents/open-forge.lock.json","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge doctor --workspace <workspace>","reason":"Inspect the blocked, unavailable, or incomplete Update facts before rerunning."}],"candidates":[],"evidence":[],"provenance":null}
+
+## remove Minimal Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+1 errors.
+Next: open-forge remove --help
+
+
+## remove Minimal Json
+{"severity":"error","code":"remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/topic.md","id":null,"location":null},"category":null,"actions":[{"kind":"command","command":"open-forge remove --help","reason":"Correct the Remove target and review its safety boundary."}]}
+
+## remove Standard Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/topic.md  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge remove --help
+         Correct the Remove target and review its safety boundary.
+1 errors.
+  Correct the Remove target and review its safety boundary.
+Next: open-forge remove --help
+
+
+## remove Standard Json
+{"severity":"error","code":"remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/topic.md","id":null,"location":null},"category":null,"resolution":"targeted-operation","actions":[{"kind":"command","command":"open-forge remove --help","reason":"Correct the Remove target and review its safety boundary."}]}
+
+## remove Full Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/topic.md  Workspace lock is unavailable [remove.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         use open-forge remove --help
+         open-forge remove --help
+         Correct the Remove target and review its safety boundary.
+1 errors.
+  Correct the Remove target and review its safety boundary.
+Next: open-forge remove --help
+
+
+## remove Full Json
+{"severity":"error","code":"remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/topic.md","id":null,"location":null},"category":null,"resolution":"targeted-operation","actions":[{"kind":"command","command":"open-forge remove --help","reason":"Correct the Remove target and review its safety boundary."}],"candidates":[],"evidence":[],"provenance":null}
+
+## remove Debug Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/topic.md  Workspace lock is unavailable [remove.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         use open-forge remove --help
+         open-forge remove --help
+         Correct the Remove target and review its safety boundary.
+1 errors.
+  Correct the Remove target and review its safety boundary.
+Next: open-forge remove --help
+
+
+## remove Debug Json
+{"severity":"error","code":"remove.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/topic.md","id":null,"location":null},"category":null,"resolution":"targeted-operation","actions":[{"kind":"command","command":"open-forge remove --help","reason":"Correct the Remove target and review its safety boundary."}],"candidates":[],"evidence":[],"provenance":null}
+
+## repair Minimal Text
+Cannot repair: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+Next: open-forge doctor --workspace <workspace>
+
+
+## repair Minimal Json
+{"severity":"error","code":"repair.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"repair.workspace-lock-unavailable","location":null},"category":null,"actions":[]}
+
+## repair Standard Text
+Cannot repair: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  repair.workspace-lock-unavailable  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+1 error.
+  Inspect the blocked diagnosis, selection, target, plan, or recovery boundary before retrying Repair.
+Next: open-forge doctor --workspace <workspace>
+
+
+## repair Standard Json
+{"severity":"error","code":"repair.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"repair.workspace-lock-unavailable","location":null},"category":null,"resolution":"blocked-repair","actions":[]}
+
+## repair Full Text
+Cannot repair: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  repair.workspace-lock-unavailable  Workspace lock is unavailable [repair.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         cannot be fixed automatically
+  Diagnosis coverage: Workspace and path were not checked; route and heading were not checked; local references were not checked; selected scope was not checked.
+  Checks before writing: not run.
+  No verification was needed.
+  Recovery: No recovery bundle was required.
+  Checks after writing: not run.
+1 error.
+  Inspect the blocked diagnosis, selection, target, plan, or recovery boundary before retrying Repair.
+Next: open-forge doctor --workspace <workspace>
+
+
+## repair Full Json
+{"severity":"error","code":"repair.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"repair.workspace-lock-unavailable","location":null},"category":null,"resolution":"blocked-repair","actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## repair Debug Text
+Cannot repair: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  repair.workspace-lock-unavailable  Workspace lock is unavailable [repair.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         cannot be fixed automatically
+  Diagnosis coverage: Workspace and path were not checked; route and heading were not checked; local references were not checked; selected scope was not checked.
+  Checks before writing: not run.
+  No verification was needed.
+  Recovery: No recovery bundle was required.
+  Checks after writing: not run.
+1 error.
+  Inspect the blocked diagnosis, selection, target, plan, or recovery boundary before retrying Repair.
+Next: open-forge doctor --workspace <workspace>
+
+
+## repair Debug Json
+{"severity":"error","code":"repair.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":null,"id":"repair.workspace-lock-unavailable","location":null},"category":null,"resolution":"blocked-repair","actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## cleanup Minimal Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+Next: open-forge cleanup --workspace <workspace>
+
+
+## cleanup Minimal Json
+{"severity":"error","code":"cleanup.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":"cleanup","id":null,"location":null},"category":null,"actions":[{"kind":"command","command":"open-forge cleanup --workspace <workspace>","reason":"Rerun Cleanup from a fresh catalogue."}]}
+
+## cleanup Standard Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  cleanup  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge cleanup --workspace <workspace>
+         Rerun Cleanup from a fresh catalogue.
+  Rerun Cleanup from a fresh catalogue.
+Next: open-forge cleanup --workspace <workspace>
+
+
+## cleanup Standard Json
+{"severity":"error","code":"cleanup.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":"cleanup","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge cleanup --workspace <workspace>","reason":"Rerun Cleanup from a fresh catalogue."}]}
+
+## cleanup Full Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  cleanup  Workspace lock is unavailable [cleanup.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge cleanup --workspace <workspace>
+         Rerun Cleanup from a fresh catalogue.
+  The workspace lock was acquired before removal.
+  The recovery store matched the planned items under the workspace lock.
+  Rerun Cleanup from a fresh catalogue.
+Next: open-forge cleanup --workspace <workspace>
+
+
+## cleanup Full Json
+{"severity":"error","code":"cleanup.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":"cleanup","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge cleanup --workspace <workspace>","reason":"Rerun Cleanup from a fresh catalogue."}],"candidates":[],"evidence":[],"provenance":null}
+
+## cleanup Debug Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  cleanup  Workspace lock is unavailable [cleanup.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge cleanup --workspace <workspace>
+         Rerun Cleanup from a fresh catalogue.
+  The workspace lock was acquired before removal.
+  The recovery store matched the planned items under the workspace lock.
+  Rerun Cleanup from a fresh catalogue.
+Next: open-forge cleanup --workspace <workspace>
+
+
+## cleanup Debug Json
+{"severity":"error","code":"cleanup.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"identifier","path":"cleanup","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge cleanup --workspace <workspace>","reason":"Rerun Cleanup from a fresh catalogue."}],"candidates":[],"evidence":[],"provenance":null}
+
+## route update Minimal Text
+Cannot update memory/topic: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+Next: open-forge route update --help
+
+
+## route update Minimal Json
+{"severity":"error","code":"route-update.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/topic.md","id":null,"location":null},"category":null,"actions":[{"kind":"command","command":"open-forge route update --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan."}]}
+
+## route update Standard Text
+Cannot update memory/topic: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/memory/topic.md  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route update --help
+         Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan.
+  Path: .agents/memory/topic.md
+  Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan.
+Next: open-forge route update --help
+
+
+## route update Standard Json
+{"severity":"error","code":"route-update.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/topic.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route update --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan."}]}
+
+## route update Full Text
+Cannot update memory/topic: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/memory/topic.md  Workspace lock is unavailable [route-update.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route update --help
+         Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan.
+  Path: .agents/memory/topic.md
+  Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan.
+Next: open-forge route update --help
+
+
+## route update Full Json
+{"severity":"error","code":"route-update.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/topic.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route update --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan."}],"candidates":[],"evidence":[],"provenance":null}
+
+## route update Debug Text
+Cannot update memory/topic: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/memory/topic.md  Workspace lock is unavailable [route-update.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route update --help
+         Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan.
+  Path: .agents/memory/topic.md
+  Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan.
+Next: open-forge route update --help
+
+
+## route update Debug Json
+{"severity":"error","code":"route-update.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":".agents/memory/topic.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route update --help","reason":"Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan."}],"candidates":[],"evidence":[],"provenance":null}
+
+## route include Minimal Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Before: (no row)
+  After: (no row)
+Next: open-forge route include --help
+
+
+## route include Minimal Json
+{"severity":"error","code":"route-include.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"topic.md","id":null,"location":null},"category":null,"actions":[{"kind":"command","command":"open-forge route include --help","reason":"Review the reported cause and retry from a fresh preview."}]}
+
+## route include Standard Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  topic.md  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route include --help
+         Review the reported cause and retry from a fresh preview.
+  Before: (no row)
+  After: (no row)
+  Review the reported cause and retry from a fresh preview.
+Next: open-forge route include --help
+
+
+## route include Standard Json
+{"severity":"error","code":"route-include.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"topic.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route include --help","reason":"Review the reported cause and retry from a fresh preview."}]}
+
+## route include Full Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  topic.md  Workspace lock is unavailable [route-include.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route include --help
+         Review the reported cause and retry from a fresh preview.
+  Before: (no row)
+  After: (no row)
+  Review the reported cause and retry from a fresh preview.
+Next: open-forge route include --help
+
+
+## route include Full Json
+{"severity":"error","code":"route-include.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"topic.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route include --help","reason":"Review the reported cause and retry from a fresh preview."}],"candidates":[],"evidence":[],"provenance":null}
+
+## route include Debug Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  topic.md  Workspace lock is unavailable [route-include.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route include --help
+         Review the reported cause and retry from a fresh preview.
+  Before: (no row)
+  After: (no row)
+  Review the reported cause and retry from a fresh preview.
+Next: open-forge route include --help
+
+
+## route include Debug Json
+{"severity":"error","code":"route-include.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"topic.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route include --help","reason":"Review the reported cause and retry from a fresh preview."}],"candidates":[],"evidence":[],"provenance":null}
+
+## route exclude Minimal Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Before: (no row)
+  After: (no row)
+Next: open-forge route exclude --help
+
+
+## route exclude Minimal Json
+{"severity":"error","code":"route-exclude.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"topic.md","id":null,"location":null},"category":null,"actions":[{"kind":"command","command":"open-forge route exclude --help","reason":"Review the reported cause and retry from a fresh preview."}]}
+
+## route exclude Standard Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  topic.md  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route exclude --help
+         Review the reported cause and retry from a fresh preview.
+  Before: (no row)
+  After: (no row)
+  Review the reported cause and retry from a fresh preview.
+Next: open-forge route exclude --help
+
+
+## route exclude Standard Json
+{"severity":"error","code":"route-exclude.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"topic.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route exclude --help","reason":"Review the reported cause and retry from a fresh preview."}]}
+
+## route exclude Full Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  topic.md  Workspace lock is unavailable [route-exclude.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route exclude --help
+         Review the reported cause and retry from a fresh preview.
+  Before: (no row)
+  After: (no row)
+  Review the reported cause and retry from a fresh preview.
+Next: open-forge route exclude --help
+
+
+## route exclude Full Json
+{"severity":"error","code":"route-exclude.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"topic.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route exclude --help","reason":"Review the reported cause and retry from a fresh preview."}],"candidates":[],"evidence":[],"provenance":null}
+
+## route exclude Debug Text
+Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  topic.md  Workspace lock is unavailable [route-exclude.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+         open-forge route exclude --help
+         Review the reported cause and retry from a fresh preview.
+  Before: (no row)
+  After: (no row)
+  Review the reported cause and retry from a fresh preview.
+Next: open-forge route exclude --help
+
+
+## route exclude Debug Json
+{"severity":"error","code":"route-exclude.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"topic.md","id":null,"location":null},"category":null,"resolution":null,"actions":[{"kind":"command","command":"open-forge route exclude --help","reason":"Review the reported cause and retry from a fresh preview."}],"candidates":[],"evidence":[],"provenance":null}
+
+## extension install Minimal Text
+Cannot install selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+
+
+## extension install Minimal Json
+{"severity":"error","code":"extension-install.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"selected","id":null,"location":null},"category":null,"actions":[]}
+
+## extension install Standard Text
+Cannot install selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  selected  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+
+
+## extension install Standard Json
+{"severity":"error","code":"extension-install.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"selected","id":null,"location":null},"category":null,"resolution":null,"actions":[]}
+
+## extension install Full Text
+Cannot install selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  selected  Workspace lock is unavailable [extension-install.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  Entries sections unchanged: none
+  Verification: targets not checked; Entries not checked; Extension record not
+  checked; Framework record not checked
+  Recovery: not-required.
+
+
+## extension install Full Json
+{"severity":"error","code":"extension-install.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"selected","id":null,"location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## extension install Debug Text
+Cannot install selected: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+  Error  selected  Workspace lock is unavailable [extension-install.workspace-lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  Entries sections unchanged: none
+  Verification: targets not checked; Entries not checked; Extension record not
+  checked; Framework record not checked
+  Recovery: not-required.
+
+
+## extension install Debug Json
+{"severity":"error","code":"extension-install.workspace-lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"selected","id":null,"location":null},"category":null,"resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## library sync Minimal Text
+Cannot synchronize team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+
+
+## library sync Minimal Json
+{"severity":"error","code":"library-sync.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"team-knowledge","id":null,"location":null},"category":"workspace-lock-unavailable","actions":[]}
+
+## library sync Standard Text
+Cannot synchronize team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+workspace-lock-unavailable
+  Error  team-knowledge  Workspace lock is unavailable
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+
+
+## library sync Standard Json
+{"severity":"error","code":"library-sync.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"team-knowledge","id":null,"location":null},"category":"workspace-lock-unavailable","resolution":null,"actions":[]}
+
+## library sync Full Text
+Cannot synchronize team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+workspace-lock-unavailable
+  Error  team-knowledge  Workspace lock is unavailable [library-sync.lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  Inventory: 0 eligible files, 0 excluded items, 0 unavailable paths.
+  Verification: not started; record publication: not started.
+  Recovery: no recovery data was requested.
+
+
+## library sync Full Json
+{"severity":"error","code":"library-sync.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"team-knowledge","id":null,"location":null},"category":"workspace-lock-unavailable","resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}
+
+## library sync Debug Text
+Cannot synchronize team-knowledge: cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+Workspace: <workspace>
+workspace-lock-unavailable
+  Error  team-knowledge  Workspace lock is unavailable [library-sync.lock-unavailable]
+         Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.
+  Inventory: 0 eligible files, 0 excluded items, 0 unavailable paths.
+  Verification: not started; record publication: not started.
+  Recovery: no recovery data was requested.
+
+
+## library sync Debug Json
+{"severity":"error","code":"library-sync.lock-unavailable","title":"Workspace lock is unavailable","message":"Cannot use <workspace>/pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/.open-forge-state/workspace.lock as the lock: it is not an ordinary file. Nothing was changed.","subject":{"kind":"file","path":"team-knowledge","id":null,"location":null},"category":"workspace-lock-unavailable","resolution":null,"actions":[],"candidates":[],"evidence":[],"provenance":null}

@@ -574,3 +574,7 @@ Extension Install renders eligible selected Markdown to root, delivers the decla
 **State:** Independently enumerate selected packages and distinct target paths from the manifests. Compare newly delivered bytes with [X31](../experience.md#x31), verify ownership, and compare settings and unrelated content. Carry the installed state into the repeat and verify byte-identical content and ownership with no new recovery artifacts.
 
 **Output:** Compare package identities, dependency closure, and actual effects with the independent inventory. Check that the second result describes the already-current installation without reporting new delivery effects.
+
+## Task 86 Runtime Expectations
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

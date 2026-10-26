@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
@@ -56,12 +57,16 @@ internal sealed class UpdateApplicationOperation(
         {
             return UpdateResultBuilder.BeforeEffects(
                 execution,
-                Finding(
+                new UpdateFinding(
                     lockResult.State == WorkspaceLockState.Cancelled
                         ? UpdateFindingCode.Interrupted
                         : UpdateFindingCode.WorkspaceUnsafe,
-                    lockResult.Cause
-                        ?? "The persistent Update workspace lease could not be acquired."));
+                    target: null,
+                    cause: lockResult.Cause
+                        ?? "The persistent Update workspace lease could not be acquired.")
+                {
+                    LockFailure = WorkspaceLockFailureProjection.From(lockResult.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")),
+                });
         }
 
         await using (lease.ConfigureAwait(false))

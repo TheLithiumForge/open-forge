@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Remove.Shared.Effects;
@@ -77,7 +78,8 @@ internal sealed class RemovePathApplication
                 lockResult.State == WorkspaceLockState.Cancelled
                     ? CliSemanticStatus.Interrupted
                     : CliSemanticStatus.Blocked,
-                lockResult.Cause ?? "The workspace mutation lease could not be acquired.");
+                lockResult.Cause ?? "The workspace mutation lease could not be acquired.",
+                lockFailure: WorkspaceLockFailureProjection.From(lockResult.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")));
         }
 
         await using (lease.ConfigureAwait(false))

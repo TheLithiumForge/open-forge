@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
@@ -36,12 +37,20 @@ internal static class RepairApplicationOutcomeFactory
     }
 
     internal static RepairApplicationOutcome LockBoundary(WorkspaceLockResult result)
-        => result.State == WorkspaceLockState.Cancelled
+    {
+        var outcome = result.State == WorkspaceLockState.Cancelled
             ? InterruptedBeforeApplication(result.Cause ?? "Repair lock acquisition was interrupted.")
             : BeforeApplication(
             RepairPreflightState.Blocked,
             result.Cause ?? "The Repair workspace lock could not be acquired.",
             RepairFindingCode.WorkspaceLockUnavailable);
+        var failure = WorkspaceLockFailureProjection.From(result.LockFailure
+            ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure."));
+        return outcome with
+        {
+            Findings = [.. outcome.Findings.Select(finding => finding with { LockFailure = failure })],
+        };
+    }
 
     private static RepairApplicationOutcome InterruptedBeforeApplication(string cause)
         => new(

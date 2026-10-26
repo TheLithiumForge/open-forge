@@ -87,7 +87,8 @@ public sealed class IndexBeforeOutputSnapshotTests
             Assert.Contains(IndexOperationWorkspace.ExpectedEntry, await workspace.ReadRootAsync(TestContext.Current.CancellationToken), StringComparison.Ordinal);
         }
 
-        Renderers.MatchDetails(result, situation, testName: $"{nameof(GeneratedEntries)}_{situation}");
+        Renderers.MatchDetails(result, situation, testName: $"{nameof(GeneratedEntries)}_{situation}",
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 
     [Trait("Boundary", "Output")]
@@ -115,7 +116,8 @@ public sealed class IndexBeforeOutputSnapshotTests
         Assert.Equal((CliSemanticStatus)status, result.Status);
         Assert.NotEmpty(result.Findings);
         Assert.Equal(before, workspace.SnapshotHashes());
-        Renderers.MatchDetails(result, situation, testName: $"{nameof(InvalidSelectionOrMetadata)}_{situation}");
+        Renderers.MatchDetails(result, situation, testName: $"{nameof(InvalidSelectionOrMetadata)}_{situation}",
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 
     [Trait("Boundary", "Output")]
@@ -129,7 +131,8 @@ public sealed class IndexBeforeOutputSnapshotTests
             workspace.Request(IndexMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(before, workspace.SnapshotHashes());
-        Renderers.MatchDetails(result, "lock-held");
+        Renderers.MatchDetails(result, "lock-held",
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 
     [Trait("Boundary", "Output")]

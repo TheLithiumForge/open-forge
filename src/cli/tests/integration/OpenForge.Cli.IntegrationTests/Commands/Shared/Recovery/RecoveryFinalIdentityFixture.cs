@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Shared.Recovery;
@@ -79,7 +80,7 @@ internal sealed class RecoveryFinalIdentityFixture
         RecoveryBundleAttribution expectedAttribution)
     {
         var read = await RecoveryBundleReader.ReadFinalAsync(
-            _workspace,
+            RecoveryStoreLocator.Local(_workspace),
             _preparation.BundlePath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, read.State);

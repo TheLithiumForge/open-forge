@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Planning;
 
@@ -21,6 +22,8 @@ internal static class RouteInclusionTargetResolver
         if (!PhysicalContainment.Contains(request.Workspace.LexicalRoot, absolute))
             throw Invalid(request, "Choose a file inside this workspace.");
         var path = Path.GetRelativePath(request.Workspace.LexicalRoot, absolute).Replace('\\', '/');
+        if (WorkspaceRuntimePaths.Contains(request.Workspace, Path.GetFullPath(path, request.Workspace.PhysicalRoot)))
+            throw Invalid(request, "Choose a project document outside the reserved workspace runtime directory.");
         if (path.Split('/').Any(segment => segment.Equals(".git", StringComparison.OrdinalIgnoreCase)))
             throw Invalid(request, "Choose a project document outside Git metadata.");
         if (new[] { ".agents/loader.md", ".agents/open-forge.json", ".agents/open-forge.lock.json" }.Contains(path, PhysicalIdentityTracker.PathComparer))
@@ -35,6 +38,8 @@ internal static class RouteInclusionTargetResolver
         else
         {
             var physical = resolution.GetContainedPhysicalPath();
+            if (WorkspaceRuntimePaths.Contains(request.Workspace, physical))
+                throw Invalid(request, "Choose a project document outside the reserved workspace runtime directory.");
             var controls = new[] { ".agents/loader.md", ".agents/open-forge.json", ".agents/open-forge.lock.json" };
             if (controls.Any(control => PhysicalIdentityTracker.PathComparer.Equals(physical, Path.GetFullPath(control, request.Workspace.PhysicalRoot))))
                 throw Invalid(request, "Choose a project document instead of a workspace control file.");
@@ -70,10 +75,14 @@ internal static class RouteInclusionTargetResolver
     internal static async ValueTask<FileStateSnapshot> ReadAsync(CliWorkspace workspace, string path, CancellationToken token)
     {
         var logical = Path.GetFullPath(path, workspace.LexicalRoot);
+        if (WorkspaceRuntimePaths.Contains(workspace, Path.GetFullPath(path, workspace.PhysicalRoot)))
+            throw new IOException($"'{path}' is inside the reserved workspace runtime directory.");
         var resolution = new PhysicalPathResolver().ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, logical);
         if (resolution.State == PhysicalPathState.Missing) return FileStateSnapshot.Missing(logical);
         if (resolution.State != PhysicalPathState.Contained) throw new IOException($"'{path}' is not safely contained in the workspace.");
         var physical = resolution.GetContainedPhysicalPath();
+        if (WorkspaceRuntimePaths.Contains(workspace, physical))
+            throw new IOException($"'{path}' is inside the reserved workspace runtime directory.");
         if ((File.GetAttributes(physical) & (FileAttributes.Directory | FileAttributes.Device | FileAttributes.ReparsePoint)) != 0)
             throw new IOException($"'{path}' must be an ordinary file.");
         return FileStateSnapshot.File(logical, physical, await File.ReadAllBytesAsync(physical, token).ConfigureAwait(false));

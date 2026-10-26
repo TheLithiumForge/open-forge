@@ -1,10 +1,11 @@
+using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
 using OpenForge.Cli.Core.Commands.Cleanup.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
-using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion.Models;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
@@ -14,78 +15,106 @@ internal sealed class CleanupApplicationOperation(WorkspaceLockManager lockManag
     private readonly WorkspaceLockManager _lockManager = lockManager;
 
     internal async ValueTask ApplyAsync(
-        CleanupResultBuilder result,
-        RecoveryBundleCatalogueResult frozenCatalogue,
+        IReadOnlyList<CleanupStoreApplication> stores,
         CancellationToken cancellationToken)
     {
-        var request = result.Plan.Request
+        var selected = stores.Where(store => !store.Result.Plan.DeletionEntries.IsEmpty).ToArray();
+        var request = selected[0].Result.Plan.Request
             ?? throw new InvalidOperationException("Cleanup application requires an established request.");
         var acquired = await _lockManager.AcquireAsync(
             new WorkspaceLockRequest(request.Workspace, CleanupDefinitions.CommandIdentity, CleanupPlanner.LeaseOperationId(request)),
             cancellationToken).ConfigureAwait(false);
-        result.Lease = new CleanupLease
+        var leaseFact = new CleanupLease
         {
             State = ReadLeaseState(acquired.State),
             Cause = acquired.Cause,
         };
+        foreach (var store in selected)
+        {
+            store.Result.Lease = leaseFact;
+        }
+
         if (acquired.Lease is not { } lease)
         {
-            result.PreserveUnattempted(observed: null);
-            var code = acquired.State == WorkspaceLockState.Cancelled ? CleanupFindingCode.Interrupted : CleanupFindingCode.WorkspaceLockUnavailable;
-            result.AddFinding(code, acquired.Cause ?? "Workspace lease acquisition was interrupted.");
+            foreach (var store in selected)
+            {
+                var result = store.Result;
+                result.PreserveUnattempted(observed: null);
+                var code = acquired.State == WorkspaceLockState.Cancelled ? CleanupFindingCode.Interrupted : CleanupFindingCode.WorkspaceLockUnavailable;
+                result.Findings = result.Findings.Add(CleanupFinding.Create(code, acquired.Cause ?? "Workspace lease acquisition was interrupted.") with
+                {
+                    LockFailure = WorkspaceLockFailureProjection.From(acquired.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")),
+                });
+            }
+
             return;
         }
 
         await using (lease.ConfigureAwait(false))
         {
-            var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, frozenCatalogue, cancellationToken).ConfigureAwait(false);
-            result.Revalidation = new CleanupCatalogueComparison
+            foreach (var store in selected)
             {
-                State = ReadComparison(opened.State),
-                Planned = result.Plan.Catalogue,
-                Observed = opened.ObservedCatalogue is { } observed ? CleanupPlanner.ReadCatalogue(request, observed) : null,
-                Cause = opened.Cause,
-            };
-            if (opened.Session is not { } session)
-            {
-                result.PreserveUnattempted(opened.ObservedCatalogue);
-                var code = opened.State == RecoveryBundleDeletionSessionOpenState.Cancelled
-                    ? CleanupFindingCode.Interrupted
-                    : CleanupFindingCode.CatalogueChangedDuringApply;
-                result.AddFinding(code, opened.Cause ?? "Cleanup was interrupted while validating the frozen catalogue.");
-                return;
+                await ApplyStoreAsync(store, lease, cancellationToken).ConfigureAwait(false);
             }
-
-            var baselineFindings = result.Findings;
-            var progress = new CleanupDeletionProgress(result.Plan);
-            while (progress.Next is { } entry)
-            {
-                RecoveryBundleDeletionResult deletion;
-                try
-                {
-                    deletion = await session.DeleteAsync(entry.Candidate.Snapshot, cancellationToken).ConfigureAwait(false);
-                }
-                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-                {
-                    deletion = new RecoveryBundleDeletionResult(
-                        RecoveryBundleDeletionState.Cancelled, RecoveryBundleDisposition.Unknown, entry.Path, failure: null, cause: null);
-                }
-                catch (Exception exception)
-                {
-                    deletion = RecoveryBundleDeletionResult.FailedUnknown(entry.Path, $"The deletion did not establish its disposition: {exception.Message}");
-                }
-
-                progress.Record(deletion);
-                result.Effects = progress.Effects;
-                result.Findings = [.. baselineFindings, .. progress.Findings];
-            }
-
-            result.Verification = new CleanupVerification
-            {
-                State = ReadVerification(progress.Effects),
-                Cause = progress.Findings.FirstOrDefault()?.Cause,
-            };
         }
+    }
+
+    private static async ValueTask ApplyStoreAsync(CleanupStoreApplication store, WorkspaceLockLease lease, CancellationToken cancellationToken)
+    {
+        var result = store.Result;
+        var request = result.Plan.Request ?? throw new InvalidOperationException("A store plan requires a request.");
+        var frozenStore = store.Observation;
+        var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, frozenStore, cancellationToken).ConfigureAwait(false);
+        result.Revalidation = new CleanupCatalogueComparison
+        {
+            State = ReadComparison(opened.State),
+            Planned = result.Plan.Catalogue,
+            Observed = opened.ObservedCatalogue is { } observed ? CleanupPlanner.ReadCatalogue(request, observed) : null,
+            Cause = opened.Cause,
+        };
+        if (opened.Session is not { } session)
+        {
+            result.PreserveUnattempted(opened.ObservedCatalogue);
+            var code = opened.State switch
+            {
+                RecoveryBundleDeletionSessionOpenState.Cancelled => CleanupFindingCode.Interrupted,
+                RecoveryBundleDeletionSessionOpenState.Blocked or RecoveryBundleDeletionSessionOpenState.Unavailable
+                    => CleanupFindingCode.StoreValidationUnavailable,
+                _ => CleanupFindingCode.CatalogueChangedDuringApply,
+            };
+            result.AddFinding(code, opened.Cause ?? "Cleanup was interrupted while validating the frozen catalogue.", frozenStore.Location?.WorkspaceDirectory);
+            return;
+        }
+
+        var baselineFindings = result.Findings;
+        var progress = new CleanupDeletionProgress(result.Plan);
+        while (progress.Next is { } entry)
+        {
+            RecoveryBundleDeletionResult deletion;
+            try
+            {
+                deletion = await session.DeleteAsync(entry.Candidate.Snapshot, cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                deletion = new RecoveryBundleDeletionResult(
+                    RecoveryBundleDeletionState.Cancelled, RecoveryBundleDisposition.Unknown, entry.Path, failure: null, cause: null);
+            }
+            catch (Exception exception)
+            {
+                deletion = RecoveryBundleDeletionResult.FailedUnknown(entry.Path, $"The deletion did not establish its disposition: {exception.Message}");
+            }
+
+            progress.Record(deletion);
+            result.Effects = progress.Effects;
+            result.Findings = [.. baselineFindings, .. progress.Findings];
+        }
+
+        result.Verification = new CleanupVerification
+        {
+            State = ReadVerification(progress.Effects),
+            Cause = progress.Findings.FirstOrDefault()?.Cause,
+        };
     }
 
     private static CleanupLeaseState ReadLeaseState(WorkspaceLockState state)

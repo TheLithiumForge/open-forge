@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -83,7 +84,8 @@ internal sealed class CommandOutputRenderers<TResult>(
         [CallerFilePath] string sourceFile = "",
         [CallerMemberName] string testName = "",
         IDictionary<string, string>? snapshotCollector = null,
-        ISnapshotComparer? diagnosticComparer = null)
+        ISnapshotComparer? diagnosticComparer = null,
+        string? lockFailurePath = null)
     {
         var textOutputs = new Dictionary<CliDetail, CliRenderedOutput>();
         var jsonOutputs = new Dictionary<CliDetail, CliRenderedOutput>();
@@ -104,6 +106,10 @@ internal sealed class CommandOutputRenderers<TResult>(
             }
 
             var textContent = normalizeText is null ? textRendered.PrimaryContent : normalizeText(textRendered.PrimaryContent);
+            if (lockFailurePath is not null)
+            {
+                textContent = CommandOutputNormalization.ReplaceDelimitedPath(textContent, lockFailurePath, "<lock-path>");
+            }
             snapshots.Add(
                 $"{situation}.{detailName}",
                 CommandOutputNormalization.Normalize(
@@ -127,6 +133,10 @@ internal sealed class CommandOutputRenderers<TResult>(
             }
 
             var jsonContent = normalizeJson is null ? jsonRendered.PrimaryContent : normalizeJson(jsonRendered.PrimaryContent);
+            if (lockFailurePath is not null)
+            {
+                jsonContent = CommandOutputNormalization.ReplaceDelimitedPath(jsonContent, lockFailurePath, "<lock-path>");
+            }
             var normalizedJson = CommandOutputNormalization.Normalize(jsonContent, workspacePath, CliBuildVersion.InformationalVersion, recoveryBundlePath, extensionSourcePath);
             snapshots.Add(
                 $"{situation}{CommandOutputSnapshot.JsonContentNameSegment}{detailName}",

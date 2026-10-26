@@ -398,9 +398,8 @@ and recovery-bundle readiness. It completes before application authority is
 crossed. For a plan with existing-target effects (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`), readiness means exactly one immutable
 ZIP bundle has been finalized and independently
-verified outside the workspace under
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`. No temporary,
+stored in the workspace under
+`.open-forge-state/recovery/v1/<workspace key>/`. No temporary,
 repository, `HOME`, or custom platform fallback is allowed; unavailable storage
 is `incomplete` before any write.
 
@@ -419,7 +418,7 @@ infers them from free command, GUID, path, filename, or ordered-entry values and
 never uses a generic field bag. A schema-1 final missing or carrying invalid
 attribution is malformed/unattributed and remains preserved, while an unknown
 schema version is unsupported. The draft is created with `CreateNew` under its
-exact name in the same external directory, closed and reopened for semantic
+exact name in the same local directory, closed and reopened for semantic
 manifest, exact ordered entry names and counts, lengths, hashes, and bytes,
 moved within the same directory to its deterministic final name, and reopened
 and verified again. Only the valid current-v1 final ZIP forms the opaque
@@ -429,8 +428,7 @@ attribution. Create and no-op
 effects have no entries, and every planned existing-target effect has exactly
 one matching entry. All preparation completes before the first effect;
 `FileChangeApplier` requires the matching preparation and performs one final
-effect per target. Before workspace mutation, hold the persistent external
-zero-byte workspace lock with one read/write `FileShare.None` handle; write no
+effect per target. Before workspace mutation, hold the persistent workspace lock through the shared lock manager. Write no
 metadata, timestamp, or ownership record and never truncate or delete it. The
 lock is concurrency safety, not lifecycle, history, or recovery evidence.
 
@@ -509,7 +507,7 @@ plan is created. Explicit Cleanup owns
 exact named final and draft deletion under its separate lease-bound contract;
 unknown or differently named artifacts remain untouched.
 
-Recovery storage is ordinary current-user `LocalApplicationData` under the
+New recovery storage is inside `.open-forge-state/` under the
 stable workspace and cooperating-client threat model. No special platform-
 permission or encryption behavior is promised. Recovery reads use semantic
 schema and exact ordered-entry validation and do not
@@ -727,3 +725,7 @@ blocks the selected recovery. Existing `.agents` implicit permission remains;
 protected controls, all selected/registered source trees, exact no-follow link
 identity and collision checks still apply to each actual effect. Recovery adds
 no permission prompt or broad grant. Original residual bytes remain unchanged.
+
+## Workspace Runtime Boundary
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.

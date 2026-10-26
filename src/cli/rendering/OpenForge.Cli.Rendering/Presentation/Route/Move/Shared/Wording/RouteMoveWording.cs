@@ -131,7 +131,7 @@ internal static class RouteMoveWording
             RouteMoveFindingCode.DestinationInsideSource => global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.TitleDestinationIsInsideSource(),
             RouteMoveFindingCode.ReferenceUnsafe => global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.TitleReferenceCouldNotBeRewritten(),
             RouteMoveFindingCode.GeneratedRegionUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionIsUnsafe(),
-            RouteMoveFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsHeld(),
+            RouteMoveFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable(),
             RouteMoveFindingCode.TargetChanged => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetChanged(),
             RouteMoveFindingCode.RecoveryConflict => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryDataBlocksTheChange(),
             RouteMoveFindingCode.WorkspaceUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnavailable(),

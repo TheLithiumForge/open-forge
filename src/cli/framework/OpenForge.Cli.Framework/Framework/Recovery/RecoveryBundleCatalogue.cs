@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -12,23 +13,38 @@ internal static class RecoveryBundleCatalogue
     internal static async ValueTask<RecoveryBundleCatalogueResult> ReadAsync(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
+        => await ReadAsync(RecoveryStoreLocator.Local(workspace), cancellationToken).ConfigureAwait(false);
+
+    internal static async ValueTask<ImmutableArray<RecoveryStoreObservation>> ReadStoresAsync(
+        CliWorkspace workspace,
+        CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
+        var local = RecoveryStoreLocator.Local(workspace);
+        var localCatalogue = await ReadAsync(local, cancellationToken).ConfigureAwait(false);
+        var legacy = RecoveryStoreLocator.Legacy(workspace);
+        var legacyCatalogue = legacy is null
+            ? RecoveryBundleCatalogueResult.Unavailable("The legacy recovery store location is unavailable.")
+            : await ReadAsync(legacy, cancellationToken).ConfigureAwait(false);
+        return
+        [
+            new(RecoveryStoreKind.Workspace, local, localCatalogue),
+            new(RecoveryStoreKind.Legacy, legacy, legacyCatalogue),
+        ];
+    }
+
+    internal static async ValueTask<RecoveryBundleCatalogueResult> ReadAsync(
+        RecoveryStoreLocation location,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(location);
         if (cancellationToken.IsCancellationRequested)
         {
             return RecoveryBundleCatalogueResult.Cancelled();
         }
 
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None);
-        if (storeRoot is null)
-        {
-            return RecoveryBundleCatalogueResult.Available([]);
-        }
-
         if (!RecoveryBundleStorage.TryGetObserverDirectory(
-            storeRoot,
-            workspace.PhysicalRoot,
+            location.RootPath,
+            location.Workspace.PhysicalRoot,
             out var workspaceDirectory,
             out var exists,
             out var directoryFailure))
@@ -65,7 +81,7 @@ internal static class RecoveryBundleCatalogue
                     continue;
                 }
 
-                if (!TryValidateCandidateFile(path, kind, out var unavailable))
+                if (!TryValidateCandidateFile(location, path, kind, out var unavailable))
                 {
                     candidates.Add(unavailable
                         ?? throw new InvalidOperationException(
@@ -75,12 +91,12 @@ internal static class RecoveryBundleCatalogue
 
                 if (kind == RecoveryBundleCandidateKind.Draft)
                 {
-                    candidates.Add(RecoveryBundleCandidateSnapshot.IncompleteDraft(path));
+                    candidates.Add(RecoveryBundleCandidateSnapshot.IncompleteDraft(location, path));
                     continue;
                 }
 
                 var read = await RecoveryBundleReader.ReadFinalAsync(
-                    workspace,
+                    location,
                     path,
                     cancellationToken).ConfigureAwait(false);
                 if (read.State == RecoveryBundleReadState.Cancelled)
@@ -88,7 +104,7 @@ internal static class RecoveryBundleCatalogue
                     return RecoveryBundleCatalogueResult.Cancelled();
                 }
 
-                candidates.Add(FromRead(path, read));
+                candidates.Add(FromRead(location, path, read));
             }
 
             return RecoveryBundleCatalogueResult.Available(candidates.ToImmutable());
@@ -112,6 +128,7 @@ internal static class RecoveryBundleCatalogue
     }
 
     private static RecoveryBundleCandidateSnapshot FromRead(
+        RecoveryStoreLocation location,
         string path,
         RecoveryBundleReadResult read)
     {
@@ -127,6 +144,7 @@ internal static class RecoveryBundleCatalogue
             _ => RecoveryBundleIntegrity.Unavailable,
         };
         return RecoveryBundleCandidateSnapshot.Classified(
+            location,
             path,
             RecoveryBundleCandidateKind.Final,
             integrity,
@@ -135,6 +153,7 @@ internal static class RecoveryBundleCatalogue
     }
 
     private static bool TryValidateCandidateFile(
+        RecoveryStoreLocation location,
         string path,
         RecoveryBundleCandidateKind kind,
         out RecoveryBundleCandidateSnapshot? unavailable)
@@ -154,6 +173,7 @@ internal static class RecoveryBundleCatalogue
         {
             var failure = FilesystemFailure.FromException(FailureKind(exception), exception);
             unavailable = RecoveryBundleCandidateSnapshot.Classified(
+                location,
                 path,
                 kind,
                 RecoveryBundleIntegrity.Unavailable,

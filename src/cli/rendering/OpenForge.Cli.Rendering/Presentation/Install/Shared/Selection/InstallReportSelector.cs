@@ -293,7 +293,10 @@ internal static class InstallReportSelector
                 ? CliSeverity.Warning
                 : CliSeverity.Error,
             Code = InstallWireVocabulary.Name(finding.Code),
-            Title = InstallWording.FindingTitle(finding.Code),
+            LockFailure = finding.LockFailure,
+            Title = finding.LockFailure is not null
+                ? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable()
+                : InstallWording.FindingTitle(finding.Code),
             Message = Message(result, finding, path, data),
             Subject = subject,
             Resolution = Resolution(finding.Code),
@@ -305,40 +308,42 @@ internal static class InstallReportSelector
     }
 
     private static string Message(InstallResult result, InstallFinding finding, string path, InstallData data)
-        => finding.Code switch
-        {
-            InstallFindingCode.InvalidInput when finding.InvalidOption is { } option => InvalidOptionMessage(option),
-            InstallFindingCode.InvalidInput => CliFindingWording.InvalidInput(global::OpenForge.Cli.OutputText.Install.InstallText.LabelInstall(), TrimSentence(finding.Cause)),
-            InstallFindingCode.ConfirmationRequired => CliFindingWording.ConfirmationRequired(global::OpenForge.Cli.OutputText.Install.InstallText.TitleInstall()),
-            InstallFindingCode.WorkspaceUnavailable => CliFindingWording.WorkspaceUnavailable(path),
-            InstallFindingCode.WorkspaceUnsafe => CliFindingWording.WorkspaceUnsafe(path, TrimSentence(finding.Cause)),
-            InstallFindingCode.ManagedDivergence => InstallWording.ManagedDivergence(path),
-            InstallFindingCode.TargetOccupied => CliFindingWording.TargetOccupied(path),
-            InstallFindingCode.OwnershipConflict => CliFindingWording.CauseSentence(finding.Cause),
-            InstallFindingCode.TargetUnsafe => CliFindingWording.TargetUnsafe(path, TrimSentence(finding.Cause)),
-            InstallFindingCode.GeneratedRegionUnsafe => CliFindingWording.GeneratedRegionUnsafe(path, TrimSentence(finding.Cause)),
-            InstallFindingCode.LifecycleBlocked => CliFindingWording.LifecycleBlocked(TrimSentence(finding.Cause)),
-            InstallFindingCode.RecoveryConflict => CliFindingWording.RecoveryConflict(path),
-            InstallFindingCode.PayloadUnavailable => CliFindingWording.PayloadUnavailable(),
-            InstallFindingCode.PayloadInvalid => CliFindingWording.PayloadInvalid(),
-            InstallFindingCode.LifecycleUnavailable => CliFindingWording.LifecycleUnavailable(),
-            InstallFindingCode.ProjectionUnavailable => CliFindingWording.ProjectionUnavailable(path, TrimSentence(finding.Cause)),
-            InstallFindingCode.RecoveryUnavailable => CliFindingWording.RecoveryUnavailable(path),
-            InstallFindingCode.RecoveryArtifactRetained => data.RecoveryPath is { } recovery
-                ? CliFindingWording.RecoveryRetained(recovery)
-                : CliFindingWording.CauseSentence(finding.Cause),
-            InstallFindingCode.WriteFailed => InstallWording.WriteFailed(path, finding.Cause),
-            InstallFindingCode.VerificationFailed when data.RecoveryState == InstallResultRecoveryState.Retained
-                && data.RecoveryPath is { } recovery => CliFindingWording.VerificationFailed(path, recovery),
-            InstallFindingCode.VerificationFailed => InstallWording.VerificationFailed(path, finding.Cause),
-            InstallFindingCode.LifecyclePublicationFailed => CliFindingWording.LifecyclePublicationFailed(),
-            InstallFindingCode.RecoveryFailed => CliFindingWording.RecoveryFailed(),
-            InstallFindingCode.OperationFailed => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Install.InstallText.TitleInstall(), TrimSentence(finding.Cause)),
-            InstallFindingCode.Interrupted => data.SuppressInterruptedFinding
-                ? InstallWording.Cancelled()
-                : InstallWording.CancelledAfter(data.CompletedChanges, data.TotalChanges),
-            _ => CliFindingWording.CauseSentence(finding.Cause),
-        };
+        => finding.LockFailure is { } lockFailure
+            ? CliFindingWording.WorkspaceLockUnavailable(lockFailure)
+            : finding.Code switch
+            {
+                InstallFindingCode.InvalidInput when finding.InvalidOption is { } option => InvalidOptionMessage(option),
+                InstallFindingCode.InvalidInput => CliFindingWording.InvalidInput(global::OpenForge.Cli.OutputText.Install.InstallText.LabelInstall(), TrimSentence(finding.Cause)),
+                InstallFindingCode.ConfirmationRequired => CliFindingWording.ConfirmationRequired(global::OpenForge.Cli.OutputText.Install.InstallText.TitleInstall()),
+                InstallFindingCode.WorkspaceUnavailable => CliFindingWording.WorkspaceUnavailable(path),
+                InstallFindingCode.WorkspaceUnsafe => CliFindingWording.WorkspaceUnsafe(path, TrimSentence(finding.Cause)),
+                InstallFindingCode.ManagedDivergence => InstallWording.ManagedDivergence(path),
+                InstallFindingCode.TargetOccupied => CliFindingWording.TargetOccupied(path),
+                InstallFindingCode.OwnershipConflict => CliFindingWording.CauseSentence(finding.Cause),
+                InstallFindingCode.TargetUnsafe => CliFindingWording.TargetUnsafe(path, TrimSentence(finding.Cause)),
+                InstallFindingCode.GeneratedRegionUnsafe => CliFindingWording.GeneratedRegionUnsafe(path, TrimSentence(finding.Cause)),
+                InstallFindingCode.LifecycleBlocked => CliFindingWording.LifecycleBlocked(TrimSentence(finding.Cause)),
+                InstallFindingCode.RecoveryConflict => CliFindingWording.RecoveryConflict(path),
+                InstallFindingCode.PayloadUnavailable => CliFindingWording.PayloadUnavailable(),
+                InstallFindingCode.PayloadInvalid => CliFindingWording.PayloadInvalid(),
+                InstallFindingCode.LifecycleUnavailable => CliFindingWording.LifecycleUnavailable(),
+                InstallFindingCode.ProjectionUnavailable => CliFindingWording.ProjectionUnavailable(path, TrimSentence(finding.Cause)),
+                InstallFindingCode.RecoveryUnavailable => CliFindingWording.RecoveryUnavailable(path),
+                InstallFindingCode.RecoveryArtifactRetained => data.RecoveryPath is { } recovery
+                    ? CliFindingWording.RecoveryRetained(recovery)
+                    : CliFindingWording.CauseSentence(finding.Cause),
+                InstallFindingCode.WriteFailed => InstallWording.WriteFailed(path, finding.Cause),
+                InstallFindingCode.VerificationFailed when data.RecoveryState == InstallResultRecoveryState.Retained
+                    && data.RecoveryPath is { } recovery => CliFindingWording.VerificationFailed(path, recovery),
+                InstallFindingCode.VerificationFailed => InstallWording.VerificationFailed(path, finding.Cause),
+                InstallFindingCode.LifecyclePublicationFailed => CliFindingWording.LifecyclePublicationFailed(),
+                InstallFindingCode.RecoveryFailed => CliFindingWording.RecoveryFailed(),
+                InstallFindingCode.OperationFailed => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Install.InstallText.TitleInstall(), TrimSentence(finding.Cause)),
+                InstallFindingCode.Interrupted => data.SuppressInterruptedFinding
+                    ? InstallWording.Cancelled()
+                    : InstallWording.CancelledAfter(data.CompletedChanges, data.TotalChanges),
+                _ => CliFindingWording.CauseSentence(finding.Cause),
+            };
 
     private static CliResolution? Resolution(InstallFindingCode code)
         => code switch

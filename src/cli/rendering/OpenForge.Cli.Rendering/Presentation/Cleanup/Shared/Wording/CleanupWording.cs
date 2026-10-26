@@ -9,6 +9,8 @@ namespace OpenForge.Cli.Core.Presentation.Cleanup.Shared.Wording;
 
 internal static class CleanupWording
 {
+    internal const string NotStartedOutcome = "not-started";
+
     internal static string NoData() => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageNoRecoveryDataToRemove();
 
     internal static string RemovedSummary(int bundles, int drafts, bool preview)
@@ -36,6 +38,12 @@ internal static class CleanupWording
         return global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatAnd(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{verb}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{bundles}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{Plural(bundles, "recovery bundle")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{drafts}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{Plural(drafts, "unfinished draft")}"));
     }
 
+    internal static string Partial(int removed, int total, bool preview)
+        => global::OpenForge.Cli.OutputText.Cleanup.CleanupWording.Partial(removed, total, preview);
+
+    internal static string StoreValidationUnavailable(string path, string cause)
+        => global::OpenForge.Cli.OutputText.Cleanup.CleanupWording.StoreValidationUnavailable(path, TrimSentence(cause));
+
     internal static string StoreIncomplete()
         => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageTheRecoveryStoreCouldNotBeReadCompletelyNothingWasRemoved();
 
@@ -51,7 +59,7 @@ internal static class CleanupWording
         => CliFindingWording.InvalidInput(global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelCleanUp(), TrimSentence(cause));
 
     internal static string LockHeld()
-        => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageCannotCleanUpAnotherOpenForgeCommandHoldsTheWorkspaceLockNothingWasRemoved();
+        => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageCannotCleanUpTheWorkspaceLockCouldNotBeAcquiredNothingWasRemoved();
 
     internal static string ChangedDuringApply()
         => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageCannotCleanUpTheRecoveryStoreChangedWhileCleanupWasRunningNothingWasRemoved();
@@ -133,12 +141,12 @@ internal static class CleanupWording
         return effect.Outcome switch
         {
             CleanupEffectOutcome.Planned => "would-be-removed",
-            CleanupEffectOutcome.NotStarted => "not-started",
+            CleanupEffectOutcome.NotStarted => NotStartedOutcome,
             CleanupEffectOutcome.Verified => "removed",
             CleanupEffectOutcome.VerificationFailed => "could-not-be-removed",
             CleanupEffectOutcome.CompletionUnknown when effect.Cause is { } cause
                 && cause.StartsWith("No deletion was attempted", StringComparison.Ordinal)
-                => "not-started",
+                => NotStartedOutcome,
             CleanupEffectOutcome.CompletionUnknown => "final-state-unknown",
             _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Outcome, "The cleanup effect outcome is not defined."),
         };
@@ -162,6 +170,7 @@ internal static class CleanupWording
             CleanupFindingCode.WorkspaceNotDirectory => "cleanup.workspace-not-directory",
             CleanupFindingCode.WorkspaceUnsafe => "cleanup.workspace-unsafe",
             CleanupFindingCode.CatalogueIncomplete => "cleanup.catalogue-incomplete",
+            CleanupFindingCode.StoreValidationUnavailable => "cleanup.store-validation-unavailable",
             CleanupFindingCode.RecoveryFinalMalformed => "cleanup.recovery-final-malformed",
             CleanupFindingCode.RecoveryFinalUnsupported => "cleanup.recovery-final-unsupported",
             CleanupFindingCode.RecoveryFinalUnavailable => "cleanup.recovery-final-unavailable",
@@ -183,7 +192,7 @@ internal static class CleanupWording
             CleanupFindingCode.WorkspaceUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnavailable(),
             CleanupFindingCode.WorkspaceNotDirectory => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsNotADirectory(),
             CleanupFindingCode.WorkspaceUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnsafe(),
-            CleanupFindingCode.CatalogueIncomplete => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.TitleRecoveryStoreIsIncomplete(),
+            CleanupFindingCode.CatalogueIncomplete or CleanupFindingCode.StoreValidationUnavailable => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.TitleRecoveryStoreIsIncomplete(),
             CleanupFindingCode.RecoveryFinalMalformed => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsDamaged(),
             CleanupFindingCode.RecoveryFinalUnsupported => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.TitleRecoveryBundleVersionIsUnsupported(),
             CleanupFindingCode.RecoveryFinalUnavailable => global::OpenForge.Cli.OutputText.Cleanup.CleanupText.TitleRecoveryBundleIsUnreadable(),
@@ -212,26 +221,31 @@ internal static class CleanupWording
         string path,
         int removed,
         int total)
-        => finding.Code switch
-        {
-            CleanupFindingCode.InvalidInput => InvalidInput(finding.Cause),
-            CleanupFindingCode.WorkspaceUnavailable => CliFindingWording.WorkspaceUnavailable(path),
-            CleanupFindingCode.WorkspaceNotDirectory => CliFindingWording.WorkspaceNotDirectory(path),
-            CleanupFindingCode.WorkspaceUnsafe => CliFindingWording.WorkspaceUnsafe(path, TrimSentence(finding.Cause)),
-            CleanupFindingCode.CatalogueIncomplete => CatalogueIncomplete(finding.Cause),
-            CleanupFindingCode.RecoveryFinalMalformed => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatIsDamagedAndWasLeftInPlace($"{path}"),
-            CleanupFindingCode.RecoveryFinalUnsupported => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatWasWrittenByAnUnsupportedVersionAndWasLeftInPlace($"{path}"),
-            CleanupFindingCode.RecoveryFinalUnavailable => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatCouldNotBeReadAndWasLeftInPlace($"{path}"),
-            CleanupFindingCode.RecoveryDraftUnsafe => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatIsNotAnOrdinaryFileAndWasLeftInPlace($"{path}"),
-            CleanupFindingCode.WorkspaceLockUnavailable => LockHeld(),
-            CleanupFindingCode.CatalogueChangedDuringApply => ChangedDuringApply(),
-            CleanupFindingCode.CandidateChangedDuringApply => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatChangedWhileCleanupWasRunningAndWasLeftInPlace($"{path}"),
-            CleanupFindingCode.DeletionFailed => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.RemovalFailedPath($"{path}", $"{TrimSentence(finding.Cause)}"),
-            CleanupFindingCode.VerificationFailed => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatStillExistsAfterRemoval($"{path}"),
-            CleanupFindingCode.OperationFailed => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Cleanup.CleanupText.TitleCleanup(), TrimSentence(finding.Cause)),
-            CleanupFindingCode.Interrupted => Cancelled(removed, total),
-            _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code, "The cleanup finding code is not defined."),
-        };
+        => finding.LockFailure is { } lockFailure
+            ? CliFindingWording.WorkspaceLockUnavailable(lockFailure)
+            : finding.Code switch
+            {
+                CleanupFindingCode.InvalidInput => InvalidInput(finding.Cause),
+                CleanupFindingCode.WorkspaceUnavailable => CliFindingWording.WorkspaceUnavailable(path),
+                CleanupFindingCode.WorkspaceNotDirectory => CliFindingWording.WorkspaceNotDirectory(path),
+                CleanupFindingCode.WorkspaceUnsafe => CliFindingWording.WorkspaceUnsafe(path, TrimSentence(finding.Cause)),
+                CleanupFindingCode.CatalogueIncomplete => CatalogueIncomplete(finding.Cause),
+                CleanupFindingCode.StoreValidationUnavailable => StoreValidationUnavailable(path, finding.Cause),
+                CleanupFindingCode.RecoveryFinalMalformed => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatIsDamagedAndWasLeftInPlace($"{path}"),
+                CleanupFindingCode.RecoveryFinalUnsupported => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatWasWrittenByAnUnsupportedVersionAndWasLeftInPlace($"{path}"),
+                CleanupFindingCode.RecoveryFinalUnavailable => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatCouldNotBeReadAndWasLeftInPlace($"{path}"),
+                CleanupFindingCode.RecoveryDraftUnsafe => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatIsNotAnOrdinaryFileAndWasLeftInPlace($"{path}"),
+                CleanupFindingCode.WorkspaceLockUnavailable => LockHeld(),
+                CleanupFindingCode.CatalogueChangedDuringApply => removed > 0
+                    ? global::OpenForge.Cli.OutputText.Shared.CliFindingWording.RecoveryCoverageUnavailable(finding.Subject, TrimSentence(finding.Cause))
+                    : ChangedDuringApply(),
+                CleanupFindingCode.CandidateChangedDuringApply => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatChangedWhileCleanupWasRunningAndWasLeftInPlace($"{path}"),
+                CleanupFindingCode.DeletionFailed => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.RemovalFailedPath($"{path}", $"{TrimSentence(finding.Cause)}"),
+                CleanupFindingCode.VerificationFailed => global::OpenForge.Cli.OutputText.Cleanup.CleanupPhrases.FormatStillExistsAfterRemoval($"{path}"),
+                CleanupFindingCode.OperationFailed => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Cleanup.CleanupText.TitleCleanup(), TrimSentence(finding.Cause)),
+                CleanupFindingCode.Interrupted => Cancelled(removed, total),
+                _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code, "The cleanup finding code is not defined."),
+            };
 
     internal static string LockFacts(CleanupLeaseState state)
         => state switch

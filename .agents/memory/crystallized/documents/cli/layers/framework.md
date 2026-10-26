@@ -244,7 +244,7 @@ resolve and inspect, including no-follow final-leaf facts
   -> validate policy and collisions
   -> acquire the real workspace lock when applicable
   -> revalidate every planned fact under the lease
-  -> prepare and verify one external recovery bundle for every reversible non-no-op effect
+  -> prepare and verify one local recovery bundle for every reversible non-no-op effect
   -> apply bounded filesystem changes with an immediate no-follow check per effect
   -> verify resulting identity and bytes
   -> write accepted lifecycle or Library record state last
@@ -253,10 +253,10 @@ resolve and inspect, including no-follow final-leaf facts
 ```
 
 The lock provides exclusion only among cooperating Open Forge processes. It is
-external to the workspace and distinct from lifecycle and recovery. Existence is
+at `.open-forge-state/workspace.lock` and distinct from lifecycle and recovery. Existence is
 not ownership, activity, lifecycle authority, or recovery history.
 
-Every complete plan has one immutable verified final external bundle before the
+Every complete plan has one immutable verified final local bundle before the
 first effect whenever it contains a non-no-op effect that the operation must be
 able to reverse. This includes relative file-link creates and deletes and the
 prior-missing Library record Create; semantic or byte no-ops have none. A
@@ -286,7 +286,7 @@ Technical Design](../technical-designs/lifecycle-provenance.md) defines the
 boundary between stored receipts and operation-time evidence.
 
 The [Mutation And Recovery Technical
-Design](../technical-designs/mutation-and-recovery.md) defines application-data
+Design](../technical-designs/mutation-and-recovery.md) defines workspace and legacy
 stores, persistent lock identity, ZIP and manifest realization, expected-state
 checks, same-directory atomic file mechanics, receipts, bounded validation, and
 guarded deletion, no-follow recovery comparison, and relative-file-link

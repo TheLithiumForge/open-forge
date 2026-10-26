@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
@@ -59,6 +60,15 @@ internal sealed class RouteMoveCategoryInventoryReader(
         if (subject.Kind == RouteMoveSubjectKind.Leaf)
         {
             return ReadLeaf(subject, ownership);
+        }
+
+        if (subject.Layers.Any(layer =>
+            WorkspaceRuntimePaths.Contains(subject.Request.Workspace,
+                SourceLogicalPath.ToLexicalPath(subject.Request.Workspace.PhysicalRoot, layer.Layer.CanonicalPath))
+            || WorkspaceRuntimePaths.Contains(subject.Request.Workspace, layer.Layer.PhysicalPath)))
+        {
+            return Stop(subject, ownership, RouteMoveFindingCode.CategoryUnsafe, CliSemanticStatus.Blocked,
+                "The selected category is inside the reserved workspace runtime directory.");
         }
 
         var read = await _filesystemReader.ReadAsync(

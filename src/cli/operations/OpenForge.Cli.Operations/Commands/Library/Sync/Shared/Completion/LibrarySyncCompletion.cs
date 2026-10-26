@@ -36,6 +36,11 @@ internal static class LibrarySyncCompletion
             AddPermissionFinding(findings, permissionFailure, input.Request.LibraryId.Value, input.Execution);
         }
         AddExecutionFindings(findings, input.Execution, input.Request.LibraryId.Value);
+        if (input.LockFailure is { } lockFailure)
+        {
+            findings = findings.Select(finding => finding.Code == LibrarySyncFindingCode.Interrupted
+                ? finding with { LockFailure = lockFailure } : finding).ToList();
+        }
         var application = projectionMode == LibraryMode.DryRun || planState != LibraryPlanState.Complete
             || permissionStage?.Failure is not null && input.Execution.Permission?.Receipt is null
             ? LibraryMutationCompletionProjection.NotStarted()

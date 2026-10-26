@@ -511,8 +511,7 @@ For an applying plan with one or more existing-target effects (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`), the
 orchestrator prepares and verifies exactly one immutable ZIP
 recovery bundle before the first target effect. The root is
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`, outside the
+`.open-forge-state/recovery/v1/<workspace key>/`, outside the
 workspace, with no temporary, repository, `HOME`, or custom platform fallback.
 Unavailable storage is `incomplete` before any write. A verified
 no-op creates no bundle.
@@ -583,7 +582,7 @@ action; those findings remain visible evidence.
 
 Explicit Cleanup owns exact named final and draft deletion under its separate
 lease-bound contract. Unknown or differently named artifacts remain untouched.
-Recovery storage is ordinary current-user `LocalApplicationData` under the
+New recovery storage is inside `.open-forge-state/` under the
 stable workspace and cooperating-client threat model. No special platform-
 permission or encryption behavior is promised. Recovery reads use semantic
 schema and exact ordered-entry validation and do not extract bundles or add a
@@ -1000,3 +999,7 @@ remain the output evidence.
   <!-- @OpenForgeTextRef repair.wording.inspect-remaining-library-problems -->
   <!-- @OpenForgeTextRef repair.wording.review-remaining-links-and-inspect-library-problems -->
   <!-- @OpenForgeTextRef repair.wording.broken-destination-detail -->
+
+## Workspace Runtime Boundary
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.

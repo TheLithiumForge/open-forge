@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery.Shared.LibraryResiduals;
 using OpenForge.Cli.TestSupport;
 
@@ -88,7 +89,7 @@ public sealed class LibraryOrdinaryRecoverySafetyIntegrationTests
             File.WriteAllText(fixture.Preparation.BundlePath, "corrupted after preparation");
         }
         var before = File.ReadAllBytes(fixture.Preparation.BundlePath);
-        var invalid = await RecoveryBundleReader.ReadFinalAsync(fixture.Workspace, fixture.Preparation.BundlePath, TestContext.Current.CancellationToken);
+        var invalid = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(fixture.Workspace), fixture.Preparation.BundlePath, TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Malformed, invalid.State);
 
         var result = await OrdinaryFileRecoveryApplier.ApplyAsync(new PhysicalPathResolver(), lease,

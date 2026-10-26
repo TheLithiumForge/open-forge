@@ -1,11 +1,17 @@
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Recovery.Models.Catalogue;
 
 [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
 public sealed class RecoveryReadClassificationContractTests
 {
+    private static readonly RecoveryStoreLocation Location = RecoveryStoreLocator.Local(new CliWorkspace(
+        Path.GetTempPath(), Path.GetTempPath(), CliWorkspaceSelectionMethod.ExplicitWorkspace));
+
     [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Classified recovery reads retain each admitted state and supplied failure and cause")]
     [InlineData((int)RecoveryBundleReadState.Malformed), InlineData((int)RecoveryBundleReadState.Unsupported), InlineData((int)RecoveryBundleReadState.Unavailable)]
@@ -69,7 +75,7 @@ public sealed class RecoveryReadClassificationContractTests
         var failure = new FilesystemFailure(FilesystemFailureKind.InputOutput, "Filesystem failure.");
         const string cause = "  classified candidate cause  ";
 
-        var result = RecoveryBundleCandidateSnapshot.Classified(
+        var result = RecoveryBundleCandidateSnapshot.Classified(Location,
             path: path,
             kind: (RecoveryBundleCandidateKind)kind,
             integrity: (RecoveryBundleIntegrity)integrity,
@@ -90,7 +96,7 @@ public sealed class RecoveryReadClassificationContractTests
     [InlineData((int)RecoveryBundleIntegrity.Verified), InlineData((int)RecoveryBundleIntegrity.Incomplete)]
     public void CandidateClassifiedRejectsReservedIntegrityBeforeOtherFacts(int integrity)
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryBundleCandidateSnapshot.Classified(
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryBundleCandidateSnapshot.Classified(Location,
             path: null!, kind: (RecoveryBundleCandidateKind)999, integrity: (RecoveryBundleIntegrity)integrity, cause: " "));
 
         Assert.Equal("integrity", exception.ParamName);
@@ -100,7 +106,7 @@ public sealed class RecoveryReadClassificationContractTests
     [Fact(DisplayName = "Classified recovery candidates reject undefined integrity with otherwise valid facts")]
     public void CandidateClassifiedRejectsUndefinedIntegrity()
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryBundleCandidateSnapshot.Classified(
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryBundleCandidateSnapshot.Classified(Location,
             path: "bundle.zip", kind: RecoveryBundleCandidateKind.Final, integrity: (RecoveryBundleIntegrity)999, cause: "Classified candidate."));
 
         Assert.Equal("integrity", exception.ParamName);
@@ -110,7 +116,7 @@ public sealed class RecoveryReadClassificationContractTests
     [Fact(DisplayName = "Classified recovery candidates reject undefined integrity before invalid kind cause and path")]
     public void CandidateClassifiedChecksUndefinedIntegrityBeforeOtherFacts()
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryBundleCandidateSnapshot.Classified(
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryBundleCandidateSnapshot.Classified(Location,
             path: null!, kind: (RecoveryBundleCandidateKind)999, integrity: (RecoveryBundleIntegrity)999, cause: " "));
 
         Assert.Equal("integrity", exception.ParamName);
@@ -120,7 +126,7 @@ public sealed class RecoveryReadClassificationContractTests
     [Fact(DisplayName = "Classified recovery candidates reject undefined kind with otherwise valid facts")]
     public void CandidateClassifiedRejectsUndefinedKind()
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryBundleCandidateSnapshot.Classified(
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryBundleCandidateSnapshot.Classified(Location,
             path: "bundle.zip", kind: (RecoveryBundleCandidateKind)999, integrity: RecoveryBundleIntegrity.Malformed, cause: "Classified candidate."));
 
         Assert.Equal("kind", exception.ParamName);
@@ -130,7 +136,7 @@ public sealed class RecoveryReadClassificationContractTests
     [Theory(DisplayName = "Classified recovery candidates reject undefined kind before cause validation and path normalization"), InlineData(" "), InlineData("Classified candidate.")]
     public void CandidateClassifiedChecksUndefinedKindBeforeCauseAndPath(string cause)
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryBundleCandidateSnapshot.Classified(
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => RecoveryBundleCandidateSnapshot.Classified(Location,
             path: null!, kind: (RecoveryBundleCandidateKind)999, integrity: RecoveryBundleIntegrity.Malformed, cause: cause));
 
         Assert.Equal("kind", exception.ParamName);
@@ -140,7 +146,7 @@ public sealed class RecoveryReadClassificationContractTests
     [Fact(DisplayName = "Classified recovery candidates validate cause before normalizing the supplied path")]
     public void CandidateClassifiedChecksCauseBeforePath()
     {
-        var exception = Assert.Throws<ArgumentException>(() => RecoveryBundleCandidateSnapshot.Classified(
+        var exception = Assert.Throws<ArgumentException>(() => RecoveryBundleCandidateSnapshot.Classified(Location,
             path: null!, kind: RecoveryBundleCandidateKind.Final, integrity: RecoveryBundleIntegrity.Malformed, cause: " "));
 
         Assert.Equal("cause", exception.ParamName);
@@ -151,7 +157,7 @@ public sealed class RecoveryReadClassificationContractTests
     public void ClassifiedFactoriesRetainAbsentFailure()
     {
         var read = RecoveryBundleReadResult.Classified(RecoveryBundleReadState.Malformed, "Read cause.");
-        var candidate = RecoveryBundleCandidateSnapshot.Classified(
+        var candidate = RecoveryBundleCandidateSnapshot.Classified(Location,
             path: "bundle.zip", kind: RecoveryBundleCandidateKind.Draft, integrity: RecoveryBundleIntegrity.Unsupported, cause: "Candidate cause.");
 
         Assert.Null(read.Failure);

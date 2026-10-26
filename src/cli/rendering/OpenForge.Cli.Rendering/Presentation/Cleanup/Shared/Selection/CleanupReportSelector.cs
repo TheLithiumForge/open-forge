@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Cleanup.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
@@ -23,6 +24,8 @@ internal static class CleanupReportSelector
         var verificationFailures = result.Findings.Any(finding => finding.Code == CleanupFindingCode.VerificationFailed);
         var removedEffects = result.Status is CliSemanticStatus.Complete
             or CliSemanticStatus.Attention
+            or CliSemanticStatus.Incomplete
+            or CliSemanticStatus.Blocked
             or CliSemanticStatus.Failed
             or CliSemanticStatus.Interrupted
             ? result.Effects.Where(effect => IsRemoved(effect, preview)).ToArray()
@@ -35,6 +38,19 @@ internal static class CleanupReportSelector
         var full = selection.Detail >= CliDetail.Full;
         var data = new CleanupData
         {
+            Stores = full ? result.Stores.Select(store => new CleanupDataStore(
+                store.Kind, store.Path, CliReportVocabulary.Name(store.Facts.Catalogue.Coverage),
+                CliReportVocabulary.Name(store.Facts.Plan.Safety),
+                store.Facts.Plan.Entries.Select(entry => new CleanupDataItem
+                {
+                    Path = entry.Path,
+                    Kind = CleanupWording.DataKind(entry.KindValue),
+                    Integrity = CleanupWording.Integrity(entry.IntegrityValue),
+                    Outcome = store.Facts.Effects.FirstOrDefault(effect => effect.Path == entry.Path) is { } effect
+                        ? CleanupWording.DataOutcome(effect) : "retained",
+                }).ToArray(), store.Cause,
+                CliReportVocabulary.Name(store.Facts.Revalidation.State),
+                CliReportVocabulary.Name(store.Facts.Verification.State))).ToArray() : null,
             Mode = CliReportVocabulary.Name(result.Mode),
             Items = result.Effects.Select(effect => new CleanupDataItem
             {
@@ -78,9 +94,11 @@ internal static class CleanupReportSelector
             Effects = result.Effects.Select(Effect).ToArray(),
             Counts =
             [
-                new CliCount("bundlesRemoved", global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelRecoveryBundlesRemoved(), bundlesRemoved),
-                new CliCount("draftsRemoved", global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelUnfinishedDraftsRemoved(), draftsRemoved),
-                new CliCount("itemsLeftInPlace", global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelItemsLeftInPlace(), itemsLeftInPlace),
+                new CliCount(CleanupDataJsonFields.BundlesRemoved, global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelRecoveryBundlesRemoved(), bundlesRemoved),
+                new CliCount(CleanupDataJsonFields.DraftsRemoved, global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelUnfinishedDraftsRemoved(), draftsRemoved),
+                new CliCount("itemsLeftInPlace", global::OpenForge.Cli.OutputText.Cleanup.CleanupText.LabelItemsLeftInPlace(),
+                    result.Catalogue.IsComplete ? itemsLeftInPlace : null,
+                    result.Findings.FirstOrDefault(finding => finding.Code == CleanupFindingCode.CatalogueIncomplete)?.Cause),
             ],
             Data = data,
             Recovery = null,
@@ -109,8 +127,13 @@ internal static class CleanupReportSelector
                     preview ? CliHeadlineKind.Preview : CliHeadlineKind.Done),
             CliSemanticStatus.Attention
                 => new(AttentionHeadline(result, bundlesRemoved, draftsRemoved, preview), CliHeadlineKind.Warnings),
+            CliSemanticStatus.Incomplete when bundlesRemoved + draftsRemoved == 0
+                && first is { Code: CleanupFindingCode.StoreValidationUnavailable }
+                => new(CleanupWording.StoreValidationUnavailable(first.Subject ?? result.Command, first.Cause), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Incomplete
-                => new(CleanupWording.StoreIncomplete(), CliHeadlineKind.Incomplete),
+                => new(bundlesRemoved + draftsRemoved > 0
+                    ? CleanupWording.Partial(bundlesRemoved + draftsRemoved, result.Catalogue.Candidates.Length, preview)
+                    : CleanupWording.StoreIncomplete(), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid
                 => new(CleanupWording.FindingMessage(
                         first ?? throw new InvalidOperationException("An invalid Cleanup result requires a finding."),
@@ -119,7 +142,9 @@ internal static class CleanupReportSelector
                         result.Effects.Length),
                     CliHeadlineKind.CannotStart),
             CliSemanticStatus.Blocked
-                => new(BlockedHeadline(result, first), CliHeadlineKind.Blocked),
+                => new(bundlesRemoved + draftsRemoved > 0
+                    ? CleanupWording.Partial(bundlesRemoved + draftsRemoved, result.Catalogue.Candidates.Length, preview)
+                    : BlockedHeadline(result, first), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed
                 => new(CleanupWording.Failed(bundlesRemoved + draftsRemoved, result.Effects.Length), CliHeadlineKind.Failed),
             CliSemanticStatus.Interrupted
@@ -161,9 +186,11 @@ internal static class CleanupReportSelector
 
     private static string BlockedHeadline(CleanupResult result, CleanupFinding? first)
     {
-        if (result.Findings.FirstOrDefault(finding => finding.Code == CleanupFindingCode.WorkspaceLockUnavailable) is not null)
+        if (result.Findings.FirstOrDefault(finding => finding.Code == CleanupFindingCode.WorkspaceLockUnavailable) is { } lockFinding)
         {
-            return CleanupWording.LockHeld();
+            return lockFinding.LockFailure is { } lockFailure
+                ? CliFindingWording.WorkspaceLockUnavailable(lockFailure)
+                : CleanupWording.LockHeld();
         }
 
         if (result.Findings.FirstOrDefault(finding => finding.Code == CleanupFindingCode.CatalogueChangedDuringApply) is not null)
@@ -236,6 +263,7 @@ internal static class CleanupReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = CleanupWording.FindingCode(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = CleanupWording.FindingTitle(finding.Code),
             Message = CleanupWording.FindingMessage(finding, path, removed, total),
             Subject = workspaceFinding
@@ -250,7 +278,7 @@ internal static class CleanupReportSelector
     private static IReadOnlyList<CliNextAction> Actions(CleanupFindingCode code)
         => code switch
         {
-            CleanupFindingCode.CatalogueIncomplete =>
+            CleanupFindingCode.CatalogueIncomplete or CleanupFindingCode.StoreValidationUnavailable =>
                 [new CliNextAction("open-forge doctor", global::OpenForge.Cli.OutputText.Cleanup.CleanupText.MessageInspectTheRecoveryStoreBeforeRelyingOnThisCleanupResult())],
             CleanupFindingCode.RecoveryFinalMalformed
                 or CleanupFindingCode.RecoveryFinalUnsupported =>

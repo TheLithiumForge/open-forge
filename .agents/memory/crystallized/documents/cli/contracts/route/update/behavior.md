@@ -479,12 +479,8 @@ A verified no-op has no affected mutation path and therefore does not require a
 bundle. The command does not inspect or report repository state.
 When the plan contains an existing-target effect (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`), orchestration uses only
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and its application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a
-pre-effect `incomplete` result. It prepares exactly one immutable ZIP bundle
-outside the workspace. An operation containing only Create effects or
+`.open-forge-state/recovery/v1/<workspace key>/`. The path is fixed. Unavailable storage is a
+pre-effect `incomplete` result. It prepares exactly one immutable ZIP bundle in the workspace runtime folder. An operation containing only Create effects or
 no-ops creates no bundle. Its source-generated
 versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
@@ -496,7 +492,7 @@ final name, and reopened and verified. Only the valid final ZIP forms the opaque
 `RecoveryBundlePreparation`; the draft remains `Incomplete`.
 `FileChangeApplier` requires that preparation for every existing-target effect and
 performs one final effect per target. All preparation completes before the first
-target effect; unknown, malformed, mismatched, or colliding bundles block.
+target effect. A missing, malformed, mismatched or colliding current-operation preparation blocks.
 
 ### Revalidation and verification
 
@@ -620,7 +616,7 @@ boundary:
   protected-Template and `Failed`/positively observed `Retained` recovery
   completed-with-warnings conditions. Planned changes alone must not form
   `completed-with-warnings`.
-- Verified no-op behavior before recovery-bundle preparation; external bundle
+- Verified no-op behavior before recovery-bundle preparation and local bundle
   storage, semantic final-ZIP verification, unknown/mismatched artifact
   protection, collision handling, typed post-verification deletion
   state/disposition facts, and exact named lease-bound Cleanup.
@@ -644,7 +640,7 @@ authoritative generated projection, plan ordering, dry-run parity, effect
 boundaries, statuses, stream allocation, minimal-detail next-action limits, and
 recovery conditions. Focused integration tests should
 use real temporary routed workspaces, ordinary and compatibility entrypoints,
-overwrite pairs and orphans, external recovery bundles,
+overwrite pairs and orphans, local recovery bundles,
 filesystem failures, expected-state changes, concurrent edits, and generated
 parent effects. Gate 5 executable proof should prove command parsing, exact
 dry-run output, human and structured rendering from one result, the [Shared
@@ -676,3 +672,7 @@ execution without adding another command-local implementation choice.
 - [Routing Paths And Identity](../../../../framework/routing/paths.md)
 - [Overwrite Customization](../../../../framework/routing/overwrites.md)
 - [Templates](../../../../framework/primitives/templates.md)
+
+## Recovery History
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

@@ -23,12 +23,15 @@ Global options: --workspace, --format, --detail, --detail-filter, --help,
 --version. See open-forge --help.
 
 Details:
-  Safety: Only completed recovery bundles and drafts with exact expected names
-  for the selected workspace are eligible. Unknown, malformed, unsupported,
-  unavailable, or unsafe items stay. Apply holds the workspace lock. Preview
-  takes no lock. Each run rechecks the catalogue and verifies every deletion. No
-  operands, selectors, force mode, age or glob filters, or arbitrary recursive
-  deletion are accepted.
+  Safety: Only verified recovery bundles and ordinary drafts with exact expected
+  names for the selected workspace are eligible. Unknown, malformed,
+  unsupported, unavailable or unsafe items stay. Each store has its own checked
+  plan. Eligible local cleanup can proceed when legacy coverage or deletion
+  authority is unavailable. Apply holds the workspace lock. Preview takes no
+  lock. Each run rechecks the catalogues and verifies every deletion. Use
+  --format json --detail full for per-store coverage and results. No operands,
+  selectors, force mode, age or glob filters, or arbitrary recursive deletion
+  are accepted.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

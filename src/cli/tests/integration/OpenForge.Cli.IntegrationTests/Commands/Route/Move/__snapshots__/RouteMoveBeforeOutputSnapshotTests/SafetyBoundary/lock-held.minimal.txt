@@ -1,4 +1,4 @@
-Cannot move guidance/old guide: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot move guidance/old guide: another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   .agents/guidance/old guide.md -> .agents/guidance/new guide.md
   .agents/guidance/_guidance.md  not started

@@ -110,13 +110,9 @@ internal static class SharedText
     internal static string LabelFixByHand()
         => "fix by hand";
 
-    // @OpenForgeText shared.message.another-open-forge-command-holds-the-workspace-lock-nothing-was-changed
-    internal static string MessageAnotherOpenForgeCommandHoldsTheWorkspaceLockNothingWasChanged()
-        => "Another Open Forge command holds the workspace lock. Nothing was changed.";
-
-    // @OpenForgeText shared.label.another-open-forge-command-holds-the-workspace-lock
-    internal static string LabelAnotherOpenForgeCommandHoldsTheWorkspaceLock()
-        => "another Open Forge command holds the workspace lock";
+    // @OpenForgeText shared.message.the-workspace-lock-could-not-be-acquired-nothing-was-changed
+    internal static string MessageTheWorkspaceLockCouldNotBeAcquiredNothingWasChanged()
+        => "The workspace lock could not be acquired. Nothing was changed.";
 
     // @OpenForgeText shared.label.the-filesystem-operation-failed
     internal static string LabelTheFilesystemOperationFailed()
@@ -477,10 +473,6 @@ internal static class SharedText
     // @OpenForgeText shared.title.entries-section-is-unsafe
     internal static string TitleEntriesSectionIsUnsafe()
         => "Entries section is unsafe";
-
-    // @OpenForgeText shared.title.workspace-lock-is-held
-    internal static string TitleWorkspaceLockIsHeld()
-        => "Workspace lock is held";
 
     // @OpenForgeText shared.title.target-changed
     internal static string TitleTargetChanged()

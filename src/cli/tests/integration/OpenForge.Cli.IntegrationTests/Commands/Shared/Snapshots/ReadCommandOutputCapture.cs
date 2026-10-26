@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Status;
+using OpenForge.Cli.Core.Commands.Doctor;
 using System.Runtime.CompilerServices;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
@@ -43,6 +45,16 @@ internal sealed class ReadCommandOutputCapture(
         }
     }
 
+    private string NormalizeRecoveryStores(string output)
+    {
+        if (recoveryBundlePath is not null)
+        {
+            output = CommandOutputNormalization.ReplaceDelimitedPath(output, recoveryBundlePath, "<recovery-bundle>");
+        }
+
+        return CommandOutputNormalization.NormalizeRecoveryStoreLocations(output, workspacePath);
+    }
+
     internal async Task MatchDetailsAsync(
         ReadOutputScenario scenario,
         [CallerFilePath] string sourceFile = "",
@@ -85,7 +97,9 @@ internal sealed class ReadCommandOutputCapture(
 
                 Assert.NotEmpty(capture.PrimaryContent);
                 var normalized = CommandOutputNormalization.Normalize(
-                    capture.PrimaryContent,
+                    (scenario.Arguments[0] == StatusDefinitions.StatusCommand.Name || scenario.Arguments[0] == DoctorDefinitions.DoctorCommand.Name)
+                        ? NormalizeRecoveryStores(capture.PrimaryContent)
+                        : capture.PrimaryContent,
                     workspacePath,
                     CliBuildVersion.InformationalVersion,
                     recoveryBundlePath,

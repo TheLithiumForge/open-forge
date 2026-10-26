@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
@@ -73,7 +75,8 @@ internal sealed class RouteUpdateApplicationOperation(
                 plan,
                 code,
                 lockResult.Cause
-                    ?? "The persistent Route Update workspace lease could not be acquired.");
+                    ?? "The persistent Route Update workspace lease could not be acquired.",
+                WorkspaceLockFailureProjection.From(lockResult.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")));
         }
 
         RouteUpdateApplicationProgress progress;
@@ -124,7 +127,8 @@ internal sealed class RouteUpdateApplicationOperation(
     private RouteUpdateResult FinishBeforeApplication(
         RouteUpdatePlan plan,
         RouteUpdateFindingCode code,
-        string cause)
+        string cause,
+        WorkspaceLockFailureInfo? lockFailure = null)
         => _resultBuilder.Build(
             RouteUpdateApplicationResultFactory.Build(
                 plan,
@@ -139,7 +143,7 @@ internal sealed class RouteUpdateApplicationOperation(
                         new RouteUpdateFinding(
                             code,
                             cause,
-                            plan.Preview.Target.Path ?? plan.Preview.Target.Requested),
+                            plan.Preview.Target.Path ?? plan.Preview.Target.Requested) { LockFailure = lockFailure },
                     ],
                 }));
 

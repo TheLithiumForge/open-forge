@@ -371,3 +371,7 @@ Route Init creates the missing entrypoints with root Open Forge metadata and pro
 **State:** Inspect each created entrypoint's root fields, required headings, and generated region. Compare final metadata with the explicit values and intermediate metadata with the ordinary draft scaffold. Check settings and all preserved parent bytes outside `Entries`.
 
 **Output:** Check created paths, generated effects, and any authoring information against the actual chain. Do not treat supplied final metadata as completing the intermediate drafts.
+
+## Task 86 Runtime Expectations
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

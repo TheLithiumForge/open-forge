@@ -1,4 +1,7 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -90,9 +93,35 @@ internal sealed class RouteInitTargetPlanner
     internal RouteInitTargetResolution Resolve(RouteInitRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
-        return IsExactPath(request.RouteTarget)
+        var result = IsExactPath(request.RouteTarget)
             ? ResolveExactPath(request.RouteTarget)
             : ResolveId(request);
+        if (!result.IsResolved || result.Target is not { } target)
+        {
+            return result;
+        }
+        var path = target.CanonicalPath ?? ReadCanonicalEntrypointPath(target.RequestedSegments);
+        if (WorkspaceRuntimePaths.Contains(request.Workspace,
+            SourceLogicalPath.ToLexicalPath(request.Workspace.PhysicalRoot, path)))
+        {
+            return Invalid("The Route Init target is inside the reserved workspace runtime directory.");
+        }
+        var resolver = new PhysicalPathResolver();
+        var current = SourceLogicalPath.ToLexicalPath(request.Workspace.LexicalRoot, path);
+        while (current is not null)
+        {
+            var resolution = resolver.ResolveCandidate(request.Workspace.LexicalRoot, request.Workspace.PhysicalRoot, current);
+            if (resolution.ResolvedPhysicalPath is { } physical && WorkspaceRuntimePaths.Contains(request.Workspace, physical))
+            {
+                return Invalid("The Route Init target is inside the reserved workspace runtime directory.");
+            }
+            if (resolution.State != PhysicalPathState.Missing)
+            {
+                break;
+            }
+            current = Path.GetDirectoryName(current);
+        }
+        return result;
     }
 
     internal RouteInitTargetFacts ResolveAlignedFrameworkTarget(

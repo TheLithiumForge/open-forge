@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Presentation.Status.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Shared.Serialization;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using System.Text.Json;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Status;
@@ -121,10 +124,20 @@ internal static class StatusJsonAssertions
                 PropertyOrder(link, "path", "state", "expectedTarget", "observedTarget");
         }
 
-        var recovery = data.GetProperty("recovery");
-        PropertyOrder(recovery, "candidates");
-        foreach (var candidate in recovery.GetProperty("candidates").EnumerateArray())
-            PropertyOrder(candidate, "path", "kind", "integrity");
+        var recovery = data.GetProperty(StatusRecoveryJsonFields.Recovery);
+        PropertyOrder(recovery, StatusRecoveryJsonFields.Stores, StatusRecoveryJsonFields.Candidates);
+        var stores = recovery.GetProperty(StatusRecoveryJsonFields.Stores).EnumerateArray().ToArray();
+        Assert.Equal([RecoveryWireVocabulary.StoreKind(RecoveryStoreKind.Workspace), RecoveryWireVocabulary.StoreKind(RecoveryStoreKind.Legacy)], stores.Select(store => store.GetProperty(StatusRecoveryJsonFields.Kind).GetString()));
+        foreach (var store in stores)
+        {
+            PropertyOrder(store, StatusRecoveryJsonFields.Kind, StatusRecoveryJsonFields.Path, StatusRecoveryJsonFields.Coverage, StatusRecoveryJsonFields.Candidates, StatusRecoveryJsonFields.Cause);
+            Assert.Equal(RecoveryWireVocabulary.CompleteCoverage, store.GetProperty(StatusRecoveryJsonFields.Coverage).GetString());
+            Assert.Equal(JsonValueKind.String, store.GetProperty(StatusRecoveryJsonFields.Path).ValueKind);
+            foreach (var candidate in store.GetProperty(StatusRecoveryJsonFields.Candidates).EnumerateArray())
+                PropertyOrder(candidate, StatusRecoveryJsonFields.Path, StatusRecoveryJsonFields.Kind, StatusRecoveryJsonFields.Integrity);
+        }
+        foreach (var candidate in recovery.GetProperty(StatusRecoveryJsonFields.Candidates).EnumerateArray())
+            PropertyOrder(candidate, StatusRecoveryJsonFields.Path, StatusRecoveryJsonFields.Kind, StatusRecoveryJsonFields.Integrity);
 
         var counts = root.GetProperty("counts");
         PropertyOrder(counts,

@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
+using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -43,6 +45,62 @@ internal sealed class CleanupResultBuilder(CleanupPlan plan)
         };
     }
 
+    internal static CleanupResult BuildStores(CleanupRequest request, IReadOnlyList<CleanupStoreApplication> stores)
+    {
+        var plan = CleanupPlan.Aggregate(request, [.. stores.Select(store => store.Result.Plan)]);
+        var results = stores.Select(store => store.Result.Build()).ToArray();
+        var effects = results.SelectMany(result => result.Effects).ToDictionary(effect => effect.Path, StringComparer.Ordinal);
+        var aggregate = new CleanupResultBuilder(plan)
+        {
+            Findings = [.. results.SelectMany(result => result.Findings)],
+            Preflight = results.Select(result => result.Preflight).OrderByDescending(value => value.State).First(),
+            Lease = results.Select(result => result.Lease).OrderByDescending(value => value.State).First(),
+            Revalidation = AggregateComparison(plan, results),
+            Verification = results.Select(result => result.Verification).OrderByDescending(value => value.State).First(),
+            Effects = [.. plan.Entries.Where(entry => effects.ContainsKey(entry.Path)).Select(entry =>
+            {
+                var effect = effects[entry.Path];
+                return CleanupEffect.Create(entry, effect.Outcome, effect.Residual, effect.Cause);
+            })],
+        };
+        return aggregate.Build() with
+        {
+            Stores = stores.Select((store, index) => new CleanupStoreResult(
+                RecoveryWireVocabulary.StoreKind(store.Observation.Kind), store.Observation.Location?.WorkspaceDirectory,
+                store.Result.Revalidation.Cause ?? store.Observation.Catalogue.Cause ?? store.Result.Verification.Cause, results[index].Facts)).ToArray(),
+        };
+    }
+
+    private static CleanupCatalogueComparison AggregateComparison(CleanupPlan plan, IReadOnlyList<CleanupResult> results)
+    {
+        var comparison = results.Select(result => result.Revalidation).OrderByDescending(value => value.State).First();
+        if (comparison.State == CleanupCatalogueComparisonState.NotRequested)
+        {
+            return comparison;
+        }
+
+        if (comparison.State == CleanupCatalogueComparisonState.Matched && plan.Safety != CleanupPlanSafety.Safe)
+        {
+            comparison = comparison with
+            {
+                State = plan.Catalogue.IsComplete
+                    ? CleanupCatalogueComparisonState.Blocked : CleanupCatalogueComparisonState.Incomplete,
+                Cause = results.SelectMany(result => result.Findings).FirstOrDefault()?.Cause,
+            };
+        }
+
+        var observed = results.Where(result => !result.Plan.DeletionEntries.IsEmpty)
+            .Select(result => result.Revalidation.Observed).ToArray();
+        return comparison with
+        {
+            Planned = plan.Catalogue,
+            Observed = observed.All(catalogue => catalogue is not null)
+                ? CleanupCatalogue.Create(plan.Catalogue.Coverage,
+                    [.. observed.SelectMany(catalogue => catalogue?.Candidates ?? []).OrderBy(candidate => candidate.Path, StringComparer.Ordinal)])
+                : null,
+        };
+    }
+
     internal void PreserveUnattempted(RecoveryBundleCatalogueResult? observed)
         => Effects = [.. Plan.Entries.Where(entry => entry.Action == CleanupPlanAction.Delete).Select(entry => UnattemptedEffect(entry, observed))];
 
@@ -62,7 +120,7 @@ internal sealed class CleanupResultBuilder(CleanupPlan plan)
         }
 
         return CleanupEffect.Create(entry, CleanupEffectOutcome.CompletionUnknown, CleanupEffectResidual.Unknown,
-            "No deletion was attempted; the candidate's current disposition was not established.");
+            "No deletion was attempted. The candidate's current disposition was not established.");
     }
 
     private CliSemanticStatus ReadStatus()

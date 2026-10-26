@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Commands.Route.Remove;
+using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery;
@@ -5,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.TestSupport;
@@ -37,7 +41,7 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
             priorPreparation.BundlePath,
             TestContext.Current.CancellationToken);
         var priorRead = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             priorPreparation.BundlePath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, priorRead.State);
@@ -57,7 +61,10 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
             Assert.Equal(CliSemanticStatus.Complete, completion.Status);
             Assert.Equal(string.Empty, error.ToString());
             using var result = JsonDocument.Parse(output.ToString());
-            Assert.Equal(JsonValueKind.Null, result.RootElement.GetProperty("recovery").ValueKind);
+            Assert.Equal(JsonValueKind.Null, result.RootElement.GetProperty(CliJsonFields.Recovery).ValueKind);
+            Assert.DoesNotContain(result.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray(),
+                item => item.GetProperty(CliJsonFields.Code).GetString() == RouteRemoveDefinitions.RecoveryHistoryCode
+                    && item.GetProperty(CliJsonFields.Subject).GetProperty(CliJsonFields.Path).GetString() == priorPreparation.BundlePath);
 
             if (category)
             {
@@ -87,7 +94,7 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
                 priorBytes,
                 await File.ReadAllBytesAsync(priorPreparation.BundlePath, TestContext.Current.CancellationToken));
             var retainedRead = await RecoveryBundleReader.ReadFinalAsync(
-                workspace.Workspace,
+                RecoveryStoreLocator.Local(workspace.Workspace),
                 priorPreparation.BundlePath,
                 TestContext.Current.CancellationToken);
             Assert.Equal(RecoveryBundleReadState.Valid, retainedRead.State);
@@ -108,11 +115,11 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Route Remove blocks unverified recovery candidates before workspace writes"),
+    [Theory(DisplayName = "Route Remove preserves unverified recovery history while applying removal"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     [InlineData("malformed")]
     [InlineData("draft")]
-    public async Task UnverifiedPriorRecoveryCandidateBlocksWithoutWorkspaceEffects(string candidateKind)
+    public async Task UnverifiedPriorRecoveryCandidateDoesNotBlockWorkspaceEffects(string candidateKind)
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create(
             $"route-remove-prior-unverified-{candidateKind}");
@@ -139,24 +146,17 @@ public sealed class RouteRemovePriorRecoveryIntegrationTests
                 output,
                 error);
 
-            Assert.Equal(5, completion.ExitCode);
-            Assert.Equal(CliSemanticStatus.Blocked, completion.Status);
+            Assert.Equal(0, completion.ExitCode);
+            Assert.Equal(CliSemanticStatus.Complete, completion.Status);
             Assert.Equal(string.Empty, error.ToString());
             using var result = JsonDocument.Parse(output.ToString());
-            var finding = Assert.Single(result.RootElement.GetProperty("findings").EnumerateArray());
-            Assert.Equal("route-remove.recovery-conflict", finding.GetProperty("code").GetString());
-            Assert.Equal("file", finding.GetProperty("subject").GetProperty("kind").GetString());
-            Assert.Equal(candidatePath, finding.GetProperty("subject").GetProperty("path").GetString());
-            Assert.Equal(candidatePath, result.RootElement.GetProperty("recovery").GetProperty("path").GetString());
-            var effects = result.RootElement.GetProperty("effects").EnumerateArray().ToArray();
-            Assert.NotEmpty(effects);
-            Assert.All(
-                effects,
-                effect => Assert.Equal("not-started", effect.GetProperty("outcome").GetString()));
-            Assert.Equal(before, workspace.SnapshotHashes());
+            var finding = Assert.Single(result.RootElement.GetProperty(CliJsonFields.Findings).EnumerateArray(),
+                item => item.GetProperty(CliJsonFields.Code).GetString() == RouteRemoveDefinitions.RecoveryHistoryCode);
+            Assert.Equal(CliReportVocabulary.Name(CliSeverity.Warning), finding.GetProperty(CliJsonFields.Severity).GetString());
+            Assert.Equal(candidatePath, finding.GetProperty(CliJsonFields.Subject).GetProperty(CliJsonFields.Path).GetString());
+            Assert.Equal(JsonValueKind.Null, result.RootElement.GetProperty(CliJsonFields.Recovery).ValueKind);
+            Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafPath)));
             Assert.Equal(ownershipBefore, workspace.ReadBytes(RouteRemoveIntegrationWorkspace.OwnershipPath));
-            Assert.False(File.Exists(workspace.Combine(".agents/open-forge.json")));
-            Assert.True(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafPath)));
             Assert.Equal(candidateBytes, await File.ReadAllBytesAsync(candidatePath, TestContext.Current.CancellationToken));
 
             var catalogue = await RecoveryBundleCatalogue.ReadAsync(

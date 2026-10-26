@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -72,9 +73,9 @@ internal static class CleanupTestData
         if (kind == RecoveryBundleCandidateKind.Draft)
         {
             snapshot = integrity == RecoveryBundleIntegrity.Incomplete
-                ? RecoveryBundleCandidateSnapshot.IncompleteDraft(candidatePath)
+                ? RecoveryBundleCandidateSnapshot.IncompleteDraft(RecoveryStoreLocator.Local(candidate), candidatePath)
                 : RecoveryBundleCandidateSnapshot.Classified(
-                    candidatePath,
+                    RecoveryStoreLocator.Local(candidate), candidatePath,
                     kind,
                     integrity,
                     "The synthetic Cleanup candidate is unavailable.");
@@ -88,7 +89,7 @@ internal static class CleanupTestData
         else
         {
             snapshot = RecoveryBundleCandidateSnapshot.Classified(
-                candidatePath,
+                RecoveryStoreLocator.Local(candidate), candidatePath,
                 kind,
                 integrity,
                 "The synthetic Cleanup candidate is not verified.");
@@ -194,6 +195,7 @@ internal static class CleanupTestData
         var workspacePath = WorkspaceIdentity.NormalizePhysicalPath(workspace.PhysicalRoot);
         return new RecoveryBundleVerifiedRead
         {
+            Location = RecoveryStoreLocator.Local(workspace),
             BundlePath = path ?? DefaultCandidatePath(RecoveryBundleCandidateKind.Final, id),
             WorkspacePhysicalPath = workspacePath,
             WorkspaceKey = WorkspaceIdentity.Key(workspacePath),

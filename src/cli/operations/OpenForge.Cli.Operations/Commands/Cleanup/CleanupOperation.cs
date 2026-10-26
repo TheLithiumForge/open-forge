@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
@@ -8,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 
@@ -45,28 +45,37 @@ internal sealed class CleanupOperation
                 return result.Build();
             }
 
-            var frozen = await ReadCatalogueAsync(request, cancellationToken).ConfigureAwait(false);
-            var plan = CleanupPlanner.Create(request, frozen);
-            var findings = CleanupPlanner.ReadFindings(plan, frozen.Cause);
-            result = new CleanupResultBuilder(plan)
+            var local = RecoveryStoreLocator.Local(request.Workspace);
+            var legacy = RecoveryStoreLocator.Legacy(request.Workspace);
+            RecoveryStoreObservation[] observations =
+            [
+                await ReadStoreAsync(RecoveryStoreKind.Workspace, local, cancellationToken).ConfigureAwait(false),
+                await ReadStoreAsync(RecoveryStoreKind.Legacy, legacy, cancellationToken).ConfigureAwait(false),
+            ];
+            var stores = new List<CleanupStoreApplication>();
+            foreach (var frozen in observations)
             {
-                Findings = findings,
-                Preflight = new CleanupPreflight { State = ReadPreflight(plan) },
-                Effects = [.. plan.Entries.Where(entry => entry.Action == CleanupPlanAction.Delete).Select(entry => InitialEffect(request, entry))],
-            };
-            if (plan.Safety != CleanupPlanSafety.Safe || request.IsDryRun)
-            {
-                return result.Build();
+                var plan = CleanupPlanner.Create(request, frozen.Catalogue);
+                var builder = new CleanupResultBuilder(plan)
+                {
+                    Findings = CleanupPlanner.ReadFindings(plan, frozen.Catalogue.Cause),
+                    Preflight = new CleanupPreflight { State = ReadPreflight(plan) },
+                    Effects = [.. plan.Entries.Where(entry => entry.Action == CleanupPlanAction.Delete).Select(entry => InitialEffect(request, entry, plan.Safety))],
+                };
+                if (plan.Safety == CleanupPlanSafety.Safe && plan.DeletionEntries.IsEmpty && !request.IsDryRun)
+                {
+                    builder.Verification = new CleanupVerification { State = CleanupVerificationState.Verified };
+                }
+
+                stores.Add(new CleanupStoreApplication(frozen, builder));
             }
 
-            if (plan.DeletionEntries.IsEmpty)
+            if (!request.IsDryRun && stores.Any(store => !store.Result.Plan.DeletionEntries.IsEmpty))
             {
-                result.Verification = new CleanupVerification { State = CleanupVerificationState.Verified };
-                return result.Build();
+                await _application.ApplyAsync(stores, cancellationToken).ConfigureAwait(false);
             }
 
-            await _application.ApplyAsync(result, frozen, cancellationToken).ConfigureAwait(false);
-            return result.Build();
+            return CleanupResultBuilder.BuildStores(request, stores);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -80,27 +89,33 @@ internal sealed class CleanupOperation
         }
     }
 
-    private static async ValueTask<RecoveryBundleCatalogueResult> ReadCatalogueAsync(CleanupRequest request, CancellationToken cancellationToken)
+    private static async ValueTask<RecoveryStoreObservation> ReadStoreAsync(
+        RecoveryStoreKind kind,
+        RecoveryStoreLocation? location,
+        CancellationToken cancellationToken)
     {
-        var failure = RecoveryDeletionStorageBoundary.ReadWorkspace(request.Workspace);
-        if (failure is not null)
+        if (location is null)
         {
-            return RecoveryBundleCatalogueResult.Unavailable(failure.DirectCause, failure);
+            return new(kind, null, RecoveryBundleCatalogueResult.Unavailable("The legacy recovery store location is unavailable."));
         }
 
-        var catalogue = await RecoveryBundleCatalogue.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
-        failure = RecoveryDeletionStorageBoundary.ReadWorkspace(request.Workspace);
-        if (failure is not null)
+        if (RecoveryDeletionStorageBoundary.ReadLocation(location) is { } beforeFailure)
         {
-            return RecoveryBundleCatalogueResult.Unavailable(failure.DirectCause, failure);
+            return new(kind, location, RecoveryBundleCatalogueResult.Unavailable(beforeFailure.DirectCause, beforeFailure));
         }
 
-        return catalogue;
+        var catalogue = await RecoveryBundleCatalogue.ReadAsync(location, cancellationToken).ConfigureAwait(false);
+        if (RecoveryDeletionStorageBoundary.ReadLocation(location) is { } afterFailure)
+        {
+            catalogue = RecoveryBundleCatalogueResult.Unavailable(afterFailure.DirectCause, afterFailure);
+        }
+
+        return new(kind, location, catalogue);
     }
 
-    private static CleanupEffect InitialEffect(CleanupRequest request, CleanupPlanEntry entry)
+    private static CleanupEffect InitialEffect(CleanupRequest request, CleanupPlanEntry entry, CleanupPlanSafety safety)
     {
-        if (request.IsDryRun)
+        if (request.IsDryRun && safety == CleanupPlanSafety.Safe)
         {
             return CleanupEffect.Create(entry, CleanupEffectOutcome.Planned, CleanupEffectResidual.None);
         }

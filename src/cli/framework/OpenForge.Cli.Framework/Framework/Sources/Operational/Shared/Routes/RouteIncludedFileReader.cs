@@ -16,6 +16,7 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
@@ -124,7 +125,10 @@ internal sealed class RouteIncludedFileReader(CliWorkspace workspace)
         var physical = resolution.State == PhysicalPathState.Contained ? resolution.GetContainedPhysicalPath() : null;
         var exists = physical is not null && File.Exists(physical);
         string? rejection = null;
-        if (resolution.State != PhysicalPathState.Missing && !exists)
+        if (WorkspaceRuntimePaths.Contains(workspace, Path.Combine(workspace.PhysicalRoot, path.Replace('/', Path.DirectorySeparatorChar)))
+            || resolution.ResolvedPhysicalPath is { } resolved && WorkspaceRuntimePaths.Contains(workspace, resolved))
+            rejection = "The included file is inside the reserved runtime directory.";
+        else if (resolution.State != PhysicalPathState.Missing && !exists)
             rejection = "The included path is not a contained file.";
         else if (physical is not null && IsInsideAgents(physical))
             rejection = "The included file is inside .agents/.";
@@ -157,6 +161,8 @@ internal sealed class RouteIncludedFileReader(CliWorkspace workspace)
             var companion = _resolver.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot,
                 Path.Combine(workspace.LexicalRoot, overwrite.Replace('/', Path.DirectorySeparatorChar)));
             if (companion.State == PhysicalPathState.Contained && File.Exists(companion.GetContainedPhysicalPath())
+                && !WorkspaceRuntimePaths.Contains(workspace, Path.Combine(workspace.PhysicalRoot, overwrite.Replace('/', Path.DirectorySeparatorChar)))
+                && !WorkspaceRuntimePaths.Contains(workspace, companion.GetContainedPhysicalPath())
                 && !IsInsideAgents(companion.GetContainedPhysicalPath()))
             {
                 var companionPath = companion.GetContainedPhysicalPath();

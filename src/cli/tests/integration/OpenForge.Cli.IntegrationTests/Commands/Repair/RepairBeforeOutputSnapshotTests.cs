@@ -89,7 +89,8 @@ public sealed class RepairBeforeOutputSnapshotTests
         Assert.Contains(result.Findings, finding => finding.Code == RepairFindingCode.WorkspaceLockUnavailable);
         Assert.Equal(sourceBefore, workspace.ReadBytes(RepairIntegrationWorkspace.SourcePath));
         Assert.Equal(unrelatedBefore, workspace.ReadBytes(RepairIntegrationWorkspace.UnrelatedPath));
-        Renderers.MatchDetails(result, "lock-held");
+        Renderers.MatchDetails(result, "lock-held",
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 
     [Trait("Boundary", "Output")]
@@ -125,7 +126,8 @@ public sealed class RepairBeforeOutputSnapshotTests
             }
 
             Assert.Equal(unrelated, workspace.ReadBytes(RepairIntegrationWorkspace.UnrelatedPath));
-            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
@@ -149,7 +151,8 @@ public sealed class RepairBeforeOutputSnapshotTests
             Assert.Equal(status, result.Status);
             if (situation == "relink-one") Assert.Contains("[Guided](replacement.md)", workspace.ReadText(RepairIntegrationWorkspace.SourcePath), StringComparison.Ordinal);
             else Assert.Equal(before, workspace.ReadBytes(RepairIntegrationWorkspace.SourcePath));
-            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
@@ -173,7 +176,8 @@ public sealed class RepairBeforeOutputSnapshotTests
             var result = await new RepairOperation().ExecuteAsync(workspace.Request(automatic: cancelled), cancellation.Token);
             Assert.Equal(cancelled ? CliSemanticStatus.Interrupted : CliSemanticStatus.Blocked, result.Status);
             Assert.Equal(before, workspace.SnapshotState());
-            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);

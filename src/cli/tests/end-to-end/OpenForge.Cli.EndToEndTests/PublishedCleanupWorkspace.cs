@@ -29,14 +29,19 @@ internal sealed class PublishedCleanupWorkspace : IDisposable
 
     private PublishedCleanupWorkspace(
         TemporaryWorkspace workspace,
-        PublishedWorkspaceLockStore lockStore)
+        PublishedWorkspaceLockStore lockStore,
+        bool legacyStore)
     {
         _workspace = workspace;
         _lockStore = lockStore;
         _lockPath = _lockStore.Track(workspace.Path);
         _localApplicationData = lockStore.LocalApplicationDataDirectory;
-        _recoveryStoreRoot = lockStore.RecoveryStoreRoot;
-        _selectedRecoveryDirectory = lockStore.RecoveryWorkspaceDirectory(workspace.Path);
+        _recoveryStoreRoot = legacyStore
+            ? lockStore.RecoveryStoreRoot
+            : OpenForge.Cli.TestSupport.Isolation.TestDataHome.LocalRecoveryStoreRoot(workspace.Path);
+        _selectedRecoveryDirectory = legacyStore
+            ? lockStore.RecoveryWorkspaceDirectory(workspace.Path)
+            : PublishedWorkspaceLockStore.LocalRecoveryWorkspaceDirectory(workspace.Path);
         _foreignRecoveryDirectory = System.IO.Path.Combine(
             _recoveryStoreRoot,
             Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes("foreign-workspace"))));
@@ -69,14 +74,14 @@ internal sealed class PublishedCleanupWorkspace : IDisposable
 
     internal IReadOnlyDictionary<string, string> ProcessEnvironment => _lockStore.EnvironmentVariables;
 
-    internal static PublishedCleanupWorkspace CreateEmpty()
+    internal static PublishedCleanupWorkspace CreateEmpty(bool legacyStore = false)
     {
         var workspace = TemporaryWorkspace.Create("e2e-cleanup-workspace");
         var lockStore = PublishedWorkspaceLockStore.Create("e2e-cleanup-lock-store");
         PublishedCleanupWorkspace? result = null;
         try
         {
-            result = new PublishedCleanupWorkspace(workspace, lockStore);
+            result = new PublishedCleanupWorkspace(workspace, lockStore, legacyStore);
             workspace.WriteText("workspace-note.md", "preserve workspace content\n");
             return result;
         }
@@ -96,9 +101,9 @@ internal sealed class PublishedCleanupWorkspace : IDisposable
         }
     }
 
-    internal static PublishedCleanupWorkspace CreateWithArtifacts()
+    internal static PublishedCleanupWorkspace CreateWithArtifacts(bool legacyStore)
     {
-        var result = CreateEmpty();
+        var result = CreateEmpty(legacyStore);
         try
         {
             result.SeedArtifacts();

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Cleanup;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
@@ -740,6 +741,8 @@ internal sealed record CleanupVerification
 
 internal sealed record CleanupFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     private CleanupFinding(
         CleanupFindingCode code,
         string cause,

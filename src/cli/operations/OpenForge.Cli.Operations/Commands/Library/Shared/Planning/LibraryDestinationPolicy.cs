@@ -1,4 +1,6 @@
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
@@ -9,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Library.Shared.Planning;
 
@@ -37,7 +40,7 @@ internal static class LibraryDestinationPolicy
         {
             var path = mapping.DestinationPath.Value;
             var key = PortableWorkspacePath.CreatePortableKey(path);
-            if (!IsAllowed(path) || owned.Contains(key)
+            if (!IsAllowed(path) || IsRuntimeDestination(workspace, path) || owned.Contains(key)
                 || Parents(key).Any(parent => owned.Contains(parent) || selectedKeys.Contains(parent))
                 || sources.Any(root => Within(key, root))
                 || (recovery is not null && (recovery == "." || Within(key, recovery))))
@@ -56,12 +59,36 @@ internal static class LibraryDestinationPolicy
         foreach (var path in generatedTargets.Append(WorkspaceOwnershipDefinitions.RelativePath).Append(WorkspaceSettingsDefinitions.RelativePath))
         {
             var key = PortableWorkspacePath.CreatePortableKey(path);
-            if (sources.Any(root => Within(key, root)))
+            if (IsRuntimeDestination(workspace, path) || sources.Any(root => Within(key, root)))
             {
                 return path;
             }
         }
         return null;
+    }
+
+    private static bool IsRuntimeDestination(CliWorkspace workspace, string path)
+    {
+        if (WorkspaceRuntimePaths.Contains(workspace, Path.GetFullPath(path, workspace.PhysicalRoot)))
+        {
+            return true;
+        }
+        var resolver = new PhysicalPathResolver();
+        var current = Path.GetFullPath(path, workspace.LexicalRoot);
+        while (current is not null)
+        {
+            var resolution = resolver.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, current);
+            if (resolution.ResolvedPhysicalPath is { } physical && WorkspaceRuntimePaths.Contains(workspace, physical))
+            {
+                return true;
+            }
+            if (resolution.State != PhysicalPathState.Missing)
+            {
+                break;
+            }
+            current = Path.GetDirectoryName(current);
+        }
+        return false;
     }
 
     private static bool IsAllowed(string path)

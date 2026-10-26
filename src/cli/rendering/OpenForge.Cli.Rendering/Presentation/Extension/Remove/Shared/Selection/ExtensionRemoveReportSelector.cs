@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Presentation.Extension.Remove.Models;
 using OpenForge.Cli.Core.Presentation.Extension.Remove.Shared.Wording;
+using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
@@ -265,11 +266,14 @@ internal static class ExtensionRemoveReportSelector
     {
         var finding = result.Findings.FirstOrDefault(finding => finding.Status == result.Status)
             ?? result.Findings.FirstOrDefault();
-        if (result.Status == CliSemanticStatus.Complete
+        if ((result.Status == CliSemanticStatus.Complete
+                || result.Status == CliSemanticStatus.Attention && result.Findings.All(finding =>
+                    finding.Code is ExtensionRemoveFindingCode.RecoveryHistory or ExtensionRemoveFindingCode.RecoveryCoverageUnavailable))
             && ((result.Paths.Count == 0 && result.Effects.Count == 0)
                 || result.Findings.Any(finding => finding.Code == ExtensionRemoveFindingCode.OwnershipObservation)))
         {
-            return new(ExtensionRemoveWording.NoFilesRecorded(id), CliHeadlineKind.NothingToDo);
+            return new(ExtensionRemoveWording.NoFilesRecorded(id), result.Status == CliSemanticStatus.Attention
+                ? CliHeadlineKind.Warnings : CliHeadlineKind.NothingToDo);
         }
 
         if (result.Status == CliSemanticStatus.Complete && result.Mode == ExtensionRemoveMode.DryRun)
@@ -287,6 +291,8 @@ internal static class ExtensionRemoveReportSelector
                     : ExtensionRemoveWording.Incomplete(id, finding?.Cause ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheRemovalCouldNotBeChecked()),
                 CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid => new(ExtensionRemoveWording.CannotRemove(finding?.Cause ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheInputIsInvalid()), CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when finding?.LockFailure is { } lockFailure
+                => new(ExtensionRemoveWording.Blocked(id, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked => new(ExtensionRemoveWording.Blocked(
                 id,
                 finding?.Code switch
@@ -351,6 +357,7 @@ internal static class ExtensionRemoveReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = ExtensionRemoveWording.FindingCode(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = ExtensionRemoveWording.FindingTitle(finding.Code),
             Message = ExtensionRemoveWording.FindingMessage(finding, id, result.Mode == ExtensionRemoveMode.DryRun),
             Subject = new CliSubject(kind, kind == CliSubjectKind.File ? subject : null, kind == CliSubjectKind.Identifier ? subject : null),

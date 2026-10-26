@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport.Snapshots;
 using OpenForge.Cli.Core.Commands.Extension;
 using OpenForge.Cli.Core.Commands.Extension.Remove;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
@@ -34,47 +35,52 @@ public sealed class ExtensionRemoveDefinitionsTests
     public void FindingDefinitionsMapEveryCodeAndStatus()
     {
         Assert.Equal(Enum.GetValues<ExtensionRemoveFindingCode>(), ExtensionRemoveDefinitions.FindingCodes);
-        Assert.Equal(
+        (ExtensionRemoveFindingCode Code, CliSemanticStatus Status)[] expected =
         [
-            ("extension-remove.invalid-input", CliSemanticStatus.Invalid),
-            ("extension-remove.selection-required", CliSemanticStatus.Invalid),
-            ("extension-remove.interaction-ended", CliSemanticStatus.Invalid),
-            ("extension-remove.confirmation-required", CliSemanticStatus.Invalid),
-            ("extension-remove.framework-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-remove.framework-unsafe", CliSemanticStatus.Blocked),
-            ("extension-remove.lifecycle-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-remove.lifecycle-blocked", CliSemanticStatus.Blocked),
-            ("extension-remove.dependency-blocked", CliSemanticStatus.Blocked),
-            ("extension-remove.settings-invalid", CliSemanticStatus.Blocked),
-            ("extension-remove.settings-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-remove.path-excluded", CliSemanticStatus.Complete),
-            ("extension-remove.ownership-conflict", CliSemanticStatus.Blocked),
-            ("extension-remove.permission-required", CliSemanticStatus.Blocked),
-            ("extension-remove.permission-declined", CliSemanticStatus.Blocked),
-            ("extension-remove.permissions-invalid", CliSemanticStatus.Blocked),
-            ("extension-remove.permissions-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-remove.permissions-changed", CliSemanticStatus.Blocked),
-            ("extension-remove.permission-write-failed", CliSemanticStatus.Failed),
-            ("extension-remove.target-unsafe", CliSemanticStatus.Blocked),
-            ("extension-remove.projection-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-remove.generated-region-unsafe", CliSemanticStatus.Blocked),
-            ("extension-remove.workspace-lock-unavailable", CliSemanticStatus.Blocked),
-            ("extension-remove.target-changed", CliSemanticStatus.Blocked),
-            ("extension-remove.recovery-conflict", CliSemanticStatus.Blocked),
-            ("extension-remove.recovery-unavailable", CliSemanticStatus.Incomplete),
-            ("extension-remove.lifecycle-observation", CliSemanticStatus.Attention),
-            ("extension-remove.ownership-observation", CliSemanticStatus.Complete),
-            ("extension-remove.recovery-artifact-retained", CliSemanticStatus.Attention),
-            ("extension-remove.write-failed", CliSemanticStatus.Failed),
-            ("extension-remove.topology-verification-failed", CliSemanticStatus.Failed),
-            ("extension-remove.lifecycle-publication-failed", CliSemanticStatus.Failed),
-            ("extension-remove.verification-failed", CliSemanticStatus.Failed),
-            ("extension-remove.recovery-failed", CliSemanticStatus.Failed),
-            ("extension-remove.operation-failed", CliSemanticStatus.Failed),
-            ("extension-remove.interrupted", CliSemanticStatus.Interrupted),
-        ],
-            ExtensionRemoveDefinitions.FindingCodes.Select(code =>
-                (ExtensionRemoveDefinitions.ReadMachineName(code), ExtensionRemoveDefinitions.ReadStatus(code))));
+            (ExtensionRemoveFindingCode.InvalidInput, CliSemanticStatus.Invalid),
+            (ExtensionRemoveFindingCode.SelectionRequired, CliSemanticStatus.Invalid),
+            (ExtensionRemoveFindingCode.InteractionEnded, CliSemanticStatus.Invalid),
+            (ExtensionRemoveFindingCode.ConfirmationRequired, CliSemanticStatus.Invalid),
+            (ExtensionRemoveFindingCode.FrameworkUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionRemoveFindingCode.FrameworkUnsafe, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.LifecycleUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionRemoveFindingCode.LifecycleBlocked, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.DependencyBlocked, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.SettingsInvalid, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.SettingsUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionRemoveFindingCode.PathExcluded, CliSemanticStatus.Complete),
+            (ExtensionRemoveFindingCode.OwnershipConflict, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.PermissionRequired, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.PermissionDeclined, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.PermissionsInvalid, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.PermissionsUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionRemoveFindingCode.PermissionsChanged, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.PermissionWriteFailed, CliSemanticStatus.Failed),
+            (ExtensionRemoveFindingCode.TargetUnsafe, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.ProjectionUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionRemoveFindingCode.GeneratedRegionUnsafe, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.WorkspaceLockUnavailable, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.TargetChanged, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.RecoveryConflict, CliSemanticStatus.Blocked),
+            (ExtensionRemoveFindingCode.RecoveryUnavailable, CliSemanticStatus.Incomplete),
+            (ExtensionRemoveFindingCode.LifecycleObservation, CliSemanticStatus.Attention),
+            (ExtensionRemoveFindingCode.OwnershipObservation, CliSemanticStatus.Complete),
+            (ExtensionRemoveFindingCode.RecoveryArtifactRetained, CliSemanticStatus.Attention),
+            (ExtensionRemoveFindingCode.RecoveryHistory, CliSemanticStatus.Attention),
+            (ExtensionRemoveFindingCode.RecoveryCoverageUnavailable, CliSemanticStatus.Attention),
+            (ExtensionRemoveFindingCode.WriteFailed, CliSemanticStatus.Failed),
+            (ExtensionRemoveFindingCode.TopologyVerificationFailed, CliSemanticStatus.Failed),
+            (ExtensionRemoveFindingCode.LifecyclePublicationFailed, CliSemanticStatus.Failed),
+            (ExtensionRemoveFindingCode.VerificationFailed, CliSemanticStatus.Failed),
+            (ExtensionRemoveFindingCode.RecoveryFailed, CliSemanticStatus.Failed),
+            (ExtensionRemoveFindingCode.OperationFailed, CliSemanticStatus.Failed),
+            (ExtensionRemoveFindingCode.Interrupted, CliSemanticStatus.Interrupted),
+        ];
+        Assert.Equal(expected.Select(item => item.Code), Enum.GetValues<ExtensionRemoveFindingCode>());
+        Assert.Equal(expected.Select(item => item.Code), ExtensionRemoveDefinitions.FindingCodes);
+        Assert.All(expected, item => Assert.Equal(item.Status, ExtensionRemoveDefinitions.ReadStatus(item.Code)));
+        CommandOutputSnapshot.MatchSnapshot(string.Join("\n", ExtensionRemoveDefinitions.FindingCodes.Select(code =>
+            $"{code}: {ExtensionRemoveDefinitions.ReadMachineName(code)}")), "finding-codes");
         Assert.Equal(
             ExtensionRemoveDefinitions.FindingCodes.Count,
             ExtensionRemoveDefinitions.FindingCodes.Distinct().Count());

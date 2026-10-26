@@ -1,22 +1,23 @@
-using System.Text;
-using System.IO.Compression;
 using System.Collections.Immutable;
-using OpenForge.Cli.Core.Commands.Install.Models.Planning;
+using System.IO.Compression;
+using System.Text;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
-using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
+using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
+using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Embedded;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
@@ -170,7 +171,7 @@ public sealed class InstallConfigurationFrontmatterIntegrationTests
         Assert.Equal(CliSemanticStatus.Failed, result.Status);
         Assert.Equal(InstallResultRecoveryState.Retained, result.Facts.Recovery.State);
         var bundlePath = Assert.IsType<string>(result.Facts.Recovery.ResidualPath);
-        var bundle = await RecoveryBundleReader.ReadFinalAsync(workspace.Workspace, bundlePath, Token);
+        var bundle = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(workspace.Workspace), bundlePath, Token);
         Assert.Equal(RecoveryBundleReadState.Valid, bundle.State);
         using var archive = ZipFile.OpenRead(bundlePath);
         var payloads = archive.Entries.Skip(1).Select(entry =>

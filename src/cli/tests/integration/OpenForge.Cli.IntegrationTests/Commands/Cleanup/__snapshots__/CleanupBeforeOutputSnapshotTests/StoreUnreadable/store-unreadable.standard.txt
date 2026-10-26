@@ -4,5 +4,8 @@ Workspace: <workspace>
          The recovery store at <recovery-store> could not be read completely.
          open-forge doctor --workspace <workspace>
          Inspect the recovery store before relying on this Cleanup result.
+  items left in place: The recovery storage directory chain contains a
+  non-directory:
+  <recovery-store>
   Inspect the recovery store before relying on this Cleanup result.
 Next: open-forge doctor --workspace <workspace>

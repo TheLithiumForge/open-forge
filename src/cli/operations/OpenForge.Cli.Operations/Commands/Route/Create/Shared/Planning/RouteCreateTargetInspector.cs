@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Shared.Planning;
 
@@ -146,6 +147,24 @@ internal sealed class RouteCreateTargetInspector
         }
 
         var lexicalPath = SourceLogicalPath.ToLexicalPath(request.Workspace.LexicalRoot, targetPath);
+        var current = lexicalPath;
+        while (current is not null)
+        {
+            var boundary = _physicalPathResolver.ResolveCandidate(
+                request.Workspace.LexicalRoot, request.Workspace.PhysicalRoot, current);
+            if (WorkspaceRuntimePaths.Contains(request.Workspace,
+                    SourceLogicalPath.ToLexicalPath(request.Workspace.PhysicalRoot, targetPath))
+                || (boundary.ResolvedPhysicalPath is { } physical && WorkspaceRuntimePaths.Contains(request.Workspace, physical)))
+            {
+                return TargetSnapshotRead.Stop(Boundary(target, RouteCreateFindingCode.TargetUnsafe,
+                    "The Route Create target is inside the reserved workspace runtime directory.", isIncomplete: false));
+            }
+            if (boundary.State != PhysicalPathState.Missing)
+            {
+                break;
+            }
+            current = Path.GetDirectoryName(current);
+        }
         var resolution = _physicalPathResolver.ResolveCandidate(
             request.Workspace.LexicalRoot,
             request.Workspace.PhysicalRoot,

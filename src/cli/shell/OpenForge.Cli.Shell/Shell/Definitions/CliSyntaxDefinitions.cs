@@ -11,7 +11,7 @@ internal static class CliSyntaxDefinitions
     internal static readonly CliOptionDefinition<string?> Workspace = new("--workspace", global::OpenForge.Cli.OutputText.Shared.SharedText.HelpWorkspaceDescription(), CliOptionArity.ExactlyOne, null, "path");
     internal static readonly CliOptionDefinition<CliFormat> Format = new(
         "--format", global::OpenForge.Cli.OutputText.Shared.SharedText.HelpFormatDescription(), CliOptionArity.ExactlyOne, CliFormat.Text, "format",
-        new Dictionary<string, CliFormat>(StringComparer.Ordinal) { ["text"] = CliFormat.Text, ["json"] = CliFormat.Json });
+        new Dictionary<string, CliFormat>(StringComparer.Ordinal) { [CliPresentationDefinitions.TextFormat] = CliFormat.Text, [CliPresentationDefinitions.JsonFormat] = CliFormat.Json });
     internal static readonly CliOptionDefinition<CliDetail> Detail = new(
         "--detail", global::OpenForge.Cli.OutputText.Shared.SharedText.HelpDetailDescription(), CliOptionArity.ExactlyOne, CliDetail.Minimal, "detail",
         new Dictionary<string, CliDetail>(StringComparer.Ordinal)

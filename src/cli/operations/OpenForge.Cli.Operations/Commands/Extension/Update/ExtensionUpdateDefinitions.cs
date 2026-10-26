@@ -102,6 +102,8 @@ internal static class ExtensionUpdateDefinitions
             ExtensionUpdateFindingCode.RecoveryConflict => "extension-update.recovery-conflict",
             ExtensionUpdateFindingCode.RecoveryUnavailable => "extension-update.recovery-unavailable",
             ExtensionUpdateFindingCode.LifecycleObservation => "extension-update.lifecycle-observation",
+            ExtensionUpdateFindingCode.RecoveryHistory => "extension-update.recovery-history",
+            ExtensionUpdateFindingCode.RecoveryCoverageUnavailable => "extension-update.recovery-coverage-unavailable",
             ExtensionUpdateFindingCode.RecoveryArtifactRetained => "extension-update.recovery-artifact-retained",
             ExtensionUpdateFindingCode.WriteFailed => "extension-update.write-failed",
             ExtensionUpdateFindingCode.TopologyVerificationFailed => "extension-update.topology-verification-failed",
@@ -153,6 +155,8 @@ internal static class ExtensionUpdateDefinitions
                 or ExtensionUpdateFindingCode.ExcludedAncestor => CliSemanticStatus.Blocked,
             ExtensionUpdateFindingCode.PathExcluded => CliSemanticStatus.Complete,
             ExtensionUpdateFindingCode.LifecycleObservation
+                or ExtensionUpdateFindingCode.RecoveryHistory
+                or ExtensionUpdateFindingCode.RecoveryCoverageUnavailable
                 or ExtensionUpdateFindingCode.RecoveryArtifactRetained
                 or ExtensionUpdateFindingCode.ManagedDivergence
                 or ExtensionUpdateFindingCode.BulkExcluded
@@ -401,6 +405,8 @@ internal static class ExtensionUpdateDefinitions
         return status switch
         {
             CliSemanticStatus.Complete => null,
+            CliSemanticStatus.Attention when findings.All(finding => finding.Code is
+                ExtensionUpdateFindingCode.RecoveryHistory or ExtensionUpdateFindingCode.RecoveryCoverageUnavailable) => null,
             CliSemanticStatus.Invalid => new CliNextAction(
                 confirmationRequired
                     ? "open-forge extension update --automatic"

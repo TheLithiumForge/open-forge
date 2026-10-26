@@ -419,3 +419,7 @@ Complete the ownership observation without planning or applying a move/removal. 
 ### Verification
 
 Compare all source, destination, reference, index and ownership bytes. No new registration or positive unmanaged claim may be invented.
+
+## Task 86 Runtime Expectations
+
+Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.

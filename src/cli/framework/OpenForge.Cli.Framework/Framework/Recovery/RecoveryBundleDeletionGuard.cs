@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion.Models;
 
@@ -10,9 +11,9 @@ internal static class RecoveryBundleDeletionGuard
 {
     internal static ValueTask<RecoveryBundleDeletionSessionOpenResult> OpenSessionAsync(
         WorkspaceLockLease lease,
-        RecoveryBundleCatalogueResult frozenCatalogue,
+        RecoveryStoreObservation frozenStore,
         CancellationToken cancellationToken)
-        => RecoveryBundleDeletionSession.OpenAsync(lease, frozenCatalogue, cancellationToken);
+        => RecoveryBundleDeletionSession.OpenAsync(lease, frozenStore, cancellationToken);
 
     internal static async ValueTask<RecoveryBundleDeletionResult> DeleteAsync(
         WorkspaceLockLease lease,
@@ -52,8 +53,14 @@ internal static class RecoveryBundleDeletionGuard
             return RecoveryBundleDeletionResult.CancelledUnknown();
         }
 
+        var storageFailure = RecoveryDeletionStorageBoundary.ReadLocation(candidate.Location);
+        if (storageFailure is not null)
+        {
+            return RecoveryBundleDeletionResult.BlockedUnknown(storageFailure.DirectCause, candidate.Path);
+        }
+
         var catalogue = await RecoveryBundleCatalogue.ReadAsync(
-            lease.Request.Workspace,
+            candidate.Location,
             cancellationToken).ConfigureAwait(false);
         if (catalogue.State == RecoveryBundleCatalogueState.Cancelled)
         {
@@ -86,7 +93,7 @@ internal static class RecoveryBundleDeletionGuard
         if (candidate.Kind == RecoveryBundleCandidateKind.Final)
         {
             var finalRead = await RecoveryBundleReader.ReadFinalAsync(
-                lease.Request.Workspace,
+                candidate.Location,
                 candidate.Path,
                 cancellationToken).ConfigureAwait(false);
             if (finalRead.State == RecoveryBundleReadState.Cancelled)
@@ -109,6 +116,13 @@ internal static class RecoveryBundleDeletionGuard
         if (cancellationToken.IsCancellationRequested)
         {
             return RecoveryBundleDeletionResult.CancelledRetained(candidate.Path);
+        }
+
+        storageFailure = RecoveryDeletionStorageBoundary.ReadLocation(candidate.Location);
+        if (!RecoveryBundleDeletionValidation.BelongsToWorkspace(candidate, lease) || storageFailure is not null)
+        {
+            return RecoveryBundleDeletionResult.BlockedUnknown(
+                storageFailure?.DirectCause ?? "Recovery deletion requires its live store authority.", candidate.Path);
         }
 
         return RecoveryBundleDeletionValidation.DeleteOrdinaryFile(candidate);

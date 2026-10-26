@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Route.Shared.Recovery.Models;
 using System.Collections.Immutable;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
@@ -18,6 +20,38 @@ namespace OpenForge.Cli.Core.UnitTests.Presentation.Route.Update;
 [Trait("Feature", "route-update"), Trait("Evidence", "Unit")]
 public sealed class RouteUpdateRecoveryConflictPresentationTests
 {
+    [Fact(DisplayName = "Route Update retains history warnings separately at every detail level"), Trait("Boundary", "Output")]
+    public void RecoveryHistoryProjectionIsStableAtEveryDetailLevel()
+    {
+        var baseline = Result();
+        var result = baseline with
+        {
+            RecoveryHistory = new RouteRecoveryHistory(
+                ["recovery/prior-final.zip", "recovery/prior-draft.tmp"],
+                [new RouteRecoveryCoverageFailure("legacy/recovery", "Access was denied.")]),
+        };
+        var captures = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var detail in Enum.GetValues<CliDetail>())
+        {
+            var report = RouteUpdateReportSelector.Select(result, new CliSelection(detail, null));
+            Assert.Equal(baseline.Status, report.Status);
+            Assert.Equal(baseline.Recovery, result.Recovery);
+            Assert.Equal(3, report.Findings.Count);
+            Assert.All(report.Findings, finding => Assert.Equal(CliSeverity.Warning, finding.Severity));
+            Assert.Equal(result.RecoveryHistory.Paths, report.Findings.Take(2).Select(finding => finding.Subject.Path));
+            var text = Render(result, CliFormat.Text, detail).PrimaryContent;
+            var jsonText = Render(result, CliFormat.Json, detail).PrimaryContent;
+            Assert.All(result.RecoveryHistory.Paths, path => Assert.Contains(path, text, StringComparison.Ordinal));
+            Assert.Contains("legacy/recovery", text, StringComparison.Ordinal);
+            using var json = JsonDocument.Parse(jsonText);
+            Assert.Equal(3, json.RootElement.GetProperty(CliJsonFields.Findings).GetArrayLength());
+            var detailName = detail.ToString().ToLowerInvariant();
+            captures.Add($"recovery-history.{detailName}", text.Replace("\r\n", "\n", StringComparison.Ordinal));
+            captures.Add($"recovery-history{CommandOutputSnapshot.JsonContentNameSegment}{detailName}", jsonText.Replace("\r\n", "\n", StringComparison.Ordinal));
+        }
+        CommandOutputSnapshot.MatchDetailSnapshot(captures);
+    }
+
     private const string RecoveryCandidatePath = "recovery/open-forge/recovery-candidate.zip";
     private const string RecoveryConflictMessage = "Recovery data from an earlier run exists at "
         + RecoveryCandidatePath
@@ -54,7 +88,7 @@ public sealed class RouteUpdateRecoveryConflictPresentationTests
             Assert.Contains(RecoveryCandidatePath, text, StringComparison.Ordinal);
             using var json = JsonDocument.Parse(jsonText);
             var root = json.RootElement;
-            var jsonFinding = Assert.Single(root.GetProperty("findings").EnumerateArray());
+            var jsonFinding = Assert.Single(root.GetProperty(CliJsonFields.Findings).EnumerateArray());
             Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
             Assert.Equal("blocked", root.GetProperty("status").GetString());
             Assert.Equal(RecoveryConflictMessage, jsonFinding.GetProperty("message").GetString());

@@ -29,13 +29,13 @@ Run the steps on the actual resulting state. A linked scenario supplies a verifi
 
 ### First process crashes
 
-OS lock ownership ends; preserve actual partial-state evidence before retrying.
+OS lock ownership ends. Preserve actual partial-state evidence before retrying.
 
 Scenarios: [X21](../scenarios/experience.md#x21).
 
-### Inputs changed during the wait
+### Inputs changed before retry
 
-Recompute/revalidate current effects; never reuse a stale plan blindly.
+Recompute and revalidate current effects before retrying. The CLI does not wait for contention to end.
 
 Scenarios: [X09](../scenarios/experience.md#x09).
 
@@ -46,3 +46,7 @@ Concurrency is controlled by actual ownership, and the user receives accurate re
 ## Verification
 
 Observe the resulting files and links independently of printed output. Record actions, stdout, stderr, exit, preserved bytes, and separate outcome/state/communication verdicts in a run record. Carry real state between steps; fork only at an explicit alternative.
+
+## Task 86 Runtime Expectations
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the mutation and recovery design for the bridge gap and typed failures.

@@ -15,11 +15,11 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
-using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
-using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -31,6 +31,7 @@ using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
@@ -396,10 +397,7 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
 
     internal string BlockRecoveryWorkspaceDirectory()
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.Create)
-            ?? throw new InvalidOperationException(
-                "The Route Move recovery-unavailability test requires LocalApplicationData.");
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(Workspace.PhysicalRoot);
         Directory.CreateDirectory(storeRoot);
         var workspaceDirectory = RecoveryBundlePathIdentity.WorkspaceDirectory(
             storeRoot,

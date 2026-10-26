@@ -88,7 +88,7 @@ internal static class RouteUpdateWording
         RouteUpdateFindingCode.MetadataPreservationUnsafe => global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateText.TitleFrontmatterCannotBePreserved(),
         RouteUpdateFindingCode.TemplateUnsafe => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleTemplateIsUnsafe(),
         RouteUpdateFindingCode.GeneratedRegionUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionIsUnsafe(),
-        RouteUpdateFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsHeld(),
+        RouteUpdateFindingCode.WorkspaceLockUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable(),
         RouteUpdateFindingCode.TargetChanged => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetChanged(),
         RouteUpdateFindingCode.RecoveryConflict => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryDataBlocksTheChange(),
         RouteUpdateFindingCode.InspectionIncomplete => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleInspectionIsIncomplete(),

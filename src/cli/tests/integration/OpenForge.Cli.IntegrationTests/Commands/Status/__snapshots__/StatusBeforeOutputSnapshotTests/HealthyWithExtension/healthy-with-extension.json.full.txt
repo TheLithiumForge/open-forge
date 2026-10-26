@@ -20,8 +20,8 @@
     "startupTokens": 4148,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 315,
-    "allTokens": 42195,
-    "startupShare": 9.830490398800812887706554648,
+    "allTokens": 42854,
+    "startupShare": 9.679489423267644416442064242,
     "rootCategories": 7,
     "entriesSectionsCurrent": 26,
     "entriesSectionsStale": 0,
@@ -73,11 +73,11 @@
       },
       "allRouted": {
         "files": 59,
-        "characters": 168780,
-        "bytes": 168781,
-        "tokens": 42195
+        "characters": 171413,
+        "bytes": 171414,
+        "tokens": 42854
       },
-      "startupShare": 9.830490398800812887706554648,
+      "startupShare": 9.679489423267644416442064242,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
@@ -485,6 +485,22 @@
     ],
     "libraries": [],
     "recovery": {
+      "stores": [
+        {
+          "kind": "workspace",
+          "path": "<workspace-recovery-store>",
+          "coverage": "complete",
+          "candidates": [],
+          "cause": null
+        },
+        {
+          "kind": "legacy",
+          "path": "<legacy-recovery-store>",
+          "coverage": "complete",
+          "candidates": [],
+          "cause": null
+        }
+      ],
       "candidates": []
     }
   },

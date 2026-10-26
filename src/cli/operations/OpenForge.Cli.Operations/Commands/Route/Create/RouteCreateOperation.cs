@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Recovery;
 using OpenForge.Cli.Core.Commands.Route.Shared.Retry;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
@@ -28,10 +29,12 @@ internal sealed class RouteCreateOperation
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
+        var history = await RouteRecoveryHistoryReader.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
         var result = await ExecuteCoreAsync(request, cancellationToken).ConfigureAwait(false);
         var command = RouteCreateRetryCommand.From(request);
         return result with
         {
+            RecoveryHistory = history,
             RequestCommand = command,
             Next = RouteRetryCommand.Complete(result.Next, "open-forge route create", command, false),
         };

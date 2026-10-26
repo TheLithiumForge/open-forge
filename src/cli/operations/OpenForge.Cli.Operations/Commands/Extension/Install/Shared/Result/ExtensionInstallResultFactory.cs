@@ -173,7 +173,7 @@ internal static class ExtensionInstallResultFactory
                     ExtensionInstallVerificationState.Verified,
                     ExtensionInstallVerificationState.Verified),
             },
-            plan.TopologyFindings.Concat(findings ?? []));
+            plan.TopologyFindings.Concat(plan.HistoryFindings).Concat(findings ?? []));
 
     internal static ExtensionInstallResult PlanBoundary(
         ExtensionInstallPlan plan,
@@ -201,7 +201,7 @@ internal static class ExtensionInstallResultFactory
                     ExtensionInstallVerificationState.Unknown,
                     ExtensionInstallVerificationState.Unknown),
             },
-            plan.TopologyFindings
+            plan.TopologyFindings.Concat(plan.HistoryFindings)
                 .Concat(additionalFindings ?? [])
                 .Append(finding));
 
@@ -224,8 +224,8 @@ internal static class ExtensionInstallResultFactory
                 Verification = progress.Verification,
             },
             finding is null
-                ? plan.TopologyFindings.Concat(findings ?? [])
-                : plan.TopologyFindings.Concat(findings ?? []).Append(finding));
+                ? plan.TopologyFindings.Concat(plan.HistoryFindings).Concat(findings ?? [])
+                : plan.TopologyFindings.Concat(plan.HistoryFindings).Concat(findings ?? []).Append(finding));
 
     internal static ExtensionInstallBoundaryEvidence Evidence(
         ExtensionInstallSource source,

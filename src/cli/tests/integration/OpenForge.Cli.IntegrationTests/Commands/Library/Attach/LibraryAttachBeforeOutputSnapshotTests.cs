@@ -262,7 +262,8 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
         Assert.Equal(sourceExisted, File.Exists(sourcePath));
         if (sourceExisted) Assert.Equal(sourceBefore, File.ReadAllBytes(sourcePath));
         Renderers.MatchDetails(result, situation, result.Result.Application.Recovery.Path,
-            testName: $"{nameof(Attach)}_{situation}");
+            testName: $"{nameof(Attach)}_{situation}",
+            lockFailurePath: result.Result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
     }
 
     [Trait("Boundary", "Output")]

@@ -1,4 +1,4 @@
-Cannot create .agents/memory/project-alpha/overview.md: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot create .agents/memory/project-alpha/overview.md: another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
   .agents/memory/project-alpha/overview.md  not started
   .agents/memory/project-alpha/_project-alpha.md  not started

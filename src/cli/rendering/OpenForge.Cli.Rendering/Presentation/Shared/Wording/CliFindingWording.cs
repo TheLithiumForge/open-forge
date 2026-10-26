@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 
 namespace OpenForge.Cli.Core.Presentation.Shared.Wording;
@@ -21,8 +22,32 @@ internal static class CliFindingWording
     internal static string InvalidInput(string command, string problem) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.InvalidInput(command, problem);
     internal static string WorkspaceUnavailable(string path) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.WorkspaceUnavailable(path);
     internal static string WorkspaceUnsafe(string path, string reason) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.WorkspaceUnsafe(path, reason);
-    internal static string WorkspaceLockUnavailable() => global::OpenForge.Cli.OutputText.Shared.SharedText.MessageAnotherOpenForgeCommandHoldsTheWorkspaceLockNothingWasChanged();
-    internal static string WorkspaceLockUnavailableReason() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelAnotherOpenForgeCommandHoldsTheWorkspaceLock();
+    internal static string WorkspaceLockUnavailable(WorkspaceLockFailureInfo failure)
+        => failure.Reason switch
+        {
+            WorkspaceLockFailureReason.Busy => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.AnotherOpenForgeCommandHoldsTheLockAtNothingWasChanged(failure.Path),
+            WorkspaceLockFailureReason.AccessDenied => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.CannotOpenTheLockAtAccessDeniedNothingWasChanged(failure.Path),
+            WorkspaceLockFailureReason.Unsupported => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.CannotLockThisFilesystemDoesNotSupportFileLocksNothingWasChanged(failure.Path),
+            WorkspaceLockFailureReason.InvalidTarget => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.CannotUseAsTheLockItIsNotAnOrdinaryFileNothingWasChanged(failure.Path),
+            WorkspaceLockFailureReason.IoError => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.CannotOpenTheLockAtNothingWasChanged(failure.Path),
+            WorkspaceLockFailureReason.Cancelled => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.CancelledBeforeTakingTheLockAtNothingWasChanged(failure.Path),
+            _ => throw new ArgumentOutOfRangeException(nameof(failure)),
+        };
+
+    internal static string WorkspaceLockUnavailable() => global::OpenForge.Cli.OutputText.Shared.SharedText.MessageTheWorkspaceLockCouldNotBeAcquiredNothingWasChanged();
+    internal static string WorkspaceLockUnavailableReason(WorkspaceLockFailureInfo failure)
+    {
+        var message = WorkspaceLockUnavailable(failure);
+        return $"{char.ToLowerInvariant(message[0])}{message[1..]}";
+    }
+
+    internal static string WorkspaceLockUnavailableReason()
+    {
+        var title = global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable();
+        return $"{char.ToLowerInvariant(title[0])}{title[1..]}";
+    }
+    internal static string RecoveryHistory(string path) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.RecoveryHistory(path);
+    internal static string RecoveryCoverageUnavailable(string? path, string cause) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.RecoveryCoverageUnavailable(path, cause);
     internal static string FilesystemOperationFailed() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheFilesystemOperationFailed();
     internal static string FilesystemAccessDenied() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFilesystemAccessWasDenied();
     internal static string InvalidJson() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheContentIsNotValidJson();

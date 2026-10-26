@@ -1,12 +1,13 @@
 using System.Collections.Immutable;
+using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text.Json;
-using System.IO.Compression;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
 
@@ -60,7 +61,7 @@ public sealed class RemoveRootPathSafetyIntegrationTests
         var recoveryPath = reportDocument.RootElement.GetProperty("data").GetProperty("recoveryPath").GetString()
             ?? throw new InvalidOperationException("A deleted mapped link must have recovery evidence.");
         var finalRead = await RecoveryBundleReader.ReadFinalAsync(
-            workspace.Workspace,
+            RecoveryStoreLocator.Local(workspace.Workspace),
             recoveryPath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, finalRead.State);

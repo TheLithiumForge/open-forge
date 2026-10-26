@@ -15,6 +15,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 using OpenForge.Cli.IntegrationTests.TestSupport;
@@ -98,7 +99,7 @@ public sealed class LibrarySyncApplicationIntegrationTests
             Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
             Assert.Equal(recordChange.IntendedBytes.ToArray(), File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
             var retained = Assert.IsType<RecoveryBundlePreparation>(preparation);
-            var read = await RecoveryBundleReader.ReadFinalAsync(workspace.Workspace, retained.BundlePath, TestContext.Current.CancellationToken);
+            var read = await RecoveryBundleReader.ReadFinalAsync(RecoveryStoreLocator.Local(workspace.Workspace), retained.BundlePath, TestContext.Current.CancellationToken);
             var candidate = RecoveryBundleCandidateSnapshot.VerifiedFinal(Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified));
             var cleanup = await RecoveryBundleDeletionGuard.DeleteAsync(lease, candidate, TestContext.Current.CancellationToken);
             Assert.Equal(RecoveryBundleDisposition.Removed, cleanup.Disposition);

@@ -483,7 +483,7 @@ public sealed class F14DestinationConsentJourneyTests
 
     private static void AssertRecoveryEvidence(PublishedJourneyWorkspace workspace)
     {
-        var recoveryDirectory = workspace.LockStore.RecoveryWorkspaceDirectory(workspace.Path);
+        var recoveryDirectory = PublishedWorkspaceLockStore.LocalRecoveryWorkspaceDirectory(workspace.Path);
         Assert.True(Directory.Exists(recoveryDirectory));
         Assert.NotEmpty(Directory.EnumerateFiles(recoveryDirectory, "*", SearchOption.TopDirectoryOnly));
     }

@@ -1,0 +1,6 @@
+status=completed-with-warnings
+packages=1
+effects=0
+findings=2
+Recovery data from an earlier run remains.
+Recovery data from an earlier run remains.

@@ -1,7 +1,7 @@
-Cannot initialize .agents/documents/_documents.md: Another Open Forge command holds the workspace lock. Nothing was changed.
+Cannot initialize .agents/documents/_documents.md: another Open Forge command holds the lock at <lock-path>. Nothing was changed.
 Workspace: <workspace>
-  Error  documents  Workspace lock is held [route-init.workspace-lock-unavailable]
-         Another Open Forge command holds the workspace lock. Nothing was changed.
+  Error  documents  Workspace lock is unavailable [route-init.workspace-lock-unavailable]
+         Another Open Forge command holds the lock at <lock-path>. Nothing was changed.
          open-forge route init documents --workspace <workspace>
          Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.
   Scaffold: generic

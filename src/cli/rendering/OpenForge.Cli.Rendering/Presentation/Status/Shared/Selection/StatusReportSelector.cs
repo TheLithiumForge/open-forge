@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Status.Models;
 using OpenForge.Cli.Core.Presentation.Status.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -209,6 +210,17 @@ internal static class StatusReportSelector
                 }).ToArray() : null,
             Recovery = includeFull ? new StatusDataRecovery
             {
+                Stores = facts.Recovery.Stores.Select(store => new StatusDataRecoveryStore(
+                    store.Kind, store.Path,
+                    store.CoverageName,
+                    store.Candidates.Select(candidate => new StatusDataRecoveryCandidate
+                    {
+                        Path = candidate.Path,
+                        Kind = StatusWording.State(candidate.Kind),
+                        CandidateKind = candidate.Kind,
+                        Integrity = StatusWording.State(candidate.Integrity),
+                        IntegrityState = candidate.Integrity,
+                    }).ToArray(), store.Cause)).ToArray(),
                 Candidates = facts.Recovery.Candidates.Select(candidate => new StatusDataRecoveryCandidate
                 {
                     Path = candidate.Path,
@@ -523,7 +535,7 @@ internal static class StatusReportSelector
                  or StatusFindingCode.RecoveryFinalMalformed or StatusFindingCode.RecoveryFinalUnsupported
                  or StatusFindingCode.RecoveryFinalUnavailable
                 => StatusWording.Recovery(finding.Code, subject),
-            StatusFindingCode.RecoveryCatalogueUnavailable => StatusWording.RecoveryCatalogueUnavailable(subject),
+            StatusFindingCode.RecoveryCatalogueUnavailable => CliFindingWording.RecoveryCoverageUnavailable(finding.Subject, CliFindingWording.PlainCause(finding.Cause)),
             StatusFindingCode.LibraryRecordMalformed or StatusFindingCode.LibraryRecordUnavailable
                  => StatusWording.LibraryRecord(finding.Code, finding.Cause),
             StatusFindingCode.LibrarySourceRootInvalid or StatusFindingCode.LibrarySourceRootAliased

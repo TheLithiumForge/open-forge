@@ -1,10 +1,13 @@
 using System.Collections.Immutable;
 using System.IO.Compression;
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Locking.Shared.Runtime;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 
@@ -27,12 +30,21 @@ internal static class RecoveryBundleStore
             return RecoveryBundlePreparationResult.Cancelled();
         }
 
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.Create);
-        if (storeRoot is null)
+        var location = RecoveryStoreLocator.Local(input.Workspace);
+        if (RecoveryDeletionStorageBoundary.ReadLocation(location) is { } boundaryFailure)
         {
-            return RecoveryBundlePreparationResult.Incomplete(
-                "Current-user LocalApplicationData is unavailable for recovery storage.");
+            return RecoveryBundlePreparationResult.Incomplete(boundaryFailure.DirectCause, failure: boundaryFailure);
+        }
+
+        var storeRoot = location.RootPath;
+        var bootstrapFailure = WorkspaceRuntimeBootstrap.EnsureCreated(input.Workspace, cancellationToken);
+        if (bootstrapFailure is not null)
+        {
+            return bootstrapFailure.Kind == WorkspaceLockFailureKind.Cancelled
+                ? RecoveryBundlePreparationResult.Cancelled()
+                : RecoveryBundlePreparationResult.Incomplete(
+                    bootstrapFailure.Detail?.DirectCause ?? "The workspace runtime folder is unavailable.",
+                    failure: bootstrapFailure.Detail);
         }
 
         if (!RecoveryBundleStorage.TryEnsureWriterDirectory(
@@ -127,6 +139,7 @@ internal static class RecoveryBundleStore
         {
             draftRead = await RecoveryBundleReader.VerifyExpectedAsync(
                 input,
+                location,
                 draftPath,
                 RecoveryBundleCandidateKind.Draft,
                 cancellationToken).ConfigureAwait(false);
@@ -203,6 +216,7 @@ internal static class RecoveryBundleStore
         {
             finalRead = await RecoveryBundleReader.ReadExpectedFinalAsync(
                 input,
+                location,
                 finalPath,
                 cancellationToken).ConfigureAwait(false);
         }

@@ -210,6 +210,22 @@
   },
   "limitations": [],
   "data": {
+    "recoveryStores": [
+      {
+        "kind": "workspace",
+        "path": "<workspace-recovery-store>",
+        "coverage": "complete",
+        "candidates": [],
+        "cause": null
+      },
+      {
+        "kind": "legacy",
+        "path": "<legacy-recovery-store>",
+        "coverage": "complete",
+        "candidates": [],
+        "cause": null
+      }
+    ],
     "categories": [
       {
         "name": "Workspace",

@@ -520,7 +520,7 @@ command's verb phrase ("install", "update the Framework", "move the route").
 | workspace-unavailable        | error    | `Cannot use <path> as the workspace: it does not exist or cannot be read.`                                                           | none                                                                              |
 | workspace-not-directory      | error    | `Cannot use <path> as the workspace: it is not a directory.`                                                                         | none                                                                              |
 | workspace-unsafe             | error    | `Cannot use <path> as the workspace: its location could not be verified (<a link leaves it \| its identity is ambiguous>).`          | none                                                                              |
-| workspace-lock-unavailable   | error    | `Another Open Forge command holds the workspace lock. Nothing was changed.`                                                          | `open-forge <cmd> ...` (retry when it finishes)                                   |
+| workspace-lock-unavailable | error | Busy: `Another Open Forge command holds the lock at {path}. Nothing was changed.`<br>AccessDenied: `Cannot open the lock at {path}: access denied. Nothing was changed.`<br>Unsupported: `Cannot lock {path}: this filesystem does not support file locks. Nothing was changed.`<br>InvalidTarget: `Cannot use {path} as the lock: it is not an ordinary file. Nothing was changed.`<br>IoError: `Cannot open the lock at {path}. Nothing was changed.`<br>Cancelled: `Cancelled before taking the lock at {path}. Nothing was changed.` | Retry after resolving the named cause. Only Busy means another writer holds the lock |
 | target-changed               | error    | `<path> changed after the plan was made. Nothing was changed.`                                                                       | rerun the same command                                                            |
 | target-changed-during-apply  | error    | `<path> changed while changes were being written. Stopped after <n> of <m> changes.`                                                 | `open-forge doctor`                                                               |
 | target-unsafe                | error    | `<path> cannot be written safely: <it is a link \| its location could not be verified \| it is reserved>.`                           | none                                                                              |
@@ -532,6 +532,8 @@ command's verb phrase ("install", "update the Framework", "move the route").
 | inspection-incomplete        | warning  | `<path> could not be read completely.`                                                                                               | `open-forge doctor`                                                               |
 | recovery-unavailable         | warning  | `Recovery data could not be prepared at <store>. Nothing was changed.`                                                               | check the recovery store location                                                 |
 | recovery-conflict            | error    | `Recovery data from an earlier run exists at <path> and blocks this change. Nothing was changed.`                                    | `open-forge cleanup --dry-run`                                                    |
+| recovery-history | warning | `Recovery data from an earlier run remains at {path}. It does not block this operation.` | none |
+| recovery-coverage-unavailable | warning | `Recovery history at {path} could not be checked completely: {cause}. Current workspace validation still applies.` | none |
 | recovery-artifact-retained   | warning  | `The changes were applied, but the recovery bundle at <path> could not be removed.`                                                  | `open-forge cleanup`                                                              |
 | recovery-failed              | error    | `The changes were applied, but the final state of the recovery bundle is unknown.`                                                   | `open-forge doctor`                                                               |
 | write-failed                 | error    | `Writing <path> failed. Stopped after <n> of <m> changes. Recovery data: <path>.`                                                    | `open-forge doctor`                                                               |
@@ -684,8 +686,8 @@ record is written last, after all relative file-link effects verify.
 
 The direct root [`cleanup` contract](contracts/cleanup/_cleanup.md) is a narrow
 exception to the normal recovery shape. Other mutating operations prepare one
-external recovery bundle for the complete operation before the first covered
-effect. Cleanup still forms one complete catalogue and plan, runs preflight,
+local recovery bundle for the complete operation before the first covered
+effect. Cleanup forms a separate complete catalogue and plan per store, runs preflight,
 and revalidates selected artifacts immediately before deletion. It
 may return a verified empty no-op without a lease. Before any deletion, it
 acquires the same-workspace lease and repeats final catalogue and expected-state
@@ -708,11 +710,11 @@ unavailable condition. Neither condition is absence.
 
 Status and Doctor do not acquire the workspace lease, report activity, or infer
 activity from bundle contents, a filename, age, PID, marker, journal, or the
-persistent external lock file.
+persistent workspace lock file.
 
 Before applying any non-no-op effect that the operation must be able to reverse,
-the complete operation prepares exactly one immutable verified bundle outside
-the workspace. The bundle contains the exact prior bytes and state-specific
+the complete operation prepares exactly one immutable verified bundle inside
+the workspace runtime folder. The bundle contains the exact prior bytes and state-specific
 prior and intended identity for every covered effect. This includes ordinary
 existing-file `Replace`, `ReplaceGeneratedRegion`, and `Delete` effects,
 relative-file-link `Create` and `Delete` effects, and the prior-missing ordinary
@@ -769,7 +771,7 @@ though Doctor or Cleanup may report orphaned original-root bundles and never
 auto-binds or restores them. Cleanup writes no marker, PID, journal, lock
 metadata, or other lifecycle record and makes no activity inference.
 
-The mutation lock is a persistent reusable external coordination artifact with
+The mutation lock is a persistent reusable workspace coordination artifact with
 no activity metadata. Its existence does not demonstrate ownership or activity,
 and read-only observation never acquires it. Composition and terminal no-effect
 flows do not create recovery or lock infrastructure. Exact location, identity,
@@ -906,7 +908,7 @@ content on its own. Read-only `extension list` and `extension inspect` reject
   with application while writing nothing. It shares status conditions, and
   planned changes alone do not create `completed-with-warnings`.
 - Every reversible non-no-op effect in the complete operation has one matching
-  verified immutable external recovery bundle prepared before the first effect.
+  verified immutable local recovery bundle prepared before the first effect.
   This includes ordinary existing-file effects, relative-file-link creates and
   deletes, and the prior-missing Library record Create. Semantic or byte
   no-ops receive none. A draft never authorizes an effect, and an ordinary
@@ -943,7 +945,7 @@ content on its own. Read-only `extension list` and `extension inspect` reject
   revalidates each candidate immediately before deletion; contention prevents
   all deletion. Unknown,
   malformed, mismatched, or differently keyed artifacts remain untouched. The
-  persistent external lock carries no activity metadata.
+  persistent workspace lock carries no activity metadata.
 - Status, Doctor, and Cleanup use bounded validation and never extract, disclose,
   retain, or materialize payload bytes. Status and Doctor neither report nor
   infer activity.
@@ -957,3 +959,13 @@ content on its own. Read-only `extension list` and `extension inspect` reject
 - Repeating unchanged input produces the same semantic result and, when the
   local contract permits proof, a verified no-op.
 - Errors remain useful without `debug` detail.
+
+## Workspace Lock And Historical Recovery
+
+Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the mutation and recovery design for the bridge gap and typed failures.
+
+Route and Extension writers report drafts, damaged or invalid bundles, and unavailable recovery coverage as warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated Route or Extension work. Install keeps its state-based recovery checks. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.
+
+Only Busy establishes contention. Lock wording keeps the exact failed path at every detail level and in JSON. Install keeps its `install.workspace-unsafe` code for lock failure. Cancellation keeps its existing command result mapping. The shared family above does not change any command's code, status, stream or exit. No lock failure recommends deleting a lock or bundle.
+
+Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.

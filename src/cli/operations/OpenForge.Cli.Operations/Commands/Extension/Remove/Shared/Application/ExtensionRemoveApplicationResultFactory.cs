@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
@@ -17,7 +18,8 @@ internal static class ExtensionRemoveApplicationResultFactory
         ExtensionRemoveFindingCode code,
         string cause,
         ExtensionRemoveRecovery? recovery = null,
-        ExtensionRemoveEffectOutcome settingsOutcome = ExtensionRemoveEffectOutcome.NotStarted)
+        ExtensionRemoveEffectOutcome settingsOutcome = ExtensionRemoveEffectOutcome.NotStarted,
+        WorkspaceLockFailureInfo? lockFailure = null)
         => Result(
             plan,
             planned,
@@ -28,7 +30,7 @@ internal static class ExtensionRemoveApplicationResultFactory
                 [],
                 residualPath: null),
             NotRequestedVerification(),
-            [.. planned.Findings, new ExtensionRemoveFinding(code, cause)],
+            [.. planned.Findings, new ExtensionRemoveFinding(code, cause) { LockFailure = lockFailure }],
             settingsOutcome);
 
     internal static ExtensionRemoveResult AfterPreparation(

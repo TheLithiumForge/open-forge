@@ -42,7 +42,7 @@ internal static class UpdatePresentation
             TextCounts = [],
             TextFindings = selected.Report.Data.SuppressInterruptedFinding
                 ? selected.TextFindings
-                    .Where(finding => finding.Code != "update.interrupted")
+                    .Where(finding => finding.Code != "update.interrupted" || finding.LockFailure is not null)
                     .ToArray()
                 : selected.TextFindings,
         },

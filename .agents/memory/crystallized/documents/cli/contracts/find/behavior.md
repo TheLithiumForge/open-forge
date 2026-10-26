@@ -359,3 +359,7 @@ requiring one implementation stage or one source module.
 - [Framework Overwrite Customization](../../../framework/routing/overwrites.md)
 - [Canonical Markdown Syntax](../../../framework/markdown/syntax.md)
 - [Markdown Compatibility Boundary](../../../framework/markdown/compatibility.md)
+
+## Reserved Runtime Storage
+
+The fixed `.open-forge-state/` subtree is reserved runtime storage. Exclude it before source reads and traversal, even without Git ignore rules. Direct paths and links into it do not admit its files as sources or writable package destinations.

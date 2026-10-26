@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
@@ -87,7 +88,8 @@ internal sealed class ExtensionRemoveApplicationOperation(
                     ? ExtensionRemoveFindingCode.Interrupted
                     : ExtensionRemoveFindingCode.WorkspaceLockUnavailable,
                 lockResult.Cause
-                    ?? "The persistent Extension Remove workspace lease could not be acquired.");
+                    ?? "The persistent Extension Remove workspace lease could not be acquired.",
+                lockFailure: WorkspaceLockFailureProjection.From(lockResult.LockFailure ?? throw new InvalidOperationException("A failed workspace lock requires its typed failure.")));
         }
 
         await using (lease.ConfigureAwait(false))

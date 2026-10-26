@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Route.Shared.Recovery;
 using OpenForge.Cli.Core.Presentation.Route.Shared.NextActions;
 using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Globalization;
@@ -33,7 +34,10 @@ internal static class RouteCreateReportSelector
             Workspace = result.WorkspacePath is { } workspace
                 ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit)
                 : null,
-            Findings = result.Findings.Select(finding => Finding(result, finding)).ToArray(),
+            Findings = result.Findings.Select(finding => Finding(result, finding))
+                .Concat(RouteRecoveryHistoryFindings.Read(result.RecoveryHistory,
+                    result.RecoveryHistoryCode,
+                    result.RecoveryCoverageUnavailableCode)).ToArray(),
             Effects = result.Effects.Select(effect => Effect(effect, selection.Detail)).ToArray(),
             Counts =
             [
@@ -264,6 +268,11 @@ internal static class RouteCreateReportSelector
 
     private static string BlockedReason(RouteCreateResult result, RouteCreateFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailableReason(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.LabelTheBlockingConditionIsNotDefined();
@@ -305,6 +314,7 @@ internal static class RouteCreateReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = code,
+            LockFailure = finding.LockFailure,
             Title = RouteCreateWording.FindingTitle(finding.Code),
             Message = Message(result, finding),
             Subject = subject,
@@ -359,6 +369,11 @@ internal static class RouteCreateReportSelector
 
     private static string Message(RouteCreateResult result, RouteCreateFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Create.RouteCreateText.MessageTheRouteCreateResultDidNotContainAFinding();

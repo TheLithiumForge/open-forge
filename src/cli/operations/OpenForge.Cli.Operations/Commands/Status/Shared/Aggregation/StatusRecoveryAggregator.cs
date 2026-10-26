@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Serialization;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
@@ -30,6 +31,15 @@ internal static class StatusRecoveryAggregator
                 candidates.LongCount(candidate => candidate.Kind == StatusRecoveryCandidateKind.Draft
                     && candidate.Integrity == StatusRecoveryIntegrity.Incomplete)),
             Candidates = candidates,
+            Stores = recovery.Stores.Select(store => new StatusRecoveryStore(
+                RecoveryWireVocabulary.StoreKind(store.Kind),
+                store.Location?.WorkspaceDirectory,
+                store.State == OperationalViewState.Complete ? StatusValueState.Available : StatusValueState.Unavailable,
+                store.Candidates.OrderBy(candidate => candidate.Path, StringComparer.Ordinal)
+                    .Select(candidate => new StatusRecoveryCandidate(candidate.Path,
+                        StatusStateMap.RecoveryCandidate(candidate.Kind), StatusStateMap.RecoveryIntegrity(candidate.Integrity)))
+                    .ToArray(),
+                store.Cause)).ToArray(),
         };
     }
 

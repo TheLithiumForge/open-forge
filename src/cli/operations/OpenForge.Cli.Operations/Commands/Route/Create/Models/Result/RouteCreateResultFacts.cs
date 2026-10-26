@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -92,6 +93,8 @@ internal sealed record RouteCreateRecovery
 
 internal sealed class RouteCreateFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     private const int MaximumCauseLength = 256;
 
     internal RouteCreateFinding(

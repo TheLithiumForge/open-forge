@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Route.Shared.Recovery;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -32,7 +33,10 @@ internal static class RouteInitReportSelector
             Workspace = result.WorkspacePath is { } workspace
                 ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit)
                 : null,
-            Findings = result.Findings.Select(finding => Finding(result, finding)).ToArray(),
+            Findings = result.Findings.Select(finding => Finding(result, finding))
+                .Concat(RouteRecoveryHistoryFindings.Read(result.RecoveryHistory,
+                    result.RecoveryHistoryCode,
+                    result.RecoveryCoverageUnavailableCode)).ToArray(),
             Effects = result.Effects.Select(effect => Effect(effect, selection.Detail)).ToArray(),
             Counts =
             [
@@ -303,6 +307,8 @@ internal static class RouteInitReportSelector
                 => new(RouteInitWording.Incomplete(Message(result, first)), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid
                 => new(InvalidHeadline(result, first), CliHeadlineKind.CannotStart),
+            CliSemanticStatus.Blocked when first?.LockFailure is { } lockFailure
+                => new(RouteInitWording.Blocked(target, CliFindingWording.WorkspaceLockUnavailableReason(lockFailure)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked
                 => new(RouteInitWording.Blocked(target, Message(result, first)), CliHeadlineKind.Blocked),
             CliSemanticStatus.Failed
@@ -350,6 +356,11 @@ internal static class RouteInitReportSelector
         RouteInitResult result,
         RouteInitFinding? finding)
     {
+        if (finding?.LockFailure is { } lockFailure)
+        {
+            return CliFindingWording.WorkspaceLockUnavailable(lockFailure);
+        }
+
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.LabelTheRouteInitResultDidNotContainAFinding();
@@ -398,8 +409,9 @@ internal static class RouteInitReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = RouteInitWireVocabulary.Name(finding.Code),
+            LockFailure = finding.LockFailure,
             Title = RouteInitWording.FindingTitle(finding.Code),
-            Message = finding.Code == RouteInitFindingCode.RecoveryConflict
+            Message = finding.LockFailure is not null || finding.Code == RouteInitFindingCode.RecoveryConflict
                 ? Message(result, finding)
                 : RouteInitWording.Message(
                     finding.Code,

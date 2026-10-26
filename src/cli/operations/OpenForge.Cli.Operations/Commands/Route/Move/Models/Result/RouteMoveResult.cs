@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Recovery.Models;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -33,6 +34,12 @@ internal sealed record RouteMoveResult : ICliCommandResult
         Status = status;
         Next = next;
     }
+
+    internal RouteRecoveryHistory RecoveryHistory { get; init; } = RouteRecoveryHistory.Empty;
+
+    internal string RecoveryHistoryCode => RouteMoveDefinitions.RecoveryHistoryCode;
+
+    internal string RecoveryCoverageUnavailableCode => RouteMoveDefinitions.RecoveryCoverageUnavailableCode;
 
     public string Command => RouteMoveDefinitions.CommandIdentity;
 

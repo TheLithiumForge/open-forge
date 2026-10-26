@@ -1,9 +1,12 @@
+using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Install.Models.Result;
 
 internal sealed record InstallFinding
 {
+    internal WorkspaceLockFailureInfo? LockFailure { get; init; }
+
     private const int MaximumCauseLength = 256;
 
     internal InstallFinding(

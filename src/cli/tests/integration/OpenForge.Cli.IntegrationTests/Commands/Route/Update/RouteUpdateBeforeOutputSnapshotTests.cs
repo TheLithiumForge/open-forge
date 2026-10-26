@@ -86,7 +86,8 @@ public sealed class RouteUpdateBeforeOutputSnapshotTests
             if (situation is "no-change" or "dry-run") Assert.Equal(before, workspace.SnapshotHashes());
             if (situation == "template-applied") Assert.Contains(RouteUpdateIntegrationWorkspace.TemplateBody, workspace.ReadText(RouteUpdateIntegrationWorkspace.TargetPath), StringComparison.Ordinal);
             CaptureRecovery(workspace, result);
-            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
@@ -113,7 +114,8 @@ public sealed class RouteUpdateBeforeOutputSnapshotTests
             Assert.Equal(status, result.Status);
             Assert.Equal(before, workspace.SnapshotHashes());
             CaptureRecovery(workspace, result);
-            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots);
+            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots,
+            lockFailurePath: result.Findings.FirstOrDefault(finding => finding.LockFailure is not null)?.LockFailure?.Path);
         }
 
         CommandOutputSnapshot.MatchDetailSnapshot(snapshots);

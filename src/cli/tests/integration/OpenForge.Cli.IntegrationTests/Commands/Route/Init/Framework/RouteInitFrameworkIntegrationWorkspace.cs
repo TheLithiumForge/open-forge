@@ -10,10 +10,11 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Framework;
 
@@ -173,10 +174,7 @@ internal sealed class RouteInitFrameworkIntegrationWorkspace : IDisposable
 
     internal string CreateRecoveryConflictCandidate()
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.Create)
-            ?? throw new InvalidOperationException(
-                "The Framework integration recovery store is unavailable.");
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(Workspace.PhysicalRoot);
         var path = RecoveryBundlePathIdentity.FinalPath(
             storeRoot,
             Workspace.PhysicalRoot,
@@ -256,8 +254,7 @@ internal sealed class RouteInitFrameworkIntegrationWorkspace : IDisposable
 
     private void DeleteRecoveryArtifacts()
     {
-        var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
-            Environment.SpecialFolderOption.None);
+        var storeRoot = TestDataHome.LocalRecoveryStoreRoot(Workspace.PhysicalRoot);
         if (storeRoot is null)
         {
             return;

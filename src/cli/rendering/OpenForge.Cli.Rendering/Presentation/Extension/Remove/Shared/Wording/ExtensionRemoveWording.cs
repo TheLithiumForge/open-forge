@@ -188,6 +188,8 @@ internal static class ExtensionRemoveWording
         ExtensionRemoveFindingCode.TargetChanged => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleTargetChanged(),
         ExtensionRemoveFindingCode.RecoveryConflict => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleBlocksRemoval(),
         ExtensionRemoveFindingCode.RecoveryUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsUnavailable(),
+        ExtensionRemoveFindingCode.RecoveryHistory => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleWasRetained(),
+        ExtensionRemoveFindingCode.RecoveryCoverageUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsUnavailable(),
         ExtensionRemoveFindingCode.RecoveryArtifactRetained => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleWasRetained(),
         ExtensionRemoveFindingCode.WriteFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWritingFailed(),
         ExtensionRemoveFindingCode.TopologyVerificationFailed => global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.TitleEntriesVerificationFailed(),
@@ -200,30 +202,35 @@ internal static class ExtensionRemoveWording
     };
 
     internal static string FindingMessage(ExtensionRemoveFinding finding, string id, bool preview = false)
-        => finding.Code switch
-        {
-            ExtensionRemoveFindingCode.InvalidInput => CannotRemove(finding.Cause),
-            ExtensionRemoveFindingCode.SelectionRequired => CliFindingWording.SelectionRequired(global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.TitleExtensionRemove(), false),
-            ExtensionRemoveFindingCode.InteractionEnded => CliFindingWording.InteractionEnded(),
-            ExtensionRemoveFindingCode.ConfirmationRequired => CliFindingWording.ConfirmationRequired(global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.TitleExtensionRemove()),
-            ExtensionRemoveFindingCode.OwnershipObservation => finding.Cause,
-            ExtensionRemoveFindingCode.LifecycleObservation when preview && finding.Target is { } dependency
-                => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemovePhrases.DependencyRemovalPreview(dependency, id),
-            ExtensionRemoveFindingCode.LifecycleObservation => finding.Target is { } dependency
-                ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemovePhrases.FormatRemainsInstalledAndIsNoLongerNeededBy($"{dependency}", $"{id}")
-                : finding.Cause,
-            ExtensionRemoveFindingCode.DependencyBlocked
-                => DependencyBlockedReason(finding.Cause, finding.Cause),
-            ExtensionRemoveFindingCode.SettingsInvalid => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageFixInvalidSettings(),
-            ExtensionRemoveFindingCode.SettingsUnavailable => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageSettingsUnavailable(),
-            ExtensionRemoveFindingCode.PathExcluded => finding.Target is { } path
-                ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageGeneratedNavigationPathExcluded(path)
-                : finding.Cause,
-            ExtensionRemoveFindingCode.WorkspaceLockUnavailable => LockUnavailable(),
-            ExtensionRemoveFindingCode.WriteFailed => CliFindingWording.CauseSentence(finding.Cause),
-            ExtensionRemoveFindingCode.Interrupted => Cancelled(),
-            _ => finding.Cause,
-        };
+        => finding.LockFailure is { } lockFailure
+            ? CliFindingWording.WorkspaceLockUnavailable(lockFailure)
+            : finding.Code switch
+            {
+                ExtensionRemoveFindingCode.InvalidInput => CannotRemove(finding.Cause),
+                ExtensionRemoveFindingCode.SelectionRequired => CliFindingWording.SelectionRequired(global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.TitleExtensionRemove(), false),
+                ExtensionRemoveFindingCode.InteractionEnded => CliFindingWording.InteractionEnded(),
+                ExtensionRemoveFindingCode.ConfirmationRequired => CliFindingWording.ConfirmationRequired(global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.TitleExtensionRemove()),
+                ExtensionRemoveFindingCode.OwnershipObservation => finding.Cause,
+                ExtensionRemoveFindingCode.LifecycleObservation when preview && finding.Target is { } dependency
+                    => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemovePhrases.DependencyRemovalPreview(dependency, id),
+                ExtensionRemoveFindingCode.LifecycleObservation => finding.Target is { } dependency
+                    ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemovePhrases.FormatRemainsInstalledAndIsNoLongerNeededBy($"{dependency}", $"{id}")
+                    : finding.Cause,
+                ExtensionRemoveFindingCode.DependencyBlocked
+                    => DependencyBlockedReason(finding.Cause, finding.Cause),
+                ExtensionRemoveFindingCode.SettingsInvalid => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageFixInvalidSettings(),
+                ExtensionRemoveFindingCode.SettingsUnavailable => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageSettingsUnavailable(),
+                ExtensionRemoveFindingCode.PathExcluded => finding.Target is { } path
+                    ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageGeneratedNavigationPathExcluded(path)
+                    : finding.Cause,
+                ExtensionRemoveFindingCode.WorkspaceLockUnavailable => LockUnavailable(),
+                ExtensionRemoveFindingCode.RecoveryHistory => CliFindingWording.RecoveryHistory(
+                    finding.Target ?? throw new InvalidOperationException("Recovery history requires an artifact path.")),
+                ExtensionRemoveFindingCode.RecoveryCoverageUnavailable => CliFindingWording.RecoveryCoverageUnavailable(finding.Target, finding.Cause),
+                ExtensionRemoveFindingCode.WriteFailed => CliFindingWording.CauseSentence(finding.Cause),
+                ExtensionRemoveFindingCode.Interrupted => Cancelled(),
+                _ => finding.Cause,
+            };
 
     internal static string HelpSyntax() => ("  " + global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.HelpSyntax());
     internal static string HelpSelection() => ("  " + global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.HelpSelection());

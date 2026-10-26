@@ -1,0 +1,5 @@
+Would update the toolkit Extension to 1.0.0.
+  Warning  <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.zip  Recovery bundle was retained
+         Recovery data from an earlier run remains at <workspace>/.open-forge-state/recovery/v1/<workspace-key>/operation-11111111111111111111111111111111.zip. It does not block this operation.
+  .agents/toolkit.txt  replace (you had changed it and this version changes it)
+No files were changed.

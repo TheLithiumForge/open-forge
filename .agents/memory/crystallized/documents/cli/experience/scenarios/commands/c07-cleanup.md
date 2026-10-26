@@ -265,3 +265,7 @@ Verify invalid-input exit, parser-stream behavior and unchanged recovery invento
 **Disposition:** Deferred; not selected yet. A catalogue race without a reproducible cooperating-process boundary is an artificial state permutation.
 
 **Required before reconsideration:** Show a permitted filesystem change between selection and guarded revalidation without bypassing the workspace lock.
+
+## Task 86 Runtime Expectations
+
+Observe both workspace and legacy stores. Each has separate coverage and deletion authority. An unavailable legacy store does not prevent eligible local cleanup. Retain unsafe or invalid candidates and report actual partial effects. Status and Doctor continue to report verified bundles.

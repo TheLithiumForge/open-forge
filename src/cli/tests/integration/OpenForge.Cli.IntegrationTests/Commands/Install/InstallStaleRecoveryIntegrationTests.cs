@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Observation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -46,8 +47,7 @@ public sealed class InstallStaleRecoveryIntegrationTests
         var retainedPath = preparation.BundlePath;
         if (draft)
         {
-            var root = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.None)
-                ?? throw new InvalidOperationException("The prepared recovery store must exist.");
+            var root = TestDataHome.LocalRecoveryStoreRoot(workspace.PhysicalPath);
             retainedPath = RecoveryBundlePathIdentity.DraftPath(root, workspace.PhysicalPath, preparation.OperationId);
             File.Move(preparation.BundlePath, retainedPath);
         }

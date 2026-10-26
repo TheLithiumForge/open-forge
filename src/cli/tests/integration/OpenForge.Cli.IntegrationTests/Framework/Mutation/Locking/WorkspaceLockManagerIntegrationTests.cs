@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
@@ -10,7 +11,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 public sealed class WorkspaceLockManagerIntegrationTests
 {
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Workspace lock owns one external exclusive OS handle and persists its zero-byte file")]
+    [Fact(DisplayName = "Workspace lock owns local and legacy handles and preserves reusable files")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task AcquireOwnsExternalHandleAndPersistsReusableFile()
     {
@@ -26,7 +27,9 @@ public sealed class WorkspaceLockManagerIntegrationTests
         var lease = Assert.IsType<WorkspaceLockLease>(first.Lease);
         Assert.Equal(WorkspaceLockState.Acquired, first.State);
         Assert.True(lease.IsHeldFor(workspace));
-        Assert.Equal(lockPath, lease.LockPath);
+        Assert.Equal(WorkspaceRuntimePaths.LockPath(workspace), lease.LockPath);
+        Assert.Equal(lockPath, lease.LegacyLockPath);
+        Assert.True(lease.HoldsLegacyLock(lockStore.StoreRoot));
         Assert.DoesNotContain(workspace.PhysicalRoot, lockPath, StringComparison.Ordinal);
         await Assert.ThrowsAsync<IOException>(async () =>
         {

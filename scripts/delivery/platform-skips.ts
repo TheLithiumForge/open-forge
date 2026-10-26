@@ -25,6 +25,9 @@ const unixOnly = new Set([
   "This read boundary uses Unix file permissions.",
 ]);
 
+const linuxOnly = new Set(["This evidence requires linux.", "This FIFO evidence requires linux."]);
+const macosOnly = new Set(["This evidence requires macos.", "This FIFO evidence requires macos."]);
+
 const publicWindowsOnly = new Set([
   "This confirmation journey requires the repository's Windows ConPTY harness.",
   "This public-create boundary requires an owned Windows directory ACL.",
@@ -43,12 +46,17 @@ const publicWindowsOnly = new Set([
   "Library terminal choice evidence requires Windows ConPTY.",
   "Selection viewport terminal evidence requires Windows ConPTY.",
   "This selection journey requires the repository's Windows ConPTY harness.",
+  "Windows ACL qualification requires Windows access control.",
 ]);
+const publicUnixOnly = new Set(["Unix FIFO, socket and symlink qualification requires Linux or macOS."]);
 
 export const PlatformSkipReasons = {
   windows: [...windowsOnly],
   unix: [...unixOnly],
+  linux: [...linuxOnly],
+  macos: [...macosOnly],
   publicWindows: [...publicWindowsOnly],
+  publicUnix: [...publicUnixOnly],
 } as const;
 
 // Only explicit OS exclusions in the integration and public suites qualify. Capability failures,
@@ -60,11 +68,14 @@ export function isPlatformExclusion(test: Record<string, unknown>, platform: Nod
   const reason = test["message"];
   if (typeof reason !== "string") return false;
   if (extra.type.startsWith("OpenForge.Cli.EndToEndTests.")) {
+    if (platform === "win32") return publicUnixOnly.has(reason);
     return (platform === "linux" || platform === "darwin") && publicWindowsOnly.has(reason);
   }
   if (!extra.type.startsWith("OpenForge.Cli.IntegrationTests.")) return false;
-  if (platform === "win32") return unixOnly.has(reason) || reason === "Required permission evidence targets Linux.";
-  if (platform === "linux") return windowsOnly.has(reason);
-  if (platform === "darwin") return windowsOnly.has(reason) || reason === "Required permission evidence targets Linux.";
+  if (platform === "win32") {
+    return unixOnly.has(reason) || linuxOnly.has(reason) || macosOnly.has(reason) || reason === "Required permission evidence targets Linux.";
+  }
+  if (platform === "linux") return windowsOnly.has(reason) || macosOnly.has(reason);
+  if (platform === "darwin") return windowsOnly.has(reason) || linuxOnly.has(reason) || reason === "Required permission evidence targets Linux.";
   return false;
 }

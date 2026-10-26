@@ -31,6 +31,8 @@ internal enum ExtensionRemoveFindingCode
     LifecycleObservation,
     OwnershipObservation,
     RecoveryArtifactRetained,
+    RecoveryHistory,
+    RecoveryCoverageUnavailable,
     WriteFailed,
     TopologyVerificationFailed,
     LifecyclePublicationFailed,
