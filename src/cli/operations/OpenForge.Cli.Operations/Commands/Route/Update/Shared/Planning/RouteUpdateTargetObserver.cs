@@ -27,8 +27,14 @@ internal sealed class RouteUpdateTargetObserver(
     internal async ValueTask<RouteUpdateObservationBuild> ObserveAsync(
         RouteUpdateRequest request,
         CancellationToken cancellationToken)
+        => await ObserveAsync(request, null, cancellationToken).ConfigureAwait(false);
+
+    internal async ValueTask<RouteUpdateObservationBuild> ObserveAsync(
+        RouteUpdateRequest request,
+        WorkspaceLayoutRead? retainedLayout,
+        CancellationToken cancellationToken)
     {
-        var selectionBuild = await _sourceSelector.SelectAsync(request, cancellationToken)
+        var selectionBuild = await _sourceSelector.SelectAsync(request, retainedLayout, cancellationToken)
             .ConfigureAwait(false);
         if (selectionBuild.Selection is not { } selection)
         {
@@ -46,6 +52,7 @@ internal sealed class RouteUpdateTargetObserver(
                 {
                     Workspace = operation.Workspace,
                     Layer = source.Base,
+                    LayoutRead = selection.LayoutRead,
                 },
                 cancellationToken)
             .ConfigureAwait(false);
@@ -103,6 +110,7 @@ internal sealed class RouteUpdateTargetObserver(
                     {
                         Workspace = operation.Workspace,
                         Layer = overwrite,
+                        LayoutRead = selection.LayoutRead,
                     },
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -123,6 +131,7 @@ internal sealed class RouteUpdateTargetObserver(
                 Catalogue = selection.Catalogue,
                 TargetSource = source,
                 TargetSnapshot = targetLayer.Snapshot,
+                SupportingSnapshots = selection.SupportingSnapshots,
                 OverwriteSnapshot = overwriteLayer?.Snapshot,
                 TargetText = text,
                 Markdown = markdown,

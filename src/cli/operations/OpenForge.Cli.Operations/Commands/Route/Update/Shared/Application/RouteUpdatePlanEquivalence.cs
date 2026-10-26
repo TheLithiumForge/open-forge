@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 
@@ -17,6 +18,8 @@ internal sealed class RouteUpdatePlanEquivalence
             && expected.LayoutRead.Settings.MatchesObservation(actual.LayoutRead.Settings)
             && expected.LayoutRead.Expectations.SequenceEqual(actual.LayoutRead.Expectations)
             && expected.Navigation.SharingExpectation == actual.Navigation.SharingExpectation
+            && expected.Navigation.ReadonlySnapshots.Select(item => item.Expectation)
+                .SequenceEqual(actual.Navigation.ReadonlySnapshots.Select(item => item.Expectation))
             && expected.Observation.TargetSnapshot.Expectation
                 == actual.Observation.TargetSnapshot.Expectation
             && MatchesOptionalExpectation(
@@ -170,7 +173,8 @@ internal sealed class RouteUpdatePlanEquivalence
             }
         }
 
-        return expectedTopology.LoaderRootPaths.SequenceEqual(
+        return RouteUpdateOutsideBoundary.Find(expected.LayoutRead, expected.Observation.TargetSource.Base.CanonicalPath) is not null
+            || expectedTopology.LoaderRootPaths.SequenceEqual(
             actualTopology.LoaderRootPaths,
             StringComparer.Ordinal);
     }

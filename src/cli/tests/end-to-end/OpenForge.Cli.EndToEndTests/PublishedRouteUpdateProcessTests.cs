@@ -1,10 +1,60 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.TestSupport.Contracts;
+using System.Text;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedRouteUpdateProcessTests
 {
+    [Theory(DisplayName = "Published outside Update previews patches exact bytes and converges without relisting")]
+    [InlineData(".agents", false), InlineData("knowledge/main", true)]
+    [Trait("Feature", "route-update-outside"), Trait("Evidence", "EndToEnd")]
+    public async Task OutsideExactPathJourney(string root, bool compatibility)
+    {
+        var executable = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedRouteUpdateWorkspace.Create();
+        var path = workspace.SeedOutside(root, compatibility);
+        var before = workspace.SnapshotState();
+        var original = workspace.ReadBytes(path);
+        var parent = "docs/team/" + (compatibility ? PublishedTokens.Layout.IndexFile : "_team" + PublishedTokens.Layout.MarkdownExtension);
+        var parentBefore = workspace.ReadBytes(parent);
+        string[] arguments = ["route", PublishedTokens.RouteUpdate.Command, PublishedTokens.Layout.LiteralReferencePrefix + path,
+            PublishedTokens.RouteUpdate.Description, PublishedRouteUpdateWorkspace.ExpectedDescription,
+            PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat];
+        var preview = await RunWithoutWritesAsync(executable, workspace, [.. arguments, PublishedTokens.RouteCreate.DryRun]);
+        Assert.True(preview.ExitCode == 0, preview.StandardOutput + preview.StandardError);
+        Assert.Equal(string.Empty, preview.StandardError);
+        workspace.AssertNoLockInfrastructure();
+        using (var document = JsonDocument.Parse(preview.StandardOutput))
+        {
+            Assert.NotEmpty(document.RootElement.GetProperty(PublishedTokens.Json.Effects).EnumerateArray());
+            Assert.All(document.RootElement.GetProperty(PublishedTokens.Json.Effects).EnumerateArray(),
+                effect => Assert.StartsWith("docs/team/", effect.GetProperty(PublishedTokens.Json.Path).GetString(), StringComparison.Ordinal));
+        }
+        var applied = await PublishedProcessTestSupport.RunAsync(executable, workspace.Path, arguments, workspace.ProcessEnvironment);
+        Assert.Equal(0, applied.ExitCode);
+        Assert.Equal(string.Empty, applied.StandardError);
+        using (var document = JsonDocument.Parse(applied.StandardOutput))
+        {
+            Assert.Equal(PublishedTokens.Layout.LiteralReferencePrefix + path,
+                document.RootElement.GetProperty(PublishedTokens.Json.Data).GetProperty("target").GetProperty(PublishedTokens.Json.Id).GetString());
+            Assert.Equal(path, Assert.Single(document.RootElement.GetProperty(PublishedTokens.Json.Effects).EnumerateArray())
+                .GetProperty(PublishedTokens.Json.Path).GetString());
+        }
+        Assert.Equal(Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(original).Replace("description: Before overview", "description: After overview", StringComparison.Ordinal)), workspace.ReadBytes(path));
+        Assert.Equal(parentBefore, workspace.ReadBytes(parent));
+        var after = workspace.SnapshotState();
+        foreach (var row in before.Where(row => !row.Key.StartsWith("docs/team/", StringComparison.Ordinal))) Assert.Equal(row.Value, after[row.Key]);
+        Assert.All(after.Keys.Except(before.Keys, StringComparer.Ordinal), key => Assert.StartsWith("docs/team/", key, StringComparison.Ordinal));
+        var repeated = await RunWithoutWritesAsync(executable, workspace, arguments);
+        Assert.Equal(0, repeated.ExitCode);
+        Assert.Equal(string.Empty, repeated.StandardError);
+        using var noOp = JsonDocument.Parse(repeated.StandardOutput);
+        Assert.Empty(noOp.RootElement.GetProperty(PublishedTokens.Json.Effects).EnumerateArray());
+        workspace.AssertPersistentExternalLock();
+    }
+
     [Fact(DisplayName = "Published Route Update JSON dry-run previews an update without writes"),
      Trait("Feature", "route-update"), Trait("Evidence", "EndToEnd")]
     public async Task JsonDryRunIsReadOnly()

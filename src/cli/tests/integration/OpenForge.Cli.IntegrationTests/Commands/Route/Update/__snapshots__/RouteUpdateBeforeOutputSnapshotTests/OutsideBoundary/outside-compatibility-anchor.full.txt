@@ -1,0 +1,11 @@
+Updated ./docs/team/index.md
+Workspace: <workspace>
+  Path: docs/team/index.md
+  description: "Independent route metadata" -> "After outside"
+  docs/team/index.md  metadata updated
+    Before: <sha256>
+    After: <sha256>
+  Frontmatter before:
+    description: Independent route metadata
+  Frontmatter after:
+    description: After outside

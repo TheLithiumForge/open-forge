@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 
@@ -24,6 +25,24 @@ internal sealed class RouteUpdateEffectApplication(RouteUpdateFileApplication ap
             FileChangeReceipt receipt;
             try
             {
+                if (RouteUpdateOutsideBoundary.Find(input.Plan.LayoutRead, input.Plan.Observation.TargetSource.Base.CanonicalPath) is not null)
+                {
+                    var relative = Relative(input.Plan, change.LogicalPath);
+                    var boundary = RouteUpdateOutsideBoundary.WriteBoundary(input.Plan.LayoutRead, relative,
+                        change.Kind == PlannedFileChangeKind.ReplaceGeneratedRegion, cancellationToken)
+                        ?? await RouteUpdateOutsideInputs.ValidateAsync(input.Plan, cancellationToken).ConfigureAwait(false);
+                    if (boundary is not null)
+                    {
+                        var before = input.Plan.Observation.TargetSnapshot.Expectation.LogicalPath == change.LogicalPath
+                            ? input.Plan.Observation.TargetSnapshot
+                            : input.Plan.Navigation.Regions.Single(item => item.Snapshot.Expectation.LogicalPath == change.LogicalPath).Snapshot;
+                        receipt = FileChangeReceipt.NotStarted(change, before,
+                            boundary.Code == RouteUpdateFindingCode.Interrupted ? FilesystemNotStartedReason.Cancelled : FilesystemNotStartedReason.TargetChanged,
+                            boundary.Cause);
+                        receipts.Add(receipt);
+                        return FailureFromReceipt(input, receipts, receipt);
+                    }
+                }
                 receipt = await _applyFile(
                         input.Lease,
                         change,

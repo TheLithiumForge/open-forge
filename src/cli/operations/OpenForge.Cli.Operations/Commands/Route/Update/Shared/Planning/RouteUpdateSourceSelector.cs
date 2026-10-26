@@ -16,7 +16,7 @@ using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 
-internal sealed class RouteUpdateSourceSelector(
+internal sealed partial class RouteUpdateSourceSelector(
     SourceCatalogueReader catalogueReader,
     SourceRouteFactsResolver routeFactsResolver,
     PhysicalPathResolver physicalPathResolver,
@@ -30,6 +30,12 @@ internal sealed class RouteUpdateSourceSelector(
     internal async ValueTask<RouteUpdateSourceSelectionBuild> SelectAsync(
         RouteUpdateRequest operation,
         CancellationToken cancellationToken)
+        => await SelectAsync(operation, null, cancellationToken).ConfigureAwait(false);
+
+    internal async ValueTask<RouteUpdateSourceSelectionBuild> SelectAsync(
+        RouteUpdateRequest operation,
+        WorkspaceLayoutRead? retainedLayout,
+        CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
         {
@@ -41,7 +47,7 @@ internal sealed class RouteUpdateSourceSelector(
                 isIncomplete: true);
         }
 
-        var layoutRead = await new WorkspaceLayoutReader(_physicalPathResolver)
+        var layoutRead = retainedLayout ?? await new WorkspaceLayoutReader(_physicalPathResolver)
             .ReadAsync(operation.Workspace, cancellationToken).ConfigureAwait(false);
         if (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
             || layoutRead.Layout is not { } layout)
@@ -54,12 +60,17 @@ internal sealed class RouteUpdateSourceSelector(
                 isIncomplete: unavailable);
         }
 
-        var catalogue = await _catalogueReader.ReadAsync(
-                new SourceCatalogueRequest(
-                    layout,
-                    layout.SourceRoots),
-                cancellationToken)
-            .ConfigureAwait(false);
+        var parsed = SourceReferenceParser.Parse(operation.ResolutionReference);
+        var outside = parsed is { State: SourceReferenceParseState.Valid, AttemptedPath: { } selectedPath }
+            ? RouteUpdateOutsideBoundary.Find(layoutRead, selectedPath) : null;
+        if (outside is not null && parsed.AttemptedPath is { } outsidePath
+            && RouteUpdateOutsideBoundary.ReadBoundary(layoutRead, outsidePath, cancellationToken) is { } outsideFinding)
+            return Stop(operation, RouteUpdateTarget.Unresolved(operation.SourceReference), outsideFinding.Code,
+                outsideFinding.Cause, IsIncompleteOutside(outsideFinding.Code));
+
+        var catalogue = outside is null
+            ? await _catalogueReader.ReadAsync(new SourceCatalogueRequest(layout, layout.SourceRoots), cancellationToken).ConfigureAwait(false)
+            : (await new SourceReadSessionReader(_physicalPathResolver).ReadIncludedAsync(layout, cancellationToken).ConfigureAwait(false)).Catalogue;
         if (catalogue.IsCancelled)
         {
             return Stop(
@@ -71,7 +82,8 @@ internal sealed class RouteUpdateSourceSelector(
         }
 
         if (catalogue.Issues.FirstOrDefault(issue =>
-                issue.Stage == SourceCatalogueIssueStage.Root) is { } rootIssue)
+                issue.Stage == SourceCatalogueIssueStage.Root
+                && (outside is null || issue.AttemptedCanonicalPath == outside.DirectoryPath)) is { } rootIssue)
         {
             return FromRootIssue(operation, rootIssue);
         }
@@ -129,6 +141,26 @@ internal sealed class RouteUpdateSourceSelector(
         }
 
         target = target with { Form = form };
+        if (outside is not null)
+        {
+            if (parsed.AttemptedPath != source.Base.CanonicalPath && parsed.AttemptedPath != source.Overwrite?.CanonicalPath)
+                return Stop(operation, target, RouteUpdateFindingCode.TargetUnsafe,
+                    "An outside source cannot be redirected to another logical path.", isIncomplete: false);
+            if (RouteUpdateOutsideBoundary.WriteBoundary(layoutRead, source.Base.CanonicalPath, entries: false, cancellationToken) is { } protectedTarget)
+                return Stop(operation, target, protectedTarget.Code, protectedTarget.Cause, IsIncompleteOutside(protectedTarget.Code));
+            var chain = await ReadOutsideChainAsync(layoutRead, catalogue, source, cancellationToken).ConfigureAwait(false);
+            if (chain.Finding is { } chainFinding)
+                return Stop(operation, target, chainFinding.Code, chainFinding.Cause, IsIncompleteOutside(chainFinding.Code));
+            return RouteUpdateSourceSelectionBuild.Complete(new()
+            {
+                Request = operation,
+                LayoutRead = layoutRead,
+                Target = target,
+                Catalogue = catalogue,
+                Source = source,
+                SupportingSnapshots = chain.Snapshots,
+            });
+        }
         var reader = new SourceDocumentReader(operation.Workspace);
         var routeFacts = await _routeFactsResolver.ResolveAsync(
                 new SourceRouteFactsRequest(catalogue, catalogue.SelectAll()),

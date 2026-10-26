@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates.Models;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 
@@ -95,6 +96,7 @@ internal sealed class RouteUpdateBodyPlanBuild
 
 internal sealed record RouteUpdateDestinationPlan
 {
+    internal ImmutableArray<FileStateSnapshot> TemplateInputs { get; init; } = [];
     public required RouteUpdateBodyPlan Body { get; init; }
 
     public RouteTemplateResolution? Template { get; init; }

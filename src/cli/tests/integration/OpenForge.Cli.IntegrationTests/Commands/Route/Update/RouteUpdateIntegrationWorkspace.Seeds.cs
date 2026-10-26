@@ -79,11 +79,14 @@ internal sealed partial class RouteUpdateIntegrationWorkspace
                     "- [Route Template](route.md) - #Template")));
         WriteText(
             TemplatePath,
-            OpenForgeDocumentSeed.Metadata(
+            TemplateDocument(body, tags));
+    }
+
+    internal static string TemplateDocument(string body = TemplateBody, string[]? tags = null)
+        => OpenForgeDocumentSeed.Metadata(
                 description: "Route Template",
                 tags: tags ?? ["Template"],
-                body: body));
-    }
+                body: body);
 
     internal void SeedTemplateOverwrite()
         => WriteText(

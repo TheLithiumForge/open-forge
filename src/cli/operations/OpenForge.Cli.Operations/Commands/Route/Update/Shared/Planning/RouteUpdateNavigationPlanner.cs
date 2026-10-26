@@ -10,7 +10,10 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Loading;
+using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 
@@ -23,11 +26,17 @@ internal sealed partial class RouteUpdateNavigationPlanner
         CancellationToken cancellationToken)
     {
         var observation = destination.Body.Metadata.Observation;
-        var sharing = await NavigationSharingReader.ReadAsync(observation.Request.Workspace, cancellationToken).ConfigureAwait(false);
-        if (!sharing.IsAvailable)
+        var sharing = NavigationSharingReader.FromOwnership(observation.LayoutRead.Ownership);
+        if (!sharing.IsAvailable || sharing.Sharing is not { } sharingPolicy)
             return Stop(destination, RouteUpdateFindingCode.GeneratedRegionUnsafe, sharing.Cause);
-        var formation = new GeneratedNavigationFormationBuilder().Build(
-            observation.Catalogue);
+        var outside = RouteUpdateOutsideBoundary.Find(observation.LayoutRead, observation.TargetSource.Base.CanonicalPath);
+        var formationBuilder = new GeneratedNavigationFormationBuilder();
+        var formation = outside is null ? formationBuilder.Build(observation.Catalogue)
+            : formationBuilder.Build(observation.Catalogue, observation.Catalogue.Sources.Where(source =>
+                !source.Base.CanonicalPath.StartsWith(outside.DirectoryPath + "/", StringComparison.Ordinal)
+                || !WorkspaceRemovals.IsPathRemoved(observation.Catalogue.Layout, source.Base.CanonicalPath, observation.LayoutRead.Settings.Document)
+                    && sharingPolicy.Includes(source.Base.CanonicalPath)).ToArray());
+        var readonlyInputs = observation.SupportingSnapshots.AddRange(destination.TemplateInputs);
         var templateChangesEntrypoint = destination.Body.State == RouteUpdateBodyState.TemplateCopied
             && SourceFormClassifier.IsEntrypoint(observation.TargetSource.Base.Form);
         if (destination.Body.Metadata.Patch.Description.State != RouteUpdatePatchState.Changed
@@ -41,6 +50,7 @@ internal sealed partial class RouteUpdateNavigationPlanner
                     SharingExpectation = sharing.Ownership.Snapshot?.Expectation,
                     Formation = formation,
                     Regions = [],
+                    ReadonlySnapshots = readonlyInputs,
                 });
         }
 
@@ -55,6 +65,8 @@ internal sealed partial class RouteUpdateNavigationPlanner
         }
 
         var regionSources = new List<(SourceLogicalSource Source, bool IsTarget)>();
+        var registeredAnchor = outside is not null && SourceFormClassifier.IsEntrypoint(observation.TargetSource.Base.Form)
+            && SourceLogicalPath.ReadParent(observation.TargetSource.Base.CanonicalPath) == outside.DirectoryPath;
         if (targetNode.ParentState ==
             OpenForge.Cli.Core.Framework.Sources.Models.Routing.SourceRouteParentState.Resolved)
         {
@@ -63,14 +75,14 @@ internal sealed partial class RouteUpdateNavigationPlanner
                     "A resolved Route Update parent must remain in formation.");
             regionSources.Add((parent, false));
         }
-        else if (formation.Topology.LoaderRootPaths.Contains(
+        else if (outside is null && formation.Topology.LoaderRootPaths.Contains(
                      observation.TargetSource.Identity.CanonicalBasePath,
                      StringComparer.Ordinal)
                  && formation.Loader is { } loader)
         {
             regionSources.Add((loader, false));
         }
-        else
+        else if (!registeredAnchor)
         {
             return Stop(
                 destination,
@@ -79,7 +91,7 @@ internal sealed partial class RouteUpdateNavigationPlanner
         }
 
         if (SourceFormClassifier.IsEntrypoint(observation.TargetSource.Base.Form)
-            && targetNode.ChildPaths.Count != 0)
+            && (outside is null ? targetNode.ChildPaths.Count != 0 : templateChangesEntrypoint))
         {
             regionSources.Insert(0, (observation.TargetSource, true));
         }
@@ -103,6 +115,25 @@ internal sealed partial class RouteUpdateNavigationPlanner
                 continue;
             }
 
+            if (outside is not null)
+            {
+                if (!source.Base.CanonicalPath.StartsWith(outside.DirectoryPath + "/", StringComparison.Ordinal))
+                    return Stop(destination, RouteUpdateFindingCode.TargetUnsafe, "Outside navigation cannot leave its selected folder.", source.Base.CanonicalPath);
+                var observed = await new RouteUpdateLayerObserver(new SourceDocumentSnapshotReader()).ObserveAsync(new()
+                {
+                    Workspace = observation.Request.Workspace,
+                    Layer = source.Base,
+                    LayoutRead = observation.LayoutRead,
+                }, cancellationToken).ConfigureAwait(false);
+                if (observed.Layer is not { } layer)
+                    return Stop(destination, observed.FailureCode ?? RouteUpdateFindingCode.ProjectionIncomplete,
+                        observed.FailureCause ?? "An outside navigation input is unavailable.", source.Base.CanonicalPath);
+                regionInputs.Add(new(source, new MarkdownDocumentParser().Parse(layer.Text)));
+                snapshots.Add(source.Base.CanonicalPath, layer.Snapshot);
+                readonlyInputs = readonlyInputs.Add(layer.Snapshot);
+                continue;
+            }
+
             var read = await reader.ReadAsync(source.Base, cancellationToken)
                 .ConfigureAwait(false);
             if (!TryReadText(read, out var regionText, out var finding))
@@ -120,6 +151,18 @@ internal sealed partial class RouteUpdateNavigationPlanner
                     .ConfigureAwait(false));
         }
 
+        if (outside is not null)
+        {
+            foreach (var input in regionInputs)
+            {
+                var document = input.Document ?? throw new InvalidOperationException("An observed outside region requires its document.");
+                var entries = SourceGeneratedEntriesParser.Parse(document);
+                if (entries.State != SourceGeneratedEntriesState.Complete)
+                    return Stop(destination, RouteUpdateFindingCode.GeneratedRegionUnsafe,
+                        entries.Cause ?? "The outside Entries declarations are unavailable.", input.Source.Base.CanonicalPath);
+            }
+        }
+
         var metadata = await BuildMetadataAsync(
                 destination,
                 formation,
@@ -135,6 +178,10 @@ internal sealed partial class RouteUpdateNavigationPlanner
                 metadataFinding.Cause,
                 metadataFinding.Target);
         }
+        readonlyInputs = readonlyInputs.AddRange(metadata.Snapshots);
+        if (readonlyInputs.GroupBy(item => item.Expectation.LogicalPath, StringComparer.Ordinal)
+            .Any(group => group.Any(item => item.Expectation != group.First().Expectation)))
+            return Stop(destination, RouteUpdateFindingCode.TargetChanged, "An outside supporting input changed during planning.");
 
         var projection = new GeneratedNavigationProjector().Project(
             new GeneratedNavigationProjectionRequest(
@@ -163,6 +210,9 @@ internal sealed partial class RouteUpdateNavigationPlanner
                         ?? "Generated navigation projection is unavailable.",
                     projected.CanonicalPath);
             }
+            if (change.RequiresUpdate && outside is not null
+                && RouteUpdateOutsideBoundary.WriteBoundary(observation.LayoutRead, source.Base.CanonicalPath, entries: true, cancellationToken) is { } protectedRegion)
+                return Stop(destination, protectedRegion.Code, protectedRegion.Cause, protectedRegion.Target);
 
             plans.Add(new RouteUpdateGeneratedRegionPlan
             {
@@ -179,6 +229,7 @@ internal sealed partial class RouteUpdateNavigationPlanner
                 SharingExpectation = sharing.Ownership.Snapshot?.Expectation,
                 Formation = formation,
                 Regions = plans.ToImmutable(),
+                ReadonlySnapshots = readonlyInputs.DistinctBy(item => item.Expectation.LogicalPath, StringComparer.Ordinal).ToImmutableArray(),
             });
     }
 }

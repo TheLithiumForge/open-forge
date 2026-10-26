@@ -1,0 +1,10 @@
+status=completed
+mode=apply
+target=./docs/team/design/note.md
+completeness=complete
+safety=safe
+body=preserved
+effects=2
+recovery=removed
+verification=verified
+findings=0

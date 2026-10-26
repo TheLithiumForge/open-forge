@@ -1,0 +1,4 @@
+Updated ./docs/team/index.md
+Workspace: <workspace>
+  description: "Independent route metadata" -> "After outside"
+  docs/team/index.md  metadata updated

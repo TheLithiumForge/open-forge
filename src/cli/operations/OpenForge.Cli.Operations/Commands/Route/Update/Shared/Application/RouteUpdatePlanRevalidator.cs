@@ -1,6 +1,9 @@
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 
@@ -23,7 +26,17 @@ internal sealed class RouteUpdatePlanRevalidator(
         RouteUpdatePlanBuild fresh;
         try
         {
-            fresh = await _planBuilder.BuildAsync(plan.Request, cancellationToken)
+            var validator = new FileExpectationValidator(new PhysicalPathResolver());
+            foreach (var expectation in plan.LayoutRead.Expectations)
+            {
+                var check = await validator.ValidateAsync(plan.Request.Workspace, expectation, cancellationToken).ConfigureAwait(false);
+                if (check.State == FileExpectationValidationState.Cancelled) return Cancelled();
+                if (check.State != FileExpectationValidationState.Matched)
+                    return Changed(check.Cause ?? "The original layout observation changed after planning.");
+            }
+            if (await RouteUpdateOutsideInputs.ValidateAsync(plan, cancellationToken).ConfigureAwait(false) is { } inputFinding)
+                return inputFinding.Code == Models.Result.RouteUpdateFindingCode.Interrupted ? Cancelled() : Changed(inputFinding.Cause);
+            fresh = await _planBuilder.BuildAsync(plan.Request, plan.LayoutRead, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

@@ -1,6 +1,7 @@
 using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.EndToEndTests;
 
@@ -89,6 +90,29 @@ internal sealed class PublishedRouteUpdateWorkspace : IDisposable
 
 
     internal void SeedTargetText(string text) => _temporary.ReplaceText(TargetPath, text);
+
+    internal string SeedOutside(string root, bool compatibility)
+    {
+        const string directory = "docs/team";
+        SeedSettingsText($$"""{"{{PublishedTokens.Settings.SchemaVersionProperty}}":{{PublishedTokens.Settings.SchemaVersion}},"{{PublishedTokens.Settings.MainRootProperty}}":"{{root}}","{{PublishedTokens.Settings.OutsideRoutesProperty}}":["{{directory}}"]}""");
+        var anchor = directory + "/" + (compatibility ? PublishedTokens.Layout.IndexFile : "_team" + PublishedTokens.Layout.MarkdownExtension);
+        var rows = $"- [Keep this independent label](overview.md) - #{PublishedTokens.Metadata.LoadNow} #Fixture - applies to `src/**`\n"
+            + "- [Foreign readable policy](../../foreign/readonly.md) - #Fixture - applies to `docs/**`\n"
+            + $"- [Second independent label]({PublishedTokens.Layout.LiteralReferencePrefix}overview.md) - #Fixture - applies to `tests/**`";
+        _temporary.WriteText(anchor, ParentDocument(rows));
+        _temporary.WriteText("foreign/readonly.md", "# Independently authored readable input\n");
+        var path = directory + "/overview" + PublishedTokens.Layout.MarkdownExtension;
+        _temporary.WriteText(path, TargetDocument());
+        _temporary.WriteText(path[..^PublishedTokens.Layout.MarkdownExtension.Length] + PublishedTokens.Layout.OverwriteSuffix, "Independent overwrite body\r\n");
+        if (root != ".agents")
+        {
+            File.Delete(_temporary.Combine(".agents/" + PublishedTokens.Layout.LoaderFileName));
+            _temporary.WriteText(root + "/" + PublishedTokens.Layout.LoaderFileName, GeneratedLoaderDocumentBuilder.Build(PublishedTokens.Metadata.EmptyEntry));
+        }
+        return path;
+    }
+
+    internal byte[] ReadBytes(string path) => File.ReadAllBytes(_temporary.Combine(path));
 
     internal void SeedSettingsText(string text)
     {

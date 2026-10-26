@@ -16,6 +16,9 @@ internal sealed class RouteUpdateLayerObserver(SourceDocumentSnapshotReader snap
         RouteUpdateLayerObservationInput input,
         CancellationToken cancellationToken)
     {
+        if (input.LayoutRead is { } layoutRead
+            && RouteUpdateOutsideBoundary.ReadBoundary(layoutRead, input.Layer.CanonicalPath, cancellationToken) is { } outside)
+            return RouteUpdateObservedLayerBuild.Stop(outside.Code, outside.Cause, IsIncomplete(outside.Code));
         var reader = new SourceDocumentReader(input.Workspace);
         var read = await reader.ReadAsync(input.Layer, cancellationToken)
             .ConfigureAwait(false);

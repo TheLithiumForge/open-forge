@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-Select through the observed layout, retain primary-root ancestry boundaries, and revalidate the original layout observation before effects.
+Select through the retained layout observation. Primary ancestry keeps its existing boundaries. An outside target requires an available registration, current ordinary leaf and retained physical mapping, with every effect inside the selected boundary. Keep structural maintenance separate from Loader membership and package permission. Revalidate the original observation and expected inputs under the lease.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
 
@@ -122,9 +122,12 @@ mutation target is the base file. The overwrite remains a separate user-owned
 layer and is never an effect target. An orphan or ambiguous overwrite cannot
 establish the logical source.
 
-The resolver admits only one existing ordinary routed Markdown file or one
-recognized entrypoint. It rejects the Loader, `SKILL.md`, non-Markdown
-resources, detached unsupported files, and other target kinds excluded by the
+Within primary content, the resolver admits one existing ordinary routed Markdown
+file or recognized entrypoint. An exact registered outside selection may use an
+unlisted route when the required existing parent relationships are safe and
+unambiguous. It does not initialize missing anchors or invent a route. Outside
+`SKILL.md` is ordinary Markdown. The resolver rejects the Loader, native
+`SKILL.md`, non-Markdown resources, detached unsupported files and other target kinds excluded by the
 [Interface Contract](interface.md#target-source). An existing canonical or
 recognized compatibility entrypoint retains its actual filename and route
 identity. The resolver does not create a canonical sibling or turn compatibility
@@ -333,6 +336,12 @@ After the intended destination is established, the operation projects generated
 navigation against the hypothetical post-update workspace. It uses the [Index Behavior Contract](../../index-candidate/behavior.md)
 rules for authoritative topology, authored metadata, direct-child projection,
 ordering, generated boundaries, bounded interiors, verification, and recovery.
+
+Outside projection keeps authored Loader rows byte-for-byte, including their
+loading tags, conditions and order. It never relists a registration or extends
+write authority to a readable foreign source. Required generated changes remain
+inside the selected outside boundary. Authored outside Entries retain their
+independent labels, metadata, conditions and order when source fields change.
 
 The dependency-minimal generated effects are:
 

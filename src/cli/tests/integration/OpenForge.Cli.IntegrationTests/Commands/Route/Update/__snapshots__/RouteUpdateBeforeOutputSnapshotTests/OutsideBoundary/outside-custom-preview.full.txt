@@ -1,0 +1,13 @@
+Would update ./docs/team/design/note.md
+Workspace: <workspace>
+  Path: docs/team/design/note.md
+  description: "Before outside" -> "After outside"
+  docs/team/design/_design.md  Entries would be updated
+  docs/team/design/note.md  metadata would be updated
+    Before: <sha256>
+    After: <sha256>
+  Frontmatter before:
+    description: Before outside
+  Frontmatter after:
+    description: After outside
+No files were changed.
