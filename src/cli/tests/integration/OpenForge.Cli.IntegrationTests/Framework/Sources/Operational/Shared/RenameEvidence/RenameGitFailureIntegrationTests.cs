@@ -20,7 +20,7 @@ public sealed class RenameGitFailureIntegrationTests
             reads[path] = reads.GetValueOrDefault(path) + 1;
             return LinkTargetReader.Read(path);
         });
-        var reader = new GitRenameEvidenceReader(configureProcess: repository.Configure, physicalPaths: paths);
+        var reader = new GitRenameEvidenceReader(configureProcess: repository.Configure, timeProvider: new RenameEvidenceClock(), physicalPaths: paths);
         for (var pass = 0; pass < 2; pass++)
         {
             reads.Clear();
