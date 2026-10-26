@@ -97,6 +97,7 @@ internal static class RouteRemoveEffectPlanner
             document.Snapshot.LogicalPath,
             logicalPath,
             StringComparison.Ordinal));
+        if (reference is { Edits.IsEmpty: true }) reference = null;
         var generated = navigation.DocumentEdits.SingleOrDefault(edit => string.Equals(
             edit.LogicalPath,
             logicalPath,

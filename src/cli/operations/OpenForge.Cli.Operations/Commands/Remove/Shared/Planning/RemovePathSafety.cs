@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
@@ -33,6 +34,16 @@ internal static class RemovePathSafety
         => string.Equals(path, layout.MainRoot, StringComparison.Ordinal)
             || layout.MainRoot.StartsWith(path + "/", StringComparison.Ordinal);
 
+    internal static bool ProtectsOutsideRegistration(string path, WorkspaceLayout layout)
+    {
+        var basis = SourceOverwritePath.HasSuffix(path) ? SourceOverwritePath.ReadBasePath(path) : path;
+        return layout.OutsideRoutes.Any(route => route.DirectoryPath.Equals(basis, StringComparison.OrdinalIgnoreCase)
+            || route.DirectoryPath.StartsWith(basis + "/", StringComparison.OrdinalIgnoreCase)
+            || SourceLogicalPath.ReadParent(basis).Equals(route.DirectoryPath, StringComparison.OrdinalIgnoreCase)
+                && (SourceIdentity.IsRecognizedEntrypointPath(layout, basis)
+                    || SourceIdentity.IsRecognizedEntrypointPath(layout, basis.ToLowerInvariant())));
+    }
+
     internal static bool ContainsGitMetadataSegment(string path)
         => path.Split('/').Any(segment => string.Equals(segment, WorkspaceSettingsDefinitions.GitMetadataDirectoryName, StringComparison.OrdinalIgnoreCase));
 
@@ -48,6 +59,8 @@ internal static class RemovePathSafety
         LibraryRegistrationSet? registrations)
     {
         var candidates = new List<string>();
+        candidates.AddRange(layout.OutsideRoutes.Select(route => route.DirectoryPath));
+        candidates.AddRange(layout.OutsideRoutes.Select(route => route.CataloguePath));
         candidates.AddRange(settings.RemovedFiles);
         candidates.AddRange(settings.RemovedDirectories);
         candidates.AddRange(settings.RemovedCategories.Select(layout.CategoryDirectory));

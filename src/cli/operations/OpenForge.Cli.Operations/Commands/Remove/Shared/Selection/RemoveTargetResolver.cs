@@ -5,6 +5,8 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Commands.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
@@ -67,8 +69,20 @@ internal static class RemoveTargetResolver
                 layoutRead.Settings.Cause ?? "The workspace layout is unavailable, so this target cannot be classified safely.");
         }
         var target = selection.Target;
+        var reference = SourceReferenceParser.Parse(target);
+        if (!isPathSelection && reference.Kind != SourceReferenceKind.SourcePath && !layout.IsImplicitContentDestination(target))
+            return new RemoveTargetResolution(RemoveKind.Route, target, null);
+        var outsidePath = reference.Kind == SourceReferenceKind.SourcePath ? reference.AttemptedPath! : target;
+        var normalizedOutside = PortableWorkspacePath.TryNormalize(outsidePath, out var candidatePath) ? candidatePath : outsidePath;
+        var outside = layout.OutsideRoutes.SingleOrDefault(route => normalizedOutside.StartsWith(route.DirectoryPath + "/", StringComparison.Ordinal));
+        if (!isPathSelection && outside is not null)
+            return new RemoveTargetResolution(RemoveKind.Route, target, null);
+        if (SourceLogicalPath.IsCanonicalSource(normalizedOutside) && RemovePathSafety.ProtectsOutsideRegistration(normalizedOutside, layout))
+            return new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, target,
+                "A registered outside directory, ancestor or root entrypoint is protected.");
         if (!layout.IsImplicitContentDestination(target)
-            && !string.Equals(target, WorkspaceLayout.NativeSkillsPath, StringComparison.Ordinal))
+            && !string.Equals(target, WorkspaceLayout.NativeSkillsPath, StringComparison.Ordinal)
+            && outside is null)
         {
             return new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, target, null);
         }
@@ -86,6 +100,13 @@ internal static class RemoveTargetResolver
         var observed = NoFollowLeafObserver.Observe(resolver, workspace, logical, cancellationToken);
         if (observed.State == NoFollowLeafState.Missing)
         {
+            if (isPathSelection && outside is not null && SourceIdentity.IsRecognizedEntrypointPath(layout, target))
+                return new RemoveTargetResolution(RemoveKind.Path, target, null, IsEntrypointFile: true);
+            if (outside is not null && layoutRead.Settings.Document.RemovedDirectories.Contains(target, StringComparer.Ordinal))
+                return new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, target, null);
+            if (outside is not null && SourceFormClassifier.TryClassify(layout, target, out var missingForm)
+                && (missingForm == SourceDocumentForm.Markdown || SourceFormClassifier.IsEntrypoint(missingForm)))
+                return RoutePath(target);
             return new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, target, null);
         }
         if (observed.State == NoFollowLeafState.RelativeFileLink)
@@ -101,14 +122,15 @@ internal static class RemoveTargetResolver
                 observed.Failure?.DirectCause ?? "The selected path could not be safely classified.");
         }
 
-        var catalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(layout, layout.SourceRoots),
-            cancellationToken).ConfigureAwait(false);
+        var catalogue = outside is null
+            ? await new SourceCatalogueReader().ReadAsync(new SourceCatalogueRequest(layout, layout.SourceRoots), cancellationToken).ConfigureAwait(false)
+            : (await new SourceReadSessionReader(resolver).ReadIncludedAsync(layout, cancellationToken).ConfigureAwait(false)).Catalogue;
         if (catalogue.IsCancelled)
         {
             return new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, target, "Source classification was cancelled.");
         }
-        if (catalogue.Issues.Any(issue => issue.Stage == SourceCatalogueIssueStage.Root))
+        if (catalogue.Issues.Any(issue => issue.Stage == SourceCatalogueIssueStage.Root
+            && (outside is null || issue.AttemptedCanonicalPath == outside.DirectoryPath)))
         {
             return new RemoveTargetResolution(isPathSelection ? RemoveKind.Path : RemoveKind.Route, target,
                 $"The {layout.MainRoot} source catalogue is unavailable, so this target cannot be classified safely.");

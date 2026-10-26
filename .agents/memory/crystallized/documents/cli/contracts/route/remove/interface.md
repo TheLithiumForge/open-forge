@@ -9,13 +9,15 @@ open-forge:
 
 ## Workspace Layout
 
-Route Remove accepts eligible content in the selected layout. Category exclusions cover the actual category destination, even when it is absent.
+Route Remove accepts eligible content in the selected layout and exact eligible descendants of an available outside registration. Unlisted registrations and recognized compatibility anchors retain bounded maintenance without relisting. Outside identities keep their exact `./path` form, and outside `SKILL.md` is ordinary Markdown. Protect every registered directory, containing ancestor and canonical or recognized root entrypoint, including absent targets and entrypoints selected through overwrites. Category exclusions retain actual directory coordinates.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
 ## Status And Authority
 
-Remove honors the [shared link scope](../../../shared-operation-contract.md#link-scope). Ignored authored links remain written as they were. Entries naming the removed path or a descendant are dropped in the same settings effect that records removal intent.
+Remove honors the [shared link scope](../../../shared-operation-contract.md#link-scope). Ignored authored links remain written as they were. Link-scope entries naming the removed path or a descendant are dropped in the same settings effect that records removal intent.
+
+Outside content effects stay within the selected ordinal registration. Readable foreign references establish impact without granting write authority. A required surviving foreign content or Loader row edit prevents the complete removal. Admitted outside Entries drop only proven removed targets and preserve surviving labels, tags, conditions, duplicates, order and bytes. Loader, registration and independent file includes remain unchanged. Settings, ownership and recovery retain their separate bookkeeping boundaries.
 
 This is the accepted current Crystallized authority for the caller-visible
 Interface Contract for `route remove`. The command is implemented in the merged CLI;

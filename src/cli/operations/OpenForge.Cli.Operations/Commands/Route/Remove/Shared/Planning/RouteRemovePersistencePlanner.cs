@@ -61,6 +61,9 @@ internal static class RouteRemovePersistencePlanner
         }
 
         var scope = Scope(subject);
+        if (scope.Paths.Any(path => RouteRemoveOutsideBoundaryInspector.IsProtected(subject.Catalogue.Layout, path)))
+            return Finding(RouteRemoveFindingCode.ProtectedTarget, CliSemanticStatus.Blocked, subject.Source.Path,
+                "A registered outside directory, ancestor or root entrypoint cannot be removed.");
         if (scope.Paths.Any(path => !IsCanonicalPath(path)))
         {
             return Finding(

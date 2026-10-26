@@ -5,12 +5,15 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 
 internal sealed record RouteRemoveAbsenceScope
 {
     public required WorkspaceLayout Layout { get; init; }
+
+    internal WorkspaceOutsideRoute? OutsideRoute { get; init; }
 
     internal WorkspaceSettingsDocument? LinkScope { get; init; }
     public required RouteRemoveRequest Request { get; init; }
@@ -117,16 +120,18 @@ internal sealed record RouteRemoveAbsenceScope
                 .Any(layer => layer.Layer == RouteRemoveLayerKind.Base))
                 ?? throw new InvalidOperationException(
                     "An accepted Route Remove leaf plan requires its exact base source path.")
-            : layout.SourcePath(id + SourceFormClassifier.MarkdownExtension);
+            : plan.Projection.Subject.OutsideRoute is not null ? intendedPath
+                : layout.SourcePath(id + SourceFormClassifier.MarkdownExtension);
         var leafOverwritePath = subjectKind == RouteRemoveSubjectKind.Leaf
             ? physicalPaths.FirstOrDefault(path => plan.Preview.Subject.Layers
                 .Where(layer => string.Equals(layer.SourcePath, path, StringComparison.Ordinal))
                 .Any(layer => layer.Layer == RouteRemoveLayerKind.Overwrite))
                 ?? SourceOverwritePath.ReadAdjacentPath(leafPath)
-            : SourceOverwritePath.ReadAdjacentPath(layout.SourcePath(id + SourceFormClassifier.MarkdownExtension));
+            : SourceOverwritePath.ReadAdjacentPath(leafPath);
         return new RouteRemoveAbsenceScope
         {
             Layout = layout,
+            OutsideRoute = plan.Projection.Subject.OutsideRoute,
             Request = plan.Request,
             Id = id,
             CategoryRoot = categoryRoot,
@@ -137,7 +142,8 @@ internal sealed record RouteRemoveAbsenceScope
             Subject = new RouteRemoveSubject { Kind = subjectKind },
             Mode = RouteRemoveAbsenceScopeMode.PlannedSubject,
             LinkScope = plan.Projection.Settings.Document,
-            PhysicalPaths = physicalPaths,
+            PhysicalPaths = plan.Projection.Subject.OutsideRoute is not null && subjectKind == RouteRemoveSubjectKind.Leaf
+                ? [leafPath, leafOverwritePath] : physicalPaths,
         };
     }
 
@@ -171,6 +177,39 @@ internal sealed record RouteRemoveAbsenceScope
 
     private static RouteRemoveAbsenceScope? FromPath(RouteRemoveRequest request, WorkspaceLayout layout, string path)
     {
+        var basis = SourceOverwritePath.HasSuffix(path) ? SourceOverwritePath.ReadBasePath(path) : path;
+        if (RouteRemoveOutsideBoundaryInspector.Find(layout, basis) is { } outside
+            && !RouteRemoveOutsideBoundaryInspector.IsProtected(layout, basis)
+            && SourceFormClassifier.TryClassify(layout, basis, out var outsideForm)
+            && (outsideForm == SourceDocumentForm.Markdown || SourceFormClassifier.IsEntrypoint(outsideForm)))
+        {
+            var category = SourceFormClassifier.IsEntrypoint(outsideForm);
+            var adjacent = SourceOverwritePath.ReadAdjacentPath(basis);
+            return new RouteRemoveAbsenceScope
+            {
+                Layout = layout,
+                OutsideRoute = outside,
+                Request = request,
+                Id = SourceWorkspaceRelativePath.LiteralReferencePrefix + basis,
+                CategoryRoot = SourceLogicalPath.ReadParent(basis),
+                LeafPath = basis,
+                LeafOverwritePath = adjacent,
+                IntendedPath = basis,
+                Source = new RouteRemoveSource
+                {
+                    Requested = request.SourceReference,
+                    SelectedBy = path == basis ? RouteRemoveSourceSelection.BasePath : RouteRemoveSourceSelection.OverwritePath,
+                    Id = SourceWorkspaceRelativePath.LiteralReferencePrefix + basis,
+                    Path = basis,
+                    Form = category ? outsideForm == SourceDocumentForm.CanonicalEntrypoint
+                        ? RouteRemoveSourceForm.CanonicalEntrypoint : RouteRemoveSourceForm.CompatibilityEntrypoint
+                        : RouteRemoveSourceForm.OrdinaryMarkdown,
+                },
+                Subject = new RouteRemoveSubject { Kind = category ? RouteRemoveSubjectKind.Category : RouteRemoveSubjectKind.Leaf },
+                Mode = RouteRemoveAbsenceScopeMode.PlannedSubject,
+                PhysicalPaths = category ? [] : [basis, adjacent],
+            };
+        }
         if (!layout.IsImplicitContentDestination(path)
             || !SourceFormClassifier.TryClassify(layout, path, out var form)
             || !SourceFormClassifier.IsEntrypoint(form))

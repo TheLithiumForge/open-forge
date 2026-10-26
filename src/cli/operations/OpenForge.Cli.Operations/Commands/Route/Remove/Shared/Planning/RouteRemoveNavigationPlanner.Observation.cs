@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
+using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
@@ -20,7 +21,10 @@ internal sealed partial class RouteRemoveNavigationPlanner
             return Interrupted();
         }
 
-        var formation = _formationBuilder.Build(currentCatalogue);
+        var outside = plan.Projection.Subject.OutsideRoute;
+        var formation = outside is null ? _formationBuilder.Build(currentCatalogue)
+            : _formationBuilder.Build(currentCatalogue, currentCatalogue.Sources.Where(source =>
+                RouteRemoveOutsideBoundaryInspector.Contains(outside.DirectoryPath, source.Base.CanonicalPath)).ToArray());
         if (formation.IntendedTargetCollisions.Count != 0 || formation.Ambiguities.Count != 0)
         {
             return Failed("The final Route Remove navigation topology is ambiguous or colliding.");
@@ -33,13 +37,13 @@ internal sealed partial class RouteRemoveNavigationPlanner
         }
 
         var request = plan.Projection.Navigation.Request;
-        var documents = ReadDocuments(request, selected.Regions);
+        var documents = ReadDocuments(request, selected.Regions, applyRows: false);
         if (documents.Boundary is { } documentBoundary)
         {
             return FromBoundary(documentBoundary);
         }
 
-        var metadata = ReadMetadata(request, formation);
+        var metadata = ReadMetadata(request, formation, selected.Regions);
         if (metadata.Boundary is { } metadataBoundary)
         {
             return FromBoundary(metadataBoundary);
@@ -62,7 +66,9 @@ internal sealed partial class RouteRemoveNavigationPlanner
                 return Interrupted();
             }
 
-            var observed = _regionPlanner.Plan(projection, region);
+            var observed = outside is not null
+                ? ProjectAuthoredRows(documents.Values.Single(document => document.Region.Source.Base.CanonicalPath == region.Source.Base.CanonicalPath))
+                : _regionPlanner.Plan(projection, region);
             if (observed.State != GeneratedNavigationRegionState.Available
                 || observed.Change?.RequiresUpdate == true)
             {

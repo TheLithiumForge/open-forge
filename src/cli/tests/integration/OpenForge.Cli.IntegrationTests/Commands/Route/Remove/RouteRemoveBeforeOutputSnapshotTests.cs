@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
@@ -11,6 +12,21 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 [Trait("Feature", "command-output-snapshots"), Trait("Evidence", "Integration")]
 public sealed class RouteRemoveBeforeOutputSnapshotTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task OutsideBoundary(bool applied)
+    {
+        using var fixture = new RouteRemoveOutsideWorkspace(RouteRemoveOutsideWorkspace.CustomRoot, listed: false, compatibility: true);
+        var before = fixture.Inner.SnapshotHashes();
+        var result = await fixture.Execute(mode: applied ? RouteRemoveMode.Apply : RouteRemoveMode.DryRun);
+        Assert.True(result.Status == CliSemanticStatus.Complete, string.Join(Environment.NewLine, result.Findings.Select(finding => finding.Cause)));
+        Assert.Equal(SourceWorkspaceRelativePath.LiteralReferencePrefix + RouteRemoveOutsideWorkspace.Leaf, result.Source.Id);
+        if (!applied) Assert.Equal(before, fixture.Inner.SnapshotHashes());
+        Renderers.MatchDetails(result, applied ? "outside-applied" : "outside-preview", result.Recovery.ResidualPath,
+            testName: $"{nameof(OutsideBoundary)}_{applied}");
+    }
+
     private static readonly CommandOutputRenderers<RouteRemoveResult> Renderers = CommandOutputRenderers<RouteRemoveResult>.From(RouteRemovePresentation.Rendering);
 
     [Trait("Boundary", "Output")]

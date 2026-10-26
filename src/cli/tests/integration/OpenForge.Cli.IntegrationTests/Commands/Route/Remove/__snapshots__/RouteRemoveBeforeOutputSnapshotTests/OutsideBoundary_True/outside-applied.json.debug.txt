@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Removed docs/team/old.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "docs/team/index.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": "docs/team/old.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    },
+    {
+      "path": "docs/team/old.overwrite.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesRemoved": 2,
+    "sectionsUpdated": 1,
+    "linksDetached": 0,
+    "filesScanned": 15
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "./docs/team/old.md",
+      "path": "docs/team/old.md"
+    },
+    "removed": [
+      "docs/team/old.md",
+      "docs/team/old.overwrite.md"
+    ],
+    "detachedLinks": [],
+    "settings": {
+      "outcome": "applied",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [
+        "docs/team/old.md",
+        "docs/team/old.overwrite.md"
+      ],
+      "directories": []
+    },
+    "ownershipRelease": {
+      "outcome": "unchanged",
+      "claims": []
+    },
+    "scan": {
+      "filesScanned": 15,
+      "occurrences": 3
+    }
+  },
+  "recovery": null,
+  "next": null
+}

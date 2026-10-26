@@ -6,6 +6,8 @@ using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 
@@ -30,6 +32,8 @@ internal sealed partial class RouteRemoveAppliedVerifier(
 
         try
         {
+            if (await VerifyOutsideInputsAsync(input, cancellationToken).ConfigureAwait(false) is { } outsideCause)
+                return Failed(outsideCause);
             var receipts = await VerifyReceiptsAsync(input, cancellationToken).ConfigureAwait(false);
             if (receipts is not null)
             {
@@ -77,6 +81,8 @@ internal sealed partial class RouteRemoveAppliedVerifier(
 
         try
         {
+            if (await VerifyOutsideInputsAsync(input, cancellationToken).ConfigureAwait(false) is { } outsideCause)
+                return Failed(outsideCause);
             var receiptBoundary = await VerifyReceiptsAsync(input, cancellationToken)
                 .ConfigureAwait(false);
             if (receiptBoundary is not null)
@@ -111,6 +117,35 @@ internal sealed partial class RouteRemoveAppliedVerifier(
         {
             return Failed("Final Route Remove verification failed unexpectedly.");
         }
+    }
+
+    private async ValueTask<string?> VerifyOutsideInputsAsync(RouteRemoveAppliedVerificationInput input,
+        CancellationToken cancellationToken)
+    {
+        var plan = input.Plan;
+        if (plan.Projection.Subject.OutsideRoute is not { } outside) return null;
+        if (RouteRemoveOutsideBoundaryInspector.ValidateCurrentAnchors(plan, cancellationToken) is { } rootCause)
+            return rootCause;
+        foreach (var logicalPath in plan.Projection.FileChanges.Select(change => change.LogicalPath)
+            .Concat(plan.Projection.DirectoryDeletions.Select(deletion => deletion.LogicalPath)))
+        {
+            var path = Path.GetRelativePath(plan.Request.Workspace.LexicalRoot, logicalPath).Replace('\\', '/');
+            if (!RouteRemoveOutsideBoundaryInspector.Contains(outside.DirectoryPath, path))
+                return "A final content coordinate leaves the selected outside registration.";
+            if (RouteRemoveOutsideBoundaryInspector.Validate(plan.LayoutRead, path, cancellationToken, allowMissing: true) is { } cause)
+                return cause;
+        }
+        foreach (var snapshot in plan.Projection.References.Documents.Select(document => document.Snapshot)
+            .Concat(plan.Projection.Navigation.ReadonlyInputs)
+            .Where(snapshot => plan.Projection.FileChanges.All(change => change.LogicalPath != snapshot.LogicalPath))
+            .DistinctBy(snapshot => snapshot.LogicalPath))
+        {
+            var result = await _expectationValidator.ValidateAsync(plan.Request.Workspace, snapshot.Expectation, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (result.State != FileExpectationValidationState.Matched)
+                return "A retained readonly outside removal input changed before final verification.";
+        }
+        return null;
     }
 
     private static RouteRemoveAppliedVerification Verified()

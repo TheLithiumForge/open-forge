@@ -44,7 +44,8 @@ internal sealed partial class RouteRemoveSubjectSelector
             fact.Identity.CanonicalBasePath,
             discovery.SelectedSource.Identity.CanonicalBasePath,
             StringComparison.Ordinal));
-        if (route.State != SourceRouteState.Routed)
+        var outside = RouteRemoveOutsideBoundaryInspector.Find(discovery.Catalogue.Layout, discovery.SelectedSource.Base.CanonicalPath);
+        if (outside is null ? route.State != SourceRouteState.Routed : route.State == SourceRouteState.Ambiguous)
         {
             return FromRouteState(formation, discovery.SelectedSource, route.State);
         }

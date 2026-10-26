@@ -108,7 +108,7 @@ internal sealed class RouteRemovePlanBuilder(
         if (!sharing.IsAvailable)
             return new RouteRemovePlanBuild(plan: null, RouteRemoveBoundary.Stop(RouteRemoveBoundary.Start(request),
                 RouteRemoveFindingCode.OwnershipUnavailable, CliSemanticStatus.Blocked, target: null, sharing.Cause));
-        var navigation = _navigationPlanner.Build(resolved, sharing.Sharing);
+        var navigation = _navigationPlanner.Build(resolved, sharing.Sharing, referencePlan);
         if (navigation.Boundary is { } navigationBoundary)
         {
             return new RouteRemovePlanBuild(plan: null, navigationBoundary with

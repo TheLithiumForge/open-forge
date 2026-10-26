@@ -8,7 +8,7 @@ open-forge:
 
 ## Workspace Layout
 
-Root Remove selects actual content paths in the chosen layout. Settings and ownership stay in `.agents`, separate from removable content.
+Root Remove selects actual content paths in the chosen layout. In default path mode, eligible outside Markdown leaves and category directories delegate to Route Remove. A recognized entrypoint file in path mode retains its category-selection refusal. Registered directories, containing ancestors and canonical or recognized root entrypoints are protected even when absent or selected through overwrites. Settings and ownership stay in `.agents`, separate from removable content.
 
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 

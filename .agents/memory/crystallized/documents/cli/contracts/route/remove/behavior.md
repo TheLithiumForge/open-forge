@@ -9,7 +9,11 @@ open-forge:
 
 ## Workspace Layout
 
-Expand category names through the layout, compare content authority ordinally and keep installed ownership paths literal. Revalidate the layout under the lease.
+Expand primary category names through the layout and keep installed ownership and outside exclusions literal. Retain the combined catalogue, included rows and one layout observation for outside selection. Prove an available registration, exact ordinary physical coordinates and one safe structural parent chain independently of Loader membership. Protect its directory, containing ancestors and all canonical or recognized root entrypoints, including absent paths and overwrite selections. Revalidate physical and control facts under the lease and immediately before effects. Preserve existing primary, native, managed and Library policies.
+
+Before the first persistent effect, recheck the retained unique anchor at the
+registration and every required surviving structural parent. A competing or
+substituted anchor cannot supply authority after planning.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
 
@@ -316,6 +320,12 @@ The planner does not change generated `Entries` as ordinary references. It leave
 generated interiors to the Index projection and retains their effect evidence
 separately.
 
+For an outside removal, required surviving content replacements must stay in
+the same ordinal registration. Read foreign sources for complete impact and
+refuse a required foreign rewrite before effects. Apply the original authored
+link scope to the current operation's reference proof, including after matching
+ignore entries are removed from intended settings.
+
 ## Generated Projection
 
 The projection uses the accepted [Index Behavior Contract](../../index-candidate/behavior.md)
@@ -337,6 +347,15 @@ removal.
 The operation never invokes a hidden `index` subprocess or schedules a second
 indexing pass. Generated effects are part of the remove's one result and recovery
 boundary.
+
+For outside content, select only admitted affected parents inside the
+registration. Preserve Loader bytes and unlisted state. Remove authored rows
+only when their resolved target is a deleted layer, category member or contained
+resource. Keep every surviving row's policy, provenance, order and bytes.
+Compose row removal, generated body and disjoint prose edits once from the same
+original snapshot, with one recovery payload per changed physical host.
+Malformed or uncertain required row structure refuses the complete plan.
+Rebuild final absence through the same retained row and layout owners.
 
 ## Selection And Result Formation
 
@@ -478,6 +497,17 @@ proofs is unavailable, invalid, incomplete, or blocked, result formation keeps
 that applicable status. Exclusions record future manager behavior, not proof that
 a previous remove caused the absence. A verified absent subject without its
 required exclusion still needs the settings change before it becomes a no-op.
+
+Outside absence uses exact base, companion and category coordinates, never
+primary ID expansion or a leaf's whole parent directory. Require current
+registration, trusted physical identity, no claims or orphan companion, complete
+row/reference/projection absence and persisted exclusions. A missing directory
+record alone does not identify its former entrypoint. Refuse when complete route
+absence cannot be proved without guessing. A missing exclusion requires a real
+settings effect or refusal, with no fabricated present snapshot or no-op.
+Unavailable required Entries cannot be treated as empty rows or complete
+coverage. Ordinary authored sources without Entries remain distinct from an
+unreadable required row host.
 
 ## Revalidation, Verification, And Recovery
 

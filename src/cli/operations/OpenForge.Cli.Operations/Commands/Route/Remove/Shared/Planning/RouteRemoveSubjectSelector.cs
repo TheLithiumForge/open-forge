@@ -14,6 +14,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
@@ -37,7 +38,30 @@ internal sealed partial class RouteRemoveSubjectSelector(
         WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
-        var catalogueSelection = await ReadCatalogueAsync(request, layoutRead.Layout ?? throw new InvalidOperationException("Route Remove requires its observed layout."), cancellationToken)
+        var layout = layoutRead.Layout ?? throw new InvalidOperationException("Route Remove requires its observed layout.");
+        var reference = SourceReferenceParser.Parse(request.ResolutionReference);
+        if (reference.State == SourceReferenceParseState.Invalid)
+        {
+            var formation = RouteRemoveBoundary.Start(request);
+            return new RouteRemoveSubjectSelection(null, Boundary(formation with
+            {
+                Source = formation.Source with
+                {
+                    SelectedBy = reference.Kind == SourceReferenceKind.SourcePath ? RouteRemoveSourceSelection.BasePath : null,
+                },
+            }, RouteRemoveFindingCode.InvalidSource, CliSemanticStatus.Invalid, request.ResolutionReference, reference.Cause!));
+        }
+        var parsedPath = reference.AttemptedPath;
+        if (parsedPath is not null && (RouteRemoveOutsideBoundaryInspector.IsProtected(layout, parsedPath)
+            || RouteRemoveOutsideBoundaryInspector.IsAlias(layout, parsedPath)))
+            return new RouteRemoveSubjectSelection(null, Boundary(RouteRemoveBoundary.Start(request),
+                RouteRemoveFindingCode.ProtectedTarget, CliSemanticStatus.Blocked, parsedPath,
+                "A registered outside directory, ancestor, root entrypoint or alias is protected."));
+        var outside = parsedPath is null ? null : RouteRemoveOutsideBoundaryInspector.Find(layout, parsedPath);
+        if (outside is not null && RouteRemoveOutsideBoundaryInspector.Validate(layoutRead, parsedPath!, cancellationToken, allowMissing: true) is { } outsideCause)
+            return new RouteRemoveSubjectSelection(null, Boundary(RouteRemoveBoundary.Start(request),
+                RouteRemoveFindingCode.SourceUnsafe, CliSemanticStatus.Blocked, parsedPath, outsideCause));
+        var catalogueSelection = await ReadCatalogueAsync(request, layout, outside, cancellationToken)
             .ConfigureAwait(false);
         if (catalogueSelection.Boundary is { } catalogueBoundary)
         {
@@ -65,12 +89,13 @@ internal sealed partial class RouteRemoveSubjectSelector(
     private async ValueTask<RouteRemoveSubjectCatalogueSelection> ReadCatalogueAsync(
         RouteRemoveRequest request,
         WorkspaceLayout layout,
+        WorkspaceOutsideRoute? outside,
         CancellationToken cancellationToken)
     {
         var formation = RouteRemoveBoundary.Start(request);
-        var catalogue = await _catalogueReader.ReadAsync(
-            new SourceCatalogueRequest(layout, layout.SourceRoots),
-            cancellationToken).ConfigureAwait(false);
+        var catalogue = outside is null
+            ? await _catalogueReader.ReadAsync(new SourceCatalogueRequest(layout, layout.SourceRoots), cancellationToken).ConfigureAwait(false)
+            : (await new SourceReadSessionReader(new PhysicalPathResolver()).ReadIncludedAsync(layout, cancellationToken).ConfigureAwait(false)).Catalogue;
         if (catalogue.IsCancelled)
         {
             return new RouteRemoveSubjectCatalogueSelection(
@@ -84,7 +109,8 @@ internal sealed partial class RouteRemoveSubjectSelector(
         }
 
         if (catalogue.Issues.FirstOrDefault(issue =>
-                issue.Stage == SourceCatalogueIssueStage.Root) is { } rootIssue)
+                issue.Stage == SourceCatalogueIssueStage.Root
+                    && (outside is null || issue.AttemptedCanonicalPath == outside.DirectoryPath)) is { } rootIssue)
         {
             return new RouteRemoveSubjectCatalogueSelection(
                 catalogue: null,
@@ -140,7 +166,8 @@ internal sealed partial class RouteRemoveSubjectSelector(
         var sourceFacts = ProjectSource(request.SourceReference, resolution, source);
         formation = formation with { Source = sourceFacts };
         if (!TryReadForm(source.Base.Form, out var form, out var kind)
-            || !catalogue.Layout.IsImplicitContentDestination(source.Identity.CanonicalBasePath))
+            || !catalogue.Layout.IsImplicitContentDestination(source.Identity.CanonicalBasePath)
+                && RouteRemoveOutsideBoundaryInspector.Find(catalogue.Layout, source.Identity.CanonicalBasePath) is null)
         {
             return new RouteRemoveSubjectDiscoveryResult(
                 discovery: null,
@@ -209,6 +236,26 @@ internal sealed partial class RouteRemoveSubjectSelector(
         WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
+        var outside = RouteRemoveOutsideBoundaryInspector.Find(discovery.Catalogue.Layout, discovery.SelectedSource.Base.CanonicalPath);
+        if (outside is not null)
+        {
+            var attempted = SourceReferenceParser.Parse(discovery.Request.ResolutionReference).AttemptedPath;
+            var expected = attempted is not null && SourceOverwritePath.HasSuffix(attempted)
+                ? SourceOverwritePath.ReadBasePath(attempted) : attempted;
+            var cause = expected != discovery.SelectedSource.Base.CanonicalPath
+                ? "An outside source cannot redirect removal to another logical coordinate."
+                : !RouteRemoveOutsideBoundaryInspector.HasParentChain(discovery.Catalogue, expected, discovery.Kind == RouteRemoveSubjectKind.Category,
+                    layoutRead, cancellationToken)
+                    ? "The selected outside source requires one complete unambiguous structural parent chain."
+                    : RouteRemoveOutsideBoundaryInspector.Validate(layoutRead, expected, cancellationToken);
+            foreach (var layer in discovery.SelectedSource.Overwrite is { } overwrite
+                ? new[] { discovery.SelectedSource.Base, overwrite } : new[] { discovery.SelectedSource.Base })
+                cause ??= RouteRemoveOutsideBoundaryInspector.Validate(layoutRead, layer.CanonicalPath, cancellationToken);
+            if (cause is not null)
+                return new RouteRemoveSubjectSelection(null, Boundary(RouteRemoveBoundary.Start(discovery.Request) with { Source = discovery.Source },
+                    RouteRemoveFindingCode.SourceUnsafe, CliSemanticStatus.Blocked, expected, cause));
+        }
+
         var routeFacts = await _routeFactsResolver.ResolveAsync(
             new SourceRouteFactsRequest(discovery.Catalogue, discovery.Catalogue.SelectAll()),
             new SourceDocumentReader(discovery.Request.Workspace),
@@ -237,6 +284,8 @@ internal sealed partial class RouteRemoveSubjectSelector(
             : new RouteRemoveSubjectSelection(
                 new RouteRemoveResolvedSubject
                 {
+                    LayoutRead = layoutRead,
+                    OutsideRoute = outside,
                     Request = discovery.Request,
                     Source = discovery.Source,
                     Kind = discovery.Kind,

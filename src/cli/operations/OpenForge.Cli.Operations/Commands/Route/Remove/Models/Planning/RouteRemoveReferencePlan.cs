@@ -23,6 +23,8 @@ internal sealed record RouteRemoveReferenceDocumentPlan
     public required string IntendedText { get; init; }
 
     public ImmutableArray<RouteRemoveReferenceDocumentEdit> Edits { get; init; } = [];
+
+    internal ImmutableArray<RouteRemoveReferenceDocumentEdit> RowEdits { get; init; } = [];
 }
 
 internal sealed record RouteRemoveReferenceDocumentEdit

@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 
@@ -96,6 +97,7 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
         RouteRemoveResolvedSubject expected,
         RouteRemoveResolvedSubject actual)
         => expected.Source == actual.Source
+            && expected.OutsideRoute == actual.OutsideRoute
             && expected.Kind == actual.Kind
             && LogicalSourceMatches(expected.SelectedSource, actual.SelectedSource)
             && CatalogueMatches(expected.Catalogue, actual.Catalogue)
@@ -124,6 +126,12 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
             && expected.Sources.Count == actual.Sources.Count
             && expected.Sources.Zip(actual.Sources).All(pair =>
                 LogicalSourceMatches(pair.First, pair.Second))
+            && expected.Aliases.OrderBy(pair => pair.Key, StringComparer.Ordinal)
+                .SequenceEqual(actual.Aliases.OrderBy(pair => pair.Key, StringComparer.Ordinal))
+            && expected.IncludedRows.Count == actual.IncludedRows.Count
+            && expected.IncludedRows.Zip(actual.IncludedRows).All(pair => pair.First.Path == pair.Second.Path
+                && pair.First.ParentPath == pair.Second.ParentPath && pair.First.PhysicalState == pair.Second.PhysicalState
+                && pair.First.AliasOf == pair.Second.AliasOf && EntryMatches(pair.First.Entry, pair.Second.Entry))
             && expected.Issues.Count == actual.Issues.Count
             && expected.Issues.Zip(actual.Issues).All(pair =>
                 pair.First.Stage == pair.Second.Stage
@@ -135,6 +143,8 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
     private static bool LogicalSourceMatches(SourceLogicalSource expected, SourceLogicalSource actual)
         => expected.Identity.AutomaticId == actual.Identity.AutomaticId
             && expected.Identity.CanonicalBasePath == actual.Identity.CanonicalBasePath
+            && expected.IncludedParentPath == actual.IncludedParentPath
+            && EntryMatches(expected.IncludedEntry, actual.IncludedEntry)
             && LayerMatches(expected.Base, actual.Base)
             && (expected.Overwrite, actual.Overwrite) switch
             {
@@ -142,6 +152,12 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
                 ({ } left, { } right) => LayerMatches(left, right),
                 _ => false,
             };
+
+    private static bool EntryMatches(SourceGeneratedEntry? expected, SourceGeneratedEntry? actual)
+        => expected is null ? actual is null : actual is not null
+            && expected.Description == actual.Description && expected.Destination == actual.Destination
+            && expected.Span == actual.Span && expected.Tags.SequenceEqual(actual.Tags)
+            && expected.ApplyTo.Select(pattern => pattern.Text).SequenceEqual(actual.ApplyTo.Select(pattern => pattern.Text), StringComparer.Ordinal);
 
     private static bool LayerMatches(SourceLayer expected, SourceLayer actual)
         => expected.CanonicalPath == actual.CanonicalPath
@@ -180,12 +196,15 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
                 pair.First.SourcePath == pair.Second.SourcePath
                 && SnapshotMatches(pair.First.Snapshot, pair.Second.Snapshot)
                 && pair.First.IntendedText == pair.Second.IntendedText
-                && pair.First.Edits.SequenceEqual(pair.Second.Edits));
+                && pair.First.Edits.SequenceEqual(pair.Second.Edits)
+                && pair.First.RowEdits.SequenceEqual(pair.Second.RowEdits));
 
     private static bool NavigationMatches(
         RouteRemoveNavigationPlan expected,
         RouteRemoveNavigationPlan actual)
         => expected.Request.IntendedSources.Length == actual.Request.IntendedSources.Length
+            && expected.ReadonlyInputs.Length == actual.ReadonlyInputs.Length
+            && expected.ReadonlyInputs.Zip(actual.ReadonlyInputs).All(pair => SnapshotMatches(pair.First, pair.Second))
             && expected.Request.IntendedSources.Zip(actual.Request.IntendedSources).All(pair =>
                 LogicalSourceMatches(pair.First, pair.Second))
             && expected.GeneratedNavigation.Coverage == actual.GeneratedNavigation.Coverage

@@ -14,7 +14,14 @@ removal contracts with persistent intent and explicit managed-path removal.
 
 ## Workspace Layout
 
-Expand category exclusions through the layout, including absent targets. Protect fixed controls, the main root and its ancestors, update selected-loader and native Skills navigation, and revalidate the layout under the lease.
+Expand category exclusions through the layout, including absent targets. Protect fixed controls, the main root and its ancestors, every outside registration and containing ancestor, and all canonical or recognized outside root entrypoints. Protection applies to absent paths and overwrite-selected bases too. Preserve existing primary and native navigation rules and revalidate the layout under the lease.
+
+Preliminary dispatch supplies classification only. Delegate eligible outside
+Markdown leaves and category directories to Route Remove. Final Path planning
+observes current registration and rejects newly route-eligible or protected
+targets rather than falling through after registration drift. Do not invoke a
+nested mutation under a held lease. Missing directory intent alone cannot prove
+a former category's complete route absence.
 
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
 

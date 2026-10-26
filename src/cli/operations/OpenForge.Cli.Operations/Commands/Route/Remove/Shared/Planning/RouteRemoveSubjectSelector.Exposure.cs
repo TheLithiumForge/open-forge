@@ -42,6 +42,8 @@ internal sealed partial class RouteRemoveSubjectSelector
         RouteNavigationExposure exposure,
         SourceSharing sharing)
     {
+        if (RouteRemoveOutsideBoundaryInspector.Find(discovery.Catalogue.Layout, discovery.SelectedSource.Base.CanonicalPath) is not null)
+            return false;
         if (discovery.Kind != RouteRemoveSubjectKind.Leaf || !sharing.Includes(discovery.SelectedSource.Identity.CanonicalBasePath))
         {
             return false;
