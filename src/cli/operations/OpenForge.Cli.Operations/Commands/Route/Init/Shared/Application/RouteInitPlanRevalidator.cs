@@ -1,6 +1,9 @@
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Application;
 
@@ -28,7 +31,15 @@ internal sealed class RouteInitPlanRevalidator(RouteInitPlanBuilder planBuilder)
         RouteInitPlanBuild fresh;
         try
         {
-            fresh = await _planBuilder.BuildAsync(original.Request, cancellationToken)
+            var validator = new FileExpectationValidator(new PhysicalPathResolver());
+            foreach (var expectation in original.LayoutRead.Expectations)
+            {
+                var validation = await validator.ValidateAsync(original.Request.Workspace, expectation, cancellationToken).ConfigureAwait(false);
+                if (validation.State == FileExpectationValidationState.Cancelled) return Cancelled();
+                if (validation.State != FileExpectationValidationState.Matched)
+                    return new(RouteInitPlanRevalidationState.Changed, validation.Cause);
+            }
+            fresh = await _planBuilder.BuildAsync(original.Request, original.LayoutRead, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

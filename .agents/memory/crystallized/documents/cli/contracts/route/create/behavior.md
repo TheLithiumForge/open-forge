@@ -11,7 +11,7 @@ open-forge:
 
 Build destinations from the layout and stop ancestor traversal at the relevant primary content root or selected outside anchor. Apply ordinal authority checks and revalidate the layout under the lease.
 
-For an exact outside destination, retain its available registered boundary and existing recognized anchor through discovery, planning and verification. Stop ancestry at that anchor, preserve unlisted membership and add no Loader row. Keep implicit package permission separate from explicit route maintenance. The same observation must support each selected physical target before snapshots and effects.
+For an exact outside destination, retain its available registered boundary and existing recognized anchor through discovery, planning and verification. One existing canonical or recognized compatibility entrypoint can supply that anchor. Preserve its filename and create no canonical sibling. Missing and ambiguous anchors remain blocked. A missing declared catalogue destination in the Loader does not replace outside admission when exactly one recognized anchor exists. Keep that authored row unchanged and retain other Loader safety boundaries. Stop ancestry at that anchor, preserve unlisted membership and add no Loader row. Keep implicit package permission separate from explicit route maintenance. The same observation must support each selected physical target before snapshots and effects.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
 

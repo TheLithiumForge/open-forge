@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-The default inventory covers the selected main root, native Skills and active included files. A custom root does not change short IDs or literal path operands.
+The default universe includes eligible primary content, registered outside inventory and active included files. Unlisted registered files remain discoverable. Outside sources keep exact `./path` identities. Row metadata and inherited conditions retain their meaning when a source is both inventoried and included. Source-universe filters and working-path applicability remain independent.
 
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
@@ -103,7 +103,7 @@ Follow the [shared help template](../shared/global-flags/interface.md#--help): c
 
 | Flag                              | Role          | Accepted value                            | Omission                                                            | Repetition, ordering, and composition                                                                |
 | --------------------------------- | ------------- | ----------------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `--include=<source-reference>`    | Selection     | One shared source reference               | Start from the normal complete eligible primary-content Markdown and active included-file universe | Repeatable. Occurrences form a union of source selections.                                           |
+| `--include=<source-reference>`    | Selection     | One shared source reference               | Start from the normal complete eligible Markdown universe from primary content and registered outside routes, plus active included files | Repeatable. Occurrences form a union of source selections.                                           |
 | `--exclude=<source-reference>`    | Selection     | One shared source reference               | Subtract nothing                                                    | Repeatable. Occurrences form a union of exclusions, and exclusions win overlap.                      |
 | `--for=<workspace-relative-path>` | Applicability | One workspace-relative file path          | Keep the existing candidate universe when omitted                   | Repeatable. Paths form one normalized working set; duplicates have no additional effect.             |
 | `--tag=<tag>`                     | Selection     | One tag query value                       | No tag predicate is added                                           | Repeatable. Each occurrence adds one scalar predicate in command-line order.                         |
@@ -511,7 +511,7 @@ Each status has one representative native text transcript above. JSON uses the s
 - `find` does not infer applicability, scope, authority,
   loading, or current truth from a match.
 - `find` does not follow ordinary outgoing links. Outside the primary content locations, it searches
-  only active included files and listed catalogue descendants.
+  registered outside inventory, active included files and listed catalogue descendants.
 - `find` does not build the complete context graph.
 - `find` does not support grouped Boolean expressions,
   precedence, or negation.
@@ -605,6 +605,9 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
   `.md` suffix physically contained below the selected workspace’s primary content locations
   directory. A candidate must contain valid UTF-8 before it can become an
   inspectable Markdown layer.
+- Registered outside directories also contribute eligible routed and unrouted
+  Markdown, including files absent from Entries. Their IDs retain exact `./path`
+  identities. Registration creates no loading membership.
 - The universe includes routed and unrouted Markdown files.
 - The universe includes the Loader and `entrypoints`.
 - The universe includes `SKILL.md` and Markdown Skill resources.
@@ -619,8 +622,9 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
   are excluded.
 - Active included leaves and descendants reached through included Markdown
   catalogues are also candidates. Their row metadata supplies descriptions, tags
-  and conditions. Markdown headings and tags remain searchable. Unlisted sibling
-  files and ordinary outgoing link targets stay excluded.
+  and conditions even when those sources are also inventoried. Markdown headings
+  and tags remain searchable. A file include does not discover unlisted siblings
+  or ordinary outgoing link targets.
 - Symlinks, junctions, aliases, and other identities that escape
   the selected workspace are not valid sources. An encountered unsafe candidate
   affects coverage.
@@ -901,7 +905,7 @@ predicates using AND.
   universe regardless of argument order. Equivalent or overlapping selectors
   have no additional effect.
 - When `--include` is omitted, Find starts from its existing
-  normal complete eligible primary-content Markdown and active included-file universe defined in [Workspace
+  normal complete eligible Markdown universe from primary content and registered outside routes, plus active included files defined in [Workspace
   And Source Universe](#workspace-and-source-universe). When `--exclude` is
   omitted, it subtracts nothing. An invocation with neither flag therefore
   selects the same universe and operation as before these filters were added.
@@ -938,8 +942,9 @@ predicates using AND.
   non-interactive uses do not prompt. An unsafe or escaping physical boundary
   is blocked; no selector resolution guesses or bypasses it.
 
-For an included catalogue outside the primary content locations, expansion follows only its listed
-parent-child tree. A leaf expands to itself. This does not scan a physical folder.
+A registered outside catalogue selects its bounded inventory scope. An ordinary
+included catalogue expands only its retained listed parent-child tree. A leaf
+expands to itself. A file include does not scan a physical folder.
 
 ### Filtered Coverage, Results, And Ordering
 

@@ -11,6 +11,8 @@ internal sealed record RouteCreateTarget
     public string? Id { get; init; }
 
     public string? Path { get; init; }
+
+    internal string? MissingParentEntrypoint { get; init; }
 }
 
 internal sealed record RouteCreateParent

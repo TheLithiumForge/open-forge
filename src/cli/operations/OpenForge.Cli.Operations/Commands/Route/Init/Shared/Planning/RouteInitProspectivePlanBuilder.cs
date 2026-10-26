@@ -18,6 +18,11 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
+using OpenForge.Cli.Core.Commands.Shared.ReferenceMaintenance;
+using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata;
+using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
+using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -87,7 +92,11 @@ internal sealed class RouteInitProspectivePlanBuilder
                 incomplete);
         }
 
+        if (ReadOutsideEffectBoundary(inspection, intended, projection) is { } protection)
+            return Stopped(inspection, RouteInitFindingCode.TargetUnsafe, protection, incomplete: false);
+
         IReadOnlyList<RouteInitProspectiveSourceContent> effectSources;
+        var readonlySnapshots = ImmutableArray<FileStateSnapshot>.Empty;
         try
         {
             effectSources = await BuildEffectSourcesAsync(
@@ -98,6 +107,19 @@ internal sealed class RouteInitProspectivePlanBuilder
                     cancellationToken,
                     inspection.Restoration)
                 .ConfigureAwait(false);
+            if (inspection.Target.CanonicalPath is { } path
+                && inspection.Catalogue.Catalogue.Layout.TryGetMaintenanceBoundary(path, out var boundary)
+                && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside)
+            {
+                var snapshots = ImmutableArray.CreateBuilder<FileStateSnapshot>();
+                foreach (var read in inspection.Current.Reads)
+                {
+                    snapshots.Add(await ReadSourceSnapshotAsync(request, read.Base, cancellationToken).ConfigureAwait(false));
+                    if (read.Overwrite is { } overwrite)
+                        snapshots.Add(await ReadSourceSnapshotAsync(request, overwrite, cancellationToken).ConfigureAwait(false));
+                }
+                readonlySnapshots = snapshots.ToImmutable();
+            }
         }
         catch (RouteInitPlanningException exception)
         {
@@ -143,7 +165,34 @@ internal sealed class RouteInitProspectivePlanBuilder
             projection,
             directoryStates,
             effectSources,
-            effectPlan));
+            effectPlan)
+        { ReadonlySnapshots = readonlySnapshots });
+    }
+
+    private static string? ReadOutsideEffectBoundary(RouteInitInspectionFacts inspection,
+        RouteInitIntendedChain intended, GeneratedNavigationProjection projection)
+    {
+        var layout = inspection.Catalogue.Catalogue.Layout;
+        if (inspection.Target.CanonicalPath is not { } path || !layout.TryGetMaintenanceBoundary(path, out var boundary)
+            || boundary.Kind != WorkspaceMaintenanceBoundaryKind.Outside) return null;
+        var policy = ReferenceProtectionReader.Read(inspection.LayoutRead).Policy;
+        if (policy is null) return "The outside Route Init protection policy is unavailable.";
+        foreach (var entry in intended.Entries)
+        {
+            var entryPath = entry.Source.Identity.CanonicalBasePath;
+            if (!entry.Chain.IsMissing && !projection.Regions.Any(region => region.CanonicalPath == entryPath
+                && region.Change?.RequiresUpdate == true)) continue;
+            if (WorkspaceRemovals.IsPathRemoved(layout, entryPath, policy.Settings)
+                || !new SourceSharing(policy.Ownership.Framework?.GitIgnoredRoutes ?? []).Includes(entryPath))
+                return "The outside Route Init effect is excluded by workspace policy.";
+            var protection = new RoutedMetadataCompletionPolicy().Protection(entryPath, policy);
+            var boundedEntries = !entry.Chain.IsMissing
+                && protection is RoutedMetadataEligibility.ManagedContent or RoutedMetadataEligibility.GeneratedContent;
+            if (protection != RoutedMetadataEligibility.Eligible && !boundedEntries
+                || policy.Ownership.Libraries.Any(library => library.Paths.Contains(entryPath, StringComparer.Ordinal)))
+                return "The outside Route Init effect is protected by workspace policy.";
+        }
+        return null;
     }
 
     private async ValueTask<IReadOnlyList<RouteInitProspectiveSourceContent>> BuildEffectSourcesAsync(
@@ -342,8 +391,12 @@ internal sealed class RouteInitProspectivePlanBuilder
         {
             canonicalDirectories.Add(
                 SourceLogicalPath.ReadParent(entry.Source.Identity.CanonicalBasePath));
-            canonicalDirectories.Add(layout.SourceRoots.Single(root =>
-                entry.Source.Identity.CanonicalBasePath.StartsWith(root + "/", StringComparison.Ordinal)));
+            if (layout.TryGetMaintenanceBoundary(entry.Source.Identity.CanonicalBasePath, out var boundary)
+                && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside)
+                canonicalDirectories.Add(boundary.DirectoryPath);
+            else
+                canonicalDirectories.Add(layout.SourceRoots.Single(root =>
+                    entry.Source.Identity.CanonicalBasePath.StartsWith(root + "/", StringComparison.Ordinal)));
         }
         if (restoration is not null)
         {
@@ -361,7 +414,9 @@ internal sealed class RouteInitProspectivePlanBuilder
         foreach (var directory in canonicalDirectories.ToArray())
         {
             var parent = SourceLogicalPath.ReadParent(directory);
-            while (layout.IsImplicitContentDestination(parent))
+            while (layout.IsImplicitContentDestination(parent)
+                || layout.TryGetMaintenanceBoundary(parent, out var boundary)
+                    && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside)
             {
                 canonicalDirectories.Add(parent);
                 parent = SourceLogicalPath.ReadParent(parent);

@@ -1,0 +1,3 @@
+./docs/team/links.md
+  out  :3:1   ../../target.md
+  out  :3:26   ../../target.md#details

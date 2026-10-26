@@ -1,0 +1,96 @@
+Workspace: <workspace>
+8 sources, about 0.2k tokens.
+=== AGENTS.md ===
+included because workspace entry
+order: 1
+layer: base
+# Workspace
+
+=== knowledge/main/loader.md (loader) ===
+included because Loader
+order: 2
+layer: base
+# Root
+
+## Entries
+
+- [Primary](rules/_rules.md) - #LoadNow
+- [Skills](../../.agents/skills/_skills.md) - #LoadNow
+- [First outside](../../docs/team/_team.md) - #LoadNow - applies to `src/**`
+- [Later outside](../../docs/team/_team.md) - #LoadNow - applies to `tests/**`
+
+=== knowledge/main/rules/_rules.md (rules) ===
+included because #LoadNow from knowledge/main/loader.md
+route: rules
+order: 3
+layer: base
+---
+open-forge:
+  description: Primary
+  tags: [LoadNow]
+---
+# Root
+
+## Entries
+
+
+
+=== .agents/skills/_skills.md (skills) ===
+included because #LoadNow from knowledge/main/loader.md
+route: skills
+order: 4
+layer: base
+---
+open-forge:
+  description: Skills
+  tags: [LoadNow]
+---
+# Root
+
+## Entries
+
+
+
+=== docs/team/_team.md ===
+included because #LoadNow from knowledge/main/loader.md
+order: 5
+layer: base
+---
+open-forge:
+  description: Team
+  tags: []
+---
+# Team
+
+[Ordinary](unlisted.md)
+
+## Entries
+
+- [First rule](rule.md) - #LoadNow - applies to `**/*.cs`
+- [Later rule](rule.md) - #LoadNow - applies to `tests/**`
+- [Nested](nested/_nested.md) - #LoadNow - applies to `**/*.cs`
+
+=== docs/team/rule.md ===
+included because #LoadNow from docs/team/_team.md
+order: 6
+layer: base
+# Rule
+
+Authored outside rule.
+
+=== docs/team/nested/_nested.md ===
+included because #LoadNow from docs/team/_team.md
+order: 7
+layer: base
+# Root
+
+## Entries
+
+- [Deep](deep.md) - #LoadNow
+- [Other parent](../rule.md) - #LoadNow - applies to `tests/**`
+
+=== docs/team/nested/deep.md ===
+included because #LoadNow from docs/team/nested/_nested.md
+order: 8
+layer: base
+# Deep

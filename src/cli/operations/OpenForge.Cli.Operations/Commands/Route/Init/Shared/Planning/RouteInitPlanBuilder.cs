@@ -35,6 +35,14 @@ internal sealed class RouteInitPlanBuilder
 
         var layoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver())
             .ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        return await BuildAsync(request, layoutRead, cancellationToken).ConfigureAwait(false);
+    }
+
+    internal async ValueTask<RouteInitPlanBuild> BuildAsync(
+        RouteInitRequest request,
+        WorkspaceLayoutRead layoutRead,
+        CancellationToken cancellationToken)
+    {
         var build = await BuildCoreAsync(request, layoutRead, cancellationToken).ConfigureAwait(false);
         return build with { LayoutRead = layoutRead };
     }

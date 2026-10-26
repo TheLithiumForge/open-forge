@@ -1,4 +1,4 @@
 Cannot create docs/team/scope/note.md: docs/team/scope has no entrypoint, so the file cannot be listed. Create the route first.
 Workspace: <workspace>
 No files were changed.
-Next: open-forge route init ./docs/team/scope --workspace <workspace>
+Next: open-forge route init ./docs/team/_team.md --workspace <workspace>

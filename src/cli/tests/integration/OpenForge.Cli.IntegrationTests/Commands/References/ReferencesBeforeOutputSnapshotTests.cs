@@ -1,11 +1,29 @@
+using OpenForge.Cli.Core.Commands.References;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.References;
 
 [Trait("Feature", "command-output-snapshots"), Trait("Evidence", "Integration")]
 public sealed class ReferencesBeforeOutputSnapshotTests
 {
+    [Theory, InlineData(false), InlineData(true), Trait("Boundary", "Output")]
+    public async Task Outside(bool incoming)
+    {
+        using var workspace = new ReferencesOutsideWorkspace(ReferencesOutsideWorkspace.CustomRoot);
+        workspace.Register();
+        var before = workspace.Files.SnapshotHashes(includeRuntime: true);
+        await new ReadCommandOutputCapture(workspace.Files.Path).MatchDetailsAsync(new ReadOutputScenario
+        {
+            Situation = incoming ? "outside-incoming" : "outside-outgoing",
+            Arguments = [ReferencesDefinitions.CommandIdentity, SourceWorkspaceRelativePath.LiteralReferencePrefix
+                + (incoming ? ReferencesOutsideWorkspace.Target : ReferencesOutsideWorkspace.Leaf), ReferencesDefinitions.Direction.Name, incoming ? ReferencesDefinitions.In : ReferencesDefinitions.Out],
+            ExitCode = 0,
+        }, testName: $"{nameof(Outside)}_{incoming}");
+        Assert.Equal(before, workspace.Files.SnapshotHashes(includeRuntime: true));
+    }
+
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "References output preserves each direction and leaves source bytes unchanged")]
     [InlineData("links-both", 0)]

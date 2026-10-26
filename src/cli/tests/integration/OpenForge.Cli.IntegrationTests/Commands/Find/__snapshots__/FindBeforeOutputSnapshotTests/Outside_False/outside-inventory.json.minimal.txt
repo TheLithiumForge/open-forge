@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "4 sources match.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "matches": 4,
+    "sourcesInspected": 4,
+    "sourcesCandidates": 4
+  },
+  "limitations": [],
+  "data": {
+    "matches": [
+      {
+        "id": "./docs/team/_team.md",
+        "path": "docs/team/_team.md",
+        "description": "First authored policy"
+      },
+      {
+        "id": "./docs/team/rule.md",
+        "path": "docs/team/rule.md",
+        "description": "First authored policy"
+      },
+      {
+        "id": "./docs/team/unlisted.md",
+        "path": "docs/team/unlisted.md",
+        "description": "Unrouted inventory"
+      },
+      {
+        "id": "loader",
+        "path": "knowledge/main/loader.md",
+        "description": "Loader"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

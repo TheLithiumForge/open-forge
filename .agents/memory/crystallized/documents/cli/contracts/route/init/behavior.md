@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-Map package restoration destinations through the layout, bound ancestry at the relevant root and apply ordinal content checks. Retain and revalidate the layout observation before effects.
+Map package restoration destinations through the layout, bound ancestry at the relevant root and apply ordinal content checks. Generic outside initialization requires the selected registered directory to be available, accepts exact entrypoint operands and stops ancestry and effects at its anchor. It may restore the missing canonical anchor without changing registration or Loader membership. Keep primary short-ID mapping and refuse outside Framework scaffolding. Retain and revalidate the layout observation and physical expectations before effects.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
 
@@ -202,9 +202,9 @@ is not stored in the lock. The operation adds no instance grouping.
 
 ### Chain selection
 
-Inspect every folder from the first target segment through the final target
-folder, in chain order. For each folder, establish the current recognized
-entrypoint set:
+Inspect every primary target folder from its first segment, or every selected
+outside folder from its registered anchor, through the final target folder in
+chain order. For each folder, establish the current recognized entrypoint set:
 
 1. Exactly one recognized entrypoint is an existing authored input to preserve
    and use.

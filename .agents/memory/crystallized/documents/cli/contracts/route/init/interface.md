@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-Generic initialization accepts literal custom-root paths. Framework restoration uses the selected layout, with Skills fixed at `.agents/skills`. It does not move an installation.
+Generic initialization accepts literal custom-root paths and exact entrypoint paths in an available registered outside route. It can restore that route's missing canonical anchor or initialize descendants, including when the route is unlisted. The chain stops at the registration and does not add a Loader row. Directory operands remain invalid. Framework restoration stays within the selected primary layout, with Skills fixed at `.agents/skills`. It does not move an installation.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
@@ -202,8 +202,9 @@ rules.
 
 ## Chain Selection
 
-The command examines every folder from the first target segment through the
-final target folder. For each folder:
+Within primary content, the command examines every folder from the first target
+segment through the final target folder. For a registered outside target, it
+starts at the registered anchor and stops at the target folder. For each folder:
 
 1. One recognized entrypoint already exists: preserve and use it.
 2. No recognized entrypoint exists: plan one canonical entrypoint.

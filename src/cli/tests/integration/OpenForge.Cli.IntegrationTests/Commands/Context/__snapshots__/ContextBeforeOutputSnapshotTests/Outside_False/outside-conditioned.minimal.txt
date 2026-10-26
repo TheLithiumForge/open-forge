@@ -1,0 +1,68 @@
+=== AGENTS.md ===
+# Workspace
+
+=== knowledge/main/loader.md (loader) ===
+# Root
+
+## Entries
+
+- [Primary](rules/_rules.md) - #LoadNow
+- [Skills](../../.agents/skills/_skills.md) - #LoadNow
+- [First outside](../../docs/team/_team.md) - #LoadNow - applies to `src/**`
+- [Later outside](../../docs/team/_team.md) - #LoadNow - applies to `tests/**`
+
+=== knowledge/main/rules/_rules.md (rules) ===
+---
+open-forge:
+  description: Primary
+  tags: [LoadNow]
+---
+# Root
+
+## Entries
+
+
+
+=== .agents/skills/_skills.md (skills) ===
+---
+open-forge:
+  description: Skills
+  tags: [LoadNow]
+---
+# Root
+
+## Entries
+
+
+
+=== docs/team/_team.md ===
+---
+open-forge:
+  description: Team
+  tags: []
+---
+# Team
+
+[Ordinary](unlisted.md)
+
+## Entries
+
+- [First rule](rule.md) - #LoadNow - applies to `**/*.cs`
+- [Later rule](rule.md) - #LoadNow - applies to `tests/**`
+- [Nested](nested/_nested.md) - #LoadNow - applies to `**/*.cs`
+
+=== docs/team/rule.md ===
+# Rule
+
+Authored outside rule.
+
+=== docs/team/nested/_nested.md ===
+# Root
+
+## Entries
+
+- [Deep](deep.md) - #LoadNow
+- [Other parent](../rule.md) - #LoadNow - applies to `tests/**`
+
+=== docs/team/nested/deep.md ===
+# Deep

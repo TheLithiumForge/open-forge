@@ -2,10 +2,10 @@ Cannot create docs/team/scope/note.md: docs/team/scope has no entrypoint, so the
 Workspace: <workspace>
   Error  docs/team/scope  Parent route is missing
          docs/team/scope has no entrypoint, so the file cannot be listed. Create the route first.
-         open-forge route init ./docs/team/scope --workspace <workspace>
+         open-forge route init ./docs/team/_team.md --workspace <workspace>
          Create the missing parent route, then rerun Route Create.
   description: Authored destination
   tags: Fixture
 No files were changed.
   Create the missing parent route, then rerun Route Create.
-Next: open-forge route init ./docs/team/scope --workspace <workspace>
+Next: open-forge route init ./docs/team/_team.md --workspace <workspace>

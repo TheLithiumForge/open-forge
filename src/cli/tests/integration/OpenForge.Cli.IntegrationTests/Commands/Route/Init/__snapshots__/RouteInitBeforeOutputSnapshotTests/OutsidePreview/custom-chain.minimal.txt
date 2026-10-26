@@ -1,0 +1,7 @@
+Would create 3 entrypoints for ./docs/team/design/decisions/_decisions.md.
+Workspace: <workspace>
+  docs/team/_team.md
+  docs/team/design/_design.md
+  docs/team/design/decisions/_decisions.md
+  Its description and tags are placeholders. Edit them before relying on this route.
+No files were changed.

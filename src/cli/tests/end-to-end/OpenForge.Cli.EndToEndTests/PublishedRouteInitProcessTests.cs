@@ -1,10 +1,63 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedRouteInitProcessTests
 {
+    [Theory(DisplayName = "Published Init restores an unlisted outside anchor and nested chain without changing Loader or settings")]
+    [InlineData(PublishedTokens.Sources.AgentsRoot), InlineData("knowledge/main")]
+    [Trait("Feature", "route-init"), Trait("Evidence", "EndToEnd")]
+    public async Task RegisteredOutsideChainConverges(string mainRoot)
+    {
+        const string outside = "docs/team";
+        const string child = outside + "/decisions";
+        const string anchor = outside + "/_team" + PublishedTokens.Layout.MarkdownExtension;
+        const string leaf = child + "/_decisions" + PublishedTokens.Layout.MarkdownExtension;
+        using var workspace = TemporaryWorkspace.Create(nameof(RegisteredOutsideChainConverges));
+        using var locks = PublishedWorkspaceLockStore.Create(nameof(RegisteredOutsideChainConverges));
+        _ = locks.Track(workspace.Path);
+        workspace.CreateDirectory(outside);
+        workspace.WriteText(PublishedTokens.Settings.RelativePath,
+            $$"""{"{{PublishedTokens.Settings.SchemaVersionProperty}}":{{PublishedTokens.Settings.SchemaVersion}},"{{PublishedTokens.Settings.MainRootProperty}}":"{{mainRoot}}","{{PublishedTokens.Settings.OutsideRoutesProperty}}":["{{outside}}"]}""");
+        var loader = mainRoot + "/" + PublishedTokens.Layout.LoaderFileName;
+        workspace.WriteText(loader, OpenForgeDocumentSeed.GeneratedEntries(PublishedTokens.Metadata.EmptyEntry));
+        workspace.WriteBytes("unrelated.bin", [0, 255, 13, 10]);
+        var before = workspace.SnapshotHashes();
+        var executable = PublishedExecutableTarget.Discover();
+        string[] arguments = [PublishedTokens.Route.Command, PublishedTokens.RouteInit.Command,
+            PublishedTokens.Layout.LiteralReferencePrefix + leaf,
+            PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat];
+        try
+        {
+            var preview = await PublishedProcessTestSupport.RunWithoutWritesAsync(executable, workspace.Path,
+                workspace.SnapshotHashes, [.. arguments, PublishedTokens.RouteInit.DryRun], locks.EnvironmentVariables);
+            Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, preview.ExitCode);
+            Assert.Empty(preview.StandardError);
+            var applied = await PublishedProcessTestSupport.RunAsync(executable, workspace.Path, arguments, locks.EnvironmentVariables);
+            Assert.True(applied.ExitCode == PublishedTokens.Statuses.CompleteExitCode, applied.StandardOutput + applied.StandardError);
+            Assert.Empty(applied.StandardError);
+            Assert.True(File.Exists(workspace.Combine(anchor)));
+            Assert.True(File.Exists(workspace.Combine(leaf)));
+            var after = workspace.SnapshotHashes();
+            foreach (var entry in before) Assert.Equal(entry.Value, after[entry.Key]);
+            Assert.Equal(new[] { anchor, leaf }, after.Keys.Except(before.Keys, StringComparer.Ordinal).Order(StringComparer.Ordinal));
+            var repeat = await PublishedProcessTestSupport.RunWithoutWritesAsync(executable, workspace.Path,
+                workspace.SnapshotHashes, arguments, locks.EnvironmentVariables);
+            Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, repeat.ExitCode);
+            using var report = JsonDocument.Parse(repeat.StandardOutput);
+            Assert.Empty(report.RootElement.GetProperty(PublishedTokens.Json.Effects).EnumerateArray());
+        }
+        finally
+        {
+            foreach (var path in new[] { leaf, anchor })
+                if (File.Exists(workspace.Combine(path))) File.Delete(workspace.Combine(path));
+            if (Directory.Exists(workspace.Combine(child))) Directory.Delete(workspace.Combine(child));
+        }
+    }
+
     [Fact(DisplayName = "Published generic Route Init emits canonical atomic metadata for a comma-separated apply-to value"), Trait("Feature", "route-init"), Trait("Evidence", "EndToEnd")]
     public async Task CommaSeparatedApplyToEmitsCanonicalAtomicList()
     {

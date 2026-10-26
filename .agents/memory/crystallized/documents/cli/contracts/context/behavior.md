@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-Use the catalogue’s retained layout and identities through closure, linked reads and result projection. Resolve loader links from its actual directory and preserve included aliases.
+Use the combined catalogue's retained layout, identities and authored included rows through closure, linked reads and result projection. Resolve loader links from its actual directory and preserve included aliases. Build one logical source for each merged outside target. Inventory must not erase row conditions, reorder authored edges, replace the first-reaching parent or create startup membership.
 
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
 
@@ -307,8 +307,8 @@ When a link directly names an overwrite companion, resolve the complete logical
 source. Record the incoming link to the overwrite layer, then emit the base and
 overwrite in that order. Never emit or select the overwrite alone.
 
-A contained local target outside the primary content locations is not an Open Forge source reference,
-route, or managed source. It has no automatic ID, so the result uses the public
+A contained local target outside the primary content locations that is neither
+registered nor included has no established logical source or automatic ID. The result uses the public
 `ID: none` and canonical workspace-relative path behavior defined by the
 [Interface Contract](interface.md#link-rules).
 

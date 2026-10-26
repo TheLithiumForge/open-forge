@@ -15,7 +15,6 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
-using OpenForge.Cli.Core.Framework.Sources.Shared.Includes;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
@@ -37,7 +36,7 @@ internal sealed class ContextGraphBuilder
         var observation = await new WorkspaceLayoutReader(paths).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
         var layout = observation.Layout ?? throw new InvalidOperationException("The workspace layout is unavailable.");
         var session = await new SourceReadSessionReader(paths)
-            .ReadAsync(layout, cancellationToken).ConfigureAwait(false);
+            .ReadIncludedAsync(layout, cancellationToken).ConfigureAwait(false);
         var catalogue = session.Catalogue;
         cancellationToken.ThrowIfCancellationRequested();
         var reader = session.DocumentReader;
@@ -71,37 +70,26 @@ internal sealed class ContextGraphBuilder
                 ? SourceGeneratedEntriesFacts.Unavailable("The source document is unavailable.")
                 : SourceGeneratedEntriesParser.Parse(baseDocument);
             var route = routeFacts.RouteFacts.SingleOrDefault(fact => ReferenceEquals(fact.Identity, source.Identity));
+            var included = source.IncludedEntry;
+            // Retain the included loading and presentation policy on the merged logical source.
             sources.Add(new ContextGraphSource(
                 layout: layout,
                 logicalSource: source,
-                id: source.Identity.AutomaticId,
+                id: included is null ? source.Identity.AutomaticId : null,
                 canonicalPath: source.Identity.CanonicalBasePath,
-                form: source.Base.Form,
-                routeState: route?.State ?? SourceRouteState.Unrouted,
-                route: route?.Route,
+                form: included is null ? source.Base.Form : SourceDocumentForm.Markdown,
+                routeState: included is null ? route?.State ?? SourceRouteState.Unrouted : SourceRouteState.Unrouted,
+                route: included is null ? route?.Route : null,
                 metadata: metadata,
-                generatedEntries: generated,
-                layers: layers));
-        }
-
-        var included = await new SourceIncludedEntryReader().ReadEntriesAsync(catalogue, reader, cancellationToken).ConfigureAwait(false);
-        foreach (var source in included.Sources)
-        {
-            var layer = await ReadLayerAsync(reader, source.Base, cancellationToken).ConfigureAwait(false);
-            var document = layer.Document ?? throw new InvalidOperationException("An included source requires a readable document.");
-            var entry = source.IncludedEntry ?? throw new InvalidOperationException("An included source requires its catalogue row.");
-            sources.Add(new ContextGraphSource(layout: layout, logicalSource: null, id: null, canonicalPath: source.Base.CanonicalPath,
-                form: SourceDocumentForm.Markdown, routeState: SourceRouteState.Unrouted, route: null,
-                metadata: _metadataParser.Parse(document, SourceDocumentForm.Markdown),
-                generatedEntries: SourceGeneratedDestinationResolver.IsMarkdown(source.Base.CanonicalPath)
-                    ? SourceGeneratedEntriesParser.Parse(document) : SourceGeneratedEntriesFacts.Absent, layers: [layer])
+                generatedEntries: included is not null && !SourceGeneratedDestinationResolver.IsMarkdown(source.Base.CanonicalPath)
+                    ? SourceGeneratedEntriesFacts.Absent : generated,
+                layers: layers)
             {
                 LinkedParentPath = source.IncludedParentPath,
-                LinkedApplyTo = ApplyToMetadataFacts.FromEntryLine(entry.ApplyTo),
+                LinkedApplyTo = included is null ? ApplyToMetadataFacts.Absent : ApplyToMetadataFacts.FromEntryLine(included.ApplyTo),
             });
         }
 
-        catalogue = SourceIncludedEntryReader.Extend(catalogue, included.Sources, included.Rows);
         return new ContextGraph(
             layoutRead: observation,
             catalogue: catalogue,

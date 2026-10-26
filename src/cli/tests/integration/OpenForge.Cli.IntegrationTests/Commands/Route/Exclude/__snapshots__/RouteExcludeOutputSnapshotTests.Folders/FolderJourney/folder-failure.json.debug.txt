@@ -56,8 +56,8 @@
       "outcome": "not-started",
       "reason": null,
       "owner": null,
-      "before": "{\r\n  \"schemaVersion\": 5,\r\n  \"other\": true,\r\n  \"outsideRoutes\": [\r\n    \"project/team notes\"\r\n  ],\r\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\r\n}",
-      "after": "{\r\n  \"schemaVersion\": 5,\r\n  \"other\": true,\r\n  \"outsideRoutes\": [],\r\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\r\n}"
+      "before": "{\n  \"schemaVersion\": 5,\n  \"other\": true,\n  \"outsideRoutes\": [\n    \"project/team notes\"\n  ],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\n}",
+      "after": "{\n  \"schemaVersion\": 5,\n  \"other\": true,\n  \"outsideRoutes\": [],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\n}"
     }
   ],
   "counts": {

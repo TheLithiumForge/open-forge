@@ -103,6 +103,8 @@ internal sealed record RouteInitProspectivePlanFacts
     internal ImmutableArray<RouteInitProspectiveSourceContent> EffectSources { get; }
 
     internal RouteInitProspectiveEffectPlan Effects { get; }
+
+    internal ImmutableArray<FileStateSnapshot> ReadonlySnapshots { get; init; } = [];
 }
 
 internal abstract record RouteInitProspectivePlanResult;

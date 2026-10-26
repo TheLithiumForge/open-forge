@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would create 3 entrypoints for ./docs/team/design/decisions/_decisions.md.",
+    "kind": "preview"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "route-init.needs-authoring",
+      "title": "Route needs authoring",
+      "message": "Its description and tags are placeholders. Edit them before relying on this route.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "./docs/team/design/decisions/_decisions.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": "docs/team/design",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "docs/team/design/decisions",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "docs/team/_team.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "---\nopen-forge:\n  description: Draft route for ./docs/team; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# team\n\nDraft route for ./docs/team; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- [Draft route for ./docs/team/design; replace this description before relying on it for selection](design/_design.md) - #NeedsAuthoring\n"
+    },
+    {
+      "path": "docs/team/design/_design.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "---\nopen-forge:\n  description: Draft route for ./docs/team/design; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# design\n\nDraft route for ./docs/team/design; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- [Draft route for ./docs/team/design/decisions; replace this description before relying on it for selection](decisions/_decisions.md) - #NeedsAuthoring\n"
+    },
+    {
+      "path": "docs/team/design/decisions/_decisions.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "---\nopen-forge:\n  description: Draft route for ./docs/team/design/decisions; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# decisions\n\nDraft route for ./docs/team/design/decisions; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- none - No entries - #Empty\n"
+    }
+  ],
+  "counts": {
+    "entrypointsCreated": 3,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": {
+      "id": "./docs/team/design/decisions/_decisions.md",
+      "path": "docs/team/design/decisions/_decisions.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": "docs/team/_team.md",
+        "outcome": "planned",
+        "needsAuthoring": true,
+        "content": "---\nopen-forge:\n  description: Draft route for ./docs/team; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# team\n\nDraft route for ./docs/team; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- [Draft route for ./docs/team/design; replace this description before relying on it for selection](design/_design.md) - #NeedsAuthoring\n"
+      },
+      {
+        "path": "docs/team/design/_design.md",
+        "outcome": "planned",
+        "needsAuthoring": true,
+        "content": "---\nopen-forge:\n  description: Draft route for ./docs/team/design; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# design\n\nDraft route for ./docs/team/design; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- [Draft route for ./docs/team/design/decisions; replace this description before relying on it for selection](decisions/_decisions.md) - #NeedsAuthoring\n"
+      },
+      {
+        "path": "docs/team/design/decisions/_decisions.md",
+        "outcome": "planned",
+        "needsAuthoring": true,
+        "content": "---\nopen-forge:\n  description: Draft route for ./docs/team/design/decisions; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# decisions\n\nDraft route for ./docs/team/design/decisions; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- none - No entries - #Empty\n"
+      }
+    ],
+    "listedIn": [],
+    "metadata": {
+      "description": "Draft route for ./docs/team/design/decisions; replace this description before relying on it for selection",
+      "responsibility": null,
+      "tags": [
+        "NeedsAuthoring"
+      ],
+      "sources": {
+        "description": "draft",
+        "responsibility": "default-omitted",
+        "tags": "draft"
+      }
+    },
+    "sections": [],
+    "verification": "not-requested"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

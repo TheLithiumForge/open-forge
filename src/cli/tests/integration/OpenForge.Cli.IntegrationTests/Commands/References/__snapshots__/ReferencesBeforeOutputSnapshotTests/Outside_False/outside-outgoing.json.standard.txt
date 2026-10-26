@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "./docs/team/links.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "incoming": null,
+    "outgoing": 2,
+    "sourcesScanned": null
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "id": "./docs/team/links.md",
+      "path": "docs/team/links.md"
+    },
+    "direction": "out",
+    "outgoing": [
+      {
+        "location": ":3:1",
+        "destination": "../../target.md",
+        "resolvedPath": "target.md",
+        "state": "complete"
+      },
+      {
+        "location": ":3:26",
+        "destination": "../../target.md#details",
+        "resolvedPath": "target.md",
+        "state": "complete"
+      }
+    ],
+    "coverage": {
+      "outgoing": "complete"
+    }
+  },
+  "recovery": null,
+  "next": null
+}

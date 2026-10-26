@@ -31,6 +31,8 @@ public sealed class RouteInitEnumMappingTests
             (SourceCatalogueIssueCode.IdentityCollision, false, RouteInitFindingCode.IdentityCollision, false),
             (SourceCatalogueIssueCode.PhysicalAlias, false, RouteInitFindingCode.IdentityCollision, false),
             (SourceCatalogueIssueCode.OrphanOverwrite, false, RouteInitFindingCode.IdentityCollision, false),
+            (SourceCatalogueIssueCode.EntrypointAmbiguous, false, RouteInitFindingCode.RouteAmbiguous, false),
+            (SourceCatalogueIssueCode.EntrypointCompatibilityCollision, false, RouteInitFindingCode.RouteAmbiguous, false),
         };
 
         foreach (var (code, isFramework, expectedCode, expectedIncomplete) in cases)

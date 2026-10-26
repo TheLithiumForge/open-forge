@@ -9,6 +9,10 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -117,11 +121,15 @@ internal sealed class RouteInitCurrentStateReader
 
     internal async ValueTask<RouteInitCurrentCatalogueFacts> ReadCatalogueAsync(
         WorkspaceLayout layout,
+        RouteInitTargetFacts target,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(layout);
         var catalogue = await _catalogueReader.ReadAsync(
-                new SourceCatalogueRequest(layout, layout.SourceRoots),
+                new SourceCatalogueRequest(layout,
+                    target.CanonicalPath is { } path && layout.TryGetMaintenanceBoundary(path, out var boundary)
+                        && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside
+                        ? [boundary.DirectoryPath] : layout.SourceRoots),
                 cancellationToken)
             .ConfigureAwait(false);
         return new RouteInitCurrentCatalogueFacts(
@@ -134,30 +142,41 @@ internal sealed class RouteInitCurrentStateReader
     internal async ValueTask<RouteInitCurrentStateFacts> ReadChainAsync(
         RouteInitCurrentCatalogueFacts current,
         RouteInitTargetFacts target,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken,
         string? restorationDirectory = null)
     {
         ArgumentNullException.ThrowIfNull(current);
         ArgumentNullException.ThrowIfNull(target);
-        var canonicalSegments = target.CanonicalSegments
-            ?? throw new ArgumentException(
-                "Route Init current-chain inspection requires an aligned target.",
-                nameof(target));
-        var canonicalPaths = RouteInitTargetPlanner.ReadChainPaths(current.Catalogue.Layout, target);
-        var chain = Enumerable.Range(1, canonicalSegments.Count)
-            .Select(index =>
+        var layout = current.Catalogue.Layout;
+        var canonicalPaths = RouteInitTargetPlanner.ReadChainPaths(layout, target);
+        var outside = target.CanonicalPath is { } path && layout.TryGetMaintenanceBoundary(path, out var boundary)
+            && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside;
+        var chain = canonicalPaths
+            .Select(canonical =>
             {
-                var id = string.Join('/', canonicalSegments.Take(index));
+                var id = SourceIdentity.DeriveId(layout, canonical)
+                    ?? throw new InvalidOperationException("A chain entrypoint requires its exact source identity.");
                 var occupants = current.Catalogue.FindAllById(id);
+                var recognized = (outside
+                    ? current.ObservedSources.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form)
+                        && SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath) == SourceLogicalPath.ReadParent(canonical))
+                    : occupants.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form))).ToArray();
                 return new RouteInitCurrentChainEntry(
-                    id,
-                    canonicalPaths[index - 1],
+                    outside && recognized.Length == 1 ? recognized[0].Identity.AutomaticId : id,
+                    canonical,
                     occupants,
-                    occupants.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form)));
+                    recognized);
             })
             .ToArray();
 
         var relevant = ReadRelevantSources(current, chain, restorationDirectory);
+        foreach (var canonical in canonicalPaths.Concat(relevant.SelectMany(source =>
+            source.Overwrite is { } overwrite
+                ? new[] { source.Base.CanonicalPath, overwrite.CanonicalPath } : [source.Base.CanonicalPath])))
+        {
+            RequireOutsidePhysicalTarget(layoutRead, canonical, cancellationToken);
+        }
         var reader = new SourceDocumentReader(current.Catalogue.Workspace);
         var reads = new List<RouteInitCurrentSourceRead>(relevant.Count);
         foreach (var source in relevant)
@@ -173,6 +192,47 @@ internal sealed class RouteInitCurrentStateReader
         }
 
         return new RouteInitCurrentStateFacts(current, target, chain, reads);
+    }
+
+    internal static void RequireOutsidePhysicalTarget(WorkspaceLayoutRead observation, string path, CancellationToken token)
+    {
+        if (observation.Layout is not { } layout || !layout.TryGetMaintenanceBoundary(path, out var boundary)
+            || boundary.Kind != WorkspaceMaintenanceBoundaryKind.Outside) return;
+        var outside = observation.OutsideRoutes.SingleOrDefault(route => route.Descriptor.DirectoryPath == boundary.DirectoryPath);
+        if (outside is not { State: WorkspaceOutsideRouteReadState.Available, PhysicalDirectory: { } physicalBoundary })
+            throw new RouteInitPlanningException(
+                outside?.State == WorkspaceOutsideRouteReadState.Unavailable
+                    ? RouteInitFindingCode.InspectionIncomplete : RouteInitFindingCode.TargetUnsafe,
+                "The selected outside Route Init directory is unavailable.",
+                incomplete: outside?.State == WorkspaceOutsideRouteReadState.Unavailable);
+
+        var workspace = layout.Workspace;
+        var paths = new PhysicalPathResolver().CreateReadSession();
+        var lexicalBoundary = SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, boundary.DirectoryPath);
+        var currentBoundary = paths.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, lexicalBoundary);
+        if (currentBoundary.State != PhysicalPathState.Contained
+            || !PhysicalIdentityTracker.PathComparer.Equals(currentBoundary.ResolvedPhysicalPath, physicalBoundary))
+            throw new RouteInitPlanningException(RouteInitFindingCode.TargetUnsafe,
+                "The selected outside Route Init directory changed its retained physical coordinate.", incomplete: false);
+        var lexicalPath = SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, path);
+        var current = lexicalPath;
+        while (true)
+        {
+            token.ThrowIfCancellationRequested();
+            var leaf = NoFollowLeafObserver.Observe(paths, workspace, current, token);
+            var required = current == lexicalPath ? NoFollowLeafState.OrdinaryFile : NoFollowLeafState.Directory;
+            var resolved = paths.ResolveCandidate(lexicalBoundary, physicalBoundary, current);
+            var expected = Path.GetFullPath(Path.Combine(physicalBoundary, Path.GetRelativePath(lexicalBoundary, current)));
+            if (leaf.State != NoFollowLeafState.Missing && leaf.State != required
+                || current == lexicalBoundary && leaf.State != NoFollowLeafState.Directory
+                || resolved.State is not (PhysicalPathState.Contained or PhysicalPathState.Missing)
+                || resolved.State == PhysicalPathState.Contained
+                    && !PhysicalIdentityTracker.PathComparer.Equals(resolved.ResolvedPhysicalPath, expected))
+                throw new RouteInitPlanningException(RouteInitFindingCode.TargetUnsafe,
+                    "The outside Route Init target is not an ordinary leaf at its retained physical coordinate.", incomplete: false);
+            if (current == lexicalBoundary) break;
+            current = Path.GetDirectoryName(current) ?? throw new InvalidOperationException("An outside chain requires bounded ancestry.");
+        }
     }
 
     private static IReadOnlyList<SourceLogicalSource> ReadRelevantSources(

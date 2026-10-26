@@ -1,0 +1,44 @@
+=== AGENTS.md ===
+# Workspace
+
+=== knowledge/main/loader.md (loader) ===
+# Root
+
+## Entries
+
+- [Primary](rules/_rules.md) - #LoadNow
+- [Skills](../../.agents/skills/_skills.md) - #LoadNow
+
+
+
+=== knowledge/main/rules/_rules.md (rules) ===
+---
+open-forge:
+  description: Primary
+  tags: [LoadNow]
+---
+# Root
+
+## Entries
+
+
+
+=== .agents/skills/_skills.md (skills) ===
+---
+open-forge:
+  description: Skills
+  tags: [LoadNow]
+---
+# Root
+
+## Entries
+
+
+
+=== docs/team/unlisted.md (./docs/team/unlisted.md) ===
+---
+open-forge:
+  description: Unlisted
+  tags: [LoadNow]
+---
+# Unlisted

@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route init ./docs/team/scope --workspace <workspace>",
+          "command": "open-forge route init ./docs/team/_team.md --workspace <workspace>",
           "reason": "Create the missing parent route, then rerun Route Create."
         }
       ],
@@ -68,7 +68,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route init ./docs/team/scope --workspace <workspace>",
+    "command": "open-forge route init ./docs/team/_team.md --workspace <workspace>",
     "reason": "Create the missing parent route, then rerun Route Create."
   }
 }

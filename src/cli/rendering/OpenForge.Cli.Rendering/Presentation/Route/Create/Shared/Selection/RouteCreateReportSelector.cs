@@ -470,7 +470,7 @@ internal static class RouteCreateReportSelector
                 => new CliNextAction("open-forge find --tag Template", RouteCreateWording.FindTemplateReason()),
             RouteCreateFindingCode.ParentMissing
                 => new CliNextAction(
-                    $"open-forge route init {CliCommandText.Quote(ParentId(result))}",
+                    $"open-forge route init {CliCommandText.Quote(result.Target.MissingParentEntrypoint ?? ParentId(result))}",
                     RouteCreateWording.InitParentReason()),
             RouteCreateFindingCode.TargetContentDiffers
                 => new CliNextAction(

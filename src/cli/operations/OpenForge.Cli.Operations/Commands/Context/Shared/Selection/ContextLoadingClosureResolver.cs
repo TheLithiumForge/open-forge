@@ -181,7 +181,9 @@ internal sealed class ContextLoadingClosureResolver
             }
 
             IReadOnlyList<ContextGraphSource> chain = [];
-            if (source.RouteState == SourceRouteState.Routed || source.IsLinked)
+            var hasSelectedChain = source.RouteState == SourceRouteState.Routed || source.IsLinked
+                || source.IsEntrypoint && SourceLogicalPath.IsOutsideSource(graph.Catalogue.Layout, source.CanonicalPath);
+            if (hasSelectedChain)
             {
                 var resolvedChain = ContextApplicabilityProjector.ReadChain(graph, source);
                 if (resolvedChain is null)
@@ -232,7 +234,7 @@ internal sealed class ContextLoadingClosureResolver
                     selectedEntrypoints,
                     selected,
                     value.Reference,
-                    (source.RouteState == SourceRouteState.Routed || source.IsLinked) && chain.Count != 0);
+                    hasSelectedChain && chain.Count != 0);
             }
         }
     }
@@ -284,7 +286,7 @@ internal sealed class ContextLoadingClosureResolver
                         ProjectApplicability(entry.Applicability));
                 }
 
-                if (added && entry.Target.IsEntrypoint)
+                if (added && entry.Target.IsCatalogue)
                 {
                     queue.Enqueue(entry.Target);
                 }

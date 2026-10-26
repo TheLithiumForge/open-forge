@@ -311,7 +311,12 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
                 isIncomplete: true);
         }
 
-        if (ReadLoaderBoundary(routeFacts, directories) is { } loaderBoundary)
+        var admittedOutsideAnchor = outside
+            && entrypointsByDirectory.TryGetValue(selectedBoundary.DirectoryPath, out var outsideEntrypoints)
+            && outsideEntrypoints.Length == 1
+                ? selectedBoundary.AnchorPath
+                : null;
+        if (ReadLoaderBoundary(routeFacts, directories, admittedOutsideAnchor) is { } loaderBoundary)
         {
             return StopChain(
                 destination,
@@ -324,7 +329,7 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         var startIndex = -1;
         if (outside)
         {
-            if (inspection.Catalogue.FindByPath(selectedBoundary.AnchorPath) is null)
+            if (!entrypointsByDirectory.ContainsKey(selectedBoundary.DirectoryPath))
                 return StopChain(destination, parents, RouteCreateFindingCode.ParentMissing,
                     "The registered Route Create anchor must already exist.", isIncomplete: false);
             startIndex = 0;
@@ -638,14 +643,16 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
 
     private static LoaderBoundary? ReadLoaderBoundary(
         SourceRouteFacts routeFacts,
-        IReadOnlyList<string> directories)
+        IReadOnlyList<string> directories,
+        string? admittedOutsideAnchor)
     {
         foreach (var issue in routeFacts.Issues)
         {
             switch (issue.Code)
             {
                 case SourceRouteIssueCode.LoaderDestinationMissing
-                    when IsRelevantLoaderDestination(issue, directories):
+                    when IsRelevantLoaderDestination(issue, directories)
+                        && !string.Equals(issue.CanonicalPath, admittedOutsideAnchor, StringComparison.Ordinal):
                     return new LoaderBoundary(
                         RouteCreateFindingCode.ParentMissing,
                         "The Route Create target requires one existing routable parent.",

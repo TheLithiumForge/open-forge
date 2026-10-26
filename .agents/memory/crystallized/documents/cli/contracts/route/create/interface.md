@@ -11,7 +11,7 @@ open-forge:
 
 Short target IDs map to the selected layout. Exact `./<workspace-path>` operands stay literal and must satisfy this command’s content boundary.
 
-An exact destination may select an available registered outside boundary with an existing recognized anchor, including an unlisted route. Keep the chain inside that boundary and leave Loader membership unchanged. Registration grants no package ownership or implicit package destination. Outside folder names add no primary category semantics.
+An exact destination may select an available registered outside boundary with an existing recognized anchor, including an unlisted route. One existing canonical or recognized compatibility entrypoint can supply that anchor. Preserve its filename and create no canonical sibling. Missing and ambiguous anchors remain blocked. A Loader row naming the missing canonical catalogue does not prevent Create when one recognized outside anchor exists. Preserve that row unchanged. Keep the chain inside that boundary and leave Loader membership unchanged. A missing outside anchor points to its exact canonical entrypoint in the Init continuation. Registration grants no package ownership or implicit package destination. Outside folder names add no primary category semantics.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 

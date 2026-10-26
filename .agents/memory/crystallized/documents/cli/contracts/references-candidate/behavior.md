@@ -175,8 +175,8 @@ For a local occurrence, retain the raw authored destination, fragment when
 present, link-use location, nullable destination location, direction `out`,
 source layer/path, target kind, resolved local ID/path when available, and
 resolution/containment status. A contained local target outside the primary content locations has no
-short ID. An active included target uses its exact `./path` reference, while an
-unlisted target has a null ID. Both keep their canonical workspace-relative path. Preserve every
+short ID. A registered or active included target uses its exact `./path` reference.
+Other unlisted targets have a null ID. Both keep their canonical workspace-relative path. Preserve every
 duplicate and every base/overwrite occurrence; do not deduplicate by destination,
 target identity, or authored text.
 
@@ -237,8 +237,8 @@ Classify the authored destination before resolving it:
 
 Target kind remains `local` for local path forms even when their local resolution
 is malformed, unsafe, ambiguous, missing, or unreadable. `target.id` is present
-only for an existing unambiguous primary-content logical source or an active included
-source identified by its exact `./path` reference. `target.path` is the
+only for an existing unambiguous primary-content logical source or a registered or
+active included source identified by its exact `./path` reference. `target.path` is the
 canonical contained workspace-relative path whenever it can be established,
 including a missing path. `target.layer` identifies an existing physical base or
 overwrite target when available. External and unsupported targets have all three
@@ -445,10 +445,12 @@ A conforming implementation should prove at least these observable scenarios:
 
 ## Included Source Boundary
 
-Use the shared included-file reader to extend the source inventory. Count authored
-links in active included Markdown files once per physical file. Suppress Entries
-links as navigation. Read no authored links from other text formats and never scan
-unlisted siblings. Included catalogue filters expand only listed descendants.
+Use the combined primary, registered outside and included inventory. Count authored
+links in eligible Markdown once per merged physical file. Retain every included
+row and exact outside identity. Suppress Entries links as navigation and read no
+authored links from opaque formats. A file include never scans unlisted siblings.
+Registered outside inventory can discover unlisted files independently. Included
+catalogue filters still expand only listed descendants.
 
 ## Related Current Sources
 
