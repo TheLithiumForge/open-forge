@@ -45,7 +45,7 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         CancellationToken cancellationToken)
     {
         var inspection = destination.Inspection;
-        var sharing = await NavigationSharingReader.ReadAsync(inspection.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        var sharing = NavigationSharingReader.FromOwnership(inspection.LayoutRead.Ownership);
         if (!sharing.IsAvailable)
             return Stop(destination, parent: null, RouteCreateFindingCode.TargetUnsafe, sharing.Cause, isIncomplete: false);
         var targetPath = inspection.Target.Path
@@ -140,6 +140,9 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         foreach (var parent in resolvedChain.Parents)
         {
             var path = parent.Identity.CanonicalBasePath;
+            if (RouteCreateOutsideTargetInspector.Inspect(inspection.LayoutRead, inspection.Catalogue, path,
+                    NoFollowLeafState.OrdinaryFile, cancellationToken) is { } parentFinding)
+                return Stop(destination, parent, parentFinding);
             if (resolvedChain.SyntheticBytes.TryGetValue(path, out var syntheticBytes))
             {
                 var syntheticText = StrictUtf8.GetString(syntheticBytes.AsSpan());
@@ -217,6 +220,7 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         return RouteCreateNavigationPlanBuild.Complete(
             new RouteCreateNavigationPlan
             {
+                ReadExpectations = metadata.Expectations,
                 SharingExpectation = sharing.Ownership.Snapshot?.Expectation,
                 Formation = formation,
                 ParentSource = parentSource,
@@ -245,6 +249,8 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
 
         var targetDirectory = SourceLogicalPath.ReadParent(targetPath);
         var directories = ReadDirectoryChain(inspection.Catalogue.Layout, targetDirectory);
+        var outside = inspection.Catalogue.Layout.TryGetMaintenanceBoundary(targetPath, out var selectedBoundary)
+            && selectedBoundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside;
         if (directories.Length == 0)
         {
             return StopChain(
@@ -316,7 +322,14 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         }
 
         var startIndex = -1;
-        for (var index = 0; index < directories.Length; index++)
+        if (outside)
+        {
+            if (inspection.Catalogue.FindByPath(selectedBoundary.AnchorPath) is null)
+                return StopChain(destination, parents, RouteCreateFindingCode.ParentMissing,
+                    "The registered Route Create anchor must already exist.", isIncomplete: false);
+            startIndex = 0;
+        }
+        for (var index = 0; !outside && index < directories.Length; index++)
         {
             if (entrypointsByDirectory.TryGetValue(directories[index], out var existing)
                 && existing.Any(source => IsExposed(routeFacts, source)))
@@ -355,6 +368,9 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         for (var index = startIndex; index < directories.Length; index++)
         {
             var directory = directories[index];
+            if (RouteCreateOutsideTargetInspector.Inspect(inspection.LayoutRead, inspection.Catalogue, directory,
+                    NoFollowLeafState.Directory, cancellationToken) is { } directoryFinding)
+                return StopChain(destination, parents, directoryFinding.Code, directoryFinding.Cause, isIncomplete: false);
             var directoryPath = SourceLogicalPath.ToLexicalPath(
                 inspection.Request.Workspace.LexicalRoot,
                 directory);
@@ -418,11 +434,12 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
             }
 
             var entrypointPath = RouteScaffoldSourceBuilder.CanonicalPath(inspection.Catalogue.Layout,
-                SourceLogicalPath.ReadSourceCoordinate(inspection.Catalogue.Layout, directory));
+                outside ? SourceWorkspaceRelativePath.LiteralReferencePrefix + directory
+                    : SourceLogicalPath.ReadSourceCoordinate(inspection.Catalogue.Layout, directory));
             if (entrypointsByDirectory.TryGetValue(directory, out var existing)
                 && existing is [{ } source])
             {
-                if (!IsExposed(routeFacts, source))
+                if (!outside && !IsExposed(routeFacts, source))
                 {
                     return StopChain(
                         destination,
@@ -455,6 +472,10 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
                     "A prospective Route Create entrypoint path is already occupied by an unrecognized source.",
                     isIncomplete: false);
             }
+
+            if (RouteCreateOutsideTargetInspector.Inspect(inspection.LayoutRead, inspection.Catalogue, entrypointPath,
+                    NoFollowLeafState.OrdinaryFile, cancellationToken) is { } entrypointFinding)
+                return StopChain(destination, parents, entrypointFinding.Code, entrypointFinding.Cause, isIncomplete: false);
 
             var entrypointResolution = _physicalPathResolver.ResolveCandidate(
                 inspection.Request.Workspace.LexicalRoot,
@@ -505,6 +526,7 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
     {
         var targetSource = destination.TargetSource;
         var values = new Dictionary<string, GeneratedNavigationMetadata>(StringComparer.Ordinal);
+        var expectations = ImmutableArray.CreateBuilder<FileExpectation>();
         AddMetadata(
             values,
             targetSource,
@@ -553,6 +575,12 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
                     {
                         return NavigationMetadataBuild.Stop(readFailure);
                     }
+                    if (SourceLogicalPath.IsOutsideSource(formation.Catalogue.Layout, child.Identity.CanonicalBasePath))
+                    {
+                        var snapshot = await new SourceDocumentSnapshotReader()
+                            .ReadAsync(formation.Catalogue.Workspace, read, cancellationToken).ConfigureAwait(false);
+                        expectations.Add(snapshot.Expectation);
+                    }
                 }
 
                 AddMetadata(
@@ -564,7 +592,7 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
             }
         }
 
-        return NavigationMetadataBuild.Complete(values.Values.ToArray());
+        return NavigationMetadataBuild.Complete(values.Values.ToArray(), expectations.ToImmutable());
     }
 
     private static void AddMetadata(
@@ -577,6 +605,17 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
     {
         var values = new List<string>();
         var current = targetDirectory;
+        if (layout.TryGetMaintenanceBoundary(targetDirectory, out var boundary) && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside)
+        {
+            while (true)
+            {
+                values.Add(current);
+                if (current == boundary.DirectoryPath) break;
+                current = SourceLogicalPath.ReadParent(current);
+            }
+            values.Reverse();
+            return values.ToArray();
+        }
         while (layout.IsImplicitContentDestination(current)
             || string.Equals(current, WorkspaceLayout.NativeSkillsPath, StringComparison.Ordinal))
         {
@@ -855,21 +894,26 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
     {
         private NavigationMetadataBuild(
             IReadOnlyList<GeneratedNavigationMetadata> values,
-            RouteCreateFinding? finding)
+            RouteCreateFinding? finding,
+            ImmutableArray<FileExpectation> expectations)
         {
             Values = values;
             Finding = finding;
+            Expectations = expectations;
         }
+
+        internal ImmutableArray<FileExpectation> Expectations { get; }
 
         internal IReadOnlyList<GeneratedNavigationMetadata> Values { get; }
 
         internal RouteCreateFinding? Finding { get; }
 
         internal static NavigationMetadataBuild Complete(
-            IReadOnlyList<GeneratedNavigationMetadata> values)
-            => new(values, finding: null);
+            IReadOnlyList<GeneratedNavigationMetadata> values,
+            ImmutableArray<FileExpectation> expectations)
+            => new(values, finding: null, expectations);
 
         internal static NavigationMetadataBuild Stop(RouteCreateFinding finding)
-            => new([], finding);
+            => new([], finding, []);
     }
 }

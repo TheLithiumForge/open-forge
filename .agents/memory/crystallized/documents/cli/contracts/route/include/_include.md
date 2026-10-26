@@ -25,4 +25,4 @@ The implementation and evidence remain reviewable in the current change.
 ## Entries
 
 - [Accepted behavior for route include planning, preservation and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Behavior #Route #Include #Mutation #CurrentTruth
-- [Accepted public contract for listing an existing workspace file in the loader](interface.md) - #Memory #Crystallized #CLI #Release #Command #Interface #Route #Include #Mutation #CurrentTruth
+- [Accepted public contract for including files and registering maintained outside folders](interface.md) - #Memory #Crystallized #CLI #Release #Command #Interface #Route #Include #Mutation #CurrentTruth

@@ -9,7 +9,9 @@ open-forge:
 
 ## Workspace Layout
 
-Build destinations from the layout and stop ancestor traversal at the relevant primary content root. Apply ordinal authority checks and revalidate the layout under the lease.
+Build destinations from the layout and stop ancestor traversal at the relevant primary content root or selected outside anchor. Apply ordinal authority checks and revalidate the layout under the lease.
+
+For an exact outside destination, retain its available registered boundary and existing recognized anchor through discovery, planning and verification. Stop ancestry at that anchor, preserve unlisted membership and add no Loader row. Keep implicit package permission separate from explicit route maintenance. The same observation must support each selected physical target before snapshots and effects.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
 
@@ -45,9 +47,9 @@ Design](../../../technical-designs/mutation-and-recovery.md).
   target, forms the same intended destination and generated navigation, and
   returns the same semantic result. See [Purpose](interface.md#purpose).
 - The operation creates one ordinary routed Markdown file inside one existing
-  Loader-recognized route root. It may create a missing intermediate directory
-  chain and canonical entrypoints below that root, but it never creates the
-  Loader root itself. See [File Target](interface.md#file-target).
+  recognized route root. Primary roots retain Loader recognition, while outside roots use their available registration and existing anchor. It may create a missing intermediate directory
+  chain and canonical entrypoints below that root, but it never restores the
+  root anchor itself. See [File Target](interface.md#file-target).
 - The destination has its own explicitly supplied metadata in the workspace's
   form, possibly empty, and independently maintained content. Template frontmatter,
   route identity, ownership, future changes,
@@ -111,7 +113,7 @@ shape from filesystem coincidence.
 The exact target path is normalized to the selected workspace’s canonical
 workspace-relative reporting form and must remain lexically and physically inside
 that workspace. A directory, Loader, recognized entrypoint, overwrite
-companion, `SKILL.md`, non-Markdown resource, unsafe identity, path escape, or
+companion, native `SKILL.md`, non-Markdown resource, unsafe identity, path escape, or
 other unsupported kind cannot become the ordinary-file target. Backslash input,
 case compatibility, filesystem aliases, and exact physical identity follow the
 accepted CLI Architecture boundary recorded in [Interface Status And
@@ -120,7 +122,7 @@ Authority](interface.md#status-and-authority).
 ### Parent route
 
 The resolver first classifies the target's nearest existing route root. An
-existing Loader-recognized root admits a missing intermediate chain below it.
+existing Loader-recognized primary root or available registered outside anchor admits a missing intermediate chain below it.
 The resolver records planned missing directories, from outer to inner,
 and canonical entrypoints without writing. Each planned entrypoint uses that
 folder's automatic ID as its heading, inherits Axioms from the accepted root
@@ -206,7 +208,7 @@ facts needed to prove one complete creation plan:
 
 - The requested target reference, its resolved target ID and canonical ordinary
   Markdown path, its parent folders, containment, and physical identity.
-- The classified existing Loader root and every folder relationship needed to
+- The classified existing primary root or registered outside anchor and every folder relationship needed to
   establish the final parent, including the missing intermediate chain,
   canonical or compatibility representation, missing or duplicate entrypoints,
   child-entrypoint collisions, route-identity collisions, and orphan overwrite

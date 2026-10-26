@@ -77,6 +77,8 @@ internal sealed record RouteCreateDestinationPlan
 
 internal sealed record RouteCreateNavigationPlan
 {
+    internal ImmutableArray<FileExpectation> ReadExpectations { get; init; } = [];
+
     internal FileExpectation? SharingExpectation { get; init; }
 
     public required GeneratedNavigationFormation Formation { get; init; }

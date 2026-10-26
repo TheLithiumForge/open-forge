@@ -11,6 +11,8 @@ open-forge:
 
 Short target IDs map to the selected layout. Exact `./<workspace-path>` operands stay literal and must satisfy this command’s content boundary.
 
+An exact destination may select an available registered outside boundary with an existing recognized anchor, including an unlisted route. Keep the chain inside that boundary and leave Loader membership unchanged. Registration grants no package ownership or implicit package destination. Outside folder names add no primary category semantics.
+
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
 ## Status And Authority
@@ -86,7 +88,7 @@ Route Create uses the same neutral entrypoint composition and intended-chain sca
 ## Purpose
 
 `route create` creates one ordinary routed Markdown file inside an existing
-Loader-recognized route root. Its final parent may already exist or may be a
+recognized route root. Primary roots retain Loader recognition. Outside roots use their available registration and existing recognized anchor. Its final parent may already exist or may be a
 missing intermediate folder within that root. It can create a metadata-only
 source or copy the body of one explicit Template into the new destination.
 
@@ -175,6 +177,7 @@ these forms:
 <source-id>
 .agents/<folders>/<filename>.md
 ./.agents/<folders>/<filename>.md
+./docs/team/<filename>.md
 ```
 
 For this operation, an ID maps to an ordinary Markdown path:
@@ -194,7 +197,7 @@ The target path is:
 
 An exact path must name the same ordinary Markdown target shape. A directory,
 Loader, canonical or compatibility entrypoint filename, overwrite companion,
-`SKILL.md`, or non-Markdown resource is invalid.
+native `SKILL.md`, or non-Markdown resource is invalid. An outside `SKILL.md` follows the ordinary Markdown classification and receives no native Skill metadata.
 
 The shared [CLI Source References](../../shared/source-references/interface.md) contract defines
 ID segments, exact path detection, quoting, containment, and result identity.
@@ -202,12 +205,14 @@ ID segments, exact path detection, quoting, containment, and result identity.
 
 The final parent folder may already contain exactly one recognized entrypoint,
 or it may need a canonical entrypoint within a chain below an existing
-Loader-recognized root. Safely existing ordinary intermediate directories may
+Loader-recognized primary root or registered outside anchor. Safely existing ordinary intermediate directories may
 be reused. For missing route structure, the command creates only absent directories
 and canonical entrypoints from the root toward the final parent. Each new
 entrypoint uses its automatic ID heading, inherited Axioms, and generated
 direct-child Entries. Existing recognized entrypoints retain their actual
 filenames.
+
+Within an outside route, the registration supplies the exact boundary and an unlisted anchor remains usable. Create keeps its existing required-anchor policy and creates only missing descendants below it. Restoring a missing anchor is a separate Init or Index operation. Target fields remain supplied-only and new entrypoints keep Create's draft policy, without Index metadata completion.
 
 An unknown or unrecognized root is invalid input with process status 4 and never
 advises `route init`. A missing Framework or other required existing boundary

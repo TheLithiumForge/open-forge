@@ -13,7 +13,7 @@ using OpenForge.Cli.IntegrationTests.Hosting;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Exclude;
 
-public sealed class RouteExcludePlanningTests
+public sealed partial class RouteExcludePlanningTests
 {
     private const string GuidePath = "guide.md";
     private const string OtherPath = "other.md";

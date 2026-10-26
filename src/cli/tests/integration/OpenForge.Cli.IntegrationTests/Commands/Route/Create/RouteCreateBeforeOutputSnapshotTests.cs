@@ -6,6 +6,8 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using OpenForge.Cli.TestSupport.Snapshots;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Create;
 
@@ -13,6 +15,35 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Create;
 public sealed class RouteCreateBeforeOutputSnapshotTests
 {
     private static readonly CommandOutputRenderers<RouteCreateResult> Renderers = CommandOutputRenderers<RouteCreateResult>.From(RouteCreatePresentation.Rendering);
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Create outside previews retain exact identities, unlisted roots and optional metadata")]
+    public async Task OutsidePreview()
+    {
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var (mainRoot, listed, optional, situation) in new[]
+        {
+            (WorkspaceLayout.DefaultMainRoot, true, false, "default-listed"),
+            (RouteCreateOutsideWorkspace.CustomRoot, false, false, "custom-unlisted"),
+            (RouteCreateOutsideWorkspace.CustomRoot, true, true, "optional-metadata"),
+            (RouteCreateOutsideWorkspace.CustomRoot, false, false, "missing-anchor"),
+        })
+        {
+            using var fixture = new RouteCreateOutsideWorkspace(mainRoot, listed: listed);
+            if (situation == "missing-anchor") File.Delete(fixture.Files.Combine(fixture.Anchor));
+            var path = RouteCreateOutsideWorkspace.Directory + "/scope/note" + SourceFormClassifier.MarkdownExtension;
+            var before = fixture.Files.SnapshotHashes();
+            var result = await RouteCreateOperationFactory.Create().ExecuteAsync(
+                fixture.Request(path, optional, mode: RouteCreateMode.DryRun), TestContext.Current.CancellationToken);
+            var expectedStatus = optional ? CliSemanticStatus.Attention : CliSemanticStatus.Complete;
+            if (situation == "missing-anchor") expectedStatus = CliSemanticStatus.Blocked;
+            Assert.Equal(expectedStatus, result.Status);
+            Assert.Equal(before, fixture.Files.SnapshotHashes());
+            Assert.Equal(SourceWorkspaceRelativePath.LiteralReferencePrefix + path, result.Target.Id);
+            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+        }
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
+    }
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route create output preserves the created file when the later parent update is denied")]

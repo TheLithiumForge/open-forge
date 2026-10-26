@@ -1,0 +1,7 @@
+The current file state no longer matches the planned expectation.
+Workspace: <workspace>
+  .agents/loader.md  not started
+  Catalogue: project/team notes/_team notes.md
+  Before: - [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)
+  After: - [Replacement policy](../project/team%20notes/_team%20notes.md)
+Next: open-forge route include --help

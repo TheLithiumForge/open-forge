@@ -9,6 +9,9 @@ using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Paths;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Planning;
 
@@ -16,7 +19,21 @@ internal static class RouteInclusionTargetResolver
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
-    internal static string Resolve(WorkspaceLayout layout, RouteInclusionRequest request)
+    internal static async ValueTask<RouteInclusionTarget> ResolveAsync(WorkspaceLayout layout, RouteInclusionRequest request, CancellationToken token)
+    {
+        var target = Resolve(layout, request);
+        if (target.Kind != RouteInclusionTargetKind.Folder || request.Action == RouteInclusionAction.Exclude) return target;
+        var intended = layout.OutsideRoutes.Any(route => route.DirectoryPath == target.Path)
+            ? layout : layout.WithOutsideRoutes(layout.OutsideRoutes.Select(route => route.DirectoryPath).Append(target.Path));
+        var reader = new WorkspaceOutsideRouteReader(new PhysicalPathResolver(), intended);
+        var observations = await reader.ReadAsync(token).ConfigureAwait(false);
+        var directory = observations.Single(read => read.Descriptor.DirectoryPath == target.Path);
+        if (directory.State != WorkspaceOutsideRouteReadState.Available)
+            throw Invalid(request, directory.Issues.FirstOrDefault()?.Cause ?? "Choose an accessible ordinary directory without aliases or reserved overlaps.");
+        return target with { DirectoryRead = directory, Expectations = [.. reader.Expectations] };
+    }
+
+    internal static RouteInclusionTarget Resolve(WorkspaceLayout layout, RouteInclusionRequest request)
     {
         var operand = request.File.Replace('\\', '/');
         if (string.IsNullOrWhiteSpace(operand) || Path.IsPathRooted(operand)
@@ -33,6 +50,8 @@ internal static class RouteInclusionTargetResolver
         var controls = new[] { layout.LoaderPath, WorkspaceSettingsDefinitions.RelativePath, WorkspaceOwnershipDefinitions.RelativePath };
         if (controls.Contains(path, PhysicalIdentityTracker.PathComparer))
             throw Invalid(request, "Choose a project document instead of a workspace control file.");
+        if (request.Action == RouteInclusionAction.Exclude && layout.OutsideRoutes.Any(route => route.DirectoryPath == path))
+            return ResolveFolder(layout, request, path);
         var resolution = new PhysicalPathResolver().ResolveCandidate(request.Workspace.LexicalRoot, request.Workspace.PhysicalRoot, absolute);
         if (resolution.State is not (PhysicalPathState.Contained or PhysicalPathState.Missing))
             throw Invalid(request, "Choose a file whose links stay inside this workspace.");
@@ -52,17 +71,30 @@ internal static class RouteInclusionTargetResolver
                 throw Invalid(request, "Choose a project document outside Git metadata.");
             if (Directory.Exists(physical))
             {
-                var catalogue = $"{path}/_{Path.GetFileName(physical)}.md";
-                var action = File.Exists(Path.Combine(physical, $"_{Path.GetFileName(physical)}.md"))
-                    ? $"Use the catalogue '{catalogue}' instead."
-                    : $"Create the catalogue '{catalogue}' and use that file instead.";
-                throw Invalid(request, action);
+                return ResolveFolder(layout, request, path);
             }
             try { StrictUtf8.GetString(File.ReadAllBytes(physical)); }
             catch (DecoderFallbackException) { throw Invalid(request, "Save the file as UTF-8 text, then retry."); }
         }
         ValidateContentTarget(layout, request, path);
-        return path;
+        return new RouteInclusionTarget { Path = path, Kind = RouteInclusionTargetKind.File };
+    }
+
+    internal static RouteInclusionTarget ResolveFolder(WorkspaceLayout layout, RouteInclusionRequest request, string path)
+    {
+        var operand = request.File.Replace('\\', '/');
+        if (operand.StartsWith(SourceWorkspaceRelativePath.LiteralReferencePrefix, StringComparison.Ordinal))
+            operand = operand[SourceWorkspaceRelativePath.LiteralReferencePrefix.Length..];
+        if (operand.TrimEnd('/') != path)
+            throw Invalid(request, "Use the canonical directory path without traversal or lexical aliases.");
+        WorkspaceOutsideRoutePath.Validate(layout.MainRoot,
+            layout.OutsideRoutes.Where(route => route.DirectoryPath != path).Select(route => route.DirectoryPath).Append(path));
+        return new RouteInclusionTarget
+        {
+            Path = path,
+            Kind = RouteInclusionTargetKind.Folder,
+            CataloguePath = WorkspaceRoutePath.CanonicalEntrypointPath(path),
+        };
     }
 
     internal static void ValidateContentTarget(WorkspaceLayout layout, RouteInclusionRequest request, string path)

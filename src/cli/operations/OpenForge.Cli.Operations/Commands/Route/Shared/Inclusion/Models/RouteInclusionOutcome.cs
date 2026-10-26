@@ -6,7 +6,7 @@ using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Models;
 
 internal enum RouteInclusionEffectState { Planned, NotStarted, Verified, Unknown }
-internal enum RouteInclusionEffectKind { LoaderEntries, Settings }
+internal enum RouteInclusionEffectKind { LoaderEntries, Settings, Catalogue }
 
 internal sealed record RouteInclusionEffect(string Path, string? Before, string After, RouteInclusionEffectState State, RouteInclusionEffectKind Kind);
 
@@ -15,6 +15,8 @@ internal sealed record RouteInclusionOutcome
     internal WorkspaceLockFailureInfo? LockFailure { get; init; }
     public CliSemanticStatus Status { get; init; } = CliSemanticStatus.Complete;
     public string? Path { get; init; }
+    public RouteInclusionTargetKind? TargetKind { get; init; }
+    public string? Catalogue { get; init; }
     public string? Before { get; init; }
     public string? After { get; init; }
     public bool RegisteredBefore { get; init; }

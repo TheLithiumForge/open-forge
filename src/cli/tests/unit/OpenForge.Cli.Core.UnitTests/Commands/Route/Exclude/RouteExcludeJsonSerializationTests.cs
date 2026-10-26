@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport.Contracts;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Exclude.Models.Result;
@@ -10,7 +11,7 @@ using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Exclude;
 
-public sealed class RouteExcludeJsonSerializationTests
+public sealed partial class RouteExcludeJsonSerializationTests
 {
     [Theory(DisplayName = "RouteExclude source-generated JSON preserves row changes and no-op shape"), Trait("Feature", "route-exclude"), Trait("Evidence", "Unit")]
     [InlineData(false)]
@@ -35,6 +36,8 @@ public sealed class RouteExcludeJsonSerializationTests
             new CliPresentation(CliFormat.Json, CliDetail.Full, null)), RouteExcludePresentation.Rendering);
         using var json = JsonDocument.Parse(rendered.PrimaryContent);
         var root = json.RootElement;
+        Assert.False(root.GetProperty(PublishedTokens.Json.Data).TryGetProperty(PublishedTokens.RouteInclusionData.TargetKind, out _));
+        Assert.False(root.GetProperty(PublishedTokens.Json.Data).TryGetProperty(PublishedTokens.RouteInclusionData.Catalogue, out _));
         Assert.Equal("route exclude", root.GetProperty("command").GetString());
         Assert.Equal("completed", root.GetProperty("status").GetString());
         Assert.Empty(root.GetProperty("effects").EnumerateArray());

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted public contract for listing an existing workspace file in the loader
+  description: Accepted public contract for including files and registering maintained outside folders
   responsibility: Define what route include accepts, changes, reports and preserves
   tags: [Memory, Crystallized, CLI, Release, Command, Interface, Route, Include, Mutation, CurrentTruth]
 ---
@@ -10,6 +10,8 @@ open-forge:
 ## Workspace Layout
 
 Include changes the selected loader. The native Skills catalogue remains a primary category even when it is outside the main root.
+
+Including a safe outside folder registers a maintained route in `outsideRoutes` and lists its canonical catalogue. Including a file, including a catalogue file, retains the existing file-only `roots` meaning. Registration, loading, ownership and package permissions remain separate.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
@@ -23,12 +25,12 @@ defines locking, expected-state checks and recovery.
 
 ## Purpose
 
-Include lists an existing document where it lives. It creates no document or catalogue.
+Include lists an existing document where it lives or registers an existing outside folder. File inclusion never changes the target. Folder inclusion creates only its missing canonical catalogue and preserves an existing catalogue byte-for-byte.
 
 ## Syntax
 
 ```text
-open-forge route include <workspace-file>
+open-forge route include <workspace-path>
   [--description <text>]
   [--tag <tag>]...
   [--apply-to <glob>]...
@@ -40,12 +42,14 @@ Omitting `--dry-run` authorizes application after preflight.
 
 ## Operand
 
-Accept one workspace-relative file with either path separator and an optional
+Accept one workspace-relative file or outside folder with either path separator and an optional
 leading `./`. Report its canonical slash-separated workspace path.
-The file must exist and contain UTF-8 text.
-Reject directories, globs, URLs, fragments, lexical or linked workspace escapes,
+An included file must exist and contain UTF-8 text. An included folder must be an existing safe ordinary directory. Reject globs, URLs, fragments, lexical or linked workspace escapes,
 Git metadata, the loader, settings and lock files as invalid input.
-A directory error names its `_<folder>.md` catalogue and says whether to create it first.
+
+A maintained folder stays inside the repository and cannot overlap the workspace root, main root, `.agents`, another outside route, Git metadata or runtime storage. Apply portable lexical validation and physical checks. Registration keeps the exact outside source identities and adds no alias or short-ID mapping.
+
+Require its canonical catalogue to be the only recognized entrypoint before registration or re-inclusion. Preserve competing entrypoints and refuse the operation until their ambiguity is resolved.
 
 Outside the primary content locations, any text file is eligible. A Markdown file with
 `## Entries` is followed as a catalogue. Its own frontmatter never sets loading.
@@ -54,7 +58,7 @@ A deeper file error names that category's catalogue. Other files directly in the
 
 ## Metadata And Existing Rows
 
-A new external row requires `--description`. Repeat `--tag` in the order to keep,
+A new external file row requires `--description`. A new folder row uses the shared generic Route Init scaffold description when it is omitted. Repeat `--tag` in the order to keep,
 with or without a leading `#`. Reject blank, invalid and duplicate tags.
 Without tags the document loads on demand. Repeat `--apply-to` using the existing
 applyTo expression grammar. Sort supplied atomic patterns by ordinal comparison and remove exact duplicates, as Create does.
@@ -68,14 +72,13 @@ and name its frontmatter as the editing location.
 
 New rows follow the existing loader shape, use Index's percent-encoding form
 and append after the last Entries row. No tags or conditions means no suffix.
-The loader row controls loading. Only external targets are registered in `roots`.
+The loader row controls loading. External files are registered in `roots`. Folder directories are registered only in `outsideRoutes`, in declaration order. Omitted tags and conditions preserve an existing row or use the existing empty defaults for a new row. Row options never rewrite an existing catalogue or infer policy from its frontmatter.
 
 ## Preview And Effects
 
 Dry-run and apply use the same plan. The report shows loader rows before and after,
 registration before and after, and every planned loader or settings change.
-Only `.agents/loader.md` and `.agents/open-forge.json` may change.
-Target bytes remain unchanged. Dry-run creates no lock, recovery bundle or file.
+File inclusion changes only the selected loader and fixed settings file. Folder inclusion may also create its missing canonical catalogue, using the workspace metadata form and generic scaffold. Existing catalogue and descendant bytes remain unchanged. Preserve ownership, exclusions and Library protections before any catalogue create. Dry-run creates no lock, recovery bundle or file.
 
 ## Results And JSON
 
@@ -90,6 +93,7 @@ Command data version 1 uses the shared schema-3 envelope with command `route inc
 The data has `mode`, `target`, `before`, `after`, `registeredBefore`,
 `registeredAfter` and `verified`. Missing rows are null.
 Effects, recovery and the next action stay on the shared envelope.
+Folder data additionally carries `targetKind` and the canonical workspace-relative `catalogue` path. Its `target` identifies the directory and registration flags describe `outsideRoutes`. File data keeps its existing shape and `roots` flag meaning, with those extra facts absent.
 A successful no-op uses the existing `nothing-to-do` headline and an empty effects list.
 
 ## Findings catalogue

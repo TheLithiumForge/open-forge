@@ -25,7 +25,7 @@ preflight and mutation pattern. Include and Exclude preserve that boundary.
 Resolve one explicit workspace and canonical operand. Validate the full lexical
 and physical path before reading a target. Reject unsupported targets with an
 invalid-input cause that names the operand and gives the supported alternative.
-Allow a missing file while retaining containment and target-kind checks.
+Allow a missing file or exact registered outside folder while retaining containment and target-kind checks. A missing folder declaration supplies its logical identity, not permission to inspect an unsafe target or remove content.
 Read the loader and authored settings safely. A malformed control document blocks
 the complete operation before effects.
 
@@ -36,6 +36,7 @@ canonical workspace path, including percent-encoded authored destinations.
 Remove all matching declarations and turn a primary-category catalogue off through
 loader membership. Plan external deregistration through the settings
 root-deregistration planner. Preserve every unrelated authored row.
+For folders, use the outside-route deregistration adapter and remove matching catalogue rows. Preserve an independent file registration, every unrelated registration and authored row order. File exclusion never removes an independent folder registration. Retain before and intended layouts through planning and verification.
 
 Build loader bytes through the generated navigation planner. Preserve authored
 links and membership through the same machinery used by Index.

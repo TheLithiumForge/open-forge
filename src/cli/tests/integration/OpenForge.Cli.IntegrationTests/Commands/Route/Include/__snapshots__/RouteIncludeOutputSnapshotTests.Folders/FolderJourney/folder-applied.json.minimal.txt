@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 3,
+  "command": "route include",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Included 'project/team notes'.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "project/team notes/_team notes.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesChanged": 3
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": "project/team notes",
+    "targetKind": "folder",
+    "catalogue": "project/team notes/_team notes.md",
+    "before": null,
+    "after": "- [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)",
+    "registeredBefore": false,
+    "registeredAfter": true,
+    "verified": true
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

@@ -6,6 +6,20 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Inclusion;
 
 public sealed class RouteInclusionWireVocabularyTests
 {
+    [Fact(DisplayName = "Folder target facts are additive and file facts stay absent"), Trait("Feature", "route-inclusion"), Trait("Evidence", "Unit")]
+    public void TargetKindsAreClosed()
+    {
+        var expected = new Dictionary<RouteInclusionTargetKind, string?>
+        {
+            [RouteInclusionTargetKind.File] = null,
+            [RouteInclusionTargetKind.Folder] = RouteInclusionWireVocabulary.FolderTargetKind,
+        };
+        Assert.Equal(Enum.GetValues<RouteInclusionTargetKind>(), expected.Keys.Order());
+        foreach (var (kind, name) in expected) Assert.Equal(name, RouteInclusionWireVocabulary.TargetKind(kind));
+        Assert.Null(RouteInclusionWireVocabulary.TargetKind(null));
+        Assert.Throws<ArgumentOutOfRangeException>(() => RouteInclusionWireVocabulary.TargetKind((RouteInclusionTargetKind)int.MaxValue));
+    }
+
     [Fact(DisplayName = "Include and Exclude effects carry their kind independently of paths"), Trait("Feature", "route-inclusion"), Trait("Evidence", "Unit")]
     public void EffectKindsAreClosed()
     {
@@ -13,6 +27,7 @@ public sealed class RouteInclusionWireVocabularyTests
         {
             [RouteInclusionEffectKind.LoaderEntries] = CliEffectKind.Section,
             [RouteInclusionEffectKind.Settings] = CliEffectKind.Setting,
+            [RouteInclusionEffectKind.Catalogue] = CliEffectKind.File,
         };
         Assert.Equal(Enum.GetValues<RouteInclusionEffectKind>(), expected.Keys.Order());
         foreach (var (kind, projected) in expected)

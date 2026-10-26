@@ -1,0 +1,12 @@
+Would exclude 'project/team notes'.
+Workspace: <workspace>
+  .agents/loader.md  replaced
+    Before: # Open Forge Loader\n\n## Entries\n\n- [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)\n
+    After: # Open Forge Loader\n\n## Entries\n\n- none - No entries - #Empty\n
+  .agents/open-forge.json  replaced
+    Before: {\r\n  "schemaVersion": 5,\r\n  "other": true,\r\n  "outsideRoutes": [\r\n    "project/team notes"\r\n  ],\r\n  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json"\r\n}
+    After: {\r\n  "schemaVersion": 5,\r\n  "other": true,\r\n  "outsideRoutes": [],\r\n  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json"\r\n}
+  Catalogue: project/team notes/_team notes.md
+  Before: - [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)
+  After: (no row)
+No files were changed.

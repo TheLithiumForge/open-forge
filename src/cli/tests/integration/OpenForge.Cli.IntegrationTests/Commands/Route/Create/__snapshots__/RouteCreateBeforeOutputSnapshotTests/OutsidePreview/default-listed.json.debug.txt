@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would create docs/team/scope/note.md  (./docs/team/scope/note.md)",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "docs/team/scope",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "docs/team/scope/_scope.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "<sha256>"
+    },
+    {
+      "path": "docs/team/scope/note.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "<sha256>"
+    },
+    {
+      "path": "docs/team/_team.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "filesCreated": 2,
+    "sectionsUpdated": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": {
+      "id": "./docs/team/scope/note.md",
+      "path": "docs/team/scope/note.md"
+    },
+    "listedIn": "docs/team/scope/_scope.md",
+    "template": null,
+    "metadata": {
+      "description": "Authored destination",
+      "responsibility": null,
+      "tags": [
+        "Fixture"
+      ]
+    },
+    "content": "---\nopen-forge:\n  description: Authored destination\n  tags: [Fixture]\n---\n",
+    "sections": [
+      {
+        "path": "docs/team/_team.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "verification": "planned"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

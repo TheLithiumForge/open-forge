@@ -5,7 +5,7 @@ using OpenForge.Cli.IntegrationTests.Commands.Route.Shared.Inclusion;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Exclude;
 
-public sealed class RouteExcludeApplicationTests
+public sealed partial class RouteExcludeApplicationTests
 {
     [Theory(DisplayName = "Exclude applies to hand-written rows, missing targets and main-root catalogues"), Trait("Feature", "route-exclude"), Trait("Evidence", "Integration")]
     [InlineData("guide.md", false)]

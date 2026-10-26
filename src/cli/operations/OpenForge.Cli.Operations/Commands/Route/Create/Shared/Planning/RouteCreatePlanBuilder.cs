@@ -115,6 +115,7 @@ internal sealed class RouteCreatePlanBuilder
         var preview = _resultProjector.Preview(complete);
         var plan = new RouteCreatePlan
         {
+            ReadExpectations = navigation.ReadExpectations,
             Request = request,
             LayoutRead = inspection.LayoutRead,
             Preview = preview,

@@ -18,6 +18,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Application;
@@ -56,6 +57,13 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
                 if (fresh.Plan is not { } current || !Equivalent(plan, current))
                     return Stop(result, CliSemanticStatus.Blocked, RouteInclusionFindingCode.TargetChanged, "The plan changed. Review a fresh preview and retry.");
                 var validator = new FileExpectationValidator(new PhysicalPathResolver());
+                foreach (var expectation in plan.Target.Expectations)
+                {
+                    var check = await validator.ValidateAsync(plan.Request.Workspace, expectation, token).ConfigureAwait(false);
+                    if (check.State != FileExpectationValidationState.Matched)
+                        return Stop(result, CliSemanticStatus.Blocked, RouteInclusionFindingCode.TargetChanged,
+                            "The initial folder mapping or catalogue changed. Review a fresh preview and retry.");
+                }
                 foreach (var observation in plan.Observations)
                 {
                     var check = await validator.ValidateAsync(plan.Request.Workspace, observation.Expectation, token).ConfigureAwait(false);
@@ -84,16 +92,18 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
                     started = true;
                     result = SetEffect(result, index, RouteInclusionEffectState.Unknown);
                     var receipt = await applier.ApplyAsync(lease, plan.Changes[index], validation.Checks[index],
-                        plan.Changes[index].Kind == PlannedFileChangeKind.Create ? null : preparation, token).ConfigureAwait(false);
+                        plan.RecoveryTargets[index].RequiresRecovery ? preparation : null, token).ConfigureAwait(false);
+                    result = SetEffect(result, index, ReceiptState(receipt));
                     token.ThrowIfCancellationRequested();
                     if (receipt.EffectState != FilesystemEffectState.Applied || receipt.VerificationState != FilesystemVerificationState.Verified)
                         return Stop(result, CliSemanticStatus.Failed, RouteInclusionFindingCode.WriteFailed, receipt.Cause ?? "A planned write did not verify. Review the retained recovery artifact.");
                     result = SetEffect(result, index, RouteInclusionEffectState.Verified);
                 }
-                foreach (var observation in plan.Observations)
+                foreach (var observation in plan.LayoutRead.Expectations.Concat(plan.Target.Expectations)
+                    .Concat(plan.Observations.Select(item => item.Expectation)).DistinctBy(item => item.LogicalPath, StringComparer.Ordinal))
                 {
                     var change = plan.Changes.FirstOrDefault(candidate => candidate.LogicalPath == observation.LogicalPath);
-                    var expected = change is null ? observation.Expectation : FileExpectation.File(
+                    var expected = change is null ? observation : FileExpectation.File(
                         change.LogicalPath, observation.PhysicalPath ?? Path.GetFullPath(
                             Path.GetRelativePath(plan.Request.Workspace.LexicalRoot, change.LogicalPath), plan.Request.Workspace.PhysicalRoot),
                         FileExpectation.Hash(change.IntendedBytes.AsSpan()));
@@ -101,10 +111,23 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
                     if (check.State != FileExpectationValidationState.Matched)
                         return Stop(result, CliSemanticStatus.Failed, RouteInclusionFindingCode.VerificationFailed, "Final bytes did not verify. Review the retained recovery artifact.");
                 }
+                foreach (var expectation in plan.Target.Expectations.Where(item => item.Kind == FileExpectationKind.Directory))
+                {
+                    var check = await validator.ValidateAsync(plan.Request.Workspace, expectation, token).ConfigureAwait(false);
+                    if (check.State != FileExpectationValidationState.Matched)
+                        return Stop(result, CliSemanticStatus.Failed, RouteInclusionFindingCode.VerificationFailed,
+                            "The initial folder mapping did not verify. Review the retained recovery artifact.");
+                }
                 var post = await new RouteInclusionPlanBuilder().BuildAsync(plan.Request, token).ConfigureAwait(false);
                 if (post.Plan is null || !post.Outcome.NoOp
-                    || post.Plan.LayoutRead.Layout?.MainRoot != plan.LayoutRead.Layout?.MainRoot)
+                    || !SameLayout(plan.IntendedLayout, post.Plan.LayoutRead.Layout)
+                    || !SameLayout(plan.IntendedLayout, post.Plan.IntendedLayout))
                     return Stop(result, CliSemanticStatus.Failed, RouteInclusionFindingCode.VerificationFailed, "The final loader and registration did not verify. Review the recovery artifact.");
+                var finalLayout = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver())
+                    .ValidateAsync(lease, post.Plan.LayoutRead, token).ConfigureAwait(false);
+                if (finalLayout.State != MutationValidationState.Valid)
+                    return Stop(result, CliSemanticStatus.Failed, RouteInclusionFindingCode.VerificationFailed,
+                        finalLayout.Cause ?? "The intended workspace layout did not verify.");
                 result = result with { Verified = true };
                 return await CompleteRecoveryAsync(result, lease, preparation, token).ConfigureAwait(false);
             }
@@ -122,15 +145,35 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
         => outcome with { Status = status, Code = code, Cause = cause };
 
     private static bool Equivalent(RouteInclusionPlan expected, RouteInclusionPlan current)
-        => expected.LayoutRead.Layout?.MainRoot == current.LayoutRead.Layout?.MainRoot
+        => SameLayout(expected.LayoutRead.Layout, current.LayoutRead.Layout)
+            && SameLayout(expected.IntendedLayout, current.IntendedLayout)
+            && expected.Target.Path == current.Target.Path && expected.Target.Kind == current.Target.Kind
+            && expected.Target.CataloguePath == current.Target.CataloguePath
+            && expected.Target.Expectations.SequenceEqual(current.Target.Expectations)
             && expected.LayoutRead.State == current.LayoutRead.State
             && expected.LayoutRead.Expectations.SequenceEqual(current.LayoutRead.Expectations)
             && expected.Preview.Before == current.Preview.Before && expected.Preview.After == current.Preview.After
+            && expected.Preview.RegisteredBefore == current.Preview.RegisteredBefore
+            && expected.Preview.RegisteredAfter == current.Preview.RegisteredAfter
             && expected.Changes.Length == current.Changes.Length
             && expected.Changes.Zip(current.Changes).All(pair => pair.First.Expectation == pair.Second.Expectation
                 && pair.First.Kind == pair.Second.Kind && pair.First.IntendedBytes.AsSpan().SequenceEqual(pair.Second.IntendedBytes.AsSpan()))
+            && expected.RecoveryTargets.Length == current.RecoveryTargets.Length
+            && expected.RecoveryTargets.Zip(current.RecoveryTargets).All(pair => pair.First.RequiresRecovery == pair.Second.RequiresRecovery
+                && pair.First.Change.Expectation == pair.Second.Change.Expectation && pair.First.Before.Expectation == pair.Second.Before.Expectation)
             && expected.Observations.Length == current.Observations.Length
             && expected.Observations.Zip(current.Observations).All(pair => pair.First.Expectation == pair.Second.Expectation);
+
+    private static bool SameLayout(WorkspaceLayout? expected, WorkspaceLayout? current)
+        => expected is not null && current is not null && expected.MainRoot == current.MainRoot
+            && expected.OutsideRoutes.SequenceEqual(current.OutsideRoutes);
+
+    private static RouteInclusionEffectState ReceiptState(FileChangeReceipt receipt)
+    {
+        if (receipt.VerificationState == FilesystemVerificationState.Verified) return RouteInclusionEffectState.Verified;
+        if (receipt.EffectState == FilesystemEffectState.NotStarted) return RouteInclusionEffectState.NotStarted;
+        return RouteInclusionEffectState.Unknown;
+    }
 
     private static async ValueTask<RouteInclusionOutcome> CompleteRecoveryAsync(
         RouteInclusionOutcome outcome, WorkspaceLockLease lease, RecoveryBundlePreparation preparation, CancellationToken token)

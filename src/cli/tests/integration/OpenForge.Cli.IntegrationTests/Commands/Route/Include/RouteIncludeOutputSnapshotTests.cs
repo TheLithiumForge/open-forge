@@ -8,7 +8,7 @@ using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Include;
 
-public sealed class RouteIncludeOutputSnapshotTests
+public sealed partial class RouteIncludeOutputSnapshotTests
 {
     [Fact(DisplayName = "RouteInclude previews preserve text and JSON at every detail level"), Trait("Feature", "route-include"), Trait("Evidence", "Integration")]
     public async Task Preview()

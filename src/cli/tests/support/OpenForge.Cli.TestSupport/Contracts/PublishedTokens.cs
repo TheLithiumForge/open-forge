@@ -186,6 +186,17 @@ public static class PublishedTokens
         public const string AbsoluteDepth = "absoluteDepth";
     }
 
+    public static class RouteInclusionData
+    {
+        public const string Target = "target";
+        public const string TargetKind = "targetKind";
+        public const string Catalogue = "catalogue";
+        public const string Folder = "folder";
+        public const string RegisteredBefore = "registeredBefore";
+        public const string RegisteredAfter = "registeredAfter";
+        public const string Verified = "verified";
+    }
+
     public static class RouteInclude
     {
         public const string DryRun = "--dry-run";

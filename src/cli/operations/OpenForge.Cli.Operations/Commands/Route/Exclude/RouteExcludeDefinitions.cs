@@ -10,7 +10,7 @@ internal static class RouteExcludeDefinitions
 
     internal const int SchemaVersion = 1;
     internal const string CommandIdentity = "route exclude";
-    internal static readonly CliSyntaxDefinition Command = new("exclude", "Remove a workspace file from the loader without deleting it.");
-    internal static readonly CliSyntaxDefinition File = new("workspace-file", "Select one workspace-relative text file.");
+    internal static readonly CliSyntaxDefinition Command = new("exclude", "Stop listing a file or maintaining an outside folder without deleting content.");
+    internal static readonly CliSyntaxDefinition File = new("workspace-path", "Select one workspace-relative text file or outside folder.");
     internal static readonly CliOptionDefinition<bool> DryRun = new("--dry-run", "Preview loader and settings changes without writing.", CliOptionArity.None, false);
 }

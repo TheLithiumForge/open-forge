@@ -20,7 +20,7 @@ using OpenForge.Cli.Core.Shell.Definitions;
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Shared.Inclusion;
 
 [Trait("Boundary", "OS"), Trait("Feature", "route-inclusion"), Trait("Evidence", "Integration")]
-public sealed class RouteInclusionRecoveryHistoryIntegrationTests
+public sealed partial class RouteInclusionRecoveryHistoryIntegrationTests
 {
     private static CancellationToken Token => TestContext.Current.CancellationToken;
 

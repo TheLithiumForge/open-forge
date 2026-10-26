@@ -1,0 +1,7 @@
+Would create docs/team/scope/note.md  (./docs/team/scope/note.md)
+Workspace: <workspace>
+  Would create docs/team/scope
+  Would create docs/team/scope/_scope.md
+  Would create docs/team/scope/note.md
+  Would list it in docs/team/_team.md
+No files were changed.

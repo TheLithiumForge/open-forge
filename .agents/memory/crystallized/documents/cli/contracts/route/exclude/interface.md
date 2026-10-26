@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted public contract for removing a workspace file from the loader without deleting it
+  description: Accepted public contract for excluding files or deregistering outside folders without deleting content
   responsibility: Define what route exclude accepts, changes, reports and preserves
   tags: [Memory, Crystallized, CLI, Release, Command, Interface, Route, Exclude, Mutation, CurrentTruth]
 ---
@@ -23,12 +23,12 @@ defines locking, expected-state checks and recovery.
 
 ## Purpose
 
-Exclude removes every loader row for one destination and its roots registration. The target stays where it is.
+Exclude removes every loader row for one destination and its matching registration. A file uses `roots`. A folder uses `outsideRoutes` and its catalogue row. Content stays where it is.
 
 ## Syntax
 
 ```text
-open-forge route exclude <workspace-file>
+open-forge route exclude <workspace-path>
   [--dry-run]
 ```
 
@@ -37,12 +37,11 @@ Omitting `--dry-run` authorizes application after preflight.
 
 ## Operand
 
-Accept one workspace-relative file with either path separator and an optional
+Accept one workspace-relative file or outside folder with either path separator and an optional
 leading `./`. Report its canonical slash-separated workspace path.
-The file may be missing. An existing target must contain UTF-8 text.
-Reject directories, globs, URLs, fragments, lexical or linked workspace escapes,
+The file or registered folder may be missing. An existing file target must contain UTF-8 text. Resolve a missing registered folder from its exact declaration without traversing or deleting its tree. The shared layout observation and its anchor expected-state checks still apply. Reject globs, URLs, fragments, lexical or linked workspace escapes,
 Git metadata, the loader, settings and lock files as invalid input.
-A directory error names its `_<folder>.md` catalogue and says whether to create it first.
+Keep outside registration separate from primary/native category membership and file inclusion.
 
 Outside the primary content locations, any text file is eligible. A Markdown file with
 `## Entries` is followed as a catalogue. Its own frontmatter never sets loading.
@@ -55,6 +54,8 @@ Remove every row for the destination, including hand-written rows and rows whose
 target is missing. Remove its external `roots` registration too.
 For a primary-category catalogue, remove its generated row through loader membership.
 When neither a row nor a registration exists, report nothing changed and succeed.
+
+Folder exclusion removes its directory registration and matching catalogue rows without changing catalogue or descendant files. An independent file registration remains. Excluding the catalogue as a file removes its file registration and row while leaving an independent folder registration maintained but unlisted. Neither form records content removal or recreates an omitted row.
 
 ## Preview And Effects
 
@@ -76,6 +77,7 @@ Command data version 1 uses the shared schema-3 envelope with command `route exc
 The data has `mode`, `target`, `before`, `after`, `registeredBefore`,
 `registeredAfter` and `verified`. Missing rows are null.
 Effects, recovery and the next action stay on the shared envelope.
+Folder data additionally carries `targetKind` and the canonical workspace-relative `catalogue` path. Its `target` identifies the directory and registration flags describe `outsideRoutes`. File data keeps its existing shape and `roots` flag meaning, with those extra facts absent.
 A successful no-op uses the existing `nothing-to-do` headline and an empty effects list.
 
 ## Findings catalogue

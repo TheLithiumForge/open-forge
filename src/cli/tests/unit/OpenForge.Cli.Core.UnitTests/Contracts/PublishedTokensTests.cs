@@ -98,6 +98,13 @@ public sealed class PublishedTokensTests
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(LibraryListData.Libraries)), PublishedTokens.LibraryData.Libraries);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(LibraryListDataLibrary.SourceFolder)), PublishedTokens.LibraryData.SourceFolder);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(LibraryListDataLibrary.DestinationFolder)), PublishedTokens.LibraryData.DestinationFolder);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(OpenForge.Cli.Core.Presentation.Route.Include.Models.RouteIncludeData.Target)), PublishedTokens.RouteInclusionData.Target);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(OpenForge.Cli.Core.Presentation.Route.Include.Models.RouteIncludeData.TargetKind)), PublishedTokens.RouteInclusionData.TargetKind);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(OpenForge.Cli.Core.Presentation.Route.Include.Models.RouteIncludeData.Catalogue)), PublishedTokens.RouteInclusionData.Catalogue);
+        Assert.Equal(OpenForge.Cli.Core.Presentation.Route.Shared.Inclusion.Shared.Selection.RouteInclusionWireVocabulary.FolderTargetKind, PublishedTokens.RouteInclusionData.Folder);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(OpenForge.Cli.Core.Presentation.Route.Include.Models.RouteIncludeData.RegisteredBefore)), PublishedTokens.RouteInclusionData.RegisteredBefore);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(OpenForge.Cli.Core.Presentation.Route.Include.Models.RouteIncludeData.RegisteredAfter)), PublishedTokens.RouteInclusionData.RegisteredAfter);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(OpenForge.Cli.Core.Presentation.Route.Include.Models.RouteIncludeData.Verified)), PublishedTokens.RouteInclusionData.Verified);
         var install = InstallSymbols.Create();
         Assert.Equal(InstallDefinitions.MainRoot.Name, PublishedTokens.Install.MainRoot);
         Assert.Equal(OpenForge.Cli.Core.Presentation.Install.Shared.Prompts.InstallSetupQuestions.MainRootQuestion, PublishedTokens.Install.MainRootQuestion);

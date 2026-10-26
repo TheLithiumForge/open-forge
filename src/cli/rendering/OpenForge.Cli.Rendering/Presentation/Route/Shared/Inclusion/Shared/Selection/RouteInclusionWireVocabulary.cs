@@ -5,10 +5,20 @@ namespace OpenForge.Cli.Core.Presentation.Route.Shared.Inclusion.Shared.Selectio
 
 internal static class RouteInclusionWireVocabulary
 {
+    internal const string FolderTargetKind = "folder";
+
+    internal static string? TargetKind(RouteInclusionTargetKind? kind) => kind switch
+    {
+        null or RouteInclusionTargetKind.File => null,
+        RouteInclusionTargetKind.Folder => FolderTargetKind,
+        _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The target kind is not defined."),
+    };
+
     internal static CliEffectKind Kind(RouteInclusionEffectKind kind) => kind switch
     {
         RouteInclusionEffectKind.LoaderEntries => CliEffectKind.Section,
         RouteInclusionEffectKind.Settings => CliEffectKind.Setting,
+        RouteInclusionEffectKind.Catalogue => CliEffectKind.File,
         _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The effect kind is not defined."),
     };
 
