@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 
 internal sealed record RouteMoveNavigationPlanningRequest
 {
+    public ImmutableArray<RouteMoveReferenceDocumentPlan> ReferenceDocuments { get; init; } = [];
     public required RouteMoveResolvedDestination Destination { get; init; }
 
     public ImmutableArray<SourceLogicalSource> IntendedSources { get; init; } = [];

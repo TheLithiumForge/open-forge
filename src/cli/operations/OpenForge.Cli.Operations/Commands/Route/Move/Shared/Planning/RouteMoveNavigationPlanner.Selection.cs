@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
@@ -27,7 +28,8 @@ internal sealed partial class RouteMoveNavigationPlanner
             intended,
             moved.Identity.CanonicalBasePath,
             RouteMoveGeneratedReason.NewParent);
-        if (intended.Loader is { } loader)
+        var outside = RouteMoveMaintenanceBoundaryInspector.IsOutside(request.Destination.Inventory.Subject.Catalogue, destinationPath);
+        if (!outside && intended.Loader is { } loader)
         {
             selection.Add(loader, RouteMoveGeneratedReason.Loader);
         }
@@ -35,9 +37,14 @@ internal sealed partial class RouteMoveNavigationPlanner
         if (request.Destination.Inventory.Subject.Kind == RouteMoveSubjectKind.Category)
         {
             selection.Add(moved, RouteMoveGeneratedReason.MovedEntrypoint);
+            if (outside)
+                foreach (var source in intended.Sources.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form)
+                    && source.Base.CanonicalPath.StartsWith(SourceLogicalPath.ReadParent(destinationPath) + "/", StringComparison.Ordinal)))
+                    selection.Add(source, RouteMoveGeneratedReason.MovedEntrypoint);
         }
 
-        return selection.Form();
+        return selection.Form().Where(region => !outside || RouteMoveMaintenanceBoundaryInspector.SameBoundary(
+            request.Destination.Inventory.Subject.Catalogue.Layout, destinationPath, region.Source.Base.CanonicalPath)).ToArray();
     }
 
     private sealed class RegionSelection

@@ -15,6 +15,28 @@ public sealed class RouteMoveBeforeOutputSnapshotTests
     private static readonly CommandOutputRenderers<RouteMoveResult> Renderers = CommandOutputRenderers<RouteMoveResult>.From(RouteMovePresentation.Rendering);
 
     [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Move outside output retains exact source destination and composed row effects")]
+    public async Task OutsideBoundary()
+    {
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var custom in new[] { false, true })
+        {
+            using var workspace = new RouteMoveOutsideWorkspace(custom, compatibility: true);
+            var operation = RouteMoveOperationFactory.Create(workspace.LockStore.StoreRoot);
+            var before = workspace.Snapshot();
+            var preview = await operation.ExecuteAsync(workspace.Request(), TestContext.Current.CancellationToken);
+            RouteMoveOutsideApplicationIntegrationTests.Complete(preview);
+            Assert.Equal(before, workspace.Snapshot());
+            Renderers.MatchDetails(preview, custom ? "outside-custom-preview" : "outside-preview", snapshotCollector: snapshots);
+            workspace.OwnLeaf();
+            var applied = await operation.ExecuteAsync(workspace.Request(mode: RouteMoveMode.Apply), TestContext.Current.CancellationToken);
+            RouteMoveOutsideApplicationIntegrationTests.Complete(applied);
+            Renderers.MatchDetails(applied, custom ? "outside-custom-applied" : "outside-applied", snapshotCollector: snapshots);
+        }
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: nameof(OutsideBoundary));
+    }
+
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route move output preserves copied destination files when a later reference rewrite is denied")]
     public async Task PartialWriteFailure()
     {

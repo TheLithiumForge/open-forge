@@ -34,6 +34,7 @@ internal sealed class RouteMoveNavigationSourceProjector
         SourceLogicalSource source)
     {
         if (source.Base.Form == SourceDocumentForm.Loader
+            || RouteMoveMaintenanceBoundaryInspector.IsOutside(subject.Catalogue, source.Base.CanonicalPath)
             || SourceFormClassifier.IsEntrypoint(source.Base.Form)
             || subject.NavigationExposure.ExposedPaths.Contains(
                 source.Identity.CanonicalBasePath,
@@ -72,7 +73,12 @@ internal sealed class RouteMoveNavigationSourceProjector
                     destination,
                     overwrite,
                     movedPaths[overwrite.CanonicalPath])
-                : null);
+                : null)
+        {
+            IncludedParentPath = source.IncludedParentPath is { } parent ? movedPaths.GetValueOrDefault(parent, parent) : null,
+            IncludedEntry = source.IncludedEntry,
+            IsIncludedCatalogue = source.IsIncludedCatalogue,
+        };
     }
 
     private static SourceLayer ProjectLayer(

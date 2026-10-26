@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
 
@@ -49,6 +50,19 @@ internal sealed partial class RouteMovePostMoveObserver
     {
         var expected = plan.Projection.Destination;
         var subject = actual.Subject;
+        var original = expected.Inventory.Subject;
+        if (!RouteMoveMaintenanceBoundaryInspector.SameBoundary(original.Catalogue.Layout,
+                original.SelectedSource.Base.CanonicalPath, subject.SelectedSource.Base.CanonicalPath))
+            return "The final Route Move destination changed its maintenance registration.";
+        if (RouteMoveMaintenanceBoundaryInspector.IsOutside(original.Catalogue, original.SelectedSource.Base.CanonicalPath))
+        {
+            var before = RouteMoveMaintenanceBoundaryInspector.Observation(plan.LayoutRead, original.SelectedSource.Base.CanonicalPath);
+            var after = RouteMoveMaintenanceBoundaryInspector.Observation(subject.LayoutRead, subject.SelectedSource.Base.CanonicalPath);
+            if (before is null || after is null || before.Descriptor.DirectoryPath != after.Descriptor.DirectoryPath
+                || before.Descriptor.CataloguePath != after.Descriptor.CataloguePath
+                || !string.Equals(before.PhysicalDirectory, after.PhysicalDirectory, StringComparison.Ordinal))
+                return "The final Route Move destination changed its registered physical boundary.";
+        }
         if (subject.Kind != expected.Subject.Kind
             || subject.SelectedSource.Identity.AutomaticId != expected.Destination.Id
             || subject.SelectedSource.Identity.CanonicalBasePath != expected.Destination.Path)

@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-Map IDs through the selected layout while preserving literal operands. Scan both primary content locations, including private routes, and revalidate the layout under the lease.
+Map IDs through the selected layout while preserving literal operands. Keep existing primary and native selection rules. For an exact outside selection, retain the combined catalogue, included rows and one layout observation. Prove the selected available registration and required unique parent chain independently of Loader membership. Source and destination maintenance directory and anchor coordinates must match ordinally. Protect the registered directory and its canonical or recognized compatibility root entrypoints. Revalidate retained physical coordinates, inputs and layout under the lease and before effects.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
 
@@ -375,6 +375,12 @@ The planner does not change generated `Entries` as ordinary references. It leave
 generated interiors to the Index projection and retains their effect evidence
 separately.
 
+Outside reference coverage remains workspace-wide. A stationary source outside
+the selected registration may be read, but a required replacement there blocks
+the complete move unless the original authored link scope excludes it. Existing
+link-scope remapping is a separate control-record effect. Registration and
+removal exclusions remain unchanged.
+
 ## Generated Projection
 
 The projection uses the accepted [Index Behavior Contract](../../index-candidate/behavior.md)
@@ -397,6 +403,15 @@ generated planning failure occurs before any authored move or reference rewrite.
 The operation never invokes a hidden `index` subprocess or schedules a second
 indexing pass. Generated effects are part of the move's one result and recovery
 boundary.
+
+For an outside move, select only affected admitted parents and moved
+entrypoints inside the registration. Preserve Loader bytes and unlisted state.
+Project retained authored row destinations through the moved-path map, keeping
+labels, conditions, metadata, aliases and order. Compose these changes with the
+generated body from the same original snapshot, then combine disjoint authored
+prose edits into one effect. Malformed rows or uncertain required structure
+refuse the complete plan. Readonly metadata inputs do not acquire write
+permission, and final verification checks row meanings and untouched bytes.
 
 ## Selection And Result Formation
 

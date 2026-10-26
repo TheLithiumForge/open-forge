@@ -52,6 +52,7 @@ internal sealed record RouteMoveReferenceReplacementProjection
 
 internal sealed record RouteMoveReferenceDocumentPlan
 {
+    public RouteMoveIncludedRowPlan? IncludedRows { get; init; }
     public required string SourcePath { get; init; }
 
     public required string DestinationSourcePath { get; init; }

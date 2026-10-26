@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
@@ -25,12 +26,13 @@ internal sealed partial class RouteMoveNavigationPlanner(
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
 
-    internal RouteMoveNavigationPlanningResult Build(RouteMoveResolvedDestination destination)
+    internal RouteMoveNavigationPlanningResult Build(RouteMoveResolvedDestination destination, RouteMoveReferencePlan? references = null)
     {
         ArgumentNullException.ThrowIfNull(destination);
         return Build(new RouteMoveNavigationPlanningRequest
         {
             Destination = destination,
+            ReferenceDocuments = references?.Documents ?? [],
             IntendedSources = _sourceProjector.ProjectIntended(destination),
         });
     }
@@ -41,7 +43,7 @@ internal sealed partial class RouteMoveNavigationPlanner(
         ArgumentNullException.ThrowIfNull(request);
         var observed = request.Destination.Inventory.Subject.Catalogue;
         var observedFormation = _formationBuilder.Build(observed);
-        var formation = _formationBuilder.Build(observed, request.IntendedSources);
+        var formation = _formationBuilder.Build(RouteMoveIncludedRowProjector.ProjectCatalogue(request), request.IntendedSources);
         var formationBoundary = ReadFormationBoundary(request, formation);
         if (formationBoundary is not null)
         {
@@ -104,7 +106,14 @@ internal sealed partial class RouteMoveNavigationPlanner(
         GeneratedNavigationProjectionRequest request)
         => [.. documents.Select((document, index) => new ProjectedRegion(
             document,
-            _regionPlanner.Plan(request, request.Regions[index])))];
+            ProjectRegion(request, request.Regions[index])))];
+
+    private GeneratedNavigationRegion ProjectRegion(GeneratedNavigationProjectionRequest request, GeneratedNavigationRegionInput input)
+    {
+        var region = _regionPlanner.Plan(request, input);
+        return RouteMoveMaintenanceBoundaryInspector.IsOutside(request.Formation.Catalogue, input.Source.Base.CanonicalPath)
+            ? RouteMoveIncludedRowProjector.PreserveAuthoredBody(region, input.Document) : region;
+    }
 
     private static RouteMoveNavigationPlanningResult FormPlan(
         RouteMoveNavigationPlanningRequest request,
@@ -141,7 +150,7 @@ internal sealed partial class RouteMoveNavigationPlanner(
         {
             Path = region.Source.Identity.CanonicalBasePath,
             Reasons = region.Reasons,
-            State = projected.Projection.Change?.RequiresUpdate == true
+            State = projected.Projection.Change?.RequiresUpdate == true || projected.Document.RowsChanged
                 ? RouteMoveGeneratedState.Changed
                 : RouteMoveGeneratedState.Unchanged,
         };
@@ -151,11 +160,10 @@ internal sealed partial class RouteMoveNavigationPlanner(
         RouteMoveNavigationPlanningRequest request,
         IEnumerable<ProjectedRegion> regions)
     {
-        var movedPath = request.Destination.Destination.Path;
         var changes = new List<NavigationChange>();
         foreach (var region in regions.OrderBy(value => value.Projection.CanonicalPath, StringComparer.Ordinal))
         {
-            if (region.Projection.Change is not { RequiresUpdate: true } change)
+            if (region.Projection.Change is not { } change || !change.RequiresUpdate && !region.Document.RowsChanged)
             {
                 continue;
             }
@@ -164,18 +172,18 @@ internal sealed partial class RouteMoveNavigationPlanner(
             var destinationLogicalPath = Path.Combine(
                 workspace.LexicalRoot,
                 region.Projection.CanonicalPath.Replace('/', Path.DirectorySeparatorChar));
+            var original = region.Document.RowsChanged
+                ? ReadOriginalRegion(region.Document)
+                : (Location: change.ContentLocation, Bytes: change.BeforeBodyBytes);
             var edit = new RouteMoveNavigationDocumentEdit
             {
                 Snapshot = region.Document.Snapshot,
                 DestinationLogicalPath = destinationLogicalPath,
-                Location = change.ContentLocation,
-                BeforeBytes = change.BeforeBodyBytes,
+                Location = original.Location,
+                BeforeBytes = original.Bytes,
                 ExpectedBytes = change.ExpectedBodyBytes,
             };
-            var fileChange = string.Equals(
-                region.Projection.CanonicalPath,
-                movedPath,
-                StringComparison.Ordinal)
+            var fileChange = !string.Equals(region.Document.Snapshot.LogicalPath, destinationLogicalPath, StringComparison.Ordinal)
                 ? null
                 : PlannedFileChange.ReplaceGeneratedRegion(
                     region.Document.Snapshot.Expectation,
@@ -184,6 +192,15 @@ internal sealed partial class RouteMoveNavigationPlanner(
         }
 
         return changes;
+    }
+
+    private static (Framework.Sources.Models.Locations.SourceLocation Location, System.Collections.Immutable.ImmutableArray<byte> Bytes) ReadOriginalRegion(RegionDocument document)
+    {
+        var text = StrictUtf8.GetString(document.Snapshot.Bytes.AsSpan());
+        var facts = new MarkdownDocumentParser().Parse(text);
+        var span = facts.GeneratedRegion.EntriesBlock?.Span
+            ?? throw new InvalidOperationException("A navigation edit requires its original Entries span.");
+        return (new Utf8SourceMap(text).Map(span.Start, span.Length), [.. System.Text.Encoding.UTF8.GetBytes(text[span.Start..span.End])]);
     }
 
     private static RouteMoveResultFormation? ReadFormationBoundary(
@@ -234,7 +251,8 @@ internal sealed partial class RouteMoveNavigationPlanner(
     private sealed record RegionDocument(
         SelectedRegion Region,
         string Text,
-        FileStateSnapshot Snapshot);
+        FileStateSnapshot Snapshot,
+        bool RowsChanged);
 
     private sealed record ProjectedRegion(
         RegionDocument Document,

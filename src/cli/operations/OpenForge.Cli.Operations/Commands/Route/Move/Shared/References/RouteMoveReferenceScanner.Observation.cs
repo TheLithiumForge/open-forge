@@ -3,6 +3,8 @@ using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
+using OpenForge.Cli.Core.Framework.Sources.Loading;
+using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.References;
 
@@ -59,6 +61,40 @@ internal sealed partial class RouteMoveReferenceScanner
                 ExpectedBytes(plan, expected).AsSpan()))
         {
             return Failed("A final Route Move reference document changed from its accepted bytes.");
+        }
+
+        if (expected.IncludedRows is { } rows)
+        {
+            var parsed = SourceGeneratedEntriesParser.Parse(document.Facts);
+            if (parsed.State != SourceGeneratedEntriesState.Complete) return Failed("Final outside authored rows are unavailable.");
+            var intended = new Framework.Documents.Markdown.MarkdownDocumentParser().Parse(rows.IntendedText);
+            var remaining = parsed.Entries.ToList();
+            var actualMeanings = new List<RouteMoveReferenceMeaning>();
+            foreach (var row in rows.ExpectedEntries)
+            {
+                var literal = intended.Source[row.Span.Start..row.Span.End];
+                var index = remaining.FindIndex(candidate => document.Text[candidate.Span.Start..candidate.Span.End] == literal);
+                if (index < 0) return Failed("A final outside authored row changed its untouched bytes or order.");
+                var actual = remaining[index];
+                remaining.RemoveRange(0, index + 1);
+                var facts = await _destinationResolver.ResolveAsync(new SourceLinkDestinationInput
+                {
+                    Workspace = plan.Request.Workspace,
+                    Catalogue = sourceCatalogue,
+                    SourceCanonicalPath = expected.DestinationSourcePath,
+                    RawDestination = actual.Destination,
+                }, cancellationToken).ConfigureAwait(false);
+                if (facts.Target.Kind == SourceLinkTargetKind.Local && facts.Target.Path is { } path)
+                    actualMeanings.Add(new RouteMoveReferenceMeaning
+                    {
+                        TargetId = facts.Target.Id,
+                        TargetPath = path,
+                        Layer = facts.Target.Layer,
+                        Resolution = facts.Target.Resolution,
+                        Fragment = facts.Fragment,
+                    });
+            }
+            if (!MeaningsMatch(rows.Meanings, actualMeanings)) return Failed("A final outside authored row changed meaning.");
         }
 
         var meanings = await ReadMeaningsAsync(

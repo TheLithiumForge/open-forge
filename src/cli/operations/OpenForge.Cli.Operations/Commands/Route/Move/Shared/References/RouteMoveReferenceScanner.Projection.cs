@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
@@ -103,6 +104,16 @@ internal sealed partial class RouteMoveReferenceScanner
             return new RouteMoveReferenceReplacementProjection();
         }
 
+        var subject = input.Request.Destination.Inventory.Subject;
+        if (RouteMoveMaintenanceBoundaryInspector.IsOutside(subject.Catalogue, subject.SelectedSource.Base.CanonicalPath)
+            && (!RouteMoveMaintenanceBoundaryInspector.SameBoundary(subject.Catalogue.Layout, subject.SelectedSource.Base.CanonicalPath, sourcePath)
+                || RouteMoveMaintenanceBoundaryInspector.ReadPathProblem(subject.LayoutRead, sourcePath, false) is not null))
+            return new RouteMoveReferenceReplacementProjection
+            {
+                Boundary = Stop(input, RouteMoveFindingCode.ReferenceUnsafe,
+                Shell.Definitions.CliSemanticStatus.Blocked, sourcePath, "A required reference replacement is outside the selected safe maintenance boundary.")
+            };
+
         return new RouteMoveReferenceReplacementProjection
         {
             Replacement = new RouteMoveReferenceReplacement
@@ -173,7 +184,7 @@ internal sealed partial class RouteMoveReferenceScanner
                 },
             })];
 
-    private static string BuildDestination(
+    internal static string BuildDestination(
         string sourcePath,
         string targetPath,
         string rawDestination,

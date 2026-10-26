@@ -59,7 +59,9 @@ internal sealed partial class RouteMoveNavigationPlanner
                     "An applicable generated navigation source could not retain exact UTF-8 bytes."));
             }
 
-            values.Add(new RegionDocument(region, read.Text, read.Snapshot));
+            values.Add(new RegionDocument(region, read.Text, read.Snapshot,
+                request.ReferenceDocuments.Any(document => document.Snapshot.LogicalPath == read.Snapshot.LogicalPath
+                    && document.IncludedRows is { Edits.IsEmpty: false })));
         }
 
         return RegionDocumentRead.Complete(values);
@@ -78,6 +80,8 @@ internal sealed partial class RouteMoveNavigationPlanner
             source.Identity.CanonicalBasePath,
             StringComparison.Ordinal)).Key;
         var snapshot = ReadMovedSnapshot(destination, workspace.LexicalRoot, originalPath);
+        var reference = request.ReferenceDocuments.FirstOrDefault(document => document.DestinationSourcePath == source.Base.CanonicalPath);
+        snapshot ??= reference?.Snapshot;
         try
         {
             snapshot ??= FileStateSnapshot.File(
@@ -86,7 +90,7 @@ internal sealed partial class RouteMoveNavigationPlanner
                     source.Identity.CanonicalBasePath.Replace('/', Path.DirectorySeparatorChar)),
                 source.Base.PhysicalPath,
                 File.ReadAllBytes(source.Base.PhysicalPath));
-            return new SourceText(StrictUtf8.GetString(snapshot.Bytes.AsSpan()), snapshot);
+            return new SourceText(reference?.IncludedRows?.IntendedText ?? StrictUtf8.GetString(snapshot.Bytes.AsSpan()), snapshot);
         }
         catch (Exception exception) when (exception is DecoderFallbackException
             or UnauthorizedAccessException

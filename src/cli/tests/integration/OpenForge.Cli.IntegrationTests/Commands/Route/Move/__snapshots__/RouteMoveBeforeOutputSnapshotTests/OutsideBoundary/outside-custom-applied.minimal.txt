@@ -1,0 +1,7 @@
+Moved ./docs/team/left/old note.md to docs/team/right/new note.md
+Workspace: <workspace>
+  docs/team/left/_left.md  Entries updated
+  docs/team/right/_right.md  Entries updated
+  Updated 2 links that pointed to the old path:
+  docs/team/left/incoming.md:6:12
+  docs/team/right/new note.md:8:12
