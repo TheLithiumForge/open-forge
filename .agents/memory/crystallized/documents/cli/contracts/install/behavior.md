@@ -13,6 +13,8 @@ Read one layout observation and plan an intended layout from the first-installat
 
 Carry both observed and intended layouts in the plan. Validate the observation under the lease before settings or target effects, then verify the intended layout after application. A hand edit moves nothing. Shared drift and ownership handling follows the [layout contract](../../shared-operation-contract.md#workspace-layout). Counts and first-directory examples below describe the default layout.
 
+Outside registrations and retained outside observations must survive intended-layout construction and copying. The current Install layout planner omits these facts, so that private transport correction and outside row-preservation qualification remain pending. Preserve the required authored mutual order, conditions and first-reaching policy through ordinary Install, configure and form conversion. This requirement does not freeze absolute positions among regenerated primary rows.
+
 ## Ownership Receipt Formation
 
 Form whole-file and region receipts according to what the operation manages.

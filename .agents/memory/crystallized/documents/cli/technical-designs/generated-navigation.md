@@ -88,6 +88,8 @@ membership preservation is disabled or an anchor is missing. Within an outside
 catalogue, existing authored descendant and leaving-link rows retain their
 bytes, while new eligible descendants may receive generated rows.
 
+Retained authored rows keep their mutual order, labels, tags, conditions, duplicates and provenance. Regenerated primary rows keep their established ordering, so preservation does not freeze absolute mixed-row slots. A command changing an outside destination supplies intended row meanings through retained catalogue evidence before projection. It must compose row, ordinary-reference and region changes once from the same original snapshot, folding Entries edits into the intended region rather than overlapping replacements.
+
 A missing Loader produces zero roots. Operand-free Index selection blocks, while
 an explicit complete detached selection may still proceed. A missing
 intermediate entrypoint keeps the lower tree detached; no parent is invented.

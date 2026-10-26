@@ -184,6 +184,7 @@ public sealed class PublishedTokensTests
         Assert.Equal(RouteDefinitions.RouteGroup.Name, PublishedTokens.Route.Command);
         Assert.Equal(RouteInspectDefinitions.InspectCommand.Name, PublishedTokens.RouteInspect.Command);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteInspectData.Read)), PublishedTokens.RouteInspectData.Read);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteInspectData.MaintenanceRoot)), PublishedTokens.RouteInspectData.MaintenanceRoot);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteInspectDataRead.AtStart)), PublishedTokens.RouteInspectData.AtStart);
 
         Assert.Equal(RouteListDefinitions.ListCommand.Name, PublishedTokens.RouteList.Command);
@@ -193,6 +194,7 @@ public sealed class PublishedTokensTests
         Assert.Equal(RouteListDefinitions.AllDepth, PublishedTokens.RouteList.AllDepth);
         Assert.Equal(RouteListDefinitions.ReadFindingCode(RouteListFindingCode.InvalidDepth), PublishedTokens.RouteList.InvalidDepthCode);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteListData.Rows)), PublishedTokens.RouteListData.Rows);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteListDataRow.MaintenanceRoot)), PublishedTokens.RouteListData.MaintenanceRoot);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteListData.Depth)), PublishedTokens.RouteListData.Depth);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteListPresentationRow.HasOverwrite)), PublishedTokens.RouteListData.HasOverwrite);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteListPresentationRow.AbsoluteDepth)), PublishedTokens.RouteListData.AbsoluteDepth);

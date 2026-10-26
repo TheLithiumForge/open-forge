@@ -98,6 +98,8 @@ The identity and route boundary follows [Entrypoints](interface.md#entrypoints).
 
 ## Exact Path Resolution
 
+Use the same exact-reference spelling with filename and extension whenever an outside source is admitted. Registration grants no short ID, alias or search precedence. Registration or retained inclusion still determines discovery and whether a result has a source operand identity, so deregistration need not preserve command admission. Inventory and included-edge merge preserve each row's parent, metadata, conditions, span, order and aliases. Existing primary identities and base/overwrite ownership survive physical collapse. Effective included metadata keeps the first-reaching row. An alias can resolve a read without granting mutation authority.
+
 Included aliases of the same contained physical file resolve to the first retained
 source and its catalogue parent. They do not create another source ID or repeat
 the file. A required alias row can select that retained source through its parent.
@@ -120,7 +122,7 @@ normal automatic source ID derived from that destination. The resolver does not
 replace that ID with the source root or Library ID from a separate management
 record. Files outside the primary content locations have no short automatic ID. Active included
 files use the exact-reference display defined by the shared Interface Contract.
-Unlisted authored-link targets retain a null ID.
+Unregistered, unincluded authored-link targets retain a null ID.
 
 ## ID Resolution
 
@@ -189,7 +191,7 @@ path. A filesystem symlink projection at an eligible primary-content destination
 keeps that canonical destination path and its normal destination-derived
 automatic ID. Files outside the primary content locations have no automatic short ID. Explicit
 Context selections, Find, References and Route List put the exact `./path`
-reference in their existing `id` field. Other Context reads keep a null ID. The canonical workspace-relative path remains required. A Workspace Library ID remains a separate management identity
+reference in their existing `id` field. Context projects a null ID for retained included startup or ordinary linked reads and for an unregistered, unincluded linked target. A registered source without included policy retains its catalogue identity through a linked read. Explicit included selection projects its selected exact reference. The canonical workspace-relative path remains required. A Workspace Library ID remains a separate management identity
 and is never a source-reference operand.
 
 These facts form one typed result consumed by the command's presentation layer;

@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 
@@ -80,6 +81,13 @@ internal sealed partial class RouteListSelectionResolver
             SourceReferenceKind.SourcePath => ResolvePath(stage),
             _ => throw new ArgumentOutOfRangeException(nameof(parsed), parsed.Kind, "The source reference kind is not defined."),
         };
+        if (parsed.Kind == SourceReferenceKind.SourcePath
+            && resolution.State == RouteListSelectionResolutionState.Invalid
+            && resolution.Issues.All(issue => issue.Code == RouteListFindingCode.UnsupportedSource)
+            && RouteOutsideRouteReader.MaintenanceRoot(catalogue.Layout, attemptedReference) is not null
+            && catalogue.FindByPath(attemptedReference) is { } registered
+            && routeFacts.Topology.FindByPath(registered.Base.CanonicalPath) is not null)
+            resolution = ResolveSource(attempted, registered, projectionSet, routeFacts, RouteListSelectionKind.SourcePath, registeredExact: true);
         return new ValueTask<RouteListSelectionResolution>(resolution);
     }
 

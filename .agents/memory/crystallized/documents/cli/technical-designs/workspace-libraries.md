@@ -11,6 +11,8 @@ open-forge:
 
 Library registrations, source roots, destination roots and suffixes remain literal. They never use package-path remapping. The consumer’s observed layout supplies source identity, existing navigation boundaries and implicit destination admission. Fixed settings and ownership storage stay in `.agents`. Carry that observation through planning and revalidate it before grants or effects. See [Workspace Layout](workspace-layout.md).
 
+An outside route registration is distinct from a Library registration. It neither admits Library destinations implicitly nor releases source-tree protection. A readable Library source inside a registered route remains protected by the existing ownership and no-follow policies. Folder Include and Exclude do not create or remove Library mappings.
+
 ## Boundary And Ownership
 
 Workspace Libraries project eligible files from a workspace-contained source

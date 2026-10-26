@@ -13,6 +13,8 @@ procedures. For a first walkthrough, use the
 
 Commands follow the [context folder chosen at installation](../getting-started/installation.md#choose-the-context-folder). Path examples here use the default `.agents` layout.
 
+To maintain an existing folder elsewhere in the workspace, register an [outside route](/guides/cli#outside-routes) with folder Include. This is separate from choosing the main root. File Include stays read-only by itself. Registration supplies inventory and bounded maintenance, while authored Loader rows still decide loading.
+
 ## Start with these commands
 
 | When you want to                               | Run                                                   |

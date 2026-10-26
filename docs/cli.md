@@ -593,6 +593,18 @@ shape.
 `route list` also shows included root rows. A registration in settings `roots`
 without a loader row is labelled off and has no children.
 
+For a registered outside directory, select its catalogue or a descendant by
+exact source reference, such as `./docs/team/_team.md`. This works even without
+a Loader row. Bare `route list` keeps its Loader-root selection and does not
+add an unlisted directory as a root.
+
+Applicable outside rows include optional `maintenanceRoot` at every JSON detail.
+It names the canonical workspace-relative registered directory, such as
+`docs/team`, without `./` or a trailing slash. Standard, full and debug text may
+show `Maintenance root`. The fact is omitted when inapplicable and says nothing
+about loading, direct Loader listing, ownership or package permission. Source
+identities still keep `./` and the filename.
+
 `route list` shows routed sources and descendants at a structural depth. The
 default depth is `1`. Use `--depth=0` for the selected sources only, or
 `--depth=all` to include the complete routed descendant set. Both `--depth=2` and `--depth 2` are accepted.
@@ -635,6 +647,12 @@ An explicit inspection can explain a nonmatch, but it does not activate the
 source's automatic children. Without `--for` paths, only entries that a loading
 tag would otherwise load automatically have pending conditions. Explicitly
 selected entries remain inspectable without a path filter.
+
+Explicit inspection also works for registered-but-unlisted outside sources.
+Their source data includes optional `maintenanceRoot` at every JSON detail,
+with the same directory format and boundaries as [Route List](#route-list).
+Standard, full and debug text may show `Maintenance root`. It is omitted when
+inapplicable, and exact source identities retain `./` and the filename.
 
 ##### Current matching files
 
@@ -693,6 +711,48 @@ each pattern is translated.
 #### Next step
 
 Use [`context`](#context) to load the source and applicable route context.
+
+### Outside routes
+
+Keep a maintained folder where it already lives instead of moving it into the context folder. Given an existing ordinary `docs/team` directory, preview and register it:
+
+```sh
+open-forge route include docs/team --dry-run
+open-forge route include docs/team
+```
+
+Folder Include records `docs/team` in settings v5 `outsideRoutes` and lists its canonical `docs/team/_team.md` catalogue. It creates that catalogue only when missing and preserves an existing one byte-for-byte. Competing recognized entrypoints block registration. A file Include, including a catalogue file, still uses `roots` and grants no folder scan or maintenance by itself.
+
+The directory must be inside the workspace without overlapping the main root, fixed `.agents` locations, another registration, Git metadata or `.open-forge-state`. Use exact case and safe ordinary paths. A physical alias never expands write authority. Outside content uses generic Workspace metadata. A folder named `skills` gains no native package meaning, and an outside `SKILL.md` is ordinary Markdown.
+
+Use exact source references with the filename, such as `./docs/team/_team.md` and `./docs/team/testing.md`. Registration creates no short ID or alias. The spelling stays literal, while discovery and command admission depend on registration or retained inclusion.
+
+| Command | Within a registered outside route |
+| --- | --- |
+| `route create` | Create a Markdown leaf and necessary descendant chains below an existing recognized anchor |
+| `route init` | Initialize or restore a generic canonical entrypoint chain, stopping at the registered directory |
+| `route update` | Change eligible existing metadata or complete an eligible empty body |
+| `index` | Maintain listed roots by default, or an explicitly selected unlisted tree |
+| `repair` | Maintain only the affected closure of selected proven repairs |
+| `route move` | Move an eligible leaf or descendant category within the same registration |
+| `route remove` | Remove eligible descendants and record literal file/directory exclusions without deregistering |
+
+For example, after registration:
+
+```sh
+open-forge route create ./docs/team/testing.md --description "Team testing rules" --tag Testing --dry-run
+open-forge index ./docs/team/_team.md --dry-run
+```
+
+Within a registration, existing recognized compatibility anchors keep their filenames. Unlisted maintenance and a stale Loader row naming a missing canonical anchor do not authorize relisting, renaming a compatibility file or restoring content implicitly. Create needs one safe existing anchor. Init owns generic missing-chain restoration.
+
+Registration supplies discovery and bounded maintenance, while Loader and catalogue rows still control loading. Removing a Loader row leaves the registration unlisted. Bare Index leaves that tree alone, and explicit Index does not relist it. Context does not activate inventory merely because it was scanned. Find discovers registered unlisted Markdown, and References uses the combined universe while excluding generated Entries from authored-link counts. Repeated authored rows retain labels, tags, conditions, aliases, mutual order and first-reaching included policy.
+
+Move and Remove protect the registered directory and every recognized root entrypoint. Outside moves cannot cross registrations or enter or leave primary/native content. Readable foreign links establish impact, not write permission. A required surviving foreign rewrite blocks the complete plan unless existing authored link scope excludes it.
+
+Preview before applying. Writes retain expected-state checks, a workspace lease and recovery under the fixed workspace-root `.open-forge-state`. Registration grants neither package ownership nor an implicit Extension or Library destination. Existing explicit grants and source/ownership protections still apply.
+
+`route exclude docs/team` removes the folder registration and matching Loader rows without deleting content or scanning descendants. Independent file registrations remain. Excluding the catalogue as a file instead leaves a separate folder registration unlisted. Older CLIs do not maintain directory registrations, and preserving an unknown settings property does not make them downgrade-compatible.
 
 ## Maintain routes and Markdown
 
@@ -929,7 +989,7 @@ Open the new file and fill in its body, then check it with [`doctor`](#doctor).
 
 ### `route include`
 
-List an existing project document in the loader where it lives:
+List an existing project document where it lives, or register an existing outside folder as a maintained route:
 
 ```sh
 open-forge route include CONTRIBUTING.md --description "How to contribute" --dry-run
@@ -942,7 +1002,7 @@ Use one workspace-relative UTF-8 text file. Both path separators and a leading
 `./` are accepted. A Markdown file with `## Entries` is followed as a catalogue.
 Other files are leaves. The file keeps its bytes and needs no Open Forge frontmatter.
 
-A new row outside the primary content locations requires `--description`. Repeat `--tag` in the
+A new file row outside the primary content locations requires `--description`. Repeat `--tag` in the
 order to keep, with or without `#`. Without tags the document loads on demand.
 Repeat `--apply-to` for workspace-relative glob conditions. The file's own
 frontmatter never sets loading.
@@ -957,15 +1017,15 @@ Within the main root, include only a direct child folder's catalogue, such as
 frontmatter to change its description, tags or conditions. Metadata options on
 these catalogues are invalid. A deeper file belongs through its folder's catalogue.
 
-Use a catalogue instead of a directory. Globs, URLs, fragments, paths that escape
+A directory uses the [outside-route workflow](#outside-routes). Globs, URLs, fragments, paths that escape
 the workspace through `..` or a link, Git metadata, workspace control files and
 non-UTF-8 files are invalid. Errors name the operand and the supported next step.
 
-Only the loader and settings may change. Outside the primary content locations, the canonical path
+For a file Include, only the selected loader and fixed settings may change. Outside the primary content locations, the canonical file path
 is recorded in settings `roots`. The loader row decides whether and when it loads.
 Deleting a row by hand leaves an unlisted registration. Index, Update, Configure
 and Extension installation keep it unlisted. Index preserves included rows in their order
-and never writes the included files.
+and never writes a file solely because it was included.
 
 `--dry-run` previews without writing. Otherwise Include checks the complete plan,
 takes the workspace mutation lock and applies with recovery, without a prompt.
@@ -990,6 +1050,8 @@ When nothing lists or registers the target, the command reports nothing changed
 and succeeds. JSON uses the existing no-change shape with no effects.
 `--dry-run` previews the rows before and after. Applied changes use the workspace
 mutation lock and recovery. The target file keeps its bytes.
+
+For a folder, Exclude removes its `outsideRoutes` registration and matching catalogue rows without deleting or recursively reading its tree. A missing registered directory can be excluded. Independent file registrations remain. See [Outside routes](#outside-routes).
 
 <a id="update-one-routed-source"></a>
 
@@ -1085,6 +1147,8 @@ See [global options](#global-options) for shared flags.
 Select a category by its entrypoint path. The destination's parent route must
 already exist, so run `route init` first when it doesn't. Review the
 destination's scope and inherited rules when choosing the new location.
+
+For an outside source, choose an exact destination within the same available registration. Its directory and root entrypoints stay protected. A required foreign content rewrite blocks the whole move. See [Outside routes](#outside-routes).
 
 Both commands can be blocked by ambiguous routes, changed targets, unsafe
 generated regions or incomplete evidence. `route move` still refuses managed
@@ -1456,8 +1520,9 @@ loader, or add rows with `--route`, such as `--route memory/working=git-ignore`.
 A Memory state brings the Memory catalogue with it. Presets select supplied
 defaults. Existing content in an omitted route remains in place and routable.
 
-The loader's `Entries` are the workspace's list of what agents use. Install,
-Update, Configure, and Extension commands keep that list as you left it: a
+The loader's `Entries` are the workspace's list of what agents use. For primary
+roots and file-only inclusions, Install, Update, Configure, and Extension commands
+keep that list as you left it: a
 root line you removed stays removed, links you added to documents outside
 `.agents/` stay in place, and an empty list stays empty. A root joins the
 list only when the command creates its catalogue, or when Configure adds a
@@ -1749,11 +1814,11 @@ are in `.agents/open-forge.json`. Framework and Extension records share the lock
 but remain independent command domains.
 
 The settings key `frontmatter` accepts `root` or `scoped`. A missing key means
-scoped, and unsupported values are invalid settings. New settings use `schemaVersion` 4. Unrelated rewrites preserve existing declarations. The optional `mainRoot` names the context folder, with absence meaning `.agents`. The default value is not inserted:
+scoped, and unsupported values are invalid settings. New settings use `schemaVersion` 5. Unrelated rewrites preserve existing declarations. The optional `mainRoot` names the context folder, with absence meaning `.agents`. The default value is not inserted:
 
 ```json
 {
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "frontmatter": "root"
 }
 ```

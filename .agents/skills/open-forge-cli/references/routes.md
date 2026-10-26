@@ -14,6 +14,16 @@ Moving or removing a category also maintains direct links to its folder and
 nested folders. A missing folder link needs a manual edit, and Repair does not
 offer file replacements for it.
 
+## Outside routes
+
+Folder Include registers a safe existing workspace directory in settings v5 `outsideRoutes`, lists its canonical catalogue and creates that catalogue only when missing. File Include, including a catalogue file, stays file-only in `roots`. The two registrations can coexist. Neither adds loading authority, package ownership or an implicit Extension or Library grant.
+
+Use exact source references with filenames, such as `./docs/team/_team.md`. Registration supplies inventory, not Loader membership. Bare Index maintains listed roots. Explicit Index and affected Repair can maintain an unlisted registration without relisting it. Create requires one safe existing recognized anchor. Generic Init can restore its missing chain and stops at the registration. Update edits eligible existing content. Existing compatibility anchors keep their actual filenames, including with a stale canonical Loader row.
+
+Move stays within one outside registration. Move and Remove protect its directory and root entrypoints, keep content writes physically within the selected boundary and refuse a required surviving foreign rewrite unless existing authored link scope excludes it. Remove records literal file/directory exclusions without deregistering. Folder Exclude owns deregistration and never deletes or scans descendants. Preview every authorized write and retain reported recovery under the fixed `.open-forge-state` folder.
+
+Outside metadata uses generic Workspace defaults. Names such as `directives` or `skills` add no primary meaning, and an outside `SKILL.md` is ordinary Markdown. Directory registration requires ordinary contained paths and rejects overlaps and aliases. Given an existing `docs/team` directory, preview `open-forge route include docs/team --dry-run`. After registration, preview `open-forge index ./docs/team/_team.md --dry-run`.
+
 ## Metadata And Conditions
 
 An `entrypoint` is the Markdown file that makes a folder routable. Use Route Init for missing entrypoints, Create for an ordinary routed file, and Update for an existing source.
@@ -34,7 +44,7 @@ New metadata and quoted-string condition lists use the workspace's frontmatter f
 
 ## `route init <route-target>`
 
-Create every missing entrypoint in an exact route chain. Targets are route IDs or exact `./...` workspace-relative entrypoint paths within the context folder or native Skills. A missing exact path uses the canonical `_{folder-name}.md` filename. Init never creates the loader.
+Create every missing entrypoint in an exact route chain. Targets are route IDs or exact `./...` workspace-relative entrypoint paths within the context folder, native Skills or a registered outside route. A missing exact path uses the canonical `_{folder-name}.md` filename. Init never creates the loader.
 
 | Flag                                                       | Meaning                                                                                             |
 | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -67,7 +77,7 @@ For example, preview a new decision record using that available Template:
 open-forge route create memory/crystallized/decisions/api-choice --description "Accepted API choice" --tag Decision --tag API --template templates/planning/decision --dry-run
 ```
 
-## `route include <workspace-file>`
+## `route include <workspace-path>`
 
 List a project document in the loader where it lives. A new external row requires
 `--description <text>`. Repeat `--tag <tag>` in order, with or without `#`, and
@@ -79,9 +89,9 @@ open-forge route include CONTRIBUTING.md --description "How to contribute" --dry
 open-forge route include CONTRIBUTING.md --description "How to contribute"
 ```
 
-The target is one workspace-relative UTF-8 file. A Markdown file with
+A file target is one workspace-relative UTF-8 file. A Markdown file with
 `## Entries` is followed as a catalogue. Both path separators and a leading
-`./` are accepted. Use a catalogue instead of a directory. Globs, URLs, fragments,
+`./` are accepted. A folder instead uses [outside registration](#outside-routes), with an omitted description taking the generic scaffold description. Globs, URLs, fragments,
 workspace escapes, Git metadata and control files are invalid.
 
 An existing row keeps omitted fields. Each supplied option replaces only its own
@@ -89,15 +99,15 @@ field. An identical request is a verified no-op. A hand-written row is registere
 without rewriting it. To clear tags or conditions, edit the row or exclude and
 include again. The preview shows rows before and after.
 
-Inside `.agents/`, use only a direct child folder's catalogue. Include switches
+Inside the selected main root, use only a direct child folder's catalogue. The fixed native Skills catalogue remains a primary category. Include switches
 its generated row on. Change that catalogue's frontmatter for metadata, since
 `--description`, `--tag` and `--apply-to` are rejected there.
 
 External files are recorded in settings `roots`. The loader controls activation.
 Deleting a row by hand leaves the registration unlisted. Index, Update, Configure and
-Extension installation never restore it. Included files keep their bytes.
+Extension installation never restore it. File inclusion alone never grants maintenance of the included file.
 
-## `route exclude <workspace-file>`
+## `route exclude <workspace-path>`
 
 Remove every loader row for the target and its external `roots` registration.
 The target file stays in place. A missing target and a hand-written row are valid.
@@ -111,7 +121,7 @@ open-forge route exclude CONTRIBUTING.md
 When nothing lists or registers the target, Exclude reports nothing changed and
 succeeds. Both commands preview with `--dry-run` and otherwise apply after checks
 with the workspace mutation lock and recovery, without a prompt. They write only
-`.agents/loader.md` and `.agents/open-forge.json`.
+the selected loader and fixed `.agents/open-forge.json`. Folder Include may additionally create its missing canonical catalogue, while folder Exclude only removes its registration and matching rows.
 
 ## `route update <source-reference>`
 
@@ -125,7 +135,7 @@ Repeated `--tag` replaces the complete ordered tag list, and `--apply-to` replac
 
 ## `route move <source-reference> <destination-target>`
 
-Relocate an unmanaged routed leaf or complete category, updating affected references and generated navigation. The destination is an exact workspace-relative `./...` path under an existing routable parent in the context folder or native Skills and must match the source's leaf or category form.
+Relocate an unmanaged routed leaf or complete category, updating affected references and generated navigation. The destination is an exact workspace-relative `./...` path under an existing routable parent in the context folder, native Skills or the same registered outside route, and must match the source's leaf or category form.
 
 Its only command flag is `--dry-run`. Inspect the move and all reference changes. Move does not relocate lifecycle-managed content, create a missing parent route, or overwrite a destination.
 

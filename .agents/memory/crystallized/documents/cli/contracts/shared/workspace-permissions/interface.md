@@ -16,6 +16,8 @@ owns this boundary.
 
 Eligible destinations below the selected main root and `.agents/skills` need no external grant. Implicit admission uses exact case. A case alias needs explicit permission and still passes every ordinary safety check. Fixed controls remain protected. Authored grants are literal workspace paths and do not move when the context folder differs.
 
+An `outsideRoutes` registration grants bounded route maintenance only. It adds no implicit Extension or Library destination, persistent grant or ownership receipt. Package effects there still need the existing explicit destination admission and all protection checks.
+
 ## Authored Settings
 
 There is no per-owner permission document. Grants are workspace-relative paths

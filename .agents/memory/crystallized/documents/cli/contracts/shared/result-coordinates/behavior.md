@@ -11,6 +11,8 @@ open-forge:
 
 Project layout facts from the operation’s retained observation or intended Install layout. Do not infer a context folder from path segment positions or substitute a default when settings cannot supply a layout. Preserve actual installed paths separately from package coordinates.
 
+Keep outside exact references distinct from canonical workspace-relative paths. Registration, loading, availability, ownership and permission are independent facts. Publish only the command-owned fields defined by its Interface Contract, without adding a shared field or inferring missing observations from inventory.
+
 ## Status And Authority
 
 This is the accepted current Behavior Contract for forming the shared public

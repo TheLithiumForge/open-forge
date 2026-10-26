@@ -11,6 +11,14 @@ open-forge:
 
 Carry the observed layout through inventory, loader selection and included-source projection. Preserve aliases and conditions when reconstructing the catalogue.
 
+Use the retained outside observations for inventory admission and relevant
+diagnostics. Keep registration, listing, availability and effective loading
+separate. Preserve every authored row and first-reaching effective policy.
+Derive `maintenanceRoot` only from an ordinal registration match on an already
+represented logical coordinate. It grants no selection, loading, ownership or
+permission. Omission preserves primary and file-only presentation. Do not infer
+an available source or restore a Loader row from registration alone.
+
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
 
 ## Status And Authority

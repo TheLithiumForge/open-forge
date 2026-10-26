@@ -11,6 +11,8 @@ First installation can select the context folder with `install --main-root <fold
 
 Before you write workspace files or metadata, read the file formats in `.agents/README.md`, or run `open-forge help concepts` if that page was deleted.
 
+Folder `route include` registers a maintained outside directory in settings v5. File Include stays read-only by itself. Use exact `./...` source references with filenames outside primary content, and do not infer loading, ownership or package permission from registration. Read [outside-route maintenance](references/routes.md#outside-routes) before editing that content. Older CLIs do not maintain directory registrations, and unknown-property preservation is not downgrade compatibility.
+
 You may create or move user-owned Markdown files directly inside routed folders. Preview and run `open-forge index` to fill missing metadata, create missing entrypoints, and refresh Entries instead of writing those by hand. After renames or moves, preview and run `open-forge repair --automatic` to repair proven links and affected navigation. When Git retains the old file's committed content, Index and Repair work in either order. Without Git, run Repair first while old Entries still record the file's metadata. Index and Repair preserve protected content, including managed files. Follow Doctor's next step for remaining choices, edits or a Git timeout retry. Read [route maintenance](references/routes.md) for the boundaries.
 
 ## Most Important Commands

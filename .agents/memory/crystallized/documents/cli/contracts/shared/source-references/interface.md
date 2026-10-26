@@ -71,13 +71,15 @@ memory/crystallized/documents
 
 These values identify the same source.
 
-A file outside the primary content locations has no short source ID. Name an active included file
-by its exact path, such as `./CONTRIBUTING.md`. Explicit Context selections,
+A file outside the primary content locations has no short source ID. Name a registered outside source or active included file
+by its exact path, such as `./docs/team/testing.md` or `./CONTRIBUTING.md`. Explicit Context selections,
 Find, References and Route List use the exact `./path` reference in their
-existing `id` field. Context startup and ordinary linked reads keep a null ID. Their `path` field stays workspace-relative.
+existing `id` field. Context startup and ordinary linked reads of retained included sources keep a null ID. An unregistered, unincluded linked target also keeps a null ID. A registered source without included policy retains its catalogue identity when read through a link. The `path` field stays workspace-relative.
 
 Included paths to the same physical file share the first retained source and its
 catalogue parent. Each listed alias remains accepted as an exact operand.
+
+Exact outside references retain the filename and extension, including `./docs/team/_team.md` for an anchor. Registration creates no short ID, alias or search precedence. Discovery and whether a result has a source operand identity still depend on registration or retained inclusion. Deregistration removes that discovery route without changing the exact-reference spelling or guaranteeing that a command still admits the file. Existing authored included aliases remain valid. An outside `SKILL.md` is ordinary Markdown, not a native Skill package.
 
 ## Authored Local Destination Spellings
 
@@ -344,10 +346,10 @@ Structured results expose the same automatic ID and canonical path as separate
 fields. A source with an ID collision keeps its path and reports the ambiguous
 ID state.
 
-An included file outside the primary content locations uses the exact-reference display described
-under [Accepted Forms](#accepted-forms). An unlisted local Markdown link target
-has no source operand identity. Context keeps its null ID for startup and
-ordinary linked reads, and uses the exact reference for explicit included selections. The canonical workspace-relative path remains
+A registered outside source or included file outside the primary content locations uses the exact-reference display described
+under [Accepted Forms](#accepted-forms). An unregistered, unincluded local Markdown link target
+has no source operand identity. Context keeps the null-ID cases described under
+[Accepted Forms](#accepted-forms), and uses the exact reference for explicit outside or included selections. The canonical workspace-relative path remains
 required. A filesystem symlink projection at an eligible primary-content
 destination retains its canonical destination path and normal destination-derived
 automatic source ID.

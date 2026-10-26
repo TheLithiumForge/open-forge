@@ -180,6 +180,7 @@ public static class PublishedTokens
 
     public static class RouteListData
     {
+        public const string MaintenanceRoot = "maintenanceRoot";
         public const string Rows = "rows";
         public const string Depth = "depth";
         public const string HasOverwrite = "hasOverwrite";
@@ -214,6 +215,7 @@ public static class PublishedTokens
 
     public static class RouteInspectData
     {
+        public const string MaintenanceRoot = "maintenanceRoot";
         public const string Read = "read";
         public const string AtStart = "atStart";
     }

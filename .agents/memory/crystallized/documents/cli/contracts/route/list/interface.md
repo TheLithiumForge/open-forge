@@ -11,6 +11,18 @@ open-forge:
 
 Root rows come from the selected loader. Native Skills retain `skills/...` identities, and included files retain exact `./path` identities.
 
+Registered outside inventory supports explicit selection without adding Loader
+rows or activating an unlisted tree. Each already represented row inside an
+ordinal outside registration carries optional `maintenanceRoot` at every JSON
+detail. Its value is the canonical workspace-relative registered directory,
+without `./` or a trailing slash. Omit the field when inapplicable, including for
+primary content and file-only inclusion. An existing missing-row representation
+may retain this declaration fact. Do not create registration-only placeholders.
+The coordinate reports registration independently of availability, loading,
+ownership and permission. Human standard, full and debug views may show
+`Maintenance root: <directory>`. Minimal text and no-operand selection retain
+their existing behavior.
+
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
 ## Status And Authority

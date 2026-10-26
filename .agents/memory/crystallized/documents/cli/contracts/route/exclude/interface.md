@@ -61,7 +61,7 @@ Folder exclusion removes its directory registration and matching catalogue rows 
 
 Dry-run and apply use the same plan. The report shows loader rows before and after,
 registration before and after, and every planned loader or settings change.
-Only `.agents/loader.md` and `.agents/open-forge.json` may change.
+Only the selected layout's loader and fixed `.agents/open-forge.json` may change.
 Target bytes remain unchanged. Dry-run creates no lock, recovery bundle or file.
 
 ## Results And JSON

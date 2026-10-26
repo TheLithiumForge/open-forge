@@ -1,0 +1,3 @@
+  ./docs/team/_team.md    Team authored
+    ./docs/team/SKILL.md  Outside skill
+    ./docs/team/child.md  First child

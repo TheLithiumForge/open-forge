@@ -1,0 +1,30 @@
+./docs/team/child.md  docs/team/child.md
+Workspace: <workspace>
+  Maintenance root: docs/team
+
+Where this source belongs
+  Route chain: _team.md -> child.md
+  Parent: _team.md
+  Overwrite file: docs/team/child.overwrite.md
+  Tags: Body
+
+When it is read
+  At task start or resume: yes
+  Read automatically when ./docs/team/_team.md is read
+  Read automatically when its exposing parent is read, or a later review point is reached while its scope is active
+  Read automatically when the base source is read
+  May be read again: yes
+  When: after context restoration, before handoff or closeout, or after a change that may affect its follow-up work
+
+File applicability
+  state: matched
+  condition from: docs/team/child.md: `src/**`
+  matching paths: src/Planned.cs
+
+Context size
+  This file: 2 files, 112 B, about 28 tokens
+  Selecting this route adds: nothing (already in startup context)
+
+Axioms
+  Inherited rules from: none
+  Local rules: no

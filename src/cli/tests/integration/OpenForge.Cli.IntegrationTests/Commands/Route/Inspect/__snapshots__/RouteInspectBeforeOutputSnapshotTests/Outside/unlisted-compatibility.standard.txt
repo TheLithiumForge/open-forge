@@ -1,0 +1,23 @@
+./docs/team/index.md  docs/team/index.md
+Workspace: <workspace>
+  Maintenance root: docs/team
+
+Where this source belongs
+  Route chain: index.md
+  Parent: none (detached root)
+  Direct children: 2 files
+  Descendants: 2 files
+  Entrypoint name: index.md (compatibility name; the canonical name is _team.md)
+  Tags: Authored
+
+When it is read
+
+File applicability
+  state: unconditioned
+
+Context size
+  This file: 296 B, about 74 tokens
+  Read automatically below it through #LoadNow: 2 files, 112 B, about 28 tokens
+
+Axioms
+  Local rules: no

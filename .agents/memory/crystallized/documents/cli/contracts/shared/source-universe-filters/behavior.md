@@ -9,7 +9,7 @@ open-forge:
 
 ## Layout Selection
 
-Resolve selectors against the supplied catalogue and its retained layout. Preserve every default selection scope, included identity, alias and condition when reconstructing a filtered catalogue. Do not infer loading membership from primary content locations alone.
+Resolve selectors against the supplied catalogue and its retained layout. Preserve every default selection scope, included identity, alias and condition when reconstructing a filtered catalogue. Do not infer loading membership from primary content locations or registered inventory.
 
 ## Status And Scope
 
@@ -67,11 +67,13 @@ without turning them into a guessed effective universe.
 For each successfully resolved occurrence, expansion is based on the resolved
 source kind:
 
-- Loader, a recognized entrypoint, and `SKILL.md` expand from the physical
+- Loader, a recognized entrypoint, and native `SKILL.md` expand from the physical
   folder containing the selected source. Expansion visits every Markdown source
   eligible under the consumer's rules that is physically contained below that
   folder, including eligible unrouted Markdown.
 - An ordinary source expands to one logical source.
+
+A recognized outside entrypoint uses bounded inventory expansion even if it also has an included row. An included catalogue without recognized registered entrypoint form follows retained row edges and their aliases rather than enumerating its directory. Preserve authored row policy independently from the resulting deduplicated logical-source set.
 
 Expansion follows physical containment, not route traversal. It does not follow
 links or infer route, scope, authority, lifecycle, relevance, or applicability.

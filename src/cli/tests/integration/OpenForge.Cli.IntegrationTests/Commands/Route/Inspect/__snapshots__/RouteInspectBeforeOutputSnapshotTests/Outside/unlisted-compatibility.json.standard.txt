@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "./docs/team/index.md  docs/team/index.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "ownBytes": 296,
+    "ownTokens": 74,
+    "addedFiles": null,
+    "addedBytes": null,
+    "addedTokens": null,
+    "loadNowFiles": 2,
+    "loadNowBytes": 112,
+    "loadNowTokens": 28,
+    "directChildren": 2,
+    "descendants": 2,
+    "infos": 2
+  },
+  "limitations": [],
+  "data": {
+    "id": "./docs/team/index.md",
+    "path": "docs/team/index.md",
+    "maintenanceRoot": "docs/team",
+    "kind": "entrypoint",
+    "entrypointForm": "compatibility",
+    "overwritePath": null,
+    "workingPaths": [
+      "src/Planned.cs"
+    ],
+    "belongs": {
+      "routeChain": [
+        "index.md"
+      ],
+      "parent": null,
+      "directChildren": {
+        "files": 2,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 2,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": null,
+      "automaticallyWhen": null,
+      "mayReadAgain": null
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 296,
+        "tokens": 74
+      },
+      "adds": null,
+      "loadNow": {
+        "files": 2,
+        "bytes": 112,
+        "tokens": 28
+      }
+    },
+    "applicability": {
+      "state": "unconditioned",
+      "conditions": [],
+      "matchingPaths": []
+    },
+    "axioms": {
+      "inheritedFrom": null,
+      "local": "no local Axioms section"
+    },
+    "tags": [
+      "Authored"
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

@@ -134,7 +134,7 @@ internal sealed class RouteInspectReadingProfileBuilder
 
     private void AddKeepInMind(ICollection<RouteInspectAutomaticReading> reasons)
     {
-        if (_selected.Metadata.State != RouteSourceMetadataState.Complete)
+        if (_selected.Metadata.State != RouteSourceMetadataState.Complete && !_graph.HasRowPolicy(_selected.CanonicalPath))
         {
             return;
         }

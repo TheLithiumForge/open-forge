@@ -88,12 +88,14 @@ Doctor shows how many links it ignored and notes listed paths that no longer exi
 
 Older CLIs do not support custom roots. An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
 
+Directory registrations require settings-v5 support. An older CLI does not maintain outside routes, and preserving an unknown property does not imply downgrade compatibility.
+
 ## Files the CLI keeps for itself
 
 | File                           | Purpose                                                                                                          | Agent context? |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------- | -------------- |
 | `.agents/open-forge.lock.json` | Records files and generated navigation regions managed by the Framework and each Extension.                      | No             |
-| `.agents/open-forge.json`      | Your settings, including `mainRoot`, the frontmatter form, removal exclusions and path grants outside the primary content locations. | No             |
+| `.agents/open-forge.json`      | Your settings, including `mainRoot`, file-only `roots`, directory `outsideRoutes`, frontmatter, removal exclusions and path grants. | No             |
 
 Neither file gives content any authority. They exist for file maintenance only.
 
@@ -113,6 +115,8 @@ New route metadata and installed Templates follow the workspace setting. `route 
 Compatible Skill adoption can add missing metadata and navigation to user-owned content without claiming whole-file management. See the [installation guidance](../getting-started/installation.md#with-the-cli).
 
 ## Moving and renaming
+
+To maintain existing context outside the main root, use [folder Include](/guides/cli#outside-routes). It preserves an existing catalogue and keeps loading separate from registration. Explicit maintenance works for an unlisted registration without relisting it. Move stays inside one registration, while its directory and root entrypoints remain protected. Required foreign content rewrites block the complete Move or Remove plan.
 
 You may move, rename, or restructure routes. Moving a managed route may end automatic updates for it, but it doesn't change what the content means once loaded. A familiar folder name in a new place doesn't gain root-route behavior.
 

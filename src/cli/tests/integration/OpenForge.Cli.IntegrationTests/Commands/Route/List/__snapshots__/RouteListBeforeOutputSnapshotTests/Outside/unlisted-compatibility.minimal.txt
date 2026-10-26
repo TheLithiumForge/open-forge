@@ -1,0 +1,8 @@
+3 routes listed with warnings.
+  Warning  docs/team/index.md  Compatibility entrypoint
+         docs/team/index.md uses the compatibility entrypoint name index.md.
+
+  ./docs/team/index.md    Authored team
+    ./docs/team/SKILL.md  Outside skill
+    ./docs/team/child.md  First child
+Next: rename to _index.md

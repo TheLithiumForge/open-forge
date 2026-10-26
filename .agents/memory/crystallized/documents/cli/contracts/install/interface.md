@@ -7,6 +7,10 @@ open-forge:
 
 # Install Interface Contract
 
+## Outside Registration Boundary
+
+Package mapping remains primary, and outside registration confers no Framework ownership. Preservation of outside registrations and authored row policy through Install, configure and frontmatter conversion is required, but lifecycle completion and qualification are pending. The [Behavior Contract](behavior.md#layout-planning) records the current transport limitation. Existing primary and file-only behavior remains unchanged.
+
 ## Ownership Receipt Boundary
 
 The generated `.agents/open-forge.lock.json` distinguishes whole-file paths

@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 
@@ -44,7 +45,11 @@ internal sealed partial class RouteInspectSourceFactsResolver
         var graph = new RouteInspectGraph(
             input.Resolution.Catalogue.Layout,
             input.Resolution.Projections.ProjectionSet,
-            routeFacts);
+            routeFacts)
+        {
+            LayoutRead = input.Resolution.LayoutRead,
+            Catalogue = input.Resolution.Catalogue,
+        };
         var identity = new RouteInspectIdentity(
             logicalSource.Identity.AutomaticId,
             logicalSource.Identity.CanonicalBasePath,
@@ -52,7 +57,11 @@ internal sealed partial class RouteInspectSourceFactsResolver
             RouteInspectSourcePolicy.ReadInspectForm(logicalSource.Base.Form),
             routeState,
             ReadPhysicalLayers(projectedSource),
-            projectedSource.Metadata.Tags);
+            projectedSource.Metadata.Tags)
+        {
+            MaintenanceRoot = RouteOutsideRouteReader.MaintenanceRoot(input.Resolution.LayoutRead?.Layout
+                ?? input.Resolution.Catalogue.Layout, logicalSource.Base.CanonicalPath),
+        };
 
         var issues = new List<RouteInspectResolutionIssue>();
         AddRouteIssues(input, issues);

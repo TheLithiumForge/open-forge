@@ -49,7 +49,7 @@ Git metadata, the loader, settings and lock files as invalid input.
 
 A maintained folder stays inside the repository and cannot overlap the workspace root, main root, `.agents`, another outside route, Git metadata or runtime storage. Apply portable lexical validation and physical checks. Registration keeps the exact outside source identities and adds no alias or short-ID mapping.
 
-Require its canonical catalogue to be the only recognized entrypoint before registration or re-inclusion. Preserve competing entrypoints and refuse the operation until their ambiguity is resolved.
+An existing canonical catalogue must be the only recognized entrypoint before registration or re-inclusion. Create a missing canonical catalogue only when no competing recognized entrypoint exists. Preserve competing entrypoints and refuse the operation until their ambiguity is resolved.
 
 Outside the primary content locations, any text file is eligible. A Markdown file with
 `## Entries` is followed as a catalogue. Its own frontmatter never sets loading.

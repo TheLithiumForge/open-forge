@@ -90,6 +90,24 @@ Use this when the project already keeps rules or knowledge in its own files.
    Running Include again changes only the options you pass. Exclude removes the
    line and leaves the file alone.
 
+## Maintain a folder where it lives
+
+Start with an existing ordinary `docs/team` directory inside this workspace. Preview folder registration:
+
+```sh
+open-forge route include docs/team --dry-run
+```
+
+Review the settings registration, Loader row and any missing canonical catalogue create, then apply:
+
+```sh
+open-forge route include docs/team
+```
+
+The catalogue is `docs/team/_team.md`. An existing catalogue keeps its bytes. Use exact source references with filenames, such as `./docs/team/_team.md`, when previewing Index or another supported route command. A file Include instead lists one document without granting folder maintenance.
+
+Deleting the Loader row leaves a maintained but unlisted registration. Bare Index leaves that tree alone, while `open-forge index ./docs/team/_team.md --dry-run` previews explicit maintenance without relisting it. Folder Exclude removes the registration and matching rows without deleting content. Move stays within one registration, and required foreign rewrites block Move or Remove. Registration adds no package ownership or implicit destination permission. The [outside-route reference](/guides/cli#outside-routes) covers compatibility anchors, exclusions and recovery.
+
 ## Change the installed routes
 
 Use this to add a category, change sharing choices, or restore missing packaged

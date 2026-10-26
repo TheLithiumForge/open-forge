@@ -71,6 +71,12 @@ Loading tags act only through a parent that's already loaded. They can't pull in
 - **`#LoadNow`** is for content needed every time its parent loads, where missing it would cost more than reading it each time. Every Directive file in a Directives folder must carry it, because Directives are mandatory within their scope.
 - **`#KeepInMind`** is for continuity that must be re-read at the refresh points. The Emerging Memory entrypoint uses it, so the agent is prompted to review unsettled findings before they're lost. It's not an importance label. Like `#LoadNow`, it acts only through a loaded parent: an active Checkpoint from the [Planning](../extensions/planning.md) Extension is tagged `#KeepInMind`, but it's refreshed only once its Checkpoints category has been opened.
 
+## Registration and loading
+
+Folder Include adds a directory to settings v5 `outsideRoutes` and lists its canonical catalogue. Registration makes inventory discoverable and permits bounded maintenance. The Loader row still decides whether and when its branch loads. Deleting that row leaves an unlisted registration, and scanning it never activates its content.
+
+When a target is both inventoried and included, authored rows retain tags, conditions, aliases, order and first-reaching metadata. File Include remains file-only in `roots`, even when its target is a catalogue. See [outside routes](/guides/cli#outside-routes) for maintenance boundaries.
+
 ## File conditions
 
 In the C# example above, `applyTo: ["**/*.cs"]` limits the rule to work on C# files. See [Frontmatter](#frontmatter) for metadata forms and precedence.

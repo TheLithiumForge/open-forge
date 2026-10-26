@@ -9,7 +9,7 @@ open-forge:
 
 ## Layout Coordinates
 
-The JSON envelope remains schema 3. Settings schema v4 is independent. Status and Install may expose `data.layout` with `mainRoot` and `loaderPath` for a custom root. They omit it entirely for a default workspace. Source paths are actual workspace-relative destinations, while IDs retain the shared source-reference meaning.
+The JSON envelope remains schema 3. Settings schemas v4 and v5 are independent. Status and Install may expose `data.layout` with `mainRoot` and `loaderPath` for a custom root. They omit it entirely for a default workspace. Source paths are actual workspace-relative destinations, while IDs retain the shared source-reference meaning.
 
 ## Status And Authority
 

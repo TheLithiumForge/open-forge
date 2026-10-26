@@ -8,6 +8,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 
@@ -89,8 +91,16 @@ internal sealed partial class RouteInspectResolver
                 }
             }
 
+            var outside = parsed.AttemptedPath is { } path ? layoutRead.OutsideRoutes.FirstOrDefault(route =>
+                RouteOutsideRouteReader.Contains(route.Descriptor.DirectoryPath, path)) : null;
+            if (outside is not null && outside.State != WorkspaceOutsideRouteReadState.Available)
+                return RouteInspectResolutionSupport.CreateBoundaryResolution(unresolvedSelection,
+                    [RouteInspectResolutionSupport.CreateIssue(outside.State == WorkspaceOutsideRouteReadState.Unsafe
+                        ? RouteInspectResolutionIssueCode.UnsafeSource : RouteInspectResolutionIssueCode.ReadUnavailable,
+                        outside.Descriptor.DirectoryPath, outside.Failure?.DirectCause ?? "The selected registered outside directory is not available.")]);
+
             var session = await new SourceReadSessionReader(_physicalPathResolver)
-                .ReadAsync(layout, cancellationToken)
+                .ReadIncludedAsync(RouteOutsideRouteReader.InventoryLayout(layoutRead), cancellationToken)
                 .ConfigureAwait(false);
             var reader = session.DocumentReader;
             var catalogue = session.Catalogue;
@@ -101,7 +111,7 @@ internal sealed partial class RouteInspectResolver
                     ReadAttemptedReference(parsed));
             }
 
-            var boundaryIssues = RouteInspectResolutionSupport.ReadCatalogueBoundaryIssues(catalogue);
+            var boundaryIssues = RouteInspectResolutionSupport.ReadCatalogueBoundaryIssues(catalogue, parsed.AttemptedPath);
             if (boundaryIssues.Count != 0)
             {
                 return RouteInspectResolutionSupport.CreateBoundaryResolution(
@@ -141,7 +151,10 @@ internal sealed partial class RouteInspectResolver
                 catalogueSelection,
                 projections,
                 routeFacts,
-                exactPathPhysical);
+                exactPathPhysical)
+            {
+                LayoutRead = layoutRead,
+            };
             if (cancellationToken.IsCancellationRequested)
             {
                 return RouteInspectResolutionSupport.Interrupted(

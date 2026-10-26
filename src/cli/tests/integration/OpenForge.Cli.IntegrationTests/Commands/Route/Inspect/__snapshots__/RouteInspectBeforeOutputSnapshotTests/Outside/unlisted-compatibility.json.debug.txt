@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "./docs/team/index.md  docs/team/index.md",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "route-inspect.compatibility-entrypoint",
+      "title": "Compatibility entrypoint",
+      "message": "docs/team/index.md uses the compatibility name index.md; the canonical name is _team.md.",
+      "subject": {
+        "kind": "source",
+        "path": "docs/team/index.md",
+        "id": "docs/team/index.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "route-inspect.detached-source",
+      "title": "Source is detached",
+      "message": "docs/team/index.md belongs to a route that no Loader entry reaches.",
+      "subject": {
+        "kind": "source",
+        "path": "docs/team/index.md",
+        "id": "docs/team/index.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": 296,
+    "ownTokens": 74,
+    "addedFiles": null,
+    "addedBytes": null,
+    "addedTokens": null,
+    "loadNowFiles": 2,
+    "loadNowBytes": 112,
+    "loadNowTokens": 28,
+    "directChildren": 2,
+    "descendants": 2,
+    "infos": 2
+  },
+  "limitations": [],
+  "data": {
+    "id": "./docs/team/index.md",
+    "path": "docs/team/index.md",
+    "maintenanceRoot": "docs/team",
+    "kind": "entrypoint",
+    "entrypointForm": "compatibility",
+    "overwritePath": null,
+    "workingPaths": [
+      "src/Planned.cs"
+    ],
+    "belongs": {
+      "routeChain": [
+        "index.md"
+      ],
+      "parent": null,
+      "directChildren": {
+        "files": 2,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 2,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": null,
+      "automaticallyWhen": null,
+      "mayReadAgain": null
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 296,
+        "tokens": 74
+      },
+      "adds": null,
+      "loadNow": {
+        "files": 2,
+        "bytes": 112,
+        "tokens": 28
+      }
+    },
+    "applicability": {
+      "state": "unconditioned",
+      "conditions": [],
+      "matchingPaths": []
+    },
+    "axioms": {
+      "inheritedFrom": null,
+      "local": "no local Axioms section"
+    },
+    "tags": [
+      "Authored"
+    ],
+    "selected": {
+      "closure": {
+        "files": 3,
+        "bytes": 408,
+        "tokens": 102
+      },
+      "startupOverlap": null
+    },
+    "selection": {
+      "kind": "source-path",
+      "method": "exact-path",
+      "requested": "docs/team/index.md"
+    },
+    "layers": [
+      {
+        "path": "docs/team/index.md",
+        "kind": "base"
+      }
+    ],
+    "statusReason": "all applicable route facts are available"
+  },
+  "recovery": null,
+  "next": null
+}

@@ -24,8 +24,10 @@ open-forge context directives/order-rules --for src/Order.cs --follow-links 1
 
 ## Included Workspace Files
 
+Registered outside directories also supply inventory, including unlisted Markdown. Find searches it and References includes it in incoming impact scans. Context follows authored loading rows and conditions rather than activating inventory. Use an exact source reference with filename, such as `./docs/team/_team.md`. File-only included catalogues keep retained-edge traversal without scanning siblings. A registered entrypoint instead selects its bounded inventory scope. An outside `SKILL.md` has ordinary Markdown form.
+
 The loader can list an existing workspace file where it lives. Context follows
-those rows with their tags and conditions. Select a file outside `.agents/` by
+those rows with their tags and conditions. Select a file outside the primary content locations by
 exact path, such as `context ./CONTRIBUTING.md`. It has no short source ID.
 An exact `./...` path to an unrouted file, such as `context ./.agents/README.md`,
 reads it and its overwrite without making them startup reads.
@@ -98,9 +100,15 @@ Incoming filters cannot be used with `--direction out`. References does not read
 
 List source IDs and paths to orient scope selection. `--depth <non-negative-integer|all>` is its only command flag. Default: `1`. Use `--depth=0` for selected roots, `--depth=2` for a bounded subtree, or `--depth=all` for all descendants. Both space-separated and equals forms are accepted.
 
+Select a registered outside catalogue or descendant by exact source reference, such as `route list ./docs/team/_team.md --depth all`. This works without a Loader row. Bare `route list` keeps its Loader-root selection and does not add unlisted directories as roots.
+
+Applicable List rows and Inspect source data include optional `maintenanceRoot` at every JSON detail. It names the canonical workspace-relative registered directory, such as `docs/team`, without `./` or a trailing slash. Standard, full and debug text may show `Maintenance root`. The fact is omitted when inapplicable and does not imply loading, direct Loader listing, ownership or package permission. Exact source identities still keep `./` and the filename.
+
 ## `route inspect <source-reference>`
 
 Explain one source's route, loading, and conditions without returning its body.
+
+Explicit selection also works for registered-but-unlisted sources, such as `route inspect ./docs/team/_team.md`, without activating them. See the maintenance-root fact under [Route List](#route-list-source-reference).
 
 | Flag               | Meaning                                                                                                                              |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -141,4 +149,4 @@ Continue with [route maintenance](routes.md) for edits or [Framework and package
 
 In `.agents/open-forge.json`, `ignoreLinksFrom` skips links written inside listed paths and `ignoreLinksTo` skips links whose resolved targets lie inside them. Entries are workspace-relative paths, not patterns. Files match exactly and folders cover descendants, using the same comparison as `allowInstallPaths`. Missing lists mean no exclusions. Doctor names ignored counts and stale entries. Context omits ignored link expansion edges. References lists every link.
 
-A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands. Older CLIs do not support custom roots. Use a CLI that supports `install --main-root` for those workspaces.
+A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands. Older CLIs do not support custom roots or maintain directory registrations. Unknown-property preservation does not make them compatible with those workspaces.

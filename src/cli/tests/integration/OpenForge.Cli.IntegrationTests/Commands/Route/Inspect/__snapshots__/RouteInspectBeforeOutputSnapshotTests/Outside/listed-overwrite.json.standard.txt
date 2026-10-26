@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "./docs/team/child.md  docs/team/child.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "ownBytes": 112,
+    "ownTokens": 28,
+    "addedFiles": 0,
+    "addedBytes": 0,
+    "addedTokens": 0,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "./docs/team/child.md",
+    "path": "docs/team/child.md",
+    "maintenanceRoot": "docs/team",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": "docs/team/child.overwrite.md",
+    "workingPaths": [
+      "src/Planned.cs"
+    ],
+    "belongs": {
+      "routeChain": [
+        "_team.md",
+        "child.md"
+      ],
+      "parent": "_team.md",
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": true,
+      "automaticallyWhen": [
+        "./docs/team/_team.md is read",
+        "its exposing parent is read, or a later review point is reached while its scope is active",
+        "the base source is read"
+      ],
+      "mayReadAgain": true
+    },
+    "size": {
+      "own": {
+        "files": 2,
+        "bytes": 112,
+        "tokens": 28
+      },
+      "adds": {
+        "files": 0,
+        "bytes": 0,
+        "tokens": 0
+      },
+      "loadNow": null
+    },
+    "applicability": {
+      "state": "matched",
+      "conditions": [
+        {
+          "source": "docs/team/child.md",
+          "patterns": [
+            "src/**"
+          ]
+        }
+      ],
+      "matchingPaths": [
+        "src/Planned.cs"
+      ]
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "not applicable"
+    },
+    "tags": [
+      "Body"
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

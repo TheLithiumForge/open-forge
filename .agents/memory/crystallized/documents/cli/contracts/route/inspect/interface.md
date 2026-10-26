@@ -11,6 +11,18 @@ open-forge:
 
 Inspection reports the actual selected loader and source path for custom-root content and native Skills.
 
+An already represented source within an ordinal outside registration carries
+optional `maintenanceRoot` in data at every JSON detail. The value is the
+canonical workspace-relative registered directory without `./` or a trailing
+slash. Omit it when inapplicable, rather than emitting null. This declaration
+fact is separate from physical availability, Loader reachability, effective
+loading, ownership and permission. Existing missing-source representations may
+retain the coordinate, without inventing a source to carry it. Human standard,
+full and debug views may show `Maintenance root: <directory>`. Minimal text omits
+that new line. A newly supported detached outside root labels its absent parent
+as detached rather than Loader-rooted. Existing primary, native and file-only
+output retains its behavior.
+
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
 ## Status And Authority

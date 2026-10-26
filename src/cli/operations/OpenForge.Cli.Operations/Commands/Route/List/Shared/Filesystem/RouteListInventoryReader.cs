@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Includes;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 
@@ -25,6 +26,12 @@ internal sealed class RouteListInventoryReader
                 documentReader.PhysicalPaths,
                 request.CancellationToken)
             .ConfigureAwait(false);
+        if (request.Layout.OutsideRoutes.Length > 0)
+        {
+            var included = await new SourceIncludedEntryReader().ReadEntriesAsync(sourceCatalogue, documentReader, request.CancellationToken)
+                .ConfigureAwait(false);
+            sourceCatalogue = SourceIncludedEntryReader.Extend(sourceCatalogue, included.Sources, included.Rows);
+        }
         var selection = sourceCatalogue.SelectAll();
         var projectionBuildResult = await new RouteListSourceProjectionBuilder()
             .ReadAsync(selection, documentReader, request.CancellationToken)

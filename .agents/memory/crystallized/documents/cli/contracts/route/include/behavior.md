@@ -65,8 +65,9 @@ disposition is a failure.
 
 Unit evidence covers binding, result projection and source-generated JSON.
 Integration evidence covers real files, row merging, invalid targets and planner
-preservation. Published-process journeys cover application and no reactivation
-through Index, Update, Configure and Extension installation.
+preservation. Existing file-inclusion published journeys cover application and no
+reactivation through Index, Update, Configure and Extension installation. The
+corresponding outside-folder lifecycle preservation still needs qualification.
 
 The implementation reuses managed filesystem APIs, the shared Markdown parser,
 generated navigation, settings planners, mutation lock, recovery store and file

@@ -14,6 +14,8 @@ There is no independent grant parser, persisted subject graph or legacy reader.
 
 Use the operation’s retained layout for implicit admission, with ordinal root-prefix checks. Keep explicit grants literal and preserve their existing portable comparison. Before grant publication, revalidate the layout under the same lease as target effects. See [Workspace Layout](../../../technical-designs/workspace-layout.md#ordinal-authority-checks).
 
+Evaluate implicit admission through the primary/native content policy, never through `InventoryRoots` or maintenance-boundary lookup. Outside registration, Loader listing, readable inclusion and package ownership each remain insufficient to supply a grant.
+
 ## Admission
 
 Determine actual destination paths from the consuming command's checked plan.

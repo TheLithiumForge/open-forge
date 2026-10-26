@@ -1,11 +1,23 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 
 internal sealed class RouteInspectGraph
 {
+    internal WorkspaceLayoutRead? LayoutRead { get; init; }
+    internal SourceCatalogue? Catalogue { get; init; }
+
+    internal bool HasRowPolicy(string path) => Catalogue?.FindByPath(path)?.IncludedEntry is not null;
+
+    internal ApplyToMetadataFacts ReadCondition(RouteSource source)
+        => Catalogue?.FindByPath(source.CanonicalPath)?.IncludedEntry is { } entry
+            ? ApplyToMetadataFacts.FromEntryLine(entry.ApplyTo) : source.Metadata.ApplyTo;
+
     private readonly RouteSourceProjectionSet _projectionSet;
     private readonly SourceRouteFacts _routeFacts;
 

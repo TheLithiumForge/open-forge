@@ -56,6 +56,7 @@ internal sealed partial class RouteListSelectionResolver
             var source = projection.Source;
             if (source.Kind != RouteSourceKind.Entrypoint)
             {
+                if (projection.LogicalSource.IncludedEntry is not null) continue;
                 throw new ArgumentException("Every Loader root must project an entrypoint source.", nameof(routeFacts));
             }
 

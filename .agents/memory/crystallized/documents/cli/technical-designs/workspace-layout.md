@@ -46,6 +46,8 @@ Settings v5 adds optional `outsideRoutes`, an ordered list of canonical workspac
 
 Outside-route maintenance requires a CLI that supports settings v5. Registration never makes an outside path an implicit package destination.
 
+Older CLIs do not maintain directory registrations. Preserving an unknown settings property is not downgrade compatibility. This is separate from configurable-main-root support and does not relocate an established installation.
+
 Each outside route has its declared directory and canonical catalogue path. `WithOutsideRoutes` replaces the pure layout's registrations without changing primary mappings. It rejects portable duplicates, case aliases and overlaps in either ancestor direction with the main root, `.agents`, another outside route, Git metadata or workspace runtime storage. The workspace root is invalid.
 
 `InventoryRoots` combines primary source roots and outside directories in declaration order. It conveys discovery scope. `TryGetMaintenanceBoundary` classifies paths ordinally, checking native Skills before the encompassing default main root. An outside boundary ends at its registered directory and uses its canonical catalogue as anchor. Existing command restrictions, ownership, physical safety and explicit permissions remain separate checks.
@@ -85,6 +87,8 @@ The final observation rules incorporate chair amendments 5 through 7:
 Outside registrations come from that same settings snapshot. `WorkspaceLayoutRead.OutsideRoutes` retains their declaration order, descriptors, physical resolutions, directory and catalogue observations, failures and issues. Each outside observation is `Available`, `Missing`, `Unsafe` or `Unavailable`. A safe ordinary directory with a missing catalogue is available for later scaffolding. A missing directory or ancestor stays diagnosable. Unsupported mappings, reserved overlaps and inaccessible content are never treated as safe absence.
 
 Outside-only problems do not change the primary layout state. Maintenance within an outside boundary requires its safe available observation and command-specific protection checks. Deregistration can use the canonical registration and loader row without depending on available tree contents. The reader observes ancestry and the anchor without recursively scanning, creating or repairing anything.
+
+The descriptor's anchor is canonical. Commands that admit an existing recognized compatibility entrypoint retain that actual filename and require an unambiguous structural chain. A stale Loader row naming the missing canonical anchor is not authority to replace the compatibility file, relist the route or repair the row implicitly. Generic outside metadata uses Workspace defaults, regardless of directory names.
 
 Safe directory, ancestry and catalogue expectations join the layout's existing expectations. Lease validation checks those facts and retained directory accessibility before effects. A changed expected state still blocks the planned operation. Each target mutation separately proves containment within the selected physical boundary. Registration grants no ownership or implicit package permission.
 

@@ -1,0 +1,8 @@
+route-list diagnostics
+status=completed-with-warnings
+workspace.lexical=<workspace>
+selection.kind=source-path
+requested-depth=all
+effective-depth=1
+rows=3
+findings=1

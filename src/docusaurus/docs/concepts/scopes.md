@@ -9,6 +9,8 @@ A **scope** is a folder in a [route](../glossary.md#route) that narrows where th
 
 The tree below uses the default `.agents` context folder. Scopes work the same beneath a custom main root, and native Skill scopes stay under `.agents/skills`. See [Choose the context folder](../getting-started/installation.md#choose-the-context-folder).
 
+An [outside route](/guides/cli#outside-routes) can hold scoped context where it already lives. Its registration bounds CLI maintenance, while loaded entrypoints, authored rows and conditions still determine what applies. Use exact source paths with filenames. A registered folder named `memory` or `skills` does not inherit the standard category's metadata defaults or native Skill behavior.
+
 ## A scope is just a folder with an entrypoint
 
 An [entrypoint](../glossary.md#entrypoint) makes the folder routable. There's no separate scope syntax. Any routed folder below a root route can act as a scope. Its entrypoint says what the scope means, and everything after it in the path applies only within that subject.

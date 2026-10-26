@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "3 routes listed.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "routes": 3,
+    "roots": 1,
+    "depth": null
+  },
+  "limitations": [],
+  "data": {
+    "subject": {
+      "id": "./docs/team/_team.md",
+      "path": "docs/team/_team.md"
+    },
+    "depth": "all",
+    "rows": [
+      {
+        "id": "./docs/team/_team.md",
+        "path": "docs/team/_team.md",
+        "description": "Team authored",
+        "tags": [
+          "LoadNow"
+        ],
+        "relativeDepth": 0,
+        "maintenanceRoot": "docs/team"
+      },
+      {
+        "id": "./docs/team/SKILL.md",
+        "path": "docs/team/SKILL.md",
+        "description": "Outside skill",
+        "tags": [
+          "Private"
+        ],
+        "relativeDepth": 1,
+        "maintenanceRoot": "docs/team"
+      },
+      {
+        "id": "./docs/team/child.md",
+        "path": "docs/team/child.md",
+        "description": "First child",
+        "tags": [
+          "LoadNow",
+          "Row"
+        ],
+        "relativeDepth": 1,
+        "maintenanceRoot": "docs/team"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

@@ -7,12 +7,23 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Application;
 
 internal static class RouteListIncludedResultBuilder
 {
     internal static RouteListResult Build(RouteListRequest request, RouteListSourceResolution source, RouteListResult result, CancellationToken cancellationToken)
+    {
+        var projected = BuildCore(request, source, result, cancellationToken);
+        var layout = source.LayoutRead.Layout ?? throw new InvalidOperationException("List projection requires its retained layout.");
+        return RouteListResult.Create(projected.Status, request.Workspace, projected.Selection, projected.Coverage,
+            projected.Rows.Select(row => row.WithMaintenanceRoot(RouteOutsideRouteReader.MaintenanceRoot(layout, row.Path))),
+            projected.Findings, projected.Next, projected.CustomLoaderPath);
+    }
+
+    private static RouteListResult BuildCore(RouteListRequest request, RouteListSourceResolution source, RouteListResult result, CancellationToken cancellationToken)
     {
         if (result.Status is CliSemanticStatus.Interrupted or CliSemanticStatus.Failed or CliSemanticStatus.Blocked)
         {
@@ -30,31 +41,54 @@ internal static class RouteListIncludedResultBuilder
         var byParent = included.GroupBy(item => item.IncludedParentPath
                 ?? throw new InvalidOperationException("An included source requires its catalogue parent."), StringComparer.Ordinal)
             .ToDictionary(group => group.Key, group => group.ToArray(), StringComparer.Ordinal);
-        var rows = result.Rows.ToList();
+        var rows = result.Rows.Where(row => !byPath.ContainsKey(row.Path)).ToList();
         var selection = result.Selection;
         var status = result.Status;
         var findings = result.Findings.ToList();
         var next = result.Next;
-        var exactPath = request.SourceReference is { } reference ? SourceReferenceParser.Parse(reference).AttemptedPath : null;
+        var parsed = request.SourceReference is { } reference ? SourceReferenceParser.Parse(reference) : null;
+        var exactPath = parsed?.State == SourceReferenceParseState.Valid ? parsed.AttemptedPath : null;
         if (exactPath is not null)
         {
             exactPath = source.IncludedRows.FirstOrDefault(row => row.Path == exactPath)?.AliasOf ?? exactPath;
+            exactPath = source.Inventory.SourceCatalogue.FindByPath(exactPath)?.Base.CanonicalPath ?? exactPath;
         }
 
         var explicitInclude = exactPath is null ? null : byPath.GetValueOrDefault(exactPath);
+        if (explicitInclude is null && exactPath is not null
+            && source.Selection.State == RouteListSelectionResolutionState.Resolved
+            && rows.All(row => row.Path != exactPath)
+            && RouteOutsideRouteReader.MaintenanceRoot(source.LayoutRead.Layout!, exactPath) is not null
+            && source.Inventory.ProjectionBuildResult.ProjectionSet.FindByPath(exactPath)?.Metadata.State
+                == OpenForge.Cli.Core.Commands.Route.Shared.Models.Source.RouteSourceMetadataState.Complete)
+            explicitInclude = source.Inventory.SourceCatalogue.FindByPath(exactPath);
         if (explicitInclude is not null)
         {
-            rows.Clear();
-            selection = RouteListSelectionFactory.ResolvedIncluded(explicitInclude);
-            status = CliSemanticStatus.Complete;
-            findings.Clear();
-            next = null;
+            if (!result.Rows.Any(row => row.RelativeDepth == 0 && row.Path == explicitInclude.Base.CanonicalPath))
+            {
+                rows.Clear();
+                status = CliSemanticStatus.Complete;
+                findings.Clear();
+                next = null;
+            }
+            selection = explicitInclude.IncludedEntry is not null ? RouteListSelectionFactory.ResolvedIncluded(explicitInclude) : source.Selection.Selection;
             Add(explicitInclude, 0, ReadAbsoluteDepth(explicitInclude) is null
                 ? RouteListSelectionProvenance.DetachedRoot : RouteListSelectionProvenance.ExplicitRoot);
         }
         else if (!selection.IsResolved || status is not (CliSemanticStatus.Complete or CliSemanticStatus.Attention or CliSemanticStatus.Incomplete))
         {
             return result;
+        }
+
+        if (findings.RemoveAll(finding => finding.Subject is { } subject && byPath.ContainsKey(subject)
+            && (finding.Code is RouteListFindingCode.MetadataMissing or RouteListFindingCode.MetadataMalformed
+                || finding.Code == RouteListFindingCode.AuthoredForm && explicitInclude is { IncludedEntry: not null }
+                    && subject == explicitInclude.Base.CanonicalPath
+                    && source.Inventory.ProjectionBuildResult.ProjectionSet.FindByPath(subject)?.Metadata.IsCompatibilityEntrypoint is true)) > 0
+            && findings.All(finding => finding.Status != CliSemanticStatus.Incomplete))
+        {
+            status = findings.Any(finding => finding.Status == CliSemanticStatus.Attention) ? CliSemanticStatus.Attention : CliSemanticStatus.Complete;
+            next = RouteListResultBuilder.ReadNextAction(status);
         }
 
         var selectedPaths = rows.Select(row => row.Path).ToHashSet(StringComparer.Ordinal);
@@ -69,7 +103,7 @@ internal static class RouteListIncludedResultBuilder
             rows.AddRange(source.UnlistedRoots.Select(RouteListRow.Unlisted));
         }
 
-        foreach (var parent in result.Rows.Where(row => row.Kind == RouteListRowKind.Entrypoint))
+        foreach (var parent in result.Rows.Where(row => row.Kind == RouteListRowKind.Entrypoint && rows.Contains(row)))
         {
             var children = byParent.GetValueOrDefault(parent.Path) ?? [];
             if (children.Length == 0)
@@ -77,7 +111,10 @@ internal static class RouteListIncludedResultBuilder
                 continue;
             }
 
-            rows[rows.IndexOf(parent)] = parent.WithDirectChildCount(parent.DirectChildCount + children.Length);
+            rows[rows.IndexOf(parent)] = parent.WithDirectChildCount(
+                RouteOutsideRouteReader.MaintenanceRoot(source.LayoutRead.Layout!, parent.Path) is not null
+                    ? source.RouteFacts.Topology.FindByPath(parent.Path)?.ChildPaths.Count(path => !byPath.ContainsKey(path)) + children.Length
+                    : parent.DirectChildCount + children.Length);
             if (CanDescend(parent.RelativeDepth))
             {
                 foreach (var child in children)
@@ -175,17 +212,28 @@ internal static class RouteListIncludedResultBuilder
         {
             cancellationToken.ThrowIfCancellationRequested();
             var path = item.Base.CanonicalPath;
+            if (rows.Any(row => !row.IsUnlisted && row.Path == path)) return;
             var children = byParent.GetValueOrDefault(path) ?? [];
             var parentPath = item.IncludedParentPath == source.Inventory.SourceCatalogue.Layout.LoaderPath ? null : item.IncludedParentPath;
             var parent = parentPath is null ? null : byPath.GetValueOrDefault(parentPath) ?? source.Inventory.SourceCatalogue.FindByPath(parentPath);
-            var entry = item.IncludedEntry ?? throw new InvalidOperationException("An included source requires its catalogue row.");
+            var entry = item.IncludedEntry;
+            var authored = source.Inventory.ProjectionBuildResult.ProjectionSet.FindByPath(path)?.Metadata;
+            if (entry is null && authored is null) throw new InvalidOperationException("An inventory source requires its retained metadata.");
+            var description = entry?.Description ?? authored?.Description
+                ?? throw new InvalidOperationException("An inventory row requires its authored description.");
+            var isCatalogue = item.IsIncludedCatalogue || SourceFormClassifier.IsEntrypoint(item.Base.Form);
+            int? directChildCount = children.Length;
+            if (isCatalogue && RouteOutsideRouteReader.MaintenanceRoot(source.LayoutRead.Layout!, path) is not null
+                && result.Rows.FirstOrDefault(row => row.Path == path && row.Kind == RouteListRowKind.Entrypoint) is { } original
+                && source.RouteFacts.Topology.FindByPath(path) is { } node)
+                directChildCount = original.DirectChildCount - node.ChildPaths.Count(byPath.ContainsKey) + children.Length;
             var rowProvenance = new RouteListProvenance(provenance,
-                item.IsIncludedCatalogue ? RouteListSourceProvenance.AuthoredEntrypoint : RouteListSourceProvenance.AuthoredLeaf, false);
-            var row = item.IsIncludedCatalogue
+                isCatalogue ? RouteListSourceProvenance.AuthoredEntrypoint : RouteListSourceProvenance.AuthoredLeaf, item.Overwrite is not null);
+            var row = isCatalogue
                 ? RouteListRow.Entrypoint(item.Identity.AutomaticId, path, parent?.Identity.AutomaticId, parentPath, ReadAbsoluteDepth(item), depth,
-                    entry.Description, entry.Tags, children.Length, rowProvenance)
+                    description, entry?.Tags ?? authored!.Tags, directChildCount, rowProvenance)
                 : RouteListRow.RoutedLeaf(item.Identity.AutomaticId, path, parent?.Identity.AutomaticId, parentPath, ReadAbsoluteDepth(item), depth,
-                    entry.Description, entry.Tags, rowProvenance);
+                    description, entry?.Tags ?? authored!.Tags, rowProvenance);
             rows.Add(row);
             if (CanDescend(depth))
             {

@@ -1,0 +1,34 @@
+3 routes listed with warnings.
+Workspace: <workspace>
+  Warning  docs/team/index.md  Compatibility entrypoint [route-list.authored-form]
+         docs/team/index.md uses the compatibility entrypoint name index.md.
+
+  ./docs/team/index.md    Authored team
+    docs/team/index.md
+      Maintenance root: docs/team
+    #Authored
+    ./docs/team/SKILL.md  Outside skill
+      docs/team/SKILL.md
+        Maintenance root: docs/team
+      #Private
+    ./docs/team/child.md  First child
+      docs/team/child.md
+        Maintenance root: docs/team
+      #LoadNow #Row
+  Parent: none
+  Depth: absolute none; relative 0
+  Kind: entrypoint; direct children: 2
+  Selected as: detached root
+  Overwrite: none
+    Parent: ./docs/team/index.md; docs/team/index.md
+    Depth: absolute none; relative 1
+    Kind: file; direct children: none
+    Selected as: descendant
+    Overwrite: none
+    Parent: ./docs/team/index.md; docs/team/index.md
+    Depth: absolute none; relative 1
+    Kind: file; direct children: none
+    Selected as: descendant
+    Overwrite: present
+  Rename the compatibility entrypoint, then rerun the listing.
+Next: rename to _index.md
