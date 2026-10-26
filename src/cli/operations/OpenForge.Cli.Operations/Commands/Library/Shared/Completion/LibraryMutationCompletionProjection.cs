@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
@@ -82,7 +83,7 @@ internal static class LibraryMutationCompletionProjection
             destinationRoot ?? throw new InvalidOperationException("An eligible source requires its selected destination root."),
             sourcePath);
 
-    internal static LibraryMutationSource Source(LibraryInventoryRead? read, LibraryDestinationRoot? destinationRoot)
+    internal static LibraryMutationSource Source(LibraryInventoryRead? read, LibraryDestinationRoot? destinationRoot, WorkspaceLayout? layout)
     {
         var inventory = read?.Inventory;
         return new LibraryMutationSource
@@ -112,7 +113,7 @@ internal static class LibraryMutationCompletionProjection
                 {
                     SourcePath = entry.SourcePath.Value,
                     DestinationPath = mapping.DestinationPath.Value,
-                    SourceId = SourceIdentity.DeriveId(mapping.DestinationPath.Value),
+                    SourceId = layout is null ? null : SourceIdentity.DeriveId(layout, mapping.DestinationPath.Value),
                 };
             }).ToArray() ?? [],
             ExcludedPaths = read?.ExcludedPaths.Select(path => new LibraryExcludedPath
@@ -158,7 +159,7 @@ internal static class LibraryMutationCompletionProjection
         {
             SourcePath = mappingObservation.Mapping.SourcePath.Value,
             DestinationPath = mappingObservation.Mapping.DestinationPath.Value,
-            SourceId = SourceIdentity.DeriveId(mappingObservation.Mapping.DestinationPath.Value),
+            SourceId = observation.LayoutRead.Layout is { } layout ? SourceIdentity.DeriveId(layout, mappingObservation.Mapping.DestinationPath.Value) : null,
             ExpectedRelativeLink = mappingObservation.Mapping.ExpectedRelativeLink.Value,
             ObservedRelativeLink = mappingObservation.Leaf.RelativeFileLink?.RawRelativeTarget,
             State = !sourceIndependent && mappingObservation.UnreadableOnWindows ? LibraryLinkViewState.Changed : mappingObservation.State switch
@@ -219,6 +220,7 @@ internal static class LibraryMutationCompletionProjection
             Links = input.Effects?.Links.Select(link => new LibraryLinkEffectView
             {
                 Path = link.DestinationPath.Value,
+                IsImplicitContentDestination = input.Layout?.IsImplicitContentDestination(link.DestinationPath.Value) == true,
                 Kind = link.Kind switch
                 {
                     RelativeFileLinkEffectKind.Create => LibraryLinkEffectKind.Create,

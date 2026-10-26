@@ -104,7 +104,8 @@ internal sealed class RepairApplicationOperation(
             return RepairApplicationOutcomeFactory.ValidationBoundary(revalidation);
         }
 
-        if (!await new RepairTargetReader().ValidateAsync(plan, targets, cancellationToken).ConfigureAwait(false)
+        if (!await RepairPlanRevalidator.ValidateLayoutAsync(plan, acquired.Lease, cancellationToken).ConfigureAwait(false)
+            || !await new RepairTargetReader().ValidateAsync(plan, targets, cancellationToken).ConfigureAwait(false)
             || !await _planRevalidator.ValidateAsync(plan, cancellationToken).ConfigureAwait(false))
         {
             return RepairApplicationOutcomeFactory.BeforeApplication(RepairPreflightState.Blocked,
@@ -141,7 +142,8 @@ internal sealed class RepairApplicationOperation(
         var completion = new RepairApplicationCompletion(_postVerifier);
         try
         {
-            if (!await new RepairTargetReader().ValidateAsync(plan, targets, cancellationToken).ConfigureAwait(false)
+            if (!await RepairPlanRevalidator.ValidateLayoutAsync(plan, lease, cancellationToken).ConfigureAwait(false)
+                || !await new RepairTargetReader().ValidateAsync(plan, targets, cancellationToken).ConfigureAwait(false)
                 || !await _planRevalidator.ValidateAsync(plan, cancellationToken).ConfigureAwait(false))
             {
                 return await completion.RetainAsync(prepared, RepairFindingCode.TargetChanged,

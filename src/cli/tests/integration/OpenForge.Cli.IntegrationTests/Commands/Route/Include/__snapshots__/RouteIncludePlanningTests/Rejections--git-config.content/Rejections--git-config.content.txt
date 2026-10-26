@@ -1,0 +1,1 @@
+'.git/config': Choose a project document outside Git metadata.

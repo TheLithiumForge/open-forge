@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -115,7 +116,7 @@ internal sealed record SourceLoadingClosureSource
     public required SourceGeneratedEntriesFacts GeneratedEntries { get; init; }
 
     /// <summary>
-    /// True for an ordinary Markdown file outside `.agents/` reached through an Entries link. Its
+    /// True for an ordinary Markdown file outside the primary content locations reached through an Entries link. Its
     /// parent is the linking catalogue, and the linking entry line supplies its loading tags and
     /// conditions.
     /// </summary>
@@ -134,6 +135,8 @@ internal sealed record SourceLoadingClosureSource
 
 internal sealed record SourceLoadingClosureRequest
 {
+    public required WorkspaceLayout Layout { get; init; }
+
     public required string WorkspaceEntryPath { get; init; }
 
     public required IReadOnlyList<SourceLoadingClosureSource> Sources { get; init; }
@@ -147,7 +150,7 @@ internal sealed record SourceLoadingClosureRequest
     public bool WorkingPathsSupplied { get; init; }
 
     /// <summary>
-    /// True when the caller supplied linked sources outside `.agents/` and wants missing required
+    /// True when the caller supplied linked sources outside the primary content locations and wants missing required
     /// links reported. Callers that do not read linked files leave it false.
     /// </summary>
     public bool IncludeLinkedSources { get; init; }

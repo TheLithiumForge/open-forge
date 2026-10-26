@@ -7,6 +7,12 @@ open-forge:
 
 # extension remove Behavior Contract
 
+## Workspace Layout
+
+Map package destinations before exclusions, permissions, collisions, rendering and ownership. Record actual `TargetPath` values, keep retired recorded paths literal and revalidate the layout under the lease.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This is the accepted current Crystallized Behavior Contract for current
@@ -38,7 +44,7 @@ Consume the [Workspace Permissions Interface](../../shared/workspace-permissions
 [Behavior](../../shared/workspace-permissions/behavior.md). Require shared allow-list admission for every selected owned external path, including
 shared-owner retention. Derive these requirements
 from trusted ownership without reading package source.
-Existing `.agents/` targets need no grant; their prior safety and ownership
+Eligible primary-content targets need no grant. Their prior safety and ownership
 checks remain. Revocation blocks the complete selected lifecycle operation,
 including ownership release, until exact explicit reapproval. Unrelated
 installed packages do not enter this request's required set.
@@ -131,7 +137,7 @@ No persisted fingerprint or changed-content distinction participates.
   recovery preparation, including when its bytes were edited.
 - `missing`: release the claim without a deletion effect.
 
-The shared allow list applies to all owners, with implicit `.agents/` admission.
+The shared allow list applies to all owners, with implicit primary-content admission.
 Reserved paths and ordinary-ancestor/physical-containment checks remain. Never
 delete `.agents/open-forge.json`, `.agents/open-forge.lock.json`, or descendants
 of either, even when a stale receipt claims them. Never delete a Framework or

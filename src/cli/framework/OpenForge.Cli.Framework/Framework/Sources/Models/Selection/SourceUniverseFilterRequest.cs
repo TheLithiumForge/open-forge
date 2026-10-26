@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
@@ -7,10 +8,11 @@ internal sealed class SourceUniverseFilterRequest
 {
     internal SourceUniverseFilterRequest(
         SourceCatalogue catalogue,
-        SourceCatalogueSelectionScope? defaultSelectionScope,
+        IReadOnlyList<SourceCatalogueSelectionScope> defaultSelectionScopes,
         IEnumerable<SourceUniverseSelectorOccurrence> occurrences)
     {
         ArgumentNullException.ThrowIfNull(catalogue);
+        ArgumentNullException.ThrowIfNull(defaultSelectionScopes);
         ArgumentNullException.ThrowIfNull(occurrences);
         var materializedOccurrences = occurrences
             .Select(occurrence => occurrence ?? throw new ArgumentException(
@@ -28,13 +30,15 @@ internal sealed class SourceUniverseFilterRequest
         }
 
         Catalogue = catalogue;
-        DefaultSelectionScope = defaultSelectionScope;
+        DefaultSelectionScopes = Array.AsReadOnly(defaultSelectionScopes.ToArray());
         Occurrences = new ReadOnlyCollection<SourceUniverseSelectorOccurrence>(materializedOccurrences);
     }
 
     internal SourceCatalogue Catalogue { get; }
 
-    internal SourceCatalogueSelectionScope? DefaultSelectionScope { get; }
+    internal WorkspaceLayout Layout => Catalogue.Layout;
+
+    internal IReadOnlyList<SourceCatalogueSelectionScope> DefaultSelectionScopes { get; }
 
     internal IReadOnlyList<SourceUniverseSelectorOccurrence> Occurrences { get; }
 }

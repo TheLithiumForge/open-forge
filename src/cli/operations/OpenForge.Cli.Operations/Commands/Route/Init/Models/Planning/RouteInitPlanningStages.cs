@@ -22,7 +22,9 @@ internal sealed record RouteInitInspectionFacts(
     RouteInitCurrentStateFacts Current,
     RouteInitFrameworkPlanningBasis? Framework)
 {
-    public required WorkspaceSettingsRead Settings { get; init; }
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
+    internal WorkspaceSettingsRead Settings => LayoutRead.Settings;
 
     internal RouteInitRestoration? Restoration { get; init; }
 

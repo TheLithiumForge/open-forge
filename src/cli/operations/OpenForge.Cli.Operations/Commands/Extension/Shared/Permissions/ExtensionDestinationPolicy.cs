@@ -7,17 +7,17 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 
 internal static class ExtensionDestinationPolicy
 {
-    private const string GitDirectoryName = ".git";
     private const string WorkspaceLockPath = ".agents/open-forge.lock";
 
-    internal static bool IsImplicit(string path)
-        => path.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.Ordinal);
+    internal static bool IsImplicit(WorkspaceLayout layout, string path)
+        => layout.IsImplicitContentDestination(path);
 
     internal static bool IsAllowed(CliWorkspace workspace, string path)
     {
@@ -66,8 +66,9 @@ internal static class ExtensionDestinationPolicy
         }
         var key = PortableWorkspacePath.CreatePortableKey(path);
         if (key == WorkspaceSettingsDefinitions.DirectoryName
-            || (key.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.Ordinal) && !IsImplicit(path))
-            || key.Split('/').Contains(GitDirectoryName, StringComparer.Ordinal)
+            || (key.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.Ordinal)
+                && !path.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.Ordinal))
+            || key.Split('/').Contains(WorkspaceLayoutNames.GitMetadataDirectoryName, StringComparer.Ordinal)
             || IsReservedFileOrDescendant(key, WorkspaceSettingsDefinitions.RelativePath)
             || IsReservedFileOrDescendant(key, WorkspaceOwnershipDefinitions.RelativePath)
             || IsReservedFileOrDescendant(key, WorkspaceLockPath))

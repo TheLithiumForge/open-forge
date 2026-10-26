@@ -366,7 +366,10 @@ internal sealed class ReferencesOperation
             IncomingCoverage = incomingCoverage,
             OutgoingCoverage = outgoingCoverage,
             Findings = findings,
-        });
+        }) with
+        {
+            CustomMainRoot = sourceSession?.Layout is { IsDefault: false } layout ? layout.MainRoot : null,
+        };
     }
 
     private async ValueTask<LayerInspectionResult> InspectLayersAsync(

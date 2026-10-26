@@ -338,6 +338,7 @@ public sealed class IndexPlanBuilderTests
                 projection.Selection.Selection.Sources.Select(source => source.Path),
                 mode),
             Projection = projection,
+            LayoutRead = IndexTestData.LayoutRead(),
         };
 
     private static IndexProjectionFormation Projection(params IndexProjectedRegion[] regions)
@@ -430,13 +431,14 @@ public sealed class IndexPlanBuilderTests
 
     private static IndexLogicalSource LogicalSource(SourceLogicalSource source)
         => new(
+            layout: IndexTestData.Layout(),
             id: source.Identity.AutomaticId,
             path: source.Identity.CanonicalBasePath,
             scope: IndexLogicalSourceScope.Rooted);
 
     private static SourceLogicalSource Source(string path)
     {
-        var automaticId = SourceIdentity.DeriveId(path)
+        var automaticId = SourceIdentity.DeriveId(IndexTestData.Layout(), path)
             ?? throw new ArgumentException("An Index planning test source requires a derived ID.", nameof(path));
         return new SourceLogicalSource(
             new SourceLogicalIdentity(

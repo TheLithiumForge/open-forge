@@ -1,0 +1,1 @@
+open-forge install --main-root docs/context --automatic

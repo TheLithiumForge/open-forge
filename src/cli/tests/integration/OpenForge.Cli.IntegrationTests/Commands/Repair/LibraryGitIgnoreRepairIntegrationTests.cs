@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Commands.Repair;
 using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
@@ -41,7 +43,8 @@ public sealed class LibraryGitIgnoreRepairIntegrationTests
             Libraries = [.. attributed.Select(item => new RepairLibraryRecoveryProposal(item))],
             PromptRelinks = [],
             PromptLibraries = [new RepairLibraryRecoveryProposal(evidence)],
-        });
+        }) with
+        { LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Files.Workspace, TestContext.Current.CancellationToken) };
         var application = RepairOperationFactory.CreateDefaultComponents().Application;
         if (grant == "revoked")
         {

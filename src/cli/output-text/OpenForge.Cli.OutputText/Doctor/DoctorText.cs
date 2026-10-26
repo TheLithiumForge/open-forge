@@ -4,6 +4,10 @@ namespace OpenForge.Cli.OutputText.Doctor;
 
 internal static class DoctorText
 {
+    internal static string ContextFolderMissing(string path) => $"The {path} folder is missing";
+    internal static string ContextFolderUnreadable(string path) => $"The {path} folder cannot be read";
+    internal static string LoaderMissing(string path) => $"{path} is missing.";
+
     // @OpenForgeText doctor.title.settings-version-unknown
     internal static string TitleSettingsVersionUnknown() => "Workspace settings version is not recognized";
 

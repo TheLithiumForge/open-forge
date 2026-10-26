@@ -22,7 +22,7 @@ internal sealed class RoutedMetadataCompletionPolicy
         ArgumentNullException.ThrowIfNull(context);
         if (!file.IsSelected) return RoutedMetadataEligibility.NotSelected;
         var path = file.CanonicalPath;
-        if (!SourceFormClassifier.TryClassify(path, out var form)
+        if (!SourceFormClassifier.TryClassify(context.Roots, path, out var form)
             || form is SourceDocumentForm.Loader or SourceDocumentForm.OverwriteCompanion)
             return RoutedMetadataEligibility.UnsupportedForm;
         if (!file.IsReadable) return RoutedMetadataEligibility.Unreadable;
@@ -31,8 +31,8 @@ internal sealed class RoutedMetadataCompletionPolicy
         if (protection != RoutedMetadataEligibility.Eligible) return protection;
         if (file.IsGeneratedFile || file.HasManagedAuthoredRegions) return RoutedMetadataEligibility.GeneratedContent;
         if (file.LoaderRootEntrypointPath is not { } root
-            || !SourceFormClassifier.TryClassify(root, out var rootForm) || !SourceFormClassifier.IsEntrypoint(rootForm)
-            || SourceLogicalPath.ReadParent(SourceLogicalPath.ReadParent(root)) != SourceLogicalPath.AgentsRoot
+            || !SourceFormClassifier.TryClassify(context.Roots, root, out var rootForm) || !SourceFormClassifier.IsEntrypoint(rootForm)
+            || !SourceLogicalPath.IsPrimaryCategoryDirectory(context.Roots, SourceLogicalPath.ReadParent(root))
             || !RoutedMetadataDefaults.IsAncestor(path, SourceLogicalPath.ReadParent(root)))
             return RoutedMetadataEligibility.OutsideRoot;
         return RoutedMetadataEligibility.Eligible;
@@ -40,13 +40,13 @@ internal sealed class RoutedMetadataCompletionPolicy
 
     internal RoutedMetadataEligibility Protection(string path, RoutedMetadataPolicyContext context)
     {
-        if (!SourceFormClassifier.TryClassify(path, out var form) || form == SourceDocumentForm.OverwriteCompanion)
+        if (!SourceFormClassifier.TryClassify(context.Roots, path, out var form) || form == SourceDocumentForm.OverwriteCompanion)
             return RoutedMetadataEligibility.UnsupportedForm;
         if (context.Ownership.HasManagedPath(path)) return RoutedMetadataEligibility.ManagedContent;
         if ((context.Ownership.Framework?.Regions ?? []).Concat(context.Ownership.Extensions.SelectMany(owner => owner.Regions))
                 .Any(region => region.Path == path && region.Region != WorkspaceOwnershipDefinitions.EntriesRegion))
             return RoutedMetadataEligibility.GeneratedContent;
-        if (WorkspaceRemovals.IsPathRemoved(path, context.Settings)) return RoutedMetadataEligibility.SettingsExcluded;
+        if (WorkspaceRemovals.IsPathRemoved(context.Layout, path, context.Settings)) return RoutedMetadataEligibility.SettingsExcluded;
 
         var privateRoutes = context.Ownership.Framework?.GitIgnoredRoutes ?? [];
         if (!privateRoutes.IsEmpty && !new SourceSharing(privateRoutes).Includes(path))
@@ -61,7 +61,7 @@ internal sealed class RoutedMetadataCompletionPolicy
         ArgumentNullException.ThrowIfNull(input);
         var eligibility = Evaluate(input.File, context);
         var completion = FrameworkMetadataCompletionResult.Unchanged(input.Bytes);
-        if (eligibility == RoutedMetadataEligibility.Eligible && SourceFormClassifier.TryClassify(input.File.CanonicalPath, out var form)
+        if (eligibility == RoutedMetadataEligibility.Eligible && SourceFormClassifier.TryClassify(context.Roots, input.File.CanonicalPath, out var form)
             && form == SourceDocumentForm.Skill)
         {
             completion = _skills.Complete(input);
@@ -74,7 +74,7 @@ internal sealed class RoutedMetadataCompletionPolicy
                 Bytes = input.Bytes,
                 Document = input.Document,
                 Form = context.Settings.Frontmatter,
-                DefaultTags = RoutedMetadataDefaults.Tags(input.File),
+                DefaultTags = RoutedMetadataDefaults.Tags(context.Roots, input.File),
             });
         }
 

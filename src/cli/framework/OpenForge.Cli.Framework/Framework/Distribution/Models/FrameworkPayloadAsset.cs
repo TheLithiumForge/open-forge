@@ -1,13 +1,15 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Distribution.Models;
 
 internal sealed class FrameworkPayloadAsset
 {
     internal const string RootAgentPath = SourceLogicalPath.WorkspaceEntryPath;
-    internal const string RootClaudePath = "CLAUDE.md";
+    internal const string RootClaudePath = WorkspaceLayoutNames.ClaudeHostFileName;
     internal const string LoaderPath = SourceLogicalPath.LoaderPath;
 
     private FrameworkPayloadAsset(
@@ -45,7 +47,8 @@ internal sealed class FrameworkPayloadAsset
             return;
         }
 
-        if (!SourceLogicalPath.IsCanonical(path))
+        // Payload validation always uses package coordinates, independently of the installed layout.
+        if (!SourceLogicalPath.IsPrimarySource(SourceContentRoots.PackageCoordinates, path))
         {
             throw new ArgumentException("A Framework payload asset path must be canonical.", nameof(path));
         }

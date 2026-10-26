@@ -1,22 +1,31 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.TestSupport.Snapshots;
 using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Shared.Binding;
 using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Install.Shared.Configuration;
 
 public sealed class InstallConfigurationTests
 {
+    private const string WorkingDirectory = WorkspaceLayout.DefaultMainRoot + "/" + InstallConfigurationChoices.MemoryWorkingRouteId;
+    private const string AuthoredLine = "# authored";
+    private const string LocalPattern = "*.local";
+    private const string LegacySnapshot = "legacy-ignore-upgrade";
+
     [Fact(DisplayName = "Essentials resolves ordinary Working as Git-ignored and omits four defaults")]
     [Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     public void EssentialsHasExactConcreteChoices()
     {
         var rows = InstallConfigurationChoices.Defaults(InstallPreset.Essentials);
         Assert.Equal(10, rows.Length);
-        Assert.Equal(InstallRouteAction.GitIgnore, rows.Single(row => row.Id == "memory/working").Action);
-        Assert.Equal(["guidance", "maps", "templates", "memory/archived"], rows.Where(row => row.Action == InstallRouteAction.Remove).Select(row => row.Id));
+        Assert.Equal(InstallRouteAction.GitIgnore, rows.Single(row => row.Id == InstallConfigurationChoices.MemoryWorkingRouteId).Action);
+        Assert.Equal([WorkspaceCategoryNames.Guidance, WorkspaceCategoryNames.Maps, WorkspaceCategoryNames.Templates, InstallConfigurationChoices.MemoryArchivedRouteId], rows.Where(row => row.Action == InstallRouteAction.Remove).Select(row => row.Id));
         Assert.All(InstallConfigurationChoices.Defaults(InstallPreset.FullCore), row => Assert.Equal(InstallRouteAction.Add, row.Action));
     }
 
@@ -49,8 +58,8 @@ public sealed class InstallConfigurationTests
     public void MinimalStartsEmptyAndTakesOverrides()
     {
         var minimal = InstallConfigurationChoices.Defaults(InstallPreset.Minimal);
-        Assert.Equal(["directives", "memory/crystallized"], minimal.Where(row => row.Action == InstallRouteAction.Add).Select(row => row.Id));
-        Assert.All(minimal.Where(row => row.Id is not ("directives" or "memory/crystallized")), row => Assert.Equal(InstallRouteAction.Remove, row.Action));
+        Assert.Equal([WorkspaceCategoryNames.Directives, InstallConfigurationChoices.MemoryCrystallizedRouteId], minimal.Where(row => row.Action == InstallRouteAction.Add).Select(row => row.Id));
+        Assert.All(minimal.Where(row => row.Id is not (WorkspaceCategoryNames.Directives or InstallConfigurationChoices.MemoryCrystallizedRouteId)), row => Assert.Equal(InstallRouteAction.Remove, row.Action));
         foreach (var preset in new[] { InstallPreset.Essentials, InstallPreset.FullCore })
             Assert.All(minimal.Where(row => row.Action != InstallRouteAction.Remove), row => Assert.NotEqual(InstallRouteAction.Remove, InstallConfigurationChoices.Defaults(preset).Single(other => other.Id == row.Id).Action));
         var symbols = InstallBinding.CreateSymbols();
@@ -60,15 +69,15 @@ public sealed class InstallConfigurationTests
         Assert.Null(input.SetupError);
         var setup = Assert.IsType<InstallSetupInput>(input.Setup);
         Assert.Equal(InstallPreset.Minimal, setup.Preset);
-        Assert.Equal(["guidance", "memory/working"], setup.Overrides.Select(row => row.Id));
+        Assert.Equal([WorkspaceCategoryNames.Guidance, InstallConfigurationChoices.MemoryWorkingRouteId], setup.Overrides.Select(row => row.Id));
     }
 
     [Fact(DisplayName = "Each route switches on through its top-level Loader line"), Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     public void RoutesMapToLoaderLines()
     {
-        Assert.Equal(".agents/directives/_directives.md", InstallConfigurationChoices.LoaderRoot("directives"));
-        Assert.Equal(".agents/memory/_memory.md", InstallConfigurationChoices.LoaderRoot("memory/crystallized"));
-        Assert.Equal(".agents/memory/_memory.md", InstallConfigurationChoices.LoaderRoot("memory/working"));
+        Assert.Equal($"{WorkspaceLayout.DefaultMainRoot}/{WorkspaceCategoryNames.Directives}/{SourceFormClassifier.CanonicalEntrypointFileName(WorkspaceCategoryNames.Directives)}", InstallConfigurationChoices.LoaderRoot(FixtureLayout, WorkspaceCategoryNames.Directives));
+        Assert.Equal($"{WorkspaceLayout.DefaultMainRoot}/{WorkspaceCategoryNames.Memory}/{SourceFormClassifier.CanonicalEntrypointFileName(WorkspaceCategoryNames.Memory)}", InstallConfigurationChoices.LoaderRoot(FixtureLayout, InstallConfigurationChoices.MemoryCrystallizedRouteId));
+        Assert.Equal($"{WorkspaceLayout.DefaultMainRoot}/{WorkspaceCategoryNames.Memory}/{SourceFormClassifier.CanonicalEntrypointFileName(WorkspaceCategoryNames.Memory)}", InstallConfigurationChoices.LoaderRoot(FixtureLayout, InstallConfigurationChoices.MemoryWorkingRouteId));
     }
 
     [Fact(DisplayName = "Identical route repeats produce one typed override"), Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
@@ -79,39 +88,46 @@ public sealed class InstallConfigurationTests
         Assert.Empty(parse.Errors);
         var input = InstallBindingInputReader.Read(parse, symbols);
         Assert.Null(input.SetupError);
-        Assert.Equal(new InstallRouteSelection("skills", InstallRouteAction.Add), Assert.Single(Assert.IsType<InstallSetupInput>(input.Setup).Overrides));
+        Assert.Equal(new InstallRouteSelection(WorkspaceLayoutNames.SkillsDirectoryName, InstallRouteAction.Add), Assert.Single(Assert.IsType<InstallSetupInput>(input.Setup).Overrides));
     }
 
     [Fact(DisplayName = "Install ignore changes preserve outside bytes and user rules"), Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     public void IgnoreSectionPreservesOutsideBytes()
     {
-        const string outside = "# authored\r\n/.agents/memory/working/\r\n*.local\r\n";
+        var outside = $"{AuthoredLine}\r\n/{WorkingDirectory}/\r\n{LocalPattern}\r\n";
         var before = Encoding.UTF8.GetBytes(outside);
-        var added = InstallIgnoreSection.Rewrite(before, InstallConfigurationChoices.Defaults(InstallPreset.Essentials));
-        Assert.StartsWith(outside, Encoding.UTF8.GetString(added), StringComparison.Ordinal);
-        Assert.Equal(["memory/working"], InstallIgnoreSection.Read(added));
-        Assert.Equal(added, InstallIgnoreSection.Rewrite(added, InstallConfigurationChoices.Defaults(InstallPreset.Essentials)));
-        Assert.Equal(before, InstallIgnoreSection.Rewrite(added, InstallConfigurationChoices.Defaults(InstallPreset.FullCore)));
+        var added = InstallIgnoreSection.Rewrite(before, InstallConfigurationChoices.Defaults(InstallPreset.Essentials), null, FixtureLayout);
+        Assert.Equal(before, added.AsSpan(0, before.Length).ToArray());
+        Assert.Equal([InstallConfigurationChoices.MemoryWorkingRouteId], InstallIgnoreSection.Read(added, FixtureLayout));
+        Assert.Equal(added, InstallIgnoreSection.Rewrite(added, InstallConfigurationChoices.Defaults(InstallPreset.Essentials), null, FixtureLayout));
+        Assert.Equal(before, InstallIgnoreSection.Rewrite(added, InstallConfigurationChoices.Defaults(InstallPreset.FullCore), null, FixtureLayout));
     }
 
     [Fact(DisplayName = "Legacy whole-directory ignore upgrades to private contents and a shared compatibility host")]
     [Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     public void LegacyIgnoreUpgradesWithCompatibilityHost()
     {
-        var before = Encoding.UTF8.GetBytes("# authored\r\n# BEGIN OPEN FORGE INSTALL\r\n/.agents/memory/working/\r\n# END OPEN FORGE INSTALL\r\n*.local\r\n");
-        Assert.Equal(["memory/working"], InstallIgnoreSection.Read(before));
+        var before = Encoding.UTF8.GetBytes($"{AuthoredLine}\r\n{InstallIgnoreSection.Begin}\r\n/{WorkingDirectory}/\r\n{InstallIgnoreSection.End}\r\n{LocalPattern}\r\n");
+        Assert.Equal([InstallConfigurationChoices.MemoryWorkingRouteId], InstallIgnoreSection.Read(before, FixtureLayout));
         var rows = InstallConfigurationChoices.Defaults(InstallPreset.Essentials);
         var written = InstallIgnoreSection.Rewrite(before, rows,
-            [new(".agents/memory/working", ".agents/memory/working/index.md")]);
-        Assert.Equal("# authored\r\n# BEGIN OPEN FORGE INSTALL\r\n/.agents/memory/working/*\r\n!/.agents/memory/working/index.md\r\n# END OPEN FORGE INSTALL\r\n*.local\r\n", Encoding.UTF8.GetString(written));
-        Assert.Equal(["memory/working"], InstallIgnoreSection.Read(written));
+            [new(WorkingDirectory, WorkingDirectory + "/" + SourceFormClassifier.IndexFileName)], FixtureLayout);
+        CommandOutputSnapshot.MatchSnapshot(Encoding.UTF8.GetString(written), LegacySnapshot);
+        Assert.Equal([InstallConfigurationChoices.MemoryWorkingRouteId], InstallIgnoreSection.Read(written, FixtureLayout));
         Assert.Equal(written, InstallIgnoreSection.Rewrite(written, rows,
-            [new(".agents/memory/working", ".agents/memory/working/index.md")]));
+            [new(WorkingDirectory, WorkingDirectory + "/" + SourceFormClassifier.IndexFileName)], FixtureLayout));
     }
 
-    [Theory(DisplayName = "Malformed or duplicate Install ignore markers block"), InlineData("# BEGIN OPEN FORGE INSTALL\n"), InlineData("# END OPEN FORGE INSTALL\n")]
-    [InlineData("# BEGIN OPEN FORGE INSTALL\n# END OPEN FORGE INSTALL\n# BEGIN OPEN FORGE INSTALL\n# END OPEN FORGE INSTALL\n")]
+    [Theory(DisplayName = "Malformed or duplicate Install ignore markers block"), InlineData(InstallIgnoreSection.Begin + "\n"), InlineData(InstallIgnoreSection.End + "\n")]
+    [InlineData(InstallIgnoreSection.Begin + "\n" + InstallIgnoreSection.End + "\n" + InstallIgnoreSection.Begin + "\n" + InstallIgnoreSection.End + "\n")]
     [Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     public void AmbiguousIgnoreSection(string text)
-        => Assert.Throws<InvalidDataException>(() => InstallIgnoreSection.Read(Encoding.UTF8.GetBytes(text)));
+        => Assert.Throws<InvalidDataException>(() => InstallIgnoreSection.Read(Encoding.UTF8.GetBytes(text), FixtureLayout));
+
+    private static readonly WorkspaceLayout FixtureLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                System.IO.Path.GetFullPath(nameof(InstallConfigurationTests)),
+                System.IO.Path.GetFullPath(nameof(InstallConfigurationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

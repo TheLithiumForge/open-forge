@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
@@ -31,10 +32,12 @@ internal sealed class ExtensionInstallSelectionResolver
     internal async ValueTask<ExtensionInstallSelectionResolution> ResolveAsync(
         ExtensionInstallRequest request,
         ExtensionInstallSourceResolution sourceResolution,
-        WorkspaceSettingsDocument settings,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
-        var ownership = await ReadOwnershipAsync(request, cancellationToken).ConfigureAwait(false);
+        var ownership = layoutRead.Ownership;
+        var settings = layoutRead.Settings.Document;
+        var layout = layoutRead.Layout ?? throw new InvalidOperationException("Extension selection requires its observed layout.");
         var selection = await SelectAsync(request, sourceResolution, ownership, cancellationToken)
             .ConfigureAwait(false);
         if (selection.Finding is not null)
@@ -101,7 +104,7 @@ internal sealed class ExtensionInstallSelectionResolver
             };
         }
 
-        var normalization = ExtensionInstallPayloadNormalizer.Normalize(closure.Packages, settings);
+        var normalization = ExtensionInstallPayloadNormalizer.Normalize(layout, closure.Packages, settings);
         if (normalization.Finding is not null)
         {
             return new ExtensionInstallSelectionResolution(
@@ -232,12 +235,6 @@ internal sealed class ExtensionInstallSelectionResolver
                 "The Extension Install selection state is not defined."),
         };
     }
-
-    private static async ValueTask<WorkspaceOwnershipRead> ReadOwnershipAsync(
-        ExtensionInstallRequest request,
-        CancellationToken cancellationToken)
-        => await WorkspaceOwnershipReader.ReadAsync(
-            new PhysicalPathResolver(), request.Workspace, cancellationToken).ConfigureAwait(false);
 
     private sealed record SelectionOutcome(
         ExtensionInstallSelection? Selection,

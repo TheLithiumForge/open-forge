@@ -8,6 +8,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Context.Models.Operation;
 
@@ -29,6 +31,7 @@ internal sealed record ContextGraphLayer
 internal sealed class ContextGraphSource
 {
     internal ContextGraphSource(
+        WorkspaceLayout layout,
         SourceLogicalSource? logicalSource,
         string? id,
         string canonicalPath,
@@ -49,6 +52,8 @@ internal sealed class ContextGraphSource
             throw new ArgumentException("A Context graph source requires physical layer facts.", nameof(layers));
         }
 
+        IsEntryDocument = SourceFormClassifier.IsEntryDocument(layout, canonicalPath);
+        IsHumanGuide = string.Equals(canonicalPath, layout.HumanGuidePath, StringComparison.Ordinal);
         LogicalSource = logicalSource;
         Id = id;
         CanonicalPath = canonicalPath;
@@ -79,7 +84,7 @@ internal sealed class ContextGraphSource
     internal IReadOnlyList<ContextGraphLayer> Layers { get; }
 
     /// <summary>
-    /// The catalogue whose Entries line links this file from outside `.agents/`, or null for other sources.
+    /// The catalogue whose Entries line includes this file, or null for other sources.
     /// </summary>
     internal string? LinkedParentPath { get; init; }
 
@@ -96,7 +101,9 @@ internal sealed class ContextGraphSource
 
     internal bool IsCatalogue => IsEntrypoint || IsLinked && GeneratedEntries.State == SourceGeneratedEntriesState.Complete;
 
-    internal bool IsEntryDocument => SourceFormClassifier.IsEntryDocument(CanonicalPath);
+    internal bool IsEntryDocument { get; }
+
+    internal bool IsHumanGuide { get; }
 }
 
 internal sealed class ContextGraph
@@ -104,6 +111,7 @@ internal sealed class ContextGraph
     private readonly IReadOnlyDictionary<string, ContextGraphSource> _sourcesByPath;
 
     internal ContextGraph(
+        WorkspaceLayoutRead layoutRead,
         SourceCatalogue catalogue,
         SourceRouteFacts routeFacts,
         ContextGraphSource workspaceEntry,
@@ -114,6 +122,7 @@ internal sealed class ContextGraph
         ArgumentNullException.ThrowIfNull(workspaceEntry);
         ArgumentNullException.ThrowIfNull(sources);
         var values = sources.ToArray();
+        LayoutRead = layoutRead;
         Catalogue = catalogue;
         RouteFacts = routeFacts;
         WorkspaceEntry = workspaceEntry;
@@ -150,6 +159,8 @@ internal sealed class ContextGraph
     }
 
     internal SourceCatalogue Catalogue { get; }
+
+    internal WorkspaceLayoutRead LayoutRead { get; }
 
     internal SourceRouteFacts RouteFacts { get; }
 

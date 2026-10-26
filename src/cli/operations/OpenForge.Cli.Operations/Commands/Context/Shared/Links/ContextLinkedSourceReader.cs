@@ -36,8 +36,8 @@ internal sealed class ContextLinkedSourceReader
             return managed;
         }
 
-        if (target.Path.StartsWith(".agents/", StringComparison.Ordinal)
-            || !target.Path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+        if (graph.Catalogue.Layout.IsContentPath(target.Path)
+            || !SourceGeneratedDestinationResolver.IsMarkdown(target.Path))
         {
             return null;
         }
@@ -71,6 +71,7 @@ internal sealed class ContextLinkedSourceReader
         }
 
         var source = new ContextGraphSource(
+            layout: graph.Catalogue.Layout,
             logicalSource: null,
             id: null,
             canonicalPath: target.Path,

@@ -1,5 +1,9 @@
 using System.Collections.Immutable;
 using System.Text;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
@@ -162,7 +166,7 @@ internal static class RouteCreateTestData
         var parent = Source(workspace, ParentId, ParentPath, SourceDocumentForm.CanonicalEntrypoint);
         var target = Source(workspace, TargetId, TargetPath, SourceDocumentForm.Markdown);
         var catalogue = new SourceCatalogue(
-            workspace: workspace,
+            layout: WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot),
             candidates: [Candidate(parent)],
             sources: [parent],
             issues: [],
@@ -174,7 +178,11 @@ internal static class RouteCreateTestData
         return new RouteCreatePlan
         {
             Request = Request(workspace),
-            Settings = WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, ".agents", "open-forge.json")),
+            LayoutRead = new WorkspaceLayoutRead(
+                WorkspaceLayoutReadState.Ready,
+                WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceSettingsDefinitions.RelativePath)),
+                WorkspaceOwnershipRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceOwnershipDefinitions.RelativePath)),
+                catalogue.Layout, [], []),
             Preview = PreviewFormation(workspace),
             NavigationFormation = new GeneratedNavigationFormationBuilder().Build(
                 catalogue,

@@ -52,8 +52,9 @@ internal static class FindText
         => "match";
 
     // @OpenForgeText find.message.no-markdown-sources-were-found-under-agents
-    internal static string MessageNoMarkdownSourcesWereFoundUnderAgents()
-        => "No Markdown sources were found under .agents.";
+    internal static string MessageNoMarkdownSourcesWereFoundUnderAgents(string? mainRoot)
+        => mainRoot is null ? "No Markdown sources were found under .agents."
+            : $"No Markdown sources were found under {mainRoot} or the native Skills folder.";
 
     // @OpenForgeText find.title.invalid-selector
     internal static string TitleInvalidSelector()

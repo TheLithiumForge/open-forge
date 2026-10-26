@@ -33,18 +33,19 @@ public sealed class IndexValidationWorkIntegrationTests
         var plan = new IndexPlanBuilder().Build(new IndexPlanningInput
         {
             Request = request,
+            LayoutRead = projection.Projection?.LayoutRead ?? throw new InvalidOperationException(),
             Projection = projection.Projection ?? throw new InvalidOperationException(),
         });
 
         for (var pass = 0; pass < 2; pass++)
         {
             observations.Clear();
-            Assert.True(await reader.VerifyOwnershipAsync(plan, token));
+            Assert.True(await reader.VerifyMaintenanceAsync(plan, token));
             Assert.Equal(1, observations[temporary.Combine(".agents/guidance/deep")]);
             Assert.Equal(2, observations[temporary.Combine(".agents/guidance/deep/notes/note-0.md")]);
         }
 
         File.AppendAllText(temporary.Combine(".agents/guidance/deep/notes/note-0.md"), "Changed after planning.\n");
-        Assert.False(await reader.VerifyOwnershipAsync(plan, token));
+        Assert.False(await reader.VerifyMaintenanceAsync(plan, token));
     }
 }

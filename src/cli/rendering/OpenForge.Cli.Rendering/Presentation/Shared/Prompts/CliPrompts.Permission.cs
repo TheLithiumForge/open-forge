@@ -31,9 +31,9 @@ internal sealed partial class CliPrompts
         while (_terminal.ReadSelectionViewport() is { } viewport)
         {
             var width = viewport.Width - CliSelectionFrameRenderer.WidthReserve;
-            var ownerHeading = CliPromptWording.Permission(question.Owner);
+            var ownerHeading = CliPromptWording.Permission(question.Owner, question.ContextFolder);
             var compactOwner = CliSelectionText.Wrap(ownerHeading, width).Count > 1;
-            var frameHeading = compactOwner ? CliPromptWording.PermissionHeading() : ownerHeading;
+            var frameHeading = compactOwner ? CliPromptWording.PermissionHeading(question.ContextFolder) : ownerHeading;
             var controls = new[] { CliPromptWording.SelectControls(choices.Length) };
             var controlRows = controls.SelectMany(text => CliSelectionText.WrapItems(text, width)).Count();
             var stickyContext = new List<string>();
@@ -73,7 +73,7 @@ internal sealed partial class CliPrompts
                 return PermissionReply(choices[key.Value.Character - '1'].Value);
         }
         var heading = new StringBuilder();
-        AppendLineProse(heading, CliPromptWording.Permission(question.Owner));
+        AppendLineProse(heading, CliPromptWording.Permission(question.Owner, question.ContextFolder));
         heading.Append('\n');
         foreach (var path in question.Paths) heading.Append("  ").Append(CliText.Escape(PermissionPath(path))).Append('\n');
         heading.Append('\n');

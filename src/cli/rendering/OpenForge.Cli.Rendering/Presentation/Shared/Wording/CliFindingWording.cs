@@ -168,7 +168,7 @@ internal static class CliFindingWording
     internal static string OwnershipClaimed(string path, string owner, string command, string verb) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.OwnershipClaimed(path, owner, command, verb);
     internal static string ManagedDivergence(string path) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.ManagedDivergence(path);
 
-    internal static string PermissionRequired(string command) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.PermissionRequired(command);
+    internal static string PermissionRequired(string command, string? contextFolder = null) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.PermissionRequired(command, contextFolder);
     internal static string PermissionDeclined() => global::OpenForge.Cli.OutputText.Shared.SharedText.MessageYouDeclinedTheDestinationsSoNothingWasChanged();
     internal static string PermissionsInvalid(string reason) => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.PermissionsInvalid(reason);
     internal static string PermissionsUnavailable() => global::OpenForge.Cli.OutputText.Shared.SharedText.MessageAgentsOpenForgeJsonCouldNotBeRead();

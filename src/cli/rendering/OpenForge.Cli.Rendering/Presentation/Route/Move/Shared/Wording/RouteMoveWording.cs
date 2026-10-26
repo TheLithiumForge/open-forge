@@ -79,10 +79,14 @@ internal static class RouteMoveWording
             ? global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.FormatIsAnOverwriteFileMoveItsBaseFile($"{reference}")
             : global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.FormatIsTheLoaderAndCannotBeMoved($"{reference}");
 
-    internal static string InvalidDestination(string target, bool category)
-        => category
-            ? global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.FormatMustBeAnEntrypointPathWhenMovingARoute($"{target}")
-            : global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.FormatMustBeAMarkdownFilePathUnderAgents($"{target}");
+    internal static string InvalidDestination(string target, bool category, string? customMainRoot)
+    {
+        if (category)
+            return global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.FormatMustBeAnEntrypointPathWhenMovingARoute(target);
+        if (customMainRoot is not null)
+            return global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.MarkdownDestinationInLayout(target, customMainRoot);
+        return global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.FormatMustBeAMarkdownFilePathUnderAgents(target);
+    }
 
     internal static string DestinationOccupied(string path)
         => global::OpenForge.Cli.OutputText.Route.Move.RouteMoveWording.DestinationOccupied(path);

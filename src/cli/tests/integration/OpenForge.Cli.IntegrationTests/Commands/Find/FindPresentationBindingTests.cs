@@ -58,6 +58,7 @@ public sealed class FindPresentationBindingTests
             new FindBodyTagScanner());
         var operation = new FindOperation(
             new FindSourceResolver(
+                layoutRead: (_, _) => { operationCalls++; throw new InvalidOperationException(); },
                 (_, _) =>
                 {
                     operationCalls++;

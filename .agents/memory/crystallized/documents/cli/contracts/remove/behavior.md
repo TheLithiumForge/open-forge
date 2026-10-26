@@ -12,6 +12,12 @@ restoration. The [CLI Architecture](../../architecture.md) and shared
 define implementation boundaries. This contract extends the existing domain
 removal contracts with persistent intent and explicit managed-path removal.
 
+## Workspace Layout
+
+Expand category exclusions through the layout, including absent targets. Protect fixed controls, the main root and its ancestors, update selected-loader and native Skills navigation, and revalidate the layout under the lease.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
 ## Plan Before Effects
 
 Resolve one target from explicit input. Inspect settings and ownership, the exact
@@ -25,7 +31,7 @@ it does not supply package or Library deletion authority. Package and Library
 operations retain their source-independent ownership checks. Neither matching
 payload bytes nor a familiar folder name establishes ownership.
 
-Protect the workspace root, `.agents` itself, authored settings, the ownership
+Protect the workspace root, the main root, `.agents` itself, authored settings, the ownership
 lock, Git metadata and recovery storage. A selected directory cannot contain a
 registered Library source. Observe links without following them. A recorded
 Library file link requires its exact expected identity and link-specific effects;

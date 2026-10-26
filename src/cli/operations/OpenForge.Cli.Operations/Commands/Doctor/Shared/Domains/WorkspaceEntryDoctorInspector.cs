@@ -21,7 +21,13 @@ internal static class WorkspaceEntryDoctorInspector
         IReadOnlyList<(string Key, string Path)>? missingLinkScopeEntries = null,
         int? unrecognizedSettingsSchemaVersion = null)
     {
-        var findings = routes.Catalogue.Issues
+        if (routes.Catalogue is not { } catalogue)
+        {
+            var unavailableFindings = new List<DoctorFinding>();
+            WorkspacePathDoctorInspector.Inspect(view, unavailableFindings);
+            return DoctorUnavailableDomain.Create(Domain, DoctorBoundaryKind.Workspace, routes.UnavailableCause, unavailableFindings);
+        }
+        var findings = catalogue.Issues
             .Where(issue => issue.Code != SourceCatalogueIssueCode.OrphanOverwrite)
             .SelectMany(CreateCatalogueFindings)
             .ToList();
@@ -31,7 +37,7 @@ internal static class WorkspaceEntryDoctorInspector
         WorkspacePathDoctorInspector.Inspect(view, findings);
         WorkspaceSourceDoctorInspector.Inspect(routes, findings);
         WorkspaceRouteDoctorInspector.Inspect(routes, findings);
-        WorkspaceIncludeDoctorInspector.Inspect(routes.IncludedFiles, findings);
+        WorkspaceIncludeDoctorInspector.Inspect(catalogue.Layout.LoaderPath, routes.IncludedFiles, findings);
         findings.AddRange(routes.Routes.Issues
             .Where(issue => issue.Code is SourceRouteIssueCode.LoaderMalformed
                 or SourceRouteIssueCode.LoaderDuplicateRoot
@@ -40,7 +46,7 @@ internal static class WorkspaceEntryDoctorInspector
             .Select(CreateLoaderFinding));
 
         var coverage = DoctorDomainSupport.Coverage(view.State);
-        if (routes.Catalogue.IsCancelled || routes.Routes.IsCancelled)
+        if (catalogue.IsCancelled || routes.Routes.IsCancelled)
         {
             coverage = DoctorDomainSupport.Combine(coverage, DoctorCoverageState.Incomplete);
         }
@@ -54,7 +60,7 @@ internal static class WorkspaceEntryDoctorInspector
                 "Workspace entry evidence did not establish every required path and identity distinction."));
         }
 
-        if (routes.Catalogue.Issues.Any(issue => issue.Code is SourceCatalogueIssueCode.RootUnavailable
+        if (catalogue.Issues.Any(issue => issue.Code is SourceCatalogueIssueCode.RootUnavailable
                 or SourceCatalogueIssueCode.DirectoryUnavailable
                 or SourceCatalogueIssueCode.CandidateUnavailable
                 or SourceCatalogueIssueCode.IdentityUnavailable))

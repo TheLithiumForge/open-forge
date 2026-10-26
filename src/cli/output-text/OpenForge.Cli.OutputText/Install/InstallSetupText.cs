@@ -2,6 +2,13 @@ namespace OpenForge.Cli.OutputText.Install;
 
 internal static class InstallSetupText
 {
+    // @OpenForgeText install.setup.mainrootquestion
+    internal static string MainRootQuestion() => "Where should Open Forge keep its context files?";
+    // @OpenForgeText install.setup.mainrootexplanation
+    internal static string MainRootExplanation(string initial, string controls)
+        => $"Press Enter for {initial}, or enter an absent or empty workspace-relative folder. Settings and Skills stay in {controls}.";
+    // @OpenForgeText install.setup.mainrootrule
+    internal static string MainRootRule() => "Use a canonical workspace-relative folder without traversal or reserved paths.";
     // @OpenForgeText install.setup.frontmatterquestion
     internal static string FrontmatterQuestion() => "How should Open Forge write file metadata?";
     // @OpenForgeText install.setup.rootlabel

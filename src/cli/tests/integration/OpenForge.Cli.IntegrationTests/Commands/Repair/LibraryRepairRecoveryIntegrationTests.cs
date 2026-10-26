@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair;
@@ -66,7 +67,8 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             Libraries = [new RepairLibraryRecoveryProposal(evidence)],
             PromptRelinks = [],
             PromptLibraries = null,
-        });
+        }) with
+        { LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Files.Workspace, TestContext.Current.CancellationToken) };
         Assert.Single(plan.LibrarySteps);
         var application = RepairOperationFactory.CreateDefaultComponents().Application;
         if (afterPreflight)
@@ -91,7 +93,8 @@ public sealed class LibraryRepairRecoveryIntegrationTests
                 Libraries = [new RepairLibraryRecoveryProposal(freshEvidence)],
                 PromptRelinks = [],
                 PromptLibraries = null,
-            });
+            }) with
+            { LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Files.Workspace, TestContext.Current.CancellationToken) };
             var heldOutcome = await application.ExecuteAsync(plan, [], TestContext.Current.CancellationToken);
             Assert.Equal(RepairPreflightState.Blocked, heldOutcome.Preflight.State);
             Assert.Equal(0, heldOutcome.Application.AppliedEffects);
@@ -184,8 +187,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             """);
         var components = RepairOperationFactory.CreateDefaultComponents();
         var diagnosis = await components.DiagnosisReader.ReadAsync(new DoctorRequest(workspace.Files.Workspace), TestContext.Current.CancellationToken);
-        var catalogue = await components.CatalogueReader.ReadAsync(workspace.Files.Workspace,
-            diagnosis.Observation.LocalReferences, TestContext.Current.CancellationToken);
+        var catalogue = await components.CatalogueReader.ReadAsync(Assert.IsType<OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceLayoutRead>(diagnosis.Observation.LayoutRead), diagnosis.Observation.LocalReferences, TestContext.Current.CancellationToken);
         var plan = RepairLibraryRecoveryPlanner.Build(new RepairLibraryPlanningInput
         {
             Request = new RepairRequest(workspace.Files.Workspace, RepairMode.Apply, automatic: true, [], allowInteraction: false),
@@ -193,7 +195,9 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             Libraries = [new RepairLibraryRecoveryProposal(workspace.Evidence)],
             PromptRelinks = [],
             PromptLibraries = null,
-        });
+        }) with
+        { LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Files.Workspace, TestContext.Current.CancellationToken) };
+        plan = plan with { LayoutRead = catalogue.LayoutRead };
         Assert.NotEmpty(plan.Effects);
         Assert.Single(plan.LibrarySteps);
         var preflight = await components.Application.PreflightAsync(plan, TestContext.Current.CancellationToken);
@@ -388,7 +392,8 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             Libraries = [selected, unselected],
             PromptRelinks = [],
             PromptLibraries = [selected],
-        });
+        }) with
+        { LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Files.Workspace, TestContext.Current.CancellationToken) };
         Assert.Same(selected, Assert.Single(plan.Selection.Libraries.Selected).Proposal);
         Assert.Same(unselected, Assert.Single(plan.Selection.Libraries.Unselected));
         var original = File.ReadAllBytes(workspace.Preparation.BundlePath);
@@ -427,7 +432,8 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             Libraries = [new RepairLibraryRecoveryProposal(workspace.Evidence)],
             PromptRelinks = [],
             PromptLibraries = null,
-        });
+        }) with
+        { LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Files.Workspace, TestContext.Current.CancellationToken) };
         Assert.False(plan.IsBlocked);
         var step = Assert.Single(plan.LibrarySteps);
         Assert.Equal(1, step.Ordinal);

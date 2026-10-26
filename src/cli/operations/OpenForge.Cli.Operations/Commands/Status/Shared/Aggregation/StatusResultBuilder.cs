@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Status.Models.Operation;
+using OpenForge.Cli.Core.Commands.Shared.Layout;
 using OpenForge.Cli.Core.Commands.Status.Models.Request;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
@@ -31,16 +32,18 @@ internal static class StatusResultBuilder
                     .Where(target => target.State == OperationalGeneratedNavigationState.Current)
                     .Select(target => target.Path)
                     .ToHashSet(StringComparer.Ordinal)),
-            Library = StatusLibraryAggregator.Build(observations.Libraries),
+            Library = StatusLibraryAggregator.Build(observations.Layout, observations.Libraries),
             Recovery = StatusRecoveryAggregator.Build(observations.RecoveryResiduals),
         };
-        var findings = StatusFindingAggregator.Build(observations, facts);
+        var findings = StatusFindingAggregator.Build(observations, facts)
+            .Select(finding => finding with { CustomLoaderPath = observations.Layout is { IsDefault: false } loaderLayout ? loaderLayout.LoaderPath : null }).ToArray();
         var status = StatusResultPolicy.ReadStatus(findings);
         return new StatusResult
         {
             Status = status,
             Workspace = request.Workspace,
             Next = StatusResultPolicy.ReadNext(status, findings),
+            Layout = WorkspaceLayoutProjection.Project(observations.Layout),
             Facts = facts,
             Findings = findings,
         };

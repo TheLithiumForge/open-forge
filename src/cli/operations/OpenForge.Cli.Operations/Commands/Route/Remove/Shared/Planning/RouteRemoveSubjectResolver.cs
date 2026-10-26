@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
@@ -31,10 +32,11 @@ internal sealed class RouteRemoveSubjectResolver
 
     internal async ValueTask<RouteRemoveSubjectResolution> ResolveAsync(
         RouteRemoveRequest request,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var selection = await _selector.SelectAsync(request, cancellationToken)
+        var selection = await _selector.SelectAsync(request, layoutRead, cancellationToken)
             .ConfigureAwait(false);
         if (selection.Boundary is { } boundary)
         {

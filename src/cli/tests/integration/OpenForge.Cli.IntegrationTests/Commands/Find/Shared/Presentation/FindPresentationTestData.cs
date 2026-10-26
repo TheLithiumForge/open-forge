@@ -14,6 +14,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Presentation;
 
@@ -288,7 +289,7 @@ internal static class FindPresentationTestData
     private static SourceLogicalSource Source(string basePath, bool withOverwrite = false)
     {
         var root = Workspace().PhysicalRoot;
-        var id = SourceIdentity.DeriveId(basePath)
+        var id = SourceIdentity.DeriveId(DefaultWorkspaceLayout, basePath)
             ?? throw new InvalidOperationException("The Find fixture source must have a derived identity.");
         var baseLayer = new SourceLayer(
             basePath,
@@ -322,6 +323,13 @@ internal static class FindPresentationTestData
 
     private static string LongHeading
         => $"Heading-{new string('h', 600)}\\\"";
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(FindPresentationTestData)),
+                Path.GetFullPath(nameof(FindPresentationTestData)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 
 }
 

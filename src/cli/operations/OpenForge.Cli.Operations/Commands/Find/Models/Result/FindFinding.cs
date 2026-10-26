@@ -76,13 +76,6 @@ internal sealed record FindFinding
             throw new ArgumentException("Find finding paths must be canonical .agents paths.", nameof(path));
         }
 
-        if (path is not null && layer is { } pathLayer
-            && ((SourceLogicalPath.IsCanonicalSource(path) && !path.EndsWith(".md", StringComparison.Ordinal))
-                || (pathLayer == SourceLayerKind.Overwrite) != (SourceLogicalPath.IsCanonicalSource(path) && path.EndsWith(".overwrite.md", StringComparison.Ordinal))))
-        {
-            throw new ArgumentException("The Find finding path and layer must agree.", nameof(path));
-        }
-
         if (layer is not null && (source is null || path is null))
         {
             throw new ArgumentException("A Find finding layer requires source and path identity.", nameof(layer));
@@ -93,7 +86,7 @@ internal sealed record FindFinding
             var expectedPath = identifiedLayer switch
             {
                 SourceLayerKind.Base => source.Path,
-                SourceLayerKind.Overwrite => $"{source.Path[..^3]}.overwrite.md",
+                SourceLayerKind.Overwrite => SourceOverwritePath.ReadAdjacentPath(source.Path),
                 _ => throw new ArgumentOutOfRangeException(nameof(layer), identifiedLayer, "The Find finding layer is not defined."),
             };
             if (!string.Equals(path, expectedPath, StringComparison.Ordinal))

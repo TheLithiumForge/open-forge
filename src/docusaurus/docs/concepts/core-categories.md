@@ -7,6 +7,8 @@ description: The six content roles in Core, the question each one answers, and h
 
 Core gives content six roles, called categories. Each category answers one question. To place something, pick the category whose question it answers. The table shows the loading rules when a category is present. [Installation](../getting-started/installation.md#choose-the-installed-routes) lets you select the built-in routes you need.
 
+Category examples use the default `.agents` context folder. Ordinary categories follow a custom main root, while native Skills stay at `.agents/skills`. See [Choose the context folder](../getting-started/installation.md#choose-the-context-folder).
+
 This illustrative Directive requires behavior. It is not a shipped testing policy. Use your workspace's selected [frontmatter](../glossary.md#frontmatter) form when copying:
 
 ```md title=".agents/directives/testing.md (illustrative)"

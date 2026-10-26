@@ -7,6 +7,12 @@ open-forge:
 
 # extension update Behavior Contract
 
+## Workspace Layout
+
+Map package destinations before exclusions, permissions, collisions, rendering and ownership. Record actual `TargetPath` values, keep retired recorded paths literal and revalidate the layout under the lease.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This is the accepted current Crystallized Behavior Contract for current
@@ -71,7 +77,7 @@ Consume the [Workspace Permissions Interface](../../shared/workspace-permissions
 [Behavior](../../shared/workspace-permissions/behavior.md). Require shared allow-list admission for intended external targets and previously owned
 external targets in the selected update plan, including retirement and
 preserved paths.
-Existing `.agents/` targets need no grant; their prior safety and ownership
+Eligible primary-content targets need no grant. Their prior safety and ownership
 checks remain. Revocation blocks the complete selected lifecycle operation,
 including ownership release, until exact explicit reapproval. Unrelated
 installed packages do not enter this request's required set.
@@ -141,7 +147,7 @@ folder.
 
 ## Framework Anchor And Route Hosts
 
-Before mutation, require an ordinary contained `.agents` container and complete
+Before mutation, require an ordinary contained main-root container and complete
 facts for affected authored hosts, generated boundaries, routes and physical
 paths. Stored Framework version, inventory and content hashes are not gates. The
 only exception is the exact proof for an unrelated readable ordinary
@@ -271,7 +277,7 @@ permission, expected-state, verification or recovery checks and never implies pr
 
 `--prune` releases selected retired ownership. It deletes a retired whole-file
 path only when it exists as an ordinary contained file, the shared allow list
-(with implicit `.agents` admission) admits it, reserved-path checks pass, and no
+(with implicit primary-content admission) admits it, reserved-path checks pass, and no
 remaining owner or route dependency requires it. Changed content is eligible.
 Absent paths are never deleted. Out-of-boundary claims cannot authorize deletion.
 The verified recovery bundle precedes every deletion.

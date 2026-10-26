@@ -11,6 +11,8 @@ namespace OpenForge.Cli.Core.Commands.Find.Models.Result;
 
 internal sealed partial record FindResult : ICliCommandResult
 {
+    internal string? CustomMainRoot { get; init; }
+
     internal FindResult(
         CliSemanticStatus status,
         CliWorkspace? workspace,

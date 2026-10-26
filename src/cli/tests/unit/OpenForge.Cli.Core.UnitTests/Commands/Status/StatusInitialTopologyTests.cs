@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
@@ -78,7 +79,7 @@ public sealed class StatusInitialTopologyTests
             CliWorkspaceSelectionMethod.ExplicitWorkspace);
 
         return new RouteInitialContextReader().Read(
-                workspace,
+                WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot),
                 FrameworkPayloadReadResult.Available(payload))
             ?? throw new InvalidOperationException("The embedded topology fixture is invalid.");
     }

@@ -13,6 +13,8 @@ internal sealed record RouteUpdateObservation
 {
     public required RouteUpdateRequest Request { get; init; }
 
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
     public required RouteUpdateTarget Target { get; init; }
 
     public required SourceCatalogue Catalogue { get; init; }

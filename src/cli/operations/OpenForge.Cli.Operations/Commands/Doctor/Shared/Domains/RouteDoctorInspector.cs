@@ -18,11 +18,13 @@ internal static class RouteDoctorInspector
 
     internal static DoctorDomainReport Inspect(RouteDoctorView view)
     {
+        if (view.Catalogue is not { } catalogue)
+            return DoctorUnavailableDomain.Create(Domain, DoctorBoundaryKind.RouteUniverse, view.UnavailableCause);
         var findings = new List<DoctorFinding>();
         findings.AddRange(view.Routes.RouteFacts.Select(CreateRouteFinding).Where(finding => finding is not null).Cast<DoctorFinding>());
         findings.AddRange(view.Routes.Issues.Select(CreateIssueFinding).Where(finding => finding is not null).Cast<DoctorFinding>());
         findings.AddRange(view.Metadata
-            .Where(metadata => !string.Equals(metadata.Path, SourceLogicalPath.LoaderPath, StringComparison.Ordinal))
+            .Where(metadata => !string.Equals(metadata.Path, catalogue.Layout.LoaderPath, StringComparison.Ordinal))
             .Select(CreateMetadataFinding)
             .Where(finding => finding is not null)
             .Cast<DoctorFinding>());
@@ -30,7 +32,7 @@ internal static class RouteDoctorInspector
         findings.AddRange(RouteGeneratedEntryDoctorInspector.Inspect(view.GeneratedNavigation));
         findings.AddRange(RouteShapeDoctorInspector.Inspect(view.Shape));
         findings.AddRange(RouteSourceDoctorInspector.Inspect(view));
-        findings.AddRange(view.Catalogue.Issues
+        findings.AddRange(catalogue.Issues
             .Where(issue => issue.Code == SourceCatalogueIssueCode.OrphanOverwrite)
             .Select(CreateOrphanFinding));
 
@@ -44,7 +46,7 @@ internal static class RouteDoctorInspector
                 && !IsMetadataOnlyUnavailable(view, item))
             || !view.Routes.AreLoaderRootFactsComplete
             || view.Routes.IsCancelled
-            || view.Catalogue.IsCancelled;
+            || catalogue.IsCancelled;
         if (unavailable)
         {
             coverage = DoctorDomainSupport.Combine(coverage, DoctorCoverageState.Incomplete);

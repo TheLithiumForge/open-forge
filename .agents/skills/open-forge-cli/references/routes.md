@@ -34,7 +34,7 @@ New metadata and quoted-string condition lists use the workspace's frontmatter f
 
 ## `route init <route-target>`
 
-Create every missing entrypoint in an exact route chain. Targets are route IDs or exact `.agents` entrypoint paths. A missing exact path uses the canonical `_{folder-name}.md` filename. Init never creates the loader.
+Create every missing entrypoint in an exact route chain. Targets are route IDs or exact `./...` workspace-relative entrypoint paths within the context folder or native Skills. A missing exact path uses the canonical `_{folder-name}.md` filename. Init never creates the loader.
 
 | Flag                                                       | Meaning                                                                                             |
 | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -125,9 +125,11 @@ Repeated `--tag` replaces the complete ordered tag list, and `--apply-to` replac
 
 ## `route move <source-reference> <destination-target>`
 
-Relocate an unmanaged routed leaf or complete category, updating affected references and generated navigation. The destination is an exact workspace-relative `.agents` path under an existing routable parent and must match the source's leaf or category form.
+Relocate an unmanaged routed leaf or complete category, updating affected references and generated navigation. The destination is an exact workspace-relative `./...` path under an existing routable parent in the context folder or native Skills and must match the source's leaf or category form.
 
 Its only command flag is `--dry-run`. Inspect the move and all reference changes. Move does not relocate lifecycle-managed content, create a missing parent route, or overwrite a destination.
+
+Moving the context folder of an established installation is not available yet. Route Move changes content within the existing layout.
 
 ## `route remove <source-reference>`
 

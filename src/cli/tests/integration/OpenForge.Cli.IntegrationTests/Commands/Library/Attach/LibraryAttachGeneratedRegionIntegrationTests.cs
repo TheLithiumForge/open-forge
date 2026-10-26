@@ -261,7 +261,7 @@ public sealed class LibraryAttachGeneratedRegionIntegrationTests
     {
         using var workspace = new LibraryMutationWorkspace();
         workspace.Write("AGENTS.md", "# Workspace\n\nRead `.agents/loader.md`.\n");
-        workspace.Write(".agents/loader.md", "# Loader\n\n## Entries\n- [Directives](directives/_directives.md) - #Directive\n");
+        workspace.Replace(OpenForge.Cli.Core.Framework.Sources.Identity.SourceLogicalPath.LoaderPath, "# Loader\n\n## Entries\n- [Directives](directives/_directives.md) - #Directive\n");
         workspace.RoutedSource();
         workspace.Write(".agents/open-forge.json", "{\"removedFiles\":[\".agents/directives/_directives.md\"]}");
         var settingsBytes = File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json"));

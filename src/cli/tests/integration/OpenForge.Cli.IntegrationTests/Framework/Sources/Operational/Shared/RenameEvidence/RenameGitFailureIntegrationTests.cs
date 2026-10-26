@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Diagnostics;
 using OpenForge.Cli.Composition.Shared.Git;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Git;
@@ -19,11 +20,11 @@ public sealed class RenameGitFailureIntegrationTests
             reads[path] = reads.GetValueOrDefault(path) + 1;
             return LinkTargetReader.Read(path);
         });
-        var reader = new GitRenameEvidenceReader(configureProcess: repository.Configure, physicalPaths: paths);
+        var reader = new GitRenameEvidenceReader(configureProcess: repository.Configure, timeProvider: new RenameEvidenceClock(), physicalPaths: paths);
         for (var pass = 0; pass < 2; pass++)
         {
             reads.Clear();
-            var result = await reader.ReadAsync(new(repository.Workspace, new() { ManagedPaths = [".agents/skills"] }), TestContext.Current.CancellationToken);
+            var result = await reader.ReadAsync(new(repository.Workspace, new() { Layout = WorkspaceLayout.Create(repository.Workspace, WorkspaceLayout.DefaultMainRoot), ManagedPaths = [".agents/skills"] }), TestContext.Current.CancellationToken);
             Assert.Equal(RenameGitAvailability.Available, result.Availability);
             Assert.Equal(1, reads[repository.PathFor(".agents")]);
             Assert.Equal(1, reads[repository.PathFor(".agents/guidance/_guidance.md")]);
@@ -43,7 +44,7 @@ public sealed class RenameGitFailureIntegrationTests
                 invocations++;
                 clock.Advance(GitRenameEvidenceReader.Deadline / 2);
             });
-        var result = await adapter.ReadAsync(new(repository.Workspace, new()), TestContext.Current.CancellationToken);
+        var result = await adapter.ReadAsync(new(repository.Workspace, new() { Layout = WorkspaceLayout.Create(repository.Workspace, WorkspaceLayout.DefaultMainRoot) }), TestContext.Current.CancellationToken);
         Assert.Equal(RenameGitAvailability.Available, result.Availability);
         Assert.Equal(4, invocations);
         Assert.NotEmpty(result.Blobs);
@@ -56,7 +57,7 @@ public sealed class RenameGitFailureIntegrationTests
         using var repository = new RenameEvidenceGitWorkspace();
         var executable = missingExecutable ? Path.Combine(repository.Root, "missing-git") : "git";
         var result = await new GitRenameEvidenceReader(executable, repository.Configure, timeProvider: new RenameEvidenceClock())
-            .ReadAsync(new(repository.Workspace, new()), TestContext.Current.CancellationToken);
+            .ReadAsync(new(repository.Workspace, new() { Layout = WorkspaceLayout.Create(repository.Workspace, WorkspaceLayout.DefaultMainRoot) }), TestContext.Current.CancellationToken);
         Assert.Equal(missingExecutable ? RenameGitAvailability.Unavailable : RenameGitAvailability.NoRepository, result.Availability);
         Assert.Empty(result.Blobs);
         Assert.Null(result.Head);
@@ -92,11 +93,11 @@ public sealed class RenameGitFailureIntegrationTests
             if (cancel)
             {
                 await Assert.ThrowsAnyAsync<OperationCanceledException>(async () =>
-                    await adapter.ReadAsync(new(repository.Workspace, new()), cancellation.Token));
+                    await adapter.ReadAsync(new(repository.Workspace, new() { Layout = WorkspaceLayout.Create(repository.Workspace, WorkspaceLayout.DefaultMainRoot) }), cancellation.Token));
             }
             else
             {
-                var result = await adapter.ReadAsync(new(repository.Workspace, new()), cancellation.Token);
+                var result = await adapter.ReadAsync(new(repository.Workspace, new() { Layout = WorkspaceLayout.Create(repository.Workspace, WorkspaceLayout.DefaultMainRoot) }), cancellation.Token);
                 Assert.Equal(RenameGitAvailability.TimedOut, result.Availability);
                 Assert.Empty(result.Blobs);
             }

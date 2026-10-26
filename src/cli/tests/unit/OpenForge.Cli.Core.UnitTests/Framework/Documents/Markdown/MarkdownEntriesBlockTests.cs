@@ -7,6 +7,8 @@ using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Markdown;
 
@@ -38,7 +40,7 @@ public sealed class MarkdownEntriesBlockTests
 
         var generated = SourceGeneratedEntriesParser.Parse(
             new MarkdownDocumentParser().Parse("## Entries\n\n" + line + "\n"));
-        var loader = SourceLoaderEntriesParser.Parse(LoaderContents(line));
+        var loader = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, LoaderContents(line));
 
         Assert.Equal(SourceGeneratedEntriesState.Complete, generated.State);
         Assert.Equal(patterns.Select(pattern => pattern.Text),
@@ -74,7 +76,7 @@ public sealed class MarkdownEntriesBlockTests
     {
         var generated = SourceGeneratedEntriesParser.Parse(
             new MarkdownDocumentParser().Parse("## Entries\n\n" + line + "\n"));
-        var loader = SourceLoaderEntriesParser.Parse(LoaderContents(line));
+        var loader = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, LoaderContents(line));
 
         Assert.Equal(SourceGeneratedEntriesState.Unavailable, generated.State);
         Assert.False(string.IsNullOrWhiteSpace(generated.Cause));
@@ -129,7 +131,7 @@ public sealed class MarkdownEntriesBlockTests
     {
         const string source = "# Loader\n\n## Entries\n\nBefore.\n\n- [Root](root/_root.md) - #Root\n\nAfter.\n\n- [Authored](authored/_authored.md) - #Authored\n";
 
-        var loader = SourceLoaderEntriesParser.Parse(source);
+        var loader = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, source);
         var generated = SourceGeneratedEntriesParser.Parse(new MarkdownDocumentParser().Parse(source));
 
         Assert.Equal(SourceLoaderEntriesParseState.Valid, loader.State);
@@ -158,7 +160,7 @@ public sealed class MarkdownEntriesBlockTests
         Assert.Equal(prefix, source[..block.Span.Start]);
         Assert.Equal(suffix, source[block.Span.End..]);
 
-        var loader = SourceLoaderEntriesParser.Parse(source);
+        var loader = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, source);
         var generatedEntries = SourceGeneratedEntriesParser.Parse(document);
         Assert.Equal(SourceLoaderEntriesParseState.Valid, loader.State);
         Assert.Equal(2, loader.Destinations.Count);
@@ -185,7 +187,7 @@ public sealed class MarkdownEntriesBlockTests
         Assert.Equal(prefix, source[..block.Span.Start]);
         Assert.Equal(lineEnding + authored, source[block.Span.End..]);
 
-        var loader = SourceLoaderEntriesParser.Parse(source);
+        var loader = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, source);
         var generatedEntries = SourceGeneratedEntriesParser.Parse(document);
         Assert.Equal(SourceLoaderEntriesParseState.Valid, loader.State);
         Assert.Equal([".agents/root/_root.md"], loader.Destinations.Select(destination => destination.CanonicalPath));
@@ -199,7 +201,7 @@ public sealed class MarkdownEntriesBlockTests
     public void ProseOnlyHasNoDeclarations()
     {
         const string source = "# Loader\n\n## Entries\nAuthored prose.\n";
-        var loader = SourceLoaderEntriesParser.Parse(source);
+        var loader = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, source);
         var generated = SourceGeneratedEntriesParser.Parse(new MarkdownDocumentParser().Parse(source));
 
         Assert.Equal(SourceLoaderEntriesParseState.Valid, loader.State);
@@ -214,4 +216,11 @@ public sealed class MarkdownEntriesBlockTests
 
     private static string LoaderContents(string entry)
         => "# Loader\n\n## Entries\n\n" + entry + "\n";
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(MarkdownEntriesBlockTests)),
+                Path.GetFullPath(nameof(MarkdownEntriesBlockTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

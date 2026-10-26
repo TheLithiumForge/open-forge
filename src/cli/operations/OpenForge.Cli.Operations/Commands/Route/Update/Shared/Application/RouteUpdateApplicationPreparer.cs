@@ -1,8 +1,10 @@
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 
@@ -23,18 +25,25 @@ internal sealed partial class RouteUpdateApplicationPreparer
         RouteUpdateApplicationPipelineInput input,
         CancellationToken cancellationToken)
     {
-        var revalidation = await _revalidator.RevalidateAsync(
-                input.Plan,
-                cancellationToken)
-            .ConfigureAwait(false);
-        if (revalidation.State != RouteUpdatePlanRevalidationState.Exact)
-        {
-            return RevalidationBoundary(input.Plan, revalidation);
-        }
-
         MutationValidationResult validation;
         try
         {
+            var layoutValidation = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver())
+                .ValidateAsync(input.Lease, input.Plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+            if (layoutValidation.State != MutationValidationState.Valid)
+            {
+                return ValidationBoundary(input.Plan, layoutValidation);
+            }
+
+            var revalidation = await _revalidator.RevalidateAsync(
+                    input.Plan,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            if (revalidation.State != RouteUpdatePlanRevalidationState.Exact)
+            {
+                return RevalidationBoundary(input.Plan, revalidation);
+            }
+
             validation = await _mutationRevalidator.ValidateAsync(
                     input.Lease,
                     input.Plan.FileChanges,

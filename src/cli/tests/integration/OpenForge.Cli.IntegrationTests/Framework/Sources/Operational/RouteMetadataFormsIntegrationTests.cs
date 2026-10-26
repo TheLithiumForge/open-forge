@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
@@ -70,11 +72,12 @@ public sealed class RouteMetadataFormsIntegrationTests
         return $"---\n{yaml}---\n";
     }
 
-    private static ValueTask<RouteSourceInspection> ReadAsync(TemporaryWorkspace temporary)
+    private static async ValueTask<RouteSourceInspection> ReadAsync(TemporaryWorkspace temporary)
     {
         var resolver = new PhysicalPathResolver();
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        return new RouteSourceInspector(new SourceReadSessionReader(resolver), resolver)
-            .ReadAsync(workspace, TestContext.Current.CancellationToken);
+        var observation = await new WorkspaceLayoutReader(resolver).ReadAsync(workspace, TestContext.Current.CancellationToken);
+        return await new RouteSourceInspector(new SourceReadSessionReader(resolver), resolver)
+            .ReadAsync(Assert.IsType<WorkspaceLayout>(observation.Layout), TestContext.Current.CancellationToken);
     }
 }

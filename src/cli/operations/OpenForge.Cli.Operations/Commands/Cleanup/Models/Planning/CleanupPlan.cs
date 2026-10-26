@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
 
@@ -137,6 +138,7 @@ internal sealed record CleanupPlan
         var deletable = stores.SelectMany(store => store.DeletionEntries).Select(entry => entry.Candidate).ToHashSet();
         DeletionEntries = [.. Entries.Where(entry => deletable.Contains(entry.Candidate))];
         Safety = stores.All(store => store.Safety == CleanupPlanSafety.Safe) ? CleanupPlanSafety.Safe : CleanupPlanSafety.Blocked;
+        LayoutRead = stores[0].LayoutRead;
     }
 
     internal static CleanupPlan Aggregate(CleanupRequest request, ImmutableArray<CleanupPlan> stores)
@@ -146,6 +148,8 @@ internal sealed record CleanupPlan
         => new();
 
     public CleanupRequest? Request { get; }
+
+    internal WorkspaceLayoutRead? LayoutRead { get; init; }
 
     public CleanupCatalogue Catalogue { get; }
 

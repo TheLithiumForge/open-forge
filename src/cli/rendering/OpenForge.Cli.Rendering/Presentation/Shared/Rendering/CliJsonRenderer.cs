@@ -21,7 +21,7 @@ internal static class CliJsonRenderer
             var report = selected.Report;
             var detail = selected.Selection.Detail;
             writer.WriteStartObject();
-            writer.WriteNumber(CliJsonFields.SchemaVersion, 3);
+            writer.WriteNumber(CliJsonFields.SchemaVersion, CliJsonEnvelopeDefinitions.SchemaVersion);
             writer.WriteString(CliJsonFields.Command, report.Command);
             writer.WriteString(CliJsonFields.Status, CliStatusDefinitions.Read(report.Status).MachineName);
             writer.WriteString(CliJsonFields.Detail, CliReportVocabulary.Name(detail));

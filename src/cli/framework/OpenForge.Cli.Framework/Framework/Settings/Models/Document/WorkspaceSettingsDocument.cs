@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Settings.Models.Document;
 
@@ -13,6 +14,10 @@ internal sealed record WorkspaceSettingsDocument(
     ImmutableArray<string> RemovedCategories,
     ImmutableArray<string> RemovedFiles)
 {
+    internal string? DeclaredMainRoot { get; init; }
+
+    internal string MainRoot => DeclaredMainRoot ?? WorkspaceLayout.DefaultMainRoot;
+
     internal FrontmatterForm? DeclaredFrontmatter { get; init; }
 
     internal FrontmatterForm Frontmatter => DeclaredFrontmatter ?? FrontmatterForm.Scoped;
@@ -30,7 +35,7 @@ internal sealed record WorkspaceSettingsDocument(
     internal ImmutableArray<string> RemovedLibraries { get; init; } = [];
 
     /// <summary>
-    /// Files outside `.agents/` that `route include` registered. The loader's Entries decide what
+    /// Files outside the content locations that `route include` registered. The loader's Entries decide what
     /// loads, so a path here without a loader line is registered and switched off.
     /// </summary>
     internal ImmutableArray<string> Roots { get; init; } = [];
@@ -40,7 +45,7 @@ internal sealed record WorkspaceSettingsDocument(
 
     /// <summary>
     /// Whether this release understands the declared shape. A file that declares
-    /// another one is still read for the keys this release knows; the answer is
+    /// another one is still read for the keys this release knows. the answer is
     /// reported, never enforced.
     /// </summary>
     internal bool IsKnownSchemaVersion => SchemaVersion is >= 1 and <= WorkspaceSettingsDefinitions.SchemaVersion;

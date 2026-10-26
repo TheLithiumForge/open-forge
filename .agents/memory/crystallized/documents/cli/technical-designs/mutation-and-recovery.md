@@ -7,6 +7,12 @@ open-forge:
 
 # Mutation And Recovery Technical Design
 
+## Layout Observation
+
+Mutation plans retain the operation’s `WorkspaceLayoutRead`. Validate its settings, anchor and file expectations under the held workspace lease before permission publication or target effects. Never replace the plan’s layout with a fresh selection. Post-effect verification checks intended state. The [layout design](workspace-layout.md#observation-and-revalidation) defines drift and mismatch handling.
+
+A custom context folder does not relocate `.open-forge-state/`, the physical-workspace lock, new recovery storage or historical recorded paths. Recovery paths and recorded installed targets stay literal. Delivery 1 introduces no relocation recovery protocol.
+
 ## Boundary
 
 Shared mutation support provides immutable mechanical facts and directly

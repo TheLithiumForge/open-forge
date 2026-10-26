@@ -14,20 +14,22 @@ internal sealed class ExtensionInspectComparisonBuilder(MarkdownFingerprintReade
     {
         var currentMarkdownFacts = new Dictionary<string, MarkdownFingerprintFacts>(StringComparer.Ordinal);
         var intendedMarkdownFacts = new Dictionary<string, MarkdownFingerprintFacts>(StringComparer.Ordinal);
-        var currentFingerprints = _fingerprintBuilder.ReadCurrentFingerprints(
+        var currentFingerprints = input.Layout is not { } layout ? [] : _fingerprintBuilder.ReadCurrentFingerprints(
+            layout,
             input.PathFacts.Current,
             input.Findings,
             currentMarkdownFacts);
         IReadOnlyList<ExtensionInspectFingerprintFact> intendedFingerprints = [];
-        if (input.Frontmatter is { } form)
+        if (input.Layout is { } intendedLayout && input.Frontmatter is { } form)
         {
             intendedFingerprints = _fingerprintBuilder.ReadIntendedFingerprints(
+                intendedLayout,
                 input.SourcePathProjections,
                 form,
                 input.Findings,
                 intendedMarkdownFacts);
         }
-        else if (input.AvailablePackage is not null)
+        else if (input.AvailablePackage is not null || input.InstalledPackage is not null)
         {
             ExtensionInspectFindingPolicy.Add(input.Findings, new ExtensionInspectFindingInput
             {
@@ -44,6 +46,7 @@ internal sealed class ExtensionInspectComparisonBuilder(MarkdownFingerprintReade
         var comparison = ExtensionInspectComparisonProjector.Build(
             new ExtensionInspectComparisonInput
             {
+                Layout = input.Layout,
                 Ownership = input.Ownership,
                 Frontmatter = input.Frontmatter,
                 InstalledPackage = input.InstalledPackage,

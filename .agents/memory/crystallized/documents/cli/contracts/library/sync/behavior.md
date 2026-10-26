@@ -9,6 +9,12 @@ open-forge:
 
 A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
 
+## Workspace Layout
+
+Retain literal Library mappings. Use the consumer layout for content boundaries and navigation, and revalidate its observation under the lease before grants or effects.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Persistent Exclusions
 
 Apply the [removal settings](../../remove/interface.md#keep-removed-and-restore)
@@ -239,7 +245,7 @@ ancestry. Local sibling files remain untouched; no directory symlink, copied
 file fallback or directory ownership is introduced.
 
 Validate source eligibility and final destination protection separately. Protect
-Git metadata, Framework and recognized manager controls, `.agents` Loader,
+Git metadata, Framework and recognized manager controls, selected-layout Loader,
 entrypoint and overwrite controls, authored settings and generated ownership controls, recovery and temporary
 storage, and every selected or registered Library source tree. A grant covering
 a containing directory never overrides these leaf checks. Compare portable
@@ -248,7 +254,7 @@ Libraries may share ordinary directories but never the same destination leaf.
 An unregistered link, including an exact-looking link, is an existing occupant
 and is never adopted.
 
-Only mapped `.agents/**` leaves may participate in an existing consumer route
+Only projected primary-content leaves may participate in an existing consumer route
 chain and its bounded generated `Entries` projection under the Index contract.
 The region and route chain must already exist and authored bytes remain intact.
 External Markdown remains opaque content. No source entrypoint, Loader, missing

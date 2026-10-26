@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
@@ -9,6 +10,7 @@ namespace OpenForge.Cli.Core.Commands.Library.Models.Planning;
 internal sealed record LibraryConsumerBoundaryRequest
 {
     public required CliWorkspace Workspace { get; init; }
+    public required WorkspaceLayout? Layout { get; init; }
     public required ImmutableArray<CanonicalRelativePath> RequiredAncestorPaths { get; init; }
 
     internal void Validate()

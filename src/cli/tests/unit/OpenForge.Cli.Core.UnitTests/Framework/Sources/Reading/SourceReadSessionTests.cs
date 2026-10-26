@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Reading;
 
@@ -13,18 +14,18 @@ public sealed class SourceReadSessionTests
     public void SessionRetainsFactsAndRejectsNullRequirements()
     {
         var workspace = Workspace(Path.GetFullPath(Path.Combine(Path.GetTempPath(), "source-read-session-model")));
-        var catalogue = new SourceCatalogue(workspace, [], [], [], false);
+        var catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [], [], false);
         var documentReader = new SourceDocumentReader(workspace);
         var scope = new SourceCatalogueSelectionScope(
             SourceLogicalPath.AgentsRoot,
             Path.Combine(workspace.PhysicalRoot, ".agents"));
-        var session = new SourceReadSession(catalogue, documentReader, scope);
+        var session = new SourceReadSession(catalogue, documentReader, [scope]);
 
         Assert.Same(catalogue, session.Catalogue);
         Assert.Same(documentReader, session.DocumentReader);
-        Assert.Same(scope, session.DefaultSelectionScope);
-        Assert.Throws<ArgumentNullException>(() => new SourceReadSession(null!, documentReader, scope));
-        Assert.Throws<ArgumentNullException>(() => new SourceReadSession(catalogue, null!, scope));
+        Assert.Same(scope, Assert.Single(session.DefaultSelectionScopes));
+        Assert.Throws<ArgumentNullException>(() => new SourceReadSession(null!, documentReader, [scope]));
+        Assert.Throws<ArgumentNullException>(() => new SourceReadSession(catalogue, null!, [scope]));
     }
 
     private static CliWorkspace Workspace(string path)

@@ -52,7 +52,7 @@ internal static class DoctorMaintenanceWording
         }
         var sentence = advice.Condition switch
         {
-            DoctorMaintenanceCondition.OutsideFolders => DoctorMaintenanceText.MoveIntoRoute(path),
+            DoctorMaintenanceCondition.OutsideFolders => DoctorMaintenanceText.MoveIntoRoute(path, advice.GuidanceDirectory, advice.LoaderPath),
             DoctorMaintenanceCondition.NoCandidate => DoctorMaintenanceText.EditLink(path, finding.Subject.LocationView?.Line, finding.Subject.LocationView?.Column),
             DoctorMaintenanceCondition.MalformedFrontmatter => DoctorMaintenanceText.FixFrontmatter(path, advice.IndexCommand ?? "open-forge index"),
             DoctorMaintenanceCondition.OldNavigation => OldRulesAction(path, advice),
@@ -82,22 +82,9 @@ internal static class DoctorMaintenanceWording
         var basis = DoctorMaintenanceText.MetadataMatch();
         if (advice.SameContent) basis = DoctorMaintenanceText.SameContent();
         else if (advice.Similarity is { } similarity) basis = DoctorMaintenanceText.Unchanged(similarity);
-        var oldPath = advice.OldPath ?? "the missing file";
-        var newPath = advice.NewPath ?? "the proven successor";
-        var oldRoot = RouteRoot(oldPath);
-        var newRoot = RouteRoot(newPath);
-        if (oldRoot == newRoot && oldRoot.Length > 0)
-        {
-            oldPath = oldPath[oldRoot.Length..];
-            newPath = newPath[newRoot.Length..];
-        }
+        var oldPath = advice.DisplayOldPath ?? advice.OldPath ?? "the missing file";
+        var newPath = advice.DisplayNewPath ?? advice.NewPath ?? "the proven successor";
         return DoctorMaintenanceText.Rename(oldPath, newPath, advice.Moved, basis);
     }
 
-    private static string RouteRoot(string path)
-    {
-        if (!path.StartsWith(".agents/", StringComparison.Ordinal)) return string.Empty;
-        var separator = path.IndexOf('/', ".agents/".Length);
-        return separator < 0 ? string.Empty : path[..(separator + 1)];
-    }
 }

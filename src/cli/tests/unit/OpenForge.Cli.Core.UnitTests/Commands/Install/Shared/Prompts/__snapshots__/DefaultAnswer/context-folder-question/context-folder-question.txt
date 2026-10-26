@@ -1,0 +1,3 @@
+Where should Open Forge keep its context files? Press Enter for .agents, or
+enter an absent or empty workspace-relative folder. Settings and Skills stay in
+.agents.

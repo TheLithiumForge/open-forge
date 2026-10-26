@@ -1,0 +1,15 @@
+---
+open-forge:
+  description: Guidance
+  tags: [Guidance]
+---
+
+# Guidance
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- [Notes in guidance/team](team/_team.md) - #Guidance

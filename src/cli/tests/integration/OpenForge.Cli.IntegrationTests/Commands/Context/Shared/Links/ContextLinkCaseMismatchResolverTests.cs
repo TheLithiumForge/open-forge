@@ -6,6 +6,8 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Context.Shared.Links;
 
@@ -22,7 +24,7 @@ public sealed class ContextLinkCaseMismatchResolverTests
             linkedTargetPath: ".agents/projects/Linked.md");
         var actualPath = workspace.Absolute(".agents/projects/Linked.md");
         var catalogue = new SourceCatalogue(
-            workspace: workspace.Workspace,
+layout: WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot),
             candidates: [],
             sources: [],
             issues: [],

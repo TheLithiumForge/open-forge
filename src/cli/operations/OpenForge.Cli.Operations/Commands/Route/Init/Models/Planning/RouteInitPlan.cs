@@ -11,7 +11,9 @@ namespace OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 
 internal sealed record RouteInitPlan
 {
-    public required WorkspaceSettingsRead Settings { get; init; }
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
+    internal WorkspaceSettingsRead Settings => LayoutRead.Settings;
 
     internal RouteInitPlan(
         RouteInitRequest request,
@@ -64,4 +66,7 @@ internal sealed record RouteInitPlan
 
 internal sealed record RouteInitPlanBuild(
     RouteInitPlan? Plan,
-    RouteInitResultFormation Formation);
+    RouteInitResultFormation Formation)
+{
+    internal WorkspaceLayoutRead? LayoutRead { get; init; }
+}

@@ -15,6 +15,7 @@ internal enum LibraryListFindingCode
     LinkChanged,
     LinkUnavailable,
     LinkBlocked,
+    LayoutUnavailable,
     OperationFailed,
     Interrupted,
 }

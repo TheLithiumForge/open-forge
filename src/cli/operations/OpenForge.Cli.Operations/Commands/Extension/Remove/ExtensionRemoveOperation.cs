@@ -115,12 +115,12 @@ internal sealed class ExtensionRemoveOperation(
         try
         {
             var required = plan.Planning.Decisions.Select(decision => decision.Path)
-                .Where(path => !ExtensionDestinationPolicy.IsImplicit(path.Path))
                 .Select(path => new ExtensionPermissionTarget(path.Path,
                     path.Action == ExtensionRemovePathAction.Delete ? ExtensionPermissionEffect.Delete : ExtensionPermissionEffect.ReleaseOwnership));
             permission = await _permissions.DetermineAsync(new(request.Workspace, [.. required], SourceIdentity: null,
                 AllowPrompt: !request.IsDryRun && !request.Automatic && request.AllowInteraction,
-                ExplicitGrantPaths: request.AllowPath), cancellationToken).ConfigureAwait(false);
+                ExplicitGrantPaths: request.AllowPath)
+            { LayoutRead = plan.LayoutRead }, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

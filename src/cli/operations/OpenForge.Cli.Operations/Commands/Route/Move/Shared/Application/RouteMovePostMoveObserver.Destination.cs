@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
 
@@ -18,7 +19,8 @@ internal sealed partial class RouteMovePostMoveObserver
     {
         var path = plan.Projection.Destination.Destination.Path
             ?? throw new InvalidOperationException("A complete Route Move plan requires its destination path.");
-        var request = new RouteMoveRequest(plan.Request.Workspace, path, path, RouteMoveMode.Apply);
+        var reference = SourceWorkspaceRelativePath.LiteralReferencePrefix + path;
+        var request = new RouteMoveRequest(plan.Request.Workspace, reference, reference, RouteMoveMode.Apply);
         var resolved = await _subjectResolver.ResolveAsync(
             request,
             cancellationToken).ConfigureAwait(false);
@@ -67,7 +69,7 @@ internal sealed partial class RouteMovePostMoveObserver
         var itemsMatch = subject.Kind == RouteMoveSubjectKind.Leaf
             ? actual.Items.All(item => item.Kind != RouteMoveItemKind.Directory)
             : ItemsMatch(
-                plan.Request.Workspace.LexicalRoot,
+                actual.Subject.Catalogue.Layout,
                 expected.Subject.Items,
                 actual.Items);
         return itemsMatch ? null : "The final Route Move destination inventory changed.";
@@ -87,18 +89,18 @@ internal sealed partial class RouteMovePostMoveObserver
             }));
 
     private static bool ItemsMatch(
-        string workspaceRoot,
+        WorkspaceLayout layout,
         IReadOnlyList<RouteMoveSubjectItem> expected,
         IReadOnlyList<RouteMoveInventoryItem> actual)
         => expected.Count == actual.Count
             && expected.All(item => actual.Any(candidate =>
-                item.DestinationPath == Canonical(workspaceRoot, candidate.SourcePath)
+                item.DestinationPath == Canonical(layout.Workspace.LexicalRoot, candidate.SourcePath)
                 && item.Kind == candidate.Kind
                 && item.Layer == candidate.Layer
-                && ExpectedDestinationId(item) == candidate.SourceId));
+                && ExpectedDestinationId(layout, item) == candidate.SourceId));
 
-    private static string? ExpectedDestinationId(RouteMoveSubjectItem item)
-        => item.SourceId is null ? null : SourceIdentity.DeriveId(item.DestinationPath);
+    private static string? ExpectedDestinationId(WorkspaceLayout layout, RouteMoveSubjectItem item)
+        => item.SourceId is null ? null : SourceIdentity.DeriveId(layout, item.DestinationPath);
 
     private static string? ReadLifecycleMismatch(
         WorkspaceOwnershipRead expected,

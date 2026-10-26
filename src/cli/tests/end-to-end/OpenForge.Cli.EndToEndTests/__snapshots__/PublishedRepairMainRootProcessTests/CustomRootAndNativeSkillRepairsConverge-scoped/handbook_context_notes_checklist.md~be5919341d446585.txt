@@ -1,0 +1,8 @@
+---
+open-forge:
+  description: Checklist
+  tags: [Docs]
+---
+# Checklist
+
+Read [Guide](guide.md).

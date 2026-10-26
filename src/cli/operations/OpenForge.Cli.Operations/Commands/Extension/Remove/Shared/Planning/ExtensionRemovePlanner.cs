@@ -82,10 +82,8 @@ internal sealed class ExtensionRemovePlanner
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var workspaceOwnership = await WorkspaceOwnershipReader.ReadAsync(
-            _physicalPathResolver,
-            request.Workspace,
-            cancellationToken).ConfigureAwait(false);
+        var layoutRead = await new WorkspaceLayoutReader(_physicalPathResolver).ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var workspaceOwnership = layoutRead.Ownership;
 
         var current = workspaceOwnership.Document.Extensions;
 
@@ -143,10 +141,7 @@ internal sealed class ExtensionRemovePlanner
                 blocker.DependencyId);
         }
 
-        var settings = await WorkspaceSettingsReader.ReadAsync(
-            _physicalPathResolver,
-            request.Workspace,
-            cancellationToken).ConfigureAwait(false);
+        var settings = layoutRead.Settings;
         if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
         {
             return Stop(
@@ -159,6 +154,11 @@ internal sealed class ExtensionRemovePlanner
                 dependencies,
                 settings.LogicalPath);
         }
+
+        if (layoutRead.Layout is not { } layout)
+            return Stop(request, ExtensionRemoveFindingCode.FrameworkUnavailable, layoutRead.Issues.First().Cause, selection, dependencies);
+        if (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+            return Stop(request, ExtensionRemoveFindingCode.FrameworkUnsafe, layoutRead.Issues.First().Cause, selection, dependencies);
 
         var removalSelection = new WorkspaceRemovalSelection
         {
@@ -179,7 +179,7 @@ internal sealed class ExtensionRemovePlanner
         var settingsDirectoryEffects = new List<ExtensionRemovePlannedEffect>();
         if (settingsChange?.Kind == PlannedFileChangeKind.Create)
         {
-            var directoryPath = Path.Combine(request.Workspace.LexicalRoot, ".agents");
+            var directoryPath = Path.Combine(request.Workspace.LexicalRoot, WorkspaceSettingsDefinitions.DirectoryName);
             FileExpectationValidationResult directoryObservation;
             try
             {
@@ -196,7 +196,7 @@ internal sealed class ExtensionRemovePlanner
                     "Workspace settings directory observation was interrupted.",
                     selection,
                     dependencies,
-                    ".agents");
+                    WorkspaceSettingsDefinitions.DirectoryName);
             }
 
             if (directoryObservation.State == FileExpectationValidationState.Matched)
@@ -204,7 +204,7 @@ internal sealed class ExtensionRemovePlanner
                 settingsDirectoryEffects.Add(new ExtensionRemovePlannedEffect
                 {
                     Result = new ExtensionRemoveEffect(
-                        ".agents",
+                        WorkspaceSettingsDefinitions.DirectoryName,
                         packageId: null,
                         ExtensionRemoveEffectKind.Directory,
                         ExtensionRemoveEffectAction.Create,
@@ -225,7 +225,7 @@ internal sealed class ExtensionRemovePlanner
                         ?? "The workspace settings directory is not a safe ordinary directory or a proven missing path.",
                     selection,
                     dependencies,
-                    ".agents");
+                    WorkspaceSettingsDefinitions.DirectoryName);
             }
         }
 
@@ -296,7 +296,7 @@ internal sealed class ExtensionRemovePlanner
                 Effects = [],
                 OwnershipChange = null,
                 OwnershipRecoveryTarget = null,
-                SettingsObservation = settings,
+                LayoutRead = layoutRead,
                 RemovalSelection = removalSelection,
                 SettingsChange = null,
                 SettingsRecoveryTarget = null,
@@ -326,7 +326,7 @@ internal sealed class ExtensionRemovePlanner
                 Effects = settingsDirectoryEffects,
                 OwnershipChange = null,
                 OwnershipRecoveryTarget = null,
-                SettingsObservation = settings,
+                LayoutRead = layoutRead,
                 RemovalSelection = removalSelection,
                 SettingsChange = settingsChange,
                 SettingsRecoveryTarget = settingsRecoveryTarget,
@@ -402,7 +402,7 @@ internal sealed class ExtensionRemovePlanner
         try
         {
             topologyBuild = await _topologyBuilder.BuildAsync(
-                request.Workspace,
+                layout,
                 settings.Document,
                 pathPlans
                     .Where(path => path.Action is ExtensionRemovePathAction.Delete
@@ -479,7 +479,7 @@ internal sealed class ExtensionRemovePlanner
             Effects = effects,
             OwnershipChange = ownershipPlan.Change,
             OwnershipRecoveryTarget = ownershipRecovery,
-            SettingsObservation = settings,
+            LayoutRead = layoutRead,
             RemovalSelection = removalSelection,
             SettingsChange = settingsChange,
             SettingsRecoveryTarget = settingsRecoveryTarget,

@@ -2,6 +2,8 @@ using System.Text;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Transformation.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Distribution.Shared.Content;
 
@@ -21,7 +23,7 @@ public sealed class WorkspacePayloadRendererTests
     {
         const string body = "\r\n# Body 🐱\n```yaml\nopen-forge:\n  tags: [Example]\n```\r\n";
         var source = Encoding.UTF8.GetBytes("---\r\nopen-forge:\r\n  description: Purpose\n  tags: [Core]\r\n---\r\n" + body);
-        var result = WorkspacePayloadRenderer.Render(path, source, FrontmatterForm.Root);
+        var result = WorkspacePayloadRenderer.Render(DefaultWorkspaceLayout, path, source, FrontmatterForm.Root);
         Assert.Equal(FrameworkFrontmatterTransformState.Changed, result.State);
         Assert.Null(result.Cause);
         Assert.NotNull(result.Bytes);
@@ -52,7 +54,7 @@ public sealed class WorkspacePayloadRendererTests
     [Fact(DisplayName = "Eligible root delivery returns the document transformation failure"), Trait("Feature", "workspace-payload-rendering"), Trait("Evidence", "Unit")]
     public void InvalidEligiblePayloadRetainsCause()
     {
-        var result = WorkspacePayloadRenderer.Render(".agents/example.md", Encoding.UTF8.GetBytes("---\nopen-forge: [Core]\n---\n"), FrontmatterForm.Root);
+        var result = WorkspacePayloadRenderer.Render(DefaultWorkspaceLayout, ".agents/example.md", Encoding.UTF8.GetBytes("---\nopen-forge: [Core]\n---\n"), FrontmatterForm.Root);
         Assert.Equal(FrameworkFrontmatterTransformState.Invalid, result.State);
         Assert.Null(result.Bytes);
         Assert.NotNull(result.Cause);
@@ -60,13 +62,20 @@ public sealed class WorkspacePayloadRendererTests
 
     [Fact(DisplayName = "Workspace payload rendering rejects unnamed form values"), Trait("Feature", "workspace-payload-rendering"), Trait("Evidence", "Unit")]
     public void UndefinedFormIsRejected()
-        => Assert.Throws<ArgumentOutOfRangeException>(() => WorkspacePayloadRenderer.Render("AGENTS.md", ReadOnlyMemory<byte>.Empty, (FrontmatterForm)99));
+        => Assert.Throws<ArgumentOutOfRangeException>(() => WorkspacePayloadRenderer.Render(DefaultWorkspaceLayout, "AGENTS.md", ReadOnlyMemory<byte>.Empty, (FrontmatterForm)99));
 
     private static void AssertUnchanged(string path, ReadOnlyMemory<byte> source, FrontmatterForm form)
     {
-        var result = WorkspacePayloadRenderer.Render(path, source, form);
+        var result = WorkspacePayloadRenderer.Render(DefaultWorkspaceLayout, path, source, form);
         Assert.Equal(FrameworkFrontmatterTransformState.Unchanged, result.State);
         Assert.Null(result.Cause);
         Assert.Equal(source, result.Bytes);
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(WorkspacePayloadRendererTests)),
+                Path.GetFullPath(nameof(WorkspacePayloadRendererTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

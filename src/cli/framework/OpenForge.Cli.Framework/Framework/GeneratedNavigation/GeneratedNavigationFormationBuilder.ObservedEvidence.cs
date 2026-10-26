@@ -122,7 +122,8 @@ internal sealed partial class GeneratedNavigationFormationBuilder
 
             SourcesByCandidatePath = new ReadOnlyDictionary<string, SourceLogicalSource>(sourcesByCandidatePath);
             MemberCandidatesByPath = new ReadOnlyDictionary<string, SourceCandidate>(
-                sourcesByCandidatePath.Keys.ToDictionary(path => path, path => candidatesByPath[path], StringComparer.Ordinal));
+                sourcesByCandidatePath.Keys.Where(candidatesByPath.ContainsKey)
+                    .ToDictionary(path => path, path => candidatesByPath[path], StringComparer.Ordinal));
         }
 
         internal IReadOnlyList<SourceCandidate> Candidates { get; }

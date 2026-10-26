@@ -1,4 +1,5 @@
 using System.Text.Json;
+using OpenForge.Cli.TestSupport.Contracts;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
@@ -83,7 +84,7 @@ public sealed class PublishedInstallConfigurationProcessTests
             {
                 Size = new(width, height),
                 TerminalName = "xterm",
-                Steps = [new("Choose your Open Forge setup", "\r"), new("How should Open Forge write", "\r"), new("Apply these changes? [y/N]", apply ? "y" : "n")],
+                Steps = [new(PublishedTokens.Install.MainRootQuestion, "\r"), new("Choose your Open Forge setup", "\r"), new("How should Open Forge write", "\r"), new("Apply these changes? [y/N]", apply ? "y" : "n")],
             });
         Capture($"minimal-{width}x{height}-{apply}", terminal.Transcript);
         Assert.Equal(apply ? 0 : 130, terminal.ExitCode);

@@ -1,0 +1,1 @@
+'../outside.md': Choose a file inside this workspace.

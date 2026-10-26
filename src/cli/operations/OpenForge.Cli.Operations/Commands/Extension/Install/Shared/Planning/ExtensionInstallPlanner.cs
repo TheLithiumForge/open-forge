@@ -20,6 +20,7 @@ using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 
@@ -69,10 +70,10 @@ internal sealed class ExtensionInstallPlanner
         }
 
         var sourceFact = ExtensionInstallResultFactory.Source(source);
-        var settingsObservation = await WorkspaceSettingsReader.ReadAsync(
-            _physicalPathResolver,
+        var layoutRead = await new WorkspaceLayoutReader(_physicalPathResolver).ReadAsync(
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
+        var settingsObservation = layoutRead.Settings;
         if (settingsObservation.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
         {
             return Stop(ExtensionInstallResultFactory.Boundary(
@@ -87,13 +88,23 @@ internal sealed class ExtensionInstallPlanner
                     settingsObservation.LogicalPath)));
         }
 
+        if (layoutRead.Layout is not { } layout)
+            return Stop(Boundary(request, ExtensionInstallResultFactory.Evidence(sourceFact),
+                ExtensionInstallFindingCode.FrameworkUnavailable, layoutRead.Issues.First().Cause));
+        if (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+            return Stop(Boundary(request, ExtensionInstallResultFactory.Evidence(sourceFact),
+                layoutRead.Ownership.State is WorkspaceOwnershipReadState.Invalid or WorkspaceOwnershipReadState.Unavailable
+                    ? ExtensionInstallFindingCode.GeneratedRegionUnsafe
+                    : ExtensionInstallFindingCode.FrameworkUnsafe,
+                layoutRead.Issues.First().Cause));
+
         ExtensionInstallSelectionResolution resolution;
         try
         {
             resolution = await _selectionResolver.ResolveAsync(
                     request,
                     sourceResolution,
-                    settingsObservation.Document,
+                    layoutRead,
                     cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -149,9 +160,8 @@ internal sealed class ExtensionInstallPlanner
         var foundationObservation = await _foundationReader.ReadAsync(
             request,
             resolution.Packages,
-            cancellationToken,
-            resolution.Ownership,
-            settingsObservation.Document).ConfigureAwait(false);
+            layoutRead,
+            cancellationToken).ConfigureAwait(false);
         if (foundationObservation.Finding is not null)
         {
             return Stop(ExtensionInstallResultFactory.Boundary(
@@ -167,13 +177,14 @@ internal sealed class ExtensionInstallPlanner
         var targetInspection = await _targetInspector.InspectAsync(
             new ExtensionInstallTargetInspectionInput
             {
+                Layout = layout,
                 Request = request,
                 Packages = resolution.Packages,
                 MutationPackageIds = mutationPackages
                     .Select(package => package.Id)
                     .ToHashSet(StringComparer.Ordinal),
                 FullyExcludedPackageIds = source.Packages
-                    .Where(package => ExtensionInstallPayloadNormalizer.IsEntirePayloadExcluded(package, settingsObservation.Document))
+                    .Where(package => ExtensionInstallPayloadNormalizer.IsEntirePayloadExcluded(layout, package, settingsObservation.Document))
                     .Select(package => package.Id)
                     .ToHashSet(StringComparer.Ordinal),
                 Ownership = foundation.Ownership,
@@ -199,6 +210,7 @@ internal sealed class ExtensionInstallPlanner
         var effectPlan = await _effectPlanner.BuildAsync(
             new ExtensionInstallEffectPlanningInput
             {
+                Layout = layout,
                 Request = request,
                 Packages = mutationPackages,
                 Topology = foundation.Topology,
@@ -233,15 +245,17 @@ internal sealed class ExtensionInstallPlanner
                 EffectPlan = effectPlan,
             }) with
         {
+            ContextFolder = layout.IsDefault ? null : layout.MainRoot,
             ExcludedPackages = ExtensionInstallPayloadNormalizer.ReadExcludedPackages(
+                layout,
                 source.Packages.Where(package => packageFacts.Any(selected => selected.Id == package.Id)),
                 settingsObservation.Document),
         };
 
         var plan = ExtensionInstallPlan.Create(new ExtensionInstallPlanInput
         {
+            LayoutRead = layoutRead,
             Request = request,
-            SettingsObservation = settingsObservation,
             SourceRead = source,
             SourceSignature = ExtensionInstallFoundationReader.SourceSignature(source),
             InferredRootId = sourceResolution.InferredRootId,

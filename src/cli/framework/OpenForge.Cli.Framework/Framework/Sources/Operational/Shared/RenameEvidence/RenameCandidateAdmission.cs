@@ -12,7 +12,7 @@ internal static class RenameCandidateAdmission
 {
     internal static bool Allows(string path, RenameEvidencePolicy policy)
     {
-        if (!SourceFormClassifier.TryClassify(path, out var form)
+        if (!SourceFormClassifier.TryClassify(policy.Roots, path, out var form)
             || form is SourceDocumentForm.Loader or SourceDocumentForm.OverwriteCompanion)
         {
             return false;

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Ownership;
@@ -129,6 +130,17 @@ internal sealed class RouteInitApplicationOperation
         List<FileChangeReceipt> files,
         CancellationToken cancellationToken)
     {
+        var layoutValidation = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver())
+            .ValidateAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+        if (layoutValidation.State != MutationValidationState.Valid)
+        {
+            var code = layoutValidation.State == MutationValidationState.Cancelled
+                ? RouteInitFindingCode.Interrupted : RouteInitFindingCode.TargetChanged;
+            return Finish(plan, directories, files, NotCreatedRecovery(),
+                RouteInitVerificationState.NotRequested, code,
+                layoutValidation.Cause ?? "The workspace layout changed before application.");
+        }
+
         var planRevalidation = await _planRevalidator.RevalidateAsync(plan, cancellationToken)
             .ConfigureAwait(false);
         if (planRevalidation.State != RouteInitPlanRevalidationState.Exact)

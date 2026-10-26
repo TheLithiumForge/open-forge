@@ -10,6 +10,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup;
 
@@ -45,6 +48,16 @@ internal sealed class CleanupOperation
                 return result.Build();
             }
 
+            var layoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+            result = new CleanupResultBuilder(emptyPlan with { LayoutRead = layoutRead });
+            if (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+            {
+                result.Preflight = new CleanupPreflight { State = CleanupPreflightState.Blocked };
+                foreach (var issue in layoutRead.Issues)
+                    result.AddFinding(CleanupFindingCode.StoreValidationUnavailable, issue.Cause, issue.Path);
+                return result.Build();
+            }
+
             var local = RecoveryStoreLocator.Local(request.Workspace);
             var legacy = RecoveryStoreLocator.Legacy(request.Workspace);
             RecoveryStoreObservation[] observations =
@@ -55,7 +68,7 @@ internal sealed class CleanupOperation
             var stores = new List<CleanupStoreApplication>();
             foreach (var frozen in observations)
             {
-                var plan = CleanupPlanner.Create(request, frozen.Catalogue);
+                var plan = CleanupPlanner.Create(request, frozen.Catalogue) with { LayoutRead = layoutRead };
                 var builder = new CleanupResultBuilder(plan)
                 {
                     Findings = CleanupPlanner.ReadFindings(plan, frozen.Catalogue.Cause),

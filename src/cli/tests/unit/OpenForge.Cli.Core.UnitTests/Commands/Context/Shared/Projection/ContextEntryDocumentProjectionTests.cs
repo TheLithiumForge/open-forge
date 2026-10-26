@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
@@ -143,6 +145,7 @@ public sealed class ContextEntryDocumentProjectionTests
     {
         const string text = "# Heading\n\nNo authored frontmatter.\n";
         return new ContextGraphSource(
+            layout: WorkspaceLayout.Create(new CliWorkspace(Path.GetTempPath(), Path.GetTempPath(), CliWorkspaceSelectionMethod.CurrentDirectory), WorkspaceLayout.DefaultMainRoot),
             logicalSource: null,
             id: null,
             canonicalPath: canonicalPath,

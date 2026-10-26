@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
@@ -19,5 +20,7 @@ internal sealed record DoctorObservation(
     LibraryDoctorView Libraries,
     ImmutableArray<LibraryResidualEvidence> LibraryResiduals)
 {
+    internal WorkspaceLayoutRead? LayoutRead { get; init; }
+
     internal DoctorMaintenanceObservation? Maintenance { get; init; }
 }

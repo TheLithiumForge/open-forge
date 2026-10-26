@@ -1,0 +1,7 @@
+Would repair 1 link.
+  handbook/context/notes/checklist.md:8:17
+    rounding.md#rounding -> money-rounding.md#rounding
+    rounding.md was renamed to money-rounding.md, same content
+  handbook/context/notes/index.md           Entries would be updated
+No files were changed.
+Next: open-forge repair --automatic

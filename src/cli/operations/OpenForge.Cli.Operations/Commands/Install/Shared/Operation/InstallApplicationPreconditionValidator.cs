@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
@@ -13,7 +14,8 @@ namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 
 internal sealed class InstallApplicationPreconditionValidator(
     MutationRevalidator mutationRevalidator,
-    InstallIntendedStateBuilder intendedStateBuilder)
+    InstallIntendedStateBuilder intendedStateBuilder,
+    WorkspaceLayoutRevalidator layoutRevalidator)
 {
     private readonly MutationRevalidator _mutationRevalidator = mutationRevalidator;
     private readonly InstallIntendedStateBuilder _intendedStateBuilder = intendedStateBuilder;
@@ -23,6 +25,11 @@ internal sealed class InstallApplicationPreconditionValidator(
         InstallPlan plan,
         CancellationToken cancellationToken)
     {
+        var layoutValidation = await layoutRevalidator.ValidateAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+        if (layoutValidation.State != MutationValidationState.Valid)
+            return InstallApplicationPreconditionResult.Boundary(layoutValidation,
+                layoutValidation.State == MutationValidationState.Cancelled ? InstallFindingCode.Interrupted : InstallFindingCode.TargetUnsafe);
+
         var current = await _intendedStateBuilder.BuildAsync(
                 plan.Request,
                 plan.Payload,

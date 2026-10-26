@@ -1,0 +1,8 @@
+Cannot move memory/guides/old guide: handbook/context/memory/archive does not exist or has no entrypoint, so the moved file could not be listed.
+  Error  handbook/context/memory/archive  Destination parent is missing
+         handbook/context/memory/archive does not exist or has no entrypoint, so the moved file could not be listed.
+         open-forge route init memory/archive
+         Initialize the exact missing destination parent route, then rerun Route Move.
+No files were changed.
+  Initialize the exact missing destination parent route, then rerun Route Move.
+Next: open-forge route init memory/archive

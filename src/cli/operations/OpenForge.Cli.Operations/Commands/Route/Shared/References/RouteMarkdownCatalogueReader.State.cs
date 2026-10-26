@@ -42,16 +42,19 @@ internal sealed partial class RouteMarkdownCatalogueReader
 
         internal void AddSelected(string path) => _selectedPaths.Add(path);
 
-        internal static bool IsAgentsPath(string path)
+        private bool IsContentTraversalPath(string path)
         {
-            var separator = path.IndexOf('/');
-            var root = separator < 0 ? path : path[..separator];
-            return PhysicalIdentityTracker.PathComparer.Equals(root, SourceLogicalPath.AgentsRoot);
+            var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            return Request.Layout.SourceRoots.Any(root => string.Equals(root, path, comparison)
+                || path.StartsWith(root + "/", comparison) || root.StartsWith(path + "/", comparison));
         }
+
+        internal string NormalizeContentRoot(string path)
+            => Request.Layout.SourceRoots.FirstOrDefault(root => PhysicalIdentityTracker.PathComparer.Equals(root, path)) ?? path;
 
         internal bool IsGitIgnored(string path)
         {
-            if (IsAgentsPath(path))
+            if (IsContentTraversalPath(path))
             {
                 return false;
             }

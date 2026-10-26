@@ -1,0 +1,9 @@
+---
+description: Move fixture
+tags: [Docs]
+---
+# Root
+
+## Entries
+
+- [workshop](workshop/index.md) - #Docs

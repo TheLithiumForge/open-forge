@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Index.Models.Projection;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -11,6 +12,8 @@ namespace OpenForge.Cli.Core.Commands.Index.Models.Planning;
 
 internal sealed record IndexPlanningInput
 {
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
     public required IndexRequest Request { get; init; }
 
     public required IndexProjectionFormation Projection { get; init; }
@@ -61,6 +64,8 @@ internal sealed record IndexPlan
         RecoveryTargets = new ReadOnlyCollection<RecoveryBundleTarget>(targetValues);
         Updates = new ReadOnlyCollection<PlannedFileChange>(changeValues);
     }
+
+    internal WorkspaceLayoutRead LayoutRead => Input.LayoutRead;
 
     internal IndexPlanningInput Input { get; }
 

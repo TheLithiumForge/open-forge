@@ -6,6 +6,20 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Inclusion;
 
 public sealed class RouteInclusionWireVocabularyTests
 {
+    [Fact(DisplayName = "Include and Exclude effects carry their kind independently of paths"), Trait("Feature", "route-inclusion"), Trait("Evidence", "Unit")]
+    public void EffectKindsAreClosed()
+    {
+        var expected = new Dictionary<RouteInclusionEffectKind, CliEffectKind>
+        {
+            [RouteInclusionEffectKind.LoaderEntries] = CliEffectKind.Section,
+            [RouteInclusionEffectKind.Settings] = CliEffectKind.Setting,
+        };
+        Assert.Equal(Enum.GetValues<RouteInclusionEffectKind>(), expected.Keys.Order());
+        foreach (var (kind, projected) in expected)
+            Assert.Equal(projected, RouteInclusionWireVocabulary.Kind(kind));
+        Assert.Throws<ArgumentOutOfRangeException>(() => RouteInclusionWireVocabulary.Kind((RouteInclusionEffectKind)int.MaxValue));
+    }
+
     [Fact(DisplayName = "Include and Exclude map every effect state and reject undefined values"), Trait("Feature", "route-inclusion"), Trait("Evidence", "Unit")]
     public void EffectStatesAreClosed()
     {

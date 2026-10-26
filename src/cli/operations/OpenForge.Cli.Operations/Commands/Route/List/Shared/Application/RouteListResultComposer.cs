@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Route.List.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
@@ -34,6 +36,12 @@ internal sealed class RouteListResultComposer(
         var result = _resultBuilder.Build(input, selected, coverage);
         return RouteListIncludedResultBuilder.Build(request, source, result, cancellationToken);
     }
+
+    internal RouteListResult BuildLayoutUnavailable(
+        RouteListRequest request,
+        RouteListSelection selection,
+        WorkspaceLayoutRead layoutRead)
+        => _resultBuilder.BuildLayoutUnavailable(request, selection, layoutRead);
 
     internal RouteListResult BuildFailure(
         RouteListRequest request,

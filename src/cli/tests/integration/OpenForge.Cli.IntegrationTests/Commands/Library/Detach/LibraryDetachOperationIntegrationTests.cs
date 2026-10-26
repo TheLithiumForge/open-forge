@@ -105,8 +105,8 @@ public sealed class LibraryDetachOperationIntegrationTests
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public static async Task PlainWorkspacePlansSettingsDirectoryAndPersistsUnregisteredRemovalIntent()
     {
-        using var workspace = new LibraryMutationWorkspace();
-        System.IO.Directory.Delete(workspace.Absolute(".agents"));
+        using var workspace = new LibraryMutationWorkspace(createLoader: false);
+        System.IO.Directory.Delete(workspace.Absolute(OpenForge.Cli.Core.Framework.Workspace.Models.Layout.WorkspaceLayout.DefaultMainRoot));
         Assert.False(System.IO.Directory.Exists(workspace.Absolute(".agents")));
         var before = workspace.Snapshot();
 

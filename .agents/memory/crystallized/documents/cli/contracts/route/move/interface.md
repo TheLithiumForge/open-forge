@@ -7,6 +7,12 @@ open-forge:
 
 # route move Interface Contract
 
+## Workspace Layout
+
+Route Move moves eligible sources within the selected layout. It does not relocate the main root. Exact paths remain literal.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
@@ -121,17 +127,17 @@ therefore use the same explicit two-operand request and never prompt.
 
 | Operand                | Role                                                                        | Accepted value                                                                                           | Omission and repetition                   |
 | ---------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `<source-reference>`   | Select one existing eligible logical leaf or recognized category entrypoint | One shared automatic source ID or exact `.agents/...` path, narrowed by this command's subject rules     | Required; exactly one source subject      |
+| `<source-reference>`   | Select one existing eligible logical leaf or recognized category entrypoint | One shared automatic source ID or exact `./<workspace-path>` path, narrowed by this command's subject rules     | Required. exactly one source subject      |
 | `<destination-target>` | Select one exact new leaf target or category entrypoint target              | One exact filesystem target or accepted logical leaf ID for a leaf, or an exact category entrypoint path | Required; exactly one destination subject |
 
 The source operand follows the shared source-reference classification: `.agents/`
-and `./.agents/` prefixes request exact paths, and every other value is an
+and `./` prefixes request exact paths, and every other value is an
 automatic source ID. The CLI does not guess between the two forms. An ID that
 does not resolve to exactly one eligible subject is not repaired by ranking,
 basename matching, or route proximity.
 
 The destination target is not a source reference. A leaf destination may be an
-exact workspace-relative filesystem path under `.agents`, preserving the
+exact workspace-relative filesystem path within the selected layout, preserving the
 explicit path grammar, or an accepted logical leaf ID resolved by the canonical
 route rules. For example, `guidance/team/moved-note` maps to
 `.agents/guidance/team/moved-note.md`. A logical leaf ID has no `.agents/`
@@ -166,7 +172,7 @@ The source reference must resolve to one of these two subject forms:
    reference must resolve to that entrypoint itself, not merely to an arbitrary
    directory. This is the category form.
 
-The Loader and the `.agents` workspace root are never move subjects. A
+The Loader and the main root are never move subjects. A
 Loader-exposed category may be eligible; when it is moved, the affected Loader
 projection is part of the same plan. A recognized compatibility entrypoint can
 be selected only when the route structure is otherwise unambiguous, and its
@@ -186,7 +192,7 @@ logical subject and move together, preserving base-first layering and adjacency.
 
 The selected leaf is not eligible when it is any of the following:
 
-- an entrypoint, the Loader, or the `.agents` root;
+- an entrypoint, the Loader, or the main root.
 - a routed native source such as `SKILL.md`, a non-Markdown resource, or an
   unsupported source kind;
 - an orphan or ambiguous overwrite companion;
@@ -318,15 +324,15 @@ ordinary directory-ancestry rules remain defined by the filesystem contract.
 In a Git work tree, reference coverage excludes paths Git ignores through its
 standard exclude rules. Ignored files are left unchanged, and ignored directory
 trees are pruned before link checks or content reads. Tracked files remain
-covered even when an ignore pattern matches them. The complete `.agents` tree
-stays covered, including Git-ignored private routes recorded by the workspace.
+covered even when an ignore pattern matches them. Both primary content locations
+stay covered, including Git-ignored private routes recorded by the workspace.
 Outside a Git work tree, or when Git is missing, refuses the workspace, fails,
 times out or supplies an unusable inventory, discard its exclusions and keep
 the complete filesystem scan. Cancellation still cancels the operation.
 This rule applies to reference coverage, not the selected category inventory.
 
 Move performs one complete physically contained pass over the supported Markdown
-catalogue in the selected workspace, both inside and outside `.agents`. The
+catalogue in the selected workspace, both inside and outside the primary content locations. The
 catalogue includes every supported Markdown source and physical layer that can
 contain an authored local reference, including base files and overwrite
 companions. The command does not silently narrow this pass to routed files or to
@@ -355,7 +361,7 @@ or fuzzy matches, generated lines as authored prose, or unsupported reference
 forms.
 
 Each rewrite preserves the authored label, fragment, valid encoding, surrounding
-prose, and unrelated bytes. A local target outside `.agents` remains eligible
+prose, and unrelated bytes. A local target outside the primary content locations remains eligible
 when it is a supported target physically contained by the selected workspace.
 The command does not turn such a target into an Open Forge source ID.
 

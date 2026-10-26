@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
@@ -24,7 +27,7 @@ internal sealed class RouteInitialContextReader
     private readonly SourceRouteTopologyBuilder _topologyBuilder = new();
 
     internal RouteContextSet? Read(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         FrameworkPayloadReadResult read)
     {
         if (read.State != FrameworkPayloadReadState.Available
@@ -41,11 +44,11 @@ internal sealed class RouteInitialContextReader
                 return null;
             }
 
-            var projected = _sourceProjector.Project(workspace, payload);
+            var projected = _sourceProjector.Project(layout, payload);
             var preliminary = projected
-                .Select(source => CreateSource(source, payload))
+                .Select(source => CreateSource(layout, source, payload))
                 .ToArray();
-            var roots = RouteContextRootProjector.Read(preliminary);
+            var roots = RouteContextRootProjector.Read(layout, preliminary);
             var topologySources = projected
                 .Where(source => source.Base.Form != SourceDocumentForm.Loader)
                 .ToArray();
@@ -59,7 +62,7 @@ internal sealed class RouteInitialContextReader
                 topology)).ToArray();
             return new RouteContextSet
             {
-                WorkspaceEntry = Entry(entryAsset),
+                WorkspaceEntry = Entry(layout, entryAsset),
                 Sources = sources,
                 RootPaths = roots.Paths,
                 RootCategories = roots.Categories,
@@ -77,21 +80,22 @@ internal sealed class RouteInitialContextReader
     }
 
     private RouteContextSource CreateSource(
+        WorkspaceLayout layout,
         SourceLogicalSource source,
         FrameworkPayload payload)
     {
-        var asset = payload.Find(source.Base.CanonicalPath)
+        var asset = payload.Assets.SingleOrDefault(asset => layout.MapPayloadPath(asset.Path) == source.Base.CanonicalPath)
             ?? throw new InvalidDataException(
                 $"The projected embedded source '{source.Base.CanonicalPath}' is unavailable.");
-        var text = Decode(asset);
+        var text = Decode(layout, asset);
         var document = _markdownParser.Parse(text);
-        var layers = new List<RouteContextLayer> { new(asset.Path, text) };
+        var layers = new List<RouteContextLayer> { new(source.Base.CanonicalPath, text) };
         if (source.Overwrite is { } overwrite)
         {
-            var overwriteAsset = payload.Find(overwrite.CanonicalPath)
+            var overwriteAsset = payload.Assets.SingleOrDefault(asset => layout.MapPayloadPath(asset.Path) == overwrite.CanonicalPath)
                 ?? throw new InvalidDataException(
                     $"The projected embedded overwrite '{overwrite.CanonicalPath}' is unavailable.");
-            layers.Add(new RouteContextLayer(overwriteAsset.Path, Decode(overwriteAsset)));
+            layers.Add(new RouteContextLayer(overwrite.CanonicalPath, Decode(layout, overwriteAsset)));
         }
 
         return new RouteContextSource
@@ -130,20 +134,24 @@ internal sealed class RouteInitialContextReader
         };
     }
 
-    private static RouteContextSource Entry(FrameworkPayloadAsset asset)
+    private static RouteContextSource Entry(WorkspaceLayout layout, FrameworkPayloadAsset asset)
         => new()
         {
             Id = null,
             Path = asset.Path,
             Form = SourceDocumentForm.Markdown,
             RouteState = SourceRouteState.Unrouted,
-            Layers = [new RouteContextLayer(asset.Path, Decode(asset))],
+            Layers = [new RouteContextLayer(asset.Path, Decode(layout, asset))],
             Metadata = SourceAuthoredMetadataFacts.WithoutValues(
                 SourceAuthoredMetadataState.NotApplicable),
             GeneratedEntries = SourceGeneratedEntriesFacts.Absent,
             ParentPath = null,
         };
 
-    private static string Decode(FrameworkPayloadAsset asset)
-        => StrictUtf8.GetString(asset.Bytes.AsSpan());
+    private static string Decode(WorkspaceLayout layout, FrameworkPayloadAsset asset)
+    {
+        var rendered = WorkspacePayloadRenderer.Render(layout, asset.Path, asset.Bytes.AsMemory(), FrontmatterForm.Scoped);
+        return rendered.Bytes is { } bytes ? StrictUtf8.GetString(bytes.Span)
+            : throw new InvalidDataException("The initial payload cannot be rendered.");
+    }
 }

@@ -1,0 +1,6 @@
+# Root
+
+## Entries
+
+- [Skills](../../.agents/skills/_skills.md) - #Skill
+- [Workspace guides](guides/_guides.md) - #Docs

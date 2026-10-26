@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Documents.RepositoryDocumentation.Shared;
 
@@ -43,7 +44,7 @@ internal static class RepositoryMarkdownChecker
             lexicalRoot,
             physicalRoot.GetContainedPhysicalPath(),
             CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        var catalogue = new SourceCatalogue(workspace, [], [], [], isCancelled: false);
+        var catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [], [], isCancelled: false);
         var markdownParser = new MarkdownDocumentParser();
         var parsedFacts = new Dictionary<string, MarkdownDocumentFacts>(StringComparer.Ordinal);
         MarkdownDocumentFacts? lastParsedFacts = null;

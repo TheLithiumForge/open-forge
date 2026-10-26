@@ -18,9 +18,9 @@ internal static class FindWording
             : FormattableString.Invariant($"{count} {noun} {verb} {query}.");
     }
 
-    internal static string NoMatches(string query, bool bareInventory)
+    internal static string NoMatches(string query, bool bareInventory, string? mainRoot)
         => bareInventory
-            ? global::OpenForge.Cli.OutputText.Find.FindText.MessageNoMarkdownSourcesWereFoundUnderAgents()
+            ? global::OpenForge.Cli.OutputText.Find.FindText.MessageNoMarkdownSourcesWereFoundUnderAgents(mainRoot)
             : global::OpenForge.Cli.OutputText.Find.FindPhrases.FormatNoSourcesMatch($"{query}");
 
     internal static string Incomplete() => global::OpenForge.Cli.OutputText.Find.FindText.MessageTheSearchIsIncomplete();
@@ -79,7 +79,7 @@ internal static class FindWording
             _ => throw new ArgumentOutOfRangeException(nameof(code), code, "The Find finding code is not defined."),
         };
 
-    internal static string FindingMessage(FindFinding finding)
+    internal static string FindingMessage(FindFinding finding, string? mainRoot = null)
     {
         ArgumentNullException.ThrowIfNull(finding);
         var path = finding.Path ?? finding.Source?.Path ?? finding.Subject ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheSource();
@@ -89,7 +89,7 @@ internal static class FindWording
             FindFindingCode.InvalidInput when finding.InvalidRequireValue is { } value
                 => global::OpenForge.Cli.OutputText.Find.FindText.InvalidRequire(value),
             FindFindingCode.InvalidInput => InvalidInputProblem(finding.Cause),
-            FindFindingCode.InvalidSelector => InvalidSelector(finding),
+            FindFindingCode.InvalidSelector => InvalidSelector(finding, mainRoot),
             FindFindingCode.WorkspaceUnavailable => CliFindingWording.WorkspaceUnavailable(path),
             FindFindingCode.WorkspaceUnsafe => CliFindingWording.WorkspaceUnsafe(path, reason),
             FindFindingCode.SelectorAmbiguous => CliFindingWording.SelectorAmbiguous(finding.Subject ?? global::OpenForge.Cli.OutputText.Find.FindText.LabelTheSelector()),
@@ -228,7 +228,7 @@ internal static class FindWording
         return cause;
     }
 
-    private static string InvalidSelector(FindFinding finding)
+    private static string InvalidSelector(FindFinding finding, string? mainRoot)
     {
         var option = finding.SelectorRole switch
         {
@@ -236,6 +236,6 @@ internal static class FindWording
             FindSelectorRole.Exclude => "--exclude",
             _ => global::OpenForge.Cli.OutputText.Find.FindText.LabelTheSelector(),
         };
-        return global::OpenForge.Cli.OutputText.Find.FindPhrases.FormatIsNotASourceIdOrAPathUnderAgents($"{option}", $"{finding.Subject ?? "<value>"}");
+        return global::OpenForge.Cli.OutputText.Find.FindPhrases.FormatIsNotASourceIdOrAPathUnderAgents($"{option}", $"{finding.Subject ?? "<value>"}", mainRoot);
     }
 }

@@ -1,28 +1,33 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
 internal static class SourceIdentity
 {
-    internal static string? DeriveId(string? canonicalPath)
+
+    internal static string? DeriveId(WorkspaceLayout layout, string? canonicalPath)
+        => DeriveId(new SourceContentRoots(layout), canonicalPath);
+
+    internal static string? DeriveId(SourceContentRoots roots, string? canonicalPath)
     {
-        if (!SourceLogicalPath.IsCanonicalSource(canonicalPath))
+        if (!SourceLogicalPath.IsPrimarySource(roots, canonicalPath))
         {
             return null;
         }
 
-        var sourcePath = canonicalPath[".agents/".Length..];
+        var sourcePath = SourceLogicalPath.ReadSourceCoordinate(roots, canonicalPath);
         var segments = sourcePath.Split('/', StringSplitOptions.None);
         var fileName = segments[^1];
         var directorySegments = segments[..^1];
 
-        SourceFormClassifier.TryClassify(canonicalPath, out var form);
+        SourceFormClassifier.TryClassify(roots, canonicalPath, out var form);
         if (form == SourceDocumentForm.OverwriteCompanion)
         {
             fileName = SourceOverwritePath.ReadBasePath(fileName);
-            var basePath = string.Join('/', directorySegments.Append(fileName));
-            var canonicalBasePath = $".agents/{basePath}";
-            if (!SourceFormClassifier.TryClassify(canonicalBasePath, out form))
+            var canonicalBasePath = SourceOverwritePath.ReadBasePath(canonicalPath);
+            if (!SourceFormClassifier.TryClassify(roots, canonicalBasePath, out form))
             {
                 return null;
             }
@@ -35,15 +40,15 @@ internal static class SourceIdentity
                 : string.Join('/', directorySegments);
         }
 
-        if ((fileName == "SKILL.md" || SourceFormClassifier.IsCompatibilityFileName(fileName))
+        if ((fileName == SourceFormClassifier.NativeSkillFileName || SourceFormClassifier.IsCompatibilityFileName(fileName))
             && directorySegments.Length == 0)
         {
             return null;
         }
 
-        if (fileName.EndsWith(".md", StringComparison.Ordinal))
+        if (fileName.EndsWith(SourceFormClassifier.MarkdownExtension, StringComparison.Ordinal))
         {
-            fileName = fileName[..^".md".Length];
+            fileName = fileName[..^SourceFormClassifier.MarkdownExtension.Length];
         }
 
         return fileName.Length == 0
@@ -53,7 +58,7 @@ internal static class SourceIdentity
 
     internal static bool IsValidId(string? id)
     {
-        if (id is null || id.StartsWith(".agents/", StringComparison.Ordinal) || id.Length == 0)
+        if (id is null || id.StartsWith(SourceLogicalPath.AgentsRoot + "/", StringComparison.Ordinal) || id.Length == 0)
         {
             return false;
         }
@@ -61,9 +66,12 @@ internal static class SourceIdentity
         return id.Split('/', StringSplitOptions.None).All(SourceLogicalPath.IsCanonicalSegment);
     }
 
-    internal static bool IsRecognizedEntrypointPath(string canonicalPath)
+    internal static bool IsRecognizedEntrypointPath(WorkspaceLayout layout, string canonicalPath)
+        => IsRecognizedEntrypointPath(new SourceContentRoots(layout), canonicalPath);
+
+    internal static bool IsRecognizedEntrypointPath(SourceContentRoots roots, string canonicalPath)
     {
-        return SourceFormClassifier.TryClassify(canonicalPath, out var form)
+        return SourceFormClassifier.TryClassify(roots, canonicalPath, out var form)
             && SourceFormClassifier.IsEntrypoint(form);
     }
 }

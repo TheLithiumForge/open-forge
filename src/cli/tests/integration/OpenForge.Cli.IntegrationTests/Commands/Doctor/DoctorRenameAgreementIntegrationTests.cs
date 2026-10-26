@@ -51,7 +51,7 @@ public sealed class DoctorRenameAgreementIntegrationTests
         var doctor = await new DoctorDiagnosisReader(RepairOperationalContributorFactory.Create(paths), reader)
             .ReadAsync(new DoctorRequest(workspace.Workspace), TestContext.Current.CancellationToken);
         var repair = await new RepairCatalogueReader(paths, new RoutedMaintenanceRenameEvidenceAdapter(reader).ReadEvidenceAsync)
-            .ReadAsync(workspace.Workspace, doctor.Observation.LocalReferences, TestContext.Current.CancellationToken);
+            .ReadAsync(Assert.IsType<OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceLayoutRead>(doctor.Observation.LayoutRead), doctor.Observation.LocalReferences, TestContext.Current.CancellationToken);
         Assert.NotEmpty(Assert.Single(repair.Proposals, input => input.Proposal.SourceCanonicalPath == taxes).Proposal.Candidates?.Items ?? []);
         Assert.Empty(Assert.Single(repair.Proposals, input => input.Proposal.SourceCanonicalPath == Source).Proposal.Candidates?.Items ?? []);
         var findings = doctor.Result.Diagnosis.Domains.SelectMany(domain => domain.Findings).Where(finding => finding.Kind == DoctorFindingKind.ReferenceTargetMissing).ToArray();
@@ -104,8 +104,7 @@ public sealed class DoctorRenameAgreementIntegrationTests
         var contributors = RepairOperationalContributorFactory.Create(paths);
         var doctor = await new DoctorDiagnosisReader(contributors, reader).ReadAsync(new DoctorRequest(workspace.Workspace), TestContext.Current.CancellationToken);
         var adapter = new RoutedMaintenanceRenameEvidenceAdapter(reader);
-        var repair = await new RepairCatalogueReader(paths, adapter.ReadEvidenceAsync).ReadAsync(workspace.Workspace,
-            doctor.Observation.LocalReferences, TestContext.Current.CancellationToken);
+        var repair = await new RepairCatalogueReader(paths, adapter.ReadEvidenceAsync).ReadAsync(Assert.IsType<OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceLayoutRead>(doctor.Observation.LayoutRead), doctor.Observation.LocalReferences, TestContext.Current.CancellationToken);
         var repairEvidence = Assert.IsType<RenameEvidenceResult>(repair.RenameEvidence);
         var doctorEvidence = Assert.IsType<RenameEvidenceResult>(doctor.Observation.Maintenance?.Renames);
         var resolution = Enum.Parse<RenameResolution>(expected);

@@ -7,6 +7,10 @@ open-forge:
 
 # route update Technical Design
 
+## Layout Transport
+
+Select sources through the observed layout across both content locations. Preserve root boundaries in projected effects and revalidate the original observation before mutation. See [Workspace Layout](../../../technical-designs/workspace-layout.md).
+
 ## Status And Authority
 
 This Technical Design records the bounded Route Update parser exception and the

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
@@ -40,10 +42,10 @@ internal sealed class RouteSourceInspector
     }
 
     internal async ValueTask<RouteSourceInspection> ReadAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         CancellationToken cancellationToken)
     {
-        var session = await _sessionReader.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var session = await _sessionReader.ReadAsync(layout, cancellationToken).ConfigureAwait(false);
         var routes = await new SourceRouteFactsResolver()
             .ResolveAsync(
                 new SourceRouteFactsRequest(session.Catalogue, session.Catalogue.SelectAll()),
@@ -60,7 +62,7 @@ internal sealed class RouteSourceInspector
                 .ConfigureAwait(false);
         }).ConfigureAwait(false);
 
-        var entry = await ReadWorkspaceEntryAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var entry = await ReadWorkspaceEntryAsync(layout.Workspace, cancellationToken).ConfigureAwait(false);
         return new RouteSourceInspection
         {
             Session = session,

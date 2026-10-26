@@ -134,6 +134,7 @@ public sealed class LibrarySyncApplicationIntegrationTests
         var before = Assert.IsType<FileStateSnapshot>(record.Snapshot);
         var input = new LibrarySyncPlanningInput
         {
+            LayoutRead = LibraryMutationApplicationData.LayoutObservation(workspace),
             Request = workspace.Sync(LibraryMode.Apply),
             Record = record,
             Source = LibraryMutationApplicationData.Inventory(workspace),

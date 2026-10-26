@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
@@ -38,7 +39,7 @@ internal static class LibraryMutationOperationSupport
             }, cancellationToken))];
 
     internal static ImmutableArray<CanonicalRelativePath> ReadAncestors(
-        CliWorkspace workspace,
+        CliWorkspace workspace, WorkspaceLayout? layout,
         IEnumerable<string> destinationPaths,
         IEnumerable<PlannedFileChange> generatedRegions)
     {
@@ -52,7 +53,7 @@ internal static class LibraryMutationOperationSupport
             for (var length = 1; length < segments.Length; length++)
             {
                 var ancestor = string.Join('/', segments.AsSpan(0, length).ToArray());
-                if (ancestor != WorkspaceSettingsDefinitions.DirectoryName)
+                if (ancestor != layout?.MainRoot)
                 {
                     paths.Add(ancestor);
                 }

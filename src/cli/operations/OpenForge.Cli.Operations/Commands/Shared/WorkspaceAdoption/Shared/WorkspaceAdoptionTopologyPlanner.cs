@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
@@ -17,29 +18,29 @@ namespace OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Shared;
 
 internal static class WorkspaceAdoptionTopologyPlanner
 {
-    private const string AgentsRoot = SourceLogicalPath.AgentsRoot;
-
     private static readonly HashSet<string> SelectedRootNameKeys = new(
-        ["directives", "guidance", "maps", "patterns", "skills", "templates", "memory"],
+        [WorkspaceCategoryNames.Directives, WorkspaceCategoryNames.Guidance, WorkspaceCategoryNames.Maps, WorkspaceCategoryNames.Patterns,
+         WorkspaceLayoutNames.SkillsDirectoryName, WorkspaceCategoryNames.Templates, WorkspaceCategoryNames.Memory],
         StringComparer.Ordinal);
 
-    private static readonly string AgentsRootKey = ReadPortableKey(AgentsRoot);
+    internal static WorkspaceAdoptionTopologyPlan Plan(WorkspaceLayout layout,
+        IReadOnlyList<SourceLogicalSource> existingSources, IReadOnlyList<SourceLogicalSource> payloadSources,
+        IReadOnlyCollection<string> removedPaths, WorkspaceOwnershipRead ownership)
+        => Plan(new SourceContentRoots(layout), existingSources, payloadSources, removedPaths, ownership);
 
-    internal static WorkspaceAdoptionTopologyPlan Plan(
-        IReadOnlyList<SourceLogicalSource> existingSources,
-        IReadOnlyList<SourceLogicalSource> payloadSources,
-        IReadOnlyCollection<string> removedPaths,
-        WorkspaceOwnershipRead ownership)
+    private static WorkspaceAdoptionTopologyPlan Plan(SourceContentRoots roots,
+        IReadOnlyList<SourceLogicalSource> existingSources, IReadOnlyList<SourceLogicalSource> payloadSources,
+        IReadOnlyCollection<string> removedPaths, WorkspaceOwnershipRead ownership)
     {
         ArgumentNullException.ThrowIfNull(existingSources);
         ArgumentNullException.ThrowIfNull(payloadSources);
         ArgumentNullException.ThrowIfNull(removedPaths);
         ArgumentNullException.ThrowIfNull(ownership);
 
-        var removals = RemovalIndex.Create(removedPaths);
-        var existingFacts = ReadSourceFacts(existingSources);
-        var payloadFacts = ReadSourceFacts(payloadSources);
-        var selectedRoots = ReadSelectedRoots(payloadFacts, removals);
+        var removals = RemovalIndex.Create(roots, removedPaths);
+        var existingFacts = ReadSourceFacts(roots, existingSources);
+        var payloadFacts = ReadSourceFacts(roots, payloadSources);
+        var selectedRoots = ReadSelectedRoots(roots, payloadFacts, removals);
         if (selectedRoots.Length == 0)
         {
             return EmptyPlan();
@@ -306,7 +307,7 @@ internal static class WorkspaceAdoptionTopologyPlanner
             ImmutableArray<string>.Empty,
             ImmutableArray<string>.Empty);
 
-    private static SourceFact[] ReadSourceFacts(IReadOnlyList<SourceLogicalSource> sources)
+    private static SourceFact[] ReadSourceFacts(SourceContentRoots roots, IReadOnlyList<SourceLogicalSource> sources)
     {
         var factsByPath = new Dictionary<string, SourceFact>(StringComparer.Ordinal);
         foreach (var source in sources
@@ -317,7 +318,7 @@ internal static class WorkspaceAdoptionTopologyPlanner
         {
             var path = source.Identity.CanonicalBasePath;
             if (!PortableWorkspacePath.TryNormalize(path, out var normalizedPath)
-                || !SourceFormClassifier.TryClassify(path, out var form))
+                || !SourceFormClassifier.TryClassify(roots, path, out var form))
             {
                 continue;
             }
@@ -338,6 +339,7 @@ internal static class WorkspaceAdoptionTopologyPlanner
     }
 
     private static SelectedRoot[] ReadSelectedRoots(
+        SourceContentRoots roots,
         IReadOnlyList<SourceFact> payloadFacts,
         RemovalIndex removals)
     {
@@ -346,10 +348,7 @@ internal static class WorkspaceAdoptionTopologyPlanner
         {
             if (!SourceFormClassifier.IsEntrypoint(fact.Form)
                 || removals.Contains(fact.PathKey)
-                || !string.Equals(
-                    ReadPortableKey(SourceLogicalPath.ReadParent(fact.Directory)),
-                    AgentsRootKey,
-                    StringComparison.Ordinal))
+                || !SourceLogicalPath.IsPrimaryCategoryDirectory(roots, fact.Directory))
             {
                 continue;
             }
@@ -472,7 +471,7 @@ internal static class WorkspaceAdoptionTopologyPlanner
     private static string ReadCanonicalEntryPointPath(string directory)
     {
         var folderName = SourceLogicalPath.ReadFileName(directory);
-        return SourceLogicalPath.Combine(directory, $"_{folderName}.md");
+        return SourceLogicalPath.Combine(directory, SourceFormClassifier.CanonicalEntrypointFileName(folderName));
     }
 
     private static string AmbiguousEntryPointsCause(string directory, IEnumerable<string> paths)
@@ -619,7 +618,7 @@ internal static class WorkspaceAdoptionTopologyPlanner
             _pathsByKey = pathsByKey;
         }
 
-        internal static RemovalIndex Create(IReadOnlyCollection<string> removedPaths)
+        internal static RemovalIndex Create(SourceContentRoots roots, IReadOnlyCollection<string> removedPaths)
         {
             var pathsByKey = new Dictionary<string, string>(StringComparer.Ordinal);
             var entryPointsByDirectory = new Dictionary<string, List<string>>(StringComparer.Ordinal);
@@ -632,7 +631,7 @@ internal static class WorkspaceAdoptionTopologyPlanner
 
                 var pathKey = PortableWorkspacePath.CreatePortableKey(normalizedPath);
                 pathsByKey.TryAdd(pathKey, path);
-                if (!SourceFormClassifier.TryClassify(path, out var form)
+                if (!SourceFormClassifier.TryClassify(roots, path, out var form)
                     || !SourceFormClassifier.IsEntrypoint(form))
                 {
                     continue;

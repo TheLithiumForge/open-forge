@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Extensions.Embedded;
+using OpenForge.Cli.Core.Framework.Extensions.Operational.Models.Registration;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
@@ -17,14 +19,24 @@ internal sealed class ExtensionLifecycleDoctorReader(
     ExtensionSourceObservationReader sourceReader,
     ExtensionLifecycleTargetReader targetReader,
     ExtensionBridgeRegistrationObservationReader bridgeReader,
-    PhysicalPathResolver physicalPathResolver)
+    PhysicalPathResolver? physicalPathResolver = null)
 {
     internal async ValueTask<ExtensionLifecycleDoctorView> ReadAsync(
-        CliWorkspace workspace,
-        WorkspaceOwnershipRead ownership,
+        CliWorkspace workspace, WorkspaceOwnershipRead ownership, bool includeEmbedded, CancellationToken cancellationToken)
+    {
+        var observation = await new WorkspaceLayoutReader(physicalPathResolver ?? new PhysicalPathResolver()).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var retained = new WorkspaceLayoutRead(observation.State, observation.Settings, ownership, observation.Layout, observation.Issues, observation.Expectations);
+        return await ReadAsync(retained, includeEmbedded, cancellationToken).ConfigureAwait(false);
+    }
+
+    internal async ValueTask<ExtensionLifecycleDoctorView> ReadAsync(
+        WorkspaceLayoutRead observation,
         bool includeEmbedded,
         CancellationToken cancellationToken)
     {
+        var ownership = observation.Ownership;
+        var layout = observation.Layout;
+        var cause = observation.Issues.FirstOrDefault()?.Cause;
         if (ownership.Document.Extensions.GroupBy(package => package.Id, StringComparer.Ordinal).Any(group => group.Count() > 1))
         {
             ownership = ownership with
@@ -35,21 +47,25 @@ internal sealed class ExtensionLifecycleDoctorReader(
             };
         }
         var packages = ownership.Document.Extensions;
-        var sources = await sourceReader.ReadAsync(workspace, packages, includeEmbedded, cancellationToken)
-            .ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(physicalPathResolver, workspace, cancellationToken).ConfigureAwait(false);
+        IReadOnlyList<ExtensionSourceObservation> sources = layout is null
+            ? packages.Select(package => package.Source).Distinct(StringComparer.Ordinal)
+                .Select(source => new ExtensionSourceObservation(source, new ExtensionSourceReadResult(
+                    ExtensionSourceReadState.Unavailable, null, source ?? EmbeddedExtensionCatalogueReader.Identity, [], cause))).ToArray()
+            : await sourceReader.ReadAsync(layout.Workspace, packages, includeEmbedded, cancellationToken).ConfigureAwait(false);
+        var settings = observation.Settings;
         FrontmatterForm? form = settings.State is WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete
             ? settings.Document.Frontmatter : null;
-        var targets = await targetReader.ReadDoctorAsync(workspace, ownership.Document, sources, form, cancellationToken)
+        var targets = await targetReader.ReadDoctorAsync(layout, ownership.Document, sources, form, cancellationToken, cause)
             .ConfigureAwait(false);
         var sharing = ownership.State is WorkspaceOwnershipReadState.Complete or WorkspaceOwnershipReadState.Absent
             ? new SourceSharing(ownership.Document.Framework?.GitIgnoredRoutes ?? []) : null;
-        var bridges = await bridgeReader.ReadAsync(workspace, ownership.Document, sources, sharing, cancellationToken)
-            .ConfigureAwait(false);
+        var bridges = layout is null
+            ? ExtensionBridgeRegistrationFacts.Incomplete(cause ?? "The workspace layout is unavailable.")
+            : await bridgeReader.ReadAsync(layout, ownership.Document, sources, sharing, cancellationToken).ConfigureAwait(false);
         var comparisons = packages.Select(package => Compare(package, sources)).ToArray();
         var sourceAvailability = packages.Length == 0
             ? OperationalSourceAvailability.NotApplicable
-            : sources.All(source => ExtensionSourceObservationReader.ReadAvailability(source.Read)
+            : layout is not null && sources.All(source => ExtensionSourceObservationReader.ReadAvailability(source.Read)
                 == OperationalSourceAvailability.Available)
                 ? OperationalSourceAvailability.Available : OperationalSourceAvailability.Unavailable;
         var state = targets.Any(target => target.Target.State == OperationalTargetState.Blocked)

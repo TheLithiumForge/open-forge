@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Repair.Models.Diagnosis;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
@@ -29,18 +30,20 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
     private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
 
     internal async ValueTask<RepairCatalogueRead> ReadAsync(
-        CliWorkspace workspace,
+        WorkspaceLayoutRead observation,
         LocalReferenceDoctorView view,
         CancellationToken cancellationToken,
         IReadOnlyList<RepairRelinkRequest>? relinks = null,
         DoctorMaintenanceObservation? maintenance = null)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(observation);
         ArgumentNullException.ThrowIfNull(view);
         var findings = new List<RepairFinding>();
-        var protection = await new RepairProtectionReader(_physicalPathResolver).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var protection = RepairProtectionReader.Read(observation);
         if (protection.Policy is not { } policy)
-            return new([], [new(RepairFindingCode.DiagnosisIncomplete, "Repair source settings or ownership could not be established.")]);
+            return new([], [new(RepairFindingCode.DiagnosisIncomplete, "Repair source settings or ownership could not be established.")]) { LayoutRead = observation };
+        var layout = policy.Layout ?? throw new InvalidOperationException("Repair protection requires the observed layout.");
+        var workspace = layout.Workspace;
         var retainedEvidence = retainDiagnosisEvidence ? maintenance?.Renames : null;
         var snapshots = await ReadSnapshotsAsync(workspace, view, findings, cancellationToken)
             .ConfigureAwait(false);
@@ -55,12 +58,12 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
                 evidence = await renameRead(workspace, cancellationToken).ConfigureAwait(false);
         }
         var catalogue = view.Catalogue
-            ?? (await new SourceReadSessionReader(_physicalPathResolver).ReadAsync(workspace, cancellationToken).ConfigureAwait(false)).Catalogue;
+            ?? (await new SourceReadSessionReader(_physicalPathResolver).ReadAsync(layout, cancellationToken).ConfigureAwait(false)).Catalogue;
         var targetAcquisition = new SourceFileAcquisition();
         foreach (var document in view.Documents.Values) targetAcquisition.RetainDocument(document);
         var targetReader = targets ?? new RepairTargetReader(catalogue, acquisition: targetAcquisition);
         var candidateFilter = evidence is null ? null : new RenameWeakCandidateFilter(evidence.Facts.Candidates, evidence.Facts.Candidates);
-        var renameReader = new RepairRenameProposalReader(_physicalPathResolver, targetReader, candidateFilter);
+        var renameReader = new RepairRenameProposalReader(layout, _physicalPathResolver, targetReader, candidateFilter);
         var candidatesByOccurrence = view.Candidates.ToLookup(candidate => (candidate.SourcePath, candidate.Destination));
         AddBoundaryFindings(findings, scope.IncompleteSources);
         var references = scope.References
@@ -141,6 +144,7 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
                 && input.Proposal.Occurrence == finding.Occurrence)));
         return new RepairCatalogueRead(proposals, findings)
         {
+            LayoutRead = observation,
             Catalogue = catalogue,
             RenameEvidence = evidence,
             Documents = documents.Concat(evidence?.Facts.Candidates.Select(candidate => KeyValuePair.Create(candidate.Path, candidate.Content.Document)) ?? [])

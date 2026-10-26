@@ -203,6 +203,8 @@ internal sealed record RouteRemoveSettingsRemoval
 
     public ImmutableArray<string> Categories { get; init; } = [];
 
+    public ImmutableArray<string> CategoryPaths { get; init; } = [];
+
     public ImmutableArray<string> Files { get; init; } = [];
 
     public ImmutableArray<string> Directories { get; init; } = [];

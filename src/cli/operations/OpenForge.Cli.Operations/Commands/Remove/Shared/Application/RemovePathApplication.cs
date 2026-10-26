@@ -17,6 +17,7 @@ using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -84,6 +85,18 @@ internal sealed class RemovePathApplication
 
         await using (lease.ConfigureAwait(false))
         {
+            var layoutValidation = await new WorkspaceLayoutRevalidator(_resolver)
+                .ValidateAsync(lease, initial.LayoutRead, cancellationToken).ConfigureAwait(false);
+            if (layoutValidation.State == MutationValidationState.Cancelled)
+            {
+                return planner.Refuse(initial, RemoveFindingCode.Interrupted, CliSemanticStatus.Interrupted,
+                    "Remove was cancelled. Nothing was changed.");
+            }
+            if (layoutValidation.State != MutationValidationState.Valid)
+            {
+                return planner.Refuse(initial, RemoveFindingCode.TargetChanged, CliSemanticStatus.Blocked,
+                    layoutValidation.Cause ?? "The workspace layout changed after planning. Nothing was changed.");
+            }
             var freshOutcome = await planner.PlanAsync(initial.Request, cancellationToken).ConfigureAwait(false);
             if (freshOutcome is RemovePathPlanningOutcome.Stopped stopped)
             {

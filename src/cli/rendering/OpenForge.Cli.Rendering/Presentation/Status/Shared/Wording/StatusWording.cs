@@ -238,8 +238,9 @@ internal static class StatusWording
     internal static string ContinuityUnavailable()
         => global::OpenForge.Cli.OutputText.Status.StatusText.MessageTheMayLoadAgainContextCouldNotBeMeasured();
 
-    internal static string RootCategoriesUnavailable()
-        => global::OpenForge.Cli.OutputText.Status.StatusText.MessageTheRootCategoriesCouldNotBeReadFromAgentsLoaderMd();
+    internal static string RootCategoriesUnavailable(string? loaderPath = null)
+        => loaderPath is null ? global::OpenForge.Cli.OutputText.Status.StatusText.MessageTheRootCategoriesCouldNotBeReadFromAgentsLoaderMd()
+            : global::OpenForge.Cli.OutputText.Status.StatusText.RootCategoriesUnavailable(loaderPath);
 
     internal static string EntryUnavailable()
         => global::OpenForge.Cli.OutputText.Status.StatusText.MessageAgentsMdCouldNotBeRead();

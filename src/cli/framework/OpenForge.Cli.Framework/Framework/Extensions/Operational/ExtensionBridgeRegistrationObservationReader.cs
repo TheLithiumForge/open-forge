@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
@@ -19,7 +22,6 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Operational;
@@ -36,13 +38,13 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
     private readonly GeneratedNavigationProjector _projector = new();
 
     internal async ValueTask<ExtensionBridgeRegistrationFacts> ReadAsync(
-        CliWorkspace workspace,
+        WorkspaceLayout layout,
         WorkspaceOwnershipDocument ownership,
         IReadOnlyList<ExtensionSourceObservation> sources,
         SourceSharing? sharing,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
+        var workspace = layout.Workspace;
         ArgumentNullException.ThrowIfNull(ownership);
         ArgumentNullException.ThrowIfNull(sources);
         if (cancellationToken.IsCancellationRequested)
@@ -51,7 +53,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
                 "Extension bridge-registration observation was interrupted.");
         }
 
-        var candidateRead = ReadCandidates(ownership, sources);
+        var candidateRead = ReadCandidates(layout, ownership, sources);
         if (candidateRead.Boundary is { } candidateBoundary)
         {
             return candidateBoundary;
@@ -70,7 +72,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
         }
 
         var catalogue = await _catalogueReader.ReadAsync(
-            new SourceCatalogueRequest(workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(layout, layout.SourceRoots),
             cancellationToken).ConfigureAwait(false);
         if (catalogue.IsCancelled)
         {
@@ -117,7 +119,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
             StringComparer.Ordinal);
         var intendedSources = catalogue.Sources
             .Where(source => !overlay.ContainsKey(source.Identity.CanonicalBasePath))
-            .Concat(overlay.Keys.Select(path => CreateSource(workspace, path)))
+            .Concat(overlay.Keys.Select(path => CreateSource(layout, path)))
             .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
             .ToArray();
         var formation = _formationBuilder.Build(catalogue, intendedSources);
@@ -202,7 +204,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
 
             var match = matches[0];
             var observed = await ObserveAsync(
-                candidate,
+                layout, candidate,
                 match.Region,
                 match.Entry,
                 cancellationToken).ConfigureAwait(false);
@@ -220,6 +222,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
     }
 
     private static CandidateRead ReadCandidates(
+        WorkspaceLayout layout,
         WorkspaceOwnershipDocument ownership,
         IReadOnlyList<ExtensionSourceObservation> sources)
     {
@@ -267,7 +270,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
                 }
 
                 var files = packageMatches[0].Payload.Where(file => string.Equals(
-                    file.TargetPath,
+                    file.TargetPath is { } target ? layout.MapPayloadPath(target) : null,
                     path,
                     StringComparison.Ordinal)).ToArray();
                 if (files.Length > 1)
@@ -284,11 +287,17 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
                         "A lifecycle-owned Extension target has no exact readable reviewed source payload fact.");
                 }
 
-                if (!SourceFormClassifier.TryClassify(path, out var form)
+                if (!SourceFormClassifier.TryClassify(layout, path, out var form)
                     || form == SourceDocumentForm.OverwriteCompanion)
                 {
                     continue;
                 }
+
+                if (files[0].TargetPath is not { } packagePath)
+                    return CandidateRead.Blocked("The reviewed Extension source has no package destination.");
+                var rendered = WorkspacePayloadRenderer.Render(layout, packagePath, bytes, FrontmatterForm.Scoped);
+                if (rendered.Bytes is not { } renderedBytes)
+                    return CandidateRead.Blocked(rendered.Cause ?? "The reviewed Extension source cannot be rendered.");
 
                 ownerCandidates.Add(new BridgeCandidate(
                     path,
@@ -296,7 +305,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
                     owner,
                     source.Identity,
                     files[0].Path,
-                    bytes.ToArray()));
+                    renderedBytes.ToArray()));
             }
 
             if (ownerCandidates.Count == 0)
@@ -362,7 +371,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
     }
 
     private async ValueTask<ObservationRead> ObserveAsync(
-        BridgeCandidate candidate,
+        WorkspaceLayout layout, BridgeCandidate candidate,
         GeneratedNavigationRegion region,
         GeneratedNavigationEntry expected,
         CancellationToken cancellationToken)
@@ -408,6 +417,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
         }
 
         var comparisons = RouteGeneratedEntryComparisonReader.Read(
+            layout,
             region.Source,
             current,
             region.Entries,
@@ -417,6 +427,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
             && string.Equals(comparison.Expected, expected.Destination, StringComparison.Ordinal));
         var entries = current.Entries.Where(entry => string.Equals(
             SourceGeneratedDestinationResolver.Resolve(
+                layout,
                 region.CanonicalPath,
                 region.Source.Base.Form == SourceDocumentForm.Loader,
                 entry.Destination),
@@ -502,17 +513,17 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
             : null;
     }
 
-    private static SourceLogicalSource CreateSource(CliWorkspace workspace, string path)
+    private static SourceLogicalSource CreateSource(WorkspaceLayout layout, string path)
     {
-        if (!SourceFormClassifier.TryClassify(path, out var form))
+        if (!SourceFormClassifier.TryClassify(layout, path, out var form))
         {
             throw new InvalidDataException("A reviewed Extension target is not an authored source.");
         }
 
-        var id = SourceIdentity.DeriveId(path)
+        var id = SourceIdentity.DeriveId(layout, path)
             ?? throw new InvalidDataException("A reviewed Extension target has no canonical identity.");
         var physicalPath = Path.GetFullPath(Path.Combine(
-            workspace.PhysicalRoot,
+            layout.Workspace.PhysicalRoot,
             path.Replace('/', Path.DirectorySeparatorChar)));
         return new SourceLogicalSource(
             new SourceLogicalIdentity(id, path),

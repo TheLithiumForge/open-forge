@@ -1,5 +1,7 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Routing;
 
@@ -10,7 +12,7 @@ public sealed class SourceLoaderEntriesParserListRegressionTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EntriesParserPreservesDeclarationOrder()
     {
-        var result = SourceLoaderEntriesParser.Parse(LoaderContents(
+        var result = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, LoaderContents(
             "\n- [Second](second/_second.md) - #Second\n"
             + "- [First](first/_first.md) - #First\n",
             "## Axioms\n\n- inherited - No local axioms.\n\n"));
@@ -34,7 +36,7 @@ public sealed class SourceLoaderEntriesParserListRegressionTests
         var loader = LoaderContents("- [Root](root/_root.md) - #Root")
             .Replace("\n", lineEnding, StringComparison.Ordinal);
 
-        var result = SourceLoaderEntriesParser.Parse(loader);
+        var result = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, loader);
 
         Assert.Equal(SourceLoaderEntriesParseState.Valid, result.State);
         Assert.Equal(".agents/root/_root.md", Assert.Single(result.Destinations).CanonicalPath);
@@ -49,7 +51,7 @@ public sealed class SourceLoaderEntriesParserListRegressionTests
             "- [Root](root/_root.md) - #Root",
             "```markdown\n## Entries\n```\n\n");
 
-        var result = SourceLoaderEntriesParser.Parse(loader);
+        var result = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, loader);
 
         Assert.Equal(SourceLoaderEntriesParseState.Valid, result.State);
         Assert.Equal(".agents/root/_root.md", Assert.Single(result.Destinations).CanonicalPath);
@@ -62,7 +64,7 @@ public sealed class SourceLoaderEntriesParserListRegressionTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EntriesParserAcceptsEmptySectionAndSentinel(string entriesBody)
     {
-        var result = SourceLoaderEntriesParser.Parse(LoaderContents(entriesBody));
+        var result = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, LoaderContents(entriesBody));
 
         Assert.Equal(SourceLoaderEntriesParseState.Valid, result.State);
         Assert.Empty(result.Destinations);
@@ -74,7 +76,7 @@ public sealed class SourceLoaderEntriesParserListRegressionTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EntriesParserRetainsUnsafeDestinationResults()
     {
-        var result = SourceLoaderEntriesParser.Parse(LoaderContents(
+        var result = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, LoaderContents(
             "- [Unsafe](root%2F%2F_root.md) - #Root"));
 
         Assert.Equal(SourceLoaderEntriesParseState.Valid, result.State);
@@ -101,7 +103,7 @@ public sealed class SourceLoaderEntriesParserListRegressionTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EntriesParserRejectsMalformedSections(string loaderContents)
     {
-        var result = SourceLoaderEntriesParser.Parse(loaderContents);
+        var result = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, loaderContents);
 
         Assert.Equal(SourceLoaderEntriesParseState.Malformed, result.State);
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
@@ -112,7 +114,7 @@ public sealed class SourceLoaderEntriesParserListRegressionTests
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EntriesParserRejectsMalformedDestinationEncoding()
     {
-        var result = SourceLoaderEntriesParser.Parse(LoaderContents(
+        var result = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, LoaderContents(
             "- [Root](root%2/_root.md) - #Root"));
 
         Assert.Equal(SourceLoaderEntriesParseState.Malformed, result.State);
@@ -129,4 +131,11 @@ public sealed class SourceLoaderEntriesParserListRegressionTests
             {entriesBody}
             """;
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(SourceLoaderEntriesParserListRegressionTests)),
+                Path.GetFullPath(nameof(SourceLoaderEntriesParserListRegressionTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

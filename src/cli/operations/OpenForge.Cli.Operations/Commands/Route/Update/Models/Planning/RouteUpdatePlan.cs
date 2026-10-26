@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 
@@ -21,6 +22,8 @@ internal sealed record RouteUpdatePlan
     public required RouteUpdateResultFormation Preview { get; init; }
 
     public required RouteUpdateObservation Observation { get; init; }
+
+    public WorkspaceLayoutRead LayoutRead => Observation.LayoutRead;
 
     public RouteTemplateResolution? Template { get; init; }
 

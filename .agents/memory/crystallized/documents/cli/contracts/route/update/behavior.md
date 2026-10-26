@@ -7,6 +7,12 @@ open-forge:
 
 # route update Behavior Contract
 
+## Workspace Layout
+
+Select through the observed layout, retain primary-root ancestry boundaries, and revalidate the original layout observation before effects.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral
@@ -106,7 +112,7 @@ implementation choice.
 
 The resolver passes the source operand through the [CLI Source References](../../shared/source-references/behavior.md)
 grammar without guessing whether it is an ID or path. It accepts the automatic
-ID and exact `.agents/...` forms described by the Interface, resolves exact
+ID and exact workspace-path forms described by the Interface, resolves exact
 matches and collisions under the shared contract, and records the requested and
 resolved identities.
 

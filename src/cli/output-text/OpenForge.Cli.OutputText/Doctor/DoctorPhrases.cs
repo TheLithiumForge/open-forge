@@ -4,6 +4,12 @@ namespace OpenForge.Cli.OutputText.Doctor;
 
 internal static class DoctorPhrases
 {
+    internal static string ContextFolderMissing(string path, string folder)
+        => $"{path} has no {folder} folder. Open Forge is not installed here.";
+    internal static string ContextFolderUnreadable(string folder, string cause) => $"{folder} exists but cannot be read: {cause}.";
+    internal static string LoaderUnreadable(string path, string cause) => $"{path} cannot be read: {cause}.";
+    internal static string LoaderMalformed(string path, string cause) => $"{path} could not be understood: {cause}.";
+
     // @OpenForgeText doctor.phrase.cannot-run-doctor
     internal static string FormatCannotRunDoctor(string eventReasonText)
         => $"Cannot run doctor: {eventReasonText}";

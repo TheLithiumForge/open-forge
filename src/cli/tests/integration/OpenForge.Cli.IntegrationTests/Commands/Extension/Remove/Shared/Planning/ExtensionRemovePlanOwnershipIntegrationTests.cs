@@ -40,7 +40,7 @@ public sealed class ExtensionRemovePlanOwnershipIntegrationTests
         var accepted = ExtensionRemovePlan.Create(new ExtensionRemovePlanInput
         {
             Request = baseline.Request,
-            SettingsObservation = baseline.SettingsObservation,
+            LayoutRead = baseline.LayoutRead,
             RemovalSelection = baseline.RemovalSelection,
             SettingsChange = baseline.SettingsChange,
             SettingsRecoveryTarget = baseline.SettingsRecoveryTarget,

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Find.Models.Operation;
 using OpenForge.Cli.Core.Commands.Find.Models.Request;
 using OpenForge.Cli.Core.Commands.Find.Shared.Selection;
@@ -12,6 +14,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Models;
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Application;
 
 internal sealed class FindSourceResolver(
+    Func<CliWorkspace, CancellationToken, ValueTask<WorkspaceLayoutRead>> layoutRead,
     SourceReadSessionRead sourceSessionRead,
     FindUniverseResolver universeResolver,
     SourcePhysicalPathResolver physicalPathResolver,
@@ -22,10 +25,14 @@ internal sealed class FindSourceResolver(
     private readonly SourcePhysicalPathResolver _physicalPathResolver = physicalPathResolver;
     private readonly FindRouteFactsReader _routeFactsReader = routeFactsReader;
 
-    internal ValueTask<SourceReadSession> ReadAsync(
+    internal async ValueTask<SourceReadSession> ReadAsync(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
-        => _sourceSessionRead(workspace, cancellationToken);
+    {
+        var observation = await layoutRead(workspace, cancellationToken).ConfigureAwait(false);
+        var layout = observation.Layout ?? throw new InvalidOperationException("The workspace layout is unavailable.");
+        return await _sourceSessionRead(layout, cancellationToken).ConfigureAwait(false);
+    }
 
     internal void ProbePairedOverwritePaths(
         FindRequest request,

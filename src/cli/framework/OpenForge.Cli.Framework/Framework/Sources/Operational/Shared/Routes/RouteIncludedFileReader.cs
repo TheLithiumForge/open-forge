@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -21,8 +23,9 @@ using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
 // This reader stays local to operational reporting until the included-source reader is shared.
-internal sealed class RouteIncludedFileReader(CliWorkspace workspace)
+internal sealed class RouteIncludedFileReader(WorkspaceLayout layout)
 {
+    private readonly CliWorkspace workspace = layout.Workspace;
     private readonly PhysicalPathResolver _resolver = new();
     private readonly Dictionary<string, RouteIncludedFileObservation> _files = new(StringComparer.Ordinal);
     private readonly Dictionary<string, RouteContextSource> _total = new(PhysicalIdentityTracker.PathComparer);
@@ -37,14 +40,14 @@ internal sealed class RouteIncludedFileReader(CliWorkspace workspace)
 
     internal async ValueTask<RouteIncludedFilesObservation?> ReadAsync(
         RouteSourceInspection inspection,
+        WorkspaceSettingsRead settings,
         CancellationToken cancellationToken)
     {
-        var settings = await WorkspaceSettingsReader.ReadAsync(_resolver, workspace, cancellationToken).ConfigureAwait(false);
         _registered = settings.Document.Roots.ToHashSet(StringComparer.Ordinal);
         var loader = inspection.Sources.SingleOrDefault(source => source.Source.Base.Form == SourceDocumentForm.Loader);
         var entries = loader?.GeneratedEntries.Entries ?? [];
-        var rows = entries.Select(entry => (Entry: entry, Path: SourceGeneratedDestinationResolver.ResolveLinked(
-                SourceLogicalPath.LoaderPath, isLoader: true, entry.Destination)))
+        var rows = entries.Select(entry => (Entry: entry, Path: SourceGeneratedDestinationResolver.ResolveLinked(layout,
+                layout.LoaderPath, isLoader: true, entry.Destination)))
             .Where(row => row.Path is not null).ToArray();
         if (_registered.Count == 0 && rows.Length == 0)
             return null;
@@ -53,7 +56,7 @@ internal sealed class RouteIncludedFileReader(CliWorkspace workspace)
         foreach (var path in _registered)
             await ReadFileAsync(path, cancellationToken).ConfigureAwait(false);
         foreach (var row in rows)
-            await VisitAsync(SourceLogicalPath.LoaderPath, row.Entry, requiredParent: true, continuityParent: false,
+            await VisitAsync(layout.LoaderPath, row.Entry, requiredParent: true, continuityParent: false,
                 conditions: [], ancestors: [], cancellationToken).ConfigureAwait(false);
 
         return new RouteIncludedFilesObservation
@@ -83,7 +86,7 @@ internal sealed class RouteIncludedFileReader(CliWorkspace workspace)
         IReadOnlyList<string> ancestors,
         CancellationToken cancellationToken)
     {
-        var path = SourceGeneratedDestinationResolver.ResolveLinked(parent, parent == SourceLogicalPath.LoaderPath, entry.Destination);
+        var path = SourceGeneratedDestinationResolver.ResolveLinked(layout, parent, parent == layout.LoaderPath, entry.Destination);
         if (path is null || ancestors.Contains(path, StringComparer.Ordinal))
             return;
         var chain = conditions.Append(new SourceApplyToCondition(path, ApplyToMetadataFacts.FromEntryLine(entry.ApplyTo))).ToArray();
@@ -130,10 +133,10 @@ internal sealed class RouteIncludedFileReader(CliWorkspace workspace)
             rejection = "The included file is inside the reserved runtime directory.";
         else if (resolution.State != PhysicalPathState.Missing && !exists)
             rejection = "The included path is not a contained file.";
-        else if (physical is not null && IsInsideAgents(physical))
-            rejection = "The included file is inside .agents/.";
+        else if (physical is not null && IsInsideContent(physical))
+            rejection = layout.IsDefault ? "The included file is inside .agents/." : "The included file is inside a context content folder.";
         else if (physical is not null && !WorkspaceSettingsCodec.IsValidRootPath(
-                     Path.GetRelativePath(workspace.PhysicalRoot, physical).Replace('\\', '/')))
+                     Path.GetRelativePath(workspace.PhysicalRoot, physical).Replace('\\', '/'), layout.MainRoot))
             rejection = "The included file resolves to a path that cannot be registered.";
         string? text = null;
         if (exists && rejection is null && physical is not null)
@@ -163,7 +166,7 @@ internal sealed class RouteIncludedFileReader(CliWorkspace workspace)
             if (companion.State == PhysicalPathState.Contained && File.Exists(companion.GetContainedPhysicalPath())
                 && !WorkspaceRuntimePaths.Contains(workspace, Path.Combine(workspace.PhysicalRoot, overwrite.Replace('/', Path.DirectorySeparatorChar)))
                 && !WorkspaceRuntimePaths.Contains(workspace, companion.GetContainedPhysicalPath())
-                && !IsInsideAgents(companion.GetContainedPhysicalPath()))
+                && !IsInsideContent(companion.GetContainedPhysicalPath()))
             {
                 var companionPath = companion.GetContainedPhysicalPath();
                 var read = await StrictUtf8FileReader.ReadAsync(companionPath, overwrite, cancellationToken).ConfigureAwait(false);
@@ -194,7 +197,6 @@ internal sealed class RouteIncludedFileReader(CliWorkspace workspace)
             sources.TryAdd(_physicalPaths[layer.Path], source with { Layers = [layer] });
     }
 
-    private bool IsInsideAgents(string physicalPath)
-        => Path.GetRelativePath(workspace.PhysicalRoot, physicalPath).Replace('\\', '/')
-            .StartsWith(SourceLogicalPath.AgentsRoot + "/", StringComparison.OrdinalIgnoreCase);
+    private bool IsInsideContent(string physicalPath)
+        => layout.IsContentPath(Path.GetRelativePath(workspace.PhysicalRoot, physicalPath).Replace('\\', '/'));
 }

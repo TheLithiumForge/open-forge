@@ -13,7 +13,7 @@ internal static class LibraryPermissionScopePlanner
         LibraryPermissionRequest request,
         ImmutableArray<string> allowInstallPaths = default)
     {
-        var targets = request.Targets.Where(IsExternal).ToArray();
+        var targets = request.Targets.Where(target => IsExternal(request, target)).ToArray();
         var leaves = WorkspaceAllowList.Evaluate(allowInstallPaths, [.. targets.Select(target => target.DestinationPath)]);
         var missing = leaves.Missing.Select(PortableWorkspacePath.CreatePortableKey).ToHashSet(StringComparer.Ordinal);
         var proposed = targets.Where(target => missing.Contains(PortableWorkspacePath.CreatePortableKey(target.DestinationPath)))
@@ -30,7 +30,7 @@ internal static class LibraryPermissionScopePlanner
         };
     }
 
-    private static bool IsExternal(LibraryPermissionTarget target)
+    private static bool IsExternal(LibraryPermissionRequest request, LibraryPermissionTarget target)
     {
         _ = target.Use switch
         {
@@ -38,7 +38,7 @@ internal static class LibraryPermissionScopePlanner
             LibraryPermissionTargetUse.Retired => false,
             _ => throw new ArgumentOutOfRangeException(nameof(target), target.Use, "The Library permission target use is not defined."),
         };
-        return !target.DestinationPath.StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix, StringComparison.Ordinal);
+        return !request.Layout.IsImplicitContentDestination(target.DestinationPath);
     }
 
     private static LibraryPermissionScope CreateScope(LibraryPermissionTarget target)

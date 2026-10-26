@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.Layout;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion.Models;
@@ -31,7 +32,12 @@ internal static class RepairMaintenanceResultReader
         }, proof.Similarity,
             new(proof.Head, proof.OldBlob, proof.OldHash, proof.NewHash,
                 proof.Metadata is { } metadata ? new(metadata.Description, metadata.Tags, metadata.ApplyTo) : null),
-            proof.SameContent, SourceLogicalPath.ReadParent(proof.OldPath) != SourceLogicalPath.ReadParent(FinalPath(proof.NewPath)))).ToArray();
+            proof.SameContent, SourceLogicalPath.ReadParent(proof.OldPath) != SourceLogicalPath.ReadParent(FinalPath(proof.NewPath)))).Select(rename =>
+        {
+            if (plan.LayoutRead?.Layout is not { } layout) return rename;
+            var display = WorkspaceLayoutPathDisplay.Rename(layout, rename.OldPath, rename.NewPath);
+            return rename with { DisplayOldPath = display.OldPath, DisplayNewPath = display.NewPath };
+        }).ToArray();
         var linkRenames = plan.Steps.ToDictionary(step => (step.Proposal.SourceCanonicalPath, step.Proposal.OccurrenceView.Line, step.Proposal.OccurrenceView.Column),
             step => (IReadOnlyList<RepairRename>)renames.Where(rename => rename.OldPath == step.Proposal.RenameProof?.OldPath
                 || rename.OldPath == step.Proposal.SourceMoveProof?.OldPath).ToArray());

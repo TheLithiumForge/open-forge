@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -40,17 +41,11 @@ internal sealed record FindSourceIdentity
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        if (!SourceWorkspaceRelativePath.IsCanonical(path)
-            || (SourceLogicalPath.IsCanonicalSource(path) && !path.EndsWith(".md", StringComparison.Ordinal))
-            || (SourceLogicalPath.IsCanonicalSource(path) && path.EndsWith(".overwrite.md", StringComparison.Ordinal)))
+        if (!SourceWorkspaceRelativePath.IsCanonical(path))
         {
             throw new ArgumentException("A Find source identity requires a canonical base source path.", nameof(path));
         }
 
-        if (!string.Equals(SourceWorkspaceRelativePath.ReadReference(path), id, StringComparison.Ordinal))
-        {
-            throw new ArgumentException("A Find source identity ID must be derived from its canonical base path.", nameof(id));
-        }
 
         Id = id;
         Path = path;

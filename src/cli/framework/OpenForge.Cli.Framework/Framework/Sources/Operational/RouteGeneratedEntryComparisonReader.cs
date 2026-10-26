@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
@@ -11,7 +12,7 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 internal static class RouteGeneratedEntryComparisonReader
 {
     internal static IReadOnlyList<RouteGeneratedEntryComparison> Read(
-        SourceLogicalSource parent,
+        WorkspaceLayout layout, SourceLogicalSource parent,
         SourceGeneratedEntriesFacts current,
         IReadOnlyList<GeneratedNavigationEntry> expected,
         Utf8SourceMap? locations)
@@ -25,14 +26,18 @@ internal static class RouteGeneratedEntryComparisonReader
         var matched = new HashSet<string>(StringComparer.Ordinal);
         var currentOrder = new List<string>();
         var comparisons = new List<RouteGeneratedEntryComparison>();
-        foreach (var entry in current.Entries.Where(entry => !SourceGeneratedDestinationResolver.IsAuthoredLink(entry.Destination)))
+        foreach (var entry in current.Entries)
         {
-            var location = locations.Map(entry.Span.Start, entry.Span.Length);
             var resolved = SourceGeneratedDestinationResolver.Resolve(
+                layout,
                 parent.Identity.CanonicalBasePath,
                 parent.Base.Form == SourceDocumentForm.Loader,
                 entry.Destination);
-            if (resolved is null || !expectedBySource.TryGetValue(resolved, out var expectedEntry))
+            var expectedEntry = resolved is null ? null : expectedBySource.GetValueOrDefault(resolved);
+            // Native Skills can require traversal from a custom loader and still be generated.
+            if (expectedEntry is null && SourceGeneratedDestinationResolver.IsAuthoredLink(entry.Destination)) continue;
+            var location = locations.Map(entry.Span.Start, entry.Span.Length);
+            if (expectedEntry is null)
             {
                 comparisons.Add(new RouteGeneratedEntryComparison(
                     kind: RouteGeneratedEntryComparisonKind.Extra,
@@ -42,8 +47,8 @@ internal static class RouteGeneratedEntryComparisonReader
                 continue;
             }
 
-            matched.Add(resolved);
-            currentOrder.Add(resolved);
+            matched.Add(expectedEntry.CanonicalPath);
+            currentOrder.Add(expectedEntry.CanonicalPath);
             if (!string.Equals(entry.Destination, expectedEntry.Destination, StringComparison.Ordinal))
             {
                 comparisons.Add(new RouteGeneratedEntryComparison(

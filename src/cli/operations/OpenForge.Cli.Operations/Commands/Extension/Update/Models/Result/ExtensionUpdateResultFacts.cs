@@ -383,6 +383,10 @@ internal sealed record ExtensionUpdateFinding
 
     internal string? Target { get; }
 
+    internal string? ContextFolder { get; init; }
+
+    internal string? RecoveryDisplayPath => Target ?? ContextFolder;
+
     internal string Cause { get; }
 }
 

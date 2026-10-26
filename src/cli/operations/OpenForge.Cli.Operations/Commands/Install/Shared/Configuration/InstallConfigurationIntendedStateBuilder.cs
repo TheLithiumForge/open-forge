@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
@@ -37,19 +38,18 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
 
     // A route the user adds after leaving it out joins the loader's Entries. Routes that were already
     // installed keep their current Loader line, so a line the user removed stays removed.
-    private static IEnumerable<string> ReadReselectedRoots(InstallConfiguration? configuration, WorkspaceSettingsRead settings)
+    private static IEnumerable<string> ReadReselectedRoots(WorkspaceLayout layout, InstallConfiguration? configuration, WorkspaceSettingsRead settings)
         => configuration?.Routes
             .Where(row => row.Action != InstallRouteAction.Remove
-                && WorkspaceRemovals.IsPathRemoved(InstallConfigurationChoices.Entrypoint(row.Id), settings.Document))
-            .Select(row => InstallConfigurationChoices.LoaderRoot(row.Id)) ?? [];
+                && WorkspaceRemovals.IsPathRemoved(layout, InstallConfigurationChoices.Entrypoint(layout, row.Id), settings.Document))
+            .Select(row => InstallConfigurationChoices.LoaderRoot(layout, row.Id)) ?? [];
 
     internal async ValueTask<InstallIntendedStateBuild> BuildAsync(
-        InstallRequest request, FrameworkPayload payload, WorkspaceOwnershipRead ownership,
-        WorkspaceSettingsRead settings, CancellationToken token)
+        InstallPlanningInput input, CancellationToken token)
     {
         try
         {
-            return await BuildCoreAsync(request, payload, ownership, settings, token).ConfigureAwait(false);
+            return await BuildCoreAsync(input, token).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is InvalidDataException or ArgumentException or InvalidOperationException or DecoderFallbackException)
         {
@@ -58,37 +58,41 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
     }
 
     private async ValueTask<InstallIntendedStateBuild> BuildCoreAsync(
-        InstallRequest request, FrameworkPayload payload, WorkspaceOwnershipRead ownership,
-        WorkspaceSettingsRead settings, CancellationToken token)
+        InstallPlanningInput input, CancellationToken token)
     {
+        var request = input.Request;
+        var payload = input.Payload;
+        var layout = input.IntendedLayout;
+        var ownership = input.LayoutRead.Ownership;
+        var settings = input.LayoutRead.Settings;
         var configuration = request.Configuration;
         if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete))
             return Boundary(ownership.Cause ?? "Configuration requires trustworthy ownership facts.", InstallFindingCode.LifecycleBlocked);
-        var settingsChange = InstallConfigurationSettings.Plan(settings, configuration, request.Frontmatter);
+        var settingsChange = InstallConfigurationSettings.Plan(layout, settings, configuration, request.Frontmatter);
         var intendedSettings = settings.Document;
         if (settingsChange is { } change)
             intendedSettings = WorkspaceSettingsCodec.Read(change.IntendedBytes.ToArray()).Document
                 ?? throw new InvalidDataException("The planned settings must decode.");
         foreach (var row in configuration?.Routes.Where(row => row.Action != InstallRouteAction.Remove) ?? [])
         {
-            if (WorkspaceRemovals.IsPathRemoved(InstallConfigurationChoices.Entrypoint(row.Id), intendedSettings))
+            if (WorkspaceRemovals.IsPathRemoved(layout, InstallConfigurationChoices.Entrypoint(layout, row.Id), intendedSettings))
                 throw new InvalidDataException($"A broader exclusion prevents adding '{row.Id}'. Configure its required ancestor first.");
         }
-        var selected = payload.Assets.Where(asset => asset.Path.StartsWith(".agents/", StringComparison.Ordinal)
-            && FrameworkPayloadSelection.IncludesPath(asset.Path, intendedSettings)).ToArray();
-        var renderedPayload = InstallPayloadRendering.Render(payload, request.Frontmatter?.Form ?? intendedSettings.Frontmatter);
+        var selected = payload.Assets.Where(asset => asset.Path.StartsWith(WorkspaceLayout.DefaultMainRoot + "/", StringComparison.Ordinal)
+            && FrameworkPayloadSelection.IncludesPath(layout, asset.Path, intendedSettings)).ToArray();
+        var renderedPayload = InstallPayloadRendering.Render(layout, payload, request.Frontmatter?.Form ?? intendedSettings.Frontmatter);
         InstallTargetRead? ignore = null;
         if (configuration is not null)
         {
             ignore = await _reader.ReadAsync(request.Workspace, InstallIgnoreSection.Path, token).ConfigureAwait(false);
             var ignoreSnapshot = ignore.Snapshot ?? throw new InvalidDataException(ignore.Cause ?? "The Git-ignore file is unsafe or unavailable.");
-            _ = InstallIgnoreSection.Read(ignoreSnapshot.Bytes.AsSpan());
+            _ = InstallIgnoreSection.Read(ignoreSnapshot.Bytes.AsSpan(), layout);
         }
         InstallConfigurationFrontmatterPlan? frontmatterPlan = null;
         if (request.Frontmatter is { ConvertOwnedFiles: true } selection)
             frontmatterPlan = await new InstallConfigurationFrontmatterPlanner(paths).PlanAsync(new()
             {
-                Workspace = request.Workspace,
+                Layout = layout,
                 Ownership = ownership,
                 Payload = payload,
                 RenderedPayload = renderedPayload,
@@ -96,12 +100,12 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
                 Selection = selection,
             }, token).ConfigureAwait(false);
 
-        var catalogue = await _catalogue.ReadAsync(new(request.Workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
+        var catalogue = await _catalogue.ReadAsync(new(layout, layout.SourceRoots), token).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         if (catalogue.Issues.Any(issue => issue.Code != SourceCatalogueIssueCode.RootMissing))
             return Boundary("Current source topology is unsafe or ambiguous for configuration.", InstallFindingCode.GeneratedRegionUnsafe);
-        var topology = _adoption.PlanTopology(catalogue.Sources,
-            selected.Select(asset => FrameworkPayloadSourceProjection.Create(request.Workspace, asset)).ToArray(), intendedSettings, ownership);
+        var topology = _adoption.PlanTopology(layout, catalogue.Sources,
+            selected.Select(asset => FrameworkPayloadSourceProjection.Create(layout, asset)).ToArray(), intendedSettings, ownership);
         if (topology.Cause is { } topologyCause)
             return Boundary(topologyCause, InstallFindingCode.GeneratedRegionUnsafe);
         var sources = catalogue.Sources.ToDictionary(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal);
@@ -124,25 +128,26 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
         }
         foreach (var asset in selected)
         {
-            if (topology.ReusedEntrypoints.TryGetValue(asset.Path, out var actualPath) && actualPath != asset.Path)
+            var destination = layout.MapPayloadPath(asset.Path);
+            if (topology.ReusedEntrypoints.TryGetValue(destination, out var actualPath) && actualPath != destination)
             {
                 targetBytes.Add(actualPath, Utf8.GetBytes(documents[actualPath]));
                 continue;
             }
-            if (sources.ContainsKey(asset.Path))
+            if (sources.ContainsKey(destination))
             {
-                targetBytes.Add(asset.Path, Utf8.GetBytes(documents[asset.Path]));
+                targetBytes.Add(destination, Utf8.GetBytes(documents[destination]));
                 continue;
             }
-            var read = await _reader.ReadAsync(request.Workspace, asset.Path, token).ConfigureAwait(false);
+            var read = await _reader.ReadAsync(request.Workspace, destination, token).ConfigureAwait(false);
             if (read.State != InstallTargetReadState.Missing)
-                throw new InvalidDataException($"The selected payload destination '{asset.Path}' is occupied without a safe source identity.");
+                throw new InvalidDataException($"The selected payload destination '{destination}' is occupied without a safe source identity.");
             if (configuration is null) continue;
-            var source = FrameworkPayloadSourceProjection.Create(request.Workspace, asset);
-            sources.Add(asset.Path, source);
+            var source = FrameworkPayloadSourceProjection.Create(layout, asset);
+            sources.Add(destination, source);
             var bytes = renderedPayload[asset.Path];
-            documents.Add(asset.Path, Utf8.GetString(bytes));
-            targetBytes.Add(asset.Path, bytes);
+            documents.Add(destination, Utf8.GetString(bytes));
+            targetBytes.Add(destination, bytes);
         }
         foreach (var replacement in frontmatterPlan?.Replacements ?? [])
         {
@@ -150,7 +155,7 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
             if (targetBytes.ContainsKey(replacement.Path)) targetBytes[replacement.Path] = replacement.IntendedBytes;
         }
         var configurationPlan = new InstallConfigurationPlan(settings, ignore, settingsChange, IgnoreChange: null)
-        { Frontmatter = request.Frontmatter, FrontmatterPlan = frontmatterPlan, GitIgnoredRoutes = ownership.Document.Framework?.GitIgnoredRoutes ?? [] };
+        { Layout = layout, Frontmatter = request.Frontmatter, FrontmatterPlan = frontmatterPlan, GitIgnoredRoutes = ownership.Document.Framework?.GitIgnoredRoutes ?? [] };
         if (configuration is not null)
             configurationPlan = InstallConfigurationSharing.Complete(configurationPlan, configuration, sources.Values);
         var sharing = new SourceSharing(configurationPlan.GitIgnoredRoutes);
@@ -159,13 +164,13 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
         var formation = new GeneratedNavigationFormationBuilder().Build(sharedCatalogue, sharedSources);
         if (formation.Ambiguities.Count > 0 || formation.IntendedTargetCollisions.Count > 0)
             throw new InvalidDataException("Configuration would form an ambiguous route or target.");
-        if (FrameworkPayloadSelection.FindMissingRequiredAncestor(payload, intendedSettings, formation) is { } ancestor)
+        if (FrameworkPayloadSelection.FindMissingRequiredAncestor(layout, payload, intendedSettings, formation) is { } ancestor)
             throw new InvalidDataException($"Excluded ancestor '{ancestor}' is required by a selected route.");
         var parsed = sharedSources.ToDictionary(source => source.Identity.CanonicalBasePath,
             source => _markdown.Parse(documents[source.Identity.CanonicalBasePath]), StringComparer.Ordinal);
         var metadata = sharedSources.Where(source => source.Base.Form != SourceDocumentForm.Loader)
             .Select(source => new GeneratedNavigationMetadata(source, _metadata.Parse(parsed[source.Identity.CanonicalBasePath], source.Base.Form))).ToArray();
-        var payloadPaths = payload.Assets.Select(asset => asset.Path).Concat(topology.ReusedEntrypoints.Values).ToHashSet(StringComparer.Ordinal);
+        var payloadPaths = payload.Assets.Select(asset => layout.MapPayloadPath(asset.Path)).Concat(topology.ReusedEntrypoints.Values).ToHashSet(StringComparer.Ordinal);
         var conversionPaths = frontmatterPlan?.Replacements.Select(replacement => replacement.Path).ToHashSet(StringComparer.Ordinal) ?? [];
         var keptPaths = frontmatterPlan?.Kept.Select(file => file.Path).ToHashSet(StringComparer.Ordinal) ?? [];
         var regionSources = sharedSources.Where(source => !keptPaths.Contains(source.Identity.CanonicalBasePath)
@@ -177,7 +182,7 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
         {
             PreserveLoaderMembership = true,
             TurnedOnLoaderRoots = LoaderMembership.ReadTurnedOn(
-                formation.Topology.LoaderRootPaths, existingPaths.Contains, ReadReselectedRoots(configuration, settings)),
+                formation.Topology.LoaderRootPaths, existingPaths.Contains, ReadReselectedRoots(layout, configuration, settings)),
         });
         foreach (var region in projection.Regions)
         {
@@ -199,14 +204,14 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
         var anchors = new Dictionary<string, byte[]>(StringComparer.Ordinal);
         foreach (var path in new[] { FrameworkPayloadAsset.RootAgentPath, FrameworkPayloadAsset.RootClaudePath })
         {
-            if (FrameworkPayloadSelection.IncludesPath(path, intendedSettings))
+            if (FrameworkPayloadSelection.IncludesPath(layout, path, intendedSettings))
                 anchors[path] = renderedPayload[path];
         }
         if (ownership.Document.Framework is { } framework)
         {
             var loaderAsset = payload.Find(FrameworkPayloadAsset.LoaderPath) ?? throw new InvalidDataException("The loader payload is missing.");
-            if (existingPaths.Contains(loaderAsset.Path) && framework.Paths.Contains(loaderAsset.Path, StringComparer.Ordinal)
-                && _identity.ReadSourceFingerprint(Utf8.GetBytes(documents[loaderAsset.Path])) != _identity.ReadSourceFingerprint(renderedPayload[loaderAsset.Path]))
+            if (existingPaths.Contains(layout.LoaderPath) && framework.Paths.Contains(layout.LoaderPath, StringComparer.Ordinal)
+                && _identity.ReadSourceFingerprint(Utf8.GetBytes(documents[layout.LoaderPath])) != _identity.ReadSourceFingerprint(renderedPayload[loaderAsset.Path]))
                 return Boundary("The managed loader differs from the embedded Framework. Use Update.", InstallFindingCode.ManagedDivergence);
             foreach (var anchor in anchors)
             {

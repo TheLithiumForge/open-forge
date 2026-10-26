@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 
@@ -45,6 +46,7 @@ internal static partial class WorkspaceSettingsCodec
                 return Invalid($"{WorkspaceSettingsDefinitions.FileName} must contain a JSON object.");
             }
 
+            var mainRoot = ReadDeclaredMainRoot(root);
             return new WorkspaceSettingsDecode(
                 new WorkspaceSettingsDocument(
                     ReadSchemaVersion(root),
@@ -52,6 +54,7 @@ internal static partial class WorkspaceSettingsCodec
                     ReadRemovedCategories(root),
                     ReadRemovedFiles(root))
                 {
+                    DeclaredMainRoot = mainRoot,
                     DeclaredFrontmatter = ReadDeclaredFrontmatter(root),
                     IgnoreLinksFrom = ReadStringArray(root, WorkspaceSettingsDefinitions.IgnoreLinksFromProperty),
                     IgnoreLinksTo = ReadStringArray(root, WorkspaceSettingsDefinitions.IgnoreLinksToProperty),
@@ -59,7 +62,7 @@ internal static partial class WorkspaceSettingsCodec
                     RemovedDirectories = ReadRemovedDirectories(root),
                     RemovedExtensions = ReadRemovedExtensions(root),
                     RemovedLibraries = ReadRemovedLibraries(root),
-                    Roots = ReadRoots(root),
+                    Roots = ReadRoots(root, mainRoot ?? WorkspaceLayout.DefaultMainRoot),
                 },
                 Cause: null);
         }
@@ -144,7 +147,7 @@ internal static partial class WorkspaceSettingsCodec
         }
 
         // The generic JsonArray.Add<T> is not AOT-safe because it can box a
-        // non-primitive; the list interface takes an already-built node.
+        // non-primitive. the list interface takes an already-built node.
         ((IList<JsonNode?>)allowed).Add(JsonValue.Create(path));
         return Encoding.UTF8.GetBytes(
             settings.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
@@ -268,7 +271,7 @@ internal static partial class WorkspaceSettingsCodec
     /// The declared shape, or this release's own when the file does not say. An
     /// absent version means a file written before the key existed, or by hand,
     /// and neither is a mistake worth reporting. A version this release does not
-    /// recognise is carried through so a caller can report it; it never stops the
+    /// recognise is carried through so a caller can report it. it never stops the
     /// read.
     /// </summary>
     private static int ReadSchemaVersion(JsonElement root)
@@ -500,7 +503,7 @@ internal static partial class WorkspaceSettingsCodec
         foreach (var addition in additions)
         {
             // The generic JsonArray.Add<T> is not AOT-safe because it can box a
-            // non-primitive; add an already-built JSON node through the list API.
+            // non-primitive. add an already-built JSON node through the list API.
             ((IList<JsonNode?>)array).Add(JsonValue.Create(addition));
         }
 

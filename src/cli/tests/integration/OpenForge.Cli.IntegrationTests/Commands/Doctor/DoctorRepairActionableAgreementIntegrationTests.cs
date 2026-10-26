@@ -121,7 +121,7 @@ public sealed class DoctorRepairActionableAgreementIntegrationTests
         var doctor = await new DoctorDiagnosisReader(RepairOperationalContributorFactory.Create(paths), reader)
             .ReadAsync(new DoctorRequest(workspace.Workspace), TestContext.Current.CancellationToken);
         var repair = await new RepairCatalogueReader(paths, new RoutedMaintenanceRenameEvidenceAdapter(reader).ReadEvidenceAsync)
-            .ReadAsync(workspace.Workspace, doctor.Observation.LocalReferences, TestContext.Current.CancellationToken);
+            .ReadAsync(Assert.IsType<OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceLayoutRead>(doctor.Observation.LayoutRead), doctor.Observation.LocalReferences, TestContext.Current.CancellationToken);
         return (doctor, repair);
     }
 

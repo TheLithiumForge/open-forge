@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Status.Models.Operation;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries;
@@ -21,6 +22,7 @@ internal static class StatusAggregationObservationSeed
 {
     internal static StatusObservationSet Create()
         => new(
+            WorkspaceLayout.Create(StatusObservationSeeds.Workspace(), WorkspaceLayout.DefaultMainRoot),
             new WorkspaceEntryStatusView(
                 OperationalViewState.Complete,
                 OperationalInstallationState.Installed,

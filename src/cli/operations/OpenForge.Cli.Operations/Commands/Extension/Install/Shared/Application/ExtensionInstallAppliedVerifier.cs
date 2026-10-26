@@ -126,7 +126,7 @@ internal sealed class ExtensionInstallAppliedVerifier(
         try
         {
             currentBuild = await _topologyBuilder.BuildWithFindingsAsync(
-                plan.Request,
+                plan.Layout,
                 plan.ValidationPackages,
                 plan.SettingsObservation.Document,
                 cancellationToken).ConfigureAwait(false);

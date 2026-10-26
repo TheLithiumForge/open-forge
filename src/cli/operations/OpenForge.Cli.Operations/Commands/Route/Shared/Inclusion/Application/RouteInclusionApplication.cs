@@ -17,6 +17,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Application;
@@ -46,6 +47,11 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
             await using (lease.ConfigureAwait(false))
             {
                 token.ThrowIfCancellationRequested();
+                var layoutValidation = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver())
+                    .ValidateAsync(lease, plan.LayoutRead, token).ConfigureAwait(false);
+                if (layoutValidation.State != MutationValidationState.Valid)
+                    return Stop(result, CliSemanticStatus.Blocked, RouteInclusionFindingCode.TargetChanged,
+                        layoutValidation.Cause ?? "The workspace layout changed. Review a fresh preview and retry.");
                 var fresh = await new RouteInclusionPlanBuilder().BuildAsync(plan.Request, token).ConfigureAwait(false);
                 if (fresh.Plan is not { } current || !Equivalent(plan, current))
                     return Stop(result, CliSemanticStatus.Blocked, RouteInclusionFindingCode.TargetChanged, "The plan changed. Review a fresh preview and retry.");
@@ -96,7 +102,8 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
                         return Stop(result, CliSemanticStatus.Failed, RouteInclusionFindingCode.VerificationFailed, "Final bytes did not verify. Review the retained recovery artifact.");
                 }
                 var post = await new RouteInclusionPlanBuilder().BuildAsync(plan.Request, token).ConfigureAwait(false);
-                if (post.Plan is null || !post.Outcome.NoOp)
+                if (post.Plan is null || !post.Outcome.NoOp
+                    || post.Plan.LayoutRead.Layout?.MainRoot != plan.LayoutRead.Layout?.MainRoot)
                     return Stop(result, CliSemanticStatus.Failed, RouteInclusionFindingCode.VerificationFailed, "The final loader and registration did not verify. Review the recovery artifact.");
                 result = result with { Verified = true };
                 return await CompleteRecoveryAsync(result, lease, preparation, token).ConfigureAwait(false);
@@ -115,7 +122,10 @@ internal sealed class RouteInclusionApplication(WorkspaceLockStoreRoot? lockStor
         => outcome with { Status = status, Code = code, Cause = cause };
 
     private static bool Equivalent(RouteInclusionPlan expected, RouteInclusionPlan current)
-        => expected.Preview.Before == current.Preview.Before && expected.Preview.After == current.Preview.After
+        => expected.LayoutRead.Layout?.MainRoot == current.LayoutRead.Layout?.MainRoot
+            && expected.LayoutRead.State == current.LayoutRead.State
+            && expected.LayoutRead.Expectations.SequenceEqual(current.LayoutRead.Expectations)
+            && expected.Preview.Before == current.Preview.Before && expected.Preview.After == current.Preview.After
             && expected.Changes.Length == current.Changes.Length
             && expected.Changes.Zip(current.Changes).All(pair => pair.First.Expectation == pair.Second.Expectation
                 && pair.First.Kind == pair.Second.Kind && pair.First.IntendedBytes.AsSpan().SequenceEqual(pair.Second.IntendedBytes.AsSpan()))

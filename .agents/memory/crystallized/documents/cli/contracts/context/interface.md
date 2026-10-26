@@ -7,6 +7,12 @@ open-forge:
 
 # Context Interface Contract
 
+## Workspace Layout
+
+Context starts at the selected loader and reads native Skills at their fixed location. Exact `./<workspace-path>` operands select custom-root files. Short IDs retain their category-relative meaning.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the current Crystallized Interface Contract for the accepted `context`
@@ -33,7 +39,7 @@ defines loading behavior. The [routing model](../../../framework/routing/model.m
 define the Framework meaning consumed by this command.
 
 The shared [CLI Source References](../shared/source-references/interface.md) contract defines
-automatic IDs, exact `.agents` paths, quoting, collisions, and disambiguation.
+automatic IDs, exact workspace paths, quoting, collisions, and disambiguation.
 The shared [Global CLI Flags](../shared/global-flags/interface.md) contract defines the global
 flags used here. Those sources remain authoritative for their complete shared
 meaning; this file records only how `context` uses them.
@@ -648,7 +654,7 @@ Link expansion:
 - Follows explicit local Markdown destinations only.
 - Resolves each destination relative to the containing source.
 - Keeps every destination physically inside the selected workspace.
-- May target `.agents` content or another contained local source.
+- May target primary content or another contained local source.
 - Reports external HTTP and HTTPS URLs as unchecked observations, never fetches
   them, and never selects their targets as context. No-fetch alone does not
   weaken completeness.
@@ -671,7 +677,7 @@ logical source. The graph records the incoming link to the overwrite layer, then
 emits the base followed by its overwrite. It never emits or selects the overwrite
 alone.
 
-A contained local link may point outside `.agents`. That target has no automatic
+A contained local link may point outside the primary content locations. That target has no automatic
 Open Forge source ID. Its source block reports:
 
 ```text

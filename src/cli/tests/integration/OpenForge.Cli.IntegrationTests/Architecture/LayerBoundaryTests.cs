@@ -54,7 +54,12 @@ public sealed class LayerBoundaryTests
                     var sharedMigrationResult = imported == "Commands.Shared.WorkspaceAdoption.Models.Result"
                         && (path.StartsWith("Presentation/Install/", StringComparison.Ordinal)
                             || path.StartsWith("Presentation/Update/", StringComparison.Ordinal));
-                    if (sharedMigrationResult) continue;
+                    var sharedLayoutResult = imported == "Commands.Shared.Models.Layout"
+                        && path is "Presentation/Install/Models/InstallData.cs"
+                            or "Presentation/Status/Models/StatusData.cs"
+                            or "Presentation/Install/Shared/Rendering/InstallDataJsonContext.cs"
+                            or "Presentation/Status/Shared/Rendering/StatusDataJsonContext.cs";
+                    if (sharedMigrationResult || sharedLayoutResult) continue;
                     var segments = imported.Split('.');
                     var models = Array.IndexOf(segments, "Models");
                     var owner = models < 0 ? string.Empty : string.Join('/', segments[1..models]);

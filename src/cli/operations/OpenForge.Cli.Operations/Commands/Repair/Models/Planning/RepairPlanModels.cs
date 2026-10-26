@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Repair;
@@ -438,6 +439,8 @@ internal sealed record RepairPlan
     internal IReadOnlyList<RepairNoOp> NoOps { get; }
 
     internal IReadOnlyList<RepairConflict> Conflicts { get; }
+
+    internal WorkspaceLayoutRead? LayoutRead { get; init; }
 
     internal RepairMaintenancePlan? Maintenance { get; init; }
 

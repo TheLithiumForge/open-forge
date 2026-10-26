@@ -22,6 +22,8 @@ internal static class StatusDataTextRenderer
         ArgumentNullException.ThrowIfNull(style);
 
         var builder = new StringBuilder();
+        if (data.Layout is { } layout)
+            builder.AppendLine(global::OpenForge.Cli.OutputText.Shared.WorkspaceLayoutText.Describe(CliText.Escape(layout.MainRoot), CliText.Escape(layout.LoaderPath)));
         if (data.TextFacts.ShowOperationalSections && !data.TextFacts.ShowStandard)
         {
             AppendMinimal(builder, data);
@@ -41,7 +43,7 @@ internal static class StatusDataTextRenderer
             AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.IncludedFiles(
                 included.Listed, included.Unlisted, included.Missing, included.HandWritten));
             AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.IncludedStartup(
-                StatusWording.MeasurementSummary(included.Startup)));
+                StatusWording.MeasurementSummary(included.Startup), data.TextFacts.CustomMainRoot));
             foreach (var path in included.Pending)
                 AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.IncludedPending(path));
         }

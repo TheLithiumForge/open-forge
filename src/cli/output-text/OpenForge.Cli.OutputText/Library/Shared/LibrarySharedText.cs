@@ -4,6 +4,8 @@ namespace OpenForge.Cli.OutputText.Library.Shared;
 
 internal static class LibrarySharedText
 {
+    internal static string TitleWorkspaceLayoutIsUnavailable() => "Workspace layout is unavailable";
+
     // @OpenForgeText library.shared.message.choose-a-registered-library-id
     internal static string MessageChooseARegisteredLibraryId()
         => "Choose a registered Library ID.";

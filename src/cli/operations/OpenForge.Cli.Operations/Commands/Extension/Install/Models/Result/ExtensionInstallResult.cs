@@ -307,6 +307,8 @@ internal sealed record ExtensionInstallFinding
 
 internal sealed record ExtensionInstallResultFacts
 {
+    internal string? ContextFolder { get; init; }
+
     internal required ExtensionInstallSelection? Selection { get; init; }
 
     internal required ExtensionInstallSource? Source { get; init; }
@@ -336,6 +338,7 @@ internal sealed record ExtensionInstallResultFacts
         ArgumentNullException.ThrowIfNull(value);
         return new ExtensionInstallResultFacts
         {
+            ContextFolder = value.ContextFolder,
             Selection = value.Selection is null
                 ? null
                 : new ExtensionInstallSelection(
@@ -395,6 +398,7 @@ internal sealed record ExtensionInstallResult : ICliCommandResult
         ArgumentNullException.ThrowIfNull(findings);
 
         Workspace = input.Workspace;
+        ContextFolder = facts.ContextFolder;
         Mode = input.Mode;
         Force = input.Force;
         Automatic = input.Automatic;
@@ -431,6 +435,8 @@ internal sealed record ExtensionInstallResult : ICliCommandResult
     public CliSemanticStatus Status { get; }
 
     public CliWorkspace? Workspace { get; }
+
+    internal string? ContextFolder { get; }
 
     internal string? WorkspacePath => Workspace?.LexicalRoot;
 

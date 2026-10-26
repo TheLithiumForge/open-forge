@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.UnitTests.Commands.Index.Shared;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Index.Models.Operation;
@@ -558,6 +559,7 @@ public sealed class IndexMutationMapperTests
         {
             Request = Request(mode, RootPath),
             Projection = projection,
+            LayoutRead = IndexTestData.LayoutRead(),
         });
 
     private static IndexProjectionFormation Projection(IndexProjectedRegion region)
@@ -592,7 +594,7 @@ public sealed class IndexMutationMapperTests
             "The authored metadata is malformed.");
         var skipped = new IndexProjectedRegion(
             region: skippedRegion,
-            source: new IndexLogicalSource(
+            source: new IndexLogicalSource(IndexTestData.Layout(),
                 id: skippedSource.Identity.AutomaticId,
                 path: skippedSource.Identity.CanonicalBasePath,
                 scope: IndexLogicalSourceScope.Rooted),
@@ -656,7 +658,7 @@ public sealed class IndexMutationMapperTests
                 source: source,
                 entries: [],
                 change: change),
-            source: new IndexLogicalSource(
+            source: new IndexLogicalSource(IndexTestData.Layout(),
                 id: source.Identity.AutomaticId,
                 path: source.Identity.CanonicalBasePath,
                 scope: IndexLogicalSourceScope.Rooted),
@@ -670,7 +672,7 @@ public sealed class IndexMutationMapperTests
         string physicalPath,
         string canonicalPath)
     {
-        var automaticId = SourceIdentity.DeriveId(canonicalPath)
+        var automaticId = SourceIdentity.DeriveId(IndexTestData.Layout(), canonicalPath)
             ?? throw new InvalidOperationException("The operation fixture requires a derived source ID.");
         return new SourceLogicalSource(
             new SourceLogicalIdentity(

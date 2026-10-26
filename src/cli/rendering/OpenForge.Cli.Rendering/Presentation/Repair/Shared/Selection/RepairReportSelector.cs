@@ -967,19 +967,8 @@ internal static class RepairReportSelector
         var evidence = global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.MetadataProof();
         if (rename.SameContent) evidence = global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.SameContent();
         else if (rename.Similarity is { } score) evidence = global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Similarity(score);
-        var oldPath = rename.OldPath;
-        var newPath = rename.NewPath;
-        if (!full)
-        {
-            var oldParts = oldPath.Split('/');
-            var newParts = newPath.Split('/');
-            if (oldParts.Length > 2 && newParts.Length > 2 && oldParts[0] == ".agents" && newParts[0] == ".agents" && oldParts[1] == newParts[1])
-            {
-                var prefix = oldParts[0].Length + oldParts[1].Length + 2;
-                oldPath = oldPath[prefix..];
-                newPath = newPath[prefix..];
-            }
-        }
+        var oldPath = full ? rename.OldPath : rename.DisplayOldPath ?? rename.OldPath;
+        var newPath = full ? rename.NewPath : rename.DisplayNewPath ?? rename.NewPath;
         return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Proof(oldPath, newPath, rename.Moved, evidence);
     }
 

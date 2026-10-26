@@ -40,7 +40,10 @@ internal sealed class ContextOperation
                 .ExpandAsync(request, graph, closure, cancellationToken)
                 .ConfigureAwait(false);
             var projection = new ContextProjectionBuilder().Build(links.ResultSources, request.Content);
-            return _resultBuilder.Build(request, closure, links, projection);
+            return _resultBuilder.Build(request, closure, links, projection) with
+            {
+                SelectedLoaderPath = graph.Catalogue.Layout.LoaderPath,
+            };
         }
         catch (OperationCanceledException)
         {

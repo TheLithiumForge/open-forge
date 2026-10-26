@@ -52,7 +52,7 @@ internal static class ReferencesReportSelector
             Workspace = result.WorkspacePath is { } workspacePath
                 ? new CliWorkspaceEcho(workspacePath, result.WorkspaceExplicit)
                 : null,
-            Findings = result.Findings.Select(Finding).ToArray(),
+            Findings = result.Findings.Select(finding => Finding(finding, result.CustomMainRoot)).ToArray(),
             Effects = [],
             Counts = Counts(result),
             Data = data,
@@ -156,7 +156,7 @@ internal static class ReferencesReportSelector
             CliSemanticStatus.Incomplete
                 => new(DisplaySource(result), CliHeadlineKind.Incomplete),
             CliSemanticStatus.Invalid when finding is { Code: ReferencesFindingCode.InvalidDirection }
-                => new(ReferencesWording.CannotList(Message(finding)), CliHeadlineKind.CannotStart),
+                => new(ReferencesWording.CannotList(Message(finding, result.CustomMainRoot)), CliHeadlineKind.CannotStart),
             CliSemanticStatus.Invalid
                 => new(ReferencesWording.CannotList(Cause(finding)), CliHeadlineKind.CannotStart),
             CliSemanticStatus.Blocked when finding is { Code: ReferencesFindingCode.PhysicalAlias }
@@ -199,13 +199,13 @@ internal static class ReferencesReportSelector
         ];
     }
 
-    private static CliFinding Finding(ReferencesFinding finding)
+    private static CliFinding Finding(ReferencesFinding finding, string? mainRoot)
         => new()
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = ReferencesWireVocabulary.Name(finding.Code),
             Title = ReferencesWording.FindingTitle(finding.Code),
-            Message = Message(finding),
+            Message = Message(finding, mainRoot),
             Subject = new CliSubject(
                 SubjectKind(finding.Code),
                 finding.Path,
@@ -229,7 +229,7 @@ internal static class ReferencesReportSelector
         _ => CliSubjectKind.File,
     };
 
-    private static string Message(ReferencesFinding finding)
+    private static string Message(ReferencesFinding finding, string? mainRoot)
     {
         var location = finding.Path is { } path
             ? LocationText(path, finding.LocationView?.Line, finding.LocationView?.Column)
@@ -237,7 +237,7 @@ internal static class ReferencesReportSelector
         return finding.Code switch
         {
             ReferencesFindingCode.InvalidInput => ReferencesWording.InvalidInput(finding.Cause),
-            ReferencesFindingCode.InvalidSource => InvalidSource(finding),
+            ReferencesFindingCode.InvalidSource => InvalidSource(finding, mainRoot),
             ReferencesFindingCode.InvalidDirection => global::OpenForge.Cli.OutputText.References.ReferencesText.InvalidDirection(finding.Subject ?? ""),
             ReferencesFindingCode.InvalidFilter => InvalidFilter(finding),
             ReferencesFindingCode.WorkspaceUnavailable
@@ -279,9 +279,9 @@ internal static class ReferencesReportSelector
         };
     }
 
-    private static string InvalidSource(ReferencesFinding finding)
+    private static string InvalidSource(ReferencesFinding finding, string? mainRoot)
         => finding.Path is { } path
-            ? ReferencesWording.SourceOutsideAgents(path)
+            ? ReferencesWording.SourceOutsideAgents(path, mainRoot)
             : ReferencesWording.UnknownSourceId(finding.Subject ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheSource());
 
     private static string InvalidFilter(ReferencesFinding finding)

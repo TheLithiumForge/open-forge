@@ -57,7 +57,8 @@ public sealed class InstallSetupRecapIntegrationTests
         var prompts = new InstallSetupInteraction(
             (_, _, _) => ValueTask.FromResult(CliPromptReply<InstallPreset>.Answered(InstallPreset.Essentials)),
             (_, _, _) => throw new InvalidOperationException("Essentials does not ask for Custom routes."),
-            (_, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered("root")));
+            (_, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered("root")),
+            (initial, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered(initial.Initial)));
         var operation = InstallOperationFactory.Create(InstallInteractionTestSupport.Confirmation(), workspace.LockStoreRoot, prompts);
         var result = await operation.ExecuteAsync(workspace.Request(automatic: false, allowsInteractiveConfirmation: true), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);

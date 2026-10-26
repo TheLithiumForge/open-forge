@@ -14,6 +14,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Sync.Models.Planning;
 
 internal sealed record LibrarySyncPlanningInput : ILibraryMutationObservation
 {
+    public required WorkspaceLayoutRead LayoutRead { get; init; }
+
     public required LibrarySyncRequest Request { get; init; }
 
     public required LibraryConsumerBoundaryFacts ConsumerBoundary { get; init; }

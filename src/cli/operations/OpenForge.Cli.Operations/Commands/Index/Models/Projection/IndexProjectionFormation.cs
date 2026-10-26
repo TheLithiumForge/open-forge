@@ -9,7 +9,8 @@ using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Models;
 
 namespace OpenForge.Cli.Core.Commands.Index.Models.Projection;
@@ -145,6 +146,7 @@ internal sealed record IndexProjectedRegion
 internal sealed record IndexProjectionReadiness
 {
     internal IndexProjectionReadiness(
+        WorkspaceLayout layout,
         IEnumerable<IndexFinding> findings,
         IEnumerable<string> unavailableTargetPaths,
         bool hasMetadataLimitations = false)
@@ -162,7 +164,7 @@ internal sealed record IndexProjectionReadiness
                 nameof(unavailableTargetPaths)))
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
-        if (pathValues.Any(path => !SourceLogicalPath.IsCanonical(path))
+        if (pathValues.Any(path => !SourceLogicalPath.IsPrimarySource(new SourceContentRoots(layout), path))
             || pathValues.Distinct(StringComparer.Ordinal).Count() != pathValues.Length)
         {
             throw new ArgumentException(
@@ -184,8 +186,7 @@ internal sealed record IndexProjectionReadiness
 
 internal sealed record IndexProjectionFormation
 {
-    internal FileExpectation? OwnershipExpectation { get; init; }
-    internal FileExpectation? SettingsExpectation { get; init; }
+    internal WorkspaceLayoutRead? LayoutRead { get; init; }
     internal RoutedMaintenanceIntent? Maintenance { get; init; }
 
     internal IndexProjectionFormation(

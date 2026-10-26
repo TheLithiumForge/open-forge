@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
@@ -84,7 +85,7 @@ internal sealed record ExtensionUpdatePlanInput
 {
     internal required ExtensionUpdateRequest Request { get; init; }
 
-    internal required WorkspaceSettingsRead SettingsObservation { get; init; }
+    internal required WorkspaceLayoutRead LayoutRead { get; init; }
 
     internal required ExtensionSourceReadResult SourceRead { get; init; }
 
@@ -127,7 +128,7 @@ internal sealed class ExtensionUpdatePlan
     private ExtensionUpdatePlan(ExtensionUpdatePlanInput input)
     {
         Request = input.Request;
-        SettingsObservation = input.SettingsObservation;
+        LayoutRead = input.LayoutRead;
         SourceRead = input.SourceRead;
         SourceSignature = input.SourceSignature;
         Selection = new ExtensionUpdateSelection(
@@ -171,7 +172,9 @@ internal sealed class ExtensionUpdatePlan
 
     internal ExtensionUpdateRequest Request { get; }
 
-    internal WorkspaceSettingsRead SettingsObservation { get; }
+    internal WorkspaceLayoutRead LayoutRead { get; }
+    internal WorkspaceLayout Layout => LayoutRead.Layout ?? throw new InvalidOperationException("An Extension Update plan requires its observed layout.");
+    internal WorkspaceSettingsRead SettingsObservation => LayoutRead.Settings;
 
     internal ExtensionSourceReadResult SourceRead { get; }
 

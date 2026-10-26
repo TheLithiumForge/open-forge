@@ -64,6 +64,8 @@ internal sealed class RouteInspectAutomaticReading
 
     internal string? RelatedSourceId { get; }
 
+    internal bool RelatedSourceIsLoader { get; init; }
+
     internal IReadOnlyList<RouteInspectAutomaticReadingEvent> Events { get; }
 
     private static void ValidateEvents(

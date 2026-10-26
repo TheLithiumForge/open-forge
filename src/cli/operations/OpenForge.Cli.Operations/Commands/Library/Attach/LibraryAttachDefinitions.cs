@@ -37,6 +37,7 @@ internal static class LibraryAttachDefinitions
             LibraryAttachFindingCode.OwnershipObservation => "library-attach.ownership-observation",
             LibraryAttachFindingCode.RecordUnavailable => "library-attach.record-unavailable",
             LibraryAttachFindingCode.RecordBlocked => "library-attach.record-blocked",
+            LibraryAttachFindingCode.LayoutUnavailable => "library-attach.layout-unavailable",
             LibraryAttachFindingCode.ConsumerBlocked => "library-attach.consumer-blocked",
             LibraryAttachFindingCode.MappingBlocked => "library-attach.mapping-blocked",
             LibraryAttachFindingCode.MappingUnavailable => "library-attach.mapping-unavailable",

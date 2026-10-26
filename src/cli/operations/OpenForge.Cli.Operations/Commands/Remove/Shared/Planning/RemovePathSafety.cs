@@ -10,26 +10,31 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Remove.Shared.Planning;
 
 internal static class RemovePathSafety
 {
-    private const string AgentsDirectory = ".agents";
-    private const string RecoveryDirectory = ".agents/recovery";
+    private const string RecoveryDirectory = WorkspaceSettingsDefinitions.DirectoryName + "/" + RecoveryBundleFormatV1.RecoveryDirectoryName;
 
-    internal static bool IsProtectedPath(string path)
+    internal static bool IsProtectedControlPath(string path)
     {
         var portablePath = PortableWorkspacePath.CreatePortableKey(path);
-        return string.Equals(portablePath, AgentsDirectory, StringComparison.Ordinal)
+        return string.Equals(portablePath, WorkspaceSettingsDefinitions.DirectoryName, StringComparison.Ordinal)
             || ContainsGitMetadataSegment(portablePath)
             || IsSameOrDescendant(portablePath, WorkspaceSettingsDefinitions.RelativePath)
             || IsSameOrDescendant(portablePath, WorkspaceOwnershipDefinitions.RelativePath)
             || IsSameOrDescendant(portablePath, RecoveryDirectory);
     }
 
+    internal static bool ContainsMainRoot(string path, WorkspaceLayout layout)
+        => string.Equals(path, layout.MainRoot, StringComparison.Ordinal)
+            || layout.MainRoot.StartsWith(path + "/", StringComparison.Ordinal);
+
     internal static bool ContainsGitMetadataSegment(string path)
-        => path.Split('/').Any(segment => string.Equals(segment, ".git", StringComparison.OrdinalIgnoreCase));
+        => path.Split('/').Any(segment => string.Equals(segment, WorkspaceSettingsDefinitions.GitMetadataDirectoryName, StringComparison.OrdinalIgnoreCase));
 
     internal static bool IsLibrarySourcePath(string path, WorkspaceOwnershipDocument ownership)
         => ownership.Libraries.Any(library => IsSameOrDescendant(path, library.SourceRoot)
@@ -37,6 +42,7 @@ internal static class RemovePathSafety
 
     internal static string? FindKnownAlias(
         string path,
+        WorkspaceLayout layout,
         WorkspaceSettingsDocument settings,
         WorkspaceOwnershipDocument ownership,
         LibraryRegistrationSet? registrations)
@@ -44,7 +50,7 @@ internal static class RemovePathSafety
         var candidates = new List<string>();
         candidates.AddRange(settings.RemovedFiles);
         candidates.AddRange(settings.RemovedDirectories);
-        candidates.AddRange(settings.RemovedCategories.Select(category => $".agents/{category}"));
+        candidates.AddRange(settings.RemovedCategories.Select(layout.CategoryDirectory));
         if (ownership.Framework is { } framework)
         {
             candidates.AddRange(framework.Paths);

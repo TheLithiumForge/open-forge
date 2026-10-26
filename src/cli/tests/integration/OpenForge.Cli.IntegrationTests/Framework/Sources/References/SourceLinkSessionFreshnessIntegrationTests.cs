@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.References;
 
@@ -20,7 +21,7 @@ public sealed class SourceLinkSessionFreshnessIntegrationTests
         temporary.WriteText("outside.md", "# Old\n");
         var workspace = new CliWorkspace(temporary.Combine("workspace"), temporary.Combine("workspace"), CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var token = TestContext.Current.CancellationToken;
-        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(workspace, token);
+        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), token);
         var resolver = new SourceLinkDestinationResolver(new PhysicalPathResolver(), StrictUtf8FileReader.ReadAsync, new MarkdownDocumentParser().Parse).CreateSession(session);
         SourceLinkDestinationInput Input(string destination) => new()
         {
@@ -47,7 +48,7 @@ public sealed class SourceLinkSessionFreshnessIntegrationTests
         temporary.WriteText(".agents/target.md", "# Old\n");
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var token = TestContext.Current.CancellationToken;
-        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(workspace, token);
+        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), token);
         var target = session.Catalogue.FindByPath(".agents/target.md") ?? throw new InvalidOperationException();
         Assert.Equal("# Old\n", (await session.DocumentReader.ReadAsync(target.Base, token)).Read?.Value);
         var parses = 0;

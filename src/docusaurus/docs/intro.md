@@ -11,11 +11,13 @@ import FrameworkMap from "@site/src/components/framework-map/FrameworkMap";
 
 Open Forge is a small Markdown framework for working with AI agents, built around your projects, your tools, and the way you like to work. It gives an agent a map to your rules and project knowledge, and a place to keep useful outcomes for the next task.
 
+Path examples use the default `.agents` context folder. You can [choose another folder at first installation](getting-started/installation.md#choose-the-context-folder). Skills, settings and ownership stay in `.agents`.
+
 At its core, it's Markdown, rules, and links. Install it, ask your agent to work as usual, and add only what makes the next task easier.
 
 ## Start using it
 
-Already have `AGENTS.md` or `CLAUDE.md`? Install adds a marked Open Forge section and keeps your existing text. It also creates the selected files under `.agents/`. Save your current work before trying it.
+Already have `AGENTS.md` or `CLAUDE.md`? Install adds a marked Open Forge section and keeps your existing text. It also creates the selected context files under `.agents/` by default. Save your current work before trying it.
 
 For a trial, use a separate local clone and copy any additional local files you need. [Installation](getting-started/installation.md#try-it-and-undo-a-trial) explains the baseline and undo steps.
 

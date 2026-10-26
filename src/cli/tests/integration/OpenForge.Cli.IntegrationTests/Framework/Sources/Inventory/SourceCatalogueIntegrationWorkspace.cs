@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.Framework.Sources.Shared;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Inventory;
 
@@ -26,7 +27,7 @@ internal sealed class SourceCatalogueIntegrationWorkspace : IDisposable
     internal SourceCatalogueRequest Request(params string[] logicalRoots)
     {
         return new SourceCatalogueRequest(
-            Workspace,
+WorkspaceLayout.Create(Workspace, WorkspaceLayout.DefaultMainRoot),
             logicalRoots.Length == 0 ? [".agents"] : logicalRoots);
     }
 

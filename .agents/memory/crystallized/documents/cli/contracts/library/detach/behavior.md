@@ -9,6 +9,12 @@ open-forge:
 
 A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
 
+## Workspace Layout
+
+Retain literal Library mappings. Use the consumer layout for content boundaries and navigation, and revalidate its observation under the lease before grants or effects.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This is the current Crystallized Behavior Contract for

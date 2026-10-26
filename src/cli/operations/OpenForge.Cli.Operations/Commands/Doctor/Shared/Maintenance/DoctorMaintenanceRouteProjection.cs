@@ -10,6 +10,7 @@ internal static class DoctorMaintenanceRouteProjection
 {
     internal static RouteDoctorView Read(RouteDoctorView routes, DoctorMaintenanceObservation maintenance, SourceSharing? sharing)
     {
+        if (routes.Catalogue is null || routes.WorkspaceEntry is null) return routes;
         if (maintenance.MalformedMetadata.IsEmpty) return routes;
         var sources = routes.Sources.Select(source => maintenance.MalformedMetadata.ContainsKey(source.Source.Identity.CanonicalBasePath)
             ? source with { AuthoredMetadata = SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed) } : source).ToArray();

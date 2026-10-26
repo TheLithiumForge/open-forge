@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Comparison;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Result;
@@ -29,10 +32,8 @@ internal sealed class LibraryInspectOperation
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var read = await LibraryRegistrationReader.ReadAsync(
-                _resolver,
-                request.Workspace,
-                cancellationToken).ConfigureAwait(false);
+            var layoutRead = await new WorkspaceLayoutReader(_resolver).ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+            var read = LibraryRegistrationReader.Read(layoutRead.Ownership);
             if (read.State != LibraryRegistrationReadState.Complete)
             {
                 return FromRecordBoundary(request, read);
@@ -44,7 +45,7 @@ internal sealed class LibraryInspectOperation
                 string.Equals(library.Id.Value, request.LibraryId.Value, StringComparison.Ordinal));
             return selected is null
                 ? UnknownId(request, LibraryRecordViewState.Complete)
-                : await ObserveSelectedAsync(_resolver, request, selected, cancellationToken).ConfigureAwait(false);
+                : await ObserveSelectedAsync(_resolver, request, selected, layoutRead, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -76,6 +77,7 @@ internal sealed class LibraryInspectOperation
         PhysicalPathResolver resolver,
         LibraryInspectRequest request,
         LibraryRegistration selected,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
         var source = LibrarySourceRootReader.Read(
@@ -88,7 +90,7 @@ internal sealed class LibraryInspectOperation
             cancellationToken);
         if (source.State != LibrarySourceRootState.Available)
         {
-            return FromSourceBoundary(request, selected, LibraryInspectComparisonReader.RegisteredPaths(selected), source);
+            return FromSourceBoundary(request, selected, LibraryInspectComparisonReader.RegisteredPaths(selected, layoutRead.Layout), source);
         }
 
         var inventoryRead = await LibraryInventoryReader.ReadAsync(
@@ -97,6 +99,17 @@ internal sealed class LibraryInspectOperation
             cancellationToken).ConfigureAwait(false);
         var inventory = inventoryRead.Inventory;
         var findings = new List<LibraryInspectFinding>();
+        if (layoutRead.Layout is null)
+        {
+            findings.Add(new LibraryInspectFinding
+            {
+                Code = LibraryInspectFindingCode.LayoutUnavailable,
+                Status = CliSemanticStatus.Incomplete,
+                LibraryId = null,
+                Path = layoutRead.Settings.LogicalPath,
+                Cause = layoutRead.Settings.Cause ?? "The workspace layout is unavailable for source identity projection.",
+            });
+        }
         if (inventory is null || inventory.State != LibraryInventoryState.Complete)
         {
             findings.Add(new LibraryInspectFinding
@@ -113,7 +126,7 @@ internal sealed class LibraryInspectOperation
             });
         }
 
-        var comparison = new LibraryInspectComparisonReader(resolver, request.Workspace).Read(selected, inventory, cancellationToken);
+        var comparison = new LibraryInspectComparisonReader(resolver, request.Workspace, layoutRead.Layout).Read(selected, inventory, cancellationToken);
         findings.AddRange(comparison.Findings);
         var projection = SelectProjection(inventory, comparison.Comparisons);
         var status = SelectStatus(findings);

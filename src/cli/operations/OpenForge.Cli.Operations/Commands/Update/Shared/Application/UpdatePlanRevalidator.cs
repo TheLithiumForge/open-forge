@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
@@ -33,6 +35,12 @@ internal sealed class UpdatePlanRevalidator(
         {
             return Failed("Update revalidation does not hold the selected workspace lease.");
         }
+
+        var layoutValidation = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver())
+            .ValidateAsync(lease, expected.LayoutRead, cancellationToken).ConfigureAwait(false);
+        if (layoutValidation.State != MutationValidationState.Valid)
+            return layoutValidation.State == MutationValidationState.Cancelled ? Interrupted()
+                : Changed(layoutValidation.Cause ?? "The workspace layout changed before Update application.");
 
         var changes = Changes(expected);
         IReadOnlyList<FileExpectationValidationResult> checks = [];
@@ -110,7 +118,10 @@ internal sealed class UpdatePlanRevalidator(
         => expected.SequenceEqual(actual);
 
     private static bool Matches(UpdatePlanExecution expected, UpdatePlanExecution actual)
-        => expected.OwnershipRead.State == actual.OwnershipRead.State
+        => expected.LayoutRead.Layout?.MainRoot == actual.LayoutRead.Layout?.MainRoot
+            && expected.LayoutRead.State == actual.LayoutRead.State
+            && expected.LayoutRead.Expectations.SequenceEqual(actual.LayoutRead.Expectations)
+            && expected.OwnershipRead.State == actual.OwnershipRead.State
             && expected.OwnershipRead.Snapshot?.Expectation == actual.OwnershipRead.Snapshot?.Expectation
             && SourceMatches(expected, actual)
             && expected.Build.Preview.Mode == actual.Build.Preview.Mode

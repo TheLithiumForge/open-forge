@@ -12,7 +12,7 @@ Extension files follow a few conventions. Once you know them, you can open any i
 
 ## Start with the path
 
-The folder a file lands in tells you its role:
+The category a file lands in tells you its role. This tree uses the default `.agents` context folder. With a custom root, ordinary categories follow it and Skills stay at `.agents/skills`. See [installed path mapping](/guides/extensions#installed-paths).
 
 ```text
 .agents/

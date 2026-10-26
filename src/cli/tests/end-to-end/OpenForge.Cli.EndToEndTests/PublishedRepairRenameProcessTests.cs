@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport.Contracts;
 using System.Diagnostics;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
@@ -241,6 +242,7 @@ public sealed partial class PublishedRepairProcessTests
         private readonly TemporaryWorkspace _temporary = TemporaryWorkspace.Create("published-repair-rename");
         private readonly PublishedWorkspaceLockStore _store = PublishedWorkspaceLockStore.Create("published-repair-rename-store");
         private string? _tree;
+        private string? _customRoot;
         internal string Root { get; }
         internal IReadOnlyDictionary<string, string> EnvironmentVariables => new Dictionary<string, string>(_store.EnvironmentVariables)
         {
@@ -265,6 +267,17 @@ public sealed partial class PublishedRepairProcessTests
         internal static string Document(string description, string body) => $"---\nopen-forge:\n  description: {description}\n  tags: [Guidance]\n---\n\n{body}";
         internal async Task InitializeAsync()
         {
+            await InitializeGitAsync();
+            Write("AGENTS.md", "# Workspace\n\nRead `.agents/loader.md`.\n");
+            Write(".agents/loader.md", "# Open Forge Loader\n\n## Axioms\n\n- Preserve authored content.\n\n## Entries\n\n- [Guidance](guidance/_guidance.md) - #Guidance\n");
+            Write(".agents/guidance/_guidance.md", Document("Guidance", "# Guidance\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n"));
+            Write(".agents/guidance/billing/_billing.md", Document("Billing rules", "# Billing\n\n## Axioms\n\n- Keep exact monetary rules.\n\n## Entries\n"));
+            Write(".agents/guidance/billing/rounding.md", Document("Money rounding policy", "# Rounding\n\n" + string.Concat(Enumerable.Repeat("Keep monetary amounts in minor units.\n", 30))));
+            Write(".agents/guidance/notes.md", Document("Maintainer rename journey", "# Notes\n\nRead [Rounding](billing/rounding.md#rounding).\nRead [Billing](billing/_billing.md).\n"));
+            await RecordTreeAsync();
+        }
+        private async Task InitializeGitAsync()
+        {
             await GitAsync(Root, "init", "--quiet");
             var source = new DirectoryInfo(AppContext.BaseDirectory);
             while (source is not null && !File.Exists(Path.Combine(source.FullName, "OpenForge.Cli.slnx"))) source = source.Parent;
@@ -274,17 +287,36 @@ public sealed partial class PublishedRepairProcessTests
             var head = (await GitAsync(sourceRoot, "-c", $"safe.directory={sourceRoot.Replace('\\', '/')}", "rev-parse", "HEAD")).Trim();
             await GitAsync(Root, "update-ref", "HEAD", head);
             _tree = (await GitAsync(Root, "rev-parse", "HEAD^{tree}")).Trim();
-            Write("AGENTS.md", "# Workspace\n\nRead `.agents/loader.md`.\n");
-            Write(".agents/loader.md", "# Open Forge Loader\n\n## Axioms\n\n- Preserve authored content.\n\n## Entries\n\n- [Guidance](guidance/_guidance.md) - #Guidance\n");
-            Write(".agents/guidance/_guidance.md", Document("Guidance", "# Guidance\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n"));
-            Write(".agents/guidance/billing/_billing.md", Document("Billing rules", "# Billing\n\n## Axioms\n\n- Keep exact monetary rules.\n\n## Entries\n"));
-            Write(".agents/guidance/billing/rounding.md", Document("Money rounding policy", "# Rounding\n\n" + string.Concat(Enumerable.Repeat("Keep monetary amounts in minor units.\n", 30))));
-            Write(".agents/guidance/notes.md", Document("Maintainer rename journey", "# Notes\n\nRead [Rounding](billing/rounding.md#rounding).\nRead [Billing](billing/_billing.md).\n"));
+        }
+
+        internal async Task InitializeMainRootAsync(string mainRoot)
+        {
+            await InitializeGitAsync();
+            _customRoot = mainRoot;
+            Write(PublishedTokens.Settings.RelativePath, $$"""
+                {"{{PublishedTokens.Settings.SchemaVersionProperty}}":{{PublishedTokens.Settings.SchemaVersion}},"{{PublishedTokens.Settings.MainRootProperty}}":"{{mainRoot}}"}
+                """);
+            Write(PublishedTokens.Layout.AgentHost, $"# Workspace\n\nRead `{mainRoot}/{PublishedTokens.Layout.LoaderFileName}`.\n");
+            Write($"{mainRoot}/{PublishedTokens.Layout.LoaderFileName}", OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Prefix = "# Context\n\n## Axioms\n\n- Preserve authored rules.",
+                Entries = $"- [Notes](notes/{PublishedTokens.Layout.IndexFile}) - #Docs",
+            }));
+            Write($"{mainRoot}/notes/{PublishedTokens.Layout.IndexFile}", OpenForgeDocumentSeed.Metadata("Notes", ["Docs"], OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Prefix = "# Notes\n\n## Axioms\n\n- Preserve authored rules.",
+                Entries = string.Empty,
+            })));
+            Write($"{mainRoot}/notes/rounding{PublishedTokens.Layout.MarkdownExtension}", OpenForgeDocumentSeed.Metadata("Rounding", ["Docs"],
+                "# Rounding\n\n" + string.Concat(Enumerable.Repeat("Keep monetary amounts in minor units.\n", 30))));
+            Write($"{mainRoot}/notes/checklist{PublishedTokens.Layout.MarkdownExtension}", OpenForgeDocumentSeed.Metadata("Checklist", ["Docs"],
+                $"# Checklist\n\nRead [Rounding](rounding{PublishedTokens.Layout.MarkdownExtension}#rounding).\n"));
             await RecordTreeAsync();
         }
+
         internal async Task RecordTreeAsync()
         {
-            await GitAsync(Root, "add", "--", ".agents", "AGENTS.md");
+            await GitAsync(Root, "add", "--", PublishedTokens.Sources.AgentsRoot, PublishedTokens.Layout.AgentHost, _customRoot ?? PublishedTokens.Sources.AgentsRoot);
             var tree = (await GitAsync(Root, "write-tree")).Trim();
             await GitAsync(Root, "replace", "-f", _tree ?? throw new InvalidOperationException(), tree);
         }
@@ -294,6 +326,8 @@ public sealed partial class PublishedRepairProcessTests
         {
             var start = new ProcessStartInfo("git") { WorkingDirectory = root, UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true };
             foreach (var item in EnvironmentVariables) start.Environment[item.Key] = item.Value;
+            start.ArgumentList.Add("-c");
+            start.ArgumentList.Add("safe.directory=*");
             foreach (var argument in arguments) start.ArgumentList.Add(argument);
             using var process = Process.Start(start) ?? throw new InvalidOperationException("Git did not start.");
             var output = process.StandardOutput.ReadToEndAsync(TestContext.Current.CancellationToken);

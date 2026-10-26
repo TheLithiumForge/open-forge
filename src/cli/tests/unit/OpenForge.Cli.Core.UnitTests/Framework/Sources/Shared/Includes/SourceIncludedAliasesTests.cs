@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
@@ -21,7 +23,7 @@ public sealed class SourceIncludedAliasesTests
         var source = new SourceLogicalSource(new SourceLogicalIdentity(automaticId: "./CONTRIBUTING.md", canonicalBasePath: "CONTRIBUTING.md"),
             new SourceLayer(canonicalPath: "CONTRIBUTING.md", physicalPath: Path.Combine(root, "CONTRIBUTING.md"),
                 form: SourceDocumentForm.Markdown, kind: SourceLayerKind.Base));
-        var catalogue = new SourceCatalogue(workspace, [], [source], [], isCancelled: false,
+        var catalogue = new SourceCatalogue(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], [source], [], isCancelled: false,
             aliases: new Dictionary<string, string> { ["alias.md"] = "CONTRIBUTING.md" });
         var resolver = new SourceReferenceResolver((_, _) => throw new InvalidOperationException("A retained alias requires no extra physical lookup."));
         var resolution = resolver.Resolve("./alias.md", catalogue);
@@ -30,7 +32,7 @@ public sealed class SourceIncludedAliasesTests
         Assert.Same(source, resolution.Source);
         Assert.Single(catalogue.Sources);
         Assert.Equal(SourceReferenceResolutionState.Unknown, resolver.Resolve("alias", catalogue).State);
-        Assert.Null(SourceIdentity.DeriveId("alias.md"));
+        Assert.Null(SourceIdentity.DeriveId(DefaultWorkspaceLayout, "alias.md"));
     }
 
     [Fact(DisplayName = "Required alias rows select the first source once instead of reporting a missing file")]
@@ -48,6 +50,7 @@ public sealed class SourceIncludedAliasesTests
             """));
         var result = new SourceLoadingClosureResolver().Resolve(new SourceLoadingClosureRequest
         {
+            Layout = WorkspaceLayout.Create(SourceInventoryTestData.Workspace(), WorkspaceLayout.DefaultMainRoot),
             WorkspaceEntryPath = "AGENTS.md",
             LoaderRootPaths = [],
             IncludeLinkedSources = true,
@@ -70,4 +73,11 @@ public sealed class SourceIncludedAliasesTests
         Assert.Empty(result.Issues);
         Assert.Equal(["AGENTS.md", ".agents/loader.md", "CONTRIBUTING.md"], result.Startup.Select(source => source.Path));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(SourceIncludedAliasesTests)),
+                Path.GetFullPath(nameof(SourceIncludedAliasesTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

@@ -7,6 +7,12 @@ open-forge:
 
 # route remove Interface Contract
 
+## Workspace Layout
+
+Route Remove accepts eligible content in the selected layout. Category exclusions cover the actual category destination, even when it is absent.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 Remove honors the [shared link scope](../../../shared-operation-contract.md#link-scope). Ignored authored links remain written as they were. Entries naming the removed path or a descendant are dropped in the same settings effect that records removal intent.
@@ -125,10 +131,10 @@ is still required unless `--automatic` is supplied.
 
 | Operand              | Role                                                                        | Accepted value                                                                                       | Omission and repetition              |
 | -------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `<source-reference>` | Select one existing eligible logical leaf or recognized category entrypoint | One shared automatic source ID or exact `.agents/...` path, narrowed by this command's subject rules | Required; exactly one source subject |
+| `<source-reference>` | Select one existing eligible logical leaf or recognized category entrypoint | One shared automatic source ID or exact `./<workspace-path>` path, narrowed by this command's subject rules | Required. exactly one source subject |
 
 The source operand follows the shared source-reference classification: `.agents/`
-and `./.agents/` prefixes request exact paths, and every other value is an
+and `./` prefixes request exact paths, and every other value is an
 automatic source ID. The CLI does not guess between the two forms. An ID that
 does not resolve to exactly one eligible subject is not repaired by ranking,
 basename matching, or route proximity.
@@ -149,7 +155,7 @@ The source reference must resolve to one of these two subject forms:
    reference must resolve to that entrypoint itself, not merely to an arbitrary
    directory. This is the category form.
 
-The Loader and the `.agents` workspace root are never remove subjects. A
+The Loader and the main root are never remove subjects. A
 Loader-exposed category may be eligible; when it is removed, the affected Loader
 projection is part of the same plan. A recognized compatibility entrypoint can
 be selected only when the route structure is otherwise unambiguous.
@@ -168,7 +174,7 @@ the complete effect is applied.
 
 The selected leaf is not eligible when it is any of the following:
 
-- an entrypoint, the Loader, or the `.agents` root;
+- an entrypoint, the Loader, or the main root.
 - a routed native source such as `SKILL.md`, a non-Markdown resource, or an
   unsupported source kind;
 - an orphan or ambiguous overwrite companion;
@@ -264,15 +270,15 @@ operation; select an individual owned link with root `remove --kind path`.
 In a Git work tree, reference coverage excludes paths Git ignores through its
 standard exclude rules. Ignored files are left unchanged, and ignored directory
 trees are pruned before link checks or content reads. Tracked files remain
-covered even when an ignore pattern matches them. The complete `.agents` tree
-stays covered, including Git-ignored private routes recorded by the workspace.
+covered even when an ignore pattern matches them. Both primary content locations
+stay covered, including Git-ignored private routes recorded by the workspace.
 Outside a Git work tree, or when Git is missing, refuses the workspace, fails,
 times out or supplies an unusable inventory, discard its exclusions and keep
 the complete filesystem scan. Cancellation still cancels the operation.
 This rule applies to reference coverage, not the selected category inventory.
 
 Remove performs one complete physically contained pass over the supported
-Markdown catalogue in the selected workspace, both inside and outside `.agents`.
+Markdown catalogue in the selected workspace, both inside and outside the primary content locations.
 The catalogue includes every supported Markdown source and physical layer that
 can contain an authored local reference, including base files and overwrite
 companions. The command does not silently narrow this pass to routed files or to

@@ -7,6 +7,12 @@ open-forge:
 
 # Status Behavior Contract
 
+## Workspace Layout
+
+Distribute one layout observation to source, route and lifecycle contributors. Retain the layout when valid settings supply it. If settings cannot supply it, keep every domain and report layout-dependent domains unavailable with the settings cause.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This is the current Crystallized Behavior Contract for the accepted `status`
@@ -107,7 +113,7 @@ rules.
 The operation creates a fresh per-invocation inspection ledger whose admissible
 universe is exactly the one in [Interface Inspection Boundary](interface.md#inspection-boundary)
 and [Context Inventory](interface.md#context-inventory): the canonical workspace
-entry and supported `.agents` Markdown, settings registrations and loader-listed
+entry and supported primary-content Markdown, settings registrations and loader-listed
 included text files with their catalogue descendants, the embedded Framework payload, the
 route and loading facts needed for startup and continuity, direct Loader root
 categories, one shared per-invocation `.agents/open-forge.lock.json` snapshot
@@ -210,12 +216,12 @@ an observation, not an installation error or a trusted empty inventory.
 Read settings `roots` and the loader Entries independently. The loader decides
 what is active. Count each registered path as missing when no file exists,
 otherwise listed when a loader row lists it, otherwise unlisted. Count unregistered loader
-rows outside `.agents/` separately, including repeated rows.
+rows outside the primary content locations separately, including repeated rows.
 
 Follow included catalogue Entries without scanning their folders. Required
 `#LoadNow` and `#KeepInMind` files contribute to startup once per physical file.
-Conditions remain pending until working paths are known. Keep the outside
-`.agents/` startup contribution separate in the report while including it in the
+Conditions remain pending until working paths are known. Keep the startup contribution from outside
+the primary content locations separate in the report while including it in the
 current startup total. Pending required includes make Status incomplete without
 discarding known measurements. Unlisted registrations contribute no content. Empty or absent
 `roots` with no included rows keep the existing report unchanged.
@@ -225,7 +231,7 @@ discarding known measurements. Unlisted registrations contribute no content. Emp
 The enumerator counts each canonical path once in the physical inventory. It
 counts a base and valid adjacent overwrite companion as two contributing files,
 does not count generated `Entries` as a separate file, and excludes operational
-metadata, support resources, and ordinary local link targets outside `.agents` as
+metadata, support resources, and ordinary local link targets outside the primary content locations as
 specified by [Interface Context File](interface.md#context-file). It retains
 base and overwrite layers in their required order for measurements and logical
 source calculations.

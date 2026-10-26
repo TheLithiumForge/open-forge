@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using OpenForge.Cli.Composition.Shared.Git;
@@ -54,7 +55,7 @@ internal sealed class RenameEvidenceGitWorkspace : IDisposable
                 : [],
             MissingPaths = missing.ToImmutableArray(),
             CandidateUniverseComplete = true,
-            Policy = new(),
+            Policy = new() { Layout = WorkspaceLayout.Create(Workspace, WorkspaceLayout.DefaultMainRoot) },
         };
 
     internal string PathFor(string path) => Path.Combine(Root, path.Replace('/', Path.DirectorySeparatorChar));

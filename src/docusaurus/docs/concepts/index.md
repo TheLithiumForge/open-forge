@@ -9,6 +9,8 @@ import FrameworkMap from "@site/src/components/framework-map/FrameworkMap";
 
 Open Forge is built on one idea: give agents a map of the workspace, not the whole workspace. Everything else follows from making that map cheap to read and easy to grow.
 
+The Framework lives in one [context folder](../getting-started/installation.md#choose-the-context-folder), `.agents` by default, with native Skills fixed at `.agents/skills`. Choosing its location does not change the roles or loading rules described here.
+
 <FrameworkMap />
 
 ## Adaptive Context Engineering
@@ -30,7 +32,7 @@ ACE applies both to the workspace itself. A task starts from what you want to ac
 | **Core categories** | Six roles for content: Directives, Guidance, Patterns, Skills, Templates, and Maps.                                                   | [Core categories](core-categories.md)   |
 | **Memory**          | Four states for what's worth remembering: Working, Emerging, Crystallized, and Archived.                                              | [Memory](memory.md)                     |
 | **Customizing**     | Every installed file is yours. Edit it, replace it, remove it, or add an overwrite companion that updates leave alone.                | [Customizing](customizing.md)           |
-| **Reuse**           | Include a document already in the project, attach a Library from this workspace, or install an Extension in any project.             | [Routing](routing.md#documents-outside-agents) |
+| **Reuse**           | Include a document already in the project, attach a Library from this workspace, or install an Extension in any project.             | [Routing](routing.md#documents-outside-the-context-folder) |
 
 ## Two parts of the Framework
 

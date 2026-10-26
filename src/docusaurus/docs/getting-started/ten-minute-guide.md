@@ -7,11 +7,13 @@ description: Add one rule, one report shape, and one saved fact, then check that
 
 Use Open Forge to give your agent one testing rule, a reusable report shape, and a useful fact for the next task.
 
+This guide uses the default `.agents` context folder. If you chose a custom folder at [installation](installation.md#choose-the-context-folder), use that folder for the rule and Memory paths below.
+
 This test example needs a project with tests and a harness that reads `AGENTS.md` or the `CLAUDE.md` bridge. Starting from an empty folder? Try the [greenfield demo](../demos/greenfield.md) first, or use the [brownfield demo](../demos/brownfield.md) for an app with tests. Your harness still supplies the agent's tools and decides how Skills run.
 
 ## 1. Install and try a task
 
-Already installed? Start with the task below. Otherwise, save your current work. Install adds a marked Open Forge section to existing `AGENTS.md` and `CLAUDE.md` files and keeps your text. It creates the selected files under `.agents/`. The [installation guide](installation.md#try-it-and-undo-a-trial) explains how to try it in a clone and undo a trial from a saved baseline.
+Already installed? Start with the task below. Otherwise, save your current work. Install adds a marked Open Forge section to existing `AGENTS.md` and `CLAUDE.md` files and keeps your text. It creates the selected context files under `.agents/` by default. The [installation guide](installation.md#try-it-and-undo-a-trial) explains how to try it in a clone and undo a trial from a saved baseline.
 
 With Node.js 22.18 or later:
 

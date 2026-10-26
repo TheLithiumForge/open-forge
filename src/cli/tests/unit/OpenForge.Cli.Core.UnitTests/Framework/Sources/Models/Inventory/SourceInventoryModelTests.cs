@@ -2,6 +2,8 @@ using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
 
@@ -14,7 +16,7 @@ public sealed class SourceInventoryModelTests
     {
         var workspace = SourceInventoryTestData.Workspace();
         var request = new SourceCatalogueRequest(
-            workspace,
+WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot),
             [".agents/z", ".agents", ".agents/z", ".agents/a"]);
 
         Assert.Equal(

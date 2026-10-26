@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Selection;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 
 namespace OpenForge.Cli.Core.Commands.References;
 
@@ -25,6 +26,7 @@ internal static class ReferencesOperationFactory
         ReferencesMarkdownParser markdownParser = new MarkdownDocumentParser().Parse;
         ReferencesStrictUtf8Reader strictUtf8Reader = StrictUtf8FileReader.ReadAsync;
         var sourceResolver = new ReferencesSourceResolver(
+            layoutRead: new WorkspaceLayoutReader(physicalPathResolverImplementation).ReadAsync,
             sourceSessionRead: sourceSessionReader.ReadIncludedAsync,
             sourceReferenceResolver: sourceReferenceResolver,
             universeFilterResolver: universeFilterResolver);

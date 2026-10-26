@@ -125,7 +125,10 @@ internal sealed class RouteInspectReadingProfileBuilder
             reasons.Add(new RouteInspectAutomaticReading(
                 RouteInspectAutomaticReadingKind.ParentLoadNow,
                 parent.Id,
-                [RouteInspectAutomaticReadingEvent.ExposingParentRead]));
+                [RouteInspectAutomaticReadingEvent.ExposingParentRead])
+            {
+                RelatedSourceIsLoader = parent.Kind == RouteSourceKind.Loader,
+            });
         }
     }
 

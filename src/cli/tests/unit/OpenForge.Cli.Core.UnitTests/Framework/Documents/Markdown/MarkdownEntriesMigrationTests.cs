@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Markdown;
 
@@ -21,7 +23,7 @@ public sealed class MarkdownEntriesMigrationTests
         var source = $"# Loader\n\n## Entries\n\n{before}\n\n- [Root](root/_root.md) - #Root\n\n{after}\n";
         var document = new MarkdownDocumentParser().Parse(source);
         Assert.Equal(MarkdownGeneratedRegionState.Complete, document.GeneratedRegion.State);
-        var loader = SourceLoaderEntriesParser.Parse(source);
+        var loader = SourceLoaderEntriesParser.Parse(DefaultWorkspaceLayout, source);
         Assert.Equal(SourceLoaderEntriesParseState.Valid, loader.State);
         Assert.Equal(".agents/root/_root.md", Assert.Single(loader.Destinations).CanonicalPath);
         var entries = SourceGeneratedEntriesParser.Parse(document);
@@ -30,4 +32,11 @@ public sealed class MarkdownEntriesMigrationTests
         var noHeading = new MarkdownDocumentParser().Parse($"{before}\n- [Root](root/_root.md) - #Root\n{after}\n");
         Assert.Equal(MarkdownGeneratedRegionState.Absent, noHeading.GeneratedRegion.State);
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(MarkdownEntriesMigrationTests)),
+                Path.GetFullPath(nameof(MarkdownEntriesMigrationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

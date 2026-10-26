@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Models.Request;
@@ -15,23 +18,35 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 
 internal sealed class LibraryMutationWorkspace : IDisposable
 {
-    internal const string Leaf = ".agents/directives/review.md";
+    internal const string Leaf = WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceCategoryNames.Directives + "/review" + SourceFormClassifier.MarkdownExtension;
     internal const string SourceRoot = "shared/team-knowledge";
-    internal const string RecordPath = ".agents/open-forge.lock.json";
-    internal const string OwnershipPath = ".agents/open-forge.lock.json";
+    internal const string RecordPath = WorkspaceOwnershipDefinitions.RelativePath;
+    internal const string OwnershipPath = WorkspaceOwnershipDefinitions.RelativePath;
     internal const string SourceBytes = "# Review\n\nRetain source bytes exactly.\n";
     private readonly TemporaryWorkspace _workspace = TemporaryWorkspace.Create("library-mutation");
+    private bool _hasDefaultLoader;
 
-    internal LibraryMutationWorkspace()
+    internal LibraryMutationWorkspace(bool createLoader = true)
     {
-        _workspace.CreateDirectory(".agents");
+        _workspace.CreateDirectory(WorkspaceLayout.DefaultMainRoot);
+        if (createLoader) _workspace.WriteText(SourceLogicalPath.LoaderPath, "# Loader\n\n## " + MarkdownEntriesSectionReader.EntriesHeadingText + "\n");
+        _hasDefaultLoader = createLoader;
         _workspace.CreateDirectory($"{SourceRoot}/.agents");
     }
 
     internal string Path => _workspace.Path;
     internal string Absolute(string path) => _workspace.Combine(path);
     internal CliWorkspace Workspace => new(Path, Path, CliWorkspaceSelectionMethod.CurrentDirectory);
-    internal void Write(string path, string text) => _workspace.WriteText(path, text);
+    internal void Write(string path, string text)
+    {
+        if (_hasDefaultLoader && path == SourceLogicalPath.LoaderPath)
+        {
+            _workspace.ReplaceText(path, text);
+            _hasDefaultLoader = false;
+            return;
+        }
+        _workspace.WriteText(path, text);
+    }
     internal void Replace(string path, string text) => _workspace.ReplaceText(path, text);
     internal void Source(string path = Leaf) => SourceAt(SourceRoot, path);
     internal void SourceAt(string sourceRoot, string path) => Write($"{sourceRoot}/{path}", SourceBytes);
@@ -47,7 +62,7 @@ internal sealed class LibraryMutationWorkspace : IDisposable
     internal void ConsumerRoute()
     {
         Write("AGENTS.md", "# Workspace\n\nRead `.agents/loader.md`.\n");
-        Write(".agents/loader.md", """
+        Replace(SourceLogicalPath.LoaderPath, """
             # Loader
 
             ## Entries

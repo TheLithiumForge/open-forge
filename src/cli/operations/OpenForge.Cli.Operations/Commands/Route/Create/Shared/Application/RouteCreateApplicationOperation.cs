@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Shared.Application;
 
@@ -18,6 +19,7 @@ internal sealed class RouteCreateApplicationOperation
 {
     private readonly WorkspaceLockManager _lockManager;
     private readonly MutationRevalidator _mutationRevalidator;
+    private readonly WorkspaceLayoutRevalidator _layoutRevalidator;
     private readonly RouteCreatePlanRevalidator _planRevalidator;
     private readonly RouteCreateEffectApplication _effectApplication;
     private readonly RouteCreateAppliedVerifier _appliedVerifier;
@@ -27,6 +29,7 @@ internal sealed class RouteCreateApplicationOperation
     {
         var pathResolver = new PhysicalPathResolver();
         var expectationValidator = new FileExpectationValidator(pathResolver);
+        _layoutRevalidator = new WorkspaceLayoutRevalidator(pathResolver);
         _mutationRevalidator = new MutationRevalidator(expectationValidator);
         _lockManager = lockStoreRoot is null
             ? WorkspaceLockManager.CreateForCurrentUser()
@@ -115,6 +118,14 @@ internal sealed class RouteCreateApplicationOperation
         Guid operationId,
         CancellationToken cancellationToken)
     {
+        var layoutValidation = await _layoutRevalidator.ValidateAsync(lease, plan.LayoutRead, cancellationToken)
+            .ConfigureAwait(false);
+        if (layoutValidation.State != MutationValidationState.Valid)
+        {
+            var (code, cause) = ValidationBoundary(layoutValidation);
+            return Failure(plan, code, cause);
+        }
+
         var planRevalidation = await _planRevalidator.RevalidateAsync(
                 plan,
                 cancellationToken)

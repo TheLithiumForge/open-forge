@@ -1,0 +1,6 @@
+Would include 'guide.md'.
+  .agents/loader.md  replaced
+  .agents/open-forge.json  replaced
+  Before: (no row)
+  After: - [Guide](../guide.md) - #LoadNow #Docs - applies to `src/**`
+No files were changed.

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using System.Collections.Immutable;
@@ -35,6 +36,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
         CancellationToken cancellationToken)
     {
         var request = input.Request;
+        var layout = input.Layout;
         var packages = input.Packages;
         var current = input.Ownership.Extensions;
         var topology = input.Topology;
@@ -73,6 +75,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
             StringComparer.Ordinal);
         var stage = new ReconciliationStage
         {
+            Layout = input.Layout,
             Comparisons = comparisons,
             Effects = effects,
             Findings = findings,
@@ -89,7 +92,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
         foreach (var path in topology.IntendedTargetBytes.Keys.Order(StringComparer.Ordinal))
         {
             var directoryBoundary = await PlanDirectoriesAsync(
-                request,
+                input.Layout,
                 path,
                 input.Settings,
                 directories,
@@ -138,12 +141,12 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                      pair => pair.Key,
                      StringComparer.Ordinal))
         {
-            if (WorkspaceRemovals.IsPathRemoved(generated.Key, stage.Settings))
+            if (WorkspaceRemovals.IsPathRemoved(stage.Layout, generated.Key, stage.Settings))
             {
                 continue;
             }
 
-            var snapshot = await ObserveAsync(request, generated.Key, cancellationToken)
+            var snapshot = await ObserveAsync(layout.Workspace, generated.Key, cancellationToken)
                 .ConfigureAwait(false);
             if (snapshot is null || snapshot.Kind != FileExpectationKind.File)
             {
@@ -219,7 +222,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
     }
 
     internal async ValueTask<ExtensionUpdateReconciliation> ReprojectGeneratedAsync(
-        ExtensionUpdateRequest request,
+        WorkspaceLayout layout,
         ExtensionUpdateTopology topology,
         ExtensionUpdateReconciliation reconciliation,
         CancellationToken cancellationToken)
@@ -236,7 +239,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                      pair => pair.Key,
                      StringComparer.Ordinal))
         {
-            var snapshot = await ObserveAsync(request, generated.Key, cancellationToken)
+            var snapshot = await ObserveAsync(layout.Workspace, generated.Key, cancellationToken)
                 .ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             if (snapshot is null || snapshot.Kind != FileExpectationKind.File)
@@ -287,7 +290,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                 continue;
             }
 
-            var snapshot = await ObserveAsync(request, generated.Key, cancellationToken)
+            var snapshot = await ObserveAsync(layout.Workspace, generated.Key, cancellationToken)
                 .ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             if (snapshot is null || snapshot.Kind != FileExpectationKind.File)
@@ -308,8 +311,8 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                 var document = _markdownParser.Parse(
                     StrictUtf8.GetString(snapshot.Bytes.AsSpan()));
                 projected = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(
-                    new GeneratedNavigationRegionInput(
-                        ExtensionUpdateTopologyBuilder.CreatePackageSource(request, generated.Key),
+                    layout, new GeneratedNavigationRegionInput(
+                        ExtensionUpdateTopologyBuilder.CreatePackageSource(layout, generated.Key),
                         document),
                     generated.Value);
             }
@@ -373,7 +376,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
     }
 
     private async ValueTask<ExtensionUpdateFinding?> PlanDirectoriesAsync(
-        ExtensionUpdateRequest request,
+        WorkspaceLayout layout,
         string relativePath,
         OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument settings,
         Dictionary<string, PlannedDirectoryCreation> directories,
@@ -381,12 +384,13 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
     {
         var parent = Path.GetDirectoryName(relativePath.Replace('/', Path.DirectorySeparatorChar));
         while (!string.IsNullOrEmpty(parent)
-            && parent.Replace(Path.DirectorySeparatorChar, '/') != ".agents")
+            && parent.Replace(Path.DirectorySeparatorChar, '/') != layout.MainRoot
+            && parent.Replace(Path.DirectorySeparatorChar, '/') != OpenForge.Cli.Core.Framework.Settings.WorkspaceSettingsDefinitions.DirectoryName)
         {
             var canonical = parent.Replace(Path.DirectorySeparatorChar, '/');
             if (!directories.ContainsKey(canonical))
             {
-                var snapshot = await ObserveAsync(request, canonical, cancellationToken)
+                var snapshot = await ObserveAsync(layout.Workspace, canonical, cancellationToken)
                     .ConfigureAwait(false);
                 if (snapshot is null)
                 {
@@ -398,7 +402,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
 
                 if (snapshot.Kind == FileExpectationKind.Missing)
                 {
-                    if (WorkspaceRemovals.IsPathRemoved(canonical, settings))
+                    if (WorkspaceRemovals.IsPathRemoved(layout, canonical, settings))
                     {
                         return new ExtensionUpdateFinding(
                             ExtensionUpdateFindingCode.ExcludedAncestor,
@@ -439,7 +443,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
         var selectedIds = stage.SelectedIds;
         var intendedOwners = stage.IntendedOwners;
         var intendedProvenance = stage.IntendedProvenance;
-        var snapshot = await ObserveAsync(input.Request, input.Path, cancellationToken)
+        var snapshot = await ObserveAsync(input.Request.Workspace, input.Path, cancellationToken)
             .ConfigureAwait(false);
         if (snapshot is null || snapshot.Kind == FileExpectationKind.Directory)
         {
@@ -451,7 +455,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                     input.Path));
         }
 
-        if (WorkspaceRemovals.IsPathRemoved(input.Path, stage.Settings))
+        if (WorkspaceRemovals.IsPathRemoved(stage.Layout, input.Path, stage.Settings))
         {
             findings.Add(new ExtensionUpdateFinding(
                 ExtensionUpdateFindingCode.PathExcluded,
@@ -462,11 +466,11 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
 
         var intendedBytes = input.SourceFile is null ? null : input.Topology.IntendedTargetBytes[input.Path];
         var currentFingerprint = snapshot.Kind != FileExpectationKind.File ? null
-            : ExtensionDestinationPolicy.IsImplicit(input.Path)
+            : ExtensionDestinationPolicy.IsImplicit(stage.Layout, input.Path)
                 ? Fingerprint(snapshot.Bytes.ToArray()).Fingerprint
                 : FileExpectation.Hash(snapshot.Bytes.AsSpan());
         (string Fingerprint, MarkdownFingerprintState Kind) intendedIdentity = intendedBytes is null ? default
-            : ExtensionDestinationPolicy.IsImplicit(input.Path)
+            : ExtensionDestinationPolicy.IsImplicit(stage.Layout, input.Path)
                 ? Fingerprint(intendedBytes)
                 : (FileExpectation.Hash(intendedBytes), MarkdownFingerprintState.ExactBytes);
         var same = intendedBytes is not null && snapshot.Kind == FileExpectationKind.File
@@ -618,15 +622,15 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
     }
 
     private async ValueTask<FileStateSnapshot?> ObserveAsync(
-        ExtensionUpdateRequest request,
+        OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace workspace,
         string relativePath,
         CancellationToken cancellationToken)
     {
         var logical = Path.GetFullPath(Path.Combine(
-            request.Workspace.LexicalRoot,
+            workspace.LexicalRoot,
             relativePath.Replace('/', Path.DirectorySeparatorChar)));
         var check = await _validator.ValidateAsync(
-            request.Workspace,
+            workspace,
             FileExpectation.Missing(logical),
             cancellationToken).ConfigureAwait(false);
         return check.State is FileExpectationValidationState.Matched
@@ -716,6 +720,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
 
     private sealed class ReconciliationStage
     {
+        internal required WorkspaceLayout Layout { get; init; }
         internal required List<ExtensionUpdateComparison> Comparisons { get; init; }
 
         internal required List<ExtensionUpdatePlannedEffect> Effects { get; init; }

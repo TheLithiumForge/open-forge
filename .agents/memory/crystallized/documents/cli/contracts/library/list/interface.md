@@ -10,6 +10,12 @@ open-forge:
 Unavailable ownership is reported as `library-list.ownership-observation`
 with `completed` status. This finding grants no ownership or mutation permission.
 
+## Workspace Layout
+
+Library registrations, source roots, destination roots and suffixes stay literal. The selected consumer layout determines content identity, existing navigation and implicit path admission.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for read-only
@@ -23,7 +29,7 @@ defines group routing and the exact command order. The shared [Global CLI Flags]
 define the six unchanged global flags. The shared [Result Coordinates](../../shared/result-coordinates/interface.md)
 define the schema-3 envelope, status exits, and output streams. The shared [CLI
 Source References](../../shared/source-references/interface.md) define automatic
-source IDs and canonical `.agents` paths; this command does not create another
+source IDs and canonical workspace paths. this command does not create another
 source-ID grammar.
 
 The [Workspace Libraries Technical Design](../../../technical-designs/workspace-libraries.md)
@@ -150,7 +156,7 @@ The observation is one of:
 | `not-started` | An earlier boundary prevented observation.                                                                            |
 
 `sourceId` in a path observation is the normal destination-derived automatic
-source ID when the destination is an eligible `.agents` file. It is retained
+source ID when the destination is an eligible primary-content file. It is retained
 separately from `library.id`; the Library ID is never substituted for it.
 
 ## Human Output

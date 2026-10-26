@@ -38,7 +38,8 @@ internal sealed class ExtensionInstallEffectPlanner(
         {
             var parent = Path.GetDirectoryName(path.Replace('/', Path.DirectorySeparatorChar));
             while (!string.IsNullOrEmpty(parent)
-                && parent.Replace(Path.DirectorySeparatorChar, '/') != ".agents")
+                && parent.Replace(Path.DirectorySeparatorChar, '/') != input.Layout.MainRoot
+                && parent.Replace(Path.DirectorySeparatorChar, '/') != OpenForge.Cli.Core.Framework.Settings.WorkspaceSettingsDefinitions.DirectoryName)
             {
                 var canonical = parent.Replace(Path.DirectorySeparatorChar, '/');
                 var observation = await ObserveAsync(input.Request, canonical, cancellationToken)
@@ -53,7 +54,7 @@ internal sealed class ExtensionInstallEffectPlanner(
                         "A complete Extension directory observation requires its snapshot.");
                 if (snapshot.Kind == FileExpectationKind.Missing)
                 {
-                    if (WorkspaceRemovals.IsPathRemoved(canonical, input.Settings))
+                    if (WorkspaceRemovals.IsPathRemoved(input.Layout, canonical, input.Settings))
                     {
                         return Stop(
                             ExtensionInstallFindingCode.ExcludedAncestor,
@@ -101,7 +102,7 @@ internal sealed class ExtensionInstallEffectPlanner(
                 var path = file.TargetPath
                     ?? throw new InvalidDataException(
                         "A planned Extension package file requires its normalized target path.");
-                if (WorkspaceRemovals.IsPathRemoved(path, input.Settings))
+                if (WorkspaceRemovals.IsPathRemoved(input.Layout, path, input.Settings))
                 {
                     continue;
                 }
@@ -146,7 +147,7 @@ internal sealed class ExtensionInstallEffectPlanner(
                      StringComparer.Ordinal))
         {
             if (mutationPaths.Contains(generated.Key)
-                || WorkspaceRemovals.IsPathRemoved(generated.Key, input.Settings))
+                || WorkspaceRemovals.IsPathRemoved(input.Layout, generated.Key, input.Settings))
             {
                 continue;
             }

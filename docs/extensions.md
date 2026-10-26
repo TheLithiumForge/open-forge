@@ -54,6 +54,12 @@ open-forge extension inspect orchestration
 
 To inspect or install local changes, add `--source /path/to/open-forge/src/extensions`, with the path pointing at your source catalogue. A local source must be separate from the target workspace, including after links are resolved. An Open Forge checkout next to your project works. A source catalogue inside that project doesn't. An explicit source selects that catalogue alone.
 
+## Installed paths
+
+Extensions use the workspace’s selected context folder. Package paths keep the `.agents/` namespace, so a package file at `content/.agents/guidance/team.md` installs to `docs/forge/guidance/team.md` when the main root is `docs/forge`. Native Skills stay at `.agents/skills`, and settings and ownership stay in `.agents`. Other package destinations remain literal. The CLI maps destinations before exclusions, permissions, collisions and ownership checks. See [Context folder](cli.md#context-folder) for first-install selection and compatibility.
+
+Installed examples below use the default `.agents` context folder unless stated otherwise. Package-layout examples always show package coordinates.
+
 ## Install an Extension
 
 Set up the base Framework first.
@@ -205,7 +211,7 @@ A Template works differently: copy and adapt it, then maintain the result indepe
 The CLI is optional. To install a package by hand:
 
 1. Review its manifest and the content of its dependencies.
-2. Copy the files under each selected package's and dependency's `content/` into the target workspace, preserving existing changes and shared files. A dependency-only bundle has no files of its own to copy.
+2. With the default layout, copy the files under each selected package's and dependency's `content/` into the target workspace, preserving existing changes and shared files. For a custom root, use the CLI to map paths and links, or apply that mapping explicitly. A dependency-only bundle has no files of its own to copy.
 3. Keep affected entrypoints and `Entries` aligned with the assembled files. Follow the destination routes' rules and check links from the installed locations.
 4. Review the diff and accept the result.
 
@@ -233,7 +239,7 @@ If creation stops partway through, created files stay in the package folder. Rev
 
 ## Package format
 
-A package contains a manifest, optional package documentation, and files arranged as they will appear in the target workspace:
+A package contains a manifest, optional package documentation, and files arranged in package coordinates:
 
 ```text
 team-practices/
@@ -259,13 +265,13 @@ A minimal manifest is:
 
 Use a stable [package ID](https://thelithiumforge.github.io/open-forge/docs/glossary#package-id) and list dependencies as unique, sorted IDs that don't include the package itself. The manifest accepts only these five fields. A package may provide one content role, a useful combination, or only dependencies. A dependency-only package may omit `content/`.
 
-Add complete files, including entrypoints where new routed folders require them. Write links for the installed layout. The assembled Framework and declared dependencies may supply destinations outside the package itself.
+Add complete files, including entrypoints where new routed folders require them. Write links in package coordinates. The CLI rebases parsed links for the selected layout. The assembled Framework and declared dependencies may supply destinations outside the package itself.
 
 Native Skill packages retain their own `SKILL.md` metadata and resources. Support files for another tool retain that tool's format. Routing them does not transfer ownership from an external manager to Open Forge.
 
 ### Files used by other tools
 
-Managed installation writes a file outside `.agents/`, such as an agent definition consumed by another tool, only when `allowInstallPaths` in `.agents/open-forge.json` admits its path. A [path grant](https://thelithiumforge.github.io/open-forge/docs/glossary#path-grant) is a workspace-relative file or directory path, and every Extension and Library shares it. Destinations inside `.agents/` need no grant.
+Managed installation writes a file outside the primary content locations, such as an agent definition consumed by another tool, only when `allowInstallPaths` in `.agents/open-forge.json` admits its path. A [path grant](https://thelithiumforge.github.io/open-forge/docs/glossary#path-grant) is a workspace-relative file or directory path, and every Extension and Library shares it. Eligible destinations below the selected main root and `.agents/skills` need no grant. Implicit admission uses exact case, and fixed controls remain protected.
 
 When a grant is missing, an interactive apply asks once for the complete missing set. You can allow it always (saved to the settings), allow it once (this run only), or cancel. Key mode starts focused on `Allow once`, so Enter approves only this run. Deliberately choose `Allow always` to save a grant. Line mode accepts `always`, `once`, or `cancel`, and an empty line cancels. Dry runs, JSON output, redirected input, and `--automatic` never ask. They report the missing grant instead. To grant a path without a prompt, add `--allow-path <path>` to `extension install`, `update`, or `remove`. A dry run writes nothing, even with `--allow-path`.
 

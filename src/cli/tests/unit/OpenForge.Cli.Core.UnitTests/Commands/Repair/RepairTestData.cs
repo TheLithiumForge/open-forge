@@ -4,9 +4,14 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
@@ -232,7 +237,13 @@ internal static class RepairTestData
         IEnumerable<RepairConflict>? conflicts = null)
     {
         request ??= Request();
-        return new(request, Selection(selected), [step], conflicts ?? [], []);
+        return new(request, Selection(selected), [step], conflicts ?? [], [])
+        {
+            LayoutRead = new(WorkspaceLayoutReadState.Ready,
+                WorkspaceSettingsRead.Absent(Path.Combine(request.Workspace.LexicalRoot, WorkspaceSettingsDefinitions.RelativePath)),
+                WorkspaceOwnershipRead.Absent(Path.Combine(request.Workspace.LexicalRoot, WorkspaceOwnershipDefinitions.RelativePath)),
+                WorkspaceLayout.Create(request.Workspace, WorkspaceLayout.DefaultMainRoot), [], []),
+        };
     }
 
     internal static RepairResult Result(

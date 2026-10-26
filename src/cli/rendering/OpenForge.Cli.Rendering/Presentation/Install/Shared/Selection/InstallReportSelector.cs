@@ -72,6 +72,7 @@ internal static class InstallReportSelector
         var kept = result.Frontmatter?.Kept.Select(file => new InstallDataFrontmatterKeptFile(file.Path, KeptReason(file.Reason))).ToArray() ?? [];
         var data = new InstallData
         {
+            Layout = result.Layout,
             InvalidRoute = result.Findings.Select(finding => finding.InvalidRoute).FirstOrDefault(value => value is not null),
             InvalidOption = result.Findings.Select(finding => finding.InvalidOption).FirstOrDefault(value => value is not null),
             Frontmatter = result.Frontmatter is { } form ? new InstallDataFrontmatter

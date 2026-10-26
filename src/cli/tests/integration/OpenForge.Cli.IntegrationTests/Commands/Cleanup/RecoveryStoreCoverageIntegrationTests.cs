@@ -15,6 +15,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Storage;
 using OpenForge.Cli.Core.Framework.Recovery.Operational;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.TestSupport;
@@ -54,9 +55,10 @@ public sealed class RecoveryStoreCoverageIntegrationTests
 
             var request = new CleanupRequest(workspace, CleanupMode.Apply);
             var frozen = await RecoveryBundleCatalogue.ReadStoresAsync(workspace, Token);
+            var layoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, Token);
             var stores = frozen.Select(observation =>
             {
-                var plan = CleanupPlanner.Create(request, observation.Catalogue);
+                var plan = CleanupPlanner.Create(request, observation.Catalogue) with { LayoutRead = layoutRead };
                 return new CleanupStoreApplication(observation, new CleanupResultBuilder(plan)
                 {
                     Findings = CleanupPlanner.ReadFindings(plan, observation.Catalogue.Cause),

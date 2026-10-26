@@ -7,6 +7,12 @@ open-forge:
 
 # Forgiving Maintenance Technical Design
 
+## Selected Layout
+
+Doctor, Repair and Index use the observed context folder and fixed native Skills location for classification, route ancestry, metadata completion and navigation. Repair carries Doctor’s layout observation into its plan and revalidates it under the lease. A lone missing loader remains restorable drift, while a recorded removal remains intentional. Layout mismatch is not repaired by guessing another root. See [Workspace Layout](workspace-layout.md#observation-and-revalidation).
+
+Wording examples below use the default `.agents` layout. Custom-root guidance receives projected paths.
+
 ## Boundary
 
 After manual edits, Index completes missing metadata and navigation. Repair fixes links when evidence identifies one renamed or moved file. Doctor gives the next action that can actually resolve the remaining problem.

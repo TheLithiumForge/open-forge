@@ -7,6 +7,12 @@ open-forge:
 
 # route init Interface Contract
 
+## Workspace Layout
+
+Generic initialization accepts literal custom-root paths. Framework restoration uses the selected layout, with Skills fixed at `.agents/skills`. It does not move an installation.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Ownership Receipt Boundary
 
 The generated `.agents/open-forge.lock.json` distinguishes whole-file paths
@@ -36,7 +42,7 @@ complete spelling, values, defaults, repetition, terminal behavior, and errors
 for `--workspace <path>`, `--format <text|json>`, `--detail <minimal|standard|full|debug>`, repeatable `--detail-filter <error|warning|info|all>`, `--help`, and `--version`.
 All six apply to `route init` under that contract. The shared [CLI Source
 References](../../shared/source-references/interface.md) contract defines source-ID segments,
-exact `.agents/...` path detection, quoting, containment, and result identity.
+exact `./<workspace-path>` path detection, quoting, containment, and result identity.
 The [Index Interface Contract](../../index-candidate/interface.md) defines the generated
 navigation projection, ordering, generated boundary, verification, and recovery
 behavior consumed by this command.
@@ -130,19 +136,20 @@ resolution rules are defined below.
 ## Route Target
 
 A route target identifies the entrypoint that should exist after the command.
-It accepts an ID for the intended folder under `.agents`, an exact canonical
+It accepts an ID for the intended folder in the selected layout, an exact canonical
 entrypoint path, or the exact path of an existing recognized compatibility
 entrypoint when only missing ancestors need initialization:
 
 ```text
 <folder-id>
+./<workspace-path-to-entrypoint>
 .agents/<folders>/_{final-folder}.md
 ./.agents/<folders>/_{final-folder}.md
 .agents/<folders>/<existing-compatibility-filename>
 ./.agents/<folders>/<existing-compatibility-filename>
 ```
 
-In generic mode, an ID is the intended folder ID under `.agents`. In Framework
+In generic mode, an ID is the intended folder ID in the selected layout. In Framework
 mode, the ID-form operand is the desired concrete route chain: exact
 case-sensitive canonical Framework segments identify managed topology, while
 inserted segments are scope labels converted to deterministic concrete slugs.
@@ -158,7 +165,7 @@ and the operation needs to initialize missing ancestors. The command preserves
 that filename. It never creates a new compatibility filename.
 
 The shared [CLI Source References](../../shared/source-references/interface.md) contract defines
-ID segments, exact `.agents/...` path detection, quoting, containment, and result
+ID segments, exact `./<workspace-path>` path detection, quoting, containment, and result
 identity. `route init` adds the deterministic generic missing-target mapping and
 the Framework alignment and scope-label policy below. It does not guess another
 target shape from filesystem coincidence.
@@ -211,8 +218,8 @@ blocks the operation. A file or physical path identity that would make two route
 subjects indistinguishable also blocks. Exact path input may disambiguate source
 selection, but it cannot make an ambiguous route valid.
 
-The command may initialize a detached route chain below `.agents`. It never
-creates `.agents/loader.md`. When a valid Loader exists and exposes or can expose
+The command may initialize a detached route chain below the relevant primary content root. It never
+creates the loader. When a valid Loader exists and exposes or can expose
 the first route folder, its generated region joins the parent mutation. When no
 Loader exists, the first entrypoint remains detached. A present but ambiguous or
 unsafe Loader relationship blocks rather than being ignored.
@@ -277,7 +284,7 @@ concrete slug by this local rule:
 6. Apply the ordinary portable collision, physical-identity, and containment
    checks to the resulting concrete path.
 
-An exact `.agents/...` target path is already concrete and is never slugged, but
+An exact `./<workspace-path>` target path is already concrete and is never slugged, but
 its concrete folder segments must satisfy the same unique canonical-topology
 alignment. Ambiguous alignment, reordered managed segments, nested root
 recreation, or a post-slug identity collision blocks before any write. The
@@ -472,17 +479,17 @@ every effect. The command has no best-effort or partial-application mode.
 
 Directory creation is a separate effect from file Create/Replace/Delete and is
 limited to the intended route chain. In generic mode, when a fully preflighted
-plan starts without `.agents`, that exact container is the one visible planned
+plan starts without the selected main root, that exact container is the one visible planned
 and reported ordinary directory-create effect after the workspace
 lease is acquired. The shared applier confirms it is missing, creates and
 verifies it, and leaves it as reported residual state on later failure or
 interruption. Cancellation or lock contention before acquisition creates
 nothing. Framework mode requires an actual safe installed root and therefore cannot start
-from an absent `.agents` directory.
+from an absent main-root directory.
 
 While holding the workspace lease, the command applies every explicitly
 planned missing directory parent-first through the shared capability. Each is a
-descendant below `.agents`: immediately revalidate the missing target and its
+directory in the intended ancestry for the relevant content location: immediately revalidate the missing target and its
 exact contained physical parent, call ordinary `Directory.CreateDirectory`, then
 verify the resulting contained ordinary directory. It does not remove, rename,
 claim, or format existing user content. A directory has no recovery entry and is

@@ -75,7 +75,7 @@ internal sealed class ExtensionUpdateIndependentMetadataProof
                 continue;
             }
 
-            if (!SourceFormClassifier.TryClassify(affectedPath, out var form)
+            if (!SourceFormClassifier.TryClassify(formation.Catalogue.Layout, affectedPath, out var form)
                 || form is SourceDocumentForm.Loader or SourceDocumentForm.OverwriteCompanion)
             {
                 continue;

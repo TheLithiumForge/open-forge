@@ -6,7 +6,7 @@ Usage:
 Examples:
   open-forge install --preset minimal --dry-run
   open-forge install --preset essentials --dry-run
-  open-forge install
+  open-forge install --main-root docs/context --automatic
 
 Behavior:
   Install adds selected bundled defaults and Open Forge sections to AGENTS.md
@@ -25,23 +25,34 @@ Behavior:
   update for other changed managed files.
 
 Options:
-  --configure        Configure built-in routes while retaining existing files.
-  --preset <preset>  Select minimal, essentials, full-core, or custom.
+  --main-root <folder>  Choose an absent or empty context folder at first
+                        installation. Settings and Skills stay in .agents. An
+                        established installation keeps its context folder.
+  --configure           Configure built-in routes while retaining existing
+                        files.
+  --preset <preset>     Select minimal, essentials, full-core, or custom.
   --frontmatter <frontmatter>
       Choose where Open Forge writes file metadata: root or scoped. A fresh
       unattended Install uses root. Change an installed workspace with
       --configure.
-  --route <route>    Set a Custom or Minimal route:
-                     <id>=<add|remove|git-ignore>.
-  --force            Allow eligible existing items to be replaced during first
-                     installation.
-  --automatic        Suppress confirmation and use deterministic safe defaults.
-  --dry-run          Preview the complete installation without writing files.
+  --route <route>       Set a Custom or Minimal route:
+                        <id>=<add|remove|git-ignore>.
+  --force               Allow eligible existing items to be replaced during
+                        first installation.
+  --automatic           Suppress confirmation and use deterministic safe
+                        defaults.
+  --dry-run             Preview the complete installation without writing files.
 
 Global options: --workspace, --format, --detail, --detail-filter, --help,
 --version. See open-forge --help.
 
 Details:
+  Context folder: Choose --main-root <folder> at first installation, or answer
+  the wizard before route choices. The default is .agents. A custom folder must
+  be absent or empty. Settings and Skills stay in .agents. Preview, JSON,
+  automatic and redirected runs never ask. An omitted or unchanged value keeps
+  ordinary Install behavior. A different root on an established installation is
+  refused, including with --configure.
   Force boundary: --force may replace only the exact eligible existing item at a
   current Framework installation path before management is established. Checks
   must exclude trusted owners or competing managers, route or source collisions,

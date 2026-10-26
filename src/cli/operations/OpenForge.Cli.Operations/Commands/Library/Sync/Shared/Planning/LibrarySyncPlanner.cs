@@ -55,6 +55,14 @@ internal static class LibrarySyncPlanner
                 input.Ownership.Cause ?? "The workspace ownership lock is not available for a safe Library operation.");
             return Empty(input, LibraryPlanState.Blocked, findings);
         }
+        if (input.LayoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
+        {
+            var issue = input.LayoutRead.Issues.FirstOrDefault();
+            Add(findings, LibrarySyncFindingCode.LayoutUnavailable, CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value, issue?.Path,
+                issue?.Cause ?? "The workspace layout is not ready for a safe Library operation.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
         if (WorkspaceRemovals.IsLibraryRemoved(input.Request.LibraryId.Value, input.Settings.Document))
         {
             Add(findings, LibrarySyncFindingCode.LibraryRemoved, CliSemanticStatus.Blocked,
@@ -93,7 +101,7 @@ internal static class LibrarySyncPlanner
         {
             var path = Path.GetRelativePath(input.Request.Workspace.LexicalRoot, change.LogicalPath)
                 .Replace(Path.DirectorySeparatorChar, '/');
-            if (WorkspaceRemovals.IsPathRemoved(path, input.Settings.Document))
+            if (WorkspaceRemovals.IsPathRemoved(input.LayoutRead.Layout!, path, input.Settings.Document))
             {
                 Add(findings, LibrarySyncFindingCode.GeneratedNavigationBlocked, CliSemanticStatus.Blocked,
                     input.Request.LibraryId.Value, path,
@@ -112,7 +120,7 @@ internal static class LibrarySyncPlanner
                     registeredLibrary.SourceRoot,
                     registeredLibrary.DestinationRoot,
                     path).DestinationPath.Value;
-                if (WorkspaceRemovals.IsPathRemoved(destination, input.Settings.Document))
+                if (WorkspaceRemovals.IsPathRemoved(input.LayoutRead.Layout!, destination, input.Settings.Document))
                 {
                     excludedRegisteredPaths.Add(path.Value);
                     AddPathExcluded(findings, input.Request.LibraryId.Value, destination,
@@ -127,7 +135,7 @@ internal static class LibrarySyncPlanner
             [.. currentPaths.Union(registeredPaths).Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create)], selected.GitIgnore);
         var destinations = projection is null ? [] : LibraryPathIdentity.Mappings(projection)
             .Select(mapping => mapping.DestinationPath.Value).ToImmutableArray();
-        if (projection is not null && LibraryDestinationPolicy.FindConflict(input.Request.Workspace, projection, record, RelativePaths(input)) is { } conflict)
+        if (projection is not null && LibraryDestinationPolicy.FindConflict(input.LayoutRead.Layout!, projection, record, RelativePaths(input)) is { } conflict)
         {
             Add(findings, LibrarySyncFindingCode.DestinationCollision, CliSemanticStatus.Blocked,
                 input.Request.LibraryId.Value, conflict, "The Library destination is protected, source-owned, or registered to another Library.");
@@ -336,7 +344,7 @@ internal static class LibrarySyncPlanner
                 selected.SourceRoot,
                 selected.DestinationRoot,
                 entry.SourcePath).DestinationPath.Value;
-            if (WorkspaceRemovals.IsPathRemoved(destination, input.Settings.Document))
+            if (WorkspaceRemovals.IsPathRemoved(input.LayoutRead.Layout!, destination, input.Settings.Document))
             {
                 AddPathExcluded(findings, input.Request.LibraryId.Value, destination,
                     "The mapped destination is excluded by workspace settings and was kept untouched.");

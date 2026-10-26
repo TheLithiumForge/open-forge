@@ -1,0 +1,3 @@
+outside is not a route ID or an entrypoint path in handbook/context or the native Skills folder.
+not a route ID or an entrypoint path in handbook/context or the native Skills folder
+handbook/context/loader.md could not be verified safely.

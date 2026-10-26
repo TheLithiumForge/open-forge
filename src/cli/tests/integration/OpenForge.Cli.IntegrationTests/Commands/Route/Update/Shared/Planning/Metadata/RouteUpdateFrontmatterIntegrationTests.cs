@@ -79,23 +79,24 @@ public sealed class RouteUpdateFrontmatterIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "Invalid or unavailable settings block creation while authored metadata remains editable"), Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Invalid or unavailable layout settings block both authored and newly created metadata"), Trait("Boundary", "OS")]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task UnavailableSettingsBlockOnlyCreation(bool unavailable)
+    public async Task UnavailableLayoutBlocksAllMetadataWrites(bool unavailable)
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create("route-update-settings-unavailable");
         if (unavailable) workspace.SeedSettingsDirectory();
         else workspace.SeedSettingsText("{\"frontmatter\":\"unsupported\"}");
         var authored = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request(
             patch: RouteUpdateIntegrationWorkspace.ResponsibilityPatch("After")));
-        var authoredPlan = Assert.IsType<RouteUpdatePlan>(authored.Plan);
-        Assert.Null(authoredPlan.Observation.MetadataSettings);
+        var code = unavailable ? RouteUpdateFindingCode.WorkspaceUnavailable : RouteUpdateFindingCode.WorkspaceUnsafe;
+        Assert.Null(authored.Plan);
+        Assert.Contains(authored.Formation.Findings, finding => finding.Code == code);
         workspace.SeedTargetText("# Body\n");
         var before = workspace.SnapshotHashes();
         var created = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request(patch: CompletePatch()));
         Assert.Null(created.Plan);
-        Assert.Contains(created.Formation.Findings, finding => finding.Code == RouteUpdateFindingCode.FrontmatterUnsafe);
+        Assert.Contains(created.Formation.Findings, finding => finding.Code == code);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

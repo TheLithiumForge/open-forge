@@ -19,6 +19,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Projection;
 
@@ -413,7 +414,7 @@ public sealed class FindProjectionBuilderTests
         bool withOverwrite = false)
     {
         var root = CreateWorkspace().PhysicalRoot;
-        var id = SourceIdentity.DeriveId(path)
+        var id = SourceIdentity.DeriveId(DefaultWorkspaceLayout, path)
             ?? throw new InvalidOperationException("The projection source must have a derived ID.");
         var baseLayer = new SourceLayer(
             path,
@@ -530,4 +531,11 @@ public sealed class FindProjectionBuilderTests
         CliWorkspace Workspace,
         SourceLogicalSource Source,
         IReadOnlyList<FindLayerInspectionFacts> Inspections);
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(FindProjectionBuilderTests)),
+                Path.GetFullPath(nameof(FindProjectionBuilderTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

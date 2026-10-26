@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
@@ -206,7 +207,7 @@ public sealed class GenericRouteInitMutationIntegrationTests
             recoveryTargets: [],
             ownership: null)
         {
-            Settings = WorkspaceSettingsRead.Absent(workspace.Absolute(".agents/open-forge.json")),
+            LayoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace.Workspace, TestContext.Current.CancellationToken),
         };
         var lockManager = new WorkspaceLockManager(workspace.LockStoreRoot);
         var lockResult = await lockManager.AcquireAsync(

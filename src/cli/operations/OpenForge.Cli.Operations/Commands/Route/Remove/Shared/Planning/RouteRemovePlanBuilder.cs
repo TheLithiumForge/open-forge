@@ -1,3 +1,8 @@
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
@@ -26,16 +31,37 @@ internal sealed class RouteRemovePlanBuilder(
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
+        if (cancellationToken.IsCancellationRequested)
+            return new RouteRemovePlanBuild(null, RouteRemoveBoundary.Stop(
+                RouteRemoveBoundary.Start(request), RouteRemoveFindingCode.Interrupted, CliSemanticStatus.Interrupted,
+                request.SourceReference, "Route Remove subject resolution was interrupted."));
+        var layoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver())
+            .ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (layoutRead.Layout is not { } layout
+            || (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled)
+                && layoutRead.Ownership.State is WorkspaceOwnershipReadState.Absent
+                    or WorkspaceOwnershipReadState.Complete))
+        {
+            var issue = layoutRead.Issues.FirstOrDefault();
+            var code = RouteRemoveFindingCode.WorkspaceUnsafe;
+            if (layoutRead.Settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
+                code = RouteRemoveFindingCode.SettingsUnavailable;
+            return new RouteRemovePlanBuild(null, RouteRemoveBoundary.Stop(
+                RouteRemoveBoundary.Start(request), code, CliSemanticStatus.Blocked,
+                issue?.Path ?? WorkspaceSettingsDefinitions.RelativePath,
+                issue?.Cause ?? "The workspace layout is unavailable."));
+        }
         var subject = await _subjectResolver.ResolveAsync(
             request,
+            layoutRead,
             cancellationToken).ConfigureAwait(false);
         if (subject.Boundary is { } subjectBoundary)
         {
             if (subjectBoundary.Findings.Any(finding =>
                     finding.Code == RouteRemoveFindingCode.SourceNotFound)
-                && RouteRemoveAbsenceScope.TryCreate(request) is { } scope)
+                && RouteRemoveAbsenceScope.TryCreate(request, layout) is { } scope)
             {
-                var absence = await _absencePlanner.BuildAsync(scope, cancellationToken)
+                var absence = await _absencePlanner.BuildAsync(scope, layoutRead, cancellationToken)
                     .ConfigureAwait(false);
                 return absence;
             }
@@ -47,6 +73,7 @@ internal sealed class RouteRemovePlanBuilder(
             ?? throw new InvalidOperationException("Successful Route Remove resolution requires its subject.");
         var inventory = await _inventoryReader.ReadAsync(
             resolved,
+            layoutRead,
             cancellationToken).ConfigureAwait(false);
         if (inventory.Boundary is { } inventoryBoundary)
         {
@@ -60,7 +87,7 @@ internal sealed class RouteRemovePlanBuilder(
             {
                 Subject = resolved,
                 CatalogueRequest = new RouteMarkdownCatalogueRequest(
-                    request.Workspace,
+                    layout,
                     ["."],
                     [],
                     new RouteMarkdownCatalogueFilters([".md"])),
@@ -120,7 +147,7 @@ internal sealed class RouteRemovePlanBuilder(
             navigationPlan,
             persistence.Plan
                 ?? throw new InvalidOperationException("Successful Route Remove persistence planning requires its plan."));
-        var plan = RouteRemovePlanProjector.Build(projection, facts);
+        var plan = RouteRemovePlanProjector.Build(projection, facts, layoutRead);
         return new RouteRemovePlanBuild(plan, plan.Preview);
     }
 

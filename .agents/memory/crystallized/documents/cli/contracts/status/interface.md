@@ -7,6 +7,12 @@ open-forge:
 
 # Status Interface Contract
 
+## Workspace Layout
+
+Status names the context folder for a custom root. Its optional `data.layout` contains `mainRoot` and `loaderPath`, and is omitted for the default layout.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
+
 ## Help
 
 The purpose sentence is: Show whether Open Forge is installed and whether its setup needs attention.
@@ -114,8 +120,8 @@ non-directory workspace is blocked.
 
 `status` inspects only the facts needed for its summary:
 
-- The canonical workspace entry and supported context files below `.agents`.
-- Settings `roots`, loader-listed files outside `.agents/` and their catalogue
+- The canonical workspace entry and supported context files in both primary content locations.
+- Settings `roots`, loader-listed files outside the primary content locations and their catalogue
   descendants, limited to the selected workspace.
 - The embedded Framework payload distributed with the running CLI.
 - Entrypoints, generated `Entries`, loading tags, and overwrite companions needed
@@ -183,7 +189,7 @@ allow it.
 
 Count registered settings `roots` as listed when a loader row lists the path,
 unlisted when no loader row lists it, or missing when no file exists. Missing takes
-precedence. Count unregistered loader rows outside `.agents/` separately.
+precedence. Count unregistered loader rows outside the primary content locations separately.
 Registrations never switch files on or restore loader rows.
 
 ### Context File
@@ -193,8 +199,8 @@ boundary:
 
 - The canonical workspace `AGENTS.md` entry when it is an ordinary UTF-8 file.
 - Every ordinary UTF-8 Markdown file with a `.md` suffix that is physically
-  contained below the selected workspace's `.agents` directory.
-- Active loader-listed text files outside `.agents/` and files reached through
+  contained below the selected workspace’s primary content locations.
+- Active loader-listed text files outside the primary content locations and files reached through
   their catalogue Entries. These files need no Open Forge frontmatter.
 
 The inventory follows these rules:
@@ -207,7 +213,7 @@ The inventory follows these rules:
   it as available context.
 - Do not count generated `Entries` separately from the entrypoint that contains
   them.
-- Do not count ordinary local link targets outside `.agents` merely because
+- Do not count ordinary local link targets outside the primary content locations merely because
   another file links to them.
 - Do not count provider bridges, workspace settings, the ownership lock, recovery
   bundles, drafts, or other operational metadata as context.
@@ -223,11 +229,11 @@ physical files.
 
 ### Startup Context
 
-Required included files outside `.agents/` follow their Entries tags and inherited
+Required included files outside the primary content locations follow their Entries tags and inherited
 conditions through included catalogues. Each physical file contributes once.
 Conditioned required files remain pending because Status has no working-file
 operands. They make the result incomplete while the known contribution remains
-measurable. The report names the startup contribution outside `.agents/`.
+measurable. The report names the startup contribution outside the primary content locations.
 
 Startup context is the complete context required when work starts or resumes:
 
@@ -647,7 +653,7 @@ bundle paths with their integrity.
 
 When included rows or registrations exist, every level adds `data.includedFiles`.
 It reports registered listed, unlisted and missing counts, the hand-written loader-row
-count, the startup measurement outside `.agents/` and pending included paths.
+count, the startup measurement outside the primary content locations and pending included paths.
 The [included-files data model](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Models/StatusDataIncludedFiles.cs)
 defines its exact fields. Empty or absent `roots` without included rows omit this
 member and keep existing text and JSON unchanged.
@@ -891,7 +897,7 @@ Native AOT, OS locking, isolated tests, and package journeys.
 - [Overwrite customization](../../../framework/routing/overwrites.md)
 
 Library registered links retain separate source-relative and mapped destination
-paths. A destination outside the existing `.agents` source-reference contract has
+paths. A destination outside the primary-content source-reference contract has
 `sourceId: null`; neither the management ID nor an empty string replaces it.
 
 ## Executable Wording References

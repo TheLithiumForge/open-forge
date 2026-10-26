@@ -7,11 +7,13 @@ namespace OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 
 /// <summary>
 /// The command-owned, Framework-free facts consumed by route-list presentation. The operation
-/// result keeps its validated command and Framework model; this projection is the boundary that
+/// result keeps its validated command and Framework model. This projection is the boundary that
 /// lets Presentation render only the values that the route-list contract exposes.
 /// </summary>
 internal sealed record RouteListPresentationFacts
 {
+    internal string? CustomLoaderPath { get; init; }
+
     internal required string Command { get; init; }
 
     internal required CliSemanticStatus Status { get; init; }
@@ -39,6 +41,7 @@ internal sealed record RouteListPresentationFacts
         ArgumentNullException.ThrowIfNull(result);
         return new RouteListPresentationFacts
         {
+            CustomLoaderPath = result.CustomLoaderPath,
             Command = result.Command,
             Status = result.Status,
             WorkspacePath = result.WorkspacePath,

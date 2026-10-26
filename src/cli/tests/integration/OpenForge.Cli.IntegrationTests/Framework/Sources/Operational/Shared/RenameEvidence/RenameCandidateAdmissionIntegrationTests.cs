@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
@@ -23,6 +24,7 @@ public sealed class RenameCandidateAdmissionIntegrationTests
         {
             Policy = new RenameEvidencePolicy
             {
+                Layout = WorkspaceLayout.Create(repository.Workspace, WorkspaceLayout.DefaultMainRoot),
                 ManagedPaths = [".agents/guidance/managed.md"],
                 PrivatePaths = [".agents/guidance/private.md"],
                 ExcludedPaths = [".agents/guidance/excluded.md"],

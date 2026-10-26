@@ -1,0 +1,8 @@
+Created 2 entrypoints and completed metadata in 1 file.
+Workspace: <workspace>
+  .agents/guidance/team/deep/note.md  metadata completed, your content was kept
+  .agents/guidance/team/_team.md  entrypoint created
+  .agents/guidance/team/deep/_deep.md  entrypoint created
+  .agents/guidance/_guidance.md  0 -> 1 entries
+  Check the workspace after indexing.
+Next: open-forge doctor

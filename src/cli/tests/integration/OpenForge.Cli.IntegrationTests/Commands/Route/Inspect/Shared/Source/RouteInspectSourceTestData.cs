@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
@@ -6,6 +10,9 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Source;
 
 internal static class RouteInspectSourceTestData
 {
+    private static readonly WorkspaceLayout Layout = WorkspaceLayout.Create(
+        new CliWorkspace(Path.GetFullPath(nameof(RouteInspectSourceTestData)), Path.GetFullPath(nameof(RouteInspectSourceTestData)),
+            CliWorkspaceSelectionMethod.ExplicitWorkspace), WorkspaceLayout.DefaultMainRoot);
     private const string GeneratedIndexStart = "";
     private const string GeneratedIndexEnd = "";
     private const string EmptyEntriesSentinel = "- none - No entries - #Empty";
@@ -62,15 +69,13 @@ internal static class RouteInspectSourceTestData
                     PhysicalPath = spec.OverwritePhysicalPath ?? PhysicalPath(spec.OverwritePath),
                 });
 
-        return new RouteSource(sourceDocument, metadata, spec.Kind, overwrite, spec.IsRouteAmbiguous);
+        return new RouteSource(new SourceLogicalIdentity(SourceIdentity.DeriveId(Layout, spec.Path)!, spec.Path), sourceDocument, metadata, spec.Kind, overwrite, spec.IsRouteAmbiguous);
     }
 
     internal static RouteSourceDocument Document(RouteInspectDocumentSpec spec)
     {
         return new RouteSourceDocument(
-            spec.Path,
-            spec.PhysicalPath ?? PhysicalPath(spec.Path),
-            spec.Form,
+            new SourceLayer(spec.Path, spec.PhysicalPath ?? PhysicalPath(spec.Path), spec.Form, spec.Form == SourceDocumentForm.OverwriteCompanion ? SourceLayerKind.Overwrite : SourceLayerKind.Base),
             spec.ReadState,
             spec.ReadState == FileReadState.Complete ? spec.Body : null);
     }

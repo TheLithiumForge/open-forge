@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Composition.Shared.Git;
 using OpenForge.Cli.Core.Commands.Doctor;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
@@ -34,10 +37,11 @@ public sealed class DoctorEvidenceWorkIntegrationTests
             temporary.WriteText($".agents/guidance/note-{index}.md", Note("Note", "# Note\n"));
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var token = TestContext.Current.CancellationToken;
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, token);
         var contributors = RepairOperationalContributorFactory.Create(new PhysicalPathResolver());
         var sharing = await NavigationSharingReader.ReadAsync(workspace, token);
-        var routes = await contributors.Routes.ReadDoctorAsync(workspace, sharing.Sharing, token);
-        var references = await contributors.LocalReferences.ReadDoctorAsync(workspace, token, routes);
+        var routes = await contributors.Routes.ReadDoctorAsync(observation, sharing.Sharing, token);
+        var references = await contributors.LocalReferences.ReadDoctorAsync(observation, token, routes);
         using var release = new ManualResetEventSlim();
         var reads = 0;
         var active = 0;
@@ -77,10 +81,11 @@ public sealed class DoctorEvidenceWorkIntegrationTests
             temporary.WriteText($".agents/guidance/note-{index}.md", Note("Note", "# Note\n"));
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var token = TestContext.Current.CancellationToken;
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, token);
         var contributors = RepairOperationalContributorFactory.Create(new PhysicalPathResolver());
         var sharing = await NavigationSharingReader.ReadAsync(workspace, token);
-        var routes = await contributors.Routes.ReadDoctorAsync(workspace, sharing.Sharing, token);
-        var references = await contributors.LocalReferences.ReadDoctorAsync(workspace, token, routes);
+        var routes = await contributors.Routes.ReadDoctorAsync(observation, sharing.Sharing, token);
+        var references = await contributors.LocalReferences.ReadDoctorAsync(observation, token, routes);
         var parents = 0;
         var reader = new DoctorMaintenanceReader(new RenameEvidenceReader(new PhysicalPathResolver()), path =>
         {
@@ -88,6 +93,7 @@ public sealed class DoctorEvidenceWorkIntegrationTests
             return SourceLogicalPath.ReadParent(path);
         });
         var result = await reader.ReadAsync(routes, references, sharing, token);
+        Assert.NotNull(routes.Catalogue);
         Assert.Equal(routes.Routes.Topology.LoaderRootPaths.Count
             + routes.Catalogue.Sources.Count(source => SourceFormClassifier.IsEntrypoint(source.Base.Form)), parents);
         Assert.Equal(routes.Sources.Count, result.Eligibility.Count);
@@ -205,11 +211,14 @@ public sealed class DoctorEvidenceWorkIntegrationTests
 
     private sealed class GatedReferences(ILocalReferenceOperationalContributor inner, Task release, Action started) : ILocalReferenceOperationalContributor
     {
-        public async ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(CliWorkspace workspace, CancellationToken token, RouteDoctorView? routes = null)
+        public async ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(WorkspaceLayoutRead observation,
+            CancellationToken token, RouteDoctorView? routes = null)
         {
+            var workspace = observation.Layout?.Workspace ?? throw new InvalidOperationException();
+
             started();
             await release.WaitAsync(token);
-            return await inner.ReadDoctorAsync(workspace, token, routes);
+            return await inner.ReadDoctorAsync(observation, token, routes);
         }
     }
 }

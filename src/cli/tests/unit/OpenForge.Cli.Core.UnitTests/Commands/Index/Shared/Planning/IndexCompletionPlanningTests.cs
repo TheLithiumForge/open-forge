@@ -25,7 +25,7 @@ public sealed class IndexCompletionPlanningTests
         var root = request.Catalogue.FindByPath(".agents/guidance/_guidance.md") ?? throw new InvalidOperationException();
         var child = request.Catalogue.FindByPath(".agents/guidance/team/note.md") ?? throw new InvalidOperationException();
         var sourceBuilder = new RouteScaffoldSourceBuilder();
-        var created = sourceBuilder.Create(workspace, ".agents/guidance/team/_team.md");
+        var created = sourceBuilder.Create(request.Catalogue.Layout, ".agents/guidance/team/_team.md");
         var original = Encoding.UTF8.GetBytes("---\ndescription: Keep this # comment\n---\n\n# Guidance\n\n## Entries\n\n- stale\n\n## Authored\n\nKeep this too.\n");
         var completion = new FrameworkMetadataCompleter().Complete(new()
         {

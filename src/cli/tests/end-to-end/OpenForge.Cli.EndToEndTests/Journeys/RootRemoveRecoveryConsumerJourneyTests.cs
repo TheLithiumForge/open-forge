@@ -6,7 +6,7 @@ using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
-public sealed class RootRemoveRecoveryConsumerJourneyTests
+public sealed partial class RootRemoveRecoveryConsumerJourneyTests
 {
     private const string Feature = "root-remove-recovery-consumers";
 

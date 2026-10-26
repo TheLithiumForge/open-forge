@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
@@ -39,7 +40,7 @@ internal static class RouteCurrentContextReader
                 ParentPath = parentPath,
             };
         }).ToArray();
-        var roots = RouteContextRootProjector.Read(sources);
+        var roots = RouteContextRootProjector.Read(inspection.Catalogue.Layout, sources);
         return new RouteContextSet
         {
             WorkspaceEntry = new RouteContextSource
@@ -67,7 +68,7 @@ internal static class RouteCurrentContextReader
 
 internal static class RouteContextRootProjector
 {
-    internal static RouteContextRootFacts Read(IReadOnlyList<RouteContextSource> sources)
+    internal static RouteContextRootFacts Read(WorkspaceLayout layout, IReadOnlyList<RouteContextSource> sources)
     {
         var loader = sources.SingleOrDefault(source => source.IsLoader);
         if (loader?.GeneratedEntries.State != SourceGeneratedEntriesState.Complete)
@@ -80,6 +81,7 @@ internal static class RouteContextRootProjector
         foreach (var entry in loader.GeneratedEntries.Entries)
         {
             var path = SourceGeneratedDestinationResolver.Resolve(
+                layout,
                 loader.Path,
                 isLoader: true,
                 entry.Destination);

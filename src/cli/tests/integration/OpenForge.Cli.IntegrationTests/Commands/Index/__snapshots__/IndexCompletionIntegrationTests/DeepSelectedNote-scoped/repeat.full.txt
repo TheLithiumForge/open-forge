@@ -1,0 +1,7 @@
+The Entries section is current in 1 file. Nothing to do.
+Workspace: <workspace>
+  .agents/guidance/team/deep/_deep.md  current
+Selection: .agents/guidance/team/deep/note.md
+No recovery bundle was needed.
+  Check the workspace after indexing.
+Next: open-forge doctor

@@ -66,7 +66,7 @@ internal static class RouteExcludeReportSelector
             Effects = outcome.Effects.Select(effect => new CliEffect
             {
                 Path = effect.Path,
-                Kind = effect.Path == ".agents/loader.md" ? CliEffectKind.Section : CliEffectKind.Setting,
+                Kind = RouteInclusionWireVocabulary.Kind(effect.Kind),
                 Action = effect.Before is null ? CliEffectAction.Created : CliEffectAction.Replaced,
                 Outcome = RouteInclusionWireVocabulary.Effect(effect.State),
                 Before = selection.Detail >= CliDetail.Full ? effect.Before : null,

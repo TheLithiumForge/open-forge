@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Library.List.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Observation;
@@ -26,12 +29,10 @@ internal sealed class LibraryListOperation
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var record = await LibraryRegistrationReader.ReadAsync(
-                _resolver,
-                request.Workspace,
-                cancellationToken).ConfigureAwait(false);
+            var layoutRead = await new WorkspaceLayoutReader(_resolver).ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+            var record = LibraryRegistrationReader.Read(layoutRead.Ownership);
             return record.State == LibraryRegistrationReadState.Complete
-                ? ObserveCompleteRecord(_resolver, request, record, cancellationToken)
+                ? ObserveCompleteRecord(_resolver, request, record, layoutRead, cancellationToken)
                 : FromRecordBoundary(request, record);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -62,12 +63,24 @@ internal sealed class LibraryListOperation
         PhysicalPathResolver resolver,
         LibraryListRequest request,
         LibraryRegistrationRead read,
+        WorkspaceLayoutRead layoutRead,
         CancellationToken cancellationToken)
     {
         var record = read.Record
             ?? throw new InvalidOperationException("A complete Library record read requires a record.");
         var libraries = new List<LibraryListView>(record.Libraries.Length);
         var findings = new List<LibraryListFinding>();
+        if (layoutRead.Layout is null)
+        {
+            findings.Add(new LibraryListFinding
+            {
+                Code = LibraryListFindingCode.LayoutUnavailable,
+                Status = CliSemanticStatus.Incomplete,
+                LibraryId = null,
+                Path = layoutRead.Settings.LogicalPath,
+                Cause = layoutRead.Settings.Cause ?? "The workspace layout is unavailable for source identity projection.",
+            });
+        }
         foreach (var library in record.Libraries)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -95,7 +108,7 @@ internal sealed class LibraryListOperation
                         Mapping = mapping,
                     },
                     cancellationToken);
-                paths.Add(ProjectPath(observation));
+                paths.Add(ProjectPath(observation, layoutRead.Layout));
                 AddMappingFinding(findings, library, observation);
             }
 
@@ -211,13 +224,13 @@ internal sealed class LibraryListOperation
     }
 
     private static LibraryListRegisteredPath ProjectPath(
-        LibraryMappingObservation observation)
+        LibraryMappingObservation observation, WorkspaceLayout? layout)
         => new()
         {
             SourcePath = observation.Mapping.SourcePath.Value,
             DestinationPath = observation.Mapping.DestinationPath.Value,
             ExpectedRelativeLink = observation.Mapping.ExpectedRelativeLink.Value,
-            SourceId = SourceIdentity.DeriveId(observation.Mapping.DestinationPath.Value),
+            SourceId = layout is null ? null : SourceIdentity.DeriveId(layout, observation.Mapping.DestinationPath.Value),
             State = observation.State switch
             {
                 LibraryMappingObservationState.Current => LibraryLinkViewState.Current,

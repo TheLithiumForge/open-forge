@@ -1,0 +1,1 @@
+'docs/context/note.md': Use a direct child folder's catalogue instead. Files directly in docs/context are not routed.

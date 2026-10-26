@@ -1,0 +1,5 @@
+The Entries section is current in 1 file. Nothing to do.
+Workspace: <workspace>
+1 file is current.
+  Check the workspace after indexing.
+Next: open-forge doctor

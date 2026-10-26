@@ -1,0 +1,1 @@
+'guide.md': Several loader rows list this target. Exclude it, then include it again with the intended metadata.

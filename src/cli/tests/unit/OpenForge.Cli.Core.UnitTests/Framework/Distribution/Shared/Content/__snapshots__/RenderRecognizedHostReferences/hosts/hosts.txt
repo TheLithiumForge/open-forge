@@ -1,0 +1,11 @@
+# Open Forge
+
+Read `docs/context/loader.md`.
+
+**End of Open Forge managed section.**
+# Open Forge
+
+@AGENTS.md
+@docs/context/loader.md
+
+**End of Open Forge managed section.**

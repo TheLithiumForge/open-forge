@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Diagnostics.CodeAnalysis;
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -25,7 +26,7 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
         PhysicalPathResolver paths,
         CancellationToken cancellationToken)
     {
-        var state = new ReadState(request.Workspace, paths);
+        var state = new ReadState(request.Layout, paths);
         if (cancellationToken.IsCancellationRequested)
         {
             return new ValueTask<SourceCatalogue>(state.FormCatalogue(isCancelled: true));
@@ -47,7 +48,8 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
             var rootResolution = Resolve(state, logicalRoot);
             if (rootResolution.State != PhysicalPathState.Contained)
             {
-                state.AddRootIssue(ReadRootIssue(logicalRoot, rootResolution));
+                if (rootResolution.State != PhysicalPathState.Missing || logicalRoot != WorkspaceLayout.NativeSkillsPath || request.Layout.IsDefault)
+                    state.AddRootIssue(ReadRootIssue(logicalRoot, rootResolution));
                 continue;
             }
 
@@ -149,14 +151,14 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
                 {
                     continue;
                 }
-                var recognized = SourceFormClassifier.TryClassify(canonicalPath, out var form);
+                var recognized = SourceFormClassifier.TryClassify(state.Layout, canonicalPath, out var form);
                 var resolution = Resolve(state, canonicalPath);
                 if (resolution.State != PhysicalPathState.Contained)
                 {
                     state.AddUnsafeCandidate(
                         canonicalPath,
                         recognized ? form : null,
-                        recognized ? SourceIdentity.DeriveId(canonicalPath) : null,
+                        recognized ? SourceIdentity.DeriveId(state.Layout, canonicalPath) : null,
                         resolution.State,
                         directory.PhysicalPath,
                         resolution.Failure);
@@ -175,7 +177,7 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
                     state.AddUnavailableCandidate(
                         canonicalPath,
                         recognized ? form : null,
-                        recognized ? SourceIdentity.DeriveId(canonicalPath) : null,
+                        recognized ? SourceIdentity.DeriveId(state.Layout, canonicalPath) : null,
                         directory.PhysicalPath,
                         component.Failure);
                     continue;
@@ -190,7 +192,7 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
                         state.AddUnsafeCandidate(
                             canonicalPath,
                             recognized ? form : null,
-                            recognized ? SourceIdentity.DeriveId(canonicalPath) : null,
+                            recognized ? SourceIdentity.DeriveId(state.Layout, canonicalPath) : null,
                             PhysicalPathState.Cycle,
                             directory.PhysicalPath,
                             null);
@@ -212,7 +214,7 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
                 state.AddContainedCandidate(
                     canonicalPath,
                     form,
-                    SourceIdentity.DeriveId(canonicalPath),
+                    SourceIdentity.DeriveId(state.Layout, canonicalPath),
                     resolvedPhysicalPath,
                     directory.PhysicalPath);
             }
@@ -268,13 +270,15 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
         private readonly HashSet<string> _processedDirectories = new(StringComparer.Ordinal);
         private readonly Queue<DirectoryBoundary> _directories = new();
 
-        internal ReadState(CliWorkspace workspace, PhysicalPathResolver paths)
+        internal ReadState(WorkspaceLayout layout, PhysicalPathResolver paths)
         {
-            Workspace = workspace;
+            Layout = layout;
             Paths = paths;
         }
 
-        internal CliWorkspace Workspace { get; }
+        internal WorkspaceLayout Layout { get; }
+
+        internal CliWorkspace Workspace => Layout.Workspace;
 
         internal PhysicalPathResolver Paths { get; }
 
@@ -442,7 +446,7 @@ internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths 
             AddIdentityCollisions(sources, candidates);
             AddOrphanOverwrites(candidates, sources);
             return new SourceCatalogue(
-                Workspace,
+                Layout,
                 candidates,
                 sources,
                 Issues.Concat(RootIssues),

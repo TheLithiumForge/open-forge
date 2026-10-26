@@ -11,6 +11,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.IntegrationTests.Framework.Sources.Shared;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.GeneratedNavigation;
 
@@ -41,7 +43,7 @@ public sealed class GeneratedNavigationProspectiveFormationIntegrationTests
         var addedPath = ".agents/root/added.md";
         var added = new SourceLogicalSource(
             identity: new SourceLogicalIdentity(
-                SourceIdentity.DeriveId(addedPath)
+                SourceIdentity.DeriveId(DefaultWorkspaceLayout, addedPath)
                     ?? throw new InvalidOperationException("The intended integration source requires an automatic ID."),
                 addedPath),
             @base: new SourceLayer(
@@ -78,7 +80,7 @@ public sealed class GeneratedNavigationProspectiveFormationIntegrationTests
         SourceIntegrationWorkspace workspace)
     {
         var catalogue = await new SourceCatalogueReader().ReadAsync(
-            new SourceCatalogueRequest(workspace.Workspace, [SourceLogicalPath.AgentsRoot]),
+            new SourceCatalogueRequest(WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot), [SourceLogicalPath.AgentsRoot]),
             TestContext.Current.CancellationToken);
         Assert.False(catalogue.IsCancelled);
         return catalogue;
@@ -95,4 +97,11 @@ public sealed class GeneratedNavigationProspectiveFormationIntegrationTests
         Assert.Equal(FileReadState.Complete, read.State);
         return new MarkdownDocumentParser().Parse(Assert.IsType<string>(read.Value));
     }
+
+    private static readonly WorkspaceLayout DefaultWorkspaceLayout = WorkspaceLayout.Create(
+            new CliWorkspace(
+                Path.GetFullPath(nameof(GeneratedNavigationProspectiveFormationIntegrationTests)),
+                Path.GetFullPath(nameof(GeneratedNavigationProspectiveFormationIntegrationTests)),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            WorkspaceLayout.DefaultMainRoot);
 }

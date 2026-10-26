@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Inventory;
 
@@ -21,13 +22,13 @@ public sealed class SourceCatalogueWorkTests
             calls[path] = calls.GetValueOrDefault(path) + 1;
             return LinkTargetReader.Read(path);
         }));
-        var first = await reader.ReadAsync(new(workspace, [".agents"]), TestContext.Current.CancellationToken);
+        var first = await reader.ReadAsync(new(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [".agents"]), TestContext.Current.CancellationToken);
         Assert.Equal(2, first.Sources.Count);
         Assert.Equal(1, calls[temporary.Combine(".agents")]);
         Assert.Equal(1, calls[temporary.Combine(".agents/nested")]);
 
         File.Delete(temporary.Combine(".agents/nested/one.md"));
-        var second = await reader.ReadAsync(new(workspace, [".agents"]), TestContext.Current.CancellationToken);
+        var second = await reader.ReadAsync(new(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [".agents"]), TestContext.Current.CancellationToken);
         Assert.Single(second.Sources);
         Assert.Equal(2, calls[temporary.Combine(".agents")]);
         Assert.Equal(2, calls[temporary.Combine(".agents/nested")]);

@@ -11,6 +11,8 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Application;
 
@@ -37,18 +39,19 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
                 "The Extension Install lease no longer matches the selected workspace.");
         }
 
-        var currentSettings = await WorkspaceSettingsReader.ReadAsync(
-            new OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.PhysicalPathResolver(),
-            plan.Request.Workspace,
-            cancellationToken).ConfigureAwait(false);
-        if (currentSettings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable
-            || !plan.SettingsObservation.MatchesObservation(currentSettings))
+        var layoutValidation = await new WorkspaceLayoutRevalidator(new PhysicalPathResolver())
+            .ValidateAsync(lease, plan.LayoutRead, cancellationToken).ConfigureAwait(false);
+        if (layoutValidation.State != MutationValidationState.Valid)
         {
             return Stop(
-                ExtensionInstallFindingCode.TargetChanged,
-                "Workspace removal settings changed or became unavailable after Extension Install planning.",
+                layoutValidation.State == MutationValidationState.Cancelled ? ExtensionInstallFindingCode.Interrupted : ExtensionInstallFindingCode.TargetChanged,
+                layoutValidation.Checks.Any(check => check.State != FileExpectationValidationState.Matched
+                    && check.Expectation.LogicalPath == plan.SettingsObservation.LogicalPath)
+                    ? "Workspace removal settings changed after Extension Install planning."
+                    : layoutValidation.Cause ?? "The workspace layout changed after Extension Install planning.",
                 plan.SettingsObservation.LogicalPath);
         }
+        var currentSettings = plan.LayoutRead.Settings;
 
         var sourceResolution = await _sourceResolver.ReadAsync(plan.Request, cancellationToken)
             .ConfigureAwait(false);
@@ -93,6 +96,7 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
         }
 
         var normalized = ExtensionInstallPayloadNormalizer.Normalize(
+            plan.Layout,
             validationPackages,
             currentSettings.Document);
         if (normalized.Finding is not null)
@@ -106,8 +110,8 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
         var observation = await _foundationReader.ReadAsync(
             plan.Request,
             normalized.Packages,
-            cancellationToken,
-            settings: currentSettings.Document).ConfigureAwait(false);
+            plan.LayoutRead,
+            cancellationToken).ConfigureAwait(false);
         if (observation.Finding is { } foundationFinding)
         {
             return Stop(

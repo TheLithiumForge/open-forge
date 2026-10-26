@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
@@ -10,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
@@ -27,9 +29,10 @@ public sealed class RepairTargetWorkTests
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var token = TestContext.Current.CancellationToken;
         var paths = new PhysicalPathResolver();
+        var observation = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(workspace, token);
         var contributors = RepairOperationalContributorFactory.Create(paths);
-        var routes = await contributors.Routes.ReadDoctorAsync(workspace, new SourceSharing([]), token);
-        var view = await contributors.LocalReferences.ReadDoctorAsync(workspace, token, routes);
+        var routes = await contributors.Routes.ReadDoctorAsync(observation, new SourceSharing([]), token);
+        var view = await contributors.LocalReferences.ReadDoctorAsync(observation, token, routes);
         var active = 0;
         var maximum = 0;
         var acquisition = new SourceFileAcquisition(read: async (physical, logical, cancellation) =>
@@ -48,7 +51,7 @@ public sealed class RepairTargetWorkTests
         var targetReader = new RepairTargetReader(view.Catalogue, acquisition: acquisition);
         var reader = new RepairCatalogueReader(paths, targets: targetReader);
 
-        var first = await reader.ReadAsync(workspace, view, token);
+        var first = await reader.ReadAsync(observation, view, token);
         Assert.Equal(32, first.Proposals.Count);
         Assert.All(first.Proposals, input => Assert.Equal(
             [".agents/guidance/target-0.md", ".agents/guidance/target-1.md"],
@@ -58,7 +61,7 @@ public sealed class RepairTargetWorkTests
         Assert.Equal(0, active);
 
         temporary.ReplaceText(".agents/guidance/target-0.md", "# Changed\n");
-        var second = await reader.ReadAsync(workspace, view, token);
+        var second = await reader.ReadAsync(observation, view, token);
         Assert.Equal(2 * 32 * 33, acquisition.ReadCount);
         Assert.All(second.Proposals, input => Assert.Equal(".agents/guidance/target-1.md",
             Assert.Single(input.Proposal.Candidates?.Items ?? []).Target.CanonicalTargetPath));
@@ -71,7 +74,7 @@ public sealed class RepairTargetWorkTests
         using var temporary = TemporaryWorkspace.Create("repair-target-work");
         temporary.WriteText(".agents/target.md", "# Details\n");
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        var catalogue = await new SourceCatalogueReader().ReadAsync(new(workspace, [".agents"]), TestContext.Current.CancellationToken);
+        var catalogue = await new SourceCatalogueReader().ReadAsync(new(WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [".agents"]), TestContext.Current.CancellationToken);
         var resolutions = 0;
         var formats = 0;
         var parses = 0;

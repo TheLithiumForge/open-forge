@@ -30,6 +30,7 @@ internal static class LibrarySyncDefinitions
             LibrarySyncFindingCode.OwnershipObservation => "library-sync.ownership-observation",
             LibrarySyncFindingCode.RecordUnavailable => "library-sync.record-unavailable",
             LibrarySyncFindingCode.RecordBlocked => "library-sync.record-blocked",
+            LibrarySyncFindingCode.LayoutUnavailable => "library-sync.layout-unavailable",
             LibrarySyncFindingCode.ConsumerBlocked => "library-sync.consumer-blocked",
             LibrarySyncFindingCode.MappingBlocked => "library-sync.mapping-blocked",
             LibrarySyncFindingCode.MappingUnavailable => "library-sync.mapping-unavailable",

@@ -7,6 +7,12 @@ open-forge:
 
 # route move Behavior Contract
 
+## Workspace Layout
+
+Map IDs through the selected layout while preserving literal operands. Scan both primary content locations, including private routes, and revalidate the layout under the lease.
+
+See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Authority
 
 Apply the [shared link scope](../../../shared-operation-contract.md#link-scope) before authored-reference projection. Retain ignored occurrences in the plan so post-move verification does not demand a new meaning from preserved links. Revalidate settings under the lease and include remapped entries in the complete effect and recovery plan.
@@ -63,7 +69,7 @@ The operation satisfies these invariants:
 - Positive trusted unmanaged proof covers every selected logical source or
   resource. Absence of one receipt never substitutes for a complete inventory.
 - The complete supported-workspace-Markdown reference pass covers sources inside
-  and outside `.agents`. No supported potentially affected reference is silently
+  and outside the primary content locations. No supported potentially affected reference is silently
   left stale.
 - Generated `Entries` are projected from intended topology and authored metadata.
   Current generated lines do not establish identity or authored reference
@@ -127,7 +133,7 @@ when a terminal flag is present.
 ### Source reference classification
 
 The resolver passes the source operand through the shared source-reference
-classification without guessing. A `.agents/` or `./.agents/` prefix requests
+classification without guessing. A `.agents/` or `./` prefix requests
 an exact path. Every other value requests an automatic source ID. The resolver
 preserves the requested form and records the resolved automatic ID and canonical
 workspace-relative path.
@@ -136,7 +142,7 @@ An unresolved ID collision is `blocked` in non-interactive and JSON use and
 retains every candidate path. An exact path can select one physical candidate,
 but it cannot repair an ambiguous route, overwrite pair, or category inventory.
 
-The Loader and the `.agents` workspace root are not valid subjects. A source
+The Loader and the main root are not valid subjects. A source
 reference naming an overwrite resolves to its base logical source only when the
 base/overwrite pair is complete and unambiguous.
 
@@ -244,15 +250,15 @@ Init's region receipts remain positive ownership even in a user-authored host.
 In a Git work tree, reference coverage excludes paths Git ignores through its
 standard exclude rules. Ignored files are left unchanged, and ignored directory
 trees are pruned before link checks or content reads. Tracked files remain
-covered even when an ignore pattern matches them. The complete `.agents` tree
-stays covered, including Git-ignored private routes recorded by the workspace.
+covered even when an ignore pattern matches them. Both primary content locations
+stay covered, including Git-ignored private routes recorded by the workspace.
 Outside a Git work tree, or when Git is missing, refuses the workspace, fails,
 times out or supplies an unusable inventory, discard its exclusions and keep
 the complete filesystem scan. Cancellation still cancels the operation.
 This rule applies to reference coverage, not the selected category inventory.
 
 The reference resolver enumerates every supported Markdown source physically
-contained by the selected workspace, including sources outside `.agents`, and
+contained by the selected workspace, including sources outside the primary content locations, and
 reads every applicable base and overwrite layer. It records complete coverage
 before it forms a reference effect. Generated `Entries` interiors are excluded
 from authored-reference authority and supplied by the generated projection.
@@ -317,7 +323,7 @@ and it never invents a category or route.
 Destination and reference/generated effect targets receive the same no-follow
 final-leaf observation before ordinary physical resolution. A present link,
 reparse point, or special final leaf blocks the complete plan, including when an
-eligible `.agents/...` leaf is a filesystem projection whose target is contained
+eligible primary-content leaf is a filesystem projection whose target is contained
 by the workspace. Route Move does not follow or write through that projection,
 and the decision is independent of Library record authority.
 
@@ -576,7 +582,7 @@ successful partial category move.
 
 Evidence must prove that ignored dependency or build trees containing links do
 not block the operation, ignored Markdown stays unchanged, private references
-inside `.agents` remain covered, and Git failures and non-Git workspaces retain
+inside the primary content locations remain covered, and Git failures and non-Git workspaces retain
 the complete scan.
 
 The mandatory public evidence boundary is [Interface Verification](interface.md).
@@ -599,9 +605,9 @@ A conforming implementation must additionally prove:
   unsafe containment, and no implicit parent initialization;
 - no-follow final-leaf observations before physical resolution, at initial
   preflight, under-lease revalidation, and immediately before every ordinary
-  effect, including refusal to follow, write, or delete an eligible `.agents/...`
+  effect, including refusal to follow, write, or delete an eligible primary-content
   Library projection without consulting its record;
-- complete supported-workspace-Markdown enumeration inside and outside `.agents`,
+- complete supported-workspace-Markdown enumeration inside and outside the primary content locations,
   base/overwrite layer coverage, exact incoming and outgoing move rewrites,
   internal-link preservation, external URL preservation, and label, fragment,
   encoding, and unrelated-byte preservation;
@@ -629,7 +635,7 @@ category inventory, destination mapping, reference transformations, projection,
 plan completeness, dry-run parity, status, and no-op/repeat boundaries. Focused
 integration tests should use real temporary workspaces with leaf and category
 trees, overwrite pairs and orphans, native and ordinary resources, contained
-Markdown outside `.agents`, generated parent effects, local recovery bundles,
+Markdown outside the primary content locations, generated parent effects, local recovery bundles,
 expected-state changes, and concurrent edits. Gate 5 executable proof must
 exercise the accepted parser, filesystem, physical-identity, lock, recovery,
 library, Native AOT, test, and source-layout boundaries; source inspection or a

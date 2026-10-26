@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
@@ -7,9 +9,10 @@ using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Doctor;
 
-internal sealed class DoctorOperation(OperationalContributorCatalogue contributors, RenameEvidenceReader? renames = null)
+internal sealed class DoctorOperation(OperationalContributorCatalogue contributors, RenameEvidenceReader? renames = null,
+    Func<CliWorkspace, CancellationToken, ValueTask<WorkspaceLayoutRead>>? readLayout = null)
 {
-    private readonly DoctorDiagnosisReader _reader = new(contributors, renames);
+    private readonly DoctorDiagnosisReader _reader = new(contributors, renames, readLayout);
 
     internal async ValueTask<DoctorResult> ExecuteAsync(
         DoctorRequest request,

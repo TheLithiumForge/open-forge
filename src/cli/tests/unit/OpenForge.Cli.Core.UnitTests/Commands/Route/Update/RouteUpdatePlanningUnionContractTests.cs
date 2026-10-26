@@ -20,6 +20,7 @@ public sealed class RouteUpdatePlanningUnionContractTests
         var selection = new RouteUpdateSourceSelection
         {
             Request = observation.Request,
+            LayoutRead = observation.LayoutRead,
             Target = observation.Target,
             Catalogue = observation.Catalogue,
             Source = observation.TargetSource,

@@ -19,8 +19,6 @@ internal sealed partial class RouteListSelectionResolver
         SourceRouteFacts RouteFacts,
         CancellationToken CancellationToken);
 
-    private const string LoaderPath = SourceLogicalPath.LoaderPath;
-
     private readonly PhysicalPathResolver _physicalPathResolver;
 
     internal RouteListSelectionResolver(PhysicalPathResolver physicalPathResolver)

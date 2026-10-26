@@ -18,6 +18,7 @@ internal enum LibraryAttachFindingCode
     RecordUnavailable,
     OwnershipObservation,
     RecordBlocked,
+    LayoutUnavailable,
     ConsumerBlocked,
     MappingBlocked,
     MappingUnavailable,

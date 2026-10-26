@@ -59,6 +59,9 @@ internal static class RouteMovePhrases
     internal static string FormatMustBeAMarkdownFilePathUnderAgents(string targetText)
         => $"{targetText} must be a Markdown file path under .agents.";
 
+    internal static string MarkdownDestinationInLayout(string target, string mainRoot)
+        => $"{target} must be a Markdown file path in the {mainRoot} context folder or a native Skills route.";
+
     // @OpenForgeText route.move.phrase.contains-a-file-that-cannot-be-moved-safely
     internal static string FormatContainsAFileThatCannotBeMovedSafely(string folderText, string pathText, string trimSentenceText)
         => $"{folderText} contains a file that cannot be moved safely: {pathText} ({trimSentenceText}).";

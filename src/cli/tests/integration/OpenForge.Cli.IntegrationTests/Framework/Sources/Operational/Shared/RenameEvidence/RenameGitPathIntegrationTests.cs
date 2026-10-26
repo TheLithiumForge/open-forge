@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using System.Diagnostics;
 using OpenForge.Cli.Composition.Shared.Git;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Git;
@@ -16,7 +17,7 @@ public sealed class RenameGitPathIntegrationTests
         {
             using var repository = new RenameEvidenceGitWorkspace();
             Assert.Equal(string.Empty, Environment.GetEnvironmentVariable("PATH"));
-            var result = await new GitRenameEvidenceReader(timeProvider: new RenameEvidenceClock()).ReadAsync(new(repository.Workspace, new()), TestContext.Current.CancellationToken);
+            var result = await new GitRenameEvidenceReader(timeProvider: new RenameEvidenceClock()).ReadAsync(new(repository.Workspace, new() { Layout = WorkspaceLayout.Create(repository.Workspace, WorkspaceLayout.DefaultMainRoot) }), TestContext.Current.CancellationToken);
             Assert.Equal(RenameGitAvailability.Unavailable, result.Availability);
             return;
         }

@@ -12,6 +12,12 @@ An unrecognized authored settings version produces one informational
 including link exclusions, without changing settings, reducing coverage,
 offering a repair action or raising the result status solely for that fact.
 
+## Workspace Layout
+
+Share one layout observation across all domains, retaining unavailable domains and their causes. Apply the shared missing-loader and ownership rules. A missing loader alone is drift, and its restoration remains a command-specific action.
+
+See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
+
 ## Status And Boundary
 
 This file is the accepted current Crystallized Behavior Contract for
@@ -110,7 +116,7 @@ reports dependent domains as blocked when their boundaries cannot be established
 It never fabricates an empty workspace, installed Framework, or complete route
 universe.
 
-For a valid directory, the stage records whether `.agents`, the Loader, and
+For a valid directory, the stage records whether the main root, the Loader, and
 other required entry evidence are present and readable. A safely absent
 installation is a fact. The Framework lifecycle domain may report an absent
 installation informationally, while missing evidence needed for another domain
@@ -124,8 +130,8 @@ An outside target is never admitted merely because it is named by a source.
 For the local-reference domain, the resolver admits a supported Markdown source
 and a local target only when both are lexically and physically contained by the
 selected workspace and fall within the declared contained local-reference
-boundary. The normal source universe is below `.agents`; supported Markdown
-sources and contained targets outside `.agents` remain eligible only within that
+boundary. The normal source universe spans both primary content locations. Supported Markdown
+sources and contained targets outside the primary content locations remain eligible only within that
 same boundary. External URLs, absolute destinations, workspace escapes, physical
 aliases, unreadable targets, and unsupported target kinds do not expand it.
 
@@ -249,7 +255,7 @@ Between those commands, instruct the user to clear the ID saved by Detach in
 `removedLibraries` from workspace settings.
 This diagnostic does not propose an automatic Repair effect.
 
-The first stage establishes the selected workspace, `.agents` boundary, Loader,
+The first stage establishes the selected workspace, main-root boundary, Loader,
 recognized entrypoints, source identity, parse coverage, root reachability, and
 detached facts. It derives source IDs from current paths for evidence only. It
 does not make an ID authoritative, routed, managed, or safe to mutate.
@@ -298,7 +304,7 @@ The stage realizes the complete workspace catalogue:
   selected-workspace boundary.
 - `workspace.agents-missing` records safe absence or the dependent incomplete or
   blocked boundary. It does not create `.agents`.
-- `workspace.agents-inaccessible` preserves the blocked `.agents` boundary.
+- `workspace.agents-inaccessible` preserves the blocked main-root boundary.
 - `workspace.loader-missing`, `workspace.loader-unreadable`, and
   `workspace.loader-malformed` preserve the exact Loader failure and do not
   adopt another Loader.
@@ -667,7 +673,7 @@ coverage facts are the only public diagnosis for those conditions.
   producer-owned facts; internal legacy identifiers are not an emission claim.
 
 Neither legacy `open-forge.extensions.json`, package-source manifests, broad
-`.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
+primary-content recursion, payload/path/byte resemblance, nor Framework bridges may
 substitute for producer facts. Static CLI composition is wiring only and cannot
 manufacture observations; dependency injection and a runtime registry are not
 observation substitutes.
