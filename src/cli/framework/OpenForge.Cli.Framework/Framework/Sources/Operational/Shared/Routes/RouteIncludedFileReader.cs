@@ -19,6 +19,9 @@ using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Includes;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
@@ -41,7 +44,8 @@ internal sealed class RouteIncludedFileReader(WorkspaceLayout layout)
     internal async ValueTask<RouteIncludedFilesObservation?> ReadAsync(
         RouteSourceInspection inspection,
         WorkspaceSettingsRead settings,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        SourceIncludedEntryRead? retainedRows = null)
     {
         _registered = settings.Document.Roots.ToHashSet(StringComparer.Ordinal);
         var loader = inspection.Sources.SingleOrDefault(source => source.Source.Base.Form == SourceDocumentForm.Loader);
@@ -61,6 +65,10 @@ internal sealed class RouteIncludedFileReader(WorkspaceLayout layout)
 
         return new RouteIncludedFilesObservation
         {
+            Rows = (retainedRows ?? await new SourceIncludedEntryReader().ReadEntriesAsync(inspection.Catalogue,
+                inspection.Session?.DocumentReader ?? new SourceDocumentReader(workspace), cancellationToken).ConfigureAwait(false)).Rows,
+            Layers = _total.Select(pair => new RouteIncludedLayerObservation(pair.Key, pair.Value,
+                _startup.ContainsKey(pair.Key), _continuity.ContainsKey(pair.Key))).ToArray(),
             Files = _files.Values.OrderBy(file => file.Path, StringComparer.Ordinal).ToArray(),
             HandWrittenRows = rows.Count(row => !_registered.Contains(row.Path ?? string.Empty)),
             Startup = RouteContextMeasurementReader.Measure(_startup.Values, _startupComplete),

@@ -135,6 +135,17 @@ internal sealed class StatusOperationRecordings
     internal sealed class RecordingRouteContributor
         : RecordingWorkspaceStatusContributor, IRouteOperationalContributor
     {
+        public ValueTask<RouteOutsideRoutesObservation> ReadOutsideAsync(WorkspaceLayoutRead observation, CancellationToken cancellationToken)
+            => throw new InvalidOperationException("This recording requires the existing empty-registration path.");
+
+        public ValueTask<RouteStatusView> ReadStatusAsync(WorkspaceLayoutRead observation, SourceSharing? sharing,
+            CancellationToken cancellationToken, RouteOutsideRoutesObservation retained)
+            => throw new InvalidOperationException("This recording requires the existing empty-registration path.");
+
+        public ValueTask<RouteDoctorView> ReadDoctorAsync(WorkspaceLayoutRead observation, SourceSharing? sharing,
+            CancellationToken cancellationToken, RouteOutsideRoutesObservation retained)
+            => throw DoctorViewException();
+
         public ValueTask<RouteStatusView> ReadStatusAsync(
             WorkspaceLayoutRead observation,
             SourceSharing? sharing,

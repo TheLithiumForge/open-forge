@@ -1,0 +1,10 @@
+status=blocked
+mode=dry-run
+target=./docs/team/scope/note.md
+completeness=not-established
+safety=blocked
+effects=0
+recovery=not required
+verification=not run
+findings=1
+The registered Route Create anchor must already exist.

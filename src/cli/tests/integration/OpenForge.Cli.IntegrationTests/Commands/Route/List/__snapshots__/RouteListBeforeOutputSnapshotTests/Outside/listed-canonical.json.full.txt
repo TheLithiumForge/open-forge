@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "3 routes listed.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "routes": 3,
+    "roots": 1,
+    "depth": null
+  },
+  "limitations": [],
+  "data": {
+    "subject": {
+      "id": "./docs/team/_team.md",
+      "path": "docs/team/_team.md"
+    },
+    "depth": "all",
+    "rows": [
+      {
+        "id": "./docs/team/_team.md",
+        "path": "docs/team/_team.md",
+        "description": "Team authored",
+        "tags": [
+          "LoadNow"
+        ],
+        "relativeDepth": 0,
+        "maintenanceRoot": "docs/team",
+        "parentId": null,
+        "absoluteDepth": 0,
+        "kind": "entrypoint",
+        "directChildren": 2,
+        "selectedAs": "explicit-root",
+        "hasOverwrite": false
+      },
+      {
+        "id": "./docs/team/SKILL.md",
+        "path": "docs/team/SKILL.md",
+        "description": "Outside skill",
+        "tags": [
+          "Private"
+        ],
+        "relativeDepth": 1,
+        "maintenanceRoot": "docs/team",
+        "parentId": "./docs/team/_team.md",
+        "absoluteDepth": 1,
+        "kind": "file",
+        "directChildren": null,
+        "selectedAs": "descendant",
+        "hasOverwrite": false
+      },
+      {
+        "id": "./docs/team/child.md",
+        "path": "docs/team/child.md",
+        "description": "First child",
+        "tags": [
+          "LoadNow",
+          "Row"
+        ],
+        "relativeDepth": 1,
+        "maintenanceRoot": "docs/team",
+        "parentId": "./docs/team/_team.md",
+        "absoluteDepth": 1,
+        "kind": "file",
+        "directChildren": null,
+        "selectedAs": "descendant",
+        "hasOverwrite": true
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,0 +1,33 @@
+./docs/team/index.md  docs/team/index.md
+Workspace: <workspace>
+  Info  docs/team/index.md  Compatibility entrypoint [route-inspect.compatibility-entrypoint]
+         docs/team/index.md uses the compatibility name index.md; the canonical name is _team.md.
+  Info  docs/team/index.md  Source is detached [route-inspect.detached-source]
+         docs/team/index.md belongs to a route that no Loader entry reaches.
+  Maintenance root: docs/team
+
+Where this source belongs
+  Route chain: index.md
+  Parent: none (detached root)
+  Direct children: 2 files
+  Descendants: 2 files
+  Entrypoint name: index.md (compatibility name; the canonical name is _team.md)
+  Tags: Authored
+
+When it is read
+
+File applicability
+  state: unconditioned
+
+Context size
+  This file: 296 B, about 74 tokens
+  Read automatically below it through #LoadNow: 2 files, 112 B, about 28 tokens
+  Selected context: 3 files, 408 B, about 102 tokens
+
+Axioms
+  Local rules: no
+  Why: all applicable route facts are available
+  Selection: source path; exact path; requested "docs/team/index.md"
+
+Physical layers
+  base docs/team/index.md

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 3,
+  "command": "route exclude",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "The current file state no longer matches the planned expectation.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-exclude.target-changed",
+      "title": "The current file state no longer matches the planned expectation.",
+      "message": "The current file state no longer matches the planned expectation.",
+      "subject": {
+        "kind": "directory",
+        "path": "project/team notes",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route exclude --help",
+          "reason": "Review the reported cause and retry from a fresh preview."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": "# Open Forge Loader\n\n## Entries\n\n- [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)\n",
+      "after": "# Open Forge Loader\n\n## Entries\n\n- none - No entries - #Empty\n"
+    },
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": "{\n  \"schemaVersion\": 5,\n  \"other\": true,\n  \"outsideRoutes\": [\n    \"project/team notes\"\n  ],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\n}",
+      "after": "{\n  \"schemaVersion\": 5,\n  \"other\": true,\n  \"outsideRoutes\": [],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\n}"
+    }
+  ],
+  "counts": {
+    "filesChanged": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": "project/team notes",
+    "targetKind": "folder",
+    "catalogue": "project/team notes/_team notes.md",
+    "before": "- [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)",
+    "after": null,
+    "registeredBefore": true,
+    "registeredAfter": false,
+    "verified": false
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route exclude --help",
+    "reason": "Review the reported cause and retry from a fresh preview."
+  }
+}

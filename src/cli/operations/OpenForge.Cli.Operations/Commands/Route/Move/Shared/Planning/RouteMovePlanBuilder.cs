@@ -93,7 +93,7 @@ internal sealed class RouteMovePlanBuilder
         var referencePlan = references.Plan
             ?? throw new InvalidOperationException(
                 "Successful Route Move reference planning requires its plan.");
-        var navigation = _navigationPlanner.Build(destination);
+        var navigation = _navigationPlanner.Build(destination, referencePlan);
         if (navigation.Boundary is { } navigationBoundary)
         {
             return new RouteMovePlanBuild(plan: null, navigationBoundary with

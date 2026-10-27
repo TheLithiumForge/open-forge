@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-Metadata and Template selection work in both primary content locations. Exact workspace operands remain literal.
+Metadata and Template selection work in both primary content locations and in an available registered outside route. Exact outside operands keep their `./path` identity, including for an unlisted registration. A file include grants no maintenance. Outside effects stay inside the selected boundary and preserve authored Loader rows. Short IDs retain their primary mapping.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 

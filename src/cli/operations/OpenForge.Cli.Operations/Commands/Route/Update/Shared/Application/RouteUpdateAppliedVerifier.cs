@@ -29,6 +29,10 @@ internal sealed partial class RouteUpdateAppliedVerifier(
         {
             receiptBoundary = await VerifyReceiptsAsync(input, cancellationToken)
                 .ConfigureAwait(false);
+            if (receiptBoundary is null
+                && await RouteUpdateOutsideInputs.ValidateAsync(input.Plan, cancellationToken).ConfigureAwait(false) is { } inputFinding)
+                receiptBoundary = inputFinding.Code == Models.Result.RouteUpdateFindingCode.Interrupted
+                    ? Cancelled() : Failed(inputFinding.Cause);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -47,7 +51,7 @@ internal sealed partial class RouteUpdateAppliedVerifier(
         RouteUpdatePlanBuild fresh;
         try
         {
-            fresh = await _planBuilder.BuildAsync(input.Plan.Request, cancellationToken)
+            fresh = await _planBuilder.BuildAsync(input.Plan.Request, input.Plan.LayoutRead, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

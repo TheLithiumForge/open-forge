@@ -9,7 +9,7 @@ open-forge:
 
 ## Layout Selection
 
-A consumer’s default universe may span the main root and native Skills. Selectors retain the [shared source-reference grammar](../source-references/interface.md), including literal `./<workspace-path>` inputs for custom roots. An included catalogue keeps its existing listed-file expansion rather than granting an outside folder maintained-route status.
+A consumer's default universe may span primary content, registered outside inventory and active included files, as its contract declares. Selectors retain the [shared source-reference grammar](../source-references/interface.md), including literal `./<workspace-path>` inputs. A recognized entrypoint in a registered outside route selects its bounded inventory scope. An ordinary included catalogue keeps its retained-edge expansion without scanning siblings or granting folder maintenance.
 
 ## Status And Authority
 
@@ -89,7 +89,7 @@ source's physical kind:
 
 | Resolved source kind                           | Shared expansion                                                                                                                                                                                       |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Loader, a recognized entrypoint, or `SKILL.md` | Select the physical folder containing that source and every Markdown source eligible under the consuming command that is physically contained below that folder, including eligible unrouted Markdown. |
+| Loader, a recognized entrypoint, or native `SKILL.md` | Select the physical folder containing that source and every Markdown source eligible under the consuming command that is physically contained below that folder, including eligible unrouted Markdown. |
 | Ordinary source                                | Select that one logical source.                                                                                                                                                                        |
 
 Physical folder-root expansion is not route-descendant traversal. It does not
@@ -107,7 +107,9 @@ them.
 
 The shared filter contract does not turn an arbitrary directory operand into a
 folder root. Folder-root expansion is available only when the shared source
-reference resolves to Loader, a recognized entrypoint, or `SKILL.md`.
+reference resolves to Loader, a recognized entrypoint, or native `SKILL.md`.
+
+An outside `SKILL.md` has ordinary Markdown form and grants no native Skill folder expansion. An included catalogue without recognized registered entrypoint form instead follows its retained authored descendants. None of these read selections creates loading membership, maintenance authority or package permission.
 
 ## Identity, Collision, Safety, And Errors
 

@@ -122,6 +122,8 @@ internal sealed partial class RouteUpdatePlanProjector
             yield return node.ParentPaths[0];
             yield break;
         }
+        if (RouteUpdateOutsideBoundary.Find(observation.LayoutRead, observation.TargetSource.Base.CanonicalPath) is not null)
+            yield break;
 
         var directory = SourceLogicalPath.ReadParent(
             observation.TargetSource.Identity.CanonicalBasePath);

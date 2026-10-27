@@ -19,6 +19,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Acquisition;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
+using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
@@ -45,7 +46,7 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
         var layout = policy.Layout ?? throw new InvalidOperationException("Repair protection requires the observed layout.");
         var workspace = layout.Workspace;
         var retainedEvidence = retainDiagnosisEvidence ? maintenance?.Renames : null;
-        var snapshots = await ReadSnapshotsAsync(workspace, view, findings, cancellationToken)
+        var snapshots = await ReadSnapshotsAsync(policy, view, findings, cancellationToken)
             .ConfigureAwait(false);
         var documents = ReadSnapshotDocuments(snapshots, view.Documents, findings);
         var scope = RepairAuthoredReferenceBoundary.Filter(view.References, documents);
@@ -58,10 +59,10 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
                 evidence = await renameRead(workspace, cancellationToken).ConfigureAwait(false);
         }
         var catalogue = view.Catalogue
-            ?? (await new SourceReadSessionReader(_physicalPathResolver).ReadAsync(layout, cancellationToken).ConfigureAwait(false)).Catalogue;
+            ?? (await new SourceReadSessionReader(_physicalPathResolver).ReadIncludedAsync(layout, cancellationToken).ConfigureAwait(false)).Catalogue;
         var targetAcquisition = new SourceFileAcquisition();
         foreach (var document in view.Documents.Values) targetAcquisition.RetainDocument(document);
-        var targetReader = targets ?? new RepairTargetReader(catalogue, acquisition: targetAcquisition);
+        var targetReader = targets ?? new RepairTargetReader(catalogue, acquisition: targetAcquisition, policy: policy);
         var candidateFilter = evidence is null ? null : new RenameWeakCandidateFilter(evidence.Facts.Candidates, evidence.Facts.Candidates);
         var renameReader = new RepairRenameProposalReader(layout, _physicalPathResolver, targetReader, candidateFilter);
         var candidatesByOccurrence = view.Candidates.ToLookup(candidate => (candidate.SourcePath, candidate.Destination));
@@ -119,7 +120,8 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
             {
                 return;
             }
-            if (proposal.Target is { } target && !RepairProtectionReader.Allows(Uri.UnescapeDataString(target.CanonicalTargetPath), policy))
+            if (proposal.Target is { } target && (!RepairProtectionReader.Allows(Uri.UnescapeDataString(target.CanonicalTargetPath), policy)
+                || !RepairOutsideAdmission.Allows(Uri.UnescapeDataString(target.CanonicalTargetPath), policy, token, target.RenameProof is not null)))
             {
                 proposalFindings[index] = RepairProtectionReader.Finding(reference.SourcePath, reference.DestinationLocation,
                     Uri.UnescapeDataString(target.CanonicalTargetPath), policy);
@@ -200,18 +202,25 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
     }
 
     private async ValueTask<IReadOnlyDictionary<string, FileStateSnapshot>> ReadSnapshotsAsync(
-        CliWorkspace workspace,
+        RoutedMetadataPolicyContext policy,
         LocalReferenceDoctorView view,
         List<RepairFinding> findings,
         CancellationToken cancellationToken)
     {
         var snapshots = new Dictionary<string, FileStateSnapshot>(StringComparer.Ordinal);
+        var workspace = policy.Layout.Workspace;
         var paths = _physicalPathResolver.CreateReadSession();
         foreach (var sourcePath in view.References
             .Select(reference => reference.SourcePath)
             .Distinct(StringComparer.Ordinal)
             .Order(StringComparer.Ordinal))
         {
+            if (!RepairOutsideAdmission.Allows(sourcePath, policy, cancellationToken))
+            {
+                findings.Add(new(RepairFindingCode.ManualFindingRemaining, "The outside source has no safe retained maintenance boundary.", sourcePath)
+                { Protection = true, ProtectionKind = RepairProtectionKind.Protected, ProtectedPath = sourcePath });
+                continue;
+            }
             var lexicalPath = Path.Combine(
                 workspace.LexicalRoot,
                 sourcePath.Replace('/', Path.DirectorySeparatorChar));

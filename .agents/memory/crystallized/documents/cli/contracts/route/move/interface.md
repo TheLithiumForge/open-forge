@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-Route Move moves eligible sources within the selected layout. It does not relocate the main root. Exact paths remain literal.
+Route Move moves eligible sources within the selected layout. Exact outside source and destination paths must belong to the same available registration. Its directory and every recognized root entrypoint are protected. An unlisted registration retains bounded maintenance without relisting. Short IDs keep their primary mapping, and native restrictions remain unchanged. Outside `SKILL.md` is ordinary Markdown. The command does not relocate the main root.
 
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
@@ -60,6 +60,8 @@ Follow the [shared help template](../../shared/global-flags/interface.md#--help)
 ## Purpose And Operation Boundary
 
 Move honors the [shared link scope](../../../shared-operation-contract.md#link-scope). Ignored authored links retain their exact bytes, including inside moved files. Entries naming the moved path or a descendant follow the move in the same expected-state and recovery plan.
+
+For an outside move, readable foreign references establish impact without granting write authority. A required content rewrite outside the selected registration prevents the complete move unless existing authored link scope excludes it. Loader bytes and registration remain unchanged. Existing link-scope settings may follow the move, while removal exclusions keep their literal coordinates.
 
 `route move` moves one eligible ordinary unmanaged logical leaf or one eligible
 ordinary unmanaged category to one exact destination. It preserves the selected
@@ -389,6 +391,11 @@ established safely prevents the complete plan.
 Generated effects and authored reference rewrites are part of the same move plan.
 The result reports them together, and final verification checks the complete
 post-move projection rather than treating navigation as a later cleanup step.
+
+Outside authored Entries retain labels, metadata, conditions, duplicates and
+order. Only required destinations and containing-source coordinates follow the
+move. Row and generated-body changes compose from one original snapshot into
+one effect, with no stale source destination or duplicate synthetic row.
 
 ## Planning And Effects
 

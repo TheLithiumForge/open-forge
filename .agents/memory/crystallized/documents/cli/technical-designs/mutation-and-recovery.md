@@ -13,6 +13,8 @@ Mutation plans retain the operation’s `WorkspaceLayoutRead`. Validate its sett
 
 A custom context folder does not relocate `.open-forge-state/`, the physical-workspace lock, new recovery storage or historical recorded paths. Recovery paths and recorded installed targets stay literal. Delivery 1 introduces no relocation recovery protocol.
 
+Outside effects additionally require exact physical containment within the selected retained registration, not workspace containment alone. Commands recheck their required directory, ordinary-leaf, structural, readonly, ownership and expected-state facts at their application boundaries. Reading foreign references or metadata supplies no write authority. Fixed settings and ownership changes remain separately planned control effects. Recovery records literal outside coordinates and original bytes, with preparation before effects and retention on failure under the command contract.
+
 ## Boundary
 
 Shared mutation support provides immutable mechanical facts and directly

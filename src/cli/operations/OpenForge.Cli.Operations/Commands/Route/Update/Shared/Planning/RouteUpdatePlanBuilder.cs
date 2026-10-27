@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 
@@ -25,9 +26,16 @@ internal sealed class RouteUpdatePlanBuilder
     internal async ValueTask<RouteUpdatePlanBuild> BuildAsync(
         RouteUpdateRequest request,
         CancellationToken cancellationToken)
+        => await BuildAsync(request, null, cancellationToken).ConfigureAwait(false);
+
+    internal async ValueTask<RouteUpdatePlanBuild> BuildAsync(
+        RouteUpdateRequest request,
+        WorkspaceLayoutRead? retainedLayout,
+        CancellationToken cancellationToken)
     {
         var observed = await _observer.ObserveAsync(
                 request,
+                retainedLayout,
                 cancellationToken)
             .ConfigureAwait(false);
         if (observed.Boundary is { } observationBoundary)

@@ -25,7 +25,10 @@ preflight and mutation pattern. Include and Exclude preserve that boundary.
 Resolve one explicit workspace and canonical operand. Validate the full lexical
 and physical path before reading a target. Reject unsupported targets with an
 invalid-input cause that names the operand and gives the supported alternative.
-Allow a missing file while retaining containment and target-kind checks.
+Allow a missing file or exact registered outside folder while retaining containment and target-kind checks. A missing folder declaration supplies its logical identity, not permission to inspect an unsafe target or remove content.
+
+Folder deregistration retains the common layout and anchor observations, but does not recursively scan descendants, require the tree to become readable, or restore an anchor. It changes only the matching registration and Loader rows. Explicit Include owns any later re-registration or relisting.
+
 Read the loader and authored settings safely. A malformed control document blocks
 the complete operation before effects.
 
@@ -36,6 +39,7 @@ canonical workspace path, including percent-encoded authored destinations.
 Remove all matching declarations and turn a primary-category catalogue off through
 loader membership. Plan external deregistration through the settings
 root-deregistration planner. Preserve every unrelated authored row.
+For folders, use the outside-route deregistration adapter and remove matching catalogue rows. Preserve an independent file registration, every unrelated registration and authored row order. File exclusion never removes an independent folder registration. Retain before and intended layouts through planning and verification.
 
 Build loader bytes through the generated navigation planner. Preserve authored
 links and membership through the same machinery used by Index.
@@ -61,8 +65,9 @@ disposition is a failure.
 
 Unit evidence covers binding, result projection and source-generated JSON.
 Integration evidence covers real files, row merging, invalid targets and planner
-preservation. Published-process journeys cover application and no reactivation
-through Index, Update, Configure and Extension installation.
+preservation. Existing file-inclusion published journeys cover application and no
+reactivation through Index, Update, Configure and Extension installation. The
+outside-folder Integration controls cover ordinary Install, configure, form conversion and Update preservation of registration and authored row policy. Final combined and hosted qualification remain separate gates.
 
 The implementation reuses managed filesystem APIs, the shared Markdown parser,
 generated navigation, settings planners, mutation lock, recovery store and file

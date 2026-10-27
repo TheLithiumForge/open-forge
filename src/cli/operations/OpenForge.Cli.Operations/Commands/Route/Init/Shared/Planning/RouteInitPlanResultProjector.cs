@@ -96,7 +96,8 @@ internal sealed class RouteInitPlanResultProjector
         {
             LayoutRead = inspection.LayoutRead,
             Restoration = inspection.Restoration,
-            SourceSnapshots = [.. prospective.EffectSources.Select(content => content.Before)],
+            SourceSnapshots = [.. prospective.EffectSources.Select(content => content.Before)
+                .Concat(prospective.ReadonlySnapshots).DistinctBy(snapshot => snapshot.LogicalPath, StringComparer.Ordinal)],
         };
         return new RouteInitPlanBuild(plan, preview);
     }

@@ -10,7 +10,7 @@ internal sealed record RouteListInventoryRequest
     internal RouteListInventoryRequest(
         WorkspaceLayout layout,
         CancellationToken cancellationToken)
-        : this(layout, layout.SourceRoots, cancellationToken)
+        : this(layout, layout.InventoryRoots, cancellationToken)
     {
     }
 
@@ -27,9 +27,9 @@ internal sealed record RouteListInventoryRequest
             throw new ArgumentException("Route-list inventory requires at least one logical root.", nameof(logicalRoots));
         }
 
-        if (roots.Any(root => !layout.SourceRoots.Contains(root) && !SourceLogicalPath.IsPrimarySource(layout, root)))
+        if (roots.Any(root => !layout.InventoryRoots.Contains(root, StringComparer.Ordinal) && !SourceLogicalPath.IsPrimarySource(layout, root)))
         {
-            throw new ArgumentException("Every route-list inventory root must be a canonical primary content path.", nameof(logicalRoots));
+            throw new ArgumentException("Every route-list inventory root must be a canonical primary or registered content path.", nameof(logicalRoots));
         }
 
         var orderedRoots = roots.OrderBy(root => root, StringComparer.Ordinal).ToArray();

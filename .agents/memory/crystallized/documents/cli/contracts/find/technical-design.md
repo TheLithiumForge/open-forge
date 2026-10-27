@@ -9,7 +9,7 @@ open-forge:
 
 ## Layout Transport
 
-Carry the layout through source inventory and universe resolution. Reconstruct catalogues with their layout and aliases, and build results from retained identities. See [Workspace Layout](../../technical-designs/workspace-layout.md).
+Carry the layout through source inventory and universe resolution. Use the combined included read session and retain its layout, aliases and authored rows when reconstructing catalogues. Registered unlisted Markdown remains discoverable, while membership and row applicability remain independent. Build results from retained exact identities. See [Workspace Layout](../../technical-designs/workspace-layout.md).
 
 ## Status And Authority
 
@@ -96,9 +96,10 @@ than Route command results. Those facts distinguish routed, unrouted, ambiguous,
 and unavailable states. Find exposes a route only for one unambiguous
 Loader-rooted source identity, treats ambiguous or unavailable metadata as an
 incomplete projection, and does not infer a Framework scope from path segments.
-The route-facts resolver reads only supporting sources in the effective Find
-universe; metadata projection does not widen source filters to inspect excluded
-sources.
+Metadata and applicability may read required ancestor or Loader facts from the
+complete catalogue. Those supporting reads add no candidates or matches and do
+not search excluded sources for predicates. Candidate inspection, projection and
+counts remain confined to the effective Find universe.
 
 ## Path-Scoped Applicability
 

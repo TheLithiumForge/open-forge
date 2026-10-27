@@ -4,6 +4,9 @@ namespace OpenForge.Cli.OutputText.Route.Inspect;
 
 internal static class RouteInspectText
 {
+    // @OpenForgeText route.inspect.label.maintenance-root
+    internal static string LabelMaintenanceRoot() => "Maintenance root";
+
     // @OpenForgeText route.inspect.label.matching-all-files
     internal static string MatchingAllFiles() => "Matching files: all files";
 
@@ -87,6 +90,10 @@ internal static class RouteInspectText
     // @OpenForgeText route.inspect.label.none-loader-root
     internal static string LabelNoneLoaderRoot()
         => "none (Loader root)";
+
+    // @OpenForgeText route.inspect.label.none-detached-root
+    internal static string LabelNoneDetachedRoot()
+        => "none (detached root)";
 
     // @OpenForgeText route.inspect.title.direct-children
     internal static string TitleDirectChildren()

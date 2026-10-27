@@ -5,6 +5,8 @@ using OpenForge.Cli.Core.Commands.Route.Shared.Models.Navigation;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 
@@ -17,6 +19,10 @@ internal sealed record RouteRemoveResolvedLayer
 
 internal sealed record RouteRemoveResolvedSubject
 {
+    internal WorkspaceLayoutRead? LayoutRead { get; init; }
+
+    internal WorkspaceOutsideRoute? OutsideRoute { get; init; }
+
     public required RouteRemoveRequest Request { get; init; }
 
     public required RouteRemoveSource Source { get; init; }

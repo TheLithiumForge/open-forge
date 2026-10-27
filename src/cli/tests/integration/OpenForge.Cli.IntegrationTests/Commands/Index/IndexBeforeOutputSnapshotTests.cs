@@ -1,3 +1,4 @@
+using OpenForge.Cli.IntegrationTests.Commands.Shared.RoutedMaintenance;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
@@ -11,6 +12,18 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Index;
 public sealed class IndexBeforeOutputSnapshotTests
 {
     private static readonly CommandOutputRenderers<IndexResult> Renderers = CommandOutputRenderers<IndexResult>.From(OpenForge.Cli.Core.Presentation.Index.IndexPresentation.Rendering);
+
+    [Fact(DisplayName = "Index outside preview shows explicit unlisted completion without Loader membership"), Trait("Boundary", "Output")]
+    public async Task OutsidePreview()
+    {
+        using var fixture = new OutsideMaintenanceWorkspace();
+        var before = fixture.Files.SnapshotHashes(includeRuntime: true);
+        var result = await IndexOperationFactory.Create().ExecuteAsync(new(fixture.Workspace,
+            [OpenForge.Cli.Core.Framework.Sources.Identity.SourceWorkspaceRelativePath.LiteralReferencePrefix + OutsideMaintenanceWorkspace.Note], IndexMode.DryRun), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(before, fixture.Files.SnapshotHashes(includeRuntime: true));
+        Renderers.MatchDetails(result, "outside-unlisted-preview");
+    }
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Index output preserves partial progress after a later Windows replacement is denied")]

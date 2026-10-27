@@ -1,1 +1,0 @@
-'empty': Create the catalogue 'empty/_empty.md' and use that file instead.

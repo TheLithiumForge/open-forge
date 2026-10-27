@@ -23,8 +23,6 @@ internal static class WorkspaceLayoutPayloadGuidance
     internal const string ExampleRepairNotePath = WorkspaceLayout.DefaultMainRoot + "/memory/crystallized/repair-note.md";
     internal const string ExampleRepairTargetPath = WorkspaceLayout.DefaultMainRoot + "/memory/crystallized/order-rule.md";
     internal const string ContextExamplePrefix = "context " + SourceWorkspaceRelativePath.LiteralReferencePrefix;
-    internal const string OutsidePathIntroduction = "outside ";
-    internal const string IncludeCategoryTemplate = "Inside `" + WorkspaceLayout.DefaultMainRoot + "/`, use only a direct child folder's catalogue.";
     internal const string ExcludeCategoryTemplate = "Inside `" + WorkspaceLayout.DefaultMainRoot + "/`, use a direct child folder's catalogue to remove its row from the loader.";
     private static readonly Lazy<FrameworkPayload?> ShippedPayload = new(() => EmbeddedFrameworkPayloadReader.Read().Payload);
     private static readonly HashSet<string> ReferenceNames =
@@ -44,7 +42,6 @@ internal static class WorkspaceLayoutPayloadGuidance
             return;
 
         var categoryReference = $"a direct child folder's catalogue under `{layout.MainRoot}/`, or the native Skills catalogue under `{WorkspaceLayout.NativeSkillsPath}/`";
-        AddTemplateReference(document, IncludeCategoryTemplate, $"Use {categoryReference}.", replacements);
         AddTemplateReference(document, ExcludeCategoryTemplate, $"Use {categoryReference} to remove its row from the loader.", replacements);
 
         // Only the exact shipped templates own these examples and code references.
@@ -52,7 +49,7 @@ internal static class WorkspaceLayoutPayloadGuidance
         {
             if (replacements.Keys.Any(span => span.Start <= code.Span.Start && span.End >= code.Span.End)) continue;
             var original = document.Source[code.Span.Start..code.Span.End];
-            var rendered = RenderCode(layout, packagePath, original, document.Source[..code.Span.Start]);
+            var rendered = RenderCode(layout, packagePath, original);
             if (rendered != original) replacements[code.Span] = rendered;
         }
 
@@ -80,18 +77,14 @@ internal static class WorkspaceLayoutPayloadGuidance
             || path.StartsWith(CliSkillDirectory + "/" + ReferencesDirectoryName + "/", StringComparison.Ordinal)
                 && ReferenceNames.Contains(path[(path.LastIndexOf('/') + 1)..]);
 
-    private static string RenderCode(WorkspaceLayout layout, string packagePath, string code, string preceding)
+    private static string RenderCode(WorkspaceLayout layout, string packagePath, string code)
     {
         if (code == $"`{WorkspaceLayout.DefaultMainRoot}/{PathPlaceholder}`")
             return $"`{SourceWorkspaceRelativePath.LiteralReferencePrefix}{PathPlaceholder}`";
         if (code == $"`{WorkspaceLayout.DefaultMainRoot}/`")
             return $"the content folders (`{layout.MainRoot}/` and `{WorkspaceLayout.NativeSkillsPath}/`)";
         if (code == $"`{WorkspaceLayout.DefaultMainRoot}`")
-        {
-            if (preceding.EndsWith(OutsidePathIntroduction, StringComparison.Ordinal))
-                return $"the content folders (`{layout.MainRoot}/` and `{WorkspaceLayout.NativeSkillsPath}/`)";
             return $"`{layout.MainRoot}`";
-        }
         if (code == $"`{ContextExamplePrefix}{SourceLogicalPath.HumanGuidePath}`")
             return $"`{ContextExamplePrefix}{layout.HumanGuidePath}`";
         if (packagePath == SourceLogicalPath.HumanGuidePath && code == $"`{ExampleExcludedPath}`")

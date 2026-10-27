@@ -1,0 +1,11 @@
+Would create docs/team/scope/note.md  (./docs/team/scope/note.md)
+Workspace: <workspace>
+  Warning  docs/team/scope/note.md  Optional metadata is missing
+         Would create docs/team/scope/note.md without optional description or tags.
+         open-forge route update --help
+  Would create docs/team/scope
+  Would create docs/team/scope/_scope.md
+  Would create docs/team/scope/note.md
+  Would list it in docs/team/_team.md
+No files were changed.
+Add a description or tags when useful. See open-forge route update --help.

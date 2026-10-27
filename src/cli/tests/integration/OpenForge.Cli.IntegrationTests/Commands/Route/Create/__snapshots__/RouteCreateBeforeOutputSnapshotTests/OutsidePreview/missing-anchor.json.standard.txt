@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot create docs/team/scope/note.md: docs/team/scope has no entrypoint, so the file cannot be listed. Create the route first.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-create.parent-missing",
+      "title": "Parent route is missing",
+      "message": "docs/team/scope has no entrypoint, so the file cannot be listed. Create the route first.",
+      "subject": {
+        "kind": "directory",
+        "path": "docs/team/scope",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route init ./docs/team/_team.md --workspace <workspace>",
+          "reason": "Create the missing parent route, then rerun Route Create."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": {
+      "id": "./docs/team/scope/note.md",
+      "path": "docs/team/scope/note.md"
+    },
+    "listedIn": null,
+    "template": null,
+    "metadata": {
+      "description": "Authored destination",
+      "responsibility": null,
+      "tags": [
+        "Fixture"
+      ]
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route init ./docs/team/_team.md --workspace <workspace>",
+    "reason": "Create the missing parent route, then rerun Route Create."
+  }
+}

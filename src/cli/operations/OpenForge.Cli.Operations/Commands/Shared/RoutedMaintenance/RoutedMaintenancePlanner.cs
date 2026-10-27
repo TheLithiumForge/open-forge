@@ -21,6 +21,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance;
 
@@ -49,6 +50,8 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
             .Select(source => source.Identity.CanonicalBasePath).Select(path => (Path: path, Folder: SourceLogicalPath.ReadParent(path))).ToArray();
         var acquisitions = new List<(SourceLogicalSource Source, RoutedMetadataFileFacts Facts, SourceLayerVerification Verification)>();
         foreach (var source in request.SelectedSources.OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
+            .Where(source => request.SelectedSourcePaths is not { } selectedPaths || selectedPaths.Contains(source.Identity.CanonicalBasePath, StringComparer.Ordinal))
+            .Where(source => IsSafeOutsideTarget(source.Identity.CanonicalBasePath, source))
             .DistinctBy(source => source.Base.PhysicalPath, PhysicalIdentityTracker.PathComparer))
         {
             var path = source.Identity.CanonicalBasePath;
@@ -115,7 +118,7 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
             if (!metadata.Completion.Fields.Contains(FrameworkMetadataField.Tags)) continue;
             var source = catalogue.FindByPath(metadata.Path) ?? throw new InvalidOperationException();
             var facts = Facts(source, intendedEntrypointPaths);
-            if (metadata.Completion.Tags is { } currentTags && currentTags.SequenceEqual(RoutedMetadataDefaults.Tags(policy.Roots, facts), StringComparer.Ordinal)) continue;
+            if (metadata.Completion.Tags is { } currentTags && currentTags.SequenceEqual(RoutedMetadataDefaults.Tags(policy.Layout, facts), StringComparer.Ordinal)) continue;
             var original = originals[metadata.Path];
             var bytes = request.IntendedBytes.TryGetValue(metadata.Path, out var intended) ? intended : original.Bytes;
             var completion = _policy.Complete(new() { File = facts, Bytes = bytes }, policy).Completion;
@@ -129,6 +132,12 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
         var proofs = new List<RouteScaffoldRenameProof>();
         foreach (var gap in discovery.Gaps)
         {
+            if (catalogue.Layout.TryGetMaintenanceBoundary(gap.CanonicalPath, out var gapBoundary) && gapBoundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside
+                && (_policy.Protection(gap.CanonicalPath, policy) != RoutedMetadataEligibility.Eligible || !IsSafeOutsideTarget(gap.CanonicalPath, source: null)))
+            {
+                limitations.Add(new(gap.CanonicalPath, "The intended entrypoint is protected or outside its safe selected boundary.", false));
+                continue;
+            }
             var source = _sources.Create(catalogue.Layout, gap.CanonicalPath);
             var leaf = NoFollowLeafObserver.Observe(readPaths, catalogue.Workspace, SourceLogicalPath.ToLexicalPath(catalogue.Workspace.LexicalRoot, gap.CanonicalPath), token);
             if (leaf.State != NoFollowLeafState.Missing)
@@ -136,7 +145,7 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
                 limitations.Add(new(gap.CanonicalPath, "The intended entrypoint path is occupied or unsafe.", false));
                 continue;
             }
-            var tags = RoutedMetadataDefaults.Tags(policy.Roots, Facts(source, intendedEntrypointPaths));
+            var tags = RoutedMetadataDefaults.Tags(policy.Layout, Facts(source, intendedEntrypointPaths));
             var scaffold = new RouteScaffoldComposer().Compose(RouteScaffoldComposer.FolderDocument(gap.FolderId,
                 FrameworkMetadataDescriptionDeriver.SentenceCase(SourceLogicalPath.ReadFileName(SourceLogicalPath.ReadParent(gap.CanonicalPath))), tags, policy.Settings.Frontmatter));
             var old = eligible.Where(item => SourceLogicalPath.ReadParent(item.Identity.CanonicalBasePath) == SourceLogicalPath.ReadParent(gap.CanonicalPath)
@@ -211,6 +220,36 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
                 IsGeneratedFile = false,
                 HasManagedAuthoredRegions = false,
             };
+        }
+
+        bool IsSafeOutsideTarget(string path, SourceLogicalSource? source)
+        {
+            token.ThrowIfCancellationRequested();
+            if (!catalogue.Layout.TryGetMaintenanceBoundary(path, out var boundary) || boundary.Kind != WorkspaceMaintenanceBoundaryKind.Outside)
+                return true;
+            var observation = policy.AvailableOutsideBoundary(boundary);
+            if (observation?.PhysicalDirectory is not { } physicalBoundary
+                || !roots.Any(root => root.Folder == boundary.DirectoryPath)) return false;
+            var lexicalBoundary = SourceLogicalPath.ToLexicalPath(catalogue.Workspace.LexicalRoot, boundary.DirectoryPath);
+            var currentBoundary = readPaths.ResolveCandidate(catalogue.Workspace.LexicalRoot, catalogue.Workspace.PhysicalRoot, lexicalBoundary);
+            if (currentBoundary.State != PhysicalPathState.Contained
+                || !PhysicalIdentityTracker.PathComparer.Equals(currentBoundary.ResolvedPhysicalPath, physicalBoundary)) return false;
+            var lexicalPath = SourceLogicalPath.ToLexicalPath(catalogue.Workspace.LexicalRoot, path);
+            var target = readPaths.ResolveCandidate(lexicalBoundary, physicalBoundary, lexicalPath);
+            if (target.State is not (PhysicalPathState.Contained or PhysicalPathState.Missing)) return false;
+            var expected = Path.GetFullPath(Path.Combine(physicalBoundary, Path.GetRelativePath(lexicalBoundary, lexicalPath)));
+            if (target.State == PhysicalPathState.Contained
+                && !PhysicalIdentityTracker.PathComparer.Equals(target.ResolvedPhysicalPath, expected)) return false;
+            if (catalogue.Aliases.Any(alias => alias.Key == path || alias.Value == path)) return false;
+            if (source is null) return target.State == PhysicalPathState.Missing;
+            var candidate = catalogue.FindCandidateByPath(path);
+            if (target.State != PhysicalPathState.Contained || candidate?.PhysicalState != PhysicalPathState.Contained
+                || !PhysicalIdentityTracker.PathComparer.Equals(candidate.PhysicalPath, expected)
+                || !PhysicalIdentityTracker.PathComparer.Equals(candidate.PhysicalParentPath, Path.GetDirectoryName(expected))
+                || source.Base.CanonicalPath != path || !PhysicalIdentityTracker.PathComparer.Equals(source.Base.PhysicalPath, expected)) return false;
+            return !catalogue.Candidates.Any(item => item.CanonicalPath != path && item.PhysicalPath is { } physical
+                    && PhysicalIdentityTracker.PathComparer.Equals(physical, expected))
+                && !catalogue.FindLayersByPhysicalPath(expected).Any(item => item.Layer.CanonicalPath != path);
         }
     }
 

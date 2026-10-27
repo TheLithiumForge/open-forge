@@ -9,7 +9,7 @@ open-forge:
 
 ## Layout Transport
 
-Select sources through the observed layout across both content locations. Preserve root boundaries in projected effects and revalidate the original observation before mutation. See [Workspace Layout](../../../technical-designs/workspace-layout.md).
+Select sources through the observed layout across both primary content locations and available registered outside boundaries. Retain one layout observation, exact selected coordinates and authored included rows through target selection and intended projection. Keep outside effects within their selected boundary, including when Loader membership is absent. Revalidate physical and expected-state inputs under the lease. See [Workspace Layout](../../../technical-designs/workspace-layout.md).
 
 ## Status And Authority
 

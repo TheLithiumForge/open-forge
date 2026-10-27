@@ -11,6 +11,8 @@ open-forge:
 
 Update reconciles mapped installed destinations and does not recreate a default loader in a custom-root workspace. A lone missing selected loader remains eligible for restoration under the ordinary rules.
 
+Outside registration adds no package destination or ownership. Root Update preserves registrations, exact unlisted state and authored row policy without relisting or restoring outside content. This lifecycle operation remains distinct from `route update`, which changes selected source metadata.
+
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
 ## Ownership Receipt Boundary

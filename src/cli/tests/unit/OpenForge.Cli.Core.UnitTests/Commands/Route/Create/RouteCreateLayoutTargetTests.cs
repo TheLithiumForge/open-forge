@@ -45,4 +45,37 @@ public sealed class RouteCreateLayoutTargetTests
             Assert.Equal(RouteCreateTargetResolutionState.Invalid,
                 new RouteCreateTargetPlanner().Resolve(RouteCreateTestData.Request(fileTarget: target), layout).State);
     }
+
+    [Theory(DisplayName = "Route Create keeps outside destinations exact and outside Skills ordinary")]
+    [InlineData(WorkspaceLayout.DefaultMainRoot)]
+    [InlineData(MainRoot)]
+    public void OutsideDestinationsRetainExactIdentity(string mainRoot)
+    {
+        const string directory = "docs/team";
+        var request = RouteCreateTestData.Request();
+        var layout = WorkspaceLayout.Create(request.Workspace, mainRoot).WithOutsideRoutes([directory]);
+        foreach (var file in new[] { "release" + SourceFormClassifier.MarkdownExtension, SourceFormClassifier.NativeSkillFileName,
+                     WorkspaceLayoutNames.LoaderFileName, WorkspaceLayoutNames.HumanGuideFileName })
+        {
+            var path = directory + "/" + file;
+            var reference = SourceWorkspaceRelativePath.LiteralReferencePrefix + path;
+            var resolution = new RouteCreateTargetPlanner().Resolve(RouteCreateTestData.Request(fileTarget: reference), layout);
+            Assert.Equal(RouteCreateTargetResolutionState.Resolved, resolution.State);
+            Assert.Equal(reference, resolution.Target.Id);
+            Assert.Equal(path, resolution.Target.Path);
+            Assert.False(layout.IsImplicitContentDestination(path));
+        }
+        var shortResolution = new RouteCreateTargetPlanner().Resolve(RouteCreateTestData.Request(fileTarget: directory + "/release"), layout);
+        Assert.Equal(layout.SourcePath(directory + "/release" + SourceFormClassifier.MarkdownExtension), shortResolution.Target.Path);
+        foreach (var path in new[] { directory, directory.ToUpperInvariant() + "/release" + SourceFormClassifier.MarkdownExtension,
+                     directory + "/" + SourceFormClassifier.IndexFileName,
+                     directory + "/" + SourceFormClassifier.CanonicalEntrypointFileName("team"),
+                     SourceOverwritePath.ReadAdjacentPath(directory + "/release" + SourceFormClassifier.MarkdownExtension),
+                     directory + "/resource.json", "unregistered/release" + SourceFormClassifier.MarkdownExtension })
+        {
+            var resolution = new RouteCreateTargetPlanner().Resolve(
+                RouteCreateTestData.Request(fileTarget: SourceWorkspaceRelativePath.LiteralReferencePrefix + path), layout);
+            Assert.Equal(RouteCreateTargetResolutionState.Invalid, resolution.State);
+        }
+    }
 }

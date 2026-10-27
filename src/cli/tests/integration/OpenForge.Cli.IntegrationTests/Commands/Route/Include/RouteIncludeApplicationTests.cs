@@ -17,7 +17,7 @@ using OpenForge.Cli.IntegrationTests.Hosting;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Include;
 
-public sealed class RouteIncludeApplicationTests
+public sealed partial class RouteIncludeApplicationTests
 {
     private const string GuidePath = "guide.md";
     private const string GuideDescription = "Guide";

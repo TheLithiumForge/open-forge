@@ -35,6 +35,8 @@ internal sealed record StatusContext
 {
     public StatusIncludedFiles? IncludedFiles { get; init; }
 
+    public IReadOnlyList<StatusOutsideRoute>? OutsideRoutes { get; init; }
+
     public required string TokenEstimator { get; init; }
 
     public required StatusStartupComparison Startup { get; init; }

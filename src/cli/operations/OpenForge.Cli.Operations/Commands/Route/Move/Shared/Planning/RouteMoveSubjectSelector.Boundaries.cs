@@ -44,7 +44,18 @@ internal sealed partial class RouteMoveSubjectSelector
             fact.Identity.CanonicalBasePath,
             discovery.SelectedSource.Identity.CanonicalBasePath,
             StringComparison.Ordinal));
-        if (route.State != SourceRouteState.Routed)
+        if (RouteMoveMaintenanceBoundaryInspector.IsOutside(discovery.Catalogue, discovery.SelectedSource.Base.CanonicalPath))
+        {
+            var problem = RouteMoveMaintenanceBoundaryInspector.ReadChainProblem(discovery.LayoutRead,
+                discovery.Catalogue, routeFacts.Topology, discovery.SelectedSource.Base.CanonicalPath);
+            if (problem is not null)
+                return Boundary(formation, RouteMoveFindingCode.InvalidSubject, CliSemanticStatus.Invalid,
+                    discovery.SelectedSource.Base.CanonicalPath, problem);
+            if (discovery.SelectedSource.Overwrite is { } overwrite
+                && RouteMoveMaintenanceBoundaryInspector.ReadPathProblem(discovery.LayoutRead, overwrite.CanonicalPath, false) is { } layerProblem)
+                return Boundary(formation, RouteMoveFindingCode.SourceUnsafe, CliSemanticStatus.Blocked, overwrite.CanonicalPath, layerProblem);
+        }
+        else if (route.State != SourceRouteState.Routed)
         {
             return FromRouteState(formation, discovery.SelectedSource, route.State);
         }

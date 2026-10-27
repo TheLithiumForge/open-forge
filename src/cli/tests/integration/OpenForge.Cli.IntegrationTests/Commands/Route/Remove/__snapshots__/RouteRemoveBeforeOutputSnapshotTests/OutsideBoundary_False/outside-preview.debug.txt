@@ -1,0 +1,12 @@
+Would remove docs/team/old.md
+Workspace: <workspace>
+  Would remove docs/team/old.overwrite.md
+  Would remove entry from docs/team/index.md
+  Would record this removal in .agents/open-forge.json so updates keep this file removed.
+  No managed content ownership claims needed release.
+    Before: <sha256>
+    After: <sha256>
+    Before: <sha256>
+    Before: <sha256>
+  Scanned 15 files and found 3 links.
+No files were changed.

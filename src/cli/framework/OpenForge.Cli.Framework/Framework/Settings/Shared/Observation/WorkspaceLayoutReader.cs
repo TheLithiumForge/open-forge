@@ -79,7 +79,7 @@ internal sealed class WorkspaceLayoutReader(PhysicalPathResolver paths)
             if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
                 return Result(settings.State == WorkspaceSettingsReadState.Invalid ? WorkspaceLayoutReadState.Invalid : WorkspaceLayoutReadState.Unavailable, null);
 
-            var layout = WorkspaceLayout.Create(workspace, settings.Document.MainRoot);
+            var layout = WorkspaceLayout.Create(workspace, settings.Document.MainRoot).WithOutsideRoutes(settings.Document.OutsideRoutes);
             ObserveDirectory(layout.MainRoot, cancellationToken);
             ObserveDirectory(WorkspaceLayout.NativeSkillsPath, cancellationToken);
             if (!layout.IsDefault && ObserveDirectory(layout.MainRoot + "/" + WorkspaceLayoutNames.SkillsDirectoryName, cancellationToken) is { Exists: true })
@@ -108,6 +108,9 @@ internal sealed class WorkspaceLayoutReader(PhysicalPathResolver paths)
             if (IsUnexpectedMissingLoader(layout, settings.Document, positive, loader?.Kind))
                 Issue(WorkspaceLayoutIssueCode.MissingLoader, layout.LoaderPath, "The selected loader is missing despite installation evidence.");
 
+            var outsideReader = new WorkspaceOutsideRouteReader(paths, layout);
+            var outsideRoutes = await outsideReader.ReadAsync(cancellationToken).ConfigureAwait(false);
+
             foreach (var expectation in _expectations.Values)
             {
                 var check = await _validator.ValidateAsync(workspace, expectation, cancellationToken).ConfigureAwait(false);
@@ -117,7 +120,9 @@ internal sealed class WorkspaceLayoutReader(PhysicalPathResolver paths)
             }
 
             var classification = Classify(positive, _issues, ownership);
-            return new(classification.State, settings, ownership, layout, classification.Issues, [.. _expectations.Values]);
+            foreach (var expectation in outsideReader.Expectations)
+                _expectations.TryAdd(expectation.LogicalPath, expectation);
+            return new(classification.State, settings, ownership, layout, classification.Issues, [.. _expectations.Values], outsideRoutes);
 
             WorkspaceLayoutRead Result(WorkspaceLayoutReadState state, WorkspaceLayout? selected)
                 => new(state, settings, ownership, selected, RecordOwnershipIssue(_issues, ownership), [.. _expectations.Values]);

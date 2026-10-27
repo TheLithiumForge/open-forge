@@ -45,9 +45,15 @@ Example: `directives` is a root route when the loader lists it.
 
 ### Include
 
-To list a document that already exists in the project in the loader, where it lives, so agents use it without moving it or adding frontmatter.
+File Include lists a document where it lives without moving it, adding frontmatter or granting maintenance by itself. Folder Include registers a safe existing outside directory as a maintained route and lists its canonical catalogue, creating only that missing catalogue.
 
 Example: `open-forge route include CONTRIBUTING.md --description "Contribution rules" --tag LoadNow`.
+
+### Outside route
+
+A workspace-contained directory registered in settings v5 `outsideRoutes`, separate from the main root and file-only `roots`. Registration supplies discovery and bounded maintenance, while Loader rows decide loading. It creates no short ID, package ownership or implicit destination grant.
+
+Example: registering `docs/team` gives its canonical catalogue the exact source reference `./docs/team/_team.md`. Its filename stays in the spelling, but discovery and command admission still depend on registration or retained inclusion. See [outside routes](/guides/cli#outside-routes).
 
 ### Scope
 
@@ -111,7 +117,7 @@ Example: The CLI updates an installed category entrypoint it manages.
 
 ### Source reference
 
-A source ID or an exact workspace path, using `./<path>` for a custom root or included file, that selects content in commands. Extension and Library IDs identify different things.
+A source ID or an exact workspace path, using `./<path>` with its filename for a custom root, registered outside source or included file, that selects admitted content in commands. Extension and Library IDs identify different things.
 
 Example: `skills/open-forge-cli` selects `.agents/skills/open-forge-cli/SKILL.md`.
 

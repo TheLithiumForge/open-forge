@@ -5,6 +5,8 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using OpenForge.Cli.TestSupport.Snapshots;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
@@ -12,6 +14,32 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 public sealed class RouteUpdateBeforeOutputSnapshotTests
 {
     private static readonly CommandOutputRenderers<RouteUpdateResult> Renderers = CommandOutputRenderers<RouteUpdateResult>.From(RouteUpdatePresentation.Rendering);
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Outside Update output keeps exact identities bounded effects and registered anchors")]
+    public async Task OutsideBoundary()
+    {
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var situation in new[] { "outside-applied", "outside-custom-preview", "outside-compatibility-anchor" })
+        {
+            using var workspace = new RouteUpdateOutsideWorkspace(situation == "outside-custom-preview"
+                ? RouteUpdateOutsideWorkspace.CustomRoot : WorkspaceLayout.DefaultMainRoot, listed: false);
+            var path = workspace.Target;
+            if (situation == "outside-compatibility-anchor")
+            {
+                File.Delete(workspace.Files.Combine(workspace.Anchor));
+                path = workspace.DirectoryPath + "/" + SourceFormClassifier.IndexFileName;
+                workspace.Files.WriteText(path, RouteUpdateOutsideWorkspace.Entrypoint());
+            }
+            var before = workspace.Files.SnapshotHashes(includeRuntime: true);
+            var result = await workspace.Execute(workspace.Request(path, mode: situation == "outside-custom-preview" ? RouteUpdateMode.DryRun : RouteUpdateMode.Apply));
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            if (situation == "outside-custom-preview") Assert.Equal(before, workspace.Files.SnapshotHashes(includeRuntime: true));
+            workspace.AssertPreserved(before);
+            Renderers.MatchDetails(result, situation, result.Recovery.ResidualPath, snapshotCollector: snapshots);
+        }
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
+    }
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route update reports an unavailable ambiguous ID without interactive input")]

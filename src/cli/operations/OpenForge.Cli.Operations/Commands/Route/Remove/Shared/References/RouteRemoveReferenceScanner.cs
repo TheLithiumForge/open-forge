@@ -16,6 +16,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
+using OpenForge.Cli.Core.Framework.Sources.Loading;
+using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
@@ -47,7 +49,8 @@ internal sealed class RouteRemoveReferenceScanner(
         var removed = RemovedPaths(input.Request, inventory);
         foreach (var sourcePath in input.Catalogue.SelectedPaths)
         {
-            if (removed.Contains(sourcePath) || WorkspaceLinkScope.IgnoresSource(inventory.Settings.Document, sourcePath))
+            var ignoredSource = WorkspaceLinkScope.IgnoresSource(inventory.Settings.Document, sourcePath);
+            if (removed.Contains(sourcePath) || ignoredSource && input.Request.Subject.OutsideRoute is null)
             {
                 continue;
             }
@@ -58,6 +61,10 @@ internal sealed class RouteRemoveReferenceScanner(
                     sourcePath, "Route Remove reference inspection was interrupted.");
             }
 
+            if (input.Request.Subject.OutsideRoute is { } selectedBoundary
+                && RouteRemoveOutsideBoundaryInspector.Contains(selectedBoundary.DirectoryPath, sourcePath)
+                && RouteRemoveOutsideBoundaryInspector.ValidateEffect(input.Request.Subject, sourcePath, cancellationToken) is { } inputCause)
+                return Boundary(input, RouteRemoveFindingCode.ReferenceUnsafe, CliSemanticStatus.Blocked, sourcePath, inputCause);
             var read = await ReadDocumentAsync(input, sourcePath, cancellationToken).ConfigureAwait(false);
             if (read is null)
             {
@@ -68,7 +75,22 @@ internal sealed class RouteRemoveReferenceScanner(
             var facts = _markdownParser.Parse(read.Value.Text);
             var map = new Utf8SourceMap(read.Value.Text);
             var edits = new List<LineEdit>();
-            foreach (var link in facts.Links.Where(link => IsAuthoredLink(facts, link)))
+            var parsedRows = input.Request.Subject.OutsideRoute is null ? null : SourceGeneratedEntriesParser.Parse(facts);
+            var rows = parsedRows is { State: SourceGeneratedEntriesState.Complete }
+                ? RouteRemoveAuthoredRowProjector.Read(input.Request.Subject.Catalogue, sourcePath, facts, parsedRows, removed.Contains) : [];
+            if (!rows.IsEmpty && RouteRemoveOutsideBoundaryInspector.ValidateEffect(input.Request.Subject, sourcePath, cancellationToken) is { } rowCause)
+                return Boundary(input, RouteRemoveFindingCode.ReferenceUnsafe, CliSemanticStatus.Blocked, sourcePath, rowCause);
+            if (parsedRows is { State: SourceGeneratedEntriesState.Unavailable })
+            {
+                foreach (var link in facts.Links.Where(link => !IsAuthoredLink(facts, link)))
+                {
+                    var target = await ResolveAsync(input, sourcePath, link, cancellationToken).ConfigureAwait(false);
+                    if (TargetsRemoved(target, removed))
+                        return Boundary(input, RouteRemoveFindingCode.ReferenceUnsafe, CliSemanticStatus.Blocked, sourcePath,
+                            "A required outside Entries row has malformed or uncertain meaning.");
+                }
+            }
+            foreach (var link in facts.Links.Where(link => !ignoredSource && IsAuthoredLink(facts, link)))
             {
                 occurrenceCount++;
                 var destination = await ResolveAsync(input, sourcePath, link, cancellationToken).ConfigureAwait(false);
@@ -103,11 +125,15 @@ internal sealed class RouteRemoveReferenceScanner(
                         map.Map(link.Span.Start, link.Span.Length));
                 }
 
+                if (RouteRemoveOutsideBoundaryInspector.ValidateEffect(input.Request.Subject, sourcePath, cancellationToken) is { } referenceCause)
+                    return Boundary(input, RouteRemoveFindingCode.ReferenceUnsafe, CliSemanticStatus.Blocked,
+                        sourcePath, referenceCause, map.Map(link.Span.Start, link.Span.Length));
+
                 var (start, text) = ReadLine(read.Value.Text, link.Span);
                 edits.Add(new LineEdit(start, text.Length, text, link, visibleLabel));
             }
 
-            if (edits.Count == 0)
+            if (edits.Count == 0 && rows.IsEmpty && input.Request.Subject.OutsideRoute is null)
             {
                 continue;
             }
@@ -136,6 +162,7 @@ internal sealed class RouteRemoveReferenceScanner(
                 Snapshot = read.Value.Snapshot,
                 IntendedText = intended,
                 Edits = documentEdits,
+                RowEdits = rows,
             });
         }
 
@@ -186,7 +213,8 @@ internal sealed class RouteRemoveReferenceScanner(
                     sourcePath,
                     AbsenceInterruptedCause);
             }
-            if (WorkspaceLinkScope.IgnoresSource(linkScope, sourcePath)) continue;
+            var ignoredSource = WorkspaceLinkScope.IgnoresSource(linkScope, sourcePath);
+            if (ignoredSource && scope.OutsideRoute is null) continue;
 
             var read = await ReadDocumentAsync(
                 scope.Request.Workspace,
@@ -203,7 +231,30 @@ internal sealed class RouteRemoveReferenceScanner(
 
             var facts = _markdownParser.Parse(read.Value.Text);
             var map = new Utf8SourceMap(read.Value.Text);
-            foreach (var link in facts.Links.Where(link => IsAuthoredLink(facts, link)))
+            if (scope.OutsideRoute is not null)
+            {
+                var parsedRows = SourceGeneratedEntriesParser.Parse(facts);
+                if (parsedRows.State == SourceGeneratedEntriesState.Unavailable)
+                {
+                    if (RouteRemoveOutsideBoundaryInspector.IsRequiredParent(sourceCatalogue, scope.IntendedPath,
+                        scope.Subject.Kind == RouteRemoveSubjectKind.Category, sourcePath))
+                        return AbsenceBoundary(RouteRemoveFindingCode.ProjectionIncomplete, CliSemanticStatus.Incomplete, sourcePath,
+                            "A required outside structural parent's Entries could not be parsed completely.");
+                    foreach (var link in facts.Links.Where(link => !IsAuthoredLink(facts, link)
+                        || facts.GeneratedRegion.EntriesBlock is null))
+                    {
+                        var destination = await ResolveAsync(scope.Request.Workspace, sourceCatalogue, sourcePath, link, cancellationToken).ConfigureAwait(false);
+                        if (destination.Target.Kind == SourceLinkTargetKind.Local && destination.Target.Path is { } path && scope.Contains(path))
+                            return AbsenceBoundary(RouteRemoveFindingCode.GeneratedRegionUnsafe, CliSemanticStatus.Blocked, sourcePath,
+                                "A required outside Entries row has malformed or uncertain meaning during absence proof.");
+                    }
+                }
+                else if (parsedRows.State == SourceGeneratedEntriesState.Complete
+                    && !RouteRemoveAuthoredRowProjector.Read(sourceCatalogue, sourcePath, facts, parsedRows, scope.Contains).IsEmpty)
+                    return AbsenceBoundary(RouteRemoveFindingCode.GeneratedRegionUnsafe, CliSemanticStatus.Blocked, sourcePath,
+                        "An authored Entries row still selects the exact outside removal boundary.");
+            }
+            foreach (var link in facts.Links.Where(link => !ignoredSource && IsAuthoredLink(facts, link)))
             {
                 occurrenceCount++;
                 var destination = await ResolveAsync(

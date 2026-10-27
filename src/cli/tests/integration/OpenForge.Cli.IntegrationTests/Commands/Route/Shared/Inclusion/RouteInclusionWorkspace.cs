@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Shared.Inclusion;
 
 internal sealed class RouteInclusionWorkspace : IDisposable
 {
+    private readonly List<string> _expectedCreates = [];
     private const string Category = "patterns";
     private const string CataloguePath = SourceLogicalPath.AgentsRoot + "/" + Category + "/_" + Category + SourceFormClassifier.MarkdownExtension;
 
@@ -30,5 +31,13 @@ internal sealed class RouteInclusionWorkspace : IDisposable
     internal void SetRows(string rows) => Files.ReplaceText(SourceLogicalPath.LoaderPath, GeneratedLoaderDocumentBuilder.Build(rows));
     internal void AddRoot() => Files.WriteText(CataloguePath,
         "---\nopen-forge:\n  description: Patterns\n  tags: [Pattern]\n---\n\n# Patterns\n\n## Entries\n\n- none - No entries - #Empty\n");
-    public void Dispose() { Locks.Dispose(); Files.Dispose(); }
+    internal void ExpectCreate(string path) => _expectedCreates.Add(path);
+    public void Dispose()
+    {
+        foreach (var path in _expectedCreates.Select(path => Files.Combine(path)))
+            if (File.Exists(path) && (File.GetAttributes(path) & (FileAttributes.Directory | FileAttributes.Device | FileAttributes.ReparsePoint)) == 0)
+                File.Delete(path);
+        Locks.Dispose();
+        Files.Dispose();
+    }
 }

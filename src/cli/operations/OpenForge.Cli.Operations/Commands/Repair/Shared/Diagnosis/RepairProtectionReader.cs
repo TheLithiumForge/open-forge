@@ -15,7 +15,10 @@ internal static class RepairProtectionReader
         => ReferenceProtectionReader.Read(observation);
 
     internal static bool Allows(string path, RoutedMetadataPolicyContext policy)
-        => policy.Layout is { } layout && layout.IsImplicitContentDestination(path)
+        => policy.Layout is { } layout && (layout.IsImplicitContentDestination(path)
+                || layout.TryGetMaintenanceBoundary(path, out var boundary)
+                && boundary.Kind == OpenForge.Cli.Core.Framework.Workspace.Models.Layout.WorkspaceMaintenanceBoundaryKind.Outside
+                && policy.AvailableOutsideBoundary(boundary) is not null)
             && ReferenceProtectionReader.Allows(path, policy);
 
     internal static RepairFinding Finding(string source, SourceLocation? occurrence, string protectedPath, RoutedMetadataPolicyContext policy)

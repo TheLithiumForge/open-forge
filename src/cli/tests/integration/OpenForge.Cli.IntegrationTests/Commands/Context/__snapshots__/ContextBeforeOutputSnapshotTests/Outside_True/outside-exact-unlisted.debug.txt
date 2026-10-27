@@ -1,0 +1,63 @@
+Workspace: <workspace>
+5 sources, about 0.1k tokens.
+=== AGENTS.md ===
+included because workspace entry
+order: 1
+layer: base
+# Workspace
+
+=== knowledge/main/loader.md (loader) ===
+included because Loader
+order: 2
+layer: base
+# Root
+
+## Entries
+
+- [Primary](rules/_rules.md) - #LoadNow
+- [Skills](../../.agents/skills/_skills.md) - #LoadNow
+
+
+
+=== knowledge/main/rules/_rules.md (rules) ===
+included because #LoadNow from knowledge/main/loader.md
+route: rules
+order: 3
+layer: base
+---
+open-forge:
+  description: Primary
+  tags: [LoadNow]
+---
+# Root
+
+## Entries
+
+
+
+=== .agents/skills/_skills.md (skills) ===
+included because #LoadNow from knowledge/main/loader.md
+route: skills
+order: 4
+layer: base
+---
+open-forge:
+  description: Skills
+  tags: [LoadNow]
+---
+# Root
+
+## Entries
+
+
+
+=== docs/team/unlisted.md (./docs/team/unlisted.md) ===
+included because selected source for ./docs/team/unlisted.md
+order: 5
+layer: base
+---
+open-forge:
+  description: Unlisted
+  tags: [LoadNow]
+---
+# Unlisted

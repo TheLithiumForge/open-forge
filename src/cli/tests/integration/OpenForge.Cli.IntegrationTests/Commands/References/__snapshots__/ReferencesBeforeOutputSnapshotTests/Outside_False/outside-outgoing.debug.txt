@@ -1,0 +1,5 @@
+./docs/team/links.md
+Workspace: <workspace>
+  out  :3:1   ../../target.md -> target.md   base
+  out  :3:26   ../../target.md#details -> target.md   base
+0 in, 2 out

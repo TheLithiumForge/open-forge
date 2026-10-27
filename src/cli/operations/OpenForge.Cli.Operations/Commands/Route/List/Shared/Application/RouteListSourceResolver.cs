@@ -8,6 +8,10 @@ using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Includes;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Application;
 
@@ -31,7 +35,7 @@ internal sealed class RouteListSourceResolver(
         var layout = layoutRead.Layout ?? throw new InvalidOperationException("The workspace layout is unavailable.");
         var inventory = await _inventoryReader
             .ReadAsync(
-                new RouteListInventoryRequest(layout, cancellationToken),
+                new RouteListInventoryRequest(RouteOutsideRouteReader.InventoryLayout(layoutRead), cancellationToken),
                 documentReader)
             .ConfigureAwait(false);
         var sourceCatalogue = inventory.SourceCatalogue;
@@ -50,7 +54,9 @@ internal sealed class RouteListSourceResolver(
                 routeFacts,
                 cancellationToken)
             .ConfigureAwait(false);
-        var included = await new SourceIncludedEntryReader().ReadEntriesAsync(sourceCatalogue, documentReader, cancellationToken).ConfigureAwait(false);
+        var included = sourceCatalogue.Layout.OutsideRoutes.Length > 0
+            ? new SourceIncludedEntryRead(sourceCatalogue.Sources.Where(source => source.IncludedEntry is not null).ToArray(), sourceCatalogue.IncludedRows)
+            : await new SourceIncludedEntryReader().ReadEntriesAsync(sourceCatalogue, documentReader, cancellationToken).ConfigureAwait(false);
         if (request.SourceReference is { } reference)
         {
             var path = SourceReferenceParser.Parse(reference).AttemptedPath;
@@ -63,6 +69,22 @@ internal sealed class RouteListSourceResolver(
         }
 
         var settings = layoutRead.Settings;
+        var selectedReference = request.SourceReference is { } requested ? SourceReferenceParser.Parse(requested) : null;
+        var selectedPath = selectedReference?.State == SourceReferenceParseState.Valid ? selectedReference.AttemptedPath : null;
+        var unavailable = selectedPath is null ? null : layoutRead.OutsideRoutes.FirstOrDefault(route =>
+            RouteOutsideRouteReader.Contains(route.Descriptor.DirectoryPath, selectedPath)
+            && route.State != WorkspaceOutsideRouteReadState.Available);
+        if (unavailable is not null)
+        {
+            var attempted = RouteListSelectionFactory.AttemptedPath(selectedPath!);
+            var issue = new RouteListSelectionIssue(unavailable.State == WorkspaceOutsideRouteReadState.Unsafe
+                ? RouteListFindingCode.PhysicalBoundary : RouteListFindingCode.ReadUnavailable,
+                unavailable.State == WorkspaceOutsideRouteReadState.Unsafe ? CliSemanticStatus.Blocked : CliSemanticStatus.Incomplete, selectedPath,
+                unavailable.Failure?.DirectCause ?? "The selected registered outside directory is not available.");
+            selection = unavailable.State == WorkspaceOutsideRouteReadState.Unsafe
+                ? RouteListSelectionResolutionFactory.Blocked(attempted, [], [issue])
+                : RouteListSelectionResolutionFactory.Incomplete(attempted, [], [issue]);
+        }
         var active = included.Rows.Where(row => row.ParentPath == layout.LoaderPath).Select(row => row.Path).ToHashSet(StringComparer.Ordinal);
         return new RouteListSourceResolution(layoutRead, inventory, routeFacts, selection)
         {

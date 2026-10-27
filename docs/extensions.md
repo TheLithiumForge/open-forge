@@ -60,6 +60,8 @@ Extensions use the workspace’s selected context folder. Package paths keep the
 
 Installed examples below use the default `.agents` context folder unless stated otherwise. Package-layout examples always show package coordinates.
 
+Registering an [outside route](cli.md#outside-routes) does not add a package root or an implicit destination grant. Package mappings stay primary, and outside Extension destinations still require the existing explicit admission. Registration creates no installed ownership and does not release Library source protection.
+
 ## Install an Extension
 
 Set up the base Framework first.

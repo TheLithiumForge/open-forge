@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-Context starts at the selected loader and reads native Skills at their fixed location. Exact `./<workspace-path>` operands select custom-root files. Short IDs retain their category-relative meaning.
+Context starts at the selected loader and reads native Skills at their fixed location. Exact `./<workspace-path>` operands select custom-root files and registered outside sources. Short IDs retain their category-relative meaning. Outside registration supplies discovery, not startup loading. Authored rows retain their conditions, order and first-reaching parent when their targets also enter the registered inventory.
 
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
@@ -677,8 +677,11 @@ logical source. The graph records the incoming link to the overwrite layer, then
 emits the base followed by its overwrite. It never emits or selects the overwrite
 alone.
 
-A contained local link may point outside the primary content locations. That target has no automatic
-Open Forge source ID. Its source block reports:
+A contained local link may point outside the primary content locations. Preserve
+the shared exact-reference identity for known logical sources and Context's
+existing null-ID projection for included startup and ordinary linked reads. A
+target without an established logical source has no automatic Open Forge ID. Its
+source block reports:
 
 ```text
 ID: none

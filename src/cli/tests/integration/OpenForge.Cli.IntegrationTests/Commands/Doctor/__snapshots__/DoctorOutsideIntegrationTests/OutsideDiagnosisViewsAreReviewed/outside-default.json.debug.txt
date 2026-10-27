@@ -1,0 +1,383 @@
+{
+  "schemaVersion": 3,
+  "command": "doctor",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "1 error, 3 warnings and 3 info findings.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "workspace.root-missing",
+      "title": "Root route is missing",
+      "message": "The included file is missing. Restore the file or exclude its path.",
+      "subject": {
+        "kind": "file",
+        "path": "docs/team/_team.md",
+        "id": null,
+        "location": null
+      },
+      "category": "Workspace",
+      "resolution": "manual-decision",
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "authored value",
+          "value": "docs/team/_team.md"
+        }
+      ],
+      "provenance": {
+        "source": "workspace files",
+        "path": ".agents/loader.md",
+        "location": null
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "route.axioms-invalid",
+      "title": "Route Axioms are invalid",
+      "message": ".agents/loader.md has no Axioms section, or its Axioms section is malformed.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/loader.md",
+        "id": null,
+        "location": null
+      },
+      "category": "Routes and Entries",
+      "resolution": "manual-decision",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Fix it by hand.",
+          "reason": "Fix it by hand."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "state",
+          "value": "invalid"
+        }
+      ],
+      "provenance": {
+        "source": "route scan",
+        "path": ".agents/loader.md",
+        "location": null
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "reference.target-missing",
+      "title": "Broken link",
+      "message": "docs/team/_team.md is missing and no replacement was found.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/loader.md",
+        "id": "../docs/team/_team.md",
+        "location": {
+          "line": 5,
+          "column": 3
+        }
+      },
+      "category": "Links",
+      "resolution": "manual-decision",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Update or remove this link in .agents/loader.md at line 5, column 3.",
+          "reason": "Update or remove this link in .agents/loader.md at line 5, column 3."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "authored value",
+          "value": "../docs/team/_team.md"
+        },
+        {
+          "label": "state",
+          "value": "missing"
+        }
+      ],
+      "provenance": {
+        "source": "local links",
+        "path": ".agents/loader.md",
+        "location": {
+          "line": 5,
+          "column": 3
+        }
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "workspace.root-missing",
+      "title": "Registered outside directory is missing",
+      "message": "The registered outside directory docs/team is missing. Review its settings registration.",
+      "subject": {
+        "kind": "file",
+        "path": "docs/team",
+        "id": null,
+        "location": null
+      },
+      "category": "Workspace",
+      "resolution": "manual-decision",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Review docs/team and its outside-route settings registration by hand.",
+          "reason": "Review docs/team and its outside-route settings registration by hand."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "state",
+          "value": "missing"
+        },
+        {
+          "label": "authored value",
+          "value": "The registered directory or an ancestor is missing."
+        }
+      ],
+      "provenance": {
+        "source": "workspace files",
+        "path": ".agents/open-forge.json",
+        "location": null
+      }
+    },
+    {
+      "severity": "info",
+      "code": "library.ownership-observation",
+      "title": "No ownership record",
+      "message": "No ownership record exists, so Libraries cannot be read from it.",
+      "subject": {
+        "kind": "identifier",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": "Workspace",
+      "resolution": "informational",
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "state",
+          "value": "unavailable"
+        }
+      ],
+      "provenance": {
+        "source": "file ownership records",
+        "path": ".agents/open-forge.lock.json",
+        "location": null
+      }
+    },
+    {
+      "severity": "info",
+      "code": "framework.ownership-observation",
+      "title": "No ownership record",
+      "message": "No ownership record exists, so Framework files cannot be read from it.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>\\.agents\\open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": "Framework files",
+      "resolution": "informational",
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "state",
+          "value": "unavailable"
+        }
+      ],
+      "provenance": {
+        "source": "Framework installation record",
+        "path": "<workspace>\\.agents\\open-forge.lock.json",
+        "location": null
+      }
+    },
+    {
+      "severity": "info",
+      "code": "extension.ownership-observation",
+      "title": "No ownership record",
+      "message": "No ownership record exists, so installed Extensions cannot be read from it.",
+      "subject": {
+        "kind": "identifier",
+        "path": "<workspace>\\.agents\\open-forge.lock.json",
+        "id": "<workspace>\\.agents\\open-forge.lock.json",
+        "location": null
+      },
+      "category": "Extensions",
+      "resolution": "informational",
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "state",
+          "value": "unavailable"
+        }
+      ],
+      "provenance": {
+        "source": "Extension installation record",
+        "path": "<workspace>\\.agents\\open-forge.lock.json",
+        "location": null
+      }
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "checks": 6,
+    "checksComplete": 6,
+    "errors": 1,
+    "warnings": 3,
+    "infos": 3,
+    "linksChecked": 1,
+    "linksValid": 0,
+    "externalLinksNotChecked": 0,
+    "imageLinks": 0,
+    "routesChecked": 0,
+    "frameworkFiles": 0,
+    "extensionsInstalled": 0,
+    "librariesRegistered": null
+  },
+  "limitations": [],
+  "data": {
+    "recoveryStores": [
+      {
+        "kind": "workspace",
+        "path": "<workspace-recovery-store>",
+        "coverage": "complete",
+        "candidates": [],
+        "cause": null
+      },
+      {
+        "kind": "legacy",
+        "path": "<legacy-recovery-store>",
+        "coverage": "complete",
+        "candidates": [],
+        "cause": null
+      }
+    ],
+    "categories": [
+      {
+        "name": "Workspace",
+        "coverage": "complete",
+        "counts": {
+          "errors": 1,
+          "warnings": 1,
+          "infos": 1
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 2,
+          "blockedRepair": 0
+        }
+      },
+      {
+        "name": "Recovery data",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 0,
+          "blockedRepair": 0
+        }
+      },
+      {
+        "name": "Routes and Entries",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 1,
+          "infos": 0
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 1,
+          "blockedRepair": 0
+        }
+      },
+      {
+        "name": "Links",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 1,
+          "infos": 0
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 1,
+          "blockedRepair": 0
+        }
+      },
+      {
+        "name": "Framework files",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 1
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 0,
+          "blockedRepair": 0
+        }
+      },
+      {
+        "name": "Extensions",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 1
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 0,
+          "blockedRepair": 0
+        }
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "Review docs/team and its outside-route settings registration by hand.",
+    "reason": "Review docs/team and its outside-route settings registration by hand."
+  }
+}

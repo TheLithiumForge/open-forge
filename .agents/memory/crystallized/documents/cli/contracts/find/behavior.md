@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-Carry the observed layout through inventory, selection and result projection. Default selection spans both primary content locations. Preserve included identities and aliases during filtering.
+Carry the observed layout through inventory, selection and result projection. Default selection spans both primary content locations, eligible registered outside inventory and active included files. Registered unlisted files remain discoverable. Preserve exact outside identities, included aliases and authored row applicability independently from inventory membership.
 
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
 
@@ -293,7 +293,7 @@ requiring one implementation stage or one source module.
   which is not a defect.
 - Effective-universe formation applies the shared set
   algebra: it uses the union of all include expansions, or Find's normal
-  complete eligible primary-content Markdown and active included-file universe when no include occurs, then
+  complete eligible Markdown universe from primary content and registered outside routes, plus active included files when no include occurs, then
   subtracts the union of all exclude expansions. It deduplicates equivalent and
   overlapping selections, gives exclusion priority over inclusion, and produces
   the same effective universe regardless of include/exclude argument order.

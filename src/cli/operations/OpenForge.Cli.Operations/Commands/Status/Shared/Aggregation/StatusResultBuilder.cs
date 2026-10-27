@@ -20,7 +20,8 @@ internal static class StatusResultBuilder
                 observations.WorkspaceEntry.LoaderPath),
             Context = StatusContextAggregator.Build(
                 observations.Routes,
-                observations.WorkspaceEntry.Installation),
+                observations.WorkspaceEntry.Installation,
+                observations.OutsideRoutes),
             Structure = StatusStructureAggregator.Build(
                 observations.Routes,
                 observations.WorkspaceEntry.Installation),

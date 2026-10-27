@@ -8,11 +8,28 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Includes;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
 internal sealed class RouteObservationReader
 {
+    internal async ValueTask<RouteOutsideRoutesObservation> ReadOutsideAsync(
+        WorkspaceLayoutRead observation, CancellationToken cancellationToken)
+    {
+        if (observation.Layout is null) return RouteOutsideRouteReader.Read(observation, null, null);
+        var inspection = await _sourceInspector.ReadAsync(RouteOutsideRouteReader.InventoryLayout(observation), cancellationToken)
+            .ConfigureAwait(false);
+        var session = inspection.Session ?? throw new InvalidOperationException("Outside observations require the retained inspection session.");
+        var rows = await new SourceIncludedEntryReader().ReadEntriesAsync(inspection.Catalogue, session.DocumentReader, cancellationToken)
+            .ConfigureAwait(false);
+        var catalogue = SourceIncludedEntryReader.Extend(inspection.Catalogue, rows.Sources, rows.Rows);
+        var included = await new RouteIncludedFileReader(inspection.Catalogue.Layout)
+            .ReadAsync(inspection, observation.Settings, cancellationToken, rows).ConfigureAwait(false);
+        var loading = await RouteOutsideRouteReader.ReadLoadingAsync(inspection, catalogue, cancellationToken).ConfigureAwait(false);
+        return RouteOutsideRouteReader.Read(observation, inspection, included, catalogue, loading);
+    }
+
     private readonly RouteGeneratedNavigationReader _generatedNavigationReader;
     private readonly RouteDoctorGeneratedNavigationReader _doctorGeneratedNavigationReader;
     private readonly RouteSourceInspector _sourceInspector;
@@ -42,14 +59,19 @@ internal sealed class RouteObservationReader
     internal async ValueTask<RouteStatusView> ReadStatusAsync(
         WorkspaceLayoutRead observation,
         SourceSharing? sharing,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        RouteOutsideRoutesObservation? retained = null)
     {
+        if (retained is not null && !ReferenceEquals(retained.LayoutRead, observation))
+            throw new ArgumentException("Operational consumers must retain the same layout observation.", nameof(retained));
         if (observation.Layout is null) return RouteUnavailableObservation.Status(observation);
         var payload = EmbeddedFrameworkPayloadReader.Read();
-        var inspection = await _sourceInspector.ReadAsync(observation.Layout, cancellationToken)
+        var inspection = retained?.Inspection ?? await _sourceInspector.ReadAsync(observation.Layout, cancellationToken)
             .ConfigureAwait(false);
         var context = new RouteContextReader().Read(payload, inspection);
-        var included = await new RouteIncludedFileReader(inspection.Catalogue.Layout).ReadAsync(inspection, observation.Settings, cancellationToken).ConfigureAwait(false);
+        var included = retained is null
+            ? await new RouteIncludedFileReader(inspection.Catalogue.Layout).ReadAsync(inspection, observation.Settings, cancellationToken).ConfigureAwait(false)
+            : retained.IncludedFiles;
         var generated = _generatedNavigationReader.Read(inspection.Catalogue.Workspace, payload, inspection, sharing, observation.Settings.Document);
         var state = ReadState(inspection.State, context.IsIncomplete);
         var contextIssue = ReadContextIssue(inspection);
@@ -74,13 +96,18 @@ internal sealed class RouteObservationReader
     internal async ValueTask<RouteDoctorView> ReadDoctorAsync(
         WorkspaceLayoutRead observation,
         SourceSharing? sharing,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        RouteOutsideRoutesObservation? retained = null)
     {
+        if (retained is not null && !ReferenceEquals(retained.LayoutRead, observation))
+            throw new ArgumentException("Operational consumers must retain the same layout observation.", nameof(retained));
         if (observation.Layout is null) return RouteUnavailableObservation.Doctor(observation);
-        var inspection = await _sourceInspector.ReadAsync(observation.Layout, cancellationToken)
+        var inspection = retained?.Inspection ?? await _sourceInspector.ReadAsync(observation.Layout, cancellationToken)
             .ConfigureAwait(false);
         var generated = _doctorGeneratedNavigationReader.Read(inspection, sharing);
-        var included = await new RouteIncludedFileReader(inspection.Catalogue.Layout).ReadAsync(inspection, observation.Settings, cancellationToken).ConfigureAwait(false);
+        var included = retained is null
+            ? await new RouteIncludedFileReader(inspection.Catalogue.Layout).ReadAsync(inspection, observation.Settings, cancellationToken).ConfigureAwait(false)
+            : retained.IncludedFiles;
         return new RouteDoctorView
         {
             IncludedFiles = included,

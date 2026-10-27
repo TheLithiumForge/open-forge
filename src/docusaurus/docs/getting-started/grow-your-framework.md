@@ -12,6 +12,8 @@ The base Framework is deliberately small. The selected categories start empty ap
 
 The folder examples use the default `.agents` context folder. Route IDs work the same with a [custom folder](installation.md#choose-the-context-folder). Growing or configuring your routes does not relocate an established installation.
 
+Context can also grow in an existing workspace folder through [outside-route registration](/guides/cli#outside-routes). Folder Include grants bounded maintenance, while file Include stays read-only by itself. Use exact outside source paths with filenames, and keep loading tags and conditions on the authored rows. Registration never makes a branch load merely because it is inventoried.
+
 The [ten-minute guide](ten-minute-guide.md) covers the first rule, Pattern, and saved fact together. This page explains how to place later additions and keep them relevant as the workspace grows.
 
 ## Make the next task simpler

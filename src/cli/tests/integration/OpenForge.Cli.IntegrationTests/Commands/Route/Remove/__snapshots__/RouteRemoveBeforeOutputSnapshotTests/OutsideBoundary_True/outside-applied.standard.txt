@@ -1,0 +1,6 @@
+Removed docs/team/old.md
+Workspace: <workspace>
+  Removed docs/team/old.overwrite.md
+  Entry removed from docs/team/index.md
+  Recorded persistent route removal for file docs/team/old.md, file docs/team/old.overwrite.md in .agents/open-forge.json.
+  No managed content ownership claims needed release.

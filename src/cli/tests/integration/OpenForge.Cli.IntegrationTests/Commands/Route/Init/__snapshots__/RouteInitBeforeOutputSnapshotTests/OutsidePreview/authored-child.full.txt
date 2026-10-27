@@ -1,0 +1,67 @@
+Would create 3 entrypoints for ./docs/team/design/decisions/_decisions.md.
+Workspace: <workspace>
+  Info  ./docs/team/design/decisions/_decisions.md  Route needs authoring [route-init.needs-authoring]
+         Its description and tags are placeholders. Edit them before relying on this route.
+  Scaffold: generic
+  description: Authored outside destination
+  tags: Fixture
+  docs/team/_team.md  would create
+  docs/team/design/_design.md  would create
+  docs/team/design/decisions/_decisions.md  would create
+  Its description and tags are placeholders. Edit them before relying on this route.
+--- docs/team/_team.md (new file) ---
+---
+open-forge:
+  description: Draft route for ./docs/team; replace this description before relying on it for selection
+  tags: [NeedsAuthoring]
+---
+
+# team
+
+Draft route for ./docs/team; replace this description before relying on it for selection.
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- [Draft route for ./docs/team/design; replace this description before relying on it for selection](design/_design.md) - #NeedsAuthoring
+--- docs/team/design/_design.md (new file) ---
+---
+open-forge:
+  description: Draft route for ./docs/team/design; replace this description before relying on it for selection
+  tags: [NeedsAuthoring]
+---
+
+# design
+
+Draft route for ./docs/team/design; replace this description before relying on it for selection.
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- [Authored outside destination](decisions/_decisions.md) - #Fixture
+--- docs/team/design/decisions/_decisions.md (new file) ---
+---
+open-forge:
+  description: Authored outside destination
+  tags: [Fixture]
+---
+
+# decisions
+
+Authored outside destination.
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- none - No entries - #Empty
+  Recovery: no recovery bundle was created.
+No files were changed.

@@ -38,6 +38,12 @@ provenance rather than the source for current maintenance behavior.
 
 [Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md) extends the existing region-only plan with absent-field completion and rooted missing-chain creation. Its intended-membership formation, original-span edits, one-effect-per-target assembly and wire inventory replace the old warning-only and gap-exclusion realization for eligible ordinary sources. Existing parsers, generated boundaries, native Skill bridge, physical identity and recovery mechanics remain. Historical candidate evidence below does not prove this addition.
 
+## Registered Route Maintenance
+
+Read registered inventory and included rows from the operation's retained layout. Preserve that layout, aliases, candidates, issues and every row through prospective formation. Structural roots remain separate from selected outside roots. Derive outside automatic membership from authored Loader rows, including conditioned and unresolved anchor rows, and retain their exact bytes.
+
+Pass selected anchors, exact closure coordinates and the same layout observation to shared maintenance. Explicit registered selection can restore its anchor without relisting it. Apply the selection boundary to metadata acquisition, gaps and region projection together. Keep readonly protected-source metadata distinct from metadata-completion admission and retain its input expectations separately. Each selected outside effect retains its available observation, ordinary-leaf proof, physical boundary and expected state through lease validation and verification. [Workspace Layout](../../technical-designs/workspace-layout.md) and [Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md) own those shared details.
+
 ## Accepted Runtime Boundary
 
 The Framework ownership codec supplies neutral directory/entrypoint sharing

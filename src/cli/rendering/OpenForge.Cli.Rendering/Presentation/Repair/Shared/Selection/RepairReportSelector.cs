@@ -974,6 +974,13 @@ internal static class RepairReportSelector
 
     private static IEnumerable<RepairDataTextRow> MaintenanceRows(RepairResult result)
     {
+        var positions = result.MaintenanceResults.Effects.Select((effect, index) => (effect.Path, Index: index))
+            .ToDictionary(item => item.Path, item => item.Index, StringComparer.Ordinal);
+        return ReadMaintenanceRows(result).OrderBy(row => positions.GetValueOrDefault(row.Path, -1));
+    }
+
+    private static IEnumerable<RepairDataTextRow> ReadMaintenanceRows(RepairResult result)
+    {
         var preview = result.Mode == RepairMode.DryRun;
         foreach (var row in result.MaintenanceResults.Metadata.Where(row => row.Outcome is "planned" or "done"))
             yield return new(row.Path, global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Metadata(preview));

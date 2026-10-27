@@ -29,7 +29,7 @@ internal sealed partial class RouteRemoveNavigationPlanner
         }
         else
         {
-            parent = observed.Loader;
+            parent = request.Subject.OutsideRoute is null ? observed.Loader : null;
         }
 
         if (parent is null || intended.FindSource(parent.Identity.CanonicalBasePath) is null)
@@ -40,7 +40,12 @@ internal sealed partial class RouteRemoveNavigationPlanner
         var reason = parent.Base.Form == SourceDocumentForm.Loader
             ? RouteRemoveGeneratedReason.Loader
             : RouteRemoveGeneratedReason.OldParent;
-        return [new SelectedRegion(parent, [reason])];
+        var regions = new List<SelectedRegion> { new(parent, [reason]) };
+        foreach (var document in request.RowDocuments)
+            if (intended.FindSource(document.SourcePath) is { } source
+                && regions.All(region => region.Source.Base.CanonicalPath != document.SourcePath))
+                regions.Add(new SelectedRegion(source, [RouteRemoveGeneratedReason.OldParent]));
+        return regions;
     }
 
     private sealed record SelectedRegion(

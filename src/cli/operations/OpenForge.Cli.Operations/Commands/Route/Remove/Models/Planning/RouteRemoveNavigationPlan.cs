@@ -14,6 +14,8 @@ internal sealed record RouteRemoveNavigationPlanningRequest
     public required RouteRemoveResolvedSubject Subject { get; init; }
 
     public ImmutableArray<SourceLogicalSource> IntendedSources { get; init; } = [];
+
+    internal ImmutableArray<RouteRemoveReferenceDocumentPlan> RowDocuments { get; init; } = [];
 }
 
 internal sealed record RouteRemoveNavigationPlan
@@ -25,6 +27,8 @@ internal sealed record RouteRemoveNavigationPlan
     public ImmutableArray<PlannedFileChange> FileChanges { get; init; } = [];
 
     public ImmutableArray<RouteRemoveNavigationDocumentEdit> DocumentEdits { get; init; } = [];
+
+    internal ImmutableArray<FileStateSnapshot> ReadonlyInputs { get; init; } = [];
 }
 
 internal sealed record RouteRemoveNavigationDocumentEdit

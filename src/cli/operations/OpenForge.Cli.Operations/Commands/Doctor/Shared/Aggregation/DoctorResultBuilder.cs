@@ -7,6 +7,16 @@ using OpenForge.Cli.Core.Framework.OperationalContributors;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Actions;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -16,6 +26,7 @@ internal static class DoctorResultBuilder
 {
     internal static DoctorResult Build(DoctorRequest request, DoctorObservation observation)
     {
+        var routeInputs = RouteInputs(observation, out var retainedAuthoredMissingTargets);
         var lifecycleAbsence = OperationalLifecycleAbsenceProof.IsProven(
             OperationalLifecycleAbsenceEvidence.FromDoctor(
                 observation.WorkspaceEntry,
@@ -27,16 +38,13 @@ internal static class DoctorResultBuilder
         {
             LibraryDoctorInspector.Inspect(
                 request.Workspace,
-                WorkspaceEntryDoctorInspector.Inspect(
-                    request.Workspace, observation.WorkspaceEntry, observation.Routes,
-                    missingLinkScopeEntries: observation.LocalReferences.MissingLinkScopeEntries,
-                    unrecognizedSettingsSchemaVersion: observation.LocalReferences.UnrecognizedSettingsSchemaVersion),
+                WorkspaceEntryDoctorInspector.Inspect(request.Workspace, observation with { Routes = routeInputs }),
                 observation.Libraries,
                 observation.RecoveryResiduals,
                 observation.LibraryResiduals),
             RecoveryResidualDoctorInspector.Inspect(observation.RecoveryResiduals),
-            RouteDoctorInspector.Inspect(observation.Routes),
-            LocalReferenceDoctorInspector.Inspect(observation.LocalReferences, observation.Maintenance),
+            RouteDoctorInspector.Inspect(routeInputs),
+            LocalReferenceDoctorInspector.Inspect(observation.LocalReferences, observation.Maintenance, retainedAuthoredMissingTargets),
             FrameworkLifecycleDoctorInspector.Inspect(
                 observation.FrameworkLifecycle,
                 observation.RecoveryResiduals,
@@ -49,6 +57,7 @@ internal static class DoctorResultBuilder
             ExtensionLifecycleDoctorInspector.Inspect(observation.ExtensionLifecycle),
         };
         domains = DoctorMaintenanceGuidance.Apply(domains, observation);
+        domains = ProjectOutsideIndexActions(domains, observation);
         var layout = observation.Routes.Catalogue?.Layout;
         if (layout is not null) domains = domains.Select(domain => domain with
         {
@@ -70,6 +79,121 @@ internal static class DoctorResultBuilder
                 Domains = domains,
             },
         };
+    }
+
+    private static RouteDoctorView RouteInputs(DoctorObservation observation,
+        out IReadOnlySet<LocalReferenceObservation> retainedAuthoredMissingTargets)
+    {
+        var missing = new HashSet<LocalReferenceObservation>(ReferenceEqualityComparer.Instance);
+        retainedAuthoredMissingTargets = missing;
+        if (observation.OutsideRoutes is not { Inspection: { } inspection } outside) return observation.Routes;
+        var rows = outside.Routes.Where(route => route.Directory.State == WorkspaceOutsideRouteReadState.Available)
+            .SelectMany(route => route.Rows.Where(row => row.ParentPath.StartsWith(route.Directory.Descriptor.DirectoryPath + "/", StringComparison.Ordinal)))
+            .ToLookup(row => row.ParentPath, StringComparer.Ordinal);
+        var navigation = observation.Routes.GeneratedNavigation.Select(target =>
+        {
+            if (target.State is not (OperationalGeneratedNavigationState.Current or OperationalGeneratedNavigationState.Changed)
+                || !rows.Contains(target.Path)) return target;
+            var host = inspection.Sources.SingleOrDefault(source => source.Source.Base.CanonicalPath == target.Path);
+            if (host?.Layers[0].Text is not { } text) return target;
+            var locations = new Utf8SourceMap(text);
+            var comparisons = target.Content.EntryComparisons.Where(comparison =>
+            {
+                if (comparison.Kind != RouteGeneratedEntryComparisonKind.Extra) return true;
+                var row = rows[target.Path].FirstOrDefault(row => row.Entry.Destination == comparison.Actual
+                    && target.Content.CurrentEntries.Entries.Any(entry => entry.Destination == row.Entry.Destination
+                        && entry.Span.Start == row.Entry.Span.Start && entry.Span.Length == row.Entry.Span.Length)
+                    && locations.Map(row.Entry.Span.Start, row.Entry.Span.Length) is { } location
+                    && comparison.Location is { } observed && observed.Line == location.Line && observed.Column == location.Column);
+                if (row is null) return true;
+                if (row.PhysicalState is PhysicalPathState.Contained or PhysicalPathState.Missing && row.AliasOf is null
+                    && locations.Map(row.Entry.Span.Start, row.Entry.Span.Length) is { } rowLocation)
+                    foreach (var reference in observation.LocalReferences.References.Where(reference =>
+                        reference.SourcePath == target.Path && reference.Destination == row.Entry.Destination
+                        && reference.Facts.Target.Resolution == SourceLinkTargetResolution.Missing
+                        && reference.Location is { } occurrence && occurrence.ByteOffset >= rowLocation.ByteOffset
+                        && occurrence.ByteOffset + occurrence.ByteLength <= rowLocation.ByteOffset + rowLocation.ByteLength))
+                        missing.Add(reference);
+                return false;
+            }).ToArray();
+            if (comparisons.Length == target.Content.EntryComparisons.Count) return target;
+            return DoctorGeneratedNavigationTargetObservation.Available(target.Path, target.State,
+                target.Content with { EntryComparisons = comparisons });
+        }).ToArray();
+        var admitted = ReadOutsideStructure(observation, outside);
+        return observation.Routes with
+        {
+            GeneratedNavigation = navigation,
+            Shape = observation.Routes.Shape.Where(shape =>
+                shape.Kind is not (RouteShapeObservationKind.Detached or RouteShapeObservationKind.Unreachable)
+                || !admitted.Contains(shape.Path)).ToArray(),
+        };
+    }
+
+    private static IReadOnlySet<string> ReadOutsideStructure(DoctorObservation observation, RouteOutsideRoutesObservation outside)
+    {
+        var admitted = new HashSet<string>(StringComparer.Ordinal);
+        if (!ReferenceEquals(observation.LayoutRead, outside.LayoutRead)
+            || outside.Inspection is not { Session: not null } inspection) return admitted;
+        var sources = inspection.Sources.ToDictionary(source => source.Source.Base.CanonicalPath, StringComparer.Ordinal);
+        var facts = inspection.Routes.RouteFacts.ToDictionary(fact => fact.Identity.CanonicalBasePath, StringComparer.Ordinal);
+        foreach (var route in outside.Routes.Where(route => route.Directory.State == WorkspaceOutsideRouteReadState.Available
+                     && route.EntrypointPaths.Count == 1))
+        {
+            var directory = route.Directory.Descriptor.DirectoryPath;
+            var root = route.EntrypointPaths[0];
+            if (SourceLogicalPath.ReadParent(root) != directory || !IsProven(root)
+                || !SourceFormClassifier.IsEntrypoint(sources[root].Source.Base.Form)) continue;
+            var rows = route.Rows.Where(row => row.PhysicalState == PhysicalPathState.Contained && row.AliasOf is null)
+                .Select(row => (row.ParentPath, row.Path)).ToHashSet();
+            var pending = new Queue<string>();
+            if (admitted.Add(root)) pending.Enqueue(root);
+            while (pending.TryDequeue(out var parent))
+            {
+                if (sources[parent].GeneratedEntries.State != SourceGeneratedEntriesState.Complete) continue;
+                var node = inspection.Routes.Topology.FindByPath(parent)!;
+                foreach (var child in node.ChildPaths)
+                {
+                    if (!IsProven(child) || !rows.Contains((parent, child))) continue;
+                    if (admitted.Add(child)) pending.Enqueue(child);
+                }
+            }
+
+            bool IsProven(string path)
+            {
+                if (!path.StartsWith(directory + "/", StringComparison.Ordinal)
+                    || !sources.TryGetValue(path, out var source) || !source.IsReadable || source.Document is null
+                    || inspection.Catalogue.Aliases.ContainsKey(path)
+                    || !facts.TryGetValue(path, out var fact) || fact.State is SourceRouteState.Ambiguous or SourceRouteState.Unavailable
+                    || inspection.Routes.Topology.FindByPath(path) is not { ParentState: not SourceRouteParentState.Ambiguous }) return false;
+                var workspace = inspection.Catalogue.Workspace;
+                return PhysicalIdentityTracker.PathComparer.Equals(source.Source.Base.PhysicalPath,
+                        SourceLogicalPath.ToLexicalPath(workspace.PhysicalRoot, path))
+                    && (source.Source.Overwrite is not { } overwrite || PhysicalIdentityTracker.PathComparer.Equals(overwrite.PhysicalPath,
+                        SourceLogicalPath.ToLexicalPath(workspace.PhysicalRoot, overwrite.CanonicalPath)));
+            }
+        }
+        return admitted;
+    }
+
+    private static DoctorDomainReport[] ProjectOutsideIndexActions(DoctorDomainReport[] domains, DoctorObservation observation)
+    {
+        if (observation.OutsideRoutes is not { } outside || observation.Maintenance is not { } maintenance) return domains;
+        return domains.Select(domain =>
+        {
+            var findings = domain.Findings.Select(finding =>
+            {
+                if (finding.Subject.Path is not { } path || !maintenance.IndexablePaths.Contains(path)
+                    || !outside.Routes.Any(route => route.Directory.State == WorkspaceOutsideRouteReadState.Available
+                        && path.StartsWith(route.Directory.Descriptor.DirectoryPath + "/", StringComparison.Ordinal))) return finding;
+                return finding with
+                {
+                    Actions = finding.Actions.Select(action => action.Operation == DoctorNextOperation.Index
+                    ? DoctorIndexAction.ForPath(SourceWorkspaceRelativePath.LiteralReferencePrefix + path) : action).ToArray()
+                };
+            }).ToArray();
+            return domain with { Findings = findings, Actions = DoctorFindingAggregation.Actions(findings) };
+        }).ToArray();
     }
 
     internal static DoctorResult Event(

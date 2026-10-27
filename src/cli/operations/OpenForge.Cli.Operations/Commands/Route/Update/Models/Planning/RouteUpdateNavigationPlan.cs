@@ -20,6 +20,7 @@ internal sealed record RouteUpdateGeneratedRegionPlan
 internal sealed record RouteUpdateNavigationPlan
 {
     internal FileExpectation? SharingExpectation { get; init; }
+    internal ImmutableArray<FileStateSnapshot> ReadonlySnapshots { get; init; } = [];
 
     public required GeneratedNavigationFormation Formation { get; init; }
 

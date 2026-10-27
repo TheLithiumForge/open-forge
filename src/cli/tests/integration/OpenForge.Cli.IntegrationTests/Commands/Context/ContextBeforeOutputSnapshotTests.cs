@@ -1,12 +1,31 @@
+using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using OpenForge.Cli.TestSupport.Snapshots;
+using OpenForge.Cli.IntegrationTests.Commands.Context.Shared.Graph;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Context;
 
 [Trait("Feature", "command-output-snapshots"), Trait("Evidence", "Integration")]
 public sealed class ContextBeforeOutputSnapshotTests
 {
+    [Theory, InlineData(false), InlineData(true), Trait("Boundary", "Output")]
+    public async Task Outside(bool unlisted)
+    {
+        using var workspace = new ContextOutsideWorkspace(ContextOutsideWorkspace.CustomRoot, listed: !unlisted);
+        workspace.Register();
+        var before = workspace.Files.SnapshotHashes(includeRuntime: true);
+        string[] selection = unlisted ? [SourceWorkspaceRelativePath.LiteralReferencePrefix + ContextOutsideWorkspace.Unlisted] : [ContextDefinitions.For.Name, "src/App.cs"];
+        await new ReadCommandOutputCapture(workspace.Files.Path).MatchDetailsAsync(new ReadOutputScenario
+        {
+            Situation = unlisted ? "outside-exact-unlisted" : "outside-conditioned",
+            Arguments = [ContextDefinitions.CommandIdentity, .. selection],
+            ExitCode = 0,
+        }, testName: $"{nameof(Outside)}_{unlisted}");
+        Assert.Equal(before, workspace.Files.SnapshotHashes(includeRuntime: true));
+    }
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Context output preserves selected content and leaves source bytes unchanged")]
     public async Task Selection()

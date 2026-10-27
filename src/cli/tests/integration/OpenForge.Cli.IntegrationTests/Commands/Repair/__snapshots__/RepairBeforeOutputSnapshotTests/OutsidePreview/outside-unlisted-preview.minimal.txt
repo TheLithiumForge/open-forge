@@ -1,0 +1,11 @@
+Would repair 1 link.
+Workspace: <workspace>
+  docs/team/nested/note.md:3:14  ./guide.md -> guide.md
+  docs/team/nested/note.md
+    metadata would be completed, your content would be kept
+  docs/team/_team.md             entrypoint would be created
+  docs/team/nested/_nested.md    entrypoint would be created
+  docs/team/nested/guide.md
+    metadata would be completed, your content would be kept
+No files were changed.
+Next: open-forge repair --automatic --workspace <workspace>

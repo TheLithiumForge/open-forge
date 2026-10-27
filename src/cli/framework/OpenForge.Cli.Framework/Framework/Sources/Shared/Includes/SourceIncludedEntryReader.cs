@@ -34,18 +34,23 @@ internal sealed class SourceIncludedEntryReader
         var traversed = new HashSet<string>(StringComparer.Ordinal);
         var known = catalogue.Sources.ToDictionary(source => source.Base.CanonicalPath, StringComparer.Ordinal);
         var physical = new Dictionary<string, string>(PhysicalIdentityTracker.PathComparer);
-        foreach (var source in catalogue.Sources)
+        foreach (var source in catalogue.Sources.OrderBy(source => SourceLogicalPath.IsOutsideSource(catalogue.Layout, source.Base.CanonicalPath)))
         {
-            physical.TryAdd(source.Base.PhysicalPath, source.Base.CanonicalPath);
+            if (!SourceLogicalPath.IsOutsideSource(catalogue.Layout, source.Base.CanonicalPath) || source.IncludedEntry is not null)
+                physical.TryAdd(source.Base.PhysicalPath, source.Base.CanonicalPath);
             if (source.Overwrite is { } overwrite)
             {
                 physical.TryAdd(overwrite.PhysicalPath, source.Base.CanonicalPath);
             }
         }
-        var pending = new Queue<SourceLogicalSource>(catalogue.Sources.Where(source =>
-            source.Base.Form == SourceDocumentForm.Loader || SourceFormClassifier.IsEntrypoint(source.Base.Form) || source.IsIncludedCatalogue));
-        while (pending.TryDequeue(out var parent))
+        var catalogues = catalogue.Sources.Where(source =>
+            source.Base.Form == SourceDocumentForm.Loader || SourceFormClassifier.IsEntrypoint(source.Base.Form) || source.IsIncludedCatalogue).ToArray();
+        var pending = new Queue<SourceLogicalSource>(catalogues.Where(source => !SourceLogicalPath.IsOutsideSource(catalogue.Layout, source.Base.CanonicalPath)));
+        var disconnected = new Queue<SourceLogicalSource>(catalogues.Where(source => SourceLogicalPath.IsOutsideSource(catalogue.Layout, source.Base.CanonicalPath))
+            .OrderBy(source => source.Base.CanonicalPath, StringComparer.Ordinal));
+        while (pending.Count > 0 || disconnected.Count > 0)
         {
+            var parent = pending.Count > 0 ? pending.Dequeue() : disconnected.Dequeue();
             cancellationToken.ThrowIfCancellationRequested();
             if (!traversed.Add(parent.Base.CanonicalPath)) continue;
             var read = await reader.ReadAsync(parent.Base, cancellationToken).ConfigureAwait(false);
@@ -74,7 +79,7 @@ internal sealed class SourceIncludedEntryReader
                     Path.Combine(reader.Workspace.LexicalRoot, path.Replace('/', Path.DirectorySeparatorChar)));
                 var row = new SourceIncludedEntryRow(Path: path, ParentPath: parent.Base.CanonicalPath, Entry: entry, PhysicalState: resolution.State);
                 rows.Add(row);
-                if (!seen.Add(path) || resolution.State != PhysicalPathState.Contained)
+                if (resolution.State != PhysicalPathState.Contained)
                 {
                     continue;
                 }
@@ -83,10 +88,12 @@ internal sealed class SourceIncludedEntryReader
                 if (physical.TryGetValue(physicalPath, out var firstPath) && firstPath != path)
                 {
                     rows[^1] = row with { AliasOf = firstPath };
-                    continue;
+                    if (!SourceLogicalPath.IsOutsideSource(catalogue.Layout, firstPath)) continue;
+                    path = firstPath;
                 }
 
                 physical.TryAdd(physicalPath, path);
+                if (!seen.Add(path)) continue;
 
                 var existing = known.GetValueOrDefault(path);
                 var layer = existing?.Base ?? new SourceLayer(canonicalPath: path, physicalPath: resolution.GetContainedPhysicalPath(),
@@ -128,26 +135,20 @@ internal sealed class SourceIncludedEntryReader
             }
         }
 
+        var includedSources = included.ToArray();
         var sources = catalogue.Sources.ToDictionary(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal);
-        var physical = new Dictionary<string, string>(PhysicalIdentityTracker.PathComparer);
-        foreach (var source in catalogue.Sources)
-            physical.TryAdd(source.Base.PhysicalPath, source.Base.CanonicalPath);
-        foreach (var source in included)
+        foreach (var source in includedSources)
         {
-            if (physical.TryGetValue(source.Base.PhysicalPath, out var firstPath) && firstPath != source.Base.CanonicalPath)
-            {
-                aliases.TryAdd(source.Base.CanonicalPath, firstPath);
-                continue;
-            }
-            physical.TryAdd(source.Base.PhysicalPath, source.Base.CanonicalPath);
             if (!sources.TryGetValue(source.Identity.CanonicalBasePath, out var existing) || existing.IncludedEntry is null)
                 sources[source.Identity.CanonicalBasePath] = source;
         }
         var retainedRows = catalogue.IncludedRows.Concat(rows ?? []).ToArray();
+        var projectedPaths = catalogue.Sources.Where(source => source.IncludedEntry is not null)
+            .Select(source => source.Base.CanonicalPath).ToHashSet(StringComparer.Ordinal);
         foreach (var row in retainedRows)
         {
             var path = row.AliasOf ?? aliases.GetValueOrDefault(row.Path) ?? row.Path;
-            if (SourceLogicalPath.IsPrimarySource(catalogue.Layout, path) || !sources.TryGetValue(path, out var source) || source.IncludedEntry is not null) continue;
+            if (SourceLogicalPath.IsPrimarySource(catalogue.Layout, path) || !sources.TryGetValue(path, out var source) || !projectedPaths.Add(path)) continue;
             sources[path] = new SourceLogicalSource(source.Identity, source.Base, source.Overwrite)
             {
                 IncludedParentPath = row.ParentPath,
@@ -155,6 +156,40 @@ internal sealed class SourceIncludedEntryReader
                 IsIncludedCatalogue = source.IsIncludedCatalogue,
             };
         }
-        return new SourceCatalogue(catalogue.Layout, catalogue.Candidates, sources.Values, catalogue.Issues, catalogue.IsCancelled, aliases, retainedRows);
+        var preferredPaths = catalogue.Sources
+            .Where(source => SourceLogicalPath.IsPrimarySource(catalogue.Layout, source.Base.CanonicalPath))
+            .Select(source => source.Base.CanonicalPath)
+            .Concat(catalogue.Sources.Where(source => source.IncludedEntry is not null).Select(source => source.Base.CanonicalPath))
+            .Concat(retainedRows.Where(row => row.PhysicalState == PhysicalPathState.Contained)
+                .Select(row => row.AliasOf ?? aliases.GetValueOrDefault(row.Path) ?? row.Path))
+            .Concat(includedSources.Select(source => source.Base.CanonicalPath))
+            .Concat(sources.Keys)
+            .Distinct(StringComparer.Ordinal);
+        var retainedSources = new List<SourceLogicalSource>();
+        var physical = new Dictionary<string, string>(PhysicalIdentityTracker.PathComparer);
+        foreach (var path in preferredPaths)
+        {
+            if (!sources.TryGetValue(path, out var source)) continue;
+            if (SourceLogicalPath.IsPrimarySource(catalogue.Layout, path))
+            {
+                physical.TryAdd(source.Base.PhysicalPath, path);
+                retainedSources.Add(source);
+                continue;
+            }
+            if (physical.TryGetValue(source.Base.PhysicalPath, out var firstPath))
+            {
+                aliases[path] = firstPath;
+                continue;
+            }
+            physical.Add(source.Base.PhysicalPath, path);
+            retainedSources.Add(source);
+        }
+        foreach (var alias in aliases.Keys.ToArray())
+        {
+            if (sources.TryGetValue(aliases[alias], out var source) && physical.TryGetValue(source.Base.PhysicalPath, out var firstPath))
+                aliases[alias] = firstPath;
+            if (alias == aliases[alias]) aliases.Remove(alias);
+        }
+        return new SourceCatalogue(catalogue.Layout, catalogue.Candidates, retainedSources, catalogue.Issues, catalogue.IsCancelled, aliases, retainedRows);
     }
 }

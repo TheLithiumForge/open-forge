@@ -31,9 +31,12 @@ internal sealed class StatusOperation(
             var recoveryResiduals = await contributors.RecoveryResiduals
                 .ReadStatusAsync(request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
-            var routes = await contributors.Routes
-                .ReadStatusAsync(observation, NavigationSharingReader.FromOwnership(ownership).Sharing, cancellationToken)
-                .ConfigureAwait(false);
+            var outside = observation.Layout is null || observation.OutsideRoutes.Length > 0
+                ? await contributors.Routes.ReadOutsideAsync(observation, cancellationToken).ConfigureAwait(false) : null;
+            var sharing = NavigationSharingReader.FromOwnership(ownership).Sharing;
+            var routes = outside is null
+                ? await contributors.Routes.ReadStatusAsync(observation, sharing, cancellationToken).ConfigureAwait(false)
+                : await contributors.Routes.ReadStatusAsync(observation, sharing, cancellationToken, outside).ConfigureAwait(false);
             var frameworkLifecycle = await contributors.FrameworkLifecycle
                 .ReadStatusAsync(observation, cancellationToken)
                 .ConfigureAwait(false);
@@ -48,7 +51,11 @@ internal sealed class StatusOperation(
                 routes,
                 frameworkLifecycle,
                 extensionLifecycle,
-                libraries);
+                libraries)
+            {
+                LayoutRead = observation,
+                OutsideRoutes = outside,
+            };
             return StatusResultBuilder.Build(request, observations);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

@@ -35,7 +35,10 @@ internal sealed class RouteCreateTargetPlanner
                 parsed.Kind,
                 "The Route Create target reference kind is not defined."),
         };
-        if (!layout.IsImplicitContentDestination(path)
+        var outsideDestination = parsed.Kind == SourceReferenceKind.SourcePath
+            && layout.TryGetMaintenanceBoundary(path, out var boundary)
+            && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside;
+        if ((!layout.IsImplicitContentDestination(path) && !outsideDestination)
             || !SourceFormClassifier.TryClassify(layout, path, out var form)
             || form != SourceDocumentForm.Markdown
             || SourceIdentity.DeriveId(layout, path) is not { } targetId)

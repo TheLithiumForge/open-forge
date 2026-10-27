@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Paths;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -159,6 +160,21 @@ internal sealed class RouteInitTargetPlanner
     internal static IReadOnlyList<string> ReadChainPaths(WorkspaceLayout layout, RouteInitTargetFacts target)
     {
         ArgumentNullException.ThrowIfNull(target);
+        if (target.CanonicalPath is { } path
+            && layout.TryGetMaintenanceBoundary(path, out var boundary)
+            && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside)
+        {
+            var directories = new List<string>();
+            var directory = SourceLogicalPath.ReadParent(path);
+            while (directory != boundary.DirectoryPath)
+            {
+                directories.Add(directory);
+                directory = SourceLogicalPath.ReadParent(directory);
+            }
+            directories.Add(boundary.DirectoryPath);
+            directories.Reverse();
+            return directories.Select(WorkspaceRoutePath.CanonicalEntrypointPath).ToArray();
+        }
         var segments = target.CanonicalSegments
             ?? throw new ArgumentException(
                 "Route Init chain paths require an aligned target.",
@@ -178,7 +194,9 @@ internal sealed class RouteInitTargetPlanner
             return Invalid(parsed.Cause ?? "The exact Route Init target path is invalid.");
         }
 
-        if (!layout.IsImplicitContentDestination(path)
+        var outside = layout.TryGetMaintenanceBoundary(path, out var boundary)
+            && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside;
+        if ((!layout.IsImplicitContentDestination(path) && !outside)
             || string.Equals(path, layout.LoaderPath, StringComparison.Ordinal)
             || !SourceFormClassifier.TryClassify(layout, path, out var form)
             || !SourceFormClassifier.IsEntrypoint(form))
@@ -192,7 +210,9 @@ internal sealed class RouteInitTargetPlanner
             return Invalid("The exact Route Init target has no canonical route identity.");
         }
 
-        var segments = id.Split('/', StringSplitOptions.None);
+        var segments = outside
+            ? SourceLogicalPath.ReadParent(path).Split('/', StringSplitOptions.None)
+            : id.Split('/', StringSplitOptions.None);
         return Resolved(new RouteInitTargetFacts(
             value,
             RouteInitTargetKind.ExactPath,

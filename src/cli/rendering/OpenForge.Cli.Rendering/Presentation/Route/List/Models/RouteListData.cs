@@ -42,6 +42,8 @@ internal sealed record RouteListDataDepth
 
 internal sealed record RouteListDataRow
 {
+    public string? MaintenanceRoot { get; init; }
+
     public required string Id { get; init; }
 
     public required string Path { get; init; }

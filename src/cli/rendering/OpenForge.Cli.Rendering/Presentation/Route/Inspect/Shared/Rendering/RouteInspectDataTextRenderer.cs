@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Presentation.Route.Inspect.Models;
 using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
@@ -18,6 +19,10 @@ internal static class RouteInspectDataTextRenderer
         ArgumentNullException.ThrowIfNull(selection);
         ArgumentNullException.ThrowIfNull(style);
         var builder = new StringBuilder();
+        if (selection.Detail >= CliDetail.Standard && data.MaintenanceRoot is { } maintenanceRoot)
+        {
+            Line(builder, global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelMaintenanceRoot(), maintenanceRoot);
+        }
         if (data.MatchingFiles is { } matchingFiles)
         {
             RouteInspectMatchingFilesTextRenderer.Render(builder, matchingFiles);
@@ -35,7 +40,7 @@ internal static class RouteInspectDataTextRenderer
         var identity = data.Identity;
 
         builder.Append('\n').Append(RouteInspectWording.BelongsHeading).Append('\n');
-        AddTopology(builder, profile.Topology);
+        AddTopology(builder, profile.Topology, identity is { MaintenanceRoot: not null, RouteState: RouteInspectRouteState.Detached });
         if (identity is not null)
         {
             AddUnusualIdentity(builder, identity);
@@ -70,13 +75,16 @@ internal static class RouteInspectDataTextRenderer
 
     private static void AddTopology(
         StringBuilder builder,
-        RouteInspectFact<RouteInspectTopology> fact)
+        RouteInspectFact<RouteInspectTopology> fact,
+        bool outsideDetached)
     {
         if (fact.State == RouteInspectFactState.Value)
         {
             var topology = fact.ReadValue();
             Line(builder, global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.TitleRouteChain(), string.Join(" -> ", topology.RouteChain));
-            Line(builder, global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleParent(), topology.ParentId ?? global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelNoneLoaderRoot());
+            Line(builder, global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleParent(), topology.ParentId
+                ?? (outsideDetached ? global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelNoneDetachedRoot()
+                    : global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelNoneLoaderRoot()));
             AddCounts(builder, topology.Counts);
             return;
         }

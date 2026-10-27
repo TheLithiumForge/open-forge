@@ -95,6 +95,7 @@ internal sealed record RouteListPresentationFacts
         => new()
         {
             Id = row.Id,
+            MaintenanceRoot = row.MaintenanceRoot,
             Path = row.Path,
             ParentId = row.ParentId,
             ParentPath = row.ParentPath,
@@ -225,6 +226,8 @@ internal enum RouteListPresentationSelectionProvenance
 
 internal sealed record RouteListPresentationRow
 {
+    internal string? MaintenanceRoot { get; init; }
+
     internal bool IsUnlisted { get; init; }
 
     internal bool IsMissing { get; init; }

@@ -1,0 +1,17 @@
+1 source matches --tag RowPolicy.
+Workspace: <workspace>
+  ./docs/team/rule.md  docs/team/rule.md  First authored policy
+applicability: matched
+  docs/team/_team.md: src/**
+  docs/team/rule.md: **/*.cs
+matching paths: src/App.cs
+  matched tag RowPolicy in frontmatter
+
+Search details:
+  Filters: --tag RowPolicy
+  Require: all
+  Regions searched: frontmatter, body
+--for: src/App.cs
+  Source set: filtered
+  1 of 1 sources inspected
+1 matches, 1 sources inspected, 1 source candidates.

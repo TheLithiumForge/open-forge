@@ -88,6 +88,8 @@ target, and the lifecycle record that will result. A plan is inspectable, which
 is what makes `--dry-run` the same code path as an apply rather than a separate
 one.
 
+Outside maintenance selection retains the matching available registration and proves exact ordinary physical coordinates within it before snapshots and effects. Readable foreign inputs establish impact without extending the write set. Move and Remove refuse required foreign content rewrites through their existing findings, while fixed settings, ownership and recovery remain separate bookkeeping effects. The [command contracts](../contracts/_contracts.md) define each admission and restoration policy.
+
 A plan that cannot be formed safely is a blocked result with the blocking
 finding, not a partial plan.
 

@@ -10,6 +10,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
+using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 
@@ -43,6 +45,8 @@ internal sealed partial class RouteUpdateNavigationPlanner
         }
 
         var metadata = new List<GeneratedNavigationMetadata>();
+        var snapshots = ImmutableArray.CreateBuilder<FileStateSnapshot>();
+        var outside = RouteUpdateOutsideBoundary.Find(observation.LayoutRead, observation.TargetSource.Base.CanonicalPath);
         foreach (var path in paths.OrderBy(path => path, StringComparer.Ordinal))
         {
             var source = formation.FindSource(path)
@@ -56,17 +60,36 @@ internal sealed partial class RouteUpdateNavigationPlanner
                 continue;
             }
 
-            var read = await reader.ReadAsync(source.Base, cancellationToken)
-                .ConfigureAwait(false);
-            if (!TryReadText(read, out var text, out var finding))
+            string text;
+            if (outside is not null)
             {
-                return NavigationMetadataBuild.Stop(finding);
+                if (!path.StartsWith(outside.DirectoryPath + "/", StringComparison.Ordinal))
+                    return NavigationMetadataBuild.Stop(new(RouteUpdateFindingCode.TargetUnsafe,
+                        "Outside navigation cannot acquire another folder's maintenance inputs.", path));
+                var observed = await new RouteUpdateLayerObserver(new SourceDocumentSnapshotReader()).ObserveAsync(new()
+                {
+                    Workspace = observation.Request.Workspace,
+                    Layer = source.Base,
+                    LayoutRead = observation.LayoutRead,
+                }, cancellationToken).ConfigureAwait(false);
+                if (observed.Layer is not { } layer)
+                    return NavigationMetadataBuild.Stop(new(observed.FailureCode ?? RouteUpdateFindingCode.ProjectionIncomplete,
+                        observed.FailureCause ?? "An outside navigation input is unavailable.", path));
+                text = layer.Text;
+                snapshots.Add(layer.Snapshot);
+            }
+            else
+            {
+                var read = await reader.ReadAsync(source.Base, cancellationToken)
+                .ConfigureAwait(false);
+                if (!TryReadText(read, out text, out var finding))
+                    return NavigationMetadataBuild.Stop(finding);
             }
 
             var facts = new SourceAuthoredMetadataParser().Parse(
                 new MarkdownDocumentParser().Parse(text),
                 source.Base.Form);
-            if (facts.State != SourceAuthoredMetadataState.Complete)
+            if (outside is null && facts.State != SourceAuthoredMetadataState.Complete)
             {
                 return NavigationMetadataBuild.Stop(
                     new RouteUpdateFinding(
@@ -80,7 +103,7 @@ internal sealed partial class RouteUpdateNavigationPlanner
             metadata.Add(new GeneratedNavigationMetadata(source, facts));
         }
 
-        return NavigationMetadataBuild.Complete(metadata);
+        return NavigationMetadataBuild.Complete(metadata, snapshots.ToImmutable());
     }
 
     private static bool TryReadText(
@@ -148,10 +171,11 @@ internal sealed partial class RouteUpdateNavigationPlanner
         internal IReadOnlyList<GeneratedNavigationMetadata> Values { get; }
 
         internal RouteUpdateFinding? Finding { get; }
+        internal ImmutableArray<FileStateSnapshot> Snapshots { get; init; } = [];
 
         internal static NavigationMetadataBuild Complete(
-            IReadOnlyList<GeneratedNavigationMetadata> values)
-            => new(values, finding: null);
+            IReadOnlyList<GeneratedNavigationMetadata> values, ImmutableArray<FileStateSnapshot> snapshots)
+            => new(values, finding: null) { Snapshots = snapshots };
 
         internal static NavigationMetadataBuild Stop(RouteUpdateFinding finding)
             => new([], finding);

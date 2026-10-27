@@ -7,6 +7,8 @@ using OpenForge.Cli.IntegrationTests.Commands.Route.Init.Framework;
 using OpenForge.Cli.IntegrationTests.Commands.Route.Init.Generic;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.TestSupport.Snapshots;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Paths;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init;
 
@@ -14,6 +16,31 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init;
 public sealed class RouteInitBeforeOutputSnapshotTests
 {
     private static readonly CommandOutputRenderers<RouteInitResult> Renderers = CommandOutputRenderers<RouteInitResult>.From(RouteInitPresentation.Rendering);
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Init outside previews retain bounded anchors, chains, unlisted registration and authored metadata")]
+    public async Task OutsidePreview()
+    {
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var (root, listed, nested, authored, situation) in new[]
+        {
+            (WorkspaceLayout.DefaultMainRoot, true, false, false, "default-anchor"),
+            (RouteInitOutsideWorkspace.CustomRoot, true, true, false, "custom-chain"),
+            (RouteInitOutsideWorkspace.CustomRoot, false, false, false, "unlisted-anchor"),
+            (WorkspaceLayout.DefaultMainRoot, false, true, true, "authored-child"),
+        })
+        {
+            using var workspace = new RouteInitOutsideWorkspace(root, listed);
+            var path = nested ? WorkspaceRoutePath.CanonicalEntrypointPath(RouteInitOutsideWorkspace.NestedDirectory) : workspace.Anchor;
+            var before = workspace.Files.SnapshotHashes(includeRuntime: true);
+            var result = await workspace.Execute(workspace.Request(path, RouteInitMode.DryRun, authored
+                ? new RouteInitMetadataInput(RouteInitOutsideWorkspace.Description, false, null, [RouteInitOutsideWorkspace.Tag]) : null));
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            Assert.Equal(before, workspace.Files.SnapshotHashes(includeRuntime: true));
+            Renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
+        }
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
+    }
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route init output preserves created child structure when an existing parent update is denied")]

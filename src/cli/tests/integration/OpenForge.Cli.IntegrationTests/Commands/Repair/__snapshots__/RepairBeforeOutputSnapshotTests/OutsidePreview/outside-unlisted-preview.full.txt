@@ -1,0 +1,20 @@
+Would repair 1 link.
+Workspace: <workspace>
+  docs/team/nested/note.md:3:14  ./guide.md -> guide.md
+  docs/team/nested/note.md
+    metadata would be completed, your content would be kept
+  docs/team/_team.md             entrypoint would be created
+  docs/team/nested/_nested.md    entrypoint would be created
+  docs/team/nested/guide.md
+    metadata would be completed, your content would be kept
+  Diagnosis coverage: Workspace and path were checked; route and heading were checked; local references were checked; selected scope was checked.
+  Before: <sha256>
+  After: <sha256>
+  Checks before writing: completed.
+  Verification: targets were not checked; resulting bytes were not checked; post-conditions were not checked.
+  Recovery: No recovery bundle was created.
+  Checks after writing: not run.
+No files were changed.
+1 link repaired, 2 Entries updated, 2 Metadata completed, 2 Entrypoints created.
+  Apply the previewed repairs.
+Next: open-forge repair --automatic --workspace <workspace>

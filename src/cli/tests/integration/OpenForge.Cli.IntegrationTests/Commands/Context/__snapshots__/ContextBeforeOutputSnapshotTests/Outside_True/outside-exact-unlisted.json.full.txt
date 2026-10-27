@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context is complete.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sources": 5,
+    "tokens": 92,
+    "bytes": 366,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0
+  },
+  "limitations": [],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 1,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Workspace\r\n"
+          }
+        ]
+      },
+      {
+        "path": "knowledge/main/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "includedBecause": [
+          "Loader"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 2,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Root\n\n## Entries\n\n- [Primary](rules/_rules.md) - #LoadNow\n- [Skills](../../.agents/skills/_skills.md) - #LoadNow\n\n\n"
+          }
+        ]
+      },
+      {
+        "path": "knowledge/main/rules/_rules.md",
+        "id": "rules",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from knowledge/main/loader.md"
+        ],
+        "route": "rules",
+        "scope": null,
+        "order": 3,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Primary\n  tags: [LoadNow]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Root\n\n## Entries\n\n\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "id": "skills",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from knowledge/main/loader.md"
+        ],
+        "route": "skills",
+        "scope": null,
+        "order": 4,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Skills\n  tags: [LoadNow]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Root\n\n## Entries\n\n\n"
+          }
+        ]
+      },
+      {
+        "path": "docs/team/unlisted.md",
+        "id": "./docs/team/unlisted.md",
+        "layer": "base",
+        "includedBecause": [
+          "selected source for ./docs/team/unlisted.md"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 5,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Unlisted\n  tags: [LoadNow]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Unlisted\n"
+          }
+        ]
+      }
+    ],
+    "links": []
+  },
+  "recovery": null,
+  "next": null
+}

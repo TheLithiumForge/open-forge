@@ -9,6 +9,8 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
@@ -48,10 +50,22 @@ internal sealed class RouteInclusionPlanBuilder
         var layoutRead = await new WorkspaceLayoutReader(new PhysicalPathResolver()).ReadAsync(request.Workspace, token).ConfigureAwait(false);
         if (layoutRead.Layout is not { } layout)
             return Stop(CliSemanticStatus.Blocked, RouteInclusionFindingCode.WorkspaceUnsafe, layoutRead.Issues.FirstOrDefault()?.Cause ?? "Repair the workspace settings, then retry.");
-        var path = RouteInclusionTargetResolver.Resolve(layout, request);
+        var target = await RouteInclusionTargetResolver.ResolveAsync(layout, request, token).ConfigureAwait(false);
+        var path = target.LoaderPath;
+        var folder = target.Kind == RouteInclusionTargetKind.Folder;
         if (layoutRead.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
             return Stop(CliSemanticStatus.Blocked, RouteInclusionFindingCode.WorkspaceUnsafe, layoutRead.Issues.FirstOrDefault()?.Cause ?? "Repair the workspace layout, then retry.");
         var include = request.Action == RouteInclusionAction.Include;
+        var registered = folder
+            ? layout.OutsideRoutes.Any(route => route.DirectoryPath == target.Path)
+            : layoutRead.Settings.Document.Roots.Contains(path, StringComparer.Ordinal);
+        var intendedLayout = layout;
+        if (folder)
+        {
+            var directories = layout.OutsideRoutes.Select(route => route.DirectoryPath);
+            intendedLayout = layout.WithOutsideRoutes(include && !registered
+                ? directories.Append(target.Path) : directories.Where(directory => include || directory != target.Path));
+        }
         var external = !layout.IsImplicitContentDestination(path);
         var loader = await RouteInclusionTargetResolver.ReadAsync(request.Workspace, layout.LoaderPath, token).ConfigureAwait(false);
         if (loader.Kind != FileExpectationKind.File)
@@ -78,7 +92,10 @@ internal sealed class RouteInclusionPlanBuilder
         {
             MarkdownEntryRow? existing = null;
             if (matching.Length > 0) MarkdownEntryRowParser.TryParse(matching[0], out existing, out _);
-            after = MergeRow(layout, request, path, existing);
+            var rowRequest = request;
+            if (folder && existing is null && request.Description is null)
+                rowRequest = request with { Description = RouteInclusionFolderPlanner.Document(target, layoutRead).Metadata.Description };
+            after = MergeRow(layout, rowRequest, path, existing);
             if (existing is not null && SameFields(request, existing)) after = matching[0];
         }
         var settings = layoutRead.Settings;
@@ -88,13 +105,24 @@ internal sealed class RouteInclusionPlanBuilder
         PlannedFileChange? settingsChange = null;
         if (external)
         {
-            settingsChange = include ? WorkspaceSettingsChangePlanner.PlanRootRegistration(settings, path)
-                : WorkspaceSettingsChangePlanner.PlanRootDeregistration(settings, path);
+            if (folder)
+                settingsChange = include ? WorkspaceSettingsChangePlanner.PlanOutsideRouteRegistration(settings, target.Path)
+                    : WorkspaceSettingsChangePlanner.PlanOutsideRouteDeregistration(settings, target.Path);
+            else
+                settingsChange = include ? WorkspaceSettingsChangePlanner.PlanRootRegistration(settings, path)
+                    : WorkspaceSettingsChangePlanner.PlanRootDeregistration(settings, path);
         }
         var observations = ImmutableArray.CreateBuilder<FileStateSnapshot>();
         observations.Add(loader);
         observations.Add(settingsSnapshot);
-        if (include)
+        PlannedFileChange? catalogueChange = null;
+        if (include && folder)
+        {
+            catalogueChange = RouteInclusionFolderPlanner.PlanCatalogue(target, layoutRead, intendedLayout);
+            observations.Add(target.DirectoryRead?.CatalogueSnapshot
+                ?? throw new IOException("Folder inclusion requires its initial catalogue snapshot."));
+        }
+        else if (include)
             observations.Add(await RouteInclusionTargetResolver.ReadAsync(request.Workspace, path, token).ConfigureAwait(false));
         var intendedLoader = loader.Bytes;
         if (!(include && external && matching.Length > 0 && after == matching[0])
@@ -136,6 +164,11 @@ internal sealed class RouteInclusionPlanBuilder
         }
         var changes = ImmutableArray.CreateBuilder<PlannedFileChange>();
         var recovery = ImmutableArray.CreateBuilder<RecoveryBundleTarget>();
+        if (catalogueChange is not null)
+        {
+            changes.Add(catalogueChange);
+            recovery.Add(RecoveryBundleTarget.CreateReversible(catalogueChange, observations.Single(item => item.LogicalPath == catalogueChange.LogicalPath)));
+        }
         if (!loader.Bytes.AsSpan().SequenceEqual(intendedLoader.AsSpan()))
         {
             var loaderChange = PlannedFileChange.ReplaceGeneratedRegion(loader.Expectation, intendedLoader.AsSpan());
@@ -149,11 +182,24 @@ internal sealed class RouteInclusionPlanBuilder
                 ? RecoveryBundleTarget.CreateReversible(settingsChange, settingsSnapshot)
                 : RecoveryBundleTarget.Create(settingsChange, settingsSnapshot));
         }
-        var registered = settings.Document.Roots.Contains(path, StringComparer.Ordinal);
         var noOp = changes.Count == 0;
+        if (noOp)
+        {
+            var validator = new FileExpectationValidator(new PhysicalPathResolver());
+            foreach (var expectation in layoutRead.Expectations.Concat(target.Expectations)
+                .Concat(observations.Select(item => item.Expectation)).Distinct())
+            {
+                var check = await validator.ValidateAsync(request.Workspace, expectation, token).ConfigureAwait(false);
+                if (check.State != FileExpectationValidationState.Matched)
+                    return Stop(CliSemanticStatus.Blocked, RouteInclusionFindingCode.TargetChanged,
+                        "A source observation changed. Review a fresh preview and retry.");
+            }
+        }
         var preview = new RouteInclusionOutcome
         {
-            Path = path,
+            Path = target.Path,
+            TargetKind = folder ? RouteInclusionTargetKind.Folder : null,
+            Catalogue = target.CataloguePath,
             Before = before,
             After = after,
             RegisteredBefore = registered,
@@ -165,17 +211,26 @@ internal sealed class RouteInclusionPlanBuilder
                 Path.GetRelativePath(request.Workspace.LexicalRoot, change.LogicalPath).Replace('\\', '/'),
                 change.Kind == PlannedFileChangeKind.Create ? null : StrictUtf8.GetString(observations.First(item => item.LogicalPath == change.LogicalPath).Bytes.AsSpan()),
                 StrictUtf8.GetString(change.IntendedBytes.AsSpan()), RouteInclusionEffectState.Planned,
-                change.LogicalPath == loader.LogicalPath ? RouteInclusionEffectKind.LoaderEntries : RouteInclusionEffectKind.Settings)).ToImmutableArray(),
+                EffectKind(change, loader, settingsSnapshot))).ToImmutableArray(),
         };
         return new RouteInclusionPlanBuild(preview, new RouteInclusionPlan
         {
             Request = request,
             LayoutRead = layoutRead,
+            IntendedLayout = intendedLayout,
+            Target = target,
             Preview = preview,
             Changes = changes.ToImmutable(),
             RecoveryTargets = recovery.ToImmutable(),
             Observations = observations.DistinctBy(item => item.LogicalPath, StringComparer.Ordinal).ToImmutableArray(),
         });
+    }
+
+    private static RouteInclusionEffectKind EffectKind(PlannedFileChange change, FileStateSnapshot loader, FileStateSnapshot settings)
+    {
+        if (change.LogicalPath == loader.LogicalPath) return RouteInclusionEffectKind.LoaderEntries;
+        if (change.LogicalPath == settings.LogicalPath) return RouteInclusionEffectKind.Settings;
+        return RouteInclusionEffectKind.Catalogue;
     }
 
     private static bool SameFields(RouteInclusionRequest request, MarkdownEntryRow row)

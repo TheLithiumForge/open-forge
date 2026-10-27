@@ -1,0 +1,13 @@
+Workspace: <workspace>
+  ./docs/team/_team.md    Team authored
+    docs/team/_team.md
+      Maintenance root: docs/team
+    #LoadNow
+    ./docs/team/SKILL.md  Outside skill
+      docs/team/SKILL.md
+        Maintenance root: docs/team
+      #Private
+    ./docs/team/child.md  First child
+      docs/team/child.md
+        Maintenance root: docs/team
+      #LoadNow #Row

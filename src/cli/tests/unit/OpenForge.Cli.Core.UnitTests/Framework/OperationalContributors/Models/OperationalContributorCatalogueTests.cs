@@ -79,6 +79,17 @@ public sealed class OperationalContributorCatalogueTests
 
     private sealed class RouteContributor : IRouteOperationalContributor
     {
+        public ValueTask<RouteOutsideRoutesObservation> ReadOutsideAsync(WorkspaceLayoutRead observation, CancellationToken cancellationToken)
+            => throw NotInvoked();
+
+        public ValueTask<RouteStatusView> ReadStatusAsync(WorkspaceLayoutRead observation, SourceSharing? sharing,
+            CancellationToken cancellationToken, RouteOutsideRoutesObservation retained)
+            => throw NotInvoked();
+
+        public ValueTask<RouteDoctorView> ReadDoctorAsync(WorkspaceLayoutRead observation, SourceSharing? sharing,
+            CancellationToken cancellationToken, RouteOutsideRoutesObservation retained)
+            => throw NotInvoked();
+
         public ValueTask<RouteStatusView> ReadStatusAsync(
             WorkspaceLayoutRead observation,
             SourceSharing? sharing,

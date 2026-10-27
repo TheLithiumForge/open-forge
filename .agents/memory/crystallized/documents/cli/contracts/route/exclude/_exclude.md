@@ -25,4 +25,4 @@ The implementation and evidence remain reviewable in the current change.
 ## Entries
 
 - [Accepted behavior for route exclude planning, preservation and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Behavior #Route #Exclude #Mutation #CurrentTruth
-- [Accepted public contract for removing a workspace file from the loader without deleting it](interface.md) - #Memory #Crystallized #CLI #Release #Command #Interface #Route #Exclude #Mutation #CurrentTruth
+- [Accepted public contract for excluding files or deregistering outside folders without deleting content](interface.md) - #Memory #Crystallized #CLI #Release #Command #Interface #Route #Exclude #Mutation #CurrentTruth

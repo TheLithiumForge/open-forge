@@ -31,9 +31,11 @@ Global options: --workspace, --format, --detail, --detail-filter, --help,
 Details:
   Source and destination: Use an exact ID, base path, or overwrite path for an
   ordinary Markdown leaf, or the recognized entrypoint for a complete category.
-  Destination is one exact workspace-relative .agents path. Leaf and category
-  forms must match the subject. Apply locks the workspace and revalidates the
-  move, references, and generated navigation. Move never invokes Index.
+  Destination is one exact workspace-relative path in the selected layout or the
+  same registered outside route. Registered directories and root entrypoints
+  stay protected. Leaf and category forms must match the subject. Apply locks
+  the workspace and revalidates the move, references, and generated navigation.
+  Move never invokes Index.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

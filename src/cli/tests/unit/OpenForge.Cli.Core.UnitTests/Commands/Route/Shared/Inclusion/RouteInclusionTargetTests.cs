@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Planning;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Paths;
 using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Inclusion;
@@ -44,5 +45,35 @@ public sealed class RouteInclusionTargetTests
         var exception = Assert.Throws<ArgumentException>(() =>
             RouteInclusionTargetResolver.ValidateContentTarget(WorkspaceLayout.Create(workspace, root), request, path));
         CommandOutputSnapshot.MatchSnapshot(exception.Message, custom ? "custom" : "default");
+    }
+
+    [Theory(DisplayName = "Folder resolution keeps directory and catalogue coordinates distinct without filesystem access"), Trait("Feature", "route-inclusion"), Trait("Evidence", "Unit")]
+    [InlineData("project/team")]
+    [InlineData("./project/team")]
+    [InlineData(@"project\team")]
+    public void FolderCoordinates(string operand)
+    {
+        const string folder = "project/team";
+        var workspace = RouteInclusionTestData.Invocation().Workspace!;
+        var layout = WorkspaceLayout.Create(workspace, MainRoot);
+        var request = new RouteInclusionRequest { Workspace = workspace, File = operand, Action = RouteInclusionAction.Include };
+        var target = RouteInclusionTargetResolver.ResolveFolder(layout, request, folder);
+        Assert.Equal(RouteInclusionTargetKind.Folder, target.Kind);
+        Assert.Equal(folder, target.Path);
+        Assert.Equal(WorkspaceRoutePath.CanonicalEntrypointPath(folder), target.CataloguePath);
+        Assert.Equal(target.CataloguePath, target.LoaderPath);
+        Assert.Null(target.DirectoryRead);
+    }
+
+    [Theory(DisplayName = "Folder resolution refuses reserved overlap and lexical aliases before physical observation"), Trait("Feature", "route-inclusion"), Trait("Evidence", "Unit")]
+    [InlineData("project/../project/team", "project/team")]
+    [InlineData(MainRoot, MainRoot)]
+    [InlineData("docs", "docs")]
+    [InlineData(WorkspaceLayout.DefaultMainRoot, WorkspaceLayout.DefaultMainRoot)]
+    public void FolderAdmission(string operand, string canonical)
+    {
+        var workspace = RouteInclusionTestData.Invocation().Workspace!;
+        var request = new RouteInclusionRequest { Workspace = workspace, File = operand, Action = RouteInclusionAction.Include };
+        Assert.Throws<ArgumentException>(() => RouteInclusionTargetResolver.ResolveFolder(WorkspaceLayout.Create(workspace, MainRoot), request, canonical));
     }
 }

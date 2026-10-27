@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 3,
+  "command": "route exclude",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Excluded 'project/team notes'.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "# Open Forge Loader\n\n## Entries\n\n- [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)\n",
+      "after": "# Open Forge Loader\n\n## Entries\n\n- none - No entries - #Empty\n"
+    },
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "{\n  \"schemaVersion\": 5,\n  \"other\": true,\n  \"outsideRoutes\": [\n    \"project/team notes\"\n  ],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\n}",
+      "after": "{\n  \"schemaVersion\": 5,\n  \"other\": true,\n  \"outsideRoutes\": [],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\n}"
+    }
+  ],
+  "counts": {
+    "filesChanged": 2
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": "project/team notes",
+    "targetKind": "folder",
+    "catalogue": "project/team notes/_team notes.md",
+    "before": "- [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)",
+    "after": null,
+    "registeredBefore": true,
+    "registeredAfter": false,
+    "verified": true
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

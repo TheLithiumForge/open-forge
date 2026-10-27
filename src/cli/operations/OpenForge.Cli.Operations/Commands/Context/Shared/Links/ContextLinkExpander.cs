@@ -242,7 +242,7 @@ internal sealed class ContextLinkExpander
                         if (chain is not null)
                         {
                             var targetIdentity = Identity(targetSource);
-                            foreach (var ancestor in chain.Take(chain.Count - 1).Where(item => item.IsEntrypoint))
+                            foreach (var ancestor in chain.Take(chain.Count - 1).Where(item => item.IsCatalogue))
                             {
                                 var ancestorApplicability = ContextApplicabilityProjector.Evaluate(
                                     graph,

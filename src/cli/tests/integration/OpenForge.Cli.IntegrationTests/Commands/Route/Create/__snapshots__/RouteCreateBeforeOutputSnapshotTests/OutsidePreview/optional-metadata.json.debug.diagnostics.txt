@@ -1,0 +1,10 @@
+status=completed-with-warnings
+mode=dry-run
+target=./docs/team/scope/note.md
+completeness=complete
+safety=safe
+effects=4
+recovery=not created
+verification=not run
+findings=1
+The Route Create target omits an optional description or tag.

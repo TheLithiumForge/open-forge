@@ -132,6 +132,12 @@ internal static class StatusReportSelector
                 HandWritten: included.HandWritten,
                 Startup: Measurement(included.Startup),
                 Pending: included.Pending) : null,
+            OutsideRoutes = facts.Context.OutsideRoutes is { Count: > 0 } outside ? outside.Select(route => new StatusDataOutsideRoute
+            {
+                Path = route.Path,
+                State = StatusOutsideRouteStates.Read(route.State),
+                Listed = route.Listed,
+            }).ToArray() : null,
             Installation = new StatusDataInstallation
             {
                 State = StatusWording.State(facts.Installation.State),

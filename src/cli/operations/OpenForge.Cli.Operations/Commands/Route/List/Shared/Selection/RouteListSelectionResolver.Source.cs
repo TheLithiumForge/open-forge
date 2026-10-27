@@ -15,7 +15,8 @@ internal sealed partial class RouteListSelectionResolver
         SourceLogicalSource logicalSource,
         RouteSourceProjectionSet projectionSet,
         SourceRouteFacts routeFacts,
-        RouteListSelectionKind selectionKind)
+        RouteListSelectionKind selectionKind,
+        bool registeredExact = false)
     {
         var projection = projectionSet.Projections.SingleOrDefault(candidate =>
             ReferenceEquals(candidate.LogicalSource, logicalSource));
@@ -68,7 +69,7 @@ internal sealed partial class RouteListSelectionResolver
 
         if ((source.Kind is RouteSourceKind.Markdown or RouteSourceKind.Native)
             && (source.Metadata.State != RouteSourceMetadataState.Complete
-                || routeFact.State != SourceRouteState.Routed))
+                || routeFact.State != SourceRouteState.Routed && !registeredExact))
         {
             return Invalid(
                 attempted,

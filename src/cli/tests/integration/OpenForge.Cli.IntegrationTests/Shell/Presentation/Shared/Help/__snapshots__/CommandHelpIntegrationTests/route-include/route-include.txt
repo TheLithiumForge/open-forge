@@ -1,27 +1,32 @@
-  List an existing workspace file in the loader where it lives.
+  List an existing file or register an outside folder as a maintained route.
 
 Usage:
-  open-forge route include <workspace-file> [--description <text>] [--tag <tag>]... [--apply-to <glob>]... [--dry-run]
+  open-forge route include <workspace-path> [--description <text>] [--tag <tag>]... [--apply-to <glob>]... [--dry-run]
 
 Examples:
   open-forge route include CONTRIBUTING.md --description "How to contribute"
-  open-forge route include docs/team/_team.md --description "Team context" --dry-run
+  open-forge route include docs/team --dry-run
   open-forge route include .agents/patterns/_patterns.md
 
 Behavior:
   List an existing text file where it lives. The loader row controls when it
   loads.
+  Include a folder outside the main root to register a maintained route.
+  Its canonical catalogue is created only when missing. An existing catalogue
+  stays exact.
   An omitted field keeps its current value. An identical request changes
   nothing.
   Preview with --dry-run. Otherwise apply after checks, without a prompt.
-  The target file keeps its bytes.
+  Existing target files keep their bytes.
 
 Arguments:
-  <workspace-file>  Select one workspace-relative text file.
+  <workspace-path>  Select one workspace-relative text file or outside folder.
 
 Options:
-  --dry-run             Preview loader and settings changes without writing.
-  --description <text>  Set the loader row description. Required for a new row.
+  --dry-run             Preview catalogue, loader and settings changes without
+                        writing.
+  --description <text>  Set the loader row description. Required for a new file
+                        row.
   --tag <tag>           Replace the ordered tags. Repeat for more tags, with or
                         without #.
   --apply-to <glob>     Replace the conditions. Repeat for more
@@ -31,18 +36,23 @@ Global options: --workspace, --format, --detail, --detail-filter, --help,
 --version. See open-forge --help.
 
 Details:
-  Metadata: Supply --description for a new row outside .agents.
+  Metadata: Supply --description for a new file row outside .agents.
+  A new folder row defaults to the generic scaffold description.
+  Metadata options change only the loader row, never the catalogue.
   Repeat --tag in the order to keep, with or without #. No tags means on demand.
   Repeat --apply-to for conditions using workspace-relative globs.
   A supplied option replaces only its own field. Omitted fields stay as written.
   To clear tags or conditions, edit the row or exclude and include again.
   A file's own frontmatter never sets its loading.
-  Boundary: Use a workspace-relative file, with / or \ and an optional leading
-  ./.
-  Use a catalogue instead of a directory. Globs, URLs and fragments are invalid.
+  Boundary: Use a workspace-relative file or folder, with / or \ and an optional
+  leading ./.
+  Globs, URLs and fragments are invalid.
   Paths must stay inside the workspace, including through links.
+  Folders must be existing ordinary directories without aliases or overlaps with
+  the main root, .agents, Git metadata, runtime storage or other registered
+  routes.
   Git metadata, the loader, settings and lock files are not valid targets.
-  Inside .agents, use a direct child folder's catalogue.
+  Inside the main root, use a direct child folder's catalogue.
   Change that catalogue's frontmatter to change its description, tags or
   conditions.
 
@@ -54,5 +64,5 @@ Automation:
 
 Related commands:
   open-forge route exclude --help
-      Stop listing a file
+      Stop listing a file or maintaining a folder
   open-forge index --help  Refresh generated navigation

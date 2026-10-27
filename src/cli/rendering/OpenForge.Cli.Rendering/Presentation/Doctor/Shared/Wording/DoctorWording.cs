@@ -101,12 +101,15 @@ internal static class DoctorWording
         };
 
     internal static string Title(DoctorFinding finding)
-        => finding.CustomMainRoot is { } root ? finding.Kind switch
+    {
+        if (finding.OutsideRoute is { } outside) return OutsideTitle(outside.State);
+        return finding.CustomMainRoot is { } root ? finding.Kind switch
         {
             DoctorFindingKind.WorkspaceAgentsMissing => global::OpenForge.Cli.OutputText.Doctor.DoctorText.ContextFolderMissing(root),
             DoctorFindingKind.WorkspaceAgentsInaccessible => global::OpenForge.Cli.OutputText.Doctor.DoctorText.ContextFolderUnreadable(root),
             _ => Title(finding.Kind),
         } : Title(finding.Kind);
+    }
 
     internal static string Title(DoctorFindingKind kind)
         => kind switch
@@ -222,6 +225,7 @@ internal static class DoctorWording
     internal static string Message(DoctorFinding finding)
     {
         ArgumentNullException.ThrowIfNull(finding);
+        if (finding.OutsideRoute is { } outside) return OutsideMessage(finding, outside);
         if (finding.IsIncludedFile) return finding.Message;
         if (finding.Maintenance is { } maintenance) return DoctorMaintenanceWording.Message(finding, maintenance);
         if (finding.FolderReference is { } folder) return Presentation.Shared.Wording.FolderReferenceWording.Message(folder.Destination, folder.IsMissing);
@@ -708,6 +712,13 @@ internal static class DoctorWording
 
     private static CliNextAction? FallbackAction(DoctorFinding finding)
     {
+        if (finding.OutsideRoute is { } outside)
+        {
+            if (outside.InitTarget is { } target)
+                return Action($"open-forge route init {CliCommandText.Quote("./" + target)}", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageCreateTheMissingRouteEntrypoint());
+            return finding.Resolution == DoctorResolutionLane.Informational ? null
+                : Sentence(global::OpenForge.Cli.OutputText.Doctor.DoctorWording.ReviewOutsideRegistration(Path(finding)));
+        }
         if (finding.IsIncludedFile) return null;
         if (finding.LinkRecreation is { } recreation)
         {
@@ -765,6 +776,36 @@ internal static class DoctorWording
 
     private static bool HasExplicitIndexAction(DoctorFinding finding)
         => finding.Actions.Any(action => action.Operation == DoctorNextOperation.Index);
+
+    private static string OutsideTitle(DoctorOutsideRouteState state)
+        => state switch
+        {
+            DoctorOutsideRouteState.MissingDirectory => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideDirectoryMissingTitle(),
+            DoctorOutsideRouteState.MissingAnchor => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleEntrypointIsMissing(),
+            DoctorOutsideRouteState.Unlisted => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideUnlistedTitle(),
+            DoctorOutsideRouteState.UnsafeBoundary => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideUnsafeTitle(),
+            DoctorOutsideRouteState.PhysicalAlias => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitlePathIdentityIsAmbiguous(),
+            DoctorOutsideRouteState.Unavailable => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideUnavailableTitle(),
+            DoctorOutsideRouteState.AmbiguousAnchor => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleSeveralEntrypointsMatch(),
+            DoctorOutsideRouteState.StaleLoaderTarget => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideLoaderTargetMissingTitle(),
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The outside condition is not defined."),
+        };
+
+    private static string OutsideMessage(DoctorFinding finding, DoctorOutsideRouteCondition condition)
+    {
+        var path = Path(finding);
+        return condition.State switch
+        {
+            DoctorOutsideRouteState.MissingDirectory => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideDirectoryMissing(path),
+            DoctorOutsideRouteState.MissingAnchor => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideAnchorMissing(path),
+            DoctorOutsideRouteState.Unlisted => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideUnlisted(path),
+            DoctorOutsideRouteState.UnsafeBoundary or DoctorOutsideRouteState.PhysicalAlias => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideUnsafe(path, condition.Cause),
+            DoctorOutsideRouteState.Unavailable => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideUnavailable(path, condition.Cause),
+            DoctorOutsideRouteState.AmbiguousAnchor => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideAmbiguous(path),
+            DoctorOutsideRouteState.StaleLoaderTarget => global::OpenForge.Cli.OutputText.Doctor.DoctorWording.OutsideLoaderTargetMissing(path),
+            _ => throw new ArgumentOutOfRangeException(nameof(condition), condition.State, "The outside condition is not defined."),
+        };
+    }
 
     private static bool IsGeneratedNavigationFinding(DoctorFindingKind kind)
         => kind is DoctorFindingKind.RouteGeneratedRegionStale

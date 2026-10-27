@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 3,
+  "command": "route exclude",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Nothing changed for 'project/team notes'.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "filesChanged": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": "project/team notes",
+    "targetKind": "folder",
+    "catalogue": "project/team notes/_team notes.md",
+    "before": null,
+    "after": null,
+    "registeredBefore": false,
+    "registeredAfter": false,
+    "verified": true
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

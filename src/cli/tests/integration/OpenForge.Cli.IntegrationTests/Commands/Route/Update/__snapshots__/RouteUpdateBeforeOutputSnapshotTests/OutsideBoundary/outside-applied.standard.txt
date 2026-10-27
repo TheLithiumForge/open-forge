@@ -1,0 +1,6 @@
+Updated ./docs/team/design/note.md
+Workspace: <workspace>
+  Path: docs/team/design/note.md
+  description: "Before outside" -> "After outside"
+  docs/team/design/_design.md  Entries updated
+  docs/team/design/note.md  metadata updated

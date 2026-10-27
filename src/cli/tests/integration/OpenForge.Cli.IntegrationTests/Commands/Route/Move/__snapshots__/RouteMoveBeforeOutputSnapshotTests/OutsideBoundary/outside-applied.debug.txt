@@ -1,0 +1,17 @@
+Moved ./docs/team/left/old note.md to docs/team/right/new note.md
+Workspace: <workspace>
+  docs/team/left/old note.overwrite.md -> docs/team/right/new note.overwrite.md
+  docs/team/left/_left.md  Entries updated
+  docs/team/right/_right.md  Entries updated
+  Updated 2 links that pointed to the old path:
+  docs/team/left/incoming.md:6:12  docs/team/left/old note.md -> docs/team/right/new note.md
+  docs/team/right/new note.md:8:12  docs/team/left/local.txt -> docs/team/left/local.txt
+  Effects:
+  docs/team/right/new note.md: create file / missing -> file:<sha256> / verified
+  docs/team/right/new note.overwrite.md: create file / missing -> file:<sha256> / verified
+  docs/team/left/_left.md: rewrite Entries section / file:<sha256> -> file:<sha256> / verified
+  docs/team/left/incoming.md: rewrite link source / file:<sha256> -> file:<sha256> / verified
+  docs/team/right/_right.md: rewrite Entries section / file:<sha256> -> file:<sha256> / verified
+  docs/team/left/old note.md: delete file / file:<sha256> -> missing / verified
+  docs/team/left/old note.overwrite.md: delete file / file:<sha256> -> missing / verified
+  12 files scanned; 4 links found.

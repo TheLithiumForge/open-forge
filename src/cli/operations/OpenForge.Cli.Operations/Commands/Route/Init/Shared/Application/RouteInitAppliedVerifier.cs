@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Application;
 
@@ -78,7 +79,13 @@ internal sealed class RouteInitAppliedVerifier(
         RouteInitPlanBuild fresh;
         try
         {
-            fresh = await _planBuilder.BuildAsync(request, cancellationToken).ConfigureAwait(false);
+            var outside = original.LayoutRead.Layout is { } layout
+                && original.Preview.Target.Path is { } path
+                && layout.TryGetMaintenanceBoundary(path, out var boundary)
+                && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside;
+            fresh = outside
+                ? await _planBuilder.BuildAsync(request, original.LayoutRead, cancellationToken).ConfigureAwait(false)
+                : await _planBuilder.BuildAsync(request, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -194,6 +201,13 @@ internal sealed class RouteInitAppliedVerifier(
             {
                 return boundary;
             }
+        }
+
+        var changed = plan.FileChanges.Select(change => change.LogicalPath).ToHashSet(StringComparer.Ordinal);
+        foreach (var snapshot in plan.SourceSnapshots.Where(snapshot => !changed.Contains(snapshot.LogicalPath)))
+        {
+            var boundary = await VerifyExpectationAsync(plan, snapshot.Expectation, cancellationToken).ConfigureAwait(false);
+            if (boundary is not null) return boundary;
         }
 
         return null;

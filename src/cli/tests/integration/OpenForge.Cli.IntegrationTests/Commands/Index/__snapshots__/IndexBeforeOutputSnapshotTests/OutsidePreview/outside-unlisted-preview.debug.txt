@@ -1,0 +1,13 @@
+Would create 2 entrypoints and complete metadata in 1 file.
+Workspace: <workspace>
+  docs/team/nested/note.md  metadata would be completed, your content would be kept
+  docs/team/_team.md  entrypoint would be created
+  docs/team/nested/_nested.md  entrypoint would be created
+docs/team/nested/note.md
+  description: Note
+  tags: [Workspace]
+Selection: docs/team/nested/note.md
+No recovery bundle was needed.
+No files were changed.
+  Apply the checked plan.
+Next: open-forge index --workspace <workspace>

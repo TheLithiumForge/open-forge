@@ -1,0 +1,8 @@
+Would move ./docs/team/left/old note.md to docs/team/right/new note.md
+Workspace: <workspace>
+  docs/team/left/_left.md  Entries would be updated
+  docs/team/right/_right.md  Entries would be updated
+  Would update 2 links that point to the old path:
+  docs/team/left/incoming.md:6:12
+  docs/team/right/new note.md:8:12
+No files were changed.

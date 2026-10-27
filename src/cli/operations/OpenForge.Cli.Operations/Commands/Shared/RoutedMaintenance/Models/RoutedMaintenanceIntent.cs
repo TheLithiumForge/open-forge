@@ -14,6 +14,7 @@ internal sealed record RoutedMaintenanceRequest
     public required SourceCatalogue Catalogue { get; init; }
     public required ImmutableArray<string> RootPaths { get; init; }
     public required ImmutableArray<SourceLogicalSource> SelectedSources { get; init; }
+    public ImmutableArray<string>? SelectedSourcePaths { get; init; }
     public required RoutedMetadataPolicyContext Policy { get; init; }
     public IReadOnlyDictionary<string, ImmutableArray<byte>> IntendedBytes { get; init; } = new Dictionary<string, ImmutableArray<byte>>();
     public IReadOnlyDictionary<string, MarkdownDocumentFacts> ObservedDocuments { get; init; } = new Dictionary<string, MarkdownDocumentFacts>();

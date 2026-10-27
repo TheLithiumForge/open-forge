@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would create 3 entrypoints for ./docs/team/design/decisions/_decisions.md.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "docs/team/design",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/design/decisions",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/_team.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/design/_design.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/design/decisions/_decisions.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "entrypointsCreated": 3,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": {
+      "id": "./docs/team/design/decisions/_decisions.md",
+      "path": "docs/team/design/decisions/_decisions.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": "docs/team/_team.md",
+        "outcome": "planned",
+        "needsAuthoring": true
+      },
+      {
+        "path": "docs/team/design/_design.md",
+        "outcome": "planned",
+        "needsAuthoring": true
+      },
+      {
+        "path": "docs/team/design/decisions/_decisions.md",
+        "outcome": "planned",
+        "needsAuthoring": true
+      }
+    ],
+    "listedIn": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

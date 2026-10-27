@@ -67,7 +67,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
     {
         var descendants = new HashSet<string>(StringComparer.Ordinal);
         var queue = new Queue<string>(chain
-            .Where(source => source.Kind == RouteSourceKind.Entrypoint)
+            .Where(source => IsEntrypoint(source.CanonicalPath))
             .Select(source => source.CanonicalPath));
         while (queue.TryDequeue(out var parentPath))
         {
@@ -147,7 +147,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
     private void UpdateReadingAvailability()
     {
         if (_resolution.State == RouteInspectResolutionState.Incomplete
-            || _selected.Metadata.State != RouteSourceMetadataState.Complete)
+            || _selected.Metadata.State != RouteSourceMetadataState.Complete && !_graph.HasRowPolicy(_selected.CanonicalPath))
         {
             _readingAvailable = false;
             return;

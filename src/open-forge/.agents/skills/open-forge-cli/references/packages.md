@@ -29,11 +29,13 @@ Before route choices, first interactive Install asks `Where should Open Forge ke
 
 An omitted or unchanged `--main-root` keeps ordinary Install behavior. A different root on an established installation is refused before changes, including with `--configure`. Relocation is not available yet. Editing `mainRoot` in settings moves no files. Older CLIs do not support custom roots.
 
+Later folder Include registers outside routes separately. It does not change the main root or create package ownership. Extension and Library destinations there still use explicit grants and existing source/ownership protections. Older CLIs do not maintain directory registrations, and unknown-property preservation is not downgrade compatibility.
+
 After the preset choice, first interactive Install asks `How should Open Forge write file metadata?` with root preselected. An explicit `--frontmatter` skips the question. A fresh Install keeps an explicit preference already in settings unless the flag overrides it. Without either, fresh unattended Install uses root. Interactive Configure offers the current form first. Ordinary repeated Install and Update retain the form and never ask.
 
 Install, Update, and Extension delivery use `frontmatter` in `.agents/open-forge.json`. A missing value means scoped. Both root and scoped frontmatter are read in every workspace. The plan shows the selected form, such as `Frontmatter: root`, or a change such as `Frontmatter: scoped -> root`.
 
-When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `[".agents/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 4 for every layout. Unrelated rewrites preserve an existing schema declaration. Explicitly selecting a custom root can update it to v4.
+When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `[".agents/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 5 for every layout. Unrelated rewrites preserve an existing schema declaration. Explicitly selecting a custom root can update it to the current schema.
 
 A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands. This does not make an older CLI compatible with custom roots.
 
@@ -50,7 +52,9 @@ Install's headline describes the result, with the path on a separate `Workspace:
 
 No built-in preset installs optional Extensions. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal includes only Directives and Crystallized Memory. A Memory state added with `--route` brings the Memory catalogue with it.
 
-Install, Update, Configure, and Extension commands keep the loader's `Entries` as the user left them. A removed root line stays removed, links to documents outside `.agents/` stay, and an empty list stays empty. A root joins the list only when the command creates its catalogue or Configure adds a route that was left out.
+For primary roots and file-only inclusions, Install, Update, Configure, and Extension commands keep the loader's `Entries` as the user left them. A removed root line stays removed, links to documents outside `.agents/` stay, and an empty list stays empty. A root joins the list only when the command creates its catalogue or Configure adds a route that was left out.
+
+Ordinary Install, configure, frontmatter conversion and root Update preserve outside registrations, independent file includes, exact unlisted state and authored row bytes, conditions, aliases, mutual order and first-reaching policy. Stale targets remain authored, and these operations do not relist or restore outside anchors. Generated primary rows keep their own ordering, so absolute mixed-row positions can change. Registration still grants no package ownership or permission.
 
 In line-mode Custom, type row edits such as `2+ 9~`, press Enter on an empty line to continue, or follow `Type cancel to stop without changes.` Existing tracked files stay tracked, and left-out defaults leave existing files routable.
 
@@ -172,7 +176,7 @@ Add reviewed optional packages and their required dependencies. Select explicit 
 | `--source <package-or-catalogue-path>` | Select the reviewed separate local source                                         |
 | `--all`                                | Select every eligible package in that source                                      |
 | `--force`                              | Permit eligible existing content replacement during initial installation          |
-| `--allow-path <path>`                  | Record supported permission for a destination outside `.agents`. Repeat as needed |
+| `--allow-path <path>`                  | Record supported permission for a destination outside the primary content locations. Repeat as needed |
 | `--dry-run`                            | Preview packages, dependencies, and file changes                                  |
 | `--automatic`                          | Suppress prompts without selecting packages or adding force                       |
 
@@ -250,7 +254,7 @@ Register a workspace-relative source directory and create relative file links.
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `--to <directory>`           | Select the workspace-relative projection root. Default: workspace root                                       |
 | `--git-ignore <true\|false>` | Ignore exact projected links. `false` leaves ignore rules unchanged                                          |
-| `--allow-path <path>`        | Record supported destination permission outside `.agents`. Repeat for required destinations and `.gitignore` |
+| `--allow-path <path>`        | Record supported destination permission outside the primary content locations. Repeat for required destinations and `.gitignore` |
 | `--dry-run`                  | Preview links, registration, permissions, and ignore rules                                                   |
 | `--automatic`                | Disable prompts without changing the selected targets                                                        |
 

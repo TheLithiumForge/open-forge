@@ -4,11 +4,14 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 
 internal sealed class RouteInspectResolutionInput
 {
+    internal WorkspaceLayoutRead? LayoutRead { get; init; }
+
     internal RouteInspectResolutionInput(
         RouteInspectRequest request,
         SourceReferenceParseResult parsed,

@@ -10,6 +10,8 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -32,7 +34,11 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
         if (plan.LayoutRead?.Layout is not { } layout) return Block(plan, "Repair requires the observed workspace layout.");
         var workspace = plan.Request.Workspace;
         var catalogue = repairCatalogue.Catalogue
-            ?? await new SourceCatalogueReader().ReadAsync(new(layout, layout.SourceRoots), token).ConfigureAwait(false);
+            ?? (await new SourceReadSessionReader(paths).ReadIncludedAsync(layout, token).ConfigureAwait(false)).Catalogue;
+        // Discovery may omit unavailable registrations while maintenance retains its original observation.
+        if (!ReferenceEquals(catalogue.Layout, layout))
+            catalogue = new(layout, catalogue.Candidates, catalogue.Sources, catalogue.Issues,
+                catalogue.IsCancelled, catalogue.Aliases, catalogue.IncludedRows);
         var ownership = plan.LayoutRead.Ownership;
         var settings = plan.LayoutRead.Settings;
         if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete)
@@ -41,10 +47,13 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
         var policy = new RoutedMetadataPolicyContext
         {
             Layout = layout,
+            LayoutRead = plan.LayoutRead,
             Settings = settings.Document,
             Ownership = ownership.Document,
         };
         if (plan.Selection.Selected.Any(selected => !RepairProtectionReader.Allows(selected.Proposal.SourceCanonicalPath, policy)
+            || !RepairOutsideAdmission.Allows(selected.Proposal.SourceCanonicalPath, policy, token)
+            || !RepairOutsideAdmission.Allows(Uri.UnescapeDataString(selected.Resolution.Target.CanonicalTargetPath), policy, token, selected.Resolution.Target.RenameProof is not null)
             || !RepairProtectionReader.Allows(Uri.UnescapeDataString(selected.Resolution.Target.CanonicalTargetPath), policy)))
             return Block(plan, "Repair cannot change a protected source or select a protected target.");
         var sharing = new SourceSharing(ownership.Document.Framework?.GitIgnoredRoutes ?? []);
@@ -64,7 +73,9 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
                 && !plan.Selection.Selected.Any(selected =>
                 selected.Proposal.SourceCanonicalPath == reference.SourcePath && selected.Proposal.Occurrence == reference.DestinationLocation))
             .Select(reference => SourceLogicalPath.ReadParent(reference.Facts.Target.Path!)).Distinct(StringComparer.Ordinal).ToArray();
-        var roots = formation.Topology.LoaderRootPaths.ToImmutableArray();
+        var roots = formation.Topology.LoaderRootPaths.Where(path => !SourceLogicalPath.IsOutsideSource(layout, path))
+            .Concat(layout.OutsideRoutes.Where(route => affected.Any(path => path.StartsWith(route.DirectoryPath + "/", StringComparison.Ordinal)))
+                .Select(route => route.CataloguePath)).Distinct(StringComparer.Ordinal).ToImmutableArray();
         var regionPaths = catalogue.Sources.Where(source => (SourceFormClassifier.IsEntrypoint(source.Base.Form) || source.Base.Form == SourceDocumentForm.Loader)
             && ExposesFolder(source.Identity.CanonicalBasePath, folders))
             .Select(source => source.Identity.CanonicalBasePath).ToHashSet(StringComparer.Ordinal);
@@ -78,6 +89,7 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
             Catalogue = catalogue,
             RootPaths = roots,
             SelectedSources = selectedSources,
+            SelectedSourcePaths = [.. selectedSources.Select(source => source.Identity.CanonicalBasePath)],
             IntendedBytes = intended,
             ObservedDocuments = repairCatalogue.Documents,
             Policy = policy,
@@ -94,14 +106,30 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
         var documents = intent.Documents.ToDictionary(item => item.Key, item => item.Value, StringComparer.Ordinal);
         var regionSources = intent.Formation.Sources.Where(source => regionPaths.Contains(source.Identity.CanonicalBasePath)).ToArray();
         var metadataSources = regionSources.SelectMany(source => source.Base.Form == SourceDocumentForm.Loader
-                ? intent.Formation.Topology.LoaderRootPaths : intent.Formation.Topology.FindByPath(source.Identity.CanonicalBasePath)?.ChildPaths ?? [])
+                ? intent.Formation.Topology.LoaderRootPaths.Where(path => !SourceLogicalPath.IsOutsideSource(layout, path)).ToArray()
+                : intent.Formation.Topology.FindByPath(source.Identity.CanonicalBasePath)?.ChildPaths ?? [])
             .Select(path => intent.Formation.FindSource(path)).OfType<OpenForge.Cli.Core.Framework.Sources.Models.Inventory.SourceLogicalSource>().Distinct().ToArray();
+        var readExpectations = new List<FileExpectation>();
         foreach (var source in regionSources.Concat(metadataSources).Distinct())
         {
             var path = source.Identity.CanonicalBasePath;
+            var outside = SourceLogicalPath.IsOutsideSource(layout, path);
+            var proposed = intent.Entrypoints.Any(entrypoint => entrypoint.Source.Identity.CanonicalBasePath == path);
+            if (outside && !proposed && !RepairOutsideAdmission.AllowsNavigationInput(path, policy, regionPaths.Contains(path), token))
+                return Block(plan, $"The affected outside navigation input {path} was not admitted for maintenance.");
+            if (outside && intent.Originals.TryGetValue(path, out var original)) readExpectations.Add(original.Expectation);
             if (documents.ContainsKey(path)) continue;
             try
             {
+                if (outside)
+                {
+                    var verification = reader.Verify(source.Base, token);
+                    token.ThrowIfCancellationRequested();
+                    var snapshot = await new SourceDocumentSnapshotReader().ReadAsync(workspace, verification, token).ConfigureAwait(false);
+                    documents[path] = reader.ParseDocument(Encoding.UTF8.GetString(snapshot.Bytes.AsSpan()));
+                    readExpectations.Add(snapshot.Expectation);
+                    continue;
+                }
                 var read = await reader.ReadAsync(source.Base, token).ConfigureAwait(false);
                 token.ThrowIfCancellationRequested();
                 if (read.Read?.Value is not { } text) return Block(plan, $"The affected navigation input {path} could not be read.");
@@ -130,6 +158,7 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
         {
             Maintenance = new()
             {
+                ReadExpectations = [.. readExpectations.Distinct()],
                 Intent = intent,
                 Projection = projection,
                 Effects = new([.. changes], [.. recovery]),
@@ -139,8 +168,17 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
         };
     }
 
-    internal ValueTask<bool> VerifyAsync(RepairPlan plan, CancellationToken token)
-        => plan.Maintenance is { } maintenance ? _maintenance.VerifyProofsAsync(maintenance.Intent, token) : ValueTask.FromResult(true);
+    internal async ValueTask<bool> VerifyAsync(RepairPlan plan, CancellationToken token)
+    {
+        if (plan.Maintenance is not { } maintenance) return true;
+        var expectations = new FileExpectationValidator(paths.CreateReadSession());
+        foreach (var expectation in maintenance.ReadExpectations)
+        {
+            var validation = await expectations.ValidateAsync(plan.Request.Workspace, expectation, token).ConfigureAwait(false);
+            if (validation.State != FileExpectationValidationState.Matched) return false;
+        }
+        return await _maintenance.VerifyProofsAsync(maintenance.Intent, token).ConfigureAwait(false);
+    }
 
     private static bool ExposesFolder(string path, IReadOnlyList<string> folders)
     {

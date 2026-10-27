@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "1 source matches --tag RowPolicy.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "matches": 1,
+    "sourcesInspected": 1,
+    "sourcesCandidates": 1
+  },
+  "limitations": [],
+  "data": {
+    "matches": [
+      {
+        "id": "./docs/team/rule.md",
+        "path": "docs/team/rule.md",
+        "description": "First authored policy",
+        "evidence": [
+          {
+            "kind": "tag",
+            "value": "RowPolicy",
+            "region": "frontmatter",
+            "layer": "base"
+          }
+        ],
+        "applicability": {
+          "state": "matched",
+          "conditions": [
+            {
+              "source": "docs/team/_team.md",
+              "patterns": [
+                "src/**"
+              ]
+            },
+            {
+              "source": "docs/team/rule.md",
+              "patterns": [
+                "**/*.cs"
+              ]
+            }
+          ],
+          "matchingPaths": [
+            "src/App.cs"
+          ]
+        }
+      }
+    ],
+    "query": {
+      "tags": [
+        "RowPolicy"
+      ],
+      "headings": [],
+      "require": "all",
+      "within": [
+        "frontmatter",
+        "body"
+      ],
+      "workingPaths": [
+        "src/App.cs"
+      ]
+    }
+  },
+  "recovery": null,
+  "next": null
+}

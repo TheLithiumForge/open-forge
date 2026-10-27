@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 
 internal sealed record RepairMaintenancePlan
 {
+    internal ImmutableArray<FileExpectation> ReadExpectations { get; init; } = [];
     public required RoutedMaintenanceIntent Intent { get; init; }
     public required GeneratedNavigationProjection Projection { get; init; }
     public required RoutedMaintenanceEffects Effects { get; init; }

@@ -198,7 +198,7 @@ internal static class RouteMoveText
 
     // @OpenForgeText route.move.help.destination
     internal static string HelpDestination()
-        => "<destination-target> is one exact workspace-relative .agents path below an existing routable parent. Leaf and category destination forms must match the selected subject.";
+        => "<destination-target> is one exact workspace-relative path below an existing routable parent in the selected layout or the same registered outside route. Leaf and category destination forms must match the selected subject. Outside moves cannot cross registrations or enter or leave primary content.";
 
     // @OpenForgeText route.move.help.write-policy
     internal static string HelpWritePolicy()
@@ -226,5 +226,5 @@ internal static class RouteMoveText
         ];
     // @OpenForgeText route.move.help.details-1
     internal static string HelpSourceAndDestinationDetails()
-        => "Use an exact ID, base path, or overwrite path for an ordinary Markdown leaf, or the recognized entrypoint for a complete category. Destination is one exact workspace-relative .agents path. Leaf and category forms must match the subject. Apply locks the workspace and revalidates the move, references, and generated navigation. Move never invokes Index.";
+        => "Use an exact ID, base path, or overwrite path for an ordinary Markdown leaf, or the recognized entrypoint for a complete category. Destination is one exact workspace-relative path in the selected layout or the same registered outside route. Registered directories and root entrypoints stay protected. Leaf and category forms must match the subject. Apply locks the workspace and revalidates the move, references, and generated navigation. Move never invokes Index.";
 }

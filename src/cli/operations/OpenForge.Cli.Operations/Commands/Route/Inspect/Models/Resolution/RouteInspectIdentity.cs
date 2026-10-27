@@ -74,6 +74,8 @@ internal sealed class RouteInspectIdentity
 
     internal string Id { get; }
 
+    internal string? MaintenanceRoot { get; init; }
+
     internal string CanonicalWorkspaceRelativePath { get; }
 
     internal RouteInspectSourceKind Kind { get; }

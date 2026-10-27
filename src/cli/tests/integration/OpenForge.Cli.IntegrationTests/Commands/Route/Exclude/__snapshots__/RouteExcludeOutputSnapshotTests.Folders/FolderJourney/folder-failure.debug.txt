@@ -1,0 +1,17 @@
+The current file state no longer matches the planned expectation.
+Workspace: <workspace>
+  Error  project/team notes  The current file state no longer matches the planned expectation. [route-exclude.target-changed]
+         The current file state no longer matches the planned expectation.
+         open-forge route exclude --help
+         Review the reported cause and retry from a fresh preview.
+  .agents/loader.md  not started
+    Before: # Open Forge Loader\n\n## Entries\n\n- [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)\n
+    After: # Open Forge Loader\n\n## Entries\n\n- none - No entries - #Empty\n
+  .agents/open-forge.json  not started
+    Before: {\n  "schemaVersion": 5,\n  "other": true,\n  "outsideRoutes": [\n    "project/team notes"\n  ],\n  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json"\n}
+    After: {\n  "schemaVersion": 5,\n  "other": true,\n  "outsideRoutes": [],\n  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json"\n}
+  Catalogue: project/team notes/_team notes.md
+  Before: - [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)
+  After: (no row)
+  Review the reported cause and retry from a fresh preview.
+Next: open-forge route exclude --help

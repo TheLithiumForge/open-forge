@@ -1,0 +1,13 @@
+The current file state no longer matches the planned expectation.
+Workspace: <workspace>
+  Error  project/team notes  The current file state no longer matches the planned expectation.
+         The current file state no longer matches the planned expectation.
+         open-forge route exclude --help
+         Review the reported cause and retry from a fresh preview.
+  .agents/loader.md  not started
+  .agents/open-forge.json  not started
+  Catalogue: project/team notes/_team notes.md
+  Before: - [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)
+  After: (no row)
+  Review the reported cause and retry from a fresh preview.
+Next: open-forge route exclude --help

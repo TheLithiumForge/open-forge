@@ -1,1 +1,0 @@
-'docs': Use the catalogue 'docs/_docs.md' instead.

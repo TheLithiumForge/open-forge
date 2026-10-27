@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context is complete.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sources": 8,
+    "tokens": 222,
+    "bytes": 887,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0
+  },
+  "limitations": [],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Workspace\r\n"
+          }
+        ]
+      },
+      {
+        "path": "knowledge/main/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "includedBecause": [
+          "Loader"
+        ],
+        "route": null,
+        "scope": null,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Root\n\n## Entries\n\n- [Primary](rules/_rules.md) - #LoadNow\n- [Skills](../../.agents/skills/_skills.md) - #LoadNow\n- [First outside](../../docs/team/_team.md) - #LoadNow - applies to `src/**`\n- [Later outside](../../docs/team/_team.md) - #LoadNow - applies to `tests/**`\n"
+          }
+        ]
+      },
+      {
+        "path": "knowledge/main/rules/_rules.md",
+        "id": "rules",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from knowledge/main/loader.md"
+        ],
+        "route": "rules",
+        "scope": null,
+        "applicability": {
+          "state": "unconditioned",
+          "conditions": [],
+          "matchingPaths": []
+        },
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Primary\n  tags: [LoadNow]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Root\n\n## Entries\n\n\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "id": "skills",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from knowledge/main/loader.md"
+        ],
+        "route": "skills",
+        "scope": null,
+        "applicability": {
+          "state": "unconditioned",
+          "conditions": [],
+          "matchingPaths": []
+        },
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Skills\n  tags: [LoadNow]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Root\n\n## Entries\n\n\n"
+          }
+        ]
+      },
+      {
+        "path": "docs/team/_team.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from knowledge/main/loader.md"
+        ],
+        "route": null,
+        "scope": null,
+        "applicability": {
+          "state": "matched",
+          "conditions": [
+            {
+              "source": "docs/team/_team.md",
+              "patterns": [
+                "src/**"
+              ]
+            }
+          ],
+          "matchingPaths": [
+            "src/App.cs"
+          ]
+        },
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Team\n  tags: []\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Team\r\n\r\n[Ordinary](unlisted.md)\r\n\r\n## Entries\r\n\r\n- [First rule](rule.md) - #LoadNow - applies to `**/*.cs`\r\n- [Later rule](rule.md) - #LoadNow - applies to `tests/**`\r\n- [Nested](nested/_nested.md) - #LoadNow - applies to `**/*.cs`\r\n"
+          }
+        ]
+      },
+      {
+        "path": "docs/team/rule.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from docs/team/_team.md"
+        ],
+        "route": null,
+        "scope": null,
+        "applicability": {
+          "state": "matched",
+          "conditions": [
+            {
+              "source": "docs/team/_team.md",
+              "patterns": [
+                "src/**"
+              ]
+            },
+            {
+              "source": "docs/team/rule.md",
+              "patterns": [
+                "**/*.cs"
+              ]
+            }
+          ],
+          "matchingPaths": [
+            "src/App.cs"
+          ]
+        },
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Rule\r\n\r\nAuthored outside rule.\r\n"
+          }
+        ]
+      },
+      {
+        "path": "docs/team/nested/_nested.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from docs/team/_team.md"
+        ],
+        "route": null,
+        "scope": null,
+        "applicability": {
+          "state": "matched",
+          "conditions": [
+            {
+              "source": "docs/team/_team.md",
+              "patterns": [
+                "src/**"
+              ]
+            },
+            {
+              "source": "docs/team/nested/_nested.md",
+              "patterns": [
+                "**/*.cs"
+              ]
+            }
+          ],
+          "matchingPaths": [
+            "src/App.cs"
+          ]
+        },
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Root\n\n## Entries\n\n- [Deep](deep.md) - #LoadNow\n- [Other parent](../rule.md) - #LoadNow - applies to `tests/**`\n"
+          }
+        ]
+      },
+      {
+        "path": "docs/team/nested/deep.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from docs/team/nested/_nested.md"
+        ],
+        "route": null,
+        "scope": null,
+        "applicability": {
+          "state": "matched",
+          "conditions": [
+            {
+              "source": "docs/team/_team.md",
+              "patterns": [
+                "src/**"
+              ]
+            },
+            {
+              "source": "docs/team/nested/_nested.md",
+              "patterns": [
+                "**/*.cs"
+              ]
+            }
+          ],
+          "matchingPaths": [
+            "src/App.cs"
+          ]
+        },
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Deep\n"
+          }
+        ]
+      }
+    ],
+    "workingPaths": [
+      "src/App.cs"
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

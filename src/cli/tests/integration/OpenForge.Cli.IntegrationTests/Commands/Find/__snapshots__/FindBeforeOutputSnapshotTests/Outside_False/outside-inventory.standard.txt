@@ -1,0 +1,13 @@
+4 sources match.
+Workspace: <workspace>
+  ./docs/team/_team.md     docs/team/_team.md        First authored policy
+applicability: pending
+  docs/team/_team.md: src/**
+  ./docs/team/rule.md      docs/team/rule.md         First authored policy
+applicability: pending
+  docs/team/_team.md: src/**
+  docs/team/rule.md: **/*.cs
+  ./docs/team/unlisted.md  docs/team/unlisted.md     Unrouted inventory
+applicability: pending
+  docs/team/_team.md: src/**
+  loader                   knowledge/main/loader.md  Loader

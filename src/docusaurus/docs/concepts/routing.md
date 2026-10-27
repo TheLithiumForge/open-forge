@@ -155,10 +155,18 @@ That writes one line under the loader's `Entries`, which you can also write by h
 
 - The line carries the description, tags and conditions, so the file needs no frontmatter. Another tool's frontmatter, such as a Cursor rule's `globs`, never decides when it loads.
 - A Markdown file with its own `## Entries`, such as `docs/team/_team.md`, is followed as a catalogue.
-- Index keeps these lines in their order and never writes to the files they point at.
+- File inclusion alone never makes the target writable. Retained authored lines keep their policy and mutual order.
 - `route include` records the files it adds under `roots` in `.agents/open-forge.json`, so `open-forge status` and `open-forge doctor` can report one whose line was removed or whose file went missing. The loader line still decides whether and how each file loads.
 - `open-forge route exclude CONTRIBUTING.md` removes the line and leaves the file alone. Deleting the line by hand has the same effect on what agents read.
 - Commands name these files by their path, such as `open-forge context ./CONTRIBUTING.md`.
+
+To maintain a whole folder, use folder Include instead. `open-forge route include docs/team` registers a safe existing directory in settings v5 `outsideRoutes`, lists its canonical catalogue and creates only that missing catalogue. It preserves an existing one byte-for-byte. The separate `roots` list remains files only. Registration supplies discovery and bounded maintenance, not loading, package ownership or permission. An omitted Loader row stays omitted during explicit maintenance. See [outside routes](/guides/cli#outside-routes).
+
+Existing recognized compatibility anchors can remain in a registered tree. Outside source references keep the filename, such as `./docs/team/index.md`, and acquire no short IDs. Outside `SKILL.md` files remain ordinary Markdown. Folder names such as `memory` or `skills` do not acquire primary category defaults.
+
+Use `route list ./docs/team/_team.md --depth all` or `route inspect ./docs/team/_team.md` to select a registered catalogue even when it has no Loader row. Bare `route list` keeps its Loader-root selection and does not add unlisted directories as roots.
+
+Applicable List rows and Inspect source data include optional `maintenanceRoot` at every JSON detail. It names the canonical workspace-relative registered directory, such as `docs/team`, without `./` or a trailing slash. Standard, full and debug text may show `Maintenance root`. The fact is omitted when inapplicable and does not imply loading, direct Loader listing, ownership or package permission. Exact source identities still keep `./` and the filename.
 
 ## How an agent navigates
 

@@ -56,20 +56,25 @@ internal sealed class SourceUniverseFilterResolver
                 null);
         }
 
-        if (source.IsIncludedCatalogue)
+        var registeredFolder = SourceLogicalPath.IsOutsideSource(catalogue.Layout, source.Base.CanonicalPath) && IsFolderSource(source.Base.Form);
+        if (source.IsIncludedCatalogue && !registeredFolder)
         {
             var descendants = new List<SourceLogicalSource> { source };
+            var visited = new HashSet<string>(StringComparer.Ordinal) { source.Base.CanonicalPath };
             for (var index = 0; index < descendants.Count; index++)
             {
                 var parent = descendants[index].Base.CanonicalPath;
-                descendants.AddRange(catalogue.Sources.Where(candidate => candidate.IncludedParentPath == parent));
+                var retained = catalogue.IncludedRows.Where(row => row.ParentPath == parent)
+                    .Select(row => catalogue.FindByPath(row.AliasOf ?? row.Path)).OfType<SourceLogicalSource>();
+                foreach (var child in retained.Concat(catalogue.Sources.Where(candidate => candidate.IncludedParentPath == parent)))
+                    if (visited.Add(child.Base.CanonicalPath)) descendants.Add(child);
             }
 
             return new SourceUniverseSelectorResolution(occurrence, roleOccurrence, reference,
                 SourceUniverseSelectorExpansion.Folder, descendants, null);
         }
 
-        var expansion = source.IncludedEntry is null && IsFolderSource(source.Base.Form)
+        var expansion = registeredFolder || source.IncludedEntry is null && IsFolderSource(source.Base.Form)
             ? SourceUniverseSelectorExpansion.Folder
             : SourceUniverseSelectorExpansion.Source;
         if (expansion == SourceUniverseSelectorExpansion.Source)

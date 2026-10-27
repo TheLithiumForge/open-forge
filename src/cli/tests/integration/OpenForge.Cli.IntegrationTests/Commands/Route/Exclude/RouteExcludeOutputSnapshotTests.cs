@@ -8,7 +8,7 @@ using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Exclude;
 
-public sealed class RouteExcludeOutputSnapshotTests
+public sealed partial class RouteExcludeOutputSnapshotTests
 {
     [Fact(DisplayName = "RouteExclude previews preserve text and JSON at every detail level"), Trait("Feature", "route-exclude"), Trait("Evidence", "Integration")]
     public async Task Preview()

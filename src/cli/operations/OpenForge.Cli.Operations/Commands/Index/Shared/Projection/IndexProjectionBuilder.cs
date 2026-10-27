@@ -15,6 +15,9 @@ using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using System.Text;
 
 namespace OpenForge.Cli.Core.Commands.Index.Shared.Projection;
 
@@ -42,6 +45,7 @@ internal sealed class IndexProjectionBuilder
         }
 
         var catalogueReadiness = ResolveCatalogue(context.Formation, context.Selection);
+        var readExpectations = new List<FileExpectation>();
         var findings = catalogueReadiness.Findings.ToList();
         if (context.Maintenance is { } maintenance)
             findings.AddRange(maintenance.Limitations.Where(item => item.Malformed).Select(item => new IndexFinding(
@@ -73,6 +77,7 @@ internal sealed class IndexProjectionBuilder
                     context,
                     target,
                     IndexProjectionDocumentRole.Target,
+                    readExpectations,
                     cancellationToken)
                 .ConfigureAwait(false);
             if (!targetDocument.IsComplete)
@@ -103,6 +108,7 @@ internal sealed class IndexProjectionBuilder
                         context,
                         child,
                         IndexProjectionDocumentRole.Metadata,
+                        readExpectations,
                         cancellationToken)
                     .ConfigureAwait(false);
                 if (!childDocument.IsComplete)
@@ -175,7 +181,8 @@ internal sealed class IndexProjectionBuilder
             Metadata = metadata.Values,
             Readiness = readiness,
             MetadataFindings = metadataFindings.Concat(findings.Where(finding => finding.Code == IndexFindingCode.MetadataSkipped)).ToArray(),
-        });
+        }) with
+        { ReadExpectations = [.. readExpectations.Distinct()] };
     }
 
     internal IndexProjectionFormation Form(IndexProjectionAssembly assembly)
@@ -329,10 +336,38 @@ internal sealed class IndexProjectionBuilder
         IndexProjectionContext context,
         SourceLogicalSource source,
         IndexProjectionDocumentRole role,
+        List<FileExpectation> readExpectations,
         CancellationToken cancellationToken)
     {
+        var path = source.Identity.CanonicalBasePath;
+        var outside = SourceLogicalPath.IsOutsideSource(context.Formation.Catalogue.Layout, path);
+        var proposed = context.Maintenance?.Entrypoints.Any(entrypoint => entrypoint.Source.Identity.CanonicalBasePath == path) == true;
+        if (outside && !proposed && (context.Policy is not { } policy
+            || !new IndexOutsideAdmission(context.Formation.Catalogue, policy).Allows(source, role, cancellationToken)))
+            return IndexProjectionDocumentAcquisition.Unavailable(IndexFindingCode.TargetUnsafe);
         if (context.Maintenance?.Documents.TryGetValue(source.Identity.CanonicalBasePath, out var intended) == true)
             return IndexProjectionDocumentAcquisition.Complete(intended);
+        if (outside)
+        {
+            var verification = context.Reader.Verify(source.Base, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (verification.State != SourceLayerVerificationState.Verified)
+                return IndexProjectionDocumentAcquisition.Unavailable(ReadInvalidDocumentFindingCode(role));
+            try
+            {
+                var snapshot = await new SourceDocumentSnapshotReader().ReadAsync(context.Reader.Workspace, verification, cancellationToken).ConfigureAwait(false);
+                readExpectations.Add(snapshot.Expectation);
+                return IndexProjectionDocumentAcquisition.Complete(_markdownParser.Parse(Encoding.UTF8.GetString(snapshot.Bytes.AsSpan())));
+            }
+            catch (DecoderFallbackException)
+            {
+                return IndexProjectionDocumentAcquisition.Unavailable(ReadInvalidDocumentFindingCode(role));
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+            {
+                return IndexProjectionDocumentAcquisition.Unavailable(ReadUnavailableFindingCode(role));
+            }
+        }
         var result = await context.Reader
             .ReadAsync(source.Base, cancellationToken)
             .ConfigureAwait(false);
@@ -378,7 +413,7 @@ internal sealed class IndexProjectionBuilder
         SourceLogicalSource target)
     {
         IReadOnlyList<string> childPaths = target.Base.Form == SourceDocumentForm.Loader
-            ? formation.Topology.LoaderRootPaths
+            ? formation.Topology.LoaderRootPaths.Where(path => !SourceLogicalPath.IsOutsideSource(formation.Catalogue.Layout, path)).ToArray()
             : formation.Topology.FindByPath(target.Identity.CanonicalBasePath)?.ChildPaths
                 ?? throw new InvalidOperationException("An Index projection target must retain its topology node.");
         return childPaths

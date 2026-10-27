@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "3 routes listed with warnings.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-list.authored-form",
+      "title": "Compatibility entrypoint",
+      "message": "docs/team/index.md uses the compatibility entrypoint name index.md.",
+      "subject": {
+        "kind": "source",
+        "path": "docs/team/index.md",
+        "id": "docs/team/index.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routes": 3,
+    "roots": 1,
+    "depth": null,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "subject": {
+      "id": "./docs/team/index.md",
+      "path": "docs/team/index.md"
+    },
+    "depth": "all",
+    "rows": [
+      {
+        "id": "./docs/team/index.md",
+        "path": "docs/team/index.md",
+        "description": "Authored team",
+        "tags": [
+          "Authored"
+        ],
+        "relativeDepth": 0,
+        "maintenanceRoot": "docs/team",
+        "parentId": null,
+        "absoluteDepth": null,
+        "kind": "entrypoint",
+        "directChildren": 2,
+        "selectedAs": "detached-root",
+        "hasOverwrite": false
+      },
+      {
+        "id": "./docs/team/SKILL.md",
+        "path": "docs/team/SKILL.md",
+        "description": "Outside skill",
+        "tags": [
+          "Private"
+        ],
+        "relativeDepth": 1,
+        "maintenanceRoot": "docs/team",
+        "parentId": "./docs/team/index.md",
+        "absoluteDepth": null,
+        "kind": "file",
+        "directChildren": null,
+        "selectedAs": "descendant",
+        "hasOverwrite": false
+      },
+      {
+        "id": "./docs/team/child.md",
+        "path": "docs/team/child.md",
+        "description": "First child",
+        "tags": [
+          "LoadNow",
+          "Row"
+        ],
+        "relativeDepth": 1,
+        "maintenanceRoot": "docs/team",
+        "parentId": "./docs/team/index.md",
+        "absoluteDepth": null,
+        "kind": "file",
+        "directChildren": null,
+        "selectedAs": "descendant",
+        "hasOverwrite": true
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "rename to _index.md",
+    "reason": "Rename the compatibility entrypoint, then rerun the listing."
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Moved ./docs/team/left/old note.md to docs/team/right/new note.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "docs/team/right/new note.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/right/new note.overwrite.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/left/_left.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/left/incoming.md",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/right/_right.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/left/old note.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/left/old note.overwrite.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesMoved": 2,
+    "sectionsUpdated": 2,
+    "linksRewritten": 2,
+    "filesScanned": 12
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "./docs/team/left/old note.md",
+      "path": "docs/team/left/old note.md"
+    },
+    "destination": {
+      "id": "./docs/team/right/new note.md",
+      "path": "docs/team/right/new note.md"
+    },
+    "moved": [
+      {
+        "from": "docs/team/left/old note.md",
+        "to": "docs/team/right/new note.md"
+      }
+    ],
+    "rewrittenLinks": [
+      {
+        "path": "docs/team/left/incoming.md",
+        "location": ":6:12"
+      },
+      {
+        "path": "docs/team/right/new note.md",
+        "location": ":8:12"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

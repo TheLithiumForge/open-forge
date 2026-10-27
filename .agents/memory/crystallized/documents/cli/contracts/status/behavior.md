@@ -11,6 +11,14 @@ open-forge:
 
 Distribute one layout observation to source, route and lifecycle contributors. Retain the layout when valid settings supply it. If settings cannot supply it, keep every domain and report layout-dependent domains unavailable with the settings cause.
 
+Observe outside registrations through that same retained layout and shared
+source session. Preserve declaration order, raw row policy and all logical
+aliases. Project the Interface's separate outside-route facts without deriving
+loading, ownership or permission from registration. Known directory state and
+unknown direct listing can coexist. Preserve unknown registration coverage
+instead of treating an unavailable inventory as empty. A known-empty set keeps
+the previous primary and file-only observation and measurement path.
+
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
 
 ## Status And Boundary
@@ -227,6 +235,22 @@ discarding known measurements. Unlisted registrations contribute no content. Emp
 `roots` with no included rows keep the existing report unchanged.
 
 ### Context File Enumeration
+
+Registered outside directories contribute eligible source inventory even when
+unlisted. Count each resolved physical layer once across that inventory, linked
+files and the workspace entry while retaining every contributor's logical
+coordinate and effective loading role. Keep legacy included-file row facts
+independent. Use the shared measurement and loading owners rather than
+subtracting opaque aggregates. Unproved physical identity or incomplete inputs
+leave the affected measurement unavailable. Startup and continuity each retain
+their independently established availability, so unavailable total inventory
+does not erase separately proven closure facts.
+
+Missing, unsafe or unavailable registered inventory forms the existing truthful
+context-inventory-incomplete result with the declared directory and cause.
+Unlisted registration alone does not reduce coverage. Anchor absence,
+compatibility and ambiguity remain separate structural facts, with no invented
+source or alternate default layout.
 
 The enumerator counts each canonical path once in the physical inventory. It
 counts a base and valid adjacent overwrite companion as two contributing files,

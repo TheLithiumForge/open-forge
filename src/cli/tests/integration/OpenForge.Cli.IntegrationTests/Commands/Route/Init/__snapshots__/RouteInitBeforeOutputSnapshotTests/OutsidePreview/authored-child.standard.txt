@@ -1,0 +1,10 @@
+Would create 3 entrypoints for ./docs/team/design/decisions/_decisions.md.
+Workspace: <workspace>
+  Scaffold: generic
+  description: Authored outside destination
+  tags: Fixture
+  docs/team/_team.md  would create
+  docs/team/design/_design.md  would create
+  docs/team/design/decisions/_decisions.md  would create
+  Its description and tags are placeholders. Edit them before relying on this route.
+No files were changed.

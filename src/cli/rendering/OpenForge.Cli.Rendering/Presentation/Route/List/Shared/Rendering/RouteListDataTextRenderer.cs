@@ -41,6 +41,10 @@ internal static class RouteListDataTextRenderer
             {
                 var indent = new string(' ', checked(row.RelativeDepth * 2 + 4));
                 builder.AppendLine($"{indent}{CliText.Escape(row.Path)}");
+                if (row.MaintenanceRoot is { } maintenanceRoot)
+                {
+                    Line(builder, indent, global::OpenForge.Cli.OutputText.Route.List.RouteListText.LabelMaintenanceRoot(), maintenanceRoot);
+                }
                 if (row.Tags.Count > 0)
                 {
                     foreach (var line in CliSelectionText.Wrap(string.Join(" ", row.Tags.Select(tag => $"#{tag}")), style.Width - indent.Length))

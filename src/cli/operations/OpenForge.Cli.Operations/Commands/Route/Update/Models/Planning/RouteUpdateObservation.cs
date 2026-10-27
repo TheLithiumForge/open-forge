@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using System.Collections.Immutable;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 
@@ -22,6 +23,7 @@ internal sealed record RouteUpdateObservation
     public required SourceLogicalSource TargetSource { get; init; }
 
     public required FileStateSnapshot TargetSnapshot { get; init; }
+    public ImmutableArray<FileStateSnapshot> SupportingSnapshots { get; init; } = [];
 
     public required FileStateSnapshot? OverwriteSnapshot { get; init; }
 

@@ -102,9 +102,9 @@ internal sealed partial class RouteMoveSubjectSelector(
 
         var layout = layoutRead.Layout
             ?? throw new InvalidOperationException("Route Move discovery requires the selected layout.");
-        var catalogue = await _catalogueReader.ReadAsync(
-            new SourceCatalogueRequest(layout, layout.SourceRoots),
-            cancellationToken).ConfigureAwait(false);
+        var session = await new SourceReadSessionReader(new PhysicalPathResolver())
+            .ReadIncludedAsync(layout, cancellationToken).ConfigureAwait(false);
+        var catalogue = session.Catalogue;
         if (catalogue.IsCancelled)
         {
             return new RouteMoveSubjectCatalogueSelection(
@@ -118,7 +118,7 @@ internal sealed partial class RouteMoveSubjectSelector(
         }
 
         if (catalogue.Issues.FirstOrDefault(issue =>
-                issue.Stage == SourceCatalogueIssueStage.Root) is { } rootIssue)
+                issue.Stage == SourceCatalogueIssueStage.Root && layout.SourceRoots.Contains(issue.AttemptedCanonicalPath, StringComparer.Ordinal)) is { } rootIssue)
         {
             return new RouteMoveSubjectCatalogueSelection(
                 catalogue: null,
@@ -174,6 +174,12 @@ internal sealed partial class RouteMoveSubjectSelector(
 
         var sourceFacts = ProjectSource(request.SourceReference, resolution, source);
         formation = formation with { Source = sourceFacts };
+        if (RouteMoveMaintenanceBoundaryInspector.IsOutside(catalogue, source.Base.CanonicalPath)
+            && resolution.CanonicalPath != source.Base.CanonicalPath
+            && resolution.CanonicalPath != source.Overwrite?.CanonicalPath)
+            return new RouteMoveSubjectDiscoveryResult(null, Boundary(formation,
+                RouteMoveFindingCode.SourceUnsafe, CliSemanticStatus.Blocked, request.SourceReference,
+                "An outside move requires its exact canonical source coordinate."));
         if (!TryReadForm(source.Base.Form, out var form, out var kind))
         {
             return new RouteMoveSubjectDiscoveryResult(

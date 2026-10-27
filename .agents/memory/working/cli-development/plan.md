@@ -10,7 +10,7 @@ open-forge:
 
 The [project-control ledger](project-control.md#active-task-ledger) owns the queue and permanent Task identities. Each Task defines its remaining outcome and evidence.
 
-1. Choose the next Task with the maintainer from the [beta follow-up backlog](tasks/beta-follow-up-backlog.md), now that beta17 is released.
+1. Finish the selected [Task 87](tasks/task87-routes-outside-main-root.md). Qualify CI-R7's canonical default fixture correction with complete local Unit, Integration and EndToEnd suites and independent review, then request its guardian commit. A single committed head must have complete local and all six hosted managed/native gates green before final guardian review and merge. The guardian owns the requested beta.18 release.
 2. Keep Tasks 34 and 39 paused, and Task 48 frozen at A/B1. Its Extension scoping work remains required before 1.0. The [wave capsule](one-zero-polish-wave.md) retains resume boundaries.
 3. Retain Task 62's pending maintainer review, deferred documentation reviews and the broader [Local Planning review](../local-planning.md). Other unfinished work stays in the [Task index](tasks/_tasks.md) and [candidate queue](tasks/potential/_potential.md).
 

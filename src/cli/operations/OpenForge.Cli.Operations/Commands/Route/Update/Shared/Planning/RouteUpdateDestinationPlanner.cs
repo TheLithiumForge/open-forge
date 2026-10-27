@@ -10,6 +10,9 @@ using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
+using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 
@@ -45,17 +48,48 @@ internal sealed class RouteUpdateDestinationPlanner
             ?? throw new InvalidOperationException(
                 "Complete Route Update metadata planning requires one patch.");
         RouteTemplateResolution? template = null;
+        ImmutableArray<FileStateSnapshot> templateInputs = [];
         if (observation.Request.TemplateReference is { } reference)
         {
+            var templateRequest = new RouteTemplateResolutionRequest
+            {
+                Workspace = observation.Request.Workspace,
+                Reference = reference,
+                Catalogue = observation.Catalogue,
+            };
             template = await _templateResolver.ResolveAsync(
-                    new RouteTemplateResolutionRequest
-                    {
-                        Workspace = observation.Request.Workspace,
-                        Reference = reference,
-                        Catalogue = observation.Catalogue,
-                    },
+                    templateRequest,
                     cancellationToken)
                 .ConfigureAwait(false);
+            if (RouteUpdateOutsideBoundary.Find(observation.LayoutRead, observation.TargetSource.Base.CanonicalPath) is not null
+                && template is { State: RouteTemplateResolutionState.Resolved, Source: { } templateSource })
+            {
+                var chain = await RouteUpdateSourceSelector.ReadOutsideChainAsync(
+                    observation.LayoutRead, observation.Catalogue, templateSource, cancellationToken).ConfigureAwait(false);
+                var layer = await new RouteUpdateLayerObserver(new SourceDocumentSnapshotReader()).ObserveAsync(new()
+                {
+                    Workspace = observation.Request.Workspace,
+                    Layer = templateSource.Base,
+                    LayoutRead = observation.LayoutRead,
+                }, cancellationToken).ConfigureAwait(false);
+                if (chain.Finding is { } chainFinding)
+                    template = UnavailableTemplate(templateSource.Base.CanonicalPath, chainFinding.Cause);
+                else if (layer.Layer is not { } templateLayer)
+                    template = UnavailableTemplate(templateSource.Base.CanonicalPath, layer.FailureCause ?? "The Template input is unavailable.");
+                else
+                {
+                    var templateDocument = new MarkdownDocumentParser().Parse(templateLayer.Text);
+                    template = await _templateResolver.ResolveAsync(templateRequest, cancellationToken).ConfigureAwait(false);
+                    if (template.State == RouteTemplateResolutionState.Resolved)
+                    {
+                        if (templateDocument.BodySpan is not { } span
+                            || !StrictUtf8.GetBytes(templateLayer.Text[span.Start..span.End]).AsSpan().SequenceEqual(template.BodyBytes.AsSpan()))
+                            template = UnavailableTemplate(templateSource.Base.CanonicalPath, "The Template changed during its exact observation.");
+                        else
+                            templateInputs = chain.Snapshots.Add(templateLayer.Snapshot);
+                    }
+                }
+            }
             if (cancellationToken.IsCancellationRequested)
             {
                 template = InterruptedTemplate(reference);
@@ -100,6 +134,7 @@ internal sealed class RouteUpdateDestinationPlanner
                 Template = template,
                 IntendedTargetBytes = body.IntendedTargetBytes,
                 IntendedMetadata = intendedMetadata,
+                TemplateInputs = templateInputs,
             });
     }
 
@@ -113,6 +148,16 @@ internal sealed class RouteUpdateDestinationPlanner
             Issue = RouteTemplateResolutionIssue.ResolutionInterrupted,
             Cause = "Route Update Template resolution was interrupted.",
             Target = reference,
+        };
+
+    private static RouteTemplateResolution UnavailableTemplate(string path, string cause)
+        => new()
+        {
+            State = RouteTemplateResolutionState.Blocked,
+            BodyBytes = [],
+            Issue = RouteTemplateResolutionIssue.SourceUnsafe,
+            Cause = cause,
+            Target = path,
         };
 
     private static RouteUpdateResultFormation BuildInvalidDestination(

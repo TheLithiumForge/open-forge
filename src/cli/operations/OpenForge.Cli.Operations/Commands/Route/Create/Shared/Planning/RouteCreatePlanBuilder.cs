@@ -10,6 +10,8 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Shared.Planning;
 
@@ -105,6 +107,17 @@ internal sealed class RouteCreatePlanBuilder
             .ConfigureAwait(false);
         if (navigationBuild.Boundary is { } navigationBoundary)
         {
+            if (navigationBoundary.Finding.Code == RouteCreateFindingCode.ParentMissing
+                && inspection.Target.Path is { } targetPath
+                && inspection.Catalogue.Layout.TryGetMaintenanceBoundary(targetPath, out var boundary)
+                && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside)
+                navigationBoundary = navigationBoundary with
+                {
+                    Target = navigationBoundary.Target with
+                    {
+                        MissingParentEntrypoint = SourceWorkspaceRelativePath.LiteralReferencePrefix + boundary.AnchorPath,
+                    },
+                };
             return _resultProjector.Stop(request, navigationBoundary);
         }
 
@@ -115,6 +128,7 @@ internal sealed class RouteCreatePlanBuilder
         var preview = _resultProjector.Preview(complete);
         var plan = new RouteCreatePlan
         {
+            ReadExpectations = navigation.ReadExpectations,
             Request = request,
             LayoutRead = inspection.LayoutRead,
             Preview = preview,

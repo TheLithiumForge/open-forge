@@ -19,6 +19,29 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect;
 [Trait("Feature", "command-output-snapshots"), Trait("Evidence", "Integration")]
 public sealed class RouteInspectBeforeOutputSnapshotTests
 {
+    [Fact, Trait("Boundary", "Output")]
+    public async Task Outside()
+    {
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var listed in new[] { false, true })
+        {
+            using var fixture = new OpenForge.Cli.IntegrationTests.Commands.Route.List.RouteListOutsideWorkspace(listed: listed, compatibility: !listed);
+            var before = fixture.Inner.SnapshotHashes();
+            await new ReadCommandOutputCapture(fixture.Inner.Path).MatchDetailsAsync(new ReadOutputScenario
+            {
+                Situation = listed ? "listed-overwrite" : "unlisted-compatibility",
+                Arguments = [OpenForge.Cli.Core.Commands.Route.RouteDefinitions.RouteGroup.Name,
+                    RouteInspectDefinitions.InspectCommand.Name,
+                    OpenForge.Cli.Core.Framework.Sources.Identity.SourceWorkspaceRelativePath.LiteralReferencePrefix
+                        + (listed ? OpenForge.Cli.IntegrationTests.Commands.Route.List.RouteListOutsideWorkspace.Overwrite : fixture.Anchor),
+                    RouteInspectDefinitions.WorkingPath.Name, "src/Planned.cs"],
+                ExitCode = 0,
+            }, snapshotCollector: snapshots);
+            Assert.Equal(before, fixture.Inner.SnapshotHashes());
+        }
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
+    }
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route inspect output preserves exact source selection from an ambiguous ID prompt")]
     public async Task AmbiguousIdPrompt()

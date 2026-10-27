@@ -45,6 +45,11 @@ internal sealed class RouteMoveDestinationResolver(FileExpectationValidator expe
         var operation = projection.Inventory.Subject.Request;
         foreach (var destination in projection.Items)
         {
+            var subject = projection.Inventory.Subject;
+            if (RouteMoveMaintenanceBoundaryInspector.IsOutside(subject.Catalogue, subject.SelectedSource.Base.CanonicalPath)
+                && RouteMoveMaintenanceBoundaryInspector.ReadPathProblem(subject.LayoutRead, destination.DestinationPath, true) is { } problem)
+                return RouteMoveDestinationProjector.Stop(projection.Inventory, RouteMoveFindingCode.InvalidDestination,
+                    CliSemanticStatus.Invalid, destination.DestinationPath, problem).Boundary;
             var logicalPath = SourceLogicalPath.ToLexicalPath(
                 operation.Workspace.LexicalRoot,
                 destination.DestinationPath);

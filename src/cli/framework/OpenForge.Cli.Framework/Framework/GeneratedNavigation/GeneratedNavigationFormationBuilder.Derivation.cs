@@ -32,12 +32,12 @@ internal sealed partial class GeneratedNavigationFormationBuilder
             Issues = retainedEvidence.Issues;
 
             var topologyBuilder = new SourceRouteTopologyBuilder();
-            var unrootedTopology = topologyBuilder.Build(Sources, []);
+            var unrootedTopology = topologyBuilder.Build(catalogue.Layout, Sources, []);
             PhysicalAliasGroups = BuildAliasGroups(
                 retainedEvidence.Candidates,
                 retainedEvidence.SourcesByCandidatePath,
                 _sourcesByPath,
-                unrootedTopology, new SourceContentRoots(catalogue.Layout));
+                unrootedTopology, catalogue.Layout);
             IntendedTargetCollisions = BuildIntendedTargetCollisions(
                 Sources,
                 retainedEvidence.Candidates,
@@ -56,13 +56,13 @@ internal sealed partial class GeneratedNavigationFormationBuilder
             }
 
             var structuralRootPaths = ReadStructuralRootPaths(
-                new SourceContentRoots(catalogue.Layout),
+                catalogue.Layout,
                 Sources,
                 retainedEvidence.MemberCandidatesByPath,
                 PhysicalAliasGroups,
                 IntendedTargetCollisions,
                 ambiguities);
-            Topology = topologyBuilder.Build(Sources, Loader is null ? [] : structuralRootPaths);
+            Topology = topologyBuilder.Build(catalogue.Layout, Sources, Loader is null ? [] : structuralRootPaths);
             Ambiguities = new ReadOnlyCollection<GeneratedNavigationFormationAmbiguity>(
                 ambiguities
                     .OrderBy(ambiguity => ambiguity.Kind)

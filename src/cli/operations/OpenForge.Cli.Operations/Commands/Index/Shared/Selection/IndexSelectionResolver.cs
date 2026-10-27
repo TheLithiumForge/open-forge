@@ -62,7 +62,7 @@ internal sealed class IndexSelectionResolver
             IndexFindingCode.SourceUnsafe,
             findings);
         var targets = new List<SourceLogicalSource> { loader };
-        foreach (var rootPath in formation.Topology.LoaderRootPaths)
+        foreach (var rootPath in IndexLoaderRoots.Read(formation))
         {
             AddEntrypointClosure(formation, rootPath, targets, skillCatalogueTraversal, findings);
         }
@@ -93,6 +93,14 @@ internal sealed class IndexSelectionResolver
             {
                 resolved.Add(resolution.Source
                     ?? throw new InvalidOperationException("A resolved Index source requires its source fact."));
+                continue;
+            }
+
+            if (resolution.State == SourceReferenceResolutionState.Unknown
+                && SourceReferenceParser.Parse(request.SourceReferences[index]).AttemptedPath is { } intendedPath
+                && formation.FindSource(intendedPath) is { } intended)
+            {
+                resolved.Add(intended);
                 continue;
             }
 
@@ -152,7 +160,7 @@ internal sealed class IndexSelectionResolver
         if (source.Base.Form == SourceDocumentForm.Loader)
         {
             targets.Add(source);
-            foreach (var rootPath in formation.Topology.LoaderRootPaths)
+            foreach (var rootPath in IndexLoaderRoots.Read(formation))
             {
                 AddEntrypointClosure(formation, rootPath, targets, skillCatalogueTraversal, findings);
             }
@@ -214,7 +222,8 @@ internal sealed class IndexSelectionResolver
         ICollection<SourceLogicalSource> targets,
         ICollection<IndexFinding> findings)
     {
-        if (formation.Loader is { } loader
+        if (!SourceLogicalPath.IsOutsideSource(formation.Catalogue.Layout, source.Identity.CanonicalBasePath)
+            && formation.Loader is { } loader
             && formation.Topology.LoaderRootPaths.Contains(
                 source.Identity.CanonicalBasePath,
                 StringComparer.Ordinal))
@@ -362,6 +371,8 @@ internal sealed class IndexSelectionResolver
         foreach (var ambiguity in formation.Ambiguities.Where(ambiguity =>
                      ambiguity.Kind != GeneratedNavigationFormationAmbiguityKind.PhysicalAlias
                      && (automatic && ambiguity.Kind == GeneratedNavigationFormationAmbiguityKind.RootEntrypoint
+                             && (!SourceLogicalPath.IsOutsideSource(formation.Catalogue.Layout, ambiguity.Subject)
+                                 || ambiguity.Candidates.Any(candidate => IndexLoaderRoots.Read(formation).Contains(candidate.CanonicalPath, StringComparer.Ordinal)))
                          || relevant.Contains(ambiguity.Subject)
                          || ambiguity.Candidates.Any(candidate => relevant.Contains(candidate.CanonicalPath)))))
         {
@@ -442,7 +453,8 @@ internal sealed class IndexSelectionResolver
         GeneratedNavigationFormation formation)
     {
         var findings = new List<IndexFinding>();
-        foreach (var issue in formation.Issues.Where(issue => issue.Stage == SourceCatalogueIssueStage.Root))
+        foreach (var issue in formation.Issues.Where(issue => issue.Stage == SourceCatalogueIssueStage.Root
+            && !SourceLogicalPath.IsOutsideSource(formation.Catalogue.Layout, issue.AttemptedCanonicalPath)))
         {
             var finding = issue.Code switch
             {

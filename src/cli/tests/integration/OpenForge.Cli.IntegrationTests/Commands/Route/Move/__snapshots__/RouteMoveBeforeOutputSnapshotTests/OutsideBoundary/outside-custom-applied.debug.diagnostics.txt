@@ -1,0 +1,11 @@
+status=completed
+mode=apply
+source=./docs/team/left/old note.md
+destination=./docs/team/right/new note.md
+subject=leaf
+completeness=complete
+safety=safe
+effects=7
+recovery=removed
+verification=verified
+findings=0

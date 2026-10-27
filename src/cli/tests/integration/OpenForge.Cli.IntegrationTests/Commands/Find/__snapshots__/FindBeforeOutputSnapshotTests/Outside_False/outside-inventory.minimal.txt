@@ -1,0 +1,4 @@
+  ./docs/team/_team.md     docs/team/_team.md
+  ./docs/team/rule.md      docs/team/rule.md
+  ./docs/team/unlisted.md  docs/team/unlisted.md
+  loader                   knowledge/main/loader.md

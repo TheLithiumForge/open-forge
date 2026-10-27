@@ -234,7 +234,8 @@ internal sealed class RouteListResult : ICliCommandResult
         for (var index = 0; index < rows.Count; index++)
         {
             var row = rows[index];
-            var siblingKey = row.ParentPath ?? string.Empty;
+            var detachedRoot = row.Provenance.Selection == RouteListSelectionProvenance.DetachedRoot;
+            var siblingKey = detachedRoot ? string.Empty : row.ParentPath ?? string.Empty;
             if (lastPathByParent.TryGetValue(siblingKey, out var priorSiblingPath)
                 && string.CompareOrdinal(priorSiblingPath, row.Path) >= 0)
             {
@@ -244,10 +245,20 @@ internal sealed class RouteListResult : ICliCommandResult
             lastPathByParent[siblingKey] = row.Path;
 
             if (row.ParentPath is not null
-                && indexByPath.TryGetValue(row.ParentPath, out var establishedParentIndex)
-                && establishedParentIndex >= index)
+                && indexByPath.TryGetValue(row.ParentPath, out var establishedParentIndex))
             {
-                throw new ArgumentException("An emitted routed parent must occur before its child.", nameof(rows));
+                if (establishedParentIndex >= index && !detachedRoot)
+                {
+                    throw new ArgumentException("An emitted routed parent must occur before its child.", nameof(rows));
+                }
+
+                if (detachedRoot && (row.Kind != RouteListRowKind.Entrypoint
+                    || rows[establishedParentIndex].Kind != RouteListRowKind.Entrypoint
+                    || !string.Equals(row.ParentId, rows[establishedParentIndex].Id, StringComparison.Ordinal)
+                    || rows[establishedParentIndex].AbsoluteDepth is not null))
+                {
+                    throw new ArgumentException("A detached return edge requires its established catalogue parent and identity.", nameof(rows));
+                }
             }
 
             if (row.Provenance.Selection != RouteListSelectionProvenance.Descendant)
@@ -305,10 +316,7 @@ internal sealed class RouteListResult : ICliCommandResult
 
             var emittedChildren = rows.Count(row =>
                 string.Equals(row.ParentPath, entrypoint.Path, StringComparison.Ordinal));
-            var effectiveBoundaryIncludesChildren = effectiveDepth.Kind == RouteListDepthKind.All
-                || entrypoint.RelativeDepth < effectiveDepth.FiniteValue;
-            if ((effectiveBoundaryIncludesChildren && emittedChildren != directChildCount)
-                || (!effectiveBoundaryIncludesChildren && directChildCount != 0))
+            if (emittedChildren != directChildCount)
             {
                 throw new ArgumentException("Complete child coverage must emit every direct routed child.", nameof(rows));
             }

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would create docs/team/_team.md",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "docs/team/_team.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "entrypointsCreated": 1,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": {
+      "id": "./docs/team/_team.md",
+      "path": "docs/team/_team.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": "docs/team/_team.md",
+        "outcome": "planned",
+        "needsAuthoring": true
+      }
+    ],
+    "listedIn": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

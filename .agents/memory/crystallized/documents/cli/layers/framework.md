@@ -55,6 +55,8 @@ selection method, normalizes identity once, and never invents a fallback fact.
 Terminal modes bypass workspace selection. Workspace-free commands preserve null
 workspace in concrete results.
 
+`WorkspaceLayout` is the pure mapping below Sources. Settings observes `outsideRoutes` and retains physical availability separately. `SourceRoots` keeps primary/native meaning, while `InventoryRoots` adds registered directories for discovery. Lexical boundary lookup alone grants no physical write, loading or package authority. The retained operational observation carries outside directory facts, exact authored rows and logical loading roles from the same layout and source session. [Workspace Layout](../technical-designs/workspace-layout.md) defines the carriers.
+
 ## Filesystem And Resolved Path Identity
 
 Filesystem code uses real `System.IO` and typed outcomes. Path strings,
@@ -136,6 +138,8 @@ recognized entrypoint form, overwrites, and the physical identity behind each
 logical layer. A Framework scope is authored meaning, not a mechanically
 identifiable path segment; a consumer reports it only from explicit contract
 evidence. Commands translate shared facts into local meaning.
+
+The included read-session merge retains authored rows independently of logical inventory, including unresolved targets and repeated conditioned aliases. Registration cannot discard included policy or replace first-reaching metadata. [Generated Navigation](../technical-designs/generated-navigation.md) retains those facts through intended formation.
 
 An entry file is not a routed source. `AGENTS.md` and the Loader carry no route
 metadata, and a consumer must not require it of them.

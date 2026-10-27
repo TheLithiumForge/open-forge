@@ -1,0 +1,48 @@
+1 error, 3 warnings and 3 info findings.
+Workspace: <workspace>
+Workspace
+  Error  docs/team/_team.md  Root route is missing [workspace.root-missing]
+         The included file is missing. Restore the file or exclude its path.
+         fix by hand
+         authored value: docs/team/_team.md
+         read from .agents/loader.md
+Routes and Entries
+  Warning  .agents/loader.md  Route Axioms are invalid [route.axioms-invalid]
+         .agents/loader.md has no Axioms section, or its Axioms section is malformed.
+         fix by hand
+         Fix it by hand.
+         state: invalid
+         read from .agents/loader.md
+Links
+  Warning  .agents/loader.md:5:3  Broken link [reference.target-missing]
+         docs/team/_team.md is missing and no replacement was found.
+         fix by hand
+         Update or remove this link in .agents/loader.md at line 5, column 3.
+         authored value: ../docs/team/_team.md
+         state: missing
+         read from .agents/loader.md
+Workspace
+  Warning  docs/team  Registered outside directory is missing [workspace.root-missing]
+         The registered outside directory docs/team is missing. Review its settings registration.
+         fix by hand
+         Review docs/team and its outside-route settings registration by hand.
+         state: missing
+         authored value: The registered directory or an ancestor is missing.
+         read from .agents/open-forge.json
+  Info  .agents/open-forge.lock.json  No ownership record [library.ownership-observation]
+         No ownership record exists, so Libraries cannot be read from it.
+         state: unavailable
+         read from .agents/open-forge.lock.json
+Framework files
+  Info  <workspace>/.agents/open-forge.lock.json  No ownership record [framework.ownership-observation]
+         No ownership record exists, so Framework files cannot be read from it.
+         state: unavailable
+         read from <workspace>/.agents/open-forge.lock.json
+Extensions
+  Info  <workspace>/.agents/open-forge.lock.json  No ownership record [extension.ownership-observation]
+         No ownership record exists, so installed Extensions cannot be read from it.
+         state: unavailable
+         read from <workspace>/.agents/open-forge.lock.json
+  0 links and 0 routes checked.
+  4 must be fixed by hand.
+Next: Review docs/team and its outside-route settings registration by hand.

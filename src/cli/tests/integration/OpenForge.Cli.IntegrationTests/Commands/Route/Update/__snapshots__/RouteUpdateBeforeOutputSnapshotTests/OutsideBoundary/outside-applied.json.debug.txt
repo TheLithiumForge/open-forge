@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 3,
+  "command": "route update",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated ./docs/team/design/note.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "docs/team/design/note.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": "docs/team/design/_design.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "fieldsChanged": 1,
+    "sectionsUpdated": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "./docs/team/design/note.md",
+      "path": "docs/team/design/note.md"
+    },
+    "changes": [
+      {
+        "field": "description",
+        "before": "Before outside",
+        "after": "After outside"
+      }
+    ],
+    "template": null,
+    "listedIn": "docs/team/design/_design.md",
+    "frontmatterBefore": "description: Before outside",
+    "frontmatterAfter": "description: After outside"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

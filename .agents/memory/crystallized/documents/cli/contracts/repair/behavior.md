@@ -11,6 +11,8 @@ open-forge:
 
 Carry Doctor’s layout observation through target checks, metadata, classification, planning and result projection. Revalidate it under the lease before effects. Recovery targets and historical bundle paths stay literal.
 
+Reference protection retains that same observation. An ownership or form result alone does not admit an outside write. Require the matching available registration and prove each selected physical target within its boundary, retaining ordinary-leaf and expected-state guards. Never derive registration from an included row or source alias.
+
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
 
 ## Status And Boundary
@@ -610,6 +612,8 @@ effect verifies. `completed` does not mean every Doctor finding is gone.
 Consume the shared rename observation model before missing-target proposals become guided candidates. Prove old absence, candidate identity, strong evidence and uniqueness over the complete admitted universe. One strong candidate forms an exact resolution. Two remain guided. Revalidate proof and candidate cardinality under the lease, including HEAD identity when used. No-Git absence is not fabricated history.
 
 Plan authored relinks first against original occurrences. Compose shared affected-closure metadata, chain and Entries maintenance over intended bytes, then coalesce to one final effect per physical file. Existing-field and body preservation, target-fragment checks, no-follow guards and whole-plan safety remain. The operation shares one verified recovery bundle and retains its current confirmation and monotonic application rules. No public Index invocation or fixpoint loop is introduced.
+
+For registered outside content, select only the roots and logical coordinates required by those affected closures. An unlisted tree may be maintained without a Loader-row edit. Unrelated registrations, file-only inclusions and readable leaving links supply no additional write authority. Preserve existing diagnosis refusals, ownership, private routes, Library projections and stale-row deferral. Readonly source facts and metadata-completion eligibility remain separate.
 
 Fresh post-diagnosis chooses the Interface's single next step from actual remaining work. Automatic guided-only results must not recommend the same automatic command. No-successor links require a named authored edit. Schema and exact text additions follow the Interface and [Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md#safety-and-wire-inventory).
 

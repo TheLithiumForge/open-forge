@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Applicability;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -7,6 +8,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 {
     private IReadOnlyList<RouteSource>? ReadChain(string path)
     {
+        if (_graph.HasRowPolicy(path)) return RouteInspectSourceApplicabilityEvaluator.ReadLoadingChain(_graph, path);
         var topology = _graph.RouteFacts.Topology;
         var current = topology.FindByPath(path);
         if (current is null)

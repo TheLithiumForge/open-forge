@@ -18,6 +18,8 @@ Framework Workspace owns the pure `WorkspaceLayout` below Sources. Framework Set
 
 The layout has one context folder, defaulting to `.agents`, plus native Skills at `.agents/skills`. Settings, ownership, host files and `.open-forge-state/` retain fixed locations. The [Workspace Layout Technical Design](technical-designs/workspace-layout.md) defines mapping, observation states and ordinal authority checks. [Install](contracts/install/interface.md) defines first-install selection. Moving an established installation is reserved for Delivery 2.
 
+Settings v5 separately registers maintained outside directories in `outsideRoutes`. File-only `roots`, inventory, authored loading edges, bounded maintenance, installed ownership and package permissions remain separate facts. The primary mappings never choose among outside registrations. Read operations consume the combined inventory without activating content merely because it was scanned.
+
 ## Status And Authority
 
 This document defines the accepted implementation architecture for the C#

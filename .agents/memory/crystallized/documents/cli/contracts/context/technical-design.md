@@ -11,6 +11,8 @@ open-forge:
 
 Carry the layout through graph construction, loading closure, linked reads and projection. Result constructors use established catalogue identities instead of deriving IDs from fixed-root paths. See [Workspace Layout](../../technical-designs/workspace-layout.md).
 
+`ContextGraphBuilder` uses one included read session for the combined catalogue and document reader. Each merged logical source retains its authored inclusion parent and row conditions, even when registration also inventories it. Closure and linked reads reuse that source instead of appending a second included graph. Inventory alone creates no startup membership or working-path match.
+
 ## Status And Authority
 
 This is the accepted Technical Design for `context`. It is subordinate to the

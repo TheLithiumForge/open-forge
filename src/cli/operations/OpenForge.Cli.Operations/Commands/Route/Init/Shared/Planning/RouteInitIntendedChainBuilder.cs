@@ -145,12 +145,16 @@ internal sealed class RouteInitIntendedChainBuilder
                 continue;
             }
 
+            var folderId = chain.Id;
+            if (inspection.Catalogue.Catalogue.Layout.TryGetMaintenanceBoundary(chain.CanonicalMissingPath, out var boundary)
+                && boundary.Kind == OpenForge.Cli.Core.Framework.Workspace.Models.Layout.WorkspaceMaintenanceBoundaryKind.Outside)
+                folderId = SourceWorkspaceRelativePath.LiteralReferencePrefix + SourceLogicalPath.ReadParent(chain.CanonicalMissingPath);
             var metadata = _metadataResolver.Resolve(
-                chain.Id,
+                folderId,
                 index == current.Chain.Count - 1,
                 request.Metadata);
-            var title = chain.Id.Split('/')[^1];
-            var scaffold = _scaffoldComposer.Compose(chain.Id, title, metadata, inspection.Settings.Document.Frontmatter);
+            var title = SourceLogicalPath.ReadFileName(SourceLogicalPath.ReadParent(chain.CanonicalMissingPath));
+            var scaffold = _scaffoldComposer.Compose(folderId, title, metadata, inspection.Settings.Document.Frontmatter);
             var source = aligned?.IntendedSource
                 ?? _sourceBuilder.Create(inspection.Catalogue.Catalogue.Layout, chain.CanonicalMissingPath);
             var userContent = new RouteInitProspectiveSourceContent(

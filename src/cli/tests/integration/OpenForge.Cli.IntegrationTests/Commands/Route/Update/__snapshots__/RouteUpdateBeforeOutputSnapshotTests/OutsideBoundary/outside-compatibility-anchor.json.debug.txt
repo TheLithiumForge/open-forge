@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 3,
+  "command": "route update",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated ./docs/team/index.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "docs/team/index.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "fieldsChanged": 1,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "./docs/team/index.md",
+      "path": "docs/team/index.md"
+    },
+    "changes": [
+      {
+        "field": "description",
+        "before": "Independent route metadata",
+        "after": "After outside"
+      }
+    ],
+    "template": null,
+    "listedIn": null,
+    "frontmatterBefore": "description: Independent route metadata",
+    "frontmatterAfter": "description: After outside"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

@@ -203,6 +203,9 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
             cancellationToken);
 
     internal ValueTask<RouteUpdateResult> ExecutePlanAsync(RouteUpdatePlan plan)
+        => ExecutePlanAsync(plan, LockStoreRoot);
+
+    internal static ValueTask<RouteUpdateResult> ExecutePlanAsync(RouteUpdatePlan plan, WorkspaceLockStoreRoot lockStoreRoot)
     {
         var resultBuilder = new RouteUpdateResultBuilder();
         var expectationValidator = new FileExpectationValidator(
@@ -225,7 +228,7 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
                     planBuilder,
                     expectationValidator)),
             resultBuilder,
-            LockStoreRoot).ExecuteAsync(
+            lockStoreRoot).ExecuteAsync(
                 plan,
                 TestContext.Current.CancellationToken);
     }

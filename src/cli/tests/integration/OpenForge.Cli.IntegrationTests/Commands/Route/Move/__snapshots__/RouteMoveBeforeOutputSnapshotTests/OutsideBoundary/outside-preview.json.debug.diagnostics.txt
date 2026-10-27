@@ -1,0 +1,11 @@
+status=completed
+mode=dry-run
+source=./docs/team/left/old note.md
+destination=./docs/team/right/new note.md
+subject=leaf
+completeness=complete
+safety=safe
+effects=7
+recovery=not created
+verification=not run
+findings=0

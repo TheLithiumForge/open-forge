@@ -1,0 +1,7 @@
+./target.md
+Workspace: <workspace>
+  in   ./docs/team/links.md:3:1
+  in   ./docs/team/links.md:3:26
+  in   ./docs/team/unlisted.md:3:1
+3 in, 0 out
+The incoming scan used every source.

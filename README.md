@@ -46,6 +46,8 @@ Now give your agent a normal task:
 
 Check the answer against your contribution guide. You can stop here.
 
+To maintain a whole folder where it lives, use folder Include instead. For an existing `docs/team` directory, preview `open-forge route include docs/team --dry-run`, then run it without `--dry-run`. This registers an outside route and creates only its missing canonical catalogue. File Include stays read-only by itself. The loader still decides loading, and registration grants no package ownership. Status reports registered directory availability and direct listing separately. Doctor diagnoses outside structure and gives only grounded maintenance advice. Install, configure and Update preserve registrations and authored loading policy. See [outside routes](docs/cli.md#outside-routes) for exact paths, unlisted maintenance and safety boundaries.
+
 ### Add a rule and an accepted fact
 
 Minimal gives you two places for this. Say your agent keeps calling export work done without running the tests. Create `.agents/directives/exports.md`:

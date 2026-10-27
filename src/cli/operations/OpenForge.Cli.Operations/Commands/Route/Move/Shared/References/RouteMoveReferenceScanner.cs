@@ -123,8 +123,24 @@ internal sealed partial class RouteMoveReferenceScanner(
         var replacements = scanned.Scan
             ?? throw new InvalidOperationException(
                 "A successful Route Move replacement scan requires its replacements.");
+        var rows = await new RouteMoveIncludedRowProjector(_destinationResolver)
+            .ProjectAsync(input, document, sourcePath, intendedSourcePath, cancellationToken).ConfigureAwait(false);
+        if (rows.Boundary is { } rowBoundary) return new RouteMoveReferenceDocumentInspectionResult(null, rowBoundary);
+        var inspection = FormInspection(input, sourcePath, intendedSourcePath, document, replacements);
+        if (rows.Plan is { } rowPlan)
+        {
+            var combined = inspection.Document.Edits.Concat(rowPlan.Edits).OrderByDescending(edit => edit.Location.ByteOffset);
+            var bytes = document.Snapshot.Bytes.ToArray();
+            foreach (var edit in combined)
+            {
+                var start = checked((int)edit.Location.ByteOffset);
+                var end = checked(start + (int)edit.Location.ByteLength);
+                bytes = [.. bytes.AsSpan(0, start), .. Encoding.UTF8.GetBytes(edit.Expected), .. bytes.AsSpan(end)];
+            }
+            inspection = inspection with { Document = inspection.Document with { IncludedRows = rowPlan, IntendedText = StrictUtf8.GetString(bytes) } };
+        }
         return new RouteMoveReferenceDocumentInspectionResult(
-            FormInspection(input, sourcePath, intendedSourcePath, document, replacements),
+            inspection,
             boundary: null);
     }
 
@@ -246,7 +262,7 @@ internal sealed partial class RouteMoveReferenceScanner(
             : new RouteMoveReferenceReplacementProjection { Boundary = boundary };
     }
 
-    private static RouteMoveReferenceMeaning? ProjectMeaning(
+    internal static RouteMoveReferenceMeaning? ProjectMeaning(
         RouteMoveReferenceScanInput input,
         SourceLinkDestinationFacts facts)
     {

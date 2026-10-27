@@ -11,6 +11,8 @@ open-forge:
 
 Payload validation and inventory hashes use package coordinates. `WorkspaceLayout.MapPayloadPath` maps destinations once before exclusions, permissions, collisions and ownership. Rendering receives both the original package path and installed destination. Reverse alignment searches mapped destinations rather than equating installed and package paths.
 
+Outside registrations do not participate in that mapping. They create neither another package root nor ownership of their catalogues or descendants. Extension destinations there retain explicit permission checks. Native Skills and fixed control paths keep their existing mappings. Install and Update retain the observed outside registrations and authored row policy while rendering only their selected payload destinations.
+
 The layout renderer rebases parsed links and recognized host-template references, retaining Claude’s `@AGENTS.md` bridge. Custom README and CLI Skill variants describe the selected context folder, fixed native Skills and generic `./<workspace-path>` operands. Default layout rendering preserves original bytes, including line endings. Frontmatter rendering remains a separate transformation. See [Workspace Layout](workspace-layout.md#pure-mapping).
 
 ## Boundary

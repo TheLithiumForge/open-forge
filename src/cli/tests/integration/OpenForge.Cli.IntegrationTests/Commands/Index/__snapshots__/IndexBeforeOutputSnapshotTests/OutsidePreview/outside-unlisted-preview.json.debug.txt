@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would create 2 entrypoints and complete metadata in 1 file.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "docs/team/nested/note.md",
+      "kind": "file",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "docs/team/_team.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "docs/team/nested/_nested.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesChecked": 0,
+    "filesUpdated": 0,
+    "filesCurrent": 0,
+    "metadataCompleted": 1,
+    "entrypointsCreated": 2,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "changes": [],
+    "unchanged": [],
+    "selection": {
+      "origin": "explicit-sources",
+      "scope": "rooted",
+      "sources": [
+        {
+          "id": "./docs/team/nested/note.md",
+          "path": "docs/team/nested/note.md"
+        }
+      ]
+    },
+    "regions": [],
+    "metadata": [
+      {
+        "path": "docs/team/nested/note.md",
+        "fields": [
+          "description",
+          "tags"
+        ],
+        "description": "Note",
+        "tags": [
+          "Workspace"
+        ],
+        "outcome": "planned"
+      }
+    ],
+    "entrypoints": [
+      {
+        "path": "docs/team/_team.md",
+        "outcome": "planned"
+      },
+      {
+        "path": "docs/team/nested/_nested.md",
+        "outcome": "planned"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge index --workspace <workspace>",
+    "reason": "Apply the checked plan."
+  }
+}

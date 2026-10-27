@@ -8,8 +8,8 @@ using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
-using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Shared.Planning;
@@ -17,7 +17,6 @@ namespace OpenForge.Cli.Core.Commands.Route.Create.Shared.Planning;
 internal sealed class RouteCreateTargetInspector
 {
     private readonly RouteCreateTargetPlanner _targetPlanner = new();
-    private readonly SourceCatalogueReader _catalogueReader = new();
     private readonly PhysicalPathResolver _physicalPathResolver = new();
 
     internal async ValueTask<RouteCreateTargetInspectionBuild> InspectAsync(
@@ -67,10 +66,13 @@ internal sealed class RouteCreateTargetInspector
                 isIncomplete: true);
         }
 
-        var catalogue = await _catalogueReader.ReadAsync(
-                new SourceCatalogueRequest(layout, layout.SourceRoots),
-                cancellationToken)
-            .ConfigureAwait(false);
+        if (RouteCreateOutsideTargetInspector.Availability(layoutRead, targetPath) is { } availability)
+            return Stop(resolution.Target, availability.Code, availability.Cause,
+                availability.Code == RouteCreateFindingCode.InspectionIncomplete);
+
+        var session = await new SourceReadSessionReader(_physicalPathResolver)
+            .ReadIncludedAsync(layout, cancellationToken).ConfigureAwait(false);
+        var catalogue = session.Catalogue;
         if (catalogue.IsCancelled)
         {
             return Stop(
@@ -81,7 +83,8 @@ internal sealed class RouteCreateTargetInspector
         }
 
         if (catalogue.Issues.FirstOrDefault(issue =>
-                issue.Stage == SourceCatalogueIssueStage.Root) is { } rootIssue)
+                issue.Stage == SourceCatalogueIssueStage.Root
+                && layout.SourceRoots.Contains(issue.AttemptedCanonicalPath, StringComparer.Ordinal)) is { } rootIssue)
         {
             var code = rootIssue.Code == SourceCatalogueIssueCode.RootUnsafe
                 ? RouteCreateFindingCode.WorkspaceUnsafe
@@ -101,6 +104,10 @@ internal sealed class RouteCreateTargetInspector
                 "The Route Create target aliases another physical source.",
                 isIncomplete: false);
         }
+
+        if (RouteCreateOutsideTargetInspector.Inspect(layoutRead, catalogue, targetPath,
+                NoFollowLeafState.OrdinaryFile, cancellationToken) is { } targetFinding)
+            return Stop(resolution.Target, targetFinding.Code, targetFinding.Cause, isIncomplete: false);
 
         var snapshot = await ReadSnapshotAsync(
                 request,

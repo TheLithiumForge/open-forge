@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "./target.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "incoming": 3,
+    "outgoing": null,
+    "sourcesScanned": 6
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "id": "./target.md",
+      "path": "target.md"
+    },
+    "direction": "in",
+    "incoming": [
+      {
+        "id": "./docs/team/links.md",
+        "path": "docs/team/links.md",
+        "location": ":3:1",
+        "layer": "base"
+      },
+      {
+        "id": "./docs/team/links.md",
+        "path": "docs/team/links.md",
+        "location": ":3:26",
+        "layer": "base"
+      },
+      {
+        "id": "./docs/team/unlisted.md",
+        "path": "docs/team/unlisted.md",
+        "location": ":3:1",
+        "layer": "base"
+      }
+    ],
+    "coverage": {
+      "incoming": "complete"
+    },
+    "filters": {
+      "include": [],
+      "exclude": []
+    },
+    "scanned": [
+      {
+        "id": "./docs/team/_team.md",
+        "path": "docs/team/_team.md",
+        "layer": "base"
+      },
+      {
+        "id": "./docs/team/links.md",
+        "path": "docs/team/links.md",
+        "layer": "base"
+      },
+      {
+        "id": "./docs/team/opaque.mdc",
+        "path": "docs/team/opaque.mdc",
+        "layer": "base"
+      },
+      {
+        "id": "./docs/team/unlisted.md",
+        "path": "docs/team/unlisted.md",
+        "layer": "base"
+      },
+      {
+        "id": "./target.md",
+        "path": "target.md",
+        "layer": "base"
+      },
+      {
+        "id": "loader",
+        "path": "knowledge/main/loader.md",
+        "layer": "base"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

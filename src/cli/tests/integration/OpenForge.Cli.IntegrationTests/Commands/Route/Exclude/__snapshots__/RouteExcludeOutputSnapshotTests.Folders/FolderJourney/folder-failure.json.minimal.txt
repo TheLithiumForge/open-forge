@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 3,
+  "command": "route exclude",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "The current file state no longer matches the planned expectation.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-exclude.target-changed",
+      "title": "The current file state no longer matches the planned expectation.",
+      "message": "The current file state no longer matches the planned expectation.",
+      "subject": {
+        "kind": "directory",
+        "path": "project/team notes",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route exclude --help",
+          "reason": "Review the reported cause and retry from a fresh preview."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesChanged": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": "project/team notes",
+    "targetKind": "folder",
+    "catalogue": "project/team notes/_team notes.md",
+    "before": "- [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)",
+    "after": null,
+    "registeredBefore": true,
+    "registeredAfter": false,
+    "verified": false
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route exclude --help",
+    "reason": "Review the reported cause and retry from a fresh preview."
+  }
+}

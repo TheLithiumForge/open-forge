@@ -1,0 +1,28 @@
+Workspace: <workspace>
+  ./docs/team/_team.md    Team authored
+    docs/team/_team.md
+      Maintenance root: docs/team
+    #LoadNow
+    ./docs/team/SKILL.md  Outside skill
+      docs/team/SKILL.md
+        Maintenance root: docs/team
+      #Private
+    ./docs/team/child.md  First child
+      docs/team/child.md
+        Maintenance root: docs/team
+      #LoadNow #Row
+  Parent: none
+  Depth: absolute 0; relative 0
+  Kind: entrypoint; direct children: 2
+  Selected as: explicit root
+  Overwrite: none
+    Parent: ./docs/team/_team.md; docs/team/_team.md
+    Depth: absolute 1; relative 1
+    Kind: file; direct children: none
+    Selected as: descendant
+    Overwrite: none
+    Parent: ./docs/team/_team.md; docs/team/_team.md
+    Depth: absolute 1; relative 1
+    Kind: file; direct children: none
+    Selected as: descendant
+    Overwrite: present

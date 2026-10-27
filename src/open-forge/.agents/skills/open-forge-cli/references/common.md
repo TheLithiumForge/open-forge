@@ -22,6 +22,8 @@ A source reference is an exact source ID, such as `memory/crystallized`, or an e
 
 The context folder is chosen at first installation with `install --main-root <folder>`. The default is `--main-root .agents`. Native Skills stay in `.agents/skills/`, settings in `.agents/open-forge.json`, and ownership in `.agents/open-forge.lock.json`. See [Install](packages.md#install) for setup and relocation limits.
 
+Outside folders are registered separately in settings v5 `outsideRoutes`. They do not join primary path mapping or implicit package permission. Exact references retain filename and extension, but discovery and result operand identity depend on registration or retained inclusion. See [outside routes](routes.md#outside-routes).
+
 ## Global Flags
 
 Every command accepts these flags. Extension Create accepts `--workspace` but creates in its explicit catalogue, so that flag has no effect there.
@@ -61,7 +63,7 @@ Suggested next actions and retries keep the selected workspace and the options n
 
 Permission prompts keep the numbered order `1. Allow always`, `2. Allow once`, `3. Cancel`. Key mode starts focused on `Allow once`, so Enter approves only this run without saving a grant. Deliberately choose `Allow always` to save a grant for every Extension and Library. Line mode accepts `always`, `once`, or `cancel`, and an empty line cancels.
 
-`--allow-path <path>` records a supported CLI permission for an exact destination outside `.agents`. It is a write boundary, not human authorization. Supply the reviewed destination within the task's authority. `--force` permits only its command's documented initial replacement. On Framework and Extension Update it is accepted for compatibility and adds no authority.
+`--allow-path <path>` records a supported CLI permission for an exact destination outside the primary content locations. It is a write boundary, not human authorization. Supply the reviewed destination within the task's authority. `--force` permits only its command's documented initial replacement. On Framework and Extension Update it is accepted for compatibility and adds no authority.
 
 ## Read Results
 

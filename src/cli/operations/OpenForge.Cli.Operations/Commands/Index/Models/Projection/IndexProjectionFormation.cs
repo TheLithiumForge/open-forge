@@ -12,6 +12,9 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Models;
+using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using System.Collections.Immutable;
 
 namespace OpenForge.Cli.Core.Commands.Index.Models.Projection;
 
@@ -24,6 +27,7 @@ internal sealed record IndexProjectionContext
     public required SourceDocumentReader Reader { get; init; }
 
     internal RoutedMaintenanceIntent? Maintenance { get; init; }
+    internal RoutedMetadataPolicyContext? Policy { get; init; }
 }
 
 internal sealed record IndexProjectionAssembly
@@ -164,7 +168,8 @@ internal sealed record IndexProjectionReadiness
                 nameof(unavailableTargetPaths)))
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
-        if (pathValues.Any(path => !SourceLogicalPath.IsPrimarySource(new SourceContentRoots(layout), path))
+        if (pathValues.Any(path => !SourceLogicalPath.IsPrimarySource(new SourceContentRoots(layout), path)
+                && !SourceLogicalPath.IsOutsideSource(layout, path))
             || pathValues.Distinct(StringComparer.Ordinal).Count() != pathValues.Length)
         {
             throw new ArgumentException(
@@ -186,6 +191,7 @@ internal sealed record IndexProjectionReadiness
 
 internal sealed record IndexProjectionFormation
 {
+    internal ImmutableArray<FileExpectation> ReadExpectations { get; init; } = [];
     internal WorkspaceLayoutRead? LayoutRead { get; init; }
     internal RoutedMaintenanceIntent? Maintenance { get; init; }
 

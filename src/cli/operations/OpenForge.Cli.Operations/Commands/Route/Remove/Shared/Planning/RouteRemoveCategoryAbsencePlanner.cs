@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
@@ -67,9 +68,19 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
             Source = scope.Source,
             Subject = scope.Subject,
         };
-        var catalogue = await _catalogueReader.ReadAsync(
-            new SourceCatalogueRequest(scope.Layout, scope.Layout.SourceRoots),
-            cancellationToken).ConfigureAwait(false);
+        var retained = layoutRead ?? postRemovePlan?.LayoutRead;
+        if (scope.OutsideRoute is not null)
+        {
+            if (retained is null || RouteRemoveOutsideBoundaryInspector.IsProtected(scope.Layout, scope.IntendedPath))
+                return Stop(formation, RouteRemoveFindingCode.ProtectedTarget, CliSemanticStatus.Blocked, scope.IntendedPath,
+                    "Outside absence requires the retained registered boundary and cannot select its anchor.");
+            foreach (var path in scope.ProbePaths)
+                if (RouteRemoveOutsideBoundaryInspector.Validate(retained, path, cancellationToken, allowMissing: true) is { } cause)
+                    return Stop(formation, RouteRemoveFindingCode.SourceUnsafe, CliSemanticStatus.Blocked, path, cause);
+        }
+        var catalogue = scope.OutsideRoute is null
+            ? await _catalogueReader.ReadAsync(new SourceCatalogueRequest(scope.Layout, scope.Layout.SourceRoots), cancellationToken).ConfigureAwait(false)
+            : (await new SourceReadSessionReader(_physicalPathResolver).ReadIncludedAsync(scope.Layout, cancellationToken).ConfigureAwait(false)).Catalogue;
         if (catalogue.IsCancelled)
         {
             return Stop(
@@ -81,7 +92,8 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
         }
 
         if (catalogue.Issues.FirstOrDefault(issue =>
-                issue.Stage == SourceCatalogueIssueStage.Root) is { } rootIssue)
+                issue.Stage == SourceCatalogueIssueStage.Root
+                    && (scope.OutsideRoute is null || issue.AttemptedCanonicalPath == scope.OutsideRoute.DirectoryPath)) is { } rootIssue)
         {
             var unsafeRoot = rootIssue.Code == SourceCatalogueIssueCode.RootUnsafe;
             return Stop(
@@ -127,6 +139,12 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
                 return Stop(formation, boundary.Code, boundary.Status, path, boundary.Cause);
             }
         }
+
+        if (scope.OutsideRoute is not null
+            && !RouteRemoveOutsideBoundaryInspector.HasParentChain(catalogue, scope.IntendedPath, scope.Subject.Kind == RouteRemoveSubjectKind.Category,
+                retained ?? throw new InvalidOperationException("Outside absence requires its retained layout."), cancellationToken))
+            return Stop(formation, RouteRemoveFindingCode.RouteAmbiguous, CliSemanticStatus.Blocked, scope.IntendedPath,
+                "Exact outside absence requires one existing unambiguous structural parent chain.");
 
         var settings = layoutRead?.Settings ?? await WorkspaceSettingsReader.ReadAsync(
             _physicalPathResolver,
@@ -206,6 +224,16 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
                 Persistence = PersistedRemoval(scope, settings, projectedOwnership, postRemovePlan, allowPlannedClaims),
             };
         }
+        if (scope.OutsideRoute is not null)
+        {
+            var required = scope.Subject.Kind == RouteRemoveSubjectKind.Category ? scope.CategoryRoot : scope.LeafPath;
+            if (!WorkspaceRemovals.IsPathRemoved(scope.Layout, required, settings.Document))
+                return Stop(formation, RouteRemoveFindingCode.SourceNotFound, CliSemanticStatus.Invalid, scope.IntendedPath,
+                    "Physical absence without the required exact removal exclusion is not a verified no-op.");
+            if (catalogue.IncludedRows.Any(row => scope.Contains(row.Path) || row.AliasOf is { } alias && scope.Contains(alias)))
+                return Stop(formation, RouteRemoveFindingCode.GeneratedRegionUnsafe, CliSemanticStatus.Blocked, scope.IntendedPath,
+                    "A retained authored Entries row still selects the outside removal scope.");
+        }
 
         var exposure = await _exposureReader.ReadAsync(
             scope.Request.Workspace,
@@ -221,13 +249,16 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
                 "Generated-navigation absence inspection was interrupted.");
         }
 
-        if (!exposure.UnavailableParents.IsEmpty)
+        var unavailableParent = exposure.UnavailableParents.FirstOrDefault(parent => scope.OutsideRoute is null
+            || RouteRemoveOutsideBoundaryInspector.IsRequiredParent(catalogue, scope.IntendedPath,
+                scope.Subject.Kind == RouteRemoveSubjectKind.Category, parent));
+        if (unavailableParent is not null)
         {
             return Stop(
                 formation,
                 RouteRemoveFindingCode.ProjectionIncomplete,
                 CliSemanticStatus.Incomplete,
-                exposure.UnavailableParents[0],
+                unavailableParent,
                 "Generated-navigation absence could not be established from every parent source.");
         }
 
@@ -272,7 +303,7 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
 
         formation = formation with
         {
-            GeneratedNavigation = new RouteRemoveGeneratedNavigation
+            GeneratedNavigation = scope.OutsideRoute is not null ? formation.GeneratedNavigation : new RouteRemoveGeneratedNavigation
             {
                 Coverage = RouteRemoveCoverage.Complete,
             },
@@ -289,6 +320,7 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
 
         formation = formation with
         {
+            GeneratedNavigation = new RouteRemoveGeneratedNavigation { Coverage = RouteRemoveCoverage.Complete },
             Plan = new RouteRemovePlanFacts
             {
                 Completeness = RouteRemovePlanCompleteness.Complete,

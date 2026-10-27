@@ -13,10 +13,10 @@ Commands:
                               root route.
   update <source-reference>   Change selected metadata or add Template content
                               to an eligible empty body.
-  include <workspace-file>    List an existing workspace file in the loader
-                              where it lives.
-  exclude <workspace-file>    Remove a workspace file from the loader without
-                              deleting it.
+  include <workspace-path>    List an existing file or register an outside
+                              folder as a maintained route.
+  exclude <workspace-path>    Stop listing a file or maintaining an outside
+                              folder without deleting content.
   move <source-reference> <destination-target>
       Move one unmanaged routed file or category and update its references.
   remove <source-reference>   Remove one routed file or category and remember

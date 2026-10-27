@@ -4,7 +4,7 @@ using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedDoctorProcessTests
+public sealed partial class PublishedDoctorProcessTests
 {
     [Fact(DisplayName = "Published info-only Doctor prints no Next and retains a null JSON next"), Trait("Feature", "doctor-command"), Trait("Evidence", "EndToEnd")]
     public async Task InformationalDoctorHasNoNext()

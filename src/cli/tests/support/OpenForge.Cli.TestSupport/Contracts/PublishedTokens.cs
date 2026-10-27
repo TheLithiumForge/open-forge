@@ -44,6 +44,7 @@ public static class PublishedTokens
 
     public static class Find
     {
+        public const string Tag = "--tag";
         public const string Metadata = "metadata";
         public const string Command = "find";
         public const string Heading = "--heading";
@@ -89,6 +90,7 @@ public static class PublishedTokens
         public const string Tags = "tags";
         public const string Entries = "Entries";
         public const string LoadNow = "LoadNow";
+        public const string KeepInMind = "KeepInMind";
     }
 
     public static class ContextData
@@ -139,9 +141,21 @@ public static class PublishedTokens
         public const string Command = "status";
     }
 
+    public static class StatusOutsideRoutes
+    {
+        public const string Collection = "outsideRoutes";
+        public const string State = "state";
+        public const string Listed = "listed";
+        public const string Available = "available";
+        public const string Missing = "missing";
+        public const string Unsafe = "unsafe";
+        public const string Unavailable = "unavailable";
+    }
+
     public static class Doctor
     {
         public const string Command = "doctor";
+        public const string RootMissingCode = "workspace.root-missing";
     }
 
     public static class Repair
@@ -180,10 +194,22 @@ public static class PublishedTokens
 
     public static class RouteListData
     {
+        public const string MaintenanceRoot = "maintenanceRoot";
         public const string Rows = "rows";
         public const string Depth = "depth";
         public const string HasOverwrite = "hasOverwrite";
         public const string AbsoluteDepth = "absoluteDepth";
+    }
+
+    public static class RouteInclusionData
+    {
+        public const string Target = "target";
+        public const string TargetKind = "targetKind";
+        public const string Catalogue = "catalogue";
+        public const string Folder = "folder";
+        public const string RegisteredBefore = "registeredBefore";
+        public const string RegisteredAfter = "registeredAfter";
+        public const string Verified = "verified";
     }
 
     public static class RouteInclude
@@ -198,11 +224,13 @@ public static class PublishedTokens
 
     public static class RouteInspect
     {
+        public const string WorkingPath = "--for";
         public const string Command = "inspect";
     }
 
     public static class RouteInspectData
     {
+        public const string MaintenanceRoot = "maintenanceRoot";
         public const string Read = "read";
         public const string AtStart = "atStart";
     }
@@ -242,6 +270,7 @@ public static class PublishedTokens
 
     public static class RouteRemove
     {
+        public const string ProtectedTargetCode = "route-remove.protected-target";
         public const string DryRun = "--dry-run";
         public const string Command = "remove";
         public const string Automatic = "--automatic";
@@ -317,6 +346,7 @@ public static class PublishedTokens
 
     public static class Runtime
     {
+        public const string DirectoryName = ".open-forge-state";
         public const string IgnoreContent = "*\n";
     }
 
@@ -341,8 +371,9 @@ public static class PublishedTokens
         public const string RemovedFilesProperty = "removedFiles";
         public const string RemovedDirectoriesProperty = "removedDirectories";
         public const string RootsProperty = "roots";
+        public const string OutsideRoutesProperty = "outsideRoutes";
         public const string RelativePath = ".agents/open-forge.json";
-        public const int SchemaVersion = 4;
+        public const int SchemaVersion = 5;
         public const string SchemaVersionProperty = "schemaVersion";
         public const string MainRootProperty = "mainRoot";
         public const string FrontmatterProperty = "frontmatter";
@@ -371,6 +402,7 @@ public static class PublishedTokens
 
     public static class Recovery
     {
+        public const string RemovedDisposition = "removed";
         public const string WorkspaceStore = "workspace";
         public const string LegacyStore = "legacy";
         public const string VerifiedIntegrity = "verified";
@@ -378,6 +410,9 @@ public static class PublishedTokens
 
     public static class Statuses
     {
+        public const string Blocked = "blocked";
+        public const int AttentionExitCode = 2;
+        public const int IncompleteExitCode = 3;
         public const int BlockedExitCode = 5;
         public const int CompleteExitCode = 0;
         public const int InvalidExitCode = 4;
@@ -394,6 +429,8 @@ public static class PublishedTokens
 
     public static class Json
     {
+        public const string Recovery = "recovery";
+        public const string Disposition = "disposition";
         public const int EnvelopeSchemaVersion = 3;
         public const string SchemaVersion = "schemaVersion";
         public const string Effects = "effects";

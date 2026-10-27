@@ -14,6 +14,7 @@ internal static class RouteExcludeDataTextRenderer
             new("  " + CliText.Escape(global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.Before(data.Before ?? global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.NoRow())) + "\n"),
             new("  " + CliText.Escape(global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.After(data.After ?? global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.NoRow())) + "\n"),
         };
+        if (data.Catalogue is { } catalogue) spans.Insert(0, new CliTextSpan("  " + CliText.Escape(global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.Catalogue(catalogue)) + "\n"));
         if (data.Mode == "dry-run") spans.Add(new CliTextSpan(global::OpenForge.Cli.OutputText.Route.Exclude.RouteExcludeText.DryRun() + "\n"));
         return new CliTextDocument(spans);
     }

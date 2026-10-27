@@ -11,6 +11,8 @@ open-forge:
 
 Index maintains the selected context folder and reachable native Skill catalogues. Deliberately omitted loader rows remain omitted.
 
+Registered outside trees join discovery with exact `./path` source identities. Bare Index and explicit Loader selection maintain an outside tree only when its anchor is listed. Exact explicit selection can maintain an unlisted registered tree without relisting it, including completion of its required chain when the Loader is absent. The selected outside directory must be available and each effect must remain inside its physical boundary. File inclusion alone supplies no maintenance authority.
+
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
 ## Help
@@ -46,7 +48,7 @@ and CLI Development records current implementation and release work.
 
 Index completes missing description and tags in eligible user-owned routed Markdown, creates missing entrypoints below existing recognized roots, and rebuilds Entries in one checked plan. This is the Task 79 D1 and D2 contract, with realization in [Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md). It supersedes the former warning-only rule and missing-intermediate exclusion for eligible sources.
 
-The existing syntax and no-confirmation application remain. Preview uses `--dry-run`. No automatic, force or enrichment flag is added. Root selection includes prospective qualifying chains. Explicit leaf selection completes only its required chain and exposing parent. Detached selections gain no inferred root or completion authority.
+The existing syntax and no-confirmation application remain. Preview uses `--dry-run`. No automatic, force or enrichment flag is added. Root selection includes prospective qualifying chains. Explicit leaf selection completes only its required chain and exposing parent. Unregistered detached selections gain no inferred root or completion authority.
 
 Eligible sources, exclusions, derivation, form and partial-field behavior follow the [completion rules](../../technical-designs/forgiving-maintenance.md#metadata-completion-in-index). Descriptions use the first supported visible heading, otherwise a sentence-case filename. Tags use the exact category table there, including Memory states. Native Skill packages, overwrites, whole-file managed sources, generated content and recorded excluded or private contents are not completed. Existing generated Entries in eligible managed entrypoints may still be maintained.
 
@@ -219,7 +221,7 @@ open-forge index
 With no source operand, the command starts from the selected layout’s loader in
 the workspace.
 
-When that Loader is present, each intended root is one structurally valid,
+For primary content when that Loader is present, each intended root is one structurally valid,
 physically unique recognized entrypoint that directly represents one
 primary category folder in the selected layout. More than one recognized entrypoint representing the
 same root folder is ambiguous and blocks the request. The operand-free form
@@ -231,9 +233,11 @@ does not make explicit sources invalid: an explicit selection whose detached
 closure is complete may proceed. The command never adopts another Loader or
 silently includes an unreachable detached tree.
 
-Current generated lines do not add, hide, or order routed sources during rooted
+For primary content, current generated lines do not add, hide, or order routed sources during rooted
 selection. Selection follows the current topology rather than stale generated
 navigation.
+
+Outside automatic selection additionally requires the authored Loader listing. Structural registration alone never selects that tree for maintenance. A conditioned row remains a listing, and its authored metadata and conditions remain intact. Exact outside selections use their registered boundary independently from Loader reachability. A selected missing anchor can be restored from that registration without creating a Loader row. Direct child relationships still come from topology, and ancestors above the registration are never added.
 
 For Index selection only, a bounded bridge also considers native Skills already
 structurally reachable under the standard `.agents/skills` route, including

@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would move ./docs/team/left/old note.md to docs/team/right/new note.md",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "docs/team/right/new note.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": "docs/team/right/new note.overwrite.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": "docs/team/left/_left.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": "docs/team/left/incoming.md",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": "docs/team/right/_right.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": "docs/team/left/old note.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    },
+    {
+      "path": "docs/team/left/old note.overwrite.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    }
+  ],
+  "counts": {
+    "filesMoved": 2,
+    "sectionsUpdated": 2,
+    "linksRewritten": 2,
+    "filesScanned": 12
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "subject": "file",
+    "source": {
+      "id": "./docs/team/left/old note.md",
+      "path": "docs/team/left/old note.md"
+    },
+    "destination": {
+      "id": "./docs/team/right/new note.md",
+      "path": "docs/team/right/new note.md"
+    },
+    "moved": [
+      {
+        "from": "docs/team/left/old note.md",
+        "to": "docs/team/right/new note.md",
+        "overwrite": {
+          "from": "docs/team/left/old note.overwrite.md",
+          "to": "docs/team/right/new note.overwrite.md"
+        }
+      }
+    ],
+    "rewrittenLinks": [
+      {
+        "path": "docs/team/left/incoming.md",
+        "location": ":6:12",
+        "from": {
+          "id": "./docs/team/left/old note.md",
+          "path": "docs/team/left/old note.md"
+        },
+        "to": {
+          "id": "./docs/team/right/new note.md",
+          "path": "docs/team/right/new note.md"
+        }
+      },
+      {
+        "path": "docs/team/right/new note.md",
+        "location": ":8:12",
+        "from": {
+          "id": null,
+          "path": "docs/team/left/local.txt"
+        },
+        "to": {
+          "id": "./docs/team/left/local.txt",
+          "path": "docs/team/left/local.txt"
+        }
+      }
+    ],
+    "scan": {
+      "filesScanned": 12,
+      "occurrences": 4
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

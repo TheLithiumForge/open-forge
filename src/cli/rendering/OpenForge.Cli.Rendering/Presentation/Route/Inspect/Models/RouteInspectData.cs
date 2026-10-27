@@ -10,6 +10,9 @@ internal sealed record RouteInspectData
 
     public string? Path { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? MaintenanceRoot { get; init; }
+
     public string? Kind { get; init; }
 
     public string? EntrypointForm { get; init; }

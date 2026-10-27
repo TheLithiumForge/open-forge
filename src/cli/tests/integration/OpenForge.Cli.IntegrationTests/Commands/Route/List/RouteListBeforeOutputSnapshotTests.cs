@@ -7,6 +7,29 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List;
 [Trait("Feature", "command-output-snapshots"), Trait("Evidence", "Integration")]
 public sealed class RouteListBeforeOutputSnapshotTests
 {
+    [Fact, Trait("Boundary", "Output")]
+    public async Task Outside()
+    {
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var listed in new[] { false, true })
+        {
+            using var fixture = new RouteListOutsideWorkspace(listed: listed, compatibility: !listed);
+            var before = fixture.Inner.SnapshotHashes();
+            await new ReadCommandOutputCapture(fixture.Inner.Path).MatchDetailsAsync(new ReadOutputScenario
+            {
+                Situation = listed ? "listed-canonical" : "unlisted-compatibility",
+                Arguments = [OpenForge.Cli.Core.Commands.Route.RouteDefinitions.RouteGroup.Name,
+                    OpenForge.Cli.Core.Commands.Route.List.RouteListDefinitions.ListCommand.Name,
+                    OpenForge.Cli.Core.Framework.Sources.Identity.SourceWorkspaceRelativePath.LiteralReferencePrefix + fixture.Anchor,
+                    OpenForge.Cli.Core.Commands.Route.List.RouteListDefinitions.Depth.Name,
+                    OpenForge.Cli.Core.Commands.Route.List.RouteListDefinitions.AllDepth],
+                ExitCode = listed ? 0 : 2,
+            }, snapshotCollector: snapshots);
+            Assert.Equal(before, fixture.Inner.SnapshotHashes());
+        }
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
+    }
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route list output preserves selected depth and observed route conditions")]
     public async Task Routes()

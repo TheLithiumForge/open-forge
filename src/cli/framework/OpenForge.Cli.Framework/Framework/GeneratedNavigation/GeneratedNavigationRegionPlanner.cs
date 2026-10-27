@@ -54,7 +54,7 @@ internal sealed class GeneratedNavigationRegionPlanner
                 entryProjection.ReadCause());
         }
 
-        return BuildRegion(new SourceContentRoots(request.Formation.Catalogue.Layout), input.Source, document.ReadValue(), entryProjection.ReadValue(), ReadObservedLoader(request, input.Source),
+        return BuildRegion(request.Formation.Catalogue.Layout, input.Source, document.ReadValue(), entryProjection.ReadValue(), ReadObservedLoader(request, input.Source),
             request);
     }
 
@@ -71,10 +71,6 @@ internal sealed class GeneratedNavigationRegionPlanner
 
     internal GeneratedNavigationRegion PlanProjectedEntries(WorkspaceLayout layout, GeneratedNavigationRegionInput input,
         IReadOnlyList<GeneratedNavigationEntry> entries)
-        => PlanProjectedEntries(new SourceContentRoots(layout), input, entries);
-
-    private static GeneratedNavigationRegion PlanProjectedEntries(SourceContentRoots roots, GeneratedNavigationRegionInput input,
-        IReadOnlyList<GeneratedNavigationEntry> entries)
     {
         var document = ReadRegionDocument(input);
         if (!document.IsComplete)
@@ -85,7 +81,7 @@ internal sealed class GeneratedNavigationRegionPlanner
                 document.ReadCause());
         }
 
-        return BuildRegion(roots, input.Source, document.ReadValue(), entries, observedLoader: null);
+        return BuildRegion(layout, input.Source, document.ReadValue(), entries, observedLoader: null);
     }
 
     private static GeneratedNavigationProjectionStage<MarkdownDocumentFacts> ReadRegionDocument(
@@ -127,7 +123,7 @@ internal sealed class GeneratedNavigationRegionPlanner
     }
 
     private static GeneratedNavigationRegion BuildRegion(
-        SourceContentRoots roots,
+        WorkspaceLayout layout,
         SourceLogicalSource source,
         MarkdownDocumentFacts document,
         IReadOnlyList<GeneratedNavigationEntry> entries,
@@ -136,8 +132,9 @@ internal sealed class GeneratedNavigationRegionPlanner
     {
         try
         {
+            var roots = new SourceContentRoots(layout);
             var linkSource = observedLoader ?? document;
-            var authoredLinks = ReadAuthoredLinks(roots, source, linkSource, entries, request);
+            var authoredLinks = ReadAuthoredLinks(layout, source, linkSource, entries, request);
             if (source.Base.Form == SourceDocumentForm.Loader && request?.LoaderEdit is { } loaderEdit)
             {
                 authoredLinks = ApplyLoaderEdit(roots, authoredLinks, loaderEdit);
@@ -162,7 +159,8 @@ internal sealed class GeneratedNavigationRegionPlanner
         GeneratedNavigationProjectionRequest request,
         MarkdownDocumentFacts document)
     {
-        var structural = request.Topology.LoaderRootPaths;
+        var structural = request.Topology.LoaderRootPaths
+            .Where(path => !SourceLogicalPath.IsOutsideSource(request.Formation.Catalogue.Layout, path)).ToArray();
         if (!request.PreserveLoaderMembership)
         {
             return structural;
@@ -207,8 +205,18 @@ internal sealed class GeneratedNavigationRegionPlanner
 
         var selected = new List<SourceLogicalSource>();
         var physicalPaths = new HashSet<string>(PhysicalIdentityTracker.PathComparer);
+        var authoredOutsidePaths = new HashSet<string>(StringComparer.Ordinal);
+        if (SourceLogicalPath.IsOutsideSource(request.Formation.Catalogue.Layout, parent.Base.CanonicalPath))
+        {
+            foreach (var entry in SourceGeneratedEntriesParser.Parse(document).Entries)
+                if (SourceGeneratedDestinationResolver.ResolveLinked(request.Formation.Catalogue.Layout, parent.Base.CanonicalPath, false, entry.Destination) is { } path)
+                    authoredOutsidePaths.Add(request.Formation.Catalogue.FindByPath(path)?.Base.CanonicalPath ?? path);
+            foreach (var row in request.Formation.Catalogue.IncludedRows.Where(row => row.ParentPath == parent.Base.CanonicalPath))
+                authoredOutsidePaths.Add(request.Formation.Catalogue.FindByPath(row.Path)?.Base.CanonicalPath ?? row.AliasOf ?? row.Path);
+        }
         foreach (var childPath in childPaths)
         {
+            if (authoredOutsidePaths.Contains(childPath)) continue;
             if (!request.Sharing.Includes(childPath)) continue;
             var child = request.FindSource(childPath);
             if (child is null)
@@ -459,12 +467,13 @@ internal sealed class GeneratedNavigationRegionPlanner
 
     // Index keeps authored link rows as written, after the generated rows and in their original order.
     private static IReadOnlyList<string> ReadAuthoredLinks(
-        SourceContentRoots roots,
+        WorkspaceLayout layout,
         SourceLogicalSource source,
         MarkdownDocumentFacts document,
         IReadOnlyList<GeneratedNavigationEntry> entries,
         GeneratedNavigationProjectionRequest? request)
     {
+        var roots = new SourceContentRoots(layout);
         if (document.GeneratedRegion.EntriesBlock is not { Exists: true } block)
         {
             return [];
@@ -476,6 +485,13 @@ internal sealed class GeneratedNavigationRegionPlanner
         foreach (var line in text.Split('\n'))
         {
             if (!MarkdownEntryRowParser.TryParse(line, out var row, out _)) continue;
+            var outsidePath = SourceGeneratedDestinationResolver.ResolveLinked(roots, source.Base.CanonicalPath, false, row.Destination);
+            if (SourceLogicalPath.IsOutsideSource(layout, source.Base.CanonicalPath)
+                && (outsidePath is null || !generatedPaths.Contains(outsidePath)))
+            {
+                authored.Add(line);
+                continue;
+            }
             var path = source.Base.Form == SourceDocumentForm.Loader
                 ? SourceGeneratedDestinationResolver.Resolve(roots, source.Identity.CanonicalBasePath, true, row.Destination)
                 : null;

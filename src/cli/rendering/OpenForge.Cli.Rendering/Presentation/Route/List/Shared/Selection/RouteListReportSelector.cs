@@ -60,6 +60,7 @@ internal static class RouteListReportSelector
     private static RouteListDataRow ProjectRow(RouteListPresentationRow row)
         => new()
         {
+            MaintenanceRoot = row.MaintenanceRoot,
             Id = row.Id,
             Path = row.Path,
             Description = Description(row),

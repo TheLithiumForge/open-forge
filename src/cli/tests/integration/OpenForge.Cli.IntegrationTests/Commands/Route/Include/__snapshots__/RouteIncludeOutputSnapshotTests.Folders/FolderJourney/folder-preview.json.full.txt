@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 3,
+  "command": "route include",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would include 'project/team notes'.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "project/team notes/_team notes.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "---\nopen-forge:\n  description: Notes in ./project/team notes\n  tags: [Workspace]\n---\n\n# Team notes\n\nNotes in ./project/team notes.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- none - No entries - #Empty"
+    },
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "# Open Forge Loader\n\n## Entries\n\n- none - No entries - #Empty",
+      "after": "# Open Forge Loader\n\n## Entries\n\n- [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)\n"
+    },
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "{\"schemaVersion\":2,\"other\":true}\n",
+      "after": "{\n  \"schemaVersion\": 5,\n  \"other\": true,\n  \"outsideRoutes\": [\n    \"project/team notes\"\n  ],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\n}"
+    }
+  ],
+  "counts": {
+    "filesChanged": 3
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": "project/team notes",
+    "targetKind": "folder",
+    "catalogue": "project/team notes/_team notes.md",
+    "before": null,
+    "after": "- [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)",
+    "registeredBefore": false,
+    "registeredAfter": true,
+    "verified": false
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

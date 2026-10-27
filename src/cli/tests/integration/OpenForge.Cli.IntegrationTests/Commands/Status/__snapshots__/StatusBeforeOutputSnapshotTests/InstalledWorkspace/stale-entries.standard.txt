@@ -20,7 +20,7 @@ Startup context
   Shipped by this CLI:   7 files, about 4.0k tokens
   This workspace:        7 files, about 4.0k tokens
   May load again later:  1 file, about 0.2k tokens
-All routed files: 19 files, about 26.5k tokens (startup is 15%)
+All routed files: 19 files, about 28.2k tokens (startup is 14%)
 Routes: 7 root categories, 10 Entries sections current
 Framework files: 19 current
   Update the Framework files that need attention.

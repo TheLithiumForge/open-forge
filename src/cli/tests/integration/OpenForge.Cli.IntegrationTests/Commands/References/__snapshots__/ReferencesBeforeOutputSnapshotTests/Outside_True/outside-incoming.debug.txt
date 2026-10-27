@@ -1,0 +1,14 @@
+./target.md
+Workspace: <workspace>
+  in   ./docs/team/links.md:3:1   base
+  in   ./docs/team/links.md:3:26   base
+  in   ./docs/team/unlisted.md:3:1   base
+3 in, 0 out
+The incoming scan used every source.
+Scanned 6 sources for incoming links.
+    docs/team/_team.md   base
+    docs/team/links.md   base
+    docs/team/opaque.mdc   base
+    docs/team/unlisted.md   base
+    target.md   base
+    knowledge/main/loader.md   base

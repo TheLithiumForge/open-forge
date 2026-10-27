@@ -9,7 +9,7 @@ open-forge:
 
 ## Workspace Layout
 
-Incoming scans cover eligible Markdown in both primary content locations and active included sources. Report actual workspace paths separately from source IDs.
+Incoming scans cover eligible Markdown in both primary content locations, registered outside inventory and active included sources. Outside sources retain exact `./path` identities, including unlisted registered files. Report actual workspace paths separately from source IDs. Registration does not turn generated Entries into authored references or make opaque files Markdown.
 
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
@@ -185,7 +185,8 @@ With no include or exclude flag, incoming work uses this command's normal
 default universe: every ordinary Markdown candidate physically contained below
 the selected workspace’s primary content locations, including routed and unrouted
 sources, entrypoints, `SKILL.md`, Markdown Skill resources, Templates, and valid
-base/overwrite layers grouped as logical sources. Active included Markdown files
+base/overwrite layers grouped as logical sources. Eligible registered outside
+Markdown also participates, including unlisted files. Active included Markdown files
 and the listed descendants of included catalogues also participate. Other
 included text formats are opaque. Non-Markdown resources,
 provider bridges outside the primary content locations, receipts, recovery data, and operational
@@ -245,8 +246,8 @@ needed to distinguish a source edge from a transitive graph path:
 ### Local Targets
 
 Contained local targets retain their canonical workspace-relative path. A local
-target outside the primary content locations has no short Open Forge ID. An active included target
-uses its exact `./path` reference, while an unlisted target uses a null local ID
+target outside the primary content locations has no short Open Forge ID. A registered or active included target
+uses its exact `./path` reference. Other unlisted targets use a null local ID
 while retaining its contained canonical path. Resolution findings such as missing,
 unsupported, unsafe, or ambiguous local destinations remain visible rather than
 being dropped.

@@ -19,6 +19,9 @@ internal static class RouteCreatePlanEquivalence
             && expected.LayoutRead.State == actual.LayoutRead.State
             && string.Equals(expected.LayoutRead.Layout?.MainRoot, actual.LayoutRead.Layout?.MainRoot, StringComparison.Ordinal)
             && expected.LayoutRead.Expectations.SequenceEqual(actual.LayoutRead.Expectations)
+            && expected.LayoutRead.OutsideRoutes.Select(route => (route.Descriptor, route.State, route.PhysicalDirectory))
+                .SequenceEqual(actual.LayoutRead.OutsideRoutes.Select(route => (route.Descriptor, route.State, route.PhysicalDirectory)))
+            && expected.ReadExpectations.SequenceEqual(actual.ReadExpectations)
             && expected.SharingExpectation == actual.SharingExpectation
             && MatchesPreview(expected.Preview, actual.Preview)
             && RouteCreateFormationEquivalence.Matches(

@@ -36,7 +36,7 @@ internal sealed partial class RouteMoveNavigationPlanner
 
         foreach (var region in projection.Regions)
         {
-            var observed = _regionPlanner.Plan(
+            var observed = ProjectRegion(
                 projection.Request
                     ?? throw new InvalidOperationException(
                         "A complete post-move navigation projection requires its request."),

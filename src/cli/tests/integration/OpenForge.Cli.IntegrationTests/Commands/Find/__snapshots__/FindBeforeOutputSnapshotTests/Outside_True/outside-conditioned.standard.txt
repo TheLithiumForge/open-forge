@@ -1,0 +1,7 @@
+1 source matches --tag RowPolicy.
+Workspace: <workspace>
+  ./docs/team/rule.md  docs/team/rule.md  First authored policy
+applicability: matched
+  docs/team/_team.md: src/**
+  docs/team/rule.md: **/*.cs
+matching paths: src/App.cs

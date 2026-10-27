@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 
@@ -50,12 +51,14 @@ internal static class RouteInspectResolutionSupport
     }
 
     internal static IReadOnlyList<RouteInspectResolutionIssue> ReadCatalogueBoundaryIssues(
-        SourceCatalogue catalogue)
+        SourceCatalogue catalogue, string? selectedPath = null)
     {
         var issues = new List<RouteInspectResolutionIssue>();
         foreach (var issue in catalogue.Issues)
         {
-            var boundaryPath = catalogue.Layout.IsDefault ? catalogue.Layout.MainRoot : issue.AttemptedCanonicalPath;
+            var outside = RouteOutsideRouteReader.MaintenanceRoot(catalogue.Layout, issue.AttemptedCanonicalPath);
+            if (outside is not null && (selectedPath is null || !RouteOutsideRouteReader.Contains(outside, selectedPath))) continue;
+            var boundaryPath = catalogue.Layout.IsDefault && outside is null ? catalogue.Layout.MainRoot : issue.AttemptedCanonicalPath;
             var mapped = issue.Code switch
             {
                 SourceCatalogueIssueCode.RootUnsafe => CreateIssue(

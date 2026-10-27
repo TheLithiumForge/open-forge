@@ -13,6 +13,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Workspace.Shared.Paths;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -90,6 +92,23 @@ internal sealed class RouteInitPlanningInspector
                 requestedTarget);
         }
 
+        if (requestedTarget.CanonicalPath is { } selectedPath
+            && layout.TryGetMaintenanceBoundary(selectedPath, out var selectedBoundary)
+            && selectedBoundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside)
+        {
+            if (request.Scaffold == RouteInitScaffold.Framework)
+                return Stopped(RouteInitFindingCode.FrameworkAlignmentBlocked,
+                    "Framework scaffolding requires a primary Framework destination.", incomplete: false, requestedTarget);
+            try
+            {
+                RouteInitCurrentStateReader.RequireOutsidePhysicalTarget(layoutRead, selectedPath, cancellationToken);
+            }
+            catch (RouteInitPlanningException exception)
+            {
+                return Stopped(exception.Code, exception.Message, exception.Incomplete, requestedTarget);
+            }
+        }
+
         FrameworkPayload? payload = null;
         RouteInitFrameworkAlignment? alignment = null;
         var target = requestedTarget;
@@ -145,6 +164,7 @@ internal sealed class RouteInitPlanningInspector
 
         var catalogue = await _currentStateReader.ReadCatalogueAsync(
                 layout,
+                target,
                 cancellationToken)
             .ConfigureAwait(false);
         if (catalogue.IsCancelled)
@@ -190,8 +210,16 @@ internal sealed class RouteInitPlanningInspector
 
         var restorationDirectory = alignment is { IsCanonicalRestoration: true, Target.CanonicalPath: { } restorationPath }
             ? SourceLogicalPath.ReadParent(restorationPath) : null;
-        var current = await _currentStateReader.ReadChainAsync(catalogue, target, cancellationToken, restorationDirectory)
-            .ConfigureAwait(false);
+        RouteInitCurrentStateFacts current;
+        try
+        {
+            current = await _currentStateReader.ReadChainAsync(catalogue, target, layoutRead, cancellationToken, restorationDirectory)
+                .ConfigureAwait(false);
+        }
+        catch (RouteInitPlanningException exception)
+        {
+            return Stopped(exception.Code, exception.Message, exception.Incomplete, target);
+        }
         if (alignment?.IsCanonicalRestoration == true && catalogue.Formation?.Loader is null)
         {
             return Stopped(RouteInitFindingCode.FrameworkInstallRequired,
@@ -261,6 +289,8 @@ internal sealed class RouteInitPlanningInspector
             SourceCatalogueIssueCode.IdentityCollision
                 or SourceCatalogueIssueCode.PhysicalAlias
                 or SourceCatalogueIssueCode.OrphanOverwrite => (RouteInitFindingCode.IdentityCollision, false),
+            SourceCatalogueIssueCode.EntrypointAmbiguous
+                or SourceCatalogueIssueCode.EntrypointCompatibilityCollision => (RouteInitFindingCode.RouteAmbiguous, false),
             SourceCatalogueIssueCode.RootUnsafe
                 or SourceCatalogueIssueCode.CandidateUnsafe => (RouteInitFindingCode.TargetUnsafe, false),
             SourceCatalogueIssueCode.RootMissing when isFramework => (RouteInitFindingCode.FrameworkInstallRequired, false),
@@ -281,14 +311,16 @@ internal sealed class RouteInitPlanningInspector
     {
         if (target.Kind != RouteInitTargetKind.ExactPath
             || target.CanonicalPath is not { } requestedPath
+            || (current.Catalogue.Layout.TryGetMaintenanceBoundary(requestedPath, out var boundary)
+                && boundary.Kind == WorkspaceMaintenanceBoundaryKind.Outside
+                && requestedPath == WorkspaceRoutePath.CanonicalEntrypointPath(SourceLogicalPath.ReadParent(requestedPath)))
             || !SourceFormClassifier.TryClassify(current.Catalogue.Layout, requestedPath, out var requestedForm)
             || !SourceFormClassifier.IsCompatibilityEntrypoint(requestedForm))
         {
             return null;
         }
 
-        var exactExists = target.Id is { } targetId
-            && current.Catalogue.FindAllById(targetId).Any(source =>
+        var exactExists = current.ObservedSources.Any(source =>
                 SourceFormClassifier.IsEntrypoint(source.Base.Form)
                 && string.Equals(
                     source.Identity.CanonicalBasePath,

@@ -16,7 +16,7 @@ using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Include;
 
-public sealed class RouteIncludePlanningTests
+public sealed partial class RouteIncludePlanningTests
 {
     private const string GitConfig = WorkspaceSettingsDefinitions.GitMetadataDirectoryName + "/config";
     private const string DeepNote = SourceLogicalPath.AgentsRoot + "/" + Category + "/deep/note" + SourceFormClassifier.MarkdownExtension;
@@ -107,8 +107,6 @@ public sealed class RouteIncludePlanningTests
     }
 
     [Theory(DisplayName = "Include rejects unsupported operands with a named cause and no writes"), Trait("Feature", "route-include"), Trait("Evidence", "Integration")]
-    [InlineData("docs")]
-    [InlineData("empty")]
     [InlineData(MissingPath)]
     [InlineData("*.md")]
     [InlineData("https://example.invalid/a.md")]

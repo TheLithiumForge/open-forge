@@ -11,6 +11,17 @@ open-forge:
 
 Use retained catalogue identities and the actual loader for loading and Axiom facts. Project paths into guidance instead of deriving them from fixed path segments.
 
+Retain outside availability, included rows and aliases through resolution and
+profile construction. Explicit selection may inspect unlisted registered
+inventory without activating it. Preserve authored conditions, tags and
+first-reaching effective policy through the existing loading owner. Scope
+outside failures to requested facts and keep unknown measurements unknown.
+Project `maintenanceRoot` from an ordinal declaration match on the represented
+coordinate, independently of loading, ownership or permission. Omit an
+inapplicable coordinate and preserve existing primary and file-only behavior.
+For a detached outside root, describe its absent parent as detached at every
+text detail rather than implying Loader ancestry. This adds no loading fact.
+
 See the [shared layout contract](../../../shared-operation-contract.md#workspace-layout).
 
 ## Status And Authority

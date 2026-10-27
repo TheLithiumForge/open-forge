@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings;
@@ -43,6 +44,7 @@ public sealed class WorkspaceLayoutReadTests
         Assert.Same(ownership, read.Ownership);
         Assert.Same(issue, Assert.Single(read.Issues));
         Assert.Equal(expectation, Assert.Single(read.Expectations));
+        Assert.Empty(read.OutsideRoutes);
         Assert.NotEqual(WorkspaceLayoutReadState.Ready, read.State);
         Assert.NotEqual(WorkspaceLayoutReadState.Uninstalled, read.State);
     }
@@ -59,6 +61,7 @@ public sealed class WorkspaceLayoutReadTests
             WorkspaceLayoutReadState.Invalid, settings, ownership, WorkspaceLayout.Create(workspace, WorkspaceLayout.DefaultMainRoot), [], []));
         var read = new WorkspaceLayoutRead(WorkspaceLayoutReadState.Invalid, settings, ownership, null, [], []);
         Assert.Null(read.Layout);
+        Assert.Empty(read.OutsideRoutes);
         Assert.Same(settings, read.Settings);
         Assert.Same(ownership, read.Ownership);
     }
@@ -75,5 +78,29 @@ public sealed class WorkspaceLayoutReadTests
         Assert.Same(layout, read.Layout);
         Assert.Same(issue, Assert.Single(read.Issues));
         Assert.Throws<ArgumentOutOfRangeException>(() => new WorkspaceLayoutRead((WorkspaceLayoutReadState)999, settings, ownership, null, [], []));
+    }
+
+    [Fact(DisplayName = "Outside diagnostics retain declaration order without changing primary readiness")]
+    public void RetainsOutsideObservations()
+    {
+        var workspace = new CliWorkspace(AppContext.BaseDirectory, AppContext.BaseDirectory, CliWorkspaceSelectionMethod.CurrentDirectory);
+        var layout = WorkspaceLayout.Create(workspace, CustomRoot).WithOutsideRoutes(["reference", "notes"]);
+        var settings = WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceSettingsDefinitions.RelativePath));
+        var ownership = WorkspaceOwnershipRead.Absent(Path.Combine(workspace.LexicalRoot, WorkspaceOwnershipDefinitions.RelativePath));
+        var outside = layout.OutsideRoutes.Select(descriptor => new WorkspaceOutsideRouteRead
+        {
+            Descriptor = descriptor,
+            State = WorkspaceOutsideRouteReadState.Missing,
+            PhysicalDirectory = null,
+            DirectoryObservation = OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models.NoFollowLeafObservation.Missing(Path.Combine(workspace.LexicalRoot, descriptor.DirectoryPath)),
+            DirectoryResolution = OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models.PhysicalPathResolution.Classified(
+                OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models.PhysicalPathState.Missing, Path.Combine(workspace.LexicalRoot, descriptor.DirectoryPath)),
+        }).ToImmutableArray();
+        var read = new WorkspaceLayoutRead(WorkspaceLayoutReadState.Ready, settings, ownership, layout, [], [], outside);
+
+        Assert.Equal(WorkspaceLayoutReadState.Ready, read.State);
+        Assert.Same(layout, read.Layout);
+        Assert.Equal(outside, read.OutsideRoutes);
+        Assert.Empty(read.Issues);
     }
 }

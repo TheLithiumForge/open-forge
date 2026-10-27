@@ -2,11 +2,11 @@
 
 Open Forge is a set of plain Markdown files that tells AI coding agents where a project's rules and knowledge live and when to read them. Everything works with ordinary file reads. The CLI only makes it faster and keeps navigation current.
 
-This topic explains the ideas. Your workspace's own `.agents/loader.md` is the authority for how agents read it, so read that file before you work in a workspace.
+This topic explains the ideas. The selected workspace loader is the authority for how agents read it. The default is `.agents/loader.md`. First installation may choose another context folder, while native Skills, settings and ownership stay in `.agents` and runtime storage stays in `.open-forge-state/`.
 
 ## Start here
 
-Agents read `.agents/loader.md` before every task. It says what to read, how to use it and how to change what agents use.
+Agents read the selected loader before every task. It says what to read, how to use it and how to change what agents use.
 
 - Without the CLI, open the loader and follow its steps.
 - With the CLI, `open-forge context --for <file>`, once for each file you will work on, returns the required reads in one call. You still choose the other relevant entries yourself.
@@ -75,11 +75,15 @@ Each top-level folder holds one kind of content, and a workspace adds only the o
 
 There are three ways to bring reusable knowledge in:
 
-- **Include** uses a document already in this project, where it lives. `open-forge route include CONTRIBUTING.md --description "Contribution rules" --tag LoadNow` adds its line to the loader, and `open-forge route exclude CONTRIBUTING.md` removes it. A line written by hand works the same way.
+- **File Include** uses a document already in this project, where it lives. `open-forge route include CONTRIBUTING.md --description "Contribution rules" --tag LoadNow` adds its line to the loader, and `open-forge route exclude CONTRIBUTING.md` removes it. A line written by hand works the same way.
 - A **Library** projects a folder registered in this workspace into another place through relative file links.
 - An **Extension** packages files you can install in any project and keeps them up to date.
 
 An included file needs no frontmatter. Its line carries the description, tags and conditions, and another tool's frontmatter never decides when it loads. A Markdown file with its own `## Entries` brings its listed files along. `.agents/open-forge.json` records included files under `roots`, but the loader's line decides whether and how each one loads.
+
+Folder Include instead registers a safe existing directory outside the main root as a maintained route. `open-forge route include docs/team --dry-run` previews registration in settings v5 `outsideRoutes`, a Loader row and creation of only the missing canonical `docs/team/_team.md`. An existing catalogue keeps its bytes. File inclusion alone never grants folder maintenance. Folder Exclude removes the registration and matching Loader rows without deleting content.
+
+Use exact source references with filenames, such as `./docs/team/_team.md`. Registration supplies inventory, while authored rows, loading tags and conditions decide what agents read. An unlisted registration can be maintained explicitly without relisting it. Outside `SKILL.md` files are ordinary Markdown. Registration grants no package ownership or implicit Extension or Library permission. Older CLIs do not maintain directory registrations, and preserving an unknown settings key does not make them compatible.
 
 Management decides which files the CLI may install, update or remove. It never decides what a file means or what is accepted.
 
@@ -92,7 +96,9 @@ Management decides which files the CLI may install, update or remove. It never d
 
 ## Keeping navigation current
 
-`open-forge index` fills in missing metadata and the generated `Entries` lists inside `.agents/`. It keeps the loader lines you or `route include` wrote, in their order, and never writes to included files outside `.agents/`. Preview with `open-forge index --dry-run`.
+`open-forge index` fills missing metadata and generated `Entries` in selected primary or registered outside routes. Bare Index maintains listed roots. Exact explicit selection can maintain an unlisted outside tree without relisting it. File-only inclusion does not make its target writable. Retained authored rows keep their policy and mutual order. Preview with `open-forge index --dry-run`.
+
+Route Create, generic Route Init, Route Update, Route Move and Route Remove also work within admitted outside boundaries. Create needs an existing safe anchor. Init owns missing-chain restoration. Existing compatibility anchors keep their filenames. Move stays in one registration, and Move and Remove protect its directory and root entrypoints. Required foreign rewrites stop the complete plan. Writes retain expected-state checks, locking and recovery at the fixed runtime location.
 
 `open-forge status` summarizes the workspace and its startup cost. `open-forge doctor` diagnoses routes, links and lifecycle without changing anything.
 

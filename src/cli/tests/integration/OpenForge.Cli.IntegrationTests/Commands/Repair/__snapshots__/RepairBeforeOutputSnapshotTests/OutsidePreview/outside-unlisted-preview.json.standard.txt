@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would repair 1 link.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "docs/team/nested/note.md:3:14",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "./guide.md -> guide.md",
+      "owner": null
+    },
+    {
+      "path": "docs/team/_team.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/nested/_nested.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "docs/team/nested/guide.md",
+      "kind": "file",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksRepaired": 1,
+    "problemsRemaining": 0,
+    "problemsNeedingChoice": 0,
+    "problemsNeedingHand": 0,
+    "librarySteps": 0,
+    "entriesUpdated": 2,
+    "metadataCompleted": 2,
+    "entrypointsCreated": 2,
+    "filesSkipped": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "selection": "automatic",
+    "repairs": [
+      {
+        "path": "docs/team/nested/note.md",
+        "location": {
+          "line": 3,
+          "column": 14
+        },
+        "from": "./guide.md",
+        "to": "guide.md"
+      }
+    ],
+    "remaining": [],
+    "renames": [],
+    "navigation": [
+      {
+        "path": "docs/team/_team.md",
+        "before": 0,
+        "after": 1
+      },
+      {
+        "path": "docs/team/nested/_nested.md",
+        "before": 0,
+        "after": 2
+      }
+    ],
+    "metadata": [
+      {
+        "path": "docs/team/nested/guide.md",
+        "fields": [
+          "description",
+          "tags"
+        ],
+        "description": "Guide",
+        "tags": [
+          "Workspace"
+        ],
+        "outcome": "planned"
+      },
+      {
+        "path": "docs/team/nested/note.md",
+        "fields": [
+          "description",
+          "tags"
+        ],
+        "description": "Note",
+        "tags": [
+          "Workspace"
+        ],
+        "outcome": "planned"
+      }
+    ],
+    "entrypoints": [
+      {
+        "path": "docs/team/_team.md",
+        "outcome": "planned"
+      },
+      {
+        "path": "docs/team/nested/_nested.md",
+        "outcome": "planned"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair --automatic --workspace <workspace>",
+    "reason": "Apply the previewed repairs."
+  }
+}

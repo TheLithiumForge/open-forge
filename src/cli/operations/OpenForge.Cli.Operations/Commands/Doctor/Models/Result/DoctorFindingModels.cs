@@ -137,6 +137,7 @@ internal sealed record DoctorFinding
     internal string? CustomMainRoot { get; init; }
     internal string? CustomLoaderPath { get; init; }
     internal bool IsIncludedFile { get; init; }
+    internal DoctorOutsideRouteCondition? OutsideRoute { get; init; }
 
     internal Commands.Shared.Models.FolderReferenceFinding? FolderReference { get; init; }
     internal string? ProtectedReferencePath { get; init; }

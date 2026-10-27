@@ -1,0 +1,9 @@
+status=completed
+referenceKind=source-path
+selectionMethod=exact-path
+requested=docs/team/index.md
+identity=present
+profile=present
+observations=2
+conditions=0
+next=none

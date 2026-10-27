@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
 
-// Root and ancestor entrypoints are observed or intended route facts supplied by the maintenance caller.
+// Root and ancestor entrypoints are selected observed or intended facts supplied by the maintenance caller.
 // Directory names alone do not establish a root or a Memory state.
 internal sealed record RoutedMetadataFileFacts
 {

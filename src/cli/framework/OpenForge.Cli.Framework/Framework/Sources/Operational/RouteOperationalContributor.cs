@@ -11,6 +11,14 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 
 internal interface IRouteOperationalContributor
 {
+    ValueTask<RouteOutsideRoutesObservation> ReadOutsideAsync(WorkspaceLayoutRead observation, CancellationToken cancellationToken);
+
+    ValueTask<RouteStatusView> ReadStatusAsync(WorkspaceLayoutRead observation, SourceSharing? sharing,
+        CancellationToken cancellationToken, RouteOutsideRoutesObservation retained);
+
+    ValueTask<RouteDoctorView> ReadDoctorAsync(WorkspaceLayoutRead observation, SourceSharing? sharing,
+        CancellationToken cancellationToken, RouteOutsideRoutesObservation retained);
+
     // Null preserves unavailable policy; absent locks supply an explicit empty sharing view.
     ValueTask<RouteStatusView> ReadStatusAsync(
         WorkspaceLayoutRead observation,
@@ -27,6 +35,17 @@ internal sealed class RouteOperationalContributor(RouteObservationReader reader)
     : IRouteOperationalContributor
 {
     private readonly RouteObservationReader _reader = reader;
+
+    ValueTask<RouteOutsideRoutesObservation> IRouteOperationalContributor.ReadOutsideAsync(WorkspaceLayoutRead observation, CancellationToken cancellationToken)
+        => _reader.ReadOutsideAsync(observation, cancellationToken);
+
+    ValueTask<RouteStatusView> IRouteOperationalContributor.ReadStatusAsync(WorkspaceLayoutRead observation, SourceSharing? sharing,
+        CancellationToken cancellationToken, RouteOutsideRoutesObservation retained)
+        => _reader.ReadStatusAsync(observation, sharing, cancellationToken, retained);
+
+    ValueTask<RouteDoctorView> IRouteOperationalContributor.ReadDoctorAsync(WorkspaceLayoutRead observation, SourceSharing? sharing,
+        CancellationToken cancellationToken, RouteOutsideRoutesObservation retained)
+        => _reader.ReadDoctorAsync(observation, sharing, cancellationToken, retained);
 
     internal async ValueTask<RouteDoctorView> ReadDoctorAsync(CliWorkspace workspace, SourceSharing? sharing, CancellationToken cancellationToken)
     {

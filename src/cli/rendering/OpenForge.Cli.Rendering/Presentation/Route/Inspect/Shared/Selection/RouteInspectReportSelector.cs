@@ -71,6 +71,7 @@ internal static class RouteInspectReportSelector
         {
             Id = identity?.Id,
             Path = identity?.CanonicalWorkspaceRelativePath,
+            MaintenanceRoot = identity?.MaintenanceRoot,
             WorkingPaths = result.WorkingPaths?.ToArray(),
             MatchingFiles = ProjectMatchingFiles(result.MatchingFiles),
             Kind = identity is null ? null : RouteInspectWording.SourceKind(identity.Kind),

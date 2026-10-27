@@ -82,6 +82,12 @@ internal sealed class RouteListRow
 
     internal string Id { get; }
 
+    internal string? MaintenanceRoot { get; init; }
+
+    internal RouteListRow WithMaintenanceRoot(string? directory)
+        => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, DirectChildCount, Provenance)
+        { IsUnlisted = IsUnlisted, IsMissing = IsMissing, MaintenanceRoot = directory };
+
     internal bool IsUnlisted { get; init; }
 
     internal bool IsMissing { get; init; }
@@ -93,10 +99,12 @@ internal sealed class RouteListRow
         { IsUnlisted = true };
 
     internal RouteListRow WithDirectChildCount(int? count)
-        => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, count, Provenance) { IsUnlisted = IsUnlisted };
+        => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, count, Provenance)
+        { IsUnlisted = IsUnlisted, IsMissing = IsMissing, MaintenanceRoot = MaintenanceRoot };
 
     internal RouteListRow AsMissing()
-        => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, DirectChildCount, Provenance) { IsMissing = true };
+        => new(Id, Path, ParentId, ParentPath, AbsoluteDepth, RelativeDepth, Kind, Description, Tags, DirectChildCount, Provenance)
+        { IsUnlisted = IsUnlisted, IsMissing = true, MaintenanceRoot = MaintenanceRoot };
 
     internal string Path { get; }
 

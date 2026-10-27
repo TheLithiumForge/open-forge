@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 
@@ -14,6 +16,7 @@ internal sealed record RouteUpdateSourceSelection
     public required RouteUpdateTarget Target { get; init; }
     public required SourceCatalogue Catalogue { get; init; }
     public required SourceLogicalSource Source { get; init; }
+    public ImmutableArray<FileStateSnapshot> SupportingSnapshots { get; init; } = [];
 }
 
 internal sealed class RouteUpdateSourceSelectionBuild
@@ -46,6 +49,7 @@ internal sealed record RouteUpdateLayerObservationInput
 {
     public required CliWorkspace Workspace { get; init; }
     public required SourceLayer Layer { get; init; }
+    public WorkspaceLayoutRead? LayoutRead { get; init; }
 }
 
 internal sealed record RouteUpdateObservationBoundaryInput

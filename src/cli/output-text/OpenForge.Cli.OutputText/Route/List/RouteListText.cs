@@ -4,6 +4,9 @@ namespace OpenForge.Cli.OutputText.Route.List;
 
 internal static class RouteListText
 {
+    // @OpenForgeText route.list.label.maintenance-root
+    internal static string LabelMaintenanceRoot() => "Maintenance root";
+
     // @OpenForgeText route.list.label.registered-include-unlisted
     internal static string RegisteredIncludeUnlisted() => "Registered include (not in the loader)";
 

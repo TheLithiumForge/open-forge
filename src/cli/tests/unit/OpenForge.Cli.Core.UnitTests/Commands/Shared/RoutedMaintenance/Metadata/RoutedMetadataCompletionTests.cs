@@ -18,21 +18,54 @@ public sealed class RoutedMetadataCompletionTests
     [Fact(DisplayName = "Boolean reference membership allocates only its stateless protection check")]
     public void MembershipDoesNotConstructMaintenancePolicy()
     {
+        const int WarmupCheckCount = 100;
+        const int ShortCheckCount = 1000;
+        const int LongCheckCount = ShortCheckCount * 4;
+        const int AdditionalCheckCount = LongCheckCount - ShortCheckCount;
         var policy = new RoutedMetadataCompletionPolicy();
-        var context = Context();
         var path = Facts().CanonicalPath;
-        var direct = Allocated(() => policy.Protection(path, context) is RoutedMetadataEligibility.Eligible or RoutedMetadataEligibility.LibraryProjection);
-        var membership = Allocated(() => ReferenceProtectionReader.Allows(path, context));
-        Assert.Equal(direct, membership);
-
-        static long Allocated(Func<bool> check)
+        var libraryContext = Context() with
         {
-            for (var index = 0; index < 100; index++) Assert.True(check());
+            Ownership = WorkspaceOwnershipDocument.Empty with
+            {
+                Libraries = [new("library", Path.GetFullPath("source"), DefaultWorkspaceLayout.CategoryDirectory(WorkspaceCategoryNames.Guidance), [path])],
+            },
+        };
+        foreach (var (context, expected) in new[]
+        {
+            (Context(), RoutedMetadataEligibility.Eligible),
+            (libraryContext, RoutedMetadataEligibility.LibraryProjection),
+        })
+        {
+            Assert.Equal(expected, policy.Protection(path, context));
+            Func<bool> direct = () => policy.Protection(path, context) is RoutedMetadataEligibility.Eligible or RoutedMetadataEligibility.LibraryProjection;
+            Func<bool> membership = () => ReferenceProtectionReader.Allows(path, context);
+            for (var index = 0; index < WarmupCheckCount; index++)
+            {
+                Assert.True(direct());
+                Assert.True(membership());
+            }
+
+            var directShort = Allocated(direct, ShortCheckCount);
+            var membershipShort = Allocated(membership, ShortCheckCount);
+            var directGrowth = Allocated(direct, LongCheckCount) - directShort;
+            var membershipGrowth = Allocated(membership, LongCheckCount) - membershipShort;
+
+            // Batch subtraction removes fixed overhead and whole-byte amortization ignores fractional measurement variation.
+            // Rebuilding a policy or catalogue per check adds heap objects, exceeding this rounding precision.
+            var directBytesPerCheck = (directGrowth + AdditionalCheckCount - 1) / AdditionalCheckCount;
+            var membershipBytesPerCheck = membershipGrowth / AdditionalCheckCount;
+            Assert.True(membershipBytesPerCheck <= directBytesPerCheck,
+                $"Membership allocation growth was {membershipGrowth} bytes for {AdditionalCheckCount} additional checks, compared with {directGrowth} bytes for direct protection.");
+        }
+
+        static long Allocated(Func<bool> check, int count)
+        {
             var before = GC.GetAllocatedBytesForCurrentThread();
             var allowed = 0;
-            for (var index = 0; index < 1000; index++) if (check()) allowed++;
+            for (var index = 0; index < count; index++) if (check()) allowed++;
             var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
-            Assert.Equal(1000, allowed);
+            Assert.Equal(count, allowed);
             return allocated;
         }
     }

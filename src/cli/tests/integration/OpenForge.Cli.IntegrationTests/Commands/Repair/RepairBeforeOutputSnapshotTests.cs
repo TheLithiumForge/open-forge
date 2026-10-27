@@ -15,6 +15,18 @@ public sealed class RepairBeforeOutputSnapshotTests
 {
     private static readonly CommandOutputRenderers<RepairResult> Renderers = CommandOutputRenderers<RepairResult>.From(RepairPresentation.Rendering);
 
+    [Fact(DisplayName = "Repair outside preview shows only the selected registered maintenance closure"), Trait("Boundary", "Output")]
+    public async Task OutsidePreview()
+    {
+        using var fixture = RepairOutsideIntegrationTests.Create();
+        var before = fixture.Files.SnapshotHashes(includeRuntime: true);
+        var result = await new RepairOperation().ExecuteAsync(new(fixture.Workspace, RepairMode.DryRun, true, [], false), TestContext.Current.CancellationToken);
+        Assert.Single(result.Plan!.Selection.Selected);
+        Assert.False(result.Plan.IsBlocked);
+        Assert.Equal(before, fixture.Files.SnapshotHashes(includeRuntime: true));
+        Renderers.MatchDetails(result, "outside-unlisted-preview");
+    }
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Repair output preserves a real Library recovery step and its original evidence bundle")]
     public async Task LibraryRecoveryStep()

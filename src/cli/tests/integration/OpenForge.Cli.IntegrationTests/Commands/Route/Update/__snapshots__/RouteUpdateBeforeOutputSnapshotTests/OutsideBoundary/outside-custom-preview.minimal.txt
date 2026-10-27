@@ -1,0 +1,6 @@
+Would update ./docs/team/design/note.md
+Workspace: <workspace>
+  description: "Before outside" -> "After outside"
+  docs/team/design/_design.md  Entries would be updated
+  docs/team/design/note.md  metadata would be updated
+No files were changed.

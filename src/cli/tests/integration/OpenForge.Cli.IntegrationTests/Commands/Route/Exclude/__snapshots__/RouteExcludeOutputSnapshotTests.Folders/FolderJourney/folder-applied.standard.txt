@@ -1,0 +1,7 @@
+Excluded 'project/team notes'.
+Workspace: <workspace>
+  .agents/loader.md  replaced
+  .agents/open-forge.json  replaced
+  Catalogue: project/team notes/_team notes.md
+  Before: - [Notes in ./project/team notes](../project/team%20notes/_team%20notes.md)
+  After: (no row)

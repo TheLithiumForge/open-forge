@@ -1,12 +1,31 @@
+using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using OpenForge.Cli.TestSupport.Snapshots;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Find;
 
 [Trait("Feature", "command-output-snapshots"), Trait("Evidence", "Integration")]
 public sealed class FindBeforeOutputSnapshotTests
 {
+    [Theory, InlineData(false), InlineData(true), Trait("Boundary", "Output")]
+    public async Task Outside(bool exact)
+    {
+        using var workspace = new FindOutsideWorkspace(FindOutsideWorkspace.CustomRoot);
+        workspace.Register();
+        var before = workspace.Files.SnapshotHashes(includeRuntime: true);
+        string[] selection = exact ? [FindDefinitions.Include.Name, SourceWorkspaceRelativePath.LiteralReferencePrefix + FindOutsideWorkspace.Leaf,
+            FindDefinitions.For.Name, "src/App.cs", FindDefinitions.Tag.Name, FindOutsideWorkspace.RowTag] : [];
+        await new ReadCommandOutputCapture(workspace.Files.Path).MatchDetailsAsync(new ReadOutputScenario
+        {
+            Situation = exact ? "outside-conditioned" : "outside-inventory",
+            Arguments = [FindDefinitions.CommandIdentity, .. selection],
+            ExitCode = 0,
+        }, testName: $"{nameof(Outside)}_{exact}");
+        Assert.Equal(before, workspace.Files.SnapshotHashes(includeRuntime: true));
+    }
+
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Find output preserves named queries and leaves source bytes unchanged")]
     [InlineData("bare-inventory", 0)]

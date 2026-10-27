@@ -25,7 +25,7 @@ preflight and mutation pattern. Include and Exclude preserve that boundary.
 Resolve one explicit workspace and canonical operand. Validate the full lexical
 and physical path before reading a target. Reject unsupported targets with an
 invalid-input cause that names the operand and gives the supported alternative.
-Require an existing UTF-8 file and never infer loading metadata from it.
+Require an existing UTF-8 file or a safe existing outside directory and never infer loading metadata from its content. Resolve typed file/folder facts before planning. Keep the file operand properties and existing primary/native catalogue rules.
 Read the loader and authored settings safely. A malformed control document blocks
 the complete operation before effects.
 
@@ -36,12 +36,14 @@ canonical workspace path, including percent-encoded authored destinations.
 Keep omitted metadata and replace only supplied fields. Preserve an identical
 authored row exactly. Append a new external row after existing authored rows.
 Turn a primary-category catalogue on through loader membership and use its own metadata.
-Plan external registration through the settings root-registration planner.
+Plan external file registration through the settings root-registration planner. Plan folder registration through the outside-route adapter and existing codec, preserving independent file registrations. Use the shared canonical catalogue path and scaffold composer. Keep an existing catalogue exact. For a new folder row only, omitted description uses the generic Route Init scaffold description. A missing protected catalogue blocks rather than granting restoration permission.
+
+Check immediate entrypoints before creating or registering the canonical catalogue. Refuse an additional compatibility entrypoint without changing files or controls. The required canonical path remains valid when its filename also has compatibility meaning. Rebuild this check under the lease before effects.
 
 Build loader bytes through the generated navigation planner. Preserve authored
 links and membership through the same machinery used by Index.
 Settings `roots` records registration only. It never restores a removed loader row.
-Keep target bytes and all writes outside the two control files out of the plan.
+File inclusion keeps target bytes and all writes outside the two control files out of the plan. Folder inclusion adds only a necessary canonical catalogue create. Retain the before layout, intended layout and initial physical directory and leaf observations together. Registration alone does not replace those facts or insert other loading rows.
 Identical loader and settings bytes form a verified no-op.
 
 ## Application And Recovery
@@ -50,6 +52,7 @@ Dry-run stops with the complete plan. Application takes the workspace mutation
 lock, rebuilds and compares the plan, and revalidates loader, settings, target and
 catalogue observations. A changed observation stops application before effects.
 Prepare the recovery bundle before replacing either control file.
+For folders, prepare recovery for every planned control or catalogue change before effects. Compare the complete intended layout and target facts under the lease and after application, including outside registration order and independent file roots.
 Apply only planned changes with expected-state checks and truthful receipts.
 
 Verify every changed file and unchanged source observation. Replan the request
@@ -62,8 +65,9 @@ disposition is a failure.
 
 Unit evidence covers binding, result projection and source-generated JSON.
 Integration evidence covers real files, row merging, invalid targets and planner
-preservation. Published-process journeys cover application and no reactivation
-through Index, Update, Configure and Extension installation.
+preservation. Existing file-inclusion published journeys cover application and no
+reactivation through Index, Update, Configure and Extension installation. The
+outside-folder Integration controls cover ordinary Install, configure, form conversion and Update preservation of registration and authored row policy. Final combined and hosted qualification remain separate gates.
 
 The implementation reuses managed filesystem APIs, the shared Markdown parser,
 generated navigation, settings planners, mutation lock, recovery store and file

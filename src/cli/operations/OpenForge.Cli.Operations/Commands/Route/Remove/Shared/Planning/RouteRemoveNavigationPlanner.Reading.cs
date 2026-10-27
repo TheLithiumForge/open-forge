@@ -17,10 +17,14 @@ internal sealed partial class RouteRemoveNavigationPlanner
 
     private NavigationMetadataRead ReadMetadata(
         RouteRemoveNavigationPlanningRequest request,
-        GeneratedNavigationFormation formation)
+        GeneratedNavigationFormation formation,
+        IReadOnlyList<SelectedRegion>? selected = null)
     {
         var values = new List<GeneratedNavigationMetadata>();
-        foreach (var source in formation.Sources)
+        var inputs = new List<FileStateSnapshot>();
+        var needed = selected?.Select(region => region.Source.Base.CanonicalPath).ToHashSet(StringComparer.Ordinal);
+        foreach (var source in formation.Sources.Where(source => request.Subject.OutsideRoute is null
+            || needed is null || needed.Contains(source.Base.CanonicalPath)))
         {
             var read = ReadSourceText(request, source);
             if (read is null)
@@ -36,14 +40,16 @@ internal sealed partial class RouteRemoveNavigationPlanner
             values.Add(new GeneratedNavigationMetadata(
                 source,
                 _metadataParser.Parse(_markdownParser.Parse(read.Text), source.Base.Form)));
+            inputs.Add(read.Snapshot);
         }
 
-        return NavigationMetadataRead.Complete(values);
+        return NavigationMetadataRead.Complete(values) with { Inputs = inputs };
     }
 
     private RegionDocumentRead ReadDocuments(
         RouteRemoveNavigationPlanningRequest request,
-        IEnumerable<SelectedRegion> regions)
+        IEnumerable<SelectedRegion> regions,
+        bool applyRows = true)
     {
         var values = new List<RegionDocument>();
         foreach (var region in regions)
@@ -59,7 +65,16 @@ internal sealed partial class RouteRemoveNavigationPlanner
                     "An applicable generated navigation source could not retain exact UTF-8 bytes."));
             }
 
-            values.Add(new RegionDocument(region, read.Text, read.Snapshot));
+            var text = read.Text;
+            if (applyRows && request.RowDocuments.SingleOrDefault(document => document.SourcePath == region.Source.Base.CanonicalPath) is { } rows)
+            {
+                if (rows.Snapshot.Expectation != read.Snapshot.Expectation
+                    || !rows.Snapshot.Bytes.AsSpan().SequenceEqual(read.Snapshot.Bytes.AsSpan()))
+                    return RegionDocumentRead.Stop(StopFormation(request, RouteRemoveFindingCode.TargetChanged,
+                        CliSemanticStatus.Blocked, rows.SourcePath, "The outside row and generated projection inputs changed between reads."));
+                text = RouteRemoveAuthoredRowProjector.Apply(text, rows.RowEdits);
+            }
+            values.Add(new RegionDocument(region, text, read.Snapshot));
         }
 
         return RegionDocumentRead.Complete(values);
@@ -72,6 +87,9 @@ internal sealed partial class RouteRemoveNavigationPlanner
         var workspace = request.Subject.Request.Workspace;
         try
         {
+            if (request.Subject.OutsideRoute is not null
+                && RouteRemoveOutsideBoundaryInspector.ValidateEffect(request.Subject, source.Base.CanonicalPath, CancellationToken.None) is not null)
+                return null;
             var bytes = File.ReadAllBytes(source.Base.PhysicalPath);
             return new SourceText(
                 StrictUtf8.GetString(bytes),
@@ -106,6 +124,8 @@ internal sealed partial class RouteRemoveNavigationPlanner
         IReadOnlyList<GeneratedNavigationMetadata> Values,
         RouteRemoveResultFormation? Boundary)
     {
+        internal IReadOnlyList<FileStateSnapshot> Inputs { get; init; } = [];
+
         internal static NavigationMetadataRead Complete(IReadOnlyList<GeneratedNavigationMetadata> values)
             => new(values, Boundary: null);
 

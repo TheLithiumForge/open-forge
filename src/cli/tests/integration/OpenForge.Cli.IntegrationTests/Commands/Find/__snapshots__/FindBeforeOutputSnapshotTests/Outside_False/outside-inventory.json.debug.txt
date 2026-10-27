@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "4 sources match.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "matches": 4,
+    "sourcesInspected": 4,
+    "sourcesCandidates": 4
+  },
+  "limitations": [],
+  "data": {
+    "matches": [
+      {
+        "id": "./docs/team/_team.md",
+        "path": "docs/team/_team.md",
+        "description": "First authored policy",
+        "evidence": [],
+        "applicability": {
+          "state": "pending",
+          "conditions": [
+            {
+              "source": "docs/team/_team.md",
+              "patterns": [
+                "src/**"
+              ]
+            }
+          ],
+          "matchingPaths": []
+        }
+      },
+      {
+        "id": "./docs/team/rule.md",
+        "path": "docs/team/rule.md",
+        "description": "First authored policy",
+        "evidence": [],
+        "applicability": {
+          "state": "pending",
+          "conditions": [
+            {
+              "source": "docs/team/_team.md",
+              "patterns": [
+                "src/**"
+              ]
+            },
+            {
+              "source": "docs/team/rule.md",
+              "patterns": [
+                "**/*.cs"
+              ]
+            }
+          ],
+          "matchingPaths": []
+        }
+      },
+      {
+        "id": "./docs/team/unlisted.md",
+        "path": "docs/team/unlisted.md",
+        "description": "Unrouted inventory",
+        "evidence": [],
+        "applicability": {
+          "state": "pending",
+          "conditions": [
+            {
+              "source": "docs/team/_team.md",
+              "patterns": [
+                "src/**"
+              ]
+            }
+          ],
+          "matchingPaths": []
+        }
+      },
+      {
+        "id": "loader",
+        "path": "knowledge/main/loader.md",
+        "description": "Loader",
+        "evidence": []
+      }
+    ],
+    "query": {
+      "tags": [],
+      "headings": [],
+      "require": "all",
+      "within": [
+        "frontmatter",
+        "body"
+      ]
+    },
+    "sourceSet": {
+      "mode": "default",
+      "include": [],
+      "exclude": [],
+      "inspected": 4,
+      "candidates": 4
+    }
+  },
+  "recovery": null,
+  "next": null
+}

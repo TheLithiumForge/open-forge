@@ -10,7 +10,17 @@ internal static class SourceGeneratedDestinationResolver
 {
 
     internal static string? Resolve(WorkspaceLayout layout, string parentCanonicalPath, bool isLoader, string destination)
-        => Resolve(new SourceContentRoots(layout), parentCanonicalPath, isLoader, destination);
+    {
+        var roots = new SourceContentRoots(layout);
+        if (!isLoader && SourceLogicalPath.IsOutsideSource(layout, parentCanonicalPath))
+        {
+            var boundary = layout.OutsideRoutes.Single(route => parentCanonicalPath == route.DirectoryPath
+                || parentCanonicalPath.StartsWith(route.DirectoryPath + "/", StringComparison.Ordinal));
+            var path = ResolveWorkspacePath(roots, parentCanonicalPath, isLoader: false, destination, minimumDepth: boundary.DirectoryPath.Split('/').Length);
+            return path is not null && path.StartsWith(boundary.DirectoryPath + "/", StringComparison.Ordinal) ? path : null;
+        }
+        return Resolve(roots, parentCanonicalPath, isLoader, destination);
+    }
 
     internal static string? Resolve(SourceContentRoots roots, string parentCanonicalPath, bool isLoader, string destination)
     {

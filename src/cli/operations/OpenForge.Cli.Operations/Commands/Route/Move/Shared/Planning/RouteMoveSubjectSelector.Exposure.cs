@@ -26,6 +26,13 @@ internal sealed partial class RouteMoveSubjectSelector
                 "Route Move navigation exposure inspection was interrupted.");
         }
 
+        if (RouteMoveMaintenanceBoundaryInspector.IsOutside(discovery.Catalogue, discovery.SelectedSource.Base.CanonicalPath)
+            && discovery.LayoutRead.Layout is { } layout
+            && layout.TryGetMaintenanceBoundary(discovery.SelectedSource.Base.CanonicalPath, out var outside)
+            && exposure.UnavailableParents.Any(path => path.StartsWith(outside.DirectoryPath + "/", StringComparison.Ordinal)))
+            return Boundary(formation, RouteMoveFindingCode.RouteAmbiguous, CliSemanticStatus.Blocked,
+                discovery.SelectedSource.Base.CanonicalPath, "An outside structural parent has unavailable authored Entries.");
+
         return IsUnsupportedLeaf(discovery, routeFacts, exposure, sharing)
             ? Boundary(
                 formation,

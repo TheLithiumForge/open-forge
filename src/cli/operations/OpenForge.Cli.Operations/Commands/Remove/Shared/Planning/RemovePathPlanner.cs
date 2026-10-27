@@ -27,6 +27,8 @@ using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -88,13 +90,15 @@ internal sealed class RemovePathPlanner
                 layoutRead.Issues.FirstOrDefault()?.Cause ?? "The workspace layout is unavailable for removal.");
         }
 
-        if (RemovePathSafety.ContainsMainRoot(normalized, layout))
+        if (RemovePathSafety.ContainsMainRoot(normalized, layout)
+            || RemovePathSafety.ProtectsOutsideRegistration(normalized, layout))
         {
             return Block(request, RemoveFindingCode.ProtectedPath, CliSemanticStatus.Blocked,
                 "This path contains workspace settings, ownership, Git metadata, or other protected workspace state.");
         }
 
-        if (layout.IsImplicitContentDestination(normalized)
+        var outside = layout.OutsideRoutes.SingleOrDefault(route => normalized.StartsWith(route.DirectoryPath + "/", StringComparison.Ordinal));
+        if ((layout.IsImplicitContentDestination(normalized) || outside is not null)
             && global::OpenForge.Cli.Core.Framework.Sources.Identity.SourceIdentity.IsRecognizedEntrypointPath(layout, normalized))
         {
             var directory = Path.GetDirectoryName(normalized)?.Replace('\\', '/') ?? normalized;
@@ -146,6 +150,30 @@ internal sealed class RemovePathPlanner
             request.Workspace.LexicalRoot,
             normalized.Replace('/', Path.DirectorySeparatorChar)));
         var observation = NoFollowLeafObserver.Observe(_resolver, request.Workspace, logicalTarget, cancellationToken);
+        if (outside is not null)
+        {
+            var routeEligible = SourceFormClassifier.TryClassify(layout, normalized, out var form)
+                && form is SourceDocumentForm.Markdown or SourceDocumentForm.OverwriteCompanion;
+            if (observation.State == NoFollowLeafState.Directory)
+            {
+                try
+                {
+                    routeEligible |= Directory.EnumerateFileSystemEntries(logicalTarget)
+                        .Any(entry => SourceIdentity.IsRecognizedEntrypointPath(layout, normalized + "/" + Path.GetFileName(entry)));
+                }
+                catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+                {
+                    return Block(request, RemoveFindingCode.TargetUnsafe, CliSemanticStatus.Blocked, exception.Message);
+                }
+            }
+            if (routeEligible)
+                return Block(request, RemoveFindingCode.TargetChanged, CliSemanticStatus.Blocked,
+                    "The current outside target requires a fresh Route Remove plan and cannot fall through to ordinary path deletion.");
+            if (observation.State == NoFollowLeafState.Missing
+                && (settings.Document.RemovedDirectories.Contains(normalized, StringComparer.Ordinal) || !Path.HasExtension(normalized)))
+                return Block(request, RemoveFindingCode.TargetUnsafe, CliSemanticStatus.Blocked,
+                    "A missing outside path directory has no proven former route entrypoint or complete route absence scope.");
+        }
         if (observation.State is not (NoFollowLeafState.Missing or NoFollowLeafState.OrdinaryFile
             or NoFollowLeafState.Directory or NoFollowLeafState.RelativeFileLink))
         {

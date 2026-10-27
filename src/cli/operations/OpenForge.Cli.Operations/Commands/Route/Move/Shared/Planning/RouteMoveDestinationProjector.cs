@@ -50,7 +50,8 @@ internal static class RouteMoveDestinationProjector
                 "The logical destination cannot preserve the selected source form.");
         }
 
-        if (!subject.Catalogue.Layout.IsImplicitContentDestination(destinationPath)
+        if (!RouteMoveMaintenanceBoundaryInspector.SameBoundary(subject.Catalogue.Layout,
+                subject.SelectedSource.Base.CanonicalPath, destinationPath)
             || !HasCompatibleForm(subject, destinationPath))
         {
             return Stop(
@@ -218,6 +219,10 @@ internal static class RouteMoveDestinationProjector
             fact.Identity.CanonicalBasePath,
             candidates[0].Identity.CanonicalBasePath,
             StringComparison.Ordinal));
+        if (RouteMoveMaintenanceBoundaryInspector.IsOutside(subject.Catalogue, destinationPath))
+            return subject.RouteFacts is { } facts
+                && RouteMoveMaintenanceBoundaryInspector.ReadChainProblem(subject.LayoutRead, subject.Catalogue,
+                    facts.Topology, candidates[0].Base.CanonicalPath, allowAnchor: true) is null ? candidates[0] : null;
         return route?.State == SourceRouteState.Routed ? candidates[0] : null;
     }
 

@@ -50,3 +50,5 @@ paths, Library source containment and physical safety remain separate checks.
 ## Layout Admission
 
 Implicit content admission follows the main root and native Skills at `.agents/skills`, using ordinal root prefixes. A case alias receives no implicit authority. Explicit grants stay literal. Fixed settings and ownership remain protected controls, and classification as content never bypasses containment or ownership checks. Permission prompts receive projected layout facts. Revalidate the retained layout observation under the lease before publishing a grant. See [Workspace Layout](workspace-layout.md#ordinal-authority-checks).
+
+Extension and Library permission planners continue to call `IsImplicitContentDestination`, not `TryGetMaintenanceBoundary` or `InventoryRoots`. An available outside registration, its catalogue and its Loader row never replace an explicit grant or establish installed ownership.

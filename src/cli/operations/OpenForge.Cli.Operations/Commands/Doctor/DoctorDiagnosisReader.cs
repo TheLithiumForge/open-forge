@@ -33,9 +33,11 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
             .ReadDoctorAsync(request.Workspace, cancellationToken)
             .ConfigureAwait(false);
         var sharing = NavigationSharingReader.FromOwnership(observation.Ownership);
-        var routes = await _contributors.Routes
-            .ReadDoctorAsync(observation, sharing.Sharing, cancellationToken)
-            .ConfigureAwait(false);
+        var outside = observation.Layout is null || observation.OutsideRoutes.Length > 0
+            ? await _contributors.Routes.ReadOutsideAsync(observation, cancellationToken).ConfigureAwait(false) : null;
+        var routes = outside is null
+            ? await _contributors.Routes.ReadDoctorAsync(observation, sharing.Sharing, cancellationToken).ConfigureAwait(false)
+            : await _contributors.Routes.ReadDoctorAsync(observation, sharing.Sharing, cancellationToken, outside).ConfigureAwait(false);
         var referenceRead = _contributors.LocalReferences
             .ReadDoctorAsync(observation, cancellationToken, routes)
             .AsTask();
@@ -66,6 +68,7 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
         {
             Maintenance = maintenance,
             LayoutRead = observation,
+            OutsideRoutes = outside,
         };
         var result = DoctorResultBuilder.Build(request, resultObservation);
         return new DoctorDiagnosisRead(resultObservation, result);

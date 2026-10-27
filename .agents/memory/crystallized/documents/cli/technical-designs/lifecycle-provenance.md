@@ -11,6 +11,8 @@ open-forge:
 
 Ownership storage stays at `.agents/open-forge.lock.json` for every layout. Framework and Extension receipts record actual installed destinations. Package identities remain separate. Compare current payloads after layout mapping, but match recorded and retired paths against exclusions literally. Never map an ownership path a second time. Invalid or unreadable ownership retains command-local handling under the [layout observation rules](workspace-layout.md#observation-and-revalidation).
 
+Outside directory registration, file inclusion and Loader membership create no package receipt or permission. Route maintenance preserves registration while publishing only its contracted verified bookkeeping changes. Ordinary Install, configure, form conversion and root Update retain outside registrations, independent file includes, exact unlisted state and authored Loader row policy. Stale targets stay authored and compatibility anchors keep their filenames. The [Install behavior](../contracts/install/behavior.md#layout-planning) defines layout transport, and [generated navigation](generated-navigation.md#layout-and-included-rows) defines row preservation.
+
 ## Boundary
 
 The generated `.agents/open-forge.lock.json` records Framework, Extension and
