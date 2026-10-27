@@ -14,7 +14,8 @@ internal static class LocalReferenceDoctorInspector
 {
     private const DoctorDomainKind Domain = DoctorDomainKind.LocalReferences;
 
-    internal static DoctorDomainReport Inspect(LocalReferenceDoctorView view, DoctorMaintenanceObservation? maintenance = null)
+    internal static DoctorDomainReport Inspect(LocalReferenceDoctorView view, DoctorMaintenanceObservation? maintenance = null,
+        IReadOnlySet<LocalReferenceObservation>? retainedAuthoredMissingTargets = null)
     {
         if (view.UnavailableCause is { } cause)
             return DoctorUnavailableDomain.Create(Domain, DoctorBoundaryKind.LocalReferenceUniverse, cause);
@@ -25,7 +26,8 @@ internal static class LocalReferenceDoctorInspector
             .SelectMany(observation => CreateFindings(
                 observation,
                 view.CandidateScan == LocalReferenceCandidateScanState.Complete,
-                candidatesByOccurrence[(observation.SourcePath, observation.Destination)].ToArray(), maintenance, candidateFilter))
+                candidatesByOccurrence[(observation.SourcePath, observation.Destination)].ToArray(), maintenance, candidateFilter,
+                retainedAuthoredMissingTargets?.Contains(observation) == true))
             .ToArray();
         var coverage = DoctorDomainSupport.Coverage(view.State);
         if (view.References.Any(reference =>
@@ -89,13 +91,14 @@ internal static class LocalReferenceDoctorInspector
         bool candidateScanComplete,
         IReadOnlyList<LocalReferenceCandidateObservation> observations,
         DoctorMaintenanceObservation? maintenance,
-        RenameWeakCandidateFilter? candidateFilter)
+        RenameWeakCandidateFilter? candidateFilter,
+        bool retainedAuthoredMissingTarget)
     {
         var target = observation.Facts.Target;
         var generated = observation.Location is { } location
             && maintenance?.GeneratedEntries.TryGetValue(observation.SourcePath, out var entries) == true
             && location.ByteOffset >= entries.ByteOffset && location.ByteOffset + location.ByteLength <= entries.ByteOffset + entries.ByteLength;
-        if (target.Resolution == SourceLinkTargetResolution.Missing && generated)
+        if (target.Resolution == SourceLinkTargetResolution.Missing && generated && !retainedAuthoredMissingTarget)
             yield break;
         if (maintenance?.ReferenceProtectionPolicy is { } protection
             && DoctorReferenceProtectionFindingFactory.Read(observation, protection) is { } protectedFinding)
@@ -129,6 +132,14 @@ internal static class LocalReferenceDoctorInspector
         var renames = maintenance?.Renames;
         if (target.Resolution == SourceLinkTargetResolution.Missing && renames?.Facts.Git.Availability == RenameGitAvailability.TimedOut)
             yield break;
+        if (retainedAuthoredMissingTarget)
+        {
+            var authoredDescriptor = LocalReferenceDoctorDescriptorReader.Read(observation)
+                ?? throw new InvalidOperationException("A retained missing authored target requires its existing descriptor.");
+            yield return LocalReferenceDoctorFindingFactory.Create(observation,
+                authoredDescriptor with { Resolution = DoctorResolutionLane.ManualDecision, Action = null });
+            yield break;
+        }
         var sourceMove = maintenance?.SourceMoves.FirstOrDefault(move => move.Reference == observation);
         if (renames is not null && sourceMove is not null && DoctorRenameFindingFactory.SourceMove(observation, sourceMove.Target, renames) is { } movedFinding)
         {

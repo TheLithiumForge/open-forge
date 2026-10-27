@@ -129,14 +129,18 @@ each physical file once. The report names that contribution and keeps conditione
 required files pending, with an incomplete result. Supply working files to
 `context` to resolve them.
 
+Registered directories appear separately from included files. JSON adds optional `data.outsideRoutes` at every detail in settings declaration order, with directory `path`, `state` and optional `listed`. States are `available`, `missing`, `unsafe` or `unavailable`. Listing requires a direct logical Loader row to the declared canonical catalogue or an actual recognized entrypoint at that directory. A stale canonical row can establish listing without loading a compatibility anchor. Descendant rows and physical aliases do not establish it. Unknown listing omits `listed`. Known-empty and unknown registration inventories omit the collection, with unknown coverage retaining its cause. Standard, full and debug text distinguish listed, unlisted and unknown outside routes. These facts grant no loading, ownership or package permission.
+
 ## `doctor`
 
 Diagnose workspace, routes, references, recovery, Framework files, and managed Extensions without changes. It has no command-specific flags. Use `--detail standard` for reasons or `--format json --detail full` for evidence. Run after routed changes and resolve or report findings within the task.
 
-A missing included target is an error. An unlisted registration is information.
+For file includes, a missing target is an error. An unlisted registration is information.
 A registered path that Include would now reject is a warning. Restore or exclude
 missing targets and update or remove rejected registrations. Doctor never repairs
 these conditions.
+
+Outside directories retain separate diagnoses for missing directories, missing or competing anchors, unsafe boundaries, physical aliases and unavailable coverage. Doctor uses existing finding codes and typed outside conditions. Unlisted alone is information and does not mean that no other edge can load the content. Init or Index advice requires the existing safe maintenance, ownership and physical prerequisites. Unknown or unsafe observations supply no automatic restoration authority. Use `--format json --detail full` to include informational findings and their evidence.
 
 Existing workspace folders are valid link targets, with or without a trailing
 slash. Folder links cannot have heading fragments. A missing folder named with

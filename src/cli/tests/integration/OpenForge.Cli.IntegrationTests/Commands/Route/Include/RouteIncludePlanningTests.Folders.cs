@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Planning;
 using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
@@ -58,7 +59,7 @@ public sealed partial class RouteIncludePlanningTests
     public async Task FolderAuthoredRow(bool custom)
     {
         using var workspace = RouteInclusionFolderFixture.Create(custom, true);
-        var row = $"- [Handwritten]({RouteInclusionFolderFixture.Destination(workspace)}) - #Docs #LoadNow - applies to `src/**`";
+        var row = $"- [Handwritten]({RouteInclusionFolderFixture.Destination(workspace)}) - #Docs #{SourceLoadingClosureResolver.LoadNowTag} - applies to `src/**`";
         RouteInclusionFolderFixture.Rows(workspace, row + "\n- [Unrelated](../elsewhere.md) - #Other");
         var loader = workspace.Bytes(RouteInclusionFolderFixture.Loader(workspace));
         var anchor = workspace.Bytes(RouteInclusionFolderFixture.Catalogue);
@@ -76,7 +77,7 @@ public sealed partial class RouteIncludePlanningTests
             Assert.NotNull(changed.Plan);
             MarkdownEntryRowParser.TryParse(changed.Outcome.After!, out var merged, out _);
             Assert.Equal(replacement.Description ?? "Handwritten", merged!.Description);
-            Assert.Equal(replacement.Tags ?? ["Docs", "LoadNow"], merged.Tags);
+            Assert.Equal(replacement.Tags ?? ["Docs", SourceLoadingClosureResolver.LoadNowTag], merged.Tags);
             Assert.Equal((replacement.ApplyTo ?? ApplyToPatternExpressionParser.Parse("src/**").Patterns).Select(pattern => pattern.Text), merged.ApplyTo.Select(pattern => pattern.Text));
         }
         Assert.Equal(loader, workspace.Bytes(RouteInclusionFolderFixture.Loader(workspace)));

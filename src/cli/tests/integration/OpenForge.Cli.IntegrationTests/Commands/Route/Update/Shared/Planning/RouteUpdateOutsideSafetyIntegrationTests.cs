@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Framework.Ownership;
@@ -205,7 +206,7 @@ public sealed class RouteUpdateOutsideSafetyIntegrationTests
         const string foreign = "foreign/independent.md";
         workspace.Files.WriteText(foreign, "# Intentionally incomplete metadata\r\n");
         workspace.Files.ReplaceText(workspace.Parent, RouteUpdateOutsideWorkspace.Entrypoint(
-            "- [Independent foreign row](../../../foreign/independent.md) - #LoadNow #Fixture - applies to `authored/**`"));
+            $"- [Independent foreign row](../../../foreign/independent.md) - #{SourceLoadingClosureResolver.LoadNowTag} #Fixture - applies to `authored/**`"));
         var body = workspace.Bytes(workspace.Parent);
         var before = workspace.Files.SnapshotHashes();
         var plan = await workspace.Plan();
@@ -286,7 +287,7 @@ public sealed class RouteUpdateOutsideSafetyIntegrationTests
     {
         using var workspace = new RouteUpdateOutsideWorkspace(root);
         workspace.Files.ReplaceText(workspace.Parent, RouteUpdateOutsideWorkspace.Entrypoint(
-            "- [Independent row metadata](note.md) - #LoadNow #Fixture - applies to `policy/**`"));
+            $"- [Independent row metadata](note.md) - #{SourceLoadingClosureResolver.LoadNowTag} #Fixture - applies to `policy/**`"));
         WriteOwnership(workspace, workspace.Parent, library: true);
         var parent = workspace.Bytes(workspace.Parent);
         var before = workspace.Files.SnapshotHashes();

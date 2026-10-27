@@ -44,6 +44,7 @@ public static class PublishedTokens
 
     public static class Find
     {
+        public const string Tag = "--tag";
         public const string Metadata = "metadata";
         public const string Command = "find";
         public const string Heading = "--heading";
@@ -89,6 +90,7 @@ public static class PublishedTokens
         public const string Tags = "tags";
         public const string Entries = "Entries";
         public const string LoadNow = "LoadNow";
+        public const string KeepInMind = "KeepInMind";
     }
 
     public static class ContextData
@@ -222,6 +224,7 @@ public static class PublishedTokens
 
     public static class RouteInspect
     {
+        public const string WorkingPath = "--for";
         public const string Command = "inspect";
     }
 
@@ -267,6 +270,7 @@ public static class PublishedTokens
 
     public static class RouteRemove
     {
+        public const string ProtectedTargetCode = "route-remove.protected-target";
         public const string DryRun = "--dry-run";
         public const string Command = "remove";
         public const string Automatic = "--automatic";
@@ -342,6 +346,7 @@ public static class PublishedTokens
 
     public static class Runtime
     {
+        public const string DirectoryName = ".open-forge-state";
         public const string IgnoreContent = "*\n";
     }
 
@@ -397,6 +402,7 @@ public static class PublishedTokens
 
     public static class Recovery
     {
+        public const string RemovedDisposition = "removed";
         public const string WorkspaceStore = "workspace";
         public const string LegacyStore = "legacy";
         public const string VerifiedIntegrity = "verified";
@@ -404,6 +410,9 @@ public static class PublishedTokens
 
     public static class Statuses
     {
+        public const string Blocked = "blocked";
+        public const int AttentionExitCode = 2;
+        public const int IncompleteExitCode = 3;
         public const int BlockedExitCode = 5;
         public const int CompleteExitCode = 0;
         public const int InvalidExitCode = 4;
@@ -420,6 +429,8 @@ public static class PublishedTokens
 
     public static class Json
     {
+        public const string Recovery = "recovery";
+        public const string Disposition = "disposition";
         public const int EnvelopeSchemaVersion = 3;
         public const string SchemaVersion = "schemaVersion";
         public const string Effects = "effects";

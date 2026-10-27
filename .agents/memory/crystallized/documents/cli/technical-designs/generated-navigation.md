@@ -11,7 +11,7 @@ open-forge:
 
 Formation retains the catalogue’s layout, aliases and included rows, including sources without inventory candidates. Loader destinations resolve from the selected loader directory. Native Skills remain at `.agents/skills` and may appear through the custom loader. Preserve direct loader rows to nested catalogues, their metadata and deliberate omissions. Neither reconstruction nor maintenance reactivates an omitted root. See [Workspace Layout](workspace-layout.md#source-transport).
 
-Registration adds outside anchors to structural topology and leaves loading membership to authored rows. An outside catalogue may retain its intrinsic form and row-owned loading policy together. Registration, inventory and prospective reconstruction preserve the authored rows, conditions and order. Existing primary identities remain intact when outside physical aliases merge, and an overwrite remains attached to its base.
+Registration adds outside anchors to structural topology and leaves loading membership to authored rows. An outside catalogue may retain its intrinsic form and row-owned loading policy together. Registration, inventory and prospective reconstruction preserve authored outside row bytes, metadata, conditions, aliases, mutual order and first-reaching policy, including stale targets and deliberate absence. Generated primary rows keep their established ordering and may precede those authored rows. Absolute mixed-row slots are not preserved. Existing primary identities remain intact when outside physical aliases merge, and an overwrite remains attached to its base.
 
 ## Boundary
 

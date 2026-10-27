@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Update;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
@@ -52,8 +53,8 @@ internal sealed class RouteUpdateOutsideWorkspace : IDisposable
         Files.WriteText(primaryAnchor, Entrypoint());
         Files.WriteText(PrimarySource, AuthoredDocument);
         var destination = Path.GetRelativePath(root, Anchor).Replace(Path.DirectorySeparatorChar, '/');
-        var rows = listed ? $"- [Independent outside policy]({destination}) - #LoadNow #{Tag} - applies to `policy/**`\r\n" : string.Empty;
-        rows += "- [Primary policy](ordinary/_ordinary.md) - #LoadNow #Fixture";
+        var rows = listed ? $"- [Independent outside policy]({destination}) - #{SourceLoadingClosureResolver.LoadNowTag} #{Tag} - applies to `policy/**`\r\n" : string.Empty;
+        rows += $"- [Primary policy](ordinary/_ordinary.md) - #{SourceLoadingClosureResolver.LoadNowTag} #Fixture";
         Files.WriteText(Layout.LoaderPath, "\uFEFF" + OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
         {
             Prefix = "# Authored Loader\r\n\r\nPreserve row order and policy exactly.",

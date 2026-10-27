@@ -11,7 +11,7 @@ open-forge:
 
 Map current package paths before comparison and exclusions. Recorded and retired ownership paths already name installed destinations and stay literal. Revalidate the layout under the lease.
 
-Preserve `outsideRoutes`, independent file registrations and authored Loader policy through prospective reconstruction. Required outside lifecycle qualification remains pending. It must establish retained row metadata, conditions, mutual order and first-reaching included facts without requiring absolute interleaving with regenerated primary rows. Registration never maps an outside tree into the Framework payload or creates ownership.
+Preserve `outsideRoutes`, independent file registrations and authored Loader policy through prospective reconstruction. Retain outside row bytes, metadata, conditions, aliases, mutual order and first-reaching included facts, including stale targets and exact unlisted state. Regenerated primary rows retain their own ordering without preserving absolute mixed-row slots. Registration never maps an outside tree into the Framework payload or creates ownership.
 
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
 

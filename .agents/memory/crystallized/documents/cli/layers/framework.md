@@ -55,7 +55,7 @@ selection method, normalizes identity once, and never invents a fallback fact.
 Terminal modes bypass workspace selection. Workspace-free commands preserve null
 workspace in concrete results.
 
-`WorkspaceLayout` is the pure mapping below Sources. Settings observes `outsideRoutes` and retains physical availability separately. `SourceRoots` keeps primary/native meaning, while `InventoryRoots` adds registered directories for discovery. Lexical boundary lookup alone grants no physical write, loading or package authority. [Workspace Layout](../technical-designs/workspace-layout.md) defines the carriers.
+`WorkspaceLayout` is the pure mapping below Sources. Settings observes `outsideRoutes` and retains physical availability separately. `SourceRoots` keeps primary/native meaning, while `InventoryRoots` adds registered directories for discovery. Lexical boundary lookup alone grants no physical write, loading or package authority. The retained operational observation carries outside directory facts, exact authored rows and logical loading roles from the same layout and source session. [Workspace Layout](../technical-designs/workspace-layout.md) defines the carriers.
 
 ## Filesystem And Resolved Path Identity
 

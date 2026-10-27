@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using System.Text;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
@@ -53,7 +54,7 @@ internal sealed class RouteMoveOutsideWorkspace : IDisposable
         Write(MainRoot + "/notes/_notes.md", Catalogue("- [Primary](note.md) - #Docs"));
         Write(MainRoot + "/notes/note.md", Markdown("# Primary\n"));
         Write(Anchor, Catalogue("- [Left](left/_left.md) - #Docs\n- [Right](right/_right.md) - #Docs"));
-        Write(LeftCatalogue, Catalogue("- [First](old%20note.md) - #Docs #LoadNow - applies to `src/**`\n- [Second](old%20note.md) - #Review - applies to `tests/**`\n- [Topic](topic/_topic.md) - #Docs\n- [Incoming](incoming.md) - #Docs"));
+        Write(LeftCatalogue, Catalogue($"- [First](old%20note.md) - #Docs #{SourceLoadingClosureResolver.LoadNowTag} - applies to `src/**`\n- [Second](old%20note.md) - #Review - applies to `tests/**`\n- [Topic](topic/_topic.md) - #Docs\n- [Incoming](incoming.md) - #Docs"));
         Write(RightCatalogue, Catalogue(string.Empty));
         Write(Leaf, Markdown(LeafText));
         Write(SourceOverwritePath.ReadAdjacentPath(Leaf), OverwriteText);

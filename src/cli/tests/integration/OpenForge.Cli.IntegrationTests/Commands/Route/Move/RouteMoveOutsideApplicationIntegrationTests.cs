@@ -39,7 +39,7 @@ public sealed class RouteMoveOutsideApplicationIntegrationTests
         Assert.Equal(settings, workspace.Bytes(WorkspaceSettingsDefinitions.RelativePath));
         var expectedRows = new[]
         {
-            "- [First](../right/new%20note.md) - #Docs #LoadNow - applies to `src/**`",
+            $"- [First](../right/new%20note.md) - #Docs #{SourceLoadingClosureResolver.LoadNowTag} - applies to `src/**`",
             "- [Second](../right/new%20note.md) - #Review - applies to `tests/**`",
             "- [Topic](topic/_topic.md) - #Docs",
             "- [Incoming](incoming.md) - #Docs",

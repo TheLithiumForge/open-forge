@@ -35,6 +35,10 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
         var workspace = plan.Request.Workspace;
         var catalogue = repairCatalogue.Catalogue
             ?? (await new SourceReadSessionReader(paths).ReadIncludedAsync(layout, token).ConfigureAwait(false)).Catalogue;
+        // Discovery may omit unavailable registrations while maintenance retains its original observation.
+        if (!ReferenceEquals(catalogue.Layout, layout))
+            catalogue = new(layout, catalogue.Candidates, catalogue.Sources, catalogue.Issues,
+                catalogue.IsCancelled, catalogue.Aliases, catalogue.IncludedRows);
         var ownership = plan.LayoutRead.Ownership;
         var settings = plan.LayoutRead.Settings;
         if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete)

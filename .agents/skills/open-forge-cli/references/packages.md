@@ -54,6 +54,8 @@ No built-in preset installs optional Extensions. Essentials omits Guidance, Maps
 
 For primary roots and file-only inclusions, Install, Update, Configure, and Extension commands keep the loader's `Entries` as the user left them. A removed root line stays removed, links to documents outside `.agents/` stay, and an empty list stays empty. A root joins the list only when the command creates its catalogue or Configure adds a route that was left out.
 
+Ordinary Install, configure, frontmatter conversion and root Update preserve outside registrations, independent file includes, exact unlisted state and authored row bytes, conditions, aliases, mutual order and first-reaching policy. Stale targets remain authored, and these operations do not relist or restore outside anchors. Generated primary rows keep their own ordering, so absolute mixed-row positions can change. Registration still grants no package ownership or permission.
+
 In line-mode Custom, type row edits such as `2+ 9~`, press Enter on an empty line to continue, or follow `Type cancel to stop without changes.` Existing tracked files stay tracked, and left-out defaults leave existing files routable.
 
 Custom row IDs are `directives`, `guidance`, `maps`, `patterns`, `skills`, `templates`, `memory/working`, `memory/emerging`, `memory/crystallized`, and `memory/archived`. Identical repeated presets or row actions are idempotent. Conflicting repeats, unknown IDs, presets, or actions are invalid. Interactive Custom shows one list with a mark per row: `+` add, `~` git-ignore and `-` remove. Rows supplied by `--route` are locked.

@@ -72,7 +72,8 @@ internal static class RouteListIncludedResultBuilder
                 next = null;
             }
             selection = explicitInclude.IncludedEntry is not null ? RouteListSelectionFactory.ResolvedIncluded(explicitInclude) : source.Selection.Selection;
-            Add(explicitInclude, 0, ReadAbsoluteDepth(explicitInclude) is null
+            var absoluteDepth = ReadAbsoluteDepth(explicitInclude, out _);
+            Add(explicitInclude, 0, absoluteDepth is null
                 ? RouteListSelectionProvenance.DetachedRoot : RouteListSelectionProvenance.ExplicitRoot);
         }
         else if (!selection.IsResolved || status is not (CliSemanticStatus.Complete or CliSemanticStatus.Attention or CliSemanticStatus.Incomplete))
@@ -187,25 +188,37 @@ internal static class RouteListIncludedResultBuilder
 
         bool CanDescend(int depth) => request.RequestedDepth.Kind == RouteListDepthKind.All || depth < request.RequestedDepth.FiniteValue;
 
-        int? ReadAbsoluteDepth(SourceLogicalSource item)
+        int? ReadAbsoluteDepth(SourceLogicalSource item, out bool cyclic)
         {
-            if (item.IncludedParentPath == source.Inventory.SourceCatalogue.Layout.LoaderPath)
+            cyclic = false;
+            var selectedPath = item.Base.CanonicalPath;
+            var visited = new HashSet<string>(StringComparer.Ordinal);
+            var depth = 0;
+            while (visited.Add(item.Base.CanonicalPath))
             {
-                return 0;
+                cancellationToken.ThrowIfCancellationRequested();
+                if (item.IncludedParentPath == source.Inventory.SourceCatalogue.Layout.LoaderPath)
+                {
+                    return depth;
+                }
+
+                if (item.IncludedParentPath is not { } parentPath)
+                {
+                    return null;
+                }
+
+                if (!byPath.TryGetValue(parentPath, out var parent))
+                {
+                    return source.RouteFacts.Topology.FindByPath(parentPath) is not null
+                        ? source.RouteFacts.Topology.ReadAbsoluteDepth(parentPath) + depth + 1 : null;
+                }
+
+                item = parent;
+                depth++;
             }
 
-            if (item.IncludedParentPath is not { } parentPath)
-            {
-                return null;
-            }
-
-            if (byPath.TryGetValue(parentPath, out var parent))
-            {
-                return ReadAbsoluteDepth(parent) + 1;
-            }
-
-            return source.RouteFacts.Topology.FindByPath(parentPath) is not null
-                ? source.RouteFacts.Topology.ReadAbsoluteDepth(parentPath) + 1 : null;
+            cyclic = item.Base.CanonicalPath == selectedPath;
+            return null;
         }
 
         void Add(SourceLogicalSource item, int depth, RouteListSelectionProvenance provenance)
@@ -214,7 +227,8 @@ internal static class RouteListIncludedResultBuilder
             var path = item.Base.CanonicalPath;
             if (rows.Any(row => !row.IsUnlisted && row.Path == path)) return;
             var children = byParent.GetValueOrDefault(path) ?? [];
-            var parentPath = item.IncludedParentPath == source.Inventory.SourceCatalogue.Layout.LoaderPath ? null : item.IncludedParentPath;
+            var parentPath = item.IncludedParentPath == source.Inventory.SourceCatalogue.Layout.LoaderPath
+                ? null : item.IncludedParentPath;
             var parent = parentPath is null ? null : byPath.GetValueOrDefault(parentPath) ?? source.Inventory.SourceCatalogue.FindByPath(parentPath);
             var entry = item.IncludedEntry;
             var authored = source.Inventory.ProjectionBuildResult.ProjectionSet.FindByPath(path)?.Metadata;
@@ -229,10 +243,11 @@ internal static class RouteListIncludedResultBuilder
                 directChildCount = original.DirectChildCount - node.ChildPaths.Count(byPath.ContainsKey) + children.Length;
             var rowProvenance = new RouteListProvenance(provenance,
                 isCatalogue ? RouteListSourceProvenance.AuthoredEntrypoint : RouteListSourceProvenance.AuthoredLeaf, item.Overwrite is not null);
+            var absoluteDepth = ReadAbsoluteDepth(item, out _);
             var row = isCatalogue
-                ? RouteListRow.Entrypoint(item.Identity.AutomaticId, path, parent?.Identity.AutomaticId, parentPath, ReadAbsoluteDepth(item), depth,
+                ? RouteListRow.Entrypoint(item.Identity.AutomaticId, path, parent?.Identity.AutomaticId, parentPath, absoluteDepth, depth,
                     description, entry?.Tags ?? authored!.Tags, directChildCount, rowProvenance)
-                : RouteListRow.RoutedLeaf(item.Identity.AutomaticId, path, parent?.Identity.AutomaticId, parentPath, ReadAbsoluteDepth(item), depth,
+                : RouteListRow.RoutedLeaf(item.Identity.AutomaticId, path, parent?.Identity.AutomaticId, parentPath, absoluteDepth, depth,
                     description, entry?.Tags ?? authored!.Tags, rowProvenance);
             rows.Add(row);
             if (CanDescend(depth))

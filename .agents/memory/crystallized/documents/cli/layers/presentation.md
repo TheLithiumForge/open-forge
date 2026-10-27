@@ -24,7 +24,7 @@ The shared finding model and its wording may also read
 `Commands.Shared.Models.Mutation` for the typed lock failure and exact path.
 This does not permit Presentation to read Framework types or mutation behavior.
 
-Outside registration and availability reach Presentation only as command-owned projected facts. Presentation cannot infer maintenance, loading or package permission from a source path or inventory row. The command Interface Contract defines any additive data, and the shared result envelope remains schema 3.
+Outside registration and availability reach Presentation only as command-owned projected facts. Presentation cannot infer maintenance, loading or package permission from a source path or inventory row. Status projects optional declaration-ordered directory facts and unknown listing without inferring loading. Doctor keeps its existing finding graph and typed outside conditions. Their command Interface Contracts own the exact shapes, and the shared result envelope remains schema 3.
 
 The [land Architecture](../architecture.md) records how this layer sits against
 the others.

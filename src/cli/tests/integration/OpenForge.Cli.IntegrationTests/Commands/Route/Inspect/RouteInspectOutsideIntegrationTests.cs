@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.Inspect;
@@ -49,12 +50,12 @@ public sealed class RouteInspectOutsideIntegrationTests
         const string child = RouteListOutsideWorkspace.DirectoryPath + "/nested/child.md";
         const string alias = RouteListOutsideWorkspace.DirectoryPath + "/alias.md";
         fixture.Inner.WriteText(nested, RouteListOutsideWorkspace.Document("Structural parent",
-            "- [Later child](child.md) - #KeepInMind - applies to `tests/**`\n"));
+            $"- [Later child](child.md) - #{SourceLoadingClosureResolver.KeepInMindTag} - applies to `tests/**`\n"));
         fixture.Inner.WriteText(child, "# Independent nested child\n");
         fixture.Inner.CreateFileSymbolicLink(alias, fixture.Inner.Combine(child));
         fixture.Inner.ReplaceText(fixture.Anchor, RouteListOutsideWorkspace.Document("First reaching parent",
-            "- [Nested parent](nested/_nested.md) - #LoadNow - applies to `tests/**`\n"
-            + "- [First direct child](nested/child.md) - #LoadNow - applies to `src/**`\n"
+            $"- [Nested parent](nested/_nested.md) - #{SourceLoadingClosureResolver.LoadNowTag} - applies to `tests/**`\n"
+            + $"- [First direct child](nested/child.md) - #{SourceLoadingClosureResolver.LoadNowTag} - applies to `src/**`\n"
             + "- [Alias child](alias.md) - #Private - applies to `docs/**`\n"));
         var before = fixture.Inner.SnapshotHashes();
         var result = await RouteInspectOperationFactory.Create()(new RouteInspectRequest(fixture.Workspace,
@@ -122,7 +123,7 @@ public sealed class RouteInspectOutsideIntegrationTests
     {
         using var fixture = new RouteListOutsideWorkspace(root);
         fixture.Inner.ReplaceText(fixture.Anchor, RouteListOutsideWorkspace.Document("Authored parent",
-            "- [Standing outside file](SKILL.md) - #KeepInMind\n"));
+            $"- [Standing outside file](SKILL.md) - #{SourceLoadingClosureResolver.KeepInMindTag}\n"));
         var before = fixture.Inner.SnapshotHashes();
         var result = await RouteInspectOperationFactory.Create()(new RouteInspectRequest(fixture.Workspace,
             SourceWorkspaceRelativePath.LiteralReferencePrefix + RouteListOutsideWorkspace.Skill, false), TestContext.Current.CancellationToken);

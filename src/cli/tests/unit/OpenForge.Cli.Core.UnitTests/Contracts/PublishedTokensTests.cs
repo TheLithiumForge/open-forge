@@ -84,7 +84,7 @@ public sealed class PublishedTokensTests
 #pragma warning disable xUnit2000 // The projected constants are under test, and the production owners supply the expected values.
         Assert.Equal(CliJsonFields.SchemaVersion, PublishedTokens.Json.SchemaVersion);
         Assert.Equal(CliJsonEnvelopeDefinitions.SchemaVersion, PublishedTokens.Json.EnvelopeSchemaVersion);
-        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusData.Layout)), PublishedTokens.LayoutData.Layout);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(InstallData.Layout)), JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusData.Layout)));
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusData.OutsideRoutes)), PublishedTokens.StatusOutsideRoutes.Collection);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusDataOutsideRoute.State)), PublishedTokens.StatusOutsideRoutes.State);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusDataOutsideRoute.Listed)), PublishedTokens.StatusOutsideRoutes.Listed);
@@ -193,6 +193,7 @@ public sealed class PublishedTokensTests
 
         Assert.Equal(RouteDefinitions.RouteGroup.Name, PublishedTokens.Route.Command);
         Assert.Equal(RouteInspectDefinitions.InspectCommand.Name, PublishedTokens.RouteInspect.Command);
+        Assert.Equal(RouteInspectDefinitions.WorkingPath.Name, PublishedTokens.RouteInspect.WorkingPath);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteInspectData.Read)), PublishedTokens.RouteInspectData.Read);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteInspectData.MaintenanceRoot)), PublishedTokens.RouteInspectData.MaintenanceRoot);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(RouteInspectDataRead.AtStart)), PublishedTokens.RouteInspectData.AtStart);
@@ -228,6 +229,7 @@ public sealed class PublishedTokensTests
         Assert.Equal(RouteRemoveDefinitions.RemoveCommand.Name, PublishedTokens.RouteRemove.Command);
         Assert.Equal(RouteRemoveDefinitions.Automatic.Name, PublishedTokens.RouteRemove.Automatic);
         Assert.Equal(RouteRemoveDefinitions.DryRun.Name, PublishedTokens.RouteRemove.DryRun);
+        Assert.Equal(RouteRemoveDefinitions.ReadMachineName(OpenForge.Cli.Core.Commands.Route.Remove.Models.Result.RouteRemoveFindingCode.ProtectedTarget), PublishedTokens.RouteRemove.ProtectedTargetCode);
         Assert.Equal(WorkspaceSettingsDefinitions.RemovedCategoriesProperty, PublishedTokens.Settings.RemovedCategoriesProperty);
 
         Assert.Equal(RouteInitDefinitions.InitCommand.Name, PublishedTokens.RouteInit.Command);
@@ -266,6 +268,7 @@ public sealed class PublishedTokensTests
         Assert.Equal(CurrentUserDataHome.OverrideVariable, PublishedTokens.DataHome.Variable);
 
         Assert.Equal(WorkspaceRuntimeBootstrap.IgnoreContent, PublishedTokens.Runtime.IgnoreContent);
+        Assert.Equal(OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime.WorkspaceRuntimePaths.DirectoryName, PublishedTokens.Runtime.DirectoryName);
 
         Assert.Equal(SourceLogicalPath.AgentsRoot, PublishedTokens.Sources.AgentsRoot);
         Assert.Equal(SourceLogicalPath.LoaderPath, PublishedTokens.Sources.LoaderPath);
@@ -284,18 +287,24 @@ public sealed class PublishedTokensTests
         Assert.Equal(RecoveryWireVocabulary.StoreKind(RecoveryStoreKind.Workspace), PublishedTokens.Recovery.WorkspaceStore);
         Assert.Equal(RecoveryWireVocabulary.StoreKind(RecoveryStoreKind.Legacy), PublishedTokens.Recovery.LegacyStore);
         Assert.Equal(RecoveryWireVocabulary.Integrity(RecoveryBundleIntegrity.Verified), PublishedTokens.Recovery.VerifiedIntegrity);
+        Assert.Equal(CliReportVocabulary.Name(OpenForge.Cli.Core.Presentation.Shared.Models.CliRecoveryDisposition.Removed), PublishedTokens.Recovery.RemovedDisposition);
 
         Assert.Equal(CliStatusDefinitions.Read(CliSemanticStatus.Complete).MachineName, PublishedTokens.Statuses.Complete);
         Assert.Equal(CliStatusDefinitions.Read(CliSemanticStatus.Complete).Disposition.ExitCode, PublishedTokens.Statuses.CompleteExitCode);
+        Assert.Equal(CliStatusDefinitions.Read(CliSemanticStatus.Attention).Disposition.ExitCode, PublishedTokens.Statuses.AttentionExitCode);
+        Assert.Equal(CliStatusDefinitions.Read(CliSemanticStatus.Incomplete).Disposition.ExitCode, PublishedTokens.Statuses.IncompleteExitCode);
         Assert.Equal(CliStatusDefinitions.Read(CliSemanticStatus.Invalid).Disposition.ExitCode, PublishedTokens.Statuses.InvalidExitCode);
         Assert.Equal(CliStatusDefinitions.Read(CliSemanticStatus.Blocked).Disposition.ExitCode, PublishedTokens.Statuses.BlockedExitCode);
         Assert.Equal(CliStatusDefinitions.Read(CliSemanticStatus.Invalid).MachineName, PublishedTokens.Statuses.Invalid);
+        Assert.Equal(CliStatusDefinitions.Read(CliSemanticStatus.Blocked).MachineName, PublishedTokens.Statuses.Blocked);
         Assert.Equal(CliStatusDefinitions.Read(CliSemanticStatus.Attention).MachineName, PublishedTokens.Statuses.Attention);
         Assert.Equal(CliStatusDefinitions.Read(CliSemanticStatus.Incomplete).MachineName, PublishedTokens.Statuses.Incomplete);
 
         Assert.Equal(CliReportVocabulary.Name(CliSeverity.Warning), PublishedTokens.Report.WarningSeverity);
 
         Assert.Equal(CliJsonFields.Data, PublishedTokens.Json.Data);
+        Assert.Equal(CliJsonFields.Recovery, PublishedTokens.Json.Recovery);
+        Assert.Equal(CliJsonFields.Disposition, PublishedTokens.Json.Disposition);
         Assert.Equal(CliJsonFields.Command, PublishedTokens.Json.Command);
         Assert.Equal(CliJsonFields.Status, PublishedTokens.Json.Status);
         Assert.Equal(CliJsonFields.Findings, PublishedTokens.Json.Findings);
@@ -329,6 +338,7 @@ public sealed class PublishedTokensTests
         Assert.Equal(FindDefinitions.Metadata, PublishedTokens.Find.Metadata);
         Assert.Equal(FindDefinitions.CommandIdentity, PublishedTokens.Find.Command);
         Assert.Equal(FindDefinitions.Heading.Name, PublishedTokens.Find.Heading);
+        Assert.Equal(FindDefinitions.Tag.Name, PublishedTokens.Find.Tag);
         Assert.Equal(FindDefinitions.Content.Name, PublishedTokens.Find.Content);
         Assert.Equal(FindDefinitions.Exclude.Name, PublishedTokens.Find.Exclude);
         Assert.Equal(FindDefinitions.Body, PublishedTokens.Find.Body);
@@ -350,6 +360,7 @@ public sealed class PublishedTokensTests
         Assert.Equal(MarkdownEntriesSectionReader.EntriesHeadingText, PublishedTokens.Metadata.Entries);
         Assert.Equal(MarkdownEntriesSectionReader.EmptyEntry, PublishedTokens.Metadata.EmptyEntry);
         Assert.Equal(SourceLoadingClosureResolver.LoadNowTag, PublishedTokens.Metadata.LoadNow);
+        Assert.Equal(SourceLoadingClosureResolver.KeepInMindTag, PublishedTokens.Metadata.KeepInMind);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ContextData.Sources)), PublishedTokens.ContextData.Sources);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(FindData.Matches)), PublishedTokens.FindData.Matches);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(FindDataMatch.Parts)), PublishedTokens.FindData.Parts);

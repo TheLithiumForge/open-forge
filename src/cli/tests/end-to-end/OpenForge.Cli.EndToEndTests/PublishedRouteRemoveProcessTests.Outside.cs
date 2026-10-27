@@ -22,7 +22,7 @@ public sealed partial class PublishedRouteRemoveProcessTests
         var leaf = directory + "/old" + PublishedTokens.Layout.MarkdownExtension;
         var keep = directory + "/keep" + PublishedTokens.Layout.MarkdownExtension;
         var loader = root + "/" + PublishedTokens.Layout.LoaderFileName;
-        const string removedRow = "- [Old policy](old.md) - #LoadNow #Old - applies to `old/**`\r\n";
+        const string removedRow = $"- [Old policy](old.md) - #{PublishedTokens.Metadata.LoadNow} #Old - applies to `old/**`\r\n";
         const string survivingRows = "- [Keep one](keep.md) - #Authored - applies to `src/**`\r\n- [Keep two](keep.md) - #Other - applies to `test/**`\r\n";
         var parent = OpenForgeDocumentSeed.Metadata("Parent", ["Fixture"], OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
         {

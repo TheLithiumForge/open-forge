@@ -85,7 +85,7 @@ public sealed class RouteUpdateOutsidePlanningIntegrationTests
     {
         using var workspace = new RouteUpdateOutsideWorkspace(root, listed: false);
         workspace.Files.ReplaceText(workspace.Parent, RouteUpdateOutsideWorkspace.Entrypoint(
-            "- [Independent child policy](note.md) - #LoadNow #Fixture - applies to `authored/**`"));
+            $"- [Independent child policy](note.md) - #{SourceLoadingClosureResolver.LoadNowTag} #Fixture - applies to `authored/**`"));
         var before = workspace.Files.SnapshotHashes();
         var body = Body(workspace.Text(workspace.Parent));
         var result = await workspace.Execute(workspace.Request(workspace.Parent));

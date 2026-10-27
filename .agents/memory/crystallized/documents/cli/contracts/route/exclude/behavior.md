@@ -67,7 +67,7 @@ Unit evidence covers binding, result projection and source-generated JSON.
 Integration evidence covers real files, row merging, invalid targets and planner
 preservation. Existing file-inclusion published journeys cover application and no
 reactivation through Index, Update, Configure and Extension installation. The
-corresponding outside-folder lifecycle preservation still needs qualification.
+outside-folder Integration controls cover ordinary Install, configure, form conversion and Update preservation of registration and authored row policy. Final combined and hosted qualification remain separate gates.
 
 The implementation reuses managed filesystem APIs, the shared Markdown parser,
 generated navigation, settings planners, mutation lock, recovery store and file

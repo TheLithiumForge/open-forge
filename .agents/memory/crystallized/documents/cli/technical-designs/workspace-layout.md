@@ -94,6 +94,8 @@ Safe directory, ancestry and catalogue expectations join the layout's existing e
 
 ## Source Transport
 
+Install forms its intended layout with the observed outside registrations and preserves outside observations when copying the retained read. Ordinary setup, configuration, form conversion and Update keep those facts through expected-state validation and final verification. Package mapping and implicit destination permission remain primary/native only.
+
 Catalogue requests, catalogues, read sessions, loading closure and mutation plans carry the selected layout. Sessions derive it from their catalogue. Read sessions scan `InventoryRoots` and retain explicit default-selection scopes for the primary content locations and registered directories. Included-file registrations do not scan siblings. Catalogue reconstruction preserves included `./path` identities, aliases, conditions and order, including sources that have no inventory candidate. Loader links resolve relative to the actual loader directory.
 
 Primary source IDs stay relative to their primary content location. Outside sources keep exact `./path` identities, including catalogue filenames and extensions, before and after registration. Outside `SKILL.md` files are ordinary Markdown. Discovery retains readable lexical names independently from portable write eligibility. Inventory grants no loading membership, ownership or implicit package permission. The [source-reference contracts](../contracts/shared/source-references/interface.md) define the public forms, and [generated navigation](generated-navigation.md) defines retained loader rows and projection.

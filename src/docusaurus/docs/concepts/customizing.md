@@ -88,6 +88,8 @@ Doctor shows how many links it ignored and notes listed paths that no longer exi
 
 Older CLIs do not support custom roots. An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
 
+Ordinary Install, configure, frontmatter conversion and Update preserve outside registrations and exact unlisted state. Authored outside rows keep their bytes, conditions and mutual order, including stale destinations. Generated primary rows retain their own order. These operations do not relist or restore outside anchors.
+
 Directory registrations require settings-v5 support. An older CLI does not maintain outside routes, and preserving an unknown property does not imply downgrade compatibility.
 
 ## Files the CLI keeps for itself

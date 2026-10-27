@@ -316,7 +316,7 @@ public sealed class RouteOutsideObservationIntegrationTests
     {
         using var fixture = new RouteListOutsideWorkspace(root, fileIncluded: true);
         fixture.Inner.ReplaceText(fixture.Anchor, RouteListOutsideWorkspace.Document("Retained parent",
-            "- [Effective child](child.md) - #LoadNow #KeepInMind\n"));
+            $"- [Effective child](child.md) - #{SourceLoadingClosureResolver.LoadNowTag} #{SourceLoadingClosureResolver.KeepInMindTag}\n"));
         var paths = new PhysicalPathResolver();
         var retained = await new WorkspaceLayoutReader(paths).ReadAsync(fixture.Workspace, TestContext.Current.CancellationToken);
         var before = fixture.Inner.SnapshotHashes();

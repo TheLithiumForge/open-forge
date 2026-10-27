@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using System.Text.Json.Nodes;
 using System.IO.Compression;
 using OpenForge.Cli.Core.Commands.Route.Move;
@@ -103,7 +104,7 @@ public sealed class RouteMoveOutsideSafetyIntegrationTests
     {
         using var workspace = new RouteMoveOutsideWorkspace(custom);
         var link = Path.GetRelativePath(workspace.MainRoot, RouteMoveOutsideWorkspace.Leaf).Replace(Path.DirectorySeparatorChar, '/').Replace(" ", "%20", StringComparison.Ordinal);
-        workspace.Write(workspace.Loader, OpenForge.Cli.TestSupport.OpenForgeDocumentSeed.GeneratedEntries($"- [Included]({link}) - #Docs #LoadNow - applies to `src/**`"));
+        workspace.Write(workspace.Loader, OpenForge.Cli.TestSupport.OpenForgeDocumentSeed.GeneratedEntries($"- [Included]({link}) - #Docs #{SourceLoadingClosureResolver.LoadNowTag} - applies to `src/**`"));
         var before = workspace.Snapshot();
         var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(workspace.Request(), TestContext.Current.CancellationToken);
         Assert.Null(build.Plan);

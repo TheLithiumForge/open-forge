@@ -362,6 +362,8 @@ file. The report names the part outside the primary content locations. Condition
 stay pending and make the report incomplete. Supply working files to `context`
 to resolve their conditions for the task.
 
+Registered directories appear separately from included files. JSON adds optional `data.outsideRoutes` at every detail in settings declaration order, with directory `path`, `state` and optional `listed`. States are `available`, `missing`, `unsafe` or `unavailable`. Listing requires a direct logical Loader row to the declared canonical catalogue or an actual recognized entrypoint at that directory. A stale canonical row can establish listing without loading a compatibility anchor. Descendant rows and physical aliases do not establish it. Unknown listing omits `listed`. Known-empty and unknown registration inventories omit the collection, with unknown coverage retaining its cause. Standard, full and debug text distinguish listed, unlisted and unknown outside routes. These facts grant no loading, ownership or package permission.
+
 It is a report. It does not repair stale navigation, adopt changed files, or
 make a lifecycle record trusted. Use `doctor` when the summary names a fact
 that needs diagnosis.
@@ -747,6 +749,8 @@ open-forge index ./docs/team/_team.md --dry-run
 Within a registration, existing recognized compatibility anchors keep their filenames. Unlisted maintenance and a stale Loader row naming a missing canonical anchor do not authorize relisting, renaming a compatibility file or restoring content implicitly. Create needs one safe existing anchor. Init owns generic missing-chain restoration.
 
 Registration supplies discovery and bounded maintenance, while Loader and catalogue rows still control loading. Removing a Loader row leaves the registration unlisted. Bare Index leaves that tree alone, and explicit Index does not relist it. Context does not activate inventory merely because it was scanned. Find discovers registered unlisted Markdown, and References uses the combined universe while excluding generated Entries from authored-link counts. Repeated authored rows retain labels, tags, conditions, aliases, mutual order and first-reaching included policy.
+
+Ordinary Install, configure, frontmatter conversion and root Update preserve outside registrations, independent file includes, exact unlisted state and authored row bytes, conditions, aliases, mutual order and first-reaching policy. Stale targets remain authored, and these operations do not relist or restore outside anchors. Generated primary rows keep their own ordering, so absolute mixed-row positions can change. Registration still grants no package ownership or permission.
 
 Move and Remove protect the registered directory and every recognized root entrypoint. Outside moves cannot cross registrations or enter or leave primary/native content. Readable foreign links establish impact, not write permission. A required surviving foreign rewrite blocks the complete plan unless existing authored link scope excludes it.
 
@@ -1281,10 +1285,12 @@ See [global options](#global-options) for shared flags.
 `doctor` diagnoses workspace, route, reference, lifecycle, Library, Extension,
 and recovery facts without changing them.
 
-A missing included target is an error. A registered include with no loader row
+For file includes, a missing target is an error. A registered include with no loader row
 is information. A registration that Include would now reject, such as a target
 that became a directory, is a warning. Restore or exclude missing targets and
 update or remove rejected registrations. Doctor never changes them.
+
+Outside directories retain separate diagnoses for missing directories, missing or competing anchors, unsafe boundaries, physical aliases and unavailable coverage. Doctor uses existing finding codes and typed outside conditions. Unlisted alone is information and does not mean that no other edge can load the content. Init or Index advice requires the existing safe maintenance, ownership and physical prerequisites. Unknown or unsafe observations supply no automatic restoration authority. Use `--format json --detail full` to include informational findings and their evidence.
 
 Links to existing folders inside the workspace are valid, with or without a
 trailing slash. A folder has no heading fragments. A missing folder named with

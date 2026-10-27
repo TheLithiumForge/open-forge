@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -20,8 +21,8 @@ internal sealed class RouteListOutsideWorkspace : IDisposable
     internal static readonly string IndependentDocument = OpenForgeDocumentSeed.Metadata(
         "Independent authored leaf", ["Body"], "# Independent\n\nKeep authored \u03c0 bytes.\n");
     internal const string IndependentOverwriteDocument = "Independent companion bytes\r\n";
-    internal const string FirstRow = "- [First child](child.md) - #LoadNow #Row - applies to `src/**`\n";
-    internal const string SecondRow = "- [Second child](child.md) - #KeepInMind - applies to `tests/**`\n";
+    internal const string FirstRow = $"- [First child](child.md) - #{SourceLoadingClosureResolver.LoadNowTag} #Row - applies to `src/**`\n";
+    internal const string SecondRow = $"- [Second child](child.md) - #{SourceLoadingClosureResolver.KeepInMindTag} - applies to `tests/**`\n";
     internal TemporaryWorkspace Inner { get; } = TemporaryWorkspace.Create("route-outside-reporting");
     internal CliWorkspace Workspace => new(Inner.Path, Inner.Path, CliWorkspaceSelectionMethod.CurrentDirectory);
     internal WorkspaceLayout Layout { get; }
@@ -41,7 +42,7 @@ internal sealed class RouteListOutsideWorkspace : IDisposable
         Inner.WriteText(PrimaryAnchor, Document("Primary", MarkdownEntriesSectionReader.EmptyEntry));
         var relative = Path.GetRelativePath(Layout.MainRoot, Anchor).Replace('\\', '/');
         Inner.WriteText(Layout.LoaderPath, GeneratedLoaderDocumentBuilder.Build(
-            "- [Primary](guide/_guide.md) - #LoadNow\n" + (listed ? $"- [Team authored]({relative}) - #LoadNow\n" : string.Empty)));
+            $"- [Primary](guide/_guide.md) - #{SourceLoadingClosureResolver.LoadNowTag}\n" + (listed ? $"- [Team authored]({relative}) - #{SourceLoadingClosureResolver.LoadNowTag}\n" : string.Empty)));
         Inner.WriteText(Anchor, Document("Authored team", inventoryOnly ? MarkdownEntriesSectionReader.EmptyEntry
             : FirstRow + SecondRow + "- [Outside skill](SKILL.md) - #Private\n"));
         if (inventoryOnly)

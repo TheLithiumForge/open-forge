@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List;
 
@@ -544,6 +545,99 @@ public sealed class RouteListCoverageAndResultTests
             Assert.Throws<ArgumentException>(create);
         }
     }
+
+    [Theory, InlineData(false), InlineData(true)]
+    [Trait("Boundary", "Processing"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    public void DetachedCyclesRetainKnownParentsAndCountsAtEveryRequestedDepth(bool twoCatalogues)
+    {
+        foreach (var depth in new[] { RouteListDepth.Finite(0), RouteListDepth.Finite(1), RouteListDepth.All })
+        {
+            var root = CycleRow(CycleSelected, twoCatalogues ? CycleParent : CycleSelected, 0, 1);
+            var rows = twoCatalogues && depth != RouteListDepth.Finite(0)
+                ? new[] { root, CycleRow(CycleParent, CycleSelected, 1, 1) } : [root];
+            var result = CycleResult(rows, depth);
+
+            Assert.Equal(rows, result.Rows);
+            Assert.Equal(twoCatalogues ? CycleParent : CycleSelected, result.Rows[0].ParentPath);
+            Assert.Equal(CycleId(twoCatalogues ? CycleParent : CycleSelected), result.Rows[0].ParentId);
+            Assert.All(result.Rows, row =>
+            {
+                Assert.Null(row.AbsoluteDepth);
+                Assert.Equal(1, row.DirectChildCount);
+            });
+        }
+    }
+
+    [Fact]
+    [Trait("Boundary", "Processing"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    public void DetachedSelectedRootDoesNotParticipateInItsParentsPresentedSiblingOrder()
+    {
+        var root = CycleRow(CycleSelected, CycleParent, 0, 1);
+        var parent = CycleRow(CycleParent, CycleSelected, 1, 3);
+        var earlier = CycleRow("docs/team/a.md", CycleParent, 2, 0);
+        var later = CycleRow("docs/team/b.md", CycleParent, 2, 0);
+        var result = CycleResult([root, parent, earlier, later], RouteListDepth.All);
+
+        Assert.Equal(new[] { CycleSelected, CycleParent, "docs/team/a.md", "docs/team/b.md" }, result.Rows.Select(row => row.Path));
+        Assert.Equal(3, result.Rows[1].DirectChildCount);
+        Assert.Throws<ArgumentException>(() => CycleResult([root, parent, later, earlier], RouteListDepth.All));
+    }
+
+    [Theory]
+    [InlineData("root-parent-id"), InlineData("descendant-parent-id"), InlineData("relative-depth")]
+    [InlineData("absolute-depth"), InlineData("missing-child"), InlineData("missing-return-child")]
+    [InlineData("duplicate"), InlineData("ordinary-later-parent"), InlineData("leaf-root")]
+    [InlineData("leaf-parent"), InlineData("later-descendant-parent"), InlineData("self-parent-id"), InlineData("unknown-count")]
+    [Trait("Boundary", "Processing"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    public void DetachedReturnEdgesKeepIdentityDepthCountAndOrdinaryOrderingGuards(string scenario)
+    {
+        var root = CycleRow(CycleSelected, CycleParent, 0, 1);
+        var parent = CycleRow(CycleParent, CycleSelected, 1, 1);
+        RouteListRow[] rows = scenario switch
+        {
+            "root-parent-id" => [CycleRow(CycleSelected, CycleParent, 0, 1, parentId: "wrong"), parent],
+            "descendant-parent-id" => [root, CycleRow(CycleParent, CycleSelected, 1, 1, parentId: "wrong")],
+            "relative-depth" => [root, CycleRow(CycleParent, CycleSelected, 2, 1)],
+            "absolute-depth" => [root, CycleRow(CycleParent, CycleSelected, 1, 1, absoluteDepth: 1)],
+            "missing-child" => [CycleRow(CycleSelected, CycleParent, 0, 2), parent],
+            "missing-return-child" => [root, CycleRow(CycleParent, CycleSelected, 1, 2)],
+            "duplicate" => [root, parent, parent],
+            "ordinary-later-parent" => [CycleRow(CycleSelected, CycleParent, 0, 1,
+                provenance: RouteListSelectionProvenance.ExplicitRoot, absoluteDepth: 1),
+                CycleRow(CycleParent, CycleSelected, 1, 1, absoluteDepth: 2)],
+            "leaf-root" => [CycleLeaf(CycleSelected, CycleParent, 0), parent],
+            "leaf-parent" => [root, CycleLeaf(CycleParent, CycleSelected, 1)],
+            "later-descendant-parent" => [root, CycleLeaf("docs/team/a.md", CycleParent, 2),
+                CycleRow(CycleParent, CycleSelected, 1, 2)],
+            "self-parent-id" => [CycleRow(CycleSelected, CycleSelected, 0, 1, parentId: "wrong")],
+            "unknown-count" => [CycleRow(CycleSelected, CycleParent, 0, null), parent],
+            _ => throw new ArgumentOutOfRangeException(nameof(scenario)),
+        };
+
+        Assert.Throws<ArgumentException>(() => CycleResult(rows, RouteListDepth.All));
+    }
+
+    private const string CycleSelected = "docs/team/other.md";
+    private const string CycleParent = "docs/team/_team.md";
+
+    private static string CycleId(string path) => SourceWorkspaceRelativePath.LiteralReferencePrefix + path;
+
+    private static RouteListRow CycleRow(string path, string parentPath, int depth, int? count,
+        string? parentId = null, RouteListSelectionProvenance? provenance = null, int? absoluteDepth = null)
+        => RouteListRow.Entrypoint(CycleId(path), path, parentId ?? CycleId(parentPath), parentPath,
+            absoluteDepth, depth, "Authored catalogue", [], count,
+            new(provenance ?? (depth == 0 ? RouteListSelectionProvenance.DetachedRoot : RouteListSelectionProvenance.Descendant),
+                RouteListSourceProvenance.AuthoredEntrypoint, false));
+
+    private static RouteListRow CycleLeaf(string path, string parentPath, int depth)
+        => RouteListRow.RoutedLeaf(CycleId(path), path, CycleId(parentPath), parentPath,
+            null, depth, "Authored leaf", [], new(depth == 0 ? RouteListSelectionProvenance.DetachedRoot : RouteListSelectionProvenance.Descendant,
+                RouteListSourceProvenance.AuthoredLeaf, false));
+
+    private static RouteListResult CycleResult(RouteListRow[] rows, RouteListDepth depth)
+        => RouteListResult.Create(CliSemanticStatus.Complete, RouteListContractTestData.Workspace(),
+            RouteListSelectionFactory.ResolvedIncluded(RouteSourceTestData.LogicalSource(CycleSelected, CycleId(CycleSelected))),
+            RouteListCoverage.Complete(depth, RouteListDepth.Finite(rows.Max(row => row.RelativeDepth)), 1, rows.Length, []), rows, [], null);
 
     private static RouteListRow RootRow(
         RouteListSelectionProvenance selection = RouteListSelectionProvenance.LoaderRoot,

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Inclusion.Planning;
 using OpenForge.Cli.Core.Framework.Settings;
@@ -22,7 +23,7 @@ public sealed partial class RouteExcludePlanningTests
         bytes = WorkspaceSettingsCodec.AddRoot(bytes, RouteInclusionFolderFixture.Catalogue)!;
         workspace.Files.ReplaceBytes(WorkspaceSettingsDefinitions.RelativePath, bytes);
         var destination = RouteInclusionFolderFixture.Destination(workspace);
-        RouteInclusionFolderFixture.Rows(workspace, $"- [Before](../before.md) - #Docs\n- [One]({destination}) - #Docs\n- [Two]({destination}) - #LoadNow\n- [After](../after.md) - #Other");
+        RouteInclusionFolderFixture.Rows(workspace, $"- [Before](../before.md) - #Docs\n- [One]({destination}) - #Docs\n- [Two]({destination}) - #{SourceLoadingClosureResolver.LoadNowTag}\n- [After](../after.md) - #Other");
         var before = workspace.Files.SnapshotHashes();
         var build = await new RouteInclusionPlanBuilder().BuildAsync(RouteInclusionFolderFixture.Request(workspace, exclude: true) with { DryRun = true }, RouteInclusionFolderFixture.Token);
         var plan = Assert.IsType<RouteInclusionPlan>(build.Plan);

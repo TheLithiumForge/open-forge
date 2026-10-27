@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Commands.Route.Inspect;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
@@ -63,7 +64,7 @@ public sealed class RouteOutsideReportingSafetyIntegrationTests
         using var fixture = new RouteListOutsideWorkspace(root, listed: false, compatibility: true);
         var destination = Path.GetRelativePath(fixture.Layout.MainRoot, fixture.CanonicalAnchor).Replace('\\', '/');
         fixture.Inner.ReplaceText(fixture.Layout.LoaderPath, GeneratedLoaderDocumentBuilder.Build(
-            $"- [Stale authored root]({destination}) - #LoadNow\n"));
+            $"- [Stale authored root]({destination}) - #{SourceLoadingClosureResolver.LoadNowTag}\n"));
         var before = fixture.Inner.SnapshotHashes();
         var result = await RouteListOperationFactory.Create()(new RouteListRequest(fixture.Workspace, null, RouteListDepth.All),
             TestContext.Current.CancellationToken);

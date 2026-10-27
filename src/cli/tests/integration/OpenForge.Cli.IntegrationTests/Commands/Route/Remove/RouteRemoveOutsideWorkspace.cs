@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
@@ -21,7 +22,7 @@ internal sealed class RouteRemoveOutsideWorkspace : IDisposable
     internal const string Category = DirectoryPath + "/topics";
     internal const string Child = Category + "/child.md";
     internal const string Resource = Category + "/assets/data.bin";
-    internal const string RemovedRow = "- [Independent old label](old.md) - #LoadNow #Authored - applies to `old/**`\r\n";
+    internal const string RemovedRow = $"- [Independent old label](old.md) - #{SourceLoadingClosureResolver.LoadNowTag} #Authored - applies to `old/**`\r\n";
     internal const string SurvivingRows = "- [Keep one](keep.md) - #Keep #First - applies to `src/**`\r\n- [Keep two](keep.md) - #Second - applies to `test/**`\r\n";
     internal RouteRemoveIntegrationWorkspace Inner { get; } = RouteRemoveIntegrationWorkspace.Create("route-remove-outside");
     internal WorkspaceLayout Layout { get; }
@@ -34,7 +35,7 @@ internal sealed class RouteRemoveOutsideWorkspace : IDisposable
         if (root != WorkspaceLayout.DefaultMainRoot) Inner.DeleteFile(RouteRemoveIntegrationWorkspace.LoaderPath);
         Inner.WriteText(WorkspaceSettingsDefinitions.RelativePath, Settings());
         var destination = Path.GetRelativePath(root, WorkspaceRoutePath.CanonicalEntrypointPath(DirectoryPath)).Replace('\\', '/');
-        Inner.WriteText(Layout.LoaderPath, Entry(listed ? $"- [Outside authored]({destination}) - #LoadNow #Policy\r\n" : MarkdownEntriesSectionReader.EmptyEntry));
+        Inner.WriteText(Layout.LoaderPath, Entry(listed ? $"- [Outside authored]({destination}) - #{SourceLoadingClosureResolver.LoadNowTag} #Policy\r\n" : MarkdownEntriesSectionReader.EmptyEntry));
         Inner.WriteText(Anchor, Entry(RemovedRow + SurvivingRows));
         Inner.WriteText(Leaf, OpenForgeDocumentSeed.Metadata("Old", ["Fixture"], "# Old\r\n\r\nExact body Ï€\r\n"));
         Inner.WriteText(Overwrite, "Independent overwrite\r\n");

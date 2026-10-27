@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Remove;
@@ -137,7 +138,7 @@ public sealed class RouteRemoveOutsidePlanningIntegrationTests
             case "ambiguous-anchor": fixture.Inner.WriteText(RouteRemoveOutsideWorkspace.DirectoryPath + "/index.md", RouteRemoveOutsideWorkspace.Entry(MarkdownEntriesSectionReader.EmptyEntry)); break;
             case "ordinal-alias": target = "Docs/team/old.md"; break;
             case "ordinal-prefix": target = "docs/team-other/old.md"; fixture.Inner.WriteText(target, "Independent content\n"); break;
-            case "malformed-row": fixture.Inner.WriteText(fixture.Anchor, fixture.Inner.ReadText(fixture.Anchor).Replace("#LoadNow #Authored - applies to `old/**`", "malformed policy", StringComparison.Ordinal)); break;
+            case "malformed-row": fixture.Inner.WriteText(fixture.Anchor, fixture.Inner.ReadText(fixture.Anchor).Replace($"#{SourceLoadingClosureResolver.LoadNowTag} #Authored - applies to `old/**`", "malformed policy", StringComparison.Ordinal)); break;
             case "foreign-independent-row": fixture.Inner.WriteText(fixture.Layout.LoaderPath, RouteRemoveOutsideWorkspace.Entry("- [Direct old](../docs/team/old.md) - #Independent")); break;
             case "unavailable-registration": fixture.Inner.DeleteFile(RouteRemoveOutsideWorkspace.Leaf); fixture.Inner.DeleteFile(RouteRemoveOutsideWorkspace.Overwrite); fixture.Inner.DeleteFile(RouteRemoveOutsideWorkspace.Survivor); fixture.Inner.DeleteFile(fixture.Anchor); Directory.Delete(fixture.Inner.Combine(RouteRemoveOutsideWorkspace.DirectoryPath)); break;
         }

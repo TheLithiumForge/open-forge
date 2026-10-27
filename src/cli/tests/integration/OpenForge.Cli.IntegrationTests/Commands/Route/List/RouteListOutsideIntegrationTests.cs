@@ -215,7 +215,7 @@ public sealed class RouteListOutsideIntegrationTests
         });
         var child = Assert.Single(result.Rows, row => row.Path == RouteListOutsideWorkspace.Child);
         Assert.Equal("First child", child.Description);
-        Assert.Equal(new[] { "LoadNow", "Row" }, child.Tags);
+        Assert.Equal(new[] { SourceLoadingClosureResolver.LoadNowTag, "Row" }, child.Tags);
         Assert.True(child.Provenance.HasOverwrite);
         Assert.Equal(before, fixture.Inner.SnapshotHashes());
     }
