@@ -1,0 +1,39 @@
+MissingDirectory
+Registered outside directory is missing
+The registered outside directory docs/team is missing. Review its settings registration.
+Review docs/team and its outside-route settings registration by hand.
+
+MissingAnchor
+Entrypoint is missing
+The registered outside directory has no recognized root entrypoint. Its canonical entrypoint is docs/team/_team.md.
+open-forge route init ./docs/team/_team.md
+
+Unlisted
+Outside route has no direct Loader row
+The registered outside directory docs/team has no direct root Loader row. Other entries or explicit selection can still load its sources.
+
+
+UnsafeBoundary
+Outside route boundary is unsafe
+The registered outside boundary docs/team is unsafe: safe ordinary containment could not be established.
+Review docs/team and its outside-route settings registration by hand.
+
+PhysicalAlias
+Path identity is ambiguous
+The registered outside boundary docs/team is unsafe: safe ordinary containment could not be established.
+Review docs/team and its outside-route settings registration by hand.
+
+Unavailable
+Outside route observation is unavailable
+The registered outside observation docs/team is unavailable: the required evidence could not be established.
+Review docs/team and its outside-route settings registration by hand.
+
+AmbiguousAnchor
+Several entrypoints match
+The registered outside root has competing entrypoints, including docs/team. Keep one recognized root entrypoint.
+Review docs/team and its outside-route settings registration by hand.
+
+StaleLoaderTarget
+Outside Loader target is missing
+The direct Loader target docs/team is missing or unreachable. Review the authored row independently from the registered root entrypoint.
+Review docs/team and its outside-route settings registration by hand.

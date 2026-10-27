@@ -22,6 +22,63 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Operational;
 [Trait("Boundary", "OS"), Trait("Feature", "outside-observation"), Trait("Evidence", "Integration")]
 public sealed class RouteOutsideObservationIntegrationTests
 {
+    public static IEnumerable<object[]> CompatibilityListingCases()
+    {
+        foreach (var root in new[] { WorkspaceLayout.DefaultMainRoot, RouteListOutsideWorkspace.CustomRoot })
+            foreach (var situation in new[] { "missing-index", "missing-underscore-index", "actual-index", "actual-underscore-index", "stale-canonical", "unknown-index" })
+                yield return [root, situation];
+    }
+
+    [Theory, MemberData(nameof(CompatibilityListingCases))]
+    public async Task NoncanonicalListingRequiresRetainedActualAnchorPresence(string root, string situation)
+    {
+        var name = situation.Contains("underscore", StringComparison.Ordinal)
+            ? SourceFormClassifier.UnderscoreIndexFileName : SourceFormClassifier.IndexFileName;
+        var actual = situation.StartsWith("actual", StringComparison.Ordinal) || situation is "stale-canonical" or "unknown-index";
+        using var fixture = new RouteListOutsideWorkspace(root, listed: false, compatibilityName: actual ? name : null);
+        var target = situation == "stale-canonical" ? fixture.CanonicalAnchor : RouteListOutsideWorkspace.DirectoryPath + "/" + name;
+        fixture.Inner.ReplaceText(fixture.Layout.LoaderPath, GeneratedLoaderDocumentBuilder.Build(
+            $"- [Authored row]({Path.GetRelativePath(root, target).Replace('\\', '/')}) - #{SourceLoadingClosureResolver.LoadNowTag}\n"));
+        var paths = situation == "unknown-index" ? new PhysicalPathResolver(path => PhysicalIdentityTracker.PathComparer.Equals(path, fixture.Inner.Combine(target))
+            ? new PathComponent(PathComponentState.Inaccessible, path, null, null,
+                FilesystemFailure.FromException(FilesystemFailureKind.AccessDenied, new UnauthorizedAccessException("Controlled anchor observation")))
+            : LinkTargetReader.Read(path)) : new PhysicalPathResolver();
+        var retained = await new WorkspaceLayoutReader(paths).ReadAsync(fixture.Workspace, TestContext.Current.CancellationToken);
+        var before = fixture.Inner.SnapshotHashes();
+        var observed = await Create(paths).ReadOutsideAsync(retained, TestContext.Current.CancellationToken);
+        Assert.Same(retained, observed.LayoutRead);
+        var route = Assert.Single(observed.Routes);
+        Assert.Equal(WorkspaceOutsideRouteReadState.Available, route.Directory.State);
+        Assert.Contains(route.Rows, row => row.ParentPath == fixture.Layout.LoaderPath && row.Path == target);
+        if (situation == "unknown-index") Assert.Null(route.Listed);
+        else Assert.Equal(actual, route.Listed);
+        if (situation.StartsWith("missing", StringComparison.Ordinal)) Assert.DoesNotContain(target, route.EntrypointPaths);
+        Assert.Equal(before, fixture.Inner.SnapshotHashes());
+    }
+
+    [Theory]
+    [InlineData(WorkspaceLayout.DefaultMainRoot, false), InlineData(RouteListOutsideWorkspace.CustomRoot, false)]
+    [InlineData(WorkspaceLayout.DefaultMainRoot, true), InlineData(RouteListOutsideWorkspace.CustomRoot, true)]
+    public async Task RetainedLogicalLoaderAbsenceIsFalseAndUnavailableEvidenceStaysUnknown(string root, bool unavailable)
+    {
+        using var fixture = new RouteListOutsideWorkspace(root, listed: false);
+        if (!unavailable) fixture.Inner.MoveFile(fixture.Layout.LoaderPath, "retained-loader.md");
+        var paths = unavailable ? new PhysicalPathResolver(path => PhysicalIdentityTracker.PathComparer.Equals(path, fixture.Inner.Combine(fixture.Layout.LoaderPath))
+            ? new PathComponent(PathComponentState.Inaccessible, path, null, null,
+                FilesystemFailure.FromException(FilesystemFailureKind.AccessDenied, new UnauthorizedAccessException("Controlled selected Loader observation")))
+            : LinkTargetReader.Read(path)) : new PhysicalPathResolver();
+        var retained = await new WorkspaceLayoutReader(paths).ReadAsync(fixture.Workspace, TestContext.Current.CancellationToken);
+        var before = fixture.Inner.SnapshotHashes();
+        var outside = await Create(paths).ReadOutsideAsync(retained, TestContext.Current.CancellationToken);
+        Assert.Same(retained, outside.LayoutRead);
+        Assert.True(outside.RegistrationInventoryComplete);
+        var route = Assert.Single(outside.Routes);
+        Assert.Equal(WorkspaceOutsideRouteReadState.Available, route.Directory.State);
+        if (unavailable) Assert.Null(route.Listed);
+        else Assert.False(route.Listed);
+        Assert.Equal(before, fixture.Inner.SnapshotHashes());
+    }
+
     [Theory(DisplayName = "Workspace entry aliases count one physical layer and retain each logical loading role")]
     [InlineData(WorkspaceLayout.DefaultMainRoot, false), InlineData(WorkspaceLayout.DefaultMainRoot, true)]
     [InlineData(RouteListOutsideWorkspace.CustomRoot, false), InlineData(RouteListOutsideWorkspace.CustomRoot, true)]

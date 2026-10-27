@@ -6,7 +6,7 @@ using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedStatusProcessTests
+public sealed partial class PublishedStatusProcessTests
 {
     private const string CustomRoot = "docs/context";
 

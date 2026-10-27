@@ -3,7 +3,7 @@ using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedInstallProcessTests
+public sealed partial class PublishedInstallProcessTests
 {
     [Fact(DisplayName = "Published state commands preserve malformed legacy files as unrelated content"), Trait("Feature", "state-retirement"), Trait("Evidence", "EndToEnd")]
     public async Task LegacyFilesAreNeitherReadNorDeleted()

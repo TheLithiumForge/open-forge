@@ -22,5 +22,7 @@ internal sealed record DoctorObservation(
 {
     internal WorkspaceLayoutRead? LayoutRead { get; init; }
 
+    internal RouteOutsideRoutesObservation? OutsideRoutes { get; init; }
+
     internal DoctorMaintenanceObservation? Maintenance { get; init; }
 }

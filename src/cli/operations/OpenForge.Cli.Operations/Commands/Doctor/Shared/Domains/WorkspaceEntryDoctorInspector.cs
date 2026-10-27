@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
+using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -13,6 +14,10 @@ namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
 internal static class WorkspaceEntryDoctorInspector
 {
     private const DoctorDomainKind Domain = DoctorDomainKind.WorkspaceEntry;
+
+    internal static DoctorDomainReport Inspect(CliWorkspace workspace, DoctorObservation observation)
+        => WorkspaceIncludeDoctorInspector.InspectOutside(observation, Inspect(workspace, observation.WorkspaceEntry, observation.Routes,
+            observation.LocalReferences.MissingLinkScopeEntries, observation.LocalReferences.UnrecognizedSettingsSchemaVersion));
 
     internal static DoctorDomainReport Inspect(
         CliWorkspace workspace,

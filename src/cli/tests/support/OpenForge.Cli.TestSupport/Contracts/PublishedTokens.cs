@@ -139,9 +139,21 @@ public static class PublishedTokens
         public const string Command = "status";
     }
 
+    public static class StatusOutsideRoutes
+    {
+        public const string Collection = "outsideRoutes";
+        public const string State = "state";
+        public const string Listed = "listed";
+        public const string Available = "available";
+        public const string Missing = "missing";
+        public const string Unsafe = "unsafe";
+        public const string Unavailable = "unavailable";
+    }
+
     public static class Doctor
     {
         public const string Command = "doctor";
+        public const string RootMissingCode = "workspace.root-missing";
     }
 
     public static class Repair

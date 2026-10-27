@@ -30,6 +30,14 @@ internal sealed class InstallLayoutPlanner(PhysicalPathResolver paths)
             return Stop(InstallFindingCode.InvalidInput, "An established installation cannot change its main root in this delivery.", intended.MainRoot);
         if (observed.State is not (WorkspaceLayoutReadState.Ready or WorkspaceLayoutReadState.Uninstalled))
             return Stop(InstallFindingCode.LifecycleBlocked, observed.Issues.FirstOrDefault()?.Cause ?? "The workspace layout is inconsistent.");
+        try
+        {
+            intended = intended.WithOutsideRoutes(current.OutsideRoutes.Select(route => route.DirectoryPath));
+        }
+        catch (ArgumentException exception)
+        {
+            return Stop(InstallFindingCode.InvalidInput, exception.Message, intended.MainRoot);
+        }
         if (intended.IsDefault || observed.State == WorkspaceLayoutReadState.Ready)
             return new(observed, intended, null);
 
@@ -64,7 +72,7 @@ internal sealed class InstallLayoutPlanner(PhysicalPathResolver paths)
             return Stop(InstallFindingCode.LifecycleUnavailable, exception.Message, directory);
         }
         var captured = new WorkspaceLayoutRead(observed.State, observed.Settings, observed.Ownership, observed.Layout,
-            observed.Issues, expectations.Distinct().ToImmutableArray());
+            observed.Issues, expectations.Distinct().ToImmutableArray(), observed.OutsideRoutes);
         return new(captured, intended, null);
 
         InstallLayoutSelection Stop(InstallFindingCode code, string cause, string? subject = null)

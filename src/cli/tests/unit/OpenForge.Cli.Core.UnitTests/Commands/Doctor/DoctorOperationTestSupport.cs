@@ -135,6 +135,17 @@ internal sealed class DoctorOperationTestSupport
     internal sealed class RecordingRouteContributor(List<string> calls)
         : IRouteOperationalContributor
     {
+        public ValueTask<RouteOutsideRoutesObservation> ReadOutsideAsync(WorkspaceLayoutRead observation, CancellationToken cancellationToken)
+            => throw new InvalidOperationException("This recording requires the existing empty-registration path.");
+
+        public ValueTask<RouteStatusView> ReadStatusAsync(WorkspaceLayoutRead observation, SourceSharing? sharing,
+            CancellationToken cancellationToken, RouteOutsideRoutesObservation retained)
+            => throw new InvalidOperationException("Doctor evidence must not invoke Status views.");
+
+        public ValueTask<RouteDoctorView> ReadDoctorAsync(WorkspaceLayoutRead observation, SourceSharing? sharing,
+            CancellationToken cancellationToken, RouteOutsideRoutesObservation retained)
+            => throw new InvalidOperationException("This recording requires the existing empty-registration path.");
+
         internal RouteSourceInventoryState SourceInventory { get; set; } =
             RouteSourceInventoryState.SafelyAbsent;
 

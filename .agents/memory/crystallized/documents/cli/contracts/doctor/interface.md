@@ -11,6 +11,37 @@ open-forge:
 
 Doctor diagnoses the selected context folder and native Skills together. It reports layout disagreements without assuming the default root.
 
+Registered outside directories are diagnosed independently from file includes,
+Loader listing, loading, ownership and permission. Reuse the existing finding,
+evidence, provenance and action graph without another JSON collection. These
+outside-specific wording variants supplement the catalogue's primary wording:
+
+- A missing declared directory uses `workspace.root-missing`, warning and
+  manual-decision, naming its settings registration. It does not claim a Loader
+  row or an absent installation and offers no automatic directory restoration.
+- An available directory with no recognized anchor uses
+  `workspace.entry-missing`. Exact `route init ./path/_name.md` advice requires
+  the existing complete maintenance, ownership and physical prerequisites.
+  A valid compatibility anchor is not missing.
+- Competing anchors use `workspace.entry-ambiguous` or
+  `workspace.entry-compatibility-collision` with actual candidates and manual
+  choice. Do not recommend another competing anchor.
+- Unsafe boundaries use `workspace.path-containment` or
+  `workspace.physical-alias` according to typed evidence, with blocked/manual
+  handling. Wording names the unsafe outside boundary and actual cause. A
+  forbidden contained link is not described as workspace escape.
+- Unavailable observation uses `workspace.parse-incomplete` with the retained
+  cause and incomplete coverage. It is not missing or proven unlisted.
+- A proven absence of a direct root Loader row uses `workspace.detached`,
+  information and informational. State only that direct listing is absent,
+  without claiming that other entries or explicit selection cannot load it.
+  Unknown listing produces no unlisted claim.
+
+No case automatically registers, relists, restores or grants a package
+destination. Existing file-include wording and severity remain independent,
+including simultaneous file and directory registration. Outside condition is a
+typed fact, never inferred from message text or the included-file marker.
+
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
 ## Status And Authority

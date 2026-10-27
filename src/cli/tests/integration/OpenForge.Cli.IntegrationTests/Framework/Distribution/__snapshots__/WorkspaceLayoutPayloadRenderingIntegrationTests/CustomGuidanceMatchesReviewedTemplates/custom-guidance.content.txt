@@ -231,6 +231,8 @@ First installation can select the context folder with `install --main-root <fold
 
 Before you write workspace files or metadata, read the file formats in `docs/context/README.md`, or run `open-forge help concepts` if that page was deleted.
 
+Folder `route include` registers a maintained outside directory in settings v5. File Include stays read-only by itself. Use exact `./...` source references with filenames outside primary content, and do not infer loading, ownership or package permission from registration. Read [outside-route maintenance](references/routes.md#outside-routes) before editing that content. Older CLIs do not maintain directory registrations, and unknown-property preservation is not downgrade compatibility.
+
 You may create or move user-owned Markdown files directly inside routed folders. Preview and run `open-forge index` to fill missing metadata, create missing entrypoints, and refresh Entries instead of writing those by hand. After renames or moves, preview and run `open-forge repair --automatic` to repair proven links and affected navigation. When Git retains the old file's committed content, Index and Repair work in either order. Without Git, run Repair first while old Entries still record the file's metadata. Index and Repair preserve protected content, including managed files. Follow Doctor's next step for remaining choices, edits or a Git timeout retry. Read [route maintenance](references/routes.md) for the boundaries.
 
 ## Most Important Commands
@@ -294,6 +296,8 @@ A source reference is an exact source ID, such as `memory/crystallized`, or an e
 
 The context folder is chosen at first installation with `install --main-root <folder>`. The default is `--main-root .agents`. Native Skills stay in `.agents/skills/`, settings in `.agents/open-forge.json`, and ownership in `.agents/open-forge.lock.json`. See [Install](packages.md#install) for setup and relocation limits.
 
+Outside folders are registered separately in settings v5 `outsideRoutes`. They do not join primary path mapping or implicit package permission. Exact references retain filename and extension, but discovery and result operand identity depend on registration or retained inclusion. See [outside routes](routes.md#outside-routes).
+
 ## Global Flags
 
 Every command accepts these flags. Extension Create accepts `--workspace` but creates in its explicit catalogue, so that flag has no effect there.
@@ -333,7 +337,7 @@ Suggested next actions and retries keep the selected workspace and the options n
 
 Permission prompts keep the numbered order `1. Allow always`, `2. Allow once`, `3. Cancel`. Key mode starts focused on `Allow once`, so Enter approves only this run without saving a grant. Deliberately choose `Allow always` to save a grant for every Extension and Library. Line mode accepts `always`, `once`, or `cancel`, and an empty line cancels.
 
-`--allow-path <path>` records a supported CLI permission for an exact destination outside the content folders (`docs/context/` and `.agents/skills/`). It is a write boundary, not human authorization. Supply the reviewed destination within the task's authority. `--force` permits only its command's documented initial replacement. On Framework and Extension Update it is accepted for compatibility and adds no authority.
+`--allow-path <path>` records a supported CLI permission for an exact destination outside the primary content locations. It is a write boundary, not human authorization. Supply the reviewed destination within the task's authority. `--force` permits only its command's documented initial replacement. On Framework and Extension Update it is accepted for compatibility and adds no authority.
 
 ## Read Results
 
@@ -382,8 +386,10 @@ open-forge context directives/order-rules --for src/Order.cs --follow-links 1
 
 ## Included Workspace Files
 
+Registered outside directories also supply inventory, including unlisted Markdown. Find searches it and References includes it in incoming impact scans. Context follows authored loading rows and conditions rather than activating inventory. Use an exact source reference with filename, such as `./docs/team/_team.md`. File-only included catalogues keep retained-edge traversal without scanning siblings. A registered entrypoint instead selects its bounded inventory scope. An outside `SKILL.md` has ordinary Markdown form.
+
 The loader can list an existing workspace file where it lives. Context follows
-those rows with their tags and conditions. Select a file outside the content folders (`docs/context/` and `.agents/skills/`) by
+those rows with their tags and conditions. Select a file outside the primary content locations by
 exact path, such as `context ./CONTRIBUTING.md`. It has no short source ID.
 An exact `./...` path to an unrouted file, such as `context ./docs/context/README.md`,
 reads it and its overwrite without making them startup reads.
@@ -456,9 +462,15 @@ Incoming filters cannot be used with `--direction out`. References does not read
 
 List source IDs and paths to orient scope selection. `--depth <non-negative-integer|all>` is its only command flag. Default: `1`. Use `--depth=0` for selected roots, `--depth=2` for a bounded subtree, or `--depth=all` for all descendants. Both space-separated and equals forms are accepted.
 
+Select a registered outside catalogue or descendant by exact source reference, such as `route list ./docs/team/_team.md --depth all`. This works without a Loader row. Bare `route list` keeps its Loader-root selection and does not add unlisted directories as roots.
+
+Applicable List rows and Inspect source data include optional `maintenanceRoot` at every JSON detail. It names the canonical workspace-relative registered directory, such as `docs/team`, without `./` or a trailing slash. Standard, full and debug text may show `Maintenance root`. The fact is omitted when inapplicable and does not imply loading, direct Loader listing, ownership or package permission. Exact source identities still keep `./` and the filename.
+
 ## `route inspect <source-reference>`
 
 Explain one source's route, loading, and conditions without returning its body.
+
+Explicit selection also works for registered-but-unlisted sources, such as `route inspect ./docs/team/_team.md`, without activating them. See the maintenance-root fact under [Route List](#route-list-source-reference).
 
 | Flag               | Meaning                                                                                                                              |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -499,7 +511,7 @@ Continue with [route maintenance](routes.md) for edits or [Framework and package
 
 In `.agents/open-forge.json`, `ignoreLinksFrom` skips links written inside listed paths and `ignoreLinksTo` skips links whose resolved targets lie inside them. Entries are workspace-relative paths, not patterns. Files match exactly and folders cover descendants, using the same comparison as `allowInstallPaths`. Missing lists mean no exclusions. Doctor names ignored counts and stale entries. Context omits ignored link expansion edges. References lists every link.
 
-A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands. Older CLIs do not support custom roots. Use a CLI that supports `install --main-root` for those workspaces.
+A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands. Older CLIs do not support custom roots or maintain directory registrations. Unknown-property preservation does not make them compatible with those workspaces.
 
 .agents/skills/open-forge-cli/references/routes.md
 ---
@@ -519,6 +531,16 @@ Resolve a reported boundary before retrying. A suggested retry for a blocked Rou
 Moving or removing a category also maintains direct links to its folder and
 nested folders. A missing folder link needs a manual edit, and Repair does not
 offer file replacements for it.
+
+## Outside routes
+
+Folder Include registers a safe existing workspace directory in settings v5 `outsideRoutes`, lists its canonical catalogue and creates that catalogue only when missing. File Include, including a catalogue file, stays file-only in `roots`. The two registrations can coexist. Neither adds loading authority, package ownership or an implicit Extension or Library grant.
+
+Use exact source references with filenames, such as `./docs/team/_team.md`. Registration supplies inventory, not Loader membership. Bare Index maintains listed roots. Explicit Index and affected Repair can maintain an unlisted registration without relisting it. Create requires one safe existing recognized anchor. Generic Init can restore its missing chain and stops at the registration. Update edits eligible existing content. Existing compatibility anchors keep their actual filenames, including with a stale canonical Loader row.
+
+Move stays within one outside registration. Move and Remove protect its directory and root entrypoints, keep content writes physically within the selected boundary and refuse a required surviving foreign rewrite unless existing authored link scope excludes it. Remove records literal file/directory exclusions without deregistering. Folder Exclude owns deregistration and never deletes or scans descendants. Preview every authorized write and retain reported recovery under the fixed `.open-forge-state` folder.
+
+Outside metadata uses generic Workspace defaults. Names such as `directives` or `skills` add no primary meaning, and an outside `SKILL.md` is ordinary Markdown. Directory registration requires ordinary contained paths and rejects overlaps and aliases. Given an existing `docs/team` directory, preview `open-forge route include docs/team --dry-run`. After registration, preview `open-forge index ./docs/team/_team.md --dry-run`.
 
 ## Metadata And Conditions
 
@@ -540,7 +562,7 @@ New metadata and quoted-string condition lists use the workspace's frontmatter f
 
 ## `route init <route-target>`
 
-Create every missing entrypoint in an exact route chain. Targets are route IDs or exact `./...` workspace-relative entrypoint paths within the context folder or native Skills. A missing exact path uses the canonical `_{folder-name}.md` filename. Init never creates the loader.
+Create every missing entrypoint in an exact route chain. Targets are route IDs or exact `./...` workspace-relative entrypoint paths within the context folder, native Skills or a registered outside route. A missing exact path uses the canonical `_{folder-name}.md` filename. Init never creates the loader.
 
 | Flag                                                       | Meaning                                                                                             |
 | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -573,7 +595,7 @@ For example, preview a new decision record using that available Template:
 open-forge route create memory/crystallized/decisions/api-choice --description "Accepted API choice" --tag Decision --tag API --template templates/planning/decision --dry-run
 ```
 
-## `route include <workspace-file>`
+## `route include <workspace-path>`
 
 List a project document in the loader where it lives. A new external row requires
 `--description <text>`. Repeat `--tag <tag>` in order, with or without `#`, and
@@ -585,9 +607,9 @@ open-forge route include CONTRIBUTING.md --description "How to contribute" --dry
 open-forge route include CONTRIBUTING.md --description "How to contribute"
 ```
 
-The target is one workspace-relative UTF-8 file. A Markdown file with
+A file target is one workspace-relative UTF-8 file. A Markdown file with
 `## Entries` is followed as a catalogue. Both path separators and a leading
-`./` are accepted. Use a catalogue instead of a directory. Globs, URLs, fragments,
+`./` are accepted. A folder instead uses [outside registration](#outside-routes), with an omitted description taking the generic scaffold description. Globs, URLs, fragments,
 workspace escapes, Git metadata and control files are invalid.
 
 An existing row keeps omitted fields. Each supplied option replaces only its own
@@ -595,15 +617,15 @@ field. An identical request is a verified no-op. A hand-written row is registere
 without rewriting it. To clear tags or conditions, edit the row or exclude and
 include again. The preview shows rows before and after.
 
-Use a direct child folder's catalogue under `docs/context/`, or the native Skills catalogue under `.agents/skills/`. Include switches
+Inside the selected main root, use only a direct child folder's catalogue. The fixed native Skills catalogue remains a primary category. Include switches
 its generated row on. Change that catalogue's frontmatter for metadata, since
 `--description`, `--tag` and `--apply-to` are rejected there.
 
 External files are recorded in settings `roots`. The loader controls activation.
 Deleting a row by hand leaves the registration unlisted. Index, Update, Configure and
-Extension installation never restore it. Included files keep their bytes.
+Extension installation never restore it. File inclusion alone never grants maintenance of the included file.
 
-## `route exclude <workspace-file>`
+## `route exclude <workspace-path>`
 
 Remove every loader row for the target and its external `roots` registration.
 The target file stays in place. A missing target and a hand-written row are valid.
@@ -617,7 +639,7 @@ open-forge route exclude CONTRIBUTING.md
 When nothing lists or registers the target, Exclude reports nothing changed and
 succeeds. Both commands preview with `--dry-run` and otherwise apply after checks
 with the workspace mutation lock and recovery, without a prompt. They write only
-`docs/context/loader.md` and `.agents/open-forge.json`.
+the selected loader and fixed `.agents/open-forge.json`. Folder Include may additionally create its missing canonical catalogue, while folder Exclude only removes its registration and matching rows.
 
 ## `route update <source-reference>`
 
@@ -631,7 +653,7 @@ Repeated `--tag` replaces the complete ordered tag list, and `--apply-to` replac
 
 ## `route move <source-reference> <destination-target>`
 
-Relocate an unmanaged routed leaf or complete category, updating affected references and generated navigation. The destination is an exact workspace-relative `./...` path under an existing routable parent in the context folder or native Skills and must match the source's leaf or category form.
+Relocate an unmanaged routed leaf or complete category, updating affected references and generated navigation. The destination is an exact workspace-relative `./...` path under an existing routable parent in the context folder, native Skills or the same registered outside route, and must match the source's leaf or category form.
 
 Its only command flag is `--dry-run`. Inspect the move and all reference changes. Move does not relocate lifecycle-managed content, create a missing parent route, or overwrite a destination.
 
@@ -756,11 +778,13 @@ Before route choices, first interactive Install asks `Where should Open Forge ke
 
 An omitted or unchanged `--main-root` keeps ordinary Install behavior. A different root on an established installation is refused before changes, including with `--configure`. Relocation is not available yet. Editing `mainRoot` in settings moves no files. Older CLIs do not support custom roots.
 
+Later folder Include registers outside routes separately. It does not change the main root or create package ownership. Extension and Library destinations there still use explicit grants and existing source/ownership protections. Older CLIs do not maintain directory registrations, and unknown-property preservation is not downgrade compatibility.
+
 After the preset choice, first interactive Install asks `How should Open Forge write file metadata?` with root preselected. An explicit `--frontmatter` skips the question. A fresh Install keeps an explicit preference already in settings unless the flag overrides it. Without either, fresh unattended Install uses root. Interactive Configure offers the current form first. Ordinary repeated Install and Update retain the form and never ask.
 
 Install, Update, and Extension delivery use `frontmatter` in `.agents/open-forge.json`. A missing value means scoped. Both root and scoped frontmatter are read in every workspace. The plan shows the selected form, such as `Frontmatter: root`, or a change such as `Frontmatter: scoped -> root`.
 
-When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `["docs/context/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 4 for every layout. Unrelated rewrites preserve an existing schema declaration. Explicitly selecting a custom root can update it to v4.
+When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `["docs/context/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 5 for every layout. Unrelated rewrites preserve an existing schema declaration. Explicitly selecting a custom root can update it to the current schema.
 
 A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands. This does not make an older CLI compatible with custom roots.
 
@@ -777,7 +801,7 @@ Install's headline describes the result, with the path on a separate `Workspace:
 
 No built-in preset installs optional Extensions. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal includes only Directives and Crystallized Memory. A Memory state added with `--route` brings the Memory catalogue with it.
 
-Install, Update, Configure, and Extension commands keep the loader's `Entries` as the user left them. A removed root line stays removed, links to documents outside the content folders (`docs/context/` and `.agents/skills/`) stay, and an empty list stays empty. A root joins the list only when the command creates its catalogue or Configure adds a route that was left out.
+For primary roots and file-only inclusions, Install, Update, Configure, and Extension commands keep the loader's `Entries` as the user left them. A removed root line stays removed, links to documents outside the content folders (`docs/context/` and `.agents/skills/`) stay, and an empty list stays empty. A root joins the list only when the command creates its catalogue or Configure adds a route that was left out.
 
 In line-mode Custom, type row edits such as `2+ 9~`, press Enter on an empty line to continue, or follow `Type cancel to stop without changes.` Existing tracked files stay tracked, and left-out defaults leave existing files routable.
 
@@ -899,7 +923,7 @@ Add reviewed optional packages and their required dependencies. Select explicit 
 | `--source <package-or-catalogue-path>` | Select the reviewed separate local source                                         |
 | `--all`                                | Select every eligible package in that source                                      |
 | `--force`                              | Permit eligible existing content replacement during initial installation          |
-| `--allow-path <path>`                  | Record supported permission for a destination outside the content folders (`docs/context/` and `.agents/skills/`). Repeat as needed |
+| `--allow-path <path>`                  | Record supported permission for a destination outside the primary content locations. Repeat as needed |
 | `--dry-run`                            | Preview packages, dependencies, and file changes                                  |
 | `--automatic`                          | Suppress prompts without selecting packages or adding force                       |
 
@@ -977,7 +1001,7 @@ Register a workspace-relative source directory and create relative file links.
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `--to <directory>`           | Select the workspace-relative projection root. Default: workspace root                                       |
 | `--git-ignore <true\|false>` | Ignore exact projected links. `false` leaves ignore rules unchanged                                          |
-| `--allow-path <path>`        | Record supported destination permission outside the content folders (`docs/context/` and `.agents/skills/`). Repeat for required destinations and `.gitignore` |
+| `--allow-path <path>`        | Record supported destination permission outside the primary content locations. Repeat for required destinations and `.gitignore` |
 | `--dry-run`                  | Preview links, registration, permissions, and ignore rules                                                   |
 | `--automatic`                | Disable prompts without changing the selected targets                                                        |
 

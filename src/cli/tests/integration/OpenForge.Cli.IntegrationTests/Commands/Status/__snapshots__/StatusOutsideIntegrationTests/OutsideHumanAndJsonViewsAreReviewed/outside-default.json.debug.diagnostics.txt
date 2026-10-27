@@ -1,0 +1,17 @@
+status=completed-with-warnings
+findings=15
+The ownership lock is absent; no Extension ownership claims are recorded.
+The ownership lock is absent; no Framework ownership claims are available.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The ownership lock is absent; no Library registrations are recorded.

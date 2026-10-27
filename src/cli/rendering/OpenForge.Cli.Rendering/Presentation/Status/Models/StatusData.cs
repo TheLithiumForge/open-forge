@@ -13,6 +13,9 @@ internal sealed record StatusData
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public StatusDataIncludedFiles? IncludedFiles { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<StatusDataOutsideRoute>? OutsideRoutes { get; init; }
+
     public required StatusDataInstallation Installation { get; init; }
 
     public required StatusDataContext Context { get; init; }

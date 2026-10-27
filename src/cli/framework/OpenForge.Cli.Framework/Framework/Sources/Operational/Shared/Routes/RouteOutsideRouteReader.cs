@@ -14,6 +14,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
@@ -93,12 +95,7 @@ internal static class RouteOutsideRouteReader
             rows.Where(row => Contains(route.Descriptor.DirectoryPath, row.Path)
                 || Contains(route.Descriptor.DirectoryPath, row.ParentPath)).ToArray())
         {
-            Listed = inspection?.Sources.FirstOrDefault(source => source.Source.Base.Form == SourceDocumentForm.Loader)
-                ?.GeneratedEntries.State == SourceGeneratedEntriesState.Complete
-                ? rows.Any(row => row.ParentPath == observation.Layout?.LoaderPath
-                    && (row.Path == route.Descriptor.CataloguePath
-                        || SourceLogicalPath.ReadParent(row.Path) == route.Descriptor.DirectoryPath
-                        && SourceIdentity.IsRecognizedEntrypointPath(observation.Layout!, row.Path))) : null,
+            Listed = ReadListing(observation, inspection, route, rows),
         }).ToArray();
         var inventory = new List<(string Physical, RouteContextSource Source, bool Startup, bool Continuity)>();
         var workspaceEntryIdentityComplete = true;
@@ -180,6 +177,31 @@ internal static class RouteOutsideRouteReader
                 && observation.OutsideRoutes.All(route => route.State == WorkspaceOutsideRouteReadState.Available)
                 && (included is null || !RouteContextMeasurementReader.IsUnavailable(included.Total))),
         };
+    }
+
+    private static bool? ReadListing(WorkspaceLayoutRead observation, RouteSourceInspection? inspection,
+        WorkspaceOutsideRouteRead route, IReadOnlyList<SourceIncludedEntryRow> rows)
+    {
+        if (observation.Layout is not { } layout) return null;
+        var loader = SourceLogicalPath.ToLexicalPath(layout.Workspace.LexicalRoot, layout.LoaderPath);
+        if (observation.Expectations.Any(expectation => expectation.Kind == FileExpectationKind.Missing
+            && string.Equals(expectation.LogicalPath, loader, StringComparison.Ordinal))) return false;
+        if (inspection?.Sources.FirstOrDefault(source => source.Source.Base.Form == SourceDocumentForm.Loader)
+            ?.GeneratedEntries.State != SourceGeneratedEntriesState.Complete) return null;
+        var direct = rows.Where(row => row.ParentPath == layout.LoaderPath).ToArray();
+        if (direct.Any(row => row.Path == route.Descriptor.CataloguePath)) return true;
+        var compatibility = direct.Where(row => SourceLogicalPath.ReadParent(row.Path) == route.Descriptor.DirectoryPath
+            && SourceIdentity.IsRecognizedEntrypointPath(layout, row.Path)).ToArray();
+        if (compatibility.Length == 0) return false;
+        if (compatibility.Any(row => inspection.Sources.Any(source => source.Source.Base.CanonicalPath == row.Path
+            && SourceFormClassifier.IsEntrypoint(source.Source.Base.Form)
+            && !source.Layers.Any(layer => layer.Path == row.Path && layer.State == FileReadState.Missing)))) return true;
+        if (route.State == WorkspaceOutsideRouteReadState.Missing) return false;
+        if (route.State is WorkspaceOutsideRouteReadState.Unsafe or WorkspaceOutsideRouteReadState.Unavailable
+            || inspection.Catalogue.IsCancelled
+            || compatibility.Any(row => inspection.Catalogue.Issues.Any(issue => row.Path == issue.AttemptedCanonicalPath
+                || row.Path.StartsWith(issue.AttemptedCanonicalPath + "/", StringComparison.Ordinal)))) return null;
+        return false;
     }
 
     private static bool? ReadMembership(IEnumerable<RouteContextSource> contributions, IReadOnlySet<string> paths, bool complete)

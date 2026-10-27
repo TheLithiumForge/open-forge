@@ -56,6 +56,8 @@ using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Update;
 using OpenForge.Cli.Core.Commands.Shared.Serialization;
 using OpenForge.Cli.Core.Commands.Status;
+using OpenForge.Cli.Core.Commands.Status.Models.Result;
+using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Shared.Runtime;
@@ -83,6 +85,13 @@ public sealed class PublishedTokensTests
         Assert.Equal(CliJsonFields.SchemaVersion, PublishedTokens.Json.SchemaVersion);
         Assert.Equal(CliJsonEnvelopeDefinitions.SchemaVersion, PublishedTokens.Json.EnvelopeSchemaVersion);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusData.Layout)), PublishedTokens.LayoutData.Layout);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusData.OutsideRoutes)), PublishedTokens.StatusOutsideRoutes.Collection);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusDataOutsideRoute.State)), PublishedTokens.StatusOutsideRoutes.State);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(StatusDataOutsideRoute.Listed)), PublishedTokens.StatusOutsideRoutes.Listed);
+        Assert.Equal(StatusOutsideRouteStates.Available, PublishedTokens.StatusOutsideRoutes.Available);
+        Assert.Equal(StatusOutsideRouteStates.Missing, PublishedTokens.StatusOutsideRoutes.Missing);
+        Assert.Equal(StatusOutsideRouteStates.Unsafe, PublishedTokens.StatusOutsideRoutes.Unsafe);
+        Assert.Equal(StatusOutsideRouteStates.Unavailable, PublishedTokens.StatusOutsideRoutes.Unavailable);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(InstallData.Layout)), PublishedTokens.LayoutData.Layout);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(WorkspaceLayoutInfo.MainRoot)), PublishedTokens.LayoutData.MainRoot);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(WorkspaceLayoutInfo.LoaderPath)), PublishedTokens.LayoutData.LoaderPath);
@@ -170,6 +179,7 @@ public sealed class PublishedTokensTests
         Assert.Equal(StatusDefinitions.StatusCommand.Name, PublishedTokens.Status.Command);
 
         Assert.Equal(DoctorDefinitions.DoctorCommand.Name, PublishedTokens.Doctor.Command);
+        Assert.Equal(DoctorDefinitions.ReadFindingKind(DoctorFindingKind.WorkspaceRootMissing), PublishedTokens.Doctor.RootMissingCode);
 
         Assert.Equal(RepairDefinitions.CommandIdentity, PublishedTokens.Repair.Command);
         Assert.Equal(RepairDefinitions.Automatic.Name, PublishedTokens.Repair.Automatic);

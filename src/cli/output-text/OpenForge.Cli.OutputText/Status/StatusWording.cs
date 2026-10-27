@@ -4,6 +4,16 @@ namespace OpenForge.Cli.OutputText.Status;
 
 internal static class StatusWording
 {
+    // @OpenForgeText status.wording.outside-routes
+    internal static string OutsideRoutesHeading() => "Outside routes";
+
+    // @OpenForgeText status.wording.outside-route
+    internal static string OutsideRoute(string path, string state, bool? listed)
+    {
+        var listing = listed switch { true => "listed", false => "unlisted", null => "listing unknown" };
+        return $"{path}: {state}, {listing}";
+    }
+
     // @OpenForgeText status.wording.included-files
     internal static string IncludedFiles(int listed, int unlisted, int missing, int handWritten)
         => string.Create(CultureInfo.InvariantCulture, $"Included files: {listed} listed, {unlisted} unlisted, {missing} missing, {handWritten} hand-written loader {(handWritten == 1 ? "row" : "rows")}.");

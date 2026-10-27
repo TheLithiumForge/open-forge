@@ -2,6 +2,8 @@ using OpenForge.Cli.Core.Commands.Status.Models.Operation;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings;
 
 namespace OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
 
@@ -13,6 +15,7 @@ internal static class StatusContextFindingAggregator
         StatusFacts facts)
     {
         AddView(findings, observations);
+        AddOutside(findings, observations);
         if (observations.Routes.IncludedFiles is { Pending.Count: > 0 })
         {
             findings.Add(StatusFindingCode.ContextInventoryIncomplete, null,
@@ -29,6 +32,20 @@ internal static class StatusContextFindingAggregator
                 .SingleOrDefault(value => string.Equals(value.Path, target.Path, StringComparison.Ordinal));
             AddGenerated(findings, target, observation);
         }
+    }
+
+    private static void AddOutside(StatusFindingCollector findings, StatusObservationSet observations)
+    {
+        if (observations.OutsideRoutes is not { } outside) return;
+        if (!outside.RegistrationInventoryComplete)
+            findings.Add(StatusFindingCode.ContextInventoryIncomplete, WorkspaceSettingsDefinitions.RelativePath,
+                outside.LayoutRead.Settings.Cause
+                    ?? outside.LayoutRead.Issues.FirstOrDefault(issue => issue.Path == WorkspaceSettingsDefinitions.RelativePath)?.Cause
+                    ?? "The registered outside context inventory could not be established completely.");
+        foreach (var route in outside.Routes.Where(route => route.Directory.State != WorkspaceOutsideRouteReadState.Available))
+            findings.Add(StatusFindingCode.ContextInventoryIncomplete, route.Directory.Descriptor.DirectoryPath,
+                route.Directory.Failure?.DirectCause ?? route.Directory.Issues.FirstOrDefault()?.Cause
+                    ?? "The registered outside context directory is not available.");
     }
 
     private static void AddView(StatusFindingCollector findings, StatusObservationSet observations)
@@ -94,7 +111,9 @@ internal static class StatusContextFindingAggregator
         }
 
         if (Unavailable(facts.Context.TotalAvailable)
-            && observations.Routes.ContextUnavailablePath is null)
+            && observations.Routes.ContextUnavailablePath is null
+            && !(observations.OutsideRoutes is { } outside && (!outside.RegistrationInventoryComplete
+                || outside.Routes.Any(route => route.Directory.State != WorkspaceOutsideRouteReadState.Available))))
         {
             findings.Add(StatusFindingCode.ContextInventoryIncomplete, null,
                 "The total available context measurement is incomplete.");

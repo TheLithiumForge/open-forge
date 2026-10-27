@@ -48,6 +48,14 @@ internal static class StatusDataTextRenderer
                 AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.IncludedPending(path));
         }
 
+        if (data.TextFacts.ShowStandard && data.OutsideRoutes is { Count: > 0 } outsideRoutes)
+        {
+            AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.OutsideRoutesHeading());
+            foreach (var route in outsideRoutes)
+                AppendLine(builder, global::OpenForge.Cli.OutputText.Status.StatusWording.OutsideRoute(
+                    CliText.Escape(route.Path), route.State, route.Listed));
+        }
+
         return new CliTextDocument([new CliTextSpan(builder.ToString())]);
     }
 

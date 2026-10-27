@@ -16,6 +16,23 @@ offering a repair action or raising the result status solely for that fact.
 
 Share one layout observation across all domains, retaining unavailable domains and their causes. Apply the shared missing-loader and ownership rules. A missing loader alone is drift, and its restoration remains a command-specific action.
 
+Consume registered outside facts from the shared retained operational
+observation rather than rereading layout or rebuilding a catalogue. Directory
+availability, actual recognized anchors, direct logical Loader listing and
+loading are distinct. Preserve their original causes, row conditions, aliases
+and declaration coordinates. Unknown listing is not false. Unlisted alone is
+informational and never proves that no other edge can load the source.
+
+Use the Interface's existing-code outside variants for missing directory,
+missing or competing anchors, unsafe boundary, physical alias and unavailable
+coverage. Retain every safe confirmed fact. Do not manufacture a source for an
+unavailable directory or call a valid compatibility anchor missing. Ground any
+Init continuation in the exact canonical operand and the existing complete
+maintenance prerequisites. Unsafe or unavailable facts grant no automatic
+maintenance authority. Keep outside condition typed and distinct from legacy
+file-inclusion facts. No relisting, registration, restoration, permission grant
+or diagnostic effect follows from these observations.
+
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
 
 ## Status And Boundary

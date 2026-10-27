@@ -1,0 +1,20 @@
+1 error, 3 warnings and 3 info findings.
+Workspace: <workspace>
+Workspace
+  Error  docs/team/_team.md  Root route is missing
+         The included file is missing. Restore the file or exclude its path.
+Routes and Entries
+  Warning  .agents/loader.md  Route Axioms are invalid
+         .agents/loader.md has no Axioms section, or its Axioms section is malformed.
+         Fix it by hand.
+Links
+  Warning  .agents/loader.md:5:3  Broken link
+         docs/team/_team.md is missing and no replacement was found.
+         Update or remove this link in .agents/loader.md at line 5, column 3.
+Workspace
+  Warning  docs/team  Registered outside directory is missing
+         The registered outside directory docs/team is missing. Review its settings registration.
+         Review docs/team and its outside-route settings registration by hand.
+  0 links and 0 routes checked.
+  To list the info findings: open-forge doctor --detail full
+Next: Review docs/team and its outside-route settings registration by hand.

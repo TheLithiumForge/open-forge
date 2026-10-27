@@ -1,0 +1,65 @@
+Open Forge is installed, but 12 files need attention.
+Workspace: <workspace>
+  Warning  .agents/skills/_skills.md  Entries section is missing
+         .agents/skills/_skills.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/directives/_directives.md  Entries section is missing
+         knowledge/main/directives/_directives.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/guidance/_guidance.md  Entries section is missing
+         knowledge/main/guidance/_guidance.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/loader.md  Entries section is stale
+         The Entries section of knowledge/main/loader.md is stale.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/maps/_maps.md  Entries section is missing
+         knowledge/main/maps/_maps.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/memory/_memory.md  Entries section is missing
+         knowledge/main/memory/_memory.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/memory/archived/_archived.md  Entries section is missing
+         knowledge/main/memory/archived/_archived.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/memory/crystallized/_crystallized.md  Entries section is missing
+         knowledge/main/memory/crystallized/_crystallized.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/memory/emerging/_emerging.md  Entries section is missing
+         knowledge/main/memory/emerging/_emerging.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/memory/working/_working.md  Entries section is missing
+         knowledge/main/memory/working/_working.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/patterns/_patterns.md  Entries section is missing
+         knowledge/main/patterns/_patterns.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  knowledge/main/templates/_templates.md  Entries section is missing
+         knowledge/main/templates/_templates.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+Context folder: knowledge/main
+Loader: knowledge/main/loader.md
+Startup context
+  Shipped by this CLI:  7 files, about 4.0k tokens
+  This workspace:       2 files, about 0.0k tokens
+Compared with shipped: 5 fewer files, about 4.0k fewer tokens
+All routed files: 5 files, about 0.1k tokens (startup is 21%)
+Routes: 0 root categories, 1 Entries section current, removed: directives, guidance, maps, memory, patterns, skills, templates
+Framework files: unavailable
+Included files: 0 listed, 1 unlisted, 0 missing, 0 hand-written loader rows.
+Startup outside the context folders: 0 files, about 0.0k tokens
+Outside routes
+docs/team: available, unlisted
+  Rebuild the Entries section.
+Next: open-forge index

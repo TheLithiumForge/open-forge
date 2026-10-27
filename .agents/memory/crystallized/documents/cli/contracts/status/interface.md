@@ -11,6 +11,27 @@ open-forge:
 
 Status names the context folder for a custom root. Its optional `data.layout` contains `mainRoot` and `loaderPath`, and is omitted for the default layout.
 
+Known outside directory registrations add optional `data.outsideRoutes` at every
+JSON detail, in settings declaration order. Each item has canonical directory
+`path` without `./` or a trailing slash and directory-observation `state`:
+`available`, `missing`, `unsafe` or `unavailable`. Optional boolean `listed` is
+true only for a proven direct logical Loader row to the declared canonical
+catalogue or an actual recognized entrypoint at that exact directory. A stale
+canonical row can establish listing without loading a compatibility source.
+Descendant rows and physical aliases do not establish root listing. False
+requires complete absence evidence. Omit `listed` when that evidence is unknown.
+
+Omit the collection for a known-empty registration set. Also omit it when the
+registration inventory is unknown, retaining the existing typed coverage and
+cause. Neither omission invents an observed empty set. Human standard, full and
+debug views show a separate Outside routes section after included files when
+registrations are represented, distinguishing listed, unlisted and unknown
+listing. Existing primary and file-only output stays unchanged when absent.
+Directory state, entrypoint validity, loading, ownership and permission remain
+separate. Unlisted registration alone is informational. Missing, unsafe or
+unavailable registered inventory uses truthful context-inventory diagnosis,
+without calling the workspace or installation absent.
+
 See the [shared layout contract](../../shared-operation-contract.md#workspace-layout). Path and transcript examples using `.agents` show the default layout.
 
 ## Help
@@ -121,6 +142,8 @@ non-directory workspace is blocked.
 `status` inspects only the facts needed for its summary:
 
 - The canonical workspace entry and supported context files in both primary content locations.
+- The declared outside directory registrations, their retained directory and
+  entrypoint facts, and eligible registered source inventory.
 - Settings `roots`, loader-listed files outside the primary content locations and their catalogue
   descendants, limited to the selected workspace.
 - The embedded Framework payload distributed with the running CLI.
@@ -200,12 +223,18 @@ boundary:
 - The canonical workspace `AGENTS.md` entry when it is an ordinary UTF-8 file.
 - Every ordinary UTF-8 Markdown file with a `.md` suffix that is physically
   contained below the selected workspace’s primary content locations.
+- Eligible ordinary Markdown in registered outside directories, including
+  unlisted registrations. Registration supplies inventory scope and does not
+  activate that content or give its folders primary category semantics.
 - Active loader-listed text files outside the primary content locations and files reached through
   their catalogue Entries. These files need no Open Forge frontmatter.
 
 The inventory follows these rules:
 
-- Count each canonical workspace-relative path once in an inventory.
+- Count each canonical workspace-relative path once in an inventory. With
+  outside registrations, resolve overlapping inventory, linked-file and
+  workspace-entry contributions to physical identity and count each physical
+  layer once while retaining all logical loading roles.
 - Count a base and its valid overwrite companion as two files because both
   contribute content.
 - Exclude an orphan overwrite because it cannot be selected as context by itself.
@@ -657,6 +686,10 @@ count, the startup measurement outside the primary content locations and pending
 The [included-files data model](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Models/StatusDataIncludedFiles.cs)
 defines its exact fields. Empty or absent `roots` without included rows omit this
 member and keep existing text and JSON unchanged.
+
+The independent optional `outsideRoutes` collection follows the Workspace
+Layout rules above at every detail. It neither replaces `includedFiles` nor
+changes the legacy included-file counters.
 
 | Level    | `data` members                                                                                                                                                                                                                                                                                 |
 | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

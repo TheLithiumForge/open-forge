@@ -1,0 +1,625 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "completed-with-warnings",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed, but 12 files need attention.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": ".agents/skills/_skills.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/skills/_skills.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": "knowledge/main/directives/_directives.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/directives/_directives.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": "knowledge/main/guidance/_guidance.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/guidance/_guidance.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-changed",
+      "title": "Entries section is stale",
+      "message": "The Entries section of knowledge/main/loader.md is stale.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/loader.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": "knowledge/main/maps/_maps.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/maps/_maps.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": "knowledge/main/memory/_memory.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/memory/_memory.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": "knowledge/main/memory/archived/_archived.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/memory/archived/_archived.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": "knowledge/main/memory/crystallized/_crystallized.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/memory/crystallized/_crystallized.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": "knowledge/main/memory/emerging/_emerging.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/memory/emerging/_emerging.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": "knowledge/main/memory/working/_working.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/memory/working/_working.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": "knowledge/main/patterns/_patterns.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/patterns/_patterns.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-missing",
+      "title": "Entries section is missing",
+      "message": "knowledge/main/templates/_templates.md has no Entries section.",
+      "subject": {
+        "kind": "file",
+        "path": "knowledge/main/templates/_templates.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The generated navigation target is not current."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "status.extension-ownership-observation",
+      "title": "Extension ownership is unavailable",
+      "message": "No ownership record exists, so installed Extensions cannot be listed from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Extension ownership claims are recorded."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "status.framework-ownership-observation",
+      "title": "Framework ownership is unavailable",
+      "message": "No ownership record exists, so Framework files cannot be checked against it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Framework ownership claims are available."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "status.library-ownership-observation",
+      "title": "Library ownership is unavailable",
+      "message": "No ownership record exists, so Libraries cannot be listed from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Library registrations are recorded."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": 5,
+    "startupFiles": 2,
+    "startupTokens": 19,
+    "mayLoadAgainFiles": 0,
+    "mayLoadAgainTokens": 0,
+    "allTokens": 88,
+    "startupShare": 20.903954802259887005649717514,
+    "rootCategories": 0,
+    "entriesSectionsCurrent": 1,
+    "entriesSectionsStale": 1,
+    "entriesSectionsMissing": 11,
+    "frameworkFilesCurrent": null,
+    "frameworkFilesChanged": null,
+    "frameworkFilesMissing": null,
+    "extensionsInstalled": null,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "warnings": 12,
+    "infos": 3
+  },
+  "limitations": [],
+  "data": {
+    "layout": {
+      "mainRoot": "knowledge/main",
+      "loaderPath": "knowledge/main/loader.md"
+    },
+    "includedFiles": {
+      "listed": 0,
+      "unlisted": 1,
+      "missing": 0,
+      "handWritten": 0,
+      "startup": {
+        "files": 0,
+        "characters": 0,
+        "bytes": 0,
+        "tokens": 0
+      },
+      "pending": []
+    },
+    "outsideRoutes": [
+      {
+        "path": "docs/team",
+        "state": "available",
+        "listed": false
+      }
+    ],
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": "knowledge/main/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 7,
+          "characters": 15928,
+          "bytes": 15928,
+          "tokens": 3982
+        },
+        "current": {
+          "files": 2,
+          "characters": 74,
+          "bytes": 74,
+          "tokens": 19
+        },
+        "difference": {
+          "files": -5,
+          "characters": -15854,
+          "bytes": -15854,
+          "tokens": -3963
+        },
+        "mayLoadAgain": {
+          "files": 0,
+          "characters": 0,
+          "bytes": 0,
+          "tokens": 0
+        }
+      },
+      "allRouted": {
+        "files": 5,
+        "characters": 352,
+        "bytes": 354,
+        "tokens": 88
+      },
+      "startupShare": 20.903954802259887005649717514,
+      "mayLoadAgainSources": []
+    },
+    "structure": {
+      "rootCategories": {
+        "count": 0,
+        "added": [],
+        "removed": [
+          "directives",
+          "guidance",
+          "maps",
+          "memory",
+          "patterns",
+          "skills",
+          "templates"
+        ]
+      }
+    },
+    "frameworkFiles": [],
+    "entriesSections": [
+      {
+        "path": ".agents/skills/_skills.md",
+        "state": "missing"
+      },
+      {
+        "path": "docs/team/_team.md",
+        "state": "current"
+      },
+      {
+        "path": "knowledge/main/directives/_directives.md",
+        "state": "missing"
+      },
+      {
+        "path": "knowledge/main/guidance/_guidance.md",
+        "state": "missing"
+      },
+      {
+        "path": "knowledge/main/loader.md",
+        "state": "changed"
+      },
+      {
+        "path": "knowledge/main/maps/_maps.md",
+        "state": "missing"
+      },
+      {
+        "path": "knowledge/main/memory/_memory.md",
+        "state": "missing"
+      },
+      {
+        "path": "knowledge/main/memory/archived/_archived.md",
+        "state": "missing"
+      },
+      {
+        "path": "knowledge/main/memory/crystallized/_crystallized.md",
+        "state": "missing"
+      },
+      {
+        "path": "knowledge/main/memory/emerging/_emerging.md",
+        "state": "missing"
+      },
+      {
+        "path": "knowledge/main/memory/working/_working.md",
+        "state": "missing"
+      },
+      {
+        "path": "knowledge/main/patterns/_patterns.md",
+        "state": "missing"
+      },
+      {
+        "path": "knowledge/main/templates/_templates.md",
+        "state": "missing"
+      }
+    ],
+    "extensions": [],
+    "libraries": [],
+    "recovery": {
+      "stores": [
+        {
+          "kind": "workspace",
+          "path": "<workspace-recovery-store>",
+          "coverage": "complete",
+          "candidates": [],
+          "cause": null
+        },
+        {
+          "kind": "legacy",
+          "path": "<legacy-recovery-store>",
+          "coverage": "complete",
+          "candidates": [],
+          "cause": null
+        }
+      ],
+      "candidates": []
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge index",
+    "reason": "Rebuild the Entries section."
+  }
+}

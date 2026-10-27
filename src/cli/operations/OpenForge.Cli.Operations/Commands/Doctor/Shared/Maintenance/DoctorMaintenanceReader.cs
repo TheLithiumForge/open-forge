@@ -76,11 +76,15 @@ internal sealed class DoctorMaintenanceReader(RenameEvidenceReader renames, Func
             && sharing.Ownership.State is WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete;
         var context = new RoutedMetadataPolicyContext
         {
-            Layout = catalogue.Layout,
+            Layout = observation.Layout ?? catalogue.Layout,
+            LayoutRead = observation,
             Settings = settings.Document,
             Ownership = sharing.Ownership.Document,
         };
-        var roots = routes.Routes.Topology.LoaderRootPaths.ToImmutableArray();
+        var outsideRoots = ReadOutsideRoots(catalogue, observation);
+        var roots = outsideRoots.Count == 0 ? routes.Routes.Topology.LoaderRootPaths.ToImmutableArray()
+            : routes.Routes.Topology.LoaderRootPaths.Where(path => !outsideRoots.ContainsKey(_readRouteParent(path)))
+                .Concat(outsideRoots.Values).Distinct(StringComparer.Ordinal).ToImmutableArray();
         var rootFolders = roots.Select(path => (Path: path, Folder: _readRouteParent(path))).ToArray();
         var malformedMetadata = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.Ordinal);
         var entrypoints = catalogue.Sources.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form))
@@ -249,6 +253,25 @@ internal sealed class DoctorMaintenanceReader(RenameEvidenceReader renames, Func
     }
 
     private static bool Within(string path, string folder) => path == folder || path.StartsWith(folder + "/", StringComparison.Ordinal);
+
+    private static IReadOnlyDictionary<string, string> ReadOutsideRoots(SourceCatalogue catalogue, WorkspaceLayoutRead observation)
+    {
+        var roots = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var route in observation.OutsideRoutes.Where(route => route.State == WorkspaceOutsideRouteReadState.Available
+            && route.PhysicalDirectory is not null))
+        {
+            var directory = route.Descriptor.DirectoryPath;
+            var recognized = catalogue.Candidates.Where(candidate => candidate.Form is { } form && SourceFormClassifier.IsEntrypoint(form)
+                    && SourceLogicalPath.ReadParent(candidate.CanonicalPath) == directory)
+                .Select(candidate => candidate.CanonicalPath)
+                .Concat(catalogue.Sources.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form)
+                    && SourceLogicalPath.ReadParent(source.Base.CanonicalPath) == directory).Select(source => source.Base.CanonicalPath))
+                .Distinct(StringComparer.Ordinal).ToArray();
+            if (recognized.Length == 1) roots.Add(directory, recognized[0]);
+            else if (recognized.Length == 0) roots.Add(directory, route.Descriptor.CataloguePath);
+        }
+        return roots;
+    }
 
     private static ImmutableDictionary<string, SourceLocation> ReadGeneratedEntries(RouteDoctorView routes)
     {
