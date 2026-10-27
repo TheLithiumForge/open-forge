@@ -11,7 +11,7 @@ This is council 6. It refreshes the configurable main root that the [route inclu
 
 ## What the maintainer asked
 
-On 2026-10-22 the main root was deferred because `route include` already covered reusing project documents. On 2026-10-23 the maintainer wrote "Let's do the multy root as well", to follow the lock work in [Task 86](../../../working/cli-development/tasks/task86-workspace-runtime-lock.md), with "a council of astra xhigh for this task" and "astras high as implementers".
+On 2026-10-22 the main root was deferred because `route include` already covered reusing project documents. On 2026-10-23 the maintainer wrote "Let's do the multy root as well", to follow the lock work in [Task 86](../../../archived/cli-development/tasks/task86-workspace-runtime-lock.md), with "a council of astra xhigh for this task" and "astras high as implementers".
 
 ## Method
 

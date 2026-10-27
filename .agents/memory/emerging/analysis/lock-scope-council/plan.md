@@ -6,7 +6,7 @@ open-forge:
 
 # Workspace Runtime Lock Plan
 
-The CLI architect of the [lock scope council](record.md) wrote this plan from the chair decisions. It is frozen for [Task 86](../../../working/cli-development/tasks/task86-workspace-runtime-lock.md). Implementers read this file, not the council.
+The CLI architect of the [lock scope council](record.md) wrote this plan from the chair decisions. It is frozen for [Task 86](../../../archived/cli-development/tasks/task86-workspace-runtime-lock.md). Implementers read this file, not the council.
 
 ## Chair amendments
 

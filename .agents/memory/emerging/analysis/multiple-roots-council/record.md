@@ -7,7 +7,7 @@ open-forge:
 
 # Multiple Roots Council
 
-This is council 7. It decided how [Task 85](../../../working/cli-development/tasks/task85-configurable-main-root.md), the configurable main root, and [Task 87](../../../working/cli-development/tasks/task87-routes-outside-main-root.md), routes outside the main root, fit together. The [Task 87 plan](plan.md) turns the decisions into work packets.
+This is council 7. It decided how [Task 85](../../../working/cli-development/tasks/task85-configurable-main-root.md), the configurable main root, and [Task 87](../../../archived/cli-development/tasks/task87-routes-outside-main-root.md), routes outside the main root, fit together. The [Task 87 plan](plan.md) turns the decisions into work packets.
 
 ## What the maintainer asked
 

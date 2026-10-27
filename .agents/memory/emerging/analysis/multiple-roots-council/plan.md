@@ -6,7 +6,7 @@ open-forge:
 
 # Routes Outside The Main Root Plan
 
-The CLI architect of the [multiple roots council](record.md) wrote this plan from the chair decisions and the maintainer's direction. It is frozen for [Task 87](../../../working/cli-development/tasks/task87-routes-outside-main-root.md) and starts after Task 85 Delivery 1.
+The CLI architect of the [multiple roots council](record.md) wrote this plan from the chair decisions and the maintainer's direction. It is frozen for [Task 87](../../../archived/cli-development/tasks/task87-routes-outside-main-root.md) and starts after Task 85 Delivery 1.
 
 ## Chair amendments
 

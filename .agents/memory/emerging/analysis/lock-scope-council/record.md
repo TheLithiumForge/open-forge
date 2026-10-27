@@ -7,7 +7,7 @@ open-forge:
 
 # Lock Scope Council
 
-This is council 5. [Task 86](../../../working/cli-development/tasks/task86-workspace-runtime-lock.md) implements it, and the [implementation plan](plan.md) turns the decisions into work packets.
+This is council 5. [Task 86](../../../archived/cli-development/tasks/task86-workspace-runtime-lock.md) implements it, and the [implementation plan](plan.md) turns the decisions into work packets.
 
 ## What the maintainer asked
 

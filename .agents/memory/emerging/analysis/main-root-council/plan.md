@@ -6,7 +6,7 @@ open-forge:
 
 # Configurable Main Root Plan
 
-The test and qualification engineer of the [main root council](record.md) wrote this plan from the chair decisions. It is frozen for Delivery 1 of [Task 85](../../../working/cli-development/tasks/task85-configurable-main-root.md) and starts after [Task 86](../../../working/cli-development/tasks/task86-workspace-runtime-lock.md) merges. It replaces the [2026-10-21 plan](../route-include-council/main-root-plan.md).
+The test and qualification engineer of the [main root council](record.md) wrote this plan from the chair decisions. It is frozen for Delivery 1 of [Task 85](../../../working/cli-development/tasks/task85-configurable-main-root.md) and starts after [Task 86](../../../archived/cli-development/tasks/task86-workspace-runtime-lock.md) merges. It replaces the [2026-10-21 plan](../route-include-council/main-root-plan.md).
 
 ## Chair amendments
 

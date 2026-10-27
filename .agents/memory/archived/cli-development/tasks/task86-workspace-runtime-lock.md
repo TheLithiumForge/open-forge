@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Active Task 86 to keep the workspace lock and recovery bundles inside the workspace, so the CLI works in sandboxed worktrees and no leftover file or bundle can leave the workspace stuck
-  tags: [Memory, Working, Task, CLI, Locking, Recovery, Sandbox, Worktree, Contextual]
+  description: Completed Task 86 history for workspace-local locking and recovery, accepted for beta18
+  tags: [Memory, Task, CLI, Locking, Recovery, Sandbox, Worktree, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 86: Workspace runtime lock
 
-Status: Active since 2026-10-23, requested by the maintainer. Implementation is integrated and in review. It supersedes PR #7, whose branch it builds on.
+Status: Complete and accepted. [PR #8](https://github.com/TheLithiumForge/open-forge/pull/8) merged into develop as `164fc9667`. It superseded PR #7. This record preserves the former Working implementation history and the legacy obligations below.
 
 ## Outcome
 
@@ -47,7 +47,13 @@ An independent Astra high review found seven issues, fixed in three packets: a F
 
 The maintainer then ruled that tests reference every owned value through its owner and check user-facing text only through reviewed snapshots, with clean tiers. An audit of the lines this branch added found 486 repeated owned values, 21 literal-text assertions and 3 tier problems. Four packets fixed them by test area. EndToEnd and TestSupport stay free of production references through the tracked `PublishedTokens` projection, which a Unit test checks against each owner. Lower-tier checks that had crept into published journeys moved to Integration. Windows runs then passed 5,187 Unit, 3,648 Integration (57 skips) and 410 EndToEnd tests (1 skip). The older violations the audit counted become Task 88, recorded with Task 85.
 
-## Remaining
+## Acceptance, 2026-10-27
+
+The guardian accepted workspace-local locking and recovery in `164fc9667`. Task 85 Delivery 1 followed in `77a24b2c0`, and Task 87 in `fba519f35`. All three are included in the beta18 source `40da86c5912563cff7a1768452166c25124a2f3e`. The [Task 87 final receipt](task87-routes-outside-main-root.md#beta18-release-2026-10-27) owns combined final qualification and release evidence. No new suite was run for this records-only transition.
+
+## Retained legacy obligations
 
 - Qualify the bridge against a pinned 0.9.0-beta.17 executable on each platform.
 - Remove the legacy bridge in the 1.0 release.
+
+These later obligations are retained without claiming they were completed by this acceptance. The earlier record supplies no receipt for a pinned beta17 bridge run on every platform. Bridge removal remains a 1.0 obligation. This archival transition selects no new implementation work.

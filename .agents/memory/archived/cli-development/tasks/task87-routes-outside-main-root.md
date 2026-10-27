@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Open Task 87 to let a folder anywhere in the repository, outside the main root, be included as a full route that every command maintains, following Task 85 Delivery 1
-  tags: [Memory, Working, Task, CLI, Routing, Include, Settings, Contextual]
+  description: Completed Task 87 history and beta18 receipt for maintained routes outside the main root
+  tags: [Memory, Task, CLI, Routing, Include, Settings, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 87: Routes outside the main root
 
-Status: Final H/I and review corrections committed as `fbf307f92`. CI-R7's canonical default compatibility fixture correction is integrated for complete local qualification and independent review. Guardian review and actual-head hosted qualification govern acceptance. The guardian owns the requested beta release.
+Status: Complete and accepted. The guardian review was clear, and [PR #10](https://github.com/TheLithiumForge/open-forge/pull/10) squash-merged into develop as `fba519f3551229541708180dd6c033537b480823`. This archived record preserves the former Working execution history. The final acceptance and beta18 receipt below supersede earlier pending handoffs without changing their historical evidence.
 
 ## Outcome
 
@@ -210,3 +210,32 @@ The guardian committed all 111 paths as `fbf307f92929a23041adfdc46ccbace4d474f91
 At that clean committed head, the complete coordinator Unit suite passes 5,621 with no failures or skips. Integration passes 4,884 with no failures and 60 declared skips. EndToEnd passes 478, fails the two omitted/explicit default compatibility byte checks, and has one declared skip. CI-R7 owns the stale payload fixture reconciliation against canonical shipped guidance. Luna's separate full runs report 205 Unit, 437 Integration and 40 EndToEnd raw failures, with exact sandbox errors retained for separate classification. These are not added to coordinator totals or treated as product failures without evidence. Hosted Build `40462389508` remains in progress. The source and tests were unchanged throughout both complete runs.
 
 CI-R7 changes only the five Skill payload values in the embedded default-layout fixture, adding 7,017 source-derived bytes. The other 17 decoded files, complete path set, settings, ownership record, text/JSON expectations and all assertions remain exact. Independent direct and inverse frontmatter projections match the canonical shipped sources. The ownership record contains paths, regions and source identity rather than dependent content hashes, so it stays unchanged. The complete Unit, Integration and EndToEnd suites and independent review are required on the integrated candidate before its commit request. Linux ARM64 hosted annotations reproduce the same two byte mismatches, with managed Unit and Integration passing.
+
+## Final acceptance, 2026-10-27
+
+CI-R7 committed as `9503b442b21fc8d8177f63cfe5459c8fe1266d18`. Complete managed Windows x64 qualification passed with no class, test or trait filters:
+
+| Suite | Passed | Failed | Declared skips |
+| --- | ---: | ---: | ---: |
+| Unit | 5,621 | 0 | 0 |
+| Integration | 4,884 | 0 | 60 |
+| EndToEnd | 480 | 0 | 1 |
+
+All 11,024 committed source files matched the frozen tested candidate. The final independent whole-branch review covered all 926 changed paths with no material findings. [Build 40470057970, attempt 2](https://github.com/TheLithiumForge/open-forge/actions/runs/40470057970/attempts/2) passed all six platforms, including managed and Native AOT tests and npm installation checks. Five platform successes were retained from attempt 1. Windows ARM64's initial native relocated-payload sharing violation did not recur in its complete retry. The superseded Build on `fbf307f92` was cancelled, and its incomplete result is not acceptance evidence.
+
+A fresh built-CLI replay completed seventeen scratch lifecycle commands and two exact main-root help examples. Read and preview operations preserved files and directories, Move preserved leaf bytes, Remove retained the registration, anchor and unrelated resource, and final Status was clean after reviewed Index normalization. Index found all 189 maintained files current. The Markdown check covered 93 files and 2,453 links with zero diagnostics. The strict site gate retained all 74 consumed input hashes, five shipped/repository Skill pairs matched and all 247 public token projections retained their owners. External URLs were not checked. Earlier selected gates and sandbox-blocked executions remain separate historical evidence.
+
+The guardian accepted the complete code, contract, design and documentation outcome and merged PR #10 as `fba519f3551229541708180dd6c033537b480823`. No Task 87 implementation remains. [Task 85 Delivery 2](../../../working/cli-development/tasks/task85-configurable-main-root.md) remains unstarted, and this acceptance selects no later Task or paused work.
+
+## beta18 release, 2026-10-27
+
+The source for `0.9.0-beta.18` is version commit `40da86c5912563cff7a1768452166c25124a2f3e`, which changes only `Directory.Build.props`, `package.json` and `package-lock.json`. It follows Task 86's PR #8 merge `164fc9667`, Task 85 Delivery 1's PR #9 merge `77a24b2c0` and Task 87's PR #10 merge `fba519f35`.
+
+| Release fact | Receipt |
+| --- | --- |
+| Exact-source Build | [Build 40489367595](https://github.com/TheLithiumForge/open-forge/actions/runs/40489367595) |
+| Release workflow | [Release 40563069209](https://github.com/TheLithiumForge/open-forge/actions/runs/40563069209) |
+| Publication | Attempt 1 at 19:48 published nothing. npm refused the `NPM_TOKEN` secret with a 404 on the first platform package, most likely because the token had expired, so the GitHub release step was skipped. After the maintainer replaced the token, attempt 2 reran only the publish job at 20:09. It published the six platform packages and `@thelithiumforge/open-forge` to npm as `beta` and `latest`, then the GitHub pre-release with six archives and `SHA256SUMS`. |
+| Public smoke | `npx forge smoke:public --version 0.9.0-beta.18` exited 0 once npm served all seven packages. Published version, Install Essentials, Installed workspace status and Configure guidance preview passed. |
+
+The tag `v0.9.0-beta.18` targets `40da86c59`. The release reused the successful exact-source push Build and its six package artifacts. The PR Build is not release-reuse evidence. Merge Build 40489270534 was cancelled as superseded. Tagging and npm publication waited until after 19:45 Europe/Zurich on 2026-10-27, as the maintainer asked. Main is fast-forwarded to develop after this record, which publishes the documentation site.

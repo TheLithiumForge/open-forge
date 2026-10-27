@@ -6,9 +6,9 @@ open-forge:
 
 # CLI Project Control
 
-## Current release, 2026-10-22
+## Current release, 2026-10-27
 
-[beta17 release](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.17) is published from `36643c7f8` after one squash of PR #4 into develop as `57f019614`. That PR merged the opt-in kernel, the readable catalogues with the maintainer's review fixes and `route include`, recorded in the [route include council](../../emerging/analysis/route-include-council/record.md). 0.9.0-beta.16 was prepared in `43c684e4d` but never tagged or published, so [Task 84](../../archived/cli-development/tasks/task84-skill-package-maintenance.md) also ships in beta17. [Release 39741468082](https://github.com/TheLithiumForge/open-forge/actions/runs/39741468082) reused the passing exact-commit [Build 39733057727](https://github.com/TheLithiumForge/open-forge/actions/runs/39733057727) and published all six platforms to GitHub and npm (`latest` and `beta`). On the PR, the osx-x64 job first exceeded the 90-minute job limit on a slow runner after its managed suites had passed, then passed on rerun. A smoke run of the published package installed Minimal, included and excluded a document, and ran `status`, `context` and `help`. Main is fast-forwarded to develop, which publishes the documentation site.
+The [beta18 release](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.18) is published from `40da86c5912563cff7a1768452166c25124a2f3e`, following Task 86's PR #8 merge `164fc9667`, Task 85 Delivery 1's PR #9 merge `77a24b2c0` and Task 87's PR #10 merge `fba519f35`. The guardian accepted the complete Task 87 branch after its full local and six-platform hosted qualification. The [Task 87 beta18 receipt](../../archived/cli-development/tasks/task87-routes-outside-main-root.md#beta18-release-2026-10-27) owns the exact release Build, release run, publication and public smoke evidence. Publication waited until after 19:45 Europe/Zurich on 2026-10-27, as the maintainer asked. Main is fast-forwarded to develop, which publishes the documentation site.
 
 ## Active task ledger
 
@@ -16,10 +16,8 @@ This ledger owns permanent identity, queue state and ownership. The Task owns it
 
 | ID  | Task                                                                                 | State                                                      | Current boundary                                                                                                                                                            | Owner              |
 | --- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| 86  | [Workspace runtime lock](tasks/task86-workspace-runtime-lock.md)                     | Active, requested by the maintainer 2026-10-23             | Six waves integrated; closeout review and PR next                                                                                                                           | Root               |
-| 87  | [Routes outside the main root](tasks/task87-routes-outside-main-root.md)             | Active, CI-R7 complete-suite qualification                 | Canonical default fixture correction, full local suites, independent review, guardian commit, six-platform qualification and final review/merge                                | Root               |
 | 88  | [Test literal cleanup](tasks/task88-test-literal-cleanup.md)                         | Open, from the maintainer 2026-10-24                       | Audit counted the older violations; priority with the maintainer                                                                                                            | Root               |
-| 85  | [Configurable main root](tasks/task85-configurable-main-root.md)                     | Active, Delivery 1 in progress since 2026-10-24            | Wave 0 layout foundation integrated next; Waves 1 to 6 follow                                                                                                               | Root               |
+| 85  | [Configurable main root](tasks/task85-configurable-main-root.md)                     | Open, Delivery 2 unstarted and unselected                  | Delivery 1 accepted in `77a24b2c0`, archived. Established-installation migration remains open                                                                                  | Root               |
 | 39  | [Output Audit](tasks/task39-output-audit.md)                                         | Paused by user, 2026-10-01                                 | Wave phase 2/3, milestone 1/3; final checkpoint `r_f4bdc49aa2c4` saved; all workers stopped; no beta5 integration or captures                                               | Root; Worker Watch |
 | 34  | [Interpolated Value Markup](tasks/task34-interpolated-value-markup.md)               | Paused by user, 2026-10-01                                 | Wave phase 2/3, milestone 1/3; final literal-correction checkpoint `r_b68ae7955e36` saved; all workers stopped; no beta5 integration or captures                            | Root; Worker Watch |
 | 48  | [Scoping for Extension routes](tasks/task48-scoping-for-extension-routes.md)         | Frozen at A/B1; deferred beyond beta5; required before 1.0 | Wave phase 2/3, milestone 1/3; corrected Task 64 Init accepted for later resume; Core-first scope unchanged. Checkpoint receipts remain in wave capsule                     | Root; Worker Watch |
@@ -34,6 +32,10 @@ This ledger owns permanent identity, queue state and ownership. The Task owns it
 | 40  | [Capture coverage](tasks/task40-capture-coverage.md)                                 | Open, deferred                                             | Broad capture expansion postponed until after 1.0                                                                                                                           | Unassigned         |
 | 58  | [Demo-based evaluations](tasks/task58-demo-evals.md)                                 | Open, deferred                                             | Remains after 1.0                                                                                                                                                           | Unassigned         |
 | 62  | [Glob-scoped loading](tasks/task62-glob-scoped-loading.md)                           | Open later review horizon                                  | Original phase 3/3, milestone 6/6 implementation shipped. Later Glob UX/review-polish phase 2/2, milestone 2/3 retains pending M3 maintainer review. See Task 62 Execution. | Root               |
+
+## Completed beta18 implementation
+
+[Task 86](../../archived/cli-development/tasks/task86-workspace-runtime-lock.md) and [Task 87](../../archived/cli-development/tasks/task87-routes-outside-main-root.md) are complete and accepted. Their records are Archived. [Task 85 Delivery 1](../../archived/cli-development/tasks/task85-configurable-main-root.md) is complete and archived separately from the still-open Delivery 2 record. Task 88 remains open without selection.
 
 ## Completed onboarding release
 
@@ -52,4 +54,4 @@ Completed Task IDs remain permanent. [Archived CLI Tasks](../../archived/cli-dev
 
 ## Current next action
 
-Finish [Task 87](tasks/task87-routes-outside-main-root.md) and its final overseer checklist, then request the guardian's review. The guardian owns the requested beta release. Paused, frozen, deferred and maintainer-review work stays in the [Task index](tasks/_tasks.md).
+Choose the next Task with the maintainer after beta18 publication and public smoke. No implementation is selected by this release record. Paused, frozen, deferred and maintainer-review work retains its state in the [Task index](tasks/_tasks.md).

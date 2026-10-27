@@ -1,198 +1,29 @@
 ---
 open-forge:
-  description: Open Task 85 to let a workspace keep its Open Forge knowledge in a folder other than .agents, chosen at install or moved later, selected to follow Task 86
+  description: Remaining Task 85 Delivery 2 to move an established main context folder, unstarted and awaiting maintainer selection
   tags: [Memory, Working, Task, CLI, Install, Settings, Layout, Contextual]
 ---
 
 # Task 85: Configurable main root
 
-Status: Delivery 1 implementation and documentation are complete on the branch stacked on [Task 86](task86-workspace-runtime-lock.md). Review fixes pass focused managed verification and await commit, push and six-platform CI. Delivery 2 has not started.
+Status: Delivery 1 is complete and accepted in PR #9, merged as `77a24b2c0`. Its implementation history and acceptance receipt are [Archived](../../../archived/cli-development/tasks/task85-configurable-main-root.md). Delivery 2 has not started and is not selected by the beta18 release.
 
-## Outcome
+## Remaining outcome
 
-A workspace can keep its Open Forge knowledge in a folder other than `.agents/`, such as `docs/forge/`. The folder is chosen during install or moved later through a reviewed plan. Agents, the CLI and the `AGENTS.md` and `CLAUDE.md` pointers all follow it, and a default workspace behaves exactly as before.
+Move an established installation's context folder through a reviewed `install --configure --main-root <directory>` plan. The same Task identity stays open until that accepted outcome ships. Current Delivery 1 refuses a different established root before effects, including with `--configure`.
 
-## Accepted design
+## Accepted boundaries
 
-The [route include council](../../../emerging/analysis/route-include-council/record.md#the-configurable-main-root-7) settled the design:
+The [main root council](../../../emerging/analysis/main-root-council/record.md) and [Delivery 1 plan](../../../emerging/analysis/main-root-council/plan.md) retain the design and Delivery 2 outline. Before implementation, plan and qualify migration's safety conditions:
 
-- `mainRoot` in settings schema v4 names where the knowledge lives. It defaults to `.agents`.
-- `.agents/open-forge.json` and `.agents/open-forge.lock.json` stay where they are. Recovery bundles and the mutation lock stay keyed by the physical workspace.
-- Native Skills stay at `.agents/skills/`, where hosts discover them. The custom loader can include their catalogue. No Skills category is created under the custom root.
-- `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader.
-- `install --main-root <directory>` and a wizard question choose the folder. `install --configure --main-root <directory>` moves an existing workspace. Editing `mainRoot` by hand moves nothing, and writing commands stop until a configure plan resolves the mismatch.
-- Migration inventories the real files, including ignored and untracked ones, checks for collisions and unsafe links, verifies copied bytes before removing originals, translates Install-owned ignore rules, keeps historical recovery paths literal and rewrites the links of files recorded in `roots`.
+- Inventory real ignored and untracked content and reject collisions or unsafe links.
+- Protect both locations with ignore rules throughout the move, verify copied bytes before removing originals and preserve later edits during restoration.
+- Translate Install-owned ignore rules, keep recorded recovery paths literal and rewrite affected included-file links.
+- Preserve fixed settings, ownership, native Skills and workspace-root runtime storage.
+- Refuse Library source intersections or mappings that cannot retain one destination root and unchanged suffixes.
 
-## Plan
+Editing `mainRoot` by hand moves no files and grants no migration authority. No Delivery 2 implementation, fixture, qualification or release is claimed. Resume only when the maintainer selects it and its plan is ready.
 
-The [main root council](../../../emerging/analysis/main-root-council/record.md) refreshed the design on 2026-10-23 and split it into two deliveries. Its [Delivery 1 plan](../../../emerging/analysis/main-root-council/plan.md) replaces the [2026-10-21 plan](../../../emerging/analysis/route-include-council/main-root-plan.md).
+## Completed Delivery 1
 
-- **Delivery 1** is a custom context folder chosen at first installation, with every command supporting it. An established installation refuses a different root. The plan has the frozen layout API, settings v4 and seven waves of packets, and activates `--main-root` and the wizard question last. The estimate is 14 to 18 engineering days after Task 86.
-- **Delivery 2** moves an existing workspace with `install --configure --main-root`. It starts after Delivery 1 ships, once the council's safety conditions are planned and tested. The estimate is 7 to 10 more days.
-- This Task stays open until Delivery 2 ships, because moving an existing workspace is part of the accepted outcome.
-
-## Before starting
-
-- Start Delivery 1 only after [Task 86](task86-workspace-runtime-lock.md) merges, and reconcile the plan's line numbers against that baseline.
-- Keep `.open-forge-state/` from Task 86 at the workspace root. A configured main root never moves it, and a main root can never be placed inside it.
-
-## Wave 1 handoff
-
-B1 separates source syntax from membership and derives IDs from the selected content location.
-B2 carries Layout through catalogue requests, catalogues, sessions, filtering and loading closure.
-Inventory reads the main root and native Skills, treating absent optional Skills correctly.
-IncludedRows retains aliases, conditions, order and unresolved targets even for pre-inventoried sources.
-The frozen WorkspaceLayout signatures remain available and loader destinations use the actual loader directory.
-SourceContentRoots carries only logical roots, without a workspace or physical paths.
-Its Default value supports legacy path-only adapters and must be removed in Z1.
-
-Remaining default overloads to convert before activation:
-
-- SourceIdentity, SourceFormClassifier and SourceWorkspaceRelativePath path-only overloads
-- SourceLoaderDestinationParser, SourceLoaderEntriesParser and SourceGeneratedDestinationResolver
-- SourceCatalogueRequest and SourceCatalogue workspace overloads
-- SourceReadSessionReader workspace overloads and Find/References entry adapters
-- Legacy membership callers using SourceContentRoots.Default
-- Wave 0 WorkspaceRemovals.IsPathRemoved, WorkspaceSettingsCodec.IsValidRootPath and SeedArchiveLinkScope
-
-W1-01 remains with Wave 2: navigation formation assumes every observed source has a candidate, so candidate-free includes can trigger KeyNotFoundException.
-No new Wave 1 command path activates that existing case.
-
-Follow-up solution build passed in Release with 0 warnings and 0 errors.
-Complete Unit suite: total 5,245, passed 5,245, failed 0, skipped 0.
-Complete Integration suite: total 3,752, passed 3,694, failed 0, skipped 58, all allowlisted.
-The diff stays uncommitted. No snapshot baseline or public command activation is changed.
-
-## Wave 2 C1 handoff
-
-C1 carries layout through navigation, scaffolding, metadata, adoption, rename evidence and shared route transport. Sharing records are structural and catalogue consumers validate membership.
-W1-01 is closed by real included-session tests. Formation preserves candidate-free sources, aliases and every included row without inventing candidates.
-Z1 adapters remain in GeneratedNavigationRegionPlanner.PlanProjectedEntries, RouteScaffoldSourceBuilder.CanonicalPath/Create, RouteScaffoldRenamePlanner.Decide and the adoption Plan/Create/CreateEntrypoint overloads without layout.
-Z1 adapters also remain in RoutedMetadataPolicyContext and RoutedMetadataDefaults.Tags, RouteSource and RouteSourceDocument legacy constructors, and RouteMarkdownCatalogueRequest's workspace constructor.
-RenameEvidencePolicy.Roots, RenameRecordedEntryReader.Read, RenameCanonicalEntrypointEvidence.Read and the composition adapter's workspace ReadEvidenceAsync overloads retain default adapters for later command conversion.
-The overseer owns C2 integration, later command conversion and fresh published/native and non-Windows qualification. C2 files and snapshot baselines are untouched.
-Release build passed with zero warnings and errors. Unit: 5,252 total, 5,252 passed, 0 failed, 0 skipped. Integration: 3,757 total, 3,699 passed, 0 failed, 58 allowlisted skips. The diff remains uncommitted.
-
-## Wave 2 C2 handoff
-
-- C2 delivers mapped projection, exclusions, collisions and reverse alignment while retaining package-coordinate validation. Parsed links and recognized host references follow the layout, Claude retains `@AGENTS.md`, and reviewed README/CLI Skill variants describe both content folders, native Skills catalogues and generic `./...` operands. Default bytes and existing snapshots remain unchanged.
-- Six temporary default-layout overloads remain: `EmbeddedFrameworkSourceProjector.Project`, `FrameworkPayloadSourceProjection.Create`, `FrameworkSourceAlignment.ReadAsset`, both `FrameworkPayloadSelection` methods and `WorkspacePayloadRenderer.Render`. Convert their callers before Z1 activation. `FrameworkPayloadAsset` must retain `SourceContentRoots.Default` as a package namespace invariant. Render callers supply the original package path and use mapped destinations for permissions and ownership.
-- C2 final counts (total/passed/failed/skipped): Unit 5264/5264/0/0, Integration 3758/3700/0/58, published payload 2/2/0/0. All skips are allowlisted.
-
-## Wave 3 D1 handoff
-
-D1 carries the observed layout and catalogue identities through Context, Find and References.
-Its default-session and Find result and selection adapters are removed. None remain in these command paths.
-Three published custom-root journeys prove nested roots, native Skills, overwrite projections and byte preservation.
-
-## Wave 3 D2 handoff
-
-D2 carries the observed layout through Index and rejects changed layout evidence before any effect.
-Its default adapters are removed from discovery, removal filtering, source identity and projection readiness.
-Custom-root tests prove nested native Skill catalogues, private routes and unlisted loader membership without reactivation.
-
-## Wave 3 D3 handoff
-
-D3 adds internal requested roots, mapped Install/configuration and lease-time layout checks while preserving default adoption.
-Install no longer calls C2 default payload overloads. Setup choices and IgnoreSection default adapters remain for Z2.
-The overseer must integrate D1/D2 and complete both Install → Context → Index cases, currently failing at Context. No public activation or snapshot changes.
-Release build passed. Unit 5268/5268/0/0. Integration 3782/3722/2/58, with both failures above and all skips allowlisted. Counts are total/passed/failed/skipped.
-
-## Wave 4 E1 handoff
-
-E1 shares one layout observation across Status, Doctor, route context, lifecycle comparisons and rename evidence. Ownership comparisons map package paths, and recovery stays fixed to the workspace and Task 86's recorded stores.
-Its default-layout adapters are removed. Standalone workspace overloads observe the layout instead.
-Valid settings keep a diagnostic layout even when other evidence is unsafe, and only invalid or unavailable settings make layout-dependent domains unavailable (chair amendment 5).
-
-## Wave 4 E2 handoff
-
-E2 makes implicit admission follow the content locations, keeps explicit grants literal, gives permission prompts projected context-folder facts and revalidates the layout before writing grants.
-Extension caller prefilters are removed. Default permission carriers, Extension path-only admission and Library destination and consumer-boundary adapters remain for Wave 5.
-
-## Wave 5 Q handoff
-
-Include and Exclude carry the observed layout, distinguish native Skills from literal includes and supply typed effects to the renderers.
-One default resolver adapter remains for two runtime-reservation tests, which Z1 removes.
-
-## Wave 5 L handoff
-
-Route List carries the layout through inventory, loader selection, includes and custom-root diagnostics.
-Its runtime adapters are removed. Default-only fixtures keep the shared catalogue and route source constructors until Z1.
-
-## Wave 5 V handoff
-
-Route Inspect uses the actual loader and retained identities, with projected loader wording.
-Its runtime adapters are removed. Static default-root help and shared outside-include routing stay with the overseer.
-
-## Wave 5 C handoff
-
-Route Create maps stable IDs, bounds ancestry and revalidates the layout under the lock.
-Its command adapters are removed. Two static help sentences keep default-root wording to preserve existing snapshots.
-
-## Wave 5 EX handoff
-
-Extension Install, Update, Remove, Inspect and List use the observed layout for mapped destinations, ownership, permissions, rendering and fingerprints.
-A missing loader the settings record as removed is intentional (chair amendment 6), and every other mismatch still blocks writers.
-EX no longer calls the payload and admission adapters. The optional permission layout fallback and the shared default payload overloads remain for Z1.
-
-## Wave 5 X handoff
-
-Route Remove expands category exclusions through the layout, including absent targets, checks content ordinally and revalidates the layout under the lock.
-Its command adapters are removed. Two static help sentences keep default-root wording, like Route Create's.
-
-## Wave 5 N handoff
-
-Route Init carries and revalidates the layout, accepts literal custom-root paths, maps restoration and enforces ordinal content boundaries.
-One runtime-reservation test adapter remains for Z1, and help and binding wording keep the default root.
-
-## Wave 5 M handoff
-
-Route Move carries and revalidates the selected layout, keeps literal paths literal and gives custom-root guidance.
-Five default-only fixture adapter calls remain for Z1, and static help keeps default-root wording.
-
-## Wave 5 EU handoff
-
-Top-level Update maps installed destinations, keeps package identities and revalidates the layout. Its default-layout adapters are removed.
-Chair amendment 7 makes a lone missing loader restorable drift, records unreadable ownership without gating the layout, and matches retired and ownership paths literally. Index keeps its own ownership guard, which the old reader gate had covered.
-
-## Wave 5 ER handoff
-
-Top-level Remove carries and revalidates the layout, keeps fixed settings storage apart from content selection and updates custom-root and native Skills navigation.
-Its runtime adapters are removed. The shared adapter definitions remain for Z1.
-
-## Wave 5 LB handoff
-
-Libraries keep registrations, sources and suffixes literal and use the observed layout for identity, navigation, admission and revalidation under the lock.
-Consumer and navigation adapters are removed. The destination workspace overload and the optional permission layout fallback remain for Z1. Linux and macOS relative-link journeys run in CI.
-
-## Wave 5 RP handoff
-
-Repair takes Doctor's layout observation through planning, target checks, metadata, classification and result projection, and revalidates it under the lock. Cleanup carries the layout and keeps Task 86's recorded recovery locations.
-Doctor now recognizes native Skills rows across custom roots by resolving destinations before comparison. Default Skills rows remain unchanged, and all required managed suites and published Repair and Index journeys pass.
-
-## Wave 6 Z1 handoff
-
-Every temporary default-layout adapter is removed and its callers pass an explicit layout. The package-coordinate default stays as a named invariant.
-Status and Install expose optional layout facts through `WorkspaceLayoutInfo`, omitted for default workspaces, with the JSON envelope at schema 3.
-An audit accounts for every remaining production `.agents` literal as an owner, fixed control, package coordinate, documentation or default wording.
-
-## Wave 6 Z2 handoff
-
-Install offers `--main-root <folder>` and the first-install question, keeps unattended behavior, and refuses an established-root change before any effect.
-Published journeys cover both frontmatter forms, offline hosts, lifecycle commands and exact default bytes. Only the install help snapshot changed by design.
-
-## Overseer notes
-
-- Every new settings file declares schema v4, including default installs. The shipped README now says so, and the renderer no longer needs its schema-sentence special case.
-- The intentionally excluded missing loader E2 raised is resolved by chair amendments 6 and 7. The plan's `*LibrarySharedGrant*` filter selects nothing, because the shared-grant class has another name.
-- Static help still shows default-root wording in Route Create and Route Inspect. The final documentation packet and Z2 help changes decide whether it changes.
-- Fixed a bug that predates Task 85: regenerating navigation dropped a loader's direct rows to nested catalogues, such as a nested native Skills catalogue, in default and custom layouts. Shared generated navigation now keeps those rows and their metadata. Unit tests cover Skills, other categories and omission.
-- Extension Update recovery labels use the observed context folder, retain explicit targets and default wording, and use neutral wording when the layout is unknown.
-- Top-level Remove carries exact route references across layouts. Custom human guides now receive the default refusal, while loader behavior and ordinal content boundaries remain unchanged.
-- Default snapshots that changed on purpose: the install help (Z2), and after the shipped README and CLI Skill gained custom-root guidance, 56 Status snapshots whose startup token totals measure those files, 10 help and concepts snapshots that read the README, and the custom-guidance rendering. No other default output changed.
-
-## Review-test handoff, 2026-10-24
-
-R1, R2, R3 and R5 are fixed against `8c73fdc21`: independent Extension Update body bytes, reviewed Index output and catalogue snapshots, one published refusal checkpoint with branches retained in Integration, and one JSON envelope-version owner with a checked public-token projection. The patch has 11 C# files and 66 new snapshots. Existing snapshots are unchanged.
-Using the [focused helpers](../../../emerging/analysis/main-root-council/plan.md#build-in-the-sandbox), run `tu` with `*PublishedTokensTests`, `*CliReportRenderingTests`, `*CliCountNumericTests`, `*HelpJsonSerializationTests`, `*RouteIncludeJsonSerializationTests`, `*RouteExcludeJsonSerializationTests`, `*CleanupJsonSchemaContractTests`, `*RouteRemoveJsonSchemaContractTests`, `*RouteInspectJsonPresentationTests` and `*WorkspacePermissionJsonProjectionTests`. Run `ti` with `*ExtensionUpdateMainRootIntegrationTests`, `*IndexCompletionIntegrationTests`, `*InstallMainRootIntegrationTests`, `*CliReportInvariantsTests`, `*LayerBoundaryTests`, `*GeneratedSerializationTests` and `*Schema3CommandIntegrationTests`. Run `te` with `*PublishedExtensionUpdateProcessTests`, `*PublishedMainRootInstallProcessTests`, `*PublishedSchema3ProcessTests`, `*PublishedStatusProcessTests`, `*PublishedIndexProcessTests` and `*PublishedInstallProcessTests`.
-Fresh Windows x64 managed evidence passed 164 Unit, 100 Integration and 52 EndToEnd tests with no failures or skips. `dotnet build OpenForge.Cli.slnx -c Release --no-restore --disable-build-servers -m:1` refreshed the development executable with no warnings. Both `dotnet format whitespace OpenForge.Cli.slnx --no-restore` and `dotnet format OpenForge.Cli.slnx --no-restore --verify-no-changes --severity warn` passed. [Build 40115960520](https://github.com/TheLithiumForge/open-forge/actions/runs/40115960520) still runs on the preceding head. Commit and push these fixes, then verify all six platforms before marking PR 9 ready. Delivery 2 remains open.
+Choosing an absent or empty main root at first installation works across command families. The default remains `.agents`, native Skills remain in `.agents/skills` and controls stay fixed. Task 86 merged as `164fc9667`, Task 85 Delivery 1 as `77a24b2c0`, and Task 87 as `fba519f35`. The [beta18 receipt](../../../archived/cli-development/tasks/task87-routes-outside-main-root.md#beta18-release-2026-10-27) owns combined acceptance and release evidence.
