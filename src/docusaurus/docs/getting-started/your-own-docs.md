@@ -5,7 +5,7 @@ description: Keep the documents your team writes in your own folders, let agents
 
 # Your own docs
 
-Your own docs is the way Open Forge reads the documents your team writes where they already live, without moving them into the context folder.
+Open Forge reads the documents your team writes where they already live, so you don't have to move them into the context folder.
 
 Agent context lives in the main root, `.agents` by default. Your documents can stay in folders such as `docs/team`, written by hand or with AI help. E.g. your team keeps its testing rules in `docs/team/testing.md`. You register `docs/team` as a route, the loader lists its catalogue, and a testing task reads the rules in place.
 

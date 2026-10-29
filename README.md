@@ -190,7 +190,7 @@ Open Forge shares context at three levels. Each level reaches further than the o
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="src/docusaurus/static/img/integration-levels-dark.svg">
-    <img alt="Three levels of sharing, drawn as rings. The inner ring is one repo, your workspace: the .agents context folder for agent context and outside routes such as docs for your own documents. The middle ring covers several repos through Libraries: a shared folder in the workspace, such as a Git submodule, linked into place. The outer ring covers people, teams, projects and organizations through Extensions: packages you install in any project." src="src/docusaurus/static/img/integration-levels-light.svg" width="640">
+    <img alt="Three levels of sharing, drawn as rings. The inner ring is one repo, your workspace: the .agents context folder for agent context and outside routes such as docs for your own documents. The middle ring covers several repos through Libraries: a shared folder in the workspace, such as a Git submodule, linked into place. The outer ring covers people, teams, projects and organizations through Extensions: packages you install in any project." src="src/docusaurus/static/img/integration-levels-light.svg" width="520">
   </picture>
 </p>
 

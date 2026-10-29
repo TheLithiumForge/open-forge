@@ -5,7 +5,7 @@ import styles from "./home.module.css";
 
 interface Feature {
   readonly title: string;
-  readonly body: string;
+  readonly body: ReactNode;
   readonly link: string;
   readonly linkLabel: string;
 }
@@ -13,7 +13,12 @@ interface Feature {
 const features: readonly Feature[] = [
   {
     title: "A context folder you choose",
-    body: "Keep the Framework in .agents, or pick another absent or empty folder, such as docs/forge, at first installation. Skills, settings and ownership stay in .agents.",
+    body: (
+      <>
+        Keep the Framework in <code>.agents</code>, or pick another absent or empty folder, such as <code>docs/forge</code>, at first installation. Skills, settings and ownership
+        stay in <code>.agents</code>.
+      </>
+    ),
     link: "/docs/getting-started/installation#choose-the-context-folder",
     linkLabel: "Choose the context folder",
   },
@@ -43,7 +48,11 @@ const features: readonly Feature[] = [
   },
   {
     title: "An optional CLI",
-    body: "It finds context, keeps navigation correct, and previews every change with --dry-run. Everything it does, you can do by editing files.",
+    body: (
+      <>
+        It finds context, keeps navigation correct, and previews every change with <code>--dry-run</code>. Everything it does, you can do by editing files.
+      </>
+    ),
     link: "/docs/cli",
     linkLabel: "Working with the CLI",
   },

@@ -22,13 +22,8 @@ const alt =
 
 export default function SharingLevels(): ReactNode {
   return (
-    <section className={`${styles.section} ${styles.sectionAlt}`}>
+    <section className={styles.section}>
       <div className={`container ${styles.split}`}>
-        <ThemedImage
-          alt={alt}
-          className={styles.levelsImage}
-          sources={{ light: useBaseUrl("/img/integration-levels-light.svg"), dark: useBaseUrl("/img/integration-levels-dark.svg") }}
-        />
         <div>
           <Heading as="h2" className={styles.sectionTitle}>
             Share at your scale
@@ -46,6 +41,11 @@ export default function SharingLevels(): ReactNode {
           </dl>
           <Link to="/docs/getting-started/share-with-your-team">Share with your team →</Link>
         </div>
+        <ThemedImage
+          alt={alt}
+          className={styles.levelsImage}
+          sources={{ light: useBaseUrl("/img/integration-levels-light.svg"), dark: useBaseUrl("/img/integration-levels-dark.svg") }}
+        />
       </div>
     </section>
   );
