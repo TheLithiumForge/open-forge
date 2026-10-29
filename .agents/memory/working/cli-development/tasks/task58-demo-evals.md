@@ -97,8 +97,9 @@ The same comparison also runs on an existing build. Each setup starts from one f
 1. Vanilla - the codebase and the request, with no workspace context.
 2. Custom solution - the codebase with a hand-written `AGENTS.md` and its existing docs, as a team would set it up without Open Forge.
 3. Open Forge - the codebase with its docs routed, its rules as Directives, its reasons as Decisions and a Map to its sources.
+4. Hybrid - the custom solution plus a partial Open Forge adoption: the Minimal preset with its rules as Directives and accepted facts in Memory, existing docs added with `route include`, and the CLI for maintenance, without full specs or Decisions.
 
-The codebase can be the finished neon snake or the expense splitter brownfield app. The new request touches rules that only the docs explain, so the hidden checks show whether each setup keeps them. This variant measures what most real work looks like: adding to a project instead of starting one.
+The hybrid setup shows whether a light adoption already gives most of the gain, which is how many teams will start. The codebase can be the finished neon snake or the expense splitter brownfield app. The new request touches rules that only the docs explain, so the hidden checks show whether each setup keeps them. This variant measures what most real work looks like: adding to a project instead of starting one.
 
 ### Measures
 
