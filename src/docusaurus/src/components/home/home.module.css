@@ -249,6 +249,19 @@
   font-weight: 600;
 }
 
+.splitTop {
+  align-items: start;
+}
+
+.setupTabs {
+  min-width: 0;
+}
+
+.setupSummary {
+  min-height: 3em;
+  color: var(--ifm-color-emphasis-800);
+}
+
 .levelsImage {
   display: block;
   width: 100%;

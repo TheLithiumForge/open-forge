@@ -26,7 +26,10 @@ interface HomeStyles {
   readonly sectionAlt: string;
   readonly sectionLead: string;
   readonly sectionTitle: string;
+  readonly setupSummary: string;
+  readonly setupTabs: string;
   readonly split: string;
+  readonly splitTop: string;
   readonly stat: string;
   readonly stats: string;
   readonly sublead: string;
