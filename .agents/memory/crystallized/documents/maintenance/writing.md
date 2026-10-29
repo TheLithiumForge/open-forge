@@ -17,9 +17,9 @@ The [Loader](../../../../loader.md#working-with-the-user) defines shared concisi
 
 ## Choose The Voice
 
-Use this standard's direct, precise voice for Framework rules, contracts, technical reference text, and maintenance explanations. Use [Project Voice](project-voice.md) for READMEs and public introductions: the maintainer's own engineering voice, concrete and plainly excited about the ideas. Choose by the purpose of the passage, including within a single document.
+Use this standard's direct, precise voice for Framework rules, contracts, technical reference text, and maintenance explanations. Use [Project Voice](project-voice.md) for READMEs, the documentation site's pages and other public introductions: the maintainer's voice guide, which sets their structure, flow, wording and punctuation. Where the two differ on public documentation, Project Voice wins. Choose by the purpose of the passage, including within a single document.
 
-Both voices follow the shared requirements below for clarity, correctness, terminology, source boundaries, and lossless rewriting. Introductions may use a more varied rhythm and sentence structure. They do not need to turn every explanation into a direct instruction.
+Both voices follow the shared requirements below for clarity, correctness, terminology, source boundaries, and lossless rewriting.
 
 ## Values
 

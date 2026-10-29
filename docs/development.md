@@ -538,7 +538,7 @@ Recalculate after changing the shipped files or their loading policy. Report the
 
 ## Documentation voice
 
-Use [Project Voice](../.agents/memory/crystallized/documents/maintenance/project-voice.md) for READMEs and introductions: direct, concrete, and written like an engineer sharing ideas they're excited about. Give rules and reference text the precise, conversational voice described in the [Writing Standard](../.agents/memory/crystallized/documents/maintenance/writing.md). Both share the same accuracy and terminology requirements. Choose the voice for the passage's purpose, so an opinionated introduction can lead into exact setup instructions.
+Use [Project Voice](../.agents/memory/crystallized/documents/maintenance/project-voice.md), the maintainer's voice guide, for READMEs, the documentation site's pages and other public introductions. It sets their order, from an overview sentence through main concepts to supporting detail, and their wording and punctuation. Give rules and reference text the precise, conversational voice described in the [Writing Standard](../.agents/memory/crystallized/documents/maintenance/writing.md). Both share the same accuracy and terminology requirements. Choose the voice for the passage's purpose.
 
 The README should quickly explain what Open Forge is, why it helps, how to start, and where to learn more. Public guides explain use in more detail. Current repository documents preserve the complete accepted subjects, and maintenance files explain how their sources stay aligned. Link between them instead of maintaining competing detailed explanations.
 
