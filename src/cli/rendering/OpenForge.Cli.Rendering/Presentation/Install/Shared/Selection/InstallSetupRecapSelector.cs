@@ -20,6 +20,8 @@ internal static class InstallSetupRecapSelector
             lines.Add(InstallSetupText.AddRoutes(Routes(InstallRouteAction.Add)));
             lines.Add(InstallSetupText.IgnoredRoutes(Routes(InstallRouteAction.GitIgnore)));
             lines.Add(InstallSetupText.LeftOutRoutes(Routes(InstallRouteAction.Remove)));
+            // Before application the plan names the folder. Afterwards the receipt reports what registration did instead.
+            if (recap.OutsideRoute is { } folder && result.OutsideRoute is null) lines.Add(InstallSetupText.OutsideRoute(folder));
             return lines;
         }
 

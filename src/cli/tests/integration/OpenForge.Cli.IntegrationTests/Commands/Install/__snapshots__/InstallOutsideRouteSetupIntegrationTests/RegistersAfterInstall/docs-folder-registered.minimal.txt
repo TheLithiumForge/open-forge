@@ -1,0 +1,16 @@
+Installed the Open Forge Framework.
+Workspace: <workspace>
+Setup: Minimal
+Add: directives, memory/crystallized
+Git-ignored contents: none
+Leave out: guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/archived
+Frontmatter: root
+  Created 5 files and 3 directories under .agents (listed in
+  .agents/open-forge.lock.json).
+  Created AGENTS.md and CLAUDE.md with an Open Forge section.
+Registered docs/team as an outside route. Its catalogue is docs/team/_team.md.
+If your agent tool does not read AGENTS.md on its own, ask it to read AGENTS.md
+first.
+Next: review the new files with git status and git diff, commit them, then
+      give your agent a normal task.

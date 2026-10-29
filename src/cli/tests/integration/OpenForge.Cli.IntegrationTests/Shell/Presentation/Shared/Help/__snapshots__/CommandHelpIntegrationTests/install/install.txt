@@ -52,7 +52,9 @@ Details:
   be absent or empty. Settings and Skills stay in .agents. Preview, JSON,
   automatic and redirected runs never ask. An omitted or unchanged value keeps
   ordinary Install behavior. A different root on an established installation is
-  refused, including with --configure.
+  refused, including with --configure. A fresh interactive Install then offers
+  to register one existing folder of your own docs as an outside route. Press
+  Enter to skip it.
   Force boundary: --force may replace only the exact eligible existing item at a
   current Framework installation path before management is established. Checks
   must exclude trusted owners or competing managers, route or source collisions,

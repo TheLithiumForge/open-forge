@@ -46,6 +46,8 @@ open-forge install --main-root docs/forge --preset minimal --dry-run
 open-forge install --main-root docs/forge --preset minimal --automatic
 ```
 
+Right after this question, a fresh interactive install asks "Do you also want Open Forge to maintain a folder of your own docs?". Enter an existing folder, such as `docs/team`, to register it as an outside route after the Framework files, or press Enter to skip. [Your own docs](your-own-docs.md) explains what the registration does.
+
 The loader, guide and ordinary categories use the chosen folder. Skills stay at `.agents/skills`, settings at `.agents/open-forge.json` and ownership at `.agents/open-forge.lock.json`. The host files `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader. The runtime folder `.open-forge-state/` also stays at the workspace root.
 
 Previews, JSON output and unattended runs never ask. Older CLIs do not support custom roots. Relocating an established installation is not available yet, including through `--configure`. Editing `mainRoot` moves no files. See the [CLI reference](/guides/cli#context-folder) for settings and mismatch behavior.

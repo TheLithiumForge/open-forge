@@ -73,6 +73,10 @@ A custom destination must be absent or empty. Default-root adoption remains supp
 
 The loader and human guide follow the selected root. Skills, settings and ownership retain their fixed `.agents` locations, and workspace-root host sections point to the selected loader. New settings declare v4 without inserting an absent default `mainRoot`. Older CLIs do not support custom roots. See the [shared layout contract](../../shared-operation-contract.md#workspace-layout).
 
+After the context-folder question, a fresh prompt-capable interactive Install asks "Do you also want Open Forge to maintain a folder of your own docs?". Pressing Enter skips it. An answer must be an existing canonical workspace-relative folder that satisfies the outside-route path rules for the selected main root. Any other answer stops setup with invalid input before any plan or effect. The setup recap in the plan names the folder, and the one Install confirmation covers it. Preview, JSON, automatic, redirected, installed and `--configure` runs never ask, and no flag supplies the answer. Scripts run `route include <folder>` after Install.
+
+After a complete Install, the folder is registered through the [folder Include](../route/include/interface.md) operation. The text receipt reports that it was registered with its catalogue, that it was already registered, that registration failed with the `open-forge route include <folder>` retry command, or that Install did not finish. Install's status and exit report the Framework installation. A failed registration leaves the installed files in place and does not change them. JSON output has no docs-folder field, because JSON requests never ask.
+
 For custom roots, `data.layout` reports `mainRoot` and `loaderPath`. Default results omit it and retain the existing schema-3 envelope. Paths, counts and transcripts using `.agents` below describe the default layout.
 
 ## Help

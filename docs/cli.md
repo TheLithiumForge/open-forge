@@ -1505,6 +1505,8 @@ open-forge install --main-root docs/forge --preset minimal --automatic
 
 The loader, guide and ordinary categories go under that folder. Native Skills stay at `.agents/skills`, settings at `.agents/open-forge.json` and ownership at `.agents/open-forge.lock.json`. `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader. `.open-forge-state/` also stays at the workspace root.
 
+After the context-folder question, a fresh interactive Install asks "Do you also want Open Forge to maintain a folder of your own docs?". Enter an existing workspace-relative folder, such as `docs/team`, or press Enter to skip. The folder must sit outside the context folder, `.agents` and Git metadata, and setup stops before any plan if it doesn't exist. The plan names the folder, and after the Framework files are installed, Install registers it the same way [folder Include](#outside-routes) does. If registration fails, the installed files stay, Install's status stays complete, and the receipt gives the `open-forge route include <folder>` command to try again. Preview, JSON, automatic, redirected and `--configure` runs never ask. In scripts, run `route include <folder>` after Install.
+
 An omitted or unchanged root preserves ordinary Install behavior. An established installation refuses a different root, including with `--configure`. Relocating an established installation is not available yet. Editing `mainRoot` moves nothing. Readers report a disagreement with the installed files and writers stop. Older CLIs do not support custom roots.
 
 Status names a custom context folder. Status and Install expose `data.layout` with `mainRoot` and `loaderPath` for a custom root and omit it for the default layout. JSON output remains schema 3.

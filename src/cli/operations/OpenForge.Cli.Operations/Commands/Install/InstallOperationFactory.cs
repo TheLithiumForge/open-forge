@@ -16,7 +16,8 @@ internal static class InstallOperationFactory
     internal static InstallOperation Create(
         CliPlanConfirmation<InstallResult, InstallConfirmationFacts> planConfirmation,
         WorkspaceLockStoreRoot? lockStoreRoot = null,
-        InstallSetupInteraction? setupInteraction = null)
+        InstallSetupInteraction? setupInteraction = null,
+        InstallOutsideRouteRegistration? outsideRouteRegistration = null)
     {
         ArgumentNullException.ThrowIfNull(planConfirmation);
         var physicalPathResolver = new PhysicalPathResolver();
@@ -32,6 +33,7 @@ internal static class InstallOperationFactory
                 physicalPathResolver),
             preflight: preflight,
             applicationOperation: application,
-            setupResolver: new InstallSetupResolver(physicalPathResolver, setupInteraction));
+            setupResolver: new InstallSetupResolver(physicalPathResolver, setupInteraction),
+            outsideRouteRegistration: outsideRouteRegistration);
     }
 }

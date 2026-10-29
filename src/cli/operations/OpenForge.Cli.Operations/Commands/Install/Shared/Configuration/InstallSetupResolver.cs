@@ -62,6 +62,23 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
                 layout = WorkspaceLayout.Create(request.Workspace, reply.Value);
             }
         }
+        string? outsideRoute = null;
+        if (layoutRead.State == WorkspaceLayoutReadState.Uninstalled && canPrompt && interaction?.OutsideRoute is { } outsideInteraction)
+        {
+            var question = new InstallOutsideRouteQuestion(layout.MainRoot);
+            var reply = await outsideInteraction(question, new(true), token).ConfigureAwait(false);
+            if (reply.State == CliPromptState.Cancelled) return new(null, Cancelled: true);
+            if (reply.State == CliPromptState.Answered && !InstallOutsideRouteQuestion.IsSkip(reply.Value))
+            {
+                if (!question.IsValidAnswer(reply.Value))
+                    return Stopped(InstallFindingCode.InvalidInput, "The docs folder must be a canonical workspace-relative folder outside the context folder and .agents.");
+                // Folder Include admits only an existing directory. Checking here stops before any plan, so a missing
+                // folder never leaves an installed Framework with a registration that cannot happen.
+                if (!Directory.Exists(Path.Combine(request.Workspace.LexicalRoot, reply.Value)))
+                    return Stopped(InstallFindingCode.InvalidInput, $"The docs folder '{reply.Value}' does not exist. Create it first, or leave the answer empty and run route include later.");
+                outsideRoute = reply.Value;
+            }
+        }
         var form = InstallFrontmatterResolver.Resolve(request.Setup, settings, installed, canPrompt);
         if (form.Boundary is { } formBoundary) return new(null, formBoundary);
         if (request.Setup?.Preset is null &&
@@ -69,8 +86,9 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
             return new(null)
             {
                 RequestedMainRoot = requestedMainRoot,
+                OutsideRoute = outsideRoute,
                 Frontmatter = form.Selection,
-                Recap = !installed ? new(false, InstallPreset.FullCore, CurrentRoutes(layout, settings, []), []) : null,
+                Recap = !installed ? new(false, InstallPreset.FullCore, CurrentRoutes(layout, settings, []), []) { OutsideRoute = outsideRoute } : null,
             };
         var ignore = await _reader.ReadAsync(request.Workspace, InstallIgnoreSection.Path, token).ConfigureAwait(false);
         if (ignore.Snapshot is not { } ignoreSnapshot)
@@ -147,8 +165,9 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
             return new(configuration, resolved.Boundary)
             {
                 RequestedMainRoot = requestedMainRoot,
+                OutsideRoute = outsideRoute,
                 Frontmatter = resolved.Selection,
-                Recap = new(request.Setup?.Configure == true, configuration?.Preset ?? InstallPreset.FullCore, routes, previousRoutes),
+                Recap = new(request.Setup?.Configure == true, configuration?.Preset ?? InstallPreset.FullCore, routes, previousRoutes) { OutsideRoute = outsideRoute },
             };
         }
     }

@@ -61,7 +61,7 @@ The included file follows these rules:
 
 ## Include a folder
 
-To maintain a whole folder, include the folder instead. For an existing `docs/team` directory, preview the plan, then apply it:
+To maintain a whole folder, include the folder instead. At first installation, the install wizard can do this for one folder: it asks for a docs folder right after the context folder. For an existing installation, or another folder, preview the plan, then apply it:
 
 ```sh
 open-forge route include docs/team --dry-run

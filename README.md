@@ -160,6 +160,8 @@ open-forge route include docs/team --dry-run
 open-forge route include docs/team
 ```
 
+At first installation, the install wizard offers the same thing for one folder right after the context-folder question. Press Enter to skip it.
+
 This registers an outside route and lists its catalogue, `docs/team/_team.md`. The command creates the catalogue only when it's missing. From then on, the CLI works inside the folder the same way it works in the main root:
 
 ```sh

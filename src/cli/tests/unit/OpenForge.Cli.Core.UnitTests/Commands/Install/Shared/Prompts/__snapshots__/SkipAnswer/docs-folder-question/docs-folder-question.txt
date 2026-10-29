@@ -1,0 +1,4 @@
+Do you also want Open Forge to maintain a folder of your own docs? Enter an
+existing workspace-relative folder, such as docs/team, to register it as an
+outside route, or press Enter to skip. It can't be inside the context folder or
+.agents.

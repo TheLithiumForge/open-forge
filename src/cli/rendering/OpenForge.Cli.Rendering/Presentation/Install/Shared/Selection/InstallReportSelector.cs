@@ -124,6 +124,7 @@ internal static class InstallReportSelector
             Migrations = migrations,
             TextRows = textRows,
             TextSetupLines = InstallSetupRecapSelector.Select(result),
+            TextOutsideRouteLines = InstallOutsideRouteSelector.Select(result),
             ShowFrontmatter = (result.Input.Setup?.Configure != true && result.Input.Configuration?.Configure != true) || result.Frontmatter?.Changed == true,
             ShowFirstTask = !preview && result.Status == CliSemanticStatus.Complete
                 && result.Input.Setup?.Configure != true

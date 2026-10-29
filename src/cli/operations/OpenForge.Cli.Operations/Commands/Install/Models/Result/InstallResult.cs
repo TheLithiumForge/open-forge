@@ -69,6 +69,8 @@ internal sealed record InstallResult : ICliCommandResult
 
     internal InstallFrontmatter? Frontmatter { get; init; }
 
+    internal InstallOutsideRouteOutcome? OutsideRoute { get; init; }
+
     internal static InstallResult Invalid(
         InstallBindingInput input,
         CliWorkspace? workspace,

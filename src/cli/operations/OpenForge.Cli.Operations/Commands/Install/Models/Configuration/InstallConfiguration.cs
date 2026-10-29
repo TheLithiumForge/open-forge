@@ -19,11 +19,15 @@ internal sealed record InstallSetupInteraction(
     CliPrompt<InstallPreset, InstallPreset> Preset,
     CliPrompt<InstallRouteQuestion, ImmutableArray<InstallRouteSelection>> Routes,
     CliPrompt<InstallFrontmatterQuestion, string> Frontmatter,
-    CliPrompt<InstallMainRootQuestion, string> MainRoot);
+    CliPrompt<InstallMainRootQuestion, string> MainRoot)
+{
+    internal CliPrompt<InstallOutsideRouteQuestion, string>? OutsideRoute { get; init; }
+}
 internal sealed record InstallSetupBoundary(InstallFindingCode Code, string Cause);
 internal sealed record InstallSetupResolution(InstallConfiguration? Configuration, InstallSetupBoundary? Boundary = null, bool Cancelled = false)
 {
     internal string? RequestedMainRoot { get; init; }
+    internal string? OutsideRoute { get; init; }
     internal InstallFrontmatterSelection? Frontmatter { get; init; }
     internal InstallSetupRecap? Recap { get; init; }
 }

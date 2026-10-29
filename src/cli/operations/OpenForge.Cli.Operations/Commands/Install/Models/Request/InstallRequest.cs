@@ -46,6 +46,8 @@ internal sealed record InstallRequest
 
     internal string? RequestedMainRoot { get; init; }
 
+    internal string? OutsideRoute { get; init; }
+
     internal CliRetryOptions? RetryOptions { get; init; }
 
     internal InstallSetupRecap? SetupRecap { get; init; }

@@ -19,7 +19,8 @@ internal sealed class InstallOperation(
     InstallPlanBuilder planBuilder,
     MutationPreflight preflight,
     InstallApplicationOperation applicationOperation,
-    InstallSetupResolver? setupResolver = null)
+    InstallSetupResolver? setupResolver = null,
+    InstallOutsideRouteRegistration? outsideRouteRegistration = null)
 {
     private readonly CliPlanConfirmation<InstallResult, InstallConfirmationFacts> _planConfirmation =
         planConfirmation ?? throw new ArgumentNullException(nameof(planConfirmation));
@@ -44,7 +45,7 @@ internal sealed class InstallOperation(
                         ? InstallManagementState.Incomplete : InstallManagementState.Blocked;
                     return InitialResult(request, state, boundary.Code, boundary.Cause);
                 }
-                request = request with { Configuration = setup.Configuration, Frontmatter = setup.Frontmatter, SetupRecap = setup.Recap, RequestedMainRoot = setup.RequestedMainRoot };
+                request = request with { Configuration = setup.Configuration, Frontmatter = setup.Frontmatter, SetupRecap = setup.Recap, RequestedMainRoot = setup.RequestedMainRoot, OutsideRoute = setup.OutsideRoute };
             }
             build = await _planBuilder.BuildAsync(request, cancellationToken)
                 .ConfigureAwait(false);
@@ -174,11 +175,33 @@ internal sealed class InstallOperation(
                 "Install application failed unexpectedly.");
         }
 
-        return InstallResult.Create(
+        var installed = InstallResult.Create(
             request,
             outcome.Findings,
             outcome.Summary,
             outcome.Facts);
+        if (request.OutsideRoute is not { } folder) return installed;
+        return installed with { OutsideRoute = await RegisterOutsideRouteAsync(installed, folder, cancellationToken).ConfigureAwait(false) };
+    }
+
+    // Folder Include needs the loader Install just wrote, so it runs only after a complete Install. The CLI never
+    // rolls back, so a failed registration leaves the installed Framework in place and reports the retry command.
+    private async ValueTask<InstallOutsideRouteOutcome> RegisterOutsideRouteAsync(InstallResult installed, string folder, CancellationToken cancellationToken)
+    {
+        if (installed.Status != CliSemanticStatus.Complete || outsideRouteRegistration is null || installed.Workspace is not { } workspace)
+            return new(folder, InstallOutsideRouteState.NotAttempted);
+        try
+        {
+            return await outsideRouteRegistration(workspace, folder, cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return new(folder, InstallOutsideRouteState.Failed) { Cause = "Registration was interrupted." };
+        }
+        catch (Exception)
+        {
+            return new(folder, InstallOutsideRouteState.Failed) { Cause = "Registration failed unexpectedly." };
+        }
     }
 
     private async ValueTask<InstallResult?> ConfirmAsync(
