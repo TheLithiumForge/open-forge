@@ -131,7 +131,7 @@ These rules make the results hard to dispute:
 
 ## Current State
 
-**Now:** recorded and expanded on 2026-10-29, not started. Ready to hand to an agent once the maintainer selects it.
+**Now:** recorded and expanded on 2026-10-29, not started. Ready to hand to an agent once the maintainer selects it. Tracked publicly in [issue #12](https://github.com/TheLithiumForge/open-forge/issues/12).
 
 **Related:** the Emerging idea on
 [documentation comprehension probes](../../../emerging/ideas/documentation-comprehension-probes.md)
