@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Open Task 58 to turn the demos into a repeatable evaluation comparing Open Forge with other setups, agents, and models
+  description: Open Task 58 to turn the demos into a repeatable evaluation comparing Open Forge with other setups, agents and models, including a multi-agent neon snake demo
   tags: [Memory, Working, Task, Evaluation, Demo, Contextual, Active]
 ---
 
@@ -61,9 +61,66 @@ superiority wait for results and their limits.
 3. **Automate one setup end to end**, from a clean copy to a scored result.
 4. **Pilot** against a baseline without Open Forge, then widen.
 
+## Expansion, 2026-10-29
+
+The maintainer asked to widen this Task and hand it to another agent. The goal is a cheap, repeatable evaluation whose results hold up to scrutiny: charts and tables that show what Open Forge changes, and a baseline to track models over time. This record still authorizes no model spending or published result until the maintainer approves the pilot.
+
+### Neon snake demo
+
+A new demo: a small neon snake browser game, built by several agents in parallel. It's small enough to finish cheaply, and it has enough parts that agents must agree on shared interfaces. Each part has one agent role:
+
+- VFX - glow, trails and particles on a canvas.
+- Sound design - Web Audio synthesis for moves, food and game over.
+- Gameplay interactions - input, collision and food placement.
+- Gameplay loop - fixed tick, game states, scoring and levels.
+- UX - menus, HUD, pause, settings and accessibility.
+
+Game logic must run headlessly in Node from a seed and an input script. Hidden checks can then replay fixed inputs and compare the score, length and end state exactly. VFX and UX can be checked with Playwright screenshots and DOM assertions.
+
+### Setups
+
+Every setup gets the same request and the same model:
+
+1. Vanilla - the prompt only, no workspace context.
+2. One `AGENTS.md` with workspace instructions.
+3. Open Forge with a Vision, Architecture, module contracts, Directives and scenarios. Subagents are allowed.
+4. Setup 3 plus orchestration through Task Coordination and the `use-workflow` Skill.
+5. The same documents as setup 3, dropped into a plain `docs/` folder with no routing or links.
+6. Proposed: setup 5 plus a carefully written hand-made `AGENTS.md` that links every document. This is the "good custom solution" baseline.
+
+Setups 1 to 3 show how much context matters. Setups 3, 5 and 6 hold the content fixed and change only structure, so any difference comes from routing, loading and the Framework rules, not from extra information.
+
+### Measures
+
+We record these per run:
+
+- Hidden check pass rate, including the quiet failures.
+- Contract violations between the agents' parts, such as mismatched event names or tick assumptions.
+- Tokens in and out, cost, wall time, user turns and rework commits.
+- Instruction adherence, from probes for rules that only the Directives state.
+- Hallucination, from references to files, APIs or decisions that don't exist.
+- Long-session drift: a session of sequential tasks where late tasks depend on early Decisions, scored for contradictions and forgotten rules.
+
+### Rigor
+
+These rules make the results hard to dispute:
+
+- Write the protocol and rubric down, and get them accepted, before the first scored run.
+- Pin agent, model and tool versions. Use fixed seeds and one starting commit per run.
+- Use at least five runs per setup and model cell. Report the mean with a confidence interval, never one best run.
+- Score with scripts kept outside the agent's workspace. Where people judge, they don't know the setup.
+- Publish raw logs, prompts and the scoring code with the results, and state the limits.
+
+### Order
+
+1. Accept the protocol, setups and rubric.
+2. Build hidden checks for the two expense splitter demos.
+3. Build the neon snake specs and its headless checks.
+4. Pilot setups 1, 3 and 5 on one model, then widen.
+
 ## Current State
 
-**Now:** recorded, not started.
+**Now:** recorded and expanded on 2026-10-29, not started. Ready to hand to an agent once the maintainer selects it.
 
 **Related:** the Emerging idea on
 [documentation comprehension probes](../../../emerging/ideas/documentation-comprehension-probes.md)

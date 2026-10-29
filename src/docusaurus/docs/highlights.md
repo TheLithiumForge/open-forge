@@ -61,7 +61,7 @@ Maps are a Core category, so they're part of the base. A Map lists important sou
 
 ## Your own docs: a folder you keep
 
-Register a folder such as `docs/team` with `open-forge route include docs/team`, and it becomes an outside route. Your team writes its documents there by hand or with AI help. The CLI keeps the folder's catalogue and Entries current, and the loader still decides what loads. Linking a document doesn't make it accepted or let an agent edit it. You say which documents are accepted sources. See [Your own docs](getting-started/your-own-docs.md).
+Register a folder such as `docs/team` with `open-forge route include docs/team`, and it becomes an outside route. Your team writes its documents there by hand or with AI help. The CLI keeps the folder's catalogue and Entries current, and the loader still decides what loads. You say which documents are accepted sources, and the loader asks agents to rely only on those. See [Your own docs](getting-started/your-own-docs.md).
 
 ## Libraries: one folder, many repos
 

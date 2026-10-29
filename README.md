@@ -4,7 +4,7 @@ Open Forge is a Markdown framework that tells coding agents which of your projec
 
 One long `AGENTS.md` gives every task every rule. Open Forge replaces it with a loader and one short catalogue per folder, so each task reads only the routes it needs. E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` applies only to tasks that change export code.
 
-Your own documents stay yours. Agent context lives in one context folder, `.agents` by default. A folder such as `docs/team` can be registered as its own route for documents you write by hand or with AI help. Linking a document doesn't make it accepted and doesn't give an agent permission to edit it. Content counts as accepted when you agree, or when a source you named for that question says so.
+Your own documents can stay where they are. The framework and the agents' notes live in one context folder, `.agents` by default. A folder your team writes in, such as `docs/team`, can be registered as a route: agents find its documents through the loader, and the CLI keeps its catalogue current. [Your own docs](#your-own-docs) shows how, and how to tell agents which documents they can rely on.
 
 The design comes from an idea I call **Adaptive Context Engineering (ACE)**. An agent doesn't need to know everything, but it does need to know where everything is.
 
@@ -17,7 +17,7 @@ The design comes from an idea I call **Adaptive Context Engineering (ACE)**. An 
 
 To use Open Forge, you need:
 
-- A harness that reads `AGENTS.md`, or `CLAUDE.md` through the bridge. The harness is the tool that runs your agent.
+- An agent tool that reads `AGENTS.md` or `CLAUDE.md`.
 - Node.js 22.18 or later, if you install the CLI from npm. The native release and the manual copy need no Node.js.
 
 ## Install
@@ -55,7 +55,7 @@ cp -R open-forge/src/open-forge/.agents /path/to/your-project/
 cat open-forge/src/open-forge/AGENTS.md >> /path/to/your-project/AGENTS.md
 ```
 
-If your harness reads `CLAUDE.md`, append `open-forge/src/open-forge/CLAUDE.md` to your project's `CLAUDE.md` too. If the project already has a `.agents/` folder, merge the two by hand instead of copying over it. For the smallest setup, copy only `.agents/loader.md` and `.agents/README.md`, then replace the loader's `Entries` with `- none - No entries - #Empty` before you add your own links.
+If your agent tool reads `CLAUDE.md`, append `open-forge/src/open-forge/CLAUDE.md` to your project's `CLAUDE.md` too. If the project already has a `.agents/` folder, merge the two by hand instead of copying over it. For the smallest setup, copy only `.agents/loader.md` and `.agents/README.md`, then replace the loader's `Entries` with `- none - No entries - #Empty` before you add your own links.
 
 ## Quick start
 
@@ -127,7 +127,7 @@ This is ACE. It takes progressive disclosure and spec-driven development and app
 
 A task starts from what you want to achieve. As the work unfolds, the agent pulls in what it needs, such as the relevant architecture, your local conventions or the decision you made last month, and unrelated history stays out. What you learn along the way can become part of the framework, so the next task starts from a better place. Context isn't every file in the repository. It's the knowledge, rules and current state a task needs.
 
-Open Forge works beside your harness. Anything that reads `AGENTS.md` (or the `CLAUDE.md` bridge) can use it. Keep your hooks, custom agents and tools. If you want to define them once for several harnesses, a translator such as [APM](https://github.com/microsoft/apm) can install them where each harness looks for them.
+Open Forge works beside your agent tool. Any tool that reads `AGENTS.md` or `CLAUDE.md` can use it. Keep your hooks, custom agents and tools. If you want to define them once for several tools, a translator such as [APM](https://github.com/microsoft/apm) can install them where each tool looks for them.
 
 The [loading guide](https://thelithiumforge.github.io/open-forge/docs/concepts/loading-and-tags) explains the loading tags and file conditions step by step.
 
@@ -169,11 +169,13 @@ open-forge route create ./docs/team/testing.md --description "Team testing rules
 open-forge index ./docs/team/_team.md --dry-run
 ```
 
-The loader still decides what loads. Registration records no package ownership for the folder. `status` reports each registered directory's availability and whether the loader lists it directly. `doctor` diagnoses the folder's structure and gives only grounded maintenance advice. Install, configure and Update keep your registrations and the loading rules you wrote. [Outside routes](docs/cli.md#outside-routes) covers exact paths, unlisted maintenance and the safety limits.
+The loader still decides what loads. `status` and `doctor` report on registered folders, and Install, configure and Update keep your registrations and the loading rules you wrote. [Outside routes](docs/cli.md#outside-routes) covers exact paths, unlisted maintenance and the safety limits.
 
 ### Accepted sources
 
 If you keep rules and facts in your own `docs/` folder instead of in `.agents`, include them like any other document. Then say in `AGENTS.md`, outside the marked section, which of them are accepted sources.
+
+The loader asks agents to treat content as accepted only when you agree, or when a source you named for that question says so. Linking, tagging or reading a document doesn't count, and it doesn't give an agent permission to edit it. These are instructions the agent follows, so review its work as usual.
 
 ### Context folder
 
@@ -256,7 +258,7 @@ The dry run previews that exact selection without asking setup questions. Use `m
 
 ```text
 AGENTS.md                         <- tells the agent to read the loader first
-CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
+CLAUDE.md                         <- the same entry for tools that read CLAUDE.md
 .agents/
   loader.md                       <- the reading steps and the list of what agents use
   README.md                       <- a guide and the file formats, safe to delete
@@ -292,8 +294,7 @@ Read these files once now, and again after each update. They're short, and they 
 
 The files are yours. Add, adapt, replace or remove the defaults as your needs change:
 
-- Change the selected defaults later with `install --configure`. Custom's Remove choice keeps existing files and notes routable and releases their Framework management.
-- Restore eligible missing packaged scaffolding after a checkout with `install --configure` and the route choice. Missing private records need your own copy or backup.
+- Change the selected defaults later with `install --configure`. [Setup choices](docs/cli.md#setup-choices) covers what each choice does to existing files.
 - Stop using a part by removing its line from the loader. Its files stay as notes, and updates leave the line out. A removed default stays removed unless you ask to restore it.
 - Edit a shipped file directly when you want a different version. `open-forge update` brings changed Framework files back to the current version and reports each one it replaces.
 - Keep a local change across updates in an adjacent `{name}.overwrite.md`. It loads right after its base file and shares that file's role, scope and loading behavior. Where the two answer the same question, the overwrite wins, and updates leave it alone.
@@ -318,7 +319,7 @@ applyTo: ["src/export/**"]
 - When changing CSV exports, run the export tests before reporting completion. Include the command and its result. If the tests cannot run, say why.
 ```
 
-A Directive at the root of `directives/` must carry `LoadNow`, which tells the agent to read it at the start of every task. Every preset includes Directives. If Custom left it out, preview and restore its packaged files first with `open-forge route init directives --framework --dry-run`, then run it without `--dry-run`. If an ancestor has an exclusion, restore it first as the [CLI reference](docs/cli.md#route-init) explains.
+A Directive at the root of `directives/` must carry `LoadNow`, which tells the agent to read it at the start of every task. Every preset includes Directives. If Custom left it out, preview and restore its packaged files first with `open-forge route init directives --framework --dry-run`, then run it without `--dry-run`. [Route init](docs/cli.md#route-init) covers the other cases.
 
 Once your team has decided that exports use UTF-8, keep that as accepted knowledge in `.agents/memory/crystallized/export-format.md`:
 
@@ -421,7 +422,7 @@ applyTo: ["**/*.cs"]
 ---
 ```
 
-That's the root form. The scoped form nests the same fields under an `open-forge:` mapping. Both are readable in every workspace. New files follow `.agents/open-forge.json`, and a missing `frontmatter` setting means scoped. At install, `--frontmatter root` or `--frontmatter scoped` chooses the form without its question. A fresh unattended Install uses root unless settings already declare a preference. To switch forms later, preview `open-forge install --configure --frontmatter scoped --dry-run`, then run it without `--dry-run`. Route choices stay the same. Ordinary repeated Install and Update keep your selected form and never ask again. [Frontmatter and metadata](docs/cli.md#frontmatter-and-metadata) covers both forms, how they combine and what conversion changes.
+That's the root form. The scoped form nests the same fields under an `open-forge:` mapping. Both are readable in every workspace, and new files follow the setting in `.agents/open-forge.json`. To switch forms later, preview `open-forge install --configure --frontmatter scoped --dry-run`, then run it without `--dry-run`. [Frontmatter and metadata](docs/cli.md#frontmatter-and-metadata) covers both forms, the choice at install and what conversion changes.
 
 The fields do different jobs:
 
@@ -475,7 +476,7 @@ Commands that change files offer `--dry-run`, so you see the plan before anythin
 
 `--automatic` adds no permission to overwrite or delete files. The [CLI overview](https://thelithiumforge.github.io/open-forge/docs/cli#which-command-for-which-job) lists every command's flags in one place. `open-forge help concepts` explains the whole framework in one place: what agents use, how reading works, tags, content kinds, reuse and the file formats.
 
-Your agent can use the CLI too. The Skills entrypoint requires the `open-forge-cli` usage guide at startup. It links to command details and common options, including batching initial reads with `open-forge context skills/open-forge-cli`. The loader and Skill are plain instructions a harness can read with its usual file tools.
+Your agent can use the CLI too. The Skills entrypoint requires the `open-forge-cli` usage guide at startup. It links to command details and common options, including batching initial reads with `open-forge context skills/open-forge-cli`. The loader and Skill are plain instructions an agent can read with its usual file tools.
 
 [Working with the CLI](https://thelithiumforge.github.io/open-forge/docs/cli) walks through these flows and when each one helps. The [CLI reference](docs/cli.md) covers every command and option.
 
@@ -531,7 +532,7 @@ Open Forge makes a few choices on purpose:
 Know these before you adopt it:
 
 - It doesn't make a model deterministic. Open Forge makes the right context cheap to find and the rules clear. An agent can still misread or skip them, so review stays with you.
-- It depends on your harness reading `AGENTS.md`, or `CLAUDE.md` through the bridge. Everything starts there.
+- It depends on your agent tool reading `AGENTS.md` or `CLAUDE.md`. Everything starts there.
 - It isn't a methodology. There's no mandatory workflow, role or ceremony. Extensions offer methods, but installing one doesn't make its methods required.
 - It doesn't record everything. Memory holds what's worth keeping, and the rules ask agents to save outcomes on purpose instead of logging every conversation.
 

@@ -15,7 +15,7 @@ interface Setup {
 }
 
 const hosts = `AGENTS.md                     <- read the loader first
-CLAUDE.md                     <- bridge for CLAUDE.md tools`;
+CLAUDE.md                     <- same entry for CLAUDE.md tools`;
 
 const minimalFiles = `  loader.md                   <- loading and routing rules
   README.md                   <- a guide and the file formats

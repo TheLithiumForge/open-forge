@@ -13,7 +13,7 @@ Open Forge is a Markdown framework that tells coding agents which of your projec
 
 One long `AGENTS.md` gives every task every rule. Open Forge gives an agent a map instead: a loader and one short catalogue per folder, so each task reads only the routes it needs. E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` applies only to tasks that change export code.
 
-Your own documents stay yours. Agent context lives in one context folder, `.agents` by default, and your team's documents can stay in folders such as `docs/team`. Linking a document doesn't make it accepted and doesn't give an agent permission to edit it. Content counts as accepted when you agree, or when a source you named for that question says so.
+Your own documents can stay where they are. The framework and the agents' notes live in one context folder, `.agents` by default, and a folder your team writes in, such as `docs/team`, can be registered as a route. Agents find its documents through the loader, and you tell them which ones are accepted sources. [Your own docs](getting-started/your-own-docs.md) shows how.
 
 At its core, it's Markdown, rules, and links. Install it, ask your agent to work as usual, and add only what makes the next task easier. Path examples on this site use the default `.agents` folder, as [Installation](getting-started/installation.md#choose-the-context-folder) explains. Skills, settings and ownership stay in `.agents`.
 
@@ -57,7 +57,7 @@ An agent doesn't need to know everything, but it does need to know where everyth
 
 This is **Adaptive Context Engineering (ACE)**: start from the task, bring in context as the work unfolds, and keep what's useful next time. [Loading and tags](concepts/loading-and-tags.md) explains the exact rules.
 
-Open Forge works with any harness, the tool that runs your agent, that reads `AGENTS.md` or the `CLAUDE.md` bridge. Keep your hooks, custom agents, and tools. A translator such as [APM](https://github.com/microsoft/apm) can help install harness-specific definitions in several tools.
+Open Forge works with any agent tool that reads `AGENTS.md` or `CLAUDE.md`. Keep your hooks, custom agents, and tools. A translator such as [APM](https://github.com/microsoft/apm) can help install harness-specific definitions in several tools.
 
 ## Three parts, one of them required
 
@@ -98,7 +98,7 @@ Essentials keeps new Working records out of ordinary Git commits and leaves `_wo
 
 ```text
 AGENTS.md                         <- tells the agent to read the loader first
-CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
+CLAUDE.md                         <- the same entry for tools that read CLAUDE.md
 .agents/
   loader.md                       <- the reading steps and the list of what agents use
   README.md                       <- a guide and the file formats, safe to delete

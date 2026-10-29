@@ -26,7 +26,7 @@ const pillars: readonly Pillar[] = [
     title: "Safe by default",
     body: (
       <>
-        Every CLI command that changes files offers <code>--dry-run</code> to preview its plan. Linking or tagging a document never makes it accepted, and Memory keeps accepted
+        Every CLI command that changes files offers <code>--dry-run</code> to preview its plan. The loader asks agents to rely only on what you accepted, and Memory keeps accepted
         knowledge apart from unconfirmed findings.
       </>
     ),
