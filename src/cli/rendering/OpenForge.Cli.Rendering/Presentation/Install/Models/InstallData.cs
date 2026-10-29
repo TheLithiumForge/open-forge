@@ -59,6 +59,9 @@ internal sealed record InstallData
     internal IReadOnlyList<string> TextSetupLines { get; init; } = [];
 
     [JsonIgnore]
+    internal IReadOnlyList<string> TextNoticeLines { get; init; } = [];
+
+    [JsonIgnore]
     internal bool ShowFirstTask { get; init; }
 
     [JsonIgnore]

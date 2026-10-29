@@ -7,19 +7,19 @@ description: The features that do the most work for particular kinds of users, s
 
 Open Forge is small, but a few of its features do most of the work for particular kinds of users. Not everyone needs all of them. Find the row that matches your situation.
 
-The file example uses the default `.agents` context folder. A [custom folder](getting-started/installation.md#choose-the-context-folder) changes its location without changing how the knowledge is used.
-
 | If you...                                              | Look at                                                                          | Because                                                               |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | Work on an existing codebase, or with other people     | [Decisions](#decisions-keep-the-why)                                             | The reason behind a change survives the person who made it            |
 | Keep docs elsewhere, in a wiki or ADRs                 | [Maps](#maps-point-dont-copy)                                                    | The agent is pointed to them without you copying anything             |
+| Write your team's docs yourself, in `docs/`            | [Your own docs](#your-own-docs-a-folder-you-keep)                                | The CLI maintains the folder, and you decide what's accepted          |
+| Share rules across several repos                       | [Libraries](#libraries-one-folder-many-repos)                                    | One shared folder is linked into place instead of copied              |
 | Have a large repository or a monorepo                  | [Scopes](#scopes-rules-only-where-they-apply)                                    | Specialized rules load only for the work that needs them              |
 | Change the shipped files to suit your team             | [Overwrite companions](#overwrite-companions-keep-your-tweaks)                   | Your changes survive every update                                     |
 | Switch between sessions, agents, or people             | [Checkpoints and Handoffs](#checkpoints-and-handoffs-resume-from-the-real-state) | Work can resume from its recorded state                               |
 | Want reviews and debugging done the same way each time | [Development workflows](#development-workflows-evidence-first)                   | The methods ask for evidence behind findings and a cause before a fix |
 | Care about user journeys                               | [Flows and Scenarios](#flows-and-scenarios-expected-versus-observed)             | What should happen stays apart from what did                          |
 
-Maps, scopes, and overwrite companions are part of the base Framework. The others come from optional Extensions: Decisions and Checkpoints from [Planning](extensions/planning.md), Handoffs from [Observations and Handoffs](extensions/observations-and-handoffs.md), the workflows from [Development](extensions/development.md), and Flows and Scenarios from the [package of the same name](extensions/scenarios.md).
+Maps, scopes and overwrite companions are part of the base Framework. Outside routes and Libraries come with the CLI. The others come from optional Extensions: Decisions and Checkpoints from [Planning](extensions/planning.md), Handoffs from [Observations and Handoffs](extensions/observations-and-handoffs.md), the workflows from [Development](extensions/development.md), and Flows and Scenarios from the [package of the same name](extensions/scenarios.md).
 
 ## Decisions: keep the why
 
@@ -58,6 +58,14 @@ At startup an agent sees that a Decisions category exists, because the Crystalli
 ## Maps: point, don't copy
 
 Maps are a Core category, so they're part of the base. A Map lists important sources, such as your docs folder, ADRs, API specs, or runbooks, and says when to read each one. The sources stay where they are and keep their own authority. That makes an existing project's knowledge reachable without moving or copying it. See [Maps](concepts/core-categories.md#maps).
+
+## Your own docs: a folder you keep
+
+Register a folder such as `docs` with `open-forge route include docs`, and it becomes an outside route. Your team writes its documents there by hand or with AI help. The CLI keeps the folder's catalogue and Entries current, and the loader still decides what loads. You say which documents are accepted sources, and the loader asks agents to rely only on those. See [Your own docs](getting-started/your-own-docs.md).
+
+## Libraries: one folder, many repos
+
+Keep shared team rules in one folder, such as a Git submodule at `vendor/team-rules`, and attach it with `open-forge library attach`. Each projected file is a relative link to its source, so it always shows the shared folder's current content. `library sync` updates the links when files come and go. See [Share with your team](getting-started/share-with-your-team.md#library).
 
 ## Scopes: rules only where they apply
 

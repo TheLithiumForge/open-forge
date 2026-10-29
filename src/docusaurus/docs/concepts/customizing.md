@@ -7,8 +7,6 @@ description: Edit shipped files, keep local changes through updates with overwri
 
 Every installed file is yours. Add, adapt, replace, or remove the defaults as your needs change. The only question is how your change interacts with later updates.
 
-Examples below use the default `.agents` context folder. Choose a custom folder only at first installation. Relocating an established installation is not available yet. See [Choose the context folder](../getting-started/installation.md#choose-the-context-folder).
-
 ## Three ways to change a shipped file
 
 | You want to...                               | Do this                                   | What `open-forge update` does                                              |
@@ -88,15 +86,13 @@ Doctor shows how many links it ignored and notes listed paths that no longer exi
 
 Older CLIs do not support custom roots. An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
 
-Ordinary Install, configure, frontmatter conversion and Update preserve outside registrations and exact unlisted state. Authored outside rows keep their bytes, conditions and mutual order, including stale destinations. Generated primary rows retain their own order. These operations do not relist or restore outside anchors.
-
-Directory registrations require settings-v5 support. An older CLI does not maintain outside routes, and preserving an unknown property does not imply downgrade compatibility.
+Install, configure, frontmatter conversion and Update keep outside registrations and the rows you wrote for them, as [Your own docs](../getting-started/your-own-docs.md#status-doctor-and-updates) describes. Directory registrations need settings v5 support.
 
 ## Files the CLI keeps for itself
 
-| File                           | Purpose                                                                                                          | Agent context? |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------- | -------------- |
-| `.agents/open-forge.lock.json` | Records files and generated navigation regions managed by the Framework and each Extension.                      | No             |
+| File                           | Purpose                                                                                                                             | Agent context? |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `.agents/open-forge.lock.json` | Records files and generated navigation regions managed by the Framework and each Extension.                                         | No             |
 | `.agents/open-forge.json`      | Your settings, including `mainRoot`, file-only `roots`, directory `outsideRoutes`, frontmatter, removal exclusions and path grants. | No             |
 
 Neither file gives content any authority. They exist for file maintenance only.
@@ -118,7 +114,7 @@ Compatible Skill adoption can add missing metadata and navigation to user-owned 
 
 ## Moving and renaming
 
-To maintain existing context outside the main root, use [folder Include](/guides/cli#outside-routes). It preserves an existing catalogue and keeps loading separate from registration. Explicit maintenance works for an unlisted registration without relisting it. Move stays inside one registration, while its directory and root entrypoints remain protected. Required foreign content rewrites block the complete Move or Remove plan.
+To maintain existing context outside the main root, register it with [folder Include](../getting-started/your-own-docs.md#include-a-folder). Move stays inside one registration there.
 
 You may move, rename, or restructure routes. Moving a managed route may end automatic updates for it, but it doesn't change what the content means once loaded. A familiar folder name in a new place doesn't gain root-route behavior.
 

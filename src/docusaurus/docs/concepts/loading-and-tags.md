@@ -73,9 +73,7 @@ Loading tags act only through a parent that's already loaded. They can't pull in
 
 ## Registration and loading
 
-Folder Include adds a directory to settings v5 `outsideRoutes` and lists its canonical catalogue. Registration makes inventory discoverable and permits bounded maintenance. The Loader row still decides whether and when its branch loads. Deleting that row leaves an unlisted registration, and scanning it never activates its content.
-
-When a target is both inventoried and included, authored rows retain tags, conditions, aliases, order and first-reaching metadata. File Include remains file-only in `roots`, even when its target is a catalogue. See [outside routes](/guides/cli#outside-routes) for maintenance boundaries.
+Registering a folder as an outside route makes its files discoverable and lets the CLI maintain them. The Loader row still decides whether and when its branch loads, and scanning a registered folder never activates its content. File Include stays file-only in `roots`, even when its target is a catalogue. [Your own docs](../getting-started/your-own-docs.md#include-a-folder) covers registration in full.
 
 ## File conditions
 

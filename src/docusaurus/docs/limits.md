@@ -9,7 +9,7 @@ description: Honest limits to know before you adopt Open Forge.
 Some limits to know before you adopt it:
 
 - **It doesn't make a model deterministic.** Open Forge makes the right context cheap to find and the rules explicit. An agent can still misread or skip them, so review stays with you.
-- **It depends on your harness reading `AGENTS.md`** (or `CLAUDE.md` through the bridge). Everything starts there.
+- **It depends on your agent tool reading `AGENTS.md` or `CLAUDE.md`.** Everything starts there.
 - **It doesn't set up your harness.** Hooks, custom agents, and your harness's own instruction files stay yours to configure. Open Forge is built to sit beside them, as the [introduction](intro.md) explains.
 - **It isn't a methodology.** There's no mandatory workflow, role, or ceremony, and the base Framework ships no workflows. Extensions offer methods, but installing one doesn't make its methods required.
 - **It doesn't record everything.** Memory holds what's worth keeping, and the rules ask agents to save outcomes deliberately rather than log every conversation.

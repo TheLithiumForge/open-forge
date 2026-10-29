@@ -27,3 +27,11 @@ Editing `mainRoot` by hand moves no files and grants no migration authority. No 
 ## Completed Delivery 1
 
 Choosing an absent or empty main root at first installation works across command families. The default remains `.agents`, native Skills remain in `.agents/skills` and controls stay fixed. Task 86 merged as `164fc9667`, Task 85 Delivery 1 as `77a24b2c0`, and Task 87 as `fba519f35`. The [beta18 receipt](../../../archived/cli-development/tasks/task87-routes-outside-main-root.md#beta18-release-2026-10-27) owns combined acceptance and release evidence.
+
+## Existing folder as main root, 2026-10-29
+
+The maintainer dropped the absent-or-empty rule for a custom main root, because a folder becomes a root by receiving its loader. Delivered for review in PR #11:
+
+- An existing ordinary directory is accepted. Its files stay in place, and an occupant at a Framework destination follows the default root's initial-occupant rules. A file in place of the directory is still refused.
+- On a fresh Install without `--force`, an unmanaged file already at `<mainRoot>/README.md` is kept. The guide is left out, the path is recorded in `removedFiles`, and the report says so. The maintainer chose this over replacing the file or renaming the guide. The same applies to the default root.
+- Known follow-up: the plan summary counts created files only under `.agents`, so a custom root reads "0 files". The detailed plan is correct.

@@ -11,6 +11,8 @@ internal static class InstallSetupQuestions
 {
     internal static string MainRootQuestion => InstallSetupText.MainRootQuestion();
 
+    internal static string OutsideRouteQuestion => InstallSetupText.OutsideRouteQuestion();
+
     internal static CliTextQuestion<string> MainRoot(InstallMainRootQuestion question)
         => new($"{MainRootQuestion} {InstallSetupText.MainRootExplanation(question.Initial, InstallMainRootQuestion.SettingsDirectory)}",
             InstallSetupText.MainRootRule(), Required: false, answer =>
@@ -20,6 +22,12 @@ internal static class InstallSetupQuestions
                     ? new(true, value, null)
                     : new(false, null, InstallSetupText.MainRootRule());
             });
+
+    internal static CliTextQuestion<string> OutsideRoute(InstallOutsideRouteQuestion question)
+        => new($"{OutsideRouteQuestion} {InstallSetupText.OutsideRouteExplanation(InstallOutsideRouteQuestion.ControlsDirectory)}",
+            InstallSetupText.OutsideRouteRule(), Required: false, answer => question.IsValidAnswer(answer)
+                ? new(true, answer, null)
+                : new(false, null, InstallSetupText.OutsideRouteRule()));
 
     private static readonly InstallRouteAction[] MarkActions = [InstallRouteAction.Add, InstallRouteAction.GitIgnore, InstallRouteAction.Remove];
     private static readonly IReadOnlyDictionary<string, Func<string>> Summaries = new Dictionary<string, Func<string>>(StringComparer.Ordinal)

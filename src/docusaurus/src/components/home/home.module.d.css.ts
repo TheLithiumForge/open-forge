@@ -16,6 +16,9 @@ interface HomeStyles {
   readonly heroGrid: string;
   readonly install: string;
   readonly lead: string;
+  readonly level: string;
+  readonly levels: string;
+  readonly levelsImage: string;
   readonly pathGrid: string;
   readonly pathLinks: string;
   readonly pathPoints: string;
@@ -23,7 +26,10 @@ interface HomeStyles {
   readonly sectionAlt: string;
   readonly sectionLead: string;
   readonly sectionTitle: string;
+  readonly setupSummary: string;
+  readonly setupTabs: string;
   readonly split: string;
+  readonly splitTop: string;
   readonly stat: string;
   readonly stats: string;
   readonly sublead: string;

@@ -14,6 +14,13 @@ on:
 permissions:
   contents: read
 
+# A newer push to a pull request cancels that pull request's older Build. Every
+# other run, including direct pushes, manual runs and Release calls, gets its own
+# group, so commit Builds that Release may reuse are never queued or cancelled.
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('build-pr-{0}', github.event.pull_request.number) || format('build-run-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   DOTNET_MULTILEVEL_LOOKUP: "0"
   DOTNET_CLI_TELEMETRY_OPTOUT: "1"

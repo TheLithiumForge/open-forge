@@ -19,7 +19,7 @@ public sealed class PublishedInstallFrontmatterProcessTests
             {
                 Size = new(80, 24),
                 TerminalName = "xterm",
-                Steps = [new(PublishedTokens.Install.MainRootQuestion, "\r"), new("Choose your Open Forge setup", "\r"), new("How should Open Forge write file metadata?", "\u001b")],
+                Steps = [new(PublishedTokens.Install.MainRootQuestion, "\r"), new(PublishedTokens.Install.OutsideRouteQuestion, "\r"), new("Choose your Open Forge setup", "\r"), new("How should Open Forge write file metadata?", "\u001b")],
             });
         Assert.Equal(130, terminal.ExitCode);
         var preset = terminal.Transcript.IndexOf("Choose your Open Forge setup", StringComparison.Ordinal);
@@ -41,7 +41,7 @@ public sealed class PublishedInstallFrontmatterProcessTests
             {
                 Size = new(80, 24),
                 TerminalName = "xterm",
-                Steps = [new("Apply these changes? [y/N]", "n")],
+                Steps = [new(PublishedTokens.Install.OutsideRouteQuestion, "\r"), new("Apply these changes? [y/N]", "n")],
             });
         Assert.Equal(130, terminal.ExitCode);
         Assert.DoesNotContain("How should Open Forge write file metadata?", terminal.Transcript, StringComparison.Ordinal);

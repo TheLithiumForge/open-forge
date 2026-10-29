@@ -7,9 +7,7 @@ description: How folder placement narrows where content applies, and how that ke
 
 A **scope** is a folder in a [route](../glossary.md#route) that narrows where the content after it applies. Scopes let Open Forge grow without every task reading more.
 
-The tree below uses the default `.agents` context folder. Scopes work the same beneath a custom main root, and native Skill scopes stay under `.agents/skills`. See [Choose the context folder](../getting-started/installation.md#choose-the-context-folder).
-
-An [outside route](/guides/cli#outside-routes) can hold scoped context where it already lives. Its registration bounds CLI maintenance, while loaded entrypoints, authored rows and conditions still determine what applies. Use exact source paths with filenames. A registered folder named `memory` or `skills` does not inherit the standard category's metadata defaults or native Skill behavior.
+Scopes work the same beneath a custom main root and in an [outside route](../getting-started/your-own-docs.md#work-inside-the-folder), where loaded entrypoints, authored rows and conditions still decide what applies. Native Skill scopes stay under `.agents/skills`.
 
 ## A scope is just a folder with an entrypoint
 

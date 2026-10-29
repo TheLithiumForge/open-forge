@@ -83,6 +83,8 @@ internal sealed record InstallBindingInput(
 
     internal InstallSetupRecap? SetupRecap { get; init; }
 
+    internal string? KeptGuide { get; init; }
+
     internal bool IsDryRun => Mode == InstallMode.DryRun;
     internal InstallInvalidRoute? InvalidRoute { get; init; }
     internal InstallInvalidOption? InvalidOption { get; init; }

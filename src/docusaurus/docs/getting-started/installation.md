@@ -38,19 +38,29 @@ For individual managed-file removals or conflicts, read the [Install reference](
 
 ## Choose the context folder
 
-Before route choices, the wizard asks "Where should Open Forge keep its context files?" with `.agents` as the default. This folder is the main root. To answer without the question, use `install --main-root <folder>`. A custom destination must be absent or empty, for example:
+Before route choices, the wizard asks "Where should Open Forge keep its context files?" with `.agents` as the default. This folder is the main root. To answer without the question, use `install --main-root <folder>`. The folder can be new or already hold files, such as an existing `docs` folder:
 
 ```sh
-open-forge install --main-root docs/forge --preset minimal --dry-run
+open-forge install --main-root docs --preset minimal --dry-run
 # Review the plan, then apply the same selection.
-open-forge install --main-root docs/forge --preset minimal --automatic
+open-forge install --main-root docs --preset minimal --automatic
 ```
+
+Right after this question, a fresh interactive install asks "Do you also want Open Forge to maintain a folder of your own docs?". Enter an existing folder, such as `docs`, to register it as an outside route after the Framework files, or press Enter to skip. [Your own docs](your-own-docs.md) explains what the registration does.
+
+Files already in the folder stay as they are. If it already has a `README.md`, Install keeps it and leaves the Framework guide out, and `open-forge help concepts` prints the guide's file formats instead.
 
 The loader, guide and ordinary categories use the chosen folder. Skills stay at `.agents/skills`, settings at `.agents/open-forge.json` and ownership at `.agents/open-forge.lock.json`. The host files `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader. The runtime folder `.open-forge-state/` also stays at the workspace root.
 
 Previews, JSON output and unattended runs never ask. Older CLIs do not support custom roots. Relocating an established installation is not available yet, including through `--configure`. Editing `mainRoot` moves no files. See the [CLI reference](/guides/cli#context-folder) for settings and mismatch behavior.
 
-The remaining path examples use the default `.agents` context folder.
+:::note[Path examples on this site]
+
+Path examples on this site use the default `.agents` context folder. With a custom folder, the loader, guide and ordinary categories follow it, and Memory keeps the same states and loading rules. Native Skills, settings and ownership stay in `.agents`. The host instructions and relative loader links follow the selected folder. Short route IDs stay the same, so use your folder's path only where a page spells one out. Growing or configuring your routes doesn't relocate an established installation.
+
+:::
+
+The context folder is the main root. To keep your own documents in another folder without moving the context folder, register that folder as an outside route, as [Your own docs](your-own-docs.md) describes.
 
 ## Choose the installed routes
 
@@ -146,7 +156,7 @@ Clone the repository and follow the [local setup guide](/guides/development#link
 
 ## 2. Install the Framework
 
-Full Core supplies 20 Markdown files: `AGENTS.md`, the `CLAUDE.md` bridge, the loader, the guide for people in the context folder (`.agents/README.md` by default), the Core and Memory entrypoints, the `open-forge-cli` Skill, and its four supporting guides. The guides are `discovery.md`, `routes.md`, `packages.md`, and `common.md` under `.agents/skills/open-forge-cli/references/`, opened when needed. Essentials selects fewer routes, and Custom follows your selection. Records such as Decisions and Checkpoints, and workflow recipes, come from optional [Extensions](#add-extensions-optional) or from you.
+Full Core supplies 20 Markdown files: `AGENTS.md`, `CLAUDE.md`, the loader, the guide for people in the context folder (`.agents/README.md` by default), the Core and Memory entrypoints, the `open-forge-cli` Skill, and its four supporting guides. The guides are `discovery.md`, `routes.md`, `packages.md`, and `common.md` under `.agents/skills/open-forge-cli/references/`, opened when needed. Essentials selects fewer routes, and Custom follows your selection. Records such as Decisions and Checkpoints, and workflow recipes, come from optional [Extensions](#add-extensions-optional) or from you.
 
 The CLI records what it manages so it can update those files later. A manual copy supplies Full Core, which you can adapt by hand.
 

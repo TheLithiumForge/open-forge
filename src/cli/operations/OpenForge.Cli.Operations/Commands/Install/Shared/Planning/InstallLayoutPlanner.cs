@@ -57,14 +57,14 @@ internal sealed class InstallLayoutPlanner(PhysicalPathResolver paths)
                     continue;
                 }
                 if (leaf.State != NoFollowLeafState.Directory)
-                    return Stop(InstallFindingCode.TargetUnsafe, "A custom main root requires an absent or empty ordinary directory with safe ancestry.", directory);
+                    return Stop(InstallFindingCode.TargetUnsafe, "A custom main root requires an ordinary directory with safe ancestry.", directory);
                 var resolution = paths.ResolveCandidate(request.Workspace.LexicalRoot, request.Workspace.PhysicalRoot, logical);
                 if (resolution.State != PhysicalPathState.Contained)
                     return Stop(InstallFindingCode.TargetUnsafe, "The custom main root ancestry is unsafe.", directory);
                 var physical = resolution.GetContainedPhysicalPath();
+                // An existing folder becomes the main root by receiving the loader. Its other contents stay as they are,
+                // and an occupant at a Framework path follows the same initial-occupant rules as the default root.
                 expectations.Add(FileExpectation.Directory(logical, physical));
-                if (directory == intended.MainRoot && Directory.EnumerateFileSystemEntries(physical).Any())
-                    return Stop(InstallFindingCode.TargetUnsafe, "The custom main root is occupied. Select an absent or empty directory.", directory);
             }
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)

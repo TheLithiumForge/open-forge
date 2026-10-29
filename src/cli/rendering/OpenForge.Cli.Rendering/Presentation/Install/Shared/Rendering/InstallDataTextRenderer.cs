@@ -73,6 +73,8 @@ internal static class InstallDataTextRenderer
         var builder = new StringBuilder();
         foreach (var text in data.TextSummaryLines.Concat(data.TextDetailLines))
             foreach (var line in CliSelectionText.Wrap(text, style.Width - 2)) builder.AppendLine($"  {line}");
+        foreach (var text in data.TextNoticeLines)
+            foreach (var line in CliSelectionText.Wrap(text, style.Width)) builder.AppendLine(line);
         if (data.ShowNoChanges)
             builder.Append(OpenForge.Cli.Core.Presentation.Install.Shared.Wording.InstallWording.NoChanges()).Append('\n');
         if (data.ShowFirstTask)

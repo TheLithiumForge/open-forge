@@ -15,7 +15,7 @@ Literal workspace operands and recorded installed paths remain literal. Package 
 
 Readers retain the layout whenever settings supply one. Invalid or unavailable settings leave no fallback layout, and observers retain unavailable domains with the settings cause. A mismatch or unsafe layout stops writers. A lone missing loader remains command-owned drift, an intentionally removed loader is not missing, and unreadable ownership follows each command's existing policy. Writers revalidate the retained observation under the lease before grants and effects. The [Workspace Layout design](technical-designs/workspace-layout.md#observation-and-revalidation) defines the precise states.
 
-[Install](contracts/install/interface.md) selects an absent or empty custom folder at first installation. Changing an established installation's root is not available, including with `--configure`. JSON output remains schema 3. Unless explicitly marked as custom, path examples below use the default `.agents` layout.
+[Install](contracts/install/interface.md) selects a new or existing custom folder at first installation. Changing an established installation's root is not available, including with `--configure`. JSON output remains schema 3. Unless explicitly marked as custom, path examples below use the default `.agents` layout.
 
 ## Status And Authority
 

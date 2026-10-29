@@ -416,7 +416,7 @@ See [global options](#global-options) for shared flags.
 `context` returns ordered startup context or the selected sources added to it.
 It follows active included rows and their Markdown catalogues with the usual tags
 and conditions. Select an included file with `context ./CONTRIBUTING.md`.
-An exact path within the selected context folder, such as `context ./docs/forge/README.md` for a custom root,
+An exact path within the selected context folder, such as `context ./docs/README.md` for a custom root,
 returns it and its overwrite without adding either to startup context.
 With no source arguments it returns the startup files. Add source IDs or
 exact paths to include the context you select. An unresolved source reports why
@@ -596,13 +596,13 @@ shape.
 without a loader row is labelled off and has no children.
 
 For a registered outside directory, select its catalogue or a descendant by
-exact source reference, such as `./docs/team/_team.md`. This works even without
+exact source reference, such as `./docs/_docs.md`. This works even without
 a Loader row. Bare `route list` keeps its Loader-root selection and does not
 add an unlisted directory as a root.
 
 Applicable outside rows include optional `maintenanceRoot` at every JSON detail.
 It names the canonical workspace-relative registered directory, such as
-`docs/team`, without `./` or a trailing slash. Standard, full and debug text may
+`docs`, without `./` or a trailing slash. Standard, full and debug text may
 show `Maintenance root`. The fact is omitted when inapplicable and says nothing
 about loading, direct Loader listing, ownership or package permission. Source
 identities still keep `./` and the filename.
@@ -716,18 +716,18 @@ Use [`context`](#context) to load the source and applicable route context.
 
 ### Outside routes
 
-Keep a maintained folder where it already lives instead of moving it into the context folder. Given an existing ordinary `docs/team` directory, preview and register it:
+Keep a maintained folder where it already lives instead of moving it into the context folder. Given an existing ordinary `docs` directory, preview and register it:
 
 ```sh
-open-forge route include docs/team --dry-run
-open-forge route include docs/team
+open-forge route include docs --dry-run
+open-forge route include docs
 ```
 
-Folder Include records `docs/team` in settings v5 `outsideRoutes` and lists its canonical `docs/team/_team.md` catalogue. It creates that catalogue only when missing and preserves an existing one byte-for-byte. Competing recognized entrypoints block registration. A file Include, including a catalogue file, still uses `roots` and grants no folder scan or maintenance by itself.
+Folder Include records `docs` in settings v5 `outsideRoutes` and lists its canonical `docs/_docs.md` catalogue. It creates that catalogue only when missing and preserves an existing one byte-for-byte. Competing recognized entrypoints block registration. A file Include, including a catalogue file, still uses `roots` and grants no folder scan or maintenance by itself.
 
 The directory must be inside the workspace without overlapping the main root, fixed `.agents` locations, another registration, Git metadata or `.open-forge-state`. Use exact case and safe ordinary paths. A physical alias never expands write authority. Outside content uses generic Workspace metadata. A folder named `skills` gains no native package meaning, and an outside `SKILL.md` is ordinary Markdown.
 
-Use exact source references with the filename, such as `./docs/team/_team.md` and `./docs/team/testing.md`. Registration creates no short ID or alias. The spelling stays literal, while discovery and command admission depend on registration or retained inclusion.
+Use exact source references with the filename, such as `./docs/_docs.md` and `./docs/testing.md`. Registration creates no short ID or alias. The spelling stays literal, while discovery and command admission depend on registration or retained inclusion.
 
 | Command | Within a registered outside route |
 | --- | --- |
@@ -742,8 +742,8 @@ Use exact source references with the filename, such as `./docs/team/_team.md` an
 For example, after registration:
 
 ```sh
-open-forge route create ./docs/team/testing.md --description "Team testing rules" --tag Testing --dry-run
-open-forge index ./docs/team/_team.md --dry-run
+open-forge route create ./docs/testing.md --description "Team testing rules" --tag Testing --dry-run
+open-forge index ./docs/_docs.md --dry-run
 ```
 
 Within a registration, existing recognized compatibility anchors keep their filenames. Unlisted maintenance and a stale Loader row naming a missing canonical anchor do not authorize relisting, renaming a compatibility file or restoring content implicitly. Create needs one safe existing anchor. Init owns generic missing-chain restoration.
@@ -756,7 +756,7 @@ Move and Remove protect the registered directory and every recognized root entry
 
 Preview before applying. Writes retain expected-state checks, a workspace lease and recovery under the fixed workspace-root `.open-forge-state`. Registration grants neither package ownership nor an implicit Extension or Library destination. Existing explicit grants and source/ownership protections still apply.
 
-`route exclude docs/team` removes the folder registration and matching Loader rows without deleting content or scanning descendants. Independent file registrations remain. Excluding the catalogue as a file instead leaves a separate folder registration unlisted. Older CLIs do not maintain directory registrations, and preserving an unknown settings property does not make them downgrade-compatible.
+`route exclude docs` removes the folder registration and matching Loader rows without deleting content or scanning descendants. Independent file registrations remain. Excluding the catalogue as a file instead leaves a separate folder registration unlisted. Older CLIs do not maintain directory registrations, and preserving an unknown settings property does not make them downgrade-compatible.
 
 ## Maintain routes and Markdown
 
@@ -999,7 +999,7 @@ List an existing project document where it lives, or register an existing outsid
 open-forge route include CONTRIBUTING.md --description "How to contribute" --dry-run
 open-forge route include CONTRIBUTING.md --description "How to contribute"
 open-forge route include .cursor/rules/testing.mdc --description "Testing rules" --tag LoadNow --apply-to "src/**"
-open-forge route include docs/team/_team.md --description "Team context"
+open-forge route include docs/_docs.md --description "Team context"
 ```
 
 Use one workspace-relative UTF-8 text file. Both path separators and a leading
@@ -1444,7 +1444,7 @@ open-forge install --configure --frontmatter root --automatic
 
 | Option                                              | What it does                                                                                                                                        |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--main-root <folder>` | Choose an absent or empty context folder at first installation, defaulting to `.agents`. Existing installations cannot change roots. |
+| `--main-root <folder>` | Choose a new or existing context folder at first installation, defaulting to `.agents`. Existing installations cannot change roots. |
 | `--configure`                                       | Revisit route choices or the frontmatter form in an installed workspace                                                                             |
 | `--preset <minimal\|essentials\|full-core\|custom>` | Select built-in routes without the preset question                                                                                                  |
 | `--frontmatter <root\|scoped>`                      | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
@@ -1495,15 +1495,19 @@ line. Explanations wrap at spaces to fit the terminal width.
 
 At first installation, `install --main-root <folder>` selects where Open Forge keeps its context files. The wizard asks "Where should Open Forge keep its context files?" before route choices, with `.agents` as the default. Explicit `--main-root` input answers it. Previews, JSON output and unattended runs never ask.
 
-For example, choose an absent or empty `docs/forge` folder:
+For example, use an existing `docs` folder:
 
 ```sh
-open-forge install --main-root docs/forge --preset minimal --dry-run
+open-forge install --main-root docs --preset minimal --dry-run
 # Review the plan before applying it.
-open-forge install --main-root docs/forge --preset minimal --automatic
+open-forge install --main-root docs --preset minimal --automatic
 ```
 
+The folder can be new or already hold files. Existing files stay as they are, and a file already at a Framework path follows the ordinary existing-file rules. A fresh Install without `--force` keeps a file already at `<mainRoot>/README.md`, leaves the Framework guide out and records that path in `removedFiles`, so later updates leave it alone. A file in place of the folder itself is refused.
+
 The loader, guide and ordinary categories go under that folder. Native Skills stay at `.agents/skills`, settings at `.agents/open-forge.json` and ownership at `.agents/open-forge.lock.json`. `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader. `.open-forge-state/` also stays at the workspace root.
+
+After the context-folder question, a fresh interactive Install asks "Do you also want Open Forge to maintain a folder of your own docs?". Enter an existing workspace-relative folder, such as `docs`, or press Enter to skip. The folder must sit outside the context folder, `.agents` and Git metadata, and setup stops before any plan if it doesn't exist. The plan names the folder, and after the Framework files are installed, Install registers it the same way [folder Include](#outside-routes) does. If registration fails, the installed files stay, Install's status stays complete, and the receipt gives the `open-forge route include <folder>` command to try again. Preview, JSON, automatic, redirected and `--configure` runs never ask. In scripts, run `route include <folder>` after Install.
 
 An omitted or unchanged root preserves ordinary Install behavior. An established installation refuses a different root, including with `--configure`. Relocating an established installation is not available yet. Editing `mainRoot` moves nothing. Readers report a disagreement with the installed files and writers stop. Older CLIs do not support custom roots.
 
@@ -2520,7 +2524,7 @@ An automatic source ID is derived from the path relative to the main root. Nativ
 - `SKILL.md` uses its containing Skill folder ID.
 - Exact case, spaces, and Unicode are preserved.
 
-The `.agents/` and `./` prefixes mean a literal workspace path. For a custom root, use `./docs/forge/guidance/style.md`, for example. Any other value is an ID,
+The `.agents/` and `./` prefixes mean a literal workspace path. For a custom root, use `./docs/guidance/style.md`, for example. Any other value is an ID,
 even if it looks like a relative filesystem path. Use the exact `./<workspace-path>`
 form when an ID has more than one candidate. The CLI does not use fuzzy,
 case-correcting, or likely-intent matching.

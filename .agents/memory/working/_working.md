@@ -23,5 +23,6 @@ This folder holds records of unfinished work, so another session can pick it up.
 - [Selection of unfinished work after completed records retired](backlog.md) - #Memory #Working #Backlog #Contextual
 - [Current state, current step, and next steps for one active workstream](checkpoints/_checkpoints.md) - #Extension #Memory #Working #Checkpoint #Contextual
 - [Current CLI selection, unfinished task state and resume boundaries](cli-development/_cli-development.md) - #Memory #Working #Contextual #Active #KeepInMind #CLI #Task
+- [README and documentation site overhaul in the maintainer's voice guide, in review in PR #11](docs-overhaul.md) - #Memory #Working #Contextual #Active #Documentation #Writing
 - [Sealed transfer snapshots that preserve one boundary for resumption](handoffs/_handoffs.md) - #Extension #Memory #Handoff #AgentCommunication #Contextual
 - [Review local planning around the Planning Extension, templates, task lifecycle, completion tracking, organization, and archival before any source change](local-planning.md) - #Memory #Working #Task #Contextual #Active #Framework #Planning #Templates #Lifecycle #Archival
