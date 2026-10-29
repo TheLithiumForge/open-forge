@@ -7,7 +7,7 @@ description: Optional packages of workspace content, what each one is for, how t
 
 Extensions are optional packages of workspace content: advice, reusable shapes, workflow recipes, templates, Memory categories, and native Skills. You install the ones that fit your work, and once installed, an Extension is just more files in your workspace that you can adapt like anything else.
 
-Extensions are one of three ways to reuse knowledge. [Include](../glossary.md#include) a document already in the project where it lives, attach a [Library](/guides/cli#workspace-libraries) to project a folder from this workspace into another place, or install an Extension in any project.
+Extensions are one of three ways to reuse knowledge. [Include](../glossary.md#include) a document already in the project where it lives, attach a [Library](/guides/cli#workspace-libraries) to project a folder from this workspace into another place, or install an Extension in any project. [Share with your team](../getting-started/share-with-your-team.md) compares the three levels.
 
 An Extension is a way to ship files. Routed files take on the meaning of the [route](../glossary.md#route) they're installed into. Native files, such as a `SKILL.md`, follow the tool that uses them. Packaging adds no authority, and installing a package doesn't make its methods mandatory.
 
@@ -32,7 +32,7 @@ Package files follow your installation choices. Essentials leaves out Templates,
 
 ## Why Extensions exist
 
-Full Core supplies 19 Framework Markdown files. They include `AGENTS.md`, `CLAUDE.md`, the loader, six Core category entrypoints, five Memory entrypoints, and the `open-forge-cli` Skill with its four reference files. Essentials and Custom follow your [installation choices](../getting-started/installation.md#choose-the-installed-routes). The CLI also keeps settings and an [ownership record](../glossary.md#ownership-record) for maintenance. Methods for planning, documenting, developing, or coordinating agents ship as optional packages you choose. Records such as Decisions and Checkpoints, workflow recipes, and starter Templates come from an Extension or from you.
+Full Core supplies 20 Framework Markdown files. They include `AGENTS.md`, `CLAUDE.md`, the loader, the guide for people, six Core category entrypoints, five Memory entrypoints, and the `open-forge-cli` Skill with its four reference files. Essentials and Custom follow your [installation choices](../getting-started/installation.md#choose-the-installed-routes). The CLI also keeps settings and an [ownership record](../glossary.md#ownership-record) for maintenance. Methods for planning, documenting, developing, or coordinating agents ship as optional packages you choose. Records such as Decisions and Checkpoints, workflow recipes, and starter Templates come from an Extension or from you.
 
 Three rules shape the [catalogue](../glossary.md#catalogue):
 

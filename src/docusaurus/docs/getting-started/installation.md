@@ -50,7 +50,13 @@ The loader, guide and ordinary categories use the chosen folder. Skills stay at 
 
 Previews, JSON output and unattended runs never ask. Older CLIs do not support custom roots. Relocating an established installation is not available yet, including through `--configure`. Editing `mainRoot` moves no files. See the [CLI reference](/guides/cli#context-folder) for settings and mismatch behavior.
 
-The remaining path examples use the default `.agents` context folder.
+:::note[Path examples on this site]
+
+Path examples on this site use the default `.agents` context folder. With a custom folder, the loader, guide and ordinary categories follow it, and Memory keeps the same states and loading rules. Native Skills, settings and ownership stay in `.agents`. The host instructions and relative loader links follow the selected folder. Short route IDs stay the same, so use your folder's path only where a page spells one out. Growing or configuring your routes doesn't relocate an established installation.
+
+:::
+
+The context folder is the main root. To keep your own documents in another folder without moving the context folder, register that folder as an outside route, as [Your own docs](your-own-docs.md) describes.
 
 ## Choose the installed routes
 

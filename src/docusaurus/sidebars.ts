@@ -17,8 +17,8 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "How-to guides",
-      items: ["getting-started/greenfield-and-brownfield", "getting-started/grow-your-framework"],
+      label: "Guides",
+      items: ["getting-started/greenfield-and-brownfield", "getting-started/your-own-docs", "getting-started/share-with-your-team", "getting-started/grow-your-framework"],
     },
     {
       type: "category",

@@ -53,7 +53,7 @@ Example: `open-forge route include CONTRIBUTING.md --description "Contribution r
 
 A workspace-contained directory registered in settings v5 `outsideRoutes`, separate from the main root and file-only `roots`. Registration supplies discovery and bounded maintenance, while Loader rows decide loading. It creates no short ID, package ownership or implicit destination grant.
 
-Example: registering `docs/team` gives its canonical catalogue the exact source reference `./docs/team/_team.md`. Its filename stays in the spelling, but discovery and command admission still depend on registration or retained inclusion. See [outside routes](/guides/cli#outside-routes).
+Example: registering `docs/team` gives its canonical catalogue the exact source reference `./docs/team/_team.md`. Its filename stays in the spelling, but discovery and command admission still depend on registration or retained inclusion. See [Your own docs](getting-started/your-own-docs.md) and [outside routes](/guides/cli#outside-routes).
 
 ### Scope
 
@@ -399,7 +399,7 @@ Example: An `allowInstallPaths` entry admits a support-file destination.
 
 ### Library
 
-A registered source root inside a workspace whose files appear at another location in that workspace through relative file links. Unlike copied package files, links still point to their source. See [Workspace libraries](/guides/cli#workspace-libraries).
+A registered source root inside a workspace whose files appear at another location in that workspace through relative file links. Unlike copied package files, links still point to their source. See [Share with your team](getting-started/share-with-your-team.md#library) and [Workspace libraries](/guides/cli#workspace-libraries).
 
 Example: Team rules stay in their source folder while an attached workspace reads links to them.
 

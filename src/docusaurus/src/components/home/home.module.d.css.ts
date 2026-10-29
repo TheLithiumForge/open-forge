@@ -16,6 +16,9 @@ interface HomeStyles {
   readonly heroGrid: string;
   readonly install: string;
   readonly lead: string;
+  readonly level: string;
+  readonly levels: string;
+  readonly levelsImage: string;
   readonly pathGrid: string;
   readonly pathLinks: string;
   readonly pathPoints: string;

@@ -8,6 +8,7 @@ const installedTree = `AGENTS.md                     <- read the loader first
 CLAUDE.md                     <- bridge for CLAUDE.md tools
 .agents/
   loader.md                   <- loading and routing rules
+  README.md                   <- a guide and the file formats
   directives/_directives.md   <- required behavior
   guidance/_guidance.md       <- advice for recurring choices
   patterns/_patterns.md       <- reusable shapes
@@ -25,7 +26,7 @@ CLAUDE.md                     <- bridge for CLAUDE.md tools
                                  crystallized, archived`;
 
 const stats = [
-  { value: "19", label: "Markdown files in Full Core" },
+  { value: "20", label: "Markdown files in Full Core" },
   { value: "0", label: "runtimes or databases to run" },
 ] as const;
 

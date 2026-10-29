@@ -1,7 +1,7 @@
 ---
 title: What is Open Forge?
 sidebar_label: Introduction
-description: A small Markdown framework that gives AI agents a map of your workspace instead of all of it at once.
+description: A Markdown framework that tells coding agents which of your project's rules, docs and decisions to read for each task, and keeps what they learn for the next one.
 slug: /
 ---
 
@@ -9,11 +9,13 @@ import FrameworkMap from "@site/src/components/framework-map/FrameworkMap";
 
 # What is Open Forge?
 
-Open Forge is a small Markdown framework for working with AI agents, built around your projects, your tools, and the way you like to work. It gives an agent a map to your rules and project knowledge, and a place to keep useful outcomes for the next task.
+Open Forge is a Markdown framework that tells coding agents which of your project's rules, docs and decisions to read for each task, and keeps what they learn for the next one.
 
-Path examples use the default `.agents` context folder. You can [choose another folder at first installation](getting-started/installation.md#choose-the-context-folder). Skills, settings and ownership stay in `.agents`.
+One long `AGENTS.md` gives every task every rule. Open Forge gives an agent a map instead: a loader and one short catalogue per folder, so each task reads only the routes it needs. E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` applies only to tasks that change export code.
 
-At its core, it's Markdown, rules, and links. Install it, ask your agent to work as usual, and add only what makes the next task easier.
+Your own documents stay yours. Agent context lives in one context folder, `.agents` by default, and your team's documents can stay in folders such as `docs/team`. Linking a document doesn't make it accepted and doesn't give an agent permission to edit it. Content counts as accepted when you agree, or when a source you named for that question says so.
+
+At its core, it's Markdown, rules, and links. Install it, ask your agent to work as usual, and add only what makes the next task easier. Path examples on this site use the default `.agents` folder, as [Installation](getting-started/installation.md#choose-the-context-folder) explains. Skills, settings and ownership stay in `.agents`.
 
 ## Start using it
 
@@ -29,7 +31,7 @@ cd /path/to/your-project
 open-forge install
 ```
 
-For a first try, choose Essentials. Keep Root keys unless your workspace already declares another metadata form. Review the plan before applying it, then inspect the new files and changes with `git status` and `git diff`. [Installation](getting-started/installation.md) explains the other choices, other setup methods, and how to change your setup later.
+For a first try, choose the recommended Minimal setup. Keep Root keys unless your workspace already declares another metadata form. Review the plan before applying it, then inspect the new files and changes with `git status` and `git diff`. [Installation](getting-started/installation.md) explains the other choices, other setup methods, and how to change your setup later.
 
 Now ask your agent for a normal task. In an existing project, ask how its tests run:
 
@@ -81,6 +83,10 @@ The [Concepts](concepts/index.md) section covers each part in depth.
 
 </details>
 
+## Your docs and your team
+
+Open Forge shares context at three levels. A workspace keeps agent context in its main root and your team's documents in outside routes. A [Library](getting-started/share-with-your-team.md#library) links one shared folder into place, such as a Git submodule that several repos include. An [Extension](extensions/index.md) packages files that any project, team or organization can install. [Your own docs](getting-started/your-own-docs.md) covers the first level, and [Share with your team](getting-started/share-with-your-team.md) covers all three.
+
 ## What you actually install
 
 Full Core supplies 20 Markdown files, including a guide for people and four supporting CLI guides that are opened when needed. Minimal includes Directives and Crystallized Memory. Essentials adds Patterns, Skills, Emerging and Working Memory. Custom follows your selection.
@@ -125,6 +131,7 @@ In Full Core, startup reads `AGENTS.md`, the loader, nine entrypoints, and the C
 ## Where to go next
 
 - **New here?** Follow [Installation](getting-started/installation.md), then the [ten-minute guide](getting-started/ten-minute-guide.md). [New or existing project](getting-started/greenfield-and-brownfield.md) covers what to write down first in each case.
+- **Keeping your own docs?** Register the folder as described in [Your own docs](getting-started/your-own-docs.md), then [share it with your team](getting-started/share-with-your-team.md).
 - **Want to see it work?** Try a [demo](demos/index.md): build a small app from an idea, or add a feature to a half-built one.
 - **Wondering what's worth your attention?** The [Highlights](highlights.md) pick out the features that do the most work for particular kinds of users, starting with Decisions.
 - **Want to understand how it works?** Read the [Concepts](concepts/index.md), starting with [Routing](concepts/routing.md).

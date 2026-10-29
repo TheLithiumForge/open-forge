@@ -10,8 +10,6 @@ import TabItem from "@theme/TabItem"
 
 Routing is how an agent finds the right context. Instead of reading every file, it starts at the loader and follows short links whose descriptions tell it whether a branch is worth opening.
 
-Examples below use the default `.agents` context folder. The installed host instructions and relative loader links follow the selected folder, while native Skills stay at `.agents/skills`. See [Choose the context folder](../getting-started/installation.md#choose-the-context-folder).
-
 Here is an illustrative route from the [loader](../glossary.md#loader) to a file:
 
 ```text
@@ -141,32 +139,7 @@ After a folder rename, Index keeps a compatibility entrypoint or renames a prove
 
 ## Documents outside the context folder
 
-The loader can list any text file in the workspace, including files outside the primary content locations. Agents then use the documents a project already has, where they live:
-
-```sh
-open-forge route include CONTRIBUTING.md --description "Contribution rules to follow" --tag LoadNow
-```
-
-That writes one line under the loader's `Entries`, which you can also write by hand:
-
-```md
-- [Contribution rules to follow](../CONTRIBUTING.md) - #LoadNow
-```
-
-- The line carries the description, tags and conditions, so the file needs no frontmatter. Another tool's frontmatter, such as a Cursor rule's `globs`, never decides when it loads.
-- A Markdown file with its own `## Entries`, such as `docs/team/_team.md`, is followed as a catalogue.
-- File inclusion alone never makes the target writable. Retained authored lines keep their policy and mutual order.
-- `route include` records the files it adds under `roots` in `.agents/open-forge.json`, so `open-forge status` and `open-forge doctor` can report one whose line was removed or whose file went missing. The loader line still decides whether and how each file loads.
-- `open-forge route exclude CONTRIBUTING.md` removes the line and leaves the file alone. Deleting the line by hand has the same effect on what agents read.
-- Commands name these files by their path, such as `open-forge context ./CONTRIBUTING.md`.
-
-To maintain a whole folder, use folder Include instead. `open-forge route include docs/team` registers a safe existing directory in settings v5 `outsideRoutes`, lists its canonical catalogue and creates only that missing catalogue. It preserves an existing one byte-for-byte. The separate `roots` list remains files only. Registration supplies discovery and bounded maintenance, not loading, package ownership or permission. An omitted Loader row stays omitted during explicit maintenance. See [outside routes](/guides/cli#outside-routes).
-
-Existing recognized compatibility anchors can remain in a registered tree. Outside source references keep the filename, such as `./docs/team/index.md`, and acquire no short IDs. Outside `SKILL.md` files remain ordinary Markdown. Folder names such as `memory` or `skills` do not acquire primary category defaults.
-
-Use `route list ./docs/team/_team.md --depth all` or `route inspect ./docs/team/_team.md` to select a registered catalogue even when it has no Loader row. Bare `route list` keeps its Loader-root selection and does not add unlisted directories as roots.
-
-Applicable List rows and Inspect source data include optional `maintenanceRoot` at every JSON detail. It names the canonical workspace-relative registered directory, such as `docs/team`, without `./` or a trailing slash. Standard, full and debug text may show `Maintenance root`. The fact is omitted when inapplicable and does not imply loading, direct Loader listing, ownership or package permission. Exact source identities still keep `./` and the filename.
+The loader can list any text file in the workspace, so agents use the documents a project already has, where they live. `open-forge route include CONTRIBUTING.md` lists one file as read-only input. `open-forge route include docs/team` registers a whole folder as an outside route that the CLI maintains. Loader rows still decide loading in both cases. [Your own docs](../getting-started/your-own-docs.md) covers both, with their rules and commands.
 
 ## How an agent navigates
 

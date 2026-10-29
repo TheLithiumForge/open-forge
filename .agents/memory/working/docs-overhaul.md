@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: README and documentation site overhaul in the maintainer's voice guide, with the site phase waiting for approval
+  description: README and documentation site overhaul in the maintainer's voice guide, in review in PR #11
   tags: [Memory, Working, Contextual, Active, Documentation, Writing]
 ---
 
@@ -10,16 +10,9 @@ The maintainer asked for a README and documentation site overhaul that follows [
 
 ## Where it stands
 
-- The README rewrite, the integration-levels diagram and the Project Voice update are on branch `claude/readme-docs-overhaul-423xd0`, for review in a pull request.
-- The site phase waits for the maintainer to approve the README.
+- The README rewrite, the integration-levels diagram, the Project Voice update and the documentation site update are on branch `claude/readme-docs-overhaul-423xd0`, in PR #11.
+- The site now has Your own docs and Share with your team guides, a reworked landing page and intro, one context-folder note in Installation, and outside-route detail consolidated into Your own docs.
 
 ## Next step
 
-When the README is approved, update the site under `src/docusaurus/`:
-
-1. Rework the landing page in `src/components/home/` around routed context, spec-driven safety and maintainer-owned docs, and add the integration-levels diagram.
-2. Add one guide page for your own docs and outside routes, and replace the repeated outside-route detail in the concept pages with one line and a link.
-3. State the default `.agents` context-folder caveat once, in Installation and the intro, and remove it from the other pages.
-4. Rewrite `intro.md` overview first, and add outside routes and the context folder to `highlights.md`.
-5. Regroup the sidebar into Start here, Guides, Concepts, CLI, Extensions and Reference.
-6. Keep `docs/cli.md` as the reference and only fix links.
+Address review feedback on PR #11. Run the strict site build locally if its dependencies are installed, or rely on the Documentation workflow. Retire this record once the PR merges.

@@ -11,8 +11,6 @@ has every option, and the [glossary](../glossary.md) defines the terms. Shell
 blocks use `\` for line continuation. In PowerShell, put a wrapped command on
 one line or use a backtick.
 
-These flows use the default `.agents` context folder. With a [custom folder](../getting-started/installation.md#choose-the-context-folder), keep short IDs and use the actual context paths. Native Skills, settings and ownership stay in `.agents`.
-
 Start with the base Framework. Later flows use Documents from Project Documents,
 and Decisions and their Template from Planning. `development-toolkit` installs
 both. Essentials leaves Templates out, so restore that category before installing

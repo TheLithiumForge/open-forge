@@ -12,10 +12,10 @@ interface Feature {
 
 const features: readonly Feature[] = [
   {
-    title: "Routes, not bulk context",
-    body: "A loader and one short entrypoint per folder. The entrypoints point the agent to the routes a task needs, and the rest stays closed.",
-    link: "/docs/concepts/routing",
-    linkLabel: "How routing works",
+    title: "A context folder you choose",
+    body: "Keep the Framework in .agents, or pick another absent or empty folder, such as docs/forge, at first installation. Skills, settings and ownership stay in .agents.",
+    link: "/docs/getting-started/installation#choose-the-context-folder",
+    linkLabel: "Choose the context folder",
   },
   {
     title: "Plain Markdown you own",
