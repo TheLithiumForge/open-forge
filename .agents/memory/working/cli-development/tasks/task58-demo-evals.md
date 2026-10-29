@@ -90,6 +90,16 @@ Every setup gets the same request and the same model:
 
 Setups 1 to 3 show how much context matters. Setups 3, 5 and 6 hold the content fixed and change only structure, so any difference comes from routing, loading and the Framework rules, not from extra information.
 
+### Brownfield variant
+
+The same comparison also runs on an existing build. Each setup starts from one finished, tested codebase and gets one new feature request:
+
+1. Vanilla - the codebase and the request, with no workspace context.
+2. Custom solution - the codebase with a hand-written `AGENTS.md` and its existing docs, as a team would set it up without Open Forge.
+3. Open Forge - the codebase with its docs routed, its rules as Directives, its reasons as Decisions and a Map to its sources.
+
+The codebase can be the finished neon snake or the expense splitter brownfield app. The new request touches rules that only the docs explain, so the hidden checks show whether each setup keeps them. This variant measures what most real work looks like: adding to a project instead of starting one.
+
 ### Measures
 
 We record these per run:
@@ -117,6 +127,7 @@ These rules make the results hard to dispute:
 2. Build hidden checks for the two expense splitter demos.
 3. Build the neon snake specs and its headless checks.
 4. Pilot setups 1, 3 and 5 on one model, then widen.
+5. Run the brownfield variant on the expense splitter app, then on the finished neon snake.
 
 ## Current State
 
