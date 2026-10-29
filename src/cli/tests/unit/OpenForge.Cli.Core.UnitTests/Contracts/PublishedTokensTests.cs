@@ -117,6 +117,7 @@ public sealed class PublishedTokensTests
         var install = InstallSymbols.Create();
         Assert.Equal(InstallDefinitions.MainRoot.Name, PublishedTokens.Install.MainRoot);
         Assert.Equal(OpenForge.Cli.Core.Presentation.Install.Shared.Prompts.InstallSetupQuestions.MainRootQuestion, PublishedTokens.Install.MainRootQuestion);
+        Assert.Equal(OpenForge.Cli.Core.Presentation.Install.Shared.Prompts.InstallSetupQuestions.OutsideRouteQuestion, PublishedTokens.Install.OutsideRouteQuestion);
         Assert.Equal(InstallDefinitions.Force.Name, PublishedTokens.Install.Force);
         Assert.Equal(InstallConfigurationChoices.Name(InstallPreset.Minimal), PublishedTokens.Install.MinimalPreset);
         Assert.Equal(InstallConfigurationChoices.Name(InstallPreset.FullCore), PublishedTokens.Install.FullCorePreset);

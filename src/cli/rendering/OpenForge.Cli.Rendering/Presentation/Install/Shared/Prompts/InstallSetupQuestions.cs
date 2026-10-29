@@ -11,6 +11,8 @@ internal static class InstallSetupQuestions
 {
     internal static string MainRootQuestion => InstallSetupText.MainRootQuestion();
 
+    internal static string OutsideRouteQuestion => InstallSetupText.OutsideRouteQuestion();
+
     internal static CliTextQuestion<string> MainRoot(InstallMainRootQuestion question)
         => new($"{MainRootQuestion} {InstallSetupText.MainRootExplanation(question.Initial, InstallMainRootQuestion.SettingsDirectory)}",
             InstallSetupText.MainRootRule(), Required: false, answer =>
@@ -22,7 +24,7 @@ internal static class InstallSetupQuestions
             });
 
     internal static CliTextQuestion<string> OutsideRoute(InstallOutsideRouteQuestion question)
-        => new($"{InstallSetupText.OutsideRouteQuestion()} {InstallSetupText.OutsideRouteExplanation(InstallOutsideRouteQuestion.ControlsDirectory)}",
+        => new($"{OutsideRouteQuestion} {InstallSetupText.OutsideRouteExplanation(InstallOutsideRouteQuestion.ControlsDirectory)}",
             InstallSetupText.OutsideRouteRule(), Required: false, answer => question.IsValidAnswer(answer)
                 ? new(true, answer, null)
                 : new(false, null, InstallSetupText.OutsideRouteRule()));
