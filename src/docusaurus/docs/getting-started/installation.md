@@ -38,15 +38,17 @@ For individual managed-file removals or conflicts, read the [Install reference](
 
 ## Choose the context folder
 
-Before route choices, the wizard asks "Where should Open Forge keep its context files?" with `.agents` as the default. This folder is the main root. To answer without the question, use `install --main-root <folder>`. A custom destination must be absent or empty, for example:
+Before route choices, the wizard asks "Where should Open Forge keep its context files?" with `.agents` as the default. This folder is the main root. To answer without the question, use `install --main-root <folder>`. The folder can be new or already hold files, such as an existing `docs` folder:
 
 ```sh
-open-forge install --main-root docs/forge --preset minimal --dry-run
+open-forge install --main-root docs --preset minimal --dry-run
 # Review the plan, then apply the same selection.
-open-forge install --main-root docs/forge --preset minimal --automatic
+open-forge install --main-root docs --preset minimal --automatic
 ```
 
-Right after this question, a fresh interactive install asks "Do you also want Open Forge to maintain a folder of your own docs?". Enter an existing folder, such as `docs/team`, to register it as an outside route after the Framework files, or press Enter to skip. [Your own docs](your-own-docs.md) explains what the registration does.
+Right after this question, a fresh interactive install asks "Do you also want Open Forge to maintain a folder of your own docs?". Enter an existing folder, such as `docs`, to register it as an outside route after the Framework files, or press Enter to skip. [Your own docs](your-own-docs.md) explains what the registration does.
+
+Files already in the folder stay as they are. If it already has a `README.md`, Install keeps it and leaves the Framework guide out, and `open-forge help concepts` prints the guide's file formats instead.
 
 The loader, guide and ordinary categories use the chosen folder. Skills stay at `.agents/skills`, settings at `.agents/open-forge.json` and ownership at `.agents/open-forge.lock.json`. The host files `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader. The runtime folder `.open-forge-state/` also stays at the workspace root.
 

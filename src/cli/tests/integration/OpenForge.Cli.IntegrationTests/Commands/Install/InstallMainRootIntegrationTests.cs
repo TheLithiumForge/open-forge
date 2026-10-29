@@ -32,6 +32,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
@@ -96,14 +97,12 @@ public sealed class InstallMainRootIntegrationTests
         AssertBytes(before, workspace);
     }
 
-    [Theory(DisplayName = "Custom Install refuses an occupied destination before acquiring the workspace lock")]
-    [InlineData(false), InlineData(true)]
-    public async Task OccupiedDestination(bool file)
+    [Fact(DisplayName = "Custom Install refuses a file in place of its root before acquiring the workspace lock")]
+    public async Task FileDestination()
     {
         using var workspace = InstallOperationWorkspace.Create(FixtureName, CustomRoot);
-        var occupant = file ? CustomRoot : $"{CustomRoot}/{OccupantName}";
-        workspace.WriteText(occupant, string.Empty);
-        File.WriteAllBytes(workspace.Combine(occupant), AuthoredBytes);
+        workspace.WriteText(CustomRoot, string.Empty);
+        File.WriteAllBytes(workspace.Combine(CustomRoot), AuthoredBytes);
         var before = Bytes(workspace);
         var result = await InstallFrontmatterFixture.Operation(workspace).ExecuteAsync(
             workspace.Request(force: true) with { RequestedMainRoot = CustomRoot }, TestContext.Current.CancellationToken);
@@ -111,6 +110,43 @@ public sealed class InstallMainRootIntegrationTests
         Assert.Empty(result.Facts.Effects);
         Assert.False(Directory.Exists(WorkspaceRuntimePaths.DirectoryPath(workspace.Workspace)));
         AssertBytes(before, workspace);
+    }
+
+    [Fact(DisplayName = "Custom Install adopts an existing folder and keeps its other files")]
+    public async Task OccupiedFolder()
+    {
+        using var workspace = InstallOperationWorkspace.Create(FixtureName, CustomRoot);
+        var occupant = $"{CustomRoot}/{OccupantName}";
+        workspace.WriteText(occupant, string.Empty);
+        File.WriteAllBytes(workspace.Combine(occupant), AuthoredBytes);
+        var result = await InstallFrontmatterFixture.Operation(workspace).ExecuteAsync(
+            workspace.Request() with { RequestedMainRoot = CustomRoot }, TestContext.Current.CancellationToken);
+        Assert.True(result.Status == CliSemanticStatus.Complete, InstallFixtureDiagnostics.Failure(result));
+        Assert.True(File.Exists(workspace.Combine(Loader)));
+        Assert.Equal(AuthoredBytes, File.ReadAllBytes(workspace.Combine(occupant)));
+    }
+
+    [Theory(DisplayName = "A fresh Install keeps an existing file at the guide path, leaves the guide out and records the exclusion")]
+    [InlineData(CustomRoot), InlineData(WorkspaceLayout.DefaultMainRoot)]
+    public async Task KeptGuide(string root)
+    {
+        using var workspace = InstallOperationWorkspace.Create(FixtureName, root);
+        var guide = WorkspaceLayout.Create(workspace.Workspace, root).HumanGuidePath;
+        workspace.WriteText(guide, string.Empty);
+        File.WriteAllBytes(workspace.Combine(guide), AuthoredBytes);
+        var request = workspace.Request() with { RequestedMainRoot = root == WorkspaceLayout.DefaultMainRoot ? null : root };
+        // The kept guide is resolved with the setup choices, so this uses the composed operation.
+        var operation = InstallOperationFactory.Create(InstallInteractionTestSupport.Unavailable(), workspace.LockStoreRoot);
+        var result = await operation.ExecuteAsync(request, TestContext.Current.CancellationToken);
+        Assert.True(result.Status == CliSemanticStatus.Complete, InstallFixtureDiagnostics.Failure(result));
+        Assert.Equal(guide, result.Input.KeptGuide);
+        Assert.Equal(AuthoredBytes, File.ReadAllBytes(workspace.Combine(guide)));
+        Assert.Contains(guide, (await ReadLayoutAsync(workspace)).Settings.Document.RemovedFiles);
+
+        var repeat = await operation.ExecuteAsync(request, TestContext.Current.CancellationToken);
+        Assert.True(repeat.Status == CliSemanticStatus.Complete, InstallFixtureDiagnostics.Failure(repeat));
+        Assert.Empty(repeat.Facts.Effects);
+        Assert.Equal(AuthoredBytes, File.ReadAllBytes(workspace.Combine(guide)));
     }
 
     [Theory(DisplayName = "Install never selects the fixed workspace runtime directory as content")]
@@ -149,7 +185,7 @@ public sealed class InstallMainRootIntegrationTests
         AssertBytes(before, workspace);
     }
 
-    [Theory(DisplayName = "Install revalidates settings and an initially empty custom destination before effects")]
+    [Theory(DisplayName = "Install revalidates settings and the planned Framework paths in a custom root before effects")]
     [InlineData(false), InlineData(true)]
     public async Task ChangedPlanStops(bool settingsChanged)
     {
@@ -159,13 +195,13 @@ public sealed class InstallMainRootIntegrationTests
         var build = await new InstallPlanBuilder(paths).BuildAsync(await RequestAsync(workspace, FrontmatterForm.Scoped), TestContext.Current.CancellationToken);
         var plan = Assert.IsType<InstallPlan>(build.Plan);
         Assert.True(plan.IsComplete);
-        var changed = settingsChanged ? WorkspaceSettingsDefinitions.RelativePath : $"{CustomRoot}/{OccupantName}";
+        var changed = settingsChanged ? WorkspaceSettingsDefinitions.RelativePath : Loader;
         workspace.WriteText(changed, string.Empty);
         File.WriteAllBytes(workspace.Combine(changed), AuthoredBytes);
         var outcome = await InstallApplicationOperationFactory.Create(paths, new FileExpectationValidator(paths), workspace.LockStoreRoot)
             .ExecuteAsync(plan, TestContext.Current.CancellationToken);
         Assert.Contains(outcome.Findings, finding => finding.Code == InstallFindingCode.TargetUnsafe);
-        Assert.False(File.Exists(workspace.Combine(Loader)));
+        if (settingsChanged) Assert.False(File.Exists(workspace.Combine(Loader)));
         Assert.False(File.Exists(workspace.Combine(WorkspaceOwnershipDefinitions.RelativePath)));
         Assert.Equal(AuthoredBytes, File.ReadAllBytes(workspace.Combine(changed)));
     }

@@ -48,6 +48,9 @@ internal sealed record InstallRequest
 
     internal string? OutsideRoute { get; init; }
 
+    /// <summary>An unmanaged file already at the guide path, kept in place on a fresh Install instead of being replaced.</summary>
+    internal string? KeptGuide { get; init; }
+
     internal CliRetryOptions? RetryOptions { get; init; }
 
     internal InstallSetupRecap? SetupRecap { get; init; }

@@ -53,7 +53,7 @@ Example: `open-forge route include CONTRIBUTING.md --description "Contribution r
 
 A workspace-contained directory registered in settings v5 `outsideRoutes`, separate from the main root and file-only `roots`. Registration supplies discovery and bounded maintenance, while Loader rows decide loading. It creates no short ID, package ownership or implicit destination grant.
 
-Example: registering `docs/team` gives its canonical catalogue the exact source reference `./docs/team/_team.md`. Its filename stays in the spelling, but discovery and command admission still depend on registration or retained inclusion. See [Your own docs](getting-started/your-own-docs.md) and [outside routes](/guides/cli#outside-routes).
+Example: registering `docs` gives its canonical catalogue the exact source reference `./docs/_docs.md`. Its filename stays in the spelling, but discovery and command admission still depend on registration or retained inclusion. See [Your own docs](getting-started/your-own-docs.md) and [outside routes](/guides/cli#outside-routes).
 
 ### Scope
 

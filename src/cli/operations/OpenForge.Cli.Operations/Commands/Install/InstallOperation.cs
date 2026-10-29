@@ -45,7 +45,7 @@ internal sealed class InstallOperation(
                         ? InstallManagementState.Incomplete : InstallManagementState.Blocked;
                     return InitialResult(request, state, boundary.Code, boundary.Cause);
                 }
-                request = request with { Configuration = setup.Configuration, Frontmatter = setup.Frontmatter, SetupRecap = setup.Recap, RequestedMainRoot = setup.RequestedMainRoot, OutsideRoute = setup.OutsideRoute };
+                request = request with { Configuration = setup.Configuration, Frontmatter = setup.Frontmatter, SetupRecap = setup.Recap, RequestedMainRoot = setup.RequestedMainRoot, OutsideRoute = setup.OutsideRoute, KeptGuide = setup.KeptGuide };
             }
             build = await _planBuilder.BuildAsync(request, cancellationToken)
                 .ConfigureAwait(false);
@@ -259,7 +259,7 @@ internal sealed class InstallOperation(
                 Force: plan.Request.Force,
                 Automatic: plan.Request.Automatic,
                 Mode: InstallMode.DryRun, Setup: plan.Request.Setup, Configuration: plan.Request.Configuration)
-            { RetryOptions = plan.Request.RetryOptions, SetupRecap = plan.Request.SetupRecap, ResolvedFrontmatter = plan.Request.Frontmatter?.Form },
+            { RetryOptions = plan.Request.RetryOptions, SetupRecap = plan.Request.SetupRecap, KeptGuide = plan.Request.KeptGuide, ResolvedFrontmatter = plan.Request.Frontmatter?.Form },
             findings: [],
             summary: Summary(
                 plan.ManagementState,

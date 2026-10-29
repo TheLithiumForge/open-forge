@@ -6,14 +6,14 @@ internal static class InstallSetupText
     internal static string MainRootQuestion() => "Where should Open Forge keep its context files?";
     // @OpenForgeText install.setup.mainrootexplanation
     internal static string MainRootExplanation(string initial, string controls)
-        => $"Press Enter for {initial}, or enter an absent or empty workspace-relative folder. Settings and Skills stay in {controls}.";
+        => $"Press Enter for {initial}, or enter a new or existing workspace-relative folder. Settings and Skills stay in {controls}.";
     // @OpenForgeText install.setup.mainrootrule
     internal static string MainRootRule() => "Use a canonical workspace-relative folder without traversal or reserved paths.";
     // @OpenForgeText install.setup.outsideroutequestion
     internal static string OutsideRouteQuestion() => "Do you also want Open Forge to maintain a folder of your own docs?";
     // @OpenForgeText install.setup.outsiderouteexplanation
     internal static string OutsideRouteExplanation(string controls)
-        => $"Enter an existing workspace-relative folder, such as docs/team, to register it as an outside route, or press Enter to skip. It can't be inside the context folder or {controls}.";
+        => $"Enter an existing workspace-relative folder, such as docs, to register it as an outside route, or press Enter to skip. It can't be inside the context folder or {controls}.";
     // @OpenForgeText install.setup.outsiderouterule
     internal static string OutsideRouteRule() => "Use an existing workspace-relative folder outside the context folder, .agents and Git metadata.";
     // @OpenForgeText install.setup.outsideroute
@@ -28,6 +28,9 @@ internal static class InstallSetupText
     // @OpenForgeText install.setup.outsideroutenotattempted
     internal static string OutsideRouteNotAttempted(string folder, string command)
         => $"{folder} wasn't registered because Install didn't finish. Run {command} after Install succeeds.";
+    // @OpenForgeText install.setup.keptguide
+    internal static string KeptGuide(string path, string command)
+        => $"{path} stays as it is, and the Framework guide is left out. Run {command} for its file formats.";
     // @OpenForgeText install.setup.frontmatterquestion
     internal static string FrontmatterQuestion() => "How should Open Forge write file metadata?";
     // @OpenForgeText install.setup.rootlabel

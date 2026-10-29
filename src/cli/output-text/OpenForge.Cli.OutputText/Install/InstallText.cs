@@ -100,7 +100,7 @@ internal static class InstallText
 
     // @OpenForgeText install.help.contextfolder
     internal static string HelpContextFolder(string defaultRoot, string controls)
-        => $"Choose --main-root <folder> at first installation, or answer the wizard before route choices. The default is {defaultRoot}. A custom folder must be absent or empty. Settings and Skills stay in {controls}. Preview, JSON, automatic and redirected runs never ask. An omitted or unchanged value keeps ordinary Install behavior. A different root on an established installation is refused, including with --configure. A fresh interactive Install then offers to register one existing folder of your own docs as an outside route. Press Enter to skip it.";
+        => $"Choose --main-root <folder> at first installation, or answer the wizard before route choices. The default is {defaultRoot}. A custom folder can be new or already hold files, which stay as they are. Settings and Skills stay in {controls}. Preview, JSON, automatic and redirected runs never ask. An omitted or unchanged value keeps ordinary Install behavior. A different root on an established installation is refused, including with --configure. A fresh interactive Install then offers to register one existing folder of your own docs as an outside route. Press Enter to skip it.";
 
     // @OpenForgeText install.help.notes
     internal static string HelpNotes()

@@ -6,7 +6,7 @@ Open Forge tells agents where your rules and knowledge live. You decide what the
 
 ## Choose the context folder
 
-At first installation, `open-forge install --main-root <folder>` chooses the context folder. The default is `--main-root .agents`. A custom folder, such as `docs/context`, must be absent or empty. Interactive Install asks `Where should Open Forge keep its context files?` when the flag is omitted.
+At first installation, `open-forge install --main-root <folder>` chooses the context folder. The default is `--main-root .agents`. A custom folder, such as `docs`, can already hold files. They stay as they are, and an existing `README.md` is kept instead of this guide. Interactive Install asks `Where should Open Forge keep its context files?` when the flag is omitted.
 
 The loader, this guide and ordinary categories live in the context folder. Native Skills stay in `.agents/skills/`, settings in `.agents/open-forge.json`, and ownership in `.agents/open-forge.lock.json`. New settings use schema version 4 for every layout. Workspace-root `AGENTS.md` and `CLAUDE.md` point to the selected loader.
 

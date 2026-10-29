@@ -101,15 +101,14 @@ ${minimalFiles}
     value: "your-docs",
     label: "With your docs",
     summary: <>Any preset, plus a folder your team writes in. Folder Include registers it as an outside route, and the CLI keeps its catalogue current.</>,
-    command: "open-forge route include docs/team",
+    command: "open-forge route include docs",
     tree: `${hosts}
 .agents/                      <- main root, any preset
-  loader.md                   <- lists docs/team/_team.md
+  loader.md                   <- lists docs/_docs.md
   ...
-docs/
-  team/                       <- outside route: your own docs
-    _team.md                  <- its catalogue
-    testing.md                <- written by your team`,
+docs/                         <- outside route: your own docs
+  _docs.md                    <- its catalogue
+  testing.md                  <- written by your team`,
   },
 ];
 

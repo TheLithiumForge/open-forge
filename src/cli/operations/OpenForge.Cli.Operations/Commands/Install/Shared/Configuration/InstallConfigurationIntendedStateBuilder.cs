@@ -68,7 +68,7 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
         var configuration = request.Configuration;
         if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete))
             return Boundary(ownership.Cause ?? "Configuration requires trustworthy ownership facts.", InstallFindingCode.LifecycleBlocked);
-        var settingsChange = InstallConfigurationSettings.Plan(layout, settings, configuration, request.Frontmatter);
+        var settingsChange = InstallConfigurationSettings.Plan(layout, settings, configuration, request.Frontmatter, request.KeptGuide);
         var intendedSettings = settings.Document;
         if (settingsChange is { } change)
             intendedSettings = WorkspaceSettingsCodec.Read(change.IntendedBytes.ToArray()).Document

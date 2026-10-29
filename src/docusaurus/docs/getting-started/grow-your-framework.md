@@ -10,7 +10,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 
 The base Framework is deliberately small. The selected categories start empty apart from Memory state entrypoints and the CLI Skill. It becomes useful as you add what your project keeps teaching you.
 
-Context can also grow in a folder your team keeps itself, such as `docs/team`. [Your own docs](your-own-docs.md) covers registering it and keeping loading tags and conditions on the rows you write.
+Context can also grow in a folder your team keeps itself, such as `docs`. [Your own docs](your-own-docs.md) covers registering it and keeping loading tags and conditions on the rows you write.
 
 The [ten-minute guide](ten-minute-guide.md) covers the first rule, Pattern, and saved fact together. This page explains how to place later additions and keep them relevant as the workspace grows.
 

@@ -18,7 +18,7 @@ The maintainer accepted this shape:
 
 1. The wizard asks "Where should Open Forge keep its context files?" as today, with `.agents` recommended.
 2. It then asks whether to also set up another folder, such as a personal or team docs workspace. The default is No.
-3. On Yes, it asks for an existing folder, such as `docs/team`, and validates it with the folder Include rules.
+3. On Yes, it asks for an existing folder, such as `docs`, and validates it with the folder Include rules.
 4. The Install plan lists the registration with the other changes, so one confirmation covers both.
 5. Install applies the Framework files first, then runs the existing folder Include operation on the new loader, and reports both results.
 

@@ -4,7 +4,7 @@ Open Forge is a Markdown framework that tells coding agents which of your projec
 
 One long `AGENTS.md` gives every task every rule. Open Forge replaces it with a loader and one short catalogue per folder, so each task reads only the routes it needs. E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` applies only to tasks that change export code.
 
-Your own documents can stay where they are. The framework and the agents' notes live in one context folder, `.agents` by default. A folder your team writes in, such as `docs/team`, can be registered as a route: agents find its documents through the loader, and the CLI keeps its catalogue current. [Your own docs](#your-own-docs) shows how, and how to tell agents which documents they can rely on.
+Your own documents can stay where they are. The framework and the agents' notes live in one context folder, `.agents` by default. A folder your team writes in, such as `docs`, can be registered as a route: agents find its documents through the loader, and the CLI keeps its catalogue current. [Your own docs](#your-own-docs) shows how, and how to tell agents which documents they can rely on.
 
 The design comes from an idea I call **Adaptive Context Engineering (ACE)**. An agent doesn't need to know everything, but it does need to know where everything is.
 
@@ -136,15 +136,14 @@ The [loading guide](https://thelithiumforge.github.io/open-forge/docs/concepts/l
 Open Forge keeps two kinds of content apart:
 
 - The main root - the context folder, `.agents` by default. It holds the loader, the Framework's rules and the agents' Memory.
-- Outside routes - folders you register, such as `docs/team`. They hold your team's documents, written by hand or with AI help.
+- Outside routes - folders you register, such as `docs`. They hold your team's documents, written by hand or with AI help.
 
 ```text
 AGENTS.md
 .agents/           <- main root: loader, rules, Memory
-docs/
-  team/            <- outside route: your own documents
-    _team.md       <- its catalogue
-    testing.md
+docs/              <- outside route: your own documents
+  _docs.md         <- its catalogue
+  testing.md
 ```
 
 ### Include a file
@@ -153,20 +152,20 @@ docs/
 
 ### Include a folder
 
-To maintain a whole folder where it lives, include the folder. For an existing `docs/team` directory, preview the plan, then run it:
+To maintain a whole folder where it lives, include the folder. For an existing `docs` directory, preview the plan, then run it:
 
 ```sh
-open-forge route include docs/team --dry-run
-open-forge route include docs/team
+open-forge route include docs --dry-run
+open-forge route include docs
 ```
 
 At first installation, the install wizard offers the same thing for one folder right after the context-folder question. Press Enter to skip it.
 
-This registers an outside route and lists its catalogue, `docs/team/_team.md`. The command creates the catalogue only when it's missing. From then on, the CLI works inside the folder the same way it works in the main root:
+This registers an outside route and lists its catalogue, `docs/_docs.md`. The command creates the catalogue only when it's missing. From then on, the CLI works inside the folder the same way it works in the main root:
 
 ```sh
-open-forge route create ./docs/team/testing.md --description "Team testing rules" --tag Testing --dry-run
-open-forge index ./docs/team/_team.md --dry-run
+open-forge route create ./docs/testing.md --description "Team testing rules" --tag Testing --dry-run
+open-forge index ./docs/_docs.md --dry-run
 ```
 
 The loader still decides what loads. `status` and `doctor` report on registered folders, and Install, configure and Update keep your registrations and the loading rules you wrote. [Outside routes](docs/cli.md#outside-routes) covers exact paths, unlisted maintenance and the safety limits.
@@ -179,13 +178,13 @@ The loader asks agents to treat content as accepted only when you agree, or when
 
 ### Context folder
 
-At first installation, `install --main-root <folder>` puts the context files in another absent or empty folder:
+At first installation, `install --main-root <folder>` puts the context files in another folder, new or existing. Pick one layout: keep `.agents` and register `docs` as an outside route, or make `docs` the context folder itself:
 
 ```sh
-open-forge install --main-root docs/forge --preset minimal --dry-run
+open-forge install --main-root docs --preset minimal --dry-run
 ```
 
-The wizard asks "Where should Open Forge keep its context files?" before the route choices, and defaults to `.agents`. Skills, settings and ownership stay in `.agents`. `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader. Older CLIs don't support custom roots, and relocating an established installation isn't available yet. See the [context folder reference](docs/cli.md#context-folder).
+The wizard asks "Where should Open Forge keep its context files?" before the route choices, and defaults to `.agents`. Skills, settings and ownership stay in `.agents`. `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader. Files already in the folder stay as they are. If it already has a `README.md`, Install keeps it and leaves the Framework guide out. Older CLIs don't support custom roots, and relocating an established installation isn't available yet. See the [context folder reference](docs/cli.md#context-folder).
 
 ## Share with your team
 

@@ -15,8 +15,8 @@ const features: readonly Feature[] = [
     title: "A context folder you choose",
     body: (
       <>
-        Keep the Framework in <code>.agents</code>, or pick another absent or empty folder, such as <code>docs/forge</code>, at first installation. Skills, settings and ownership
-        stay in <code>.agents</code>.
+        Keep the Framework in <code>.agents</code>, or pick another folder, such as <code>docs</code>, at first installation. Skills, settings and ownership stay in{" "}
+        <code>.agents</code>.
       </>
     ),
     link: "/docs/getting-started/installation#choose-the-context-folder",

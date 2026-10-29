@@ -25,7 +25,7 @@ Behavior:
   update for other changed managed files.
 
 Options:
-  --main-root <folder>  Choose an absent or empty context folder at first
+  --main-root <folder>  Choose a new or existing context folder at first
                         installation. Settings and Skills stay in .agents. An
                         established installation keeps its context folder.
   --configure           Configure built-in routes while retaining existing
@@ -48,13 +48,13 @@ Global options: --workspace, --format, --detail, --detail-filter, --help,
 
 Details:
   Context folder: Choose --main-root <folder> at first installation, or answer
-  the wizard before route choices. The default is .agents. A custom folder must
-  be absent or empty. Settings and Skills stay in .agents. Preview, JSON,
-  automatic and redirected runs never ask. An omitted or unchanged value keeps
-  ordinary Install behavior. A different root on an established installation is
-  refused, including with --configure. A fresh interactive Install then offers
-  to register one existing folder of your own docs as an outside route. Press
-  Enter to skip it.
+  the wizard before route choices. The default is .agents. A custom folder can
+  be new or already hold files, which stay as they are. Settings and Skills stay
+  in .agents. Preview, JSON, automatic and redirected runs never ask. An omitted
+  or unchanged value keeps ordinary Install behavior. A different root on an
+  established installation is refused, including with --configure. A fresh
+  interactive Install then offers to register one existing folder of your own
+  docs as an outside route. Press Enter to skip it.
   Force boundary: --force may replace only the exact eligible existing item at a
   current Framework installation path before management is established. Checks
   must exclude trusted owners or competing managers, route or source collisions,

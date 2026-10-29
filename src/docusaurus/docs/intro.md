@@ -13,7 +13,7 @@ Open Forge is a Markdown framework that tells coding agents which of your projec
 
 One long `AGENTS.md` gives every task every rule. Open Forge gives an agent a map instead: a loader and one short catalogue per folder, so each task reads only the routes it needs. E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` applies only to tasks that change export code.
 
-Your own documents can stay where they are. The framework and the agents' notes live in one context folder, `.agents` by default, and a folder your team writes in, such as `docs/team`, can be registered as a route. Agents find its documents through the loader, and you tell them which ones are accepted sources. [Your own docs](getting-started/your-own-docs.md) shows how.
+Your own documents can stay where they are. The framework and the agents' notes live in one context folder, `.agents` by default, and a folder your team writes in, such as `docs`, can be registered as a route. Agents find its documents through the loader, and you tell them which ones are accepted sources. [Your own docs](getting-started/your-own-docs.md) shows how.
 
 At its core, it's Markdown, rules, and links. Install it, ask your agent to work as usual, and add only what makes the next task easier. Path examples on this site use the default `.agents` folder, as [Installation](getting-started/installation.md#choose-the-context-folder) explains. Skills, settings and ownership stay in `.agents`.
 

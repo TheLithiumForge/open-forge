@@ -28,6 +28,7 @@ internal sealed record InstallSetupResolution(InstallConfiguration? Configuratio
 {
     internal string? RequestedMainRoot { get; init; }
     internal string? OutsideRoute { get; init; }
+    internal string? KeptGuide { get; init; }
     internal InstallFrontmatterSelection? Frontmatter { get; init; }
     internal InstallSetupRecap? Recap { get; init; }
 }

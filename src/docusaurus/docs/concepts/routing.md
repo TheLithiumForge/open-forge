@@ -139,7 +139,7 @@ After a folder rename, Index keeps a compatibility entrypoint or renames a prove
 
 ## Documents outside the context folder
 
-The loader can list any text file in the workspace, so agents use the documents a project already has, where they live. `open-forge route include CONTRIBUTING.md` lists one file as read-only input. `open-forge route include docs/team` registers a whole folder as an outside route that the CLI maintains. Loader rows still decide loading in both cases. [Your own docs](../getting-started/your-own-docs.md) covers both, with their rules and commands.
+The loader can list any text file in the workspace, so agents use the documents a project already has, where they live. `open-forge route include CONTRIBUTING.md` lists one file as read-only input. `open-forge route include docs` registers a whole folder as an outside route that the CLI maintains. Loader rows still decide loading in both cases. [Your own docs](../getting-started/your-own-docs.md) covers both, with their rules and commands.
 
 ## How an agent navigates
 

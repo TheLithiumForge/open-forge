@@ -79,6 +79,14 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
                 outsideRoute = reply.Value;
             }
         }
+        // A fresh Install keeps an unmanaged file already at the guide path, such as a docs folder's own README, and
+        // leaves the optional guide out. --force keeps the explicit replacement path for that occupant.
+        string? keptGuide = null;
+        if (!installed && !request.Force && !WorkspaceRemovals.IsPathRemoved(layout, layout.HumanGuidePath, settings.Document))
+        {
+            var guide = await _reader.ReadAsync(request.Workspace, layout.HumanGuidePath, token).ConfigureAwait(false);
+            if (guide.State == InstallTargetReadState.File) keptGuide = layout.HumanGuidePath;
+        }
         var form = InstallFrontmatterResolver.Resolve(request.Setup, settings, installed, canPrompt);
         if (form.Boundary is { } formBoundary) return new(null, formBoundary);
         if (request.Setup?.Preset is null &&
@@ -87,6 +95,7 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
             {
                 RequestedMainRoot = requestedMainRoot,
                 OutsideRoute = outsideRoute,
+                KeptGuide = keptGuide,
                 Frontmatter = form.Selection,
                 Recap = !installed ? new(false, InstallPreset.FullCore, CurrentRoutes(layout, settings, []), []) { OutsideRoute = outsideRoute } : null,
             };
@@ -166,6 +175,7 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
             {
                 RequestedMainRoot = requestedMainRoot,
                 OutsideRoute = outsideRoute,
+                KeptGuide = keptGuide,
                 Frontmatter = resolved.Selection,
                 Recap = new(request.Setup?.Configure == true, configuration?.Preset ?? InstallPreset.FullCore, routes, previousRoutes) { OutsideRoute = outsideRoute },
             };
