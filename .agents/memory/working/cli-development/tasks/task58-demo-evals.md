@@ -141,6 +141,18 @@ These rules make the results hard to dispute:
 
 **Now:** recorded and expanded on 2026-10-29, not started. Ready to hand to an agent once the maintainer selects it. Tracked publicly in [issue #12](https://github.com/TheLithiumForge/open-forge/issues/12).
 
+**2026-10-30:** the maintainer set the expanded outline aside and restarted from the barest case. The [Eval Ladder](../../../emerging/ideas/eval-ladder.md) keeps the new outline, and the [Twelve-Eval Catalogue](../../../emerging/ideas/eval-catalogue.md) keeps the earlier council plan for comparison. The [Evals](../../../crystallized/documents/evals/_evals.md) scope holds the first proposed documents, waiting for review: [Eval Data Points](../../../crystallized/documents/evals/data-points.md) and the [Greenfield Baseline](../../../crystallized/documents/evals/greenfield-baseline.md).
+
+Later on 2026-10-30 the maintainer chose Neon Pairs, a React memory game with grids from 4x4 to 16x16, for the Greenfield Baseline, and added a Helpful setup with the Collaboration extension. [Running Evals](../../../crystallized/documents/evals/running-evals.md) and [Eval Judging](../../../crystallized/documents/evals/judging.md) now cover isolation, the simulated user, the runner and who judges what.
+
+The maintainer then decided that judging must be repeatable by anyone: headline numbers from checks and counts, a model judge at least as strong as the agents answering yes or no questions, and blind pairwise picks by people. They asked for a simple tool that runs on Claude and Codex subscriptions. A first draft is in [`evals/`](../../../../../evals/README.md): `npm start` opens a local web app that runs batches, plays finished games blind and shows the results. It drives the official CLIs directly, pinned on npm. Its hidden checks pass on a reference Neon Pairs build. Only mock runs are tested so far. Real runs wait for the maintainer's sign-in and approval to spend.
+
+**2026-10-31:** the first real batch ran: Codex `gpt-6.1-sol` at high effort, one run per setup. The real games exposed check and runner bugs, now fixed, and `npm run recheck` scores saved games again. [Baseline Lessons](../../../emerging/ideas/baseline-lessons.md) keeps what it taught as specs for Greenfield 2 and 3. The maintainer allowed Codex runs in parallel, so batches can run several at once.
+
+**2026-11-01:** [Eval Council Round 4](../../../emerging/analysis/eval-council-round4.md) reviewed both eval efforts, and the maintainer answered its open points: build on the pilot's containers, claim nothing yet, keep a simulated user and a judge at every layer, and grade as deterministically as each layer allows. Council round 5 wrote the [Eval Product Proposal](../../../emerging/analysis/eval-product-proposal.md), and the maintainer approved it the same day. The product moves to `src/evals/`, runs in containers and publishes results to a public results repository. Each case runs five times per setup. The work goes layer by layer: the product with Layer 1 tested end to end, then the documents for Layers 2, 3 and 4. A council builds the reference solution that seeds Layer 4.
+
+**Later:** testing Extensions, starting with the Helpful setup. [Task 90](task90-extensions-install-their-routes.md) covers Extensions that need routes a preset left out, and the [Plan-Ahead Skill](../../../emerging/ideas/plan-ahead-skill.md) idea covers Guidance that doesn't change how agents ask.
+
 **Related:** the Emerging idea on
 [documentation comprehension probes](../../../emerging/ideas/documentation-comprehension-probes.md)
 proposes known-answer questions for unfamiliar agents, which could share this
