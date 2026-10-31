@@ -1,0 +1,20 @@
+{
+  "id": "greenfield-baseline",
+  "title": "Greenfield Baseline",
+  "project": "neon-pairs",
+  "baseline": "no-setup",
+  "setups": {
+    "no-setup": { "label": "No setup", "commands": [] },
+    "minimal": { "label": "Minimal", "commands": [["install", "--preset", "minimal", "--automatic"]] },
+    "essentials": { "label": "Essentials", "commands": [["install", "--preset", "essentials", "--automatic"]] },
+    "full-core": { "label": "Full Core", "commands": [["install", "--preset", "full-core", "--automatic"]] },
+    "helpful": {
+      "label": "Helpful",
+      "commands": [
+        ["install", "--preset", "essentials", "--automatic"],
+        ["route", "init", "guidance", "--framework"],
+        ["extension", "install", "collaboration", "--automatic"]
+      ]
+    }
+  }
+}

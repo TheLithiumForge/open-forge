@@ -1,0 +1,14 @@
+{
+  "suite": "greenfield-baseline",
+  "runsPerSetup": 1,
+  "parallelRuns": 3,
+  "setups": ["no-setup", "minimal", "essentials", "full-core", "helpful"],
+  "agents": [
+    { "tool": "claude", "model": "sonnet", "effort": "high" },
+    { "tool": "codex", "model": null, "effort": "high" }
+  ],
+  "judge": { "tool": "claude", "model": "opus", "effort": "max", "repeats": 3 },
+  "simulatedUser": { "tool": "claude", "model": "haiku", "effort": "low" },
+  "isolation": "docker",
+  "limits": { "runMinutes": 30, "questionRounds": 3, "checkMinutes": 15 }
+}

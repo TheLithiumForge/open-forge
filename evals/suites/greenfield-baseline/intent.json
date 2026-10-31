@@ -1,0 +1,7 @@
+[
+  { "id": "start-4x4", "text": "Start on 4x4 the first time, then remember the last grid size I picked.", "judgedBy": "checks" },
+  { "id": "even-sizes", "text": "Even sizes are enough. Odd grids like 5x5 aren't needed.", "judgedBy": "judge" },
+  { "id": "colors", "text": "Cyan and magenta on a near-black background.", "judgedBy": "judge" },
+  { "id": "celebration", "text": "A short celebration when a game is won.", "judgedBy": "judge" },
+  { "id": "no-sound", "text": "No sound.", "judgedBy": "checks" }
+]
