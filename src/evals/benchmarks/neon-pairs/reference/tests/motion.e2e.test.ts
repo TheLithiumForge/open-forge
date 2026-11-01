@@ -14,10 +14,7 @@ test('card transitions use 120ms and a completed game has one 600ms pulse', asyn
   expect(transitions.duration.split(',').every((duration) => parseFloat(duration) === 0.12)).toBe(
     true,
   );
-  expect(transitions.property.split(',').map((value) => value.trim())).toEqual([
-    'border-color',
-    'opacity',
-  ]);
+  expect(transitions.property.split(',').map((value) => value.trim())).toEqual(['border-color']);
   await finishBoard(page);
   const pulse = await page.locator('.victory').evaluate((element) => {
     const style = getComputedStyle(element);

@@ -6,7 +6,7 @@ open-forge:
 # Sound
 Sound is a game requirement that keeps Neon Pairs silent.
 
-Status: spec version 2.
+Status: spec version 2.1.
 
 You can play in a shared room without starting audio. Card feedback and completion are conveyed by the game display and accessible announcements.
 

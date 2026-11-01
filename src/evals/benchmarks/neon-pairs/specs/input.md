@@ -1,7 +1,7 @@
 # Input
 Input is a set of controls that lets you play Neon Pairs with a pointer, touch or keyboard.
 
-Status: spec version 2.
+Status: spec version 2.1.
 
 You can reveal a card with a tap, then move to its partner with the arrow keys. Every activation uses the same game action, so changing input methods keeps the same turn.
 
@@ -45,7 +45,7 @@ The board keeps focus separate from play:
 - I10 - While a mismatching pair waits to turn back, allow focus movement and block card activation.
 - I11 - On initial load, keep the browser's current focus. Loading the game doesn't move focus to the board.
 - I12 - After a new deal, Restart or a successful load, reset the board's remembered tab stop to its first card.
-- I13 - When a card receives focus, scroll it into view with nearest alignment in the board's scroll area.
+- I13 - When a card receives focus, scroll it into view with nearest alignment in the board's scroll area. Give each card a scroll margin of at least 6px, so its complete focus outline stays in view, including mid-board cards.
 
 The session buttons keep their focus as defined in [Controls](controls.md).
 
@@ -62,10 +62,21 @@ For example, the first hidden button is named "Row 1, column 1, closed". Once re
 
 - I16 - Use one polite, atomic live region for turn results and completion. Announce each turn result exactly once. A winning turn has one announcement containing both the match and the win. Consecutive identical results each get their own announcement. Focus movement, clock renders and closing a mismatch don't repeat a result.
 
+Use these turn announcements, where `M` is the matched pair count, `N` is moves and `time` uses R07's display format:
+
+| Event | Announcement |
+| --- | --- |
+| First match | Pair found. 1 pair matched. |
+| Later match | Pair found. M pairs matched. |
+| Miss | No match. Cards close after a short pause. |
+| Final match | Pair found. All pairs found in N moves and time. |
+
+Send the load statuses in Controls through this same live region once per load event. Keep the visible status beside the reproduction controls.
+
 For example, moving across three cards leaves the current announcement unchanged. Resolving the next pair announces that turn's result.
 
 ## Screen reader
 
-- I17 - Complete a 4x4 game with a screen reader and keyboard alone. Find Grid size and New Game by name, enter the board, hear closed card positions, reveal faces, hear one result per turn and finish with the win, final moves and time available. Leave the board with Tab and start another game. Record the screen reader and browser versions used for this journey in the project README.
+- I17 - Support a complete 4x4 keyboard game with a screen reader. Find Grid size and New Game by name, enter the board, expose closed positions and revealed faces by name and state, announce one result per turn and make the win, final moves and time available. Leave the board with Tab and start another game. Deliver automated accessibility-tree evidence for this journey. Record the browser and tool versions in the project README and say whether a screen reader was used. If one was used, record its name and version. The user confirms spoken output during acceptance. Spoken confirmation isn't the developer's deliverable.
 
 The complete game pack starts in [Neon Pairs](README.md).

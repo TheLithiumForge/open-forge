@@ -41,9 +41,7 @@
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
-  transition:
-    border-color 120ms ease,
-    opacity 120ms ease;
+  transition: border-color 120ms ease;
   display: grid;
   place-items: center;
 }

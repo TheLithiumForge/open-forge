@@ -1,6 +1,6 @@
 {
     "schemaVersion":  1,
-    "specVersion":  2,
+    "specVersion":  2.1,
     "requirements":  [
                          {
                              "id":  "R01",
@@ -127,7 +127,7 @@
                              "clauses":  [
                                              {
                                                  "id":  "R05.1",
-                                                 "text":  "Add one move on the second valid reveal until the move cap is reached.",
+                                                 "text":  "Add one move on the second valid reveal.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -145,31 +145,37 @@
                                              },
                                              {
                                                  "id":  "R05.4",
-                                                 "text":  "A match and a miss each cost one move until the move cap is reached.",
+                                                 "text":  "A match and a miss each cost one move.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
                                              {
                                                  "id":  "R05.5",
                                                  "text":  "Stop increasing the move count at 999999.",
-                                                 "firstLayer":  "L2",
+                                                 "firstLayer":  "L3",
                                                  "method":  "browser"
                                              },
                                              {
                                                  "id":  "R05.6",
                                                  "text":  "Play continues normally at the move cap.",
-                                                 "firstLayer":  "L2",
+                                                 "firstLayer":  "L3",
                                                  "method":  "browser"
                                              },
                                              {
                                                  "id":  "R05.7",
                                                  "text":  "Pairs still match at the move cap.",
-                                                 "firstLayer":  "L2",
+                                                 "firstLayer":  "L3",
                                                  "method":  "browser"
                                              },
                                              {
                                                  "id":  "R05.8",
-                                                 "text":  "The game can still be won at the move cap.",
+                                                 "text":  "The game still completes at the move cap.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R05.9",
+                                                 "text":  "Show the current move count throughout play as Moves: N.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              }
@@ -188,7 +194,7 @@
                                              },
                                              {
                                                  "id":  "R06.2",
-                                                 "text":  "Show matched pairs against the total throughout play.",
+                                                 "text":  "Show matched pairs against the total throughout play as Pairs: M/T, where M is matched pairs and T is the total.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -274,7 +280,7 @@
                                              {
                                                  "id":  "R07.9",
                                                  "text":  "Cap elapsed time at 359999999 milliseconds.",
-                                                 "firstLayer":  "L2",
+                                                 "firstLayer":  "L3",
                                                  "method":  "browser"
                                              },
                                              {
@@ -286,6 +292,12 @@
                                              {
                                                  "id":  "R07.11",
                                                  "text":  "The clock shows the capped elapsed time.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.12",
+                                                 "text":  "Show the clock throughout play as Time: m:ss. Round elapsed seconds down, pad seconds to two digits and let minutes continue past 59. For example, 3600000ms shows Time: 60:00.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              }
@@ -414,7 +426,7 @@
                                              },
                                              {
                                                  "id":  "R10.6",
-                                                 "text":  "Show the current size\u0027s best moves during play and after completion.",
+                                                 "text":  "Show the current size\u0027s best moves during play and after completion as Best: N.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -496,6 +508,12 @@
                                              {
                                                  "id":  "C01.3",
                                                  "text":  "Each option value is its numeric side length.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C01.4",
+                                                 "text":  "After a successful board-code or snapshot load, select the loaded board\u0027s size in Grid size.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
                                              }
@@ -685,6 +703,18 @@
                                                  "text":  "Require no Clipboard API.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C08.6",
+                                                 "text":  "Round exported elapsedMs down to integer milliseconds.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "C08.7",
+                                                 "text":  "Round pending mismatch remainingMs up to integer milliseconds, at least 1ms.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
                                              }
                                          ]
                          },
@@ -707,13 +737,19 @@
                                              },
                                              {
                                                  "id":  "C09.3",
-                                                 "text":  "Load valid progress paused.",
+                                                 "text":  "Load unfinished progress paused.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
                                              },
                                              {
                                                  "id":  "C09.4",
                                                  "text":  "Show Loaded snapshot. Select Resume to continue.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C09.5",
+                                                 "text":  "Load completed progress without pausing and show Loaded completed snapshot.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
                                              }
@@ -726,7 +762,7 @@
                              "clauses":  [
                                              {
                                                  "id":  "C10.1",
-                                                 "text":  "Show Resume only for an imported paused game.",
+                                                 "text":  "Show Resume only for an imported unfinished paused game.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
                                              },
@@ -762,7 +798,7 @@
                                              },
                                              {
                                                  "id":  "C10.7",
-                                                 "text":  "A completed imported game stays completed after Resume.",
+                                                 "text":  "A completed imported game stays completed without pausing and shows no Resume button.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
                                              }
@@ -824,7 +860,7 @@
                                              },
                                              {
                                                  "id":  "C12.4",
-                                                 "text":  "A later win from unfinished imported progress can record a best.",
+                                                 "text":  "A later win from unfinished imported progress records a local best under R10.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
                                              }
@@ -886,7 +922,19 @@
                                              },
                                              {
                                                  "id":  "C14.3",
-                                                 "text":  "npm run replay -- PATH reads replay JSON and prints the final snapshot.",
+                                                 "text":  "npm run --silent replay -- PATH reads replay JSON and prints the final snapshot.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "C14.4",
+                                                 "text":  "On valid replay input print only the final snapshot JSON to stdout and exit 0.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "C14.5",
+                                                 "text":  "On invalid replay input print nothing to stdout, a message to stderr and exit nonzero.",
                                                  "firstLayer":  "L3",
                                                  "method":  "replay"
                                              }
@@ -1166,6 +1214,12 @@
                                                  "text":  "Scroll each focused card into view with nearest alignment inside the board.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I13.2",
+                                                 "text":  "Give every card a scroll margin of at least 6px so its complete focus outline stays in view, including mid-board cards.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
                                              }
                                          ]
                          },
@@ -1176,7 +1230,7 @@
                              "clauses":  [
                                              {
                                                  "id":  "I14.1",
-                                                 "text":  "Hidden card names contain the one-based row, column and closed state.",
+                                                 "text":  "Name hidden cards by one-based row, column and closed state. For example, Row 1, column 1, closed.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -1247,6 +1301,30 @@
                                                  "text":  "Focus movement, clock renders and mismatch closing don\u0027t repeat a result.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I16.6",
+                                                 "text":  "Announce the first match as \"Pair found. 1 pair matched.\" Announce later matches as \"Pair found. M pairs matched.\", where M is matched pairs.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I16.7",
+                                                 "text":  "Announce a miss as No match. Cards close after a short pause.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I16.8",
+                                                 "text":  "Announce the final match as \"Pair found. All pairs found in N moves and time.\", where N is moves and time uses the R07 display format.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I16.9",
+                                                 "text":  "Send the load statuses in Controls through the same live region once per load event. Keep the visible status beside reproduction controls.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
                                              }
                                          ]
                          },
@@ -1257,7 +1335,7 @@
                              "clauses":  [
                                              {
                                                  "id":  "I17.1",
-                                                 "text":  "Finish a 4x4 game with a screen reader and keyboard alone.",
+                                                 "text":  "Support a complete 4x4 keyboard game with a screen reader. Deliver automated accessibility-tree evidence for this journey.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -1269,7 +1347,7 @@
                                              },
                                              {
                                                  "id":  "I17.3",
-                                                 "text":  "Hear closed positions, revealed faces and one result per turn.",
+                                                 "text":  "Expose closed positions, revealed face names and states and one live-region result per turn in the accessibility tree.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -1287,7 +1365,7 @@
                                              },
                                              {
                                                  "id":  "I17.6",
-                                                 "text":  "Record screen reader and browser versions in the project README.",
+                                                 "text":  "Record the browser and tool versions in the project README and whether a screen reader was used. If used, record its name and version. The user confirms spoken output during acceptance. Spoken confirmation is not the developer deliverable.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              }
@@ -1318,7 +1396,7 @@
                                              },
                                              {
                                                  "id":  "V01.4",
-                                                 "text":  "Render without canvas or shadcn components.",
+                                                 "text":  "Render without canvas. Use no component library.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
                                              }
@@ -1437,7 +1515,7 @@
                                              },
                                              {
                                                  "id":  "V06.2",
-                                                 "text":  "Panel background is #141827.",
+                                                 "text":  "Use #141827 for the board scroll area, reproduction panel and non-card button, select, input and textarea backgrounds.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -1461,7 +1539,7 @@
                                              },
                                              {
                                                  "id":  "V06.6",
-                                                 "text":  "Secondary text is #B8BDD2.",
+                                                 "text":  "Use #B8BDD2 for secondary text, meaning help text, status labels and optional supporting text.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -1517,7 +1595,7 @@
                                              },
                                              {
                                                  "id":  "V08.4",
-                                                 "text":  "Secondary text is 14px.",
+                                                 "text":  "Set secondary text to 14px, meaning help text, status labels and optional supporting text.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              }
@@ -1530,7 +1608,7 @@
                              "clauses":  [
                                              {
                                                  "id":  "V09.1",
-                                                 "text":  "Layout gaps, padding and margins use 4px, 6px, 8px, 12px, 16px, 24px or 32px.",
+                                                 "text":  "Positive layout gaps, padding and margins you set use 4px, 6px, 8px, 12px, 16px, 24px or 32px. Allow zero resets and automatic centering. Reset browser default margins. Native control internals are not covered.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -1598,8 +1676,8 @@
                                              {
                                                  "id":  "V10.9",
                                                  "text":  "Color is the palette entry at the marker index.",
-                                                 "firstLayer":  "L3",
-                                                 "method":  "static"
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
                                              }
                                          ]
                          },
@@ -1668,6 +1746,12 @@
                                                  "text":  "Distinguish all 128 identities at 44px in grayscale, including solid and outline squares with diagonal markers.",
                                                  "firstLayer":  "L2",
                                                  "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "V12.8",
+                                                 "text":  "Use the face color for the solid shape\u0027s fill, the outlined shape\u0027s stroke and the marker\u0027s fill. An outlined shape has no fill. The marker keeps its Face-background stroke.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
                                              }
                                          ]
                          },
@@ -1722,7 +1806,7 @@
                                              },
                                              {
                                                  "id":  "V15.2",
-                                                 "text":  "Matched cards add a green border and check mark.",
+                                                 "text":  "Matched cards add a Green palette (#8BEA7D) border and check mark.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -1747,7 +1831,7 @@
                                              },
                                              {
                                                  "id":  "V16.2",
-                                                 "text":  "Hover changes only the border.",
+                                                 "text":  "Hover changes only the border to the Text color (#F4F6FF). Matched cards keep their Green border when hovered.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              }
@@ -1760,13 +1844,13 @@
                              "clauses":  [
                                              {
                                                  "id":  "V17.1",
-                                                 "text":  "Use 120ms border and opacity transitions.",
+                                                 "text":  "Use a 120ms border-color transition.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
                                              {
                                                  "id":  "V17.2",
-                                                 "text":  "Turn those transitions off under prefers-reduced-motion: reduce.",
+                                                 "text":  "Turn that transition off under prefers-reduced-motion: reduce.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              }
@@ -1847,25 +1931,25 @@
                              "clauses":  [
                                              {
                                                  "id":  "V20.1",
-                                                 "text":  "At 200% browser zoom from 1280x800 keep controls, status and the win summary readable without overlap.",
+                                                 "text":  "At a 640x400 CSS-pixel viewport with device scale 2, equivalent to 200% browser zoom from 1280x800, keep controls, status and the win summary readable without overlap.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
                                              {
                                                  "id":  "V20.2",
-                                                 "text":  "Keep the outer page within viewport width at that zoom.",
+                                                 "text":  "Keep the outer page within viewport width at that equivalent zoom layout.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
                                              {
                                                  "id":  "V20.3",
-                                                 "text":  "Keep 4x4 and 16x16 playable by pointer and keyboard.",
+                                                 "text":  "At that equivalent zoom layout keep 4x4 and 16x16 playable by pointer and keyboard.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
                                              {
                                                  "id":  "V20.4",
-                                                 "text":  "Allow board scrolling and show the whole focused card and outline.",
+                                                 "text":  "At that equivalent zoom layout allow board scrolling and show the whole focused card and outline.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -1935,6 +2019,12 @@
                                              {
                                                  "id":  "T01.3",
                                                  "text":  "Use CSS Grid.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T01.4",
+                                                 "text":  "Use no component library.",
                                                  "firstLayer":  "L3",
                                                  "method":  "static"
                                              }
@@ -2180,7 +2270,7 @@
                                              },
                                              {
                                                  "id":  "T07.7",
-                                                 "text":  "npm run replay -- PATH reads replay JSON and prints the final snapshot.",
+                                                 "text":  "npm run --silent replay -- PATH reads replay JSON with the output and exit behavior in C14.",
                                                  "firstLayer":  "L3",
                                                  "method":  "replay"
                                              },
@@ -2453,7 +2543,7 @@
                                              },
                                              {
                                                  "id":  "A06.3",
-                                                 "text":  "A later win from an unfinished imported game can update bests.",
+                                                 "text":  "A later win from unfinished imported progress records a local best under R10.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
                                              }
@@ -2627,7 +2717,7 @@
                                              },
                                              {
                                                  "id":  "A12.3",
-                                                 "text":  "Use no global store, event bus, router or generic utility folder for this game.",
+                                                 "text":  "Don\u0027t add a global store, event bus, router or generic utility folder.",
                                                  "firstLayer":  "L3",
                                                  "method":  "review"
                                              }
@@ -2658,7 +2748,7 @@
                                              },
                                              {
                                                  "id":  "D01.4",
-                                                 "text":  "A text control can trim surrounding whitespace before parsing.",
+                                                 "text":  "Trim surrounding whitespace in the Board code control before parsing. The parser accepts only the exact D01 format.",
                                                  "firstLayer":  "L3",
                                                  "method":  "replay"
                                              }
@@ -2898,7 +2988,7 @@
                                              },
                                              {
                                                  "id":  "D07.6",
-                                                 "text":  "Import pauses clock and mismatch until Resume.",
+                                                 "text":  "Import of unfinished progress pauses the clock and mismatch until Resume. Completed imports stay completed without a pause.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
                                              },

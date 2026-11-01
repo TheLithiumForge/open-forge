@@ -11,7 +11,7 @@ import {
 
 test('finishes the literal board by keyboard without inspecting hidden faces', async ({ page }) => {
   await loadFixedBoard(page);
-  await expect(page.locator('.card.closed svg'), 'I14.2 hidden cards mount no face').toHaveCount(0);
+  await expect(page.locator('.card.closed svg'), 'I14 hidden cards mount no face').toHaveCount(0);
   await expect(page.locator('[data-face], [data-face-id]')).toHaveCount(0);
   for (const pair of FIXED_PAIRS) {
     for (const index of pair) {

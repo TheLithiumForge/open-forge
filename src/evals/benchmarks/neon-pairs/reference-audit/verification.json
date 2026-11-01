@@ -1,8 +1,13 @@
 {
   "schemaVersion": 2,
-  "specVersion": 2,
+  "specVersion": 2.1,
   "requirements": 97,
-  "clauses": 401,
+  "clauses": 416,
+  "layerTwo": {
+    "requirements": 60,
+    "clauses": 189,
+    "words": 1723
+  },
   "runtime": {
     "node": "26.12.1",
     "npm": "11.20.0",
@@ -17,7 +22,7 @@
     },
     {
       "path": "reference/src/game/session/session.test.ts",
-      "lines": 107
+      "lines": 113
     },
     {
       "path": "reference/src/game/snapshot.test.ts",
@@ -26,6 +31,10 @@
     {
       "path": "reference/tests/accessibility.e2e.test.ts",
       "lines": 162
+    },
+    {
+      "path": "reference/tests/art.e2e.test.ts",
+      "lines": 116
     },
     {
       "path": "reference/tests/browser-test.ts",
@@ -42,65 +51,87 @@
     {
       "path": "reference/tests/lifecycle.e2e.test.ts",
       "lines": 126
+    },
+    {
+      "path": "reference/tests/product-contract.e2e.test.ts",
+      "lines": 110
     }
   ],
   "gates": {
     "productInstall": "passed",
     "productTypecheck": "passed",
     "productTests": {
-      "passed": 93,
-      "failed": 0,
-      "skipped": 0
+      "status": "failed",
+      "tests": 217,
+      "passed": 191,
+      "failed": 26,
+      "skipped": 0,
+      "exit": 1,
+      "reasons": [
+        "Protected benchmark loaders and catalogs still require spec v2.",
+        "Layer 2 and Layer 3 case input hashes still describe the old packs.",
+        "The protected source scan enters installed reference cache files."
+      ]
     },
     "referenceInstall": "passed",
     "referenceTypecheck": "passed",
     "vitest": {
-      "passed": 123,
+      "tests": 128,
+      "passed": 128,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    "build": "passed",
+    "referenceFormatter": "passed",
+    "auditTypecheck": "passed",
+    "harnessSelfTest": "passed",
+    "subsetTests": {
+      "passed": 3,
       "failed": 0,
       "skipped": 0
     },
     "browserRuns": [
       {
-        "run": 1,
-        "command": "npm run test:e2e --cache .npm-cache",
+        "repetition": 1,
+        "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 61,
+        "tests": 65,
+        "passed": 65,
         "failed": 0,
-        "skipped": 0
-      },
-      {
-        "run": 2,
-        "command": "npm run test:e2e --cache .npm-cache",
-        "builtFromCurrentSource": true,
-        "tests": 61,
-        "failed": 0,
-        "skipped": 0
-      },
-      {
-        "run": 3,
-        "command": "npm run test:e2e --cache .npm-cache",
-        "builtFromCurrentSource": true,
-        "tests": 61,
-        "failed": 0,
-        "skipped": 0
+        "skipped": 0,
+        "exit": 0
       }
     ],
     "mutations": {
       "caught": 21,
-      "survived": 0
+      "survived": 0,
+      "cleanUnitBaseline": "passed",
+      "cleanBrowserBaseline": "passed",
+      "exit": 0
     },
-    "harnessSelfTest": "passed",
-    "auditTypecheck": "passed",
-    "referenceFormatter": "passed",
-    "auditFormatter": "passed",
-    "buildArtifactSha256": "8c74b3a2c4023ae272683c793f1bf4556738db5411289800880baa0069887816"
+    "buildArtifactSha256": "38ff3ff9dce746cc25e5ddbdad2087b92c2e9945d9a64515016561b0d975ee97"
+  },
+  "packs": {
+    "fullSourceHash": "0466a72761d5e1d316ad9aab131c0862c6b63def04e91753baa3f79d7445d74d",
+    "playerSourceHash": "7c03b21e8648bdec0e181dc7f33c210a7096ffaa91d1c4597302588595837862",
+    "selectionChanges": 3
+  },
+  "validation": {
+    "requirements": 97,
+    "clauses": 416,
+    "emptyReferenceSlots": 0,
+    "pendingCheckSlots": 15,
+    "reviewClauses": 50,
+    "treeCaptures": 28,
+    "screenReaderUsed": false
   },
   "limits": [
-    "I17.6 needs a person with NVDA.",
+    "Spoken output is user acceptance. No screen reader was run by the developer.",
     "Source and process review clauses need independent judgment.",
-    "Protected benchmark repairs and final seed freeze stay with the overseer.",
-    "Manual dist and Chromium cleanup stays with the overseer after the earlier policy rejection.",
-    "Automatic approval rejected log-file cleanup as blocked by policy. Generated logs in ignored reference work folders need overseer cleanup."
+    "Protected checks, cases, run-limit data and the final seed freeze stay with the following workers.",
+    "The Layer 3 check batch has not measured real completion times yet.",
+    "No Docker, WSL, model CLI or sign-in was used."
   ],
   "commands": [
     {
@@ -116,6 +147,16 @@
     {
       "command": "npm test --cache .npm-cache",
       "folder": "src/evals",
+      "exit": 1
+    },
+    {
+      "command": "node materialize/cli.ts specs",
+      "folder": "src/evals",
+      "exit": 0
+    },
+    {
+      "command": "node materialize/cli.ts subset --accept-selection-change REASON",
+      "folder": "src/evals",
       "exit": 0
     },
     {
@@ -124,19 +165,29 @@
       "exit": 0
     },
     {
-      "command": "npm run typecheck --cache .npm-cache",
+      "command": "npm exec --cache .npm-cache -- playwright install chromium",
       "folder": "reference",
       "exit": 0
     },
     {
-      "command": "npm test --cache .npm-cache",
+      "command": "npm run typecheck",
       "folder": "reference",
       "exit": 0
     },
     {
-      "command": "npm run test:e2e --cache .npm-cache",
-      "repetitions": 3,
+      "command": "npm test",
       "folder": "reference",
+      "exit": 0
+    },
+    {
+      "command": "npm run build",
+      "folder": "reference",
+      "exit": 0
+    },
+    {
+      "command": "npm run test:e2e",
+      "folder": "reference",
+      "repetitions": 1,
       "exit": 0
     },
     {
@@ -145,7 +196,7 @@
       "exit": 0
     },
     {
-      "command": "npm run format:check --cache .npm-cache",
+      "command": "npm run format:check",
       "folder": "reference",
       "exit": 0
     },
@@ -153,35 +204,22 @@
       "command": "node ../reference/node_modules/typescript/bin/tsc -p tsconfig.json",
       "folder": "reference-audit",
       "exit": 0
-    },
-    {
-      "command": "node --test mutation-report.test.ts",
-      "folder": "reference-audit",
-      "exit": 0
     }
   ],
-  "validation": {
-    "clauses": 401,
-    "requirements": 97,
-    "links": 20,
-    "emptyReferenceSlots": 0,
-    "unchangedChecksSlots": 401,
-    "proseDashMatches": 0,
-    "hashes": 136
-  },
-  "acceptedReview": {
-    "clauseId": "V12.7",
-    "result": "passed",
-    "reason": "The round-2 judge found all 128 grayscale faces distinguishable at 44px."
-  },
-  "correctionRound": 3,
-  "cleanup": {
-    "referenceLogFiles": 32,
-    "status": "blocked",
-    "reason": "Automatic approval rejected the requested log-file removal as blocked by policy."
-  },
-  "receiptNotes": [
-    "The browser commands passed three times. Optional wrapper metadata commands Get-FileHash and ConvertTo-Json -AsArray were unavailable. The wrapper exited 1 after all browser commands passed. The final build hash was recorded separately with Node.",
-    "I17.6 still needs a person-run spoken journey."
-  ]
+  "replayCommand": "npm run --silent replay -- PATH",
+  "followUp": {
+    "change": "silent replay command",
+    "clauses": ["C14.3", "C14.4", "C14.5", "T07.7"],
+    "npmConfig": "cache=.npm-cache",
+    "previousBrowserRuns": 3,
+    "currentBrowserRuns": 1,
+    "referenceInstall": "passed",
+    "referenceTypecheck": "passed",
+    "vitestPassed": 128,
+    "build": "passed",
+    "browserPassed": 65,
+    "mutations": "21 caught for their declared reasons",
+    "productTestsPassed": 191,
+    "productTestsFailed": 26
+  }
 }

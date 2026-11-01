@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { SESSION_URL, loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
 
-test('A04.3 R12.1 unmount clears the active timer and visibility listener', async ({ page }) => {
+test('A04 R12 unmount clears the active timer and visibility listener', async ({ page }) => {
   await page.addInitScript(() => {
     const pending = new Set<number>();
     const listeners = new Set<EventListenerOrEventListenerObject>();
@@ -60,17 +60,17 @@ test('A04.3 R12.1 unmount clears the active timer and visibility listener', asyn
   await expect(page.locator('html')).toHaveAttribute('data-pending-timers', '1');
   await expect(page.locator('html')).toHaveAttribute('data-visibility-listeners', '1');
   await page.getByRole('button', { name: 'Unmount game', exact: true }).click();
-  await expect(page.locator('html'), 'A04.3 active timer cancelled at unmount').toHaveAttribute(
+  await expect(page.locator('html'), 'A04 active timer cancelled at unmount').toHaveAttribute(
     'data-pending-timers',
     '0',
   );
-  await expect(page.locator('html'), 'A04.3 visibility subscription removed').toHaveAttribute(
+  await expect(page.locator('html'), 'A04 visibility subscription removed').toHaveAttribute(
     'data-visibility-listeners',
     '0',
   );
 });
 
-test('R12.2 a prior turn deadline cannot close a later mismatch in the same deal', async ({
+test('R12 a prior turn deadline cannot close a later mismatch in the same deal', async ({
   page,
 }) => {
   await loadTimedBoard(page);

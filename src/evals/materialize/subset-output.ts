@@ -5,7 +5,7 @@ import { readFrozenSpecs } from "./frozen.ts";
 import { isRecord } from "./frontmatter.ts";
 import { orderedDocuments } from "./document-order.ts";
 import { MaterializePaths } from "./paths.ts";
-import { SpecVersion } from "./requirements.ts";
+import { PreviousSpecVersion, SpecVersion } from "./requirements.ts";
 import { readSelectionChanges, selectedClauses, selectionStamp, type SubsetSelection } from "./subset-selection.ts";
 import { SpecsFiles, type SpecsManifest } from "./specs.ts";
 
@@ -24,7 +24,7 @@ export async function subsetBaseline(destination: string, sources: readonly stri
   const frozen = await readFrozenSpecs(root);
   const manifest: unknown = JSON.parse(await readFile(join(root, SpecsFiles.manifest), "utf8"));
   const clauses = selectedClauses(orderedDocuments(frozen.manifest, frozen.documents));
-  if (!isRecord(manifest) || manifest["specVersion"] !== SpecVersion || JSON.stringify(manifest["clauseIds"]) !== JSON.stringify(clauses.map((clause) => clause.id))) throw new Error("The previous player clause manifest is invalid.");
+  if (!isRecord(manifest) || (manifest["specVersion"] !== SpecVersion && manifest["specVersion"] !== PreviousSpecVersion) || JSON.stringify(manifest["clauseIds"]) !== JSON.stringify(clauses.map((clause) => clause.id))) throw new Error("The previous player clause manifest is invalid.");
   const changes = readSelectionChanges(manifest["selectionChanges"]);
   const latest = changes.at(-1);
   if (latest && latest.to.sha256 !== selectionStamp(frozen.manifest.sourceHash, clauses).sha256) throw new Error("The selection change history differs from the player pack.");

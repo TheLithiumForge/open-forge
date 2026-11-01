@@ -14,18 +14,16 @@ export function GameStatus({ game, best, celebration }: GameStatusProps) {
     <>
       <dl className="stats">
         <div>
-          <dt>{StatusLabel.moves}</dt>
-          <dd>{game.moves}</dd>
+          <dt>{StatusLabel.moves}</dt> <dd>{game.moves}</dd>
         </div>
         <div>
-          <dt>{StatusLabel.pairs}</dt>
+          <dt>{StatusLabel.pairs}</dt>{' '}
           <dd>
-            {game.matched.length / 2} / {game.deck.length / 2}
+            {game.matched.length / 2}/{game.deck.length / 2}
           </dd>
         </div>
         <div>
-          <dt>{StatusLabel.time}</dt>
-          <dd>{formatElapsed(game.elapsedMs)}</dd>
+          <dt>{StatusLabel.time}</dt> <dd>{formatElapsed(game.elapsedMs)}</dd>
         </div>
         <div>
           <dt>{StatusLabel.best}</dt> <dd>{best ?? 'none'}</dd>
@@ -41,8 +39,8 @@ export function GameStatus({ game, best, celebration }: GameStatusProps) {
 }
 
 export const StatusLabel = {
-  moves: 'Moves',
-  pairs: 'Pairs',
-  time: 'Active time',
+  moves: 'Moves:',
+  pairs: 'Pairs:',
+  time: 'Time:',
   best: 'Best:',
 } as const;

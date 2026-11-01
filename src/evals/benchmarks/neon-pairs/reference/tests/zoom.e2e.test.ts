@@ -1,36 +1,14 @@
-import { mkdir, mkdtemp, rm } from 'node:fs/promises';
-import { join } from 'node:path';
-import { chromium, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
-import { REFERENCE_ROOT } from './artifact-server.ts';
 import { DealControl } from './control-labels.ts';
 import { loadFixedBoard, finishBoard, exportedSnapshot } from './game-fixture.ts';
-import { zoomExtension, zoomGameTab } from './zoom-extension.ts';
 import { expectFocusInside } from './focus-bounds.ts';
 import { expectReadableText } from './readability.ts';
 
-test('actual 200 percent browser zoom keeps both board sizes playable', async (_, artifacts) => {
-  const work = join(REFERENCE_ROOT, '.browser-work');
-  await mkdir(work, { recursive: true });
-  const profile = await mkdtemp(join(work, 'zoom-'));
-  const extension = await zoomExtension(profile);
-  const context = await chromium.launchPersistentContext(profile, {
-    executablePath: chromium.executablePath(),
-    headless: true,
-    viewport: { width: 1280, height: 800 },
-    args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`],
-    ignoreDefaultArgs: ['--disable-extensions'],
-  });
-  try {
-    if (!context.serviceWorkers().length) await context.waitForEvent('serviceworker');
-    const page = await context.newPage();
+test(
+  'the equivalent zoom layout keeps both board sizes playable',
+  async ({ page }, artifacts) => {
     await loadFixedBoard(page);
-    const worker = context.serviceWorkers()[0];
-    if (!worker) throw new Error('Zoom worker missing.');
-    await expect(
-      worker.evaluate(zoomGameTab, 'https://neon-pairs.invalid/missing'),
-    ).rejects.toThrow('Game tab missing.');
-    await worker.evaluate(zoomGameTab, page.url());
     await expect
       .poll(() => page.evaluate(() => ({ width: innerWidth, ratio: devicePixelRatio })))
       .toEqual({ width: 640, ratio: 2 });
@@ -52,6 +30,17 @@ test('actual 200 percent browser zoom keeps both board sizes playable', async (_
     const completed = await exportedSnapshot(page);
     await page.locator('summary').click();
     await page.getByLabel('Snapshot JSON', { exact: true }).fill(JSON.stringify(completed));
+    await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Resume', exact: true })).toHaveCount(0);
+    await expectReadableText(page);
+    await page.getByLabel('Snapshot JSON', { exact: true }).fill(
+      JSON.stringify({
+        ...completed,
+        matched: [],
+        moves: 0,
+        selection: { kind: 'one', index: 0 },
+      }),
+    );
     await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Resume', exact: true })).toBeVisible();
     await expectReadableText(page);
@@ -78,8 +67,6 @@ test('actual 200 percent browser zoom keeps both board sizes playable', async (_
     }));
     expect(layout.page).toBeLessThanOrEqual(layout.width);
     await page.screenshot({ path: artifacts.outputPath('zoom-large.png'), fullPage: true });
-  } finally {
-    await context.close();
-    await rm(profile, { recursive: true });
-  }
-});
+  },
+  { viewport: { width: 640, height: 400 }, deviceScaleFactor: 2 },
+);

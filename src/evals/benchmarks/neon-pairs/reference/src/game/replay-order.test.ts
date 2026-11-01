@@ -23,6 +23,6 @@ test('equal-time replay actions keep array order before a blocked third activati
       second: 1,
       remainingMs: MISMATCH_MS,
     },
-    'D08.7 equal timestamps keep array order',
+    'D08 equal timestamps keep array order',
   );
 });

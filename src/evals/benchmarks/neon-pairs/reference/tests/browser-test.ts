@@ -25,15 +25,15 @@ before(async () => {
     process.platform === 'win32'
       ? spawnSync('cmd.exe', ['/d', '/c', 'npm --version'], { encoding: 'utf8' })
       : spawnSync('npm', ['--version'], { encoding: 'utf8' });
-  assert.equal(npmResult.status, 0, 'T03.4 npm version command');
+  assert.equal(npmResult.status, 0, 'T03 npm version command');
   const npm = npmResult.stdout.trim();
   const playwright: unknown = JSON.parse(
     await readFile(new URL(import.meta.resolve('@playwright/test/package.json')), 'utf8'),
   );
-  assert.equal(process.versions.node, '26.12.1', 'T03.4 named Node');
-  assert.equal(npm, '11.20.0', 'T03.4 named npm');
+  assert.equal(process.versions.node, '26.12.1', 'T03 named Node');
+  assert.equal(npm, '11.20.0', 'T03 named npm');
   assert.ok(playwright && typeof playwright === 'object' && 'version' in playwright);
-  assert.equal(playwright.version, '1.64.1', 'T03.4 named Playwright');
+  assert.equal(playwright.version, '1.64.1', 'T03 named Playwright');
   browser = await chromium.launch({
     headless: true,
     ...(executable ? { executablePath: executable } : {}),

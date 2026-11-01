@@ -148,7 +148,7 @@ test('the I17 keyboard journey exposes names, states and each result in Chromium
         chromium: browser.version(),
         playwright: await playwrightVersion(),
         screenReader: null,
-        spokenReview: 'Person confirmation pending. No spoken output was tested.',
+        spokenReview: 'User acceptance. No spoken output was tested by the developer.',
         captures,
       },
       null,

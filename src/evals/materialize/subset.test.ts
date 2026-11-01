@@ -13,6 +13,7 @@ import { SpecsFiles } from "./specs.ts";
 import { sample } from "./test-fixture.ts";
 
 const PlayerCapClauses = ["R05.5", "R05.6", "R05.7", "R05.8", "R07.9", "R07.10", "R07.11"];
+const PlayerCapHistory = { before: 180, after: 187 } as const;
 
 test("the frozen player pack contains each L2 clause once in document and clause order", async (t) => {
   const fixture = await sample(t);
@@ -26,8 +27,8 @@ test("the frozen player pack contains each L2 clause once in document and clause
   assert.deepEqual(manifest.clauseIds, expected.map((clause) => clause.id));
   const caps = manifest.selectionChanges.find((change) => PlayerCapClauses.every((id) => change.added.includes(id)));
   assert.ok(caps);
-  assert.equal(caps.from.count, LayerTwoClauseCount - PlayerCapClauses.length);
-  assert.equal(caps.to.count, LayerTwoClauseCount);
+  assert.equal(caps.from.count, PlayerCapHistory.before);
+  assert.equal(caps.to.count, PlayerCapHistory.after);
   assert.deepEqual(caps.added, PlayerCapClauses);
   assert.deepEqual(caps.removed, []);
   const documents = (await inventory(fixture.destination)).filter((file) => file.path !== SpecsFiles.manifest);

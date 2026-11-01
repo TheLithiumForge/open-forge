@@ -6,7 +6,7 @@ open-forge:
 # Controls
 Controls is a specification that defines the game options and reproduction tools in Neon Pairs.
 
-Status: spec version 2.
+Status: spec version 2.1.
 
 You can start another deal, repeat the current one or load saved progress. Each control keeps the same label, so you can find the same action after a game changes.
 
@@ -14,7 +14,7 @@ You can start another deal, repeat the current one or load saved progress. Each 
 
 The main controls are:
 
-- C01 - Label the native size select "Grid size". Give it options `4x4`, `6x6`, `8x8`, `10x10`, `12x12`, `14x14` and `16x16`, with numeric side length `N` as each value.
+- C01 - Label the native size select "Grid size". Give it options `4x4`, `6x6`, `8x8`, `10x10`, `12x12`, `14x14` and `16x16`, with numeric side length `N` as each value. After a successful board-code or snapshot load, select the loaded board's size.
 - C02 - Label the fresh-deal button "New Game". It creates a fresh seed and keeps the current size.
 - C03 - Label the repeat-deal button "Restart". It starts the same board code again.
 
@@ -40,9 +40,11 @@ For example, loading `np1-4-1` starts its hidden four-column board. Entering tha
 
 - C08 - Label the export button "Export snapshot". Fill the textarea with readable version 1 snapshot JSON that you can select and copy manually. Export leaves the game state and clock unchanged. It requires no Clipboard API.
 
-- C09 - Label the import button "Load snapshot". Validate the complete draft before replacing the current game. Load valid progress paused and show "Loaded snapshot. Select Resume to continue."
+If the active clock has fractional milliseconds, round exported `elapsedMs` down and pending mismatch `remainingMs` up. A pending mismatch always exports at least 1ms.
 
-- C10 - Show a "Resume" button only while an imported game is paused. Selecting it clears that pause. Unfinished play continues from the loaded state. While paused, block every card activation and allow board focus movement. On Resume, move focus to the board's remembered tab stop before removing the Resume button. A loaded completed game stays completed after Resume.
+- C09 - Label the import button "Load snapshot". Validate the complete draft before replacing the current game. Load unfinished progress paused and show "Loaded snapshot. Select Resume to continue." Load completed progress as completed without pausing and show "Loaded completed snapshot."
+
+- C10 - Show a "Resume" button only while an imported unfinished game is paused. Selecting it clears that pause. Unfinished play continues from the loaded state. While paused, block every card activation and allow board focus movement. On Resume, move focus to the board's remembered tab stop before removing the Resume button. A loaded completed game stays completed and shows no Resume button.
 
 - C11 - On invalid input, keep the current game and the entered draft for correction. Show the exact status for that control:
 
@@ -51,7 +53,7 @@ For example, loading `np1-4-1` starts its hidden four-column board. Entering tha
 | Load board | Invalid board code. |
 | Load snapshot | Invalid snapshot. |
 
-- C12 - A loaded completed snapshot keeps the win banner static and plays no celebration. Import doesn't write a best score. Resuming an unfinished snapshot and later winning can record a local best.
+- C12 - A loaded completed snapshot keeps the win banner static and plays no celebration. Import doesn't write a best score. Resuming an unfinished snapshot and later winning records a local best under R10.
 
 For example, loading a completed game with fewer moves than the saved best shows that game without replacing the saved record.
 
@@ -63,6 +65,6 @@ For example, loading a completed game with fewer moves than the saved best shows
 
 - C14 - Keep replay in the developer CLI and game core. V1 has no replay controls in the game UI.
 
-Run `npm run replay -- PATH` to read a replay file and print its final snapshot.
+Run `npm run --silent replay -- PATH` to read a replay file. On valid input, print only the final snapshot JSON to stdout and exit 0. On invalid input, print nothing to stdout, write a message to stderr and exit nonzero.
 
 The complete game pack starts in [Neon Pairs](README.md).

@@ -49,10 +49,11 @@ Input is a specification that defines requirements for Neon Pairs.
 - I12.1 - A new deal or Restart resets the remembered tab stop to the first card.
 
 - I13.1 - Scroll each focused card into view with nearest alignment inside the board.
+- I13.2 - Give every card a scroll margin of at least 6px so its complete focus outline stays in view, including mid-board cards.
 
 ## Card names
 
-- I14.1 - Hidden card names contain the one-based row, column and closed state.
+- I14.1 - Name hidden cards by one-based row, column and closed state. For example, Row 1, column 1, closed.
 - I14.2 - Hidden cards keep face SVG out of the DOM.
 - I14.3 - Hidden cards keep face identifiers out of attributes and accessible text.
 
@@ -66,13 +67,16 @@ Input is a specification that defines requirements for Neon Pairs.
 - I16.3 - Announce a final match and win together once.
 - I16.4 - Consecutive identical results each have their own announcement.
 - I16.5 - Focus movement, clock renders and mismatch closing don't repeat a result.
+- I16.6 - Announce the first match as "Pair found. 1 pair matched." Announce later matches as "Pair found. M pairs matched.", where M is matched pairs.
+- I16.7 - Announce a miss as No match. Cards close after a short pause.
+- I16.8 - Announce the final match as "Pair found. All pairs found in N moves and time.", where N is moves and time uses the [R07](rules.md#clock) display format.
 
 ## Screen reader
 
-- I17.1 - Finish a 4x4 game with a screen reader and keyboard alone.
+- I17.1 - Support a complete 4x4 keyboard game with a screen reader. Deliver automated accessibility-tree evidence for this journey.
 - I17.2 - Find Grid size and New Game by name.
-- I17.3 - Hear closed positions, revealed faces and one result per turn.
+- I17.3 - Expose closed positions, revealed face names and states and one live-region result per turn in the accessibility tree.
 - I17.4 - Make the win, final moves and time available.
 - I17.5 - Tab out of the board and start another game.
-- I17.6 - Record screen reader and browser versions in the project README.
+- I17.6 - Record the browser and tool versions in the project README and whether a screen reader was used. If used, record its name and version. The user confirms spoken output during acceptance. Spoken confirmation is not the developer deliverable.
 

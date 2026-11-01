@@ -25,11 +25,11 @@ Visuals is a specification that defines requirements for Neon Pairs.
 ## Colors
 
 - V06.1 - Page background is #090B14.
-- V06.2 - Panel background is #141827.
+- V06.2 - Use #141827 for the board scroll area, reproduction panel and non-card button, select, input and textarea backgrounds.
 - V06.3 - Hidden card background is #1B2034.
 - V06.4 - Revealed card background is #111625.
 - V06.5 - Main text is #F4F6FF.
-- V06.6 - Secondary text is #B8BDD2.
+- V06.6 - Use #B8BDD2 for secondary text, meaning help text, status labels and optional supporting text.
 - V06.7 - Neutral borders are #757C9A.
 - V06.8 - Focus outline is #FFFFFF.
 
@@ -40,9 +40,9 @@ Visuals is a specification that defines requirements for Neon Pairs.
 - V08.1 - Use the system sans-serif font stack.
 - V08.2 - Body text is 16px with 24px line height.
 - V08.3 - Title text is 24px.
-- V08.4 - Secondary text is 14px.
+- V08.4 - Set secondary text to 14px, meaning help text, status labels and optional supporting text.
 
-- V09.1 - Layout gaps, padding and margins use 4px, 6px, 8px, 12px, 16px, 24px or 32px.
+- V09.1 - Positive layout gaps, padding and margins you set use 4px, 6px, 8px, 12px, 16px, 24px or 32px. Allow zero resets and automatic centering. Reset browser default margins. Native control internals are not covered.
 - V09.2 - Borders, radii, focus, font metrics and SVG coordinates use their own stated values.
 
 ## Card faces
@@ -51,6 +51,7 @@ Visuals is a specification that defines requirements for Neon Pairs.
 - V10.3 - Use circle, square, triangle, diamond, star, hexagon, plus and chevron shapes.
 - V10.4 - Use top, top-right, right, bottom-right, bottom, bottom-left, left and top-left markers.
 - V10.5 - Use solid and outline fills.
+- V10.9 - Color is the palette entry at the marker index.
 
 - V11.1 - Shape, marker and fill define identity.
 - V11.2 - Color repeats the marker distinction without adding an identity.
@@ -66,14 +67,14 @@ Visuals is a specification that defines requirements for Neon Pairs.
 - V14.2 - Keep hidden face artwork out of the DOM under [I14](input.md#card-names).
 
 - V15.1 - Show face artwork on revealed and matched cards.
-- V15.2 - Matched cards add a green border and check mark.
+- V15.2 - Matched cards add a Green palette (#8BEA7D) border and check mark.
 - V15.3 - Keep matched cards at full opacity.
 
 - V16.1 - Keyboard focus has a 3px white outline offset by 2px.
-- V16.2 - Hover changes only the border.
+- V16.2 - Hover changes only the border to the Text color (#F4F6FF). Matched cards keep their Green border when hovered.
 
-- V17.1 - Use 120ms border and opacity transitions.
-- V17.2 - Turn those transitions off under prefers-reduced-motion: reduce.
+- V17.1 - Use a 120ms border-color transition.
+- V17.2 - Turn that transition off under prefers-reduced-motion: reduce.
 
 ## Completion
 
@@ -92,9 +93,9 @@ Visuals is a specification that defines requirements for Neon Pairs.
 
 ## Browser zoom
 
-- V20.1 - At 200% browser zoom from 1280x800 keep controls, status and the win summary readable without overlap.
-- V20.2 - Keep the outer page within viewport width at that zoom.
-- V20.3 - Keep 4x4 and 16x16 playable by pointer and keyboard.
-- V20.4 - Allow board scrolling and show the whole focused card and outline.
+- V20.1 - At a 640x400 CSS-pixel viewport with device scale 2, equivalent to 200% browser zoom from 1280x800, keep controls, status and the win summary readable without overlap.
+- V20.2 - Keep the outer page within viewport width at that equivalent zoom layout.
+- V20.3 - At that equivalent zoom layout keep 4x4 and 16x16 playable by pointer and keyboard.
+- V20.4 - At that equivalent zoom layout allow board scrolling and show the whole focused card and outline.
 - V20.5 - Keep pinch zoom enabled.
 

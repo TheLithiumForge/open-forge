@@ -11,7 +11,7 @@ import { ManifestVersion, SpecsFiles, type SpecsManifest } from "./specs.ts";
 import { selectedClauses, selectionChanges, type SelectionChange } from "./subset-selection.ts";
 import { subsetBaseline, writeSubset } from "./subset-output.ts";
 
-export const LayerTwoClauseCount = 187;
+export const LayerTwoClauseCount = 189;
 export const LayerTwoRequirementCount = 60;
 export const LayerTwoFixture = "neon-pairs-player";
 export const SubsetFiles = { requirements: "requirements.json" } as const;
@@ -89,7 +89,7 @@ export async function checkSubset(folder: string): Promise<void> {
   const clauseIds = expected.flatMap((file) => [...file.bytes.toString().matchAll(/^- ([A-Z]\d{2}\.\d+) - /gm)].flatMap((match) => match[1] ?? []));
   if (!isRecord(manifest) || manifest["specVersion"] !== SpecVersion || JSON.stringify(manifest["clauseIds"]) !== JSON.stringify(clauseIds)) throw new Error("The player pack clause manifest changed.");
   const actual = (await inventory(folder)).filter((file) => file.path !== SpecsFiles.manifest);
-  if (JSON.stringify(hashes(actual)) !== JSON.stringify(hashes([...expected].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0)))) throw new Error("The player pack differs from its version 2 clause source.");
+  if (JSON.stringify(hashes(actual)) !== JSON.stringify(hashes([...expected].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0)))) throw new Error(`The player pack differs from its version ${SpecVersion} clause source.`);
   for (const source of frozen.manifest.sourceFiles) {
     if (sha256(await readFile(join(MaterializePaths.source, source.path))) !== source.sha256) throw new Error("The editable product source differs from the frozen specification.");
   }

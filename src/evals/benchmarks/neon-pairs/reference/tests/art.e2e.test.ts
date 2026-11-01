@@ -77,6 +77,34 @@ test('the face marker keeps the specified surround and geometry', async ({ page 
   });
 });
 
+test('solid fills, outline strokes and marker fills share the face palette color', async ({
+  page,
+}) => {
+  await page.goto(ART_URL);
+  const colors = [
+    '#63E7FF',
+    '#FF71D6',
+    '#8BEA7D',
+    '#FFE082',
+    '#FFB064',
+    '#B49AFF',
+    '#FF8296',
+    '#D9F3FF',
+  ];
+  const actual = await page.locator('figure svg').evaluateAll((elements) =>
+    elements.map((element) => ({
+      fill: element.querySelector('g')?.getAttribute('fill'),
+      stroke: element.querySelector('g')?.getAttribute('stroke'),
+      marker: element.querySelector(':scope > circle')?.getAttribute('fill'),
+    })),
+  );
+  expect(actual).toHaveLength(FACE_COUNT);
+  for (const [id, face] of actual.entries()) {
+    const color = colors[Math.floor(id / 8) % colors.length];
+    expect(face).toEqual({ fill: id < 64 ? color : 'none', stroke: color, marker: color });
+  }
+});
+
 test('records the default board and focused revealed state for visual review', async ({
   page,
 }, artifacts) => {

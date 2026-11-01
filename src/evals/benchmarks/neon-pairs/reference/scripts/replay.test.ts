@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { test, onTestFinished } from 'vitest';
@@ -32,7 +32,16 @@ test('replay CLI prints a final snapshot and rejects invalid files and arguments
   );
   const valid = spawnSync(process.execPath, [CLI, file], { encoding: 'utf8' });
   assert.equal(valid.status, ReplayExit.success);
+  assert.equal(valid.stderr, '');
   const actual: unknown = JSON.parse(valid.stdout);
+  const npm =
+    process.env.npm_execpath ?? join(dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js');
+  const command = spawnSync(process.execPath, [npm, 'run', '--silent', 'replay', '--', file], {
+    encoding: 'utf8',
+  });
+  assert.equal(command.status, ReplayExit.success);
+  assert.equal(command.stderr, '');
+  assert.deepEqual(JSON.parse(command.stdout), actual);
   assert.deepEqual(actual, {
     version: SNAPSHOT_VERSION,
     boardCode: EXAMPLE_CODE,
@@ -46,7 +55,21 @@ test('replay CLI prints a final snapshot and rejects invalid files and arguments
   const invalid = spawnSync(process.execPath, [CLI, file], { encoding: 'utf8' });
   assert.equal(invalid.status, ReplayExit.failure);
   assert.equal(invalid.stdout, '');
+  assert.ok(invalid.stderr.trim().length > 0);
+  const rejectedCommand = spawnSync(
+    process.execPath,
+    [npm, 'run', '--silent', 'replay', '--', file],
+    {
+      encoding: 'utf8',
+    },
+  );
+  assert.equal(rejectedCommand.status, ReplayExit.failure);
+  assert.equal(rejectedCommand.stdout, '');
+  assert.ok(rejectedCommand.stderr.trim().length > 0);
   for (const args of [[], [file, file], [join(directory, 'missing.json')]]) {
-    assert.equal(spawnSync(process.execPath, [CLI, ...args]).status, ReplayExit.failure);
+    const rejected = spawnSync(process.execPath, [CLI, ...args], { encoding: 'utf8' });
+    assert.equal(rejected.status, ReplayExit.failure);
+    assert.equal(rejected.stdout, '');
+    assert.ok(rejected.stderr.trim().length > 0);
   }
 });

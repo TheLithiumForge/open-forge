@@ -1,14 +1,14 @@
 # Screen Reader Journey
 
-Screen Reader Journey is a manual NVDA check that records the spoken result of playing one complete Neon Pairs game with the keyboard.
+Screen Reader Journey is a user acceptance check that records the spoken result of playing one complete Neon Pairs game with NVDA and the keyboard.
 
 For example, matching row 1, column 3 with row 2, column 3 on `np1-4-1` should announce one found pair. Rows and columns start at one. Moving focus afterward should leave that result silent.
 
-Status: I17.6 is open for a person. Chromium tree checks cover I17.1 through I17.5. No spoken result is recorded yet.
+Status: user acceptance pending. Chromium tree checks and the browser and tool record cover I17.1 through I17.6. The developer hasn't run a screen reader.
 
 ## Record versions
 
-Before starting, fill in this record with the actual versions. Copy the completed record into the game's README under Accessibility:
+Before starting acceptance, fill in this record with the actual versions. Keep the developer's automated tree record separate from your spoken result:
 
 | Field                                  | Result  |
 | -------------------------------------- | ------- |
@@ -19,7 +19,7 @@ Before starting, fill in this record with the actual versions. Copy the complete
 | Journey result                         | Pending |
 | Unexpected speech and step             | Pending |
 
-Keep personal names and machine paths out of the record. Record a failed step with its expected and heard speech. Leave I17.6 open until a person completes the journey and saves the versions and result.
+Keep personal names and machine paths out of the record. Record a failed step with its expected and heard speech. Spoken confirmation belongs to you during acceptance and isn't a developer delivery gate.
 
 ## Prepare
 
@@ -50,7 +50,7 @@ For each row below, reveal the first position with Enter. Hear its face name and
 | 7    | Row 3 column 3 | Row 4 column 3  | cyan solid square, marker top   | Pair found. 7 pairs matched.                                 |
 | 8    | Row 4 column 1 | Row 4 column 2  | cyan solid star, marker top     | Pair found. All pairs found in 8 moves and the elapsed time. |
 
-The final turn has one result that combines the match and win. Its elapsed time depends on your pace. Compare it with the static win summary and the Active time value. Read the Moves value as 8 and Pairs as 8 / 8. Wait and move focus. The clock stays stopped and the turn result stays silent.
+The final turn has one result that combines the match and win. Its elapsed time depends on your pace. Compare it with the static win summary and Time value. Read Moves: 8 and Pairs: 8/8. Wait and move focus. The clock stays stopped and the turn result stays silent.
 
 ## Start again
 

@@ -1,7 +1,7 @@
 # Neon Pairs
 Neon Pairs is a browser memory game that asks you to find every pair of matching cards.
 
-Status: spec version 2.
+Status: spec version 2.1.
 
 Reveal two cards at a time and finish in as few moves as you can. A board code repeats a deal, so you can report a problem with the same starting cards.
 
@@ -19,7 +19,7 @@ The game draws faces on a dark background. Shape, marker and fill distinguish ea
 
 ## Repeat a game
 
-A board code describes a deal. A snapshot saves progress. A replay records timed actions. The algorithms and version 1 formats are in [Reproducibility](reproducibility.md). Spec version 2 doesn't change those format versions.
+A board code describes a deal. A snapshot saves progress. A replay records timed actions. The algorithms and version 1 formats are in [Reproducibility](reproducibility.md). Spec version 2.1 doesn't change those format versions.
 
 ## Build
 

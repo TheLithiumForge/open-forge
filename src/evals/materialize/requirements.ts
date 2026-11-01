@@ -1,13 +1,14 @@
 import { isRecord } from "./frontmatter.ts";
 import { safeRelative } from "./files.ts";
 
-export const SpecVersion = 2;
+export const SpecVersion = 2.1;
+export const PreviousSpecVersion = 2;
 export const CaseLayer = { two: "L2", three: "L3" } as const;
 export interface ProductClause { readonly id: string; readonly text: string; readonly firstLayer: string }
 export interface ProductRequirement { readonly id: string; readonly document: string; readonly heading: string; readonly clauses: readonly ProductClause[] }
 
 export function readRequirements(value: unknown): ProductRequirement[] {
-  if (!isRecord(value) || value["specVersion"] !== SpecVersion || !Array.isArray(value["requirements"])) throw new Error("Expected the version 2 requirements map.");
+  if (!isRecord(value) || value["specVersion"] !== SpecVersion || !Array.isArray(value["requirements"])) throw new Error(`Expected the version ${SpecVersion} requirements map.`);
   const ids = new Set<string>();
   return value["requirements"].map((entry: unknown) => {
     if (!isRecord(entry) || typeof entry["id"] !== "string" || typeof entry["document"] !== "string" || typeof entry["heading"] !== "string" || !Array.isArray(entry["clauses"])) throw new Error("Invalid product requirement.");

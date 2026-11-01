@@ -31,7 +31,7 @@ test('a capped mismatch closes and larger imported move counts are rejected', ()
   const game = { ...activateCard(createGame(EXAMPLE_CODE), 0), moves: MOVES_MAX };
   const mismatch = activateCard(game, 1);
   assert.equal(mismatch.selection.kind, SelectionKind.mismatch);
-  assert.equal(mismatch.moves, MOVES_MAX, 'R05.5 move count saturates');
+  assert.equal(mismatch.moves, MOVES_MAX, 'R05 move count saturates');
   const closed = advanceGame(mismatch, MISMATCH_MS);
   assert.equal(closed.selection.kind, SelectionKind.closed);
   assert.ok(decodeSnapshot(encodeSnapshot(closed)));

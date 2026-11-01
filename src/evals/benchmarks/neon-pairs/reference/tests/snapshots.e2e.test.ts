@@ -84,7 +84,12 @@ test('invalid drafts keep the current game and a loaded win changes neither best
   expect(await page.locator('.victory.celebrate').count()).toBe(0);
   const expected = await uiSnapshot();
   await expect(page.locator('.stats dd').nth(3)).toHaveText(expected.bestNone);
-  await page.getByRole('button', { name: ReproductionControl.resume, exact: true }).click();
+  await expect(
+    page.getByRole('button', { name: ReproductionControl.resume, exact: true }),
+  ).toHaveCount(0);
+  await expect(page.getByRole('status')).toHaveText('Loaded completed snapshot.');
+  await page.clock.runFor(1000);
+  expect((await exportedSnapshot(page)).elapsedMs).toBe(500);
   await expect(page.locator('.card.matched')).toHaveCount(16);
   expect(await page.locator('.victory.celebrate').count()).toBe(0);
 });

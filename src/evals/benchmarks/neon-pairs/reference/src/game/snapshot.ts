@@ -23,9 +23,12 @@ export function encodeSnapshot(state: GameState): string {
       version: SNAPSHOT_VERSION,
       boardCode: state.boardCode,
       matched: [...state.matched].sort((left, right) => left - right),
-      selection: state.selection,
+      selection:
+        state.selection.kind === SelectionKind.mismatch
+          ? { ...state.selection, remainingMs: Math.ceil(state.selection.remainingMs) }
+          : state.selection,
       moves: state.moves,
-      elapsedMs: state.elapsedMs,
+      elapsedMs: Math.floor(state.elapsedMs),
       started: state.started,
     },
     null,

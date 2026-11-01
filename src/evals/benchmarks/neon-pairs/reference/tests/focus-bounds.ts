@@ -21,5 +21,5 @@ export async function expectFocusInside(card: Locator): Promise<void> {
     };
   });
   for (const [edge, value] of Object.entries(bounds))
-    expect(value, `V19.5 full focus outline ${edge}`).toBeGreaterThanOrEqual(-0.25);
+    expect(value, `V19 full focus outline ${edge}`).toBeGreaterThanOrEqual(-0.25);
 }

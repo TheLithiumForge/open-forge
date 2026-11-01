@@ -13,6 +13,7 @@ test('packages and lock use the reviewed exact versions and strict separate comp
     record(pkg) && record(pkg.dependencies) && record(pkg.devDependencies) && record(expected),
   );
   const installed = { ...pkg.dependencies, ...pkg.devDependencies };
+  assert.deepEqual(Object.keys(pkg.dependencies).sort(), ['react', 'react-dom']);
   for (const [name, version] of Object.entries(expected)) assert.equal(installed[name], version);
   const lock: unknown = JSON.parse(await readFile('package-lock.json', 'utf8'));
   assert.ok(record(lock) && record(lock.packages));
@@ -37,9 +38,9 @@ test('packages and lock use the reviewed exact versions and strict separate comp
   assert.equal(
     pkg.scripts.typecheck,
     'tsc -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p tsconfig.e2e.json',
-    'T07.3 every compiler project',
+    'T07 every compiler project',
   );
-  assert.equal(pkg.scripts.test, 'vitest run', 'T02.7 Vitest runs unit tests');
+  assert.equal(pkg.scripts.test, 'vitest run', 'T02 Vitest runs unit tests');
 });
 
 test('authored TypeScript stays small, uses static ESM and rejects unsafe type escapes', async () => {

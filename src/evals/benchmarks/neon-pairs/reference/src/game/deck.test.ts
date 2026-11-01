@@ -18,18 +18,18 @@ test('generation matches the independent specification vectors', () => {
       return state;
     }),
     RANDOM_STATES,
-    'D03.2 generator follows independent states',
+    'D03 generator follows independent states',
   );
   assert.deepEqual(generateBoard(EXAMPLE_CODE).deck, EXAMPLE_DECK);
   assert.deepEqual(GRID_SIZES, SPEC_VECTOR.sizes);
   assert.equal(SEED_MAX, SPEC_VECTOR.seedMax);
 });
 
-test('D01.2 accepts the inclusive maximum seed', () => {
+test('D01 accepts the inclusive maximum seed', () => {
   assert.deepEqual(
     parseBoardCode('np1-4-2147483646'),
     { size: 4, seed: 2147483646 },
-    'D01.2 inclusive maximum seed',
+    'D01 inclusive maximum seed',
   );
 });
 

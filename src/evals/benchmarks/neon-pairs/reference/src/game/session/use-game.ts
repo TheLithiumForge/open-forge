@@ -56,6 +56,7 @@ export function useGame() {
   }
 
   function loadBoard(code: string): boolean {
+    code = code.trim();
     if (!parseBoardCode(code)) {
       notice(SessionNotice.invalidBoard);
       return false;

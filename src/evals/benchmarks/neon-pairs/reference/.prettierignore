@@ -5,7 +5,5 @@ dist
 .session
 .npm-cache
 .browser-work
-.mutation-work
 .test-work
 test-results
-evidence

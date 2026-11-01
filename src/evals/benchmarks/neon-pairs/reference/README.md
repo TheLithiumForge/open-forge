@@ -4,7 +4,7 @@ Neon Pairs is a memory game that runs offline from one HTML file and keeps local
 
 You can repeat a deal with its board code, save progress as a snapshot or run timed actions through the replay command.
 
-Status: implements product spec version 2.
+Status: implements product spec version 2.1.
 
 ## Install
 
@@ -27,11 +27,11 @@ Run `npm run build`, then open `dist/index.html` from disk. The game makes no ne
 
 Use Grid size to choose a board. Reveal two cards with a click, tap, Enter or Space. Arrow keys, Home and End move board focus. Ctrl+Home and Ctrl+End reach the board ends. Tab leaves the board. New Game gives another deal. Restart repeats the current deal.
 
-Open Reproduce a game to load a board code or export progress. Loading a snapshot pauses it. Resume returns focus to the remembered card and continues the remaining mismatch interval. Elapsed time stops at 359999999ms while play continues. The minutes and seconds display reaches 5999:59. Moves stop at 999999. Matching and victory continue at that count. Saved bests use the same move limit.
+Open Reproduce a game to load a board code or export progress. Loading an unfinished snapshot pauses it. Resume returns focus to the remembered card and continues the remaining mismatch interval. A completed snapshot loads as completed without Resume. Elapsed time stops at 359999999ms while play continues. The minutes and seconds display reaches 5999:59. Moves stop at 999999. Matching and victory continue at that count. Saved bests use the same move limit.
 
 ## Replay
 
-Run `npm run replay -- PATH` with a version 1 replay JSON file. The command prints its final version 1 snapshot. Invalid files produce a nonzero exit and no snapshot. Replay timestamps can reach the safe integer limit. Elapsed time uses the same cap as browser play.
+Run `npm run --silent replay -- PATH` with a version 1 replay JSON file. Valid input prints only its final version 1 snapshot JSON to stdout and exits 0. Invalid input prints nothing to stdout, writes a message to stderr and exits nonzero. The command's silent flag suppresses its npm banner so stdout stays JSON. Other npm commands keep their errors and warnings. Replay timestamps can reach the safe integer limit. Elapsed time uses the same cap as browser play.
 
 ## Check
 
@@ -50,10 +50,10 @@ The locked install, type check, Vitest unit tests, build from current source and
 
 ## Accessibility
 
-Keyboard, card names, atomic turn feedback, reduced motion, touch scrolling and actual 200% browser zoom have browser checks. The diagnostic face sheet draws all 128 faces at 44px.
+Keyboard, card names, atomic turn feedback, reduced motion, touch scrolling and the equivalent zoom layout at 640x400 CSS pixels with device scale 2 have browser checks. The diagnostic face sheet draws all 128 faces at 44px.
 
-Playwright checks Chromium's accessibility tree through a complete keyboard journey. It checks controls, card names, states, turn results, the final summary, Tab exit and New Game. A person still needs to confirm spoken output with a screen reader and record its version here.
+Playwright checks Chromium's accessibility tree through a complete keyboard journey. It checks controls, card names, states, turn results, the final summary, Tab exit and New Game. The developer provides this tree evidence and the tool record. You confirm spoken output during acceptance with your screen reader.
 
-Tree record: Chromium 156.0.8078.4 and Playwright 1.64.1. Screen reader: not run. Spoken journey: person confirmation pending.
+Tree record: Chromium 156.0.8078.4 and Playwright 1.64.1. Screen reader: not run. Spoken journey: user acceptance.
 
-Back to [Specification](../specs/README.md).
+Back to [Specification](docs/).

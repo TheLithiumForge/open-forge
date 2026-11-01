@@ -7,12 +7,7 @@ export default defineConfig({
   build: { target: 'es2023' },
   server: {
     watch: {
-      ignored: [
-        '**/.browser-work/**',
-        '**/.mutation-work/**',
-        '**/.playwright-browsers/**',
-        '**/.npm-cache/**',
-      ],
+      ignored: ['**/.browser-work/**', '**/.playwright-browsers/**', '**/.npm-cache/**'],
     },
   },
 });

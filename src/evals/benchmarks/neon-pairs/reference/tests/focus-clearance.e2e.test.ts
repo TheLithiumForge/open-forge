@@ -3,7 +3,7 @@ import { test } from './browser-test.ts';
 import { loadFixedBoard } from './game-fixture.ts';
 import { expectFocusInside } from './focus-bounds.ts';
 
-test('V19.5 focus clearance survives nearest scroll to an interior row', async ({ page }) => {
+test('V19 focus clearance survives nearest scroll to an interior row', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 });
   await loadFixedBoard(page);
   await page.getByLabel('Grid size', { exact: true }).selectOption('16');

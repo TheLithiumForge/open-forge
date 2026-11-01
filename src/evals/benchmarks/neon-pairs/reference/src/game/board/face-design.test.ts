@@ -21,7 +21,7 @@ test('face names and geometry match the reviewed identity snapshot', async () =>
   assert.deepEqual([faceDesign(0), faceDesign(64), faceDesign(9)], expected);
 });
 
-test('V07.1 V10.6 V10.7 V10.9 all ordered parts match independent literal values', () => {
+test('V07 V10 V10 V10 all ordered parts match independent literal values', () => {
   const shapes = ['circle', 'square', 'triangle', 'diamond', 'star', 'hexagon', 'plus', 'chevron'];
   const markers = [
     'top',

@@ -55,7 +55,7 @@ test('hover changes only card border color and matched marks stay legible', asyn
   expect(await exportedSnapshot(page)).toEqual(progress);
   await card.click();
   await page.locator('.card').nth(6).click();
-  await expect(page.locator('.stats dd').nth(1)).toHaveText('1 / 8');
+  await expect(page.locator('.stats dd').nth(1)).toHaveText('1/8');
   await page.mouse.move(0, 0);
   await expect(card).toHaveCSS('border-color', 'rgb(139, 234, 125)');
   await expect(card).toHaveCSS('opacity', '1');

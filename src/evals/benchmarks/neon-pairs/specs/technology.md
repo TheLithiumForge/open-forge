@@ -1,13 +1,13 @@
 # Technology
 Technology is the build and language specification for Neon Pairs.
 
-Status: spec version 2.
+Status: spec version 2.1.
 
 The game runs offline from one HTML file. Browser controls and inline SVG provide the board, input and artwork.
 
 ## Stack
 
-- T01 - Use React with TypeScript and DOM rendering. Use native buttons, a native select and CSS Grid. Canvas adds no required behavior to this game. Shadcn adds a component setup that this game doesn't need.
+- T01 - Use React with TypeScript and DOM rendering. Use native buttons, a native select and CSS Grid. Use no component library.
 
 - T02 - Pin these packages and keep the lockfile. The stable versions were checked on 31 October 2026:
 
@@ -35,7 +35,7 @@ Use Node `26.12.1`, npm `11.20.0` and Playwright `1.64.1` with Chromium `156.0.8
 
 - T05 - Model project data with exact types and validate unknown data where it enters the game. Use narrowing instead of `any`, suppressed diagnostics or unchecked casts. Derive state unions from their named values.
 
-- T06 - Keep behavior and its code, styles and tests together. Aim for 100 lines per TypeScript file and keep authored files at or below 200 lines. Split by behavior when a file grows. Use direct imports from the file that defines a behavior.
+- T06 - Keep behavior and its code, styles and tests together. Aim for 100 lines per TypeScript file and keep authored TypeScript files at or below 200 lines. Split by behavior when a file grows. Use direct imports from the file that defines a behavior.
 
 ## Commands
 
@@ -49,7 +49,7 @@ Use Node `26.12.1`, npm `11.20.0` and Playwright `1.64.1` with Chromium `156.0.8
 | `npm test` | Run unit tests for the game rules |
 | `npm run test:e2e` | Build from current source, then run browser checks in fresh contexts against that build |
 | `npm run build` | Type check and emit `dist/index.html` |
-| `npm run replay -- PATH` | Read replay JSON and print its final snapshot |
+| `npm run --silent replay -- PATH` | Read replay JSON with the output and exit behavior in C14 |
 
 The browser command must fail if its build fails. It must never fall back to an earlier `dist`. Stop development servers and watchers you start before finishing the work.
 

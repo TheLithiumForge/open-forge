@@ -1,14 +1,18 @@
 # Neon Pairs Reference Audit
 
-Neon Pairs Reference Audit is the decision and evidence record for the game candidate built to product spec version 2.
+Neon Pairs Reference Audit is the decision and evidence record for the game candidate built to product spec version 2.1.
 
 For example, a malformed snapshot is checked against populated progress so resetting the game cannot hide a validation failure.
 
-Status: corrected candidate with 97 requirements and 401 clauses. Independent judgment is pending. I17.6 is the one open person item.
+Status: version 2.1 candidate with 97 requirements and 416 clauses. Local verification is recorded below. Spoken confirmation belongs to user acceptance.
+
+## Current revision
+
+The [spec revision record](revision-v2.1.md) connects the council decisions to the changed behavior and tests. The v2 judges scored the starting reference 10 out of 10. This revised candidate follows the newly published product choices. The replay follow-up publishes `npm run --silent replay -- PATH` and keeps only the cache setting in `.npmrc`.
 
 ## Corrections
 
-The first review is recorded in [Reference Review Corrections](review-round-1.md). The eight later corrections are recorded in [Reference Review Two](review-round-2.md). The load-status announcement correction is recorded in [Reference Review Three](review-round-3.md). Protected benchmark-check defects stay with the overseer. No specification change is proposed.
+The first review is recorded in [Reference Review Corrections](review-round-1.md). The eight later corrections are recorded in [Reference Review Two](review-round-2.md). The load-status announcement correction is recorded in [Reference Review Three](review-round-3.md). Protected benchmark-check updates stay with the overseer. The current revision applies the approved spec changes.
 
 ## Decisions
 
@@ -24,14 +28,14 @@ The candidate keeps these product decisions:
 | Delayed timer        | Synchronize active time before deciding whether an activation is blocked.                                                                                                                 |
 | Elapsed cap          | The maintainer capped elapsed time at 359999999ms. Play continues. Snapshot validation rejects larger values. Replay timestamps keep their safe-integer range.                            |
 | Move cap             | The maintainer capped moves at 999999. Matching and winning continue. Snapshots and saved bests reject larger values.                                                                     |
-| Formats              | Board code, snapshot and replay format versions stay at 1. Product spec stays at 2 under the maintainer's cap decisions.                                                                  |
+| Formats              | Board code, snapshot and replay format versions stay at 1. Product spec is 2.1. Local data formats stay at 1.                                                                             |
 | Test runner          | The maintainer requires Vitest 5.0.5 for game unit tests. Product-rule coverage is kept. The removed second-clock parameter's test is replaced with shared-time assertions.               |
 | Rejection vector     | A literal BigInt-calculated shuffle fixture exercises the rejection branch independently.                                                                                                 |
 | Half-pair gap        | The first half-pair mutation exposed an overlapping-invalid-input gap. An otherwise-valid fixture now isolates it.                                                                        |
 | Reference separation | Game files stay in reference. Audit records, captures and mutation tools stay here.                                                                                                       |
 | Focus and controls   | Board handles its remembered focus. Input reset uses a keyed input while keeping action buttons mounted. Game results sit beside the board. Load feedback follows reproduction controls.  |
 | Mutations            | Several clauses can break together. A kill requires the declared test and assertion reason. M07 exercises real timer cancellation. M19 leaves padding unchanged and fails outline bounds. |
-| Screen reader        | I17.1 through I17.5 are tree-checked. I17.6 records the pending person-run spoken journey.                                                                                                |
+| Screen reader        | I17.1 through I17.6 are tree-checked. The README records the browser and tool versions and that no screen reader was used.                                                                |
 
 ## Checks
 
@@ -39,20 +43,20 @@ The named combination is Node 26.12.1, npm 11.20.0, Playwright 1.64.1 and Chromi
 
 The locked install and checks have these results:
 
-| Gate                           | Result                                                                    |
-| ------------------------------ | ------------------------------------------------------------------------- |
-| Product install and type check | Passed                                                                    |
-| Product tests                  | 93 passed, zero failed and zero skipped                                   |
-| Reference install              | Passed from the lockfile with the worktree-local npm cache                |
-| Reference type check           | All three projects passed                                                 |
-| Vitest unit and static checks  | 123 passed, zero failed and zero skipped                                  |
-| Build                          | Current source emitted one offline HTML file                              |
-| Browser command                | 61 passed in each of three consecutive runs, zero failed and zero skipped |
-| Mutation harness               | 21 caught for their declared assertion reasons                            |
-| Harness self-test              | Passed. Unrelated test names and failure reasons are rejected             |
-| Audit type check               | Passed                                                                    |
+| Gate                           | Result                                                              |
+| ------------------------------ | ------------------------------------------------------------------- |
+| Product install and type check | Passed                                                              |
+| Product tests                  | 191 passed, 26 failed on protected v2 inputs, zero skipped          |
+| Reference install              | Passed from the lockfile with the worktree-local npm cache          |
+| Reference type check           | All three projects passed                                           |
+| Vitest unit and static checks  | 128 passed, zero failed and zero skipped                            |
+| Build                          | Current source emitted one offline HTML file                        |
+| Browser command                | 65 passed in the replay follow-up run, zero failed and zero skipped |
+| Mutation harness               | 21 caught for their declared assertion reasons                      |
+| Harness self-test              | Passed. Unrelated test names and failure reasons are rejected       |
+| Audit type check               | Passed                                                              |
 
-Each browser command builds the game and diagnostic sheet afresh. Vite clears its output before writing. Fresh contexts run against that build. The zoom API targets the loaded game tab. Text bounds check its contents as well as outer layout. Offline delivery permits only the HTML's own file request.
+Each browser command builds the game and diagnostic sheet afresh. Vite clears its output before writing. Fresh contexts run against that build. The zoom journey uses the specified 640x400 CSS-pixel viewport and device scale 2. Text bounds check its contents as well as outer layout. Offline delivery permits only the HTML's own file request.
 
 The [verification record](verification.json) gives commands and counts. The [seed record](seed-record.json) binds source, configuration, trace and evidence hashes. Raw command logs are disposable outputs. The seed is not frozen.
 
@@ -60,7 +64,7 @@ The [verification record](verification.json) gives commands and counts. The [see
 
 The [accessibility record](evidence/accessibility-journey.json) contains 28 sanitized Chromium accessibility-tree captures. It includes independent control names, all closed positions, revealed names, disabled matched states, atomic result payloads, the final summary, Tab exit and New Game. Six captures check both invalid load notices and the paused snapshot notice, each submitted twice. A separate observer checks one live-region change per turn and per load event.
 
-Tree checks do not record speech. A person follows [Screen Reader Journey](screen-reader-journey.md), records NVDA and browser versions and copies the result into the game README. I17.6 stays open until that happens.
+Tree checks do not record speech. You follow [Screen Reader Journey](screen-reader-journey.md) during user acceptance and record NVDA and browser versions there. Spoken confirmation is not a developer delivery gate.
 
 ## Visual review
 
@@ -76,11 +80,10 @@ The cap rules were decided and recorded in the preceding packet. This round chan
 
 ## Review clauses
 
-The following 51 clauses use a review note or still need judgment. The first review's source verdicts do not approve the changed candidate. The next judgment reviews these reasons alongside executable evidence:
+The following 50 clauses use a review note or still need judgment. The first review's source verdicts do not approve the changed candidate. The next judgment reviews these reasons alongside executable evidence:
 
 | Clause | Reason                                                                                               |
 | ------ | ---------------------------------------------------------------------------------------------------- |
-| I17.6  | Open person item. Record the spoken NVDA journey and versions.                                       |
 | V11.1  | Source or design review. The rule requires reading the final structure, types or dependency choices. |
 | V11.2  | Source or design review. The rule requires reading the final structure, types or dependency choices. |
 | V12.7  | Passed by the round-2 judge. All 128 faces are distinguishable at 44px in grayscale.                 |
@@ -134,457 +137,476 @@ The following 51 clauses use a review note or still need judgment. The first rev
 
 ## Clause ledger
 
-Every clause has real paths in the [trace map](../trace.json). Existing checks slots are unchanged. This ledger describes the evidence type. It does not replace independent acceptance:
+Every clause has real paths in the [trace map](../trace.json). Existing check slots stay as recorded for v2. New clause check slots wait for the separate checks packet. This ledger records the reference evidence type:
 
-| Clause | Evidence type        |
-| ------ | -------------------- |
-| R01.1  | Executable evidence  |
-| R01.2  | Executable evidence  |
-| R01.3  | Executable evidence  |
-| R01.4  | Executable evidence  |
-| R02.1  | Executable evidence  |
-| R02.2  | Executable evidence  |
-| R02.3  | Executable evidence  |
-| R03.1  | Executable evidence  |
-| R03.2  | Executable evidence  |
-| R03.3  | Executable evidence  |
-| R04.1  | Executable evidence  |
-| R04.2  | Executable evidence  |
-| R04.3  | Executable evidence  |
-| R04.4  | Executable evidence  |
-| R04.5  | Executable evidence  |
-| R05.1  | Executable evidence  |
-| R05.2  | Executable evidence  |
-| R05.3  | Executable evidence  |
-| R05.4  | Executable evidence  |
-| R05.5  | Executable evidence  |
-| R05.6  | Executable evidence  |
-| R05.7  | Executable evidence  |
-| R05.8  | Executable evidence  |
-| R06.1  | Executable evidence  |
-| R06.2  | Executable evidence  |
-| R06.3  | Executable evidence  |
-| R06.4  | Executable evidence  |
-| R06.5  | Executable evidence  |
-| R06.6  | Executable evidence  |
-| R07.1  | Executable evidence  |
-| R07.2  | Executable evidence  |
-| R07.3  | Executable evidence  |
-| R07.4  | Executable evidence  |
-| R07.5  | Executable evidence  |
-| R07.6  | Executable evidence  |
-| R07.7  | Executable evidence  |
-| R07.8  | Executable evidence  |
-| R07.9  | Executable evidence  |
-| R07.10 | Executable evidence  |
-| R07.11 | Executable evidence  |
-| R08.1  | Executable evidence  |
-| R08.2  | Executable evidence  |
-| R08.3  | Executable evidence  |
-| R08.4  | Executable evidence  |
-| R08.5  | Executable evidence  |
-| R08.6  | Executable evidence  |
-| R09.1  | Executable evidence  |
-| R09.2  | Executable evidence  |
-| R09.3  | Executable evidence  |
-| R09.4  | Executable evidence  |
-| R09.5  | Executable evidence  |
-| R09.6  | Executable evidence  |
-| R10.1  | Executable evidence  |
-| R10.2  | Executable evidence  |
-| R10.3  | Executable evidence  |
-| R10.4  | Executable evidence  |
-| R10.5  | Executable evidence  |
-| R10.6  | Executable evidence  |
-| R10.7  | Executable evidence  |
-| R11.1  | Executable evidence  |
-| R11.2  | Executable evidence  |
-| R11.3  | Executable evidence  |
-| R11.4  | Executable evidence  |
-| R12.1  | Executable evidence  |
-| R12.2  | Executable evidence  |
-| C01.1  | Executable evidence  |
-| C01.2  | Executable evidence  |
-| C01.3  | Executable evidence  |
-| C02.1  | Executable evidence  |
-| C02.2  | Executable evidence  |
-| C02.3  | Executable evidence  |
-| C03.1  | Executable evidence  |
-| C03.2  | Executable evidence  |
-| C03.3  | Executable evidence  |
-| C04.1  | Executable evidence  |
-| C04.2  | Executable evidence  |
-| C04.3  | Executable evidence  |
-| C05.1  | Executable evidence  |
-| C05.2  | Executable evidence  |
-| C05.3  | Executable evidence  |
-| C05.4  | Executable evidence  |
-| C06.1  | Executable evidence  |
-| C06.2  | Executable evidence  |
-| C07.1  | Executable evidence  |
-| C07.2  | Executable evidence  |
-| C07.3  | Executable evidence  |
-| C08.1  | Executable evidence  |
-| C08.2  | Executable evidence  |
-| C08.3  | Executable evidence  |
-| C08.4  | Executable evidence  |
-| C08.5  | Executable evidence  |
-| C09.1  | Executable evidence  |
-| C09.2  | Executable evidence  |
-| C09.3  | Executable evidence  |
-| C09.4  | Executable evidence  |
-| C10.1  | Executable evidence  |
-| C10.2  | Executable evidence  |
-| C10.3  | Executable evidence  |
-| C10.4  | Executable evidence  |
-| C10.5  | Executable evidence  |
-| C10.6  | Executable evidence  |
-| C10.7  | Executable evidence  |
-| C11.1  | Executable evidence  |
-| C11.2  | Executable evidence  |
-| C11.3  | Executable evidence  |
-| C11.4  | Executable evidence  |
-| C12.1  | Executable evidence  |
-| C12.2  | Executable evidence  |
-| C12.3  | Executable evidence  |
-| C12.4  | Executable evidence  |
-| C13.1  | Executable evidence  |
-| C13.2  | Executable evidence  |
-| C13.3  | Executable evidence  |
-| C13.4  | Executable evidence  |
-| C13.5  | Executable evidence  |
-| C14.1  | Executable evidence  |
-| C14.2  | Executable evidence  |
-| C14.3  | Executable evidence  |
-| I01.1  | Executable evidence  |
-| I01.2  | Executable evidence  |
-| I02.1  | Executable evidence  |
-| I03.1  | Executable evidence  |
-| I03.2  | Executable evidence  |
-| I04.1  | Executable evidence  |
-| I04.2  | Executable evidence  |
-| I05.1  | Executable evidence  |
-| I05.2  | Executable evidence  |
-| I05.3  | Executable evidence  |
-| I06.1  | Executable evidence  |
-| I06.2  | Executable evidence  |
-| I06.3  | Executable evidence  |
-| I06.4  | Executable evidence  |
-| I06.5  | Executable evidence  |
-| I06.6  | Executable evidence  |
-| I06.7  | Executable evidence  |
-| I06.8  | Executable evidence  |
-| I06.9  | Executable evidence  |
-| I07.1  | Executable evidence  |
-| I08.1  | Executable evidence  |
-| I08.2  | Executable evidence  |
-| I09.1  | Executable evidence  |
-| I09.2  | Executable evidence  |
-| I09.3  | Executable evidence  |
-| I10.1  | Executable evidence  |
-| I10.2  | Executable evidence  |
-| I11.1  | Executable evidence  |
-| I12.1  | Executable evidence  |
-| I12.2  | Executable evidence  |
-| I13.1  | Executable evidence  |
-| I14.1  | Executable evidence  |
-| I14.2  | Executable evidence  |
-| I14.3  | Executable evidence  |
-| I15.1  | Executable evidence  |
-| I15.2  | Executable evidence  |
-| I16.1  | Executable evidence  |
-| I16.2  | Executable evidence  |
-| I16.3  | Executable evidence  |
-| I16.4  | Executable evidence  |
-| I16.5  | Executable evidence  |
-| I17.1  | Tree-checked         |
-| I17.2  | Tree-checked         |
-| I17.3  | Tree-checked         |
-| I17.4  | Tree-checked         |
-| I17.5  | Tree-checked         |
-| I17.6  | Open person item     |
-| V01.1  | Executable evidence  |
-| V01.2  | Executable evidence  |
-| V01.3  | Executable evidence  |
-| V01.4  | Executable evidence  |
-| V02.1  | Executable evidence  |
-| V02.2  | Executable evidence  |
-| V02.3  | Executable evidence  |
-| V03.1  | Executable evidence  |
-| V03.2  | Executable evidence  |
-| V03.3  | Executable evidence  |
-| V04.1  | Executable evidence  |
-| V04.2  | Executable evidence  |
-| V04.3  | Executable evidence  |
-| V04.4  | Executable evidence  |
-| V05.1  | Executable evidence  |
-| V05.2  | Executable evidence  |
-| V06.1  | Executable evidence  |
-| V06.2  | Executable evidence  |
-| V06.3  | Executable evidence  |
-| V06.4  | Executable evidence  |
-| V06.5  | Executable evidence  |
-| V06.6  | Executable evidence  |
-| V06.7  | Executable evidence  |
-| V06.8  | Executable evidence  |
-| V07.1  | Executable evidence  |
-| V08.1  | Executable evidence  |
-| V08.2  | Executable evidence  |
-| V08.3  | Executable evidence  |
-| V08.4  | Executable evidence  |
-| V09.1  | Executable evidence  |
-| V09.2  | Executable evidence  |
-| V10.1  | Executable evidence  |
-| V10.2  | Executable evidence  |
-| V10.3  | Executable evidence  |
-| V10.4  | Executable evidence  |
-| V10.5  | Executable evidence  |
-| V10.6  | Executable evidence  |
-| V10.7  | Executable evidence  |
-| V10.8  | Executable evidence  |
-| V10.9  | Executable evidence  |
-| V11.1  | Review               |
-| V11.2  | Review               |
-| V12.1  | Executable evidence  |
-| V12.2  | Executable evidence  |
-| V12.3  | Executable evidence  |
-| V12.4  | Executable evidence  |
-| V12.5  | Executable evidence  |
-| V12.6  | Executable evidence  |
-| V12.7  | Passed visual review |
-| V13.1  | Executable evidence  |
-| V13.2  | Executable evidence  |
-| V14.1  | Executable evidence  |
-| V14.2  | Executable evidence  |
-| V15.1  | Executable evidence  |
-| V15.2  | Executable evidence  |
-| V15.3  | Executable evidence  |
-| V16.1  | Executable evidence  |
-| V16.2  | Executable evidence  |
-| V17.1  | Executable evidence  |
-| V17.2  | Executable evidence  |
-| V18.1  | Executable evidence  |
-| V18.2  | Executable evidence  |
-| V18.3  | Executable evidence  |
-| V18.4  | Executable evidence  |
-| V19.1  | Executable evidence  |
-| V19.2  | Executable evidence  |
-| V19.3  | Executable evidence  |
-| V19.4  | Executable evidence  |
-| V19.5  | Executable evidence  |
-| V20.1  | Executable evidence  |
-| V20.2  | Executable evidence  |
-| V20.3  | Executable evidence  |
-| V20.4  | Executable evidence  |
-| V20.5  | Executable evidence  |
-| S01.1  | Executable evidence  |
-| S02.1  | Executable evidence  |
-| S02.2  | Executable evidence  |
-| S02.3  | Executable evidence  |
-| T01.1  | Executable evidence  |
-| T01.2  | Executable evidence  |
-| T01.3  | Executable evidence  |
-| T02.1  | Executable evidence  |
-| T02.2  | Executable evidence  |
-| T02.3  | Executable evidence  |
-| T02.4  | Executable evidence  |
-| T02.5  | Executable evidence  |
-| T02.6  | Executable evidence  |
-| T02.7  | Executable evidence  |
-| T02.8  | Executable evidence  |
-| T02.9  | Executable evidence  |
-| T02.10 | Executable evidence  |
-| T03.1  | Executable evidence  |
-| T03.2  | Executable evidence  |
-| T03.3  | Executable evidence  |
-| T03.4  | Executable evidence  |
-| T03.5  | Review               |
-| T03.6  | Review               |
-| T04.1  | Executable evidence  |
-| T04.2  | Executable evidence  |
-| T05.1  | Review               |
-| T05.2  | Review               |
-| T05.3  | Review               |
-| T05.4  | Review               |
-| T06.1  | Review               |
-| T06.2  | Review               |
-| T06.3  | Executable evidence  |
-| T06.4  | Review               |
-| T06.5  | Review               |
-| T07.1  | Executable evidence  |
-| T07.2  | Executable evidence  |
-| T07.3  | Executable evidence  |
-| T07.4  | Executable evidence  |
-| T07.5  | Executable evidence  |
-| T07.6  | Executable evidence  |
-| T07.7  | Executable evidence  |
-| T07.8  | Executable evidence  |
-| T07.9  | Review               |
-| T08.1  | Executable evidence  |
-| T08.2  | Executable evidence  |
-| T08.3  | Executable evidence  |
-| T08.4  | Executable evidence  |
-| T09.1  | Executable evidence  |
-| T09.2  | Executable evidence  |
-| T10.1  | Review               |
-| T10.2  | Review               |
-| T10.3  | Review               |
-| T10.4  | Executable evidence  |
-| A01.1  | Review               |
-| A01.2  | Review               |
-| A01.3  | Review               |
-| A02.1  | Review               |
-| A02.2  | Review               |
-| A02.3  | Review               |
-| A02.4  | Review               |
-| A03.1  | Review               |
-| A03.2  | Review               |
-| A04.1  | Review               |
-| A04.2  | Review               |
-| A04.3  | Review               |
-| A04.4  | Review               |
-| A04.5  | Executable evidence  |
-| A05.1  | Review               |
-| A05.2  | Review               |
-| A05.3  | Review               |
-| A05.4  | Review               |
-| A05.5  | Review               |
-| A05.6  | Executable evidence  |
-| A06.1  | Review               |
-| A06.2  | Executable evidence  |
-| A06.3  | Executable evidence  |
-| A07.1  | Review               |
-| A07.2  | Review               |
-| A07.3  | Review               |
-| A08.1  | Executable evidence  |
-| A08.2  | Executable evidence  |
-| A08.3  | Executable evidence  |
-| A08.4  | Executable evidence  |
-| A09.1  | Review               |
-| A09.2  | Review               |
-| A09.3  | Executable evidence  |
-| A09.4  | Review               |
-| A10.1  | Review               |
-| A10.2  | Review               |
-| A10.3  | Review               |
-| A10.4  | Review               |
-| A10.5  | Review               |
-| A11.1  | Executable evidence  |
-| A11.2  | Executable evidence  |
-| A11.3  | Executable evidence  |
-| A12.1  | Review               |
-| A12.2  | Review               |
-| A12.3  | Review               |
-| D01.1  | Executable evidence  |
-| D01.2  | Executable evidence  |
-| D01.3  | Executable evidence  |
-| D01.4  | Executable evidence  |
-| D02.1  | Executable evidence  |
-| D02.2  | Executable evidence  |
-| D02.3  | Executable evidence  |
-| D02.4  | Executable evidence  |
-| D03.1  | Executable evidence  |
-| D03.2  | Executable evidence  |
-| D03.3  | Executable evidence  |
-| D04.1  | Executable evidence  |
-| D04.2  | Executable evidence  |
-| D04.3  | Executable evidence  |
-| D04.4  | Executable evidence  |
-| D04.5  | Executable evidence  |
-| D04.6  | Executable evidence  |
-| D05.1  | Executable evidence  |
-| D05.2  | Executable evidence  |
-| D05.3  | Executable evidence  |
-| D05.4  | Executable evidence  |
-| D05.5  | Executable evidence  |
-| D05.6  | Executable evidence  |
-| D05.7  | Executable evidence  |
-| D06.1  | Executable evidence  |
-| D06.2  | Executable evidence  |
-| D06.3  | Executable evidence  |
-| D06.4  | Executable evidence  |
-| D06.5  | Executable evidence  |
-| D06.6  | Executable evidence  |
-| D06.7  | Executable evidence  |
-| D07.1  | Executable evidence  |
-| D07.2  | Executable evidence  |
-| D07.3  | Executable evidence  |
-| D07.4  | Executable evidence  |
-| D07.5  | Executable evidence  |
-| D07.6  | Executable evidence  |
-| D07.7  | Executable evidence  |
-| D07.8  | Executable evidence  |
-| D07.9  | Executable evidence  |
-| D08.1  | Executable evidence  |
-| D08.2  | Executable evidence  |
-| D08.3  | Executable evidence  |
-| D08.4  | Executable evidence  |
-| D08.5  | Executable evidence  |
-| D08.6  | Executable evidence  |
-| D08.7  | Executable evidence  |
-| D09.1  | Executable evidence  |
-| D09.2  | Executable evidence  |
-| D09.3  | Executable evidence  |
-| D09.4  | Executable evidence  |
-| D09.5  | Executable evidence  |
-| D09.6  | Executable evidence  |
-| D09.7  | Executable evidence  |
-| D10.1  | Executable evidence  |
-| D10.2  | Executable evidence  |
-| D10.3  | Executable evidence  |
-| D10.4  | Executable evidence  |
-| D10.5  | Executable evidence  |
-| D10.6  | Executable evidence  |
-| D10.7  | Executable evidence  |
-| D10.8  | Executable evidence  |
-| D10.9  | Executable evidence  |
-| D10.10 | Executable evidence  |
+| Clause | Evidence type       |
+| ------ | ------------------- |
+| R01.1  | Executable evidence |
+| R01.2  | Executable evidence |
+| R01.3  | Executable evidence |
+| R01.4  | Executable evidence |
+| R02.1  | Executable evidence |
+| R02.2  | Executable evidence |
+| R02.3  | Executable evidence |
+| R03.1  | Executable evidence |
+| R03.2  | Executable evidence |
+| R03.3  | Executable evidence |
+| R04.1  | Executable evidence |
+| R04.2  | Executable evidence |
+| R04.3  | Executable evidence |
+| R04.4  | Executable evidence |
+| R04.5  | Executable evidence |
+| R05.1  | Executable evidence |
+| R05.2  | Executable evidence |
+| R05.3  | Executable evidence |
+| R05.4  | Executable evidence |
+| R05.5  | Executable evidence |
+| R05.6  | Executable evidence |
+| R05.7  | Executable evidence |
+| R05.8  | Executable evidence |
+| R05.9  | Executable evidence |
+| R06.1  | Executable evidence |
+| R06.2  | Executable evidence |
+| R06.3  | Executable evidence |
+| R06.4  | Executable evidence |
+| R06.5  | Executable evidence |
+| R06.6  | Executable evidence |
+| R07.1  | Executable evidence |
+| R07.2  | Executable evidence |
+| R07.3  | Executable evidence |
+| R07.4  | Executable evidence |
+| R07.5  | Executable evidence |
+| R07.6  | Executable evidence |
+| R07.7  | Executable evidence |
+| R07.8  | Executable evidence |
+| R07.9  | Executable evidence |
+| R07.10 | Executable evidence |
+| R07.11 | Executable evidence |
+| R07.12 | Executable evidence |
+| R08.1  | Executable evidence |
+| R08.2  | Executable evidence |
+| R08.3  | Executable evidence |
+| R08.4  | Executable evidence |
+| R08.5  | Executable evidence |
+| R08.6  | Executable evidence |
+| R09.1  | Executable evidence |
+| R09.2  | Executable evidence |
+| R09.3  | Executable evidence |
+| R09.4  | Executable evidence |
+| R09.5  | Executable evidence |
+| R09.6  | Executable evidence |
+| R10.1  | Executable evidence |
+| R10.2  | Executable evidence |
+| R10.3  | Executable evidence |
+| R10.4  | Executable evidence |
+| R10.5  | Executable evidence |
+| R10.6  | Executable evidence |
+| R10.7  | Executable evidence |
+| R11.1  | Executable evidence |
+| R11.2  | Executable evidence |
+| R11.3  | Executable evidence |
+| R11.4  | Executable evidence |
+| R12.1  | Executable evidence |
+| R12.2  | Executable evidence |
+| C01.1  | Executable evidence |
+| C01.2  | Executable evidence |
+| C01.3  | Executable evidence |
+| C01.4  | Executable evidence |
+| C02.1  | Executable evidence |
+| C02.2  | Executable evidence |
+| C02.3  | Executable evidence |
+| C03.1  | Executable evidence |
+| C03.2  | Executable evidence |
+| C03.3  | Executable evidence |
+| C04.1  | Executable evidence |
+| C04.2  | Executable evidence |
+| C04.3  | Executable evidence |
+| C05.1  | Executable evidence |
+| C05.2  | Executable evidence |
+| C05.3  | Executable evidence |
+| C05.4  | Executable evidence |
+| C06.1  | Executable evidence |
+| C06.2  | Executable evidence |
+| C07.1  | Executable evidence |
+| C07.2  | Executable evidence |
+| C07.3  | Executable evidence |
+| C08.1  | Executable evidence |
+| C08.2  | Executable evidence |
+| C08.3  | Executable evidence |
+| C08.4  | Executable evidence |
+| C08.5  | Executable evidence |
+| C08.6  | Executable evidence |
+| C08.7  | Executable evidence |
+| C09.1  | Executable evidence |
+| C09.2  | Executable evidence |
+| C09.3  | Executable evidence |
+| C09.4  | Executable evidence |
+| C09.5  | Executable evidence |
+| C10.1  | Executable evidence |
+| C10.2  | Executable evidence |
+| C10.3  | Executable evidence |
+| C10.4  | Executable evidence |
+| C10.5  | Executable evidence |
+| C10.6  | Executable evidence |
+| C10.7  | Executable evidence |
+| C11.1  | Executable evidence |
+| C11.2  | Executable evidence |
+| C11.3  | Executable evidence |
+| C11.4  | Executable evidence |
+| C12.1  | Executable evidence |
+| C12.2  | Executable evidence |
+| C12.3  | Executable evidence |
+| C12.4  | Executable evidence |
+| C13.1  | Executable evidence |
+| C13.2  | Executable evidence |
+| C13.3  | Executable evidence |
+| C13.4  | Executable evidence |
+| C13.5  | Executable evidence |
+| C14.1  | Executable evidence |
+| C14.2  | Executable evidence |
+| C14.3  | Executable evidence |
+| C14.4  | Executable evidence |
+| C14.5  | Executable evidence |
+| I01.1  | Executable evidence |
+| I01.2  | Executable evidence |
+| I02.1  | Executable evidence |
+| I03.1  | Executable evidence |
+| I03.2  | Executable evidence |
+| I04.1  | Executable evidence |
+| I04.2  | Executable evidence |
+| I05.1  | Executable evidence |
+| I05.2  | Executable evidence |
+| I05.3  | Executable evidence |
+| I06.1  | Executable evidence |
+| I06.2  | Executable evidence |
+| I06.3  | Executable evidence |
+| I06.4  | Executable evidence |
+| I06.5  | Executable evidence |
+| I06.6  | Executable evidence |
+| I06.7  | Executable evidence |
+| I06.8  | Executable evidence |
+| I06.9  | Executable evidence |
+| I07.1  | Executable evidence |
+| I08.1  | Executable evidence |
+| I08.2  | Executable evidence |
+| I09.1  | Executable evidence |
+| I09.2  | Executable evidence |
+| I09.3  | Executable evidence |
+| I10.1  | Executable evidence |
+| I10.2  | Executable evidence |
+| I11.1  | Executable evidence |
+| I12.1  | Executable evidence |
+| I12.2  | Executable evidence |
+| I13.1  | Executable evidence |
+| I13.2  | Executable evidence |
+| I14.1  | Executable evidence |
+| I14.2  | Executable evidence |
+| I14.3  | Executable evidence |
+| I15.1  | Executable evidence |
+| I15.2  | Executable evidence |
+| I16.1  | Executable evidence |
+| I16.2  | Executable evidence |
+| I16.3  | Executable evidence |
+| I16.4  | Executable evidence |
+| I16.5  | Executable evidence |
+| I16.6  | Executable evidence |
+| I16.7  | Executable evidence |
+| I16.8  | Executable evidence |
+| I16.9  | Executable evidence |
+| I17.1  | Tree-checked        |
+| I17.2  | Tree-checked        |
+| I17.3  | Tree-checked        |
+| I17.4  | Tree-checked        |
+| I17.5  | Tree-checked        |
+| I17.6  | Tree-checked        |
+| V01.1  | Executable evidence |
+| V01.2  | Executable evidence |
+| V01.3  | Executable evidence |
+| V01.4  | Executable evidence |
+| V02.1  | Executable evidence |
+| V02.2  | Executable evidence |
+| V02.3  | Executable evidence |
+| V03.1  | Executable evidence |
+| V03.2  | Executable evidence |
+| V03.3  | Executable evidence |
+| V04.1  | Executable evidence |
+| V04.2  | Executable evidence |
+| V04.3  | Executable evidence |
+| V04.4  | Executable evidence |
+| V05.1  | Executable evidence |
+| V05.2  | Executable evidence |
+| V06.1  | Executable evidence |
+| V06.2  | Executable evidence |
+| V06.3  | Executable evidence |
+| V06.4  | Executable evidence |
+| V06.5  | Executable evidence |
+| V06.6  | Executable evidence |
+| V06.7  | Executable evidence |
+| V06.8  | Executable evidence |
+| V07.1  | Executable evidence |
+| V08.1  | Executable evidence |
+| V08.2  | Executable evidence |
+| V08.3  | Executable evidence |
+| V08.4  | Executable evidence |
+| V09.1  | Executable evidence |
+| V09.2  | Executable evidence |
+| V10.1  | Executable evidence |
+| V10.2  | Executable evidence |
+| V10.3  | Executable evidence |
+| V10.4  | Executable evidence |
+| V10.5  | Executable evidence |
+| V10.6  | Executable evidence |
+| V10.7  | Executable evidence |
+| V10.8  | Executable evidence |
+| V10.9  | Executable evidence |
+| V11.1  | Review note         |
+| V11.2  | Review note         |
+| V12.1  | Executable evidence |
+| V12.2  | Executable evidence |
+| V12.3  | Executable evidence |
+| V12.4  | Executable evidence |
+| V12.5  | Executable evidence |
+| V12.6  | Executable evidence |
+| V12.7  | Review note         |
+| V12.8  | Executable evidence |
+| V13.1  | Executable evidence |
+| V13.2  | Executable evidence |
+| V14.1  | Executable evidence |
+| V14.2  | Executable evidence |
+| V15.1  | Executable evidence |
+| V15.2  | Executable evidence |
+| V15.3  | Executable evidence |
+| V16.1  | Executable evidence |
+| V16.2  | Executable evidence |
+| V17.1  | Executable evidence |
+| V17.2  | Executable evidence |
+| V18.1  | Executable evidence |
+| V18.2  | Executable evidence |
+| V18.3  | Executable evidence |
+| V18.4  | Executable evidence |
+| V19.1  | Executable evidence |
+| V19.2  | Executable evidence |
+| V19.3  | Executable evidence |
+| V19.4  | Executable evidence |
+| V19.5  | Executable evidence |
+| V20.1  | Executable evidence |
+| V20.2  | Executable evidence |
+| V20.3  | Executable evidence |
+| V20.4  | Executable evidence |
+| V20.5  | Executable evidence |
+| S01.1  | Executable evidence |
+| S02.1  | Executable evidence |
+| S02.2  | Executable evidence |
+| S02.3  | Executable evidence |
+| T01.1  | Executable evidence |
+| T01.2  | Executable evidence |
+| T01.3  | Executable evidence |
+| T01.4  | Executable evidence |
+| T02.1  | Executable evidence |
+| T02.2  | Executable evidence |
+| T02.3  | Executable evidence |
+| T02.4  | Executable evidence |
+| T02.5  | Executable evidence |
+| T02.6  | Executable evidence |
+| T02.7  | Executable evidence |
+| T02.8  | Executable evidence |
+| T02.9  | Executable evidence |
+| T02.10 | Executable evidence |
+| T03.1  | Executable evidence |
+| T03.2  | Executable evidence |
+| T03.3  | Executable evidence |
+| T03.4  | Executable evidence |
+| T03.5  | Review note         |
+| T03.6  | Review note         |
+| T04.1  | Executable evidence |
+| T04.2  | Executable evidence |
+| T05.1  | Review note         |
+| T05.2  | Review note         |
+| T05.3  | Review note         |
+| T05.4  | Review note         |
+| T06.1  | Review note         |
+| T06.2  | Review note         |
+| T06.3  | Executable evidence |
+| T06.4  | Review note         |
+| T06.5  | Review note         |
+| T07.1  | Executable evidence |
+| T07.2  | Executable evidence |
+| T07.3  | Executable evidence |
+| T07.4  | Executable evidence |
+| T07.5  | Executable evidence |
+| T07.6  | Executable evidence |
+| T07.7  | Executable evidence |
+| T07.8  | Executable evidence |
+| T07.9  | Review note         |
+| T08.1  | Executable evidence |
+| T08.2  | Executable evidence |
+| T08.3  | Executable evidence |
+| T08.4  | Executable evidence |
+| T09.1  | Executable evidence |
+| T09.2  | Executable evidence |
+| T10.1  | Review note         |
+| T10.2  | Review note         |
+| T10.3  | Review note         |
+| T10.4  | Executable evidence |
+| A01.1  | Review note         |
+| A01.2  | Review note         |
+| A01.3  | Review note         |
+| A02.1  | Review note         |
+| A02.2  | Review note         |
+| A02.3  | Review note         |
+| A02.4  | Review note         |
+| A03.1  | Review note         |
+| A03.2  | Review note         |
+| A04.1  | Review note         |
+| A04.2  | Review note         |
+| A04.3  | Review note         |
+| A04.4  | Review note         |
+| A04.5  | Executable evidence |
+| A05.1  | Review note         |
+| A05.2  | Review note         |
+| A05.3  | Review note         |
+| A05.4  | Review note         |
+| A05.5  | Review note         |
+| A05.6  | Executable evidence |
+| A06.1  | Review note         |
+| A06.2  | Executable evidence |
+| A06.3  | Executable evidence |
+| A07.1  | Review note         |
+| A07.2  | Review note         |
+| A07.3  | Review note         |
+| A08.1  | Executable evidence |
+| A08.2  | Executable evidence |
+| A08.3  | Executable evidence |
+| A08.4  | Executable evidence |
+| A09.1  | Review note         |
+| A09.2  | Review note         |
+| A09.3  | Executable evidence |
+| A09.4  | Review note         |
+| A10.1  | Review note         |
+| A10.2  | Review note         |
+| A10.3  | Review note         |
+| A10.4  | Review note         |
+| A10.5  | Review note         |
+| A11.1  | Executable evidence |
+| A11.2  | Executable evidence |
+| A11.3  | Executable evidence |
+| A12.1  | Review note         |
+| A12.2  | Review note         |
+| A12.3  | Review note         |
+| D01.1  | Executable evidence |
+| D01.2  | Executable evidence |
+| D01.3  | Executable evidence |
+| D01.4  | Executable evidence |
+| D02.1  | Executable evidence |
+| D02.2  | Executable evidence |
+| D02.3  | Executable evidence |
+| D02.4  | Executable evidence |
+| D03.1  | Executable evidence |
+| D03.2  | Executable evidence |
+| D03.3  | Executable evidence |
+| D04.1  | Executable evidence |
+| D04.2  | Executable evidence |
+| D04.3  | Executable evidence |
+| D04.4  | Executable evidence |
+| D04.5  | Executable evidence |
+| D04.6  | Executable evidence |
+| D05.1  | Executable evidence |
+| D05.2  | Executable evidence |
+| D05.3  | Executable evidence |
+| D05.4  | Executable evidence |
+| D05.5  | Executable evidence |
+| D05.6  | Executable evidence |
+| D05.7  | Executable evidence |
+| D06.1  | Executable evidence |
+| D06.2  | Executable evidence |
+| D06.3  | Executable evidence |
+| D06.4  | Executable evidence |
+| D06.5  | Executable evidence |
+| D06.6  | Executable evidence |
+| D06.7  | Executable evidence |
+| D07.1  | Executable evidence |
+| D07.2  | Executable evidence |
+| D07.3  | Executable evidence |
+| D07.4  | Executable evidence |
+| D07.5  | Executable evidence |
+| D07.6  | Executable evidence |
+| D07.7  | Executable evidence |
+| D07.8  | Executable evidence |
+| D07.9  | Executable evidence |
+| D08.1  | Executable evidence |
+| D08.2  | Executable evidence |
+| D08.3  | Executable evidence |
+| D08.4  | Executable evidence |
+| D08.5  | Executable evidence |
+| D08.6  | Executable evidence |
+| D08.7  | Executable evidence |
+| D09.1  | Executable evidence |
+| D09.2  | Executable evidence |
+| D09.3  | Executable evidence |
+| D09.4  | Executable evidence |
+| D09.5  | Executable evidence |
+| D09.6  | Executable evidence |
+| D09.7  | Executable evidence |
+| D10.1  | Executable evidence |
+| D10.2  | Executable evidence |
+| D10.3  | Executable evidence |
+| D10.4  | Executable evidence |
+| D10.5  | Executable evidence |
+| D10.6  | Executable evidence |
+| D10.7  | Executable evidence |
+| D10.8  | Executable evidence |
+| D10.9  | Executable evidence |
+| D10.10 | Executable evidence |
 
 ## Mutations
 
-Run from reference with the documented worktree-local browser settings, then call `node ../reference-audit/mutations.ts`. The harness checks clean unit and browser baselines first. It changes temporary copies under the game test-work folder and removes each copy afterward.
+Run from reference with the documented local browser settings, then call `node ../reference-audit/mutations.ts`. The harness checks clean unit and browser baselines first. It changes temporary copies under the game test-work folder and removes each copy afterward.
 
 Each fixture lists directly affected clauses, one test and a required assertion reason. The report records the actual assertion and other failed tests. An unrelated failure, build error or missing report cannot count as a kill. The [mutation results](mutation-results.json) contain all 21 reasons:
 
-| Mutation | Clauses                    | Result | Required assertion                         |
-| -------- | -------------------------- | ------ | ------------------------------------------ |
-| M01      | R03.1, R03.2, R04.1, R04.2 | Caught | R03.2 matching pair stays matched          |
-| M02      | R05.1, R05.4               | Caught | R05.1 second distinct reveal adds one move |
-| M03      | R07.1, D09.1               | Caught | R07.1 first reveal starts time             |
-| M04      | R04.3, I10.2, D09.4        | Caught | R04.3 mismatch blocks activation           |
-| M05      | R04.1, D09.3               | Caught | R04.1 mismatch closes at 800ms             |
-| M06      | R07.9, R07.11, D09.5       | Caught | R07.9 elapsed time saturates               |
-| M07      | A04.3, R12.1               | Caught | A04.3 active timer cancelled at unmount    |
-| M08      | C10.4                      | Caught | C10.4 paused import blocks activation      |
-| M09      | R10.1, R10.2               | Caught | R10.1 size six has its separate best       |
-| M10      | R10.2, R10.4               | Caught | R10.4 worse score keeps best               |
-| M11      | R10.3                      | Caught | R10.3 scores survive storage round trip    |
-| M12      | D03.2, D03.3, D04.6        | Caught | D03.2 generator follows independent states |
-| M13      | D01.2                      | Caught | D01.2 inclusive maximum seed               |
-| M14      | D05.1, D06.2               | Caught | snapshot rejects isolated field case 1     |
-| M15      | D06.3                      | Caught | D06.3 half pair is invalid                 |
-| M16      | D09.1, D09.2, D09.3        | Caught | D09.2 time advances before activation      |
-| M17      | D08.5, D08.7               | Caught | D08.7 equal timestamps keep array order    |
-| M18      | I06.1, I07.1               | Caught | I07.1 left movement stops at row edge      |
-| M19      | V16.1, V19.5, V20.4        | Caught | V19.5 full focus outline                   |
-| M20      | I14.2, A08.1, V14.2        | Caught | I14.2 hidden cards mount no face           |
-| M21      | R05.5, R05.8, D07.8        | Caught | R05.5 move count saturates                 |
+| Mutation | Clauses                    | Result | Required assertion                       |
+| -------- | -------------------------- | ------ | ---------------------------------------- |
+| M01      | R03.1, R03.2, R04.1, R04.2 | Caught | R03 matching pair stays matched          |
+| M02      | R05.1, R05.4               | Caught | R05 second distinct reveal adds one move |
+| M03      | R07.1, D09.1               | Caught | R07 first reveal starts time             |
+| M04      | R04.3, I10.2, D09.4        | Caught | R04 mismatch blocks activation           |
+| M05      | R04.1, D09.3               | Caught | R04 mismatch closes at 800ms             |
+| M06      | R07.9, R07.11, D09.5       | Caught | R07 elapsed time saturates               |
+| M07      | A04.3, R12.1               | Caught | A04 active timer cancelled at unmount    |
+| M08      | C10.4                      | Caught | C10 paused import blocks activation      |
+| M09      | R10.1, R10.2               | Caught | R10 size six has its separate best       |
+| M10      | R10.2, R10.4               | Caught | R10 worse score keeps best               |
+| M11      | R10.3                      | Caught | R10 scores survive storage round trip    |
+| M12      | D03.2, D03.3, D04.6        | Caught | D03 generator follows independent states |
+| M13      | D01.2                      | Caught | D01 inclusive maximum seed               |
+| M14      | D05.1, D06.2               | Caught | snapshot rejects isolated field case 1   |
+| M15      | D06.3                      | Caught | D06 half pair is invalid                 |
+| M16      | D09.1, D09.2, D09.3        | Caught | D09 time advances before activation      |
+| M17      | D08.5, D08.7               | Caught | D08 equal timestamps keep array order    |
+| M18      | I06.1, I07.1               | Caught | I07 left movement stops at row edge      |
+| M19      | V16.1, V19.5, V20.4        | Caught | V19 full focus outline                   |
+| M20      | I14.2, A08.1, V14.2        | Caught | I14 hidden cards mount no face           |
+| M21      | R05.5, R05.8, D07.8        | Caught | R05 move count saturates                 |
 
 ## Size
 
-These counts follow Prettier 3.9.6. Physical lines include blank lines. The nonblank column excludes them. Tiers cover the game source, styles, tests, scripts and configuration:
+These counts follow Prettier 3.9.6. Physical lines include blank lines. The nonblank column excludes them. Tiers cover game source, styles, tests, scripts and configuration:
 
 | Tier                | Files | Physical lines | Nonblank lines |
 | ------------------- | ----- | -------------- | -------------- |
-| Configuration       | 10    | 130            | 127            |
-| Styles              | 5     | 304            | 304            |
+| Configuration       | 10    | 125            | 122            |
+| Styles              | 5     | 302            | 302            |
 | Development scripts | 5     | 90             | 84             |
-| Tests and fixtures  | 63    | 3569           | 3425           |
-| Components          | 8     | 467            | 447            |
-| Game functions      | 12    | 471            | 440            |
-| Browser session     | 7     | 357            | 325            |
+| Tests and fixtures  | 65    | 3713           | 3567           |
+| Components          | 8     | 465            | 445            |
+| Game functions      | 12    | 474            | 443            |
+| Browser session     | 7     | 365            | 333            |
 
-Counts exclude Markdown, package-lock.json, HTML, generated distributions, captured evidence, audit tools, command logs, caches, browser downloads and dependencies. Every authored game TypeScript file is within 200 lines. Files above the 100-line aim stay listed in verification.json.
+Counts exclude Markdown, package-lock.json, HTML, generated distributions, captured evidence, audit tools, command logs, caches, browser downloads and dependencies. Every authored game TypeScript file is within 200 lines. Files above the 100-line aim are listed in verification.json.
+
+## Revision files
+
+The [revision file inventory](revision-files.json) lists every created, changed and deleted file for v2.1. The following table keeps the earlier v2 correction history.
 
 ## File changes
 
@@ -687,8 +709,8 @@ The following inventory records the first correction packet. Reference Review Tw
 
 ## Review items
 
-I17.6 needs the person-run NVDA journey and version record. The source and process review clauses above need the next independent judgment. The overseer handles the protected benchmark checks and final freeze decision.
+The source and process review clauses above need the next independent judgment. I17 is complete through the automated journey and tool record. Spoken output is left to user acceptance. The overseer handles the protected benchmark checks and final freeze decision.
 
-The overseer also handles Layer 2 subset generation and manual dist and local Chromium cleanup. Earlier cleanup was rejected by automatic approval review as blocked by policy. No alternate deletion route was used.
+Both packs are regenerated in this revision. Manual dist and local Chromium cleanup stays with the overseer. Earlier cleanup was rejected by automatic approval review as blocked by policy. No alternate deletion route was used.
 
 Back to [Neon Pairs](../../../../../.agents/memory/crystallized/documents/evals/neon-pairs/_neon-pairs.md).

@@ -11,6 +11,7 @@ const ROOT = resolve(AUDIT, "../reference");
 const WORK = join(ROOT, ".test-work");
 const VITEST = join(ROOT, "node_modules/vitest/vitest.mjs");
 const INPUTS = [
+  ".npmrc",
   "src",
   "tests",
   "scripts",

@@ -15,7 +15,7 @@ test('arrow navigation stops at row and column edges without wrapping', () => {
     assert.equal(
       navigationTarget(row * 4, 4, BoardKey.left, false),
       row * 4,
-      'I07.1 left movement stops at row edge',
+      'I07 left movement stops at row edge',
     );
 });
 

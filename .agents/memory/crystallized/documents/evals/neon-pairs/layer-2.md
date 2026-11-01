@@ -20,7 +20,7 @@ Use the same task text in every setup. Only the registered delivery of the suppl
 
 ## Supplied clauses
 
-Use spec version 2 and only clauses whose `firstLayer` is `L2` in `src/evals/benchmarks/neon-pairs/requirements.json`. That is 187 clauses across 60 requirement IDs. The following list freezes the exact subset. All means every clause of that requirement. A mixed requirement lists its supplied clauses:
+Use spec version 2.1 and only clauses whose `firstLayer` is `L2` in `src/evals/benchmarks/neon-pairs/requirements.json`. That is 189 clauses across 60 requirement IDs. The following list freezes the exact subset. All means every clause of that requirement. A mixed requirement lists its supplied clauses:
 
 | Requirement | Supplied clauses |
 | --- | --- |
@@ -28,9 +28,9 @@ Use spec version 2 and only clauses whose `firstLayer` is `L2` in `src/evals/ben
 | R02 | All |
 | R03 | All |
 | R04 | R04.1, R04.2, R04.3, R04.4 |
-| R05 | All |
+| R05 | R05.1, R05.2, R05.3, R05.4, R05.9 |
 | R06 | All |
-| R07 | R07.1, R07.2, R07.3, R07.5, R07.6, R07.7, R07.8, R07.9, R07.10, R07.11 |
+| R07 | R07.1, R07.2, R07.3, R07.5, R07.6, R07.7, R07.8, R07.10, R07.11, R07.12 |
 | R08 | R08.1, R08.2, R08.3, R08.4 |
 | R09 | R09.1, R09.2, R09.3, R09.4 |
 | R10 | All |
@@ -55,7 +55,7 @@ Use spec version 2 and only clauses whose `firstLayer` is `L2` in `src/evals/ben
 | I13 | All |
 | I14 | All |
 | I15 | All |
-| I16 | All |
+| I16 | I16.1, I16.2, I16.3, I16.4, I16.5, I16.6, I16.7, I16.8 |
 | I17 | All |
 | V01 | V01.1, V01.3 |
 | V02 | All |
@@ -66,7 +66,7 @@ Use spec version 2 and only clauses whose `firstLayer` is `L2` in `src/evals/ben
 | V07 | All |
 | V08 | All |
 | V09 | All |
-| V10 | V10.1, V10.3, V10.4, V10.5 |
+| V10 | V10.1, V10.3, V10.4, V10.5, V10.9 |
 | V11 | All |
 | V12 | V12.7 |
 | V13 | All |
@@ -87,7 +87,7 @@ Use spec version 2 and only clauses whose `firstLayer` is `L2` in `src/evals/ben
 
 Deliver each included clause's complete text and its defining heading. Include the table values and exact labels it needs. Resolve parent references to included clauses only. Use neutral local document links with the same descriptions in every form. Don't give the agent full source documents with omitted clauses still in them. Don't send layer plans, data maps, the decision log, trace entries or grading instructions.
 
-The generated subset must carry only the same 187 clauses in each form. Check its clause IDs and product sentences before scored runs. Unprovided rules can't become hidden correctness checks. Source locality stays in the prompt and in the existing judge result, while the stricter architecture and file-length rules wait for Layer 3.
+The generated subset must carry only the same 189 clauses in each form. It reads as a checklist, with examples and exact labels in the clause text. Check its clause IDs and product sentences before scored runs. Unprovided rules can't become hidden correctness checks. Source locality stays in the prompt and in the existing judge result, while the stricter architecture and file-length rules wait for Layer 3.
 
 ## Delivery setups
 
@@ -110,7 +110,6 @@ Only these choices have answers beyond the provided rules:
 
 | Choice | Answer |
 | --- | --- |
-| Elapsed-time display | Show minutes and seconds. Let minutes grow past 59. |
 | Supporting title copy | Just use Neon Pairs as the title. I don't need a subtitle. |
 | Control arrangement | Put the size and game buttons above the board. They can wrap on my phone. |
 
@@ -122,6 +121,6 @@ Use a 60-minute limit for this case, including coding and tool work. Freeze file
 
 Keep Layer 1's 16 stated checks and add checks for every supplied clause. The proposal's roughly 48 checks is a planning estimate, not this clause count. One check can test several clauses, but each clause needs all its assertions to pass. Controlled clocks check the stated intervals. Find cards through play and accessible controls without an undocumented hook.
 
-Report executable outcomes separately from the screen reader and face-legibility reviews. The [Grading](../grading.md) defines statuses, review uncertainty and counting.
+The developer provides the I17 tree evidence and tool record. Spoken output belongs to user acceptance. Report face-legibility reviews separately from executable outcomes. The [Grading](../grading.md) defines statuses, review uncertainty and counting.
 
 Back to [Neon Pairs](_neon-pairs.md).

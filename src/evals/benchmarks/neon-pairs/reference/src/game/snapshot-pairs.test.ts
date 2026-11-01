@@ -10,6 +10,6 @@ test('matched indices need whole pairs even when every other field is consistent
   assert.equal(
     decodeSnapshot(encodeSnapshot({ ...valid, matched: [0] })),
     null,
-    'D06.3 half pair is invalid',
+    'D06 half pair is invalid',
   );
 });

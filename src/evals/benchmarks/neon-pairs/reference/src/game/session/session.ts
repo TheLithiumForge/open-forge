@@ -10,6 +10,7 @@ export const SessionNotice = {
   ready: 'Find every matching pair.',
   newGame: 'New game ready.',
   loaded: 'Loaded snapshot. Select Resume to continue.',
+  loadedCompleted: 'Loaded completed snapshot.',
   invalidBoard: 'Invalid board code.',
   invalidSnapshot: 'Invalid snapshot.',
   resumed: 'Game resumed.',
@@ -28,7 +29,13 @@ export function initialSession(code: string, preferences: Preferences): Session 
   };
 }
 
-export function replaceGame(session: Session, game: GameState, paused: boolean): Session {
+export function replaceGame(session: Session, game: GameState, imported: boolean): Session {
+  const paused = imported && !isWon(game);
+  const loadNotice = imported
+    ? paused
+      ? SessionNotice.loaded
+      : SessionNotice.loadedCompleted
+    : '';
   return {
     ...session,
     game,
@@ -37,8 +44,8 @@ export function replaceGame(session: Session, game: GameState, paused: boolean):
     celebration: false,
     preferences: { ...session.preferences, size: game.size },
     announcement: session.announcement + 1,
-    feedback: paused ? SessionNotice.loaded : SessionNotice.newGame,
-    loadNotice: paused ? SessionNotice.loaded : '',
+    feedback: loadNotice || SessionNotice.newGame,
+    loadNotice,
   };
 }
 

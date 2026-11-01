@@ -21,7 +21,7 @@ function replay(overrides: Record<string, unknown> = {}): string {
 
 test('replay starts its elapsed clock on first activation and advances before actions', () => {
   const result = replayGame(replay());
-  assert.equal(result?.elapsedMs, 100, 'D09.2 time advances before activation');
+  assert.equal(result?.elapsedMs, 100, 'D09 time advances before activation');
   assert.deepEqual(result?.selection, {
     kind: SelectionKind.mismatch,
     first: 0,
@@ -77,8 +77,8 @@ test('replay enforces bounded actions, bytes and safe elapsed endpoints', () => 
   assert.equal(replayGame(replay({ actions: [...actions, actions[0]] })), null);
   const valid = replay();
   const padded = valid + ' '.repeat(1_048_576 - Buffer.byteLength(valid));
-  assert.ok(replayGame(padded), 'D10.2 valid JSON exactly at byte limit');
-  assert.equal(replayGame(padded + ' '), null, 'D10.2 valid JSON above byte limit');
+  assert.ok(replayGame(padded), 'D10 valid JSON exactly at byte limit');
+  assert.equal(replayGame(padded + ' '), null, 'D10 valid JSON above byte limit');
   const maximum = replayGame(
     replay({ actions: [{ atMs: 0, index: 0 }], endMs: Number.MAX_SAFE_INTEGER }),
   );

@@ -8,7 +8,7 @@
     "browser": false,
     "clauses": ["R03.1", "R03.2", "R04.1", "R04.2"],
     "testName": "a matching pair stays up and costs exactly one move",
-    "reason": "R03.2 matching pair stays matched"
+    "reason": "R03 matching pair stays matched"
   },
   {
     "id": "M02",
@@ -19,7 +19,7 @@
     "browser": false,
     "clauses": ["R05.1", "R05.4"],
     "testName": "a matching pair stays up and costs exactly one move",
-    "reason": "R05.1 second distinct reveal adds one move"
+    "reason": "R05 second distinct reveal adds one move"
   },
   {
     "id": "M03",
@@ -30,7 +30,7 @@
     "browser": false,
     "clauses": ["R07.1", "D09.1"],
     "testName": "first reveal starts play without a move and ignores invalid activation",
-    "reason": "R07.1 first reveal starts time"
+    "reason": "R07 first reveal starts time"
   },
   {
     "id": "M04",
@@ -41,7 +41,7 @@
     "browser": false,
     "clauses": ["R04.3", "I10.2", "D09.4"],
     "testName": "a mismatch blocks all activation and closes together at the exact interval",
-    "reason": "R04.3 mismatch blocks activation"
+    "reason": "R04 mismatch blocks activation"
   },
   {
     "id": "M05",
@@ -52,7 +52,7 @@
     "browser": false,
     "clauses": ["R04.1", "D09.3"],
     "testName": "a mismatch blocks all activation and closes together at the exact interval",
-    "reason": "R04.1 mismatch closes at 800ms"
+    "reason": "R04 mismatch closes at 800ms"
   },
   {
     "id": "M06",
@@ -63,7 +63,7 @@
     "browser": false,
     "clauses": ["R07.9", "R07.11", "D09.5"],
     "testName": "elapsed cap accepts its endpoint, rejects larger imports and keeps play exportable",
-    "reason": "R07.9 elapsed time saturates"
+    "reason": "R07 elapsed time saturates"
   },
   {
     "id": "M07",
@@ -73,8 +73,8 @@
     "test": "tests/timer-lifecycle.e2e.test.ts",
     "browser": true,
     "clauses": ["A04.3", "R12.1"],
-    "testName": "A04.3 R12.1 unmount clears the active timer and visibility listener",
-    "reason": "A04.3 active timer cancelled at unmount"
+    "testName": "A04 R12 unmount clears the active timer and visibility listener",
+    "reason": "A04 active timer cancelled at unmount"
   },
   {
     "id": "M08",
@@ -85,7 +85,7 @@
     "browser": false,
     "clauses": ["C10.4"],
     "testName": "an imported session blocks input and active time until Resume",
-    "reason": "C10.4 paused import blocks activation"
+    "reason": "C10 paused import blocks activation"
   },
   {
     "id": "M09",
@@ -96,7 +96,7 @@
     "browser": false,
     "clauses": ["R10.1", "R10.2"],
     "testName": "preferences round trip size and separate minimum moves per size",
-    "reason": "R10.1 size six has its separate best"
+    "reason": "R10 size six has its separate best"
   },
   {
     "id": "M10",
@@ -107,7 +107,7 @@
     "browser": false,
     "clauses": ["R10.2", "R10.4"],
     "testName": "preferences round trip size and separate minimum moves per size",
-    "reason": "R10.4 worse score keeps best"
+    "reason": "R10 worse score keeps best"
   },
   {
     "id": "M11",
@@ -118,7 +118,7 @@
     "browser": false,
     "clauses": ["R10.3"],
     "testName": "preferences round trip size and separate minimum moves per size",
-    "reason": "R10.3 scores survive storage round trip"
+    "reason": "R10 scores survive storage round trip"
   },
   {
     "id": "M12",
@@ -129,7 +129,7 @@
     "browser": false,
     "clauses": ["D03.2", "D03.3", "D04.6"],
     "testName": "generation matches the independent specification vectors",
-    "reason": "D03.2 generator follows independent states"
+    "reason": "D03 generator follows independent states"
   },
   {
     "id": "M13",
@@ -139,8 +139,8 @@
     "test": "src/game/deck.test.ts",
     "browser": false,
     "clauses": ["D01.2"],
-    "testName": "D01.2 accepts the inclusive maximum seed",
-    "reason": "D01.2 inclusive maximum seed"
+    "testName": "D01 accepts the inclusive maximum seed",
+    "reason": "D01 inclusive maximum seed"
   },
   {
     "id": "M14",
@@ -162,7 +162,7 @@
     "browser": false,
     "clauses": ["D06.3"],
     "testName": "matched indices need whole pairs even when every other field is consistent",
-    "reason": "D06.3 half pair is invalid"
+    "reason": "D06 half pair is invalid"
   },
   {
     "id": "M16",
@@ -173,7 +173,7 @@
     "browser": false,
     "clauses": ["D09.1", "D09.2", "D09.3"],
     "testName": "replay starts its elapsed clock on first activation and advances before actions",
-    "reason": "D09.2 time advances before activation"
+    "reason": "D09 time advances before activation"
   },
   {
     "id": "M17",
@@ -184,7 +184,7 @@
     "browser": false,
     "clauses": ["D08.5", "D08.7"],
     "testName": "equal-time replay actions keep array order before a blocked third activation",
-    "reason": "D08.7 equal timestamps keep array order"
+    "reason": "D08 equal timestamps keep array order"
   },
   {
     "id": "M18",
@@ -195,7 +195,7 @@
     "browser": false,
     "clauses": ["I06.1", "I07.1"],
     "testName": "arrow navigation stops at row and column edges without wrapping",
-    "reason": "I07.1 left movement stops at row edge"
+    "reason": "I07 left movement stops at row edge"
   },
   {
     "id": "M19",
@@ -205,8 +205,8 @@
     "test": "tests/focus-clearance.e2e.test.ts",
     "browser": true,
     "clauses": ["V16.1", "V19.5", "V20.4"],
-    "testName": "V19.5 focus clearance survives nearest scroll to an interior row",
-    "reason": "V19.5 full focus outline"
+    "testName": "V19 focus clearance survives nearest scroll to an interior row",
+    "reason": "V19 full focus outline"
   },
   {
     "id": "M20",
@@ -217,7 +217,7 @@
     "browser": true,
     "clauses": ["I14.2", "A08.1", "V14.2"],
     "testName": "finishes the literal board by keyboard without inspecting hidden faces",
-    "reason": "I14.2 hidden cards mount no face"
+    "reason": "I14 hidden cards mount no face"
   },
   {
     "id": "M21",
@@ -228,6 +228,6 @@
     "browser": false,
     "clauses": ["R05.5", "R05.8", "D07.8"],
     "testName": "a capped mismatch closes and larger imported move counts are rejected",
-    "reason": "R05.5 move count saturates"
+    "reason": "R05 move count saturates"
   }
 ]

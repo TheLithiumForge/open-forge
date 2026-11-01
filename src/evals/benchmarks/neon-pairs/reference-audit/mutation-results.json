@@ -9,14 +9,14 @@
       "clauses": ["R03.1", "R03.2", "R04.1", "R04.2"],
       "test": "src/game/game.test.ts",
       "testName": "a matching pair stays up and costs exactly one move",
-      "reason": "R03.2 matching pair stays matched",
+      "reason": "R03 matching pair stays matched",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R03.2 matching pair stays matched\n+ actual - expected\n\n+ []\n- [\n-   2,\n-   6\n- ]\n\n    at reference/src/game/game.test.ts:29:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R03 matching pair stays matched\n+ actual - expected\n\n+ []\n- [\n-   2,\n-   6\n- ]\n\n    at reference/src/game/game.test.ts:29:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "a mismatch blocks all activation and closes together at the exact interval",
-          "message": "AssertionError [ERR_ASSERTION]: R04.3 mismatch blocks activation\n+ actual - expected\n... Skipped lines\n\n  {\n    boardCode: 'np1-4-1',\n    deck: [\n      6,\n      7,\n...\n    selection: {\n+     index: 2,\n+     kind: 'one'\n-     kind: 'closed'\n    },\n    size: 4,\n    started: true\n  }\n\n    at reference/src/game/game.test.ts:40:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: R04 mismatch blocks activation\n+ actual - expected\n... Skipped lines\n\n  {\n    boardCode: 'np1-4-1',\n    deck: [\n      6,\n      7,\n...\n    selection: {\n+     index: 2,\n+     kind: 'one'\n-     kind: 'closed'\n    },\n    size: 4,\n    started: true\n  }\n\n    at reference/src/game/game.test.ts:40:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         },
         {
           "name": "completion counts only matched pairs and stops the clock and later activation",
@@ -33,10 +33,10 @@
       "clauses": ["R05.1", "R05.4"],
       "test": "src/game/game.test.ts",
       "testName": "a matching pair stays up and costs exactly one move",
-      "reason": "R05.1 second distinct reveal adds one move",
+      "reason": "R05 second distinct reveal adds one move",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R05.1 second distinct reveal adds one move\n\n2 !== 1\n\n    at reference/src/game/game.test.ts:31:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R05 second distinct reveal adds one move\n\n2 !== 1\n\n    at reference/src/game/game.test.ts:31:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "a mismatch blocks all activation and closes together at the exact interval",
@@ -53,10 +53,10 @@
       "clauses": ["R07.1", "D09.1"],
       "test": "src/game/game.test.ts",
       "testName": "first reveal starts play without a move and ignores invalid activation",
-      "reason": "R07.1 first reveal starts time",
+      "reason": "R07 first reveal starts time",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R07.1 first reveal starts time\n\nfalse !== true\n\n    at reference/src/game/game.test.ts:19:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R07 first reveal starts time\n\nfalse !== true\n\n    at reference/src/game/game.test.ts:19:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "a mismatch blocks all activation and closes together at the exact interval",
@@ -81,10 +81,10 @@
       "clauses": ["R04.3", "I10.2", "D09.4"],
       "test": "src/game/game.test.ts",
       "testName": "a mismatch blocks all activation and closes together at the exact interval",
-      "reason": "R04.3 mismatch blocks activation",
+      "reason": "R04 mismatch blocks activation",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R04.3 mismatch blocks activation\n+ actual - expected\n... Skipped lines\n\n  {\n    boardCode: 'np1-4-1',\n    deck: [\n      6,\n      7,\n...\n    selection: {\n+     index: 0,\n+     kind: 'one'\n-     first: 0,\n-     kind: 'mismatch',\n-     remainingMs: 800,\n-     second: 1\n    },\n    size: 4,\n    started: true\n  }\n\n    at reference/src/game/game.test.ts:40:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R04 mismatch blocks activation\n+ actual - expected\n... Skipped lines\n\n  {\n    boardCode: 'np1-4-1',\n    deck: [\n      6,\n      7,\n...\n    selection: {\n+     index: 0,\n+     kind: 'one'\n-     first: 0,\n-     kind: 'mismatch',\n-     remainingMs: 800,\n-     second: 1\n    },\n    size: 4,\n    started: true\n  }\n\n    at reference/src/game/game.test.ts:40:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
@@ -92,10 +92,10 @@
       "clauses": ["R04.1", "D09.3"],
       "test": "src/game/game.test.ts",
       "testName": "a mismatch blocks all activation and closes together at the exact interval",
-      "reason": "R04.1 mismatch closes at 800ms",
+      "reason": "R04 mismatch closes at 800ms",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R04.1 mismatch closes at 800ms\n+ actual - expected\n\n+ 'mismatch'\n- 'closed'\n\n    at reference/src/game/game.test.ts:49:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R04 mismatch closes at 800ms\n+ actual - expected\n\n+ 'mismatch'\n- 'closed'\n\n    at reference/src/game/game.test.ts:49:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "one active-time step advances elapsed and mismatch together",
@@ -108,21 +108,21 @@
       "clauses": ["R07.9", "R07.11", "D09.5"],
       "test": "src/game/elapsed-time.test.ts",
       "testName": "elapsed cap accepts its endpoint, rejects larger imports and keeps play exportable",
-      "reason": "R07.9 elapsed time saturates",
+      "reason": "R07 elapsed time saturates",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R07.9 elapsed time saturates\n+ actual - expected\n\n+ 9007199614740990\n- 359999999\n\n    at reference/src/game/elapsed-time.test.ts:15:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R07 elapsed time saturates\n+ actual - expected\n\n+ 9007199614740990\n- 359999999\n\n    at reference/src/game/elapsed-time.test.ts:15:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
       "id": "M07",
       "clauses": ["A04.3", "R12.1"],
       "test": "tests/timer-lifecycle.e2e.test.ts",
-      "testName": "A04.3 R12.1 unmount clears the active timer and visibility listener",
-      "reason": "A04.3 active timer cancelled at unmount",
+      "testName": "A04 R12 unmount clears the active timer and visibility listener",
+      "reason": "A04 active timer cancelled at unmount",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "A04.3 active timer cancelled at unmount\n\nexpect(locator).toHaveAttribute(expected) failed\n\nLocator:  locator('html')\nExpected: \"0\"\nReceived: \"1\"\nTimeout:  5000ms\n\nCall log:\n  - A04.3 active timer cancelled at unmount locator('html') with timeout 5000ms\n  - waiting for locator('html')\n    14 × locator resolved to <html lang=\"en\" data-pending-timers=\"1\" data-visibility-listeners=\"0\">…</html>\n       - unexpected value \"1\"\n",
+      "assertion": "A04 active timer cancelled at unmount\n\nexpect(locator).toHaveAttribute(expected) failed\n\nLocator:  locator('html')\nExpected: \"0\"\nReceived: \"1\"\nTimeout:  5000ms\n\nCall log:\n  - A04 active timer cancelled at unmount locator('html') with timeout 5000ms\n  - waiting for locator('html')\n    14 × locator resolved to <html lang=\"en\" data-pending-timers=\"1\" data-visibility-listeners=\"0\">…</html>\n       - unexpected value \"1\"\n",
       "otherFailures": []
     },
     {
@@ -130,10 +130,10 @@
       "clauses": ["C10.4"],
       "test": "src/game/session/session.test.ts",
       "testName": "an imported session blocks input and active time until Resume",
-      "reason": "C10.4 paused import blocks activation",
+      "reason": "C10 paused import blocks activation",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: C10.4 paused import blocks activation\n+ actual - expected\n... Skipped lines\n\n  {\n+   announcement: 4,\n-   announcement: 3,\n    celebration: false,\n+   feedback: 'No match. Cards close after a short pause.',\n-   feedback: 'Loaded snapshot. Select Resume to continue.',\n    game: {\n      boardCode: 'np1-4-1',\n      deck: [\n        6,\n        7,\n...\n      matched: [],\n+     moves: 1,\n-     moves: 0,\n      seed: 1,\n      selection: {\n+       first: 0,\n+       kind: 'mismatch',\n+       remainingMs: 800,\n+       second: 2\n-       index: 0,\n-       kind: 'one'\n      },\n      size: 4,\n      started: true\n    },\n    generation: 2,\n\n    at reference/src/game/session/session.test.ts:45:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: C10 paused import blocks activation\n+ actual - expected\n... Skipped lines\n\n  {\n+   announcement: 4,\n-   announcement: 3,\n    celebration: false,\n+   feedback: 'No match. Cards close after a short pause.',\n-   feedback: 'Loaded snapshot. Select Resume to continue.',\n    game: {\n      boardCode: 'np1-4-1',\n      deck: [\n        6,\n        7,\n...\n      matched: [],\n+     moves: 1,\n-     moves: 0,\n      seed: 1,\n      selection: {\n+       first: 0,\n+       kind: 'mismatch',\n+       remainingMs: 800,\n+       second: 2\n-       index: 0,\n-       kind: 'one'\n      },\n      size: 4,\n      started: true\n    },\n    generation: 2,\n\n    at reference/src/game/session/session.test.ts:45:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
@@ -141,10 +141,10 @@
       "clauses": ["R10.1", "R10.2"],
       "test": "src/game/session/storage.test.ts",
       "testName": "preferences round trip size and separate minimum moves per size",
-      "reason": "R10.1 size six has its separate best",
+      "reason": "R10 size six has its separate best",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R10.1 size six has its separate best\n\nundefined !== 20\n\n    at reference/src/game/session/storage.test.ts:36:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R10 size six has its separate best\n\nundefined !== 20\n\n    at reference/src/game/session/storage.test.ts:32:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
@@ -152,10 +152,10 @@
       "clauses": ["R10.2", "R10.4"],
       "test": "src/game/session/storage.test.ts",
       "testName": "preferences round trip size and separate minimum moves per size",
-      "reason": "R10.4 worse score keeps best",
+      "reason": "R10 worse score keeps best",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R10.4 worse score keeps best\n+ actual - expected\n\n  {\n    bestMoves: {\n+     '4': 13,\n-     '4': 12,\n      '6': 20\n    },\n    size: 6\n  }\n\n    at reference/src/game/session/storage.test.ts:29:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R10 worse score keeps best\n+ actual - expected\n\n  {\n    bestMoves: {\n+     '4': 13,\n-     '4': 12,\n      '6': 20\n    },\n    size: 6\n  }\n\n    at reference/src/game/session/storage.test.ts:29:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
@@ -163,10 +163,10 @@
       "clauses": ["R10.3"],
       "test": "src/game/session/storage.test.ts",
       "testName": "preferences round trip size and separate minimum moves per size",
-      "reason": "R10.3 scores survive storage round trip",
+      "reason": "R10 scores survive storage round trip",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R10.3 scores survive storage round trip\n+ actual - expected\n\n  {\n+   bestMoves: {},\n+   size: 4\n-   bestMoves: {\n-     '4': 12,\n-     '6': 20\n-   },\n-   size: 6\n  }\n\n    at reference/src/game/session/storage.test.ts:28:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R10 scores survive storage round trip\n+ actual - expected\n\n  {\n+   bestMoves: {},\n+   size: 4\n-   bestMoves: {\n-     '4': 12,\n-     '6': 20\n-   },\n-   size: 6\n  }\n\n    at reference/src/game/session/storage.test.ts:28:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
@@ -174,21 +174,21 @@
       "clauses": ["D03.2", "D03.3", "D04.6"],
       "test": "src/game/deck.test.ts",
       "testName": "generation matches the independent specification vectors",
-      "reason": "D03.2 generator follows independent states",
+      "reason": "D03 generator follows independent states",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: D03.2 generator follows independent states\n+ actual - expected\n\n  [\n+   16808,\n+   282508864,\n+   322642595,\n+   580528085,\n+   1497844359\n-   16807,\n-   282475249,\n-   1622650073,\n-   984943658,\n-   1144108930\n  ]\n\n    at reference/src/game/deck.test.ts:15:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: D03 generator follows independent states\n+ actual - expected\n\n  [\n+   16808,\n+   282508864,\n+   322642595,\n+   580528085,\n+   1497844359\n-   16807,\n-   282475249,\n-   1622650073,\n-   984943658,\n-   1144108930\n  ]\n\n    at reference/src/game/deck.test.ts:15:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
       "id": "M13",
       "clauses": ["D01.2"],
       "test": "src/game/deck.test.ts",
-      "testName": "D01.2 accepts the inclusive maximum seed",
-      "reason": "D01.2 inclusive maximum seed",
+      "testName": "D01 accepts the inclusive maximum seed",
+      "reason": "D01 inclusive maximum seed",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: D01.2 inclusive maximum seed\n+ actual - expected\n\n+ null\n- {\n-   seed: 2147483646,\n-   size: 4\n- }\n\n    at reference/src/game/deck.test.ts:29:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: D01 inclusive maximum seed\n+ actual - expected\n\n+ null\n- {\n-   seed: 2147483646,\n-   size: 4\n- }\n\n    at reference/src/game/deck.test.ts:29:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "generation deals complete immutable pairs at size 4",
@@ -236,10 +236,10 @@
       "clauses": ["D06.3"],
       "test": "src/game/snapshot-pairs.test.ts",
       "testName": "matched indices need whole pairs even when every other field is consistent",
-      "reason": "D06.3 half pair is invalid",
+      "reason": "D06 half pair is invalid",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: D06.3 half pair is invalid\n+ actual - expected\n\n+ {\n+   boardCode: 'np1-4-1',\n+   deck: [\n+     6,\n+     7,\n+     0,\n+     5,\n+     2,\n+     2,\n+     0,\n+     5,\n+     3,\n+     7,\n+     1,\n+     6,\n+     4,\n+     4,\n+     1,\n+     3\n+   ],\n+   elapsedMs: 0,\n+   matched: [\n+     0\n+   ],\n+   moves: 1,\n+   seed: 1,\n+   selection: {\n+     kind: 'closed'\n+   },\n+   size: 4,\n+   started: true\n+ }\n- null\n\n    at reference/src/game/snapshot-pairs.test.ts:10:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: D06 half pair is invalid\n+ actual - expected\n\n+ {\n+   boardCode: 'np1-4-1',\n+   deck: [\n+     6,\n+     7,\n+     0,\n+     5,\n+     2,\n+     2,\n+     0,\n+     5,\n+     3,\n+     7,\n+     1,\n+     6,\n+     4,\n+     4,\n+     1,\n+     3\n+   ],\n+   elapsedMs: 0,\n+   matched: [\n+     0\n+   ],\n+   moves: 1,\n+   seed: 1,\n+   selection: {\n+     kind: 'closed'\n+   },\n+   size: 4,\n+   started: true\n+ }\n- null\n\n    at reference/src/game/snapshot-pairs.test.ts:10:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
@@ -247,10 +247,10 @@
       "clauses": ["D09.1", "D09.2", "D09.3"],
       "test": "src/game/replay.test.ts",
       "testName": "replay starts its elapsed clock on first activation and advances before actions",
-      "reason": "D09.2 time advances before activation",
+      "reason": "D09 time advances before activation",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: D09.2 time advances before activation\n\n200 !== 100\n\n    at reference/src/game/replay.test.ts:24:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: D09 time advances before activation\n\n200 !== 100\n\n    at reference/src/game/replay.test.ts:24:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "replay resolves exact timeout edges before equal-time ordered activation",
@@ -263,10 +263,10 @@
       "clauses": ["D08.5", "D08.7"],
       "test": "src/game/replay-order.test.ts",
       "testName": "equal-time replay actions keep array order before a blocked third activation",
-      "reason": "D08.7 equal timestamps keep array order",
+      "reason": "D08 equal timestamps keep array order",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: D08.7 equal timestamps keep array order\n+ actual - expected\n\n  {\n+   first: 2,\n-   first: 0,\n    kind: 'mismatch',\n    remainingMs: 800,\n    second: 1\n  }\n\n    at reference/src/game/replay-order.test.ts:18:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: D08 equal timestamps keep array order\n+ actual - expected\n\n  {\n+   first: 2,\n-   first: 0,\n    kind: 'mismatch',\n    remainingMs: 800,\n    second: 1\n  }\n\n    at reference/src/game/replay-order.test.ts:18:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
@@ -274,21 +274,21 @@
       "clauses": ["I06.1", "I07.1"],
       "test": "src/game/board/keyboard.test.ts",
       "testName": "arrow navigation stops at row and column edges without wrapping",
-      "reason": "I07.1 left movement stops at row edge",
+      "reason": "I07 left movement stops at row edge",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: I07.1 left movement stops at row edge\n\n3 !== 4\n\n    at reference/src/game/board/keyboard.test.ts:15:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: I07 left movement stops at row edge\n\n3 !== 4\n\n    at reference/src/game/board/keyboard.test.ts:15:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
       "id": "M19",
       "clauses": ["V16.1", "V19.5", "V20.4"],
       "test": "tests/focus-clearance.e2e.test.ts",
-      "testName": "V19.5 focus clearance survives nearest scroll to an interior row",
-      "reason": "V19.5 full focus outline",
+      "testName": "V19 focus clearance survives nearest scroll to an interior row",
+      "reason": "V19 full focus outline",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "V19.5 full focus outline left\n\nexpect(received).toBeGreaterThanOrEqual(expected)\n\nExpected: >= -0.25\nReceived:    -1",
+      "assertion": "V19 full focus outline left\n\nexpect(received).toBeGreaterThanOrEqual(expected)\n\nExpected: >= -0.25\nReceived:    -1",
       "otherFailures": []
     },
     {
@@ -296,10 +296,10 @@
       "clauses": ["I14.2", "A08.1", "V14.2"],
       "test": "tests/play.e2e.test.ts",
       "testName": "finishes the literal board by keyboard without inspecting hidden faces",
-      "reason": "I14.2 hidden cards mount no face",
+      "reason": "I14 hidden cards mount no face",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "I14.2 hidden cards mount no face\n\nexpect(locator).toHaveCount(expected) failed\n\nLocator:  locator('.card.closed svg')\nExpected: 0\nReceived: 16\nTimeout:  5000ms\n\nCall log:\n  - I14.2 hidden cards mount no face locator('.card.closed svg') with timeout 5000ms\n  - waiting for locator('.card.closed svg')\n    14 × locator resolved to 16 elements\n       - unexpected value \"16\"\n",
+      "assertion": "I14 hidden cards mount no face\n\nexpect(locator).toHaveCount(expected) failed\n\nLocator:  locator('.card.closed svg')\nExpected: 0\nReceived: 16\nTimeout:  5000ms\n\nCall log:\n  - I14 hidden cards mount no face locator('.card.closed svg') with timeout 5000ms\n  - waiting for locator('.card.closed svg')\n    13 × locator resolved to 16 elements\n       - unexpected value \"16\"\n",
       "otherFailures": []
     },
     {
@@ -307,10 +307,10 @@
       "clauses": ["R05.5", "R05.8", "D07.8"],
       "test": "src/game/move-cap.test.ts",
       "testName": "a capped mismatch closes and larger imported move counts are rejected",
-      "reason": "R05.5 move count saturates",
+      "reason": "R05 move count saturates",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R05.5 move count saturates\n+ actual - expected\n\n+ 1000000\n- 999999\n\n    at reference/src/game/move-cap.test.ts:34:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R05 move count saturates\n+ actual - expected\n\n+ 1000000\n- 999999\n\n    at reference/src/game/move-cap.test.ts:34:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "moves reach the cap once and matching, completion and snapshot export continue",

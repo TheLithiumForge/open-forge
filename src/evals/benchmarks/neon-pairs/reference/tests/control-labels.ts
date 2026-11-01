@@ -9,9 +9,9 @@ export const ReproductionControl = {
   resume: 'Resume',
 } as const;
 export const StatusLabel = {
-  moves: 'Moves',
-  pairs: 'Pairs',
-  time: 'Active time',
+  moves: 'Moves:',
+  pairs: 'Pairs:',
+  time: 'Time:',
   best: 'Best:',
 } as const;
 export const BOARD_CODE_MAX_CHARACTERS = 32;

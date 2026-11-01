@@ -42,7 +42,7 @@ test('an imported session blocks input and active time until Resume', () => {
   assert.equal(tickSession(paused, paused.generation, MISMATCH_MS), paused);
   assert.equal(paused.celebration, false);
   const pausedOne = replaceGame(paused, activateCard(createGame(EXAMPLE_CODE), 0), true);
-  assert.equal(activateSession(pausedOne, 2), pausedOne, 'C10.4 paused import blocks activation');
+  assert.equal(activateSession(pausedOne, 2), pausedOne, 'C10 paused import blocks activation');
   const resumed = { ...paused, paused: false };
   assert.notEqual(
     tickSession(resumed, resumed.generation, MISMATCH_MS).game.selection.kind,
@@ -73,6 +73,12 @@ test('a new completion records bests but completed imports never do', () => {
   assert.equal(session.celebration, true);
   assert.equal(session.announcement, EXAMPLE_PAIRS.length);
   const imported = replaceGame(initialSession(EXAMPLE_CODE, EMPTY_PREFERENCES), session.game, true);
+  assert.equal(imported.paused, false);
+  assert.equal(imported.feedback, SessionNotice.loadedCompleted);
+  assert.equal(imported.loadNotice, SessionNotice.loadedCompleted);
+  assert.equal(imported.announcement, 1);
+  assert.equal(imported.celebration, false);
+  assert.equal(tickSession(imported, imported.generation, MISMATCH_MS), imported);
   assert.deepEqual(imported.preferences.bestMoves, {});
   assert.deepEqual(activateSession({ ...imported, paused: false }, 0).preferences.bestMoves, {});
   const pending = {
