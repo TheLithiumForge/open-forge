@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import { BoardKey, navigationTarget } from './keyboard.ts';
 
 test('arrow navigation stops at row and column edges without wrapping', () => {
@@ -12,7 +12,11 @@ test('arrow navigation stops at row and column edges without wrapping', () => {
   assert.equal(navigationTarget(5, 4, BoardKey.up, false), 1);
   assert.equal(navigationTarget(5, 4, BoardKey.down, false), 9);
   for (let row = 0; row < 4; row += 1)
-    assert.equal(navigationTarget(row * 4, 4, BoardKey.left, false), row * 4);
+    assert.equal(
+      navigationTarget(row * 4, 4, BoardKey.left, false),
+      row * 4,
+      'I07.1 left movement stops at row edge',
+    );
 });
 
 test('Home and End move within a row or board and leave native Tab alone', () => {

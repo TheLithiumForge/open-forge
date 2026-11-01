@@ -1,6 +1,5 @@
 import { isWon } from '../game.ts';
 import { formatElapsed } from '../elapsed-time.ts';
-import { StatusLabel } from './status-labels.ts';
 import type { GameState } from '../game.types.ts';
 import './status.css';
 
@@ -16,21 +15,20 @@ export function GameStatus({ game, best, celebration }: GameStatusProps) {
       <dl className="stats">
         <div>
           <dt>{StatusLabel.moves}</dt>
-          <dd aria-label={StatusLabel.moves}>{game.moves}</dd>
+          <dd>{game.moves}</dd>
         </div>
         <div>
           <dt>{StatusLabel.pairs}</dt>
-          <dd aria-label={StatusLabel.pairs}>
+          <dd>
             {game.matched.length / 2} / {game.deck.length / 2}
           </dd>
         </div>
         <div>
           <dt>{StatusLabel.time}</dt>
-          <dd aria-label={StatusLabel.time}>{formatElapsed(game.elapsedMs)}</dd>
+          <dd>{formatElapsed(game.elapsedMs)}</dd>
         </div>
         <div>
-          <dt>{StatusLabel.best}</dt>
-          <dd aria-label={StatusLabel.best}>{best ?? 'Best: none'}</dd>
+          <dt>{best === undefined ? 'Best:' : StatusLabel.best}</dt> <dd>{best ?? 'none'}</dd>
         </div>
       </dl>
       {isWon(game) && (
@@ -41,3 +39,10 @@ export function GameStatus({ game, best, celebration }: GameStatusProps) {
     </>
   );
 }
+
+export const StatusLabel = {
+  moves: 'Moves',
+  pairs: 'Pairs',
+  time: 'Active time',
+  best: 'Best moves',
+} as const;

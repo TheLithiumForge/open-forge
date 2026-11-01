@@ -1,0 +1,109 @@
+import { expect } from '@playwright/test';
+import { test } from './browser-test.ts';
+import { loadFixedBoard, exportedSnapshot } from './game-fixture.ts';
+
+test('hidden DOM contains only position state and identical neutral backs', async ({ page }) => {
+  await loadFixedBoard(page);
+  const cards = await page.locator('.card').evaluateAll((elements) =>
+    elements.map((element) => ({
+      attributes: Object.fromEntries([...element.attributes].map((a) => [a.name, a.value])),
+      content: element.innerHTML,
+      text: element.textContent,
+    })),
+  );
+  for (const [index, card] of cards.entries())
+    expect(card).toEqual({
+      attributes: {
+        type: 'button',
+        class: 'card closed',
+        'aria-label': `Row ${Math.floor(index / 4) + 1}, column ${(index % 4) + 1}, closed`,
+        'aria-disabled': 'false',
+        tabindex: index === 0 ? '0' : '-1',
+      },
+      content: '<span class="card-back" aria-hidden="true"></span>',
+      text: '',
+    });
+});
+
+test('hover changes only card border color and matched marks stay legible', async ({ page }) => {
+  await loadFixedBoard(page);
+  await page.mouse.move(0, 0);
+  const card = page.locator('.card').nth(2);
+  const before = await card.evaluate((e) =>
+    Object.fromEntries(
+      [...getComputedStyle(e)].map((k) => [k, getComputedStyle(e).getPropertyValue(k)]),
+    ),
+  );
+  const progress = await exportedSnapshot(page);
+  await card.hover();
+  await expect(card).toHaveCSS('border-color', 'rgb(244, 246, 255)');
+  const after = await card.evaluate((e) =>
+    Object.fromEntries(
+      [...getComputedStyle(e)].map((k) => [k, getComputedStyle(e).getPropertyValue(k)]),
+    ),
+  );
+  const changed = Object.keys(before).filter((k) => before[k] !== after[k]);
+  expect(changed.length).toBeGreaterThan(0);
+  expect(
+    changed.filter(
+      (k) =>
+        !/^border-(?:(?:top|right|bottom|left|block(?:-start|-end)?|inline(?:-start|-end)?)-)?color$/.test(
+          k,
+        ),
+    ),
+  ).toEqual([]);
+  expect(await exportedSnapshot(page)).toEqual(progress);
+  await card.click();
+  await page.locator('.card').nth(6).click();
+  await expect(page.locator('.stats dd').nth(1)).toHaveText('1 / 8');
+  await page.mouse.move(0, 0);
+  await expect(card).toHaveCSS('border-color', 'rgb(139, 234, 125)');
+  await expect(card).toHaveCSS('opacity', '1');
+  const mark = card.locator('.matched-mark');
+  await expect(mark).toBeVisible();
+  await expect(mark).toHaveCSS('width', '16px');
+  await expect(mark).toHaveCSS('height', '16px');
+  await expect(mark.locator('path')).toHaveAttribute('d', 'm2 6 3 3 5-6');
+});
+
+test('focus requests nearest alignment on both axes', async ({ page }) => {
+  await loadFixedBoard(page);
+  await page.evaluate(() => {
+    const original = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = function (options) {
+      if (this.matches('.card')) this.setAttribute('data-scroll-options', JSON.stringify(options));
+      original.call(this, options);
+    };
+  });
+  await page.locator('.card').nth(3).focus();
+  await expect(page.locator('.card').nth(3)).toHaveAttribute(
+    'data-scroll-options',
+    '{"block":"nearest","inline":"nearest"}',
+  );
+});
+
+test(
+  'a held touch opens the native context-menu path without activating',
+  async ({ page, context }) => {
+    await loadFixedBoard(page);
+    const card = page.locator('.card').first();
+    const box = await card.boundingBox();
+    if (!box) throw new Error('Missing card');
+    const cdp = await context.newCDPSession(page);
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [{ x: box.x + box.width / 2, y: box.y + box.height / 2 }],
+    });
+    await page.waitForTimeout(1200);
+    const menu = await card.evaluate((button) => {
+      const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
+      button.dispatchEvent(event);
+      return event.defaultPrevented;
+    });
+    expect(menu).toBe(false);
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await expect(page.locator('.card.revealed')).toHaveCount(0);
+    await cdp.detach();
+  },
+  { hasTouch: true, isMobile: true },
+);

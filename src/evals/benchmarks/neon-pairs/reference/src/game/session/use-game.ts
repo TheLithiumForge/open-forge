@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { createGame } from '../game.ts';
 import { parseBoardCode, validSize } from '../deck.ts';
 import { decodeSnapshot } from '../snapshot.ts';
-import { SelectionKind } from '../selection.ts';
 import { freshBoardCode } from './fresh-board.ts';
 import { activateSession, initialSession, replaceGame, SessionNotice } from './session.ts';
 import { readPreferences, writePreferences } from './storage.ts';
@@ -74,14 +73,7 @@ export function useGame() {
 
   function activate(index: number): void {
     clock.synchronize();
-    const previous = current.current;
-    const next = activateSession(previous, index);
-    if (
-      previous.game.selection.kind !== SelectionKind.mismatch &&
-      next.game.selection.kind === SelectionKind.mismatch
-    )
-      clock.beginMismatch();
-    commit(next);
+    commit(activateSession(current.current, index));
   }
 
   function resume(): void {

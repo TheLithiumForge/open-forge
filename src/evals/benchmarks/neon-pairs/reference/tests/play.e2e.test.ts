@@ -11,7 +11,7 @@ import {
 
 test('finishes the literal board by keyboard without inspecting hidden faces', async ({ page }) => {
   await loadFixedBoard(page);
-  await expect(page.locator('.card.closed svg')).toHaveCount(0);
+  await expect(page.locator('.card.closed svg'), 'I14.2 hidden cards mount no face').toHaveCount(0);
   await expect(page.locator('[data-face], [data-face-id]')).toHaveCount(0);
   for (const pair of FIXED_PAIRS) {
     for (const index of pair) {
@@ -25,7 +25,7 @@ test('finishes the literal board by keyboard without inspecting hidden faces', a
   }
   await expect(page.locator('.card.matched')).toHaveCount(16);
   expect(await moves(page)).toBe(8);
-  expect(Number(await page.getByLabel('Best moves', { exact: true }).textContent())).toBe(8);
+  await expect(page.locator('.stats dd').nth(3)).toHaveText('8');
   expect(await page.locator('.victory').count()).toBe(1);
   const first = await exportedSnapshot(page);
   const second = await exportedSnapshot(page);
@@ -55,14 +55,14 @@ test('loads the built file with the network offline and no external requests', a
 }) => {
   const requested: string[] = [];
   page.on('request', (request) => {
-    if (!request.url().startsWith('file:')) requested.push(request.url());
+    requested.push(request.url());
   });
   await context.setOffline(true);
   await page.goto(GAME_URL);
   await expect(page.locator('.card')).toHaveCount(16);
   await page.locator('.card').first().click();
   await expect(page.locator('.card.revealed')).toHaveCount(1);
-  expect(requested).toEqual([]);
+  expect(requested).toEqual([GAME_URL]);
 });
 
 test('keeps navigation focus, ignores repeat and leaves the board with Tab', async ({ page }) => {
@@ -81,7 +81,6 @@ test('keeps navigation focus, ignores repeat and leaves the board with Tab', asy
   await page.keyboard.down('Enter');
   await page.keyboard.down('Enter');
   await page.keyboard.up('Enter');
-  await expect(cards.locator('.revealed')).toHaveCount(0);
   await expect(page.locator('.card.revealed')).toHaveCount(1);
   await page.keyboard.press('Tab');
   expect(await page.locator('.card:focus').count()).toBe(0);

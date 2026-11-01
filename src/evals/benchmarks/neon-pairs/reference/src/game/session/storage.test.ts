@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import {
   DEFAULT_SIZE,
   PREFERENCES_KEY,
@@ -25,11 +25,15 @@ test('preferences round trip size and separate minimum moves per size', () => {
   const store = memoryStore();
   const preferences = rememberBest(rememberBest({ size: 6, bestMoves: {} }, 4, 12), 6, 20);
   writePreferences(store, preferences);
-  assert.deepEqual(readPreferences(store), preferences);
-  assert.equal(rememberBest(preferences, 4, 13), preferences);
+  assert.deepEqual(readPreferences(store), preferences, 'R10.3 scores survive storage round trip');
+  assert.equal(rememberBest(preferences, 4, 13), preferences, 'R10.4 worse score keeps best');
   assert.equal(rememberBest(preferences, 4, 12), preferences);
-  assert.equal(rememberBest(preferences, 4, 9).bestMoves['4'], 9);
-  assert.equal(preferences.bestMoves['6'], 20);
+  assert.equal(
+    rememberBest(preferences, 4, 9).bestMoves['4'],
+    9,
+    'R10.4 better score replaces best',
+  );
+  assert.equal(preferences.bestMoves['6'], 20, 'R10.1 size six has its separate best');
 });
 
 const INVALID_PREFERENCES = [

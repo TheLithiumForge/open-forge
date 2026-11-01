@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import {
   boardCode,
   generateBoard,
@@ -18,10 +18,19 @@ test('generation matches the independent specification vectors', () => {
       return state;
     }),
     RANDOM_STATES,
+    'D03.2 generator follows independent states',
   );
   assert.deepEqual(generateBoard(EXAMPLE_CODE).deck, EXAMPLE_DECK);
   assert.deepEqual(GRID_SIZES, SPEC_VECTOR.sizes);
   assert.equal(SEED_MAX, SPEC_VECTOR.seedMax);
+});
+
+test('D01.2 accepts the inclusive maximum seed', () => {
+  assert.deepEqual(
+    parseBoardCode('np1-4-2147483646'),
+    { size: 4, seed: 2147483646 },
+    'D01.2 inclusive maximum seed',
+  );
 });
 
 for (const size of GRID_SIZES) {

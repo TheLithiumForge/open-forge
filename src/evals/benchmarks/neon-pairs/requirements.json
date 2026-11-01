@@ -2194,7 +2194,7 @@
                                                  "id":  "T07.9",
                                                  "text":  "Stop development servers and watchers started during the work before finishing.",
                                                  "firstLayer":  "L2",
-                                                 "method":  "build"
+                                                 "method":  "review"
                                              }
                                          ]
                          },

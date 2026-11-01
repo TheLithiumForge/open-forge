@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import { activateCard, advanceGame, createGame, MISMATCH_MS } from './game.ts';
 import {
   decodeSnapshot,
@@ -98,7 +98,11 @@ const INVALID_SNAPSHOTS: readonly Record<string, unknown>[] = [
 ];
 for (const [index, overrides] of INVALID_SNAPSHOTS.entries()) {
   test(`snapshot validation rejects inconsistent state ${index + 1}`, () => {
-    assert.equal(decodeSnapshot(snapshot(overrides)), null);
+    assert.equal(
+      decodeSnapshot(snapshot(overrides)),
+      null,
+      `snapshot rejects isolated field case ${index + 1}`,
+    );
   });
 }
 

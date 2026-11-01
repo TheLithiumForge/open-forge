@@ -14,7 +14,12 @@ export async function expectFocusInside(card: Locator): Promise<void> {
       top: inner.top - ring - outer.top - viewport.clientTop,
       right: outer.left + viewport.clientLeft + viewport.clientWidth - inner.right - ring,
       bottom: outer.top + viewport.clientTop + viewport.clientHeight - inner.bottom - ring,
+      windowLeft: inner.left - ring,
+      windowTop: inner.top - ring,
+      windowRight: innerWidth - inner.right - ring,
+      windowBottom: innerHeight - inner.bottom - ring,
     };
   });
-  for (const value of Object.values(bounds)) expect(value).toBeGreaterThanOrEqual(-0.25);
+  for (const [edge, value] of Object.entries(bounds))
+    expect(value, `V19.5 full focus outline ${edge}`).toBeGreaterThanOrEqual(-0.25);
 }

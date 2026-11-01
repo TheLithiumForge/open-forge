@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import { activateCard, createGame, isWon, MISMATCH_MS } from '../game.ts';
 import { boardCode } from '../deck.ts';
 import { activateSession, initialSession, replaceGame, tickSession } from './session.ts';
@@ -33,7 +33,7 @@ test('an imported session blocks input and active time until Resume', () => {
   assert.equal(tickSession(paused, paused.generation, MISMATCH_MS), paused);
   assert.equal(paused.celebration, false);
   const pausedOne = replaceGame(paused, activateCard(createGame(EXAMPLE_CODE), 0), true);
-  assert.equal(activateSession(pausedOne, 2), pausedOne);
+  assert.equal(activateSession(pausedOne, 2), pausedOne, 'C10.4 paused import blocks activation');
   const resumed = { ...paused, paused: false };
   assert.notEqual(
     tickSession(resumed, resumed.generation, MISMATCH_MS).game.selection.kind,

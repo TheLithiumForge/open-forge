@@ -3,10 +3,11 @@ import { join } from 'node:path';
 import { chromium, expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { REFERENCE_ROOT } from './artifact-server.ts';
-import { DealControl } from '../src/game/controls/deal-controls.ts';
+import { DealControl } from './control-labels.ts';
 import { loadFixedBoard, finishBoard } from './game-fixture.ts';
-import { zoomExtension } from './zoom-extension.ts';
+import { zoomExtension, zoomGameTab } from './zoom-extension.ts';
 import { expectFocusInside } from './focus-bounds.ts';
+import { expectReadableText } from './readability.ts';
 
 test('actual 200 percent browser zoom keeps both board sizes playable', async (_, artifacts) => {
   const work = join(REFERENCE_ROOT, '.browser-work');
@@ -24,6 +25,9 @@ test('actual 200 percent browser zoom keeps both board sizes playable', async (_
     if (!context.serviceWorkers().length) await context.waitForEvent('serviceworker');
     const page = await context.newPage();
     await loadFixedBoard(page);
+    const worker = context.serviceWorkers()[0];
+    if (!worker) throw new Error('Zoom worker missing.');
+    await worker.evaluate(zoomGameTab, page.url());
     await expect
       .poll(() => page.evaluate(() => ({ width: innerWidth, ratio: devicePixelRatio })))
       .toEqual({ width: 640, ratio: 2 });
@@ -40,6 +44,7 @@ test('actual 200 percent browser zoom keeps both board sizes playable', async (_
       );
     });
     expect(readable).toBe(true);
+    await expectReadableText(page);
     await page.screenshot({ path: artifacts.outputPath('zoom-win.png'), fullPage: true });
     await page.getByRole('button', { name: DealControl.restart, exact: true }).click();
     await page.locator('.card').first().focus();

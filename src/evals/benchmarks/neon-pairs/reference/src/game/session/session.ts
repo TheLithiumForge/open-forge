@@ -40,14 +40,9 @@ export function replaceGame(session: Session, game: GameState, paused: boolean):
   };
 }
 
-export function tickSession(
-  session: Session,
-  generation: number,
-  milliseconds: number,
-  mismatchMs = milliseconds,
-): Session {
+export function tickSession(session: Session, generation: number, milliseconds: number): Session {
   if (session.generation !== generation || session.paused) return session;
-  const game = advanceGame(session.game, milliseconds, mismatchMs);
+  const game = advanceGame(session.game, milliseconds);
   return game === session.game ? session : { ...session, game };
 }
 

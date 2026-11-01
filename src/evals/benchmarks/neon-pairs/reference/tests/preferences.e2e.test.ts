@@ -1,9 +1,8 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { PREFERENCES_KEY } from '../src/game/session/storage.ts';
-import { DealControl } from '../src/game/controls/deal-controls.ts';
-import { ReproductionControl } from '../src/game/controls/reproduction-controls.ts';
-import { StatusLabel } from '../src/game/status/status-labels.ts';
+import { DealControl } from './control-labels.ts';
+import { ReproductionControl } from './control-labels.ts';
 import { finishBoard, loadFixedBoard } from './game-fixture.ts';
 
 test('saved size and per-size completed bests survive reload and resets', async ({
@@ -13,14 +12,14 @@ test('saved size and per-size completed bests survive reload and resets', async 
   await loadFixedBoard(page, gameURL);
   await finishBoard(page);
   await page.getByRole('button', { name: DealControl.newGame, exact: true }).click();
-  expect(Number(await page.getByLabel(StatusLabel.best, { exact: true }).textContent())).toBe(8);
+  expect(Number(await page.locator('.stats dd').nth(3).textContent())).toBe(8);
   await page.getByRole('button', { name: DealControl.restart, exact: true }).click();
-  expect(Number(await page.getByLabel(StatusLabel.best, { exact: true }).textContent())).toBe(8);
+  expect(Number(await page.locator('.stats dd').nth(3).textContent())).toBe(8);
   await page.getByLabel(DealControl.size, { exact: true }).selectOption('6');
   await page.reload();
   await expect(page.locator('.card')).toHaveCount(36);
   await page.getByLabel(DealControl.size, { exact: true }).selectOption('4');
-  expect(Number(await page.getByLabel(StatusLabel.best, { exact: true }).textContent())).toBe(8);
+  expect(Number(await page.locator('.stats dd').nth(3).textContent())).toBe(8);
 });
 
 test('valid board loads save their size while invalid loads keep that preference', async ({

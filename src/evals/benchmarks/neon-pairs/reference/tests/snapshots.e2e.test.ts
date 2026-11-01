@@ -2,8 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { SelectionKind } from '../src/game/selection.ts';
 import { SNAPSHOT_VERSION } from '../src/game/snapshot.ts';
-import { ReproductionControl } from '../src/game/controls/reproduction-controls.ts';
-import { StatusLabel } from '../src/game/status/status-labels.ts';
+import { ReproductionControl } from './control-labels.ts';
 import { FIXED_BOARD, FIXED_PAIRS, exportedSnapshot, loadTimedBoard } from './game-fixture.ts';
 import { uiSnapshot } from './ui-snapshot.ts';
 
@@ -54,6 +53,10 @@ test('invalid drafts keep the current game and a loaded win changes neither best
   page,
 }) => {
   await loadTimedBoard(page);
+  await page.locator('.card').nth(2).click();
+  await page.locator('.card').nth(6).click();
+  await page.locator('.card').nth(0).click();
+  await page.clock.runFor(1200);
   const original = await exportedSnapshot(page);
   await page.locator('summary').click();
   const code = page.getByLabel(ReproductionControl.board, { exact: true });
@@ -80,7 +83,7 @@ test('invalid drafts keep the current game and a loaded win changes neither best
   await expect(page.locator('.card.matched')).toHaveCount(16);
   expect(await page.locator('.victory.celebrate').count()).toBe(0);
   const expected = await uiSnapshot();
-  await expect(page.getByLabel(StatusLabel.best, { exact: true })).toHaveText(expected.bestNone);
+  await expect(page.locator('.stats dd').nth(3)).toHaveText(expected.bestNone);
   await page.getByRole('button', { name: ReproductionControl.resume, exact: true }).click();
   await expect(page.locator('.card.matched')).toHaveCount(16);
   expect(await page.locator('.victory.celebrate').count()).toBe(0);

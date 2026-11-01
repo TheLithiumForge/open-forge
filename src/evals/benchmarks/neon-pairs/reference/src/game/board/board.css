@@ -72,8 +72,8 @@
   position: absolute;
   right: 0;
   top: 0;
-  width: 8px;
-  height: 8px;
+  width: 16px;
+  height: 16px;
   color: var(--green);
 }
 @media (prefers-reduced-motion: reduce) {

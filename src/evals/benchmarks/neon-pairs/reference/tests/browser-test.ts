@@ -3,6 +3,8 @@ import { before, after, test as nodeTest } from 'node:test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { chromium } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
 import { REFERENCE_ROOT, serveArtifact } from './artifact-server.ts';
 import type { Browser, BrowserContext, BrowserContextOptions, Page } from '@playwright/test';
 
@@ -19,6 +21,19 @@ before(async () => {
   process.env.TEMP = BROWSER_TEMP;
   process.env.TMP = BROWSER_TEMP;
   const executable = process.env[EXECUTABLE_ENV];
+  const npmResult =
+    process.platform === 'win32'
+      ? spawnSync('cmd.exe', ['/d', '/c', 'npm --version'], { encoding: 'utf8' })
+      : spawnSync('npm', ['--version'], { encoding: 'utf8' });
+  assert.equal(npmResult.status, 0, 'T03.4 npm version command');
+  const npm = npmResult.stdout.trim();
+  const playwright: unknown = JSON.parse(
+    await readFile(new URL(import.meta.resolve('@playwright/test/package.json')), 'utf8'),
+  );
+  assert.equal(process.versions.node, '26.12.1', 'T03.4 named Node');
+  assert.equal(npm, '11.20.0', 'T03.4 named npm');
+  assert.ok(playwright && typeof playwright === 'object' && 'version' in playwright);
+  assert.equal(playwright.version, '1.64.1', 'T03.4 named Playwright');
   browser = await chromium.launch({
     headless: true,
     ...(executable ? { executablePath: executable } : {}),
@@ -31,7 +46,8 @@ before(async () => {
       {
         node: process.versions.node,
         chromium: browser.version(),
-        npm: process.env.npm_config_user_agent?.match(/^npm\/([^ ]+)/)?.[1] ?? null,
+        npm,
+        playwright: playwright.version,
       },
       null,
       2,
@@ -74,7 +90,16 @@ export function test(
         return join(directory, file);
       },
     };
-    await body({ browser, context, page, gameURL: artifact.url }, artifacts);
+    try {
+      await body({ browser, context, page, gameURL: artifact.url }, artifacts);
+    } catch (error) {
+      if (process.env.NEON_TEST_FAILURE)
+        await writeFile(
+          process.env.NEON_TEST_FAILURE,
+          JSON.stringify({ name, message: error instanceof Error ? error.message : String(error) }),
+        );
+      throw error;
+    }
     assert.deepEqual(pageErrors, []);
   });
 }

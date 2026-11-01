@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useImperativeHandle } from 'react';
 import { SelectionKind } from '../selection.ts';
 import { Card } from './Card.tsx';
 import { navigationTarget } from './keyboard.ts';
@@ -8,7 +8,7 @@ import './board.css';
 
 interface BoardProps {
   game: GameState;
-  element: RefObject<HTMLDivElement | null>;
+  ref: RefObject<BoardFocus | null>;
   paused: boolean;
   activate(index: number): void;
 }
@@ -16,8 +16,20 @@ interface BoardStyle extends CSSProperties {
   '--grid-size': number;
 }
 
-export function Board({ game, element, paused, activate }: BoardProps) {
+export interface BoardFocus {
+  focusRemembered(): void;
+}
+
+export function Board({ game, ref, paused, activate }: BoardProps) {
+  const element = useRef<HTMLDivElement>(null);
   const [focused, setFocused] = useState(0);
+  useImperativeHandle(
+    ref,
+    () => ({
+      focusRemembered: () => element.current?.querySelectorAll('button').item(focused)?.focus(),
+    }),
+    [focused],
+  );
 
   function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number): void {
     const target = navigationTarget(index, game.size, event.key, event.ctrlKey);

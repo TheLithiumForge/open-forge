@@ -1,0 +1,233 @@
+[
+  {
+    "id": "M01",
+    "path": "src/game/game.ts",
+    "find": "state.deck[first] === state.deck[index]",
+    "replace": "state.deck[first] !== state.deck[index]",
+    "test": "src/game/game.test.ts",
+    "browser": false,
+    "clauses": ["R03.1", "R03.2", "R04.1", "R04.2"],
+    "testName": "a matching pair stays up and costs exactly one move",
+    "reason": "R03.2 matching pair stays matched"
+  },
+  {
+    "id": "M02",
+    "path": "src/game/game.ts",
+    "find": "const moves = Math.min(MOVES_MAX, state.moves + 1);",
+    "replace": "const moves = Math.min(MOVES_MAX, state.moves + 2);",
+    "test": "src/game/game.test.ts",
+    "browser": false,
+    "clauses": ["R05.1", "R05.4"],
+    "testName": "a matching pair stays up and costs exactly one move",
+    "reason": "R05.1 second distinct reveal adds one move"
+  },
+  {
+    "id": "M03",
+    "path": "src/game/game.ts",
+    "find": "...state, started: true, selection:",
+    "replace": "...state, started: false, selection:",
+    "test": "src/game/game.test.ts",
+    "browser": false,
+    "clauses": ["R07.1", "D09.1"],
+    "testName": "first reveal starts play without a move and ignores invalid activation",
+    "reason": "R07.1 first reveal starts time"
+  },
+  {
+    "id": "M04",
+    "path": "src/game/game.ts",
+    "find": "case SelectionKind.mismatch:\n      return state;",
+    "replace": "case SelectionKind.mismatch:\n      return { ...state, selection: { kind: SelectionKind.one, index } };",
+    "test": "src/game/game.test.ts",
+    "browser": false,
+    "clauses": ["R04.3", "I10.2", "D09.4"],
+    "testName": "a mismatch blocks all activation and closes together at the exact interval",
+    "reason": "R04.3 mismatch blocks activation"
+  },
+  {
+    "id": "M05",
+    "path": "src/game/game.ts",
+    "find": "remainingMs \u003e 0 ?",
+    "replace": "remainingMs \u003e= 0 ?",
+    "test": "src/game/game.test.ts",
+    "browser": false,
+    "clauses": ["R04.1", "D09.3"],
+    "testName": "a mismatch blocks all activation and closes together at the exact interval",
+    "reason": "R04.1 mismatch closes at 800ms"
+  },
+  {
+    "id": "M06",
+    "path": "src/game/game.ts",
+    "find": "Math.min(ELAPSED_MAX_MS, state.elapsedMs + milliseconds)",
+    "replace": "state.elapsedMs + milliseconds",
+    "test": "src/game/elapsed-time.test.ts",
+    "browser": false,
+    "clauses": ["R07.9", "R07.11", "D09.5"],
+    "testName": "elapsed cap accepts its endpoint, rejects larger imports and keeps play exportable",
+    "reason": "R07.9 elapsed time saturates"
+  },
+  {
+    "id": "M07",
+    "path": "src/game/session/use-session-clock.ts",
+    "find": "active = false;\n      window.clearTimeout(timer);",
+    "replace": "active = false;",
+    "test": "tests/timer-lifecycle.e2e.test.ts",
+    "browser": true,
+    "clauses": ["A04.3", "R12.1"],
+    "testName": "A04.3 R12.1 unmount clears the active timer and visibility listener",
+    "reason": "A04.3 active timer cancelled at unmount"
+  },
+  {
+    "id": "M08",
+    "path": "src/game/session/session.ts",
+    "find": "if (session.paused) return session;",
+    "replace": "if (false) return session;",
+    "test": "src/game/session/session.test.ts",
+    "browser": false,
+    "clauses": ["C10.4"],
+    "testName": "an imported session blocks input and active time until Resume",
+    "reason": "C10.4 paused import blocks activation"
+  },
+  {
+    "id": "M09",
+    "path": "src/game/session/storage.ts",
+    "find": "const previous = preferences.bestMoves[String(size)];",
+    "replace": "const previous = preferences.bestMoves[String(DEFAULT_SIZE)];",
+    "test": "src/game/session/storage.test.ts",
+    "browser": false,
+    "clauses": ["R10.1", "R10.2"],
+    "testName": "preferences round trip size and separate minimum moves per size",
+    "reason": "R10.1 size six has its separate best"
+  },
+  {
+    "id": "M10",
+    "path": "src/game/session/storage.ts",
+    "find": "previous \u003c= moves",
+    "replace": "previous \u003e= moves",
+    "test": "src/game/session/storage.test.ts",
+    "browser": false,
+    "clauses": ["R10.2", "R10.4"],
+    "testName": "preferences round trip size and separate minimum moves per size",
+    "reason": "R10.4 worse score keeps best"
+  },
+  {
+    "id": "M11",
+    "path": "src/game/session/storage.ts",
+    "find": "store?.setItem(",
+    "replace": "false \u0026\u0026 store?.setItem(",
+    "test": "src/game/session/storage.test.ts",
+    "browser": false,
+    "clauses": ["R10.3"],
+    "testName": "preferences round trip size and separate minimum moves per size",
+    "reason": "R10.3 scores survive storage round trip"
+  },
+  {
+    "id": "M12",
+    "path": "src/game/deck.ts",
+    "find": "const PRNG_MULTIPLIER = 16_807;",
+    "replace": "const PRNG_MULTIPLIER = 16_808;",
+    "test": "src/game/deck.test.ts",
+    "browser": false,
+    "clauses": ["D03.2", "D03.3", "D04.6"],
+    "testName": "generation matches the independent specification vectors",
+    "reason": "D03.2 generator follows independent states"
+  },
+  {
+    "id": "M13",
+    "path": "src/game/deck.ts",
+    "find": "seed \u003c= SEED_MAX",
+    "replace": "seed \u003c SEED_MAX",
+    "test": "src/game/deck.test.ts",
+    "browser": false,
+    "clauses": ["D01.2"],
+    "testName": "D01.2 accepts the inclusive maximum seed",
+    "reason": "D01.2 inclusive maximum seed"
+  },
+  {
+    "id": "M14",
+    "path": "src/game/snapshot.ts",
+    "find": "!exactKeys(value, SNAPSHOT_KEYS)",
+    "replace": "false",
+    "test": "src/game/snapshot.test.ts",
+    "browser": false,
+    "clauses": ["D05.1", "D06.2"],
+    "testName": "snapshot validation rejects inconsistent state 1",
+    "reason": "snapshot rejects isolated field case 1"
+  },
+  {
+    "id": "M15",
+    "path": "src/game/snapshot-selection.ts",
+    "find": "every((count) =\u003e count === 2)",
+    "replace": "every((count) =\u003e count \u003e= 1)",
+    "test": "src/game/snapshot-pairs.test.ts",
+    "browser": false,
+    "clauses": ["D06.3"],
+    "testName": "matched indices need whole pairs even when every other field is consistent",
+    "reason": "D06.3 half pair is invalid"
+  },
+  {
+    "id": "M16",
+    "path": "src/game/replay.ts",
+    "find": "state = activateCard(advanceGame(state, action.atMs - previousTime), action.index);",
+    "replace": "state = advanceGame(activateCard(state, action.index), action.atMs - previousTime);",
+    "test": "src/game/replay.test.ts",
+    "browser": false,
+    "clauses": ["D09.1", "D09.2", "D09.3"],
+    "testName": "replay starts its elapsed clock on first activation and advances before actions",
+    "reason": "D09.2 time advances before activation"
+  },
+  {
+    "id": "M17",
+    "path": "src/game/replay.ts",
+    "find": "for (const action of value.actions)",
+    "replace": "for (const action of [...value.actions].sort((left, right) =\u003e left.atMs - right.atMs || right.index - left.index))",
+    "test": "src/game/replay-order.test.ts",
+    "browser": false,
+    "clauses": ["D08.5", "D08.7"],
+    "testName": "equal-time replay actions keep array order before a blocked third activation",
+    "reason": "D08.7 equal timestamps keep array order"
+  },
+  {
+    "id": "M18",
+    "path": "src/game/board/keyboard.ts",
+    "find": "Math.max(rowStart, index - 1)",
+    "replace": "Math.max(0, index - 1)",
+    "test": "src/game/board/keyboard.test.ts",
+    "browser": false,
+    "clauses": ["I06.1", "I07.1"],
+    "testName": "arrow navigation stops at row and column edges without wrapping",
+    "reason": "I07.1 left movement stops at row edge"
+  },
+  {
+    "id": "M19",
+    "path": "src/game/game.css",
+    "find": "outline-offset: 2px;",
+    "replace": "outline-offset: 4px;",
+    "test": "tests/focus-clearance.e2e.test.ts",
+    "browser": true,
+    "clauses": ["V16.1", "V19.5", "V20.4"],
+    "testName": "V19.5 focus clearance survives nearest scroll to an interior row",
+    "reason": "V19.5 full focus outline"
+  },
+  {
+    "id": "M20",
+    "path": "src/game/board/Card.tsx",
+    "find": "\u003cspan className=\"card-back\" aria-hidden=\"true\" /\u003e",
+    "replace": "\u003cFace face={0} /\u003e",
+    "test": "tests/play.e2e.test.ts",
+    "browser": true,
+    "clauses": ["I14.2", "A08.1", "V14.2"],
+    "testName": "finishes the literal board by keyboard without inspecting hidden faces",
+    "reason": "I14.2 hidden cards mount no face"
+  },
+  {
+    "id": "M21",
+    "path": "src/game/game.ts",
+    "find": "Math.min(MOVES_MAX, state.moves + 1)",
+    "replace": "Math.min(MOVES_MAX + 1, state.moves + 1)",
+    "test": "src/game/move-cap.test.ts",
+    "browser": false,
+    "clauses": ["R05.5", "R05.8", "D07.8"],
+    "testName": "a capped mismatch closes and larger imported move counts are rejected",
+    "reason": "R05.5 move count saturates"
+  }
+]

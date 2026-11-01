@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { test } from 'node:test';
+import { test, onTestFinished } from 'vitest';
 import { REPLAY_VERSION } from '../src/game/replay.ts';
 import { SNAPSHOT_VERSION } from '../src/game/snapshot.ts';
 import { SelectionKind } from '../src/game/selection.ts';
@@ -13,10 +13,10 @@ import { ReplayExit } from './replay-cli.ts';
 const CLI = fileURLToPath(new URL('./replay.ts', import.meta.url));
 const TEST_ROOT = fileURLToPath(new URL('../.test-work/', import.meta.url));
 
-test('replay CLI prints a final snapshot and rejects invalid files and arguments', async (t) => {
+test('replay CLI prints a final snapshot and rejects invalid files and arguments', async () => {
   await mkdir(TEST_ROOT, { recursive: true });
   const directory = await mkdtemp(join(TEST_ROOT, 'replay-'));
-  t.after(() => rm(directory, { recursive: true, force: true }));
+  onTestFinished(() => rm(directory, { recursive: true, force: true }));
   const file = join(directory, 'replay.json');
   await writeFile(
     file,

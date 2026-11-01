@@ -9,6 +9,7 @@
     "vite.art.config.ts",
     "scripts/**/*.ts",
     "src/**/*.test.ts",
-    "src/**/*.fixture.ts"
+    "src/**/*.fixture.ts",
+    "vitest.config.ts"
   ]
 }

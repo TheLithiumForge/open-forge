@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import { GRID_SIZES, boardCode } from './deck.ts';
 import { createGame, activateCard, isWon } from './game.ts';
 

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import { sourceFiles } from './source-files.ts';
 import { record } from '../src/game/saved-format.ts';
 
@@ -33,6 +33,13 @@ test('packages and lock use the reviewed exact versions and strict separate comp
     assert.equal(config.compilerOptions[key], true);
   for (const project of ['app', 'node', 'e2e'])
     assert.ok(await readFile(`tsconfig.${project}.json`, 'utf8'));
+  assert.ok(record(pkg.scripts));
+  assert.equal(
+    pkg.scripts.typecheck,
+    'tsc -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p tsconfig.e2e.json',
+    'T07.3 every compiler project',
+  );
+  assert.equal(pkg.scripts.test, 'vitest run', 'T02.7 Vitest runs unit tests');
 });
 
 test('authored TypeScript stays small, uses static ESM and rejects unsafe type escapes', async () => {

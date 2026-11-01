@@ -2,8 +2,8 @@ import { useRef } from 'react';
 import { Board } from './board/Board.tsx';
 import { Controls } from './controls/Controls.tsx';
 import { Reproduction } from './controls/Reproduction.tsx';
-import { ReproductionControl } from './controls/reproduction-controls.ts';
 import { GameStatus } from './status/GameStatus.tsx';
+import type { BoardFocus } from './board/Board.tsx';
 import { useGame } from './session/use-game.ts';
 import './game.css';
 
@@ -11,9 +11,9 @@ export function Game() {
   const controller = useGame();
   const { session } = controller;
   const { game } = session;
-  const board = useRef<HTMLDivElement>(null);
+  const board = useRef<BoardFocus>(null);
   function resume(): void {
-    board.current?.querySelector<HTMLButtonElement>('[tabindex="0"]')?.focus();
+    board.current?.focusRemembered();
     controller.resume();
   }
   return (
@@ -33,28 +33,22 @@ export function Game() {
         Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space
         reveals a card.
       </p>
-      <div className="status-row">
-        <p role="status" aria-live="polite" aria-atomic="true">
-          <span key={session.announcement}>{session.feedback}</span>
-        </p>
-        {session.paused && (
-          <button type="button" onClick={resume}>
-            {ReproductionControl.resume}
-          </button>
-        )}
-      </div>
       <Board
         key={session.generation}
         game={game}
         paused={session.paused}
         activate={controller.activate}
-        element={board}
+        ref={board}
       />
       <Reproduction
         game={game}
         generation={session.generation}
         loadBoard={controller.loadBoard}
         loadSnapshot={controller.loadSnapshot}
+        feedback={session.feedback}
+        announcement={session.announcement}
+        paused={session.paused}
+        resume={resume}
       />
     </main>
   );

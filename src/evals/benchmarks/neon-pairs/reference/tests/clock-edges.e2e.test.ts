@@ -1,10 +1,10 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { MISMATCH_MS } from '../src/game/game.ts';
-import { ELAPSED_MAX_MS } from '../src/game/elapsed-time.ts';
+import { ELAPSED_MAX_MS } from '../src/game/game.ts';
 import { encodeSnapshot } from '../src/game/snapshot.ts';
 import { createGame, activateCard } from '../src/game/game.ts';
-import { ReproductionControl } from '../src/game/controls/reproduction-controls.ts';
+import { ReproductionControl } from './control-labels.ts';
 import { FIXED_BOARD, loadFixedBoard, loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
 
 test('an overdue mismatch resolves before the next click even when its timer is delayed', async ({
@@ -36,6 +36,7 @@ test('a capped imported clock keeps matching, closing and exporting valid progre
   await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
   await page.locator('summary').click();
   await page.getByRole('button', { name: ReproductionControl.resume, exact: true }).click();
+  await expect(page.locator('.stats dd').nth(2)).toHaveText('5999:59');
   await page.locator('.card').nth(1).click();
   await page.clock.runFor(MISMATCH_MS - 1);
   await expect(page.locator('.card.revealed')).toHaveCount(2);

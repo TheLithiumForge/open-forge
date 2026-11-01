@@ -15,7 +15,7 @@ export function nextRandomState(state: number): number {
 }
 
 export function parseBoardCode(code: string): { size: number; seed: number } | null {
-  const parts = /^np1-([1-9]\d*)-([1-9]\d*)$/.exec(code);
+  const parts = new RegExp(`^${BOARD_VERSION}-([1-9]\\d*)-([1-9]\\d*)$`).exec(code);
   if (!parts) return null;
   const size = Number(parts[1]);
   const seed = Number(parts[2]);

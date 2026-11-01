@@ -1,11 +1,15 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
-import { MISMATCH_MS } from '../src/game/game.ts';
-import { GAME_URL, exportedSnapshot, loadFixedBoard } from './game-fixture.ts';
+import {
+  GAME_URL,
+  exportedSnapshot,
+  loadFixedBoard,
+  loadTimedBoard,
+  finishBoard,
+} from './game-fixture.ts';
 
 test('pauses elapsed time and a mismatch while the document is hidden', async ({ page }) => {
-  await loadFixedBoard(page);
-  await page.clock.install();
+  await loadTimedBoard(page);
   await page.locator('.card').nth(0).click();
   await page.locator('.card').nth(1).click();
   await page.clock.runFor(200);
@@ -22,7 +26,9 @@ test('pauses elapsed time and a mismatch while the document is hidden', async ({
     Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
     document.dispatchEvent(new Event('visibilitychange'));
   });
-  await page.clock.runFor(MISMATCH_MS);
+  await page.clock.runFor(599);
+  await expect(page.locator('.card.revealed')).toHaveCount(2);
+  await page.clock.runFor(1);
   await expect(page.locator('.card.closed')).toHaveCount(16);
 });
 
@@ -49,7 +55,27 @@ test('keeps the initial focus and produces no audio during play', async ({ page 
   expect(
     await page.locator('button:focus, select:focus, input:focus, textarea:focus').count(),
   ).toBe(0);
-  await page.locator('.card').first().click();
+  await page.addInitScript(() => {
+    for (const key of ['AudioContext', 'webkitAudioContext', 'Audio']) {
+      Object.defineProperty(window, key, {
+        configurable: true,
+        value: class {
+          constructor() {
+            throw new Error('Unexpected synthesized audio');
+          }
+        },
+      });
+    }
+    HTMLMediaElement.prototype.play = () => {
+      throw new Error('Unexpected media playback');
+    };
+    speechSynthesis.speak = () => {
+      throw new Error('Unexpected synthesized speech');
+    };
+  });
+  await loadFixedBoard(page);
+  await finishBoard(page);
+  await page.getByRole('button', { name: 'Restart', exact: true }).click();
   await expect(page.locator('audio, video')).toHaveCount(0);
   expect(audioRequests).toBe(0);
 });

@@ -1,3 +1,4 @@
+export const DealControl = { size: 'Grid size', newGame: 'New Game', restart: 'Restart' } as const;
 export const ReproductionControl = {
   summary: 'Reproduce a game',
   board: 'Board code',
@@ -6,6 +7,12 @@ export const ReproductionControl = {
   exportSnapshot: 'Export snapshot',
   loadSnapshot: 'Load snapshot',
   resume: 'Resume',
+} as const;
+export const StatusLabel = {
+  moves: 'Moves',
+  pairs: 'Pairs',
+  time: 'Active time',
+  best: 'Best moves',
 } as const;
 export const BOARD_CODE_MAX_CHARACTERS = 32;
 export const SNAPSHOT_MAX_CHARACTERS = 65_536;

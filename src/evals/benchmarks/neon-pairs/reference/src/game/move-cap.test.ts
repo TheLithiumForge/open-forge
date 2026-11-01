@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import { activateCard, advanceGame, createGame, isWon, MISMATCH_MS, MOVES_MAX } from './game.ts';
 import { decodeSnapshot, encodeSnapshot } from './snapshot.ts';
 import { EXAMPLE_CODE, EXAMPLE_PAIRS } from './game.fixture.ts';
@@ -31,7 +31,7 @@ test('a capped mismatch closes and larger imported move counts are rejected', ()
   const game = { ...activateCard(createGame(EXAMPLE_CODE), 0), moves: MOVES_MAX };
   const mismatch = activateCard(game, 1);
   assert.equal(mismatch.selection.kind, SelectionKind.mismatch);
-  assert.equal(mismatch.moves, MOVES_MAX);
+  assert.equal(mismatch.moves, MOVES_MAX, 'R05.5 move count saturates');
   const closed = advanceGame(mismatch, MISMATCH_MS);
   assert.equal(closed.selection.kind, SelectionKind.closed);
   assert.ok(decodeSnapshot(encodeSnapshot(closed)));

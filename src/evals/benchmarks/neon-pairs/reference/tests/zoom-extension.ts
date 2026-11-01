@@ -3,22 +3,16 @@ import { join } from 'node:path';
 
 declare const chrome: {
   tabs: {
-    onUpdated: { addListener(callback: (id: number, change: { status?: string }) => void): void };
+    query(query: { url: string }, callback: (tabs: { id?: number }[]) => void): void;
     setZoom(id: number, factor: number): void;
   };
 };
-
-function zoomOnLoad(): void {
-  chrome.tabs.onUpdated.addListener((id, change) => {
-    if (change.status === 'complete') chrome.tabs.setZoom(id, 2);
-  });
-}
 
 export async function zoomExtension(profile: string): Promise<string> {
   const extension = join(profile, 'extension');
   await mkdir(extension);
   // This generated fixture uses Chrome's page zoom API rather than a CSS or device-scale substitute.
-  await writeFile(join(extension, 'background.js'), `(${zoomOnLoad.toString()})();`);
+  await writeFile(join(extension, 'background.js'), 'globalThis.ready = true;');
   await writeFile(
     join(extension, 'manifest.json'),
     JSON.stringify({
@@ -30,4 +24,15 @@ export async function zoomExtension(profile: string): Promise<string> {
     }),
   );
   return extension;
+}
+
+export function zoomGameTab(url: string): Promise<void> {
+  return new Promise((resolve) =>
+    chrome.tabs.query({ url }, (tabs) => {
+      const tab = tabs[0];
+      if (tab?.id === undefined) throw new Error('Game tab missing.');
+      chrome.tabs.setZoom(tab.id, 2);
+      resolve();
+    }),
+  );
 }

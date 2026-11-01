@@ -12,7 +12,6 @@ export function useSessionClock(
   commit: (next: Session) => void,
 ) {
   const clock = useRef(createClock(performance.now()));
-  const mismatchClock = useRef(clock.current);
   const visible = useRef(!document.hidden);
   const won = isWon(session.game);
 
@@ -29,11 +28,8 @@ export function useSessionClock(
     if (generation !== current.current.generation) return;
     const now = performance.now();
     const step = elapsedStep(clock.current, now, running());
-    const mismatch = elapsedStep(mismatchClock.current, now, running());
     clock.current = step.clock;
-    mismatchClock.current = mismatch.clock;
-    if (step.milliseconds || mismatch.milliseconds)
-      commit(tickSession(current.current, generation, step.milliseconds, mismatch.milliseconds));
+    if (step.milliseconds) commit(tickSession(current.current, generation, step.milliseconds));
   }
 
   useEffect(() => {
@@ -46,7 +42,7 @@ export function useSessionClock(
       const selection = current.current.game.selection;
       const delay =
         selection.kind === SelectionKind.mismatch
-          ? Math.min(CLOCK_INTERVAL_MS, selection.remainingMs - mismatchClock.current.remainderMs)
+          ? Math.min(CLOCK_INTERVAL_MS, selection.remainingMs - clock.current.remainderMs)
           : CLOCK_INTERVAL_MS;
       timer = window.setTimeout(() => {
         if (!active) return;
@@ -71,12 +67,8 @@ export function useSessionClock(
 
   return {
     synchronize,
-    beginMismatch: () => {
-      mismatchClock.current = createClock(performance.now());
-    },
     reset: () => {
       clock.current = createClock(performance.now());
-      mismatchClock.current = clock.current;
     },
   };
 }

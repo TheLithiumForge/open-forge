@@ -1,5 +1,4 @@
 import { GRID_SIZES } from '../deck.ts';
-import { DealControl } from './deal-controls.ts';
 import './controls.css';
 
 interface ControlsProps {
@@ -34,3 +33,5 @@ export function Controls({ size, newGame, restart }: ControlsProps) {
     </div>
   );
 }
+
+export const DealControl = { size: 'Grid size', newGame: 'New Game', restart: 'Restart' } as const;

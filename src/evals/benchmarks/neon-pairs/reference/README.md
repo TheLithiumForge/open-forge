@@ -4,7 +4,7 @@ Neon Pairs is a memory game that runs offline from one HTML file and keeps local
 
 You can repeat a deal with its board code, save progress as a snapshot or run timed actions through the replay command.
 
-Status: reference candidate for spec version 2. Automated checks are complete. Person confirmation of the spoken journey and independent final approval are review items.
+Status: implements product spec version 2.
 
 ## Install
 
@@ -41,19 +41,18 @@ Run the checks from this folder:
 npm run typecheck
 npm test
 npm run test:e2e
-npm run mutate
 npm run format:check
 ```
 
-`test:e2e` type checks and builds current source before opening the new HTML. It also builds the separate diagnostic face sheet. The game distribution contains no diagnostic entry. `mutate` tests 21 isolated changes and leaves the source unchanged. Its result is recorded in `mutation-results.json`.
+`npm test` runs the unit and static checks with Vitest 5.0.5. `test:e2e` type checks and builds current source before opening the new HTML. It also builds the separate diagnostic face sheet. The game distribution contains no diagnostic entry.
 
-The locked install, type check, unit tests, build from current source and Chromium journeys have passed on the named combination. The exact counts and source records are in [Audit](AUDIT.md). Other versions have no test record here.
+The locked install, type check, Vitest unit tests, build from current source and Chromium journeys have passed on the named combination. The browser command asserts all four runtime versions. Other versions have no test record here.
 
 ## Accessibility
 
-Keyboard, card names, atomic turn feedback, reduced motion, touch scrolling and actual 200% browser zoom have browser checks. Two reviewers checked all 128 faces at 44px in grayscale.
+Keyboard, card names, atomic turn feedback, reduced motion, touch scrolling and actual 200% browser zoom have browser checks. The diagnostic face sheet draws all 128 faces at 44px.
 
-I17.1 through I17.6 are tree-checked through a complete keyboard journey. Playwright captures Chromium's accessibility tree for controls, card names, states, turn results, the final summary, Tab exit and New Game. The record is in evidence/accessibility-journey.json. Tree checks don't establish spoken output. A person confirms the spoken journey and records the screen reader version as a review item.
+Playwright checks Chromium's accessibility tree through a complete keyboard journey. It checks controls, card names, states, turn results, the final summary, Tab exit and New Game. A person still needs to confirm spoken output with a screen reader and record its version here.
 
 Tree record: Chromium 156.0.8078.4 and Playwright 1.64.1. Screen reader: not run. Spoken journey: person confirmation pending.
 

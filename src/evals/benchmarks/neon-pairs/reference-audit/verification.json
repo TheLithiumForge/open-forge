@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 2,
+  "specVersion": 2,
+  "requirements": 97,
+  "clauses": 401,
+  "runtime": {
+    "node": "26.12.1",
+    "npm": "11.20.0",
+    "playwright": "1.64.1",
+    "chromium": "156.0.8078.4",
+    "formatter": "prettier@3.9.6"
+  },
+  "aboveAim": [
+    {
+      "path": "reference/src/game/snapshot.test.ts",
+      "lines": 115
+    },
+    {
+      "path": "reference/tests/accessibility.e2e.test.ts",
+      "lines": 112
+    },
+    {
+      "path": "reference/tests/browser-test.ts",
+      "lines": 105
+    },
+    {
+      "path": "reference/tests/control-contract.e2e.test.ts",
+      "lines": 137
+    },
+    {
+      "path": "reference/tests/input-contract.e2e.test.ts",
+      "lines": 109
+    },
+    {
+      "path": "reference/tests/lifecycle.e2e.test.ts",
+      "lines": 107
+    }
+  ],
+  "gates": {
+    "productInstall": "passed",
+    "productTypecheck": "passed",
+    "productTests": {
+      "passed": 93,
+      "failed": 0,
+      "skipped": 0
+    },
+    "referenceInstall": "passed",
+    "referenceTypecheck": "passed",
+    "vitest": {
+      "passed": 123,
+      "failed": 0,
+      "skipped": 0
+    },
+    "browserRuns": [
+      {
+        "run": 1,
+        "command": "npm run test:e2e --cache .npm-cache",
+        "builtFromCurrentSource": true,
+        "tests": 57,
+        "failed": 0,
+        "skipped": 0,
+        "artifactSha256": "fcf9f69af9879481075f071c6987cf8e5d9f1c97da755fd1f77dd1f71a3285f8"
+      },
+      {
+        "run": 2,
+        "command": "npm run test:e2e --cache .npm-cache",
+        "builtFromCurrentSource": true,
+        "tests": 57,
+        "failed": 0,
+        "skipped": 0,
+        "artifactSha256": "fcf9f69af9879481075f071c6987cf8e5d9f1c97da755fd1f77dd1f71a3285f8"
+      },
+      {
+        "run": 3,
+        "command": "npm run test:e2e --cache .npm-cache",
+        "builtFromCurrentSource": true,
+        "tests": 57,
+        "failed": 0,
+        "skipped": 0,
+        "artifactSha256": "fcf9f69af9879481075f071c6987cf8e5d9f1c97da755fd1f77dd1f71a3285f8"
+      }
+    ],
+    "mutations": {
+      "caught": 21,
+      "survived": 0
+    },
+    "harnessSelfTest": "passed",
+    "auditTypecheck": "passed"
+  },
+  "limits": [
+    "I17.6 needs a person with NVDA.",
+    "V12.7 needs the next vision judgment.",
+    "Source and process review clauses need independent judgment.",
+    "Protected benchmark repairs and final seed freeze stay with the overseer.",
+    "Manual dist and Chromium cleanup stays with the overseer after the earlier policy rejection."
+  ],
+  "commands": [
+    {
+      "command": "npm ci --cache benchmarks/neon-pairs/reference/.npm-cache",
+      "folder": "src/evals",
+      "exit": 0
+    },
+    {
+      "command": "npm run typecheck --cache benchmarks/neon-pairs/reference/.npm-cache",
+      "folder": "src/evals",
+      "exit": 0
+    },
+    {
+      "command": "npm test --cache benchmarks/neon-pairs/reference/.npm-cache",
+      "folder": "src/evals",
+      "exit": 0
+    },
+    {
+      "command": "npm ci --cache .npm-cache",
+      "folder": "reference",
+      "exit": 0
+    },
+    {
+      "command": "npm run typecheck --cache .npm-cache",
+      "folder": "reference",
+      "exit": 0
+    },
+    {
+      "command": "npm test --cache .npm-cache",
+      "folder": "reference",
+      "exit": 0
+    },
+    {
+      "command": "npm run test:e2e --cache .npm-cache",
+      "repetitions": 3,
+      "folder": "reference",
+      "exit": 0
+    },
+    {
+      "command": "node ../reference-audit/mutations.ts",
+      "folder": "reference",
+      "exit": 0
+    },
+    {
+      "command": "npm run format:check --cache .npm-cache",
+      "folder": "reference",
+      "exit": 0
+    },
+    {
+      "command": "node ../reference/node_modules/typescript/bin/tsc -p tsconfig.json",
+      "folder": "reference-audit",
+      "exit": 0
+    },
+    {
+      "command": "node --test mutation-report.test.ts",
+      "folder": "reference-audit",
+      "exit": 0
+    }
+  ],
+  "validation": {
+    "clauses": 401,
+    "hashes": 131,
+    "proseDashMatches": 0,
+    "unchangedChecksSlots": 401,
+    "emptyReferenceSlots": 0,
+    "links": 12
+  }
+}

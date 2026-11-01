@@ -1,0 +1,4 @@
+.mutation-run.log
+.mutation-focused.log
+.test-work/
+*.log

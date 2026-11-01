@@ -43,6 +43,7 @@ p {
   font-size: 14px;
 }
 .intro {
+  font-size: 14px;
   color: var(--secondary);
   margin-bottom: 24px;
 }

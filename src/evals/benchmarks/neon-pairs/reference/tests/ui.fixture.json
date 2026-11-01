@@ -1,5 +1,5 @@
 {
-  "bestNone": "Best: none",
+  "bestNone": "none",
   "winBanner": "Every pair found in 8 moves and 0:03. Well played.",
   "mismatch": "No match. Cards close after a short pause.",
   "winningResult": "Pair found. All pairs found in 8 moves and 0:03."

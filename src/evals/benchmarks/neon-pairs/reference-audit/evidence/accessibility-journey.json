@@ -13,7 +13,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -23,14 +23,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {}
         },
         {
@@ -90,7 +90,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves0Pairs0 / 8Active time0:00Best movesBest: none",
+          "text": "Moves0Pairs0 / 8Active time0:00Best:none",
           "properties": {}
         },
         {
@@ -99,17 +99,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "New game ready.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -124,6 +113,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "New game ready.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -183,7 +183,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "0",
           "properties": {}
@@ -197,7 +197,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "0 / 8",
           "properties": {}
@@ -211,23 +211,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:00",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -235,13 +235,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "New game ready.",
-          "value": null,
-          "text": "New game ready.",
           "properties": {}
         },
         {
@@ -416,6 +409,13 @@
         },
         {
           "role": "StaticText",
+          "name": "New game ready.",
+          "value": null,
+          "text": "New game ready.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -584,16 +584,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -611,17 +611,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "New game ready.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New game ready.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -696,14 +696,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -724,7 +724,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -734,14 +734,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {}
         },
         {
@@ -801,7 +801,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves0Pairs0 / 8Active time0:00Best movesBest: none",
+          "text": "Moves0Pairs0 / 8Active time0:00Best:none",
           "properties": {}
         },
         {
@@ -810,17 +810,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "New game ready.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -835,6 +824,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "New game ready.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -894,7 +894,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "0",
           "properties": {}
@@ -908,7 +908,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "0 / 8",
           "properties": {}
@@ -922,23 +922,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:00",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -946,13 +946,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "New game ready.",
-          "value": null,
-          "text": "New game ready.",
           "properties": {}
         },
         {
@@ -1127,6 +1120,13 @@
         },
         {
           "role": "StaticText",
+          "name": "New game ready.",
+          "value": null,
+          "text": "New game ready.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -1295,16 +1295,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -1322,17 +1322,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "New game ready.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New game ready.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -1407,14 +1407,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -1435,7 +1435,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -1445,14 +1445,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {}
         },
         {
@@ -1511,7 +1511,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves0Pairs0 / 8Active time0:00Best movesBest: none",
+          "text": "Moves0Pairs0 / 8Active time0:00Best:none",
           "properties": {}
         },
         {
@@ -1520,17 +1520,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "New game ready.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -1545,6 +1534,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "New game ready.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -1604,7 +1604,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "0",
           "properties": {}
@@ -1618,7 +1618,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "0 / 8",
           "properties": {}
@@ -1632,23 +1632,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:00",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -1656,13 +1656,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "New game ready.",
-          "value": null,
-          "text": "New game ready.",
           "properties": {}
         },
         {
@@ -1838,6 +1831,13 @@
         },
         {
           "role": "StaticText",
+          "name": "New game ready.",
+          "value": null,
+          "text": "New game ready.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -2006,16 +2006,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -2033,17 +2033,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "New game ready.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New game ready.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -2118,14 +2118,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -2146,7 +2146,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -2156,14 +2156,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {}
         },
         {
@@ -2222,7 +2222,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves0Pairs0 / 8Active time0:00Best movesBest: none",
+          "text": "Moves0Pairs0 / 8Active time0:00Best:none",
           "properties": {}
         },
         {
@@ -2231,17 +2231,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "New game ready.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -2256,6 +2245,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "New game ready.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -2315,7 +2315,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "0",
           "properties": {}
@@ -2329,7 +2329,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "0 / 8",
           "properties": {}
@@ -2343,23 +2343,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:00",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -2367,13 +2367,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "New game ready.",
-          "value": null,
-          "text": "New game ready.",
           "properties": {}
         },
         {
@@ -2549,6 +2542,13 @@
         },
         {
           "role": "StaticText",
+          "name": "New game ready.",
+          "value": null,
+          "text": "New game ready.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -2717,16 +2717,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -2744,17 +2744,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "New game ready.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New game ready.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -2829,14 +2829,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -2857,7 +2857,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 1 pair matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 1 pair matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -2867,14 +2867,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 1 pair matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 1 pair matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 1 pair matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 1 pair matched.",
           "properties": {}
         },
         {
@@ -2933,7 +2933,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves1Pairs1 / 8Active time0:03Best movesBest: none",
+          "text": "Moves1Pairs1 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -2942,17 +2942,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 1 pair matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -2967,6 +2956,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 1 pair matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -3026,7 +3026,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "1",
           "properties": {}
@@ -3040,7 +3040,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "1 / 8",
           "properties": {}
@@ -3054,23 +3054,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -3078,13 +3078,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 1 pair matched.",
-          "value": null,
-          "text": "Pair found. 1 pair matched.",
           "properties": {}
         },
         {
@@ -3262,6 +3255,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 1 pair matched.",
+          "value": null,
+          "text": "Pair found. 1 pair matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -3430,16 +3430,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -3457,17 +3457,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 1 pair matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 1 pair matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -3542,14 +3542,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -3570,7 +3570,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 1 pair matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 1 pair matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -3580,14 +3580,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 1 pair matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 1 pair matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 1 pair matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves1Pairs1 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 1 pair matched.",
           "properties": {}
         },
         {
@@ -3646,7 +3646,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves1Pairs1 / 8Active time0:03Best movesBest: none",
+          "text": "Moves1Pairs1 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -3655,17 +3655,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 1 pair matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -3680,6 +3669,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 1 pair matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -3739,7 +3739,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "1",
           "properties": {}
@@ -3753,7 +3753,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "1 / 8",
           "properties": {}
@@ -3767,23 +3767,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -3791,13 +3791,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 1 pair matched.",
-          "value": null,
-          "text": "Pair found. 1 pair matched.",
           "properties": {}
         },
         {
@@ -3975,6 +3968,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 1 pair matched.",
+          "value": null,
+          "text": "Pair found. 1 pair matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -4143,16 +4143,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -4170,17 +4170,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 1 pair matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 1 pair matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -4255,14 +4255,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -4283,7 +4283,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 2 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 2 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -4293,14 +4293,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 2 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 2 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 2 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 2 pairs matched.",
           "properties": {}
         },
         {
@@ -4359,7 +4359,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves2Pairs2 / 8Active time0:03Best movesBest: none",
+          "text": "Moves2Pairs2 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -4368,17 +4368,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 2 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -4393,6 +4382,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 2 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -4452,7 +4452,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "2",
           "properties": {}
@@ -4466,7 +4466,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "2 / 8",
           "properties": {}
@@ -4480,23 +4480,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -4504,13 +4504,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 2 pairs matched.",
-          "value": null,
-          "text": "Pair found. 2 pairs matched.",
           "properties": {}
         },
         {
@@ -4690,6 +4683,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 2 pairs matched.",
+          "value": null,
+          "text": "Pair found. 2 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -4858,16 +4858,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -4885,17 +4885,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 2 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 2 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -4970,14 +4970,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -4998,7 +4998,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 2 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 2 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -5008,14 +5008,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 2 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 2 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 2 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves2Pairs2 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 2 pairs matched.",
           "properties": {}
         },
         {
@@ -5074,7 +5074,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves2Pairs2 / 8Active time0:03Best movesBest: none",
+          "text": "Moves2Pairs2 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -5083,17 +5083,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 2 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -5108,6 +5097,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 2 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -5167,7 +5167,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "2",
           "properties": {}
@@ -5181,7 +5181,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "2 / 8",
           "properties": {}
@@ -5195,23 +5195,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -5219,13 +5219,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 2 pairs matched.",
-          "value": null,
-          "text": "Pair found. 2 pairs matched.",
           "properties": {}
         },
         {
@@ -5405,6 +5398,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 2 pairs matched.",
+          "value": null,
+          "text": "Pair found. 2 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -5573,16 +5573,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -5600,17 +5600,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 2 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 2 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -5685,14 +5685,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -5713,7 +5713,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 3 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 3 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -5723,14 +5723,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 3 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 3 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 3 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 3 pairs matched.",
           "properties": {}
         },
         {
@@ -5789,7 +5789,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves3Pairs3 / 8Active time0:03Best movesBest: none",
+          "text": "Moves3Pairs3 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -5798,17 +5798,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 3 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -5823,6 +5812,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 3 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -5882,7 +5882,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "3",
           "properties": {}
@@ -5896,7 +5896,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "3 / 8",
           "properties": {}
@@ -5910,23 +5910,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -5934,13 +5934,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 3 pairs matched.",
-          "value": null,
-          "text": "Pair found. 3 pairs matched.",
           "properties": {}
         },
         {
@@ -6122,6 +6115,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 3 pairs matched.",
+          "value": null,
+          "text": "Pair found. 3 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -6290,16 +6290,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -6317,17 +6317,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 3 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 3 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -6402,14 +6402,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -6430,7 +6430,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 3 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 3 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -6440,14 +6440,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 3 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 3 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 3 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves3Pairs3 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 3 pairs matched.",
           "properties": {}
         },
         {
@@ -6506,7 +6506,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves3Pairs3 / 8Active time0:03Best movesBest: none",
+          "text": "Moves3Pairs3 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -6515,17 +6515,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 3 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -6540,6 +6529,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 3 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -6599,7 +6599,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "3",
           "properties": {}
@@ -6613,7 +6613,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "3 / 8",
           "properties": {}
@@ -6627,23 +6627,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -6651,13 +6651,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 3 pairs matched.",
-          "value": null,
-          "text": "Pair found. 3 pairs matched.",
           "properties": {}
         },
         {
@@ -6839,6 +6832,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 3 pairs matched.",
+          "value": null,
+          "text": "Pair found. 3 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -7007,16 +7007,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -7034,17 +7034,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 3 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 3 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -7119,14 +7119,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -7147,7 +7147,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 4 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 4 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -7157,14 +7157,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 4 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 4 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 4 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 4 pairs matched.",
           "properties": {}
         },
         {
@@ -7223,7 +7223,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves4Pairs4 / 8Active time0:03Best movesBest: none",
+          "text": "Moves4Pairs4 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -7232,17 +7232,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 4 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -7257,6 +7246,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 4 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -7316,7 +7316,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "4",
           "properties": {}
@@ -7330,7 +7330,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "4 / 8",
           "properties": {}
@@ -7344,23 +7344,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -7368,13 +7368,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 4 pairs matched.",
-          "value": null,
-          "text": "Pair found. 4 pairs matched.",
           "properties": {}
         },
         {
@@ -7558,6 +7551,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 4 pairs matched.",
+          "value": null,
+          "text": "Pair found. 4 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -7726,16 +7726,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -7753,17 +7753,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 4 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 4 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -7838,14 +7838,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -7866,7 +7866,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 4 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 4 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -7876,14 +7876,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 4 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 4 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 4 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves4Pairs4 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 4 pairs matched.",
           "properties": {}
         },
         {
@@ -7942,7 +7942,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves4Pairs4 / 8Active time0:03Best movesBest: none",
+          "text": "Moves4Pairs4 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -7951,17 +7951,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 4 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -7976,6 +7965,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 4 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -8035,7 +8035,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "4",
           "properties": {}
@@ -8049,7 +8049,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "4 / 8",
           "properties": {}
@@ -8063,23 +8063,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -8087,13 +8087,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 4 pairs matched.",
-          "value": null,
-          "text": "Pair found. 4 pairs matched.",
           "properties": {}
         },
         {
@@ -8277,6 +8270,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 4 pairs matched.",
+          "value": null,
+          "text": "Pair found. 4 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -8445,16 +8445,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -8472,17 +8472,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 4 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 4 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -8557,14 +8557,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -8585,7 +8585,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 5 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 5 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -8595,14 +8595,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 5 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 5 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 5 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 5 pairs matched.",
           "properties": {}
         },
         {
@@ -8661,7 +8661,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves5Pairs5 / 8Active time0:03Best movesBest: none",
+          "text": "Moves5Pairs5 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -8670,17 +8670,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 5 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -8695,6 +8684,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 5 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -8754,7 +8754,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "5",
           "properties": {}
@@ -8768,7 +8768,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "5 / 8",
           "properties": {}
@@ -8782,23 +8782,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -8806,13 +8806,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 5 pairs matched.",
-          "value": null,
-          "text": "Pair found. 5 pairs matched.",
           "properties": {}
         },
         {
@@ -8998,6 +8991,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 5 pairs matched.",
+          "value": null,
+          "text": "Pair found. 5 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -9166,16 +9166,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -9193,17 +9193,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 5 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 5 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -9278,14 +9278,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -9306,7 +9306,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 5 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 5 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -9316,14 +9316,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 5 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 5 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 5 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves5Pairs5 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 5 pairs matched.",
           "properties": {}
         },
         {
@@ -9382,7 +9382,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves5Pairs5 / 8Active time0:03Best movesBest: none",
+          "text": "Moves5Pairs5 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -9391,17 +9391,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 5 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -9416,6 +9405,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 5 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -9475,7 +9475,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "5",
           "properties": {}
@@ -9489,7 +9489,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "5 / 8",
           "properties": {}
@@ -9503,23 +9503,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -9527,13 +9527,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 5 pairs matched.",
-          "value": null,
-          "text": "Pair found. 5 pairs matched.",
           "properties": {}
         },
         {
@@ -9719,6 +9712,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 5 pairs matched.",
+          "value": null,
+          "text": "Pair found. 5 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -9887,16 +9887,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -9914,17 +9914,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 5 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 5 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -9999,14 +9999,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -10027,7 +10027,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 6 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 6 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -10037,14 +10037,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 6 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 6 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 6 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 6 pairs matched.",
           "properties": {}
         },
         {
@@ -10103,7 +10103,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves6Pairs6 / 8Active time0:03Best movesBest: none",
+          "text": "Moves6Pairs6 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -10112,17 +10112,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 6 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -10137,6 +10126,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 6 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -10196,7 +10196,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "6",
           "properties": {}
@@ -10210,7 +10210,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "6 / 8",
           "properties": {}
@@ -10224,23 +10224,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -10248,13 +10248,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 6 pairs matched.",
-          "value": null,
-          "text": "Pair found. 6 pairs matched.",
           "properties": {}
         },
         {
@@ -10442,6 +10435,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 6 pairs matched.",
+          "value": null,
+          "text": "Pair found. 6 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -10610,16 +10610,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -10637,17 +10637,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 6 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 6 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -10722,14 +10722,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -10750,7 +10750,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 6 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 6 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -10760,14 +10760,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 6 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 6 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 6 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves6Pairs6 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 6 pairs matched.",
           "properties": {}
         },
         {
@@ -10826,7 +10826,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves6Pairs6 / 8Active time0:03Best movesBest: none",
+          "text": "Moves6Pairs6 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -10835,17 +10835,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 6 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -10860,6 +10849,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 6 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -10919,7 +10919,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "6",
           "properties": {}
@@ -10933,7 +10933,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "6 / 8",
           "properties": {}
@@ -10947,23 +10947,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -10971,13 +10971,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 6 pairs matched.",
-          "value": null,
-          "text": "Pair found. 6 pairs matched.",
           "properties": {}
         },
         {
@@ -11165,6 +11158,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 6 pairs matched.",
+          "value": null,
+          "text": "Pair found. 6 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -11333,16 +11333,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -11360,17 +11360,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 6 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 6 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -11445,14 +11445,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -11473,7 +11473,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 7 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 7 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -11483,14 +11483,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 7 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 7 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 7 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 7 pairs matched.",
           "properties": {}
         },
         {
@@ -11549,7 +11549,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves7Pairs7 / 8Active time0:03Best movesBest: none",
+          "text": "Moves7Pairs7 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -11558,17 +11558,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 7 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -11583,6 +11572,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 7 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -11642,7 +11642,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "7",
           "properties": {}
@@ -11656,7 +11656,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "7 / 8",
           "properties": {}
@@ -11670,23 +11670,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -11694,13 +11694,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 7 pairs matched.",
-          "value": null,
-          "text": "Pair found. 7 pairs matched.",
           "properties": {}
         },
         {
@@ -11890,6 +11883,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 7 pairs matched.",
+          "value": null,
+          "text": "Pair found. 7 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -12058,16 +12058,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -12085,17 +12085,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 7 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 7 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -12170,14 +12170,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -12198,7 +12198,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 7 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 7 pairs matched.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -12208,14 +12208,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 7 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 7 pairs matched.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best movesBest: noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. 7 pairs matched.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves7Pairs7 / 8Active time0:03Best:noneUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. 7 pairs matched.",
           "properties": {}
         },
         {
@@ -12274,7 +12274,7 @@
           "role": "DescriptionList",
           "name": "",
           "value": null,
-          "text": "Moves7Pairs7 / 8Active time0:03Best movesBest: none",
+          "text": "Moves7Pairs7 / 8Active time0:03Best:none",
           "properties": {}
         },
         {
@@ -12283,17 +12283,6 @@
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "properties": {}
-        },
-        {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. 7 pairs matched.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
         },
         {
           "role": "region",
@@ -12308,6 +12297,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. 7 pairs matched.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -12367,7 +12367,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "7",
           "properties": {}
@@ -12381,7 +12381,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "7 / 8",
           "properties": {}
@@ -12395,23 +12395,23 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
         },
         {
           "role": "term",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -12419,13 +12419,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. 7 pairs matched.",
-          "value": null,
-          "text": "Pair found. 7 pairs matched.",
           "properties": {}
         },
         {
@@ -12615,6 +12608,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. 7 pairs matched.",
+          "value": null,
+          "text": "Pair found. 7 pairs matched.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -12783,16 +12783,16 @@
         },
         {
           "role": "StaticText",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
-          "text": "Best moves",
+          "text": "Best:",
           "properties": {}
         },
         {
           "role": "StaticText",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
-          "text": "Best: none",
+          "text": "none",
           "properties": {}
         },
         {
@@ -12810,17 +12810,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. 7 pairs matched.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. 7 pairs matched.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -12895,14 +12895,14 @@
         },
         {
           "role": "InlineTextBox",
-          "name": "Best moves",
+          "name": "Best:",
           "value": null,
           "text": "",
           "properties": {}
         },
         {
           "role": "InlineTextBox",
-          "name": "Best: none",
+          "name": "none",
           "value": null,
           "text": "",
           "properties": {}
@@ -12923,7 +12923,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. All pairs found in 8 moves and 0:03.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. All pairs found in 8 moves and 0:03.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -12933,14 +12933,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. All pairs found in 8 moves and 0:03.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. All pairs found in 8 moves and 0:03.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. All pairs found in 8 moves and 0:03.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. All pairs found in 8 moves and 0:03.",
           "properties": {}
         },
         {
@@ -13017,17 +13017,6 @@
           "properties": {}
         },
         {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. All pairs found in 8 moves and 0:03.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
-        },
-        {
           "role": "region",
           "name": "Game board",
           "value": null,
@@ -13040,6 +13029,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. All pairs found in 8 moves and 0:03.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -13099,7 +13099,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "8",
           "properties": {}
@@ -13113,7 +13113,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "8 / 8",
           "properties": {}
@@ -13127,7 +13127,7 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
@@ -13141,7 +13141,7 @@
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
           "text": "8",
           "properties": {}
@@ -13186,13 +13186,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. All pairs found in 8 moves and 0:03.",
-          "value": null,
-          "text": "Pair found. All pairs found in 8 moves and 0:03.",
           "properties": {}
         },
         {
@@ -13384,6 +13377,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. All pairs found in 8 moves and 0:03.",
+          "value": null,
+          "text": "Pair found. All pairs found in 8 moves and 0:03.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -13614,17 +13614,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. All pairs found in 8 moves and 0:03.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. All pairs found in 8 moves and 0:03.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -13727,7 +13727,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. All pairs found in 8 moves and 0:03.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. All pairs found in 8 moves and 0:03.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -13737,14 +13737,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. All pairs found in 8 moves and 0:03.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. All pairs found in 8 moves and 0:03.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. All pairs found in 8 moves and 0:03.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. All pairs found in 8 moves and 0:03.",
           "properties": {}
         },
         {
@@ -13821,17 +13821,6 @@
           "properties": {}
         },
         {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. All pairs found in 8 moves and 0:03.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
-        },
-        {
           "role": "region",
           "name": "Game board",
           "value": null,
@@ -13844,6 +13833,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. All pairs found in 8 moves and 0:03.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -13903,7 +13903,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "8",
           "properties": {}
@@ -13917,7 +13917,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "8 / 8",
           "properties": {}
@@ -13931,7 +13931,7 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
@@ -13945,7 +13945,7 @@
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
           "text": "8",
           "properties": {}
@@ -13990,13 +13990,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. All pairs found in 8 moves and 0:03.",
-          "value": null,
-          "text": "Pair found. All pairs found in 8 moves and 0:03.",
           "properties": {}
         },
         {
@@ -14185,6 +14178,13 @@
             "focusable": true,
             "expanded": false
           }
+        },
+        {
+          "role": "StaticText",
+          "name": "Pair found. All pairs found in 8 moves and 0:03.",
+          "value": null,
+          "text": "Pair found. All pairs found in 8 moves and 0:03.",
+          "properties": {}
         },
         {
           "role": "StaticText",
@@ -14418,17 +14418,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. All pairs found in 8 moves and 0:03.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. All pairs found in 8 moves and 0:03.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -14531,7 +14531,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. All pairs found in 8 moves and 0:03.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. All pairs found in 8 moves and 0:03.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -14541,14 +14541,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. All pairs found in 8 moves and 0:03.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. All pairs found in 8 moves and 0:03.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Pair found. All pairs found in 8 moves and 0:03.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves8Pairs8 / 8Active time0:03Best moves8Every pair found in 8 moves and 0:03. Well played.Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gamePair found. All pairs found in 8 moves and 0:03.",
           "properties": {}
         },
         {
@@ -14625,17 +14625,6 @@
           "properties": {}
         },
         {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "Pair found. All pairs found in 8 moves and 0:03.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
-        },
-        {
           "role": "region",
           "name": "Game board",
           "value": null,
@@ -14648,6 +14637,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Pair found. All pairs found in 8 moves and 0:03.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -14707,7 +14707,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "8",
           "properties": {}
@@ -14721,7 +14721,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "8 / 8",
           "properties": {}
@@ -14735,7 +14735,7 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:03",
           "properties": {}
@@ -14749,7 +14749,7 @@
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
           "text": "8",
           "properties": {}
@@ -14794,13 +14794,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "Pair found. All pairs found in 8 moves and 0:03.",
-          "value": null,
-          "text": "Pair found. All pairs found in 8 moves and 0:03.",
           "properties": {}
         },
         {
@@ -14992,6 +14985,13 @@
         },
         {
           "role": "StaticText",
+          "name": "Pair found. All pairs found in 8 moves and 0:03.",
+          "value": null,
+          "text": "Pair found. All pairs found in 8 moves and 0:03.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
           "name": "A little focus. A perfect pair.",
           "value": null,
           "text": "A little focus. A perfect pair.",
@@ -15222,17 +15222,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "Pair found. All pairs found in 8 moves and 0:03.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pair found. All pairs found in 8 moves and 0:03.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {
@@ -15335,7 +15335,7 @@
           "role": "RootWebArea",
           "name": "Neon Pairs",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best moves8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best moves8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {
             "focusable": true,
             "focused": true
@@ -15345,14 +15345,14 @@
           "role": "generic",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best moves8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best moves8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {}
         },
         {
           "role": "main",
           "name": "",
           "value": null,
-          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best moves8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.New game ready.Reproduce a game",
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best moves8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Reproduce a gameNew game ready.",
           "properties": {}
         },
         {
@@ -15423,17 +15423,6 @@
           "properties": {}
         },
         {
-          "role": "status",
-          "name": "",
-          "value": null,
-          "text": "New game ready.",
-          "properties": {
-            "live": "polite",
-            "atomic": true,
-            "relevant": "additions text"
-          }
-        },
-        {
           "role": "region",
           "name": "Game board",
           "value": null,
@@ -15446,6 +15435,17 @@
           "value": null,
           "text": "Reproduce a game",
           "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "New game ready.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
         },
         {
           "role": "paragraph",
@@ -15505,7 +15505,7 @@
         },
         {
           "role": "definition",
-          "name": "Moves",
+          "name": "",
           "value": null,
           "text": "0",
           "properties": {}
@@ -15519,7 +15519,7 @@
         },
         {
           "role": "definition",
-          "name": "Pairs",
+          "name": "",
           "value": null,
           "text": "0 / 8",
           "properties": {}
@@ -15533,7 +15533,7 @@
         },
         {
           "role": "definition",
-          "name": "Active time",
+          "name": "",
           "value": null,
           "text": "0:00",
           "properties": {}
@@ -15547,7 +15547,7 @@
         },
         {
           "role": "definition",
-          "name": "Best moves",
+          "name": "",
           "value": null,
           "text": "8",
           "properties": {}
@@ -15557,13 +15557,6 @@
           "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
           "value": null,
           "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
-          "properties": {}
-        },
-        {
-          "role": "StaticText",
-          "name": "New game ready.",
-          "value": null,
-          "text": "New game ready.",
           "properties": {}
         },
         {
@@ -15735,6 +15728,13 @@
             "focusable": true,
             "expanded": false
           }
+        },
+        {
+          "role": "StaticText",
+          "name": "New game ready.",
+          "value": null,
+          "text": "New game ready.",
+          "properties": {}
         },
         {
           "role": "StaticText",
@@ -15933,17 +15933,17 @@
           "properties": {}
         },
         {
-          "role": "InlineTextBox",
-          "name": "New game ready.",
-          "value": null,
-          "text": "",
-          "properties": {}
-        },
-        {
           "role": "StaticText",
           "name": "Reproduce a game",
           "value": null,
           "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New game ready.",
+          "value": null,
+          "text": "",
           "properties": {}
         },
         {

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import { exactKeys, readJson, record, safeNonnegative } from './saved-format.ts';
 
 test('JSON limits count UTF-8 bytes before parsing', () => {

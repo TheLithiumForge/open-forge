@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import { describeCard } from './card-state.ts';
 
 test('card names expose only positions until reveal and include state and face after reveal', async () => {

@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { GRID_SIZES, boardCode, generateBoard } from '../src/game/deck.ts';
-import { ReproductionControl } from '../src/game/controls/reproduction-controls.ts';
-import { StatusLabel } from '../src/game/status/status-labels.ts';
+import { ReproductionControl } from './control-labels.ts';
+import { StatusLabel } from './control-labels.ts';
 import { loadFixedBoard } from './game-fixture.ts';
 
 for (const size of GRID_SIZES) {
@@ -24,9 +24,15 @@ for (const size of GRID_SIZES) {
       }
     }
     await expect(page.locator('.card.matched')).toHaveCount(size ** 2);
-    expect(Number(await page.getByLabel(StatusLabel.moves, { exact: true }).textContent())).toBe(
-      size ** 2 / 2,
-    );
+    expect(
+      Number(
+        await page
+          .locator('.stats > div')
+          .filter({ has: page.getByText(StatusLabel.moves, { exact: true }) })
+          .locator('dd')
+          .textContent(),
+      ),
+    ).toBe(size ** 2 / 2);
     await expect(page.locator('.victory')).toHaveCount(1);
   });
 }

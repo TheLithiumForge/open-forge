@@ -1,10 +1,10 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
-import { DealControl } from '../src/game/controls/deal-controls.ts';
+import { DealControl } from './control-labels.ts';
 import { loadFixedBoard, PHONE } from './game-fixture.ts';
 import { expectFocusInside } from './focus-bounds.ts';
 
-for (const viewport of [PHONE, { width: 1280, height: 800 }]) {
+for (const viewport of [PHONE, { width: 1280, height: 800 }, { width: 1280, height: 1400 }]) {
   test(`16x16 fits the page and keeps both end focus outlines at ${viewport.width}x${viewport.height}`, async ({
     page,
   }) => {
@@ -21,6 +21,7 @@ for (const viewport of [PHONE, { width: 1280, height: 800 }]) {
     }));
     expect(layout.pageWidth).toBeLessThanOrEqual(layout.viewportWidth);
     expect(layout.height).toBeLessThanOrEqual(viewport.height * 0.7);
+    expect(layout.height).toBeLessThanOrEqual(768);
     expect(layout.contentHeight).toBeGreaterThan(layout.height);
     expect(parseFloat(layout.padding)).toBe(6);
     const card = await page.locator('.card').first().boundingBox();

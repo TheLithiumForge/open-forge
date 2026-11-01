@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import { createClock, elapsedStep } from './browser-clock.ts';
 
 test('active clock keeps fractional time across hidden intervals', () => {

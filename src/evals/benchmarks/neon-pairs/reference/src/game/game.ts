@@ -1,9 +1,10 @@
 import { generateBoard } from './deck.ts';
 import { safeNonnegative } from './saved-format.ts';
 import { SelectionKind } from './selection.ts';
-import { ELAPSED_MAX_MS } from './elapsed-time.ts';
+
 import type { GameState } from './game.types.ts';
 
+export const ELAPSED_MAX_MS = 359_999_999;
 export const MISMATCH_MS = 800;
 export const MOVES_MAX = 999_999;
 
@@ -58,22 +59,12 @@ export function activateCard(state: GameState, index: number): GameState {
   }
 }
 
-export function advanceGame(
-  state: GameState,
-  milliseconds: number,
-  mismatchMs = milliseconds,
-): GameState {
-  if (
-    !safeNonnegative(milliseconds) ||
-    !safeNonnegative(mismatchMs) ||
-    !state.started ||
-    isWon(state)
-  )
-    return state;
-  if (milliseconds === 0 && mismatchMs === 0) return state;
+export function advanceGame(state: GameState, milliseconds: number): GameState {
+  if (!safeNonnegative(milliseconds) || !state.started || isWon(state)) return state;
+  if (milliseconds === 0) return state;
   const elapsedMs = Math.min(ELAPSED_MAX_MS, state.elapsedMs + milliseconds);
   if (state.selection.kind !== SelectionKind.mismatch) return { ...state, elapsedMs };
-  const remainingMs = state.selection.remainingMs - mismatchMs;
+  const remainingMs = state.selection.remainingMs - milliseconds;
   const selection =
     remainingMs > 0 ? { ...state.selection, remainingMs } : { kind: SelectionKind.closed };
   return { ...state, elapsedMs, selection };

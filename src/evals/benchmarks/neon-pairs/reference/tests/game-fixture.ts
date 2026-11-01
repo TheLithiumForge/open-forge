@@ -2,8 +2,8 @@ import { fileURLToPath } from 'node:url';
 import { expect } from '@playwright/test';
 import { record } from '../src/game/saved-format.ts';
 import { EXAMPLE_CODE, EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
-import { ReproductionControl } from '../src/game/controls/reproduction-controls.ts';
-import { StatusLabel } from '../src/game/status/status-labels.ts';
+import { ReproductionControl } from './control-labels.ts';
+import { StatusLabel } from './control-labels.ts';
 import type { Page } from '@playwright/test';
 
 export const GAME_URL = new URL('../dist/index.html', import.meta.url).href;
@@ -41,7 +41,13 @@ export async function exportedSnapshot(page: Page): Promise<Record<string, unkno
 }
 
 export async function moves(page: Page): Promise<number> {
-  return Number(await page.getByLabel(StatusLabel.moves, { exact: true }).textContent());
+  return Number(
+    await page
+      .locator('.stats > div')
+      .filter({ has: page.getByText(StatusLabel.moves, { exact: true }) })
+      .locator('dd')
+      .textContent(),
+  );
 }
 
 export async function finishBoard(page: Page): Promise<void> {
