@@ -2,12 +2,13 @@ import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-import { extname, join, normalize } from "node:path";
+import { extname, join, normalize, sep } from "node:path";
 import { pauseInterruptedBatches } from "../../execution/batch.ts";
 import { progress } from "../../execution/progress.ts";
 import { loadLocalEnv } from "../../config/auth.ts";
 import { EvalPaths, ResultFiles } from "../../paths.ts";
 import { runFolder } from "../../history/store.ts";
+import { refusal, type RequestFacts } from "./guard.ts";
 import { ApiPaths, handleApi, sendJson } from "./routes.ts";
 
 const Port = Number(process.env["EVALS_PORT"] ?? "4318");
@@ -35,8 +36,18 @@ function streamEvents(request: IncomingMessage, response: ServerResponse, batchI
   request.on("close", unsubscribe);
 }
 
+function requestFacts(request: IncomingMessage): RequestFacts {
+  const header = (name: string): string | undefined => {
+    const value = request.headers[name];
+    return Array.isArray(value) ? value[0] : value;
+  };
+  return { method: request.method ?? "GET", host: header("host"), origin: header("origin"), fetchSite: header("sec-fetch-site"), contentType: header("content-type") };
+}
+
 async function handle(request: IncomingMessage, response: ServerResponse): Promise<void> {
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "localhost"}`);
+  const refused = refusal(requestFacts(request), Port, url.pathname.startsWith("/api/"));
+  if (refused !== null) return sendJson(response, 403, { error: refused });
   const game = runHost.exec(request.headers.host ?? "");
   if (game?.[1] !== undefined) {
     const batchId = await batchOfRun(game[1]);
@@ -47,7 +58,7 @@ async function handle(request: IncomingMessage, response: ServerResponse): Promi
   const shot = shotPath.exec(url.pathname);
   if (shot?.[1] !== undefined && shot[2] !== undefined && shot[3] !== undefined) return sendFile(response, join(runFolder(shot[1], shot[2]), ResultFiles.shots, shot[3]));
   const file = normalize(join(EvalPaths.uiDist, url.pathname === "/" ? "index.html" : url.pathname));
-  return sendFile(response, file.startsWith(EvalPaths.uiDist) ? file : "");
+  return sendFile(response, file.startsWith(EvalPaths.uiDist + sep) ? file : "");
 }
 
 function openBrowser(url: string): void {
@@ -59,7 +70,7 @@ loadLocalEnv();
 await pauseInterruptedBatches();
 createServer((request, response) => {
   handle(request, response).catch((error: unknown) => sendJson(response, 500, { error: error instanceof Error ? error.message : String(error) }));
-}).listen(Port, () => {
+}).listen(Port, "127.0.0.1", () => {
   const url = `http://localhost:${Port}/`;
   console.log(`Open Forge evals are running at ${url}`);
   if (process.env["EVALS_NO_BROWSER"] === undefined) openBrowser(url);

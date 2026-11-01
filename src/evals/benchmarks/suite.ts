@@ -15,8 +15,17 @@ const SuiteFiles = {
 
 type SuiteDefinition = Pick<Suite, "id" | "title" | "project" | "baseline" | "setups">;
 
-export async function loadSuite(id: string): Promise<Suite> {
+const suiteId = /^[\w-]+$/;
+
+/** A suite ID names one folder under the suites, so it can never reach a file outside them. */
+function suiteFolder(id: string): string {
   const folder = join(EvalPaths.suites, id);
+  if (!suiteId.test(id) || !existsSync(join(folder, SuiteFiles.definition))) throw new Error(`There's no suite called ${JSON.stringify(id)}.`);
+  return folder;
+}
+
+export async function loadSuite(id: string): Promise<Suite> {
+  const folder = suiteFolder(id);
   const read = (name: string): Promise<string> => readFile(join(folder, name), "utf8");
   const intentEdited = existsSync(join(folder, SuiteFiles.localIntent));
   const sources = {
@@ -39,7 +48,7 @@ export async function loadSuite(id: string): Promise<Suite> {
 
 /** Edits from the UI go to a local copy, so the checked-in intent stays the standard one. */
 export async function saveIntent(id: string, intent: readonly IntentItem[]): Promise<void> {
-  await writeFile(join(EvalPaths.suites, id, SuiteFiles.localIntent), `${JSON.stringify(intent, null, 2)}\n`);
+  await writeFile(join(suiteFolder(id), SuiteFiles.localIntent), `${JSON.stringify(intent, null, 2)}\n`);
 }
 
 async function readChecks(folder: string): Promise<string> {

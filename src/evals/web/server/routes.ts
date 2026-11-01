@@ -78,6 +78,8 @@ export async function handleApi(request: IncomingMessage, response: ServerRespon
   const batchId = match?.[1];
   if (batchId === undefined) return sendJson(response, 404, { error: "Not found." });
   const action = match?.[2];
+  const expected = action === undefined || action === "pair" ? "GET" : "POST";
+  if (method !== expected) return sendJson(response, 405, { error: `Use ${expected}.` });
   if (action === undefined) return sendJson(response, 200, await batchView(batchId));
   if (action === "resume") return sendJson(response, 200, await resumeBatch(batchId));
   if (action === "pair") {

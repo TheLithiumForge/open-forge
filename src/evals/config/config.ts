@@ -21,6 +21,7 @@ export async function saveConfig(value: unknown): Promise<EvalConfig> {
 
 export function parseConfig(value: unknown): EvalConfig {
   const config = value as EvalConfig; // Checked field by field below.
+  if (typeof config.suite !== "string" || !/^[\w-]+$/.test(config.suite)) throw new Error("The suite must be a suite's folder name.");
   const choices = [...config.agents, config.judge, config.simulatedUser];
   if (!choices.every((choice) => tools.includes(choice.tool))) throw new Error(`Each tool must be one of ${tools.join(", ")}.`);
   if (!isolations.includes(config.isolation)) throw new Error(`Isolation must be one of ${isolations.join(", ")}.`);
