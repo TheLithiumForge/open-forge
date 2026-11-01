@@ -1,4 +1,4 @@
 {
-  "node": { "tag": "node:24.19.0-bookworm-slim", "digest": "sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df" },
+  "node": { "tag": "node:26.12.1-bookworm-slim", "digest": "sha256:88e480776c6149ff1d098cd304f44bf18057fb5d284a3329b78162d29821e28c" },
   "playwright": { "tag": "mcr.microsoft.com/playwright:v1.64.1-noble", "digest": "sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea" }
 }

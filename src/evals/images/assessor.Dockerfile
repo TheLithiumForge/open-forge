@@ -1,5 +1,5 @@
 ARG NODE_DIGEST
-FROM node:24.19.0-bookworm-slim@${NODE_DIGEST}
+FROM node:26.12.1-bookworm-slim@${NODE_DIGEST}
 ARG CLAUDE_VERSION
 ARG CODEX_VERSION
 RUN apt-get update \

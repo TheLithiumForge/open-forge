@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { EvalPaths } from "../paths.ts";
 
 export const BaseImages = {
-  node: "node:24.19.0-bookworm-slim",
+  node: "node:26.12.1-bookworm-slim",
   playwright: "mcr.microsoft.com/playwright:v1.64.1-noble",
 } as const;
 export const ImageLockFile = "lock.json";

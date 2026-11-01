@@ -1,6 +1,6 @@
 ARG NODE_DIGEST
 ARG PLAYWRIGHT_DIGEST
-FROM node:24.19.0-bookworm-slim@${NODE_DIGEST} AS node-runtime
+FROM node:26.12.1-bookworm-slim@${NODE_DIGEST} AS node-runtime
 FROM mcr.microsoft.com/playwright:v1.64.1-noble@${PLAYWRIGHT_DIGEST}
 COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
 COPY --from=node-runtime /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
