@@ -3,6 +3,7 @@ import type { BatchRecord } from "../../history/results.types.ts";
 import type { PreferenceWinner } from "../../history/statuses.ts";
 import type { BatchResponse, ComparePair, StateResponse } from "../server/api.types.ts";
 import type { IntentItem } from "../../benchmarks/suite.types.ts";
+import type { ReferenceTrend } from "../../history/reference-trend.ts";
 
 interface ErrorBody {
   readonly error?: string;
@@ -20,6 +21,7 @@ async function call<T>(path: string, method = "GET", body?: unknown): Promise<T>
 }
 
 export const api = {
+  referenceHistory: () => call<ReferenceTrend[]>("/api/reference-history"),
   state: () => call<StateResponse>("/api/state"),
   saveConfig: (config: EvalConfig) => call<EvalConfig>("/api/config", "PUT", config),
   saveIntent: (intent: readonly IntentItem[]) => call<StateResponse>("/api/intent", "PUT", intent),

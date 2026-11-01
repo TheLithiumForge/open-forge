@@ -6,6 +6,7 @@ import type { SetupSummary } from "../../history/summary.ts";
 import type { JudgeDifference } from "../../history/summary-matrix.ts";
 import type { IntentItem, RubricQuestion } from "../../benchmarks/suite.types.ts";
 import type { ProgressMessage } from "../../execution/progress.ts";
+import type { ReferenceTrend } from "../../history/reference-trend.ts";
 
 export interface SuiteView {
   readonly id: string;
@@ -35,6 +36,7 @@ export interface HiddenRun {
 }
 
 export interface BatchResponse {
+  readonly referenceHistory?: readonly ReferenceTrend[];
   readonly batch: BatchRecord;
   readonly hidden: readonly HiddenRun[];
   readonly runs: readonly RunRecord[] | null;

@@ -39,7 +39,7 @@ export async function rejudgeRun(run: RunView, versions: AssessmentVersions, dep
   } catch (error) {
     assessment = { ...judgeAssessment(run, [], versions, report), error: error instanceof Error ? error.message : String(error) };
   }
-  if (dependencies.choice !== undefined) assessment = { ...assessment, requestedModel: dependencies.choice, replacesAssessmentId: dependencies.previous?.id ?? null };
+  if (dependencies.choice !== undefined) assessment = { ...assessment, requestedModel: dependencies.choice, ballots: dependencies.choice.repeats, replacesAssessmentId: dependencies.previous?.id ?? null };
   await dependencies.append(assessment);
   return assessment;
 }

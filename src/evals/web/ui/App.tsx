@@ -6,6 +6,7 @@ import { api } from "./api.ts";
 import { BatchPanel } from "./BatchPanel.tsx";
 import { SetupPanel } from "./SetupPanel.tsx";
 import { StatusBadges } from "./StatusBadges.tsx";
+import { ReferenceHistoryPanel } from "./ReferenceHistory.tsx";
 
 export function App() {
   const [state, setState] = useState<StateResponse | null>(null);
@@ -52,6 +53,7 @@ export function App() {
           <>
             <SetupPanel state={state} onChange={setState} onRun={run} />
             <BatchPanel state={state} current={current} onSelect={setSelected} onChange={refresh} />
+            <ReferenceHistoryPanel refreshKey={JSON.stringify(state.batches.map((batch) => [batch.id, batch.status]))} />
           </>
         )}
       </main>

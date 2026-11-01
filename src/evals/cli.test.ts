@@ -6,6 +6,7 @@ import { FixtureConfig, FixtureSuite } from "./config/test-fixtures.ts";
 import { RunStatus } from "./history/statuses.ts";
 import { ImplementerPresets, JudgePresets, UserPresets, PresetName } from "./config/presets.ts";
 import type { EvalConfig } from "./config/config.types.ts";
+import { referenceOptions, ReferenceLayer } from "./config/reference.ts";
 
 function fakeServices() {
   const calls: string[] = [], output: string[] = [];
@@ -68,5 +69,19 @@ test("unknown role presets and removed rejudge plan flags fail without loading o
   for (const args of [[Command.run, Flag.plan, "fixture.json", Flag.user, PresetName.both],
     [Command.rejudge, "batch", Flag.plan, "fixture.json"], [Command.rejudge, "batch", Flag.judges, "unknown"],
     [Command.rejudge, "batch", Flag.judges, PresetName.claude, Flag.judges, PresetName.codex]]) await assert.rejects(runCli(args, fake.services));
+  assert.deepEqual(fake.calls, []);
+});
+
+test("reference defaults and overrides dispatch without a model implementation", async () => {
+  const fake = fakeServices(), selections: ReturnType<typeof referenceOptions>[] = [];
+  const services = { ...fake.services, reference: async (options: ReturnType<typeof referenceOptions>) => { selections.push(options); return 0; } };
+  assert.equal(await runCli([Command.reference], services), 0);
+  assert.deepEqual(selections[0], referenceOptions());
+  assert.equal(await runCli([Command.reference, Flag.layer, String(ReferenceLayer.two), Flag.judges, PresetName.both], services), 0);
+  assert.deepEqual(selections[1], referenceOptions(String(ReferenceLayer.two), PresetName.both));
+  for (const args of [[Flag.layer, "1"], [Flag.judges, "unknown"], [Flag.implementers, PresetName.claude], [Flag.layer, "3", Flag.layer, "2"]]) {
+    await assert.rejects(runCli([Command.reference, ...args], services));
+  }
+  assert.equal(selections.length, 2);
   assert.deepEqual(fake.calls, []);
 });

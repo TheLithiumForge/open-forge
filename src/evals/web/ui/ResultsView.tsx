@@ -9,6 +9,7 @@ import { api } from "./api.ts";
 import { RunDetails } from "./RunDetails.tsx";
 import { ResultPanel, SummaryTable } from "./SummaryTable.tsx";
 import { JudgeDifferences } from "./JudgeDifferences.tsx";
+import { ReferenceHistory } from "./ReferenceHistory.tsx";
 
 interface ResultsViewProps {
   readonly view: BatchResponse;
@@ -17,6 +18,7 @@ interface ResultsViewProps {
 
 /** One table and two charts per tool and model, since setups are only compared within one. */
 export function ResultsView({ view, onChange }: ResultsViewProps) {
+  if (view.batch.reference !== undefined) return <div className="pt-2"><ReferenceHistory groups={view.referenceHistory ?? []} /></div>;
   if (view.summary === null || view.runs === null) {
     return (
       <Alert className="mt-2">

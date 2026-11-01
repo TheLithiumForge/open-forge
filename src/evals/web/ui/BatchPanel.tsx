@@ -26,7 +26,7 @@ export function BatchPanel({ state, current, onSelect, onChange }: BatchPanelPro
               <SelectContent>
                 {state.batches.map((batch) => (
                   <SelectItem key={batch.id} value={batch.id}>
-                    {new Date(batch.createdAt).toLocaleString()} · {batch.config.agents.map((agent) => agent.model ?? agent.tool).join(", ")} · {batch.status}
+                    {new Date(batch.createdAt).toLocaleString()} · {batch.reference === undefined ? batch.config.agents.map((agent) => agent.model ?? agent.tool).join(", ") : "Reference"} · {batch.status}
                   </SelectItem>
                 ))}
               </SelectContent>

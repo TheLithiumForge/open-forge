@@ -56,7 +56,7 @@ export function BatchView({ batchId, onChange }: BatchViewProps) {
   if (view === null) return <p className="text-sm text-muted-foreground">Loading the batch…</p>;
   const { batch } = view;
   const finished = view.hidden.filter((run) => run.status === RunStatus.done).length;
-  const resumable = batch.status === BatchStatus.paused || batch.status === BatchStatus.failed;
+  const resumable = batch.reference === undefined && (batch.status === BatchStatus.paused || batch.status === BatchStatus.failed);
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -89,7 +89,7 @@ export function BatchView({ batchId, onChange }: BatchViewProps) {
           ))}
         </div>
       </ScrollArea>
-      <Tabs defaultValue={Tab.compare}>
+      <Tabs key={batch.id} defaultValue={batch.reference === undefined ? Tab.compare : Tab.results}>
         <TabsList>
           <TabsTrigger value={Tab.compare}>
             <Gamepad2 /> Play and compare

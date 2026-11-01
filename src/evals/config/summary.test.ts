@@ -20,6 +20,7 @@ test("summary reads a saved batch and prints all planned pairs without model ser
   assert.equal(value.pairs.length, MatrixAgents.length * MatrixJudges.length);
   assert.ok(value.pairs.every((pair: object) => !("runs" in pair)));
   assert.equal(value.implementationAttempts, 1);
-  await assert.rejects(runCli([Command.summary], services));
+  assert.equal(await runCli([Command.summary], services), 0);
+  assert.deepEqual(JSON.parse(output.at(-1) ?? "null").referenceHistory, []);
   await assert.rejects(runCli([Command.summary, Flag.batch, batch.id, Flag.all], services));
 });

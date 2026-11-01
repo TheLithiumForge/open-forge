@@ -11,8 +11,10 @@ import type { BatchResponse, StateResponse } from "./api.types.ts";
 import { allPairs, nextPair } from "./compare.ts";
 import { summarizeMatrix } from "../../history/summary-matrix.ts";
 import { recordPick } from "./picks.ts";
+import { referenceHistory, referenceTrends } from "../../history/reference-trend.ts";
 
 export const ApiPaths = {
+  referenceHistory: "/api/reference-history",
   state: "/api/state",
   config: "/api/config",
   intent: "/api/intent",
@@ -66,11 +68,13 @@ export async function batchView(batchId: string, history: { readBatch: typeof re
     gradingGroups: batch.revealed ? groups : [],
     judgeDifferences: matrix?.differences ?? [],
     implementationAttempts: matrix?.implementationAttempts ?? 0,
+    referenceHistory: batch.reference === undefined ? [] : referenceTrends([{ batch, runs, assessments }]),
   };
 }
 
 export async function handleApi(request: IncomingMessage, response: ServerResponse, url: URL, port: number): Promise<void> {
   const method = request.method ?? "GET";
+  if (url.pathname === ApiPaths.referenceHistory) return sendJson(response, method === "GET" ? 200 : 405, method === "GET" ? await referenceHistory() : { error: "Use GET." });
   if (url.pathname === ApiPaths.state) return sendJson(response, 200, await state());
   if (url.pathname === ApiPaths.config && method === "PUT") return sendJson(response, 200, await saveConfig(await readBody(request)));
   if (url.pathname === ApiPaths.intent && method === "PUT") {

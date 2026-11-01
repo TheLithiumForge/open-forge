@@ -16,6 +16,8 @@ import { validateCase } from "./grading/brownfield/validate.ts";
 import { BrownfieldFiles } from "./materialize/brownfield-case.ts";
 import { batchMatrixSummary } from "./config/summary.ts";
 import { rejudgeOptions, runPresetOptions } from "./config/preset-options.ts";
+import { referenceOptions } from "./config/reference.ts";
+import { runReference } from "./execution/reference.ts";
 
 export interface CliServices {
   readonly print: (text: string) => void;
@@ -31,6 +33,7 @@ export interface CliServices {
   readonly export: (batch: string, target: string) => Promise<string>;
   readonly validateCase: typeof validateCase;
   readonly summary?: typeof batchMatrixSummary;
+  readonly reference?: typeof runReference;
 }
 const defaults: CliServices = {
   print: console.log, doctor: configuredDoctor, images: buildEvalImages, smoke: smokeAttempt, qualify: qualifySetups,
@@ -57,6 +60,12 @@ export async function runCli(argv: readonly string[], services: CliServices = de
   const { command, args } = request;
   if (request.help) { services.print(commandHelp(command === Command.help ? args[0] : command)); return 0; }
   switch (command) {
+    case Command.reference: {
+      checkedArgs(args, [], [Flag.layer, Flag.judges], 0);
+      const selected = referenceOptions(args.includes(Flag.layer) ? option(args, Flag.layer) : undefined,
+        args.includes(Flag.judges) ? option(args, Flag.judges) : undefined);
+      return (services.reference ?? runReference)(selected, services.print);
+    }
     case Command.doctor: {
       checkedArgs(args, [], [], 0);
       const checks = await services.doctor();
@@ -67,7 +76,7 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     case Command.smoke: checkedArgs(args, [], [], 0); services.print(`Smoke passed. ${JSON.stringify(await services.smoke())}`); return 0;
     case Command.summary: {
       checkedArgs(args, [], [Flag.batch], 0);
-      services.print(JSON.stringify(await (services.summary ?? batchMatrixSummary)(option(args, Flag.batch)), null, 2));
+      services.print(JSON.stringify(await (services.summary ?? batchMatrixSummary)(args.includes(Flag.batch) ? option(args, Flag.batch) : undefined), null, 2));
       return 0;
     }
     case Command.validateCase: {

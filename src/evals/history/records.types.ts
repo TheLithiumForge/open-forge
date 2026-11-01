@@ -1,6 +1,7 @@
 import type { ModelChoice } from "../config/config.types.ts";
 import type { ScopePolicy } from "../materialize/scope.types.ts";
 import type { BallotFailure } from "../grading/judge/report.ts";
+import type { ReferenceImplementer, ReferenceVersion } from "./reference.ts";
 import type { CheckOutcome, CheckSelection, FunctionalResult } from "../grading/grading.types.ts";
 import type { BuildResult, JudgeAnswer, LegacyBatchRecord, LegacyRunRecord, PerformanceResult } from "./results.types.ts";
 import type { AssessmentKind, FailureKind, PreferenceWinner, RecordSchemaVersion, RunStatus } from "./statuses.ts";
@@ -19,6 +20,7 @@ export interface Fingerprints {
 }
 
 export interface ExperimentRecord extends LegacyBatchRecord {
+  readonly reference?: ReferenceVersion;
   readonly schemaVersion: typeof RecordSchemaVersion;
   readonly legacy: boolean;
   readonly cliVersion: string | null;
@@ -52,6 +54,8 @@ export interface SetupRecord {
 }
 
 export interface RunRecord extends Omit<LegacyRunRecord, "status" | "checks" | "judge"> {
+  readonly implementer?: typeof ReferenceImplementer;
+  readonly reference?: ReferenceVersion;
   readonly schemaVersion: typeof RecordSchemaVersion;
   readonly pipelineStatus: RunStatus;
   readonly functionalResult: FunctionalResult | null;
@@ -64,6 +68,8 @@ export interface RunRecord extends Omit<LegacyRunRecord, "status" | "checks" | "
 }
 
 export interface AssessmentVersions {
+  readonly spec?: string | null;
+  readonly specVersion?: number | null;
   readonly checker: string | null;
   readonly rubric: string | null;
   readonly judge: string | null;
@@ -90,6 +96,7 @@ export interface ChecksAssessment extends AssessmentBase {
 }
 
 export interface JudgeAssessment extends AssessmentBase {
+  readonly ballots?: number;
   readonly kind: typeof AssessmentKind.judge;
   readonly runId: string;
   readonly answers: readonly JudgeAnswer[];

@@ -75,6 +75,7 @@ export async function pauseInterruptedBatches(): Promise<void> {
 export async function resumeBatch(batchId: string): Promise<void> {
   if (activeBatch !== null) throw new Error("A batch is already running.");
   const batch = await readBatch(batchId);
+  if (batch.reference !== undefined) throw new Error("Start a new reference grading with the reference command.");
   if (batch.legacy) throw new Error("Legacy batches are read only. Start a new batch.");
   assertFrozenExecution(batch, await captureExperiment(batchId, batch.config, await loadSuite(batch.suite), batch.candidateLabel));
   void executeBatch(batchId);

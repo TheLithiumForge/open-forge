@@ -9,6 +9,8 @@ import { createFingerprints, fingerprint, sha256 } from "./fingerprints.ts";
 import { readJson } from "./json-files.ts";
 import type { AssessmentVersions, ExperimentRecord, RunRecord } from "./records.types.ts";
 import { BatchStatus, RecordSchemaVersion } from "./statuses.ts";
+import { documentGradingInputs } from "../grading/document-layers.ts";
+import { SpecVersion } from "../benchmarks/neon-pairs/checks/spec-layers/requirements.ts";
 
 interface PackageInfo {
   readonly version: string;
@@ -41,8 +43,9 @@ async function harnessSources(root: string) {
 }
 
 export async function gradingVersions(suite: Suite): Promise<AssessmentVersions> {
-  const frozen = await suiteGradingInputs(suite.id);
+  const frozen = [...await suiteGradingInputs(suite.id), ...await documentGradingInputs(suite.id)];
   return {
+    ...(suite.documents === undefined ? {} : { spec: fingerprint(suite.documents), specVersion: SpecVersion }),
     checker: fingerprint({ files: await fileDigests(EvalPaths.checks), frozen }), rubric: fingerprint({ questions: suite.rubric, frozen }),
     judge: fingerprint(await fileDigests(join(evalsRoot, "grading", "judge"))),
   };
@@ -55,7 +58,7 @@ export async function captureExperiment(id: string, config: EvalConfig, suite: S
   const harnessSource = await harnessSources(paths.root);
   const pinnedTools = { ...pkg.dependencies, node: process.version };
   const imageDigests: Readonly<Record<string, string | null>> = paths.imageDigests ?? { eval: null };
-  const frozen = await suiteGradingInputs(suite.id, paths.root);
+  const frozen = [...await suiteGradingInputs(suite.id, paths.root), ...await documentGradingInputs(suite.id, paths.root)];
   const checkInputs = { files: await fileDigests(paths.checks), frozen };
   const rubricInputs = { questions: suite.rubric, frozen };
   const versions = { checker: fingerprint(checkInputs), rubric: fingerprint(rubricInputs),

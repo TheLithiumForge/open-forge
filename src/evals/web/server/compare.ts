@@ -9,6 +9,7 @@ import { agentLabel } from "../../history/summary.ts";
 import type { ComparePair } from "./api.types.ts";
 import type { AssessmentRecord } from "../../history/records.types.ts";
 import { gradingKey } from "./result-groups.ts";
+import { ReferenceImplementer } from "../../history/reference.ts";
 
 /** Each game opens on its own origin, so games never share saved best scores. */
 export function gameUrl(runId: string, port: number): string {
@@ -21,7 +22,7 @@ function pairKey(a: string, b: string): string {
 
 /** Every pair of finished games from the same tool and model, since setups are compared only within one. */
 export function allPairs(runs: readonly RunRecord[], folder = runFolder, assessments: readonly AssessmentRecord[] = []): [string, string][] {
-  const playable = runs.filter((run) => run.finishedAt !== null && (run.status === RunStatus.done || run.status === RunStatus.failed)
+  const playable = runs.filter((run) => run.implementer !== ReferenceImplementer && run.finishedAt !== null && (run.status === RunStatus.done || run.status === RunStatus.failed)
     && run.build?.passed === true && existsSync(join(folder(run.batchId, run.id), ResultFiles.game)));
   const pairs: [string, string][] = [];
   for (const [index, a] of playable.entries()) {

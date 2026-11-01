@@ -13,6 +13,7 @@ import type { AssessmentVersions, ChecksAssessment, RunView } from "../history/r
 import { appendAssessment, assessmentEvidenceFolder, readBatch, readRuns, readSetups, runFolder } from "../history/store.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { checksForSuite } from "../benchmarks/registry.ts";
+import { layerChecks } from "./document-layers.ts";
 import type { SuiteCheckOutput } from "../benchmarks/suite-checks.types.ts";
 import type { BuildResult } from "../history/results.types.ts";
 
@@ -50,7 +51,7 @@ async function main(): Promise<void> {
   if (rebuild && !(await dockerAvailable())) throw new Error("Rebuilding needs Docker, because agent code never builds on this machine.");
   for (const run of await readRuns(batch)) {
     const setup = setups.find((setup) => setup.id === run.setup);
-    const checks = checksForSuite(suite, setup?.files, setup?.scope);
+    const checks = checksForSuite(suite, setup?.files, setup?.scope) ?? layerChecks(suite.id);
     if (checks === undefined) throw new Error(`No hidden checks for ${suite.id}.`);
     if (run.build === null || (onlyRun !== undefined && run.id !== onlyRun)) continue;
     if (rebuild && run.status !== RunStatus.done) {

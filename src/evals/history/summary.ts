@@ -4,6 +4,7 @@ import type { JudgeAnswer, Preference, RunRecord } from "./results.types.ts";
 import type { AssessmentRecord, JudgeAssessment } from "./records.types.ts";
 import { modelKey } from "../config/judges.ts";
 import { AssessmentKind, FailureKind, IntentCheckArea, PreferenceWinner, RunStatus } from "./statuses.ts";
+import { ReferenceImplementer } from "./reference.ts";
 
 export { IntentCheckArea } from "./statuses.ts";
 export const JudgeAreas = { rules: "rules", code: "code", intent: "intent" } as const;
@@ -73,6 +74,7 @@ function preferenceShare(runIds: ReadonlySet<string>, preferences: readonly Pref
 export function summarize(runs: readonly RunRecord[], preferences: readonly Preference[]): SetupSummary[] {
   const groups = new Map<string, RunRecord[]>();
   for (const run of runs) {
+    if (run.implementer === ReferenceImplementer) continue;
     const key = `${agentLabel(run.agent)}\n${run.setup}`;
     groups.set(key, [...groups.get(key) ?? [], run]);
   }

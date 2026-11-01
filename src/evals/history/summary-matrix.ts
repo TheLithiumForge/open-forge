@@ -4,6 +4,7 @@ import { summarizeMeasurements } from "../grading/counting.ts";
 import type { AssessmentRecord, AssessmentVersions, JudgeAssessment } from "./records.types.ts";
 import type { Preference, RunRecord } from "./results.types.ts";
 import { AssessmentKind, RunStatus } from "./statuses.ts";
+import { ReferenceImplementer } from "./reference.ts";
 import { agentLabel, JudgeAreas, latestJudgeFor, summarize, yesShare, type SetupSummary } from "./summary.ts";
 
 export interface PairSummary {
@@ -45,7 +46,8 @@ function attempted(run: RunRecord): boolean {
   return run.startedAt !== null || run.status === RunStatus.done || run.status === RunStatus.failed;
 }
 
-export function summarizeMatrix(config: EvalConfig, runs: readonly RunRecord[], assessments: readonly AssessmentRecord[], preferences: readonly Preference[]): MatrixSummary {
+export function summarizeMatrix(config: EvalConfig, input: readonly RunRecord[], assessments: readonly AssessmentRecord[], preferences: readonly Preference[]): MatrixSummary {
+  const runs = input.filter((run) => run.implementer !== ReferenceImplementer);
   const layer = config.layer ?? null, pairs: PairSummary[] = [];
   const agents = uniqueModels([...config.agents, ...runs.map((run) => run.agent)]);
   const judges = uniqueModels([...configuredJudges(config), ...assessments.flatMap((item) => item.kind === AssessmentKind.judge && item.requestedModel !== null ? [item.requestedModel] : [])]);

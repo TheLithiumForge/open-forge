@@ -24,6 +24,11 @@ function evidenceKind(value: unknown): JudgeEvidenceKind {
 export async function frozenQuestions(): Promise<JudgeQuestion[]> {
   const value: unknown = JSON.parse(await readFile(new URL(`../../benchmarks/neon-pairs/${LayerFiles.rubric}`, import.meta.url), "utf8"));
   if (!record(value) || value["version"] !== LayerVersion || value["ballots"] !== BallotCount || !Array.isArray(value["questions"])) throw new Error("Invalid L1-v2 rubric.");
+  return parseQuestions(value);
+}
+
+export function parseQuestions(value: unknown): JudgeQuestion[] {
+  if (!record(value) || value["ballots"] !== BallotCount || !Array.isArray(value["questions"])) throw new Error("Invalid judge rubric.");
   const questions = value["questions"].map((question: unknown): JudgeQuestion => {
     if (!record(question) || typeof question["id"] !== "string" || typeof question["area"] !== "string" || typeof question["question"] !== "string") throw new Error("Invalid L1-v2 question.");
     return { id: question["id"], area: question["area"], evidence: evidenceKind(question["evidence"]), question: question["question"] };

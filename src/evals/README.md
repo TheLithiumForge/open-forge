@@ -73,6 +73,7 @@ Every command accepts `--help`. Each help text includes an example:
 | `smoke` | Run the mock attempt | `npm run evals -- smoke` |
 | `qualify` | Check generated setups | `npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1-check.json` |
 | `run` | Run a saved plan with optional role presets | `npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude` |
+| `reference` | Grade the tracked reference | `npm run evals -- reference --layer 3 --judges both` |
 | `summary` | Print the implementer and judge matrix | `npm run evals -- summary --batch <id>` |
 | `ui` | Open the local results app | `npm run evals -- ui` |
 | `recheck` | Append checks for saved files | `npm run evals -- recheck <batch> --rebuild` |
@@ -98,6 +99,22 @@ The classifier splits bundled decisions into separate questions. The runner allo
 The batch saves a copy and hash of its bank before any attempt. For Layer 1, each intent item's ID is its topic ID and its text is its literal answer. `conversation.json` records individual questions, rounds, repeats, decisions already answered by public documents, answer lengths and the classifier's separate usage. A classifier failure is an infrastructure error. It never counts as a message with no question.
 
 Claude assessor calls turn model tools off. Codex assessor calls use an empty working folder and a read-only sandbox, with all evidence in the prompt. Their tools are recorded as restricted. Containers use Docker copy, with no host mounts, Docker socket or published ports. The agent never receives grading. Full rules are in the [Protocol](../../.agents/memory/crystallized/documents/evals/protocol.md).
+
+## The reference as a data point
+
+The reference command grades the Neon Pairs reference as one saved attempt. It skips the agent, then uses the normal verifier build, the layer's hidden checks and the judges in their containers.
+
+Run `npm run evals -- reference [--layer 2|3] [--judges <preset>]`. It defaults to Layer 3 and the `claude` judge preset. For example, to grade with both judges:
+
+```powershell
+npm run evals -- reference --layer 3 --judges both
+```
+
+The batch freezes the Git-tracked working files from `benchmarks/neon-pairs/reference/`. It leaves out ignored output, installed packages and build output. It records `reference` as the implementer, the last commit that changed the reference, a SHA-256 hash of the copied file list and bytes, the spec version and its content hash. Each assessment records the checker, rubric and judge prompt hashes. Judge assessments also record the requested model, effort, ballot count and reported model when available.
+
+Run the command again to add a new batch. To grade its saved files again, use `recheck` or `rejudge`. These commands append assessments and record the spec used for that grading.
+
+`npm run evals -- summary` shows reference coverage and judge scores over time. Add `--batch <id>` to read one batch. The web UI's "Reference over time" view shows the same history. Matching reference, spec and grading versions share a group, with each assessment's time and reference commit shown in its row. Changed hashes or judge models form separate groups. Reference scores stay out of model setup comparisons. The results export includes their records and assessments.
 
 ## Plans
 
