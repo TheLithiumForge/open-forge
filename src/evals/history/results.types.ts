@@ -64,7 +64,7 @@ export interface JudgeAnswer {
   readonly evidence: readonly string[];
 }
 
-export interface RunRecord {
+export interface LegacyRunRecord {
   readonly id: string;
   readonly batchId: string;
   readonly setup: string;
@@ -85,7 +85,7 @@ export interface RunRecord {
   readonly shots: readonly string[];
 }
 
-export interface BatchRecord {
+export interface LegacyBatchRecord {
   readonly id: string;
   readonly suite: string;
   readonly fingerprint: string;
@@ -104,3 +104,5 @@ export interface Preference {
   readonly winner: PreferenceWinner;
   readonly at: string;
 }
+
+export type { RunView as RunRecord, ExperimentRecord as BatchRecord } from "./records.types.ts";

@@ -42,7 +42,7 @@ export function ResultsView({ view, onChange }: ResultsViewProps) {
             <CardHeader>
               <CardTitle>{agent}</CardTitle>
               <CardDescription>
-                Works: every stated check passed. Checks: share passed. Wishes: unstated wishes met. Rules and Code: the judge's yes answers. Picked: blind comparisons won. No blended score.
+                Coverage counts every applicable check. The working gate and stated success use their declared checks. Intent, Rules, Code and blind picks stay separate. Missing tokens are reported beside the measured mean.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">

@@ -47,10 +47,10 @@ async function state(): Promise<StateResponse> {
 }
 
 /** Until the reveal, a batch shows only what can't tell a run's setup. */
-async function batchView(batchId: string): Promise<BatchResponse> {
-  const batch = await readBatch(batchId);
-  const runs = await readRuns(batch);
-  const preferences = await readPreferences(batchId);
+export async function batchView(batchId: string, history = { readBatch, readRuns, readPreferences }): Promise<BatchResponse> {
+  const batch = await history.readBatch(batchId);
+  const runs = await history.readRuns(batch);
+  const preferences = await history.readPreferences(batchId);
   return {
     batch,
     hidden: runs.map((run) => ({ id: run.id, status: run.status, agent: run.agent })),

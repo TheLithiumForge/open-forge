@@ -3,12 +3,12 @@ import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { RunRecord } from "../../history/results.types.ts";
-import { RunStatus } from "../../history/statuses.ts";
+import { CheckStatus, RunStatus } from "../../history/statuses.ts";
 import { number, shotUrl } from "./api.ts";
 
-function CheckIcon({ passed }: { passed: boolean | null }) {
-  if (passed === null) return <CircleHelp className="size-4 shrink-0 text-warning" />;
-  return passed ? <CircleCheck className="size-4 shrink-0 text-success" /> : <CircleX className="size-4 shrink-0 text-destructive" />;
+function CheckIcon({ status }: { status: CheckStatus }) {
+  if (status === CheckStatus.blocked || status === CheckStatus.error) return <CircleHelp className="size-4 shrink-0 text-warning" />;
+  return status === CheckStatus.pass ? <CircleCheck className="size-4 shrink-0 text-success" /> : <CircleX className="size-4 shrink-0 text-destructive" />;
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
@@ -24,23 +24,27 @@ function Stat({ label, value }: { label: string; value: string }) {
 export function RunDetails({ run }: { run: RunRecord }) {
   const telemetry = run.telemetry;
   const tokens = telemetry?.tokens;
-  const passed = run.checks.filter((check) => check.passed === true).length;
+  const passed = run.functionalResult?.coverage.passed ?? 0;
+  const applicable = run.functionalResult?.coverage.applicable ?? 0;
   return (
     <AccordionItem value={run.id}>
       <AccordionTrigger>
         <span className="flex flex-wrap items-center gap-2">
           <Badge variant="outline">{run.setup}</Badge>
           <Badge variant={run.status === RunStatus.done ? "secondary" : "destructive"}>{run.status}</Badge>
-          <span className="text-muted-foreground">{passed}/{run.checks.length} checks</span>
+          <span className="text-muted-foreground">{passed}/{applicable} checks</span>
         </span>
       </AccordionTrigger>
       <AccordionContent className="space-y-4">
         {run.error === null ? null : <p className="text-sm text-destructive">{run.error.slice(0, 400)}</p>}
+        {run.checksError === null ? null : <p className="text-sm text-destructive">Checks: {run.checksError}</p>}
+        {run.judgeError === null ? null : <p className="text-sm text-destructive">Judge: {run.judgeError}</p>}
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-7">
           <Stat label="Tokens" value={number(tokens === null || tokens === undefined ? null : tokens.input + tokens.cachedInput + tokens.cacheWrite + tokens.output)} />
           <Stat label="Peak context" value={number(telemetry?.peakContext ?? null)} />
           <Stat label="Compactions" value={number(telemetry?.compactions ?? null)} />
           <Stat label="Tool calls" value={String(telemetry?.toolCalls ?? "–")} />
+          <Stat label="Failed tool calls" value={String(telemetry?.failedToolCalls ?? "–")} />
           <Stat label="Open Forge reads" value={String(telemetry?.openForgeReads ?? "–")} />
           <Stat label="Agent" value={`${number(run.agentSeconds === null ? null : run.agentSeconds / 60, 1)} min`} />
           <Stat label="Build" value={run.build === null ? "–" : `${run.build.passed ? "passed" : "failed"} · ${run.build.seconds.toFixed(0)} s`} />
@@ -59,11 +63,11 @@ export function RunDetails({ run }: { run: RunRecord }) {
         <div className="space-y-2">
           <p className="text-sm font-medium">Hidden checks</p>
           <ul className="space-y-1.5 text-sm">
-            {run.checks.map((check) => (
+            {run.checkOutcomes.map((check) => (
               <li key={check.id} className="flex gap-2">
-                <CheckIcon passed={check.passed} />
+                <CheckIcon status={check.status} />
                 <span>
-                  <span className="font-medium">{check.area}:</span> <span className="text-muted-foreground">{check.detail}</span>
+                  <span className="font-medium">{check.area} ({check.status}):</span> <span className="text-muted-foreground">{check.evidence}</span>
                 </span>
               </li>
             ))}

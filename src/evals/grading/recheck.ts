@@ -1,56 +1,81 @@
-// Runs the current hidden checks again on a batch's finished runs, from the games and files they saved.
-// Use it after the checks change. With --rebuild, or for a run whose build failed, it first installs the
-// packages from the saved lockfile and builds offline again. The agents and the judge don't run again.
 import { existsSync } from "node:fs";
-import { copyFile } from "node:fs/promises";
+import { copyFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { NpmCommand, spawnInRun } from "../execution/containers/executor.ts";
 import { waitForProcess } from "../execution/process.ts";
+import { createRunSpace, removeFolder } from "../execution/workspace.ts";
 import { buildProject } from "./build.ts";
 import { Isolation } from "../config/choices.ts";
 import { ResultFiles } from "../paths.ts";
-import type { BuildResult, RunRecord } from "../history/results.types.ts";
-import { RunStatus } from "../history/statuses.ts";
-import { readBatch, readRun, readRuns, runFolder, saveBatch, saveRun } from "../history/store.ts";
+import { assessmentBase, checksAssessment, failedChecksAssessment } from "../history/assessments.ts";
+import { gradingVersions } from "../history/capture.ts";
+import type { AssessmentVersions, ChecksAssessment, RunView } from "../history/records.types.ts";
+import { appendAssessment, assessmentEvidenceFolder, readBatch, readRuns, runFolder } from "../history/store.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { suiteChecks } from "../benchmarks/registry.ts";
-import { createRunSpace, removeFolder } from "../execution/workspace.ts";
+import type { SuiteCheckOutput } from "../benchmarks/suite-checks.types.ts";
+import type { BuildResult } from "../history/results.types.ts";
 
 const RebuildFlag = "--rebuild";
 const InstallMs = 10 * 60_000;
 const BuildMs = 15 * 60_000;
 
-const args = process.argv.slice(2);
-const rebuildAll = args.includes(RebuildFlag);
-const [batchId, onlyRun] = args.filter((arg) => arg !== RebuildFlag);
-if (batchId === undefined) throw new Error("Name the batch to check again: npm run recheck -- <batch ID> [run ID] [--rebuild]");
-const batch = await readBatch(batchId);
-const suite = await loadSuite(batch.suite);
-const checks = suiteChecks[suite.id];
-if (checks === undefined) throw new Error(`No hidden checks for ${suite.id}.`);
-
-/** Installs the saved project's packages, then builds it offline as a run does. */
-async function rebuild(run: RunRecord, folder: string): Promise<{ build: BuildResult; project: string; cleanup: () => Promise<void> }> {
-  const space = await createRunSpace(suite.project, join(folder, ResultFiles.files));
-  await waitForProcess(spawnInRun({ isolation: Isolation.local, space, command: NpmCommand, args: ["ci", "--no-audit", "--no-fund"], network: true }), { timeoutMs: InstallMs });
-  const build = await buildProject(Isolation.local, space, BuildMs);
-  if (build.html !== null) await copyFile(join(space.work, build.html), join(folder, ResultFiles.game));
-  console.log(`${run.id}: rebuilt, ${build.passed ? "passed" : "failed"}.`);
-  return { build, project: space.work, cleanup: () => removeFolder(space.root) };
+export interface RecheckDependencies {
+  readonly evaluate: (run: RunView, assessmentId: string) => Promise<SuiteCheckOutput & { readonly build?: BuildResult }>;
+  readonly append: (assessment: ChecksAssessment) => Promise<void>;
 }
 
-for (const run of await readRuns(batch)) {
-  if (run.status !== RunStatus.done || run.build === null || (onlyRun !== undefined && run.id !== onlyRun)) continue;
-  const folder = runFolder(batch.id, run.id);
-  const fresh = rebuildAll || !run.build.passed ? await rebuild(run, folder) : null;
-  const build = fresh?.build ?? run.build;
-  const game = join(folder, ResultFiles.game);
-  const result = await checks({ project: fresh?.project ?? join(folder, ResultFiles.files), build, html: existsSync(game) && build.passed ? game : null, shotsFolder: join(folder, ResultFiles.shots) });
-  // Read again before saving, so judge answers written meanwhile by a rejudge are kept.
-  await saveRun({ ...(await readRun(batch.id, run.id)), build, checks: result.checks, performance: result.performance, shots: result.shots });
-  await fresh?.cleanup();
-  const passed = result.checks.filter((check) => check.passed === true).length;
-  console.log(`${run.id}: ${passed} of ${result.checks.length} checks passed.`);
+export async function recheckRun(run: RunView, versions: AssessmentVersions, dependencies: RecheckDependencies): Promise<ChecksAssessment> {
+  const base = assessmentBase(run.batchId, versions, run.checksAssessmentId);
+  let assessment: ChecksAssessment;
+  try {
+    const result = await dependencies.evaluate(run, base.id);
+    const selection = run.checkSelection.working.length === 0 ? undefined : run.checkSelection;
+    assessment = { ...checksAssessment({ ...run, build: result.build ?? run.build, performance: result.performance, shots: result.shots }, result.checks, versions, selection), ...base };
+  } catch (error) {
+    assessment = { ...base, ...failedChecksAssessment(run, error, versions), id: base.id };
+  }
+  await dependencies.append(assessment);
+  return assessment;
 }
-await saveBatch({ ...(await readBatch(batch.id)), fingerprint: suite.fingerprint });
-console.log(`Batch ${batch.id} now carries eval ${suite.fingerprint}.`);
+
+async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+  const [batchId, onlyRun] = args.filter((arg) => arg !== RebuildFlag);
+  if (batchId === undefined) throw new Error("Name the batch to check again.");
+  const batch = await readBatch(batchId);
+  const suite = await loadSuite(batch.suite);
+  const checks = suiteChecks[suite.id];
+  if (checks === undefined) throw new Error(`No hidden checks for ${suite.id}.`);
+  const versions = await gradingVersions(suite);
+  for (const run of await readRuns(batch)) {
+    if (run.build === null || (onlyRun !== undefined && run.id !== onlyRun)) continue;
+    const savedBuild = run.build;
+    await recheckRun(run, versions, { append: appendAssessment, evaluate: async (_, assessmentId) => {
+      const folder = runFolder(batchId, run.id);
+      const evidence = assessmentEvidenceFolder(batch.id, assessmentId);
+      const shotsFolder = join(evidence, ResultFiles.shots);
+      await mkdir(shotsFolder, { recursive: true });
+      let space: Awaited<ReturnType<typeof createRunSpace>> | null = null;
+      try {
+        let build = savedBuild;
+        let project = join(folder, ResultFiles.files);
+        let game = join(folder, ResultFiles.game);
+        if (args.includes(RebuildFlag) || !build.passed) {
+          space = await createRunSpace(suite.project, project);
+          await waitForProcess(spawnInRun({ isolation: Isolation.local, space, command: NpmCommand, args: ["ci", "--no-audit", "--no-fund"], network: true }), { timeoutMs: InstallMs });
+          build = await buildProject(Isolation.local, space, BuildMs);
+          project = space.work;
+          game = build.html === null ? "" : join(project, build.html);
+          if (existsSync(game)) await copyFile(game, join(evidence, ResultFiles.game));
+        }
+        const result = await checks({ project, build, html: existsSync(game) && build.passed ? game : null, shotsFolder });
+        return { ...result, shots: result.shots.map((shot) => `${assessmentId}/${shot}`), build };
+      } finally {
+        if (space !== null) await removeFolder(space.root);
+      }
+    } });
+  }
+}
+
+if (import.meta.main) await main();

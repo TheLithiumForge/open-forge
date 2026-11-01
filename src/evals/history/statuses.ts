@@ -32,3 +32,12 @@ export type BatchStatus = (typeof BatchStatus)[keyof typeof BatchStatus];
 
 export const PreferenceWinner = { left: "left", right: "right", tie: "tie" } as const;
 export type PreferenceWinner = (typeof PreferenceWinner)[keyof typeof PreferenceWinner];
+
+export const RecordSchemaVersion = 2;
+export const CheckStatus = { pass: "pass", fail: "fail", error: "error", blocked: "blocked" } as const;
+export type CheckStatus = (typeof CheckStatus)[keyof typeof CheckStatus];
+export const AssessmentKind = { checks: "checks", judge: "judge", pick: "pick" } as const;
+export type AssessmentKind = (typeof AssessmentKind)[keyof typeof AssessmentKind];
+export const FailureKind = { infrastructure: "infrastructure", attempt: "attempt", grading: "grading" } as const;
+export type FailureKind = (typeof FailureKind)[keyof typeof FailureKind];
+export const IntentCheckArea = "Intent";

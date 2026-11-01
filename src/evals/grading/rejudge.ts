@@ -1,33 +1,54 @@
-// Runs the judge again on a batch's finished runs, from the files they saved, several at once.
-// Use it after the judge or its rubric changes. The agents and the hidden checks don't run again.
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { judgeRun } from "./judge/judge.ts";
 import { prepareJudgeFolder } from "./judge/judge-folder.ts";
 import { ResultFiles } from "../paths.ts";
-import { RunStatus } from "../history/statuses.ts";
-import { readBatch, readRun, readRuns, runFolder, saveRun } from "../history/store.ts";
+import { judgeAssessment } from "../history/assessments.ts";
+import { gradingVersions } from "../history/capture.ts";
+import type { AssessmentVersions, JudgeAssessment, RunView } from "../history/records.types.ts";
+import type { JudgeAnswer } from "../history/results.types.ts";
+import { appendAssessment, readBatch, readRuns, runFolder } from "../history/store.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { runInParallel } from "../execution/run-queue.ts";
-import { removeFolder, scratchFolder } from "../execution/workspace.ts";
 
 const JudgeTimeoutMs = 15 * 60_000;
 
-const [batchId, onlyRun] = process.argv.slice(2);
-if (batchId === undefined) throw new Error("Name the batch to judge again: npm run rejudge -- <batch ID> [run ID]");
-const batch = await readBatch(batchId);
-const suite = await loadSuite(batch.suite);
-const runs = (await readRuns(batch)).filter((run) => run.status === RunStatus.done && (onlyRun === undefined || run.id === onlyRun));
-// Batches saved before parallel runs existed have no setting, so they judge one run at a time.
-await runInParallel(runs, batch.config.parallelRuns || 1, async (run) => {
-  const scratch = await scratchFolder();
+export interface RejudgeDependencies {
+  readonly evaluate: (run: RunView) => Promise<readonly JudgeAnswer[]>;
+  readonly append: (assessment: JudgeAssessment) => Promise<void>;
+}
+
+export async function rejudgeRun(run: RunView, versions: AssessmentVersions, dependencies: RejudgeDependencies): Promise<JudgeAssessment> {
+  let assessment: JudgeAssessment;
   try {
-    await prepareJudgeFolder(join(runFolder(batch.id, run.id), ResultFiles.files), join(scratch, "project"));
-    const judge = await judgeRun(suite, batch.config.judge, join(scratch, "project"), join(scratch, "home"), JudgeTimeoutMs);
-    // Read again before saving, so a recheck that ran meanwhile keeps its checks.
-    await saveRun({ ...(await readRun(batch.id, run.id)), judge });
-    const sure = judge.filter((answer) => answer.yes + answer.no > 0).length;
-    console.log(`${run.id}: ${sure} of ${judge.length} questions answered.`);
-  } finally {
-    await removeFolder(scratch);
+    assessment = judgeAssessment(run, await dependencies.evaluate(run), versions);
+  } catch (error) {
+    assessment = { ...judgeAssessment(run, [], versions), error: error instanceof Error ? error.message : String(error) };
   }
-}, () => false);
+  await dependencies.append(assessment);
+  return assessment;
+}
+
+async function main(): Promise<void> {
+  const [batchId, onlyRun] = process.argv.slice(2);
+  if (batchId === undefined) throw new Error("Name the batch to judge again.");
+  const batch = await readBatch(batchId);
+  const suite = await loadSuite(batch.suite);
+  const versions = await gradingVersions(suite);
+  const runs = (await readRuns(batch)).filter((run) => run.startedAt !== null && (onlyRun === undefined || run.id === onlyRun));
+  await runInParallel(runs, batch.config.parallelRuns || 1, async (run) => {
+    const scratch = await mkdtemp(join(tmpdir(), "eval-rejudge-"));
+    try {
+      await prepareJudgeFolder(join(runFolder(batch.id, run.id), ResultFiles.files), join(scratch, "project"));
+      await rejudgeRun(run, versions, {
+        append: (assessment) => appendAssessment({ ...assessment, requestedModel: batch.config.judge }),
+        evaluate: () => judgeRun(suite, batch.config.judge, join(scratch, "project"), join(scratch, "home"), JudgeTimeoutMs),
+      });
+    } finally {
+      await rm(scratch, { recursive: true, force: true });
+    }
+  }, () => false);
+}
+
+if (import.meta.main) await main();

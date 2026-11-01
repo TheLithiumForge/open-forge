@@ -2,7 +2,7 @@ import { Bar, BarChart, CartesianGrid, Scatter, ScatterChart, XAxis, YAxis, ZAxi
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import type { RunRecord } from "../../history/results.types.ts";
-import { IntentCheckArea, type SetupSummary } from "../../history/summary.ts";
+import type { SetupSummary } from "../../history/summary.ts";
 
 const qualityConfig = {
   checks: { label: "Checks", color: "var(--chart-1)" },
@@ -14,7 +14,7 @@ const qualityConfig = {
 
 const tokensConfig = { run: { label: "Run", color: "var(--chart-1)" } } satisfies ChartConfig;
 
-const asPercent = (value: number | null): number => Math.round((value ?? 0) * 100);
+const asPercent = (value: number | null): number | null => value === null ? null : Math.round(value * 100);
 
 /** Shares from 0 to 100% per setup, one bar per measure. */
 export function QualityChart({ rows }: { rows: readonly SetupSummary[] }) {
@@ -54,10 +54,10 @@ export function QualityChart({ rows }: { rows: readonly SetupSummary[] }) {
 export function TokensChart({ runs }: { runs: readonly RunRecord[] }) {
   const data = runs.flatMap((run) => {
     const tokens = run.telemetry?.tokens;
-    const stated = run.checks.filter((check) => check.area !== IntentCheckArea && check.passed !== null);
-    if (tokens === null || tokens === undefined || stated.length === 0) return [];
+    const share = run.functionalResult?.coverage.share;
+    if (tokens === null || tokens === undefined || share == null) return [];
     const total = tokens.input + tokens.cachedInput + tokens.cacheWrite + tokens.output;
-    return [{ setup: run.setup, tokens: total, checks: Math.round((stated.filter((check) => check.passed === true).length / stated.length) * 100) }];
+    return [{ setup: run.setup, tokens: total, checks: Math.round(share * 100) }];
   });
   return (
     <Card>

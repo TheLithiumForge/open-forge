@@ -7,7 +7,7 @@ import { pauseInterruptedBatches } from "../../execution/batch.ts";
 import { progress } from "../../execution/progress.ts";
 import { loadLocalEnv } from "../../config/auth.ts";
 import { EvalPaths, ResultFiles } from "../../paths.ts";
-import { runFolder } from "../../history/store.ts";
+import { assessmentEvidenceFolder, runFolder } from "../../history/store.ts";
 import { refusal, type RequestFacts } from "./guard.ts";
 import { ApiPaths, handleApi, sendJson } from "./routes.ts";
 
@@ -15,6 +15,7 @@ const Port = Number(process.env["EVALS_PORT"] ?? "4318");
 const contentTypes: Readonly<Record<string, string>> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml" };
 const runHost = /^([0-9a-f]{12})\.localhost(?::\d+)?$/;
 const shotPath = /^\/shots\/([\w-]+)\/([0-9a-f]{12})\/([\w.-]+\.png)$/;
+const assessmentShotPath = /^\/shots\/([\w-]+)\/([0-9a-f]{12})\/([\w-]+)\/([\w.-]+\.png)$/;
 
 async function sendFile(response: ServerResponse, path: string): Promise<void> {
   if (!existsSync(path)) return void response.writeHead(404).end();
@@ -57,6 +58,10 @@ async function handle(request: IncomingMessage, response: ServerResponse): Promi
   if (url.pathname.startsWith("/api/")) return handleApi(request, response, url, Port);
   const shot = shotPath.exec(url.pathname);
   if (shot?.[1] !== undefined && shot[2] !== undefined && shot[3] !== undefined) return sendFile(response, join(runFolder(shot[1], shot[2]), ResultFiles.shots, shot[3]));
+  const assessedShot = assessmentShotPath.exec(url.pathname);
+  if (assessedShot?.[1] !== undefined && assessedShot[3] !== undefined && assessedShot[4] !== undefined) {
+    return sendFile(response, join(assessmentEvidenceFolder(assessedShot[1], assessedShot[3]), ResultFiles.shots, assessedShot[4]));
+  }
   const file = normalize(join(EvalPaths.uiDist, url.pathname === "/" ? "index.html" : url.pathname));
   return sendFile(response, file.startsWith(EvalPaths.uiDist + sep) ? file : "");
 }

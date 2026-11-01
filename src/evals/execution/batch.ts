@@ -1,13 +1,16 @@
 import { randomInt } from "node:crypto";
-import { writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
-import { dockerAvailable, ensureEvalImage, ImageVersions } from "./containers/docker-image.ts";
+import { dirname } from "node:path";
+import { dockerAvailable, ensureEvalImage } from "./containers/docker-image.ts";
 import { Isolation } from "../config/choices.ts";
 import { loadConfig } from "../config/config.ts";
-import { ResultFiles } from "../paths.ts";
 import type { BatchRecord, RunRecord } from "../history/results.types.ts";
-import { BatchStatus, rerunStatuses, RunStatus } from "../history/statuses.ts";
-import { batchFolder, listBatches, readBatch, readRun, saveBatch, saveRun } from "../history/store.ts";
+import { BatchStatus, FailureKind, RecordSchemaVersion, rerunStatuses, RunStatus } from "../history/statuses.ts";
+import { listBatches, readBatch, readRun, readRuns, readSetups, saveBatch, saveRun, saveSetups } from "../history/store.ts";
+import { assertFrozenExecution, captureExperiment, withReportedModels } from "../history/capture.ts";
+import { fingerprint } from "../history/fingerprints.ts";
+import { artifactHash } from "../history/artifacts.ts";
+import { plannedRun, replacementRun } from "../history/run-records.ts";
+import type { SetupRecord } from "../history/records.types.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { progress } from "./progress.ts";
 import { executeRun } from "./run.ts";
@@ -34,25 +37,14 @@ function shuffled<T>(items: readonly T[]): T[] {
   return copy;
 }
 
-function plannedRun(batchId: string, setup: string, agent: RunRecord["agent"], repeat: number): RunRecord {
-  return {
-    id: opaqueId(), batchId, setup, agent, repeat, status: RunStatus.pending, error: null, startedAt: null, finishedAt: null,
-    agentSeconds: null, finalMessage: null, questions: [], telemetry: null, build: null, checks: [], performance: null, judge: [], shots: [],
-  };
-}
-
 /** Plans every run of the config, in random order so no setup always runs first, and starts them. */
 export async function startBatch(): Promise<BatchRecord> {
   if (activeBatch !== null) throw new Error("A batch is already running.");
   const config = await loadConfig();
   const suite = await loadSuite(config.suite);
   const id = `${new Date().toISOString().replaceAll(/[:.]/g, "-")}-${opaqueId()}`;
-  const runs = shuffled(config.agents.flatMap((agent) => config.setups.flatMap((setup) => Array.from({ length: config.runsPerSetup }, (_, repeat) => plannedRun(id, setup, agent, repeat + 1)))));
-  const batch: BatchRecord = {
-    id, suite: suite.id, fingerprint: suite.fingerprint, intentEdited: suite.intentEdited, config, createdAt: new Date().toISOString(),
-    status: BatchStatus.preparing, runs: runs.map((run) => run.id), revealed: false,
-    versions: { claude: ImageVersions.claude, codex: ImageVersions.codex, openForge: ImageVersions.openForge, node: process.version },
-  };
+  const runs = shuffled(config.agents.flatMap((agent) => config.setups.flatMap((setup) => Array.from({ length: config.runsPerSetup }, (_, repeat) => plannedRun(opaqueId(), id, setup, agent, repeat + 1)))));
+  const batch: BatchRecord = { ...await captureExperiment(id, config, suite), runs: runs.map((run) => run.id) };
   await saveBatch(batch);
   for (const run of runs) await saveRun(run);
   void executeBatch(batch.id);
@@ -63,12 +55,15 @@ export async function startBatch(): Promise<BatchRecord> {
 export async function pauseInterruptedBatches(): Promise<void> {
   const interrupted: readonly string[] = [BatchStatus.preparing, BatchStatus.running];
   for (const batch of await listBatches()) {
-    if (interrupted.includes(batch.status)) await saveBatch({ ...batch, status: BatchStatus.paused });
+    if (!batch.legacy && interrupted.includes(batch.status)) await saveBatch({ ...batch, status: BatchStatus.paused });
   }
 }
 
 export async function resumeBatch(batchId: string): Promise<void> {
   if (activeBatch !== null) throw new Error("A batch is already running.");
+  const batch = await readBatch(batchId);
+  if (batch.legacy) throw new Error("Legacy batches are read only. Start a new batch.");
+  assertFrozenExecution(batch, await captureExperiment(batchId, batch.config, await loadSuite(batch.suite), batch.candidateLabel));
   void executeBatch(batchId);
 }
 
@@ -95,16 +90,39 @@ async function executeBatch(batchId: string): Promise<void> {
       snapshots.set(setup, snapshot.folder);
       records.push(snapshot.record);
     }
-    await writeFile(join(batchFolder(batchId), ResultFiles.setups), `${JSON.stringify(records, null, 2)}\n`);
+    const setups: SetupRecord[] = records.map((record) => ({ schemaVersion: RecordSchemaVersion, id: record.setup, experimentId: batchId,
+      label: record.label, commands: record.commands, files: record.files, contentHash: artifactHash(record.files) }));
+    const setupContent = fingerprint(setups.map(({ id, contentHash }) => ({ id, contentHash })));
+    if ((await readSetups(batch)).length === 0) {
+      batch = { ...batch, fingerprints: { ...batch.fingerprints, setupContent } };
+      await saveBatch(batch);
+      await saveSetups(batchId, setups);
+    } else if (batch.fingerprints.setupContent !== setupContent) throw new Error("The setup content changed since this batch started.");
     await setStatus(BatchStatus.running);
     let limited = false;
     // Batches saved before parallel runs existed have no setting, so they run one at a time.
     await runInParallel(batch.runs, batch.config.parallelRuns || 1, async (runId, index) => {
-      const run = await readRun(batchId, runId);
+      let run: RunRecord = await readRun(batchId, runId);
       if (!rerunStatuses.includes(run.status)) return;
-      const done = await executeRun({ run, suite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} of ${batch.runs.length}` });
+      if (run.status !== RunStatus.pending) {
+        if (run.finishedAt === null) await saveRun({ ...run, status: RunStatus.failed, failureKind: FailureKind.infrastructure, finishedAt: new Date().toISOString() });
+        if (run.replacesRunId !== null) return;
+        run = replacementRun(run, opaqueId(), "Resume after an interrupted or limited attempt.");
+        batch = { ...batch, runs: [...batch.runs, run.id] };
+        await saveRun(run);
+        await saveBatch(batch);
+      }
+      let done = await executeRun({ run, suite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} of ${batch.runs.length}` });
+      if (done.status === RunStatus.failed && done.failureKind === FailureKind.infrastructure && done.replacesRunId === null) {
+        const replacement = replacementRun(done, opaqueId(), "One replacement for an infrastructure failure.");
+        batch = { ...batch, runs: [...batch.runs, replacement.id] };
+        await saveRun(replacement);
+        await saveBatch(batch);
+        done = await executeRun({ run: replacement, suite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} replacement` });
+      }
       if (done.status === RunStatus.limited) limited = true;
     }, () => limited);
+    batch = withReportedModels(batch, await readRuns(batch));
     if (limited) return await setStatus(BatchStatus.paused);
     await setStatus(BatchStatus.done);
     progress.report(batchId, "The batch is done.");

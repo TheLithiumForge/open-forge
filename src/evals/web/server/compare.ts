@@ -18,8 +18,8 @@ function pairKey(a: string, b: string): string {
 }
 
 /** Every pair of finished games from the same tool and model, since setups are compared only within one. */
-export function allPairs(runs: readonly RunRecord[]): [string, string][] {
-  const playable = runs.filter((run) => run.status === RunStatus.done && existsSync(join(runFolder(run.batchId, run.id), ResultFiles.game)));
+export function allPairs(runs: readonly RunRecord[], folder = runFolder): [string, string][] {
+  const playable = runs.filter((run) => (run.status === RunStatus.done || run.build?.passed === true) && existsSync(join(folder(run.batchId, run.id), ResultFiles.game)));
   const pairs: [string, string][] = [];
   for (const [index, a] of playable.entries()) {
     for (const b of playable.slice(index + 1)) if (agentLabel(a.agent) === agentLabel(b.agent)) pairs.push([a.id, b.id]);
@@ -28,9 +28,9 @@ export function allPairs(runs: readonly RunRecord[]): [string, string][] {
 }
 
 /** A random pair not judged yet, with a random side for each game. */
-export function nextPair(runs: readonly RunRecord[], preferences: readonly Preference[], port: number): ComparePair | null {
+export function nextPair(runs: readonly RunRecord[], preferences: readonly Preference[], port: number, folder = runFolder): ComparePair | null {
   const judged = new Set(preferences.map((preference) => pairKey(preference.left, preference.right)));
-  const open = allPairs(runs).filter(([a, b]) => !judged.has(pairKey(a, b)));
+  const open = allPairs(runs, folder).filter(([a, b]) => !judged.has(pairKey(a, b)));
   const pair = open[randomInt(Math.max(1, open.length))];
   if (pair === undefined) return null;
   const [left, right] = randomInt(2) === 0 ? pair : ([pair[1], pair[0]] as const);
