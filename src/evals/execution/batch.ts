@@ -17,6 +17,7 @@ import type { SetupRecord } from "../history/records.types.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { checksForSuite } from "../benchmarks/registry.ts";
 import type { FileHash } from "../materialize/files.ts";
+import type { ScopePolicy } from "../materialize/scope.types.ts";
 import { progress } from "./progress.ts";
 import { executeRun } from "./run.ts";
 import { completeSavedJudgments } from "../grading/rejudge.ts";
@@ -88,6 +89,7 @@ async function executeBatch(batchId: string): Promise<void> {
   };
   const snapshots = new Map<string, string>();
   const baselines = new Map<string, readonly FileHash[]>();
+  const scopes = new Map<string, ScopePolicy>();
   try {
     await setStatus(BatchStatus.preparing);
     const suite = await loadSuite(batch.suite);
@@ -102,10 +104,14 @@ async function executeBatch(batchId: string): Promise<void> {
       const snapshot = await generateSetup(suite, setup);
       snapshots.set(setup, snapshot.folder);
       baselines.set(setup, snapshot.record.files);
+      if (snapshot.materialized?.scope !== undefined) scopes.set(setup, snapshot.materialized.scope);
       records.push(snapshot.record);
     }
-    const setups: SetupRecord[] = records.map((record) => ({ schemaVersion: RecordSchemaVersion, id: record.setup, experimentId: batchId,
-      label: record.label, commands: record.commands, files: record.files, contentHash: artifactHash(record.files) }));
+    const setups: SetupRecord[] = records.map((record) => {
+      const scope = scopes.get(record.setup);
+      return { schemaVersion: RecordSchemaVersion, id: record.setup, experimentId: batchId,
+        label: record.label, commands: record.commands, files: record.files, contentHash: artifactHash(record.files), ...(scope === undefined ? {} : { scope }) };
+    });
     const setupContent = fingerprint(setups.map(({ id, contentHash }) => ({ id, contentHash })));
     if ((await readSetups(batch)).length === 0) {
       batch = { ...batch, fingerprints: { ...batch.fingerprints, setupContent } };
@@ -131,7 +137,7 @@ async function executeBatch(batchId: string): Promise<void> {
         await saveBatch(batch);
       }
       const attemptSuite = suiteForSetup(suite, run.setup);
-      const checks = suite.brownfield === undefined ? undefined : checksForSuite(suite, baselines.get(run.setup));
+      const checks = suite.brownfield === undefined ? undefined : checksForSuite(suite, baselines.get(run.setup), scopes.get(run.setup));
       const services = checks === undefined ? {} : { checks };
       let done = await executeRun({ run, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} of ${batch.runs.length}`, services });
       if (done.status === RunStatus.failed && done.failureKind === FailureKind.infrastructure && done.replacesRunId === null) {

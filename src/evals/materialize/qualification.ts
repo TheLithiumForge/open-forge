@@ -5,6 +5,7 @@ import { initialRepository } from "./seed-repository.ts";
 import { SetupFiles, SetupKind, linkedInstructions, projectReadme, InlineReadme, type SetupManifest } from "./setup.ts";
 import { stripFrontmatter } from "./strip.ts";
 import { SetupProjectMetadata } from "./brownfield-files.ts";
+import { verifyScope } from "./scope-policy.ts";
 
 export async function checkDocumentSetup(folder: string, manifest: SetupManifest): Promise<string> {
   const files = await inventory(folder);
@@ -20,7 +21,8 @@ export async function checkDocumentSetup(folder: string, manifest: SetupManifest
   if (manifest.kind === SetupKind.linked && actual.get(SetupFiles.agents)?.toString() !== linkedInstructions(manifest.specifications)) throw new Error("The linked instructions differ from the shared descriptions.");
   if (manifest.kind !== SetupKind.forge && files.some((file) => file.path.startsWith(".agents/") || file.path.startsWith(".open-forge-state/"))) throw new Error("A document control contains Open Forge files.");
   for (const file of manifest.projectFiles ?? []) if (!SetupProjectMetadata.has(file.path) && sha256(actual.get(file.path) ?? "") !== file.sha256) throw new Error("The brownfield setup differs from its case seed.");
-  await initialRepository(folder, manifest.history === undefined ? 1 : 2);
+  await initialRepository(folder);
+  if (manifest.scope !== undefined) verifyScope(manifest.scope, manifest.files);
   const recorded = await readFile(`${folder}${SetupFiles.manifestSuffix}`, "utf8");
   if (recorded.includes(folder)) throw new Error("A setup manifest contains its machine path.");
   return sha256(JSON.stringify(manifest.specifications.files.map(({ path, sha256 }) => ({ path, sha256 }))));

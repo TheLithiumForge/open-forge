@@ -42,13 +42,14 @@ export async function ordinaryPath(path: string): Promise<void> {
 }
 
 /** `excluded` names are skipped at any depth. `rootExcluded` names are skipped only at the root, so a nested folder of the same name still counts. */
-export async function inventory(root: string, excluded: ReadonlySet<string> = new Set([GitDirectory]), rootExcluded: ReadonlySet<string> = new Set()): Promise<FileBytes[]> {
+export async function inventory(root: string, excluded: ReadonlySet<string> = new Set([GitDirectory]), rootExcluded: ReadonlySet<string> = new Set(), ignored?: (path: string, directory: boolean) => boolean): Promise<FileBytes[]> {
   await ordinaryPath(root);
   const files: FileBytes[] = [];
   async function walk(folder: string, prefix: string): Promise<void> {
     for (const entry of await readdir(folder, { withFileTypes: true })) {
       if (excluded.has(entry.name) || (prefix === "" && rootExcluded.has(entry.name))) continue;
       const path = prefix ? `${prefix}/${entry.name}` : entry.name;
+      if (ignored?.(path, entry.isDirectory())) continue;
       const fullPath = join(folder, entry.name);
       if (entry.isSymbolicLink()) throw new Error(`Links are unsupported: ${path}`);
       if (entry.isDirectory()) await walk(fullPath, path);

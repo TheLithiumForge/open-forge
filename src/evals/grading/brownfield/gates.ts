@@ -10,20 +10,24 @@ import { loadDefinition } from "../../benchmarks/neon-pairs/checks/spec-layers/l
 import { LayerId } from "../../benchmarks/neon-pairs/checks/spec-layers/requirements.ts";
 import { readChangeChecks } from "./change-checks.ts";
 import { runChangeChecks } from "./container.ts";
-import { regressionDefinition, regressionOutcomes } from "./regression.ts";
+import { regressionDefinition, regressionOutcomes, regressionReview } from "./regression.ts";
 import { BrownfieldGuard, changedFiles, projectHashes, scopeOutcome } from "./scope.ts";
 import { protectedHashes, protectedOutcome } from "./protected.ts";
 import type { CheckOutcome, Coverage } from "../grading.types.ts";
 import { coverage } from "../counting.ts";
 import { CheckStatus } from "../../history/statuses.ts";
+import type { ScopePolicy } from "../../materialize/scope.types.ts";
+import { captureScope, verifyScope } from "../../materialize/scope-policy.ts";
 
 export interface BrownfieldServices {
+  readonly scope?: ScopePolicy;
   readonly regression?: (input: SuiteCheckInput) => Promise<LayerOutput>;
   readonly changes?: typeof runChangeChecks;
   readonly protectedRoots?: readonly string[];
 }
 export const BrownfieldReport = "brownfield.json";
 export interface BrownfieldOutput extends SuiteCheckOutput {
+  readonly pending: readonly CheckOutcome[];
   readonly groups: { readonly feature: Coverage; readonly repair: Coverage; readonly regression: Coverage };
 }
 
@@ -32,6 +36,8 @@ export async function runBrownfieldChecks(inputs: BrownfieldInputs, baseline: re
   if (JSON.stringify(hashesWithoutValidation(await inventory(item.root), item.checks)) !== JSON.stringify(item.inputs)) throw new Error("The frozen brownfield case inputs changed before verification.");
   const frozen = regressionDefinition(await loadDefinition(LayerId.three), item.supersedes);
   const declared = await readChangeChecks(item);
+  const policy = services.scope ?? captureScope(inputs.seed, false);
+  verifyScope(policy, baseline);
   const checks: CheckOutcome[] = [];
   const roots = services.protectedRoots ?? [join(evalsRoot, "benchmarks", "neon-pairs"), join(evalsRoot, "grading", "brownfield")];
   const before = await protectedHashes(roots, input.project);
@@ -45,12 +51,13 @@ export async function runBrownfieldChecks(inputs: BrownfieldInputs, baseline: re
   catch (error) {
     for (const check of declared) checks.push({ id: `${check.kind}-${check.id}`, area: check.kind, status: CheckStatus.error, evidence: error instanceof Error ? error.message : String(error) });
   }
-  checks.push(scopeOutcome(changedFiles(baseline, await projectHashes(input.project), item.diffScope)));
+  checks.push(scopeOutcome(changedFiles(baseline, await projectHashes(input.project, policy), item.diffScope, policy)));
   checks.push(await protectedOutcome(item, input.project, before, await protectedHashes(roots, input.project)));
   const groups = { feature: coverage(checks.filter((check) => check.area === "feature")), repair: coverage(checks.filter((check) => check.area === "repair")), regression: coverage(checks.filter((check) => check.area === "regression")) };
   await mkdir(dirname(input.shotsFolder), { recursive: true });
-  await writeFile(join(dirname(input.shotsFolder), BrownfieldReport), `${JSON.stringify({ schemaVersion: 1, groups, checks }, null, 2)}\n`);
+  const pending = regressionReview(frozen);
+  await writeFile(join(dirname(input.shotsFolder), BrownfieldReport), `${JSON.stringify({ schemaVersion: 1, groups, checks, pending }, null, 2)}\n`);
   const ids = checks.map((check) => check.id);
-  return { checks, selection: { applicable: ids, stated: ids, working: [...frozen.working.map((id) => `regression-${id}`), BrownfieldGuard.protected] },
-    performance: regression?.performance ?? null, shots: regression?.shots ?? [], groups };
+  return { checks: [...checks, ...pending], selection: { applicable: ids, stated: ids, working: [...frozen.working.map((id) => `regression-${id}`), BrownfieldGuard.protected] },
+    performance: regression?.performance ?? null, shots: regression?.shots ?? [], groups, pending };
 }

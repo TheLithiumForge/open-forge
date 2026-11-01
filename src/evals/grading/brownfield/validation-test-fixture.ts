@@ -18,6 +18,7 @@ export async function validationFixture(t: TestContext) {
   const builds: string[] = [], phases: string[] = [];
   // The fake build never executes fixture code. Gates still use the real scope and protected-input checks.
   const tools: CaseValidationServices = {
+    projectTests: async () => ({ unit: { code: 0, stdout: "1 passed", stderr: "", timedOut: false }, browser: { code: 0, stdout: "1 passed", stderr: "", timedOut: false } }),
     build: async (space) => {
       builds.push(await readFile(join(space.work, BrownfieldFixture.source), "utf8"));
       await writeNew(space.work, ValidationFixturePage, "<html>Fixture page</html>");

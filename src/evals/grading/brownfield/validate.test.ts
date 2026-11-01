@@ -18,7 +18,7 @@ test("case validation builds starting and solution snapshots, saves bound inputs
   const result = await validateCase(fixture.suite, fixture.tools);
   assert.equal(result.schemaVersion, CaseValidationVersion);
   assert.equal(result.passed, true);
-  assert.deepEqual(result.stages.map((stage) => stage.phase), Object.values(ValidationPhase));
+  assert.deepEqual(result.stages.map((stage) => stage.phase), [ValidationPhase.starting, ValidationPhase.solution]);
   assert.deepEqual(fixture.builds, [BrownfieldFixture.broken, BrownfieldFixture.repaired]);
   assert.deepEqual(fixture.phases, fixture.builds);
   assert.ok(result.inputs.case.length && result.inputs.tooling.length && result.inputs.reference.length);
@@ -28,7 +28,7 @@ test("case validation builds starting and solution snapshots, saves bound inputs
   assert.equal(reloaded.fingerprint, fixture.suite.fingerprint);
   assert.equal((await validateCase(reloaded, fixture.tools)).passed, true);
   assert.deepEqual(hashes(await inventory(fixture.reference)), original);
-  for (const phase of Object.values(ValidationPhase)) for (const check of fixture.checks) {
+  for (const phase of [ValidationPhase.starting, ValidationPhase.solution]) for (const check of fixture.checks) {
     const entry = result.stages.find((entry) => entry.phase === phase)?.outcomes.find((entry) => entry.id === `${check.kind}-${check.id}`);
     assert.equal(entry?.expected, phase === ValidationPhase.starting ? CheckStatus.fail : CheckStatus.pass);
     assert.equal(entry?.matches, true);

@@ -10,8 +10,9 @@ import type { CommandRunner } from "./runner.ts";
 import { ManifestVersion, SpecsFiles, type SpecsManifest } from "./specs.ts";
 import { stripFrontmatter } from "./strip.ts";
 import { LayerTwoFixture } from "./subset.ts";
-import { appendSeedCommit } from "./seed-repository.ts";
 import { replaceSeedFiles, startingReadme, writeStartingFiles, SetupProjectMetadata } from "./brownfield-files.ts";
+import { captureScope } from "./scope-policy.ts";
+import type { ScopePolicy } from "./scope.types.ts";
 
 export const SetupKind = { plain: "plain-docs", linked: "linked-agents", forge: "open-forge", inline: "spec-in-prompt", code: "code-only" } as const;
 export type SetupKind = (typeof SetupKind)[keyof typeof SetupKind];
@@ -29,7 +30,6 @@ export interface SetupOptions {
   readonly frozen?: Awaited<ReturnType<typeof readFrozenSpecs>>;
   readonly projectFiles?: readonly FileBytes[];
   readonly seedFiles?: readonly FileBytes[];
-  readonly referenceDocuments?: readonly FileBytes[];
 }
 
 export interface SetupManifest {
@@ -42,8 +42,8 @@ export interface SetupManifest {
   readonly files: readonly FileHash[];
   readonly preset?: ForgePreset;
   readonly readmeHash?: string;
-  readonly history?: { readonly reference: string; readonly seed: string };
   readonly projectFiles?: readonly FileHash[];
+  readonly scope?: ScopePolicy;
 }
 
 export function projectReadme(manifest: SpecsManifest): string {
@@ -112,20 +112,18 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
       await writeFile(resolve(target, SetupFiles.docs, file.path), kind === SetupKind.forge ? addMetadata(file.bytes, metadata) : file.bytes);
     }
   };
-  if (options.referenceDocuments) await replaceDocuments(options.referenceDocuments);
-  await initialCommit(target, options.runGit);
-  let history: SetupManifest["history"];
   let finalReadme = readme;
   if (options.seedFiles && options.projectFiles) {
     finalReadme = startingReadme(options.seedFiles, kind === SetupKind.code ? null : AcceptanceLine) ?? readme;
     await replaceSeedFiles(target, options.projectFiles, options.seedFiles, finalReadme);
     await replaceDocuments(frozen.documents);
-    history = await appendSeedCommit(target);
     files = await inventory(target);
   }
+  await initialCommit(target, options.runGit);
   const manifest: SetupManifest = { schemaVersion: ManifestVersion, kind, sourceHash: frozen.manifest.sourceHash, specifications: frozen.manifest,
     frameworkVersion: kind === SetupKind.forge ? FrameworkVersion : null, frameworkCommands, files: hashes(files), ...(options.preset === undefined ? {} : { preset: options.preset }),
-    ...(options.projectFiles === undefined ? {} : { readmeHash: sha256(finalReadme), projectFiles: hashes(options.seedFiles ?? options.projectFiles) }), ...(history === undefined ? {} : { history }) };
+    ...(options.projectFiles === undefined ? {} : { readmeHash: sha256(finalReadme), projectFiles: hashes(options.seedFiles ?? options.projectFiles),
+      scope: captureScope(files, kind === SetupKind.forge, [...options.seedFiles ?? options.projectFiles, ...documentFiles.map((file) => ({ ...file, path: `${SetupFiles.docs}/${file.path}` }))]) }) };
   await ordinaryPath(dirname(manifestPath));
   await writeFile(manifestPath, jsonBytes(manifest), { flag: "wx" });
   return { manifestPath, manifest };

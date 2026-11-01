@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { test } from "node:test";
-import { inflateSync } from "node:zlib";
+import { deflateSync, inflateSync } from "node:zlib";
 import { createHash } from "node:crypto";
 import { GitDirectory, inventory, writeNew } from "./files.ts";
-import { initialRepository, seedRepository } from "./seed-repository.ts";
+import { InitialCommitMessage, initialRepository, seedRepository } from "./seed-repository.ts";
 import { sample } from "./test-fixture.ts";
 
 test("setup seed has one root commit, matching blobs and a complete index without calling Git", async (t) => {
@@ -25,4 +25,8 @@ test("setup seed has one root commit, matching blobs and a complete index withou
   for (const hash of blobHashes) assert.ok(index.includes(hash));
   for (const file of files) assert.ok(index.includes(Buffer.from(`${file.path}\0`)));
   await assert.rejects(seedRepository(fixture.destination));
+  const extra = Buffer.from(object.toString().replace(InitialCommitMessage, "Another project"));
+  const extraHash = createHash("sha1").update(extra).digest("hex");
+  await writeNew(fixture.destination, `${GitDirectory}/objects/${extraHash.slice(0, 2)}/${extraHash.slice(2)}`, deflateSync(extra));
+  await assert.rejects(initialRepository(fixture.destination), /exactly one commit/);
 });

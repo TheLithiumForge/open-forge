@@ -7,7 +7,7 @@ A combined case can pass its repair checks while its feature checks fail. Each c
 
 The loader reads `case.json` from the named case folder. The path fields are `request`, `specDelta`, `seedPatch`, `solutionPatch`, `checks` and `answers`. They default to the filenames in the shared Layer 4 case format. Repair cases omit `specDelta`. Feature cases omit `seedPatch`. Paths stay inside the case folder.
 
-The runner reads `supersedes` as clause IDs and `diffScope` as project-relative globs. The source, product documents and case inputs are hashed before the batch. Case records, patches, answer banks and check files stay outside every project.
+The runner reads `supersedes` as clause IDs and `diffScope` as project-relative globs. An optional `alt-solution.patch` beside `solution.patch` gives a second solution for case validation. The source, product documents and case inputs are hashed before the batch. Case records, patches, answer banks and check files stay outside every project.
 
 ## Change checks
 
@@ -30,9 +30,9 @@ Reports leave the container through `copyOutPlain`, then pass the report parser.
 
 ## Gates
 
-The regression runner executes the full frozen Layer 3 checker. Grading then removes only the named superseded clauses before aggregating each check. Other clauses in the same check still count. Feature, repair and regression checks use separate areas. The saved `brownfield.json` artifact reports coverage for each group apart.
+The regression runner executes the full frozen Layer 3 checker. Grading removes the named superseded clauses before aggregating each check. Clauses the checker lists as limits and clauses left to review are reported as pending, outside the regression gate and coverage. Unexpected errors still fail the gate. Every gradable frozen clause must pass. Other gradable clauses in the same check still count. Feature, repair and regression checks use separate areas. The saved `brownfield.json` artifact reports coverage for each group apart and lists pending clauses.
 
-The diff gate compares against the saved setup manifest. It reports added, changed and deleted paths and whether each matches `diffScope`. Installed packages, distributions, browser reports and workspace locks are outside this source comparison. The protected-input gate checks external hashes before and after verification and reports private grader files found in the submitted project.
+The diff gate compares against the saved setup manifest. It reports added, changed and deleted paths and whether each matches `diffScope`. Files ignored by the starting project's saved `.gitignore` rules stay outside the comparison. Editing `.gitignore` counts and can't hide other changes. Installed packages, distributions and browser reports at the project root are also outside the comparison. In Open Forge cells, changes to installed Open Forge files, routes and `.agents/` work records are reported and allowed. Other cells get no Open Forge exemption. The protected-input gate checks external hashes before and after verification and reports private grader files found in the submitted project.
 
 Rechecks use the saved setup manifest. They append assessments through the existing history reader.
 
@@ -44,7 +44,7 @@ Before running agents, check one case from the repository root:
 npm run evals -- validate-case --case l4-f01
 ```
 
-The command builds the starting project, runs every gate, applies `solution.patch` to a fresh starting snapshot and repeats the build and gates. Project code runs only in verifier containers. The command uses no models or sign-ins.
+The command builds the starting project and runs every gate. It then applies `solution.patch` to a fresh starting snapshot and repeats the build. Before running the solution gates, it runs the project's own `npm test` and `npm run test:e2e` as the build account in the verifier. Their output files exercise the saved ignore rules. Both commands must pass with reported tests. If `alt-solution.patch` exists, the command repeats these steps on another fresh starting snapshot. Project code runs only in verifier containers. The command uses no models or sign-ins.
 
 Each change check declares `expected.starting` as `pass`, `fail` or `blocked` and `expected.solution` as `pass`. At least one check in each change group must fail on the starting project. Errors can't count as expected failures.
 
@@ -54,9 +54,9 @@ Illustrative change check entry:
 { "id": "stale-callback", "kind": "repair", "expected": { "starting": "fail", "solution": "pass" } }
 ```
 
-This entry requires the planted defect to fail the check and the solution to pass it. Frozen regression checks default to `pass` on both projects. For repair and combined cases, the manifest's optional `regressionExpectations` object maps affected `regression-<Layer 3 check ID>` keys to starting statuses. Unknown or superseded IDs are rejected. Feature cases must start with passing frozen regressions. Both projects must build, typecheck and pass the diff and protected-input guards. Every solution check must pass.
+This entry requires the planted defect to fail the check and each solution to pass it. Gradable frozen regression checks default to `pass` in every phase. For repair and combined cases, the manifest's optional `regressionExpectations` object maps affected `regression-<Layer 3 check ID>` keys to starting statuses. Unknown, pending or superseded IDs are rejected. Feature cases must start with passing frozen regressions. Every project must build, typecheck and pass the diff and protected-input guards. Every solution check must pass.
 
-The command writes `checks/validation.json` with the input hashes, expected statuses, actual statuses and evidence. Paths in evidence are removed before saving. Any mismatch exits with code `1`. The report is generated output, so the case loader and grading fingerprints leave it out of their inputs.
+The command writes `checks/validation.json` with the input hashes, the patch for each phase, expected statuses, actual statuses, evidence and pending clauses. Paths in evidence are removed before saving. Any mismatch exits with code `1`. The report is generated output, so the case loader and grading fingerprints leave it out of their inputs.
 
 To check every case a plan lists, run:
 

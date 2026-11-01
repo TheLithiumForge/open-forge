@@ -27,7 +27,8 @@ test("regressions remove only superseded clauses inside a grouped check", async 
   const frozen = await loadDefinition(LayerId.three), removed = "R05.1";
   const selected = regressionDefinition(frozen, [removed]);
   assert.equal(selected.checks.flatMap((check) => check.assertions).some((assertion) => assertion.clause === removed), false);
-  assert.equal(selected.checks.flatMap((check) => check.assertions).length, frozen.checks.flatMap((check) => check.assertions).length - 1);
+  const excluded = new Set([removed, ...frozen.uncheckable.map((entry) => entry.clause), ...frozen.review.map((entry) => entry.clause)]);
+  assert.equal(selected.checks.flatMap((check) => check.assertions).length, frozen.checks.flatMap((check) => check.assertions).filter((assertion) => !excluded.has(assertion.clause)).length);
   const evidence = await passingRegression();
   const outcomes = regressionOutcomes(selected, evidence.assertions.map((assertion) => assertion.clause === removed ? { ...assertion, status: CheckStatus.fail } : assertion), evidence.checks);
   assert.ok(outcomes.every((check) => check.status === CheckStatus.pass));

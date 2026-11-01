@@ -7,7 +7,9 @@ export const SetupProjectMetadata = new Set(["README.md", ".gitignore"]);
 export function startingReadme(project: readonly FileBytes[] | undefined, pointer: string | null): string | undefined {
   const readme = project?.find((file) => file.path === "README.md")?.bytes.toString();
   if (readme === undefined) return undefined;
-  return pointer === null ? readme : `${readme.trimEnd()}\n\n${pointer}\n`;
+  const local = readme.split("\n").filter((line) => pointer !== null || !line.includes("](../specs/"))
+    .map((line) => line.replaceAll("](../specs/", "](docs/")).join("\n");
+  return pointer === null ? local : `${local.trimEnd()}\n\n${pointer}\n`;
 }
 
 export async function writeStartingFiles(target: string, files: readonly FileBytes[]): Promise<void> {
@@ -19,7 +21,7 @@ export async function writeStartingFiles(target: string, files: readonly FileByt
 
 export function validateStartingFiles(files: readonly FileBytes[]): void {
   for (const file of files) {
-    if (/^(?:docs|\.agents|checks)\//.test(file.path) || /^(?:AGENTS\.md|case\.json|answers\.json|requirements\.json|trace\.json|seed\.patch|solution\.patch)$/.test(file.path)) throw new Error("A starting project contains setup or grader inputs.");
+    if (/^(?:docs|\.agents|checks)\//.test(file.path) || /^(?:AGENTS\.md|case\.json|answers\.json|requirements\.json|trace\.json|seed\.patch|solution\.patch|alt-solution\.patch)$/.test(file.path)) throw new Error("A starting project contains setup or grader inputs.");
   }
 }
 

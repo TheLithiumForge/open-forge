@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { readFile, rm, writeFile } from "node:fs/promises";
+import { inflateSync } from "node:zlib";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { brownfieldFixture, BrownfieldFixture, FixtureSeedPatch } from "./brownfield-test-fixture.ts";
@@ -13,7 +14,7 @@ import { SetupFiles } from "./setup.ts";
 import { CodeOnlySetup, BrownfieldFiles } from "./brownfield-case.ts";
 import { suiteForSetup } from "../execution/workspace.ts";
 import { ReferenceExcluded } from "./brownfield-inputs.ts";
-import { writeNew } from "./files.ts";
+import { GitDirectory, inventory, writeNew } from "./files.ts";
 
 test("a unified seed patch matches context and rejects escaped paths and stale source", () => {
   const files = [{ path: BrownfieldFixture.source, bytes: Buffer.from(BrownfieldFixture.original) }];
@@ -23,7 +24,7 @@ test("a unified seed patch matches context and rejects escaped paths and stale s
   assert.equal(files[0]?.bytes.toString(), BrownfieldFixture.original);
 });
 
-test("brownfield setups share patched code and product bodies with a two-commit history", async (t) => {
+test("brownfield setups have one seeded commit and never store the clean source in Git objects", async (t) => {
   const fixture = await brownfieldFixture(t);
   for (const folder of ReferenceExcluded) await writeNew(fixture.reference, `${folder}/ignored.txt`, "Ignored generated file.");
   const suite = await loadBrownfieldSuite(fixture.caseRoot, BrownfieldFixture.id, fixture.reference, fixture.destination);
@@ -35,9 +36,13 @@ test("brownfield setups share patched code and product bodies with a two-commit 
   for (const setup of Object.keys(BrownfieldSetups)) {
     const generated = await generateSetup(suite, setup, documentInstaller([], true));
     try {
-      await initialRepository(generated.folder, 2);
+      await initialRepository(generated.folder);
       assert.equal(await readFile(join(generated.folder, BrownfieldFixture.source), "utf8"), BrownfieldFixture.broken);
-      assert.ok(generated.materialized?.history);
+      const objects = await inventory(join(generated.folder, GitDirectory, "objects"));
+      const contents = objects.map((file) => inflateSync(file.bytes).toString());
+      assert.equal(contents.filter((text) => text.startsWith("commit ")).length, 1);
+      assert.equal(contents.some((text) => text.includes(BrownfieldFixture.original)), false);
+      assert.ok(contents.some((text) => text.endsWith(BrownfieldFixture.broken)));
       if (generated.frameworkVersion !== null) assert.ok((await readFile(join(generated.folder, ".gitignore"), "utf8")).includes(FixtureIgnoredContext));
       for (const name of [BrownfieldFiles.definition, BrownfieldFiles.seed, BrownfieldFiles.solution, BrownfieldFiles.answers]) await assert.rejects(readFile(join(generated.folder, name)));
       if (setup === CodeOnlySetup) {

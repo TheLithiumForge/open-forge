@@ -43,7 +43,7 @@ export async function generateSetup(suite: Suite, setup: string, run: ForgeRunne
         return result;
       };
       const result = await materializeSetup({ kind: definition.delivery.kind, destination: folder, ...(suite.specs === undefined ? {} : { specs: join(evalsRoot, safeRelative(suite.specs)) }),
-        ...(suite.brownfield === undefined ? {} : { frozen: suite.brownfield.specifications, projectFiles: suite.brownfield.reference, seedFiles: suite.brownfield.seed, referenceDocuments: suite.brownfield.referenceDocuments }),
+        ...(suite.brownfield === undefined ? {} : { frozen: suite.brownfield.specifications, projectFiles: suite.brownfield.reference, seedFiles: suite.brownfield.seed }),
         ...(definition.delivery.preset === undefined ? {} : { preset: definition.delivery.preset }), runForge: tracked });
       expected.add(SetupFiles.readme);
       if (definition.delivery.kind !== SetupKind.inline && definition.delivery.kind !== SetupKind.code) for (const file of result.manifest.specifications.files) expected.add(`${SetupFiles.docs}/${file.path}`);

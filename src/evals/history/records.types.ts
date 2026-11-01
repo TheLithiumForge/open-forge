@@ -1,4 +1,5 @@
 import type { ModelChoice } from "../config/config.types.ts";
+import type { ScopePolicy } from "../materialize/scope.types.ts";
 import type { CheckOutcome, CheckSelection, FunctionalResult } from "../grading/grading.types.ts";
 import type { BuildResult, JudgeAnswer, LegacyBatchRecord, LegacyRunRecord, PerformanceResult } from "./results.types.ts";
 import type { AssessmentKind, FailureKind, PreferenceWinner, RecordSchemaVersion, RunStatus } from "./statuses.ts";
@@ -39,6 +40,7 @@ export interface ArtifactRecord {
 }
 
 export interface SetupRecord {
+  readonly scope?: ScopePolicy;
   readonly schemaVersion: typeof RecordSchemaVersion;
   readonly id: string;
   readonly experimentId: string;

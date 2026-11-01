@@ -6,13 +6,13 @@ import type { IntentItem } from "../benchmarks/suite.types.ts";
 
 export const ChangeType = { feature: "F", repair: "R", combined: "FR" } as const;
 export type ChangeType = (typeof ChangeType)[keyof typeof ChangeType];
-export const BrownfieldFiles = { definition: "case.json", request: "request.md", delta: "spec-delta", seed: "seed.patch", solution: "solution.patch", checks: "checks", answers: "answers.json", validation: "validation.json" } as const;
+export const BrownfieldFiles = { definition: "case.json", request: "request.md", delta: "spec-delta", seed: "seed.patch", solution: "solution.patch", alternative: "alt-solution.patch", checks: "checks", answers: "answers.json", validation: "validation.json" } as const;
 export const LayerFourCases = ["l4-f01", "l4-r01", "l4-fr01"] as const;
 export const CodeOnlySetup = "code-only";
 export interface BrownfieldCase {
   readonly id: string; readonly changeType: ChangeType; readonly title: string; readonly root: string;
   readonly request: string; readonly specDelta: string | null; readonly seedPatch: string | null;
-  readonly solutionPatch: string; readonly checks: string; readonly answers: readonly IntentItem[];
+  readonly solutionPatch: string; readonly altSolutionPatch: string | null; readonly checks: string; readonly answers: readonly IntentItem[];
   readonly supersedes: readonly string[]; readonly diffScope: readonly string[]; readonly inputs: readonly FileHash[];
 }
 
@@ -44,6 +44,8 @@ export async function readBrownfieldCase(root: string, expectedId?: string): Pro
   const specDelta = optional("specDelta", BrownfieldFiles.delta, changeType !== ChangeType.repair);
   const seedPatch = optional("seedPatch", BrownfieldFiles.seed, changeType !== ChangeType.feature);
   const solutionPatch = path("solutionPatch", BrownfieldFiles.solution), checks = path("checks", BrownfieldFiles.checks);
+  const alternative = [...solutionPatch.split("/").slice(0, -1), BrownfieldFiles.alternative].join("/");
+  const altSolutionPatch = files.some((file) => file.path === alternative) ? alternative : null;
   for (const name of [request, answersPath, seedPatch, solutionPatch].filter((name) => name !== null)) if (!files.some((file) => file.path === name)) throw new Error(`Missing brownfield input: ${name}`);
   for (const name of [checks, specDelta].filter((name) => name !== null)) if (!files.some((file) => file.path.startsWith(`${name}/`))) throw new Error(`Missing brownfield input folder: ${name}`);
   const bank: unknown = JSON.parse(await readFile(join(root, answersPath), "utf8"));
@@ -56,7 +58,7 @@ export async function readBrownfieldCase(root: string, expectedId?: string): Pro
   const supersedes = strings(json["supersedes"]), diffScope = strings(json["diffScope"]);
   if (supersedes.some((clause) => !/^[A-Z]\d{2}\.\d+$/.test(clause)) || !diffScope.length) throw new Error("Invalid supersedes or empty diffScope.");
   for (const pattern of diffScope) safeRelative(pattern);
-  return { id, changeType, root, title: text(json["title"]), request: (await readFile(join(root, request), "utf8")).trim(), specDelta, seedPatch, solutionPatch, checks, answers, supersedes, diffScope,
+  return { id, changeType, root, title: text(json["title"]), request: (await readFile(join(root, request), "utf8")).trim(), specDelta, seedPatch, solutionPatch, altSolutionPatch, checks, answers, supersedes, diffScope,
     inputs: hashesWithoutValidation(files, checks) };
 }
 

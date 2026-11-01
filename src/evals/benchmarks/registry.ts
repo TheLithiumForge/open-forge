@@ -11,12 +11,13 @@ import { inventory, sha256, type FileHash } from "../materialize/files.ts";
 import { ReferenceExcluded } from "../materialize/brownfield-inputs.ts";
 import { runBrownfieldChecks } from "../grading/brownfield/gates.ts";
 import { readBrownfieldCase } from "../materialize/brownfield-case.ts";
+import type { ScopePolicy } from "../materialize/scope.types.ts";
 
-export function checksForSuite(suite: Suite, baseline?: readonly FileHash[]): SuiteChecks | undefined {
+export function checksForSuite(suite: Suite, baseline?: readonly FileHash[], scope?: ScopePolicy): SuiteChecks | undefined {
   const inputs = suite.brownfield;
   if (inputs === undefined) return suiteChecks[suite.id];
   if (!baseline?.length) throw new Error("Brownfield grading needs the saved starting setup manifest.");
-  return (input) => runBrownfieldChecks(inputs, baseline, input);
+  return (input) => runBrownfieldChecks(inputs, baseline, input, scope === undefined ? {} : { scope });
 }
 
 /** Each suite's hidden checks, by suite ID. A new suite adds its entry here. */

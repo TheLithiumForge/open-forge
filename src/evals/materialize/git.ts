@@ -1,11 +1,11 @@
 import type { CommandRunner } from "./runner.ts";
-import { seedRepository } from "./seed-repository.ts";
+import { InitialCommitMessage, seedRepository } from "./seed-repository.ts";
 
 export const GitCommand = "git";
 export const GitRequests = {
   init: ["init", "--initial-branch=main", "--template="],
   add: ["add", "--all"],
-  commit: ["-c", "user.name=Open Forge Evals", "-c", "user.email=evals@example.invalid", "-c", "commit.gpgsign=false", "-c", "core.hooksPath=.git/no-hooks", "commit", "--no-verify", "-m", "Initial project"],
+  commit: ["-c", "user.name=Open Forge Evals", "-c", "user.email=evals@example.invalid", "-c", "commit.gpgsign=false", "-c", "core.hooksPath=.git/no-hooks", "commit", "--no-verify", "-m", InitialCommitMessage],
 } as const;
 
 export async function initialCommit(destination: string, run?: CommandRunner): Promise<void> {

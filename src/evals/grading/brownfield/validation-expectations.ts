@@ -11,10 +11,10 @@ import { regressionDefinition } from "./regression.ts";
 import { BrownfieldGuard } from "./scope.ts";
 import type { CheckOutcome } from "../grading.types.ts";
 
-export const ValidationPhase = { starting: "starting", solution: "solution" } as const;
+export const ValidationPhase = { starting: "starting", solution: "solution", alternative: "alternative" } as const;
 export type ValidationPhase = (typeof ValidationPhase)[keyof typeof ValidationPhase];
 export const ValidationStatus = { missing: "missing", unexpected: "unexpected" } as const;
-export const ValidationCheck = { build: "validation-build", typecheck: "validation-typecheck", inputs: "validation-inputs", stage: "validation-stage" } as const;
+export const ValidationCheck = { build: "validation-build", typecheck: "validation-typecheck", unit: "validation-unit-tests", browser: "validation-browser-tests", inputs: "validation-inputs", stage: "validation-stage" } as const;
 export interface ValidationExpectation { readonly id: string; readonly starting: CheckStatus; readonly solution: CheckStatus }
 export interface ValidationComparison { readonly id: string; readonly expected: CheckStatus; readonly actual: CheckStatus | (typeof ValidationStatus)[keyof typeof ValidationStatus]; readonly matches: boolean; readonly evidence: string | null }
 
@@ -54,7 +54,8 @@ export function compareValidation(expected: readonly ValidationExpectation[], ch
   const results: ValidationComparison[] = expected.map((entry) => {
     const found = checks.filter((check) => check.id === entry.id);
     const actual = found.length === 1 ? found[0]?.status ?? ValidationStatus.missing : found.length ? ValidationStatus.unexpected : ValidationStatus.missing;
-    return { id: entry.id, expected: entry[phase], actual, matches: actual === entry[phase], evidence: found[0]?.evidence ?? null };
+    const status = phase === ValidationPhase.starting ? entry.starting : entry.solution;
+    return { id: entry.id, expected: status, actual, matches: actual === status, evidence: found[0]?.evidence ?? null };
   });
   for (const check of checks) if (!expected.some((entry) => entry.id === check.id)) results.push({ id: check.id, expected: CheckStatus.pass, actual: ValidationStatus.unexpected, matches: false, evidence: check.evidence });
   return results;

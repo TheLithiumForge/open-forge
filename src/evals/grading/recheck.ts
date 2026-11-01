@@ -49,7 +49,8 @@ async function main(): Promise<void> {
   const rebuild = args.includes(RebuildFlag);
   if (rebuild && !(await dockerAvailable())) throw new Error("Rebuilding needs Docker, because agent code never builds on this machine.");
   for (const run of await readRuns(batch)) {
-    const checks = checksForSuite(suite, setups.find((setup) => setup.id === run.setup)?.files);
+    const setup = setups.find((setup) => setup.id === run.setup);
+    const checks = checksForSuite(suite, setup?.files, setup?.scope);
     if (checks === undefined) throw new Error(`No hidden checks for ${suite.id}.`);
     if (run.build === null || (onlyRun !== undefined && run.id !== onlyRun)) continue;
     if (rebuild && run.status !== RunStatus.done) {

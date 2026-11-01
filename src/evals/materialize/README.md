@@ -54,9 +54,9 @@ Document forms use the same acceptance line naming `docs/`. The inline form says
 
 ## Brownfield setups
 
-Layer 4 loads `case.json`, copies the reference and applies the optional seed patch as data. Every setup has a reference commit followed by a case-seed commit. Document setups use the full spec with the case's document replacements. Code only keeps the project and public tests without product documents. Manifests stay outside the project.
+Layer 4 loads `case.json`, copies the reference and applies the optional seed patch as data. Every setup has one commit named "Initial project" that contains the seeded code and the setup's documents. The clean reference is never written to Git objects. Document setups use the full spec with the case's document replacements. Code only keeps the project and public tests without product documents. Manifests stay outside the project.
 
-The batch and recheck commands use the saved starting file hashes for the diff gate. The [brownfield grading contract](../grading/brownfield/README.md) defines the case path fields, verifier worker and reports.
+The batch and recheck commands use the saved starting file hashes, ignore rules and installed Open Forge paths for the diff gate. The [brownfield grading contract](../grading/brownfield/README.md) defines the case path fields, verifier worker and reports.
 
 ## Check
 
