@@ -135,3 +135,4 @@ The [Results](../../.agents/memory/crystallized/documents/evals/results.md) docu
 - Each check keeps its first outcome. Rechecking saved files appends a new assessment and never changes the old one.
 - Real agents always run in Docker. `local` isolation is for harness development with the mock provider, and its runs are marked as not for scoring.
 - Codex reports no dollar cost, and Claude Code's cost is its own estimate. Missing token counts stay missing.
+- Each attempt works in a scratch folder outside any Git repository, by default `~/.workspaces`. Set `EVALS_SCRATCH` to a folder on a roomier drive when the home drive is short of space. It must also sit outside any Git repository.
