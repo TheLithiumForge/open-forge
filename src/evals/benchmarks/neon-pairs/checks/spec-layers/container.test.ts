@@ -50,7 +50,9 @@ test("later grading isolates candidate commands and validates only plain copied-
   assert.ok(calls.every((args) => !args.some((arg) => arg.includes(".eval-command-results"))), "No result passes through a folder the candidate can write.");
   const browser = calls.find((args) => args.includes(`${SpecLayerContainer.harness}/${SpecLayerContainer.worker}`));
   assert.equal(browser?.[browser.indexOf("--user") + 1], ContainerUsers.agent);
-  assert.ok(calls.some((args) => args.includes("700") && args.includes(SpecLayerContainer.evidence)));
+  const evidenceFolder = calls.find((args) => args.includes("700") && args.includes(SpecLayerContainer.evidence));
+  assert.equal(evidenceFolder?.[evidenceFolder.indexOf("--user") + 1], ContainerUsers.agent, "The checker account makes its own evidence folder, since root has no capabilities.");
+  assert.ok(calls.every((args) => !args.includes("chown")));
   assert.ok(calls.some((args) => args[0] === "network" && args[1] === "disconnect"));
   assert.ok(calls.some((args) => args[0] === "kill"));
   assert.ok(calls.some((args) => args[0] === "rm"));

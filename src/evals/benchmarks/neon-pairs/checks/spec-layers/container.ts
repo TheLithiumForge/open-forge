@@ -19,6 +19,7 @@ import type { ProcessResult } from "../../../../execution/process.ts";
 import { replayVectors } from "./vectors.ts";
 import { parseReport } from "./report.ts";
 import { removeTemporary } from "./temporary.ts";
+import { packageClosure } from "./harness-packages.ts";
 
 export interface LayerOutput extends SuiteCheckOutput { readonly assertions: readonly AssertionOutcome[]; readonly review: readonly { readonly clause: string; readonly reason: string }[] }
 const Environment = { HOME: ContainerPaths.buildHome, PLAYWRIGHT_BROWSERS_PATH: "/ms-playwright", npm_config_audit: "false", npm_config_fund: "false" } as const;
@@ -70,7 +71,7 @@ export async function runLayerChecks(layer: Layer, input: SuiteCheckInput, optio
     for (const folder of ["checks", "layers"]) await cp(join(source, folder), join(harness, "benchmarks", "neon-pairs", folder), { recursive: true });
     await cp(join(source, "requirements.json"), join(harness, "benchmarks", "neon-pairs", "requirements.json"));
     for (const file of ["history/statuses.ts", "execution/containers/settings.ts"]) { await mkdir(dirname(join(harness, file)), { recursive: true }); await cp(join(evalsRoot, file), join(harness, file)); }
-    for (const name of SpecLayerPackages) await cp(join(evalsRoot, "node_modules", name), join(harness, "node_modules", name), { recursive: true });
+    for (const name of await packageClosure(join(evalsRoot, "node_modules"), SpecLayerPackages)) await cp(join(evalsRoot, "node_modules", name), join(harness, "node_modules", name), { recursive: true });
     await writeFile(join(harness, "package.json"), JSON.stringify({ type: "module" }));
     await writeFile(join(harness, "input.json"), JSON.stringify({ layer, build: { typecheck: input.build.typecheck } }));
     await cp(input.html, join(harness, "index.html"));
@@ -83,9 +84,9 @@ export async function runLayerChecks(layer: Layer, input: SuiteCheckInput, optio
     await copyProjectIn(stage, { root: scratch, work: input.project, home: join(scratch, "home"), project: "neon-pairs" }, true);
     await stage.copyIn(harness, SpecLayerContainer.harness);
     await stage.prepare(ContainerPaths.work);
-    // The root-owned parent prevents candidate processes from replacing the checker folder.
-    await stage.exec(["mkdir", "-m", "700", SpecLayerContainer.evidence], ContainerUsers.root).then(requireDockerResult);
-    await stage.exec(["chown", ContainerUsers.agent, SpecLayerContainer.evidence], ContainerUsers.root).then(requireDockerResult);
+    // The checker account makes its evidence folder in its own home, which the build account can't write.
+    // Root has no capabilities in a stage, so it can't chown a folder over to the checker.
+    await stage.exec(["mkdir", "-m", "700", SpecLayerContainer.evidence], ContainerUsers.agent).then(requireDockerResult);
     const results = new Map<CommandId, CommandResult>();
     const install = await runCandidate(stage, CommandId.ci);
     results.set(CommandId.ci, install);

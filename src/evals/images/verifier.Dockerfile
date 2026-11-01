@@ -11,4 +11,5 @@ RUN ln -sf ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
   && mkdir -p /work /output /opt/evals && chmod 777 /work /output
 COPY prepare.ts /opt/evals/prepare.ts
 COPY collect.ts /opt/evals/collect.ts
+COPY stop-tools.ts /opt/evals/stop-tools.ts
 WORKDIR /work
