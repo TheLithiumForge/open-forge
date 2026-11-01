@@ -1,0 +1,10 @@
+node_modules
+.playwright-browsers
+dist
+.art
+.npm-cache
+.browser-work
+.mutation-work
+.test-work
+test-results
+evidence

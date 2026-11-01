@@ -18,7 +18,7 @@ Send this prompt with the full product documents:
 
 ## Full pack
 
-Supply the ten generated product documents in `src/evals/benchmarks/neon-pairs/specs/`, starting at `README.md`. Freeze spec version 2, all 97 requirement IDs and all 391 clauses. Keep file hashes with the case inputs.
+Supply the ten generated product documents in `src/evals/benchmarks/neon-pairs/specs/`, starting at `README.md`. Freeze spec version 2, all 97 requirement IDs and all 401 clauses. Keep file hashes with the case inputs.
 
 Give the agent no layer plan, requirements map, trace map, private fixture, reference implementation or check definition. The public Acceptance journeys are part of the product pack. Product text must read as the user's requirements and contain no study instructions.
 
@@ -52,6 +52,6 @@ The full pack isn't yet timed on the version 2 game. Treat 30 to 60 minutes as a
 
 Keep earlier checks and cover every executable clause. Use board codes for known deals, snapshots for states and replay for exact moves and timeout edges. Use static and build checks for pins, compiler options, source limits and delivery. Source structure and face legibility need review. An unsure review leaves compliance pending.
 
-The 391 clauses split the earlier 94-ID estimate more finely and add I17, V19 and V20, giving 97 IDs. The proposal's roughly 160 assertions isn't a cap on clause coverage. Checks still count once as defined in [Grading](../grading.md). A reference that passes a subset doesn't make uncovered clauses pass.
+The 401 clauses split the earlier 94-ID estimate more finely and add I17, V19 and V20, giving 97 IDs. The proposal's roughly 160 assertions isn't a cap on clause coverage. Checks still count once as defined in [Grading](../grading.md). A reference that passes a subset doesn't make uncovered clauses pass.
 
 Back to [Neon Pairs](_neon-pairs.md).

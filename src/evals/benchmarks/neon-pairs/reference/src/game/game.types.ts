@@ -1,9 +1,4 @@
-import type { SelectionKind } from './rules.ts';
-
-export type Selection =
-  | { readonly kind: typeof SelectionKind.closed }
-  | { readonly kind: typeof SelectionKind.one; readonly index: number }
-  | { readonly kind: typeof SelectionKind.mismatch; readonly first: number; readonly second: number; readonly remainingMs: number };
+import type { Selection } from './selection.ts';
 
 export interface Board {
   readonly boardCode: string;

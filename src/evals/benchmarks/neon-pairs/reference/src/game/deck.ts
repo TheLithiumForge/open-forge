@@ -1,5 +1,14 @@
-import { BOARD_VERSION, PRNG_MODULUS, PRNG_MULTIPLIER, SEED_MAX, validSize } from './rules.ts';
 import type { Board } from './game.types.ts';
+
+export const GRID_SIZES = [4, 6, 8, 10, 12, 14, 16] as const;
+export const BOARD_VERSION = 'np1';
+export const SEED_MAX = 2_147_483_646;
+const PRNG_MODULUS = SEED_MAX + 1;
+const PRNG_MULTIPLIER = 16_807;
+
+export function validSize(value: number): boolean {
+  return GRID_SIZES.some((size) => size === value);
+}
 
 export function nextRandomState(state: number): number {
   return (state * PRNG_MULTIPLIER) % PRNG_MODULUS;
@@ -35,9 +44,10 @@ export function generateBoard(code: string): Board {
     const other = draw % bound;
     const currentFace = deck[index];
     const otherFace = deck[other];
-    if (currentFace === undefined || otherFace === undefined) throw new Error('Deck index out of range.');
+    if (currentFace === undefined || otherFace === undefined)
+      throw new Error('Deck index out of range.');
     deck[index] = otherFace;
     deck[other] = currentFace;
   }
-  return { boardCode: code, ...parsed, deck };
+  return Object.freeze({ boardCode: code, ...parsed, deck: Object.freeze(deck) });
 }

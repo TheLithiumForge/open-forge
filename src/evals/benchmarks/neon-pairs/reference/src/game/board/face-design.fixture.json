@@ -1,0 +1,23 @@
+[
+  {
+    "shape": "circle",
+    "center": [50, 10],
+    "color": "#63E7FF",
+    "outline": false,
+    "label": "cyan solid circle, marker top"
+  },
+  {
+    "shape": "circle",
+    "center": [50, 10],
+    "color": "#63E7FF",
+    "outline": true,
+    "label": "cyan outline circle, marker top"
+  },
+  {
+    "shape": "square",
+    "center": [78.2842712474619, 21.7157287525381],
+    "color": "#FF71D6",
+    "outline": false,
+    "label": "magenta solid square, marker top-right"
+  }
+]

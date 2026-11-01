@@ -21,7 +21,7 @@ The deal comes from the board code defined in [Reproducibility](reproducibility.
 - R02 - The first valid card activation reveals that card. Activating it again or activating a matched card has no game effect.
 - R03 - The next valid activation reveals a different unmatched card. If the two faces match, keep them revealed and add one matched pair immediately.
 - R04 - If the faces differ, show both for `800` active milliseconds, then close both together. Ignore all card activation during this interval. Pause the interval while the page is hidden or an imported snapshot awaits Resume.
-- R05 - Add one move when the second valid card is revealed. The first reveal and ignored activation add no moves. Matches and misses each cost one move.
+- R05 - Add one move when the second valid card is revealed. The first reveal and ignored activation add no moves. Matches and misses each cost one move until the count reaches `999999`. At that cap the count stops increasing. Play continues normally, pairs still match and the game can still be won.
 
 For example, revealing two matching cards produces one move and one matched pair. Revealing the same first card twice still leaves one revealed card and zero moves.
 
@@ -32,7 +32,7 @@ For example, revealing two matching cards produces one move and one matched pair
 
 ## Clock
 
-- R07 - Start elapsed time on the first valid reveal. Count active milliseconds while the page is shown. Pause while the page is hidden or an imported snapshot awaits Resume. Stop at completion. Rendering frequency doesn't change the elapsed time.
+- R07 - Start elapsed time on the first valid reveal. Count active milliseconds while the page is shown. Pause while the page is hidden or an imported snapshot awaits Resume. Stop at completion. Rendering frequency doesn't change the elapsed time. Cap elapsed time at `359999999` milliseconds. At the cap, play continues normally and the clock shows the capped time.
 
 The mismatch interval and elapsed clock use the same active time. Showing the page again continues the interval from its remaining time.
 

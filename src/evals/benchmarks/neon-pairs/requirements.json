@@ -127,7 +127,7 @@
                              "clauses":  [
                                              {
                                                  "id":  "R05.1",
-                                                 "text":  "Add one move on the second valid reveal.",
+                                                 "text":  "Add one move on the second valid reveal until the move cap is reached.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              },
@@ -145,7 +145,31 @@
                                              },
                                              {
                                                  "id":  "R05.4",
-                                                 "text":  "A match and a miss each cost one move.",
+                                                 "text":  "A match and a miss each cost one move until the move cap is reached.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R05.5",
+                                                 "text":  "Stop increasing the move count at 999999.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R05.6",
+                                                 "text":  "Play continues normally at the move cap.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R05.7",
+                                                 "text":  "Pairs still match at the move cap.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R05.8",
+                                                 "text":  "The game can still be won at the move cap.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              }
@@ -244,6 +268,24 @@
                                              {
                                                  "id":  "R07.8",
                                                  "text":  "Continue a hidden-page mismatch from its remaining time when the page is shown.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.9",
+                                                 "text":  "Cap elapsed time at 359999999 milliseconds.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.10",
+                                                 "text":  "Play continues normally at the elapsed-time cap.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.11",
+                                                 "text":  "The clock shows the capped elapsed time.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              }
@@ -1217,37 +1259,37 @@
                                                  "id":  "I17.1",
                                                  "text":  "Finish a 4x4 game with a screen reader and keyboard alone.",
                                                  "firstLayer":  "L2",
-                                                 "method":  "review"
+                                                 "method":  "browser"
                                              },
                                              {
                                                  "id":  "I17.2",
                                                  "text":  "Find Grid size and New Game by name.",
                                                  "firstLayer":  "L2",
-                                                 "method":  "review"
+                                                 "method":  "browser"
                                              },
                                              {
                                                  "id":  "I17.3",
                                                  "text":  "Hear closed positions, revealed faces and one result per turn.",
                                                  "firstLayer":  "L2",
-                                                 "method":  "review"
+                                                 "method":  "browser"
                                              },
                                              {
                                                  "id":  "I17.4",
                                                  "text":  "Make the win, final moves and time available.",
                                                  "firstLayer":  "L2",
-                                                 "method":  "review"
+                                                 "method":  "browser"
                                              },
                                              {
                                                  "id":  "I17.5",
                                                  "text":  "Tab out of the board and start another game.",
                                                  "firstLayer":  "L2",
-                                                 "method":  "review"
+                                                 "method":  "browser"
                                              },
                                              {
                                                  "id":  "I17.6",
                                                  "text":  "Record screen reader and browser versions in the project README.",
                                                  "firstLayer":  "L2",
-                                                 "method":  "review"
+                                                 "method":  "browser"
                                              }
                                          ]
                          },
@@ -2859,6 +2901,24 @@
                                                  "text":  "Import pauses clock and mismatch until Resume.",
                                                  "firstLayer":  "L3",
                                                  "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "D07.7",
+                                                 "text":  "Reject elapsedMs above 359999999.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D07.8",
+                                                 "text":  "Reject moves above 999999.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D07.9",
+                                                 "text":  "Apply the 999999 move cap to saved best scores too.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
                                              }
                                          ]
                          },
@@ -2942,7 +3002,7 @@
                                              },
                                              {
                                                  "id":  "D09.5",
-                                                 "text":  "Reject elapsed-time addition outside safe integers.",
+                                                 "text":  "Cap replayed elapsed time at 359999999 milliseconds. Action times and endMs stay nonnegative safe integers.",
                                                  "firstLayer":  "L3",
                                                  "method":  "replay"
                                              },

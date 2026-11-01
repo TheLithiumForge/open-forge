@@ -24,8 +24,8 @@ Counts use the ten product documents after frontmatter is stripped. Words are wh
 
 | Scope | Words | Requirement IDs | Clauses |
 | --- | --- | --- | --- |
-| Full pack | 6929 | 97 | 391 |
-| Player subset | 1426 | 60 | 180 |
+| Full pack | 6022 | 97 | 401 |
+| Player subset | 1489 | 60 | 187 |
 
 The full pack isn't a reliable 30 to 60 minute implementation task. It adds exact generation, import validation, logical time and a replay command to the complete player game. Budget a 60-minute pilot and report unfinished clauses. A timed pilot hasn't measured completion yet. If it doesn't fit, give the board-code, snapshot and replay formats in a starting library or move that work to a separate task. Keep every player-facing rule, including accessibility, look and offline delivery.
 
@@ -56,5 +56,8 @@ Version 2 resolves the reported gaps and earlier build differences:
 | Product wording | Remove process instructions from Controls, Architecture and Acceptance. | The documents describe the requested game. |
 | Coverage | Map every ID and every clause before adding evidence. | Missing evidence stays empty instead of being implied. |
 | Pack size | Count the full pack and player subset. Keep the full task at a 60-minute pilot limit until measured. | A larger contract needs a measured time budget. |
+| Elapsed counter limit | R07 caps elapsed time at 359999999ms while play continues. D07 rejects larger imported values. D09 caps replayed elapsed time while D08 timestamps stay nonnegative safe integers. | The cap is 99 hours, 59 minutes and 59.999 seconds. Every exported elapsed value fits version 1 without an overflow policy. C08.2 and C10.3 need no change. R05.1 is independent of elapsed time. |
+| Move counter limit | R05 caps moves at 999999. Play, matching and completion continue at that count. D07 rejects larger imported moves and saved best scores. | The maintainer chose a finite count so a valid loaded game can always continue and export version 1 data. |
+| Screen reader evidence | I17.1 through I17.6 use Chromium accessibility-tree captures for automated checks. A person confirms the spoken journey as a review item. Record Chromium and Playwright versions and state that no actual screen reader was run. | Tree names, roles, states and live-region payloads can be checked unattended. Those checks don't establish spoken output. |
 
 Back to [Neon Pairs](_neon-pairs.md).

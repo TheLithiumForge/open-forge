@@ -1,9 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES2023", "module": "ESNext", "moduleResolution": "bundler",
-    "strict": true, "noUncheckedIndexedAccess": true, "exactOptionalPropertyTypes": true,
-    "verbatimModuleSyntax": true, "erasableSyntaxOnly": true, "noEmit": true,
-    "noUnusedLocals": true, "noUnusedParameters": true,
-    "allowImportingTsExtensions": true, "skipLibCheck": false
+    "target": "ES2023",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": false
   }
 }

@@ -1,6 +1,10 @@
 {
   "extends": "./tsconfig.base.json",
-  "compilerOptions": { "lib": ["ES2023", "DOM", "DOM.Iterable"], "jsx": "react-jsx", "types": ["vite/client"] },
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "types": ["vite/client"]
+  },
   "include": ["src/**/*.ts", "src/**/*.tsx", "art/**/*.tsx"],
-  "exclude": ["src/**/__tests__/**"]
+  "exclude": ["src/**/*.test.ts", "src/**/*.fixture.ts"]
 }

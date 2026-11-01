@@ -3,17 +3,25 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=24.19.0" },
+  "engines": {
+    "node": "\u003e=24.19.0"
+  },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p tsconfig.e2e.json",
-    "test": "vitest run",
-    "build": "npm run typecheck && vite build",
+    "typecheck": "tsc -p tsconfig.app.json \u0026\u0026 tsc -p tsconfig.node.json \u0026\u0026 tsc -p tsconfig.e2e.json",
+    "test": "node --test \"src/**/*.test.ts\" \"scripts/**/*.test.ts\"",
+    "build": "npm run typecheck \u0026\u0026 vite build",
     "build:art": "vite build --config vite.art.config.ts",
-    "test:e2e": "npm run build:art && playwright test",
-    "replay": "node --experimental-strip-types scripts/replay.ts"
+    "test:e2e": "npm run build \u0026\u0026 npm run build:art \u0026\u0026 node --test --test-concurrency=1 \"tests/*.e2e.test.ts\"",
+    "replay": "node scripts/replay.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "mutate": "npm run build \u0026\u0026 node scripts/mutations.ts"
   },
-  "dependencies": { "react": "19.3.1", "react-dom": "19.3.1" },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
   "devDependencies": {
     "@playwright/test": "1.64.1",
     "@types/node": "24.19.2",
@@ -23,6 +31,9 @@
     "typescript": "7.0.2",
     "vite": "8.3.5",
     "vite-plugin-singlefile": "2.3.4",
-    "vitest": "5.0.5"
+    "vitest": "5.0.5",
+    "prettier": "3.9.6",
+    "pngjs": "7.0.0",
+    "@types/pngjs": "6.0.5"
   }
 }

@@ -20,7 +20,7 @@ Use the same task text in every setup. Only the registered delivery of the suppl
 
 ## Supplied clauses
 
-Use spec version 2 and only clauses whose `firstLayer` is `L2` in `src/evals/benchmarks/neon-pairs/requirements.json`. That is 180 clauses across 60 requirement IDs. The following list freezes the exact subset. All means every clause of that requirement. A mixed requirement lists its supplied clauses:
+Use spec version 2 and only clauses whose `firstLayer` is `L2` in `src/evals/benchmarks/neon-pairs/requirements.json`. That is 187 clauses across 60 requirement IDs. The following list freezes the exact subset. All means every clause of that requirement. A mixed requirement lists its supplied clauses:
 
 | Requirement | Supplied clauses |
 | --- | --- |
@@ -30,7 +30,7 @@ Use spec version 2 and only clauses whose `firstLayer` is `L2` in `src/evals/ben
 | R04 | R04.1, R04.2, R04.3, R04.4 |
 | R05 | All |
 | R06 | All |
-| R07 | R07.1, R07.2, R07.3, R07.5, R07.6, R07.7, R07.8 |
+| R07 | R07.1, R07.2, R07.3, R07.5, R07.6, R07.7, R07.8, R07.9, R07.10, R07.11 |
 | R08 | R08.1, R08.2, R08.3, R08.4 |
 | R09 | R09.1, R09.2, R09.3, R09.4 |
 | R10 | All |
@@ -87,7 +87,7 @@ Use spec version 2 and only clauses whose `firstLayer` is `L2` in `src/evals/ben
 
 Deliver each included clause's complete text and its defining heading. Include the table values and exact labels it needs. Resolve parent references to included clauses only. Use neutral local document links with the same descriptions in every form. Don't give the agent full source documents with omitted clauses still in them. Don't send layer plans, data maps, the decision log, trace entries or grading instructions.
 
-The generated subset must carry only the same 180 clauses in each form. Check its clause IDs and product sentences before scored runs. Unprovided rules can't become hidden correctness checks. Source locality stays in the prompt and in the existing judge result, while the stricter architecture and file-length rules wait for Layer 3.
+The generated subset must carry only the same 187 clauses in each form. Check its clause IDs and product sentences before scored runs. Unprovided rules can't become hidden correctness checks. Source locality stays in the prompt and in the existing judge result, while the stricter architecture and file-length rules wait for Layer 3.
 
 ## Delivery setups
 

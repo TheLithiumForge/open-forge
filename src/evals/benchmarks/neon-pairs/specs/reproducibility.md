@@ -34,7 +34,7 @@ The `selection` object has one of these forms:
 | `mismatch` | `first`, `second`, `remainingMs` | Two different faces await closing |
 
 - D06 - Validate the complete object before replacing the game. Reject unknown keys. Require unique in-range matched indices containing whole face pairs. Selection indices must be in range and unmatched. A mismatch needs distinct indices with different faces and an integer `remainingMs` from `1` through `800`. Completion requires a closed selection.
-- D07 - Require boolean `started` and nonnegative safe integers for `moves` and `elapsedMs`. Require at least one move per matched pair and one further move for a pending mismatch. If `started` is false, require zero moves, zero elapsed time, no matches and a closed selection. A started game with zero moves requires one revealed card. Import pauses the clock and pending mismatch until Resume.
+- D07 - Require boolean `started` and nonnegative safe integers for `moves` and `elapsedMs`. Reject `elapsedMs` above `359999999` and `moves` above `999999`. Apply the move cap to saved best scores too. Require at least one move per matched pair and one further move for a pending mismatch. If `started` is false, require zero moves, zero elapsed time, no matches and a closed selection. A started game with zero moves requires one revealed card. Import pauses the clock and pending mismatch until Resume.
 
 Illustrative snapshot:
 
@@ -47,7 +47,7 @@ Importing this snapshot shows one matched pair and two different faces. Resume l
 ## Replay
 
 - D08 - Encode a single deal as `{version: 1, boardCode, actions: [{atMs, index}], endMs}`. Require exactly these fields and exactly `atMs` and `index` per action. Indices must be in range. Times are nonnegative safe integers. Action times must be nondecreasing. If actions exist, `endMs` must be at least the final action time. Equal-time actions keep array order.
-- D09 - Start from the code's hidden deal. Advance active time to each action's `atMs` before activating its index, then advance to `endMs`. Resolve a mismatch whose interval ends exactly at an action time before that action. Apply the game rules to ignored activation too. Reject any elapsed-time addition outside the safe integer range.
+- D09 - Start from the code's hidden deal. Advance active time to each action's `atMs` before activating its index, then advance to `endMs`. Resolve a mismatch whose interval ends exactly at an action time before that action. Apply the game rules to ignored activation too. Cap replayed elapsed time at `359999999` milliseconds as R07 requires. Action times and `endMs` keep the nonnegative safe integer range in D08.
 
 Illustrative replay:
 

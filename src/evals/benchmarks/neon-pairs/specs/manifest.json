@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "fixture": "neon-pairs",
-  "sourceHash": "e5e2b62ec066f67a2407b9595e59a78d75d614ae48d9a3bb4d323fac4f41698b",
+  "sourceHash": "ad088ffd6f00bd9cc417f50dfca9190092c9a93b640f9d1f47ca911392c10f9d",
   "sourceFiles": [
     {
       "path": "README.md",
@@ -29,11 +29,11 @@
     },
     {
       "path": "reproducibility.md",
-      "sha256": "55ee4033721ac3c05c26f9bcdc1bf51ee6e8475d51e57c6eb0853a4235e8f0a6"
+      "sha256": "9ff74bb360e06aae852de6ed6db3232b8c69c03084a48fa176eb6d4d98c080c0"
     },
     {
       "path": "rules.md",
-      "sha256": "08be8af35df23e8dc82a0366a2e4c0da358d7889cb74eb71470d20dd6c581020"
+      "sha256": "a8702449b47711bcee3025c0181a94d1ea4382ea9a4640eb1126195cb639f4ab"
     },
     {
       "path": "sound.md",
@@ -115,8 +115,8 @@
     },
     {
       "path": "reproducibility.md",
-      "sha256": "70fe45ba62462a969fb911d753bc0dbac2f848d860ab67af53745d19f6d491f6",
-      "sourceSha256": "55ee4033721ac3c05c26f9bcdc1bf51ee6e8475d51e57c6eb0853a4235e8f0a6",
+      "sha256": "562994c433d0349ad5ab2d9bdacc86c7d1a705f20c9e7949794d589be0bb7b4c",
+      "sourceSha256": "9ff74bb360e06aae852de6ed6db3232b8c69c03084a48fa176eb6d4d98c080c0",
       "metadata": {
         "description": "Board codes, snapshots and replay formats",
         "tags": [
@@ -128,8 +128,8 @@
     },
     {
       "path": "rules.md",
-      "sha256": "8c743ab97ca18c75904b4235930e608c33659084d9657117cde7faebc62a4cd4",
-      "sourceSha256": "08be8af35df23e8dc82a0366a2e4c0da358d7889cb74eb71470d20dd6c581020",
+      "sha256": "b71be211b25954d2a5e29808cc15ccc293f87f9d79674a06f166567734d4aad0",
+      "sourceSha256": "a8702449b47711bcee3025c0181a94d1ea4382ea9a4640eb1126195cb639f4ab",
       "metadata": {
         "description": "Card matching, moves, timing and victory rules",
         "tags": [

@@ -2,12 +2,14 @@
   --card-min: 44px;
   --card-max: 88px;
   --card-gap: 6px;
-  --board-padding: 2px;
+  --board-padding: 6px;
+  --board-border: 1px;
   max-height: min(70dvh, 768px);
   overflow: auto;
   overscroll-behavior: contain;
-  padding: 4px;
-  border: 1px solid var(--border);
+  padding: var(--board-padding);
+  scroll-padding: var(--board-padding);
+  border: var(--board-border) solid var(--border);
   border-radius: 12px;
   background: var(--panel);
   width: fit-content;
@@ -16,19 +18,22 @@
 .board {
   display: grid;
   gap: var(--card-gap);
-  padding: var(--board-padding);
   grid-template-columns: repeat(var(--grid-size), minmax(var(--card-min), var(--card-max)));
   width: clamp(
-    calc(var(--grid-size) * var(--card-min) + (var(--grid-size) - 1) * var(--card-gap) + 2 * var(--board-padding)),
-    calc(min(100vw, var(--content-max)) - 46px),
-    calc(var(--grid-size) * var(--card-max) + (var(--grid-size) - 1) * var(--card-gap) + 2 * var(--board-padding))
+    calc(var(--grid-size) * var(--card-min) + (var(--grid-size) - 1) * var(--card-gap)),
+    calc(
+      min(100vw, var(--content-max)) - 2 * var(--page-padding) - 2 * var(--board-padding) - 2 *
+        var(--board-border)
+    ),
+    calc(var(--grid-size) * var(--card-max) + (var(--grid-size) - 1) * var(--card-gap))
   );
 }
 .card {
   position: relative;
   width: 100%;
   aspect-ratio: 1;
-  padding: 2px;
+  padding: 0;
+  scroll-margin: 6px;
   border: 2px solid var(--border);
   border-radius: 8px;
   background: var(--back);
@@ -36,12 +41,43 @@
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
-  transition: border-color 120ms ease, opacity 120ms ease;
+  transition:
+    border-color 120ms ease,
+    opacity 120ms ease;
+  display: grid;
+  place-items: center;
 }
-.card:hover { border-color: var(--text); }
-.card.revealed, .card.matched { background: var(--face); }
-.card.matched { border-color: var(--green); }
-.card svg { display: block; width: 100%; height: 100%; }
-.card-back { font-size: 30px; line-height: 1; color: var(--secondary); }
-.matched-mark { position: absolute; right: 1px; top: -6px; font-size: 16px; font-weight: bold; color: var(--green); }
-@media (prefers-reduced-motion: reduce) { .card { transition: none; } }
+.card:hover {
+  border-color: var(--text);
+}
+.card.revealed,
+.card.matched {
+  background: var(--face);
+}
+.card.matched {
+  border-color: var(--green);
+}
+.card > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.card-back {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--secondary);
+  transform: rotate(45deg);
+}
+.card > .matched-mark {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  color: var(--green);
+}
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}

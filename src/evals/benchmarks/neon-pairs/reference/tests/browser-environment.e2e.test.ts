@@ -1,5 +1,6 @@
-import { expect, test } from '@playwright/test';
-import { MISMATCH_MS } from '../src/game/rules.ts';
+import { expect } from '@playwright/test';
+import { test } from './browser-test.ts';
+import { MISMATCH_MS } from '../src/game/game.ts';
 import { GAME_URL, exportedSnapshot, loadFixedBoard } from './game-fixture.ts';
 
 test('pauses elapsed time and a mismatch while the document is hidden', async ({ page }) => {
@@ -27,7 +28,11 @@ test('pauses elapsed time and a mismatch while the document is hidden', async ({
 
 test('continues playing when access to browser storage is denied', async ({ page }) => {
   await page.addInitScript(() => {
-    Object.defineProperty(window, 'localStorage', { get: () => { throw new DOMException('Blocked', 'SecurityError'); } });
+    Object.defineProperty(window, 'localStorage', {
+      get: () => {
+        throw new DOMException('Blocked', 'SecurityError');
+      },
+    });
   });
   await loadFixedBoard(page);
   await page.locator('.card').nth(2).click();
@@ -37,9 +42,13 @@ test('continues playing when access to browser storage is denied', async ({ page
 
 test('keeps the initial focus and produces no audio during play', async ({ page }) => {
   let audioRequests = 0;
-  page.on('request', (request) => { if (request.resourceType() === 'media') audioRequests += 1; });
+  page.on('request', (request) => {
+    if (request.resourceType() === 'media') audioRequests += 1;
+  });
   await page.goto(GAME_URL);
-  expect(await page.locator('button:focus, select:focus, input:focus, textarea:focus').count()).toBe(0);
+  expect(
+    await page.locator('button:focus, select:focus, input:focus, textarea:focus').count(),
+  ).toBe(0);
   await page.locator('.card').first().click();
   await expect(page.locator('audio, video')).toHaveCount(0);
   expect(audioRequests).toBe(0);

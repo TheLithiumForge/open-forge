@@ -1,0 +1,6 @@
+{
+  "initial": "Find every matching pair.",
+  "mismatch": "No match. Cards close after a short pause.",
+  "matched": "Pair found. 1 pair matched.",
+  "won": "Pair found. All pairs found in 8 moves and 0:00."
+}

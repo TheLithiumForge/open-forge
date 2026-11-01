@@ -3,3 +3,8 @@ dist/
 .art/
 test-results/
 playwright-report/
+.npm-cache/
+.playwright-browsers/
+.browser-work/
+.mutation-work/
+.test-work/

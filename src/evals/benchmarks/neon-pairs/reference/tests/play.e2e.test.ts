@@ -1,5 +1,13 @@
-import { expect, test } from '@playwright/test';
-import { FIXED_PAIRS, GAME_URL, PHONE, exportedSnapshot, loadFixedBoard, moves } from './game-fixture.ts';
+import { expect } from '@playwright/test';
+import { test } from './browser-test.ts';
+import {
+  FIXED_PAIRS,
+  GAME_URL,
+  PHONE,
+  exportedSnapshot,
+  loadFixedBoard,
+  moves,
+} from './game-fixture.ts';
 
 test('finishes the literal board by keyboard without inspecting hidden faces', async ({ page }) => {
   await loadFixedBoard(page);
@@ -9,7 +17,8 @@ test('finishes the literal board by keyboard without inspecting hidden faces', a
     for (const index of pair) {
       await page.locator('.card').first().focus();
       await page.keyboard.press('Control+Home');
-      for (let row = 0; row < Math.floor(index / 4); row += 1) await page.keyboard.press('ArrowDown');
+      for (let row = 0; row < Math.floor(index / 4); row += 1)
+        await page.keyboard.press('ArrowDown');
       for (let column = 0; column < index % 4; column += 1) await page.keyboard.press('ArrowRight');
       await page.keyboard.press('Enter');
     }
@@ -31,15 +40,23 @@ test('finishes by phone taps with visible 44px targets', async ({ browser }) => 
     const bounds = await page.locator('.card').first().boundingBox();
     expect(bounds?.width).toBeGreaterThanOrEqual(44);
     expect(bounds?.height).toBeGreaterThanOrEqual(44);
-    for (const pair of FIXED_PAIRS) for (const index of pair) await page.locator('.card').nth(index).tap();
+    for (const pair of FIXED_PAIRS)
+      for (const index of pair) await page.locator('.card').nth(index).tap();
     await expect(page.locator('.card.matched')).toHaveCount(16);
     expect(await moves(page)).toBe(8);
-  } finally { await context.close(); }
+  } finally {
+    await context.close();
+  }
 });
 
-test('loads the built file with the network offline and no external requests', async ({ context, page }) => {
+test('loads the built file with the network offline and no external requests', async ({
+  context,
+  page,
+}) => {
   const requested: string[] = [];
-  page.on('request', (request) => { if (!request.url().startsWith('file:')) requested.push(request.url()); });
+  page.on('request', (request) => {
+    if (!request.url().startsWith('file:')) requested.push(request.url());
+  });
   await context.setOffline(true);
   await page.goto(GAME_URL);
   await expect(page.locator('.card')).toHaveCount(16);

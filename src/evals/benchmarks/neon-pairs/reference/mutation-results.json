@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "node": "26.12.1",
+  "cleanUnitBaseline": "passed",
+  "cleanBrowserBaseline": "passed",
+  "results": [
+    {
+      "id": "M01",
+      "clause": "R03.2",
+      "test": "src/game/game.test.ts",
+      "selected": 6,
+      "failed": 4,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M02",
+      "clause": "R05.1",
+      "test": "src/game/game.test.ts",
+      "selected": 6,
+      "failed": 3,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M03",
+      "clause": "R07.1",
+      "test": "src/game/game.test.ts",
+      "selected": 6,
+      "failed": 5,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M04",
+      "clause": "R04.3",
+      "test": "src/game/game.test.ts",
+      "selected": 6,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M05",
+      "clause": "R04.1",
+      "test": "src/game/game.test.ts",
+      "selected": 6,
+      "failed": 2,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M06",
+      "clause": "R07.9",
+      "test": "src/game/elapsed-time.test.ts",
+      "selected": 1,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M07",
+      "clause": "R12.2",
+      "test": "src/game/session/session.test.ts",
+      "selected": 5,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M08",
+      "clause": "C10.4",
+      "test": "src/game/session/session.test.ts",
+      "selected": 5,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M09",
+      "clause": "R10.1",
+      "test": "src/game/session/storage.test.ts",
+      "selected": 10,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M10",
+      "clause": "R10.4",
+      "test": "src/game/session/storage.test.ts",
+      "selected": 10,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M11",
+      "clause": "R10.3",
+      "test": "src/game/session/storage.test.ts",
+      "selected": 10,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M12",
+      "clause": "D03.2",
+      "test": "src/game/deck.test.ts",
+      "selected": 22,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M13",
+      "clause": "D01.2",
+      "test": "src/game/deck.test.ts",
+      "selected": 22,
+      "failed": 7,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M14",
+      "clause": "D06.2",
+      "test": "src/game/snapshot.test.ts",
+      "selected": 28,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M15",
+      "clause": "D06.3",
+      "test": "src/game/snapshot-pairs.test.ts",
+      "selected": 1,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M16",
+      "clause": "D09.2",
+      "test": "src/game/replay.test.ts",
+      "selected": 16,
+      "failed": 2,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M17",
+      "clause": "D08.7",
+      "test": "src/game/replay-order.test.ts",
+      "selected": 1,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M18",
+      "clause": "I07.1",
+      "test": "src/game/board/keyboard.test.ts",
+      "selected": 2,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M19",
+      "clause": "V19.5",
+      "test": "tests/layout.e2e.test.ts",
+      "selected": 3,
+      "failed": 2,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M20",
+      "clause": "I14.2",
+      "test": "tests/play.e2e.test.ts",
+      "selected": 4,
+      "failed": 1,
+      "exit": 1,
+      "outcome": "caught"
+    },
+    {
+      "id": "M21",
+      "clause": "R05.5",
+      "test": "src/game/move-cap.test.ts",
+      "selected": 3,
+      "failed": 3,
+      "exit": 1,
+      "outcome": "caught"
+    }
+  ]
+}
