@@ -14,11 +14,6 @@
   "parallelRuns": 6,
   "agents": [
     {
-      "tool": "codex",
-      "model": "gpt-6.1-sol",
-      "effort": "high"
-    },
-    {
       "tool": "claude",
       "model": "opus",
       "effort": "high"
@@ -35,12 +30,6 @@
       "tool": "claude",
       "model": "opus",
       "effort": "high",
-      "repeats": 3
-    },
-    {
-      "tool": "codex",
-      "model": "gpt-6.1-sol",
-      "effort": "xhigh",
       "repeats": 3
     }
   ]

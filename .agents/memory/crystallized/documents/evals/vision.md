@@ -50,6 +50,8 @@ A richer-context brownfield case is a Layer 4 variant, not another layer.
 
 The maintainer set the matrix on 2026-11-01: Claude implementing with a Claude judge, Codex implementing with a Claude judge, Codex implementing with a Codex judge, and Claude implementing with a Codex judge. Each attempt runs once with its implementer and is then judged by both judges, the second through an appended rejudge. So two implementers give all four pairs, and a judge's taste for its own family shows up as a difference between the two judges' scores on the same attempt.
 
+Later on 2026-11-01 the maintainer moved the runs to Claude only for now, because Claude usage is plentiful: Claude Opus implements and judges, and Claude Sonnet plays the simulated user. This costs some quality, since a judge's taste for its own family can't be measured without the Codex pairs. Codex attempts and judgments already saved stay in the history while they still apply. The four-pair matrix returns when the maintainer asks.
+
 Everything frozen as an eval input passes both providers first: the seed reference must score 10 out of 10 with a Claude Opus judge and a Codex `gpt-6.1-sol` judge at xhigh effort, and the spec, the seed code and the brownfield cases go through a council with Claude and Codex members. The [proposal's document scopes](../../../emerging/analysis/eval-product-proposal.md#open-forge-documents) carry forward this separation from the council review.
 
 ## Current work

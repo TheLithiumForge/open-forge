@@ -11,7 +11,7 @@ import { loadSuite } from "../benchmarks/suite.ts";
 import { runCli, type CliServices } from "../cli.ts";
 import { Command, Flag } from "../config/commands.ts";
 import { FixtureSuite } from "../config/test-fixtures.ts";
-import { MatrixAgents, MatrixJudges } from "../config/matrix.ts";
+import { PlanAgents, PlanJudges } from "../config/matrix.ts";
 
 test("Layer 4 plans list all cases and setups with frozen models and independent case batches", async () => {
   for (const variant of ["check", "full"]) {
@@ -20,9 +20,9 @@ test("Layer 4 plans list all cases and setups with frozen models and independent
     assert.deepEqual(plan.setups, Object.keys(BrownfieldSetups));
     assert.ok(plan.setups.includes(CodeOnlySetup));
     assert.equal(plan.runsPerSetup, variant === "check" ? 1 : 3);
-    assert.deepEqual(plan.agents, MatrixAgents);
-    assert.deepEqual(plan.judges, MatrixJudges);
-    assert.deepEqual(plan.judge, MatrixJudges[0]);
+    assert.deepEqual(plan.agents, PlanAgents);
+    assert.deepEqual(plan.judges, PlanJudges);
+    assert.deepEqual(plan.judge, PlanJudges[0]);
     assert.deepEqual(plan.simulatedUser, FixtureConfig.simulatedUser);
     assert.equal(plan.isolation, "docker");
   }

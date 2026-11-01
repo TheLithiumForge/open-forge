@@ -101,9 +101,9 @@ Claude assessor calls turn model tools off. Codex assessor calls use an empty wo
 
 ## Plans
 
-Each layer has a check plan and a full plan in `experiments/`. Start with [neon-pairs-l1-check.json](experiments/neon-pairs-l1-check.json). Check plans run once per setup and implementer. Full plans run three times. Every plan fixes Codex `gpt-6.1-sol` and Claude `opus` at high effort as implementers. Helpful stays out because Extension testing waits.
+Each layer has a check plan and a full plan in `experiments/`. Start with [neon-pairs-l1-check.json](experiments/neon-pairs-l1-check.json). Check plans run once per setup and implementer. Full plans run three times. For now every plan fixes Claude `opus` at high effort as the implementer, as the [vision](../../.agents/memory/crystallized/documents/evals/vision.md#test-matrix) records. Adding Codex `gpt-6.1-sol` back to `agents` and `judges` restores the four-pair matrix. Helpful stays out because Extension testing waits.
 
-The ordered `judges` list fixes Claude `opus` at high effort first and Codex `gpt-6.1-sol` at xhigh effort second. Each judge casts three ballots per question. The first judges an attempt as it finishes. Each later judge reads the same saved source and images through append-only rejudge. A resumed batch fills missing judgments without repeating a finished implementation.
+The ordered `judges` list fixes Claude `opus` at high effort. Each judge casts three ballots per question. The first judges an attempt as it finishes. Each later judge reads the same saved source and images through append-only rejudge. A resumed batch fills missing judgments without repeating a finished implementation.
 
 These two implementations and two judgments give four pairs per setup: Claude with a Claude judge, Codex with a Claude judge, Codex with a Codex judge and Claude with a Codex judge. Older plans with one `judge`, including `neon-pairs-l1.json`, still work.
 
