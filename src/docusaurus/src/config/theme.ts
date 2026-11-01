@@ -1,6 +1,6 @@
 import type { ThemeConfig } from "@docusaurus/preset-classic";
 import { themes as prismThemes } from "prism-react-renderer";
-import { guidesRouteBasePath, npmPackageUrl, releasesUrl, repositoryUrl } from "./site";
+import { evalResultsUrl, guidesRouteBasePath, npmPackageUrl, releasesUrl, repositoryUrl } from "./site";
 
 const guidesSidebarRoute = `/${guidesRouteBasePath}`;
 
@@ -59,6 +59,7 @@ export const themeConfig = {
         items: [
           { label: "GitHub", href: repositoryUrl },
           { label: "Releases", href: releasesUrl },
+          { label: "Evaluation results", href: evalResultsUrl },
           { label: "npm package", href: npmPackageUrl },
         ],
       },

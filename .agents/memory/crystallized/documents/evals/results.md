@@ -8,9 +8,9 @@ open-forge:
 
 Eval Results is the public record of Open Forge comparisons, with versioned measurements, saved evidence and a separate results site.
 
-Status: approved on 2026-11-01. The results repository and publishing system are Not built yet.
+Status: approved on 2026-11-01. The repository, its site and the submodule were created the same day, with no batches published yet. The publish command is Not built yet.
 
-The public `open-forge-eval-results` repository will hold the records, evidence manifests and its Docusaurus site. It will be a submodule at `src/evals/results/`. The runner, specs and local UI stay in `src/evals/`. The [approval](../../../emerging/analysis/eval-product-proposal.md#approved) makes the repository public.
+The public [`open-forge-eval-results`](https://github.com/TheLithiumForge/open-forge-eval-results) repository holds the records, evidence manifests and its Docusaurus site, published at [the results site](https://thelithiumforge.github.io/open-forge-eval-results/). It's a submodule at `src/evals/results/`. The runner, specs and local UI stay in `src/evals/`. The [approval](../../../emerging/analysis/eval-product-proposal.md#approved) makes the repository public.
 
 ## Versions
 

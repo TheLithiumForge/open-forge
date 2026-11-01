@@ -25,6 +25,8 @@ export const projectName = "open-forge";
 
 export const npmPackageUrl = "https://www.npmjs.com/package/@thelithiumforge/open-forge";
 export const releasesUrl = `${repositoryUrl}/releases`;
+// The eval results publish from their own repository, so new results never wait for a docs release.
+export const evalResultsUrl = "https://thelithiumforge.github.io/open-forge-eval-results/";
 
 // Repository-relative locations of the content this site publishes.
 export const siteDirectory = "src/docusaurus";
