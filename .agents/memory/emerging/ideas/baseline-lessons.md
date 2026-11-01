@@ -6,7 +6,7 @@ open-forge:
 
 # Baseline Lessons
 
-Baseline Lessons collects what the first real [Greenfield Baseline](../../crystallized/documents/evals/greenfield-baseline.md) batch taught us: which choices the agents made differently, and what broke in the eval tool.
+Baseline Lessons collects what the first real [Greenfield Baseline](../../crystallized/documents/evals/neon-pairs/layer-1.md) batch taught us: which choices the agents made differently, and what broke in the eval tool.
 
 The Baseline stays a prompt with no context, so none of this goes back into it. The maintainer asked on 2026-10-31 to keep these lessons as context for Greenfield 2 and 3, where the specs are the point. For example, no agent remembered the last grid size, because the prompt never asked for it. Greenfield 2 and 3 can state it in their specs and check whether each setup's agent follows it.
 
@@ -59,7 +59,7 @@ Each real game showed a design the checks hadn't allowed for. Every fix keeps th
 - Keyboard grids where Tab reaches one card and the arrow keys move within the grid.
 - Different faces that look alike to the checks, such as a triangle and a pentagon with the same color and pattern. The solver now never retries a pair the game turned back, and lets such a pair settle before the next click.
 - A second click on the same card that puts it back face down. The check only requires that the card isn't paired with itself.
-- A best score shown on the line below its label, after a size such as "Best on 4×4: 14", or near descriptions such as "A personal best for every grid". The checks read the number on the label's line, or a value-only line under it.
+- A best score shown on the line below its label, after a size such as "Best on 4x4: 14", or near descriptions such as "A personal best for every grid". The checks read the number on the label's line, or a value-only line under it.
 - Faces that differ only by a small mark, which screenshots can't resolve at 16x16. The check now fails only when more than 5% of cards share a face with two or more others, as when a set of faces repeats. Whether faces are easy to tell apart is for people and the judge.
 
 The runner needed these too:

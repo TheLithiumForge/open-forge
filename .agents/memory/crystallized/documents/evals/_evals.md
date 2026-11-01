@@ -22,7 +22,7 @@ The [Grading](grading.md) defines checks, statuses, the judge and human audits. 
 
 The [Running Evals](running-evals.md) guide covers commands, prerequisites, sign-in and recovery. The [Results](results.md) defines versioned records, evidence storage and publication.
 
-The [Neon Pairs](neon-pairs/_neon-pairs.md) pack is the editable game specification the cases use. The Greenfield Baseline stays unchanged until a later packet folds it into the Neon Pairs documents.
+The [Neon Pairs](neon-pairs/_neon-pairs.md) pack is the editable game specification the cases use. Its Layer 1 document now covers the Greenfield Baseline. The folder also defines Layers 2, 3 and 4.
 
 Back to [Documents](../_documents.md).
 
@@ -35,7 +35,6 @@ Back to [Documents](../_documents.md).
 - [The approved Evals product folders, three images, container rules and stage inputs and outputs](architecture.md) - #Memory #Document #CurrentTruth #Evaluation #Architecture #Harness #Isolation
 - [The measurements every eval records, their units, counting rules and separate result panels](data-points.md) - #Memory #Document #CurrentTruth #Evaluation #Measurement #Context #Tokens
 - [Checks per layer, check statuses, counting rules, model judge and blind human audits](grading.md) - #Memory #Document #CurrentTruth #Evaluation #Grading #Judging #Measurement
-- [The first Open Forge eval, one short prompt for Neon Pairs, a small React memory game, run in an empty folder, in fresh Open Forge installs and with the Collaboration extension, checking that Open Forge is not worse](greenfield-baseline.md) - #Memory #Document #CurrentTruth #Evaluation #Greenfield #Baseline #Demo
 - [Editable Neon Pairs specification and frozen pack generation](neon-pairs/_neon-pairs.md) - #Memory #Document #CurrentTruth #Evaluation #Game #Specification
 - [The shared run steps, simulated user, judge evidence, fair comparison and pre-registration rules](protocol.md) - #Memory #Document #CurrentTruth #Evaluation #Protocol #Conversation
 - [The public results repository, result versions, schema v2 records, evidence assets and publishing flow](results.md) - #Memory #Document #CurrentTruth #Evaluation #Results #History #Publishing

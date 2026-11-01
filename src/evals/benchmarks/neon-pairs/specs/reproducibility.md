@@ -1,6 +1,8 @@
 # Reproducibility
 The reproducibility specification is a set of versioned formats that recreates Neon Pairs deals, progress and actions.
 
+Status: spec version 2. Board codes, snapshots and replays keep format version 1.
+
 A board code reproduces the starting cards. A snapshot restores a later position. A replay shows the actions that produced a position, so each format answers a different debugging question.
 
 ## Board code
@@ -57,7 +59,7 @@ This replay ends with one matched pair, one move and `800` elapsed milliseconds.
 
 ## Limits
 
-- D10 - Limit snapshot JSON to `65536` UTF-8 bytes. Limit replay JSON to `1048576` UTF-8 bytes and `10000` actions. Reject malformed JSON, unsupported versions and inconsistent data. Invalid board codes and snapshots keep the current browser game. Invalid replay files are rejected by the CLI and game core.
+- D10 - Limit snapshot JSON to `65536` UTF-8 bytes. Limit replay JSON to `1048576` UTF-8 bytes and `10000` actions. Reject malformed JSON and unsupported format versions. For snapshots, inconsistent data means a violation of D05, D06 or D07. For replays, it means a violation of D08 or D09. For board codes, validate D01. Validation checks these stated constraints, without requiring a reconstructed history of earlier turns. Invalid board codes and snapshots keep the current browser game. Invalid replay files are rejected by the CLI and game core.
 
 These local formats and saved scores are untrusted input. Validation checks the state rules, not a verified play history. The game has no accounts or trusted leaderboard.
 

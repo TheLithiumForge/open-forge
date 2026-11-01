@@ -1,6 +1,8 @@
 # Input
 Input is a set of controls that lets you play Neon Pairs with a pointer, touch or keyboard.
 
+Status: spec version 2.
+
 You can reveal a card with a tap, then move to its partner with the arrow keys. Every activation uses the same game action, so changing input methods keeps the same turn.
 
 ## Activation
@@ -16,9 +18,9 @@ The game decides whether an activation changes a card. See [Rules](rules.md) for
 
 ## Keyboard movement
 
-I05 - Give the board one remembered tab stop. When Tab enters the board, focus that card. Use the first card before any board focus has been remembered.
+- I05 - Give the board one remembered tab stop. When Tab enters the board, focus that card. Use the first card before any board focus has been remembered.
 
-I06 - Move focus with these keys. Movement changes focus without activating a card:
+- I06 - Move focus with these keys. Movement changes focus without activating a card:
 
 | Key | Focus destination |
 | --- | --- |
@@ -31,9 +33,9 @@ I06 - Move focus with these keys. Movement changes focus without activating a ca
 | Ctrl+Home | First card on the board |
 | Ctrl+End | Last card on the board |
 
-I07 - Stop arrow movement at a board edge. Moving left from the first column keeps focus on the same card.
+- I07 - Stop arrow movement at a board edge. Moving left from the first column keeps focus on the same card.
 
-I08 - Let native Tab and Shift+Tab leave the board. Moving through the board uses the movement keys instead of adding every card to the page's tab order.
+- I08 - Let native Tab and Shift+Tab leave the board. Moving through the board uses the movement keys instead of adding every card to the page's tab order.
 
 ## Focus
 
@@ -58,8 +60,12 @@ For example, the first hidden button is named "Row 1, column 1, closed". Once re
 
 ## Announcements
 
-I16 - Use one polite, atomic live region for turn results and completion. Announce a match, a mismatch or a win when that result occurs. Focus movement doesn't update the live region.
+- I16 - Use one polite, atomic live region for turn results and completion. Announce each turn result exactly once. A winning turn has one announcement containing both the match and the win. Consecutive identical results each get their own announcement. Focus movement, clock renders and closing a mismatch don't repeat a result.
 
 For example, moving across three cards leaves the current announcement unchanged. Resolving the next pair announces that turn's result.
+
+## Screen reader
+
+- I17 - Complete a 4x4 game with a screen reader and keyboard alone. Find Grid size and New Game by name, enter the board, hear closed card positions, reveal faces, hear one result per turn and finish with the win, final moves and time available. Leave the board with Tab and start another game. Record the screen reader and browser versions used for this journey in the project README.
 
 The complete game pack starts in [Neon Pairs](README.md).

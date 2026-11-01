@@ -1,0 +1,3031 @@
+{
+    "schemaVersion":  1,
+    "specVersion":  2,
+    "requirements":  [
+                         {
+                             "id":  "R01",
+                             "document":  "specs/rules.md",
+                             "heading":  "Board",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R01.1",
+                                                 "text":  "Support side lengths 4, 6, 8, 10, 12, 14 and 16.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R01.2",
+                                                 "text":  "Each board is square.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R01.3",
+                                                 "text":  "Every face occurs exactly twice.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R01.4",
+                                                 "text":  "Number positions from zero in row order.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R02",
+                             "document":  "specs/rules.md",
+                             "heading":  "Turn",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R02.1",
+                                                 "text":  "Reveal the first eligible card.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R02.2",
+                                                 "text":  "Reactivating that card has no game effect.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R02.3",
+                                                 "text":  "Activating a matched card has no game effect.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R03",
+                             "document":  "specs/rules.md",
+                             "heading":  "Turn",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R03.1",
+                                                 "text":  "Reveal a different unmatched card on the second valid activation.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R03.2",
+                                                 "text":  "Keep a matching pair revealed.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R03.3",
+                                                 "text":  "Add one matched pair immediately.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R04",
+                             "document":  "specs/rules.md",
+                             "heading":  "Turn",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R04.1",
+                                                 "text":  "Show mismatching faces for 800 active milliseconds.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R04.2",
+                                                 "text":  "Close both cards together when that interval ends.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R04.3",
+                                                 "text":  "Ignore every card activation during the interval.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R04.4",
+                                                 "text":  "Pause the interval while the page is hidden.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R04.5",
+                                                 "text":  "Pause the interval while an imported snapshot awaits Resume.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R05",
+                             "document":  "specs/rules.md",
+                             "heading":  "Turn",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R05.1",
+                                                 "text":  "Add one move on the second valid reveal.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R05.2",
+                                                 "text":  "The first reveal adds no move.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R05.3",
+                                                 "text":  "Ignored activation adds no move.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R05.4",
+                                                 "text":  "A match and a miss each cost one move.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R06",
+                             "document":  "specs/rules.md",
+                             "heading":  "Completion",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R06.1",
+                                                 "text":  "Give one point per matched pair and no other score.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R06.2",
+                                                 "text":  "Show matched pairs against the total throughout play.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R06.3",
+                                                 "text":  "Complete the game when every pair is matched.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R06.4",
+                                                 "text":  "Show final moves in the completion banner.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R06.5",
+                                                 "text":  "Show final elapsed time in the completion banner.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R06.6",
+                                                 "text":  "Apply the completion motion in V18.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R07",
+                             "document":  "specs/rules.md",
+                             "heading":  "Clock",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R07.1",
+                                                 "text":  "Start elapsed time on the first valid reveal.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.2",
+                                                 "text":  "Count active milliseconds while the page is shown.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.3",
+                                                 "text":  "Pause elapsed time while the page is hidden.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.4",
+                                                 "text":  "Pause elapsed time while an imported snapshot awaits Resume.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.5",
+                                                 "text":  "Stop elapsed time at completion.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.6",
+                                                 "text":  "Rendering frequency doesn\u0027t change elapsed time.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.7",
+                                                 "text":  "Use the same active time for the clock and mismatch interval.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R07.8",
+                                                 "text":  "Continue a hidden-page mismatch from its remaining time when the page is shown.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R08",
+                             "document":  "specs/rules.md",
+                             "heading":  "Session",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R08.1",
+                                                 "text":  "Start at 4x4 when there is no supported saved size.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R08.2",
+                                                 "text":  "Use a supported saved size on reload.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R08.3",
+                                                 "text":  "Remember the last chosen size after reload.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R08.4",
+                                                 "text":  "Start a fresh deal on page load.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R08.5",
+                                                 "text":  "A successful board-code or snapshot load saves its size as the last chosen size.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R08.6",
+                                                 "text":  "A failed load keeps the saved size unchanged.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R09",
+                             "document":  "specs/rules.md",
+                             "heading":  "Session",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R09.1",
+                                                 "text":  "New Game starts another deal at the current size.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R09.2",
+                                                 "text":  "Restart repeats the same deal.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R09.3",
+                                                 "text":  "Changing size starts another deal at that size.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R09.4",
+                                                 "text":  "Each of these actions clears selection, matches, moves and elapsed time.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R09.5",
+                                                 "text":  "New Game and a size change create a fresh seed.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R09.6",
+                                                 "text":  "Restart keeps the current board code.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R10",
+                             "document":  "specs/rules.md",
+                             "heading":  "Session",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R10.1",
+                                                 "text":  "Record only completed games as a best score for their size.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R10.2",
+                                                 "text":  "Replace the best only with fewer moves.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R10.3",
+                                                 "text":  "Keep the best after reload.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R10.4",
+                                                 "text":  "Equal or worse results keep the saved best.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R10.5",
+                                                 "text":  "Starting or restarting keeps best scores.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R10.6",
+                                                 "text":  "Show the current size\u0027s best moves during play and after completion.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R10.7",
+                                                 "text":  "Show Best: none before a size has a record.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R11",
+                             "document":  "specs/rules.md",
+                             "heading":  "Session",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R11.1",
+                                                 "text":  "Invalid board codes show an error and keep the game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R11.2",
+                                                 "text":  "Invalid snapshots show an error and keep the game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R11.3",
+                                                 "text":  "Ignore invalid saved preferences.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R11.4",
+                                                 "text":  "Continue playing without saving when storage is unavailable.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "R12",
+                             "document":  "specs/rules.md",
+                             "heading":  "Session",
+                             "clauses":  [
+                                             {
+                                                 "id":  "R12.1",
+                                                 "text":  "Starting, restarting, replacing or leaving a game invalidates pending timer updates.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "R12.2",
+                                                 "text":  "An earlier game or turn\u0027s update can\u0027t change the current game.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C01",
+                             "document":  "specs/controls.md",
+                             "heading":  "Deal controls",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C01.1",
+                                                 "text":  "Use a native select named Grid size.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C01.2",
+                                                 "text":  "Offer 4x4, 6x6, 8x8, 10x10, 12x12, 14x14 and 16x16.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C01.3",
+                                                 "text":  "Each option value is its numeric side length.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C02",
+                             "document":  "specs/controls.md",
+                             "heading":  "Deal controls",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C02.1",
+                                                 "text":  "Name the fresh-deal button New Game.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C02.2",
+                                                 "text":  "Start a fresh deal at the current size.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C02.3",
+                                                 "text":  "Create a fresh seed for the new deal.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C03",
+                             "document":  "specs/controls.md",
+                             "heading":  "Deal controls",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C03.1",
+                                                 "text":  "Name the repeat-deal button Restart.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C03.2",
+                                                 "text":  "Repeat the same deal.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C03.3",
+                                                 "text":  "Keep the current board code.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C04",
+                             "document":  "specs/controls.md",
+                             "heading":  "Reproduction tools",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C04.1",
+                                                 "text":  "Put reproduction controls inside native details.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C04.2",
+                                                 "text":  "Start the details collapsed.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C04.3",
+                                                 "text":  "Use the exact summary Reproduce a game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C05",
+                             "document":  "specs/controls.md",
+                             "heading":  "Load a board",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C05.1",
+                                                 "text":  "Name the input Board code.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C05.2",
+                                                 "text":  "Limit its text to 32 characters.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C05.3",
+                                                 "text":  "Show the current code after a new deal, Restart or successful load.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C05.4",
+                                                 "text":  "Keep an edited draft across card actions.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C06",
+                             "document":  "specs/controls.md",
+                             "heading":  "Load a board",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C06.1",
+                                                 "text":  "Name the button Load board.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C06.2",
+                                                 "text":  "Validate the draft before replacing the game with the deal\u0027s starting state.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C07",
+                             "document":  "specs/controls.md",
+                             "heading":  "Snapshot tools",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C07.1",
+                                                 "text":  "Name the textarea Snapshot JSON.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C07.2",
+                                                 "text":  "Limit it to 65536 characters.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C07.3",
+                                                 "text":  "Also apply D10\u0027s UTF-8 byte limit in parsing.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C08",
+                             "document":  "specs/controls.md",
+                             "heading":  "Snapshot tools",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C08.1",
+                                                 "text":  "Name the button Export snapshot.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C08.2",
+                                                 "text":  "Write readable version 1 snapshot JSON into the textarea.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C08.3",
+                                                 "text":  "Allow manual selection and copying.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C08.4",
+                                                 "text":  "Leave game state and clock unchanged.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C08.5",
+                                                 "text":  "Require no Clipboard API.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C09",
+                             "document":  "specs/controls.md",
+                             "heading":  "Snapshot tools",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C09.1",
+                                                 "text":  "Name the button Load snapshot.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C09.2",
+                                                 "text":  "Validate the complete draft before replacing the game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C09.3",
+                                                 "text":  "Load valid progress paused.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C09.4",
+                                                 "text":  "Show Loaded snapshot. Select Resume to continue.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C10",
+                             "document":  "specs/controls.md",
+                             "heading":  "Snapshot tools",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C10.1",
+                                                 "text":  "Show Resume only for an imported paused game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C10.2",
+                                                 "text":  "Resume clears the imported pause.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C10.3",
+                                                 "text":  "Continue unfinished loaded progress.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C10.4",
+                                                 "text":  "Block every card activation while paused.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C10.5",
+                                                 "text":  "Allow board focus movement while paused.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C10.6",
+                                                 "text":  "Move focus to the remembered board tab stop before removing Resume.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C10.7",
+                                                 "text":  "A completed imported game stays completed after Resume.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C11",
+                             "document":  "specs/controls.md",
+                             "heading":  "Snapshot tools",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C11.1",
+                                                 "text":  "On invalid input keep the current game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C11.2",
+                                                 "text":  "Keep the invalid draft for correction.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C11.3",
+                                                 "text":  "Load board shows Invalid board code.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C11.4",
+                                                 "text":  "Load snapshot shows Invalid snapshot.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C12",
+                             "document":  "specs/controls.md",
+                             "heading":  "Snapshot tools",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C12.1",
+                                                 "text":  "A completed snapshot shows a static win banner.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C12.2",
+                                                 "text":  "Import plays no celebration.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C12.3",
+                                                 "text":  "Import doesn\u0027t write a best score.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C12.4",
+                                                 "text":  "A later win from unfinished imported progress can record a best.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C13",
+                             "document":  "specs/controls.md",
+                             "heading":  "Focus",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C13.1",
+                                                 "text":  "Keep focus on New Game and Restart after activation.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C13.2",
+                                                 "text":  "Keep focus on load and export buttons after activation.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C13.3",
+                                                 "text":  "These actions don\u0027t move focus to the board.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C13.4",
+                                                 "text":  "Resume moves focus as required by C10.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "C13.5",
+                                                 "text":  "Use I12 for the remembered board tab stop after a deal change.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "C14",
+                             "document":  "specs/controls.md",
+                             "heading":  "Replay",
+                             "clauses":  [
+                                             {
+                                                 "id":  "C14.1",
+                                                 "text":  "Keep replay in the developer CLI and game core.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "C14.2",
+                                                 "text":  "Provide no replay controls in the game UI.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "C14.3",
+                                                 "text":  "npm run replay -- PATH reads replay JSON and prints the final snapshot.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I01",
+                             "document":  "specs/input.md",
+                             "heading":  "Activation",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I01.1",
+                                                 "text":  "Each card is a native button.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I01.2",
+                                                 "text":  "Primary click, completed tap, Enter and Space use the same activation action.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I02",
+                             "document":  "specs/input.md",
+                             "heading":  "Activation",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I02.1",
+                                                 "text":  "Ignore keyboard autorepeat for Enter and Space.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I03",
+                             "document":  "specs/input.md",
+                             "heading":  "Activation",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I03.1",
+                                                 "text":  "Keep the normal context menu for right-click and long-press.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I03.2",
+                                                 "text":  "Opening that menu doesn\u0027t activate a card.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I04",
+                             "document":  "specs/input.md",
+                             "heading":  "Activation",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I04.1",
+                                                 "text":  "Hover leaves game state unchanged.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I04.2",
+                                                 "text":  "Pointer cancellation leaves game state unchanged.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I05",
+                             "document":  "specs/input.md",
+                             "heading":  "Keyboard movement",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I05.1",
+                                                 "text":  "Give the board one remembered tab stop.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I05.2",
+                                                 "text":  "Tab enters at that card.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I05.3",
+                                                 "text":  "Use the first card before any board focus is remembered.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I06",
+                             "document":  "specs/input.md",
+                             "heading":  "Keyboard movement",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I06.1",
+                                                 "text":  "ArrowLeft moves to the previous card in the same row.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I06.2",
+                                                 "text":  "ArrowRight moves to the next card in the same row.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I06.3",
+                                                 "text":  "ArrowUp moves to the previous row in the same column.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I06.4",
+                                                 "text":  "ArrowDown moves to the next row in the same column.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I06.5",
+                                                 "text":  "Home moves to the first card in the row.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I06.6",
+                                                 "text":  "End moves to the last card in the row.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I06.7",
+                                                 "text":  "Ctrl+Home moves to the first card on the board.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I06.8",
+                                                 "text":  "Ctrl+End moves to the last card on the board.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I06.9",
+                                                 "text":  "Movement changes focus without activating a card.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I07",
+                             "document":  "specs/input.md",
+                             "heading":  "Keyboard movement",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I07.1",
+                                                 "text":  "Arrow movement stops at board edges without wrapping.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I08",
+                             "document":  "specs/input.md",
+                             "heading":  "Keyboard movement",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I08.1",
+                                                 "text":  "Native Tab and Shift+Tab leave the board.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I08.2",
+                                                 "text":  "Movement keys navigate without putting every card in the page tab order.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I09",
+                             "document":  "specs/input.md",
+                             "heading":  "Focus",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I09.1",
+                                                 "text":  "Matched cards stay focusable.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I09.2",
+                                                 "text":  "Matched cards have aria-disabled=true.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I09.3",
+                                                 "text":  "Matched-card activation follows R02.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I10",
+                             "document":  "specs/input.md",
+                             "heading":  "Focus",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I10.1",
+                                                 "text":  "Allow focus movement during a mismatch interval.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I10.2",
+                                                 "text":  "Block card activation during that interval.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I11",
+                             "document":  "specs/input.md",
+                             "heading":  "Focus",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I11.1",
+                                                 "text":  "Initial load keeps the browser\u0027s current focus.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I12",
+                             "document":  "specs/input.md",
+                             "heading":  "Focus",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I12.1",
+                                                 "text":  "A new deal or Restart resets the remembered tab stop to the first card.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I12.2",
+                                                 "text":  "A successful board or snapshot load resets it to the first card.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I13",
+                             "document":  "specs/input.md",
+                             "heading":  "Focus",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I13.1",
+                                                 "text":  "Scroll each focused card into view with nearest alignment inside the board.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I14",
+                             "document":  "specs/input.md",
+                             "heading":  "Card names",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I14.1",
+                                                 "text":  "Hidden card names contain the one-based row, column and closed state.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I14.2",
+                                                 "text":  "Hidden cards keep face SVG out of the DOM.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I14.3",
+                                                 "text":  "Hidden cards keep face identifiers out of attributes and accessible text.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I15",
+                             "document":  "specs/input.md",
+                             "heading":  "Card names",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I15.1",
+                                                 "text":  "Revealed and matched names include position, face name and state.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I15.2",
+                                                 "text":  "Use V13\u0027s face names.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I16",
+                             "document":  "specs/input.md",
+                             "heading":  "Announcements",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I16.1",
+                                                 "text":  "Use one polite atomic live region.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I16.2",
+                                                 "text":  "Announce each turn result exactly once.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I16.3",
+                                                 "text":  "Announce a final match and win together once.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I16.4",
+                                                 "text":  "Consecutive identical results each have their own announcement.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I16.5",
+                                                 "text":  "Focus movement, clock renders and mismatch closing don\u0027t repeat a result.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "I17",
+                             "document":  "specs/input.md",
+                             "heading":  "Screen reader",
+                             "clauses":  [
+                                             {
+                                                 "id":  "I17.1",
+                                                 "text":  "Finish a 4x4 game with a screen reader and keyboard alone.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "I17.2",
+                                                 "text":  "Find Grid size and New Game by name.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "I17.3",
+                                                 "text":  "Hear closed positions, revealed faces and one result per turn.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "I17.4",
+                                                 "text":  "Make the win, final moves and time available.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "I17.5",
+                                                 "text":  "Tab out of the board and start another game.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "I17.6",
+                                                 "text":  "Record screen reader and browser versions in the project README.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V01",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Layout",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V01.1",
+                                                 "text":  "Use native controls.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V01.2",
+                                                 "text":  "Use CSS Grid and DOM card buttons.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V01.3",
+                                                 "text":  "Use inline SVG artwork.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V01.4",
+                                                 "text":  "Render without canvas or shadcn components.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V02",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Layout",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V02.1",
+                                                 "text":  "Center content at a maximum width of 1120px.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V02.2",
+                                                 "text":  "Use 16px content padding.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V02.3",
+                                                 "text":  "Keep the outer page within viewport width.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V03",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Layout",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V03.1",
+                                                 "text":  "Limit board height to 70dvh capped at 768px.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V03.2",
+                                                 "text":  "Use 6px board padding.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V03.3",
+                                                 "text":  "Allow both axes to scroll inside the board area.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V04",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Layout",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V04.1",
+                                                 "text":  "Keep cards square between 44px and 88px based on available board width.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V04.2",
+                                                 "text":  "Use a 6px grid gap.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V04.3",
+                                                 "text":  "Use a 2px card border.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V04.4",
+                                                 "text":  "Use an 8px card radius.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V05",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Layout",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V05.1",
+                                                 "text":  "Fit the four-column board within a phone viewport.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V05.2",
+                                                 "text":  "Keep 44px cards and scroll inside the board when a larger board reaches that minimum.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V06",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Colors",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V06.1",
+                                                 "text":  "Page background is #090B14.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V06.2",
+                                                 "text":  "Panel background is #141827.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V06.3",
+                                                 "text":  "Hidden card background is #1B2034.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V06.4",
+                                                 "text":  "Revealed card background is #111625.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V06.5",
+                                                 "text":  "Main text is #F4F6FF.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V06.6",
+                                                 "text":  "Secondary text is #B8BDD2.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V06.7",
+                                                 "text":  "Neutral borders are #757C9A.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V06.8",
+                                                 "text":  "Focus outline is #FFFFFF.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V07",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Colors",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V07.1",
+                                                 "text":  "Use the ordered palette Cyan #63E7FF, Magenta #FF71D6, Green #8BEA7D, Yellow #FFE082, Orange #FFB064, Violet #B49AFF, Rose #FF8296 and Ice #D9F3FF.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V08",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Type and spacing",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V08.1",
+                                                 "text":  "Use the system sans-serif font stack.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V08.2",
+                                                 "text":  "Body text is 16px with 24px line height.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V08.3",
+                                                 "text":  "Title text is 24px.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V08.4",
+                                                 "text":  "Secondary text is 14px.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V09",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Type and spacing",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V09.1",
+                                                 "text":  "Layout gaps, padding and margins use 4px, 6px, 8px, 12px, 16px, 24px or 32px.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V09.2",
+                                                 "text":  "Borders, radii, focus, font metrics and SVG coordinates use their own stated values.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V10",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Card faces",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V10.1",
+                                                 "text":  "Generate 128 distinguishable face identities.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V10.2",
+                                                 "text":  "Use integer face IDs from 0 through 127.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "V10.3",
+                                                 "text":  "Use circle, square, triangle, diamond, star, hexagon, plus and chevron shapes.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V10.4",
+                                                 "text":  "Use top, top-right, right, bottom-right, bottom, bottom-left, left and top-left markers.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V10.5",
+                                                 "text":  "Use solid and outline fills.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V10.6",
+                                                 "text":  "Shape is id % 8 in the stated shape order.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "V10.7",
+                                                 "text":  "Marker is floor(id / 8) % 8 in the stated marker order.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "V10.8",
+                                                 "text":  "Fill is floor(id / 64) with solid then outline.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "V10.9",
+                                                 "text":  "Color is the palette entry at the marker index.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V11",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Card faces",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V11.1",
+                                                 "text":  "Shape, marker and fill define identity.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "V11.2",
+                                                 "text":  "Color repeats the marker distinction without adding an identity.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V12",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Card faces",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V12.1",
+                                                 "text":  "Use viewBox 0 0 100 100.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V12.2",
+                                                 "text":  "Center the main shape within x=25..75 and y=25..75.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V12.3",
+                                                 "text":  "Draw the marker above the shape as a radius-5 circle 40 units from the center.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V12.4",
+                                                 "text":  "Give the marker a 3-unit Face-background stroke.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V12.5",
+                                                 "text":  "Normalize diagonal offsets to about 28.284 units per axis.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V12.6",
+                                                 "text":  "Use a 5-unit stroke for outlined shapes.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V12.7",
+                                                 "text":  "Distinguish all 128 identities at 44px in grayscale, including solid and outline squares with diagonal markers.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V13",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Card faces",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V13.1",
+                                                 "text":  "Name faces with lowercase palette, fill, shape and marker names.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V13.2",
+                                                 "text":  "Use the form {color} {fill} {shape}, marker {position}.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V14",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Card states",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V14.1",
+                                                 "text":  "Use the same neutral-diamond back for every hidden card.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V14.2",
+                                                 "text":  "Keep hidden face artwork out of the DOM under I14.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V15",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Card states",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V15.1",
+                                                 "text":  "Show face artwork on revealed and matched cards.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V15.2",
+                                                 "text":  "Matched cards add a green border and check mark.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V15.3",
+                                                 "text":  "Keep matched cards at full opacity.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V16",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Card states",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V16.1",
+                                                 "text":  "Keyboard focus has a 3px white outline offset by 2px.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V16.2",
+                                                 "text":  "Hover changes only the border.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V17",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Card states",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V17.1",
+                                                 "text":  "Use 120ms border and opacity transitions.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V17.2",
+                                                 "text":  "Turn those transitions off under prefers-reduced-motion: reduce.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V18",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Completion",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V18.1",
+                                                 "text":  "Show a win banner on completion.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V18.2",
+                                                 "text":  "Pulse it once for 600ms then keep it static.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V18.3",
+                                                 "text":  "Reduced motion shows the static banner immediately.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V18.4",
+                                                 "text":  "Use neither flashing nor confetti.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V19",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Large boards",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V19.1",
+                                                 "text":  "Render all 256 cards at 360x800 and 1280x800 viewports.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V19.2",
+                                                 "text":  "Keep the page within viewport width and controls reachable.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V19.3",
+                                                 "text":  "Keep cards at least 44px square with board scrolling when needed.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V19.4",
+                                                 "text":  "Reach first and last cards through touch scrolling and keyboard.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V19.5",
+                                                 "text":  "Keep the full focused card and outline in view.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "V20",
+                             "document":  "specs/visuals.md",
+                             "heading":  "Browser zoom",
+                             "clauses":  [
+                                             {
+                                                 "id":  "V20.1",
+                                                 "text":  "At 200% browser zoom from 1280x800 keep controls, status and the win summary readable without overlap.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V20.2",
+                                                 "text":  "Keep the outer page within viewport width at that zoom.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V20.3",
+                                                 "text":  "Keep 4x4 and 16x16 playable by pointer and keyboard.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V20.4",
+                                                 "text":  "Allow board scrolling and show the whole focused card and outline.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "V20.5",
+                                                 "text":  "Keep pinch zoom enabled.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "S01",
+                             "document":  "specs/sound.md",
+                             "heading":  "Playback",
+                             "clauses":  [
+                                             {
+                                                 "id":  "S01.1",
+                                                 "text":  "Every action and state stays silent, including reveal, match, mismatch, restart and win.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "S02",
+                             "document":  "specs/sound.md",
+                             "heading":  "Playback",
+                             "clauses":  [
+                                             {
+                                                 "id":  "S02.1",
+                                                 "text":  "Include no audio files.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "S02.2",
+                                                 "text":  "Include no audio API calls.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "S02.3",
+                                                 "text":  "Include no sound toggle in this version.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "static"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "T01",
+                             "document":  "specs/technology.md",
+                             "heading":  "Stack",
+                             "clauses":  [
+                                             {
+                                                 "id":  "T01.1",
+                                                 "text":  "Use React and TypeScript with DOM rendering.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T01.2",
+                                                 "text":  "Use native buttons and a native select.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T01.3",
+                                                 "text":  "Use CSS Grid.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "T02",
+                             "document":  "specs/technology.md",
+                             "heading":  "Stack",
+                             "clauses":  [
+                                             {
+                                                 "id":  "T02.1",
+                                                 "text":  "Pin react and react-dom to 19.3.1.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T02.2",
+                                                 "text":  "Pin typescript to 7.0.2.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T02.3",
+                                                 "text":  "Pin @types/react and @types/react-dom to 19.3.0.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T02.4",
+                                                 "text":  "Pin vite to 8.3.5.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T02.5",
+                                                 "text":  "Pin @vitejs/plugin-react to 6.1.2.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T02.6",
+                                                 "text":  "Pin vite-plugin-singlefile to 2.3.4.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T02.7",
+                                                 "text":  "Pin vitest to 5.0.5.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T02.8",
+                                                 "text":  "Pin @playwright/test to 1.64.1.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T02.9",
+                                                 "text":  "Pin @types/node to 24.19.2.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T02.10",
+                                                 "text":  "Keep the dependency lockfile.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "T03",
+                             "document":  "specs/technology.md",
+                             "heading":  "Language",
+                             "clauses":  [
+                                             {
+                                                 "id":  "T03.1",
+                                                 "text":  "Use Node 24.19 or later and npm.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T03.2",
+                                                 "text":  "Separate browser and Node compiler projects.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T03.3",
+                                                 "text":  "Use ESM with static imports and type-only imports for types.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T03.4",
+                                                 "text":  "Use Node 26.12.1, npm 11.20.0 and Playwright 1.64.1 with Chromium 156.0.8078.4 as the named combination.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "build"
+                                             },
+                                             {
+                                                 "id":  "T03.5",
+                                                 "text":  "Record locked install, build, unit tests and browser journeys with exact versions before calling a combination tested.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "T03.6",
+                                                 "text":  "Other supported versions need their own results.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "T04",
+                             "document":  "specs/technology.md",
+                             "heading":  "Language",
+                             "clauses":  [
+                                             {
+                                                 "id":  "T04.1",
+                                                 "text":  "Enable strict, noUncheckedIndexedAccess, exactOptionalPropertyTypes, verbatimModuleSyntax and erasableSyntaxOnly.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T04.2",
+                                                 "text":  "Keep type checking separate from bundling.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "T05",
+                             "document":  "specs/technology.md",
+                             "heading":  "Language",
+                             "clauses":  [
+                                             {
+                                                 "id":  "T05.1",
+                                                 "text":  "Model project data with exact types.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "T05.2",
+                                                 "text":  "Validate unknown data where it enters the game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "T05.3",
+                                                 "text":  "Use narrowing instead of any, suppressed diagnostics or unchecked casts.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "T05.4",
+                                                 "text":  "Derive state unions from named values.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "T06",
+                             "document":  "specs/technology.md",
+                             "heading":  "Language",
+                             "clauses":  [
+                                             {
+                                                 "id":  "T06.1",
+                                                 "text":  "Keep behavior with its code, styles and tests.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "T06.2",
+                                                 "text":  "Aim for 100 lines per TypeScript file.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "T06.3",
+                                                 "text":  "Keep authored TypeScript files at or below 200 lines.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "T06.4",
+                                                 "text":  "Split growing files by behavior.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "T06.5",
+                                                 "text":  "Use direct imports from the defining file.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "T07",
+                             "document":  "specs/technology.md",
+                             "heading":  "Commands",
+                             "clauses":  [
+                                             {
+                                                 "id":  "T07.1",
+                                                 "text":  "npm ci installs locked dependencies.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "build"
+                                             },
+                                             {
+                                                 "id":  "T07.2",
+                                                 "text":  "npm run dev serves locally.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "build"
+                                             },
+                                             {
+                                                 "id":  "T07.3",
+                                                 "text":  "npm run typecheck checks every compiler project.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "build"
+                                             },
+                                             {
+                                                 "id":  "T07.4",
+                                                 "text":  "npm test runs game rule unit tests.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "build"
+                                             },
+                                             {
+                                                 "id":  "T07.5",
+                                                 "text":  "npm run test:e2e builds current source then tests that build in fresh browser contexts.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "build"
+                                             },
+                                             {
+                                                 "id":  "T07.6",
+                                                 "text":  "npm run build type checks and writes dist/index.html.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "build"
+                                             },
+                                             {
+                                                 "id":  "T07.7",
+                                                 "text":  "npm run replay -- PATH reads replay JSON and prints the final snapshot.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "T07.8",
+                                                 "text":  "Fail browser testing on a failed build without using stale dist.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "build"
+                                             },
+                                             {
+                                                 "id":  "T07.9",
+                                                 "text":  "Stop development servers and watchers started during the work before finishing.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "build"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "T08",
+                             "document":  "specs/technology.md",
+                             "heading":  "Distribution",
+                             "clauses":  [
+                                             {
+                                                 "id":  "T08.1",
+                                                 "text":  "dist/index.html contains all script, styles and artwork for play.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "build"
+                                             },
+                                             {
+                                                 "id":  "T08.2",
+                                                 "text":  "Open it directly from disk without other files or network requests.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "T08.3",
+                                                 "text":  "Use the system font.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "T08.4",
+                                                 "text":  "Keep browser zoom enabled.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "T09",
+                             "document":  "specs/technology.md",
+                             "heading":  "Distribution",
+                             "clauses":  [
+                                             {
+                                                 "id":  "T09.1",
+                                                 "text":  "Check saved preferences on a local HTTP origin.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "T09.2",
+                                                 "text":  "Storage failure leaves the current session playable.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "T10",
+                             "document":  "specs/technology.md",
+                             "heading":  "Distribution",
+                             "clauses":  [
+                                             {
+                                                 "id":  "T10.1",
+                                                 "text":  "Keep dependencies in development and build tooling where possible.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "T10.2",
+                                                 "text":  "The game uses no service, account, external asset, analytics or API key.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "T10.3",
+                                                 "text":  "Dependency installation can use the network.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "T10.4",
+                                                 "text":  "Playing the distribution makes no network requests.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A01",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Game core",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A01.1",
+                                                 "text":  "Keep deck generation, transitions, logical time, snapshot validation and replay pure under src/game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A01.2",
+                                                 "text":  "Pass their inputs directly.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A01.3",
+                                                 "text":  "The core reads no DOM, storage, external randomness or browser clock.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A02",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Game core",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A02.1",
+                                                 "text":  "Keep board description and deck immutable.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A02.2",
+                                                 "text":  "Keep matched positions, selection, moves, active elapsed time and started status in game state.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A02.3",
+                                                 "text":  "Derive pair count and victory.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A02.4",
+                                                 "text":  "Serialize progress through the documented formats.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A03",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Game core",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A03.1",
+                                                 "text":  "Use direct calls and exhaustive closed, one-card and mismatch branches.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A03.2",
+                                                 "text":  "Keep named states, format versions, timing and size limits beside the behavior they control.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A04",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Browser session",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A04.1",
+                                                 "text":  "Keep React state, timer lifecycle and visibility handling in src/game/session.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A04.2",
+                                                 "text":  "Use a monotonic browser clock.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A04.3",
+                                                 "text":  "Clear pending work on unmount.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A04.4",
+                                                 "text":  "Invalidate callbacks when the deal changes.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A04.5",
+                                                 "text":  "Earlier deal callbacks can\u0027t change the current deal.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A05",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Browser session",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A05.1",
+                                                 "text":  "Keep preference and best-score reads in the session storage module.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A05.2",
+                                                 "text":  "Treat saved JSON as unknown.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A05.3",
+                                                 "text":  "Validate grid sizes and finite integer scores.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A05.4",
+                                                 "text":  "Catch read, parse and write failures.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A05.5",
+                                                 "text":  "Keep unrelated storage keys untouched.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A05.6",
+                                                 "text":  "Storage failure leaves play working.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A06",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Browser session",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A06.1",
+                                                 "text":  "Keep active progress in memory until snapshot export or import.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A06.2",
+                                                 "text":  "Importing a completed snapshot doesn\u0027t update bests or celebrate.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "A06.3",
+                                                 "text":  "A later win from an unfinished imported game can update bests.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A07",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Components",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A07.1",
+                                                 "text":  "Game.tsx composes status, board, game controls and reproduction controls.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A07.2",
+                                                 "text":  "Keep navigation in src/game/board, controls in src/game/controls and session behavior in src/game/session.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A07.3",
+                                                 "text":  "Keep component props and styles beside the component.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A08",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Components",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A08.1",
+                                                 "text":  "Mount a card\u0027s face SVG only while revealed or matched.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "A08.2",
+                                                 "text":  "Keep hidden face identity out of attributes, accessible names and diagnostic globals.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "A08.3",
+                                                 "text":  "Tests can know the deck from documented board codes.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "A08.4",
+                                                 "text":  "Expose no solver endpoint.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A09",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Components",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A09.1",
+                                                 "text":  "Use native input and the shared activation function.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A09.2",
+                                                 "text":  "Keep focus position in the board component.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A09.3",
+                                                 "text":  "Focus movement changes neither deck nor moves.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "A09.4",
+                                                 "text":  "Use the documented input keys and focus rules.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A10",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Evidence",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A10.1",
+                                                 "text":  "Keep focused tests beside their behavior.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A10.2",
+                                                 "text":  "Keep complete browser journeys at application test level.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A10.3",
+                                                 "text":  "Check generation against independent literal vectors.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A10.4",
+                                                 "text":  "Check transitions against stated rules.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A10.5",
+                                                 "text":  "Test built HTML from disk and served storage behavior.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A11",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Evidence",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A11.1",
+                                                 "text":  "Keep development fixtures and diagnostic helpers out of the shipped game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "A11.2",
+                                                 "text":  "Tests can use board-code, snapshot and replay formats.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             },
+                                             {
+                                                 "id":  "A11.3",
+                                                 "text":  "The shipped game exposes only documented controls.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "static"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "A12",
+                             "document":  "specs/architecture.md",
+                             "heading":  "Changes",
+                             "clauses":  [
+                                             {
+                                                 "id":  "A12.1",
+                                                 "text":  "Add a new rule at its game behavior then update component, tests and spec.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A12.2",
+                                                 "text":  "Share support only when two actual behaviors need the same meaning.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             },
+                                             {
+                                                 "id":  "A12.3",
+                                                 "text":  "Use no global store, event bus, router or generic utility folder for this game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "review"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "D01",
+                             "document":  "specs/reproducibility.md",
+                             "heading":  "Board code",
+                             "clauses":  [
+                                             {
+                                                 "id":  "D01.1",
+                                                 "text":  "Parse exactly np1-N-seed with a supported side length.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D01.2",
+                                                 "text":  "Seed is an integer from 1 through 2147483646.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D01.3",
+                                                 "text":  "Use decimal digits without leading zeros.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D01.4",
+                                                 "text":  "A text control can trim surrounding whitespace before parsing.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "D02",
+                             "document":  "specs/reproducibility.md",
+                             "heading":  "Board code",
+                             "clauses":  [
+                                             {
+                                                 "id":  "D02.1",
+                                                 "text":  "np1 fixes the generation algorithm.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D02.2",
+                                                 "text":  "The same code gives the same deck in every supported runtime.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D02.3",
+                                                 "text":  "Generation changes need another version.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D02.4",
+                                                 "text":  "Time, animation and other random draws can\u0027t change the deck.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "D03",
+                             "document":  "specs/reproducibility.md",
+                             "heading":  "Generate",
+                             "clauses":  [
+                                             {
+                                                 "id":  "D03.1",
+                                                 "text":  "Initialize Park-Miller state to seed.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D03.2",
+                                                 "text":  "Each draw sets state = (state * 16807) % 2147483647 with exact integer arithmetic.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D03.3",
+                                                 "text":  "Seed 1 begins 16807, 282475249, 1622650073, 984943658 and 1144108930.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "D04",
+                             "document":  "specs/reproducibility.md",
+                             "heading":  "Generate",
+                             "clauses":  [
+                                             {
+                                                 "id":  "D04.1",
+                                                 "text":  "Build paired faces from 0 through N * N / 2 - 1 in ascending order.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D04.2",
+                                                 "text":  "Shuffle downward from N * N - 1 through 1 by swapping i with a draw in 0..i.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D04.3",
+                                                 "text":  "Use q=2147483646 and limit=floor(q / b) * b for a draw with b results.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D04.4",
+                                                 "text":  "Advance the generator and set x=state - 1.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D04.5",
+                                                 "text":  "Retry when x \u003e= limit and otherwise return x % b.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D04.6",
+                                                 "text":  "np1-4-1 yields [6,7,0,5,2,2,0,5,3,7,1,6,4,4,1,3].",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "D05",
+                             "document":  "specs/reproducibility.md",
+                             "heading":  "Snapshot",
+                             "clauses":  [
+                                             {
+                                                 "id":  "D05.1",
+                                                 "text":  "Snapshots have exactly version, boardCode, matched, selection, moves, elapsedMs and started.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D05.2",
+                                                 "text":  "Snapshot version is 1.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D05.3",
+                                                 "text":  "matched contains matched position indices.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D05.4",
+                                                 "text":  "Derive deck, pair count and completion from the fields.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D05.5",
+                                                 "text":  "Closed selection has only kind=closed.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D05.6",
+                                                 "text":  "One-card selection has only kind=one and index.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D05.7",
+                                                 "text":  "Mismatch selection has only kind=mismatch, first, second and remainingMs.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "D06",
+                             "document":  "specs/reproducibility.md",
+                             "heading":  "Snapshot",
+                             "clauses":  [
+                                             {
+                                                 "id":  "D06.1",
+                                                 "text":  "Validate the whole snapshot before replacement.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D06.2",
+                                                 "text":  "Reject unknown keys.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D06.3",
+                                                 "text":  "Require unique in-range matched indices containing whole face pairs.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D06.4",
+                                                 "text":  "Selection indices are in range and unmatched.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D06.5",
+                                                 "text":  "Mismatch indices are distinct and have different faces.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D06.6",
+                                                 "text":  "remainingMs is an integer from 1 through 800.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D06.7",
+                                                 "text":  "Completion requires closed selection.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "D07",
+                             "document":  "specs/reproducibility.md",
+                             "heading":  "Snapshot",
+                             "clauses":  [
+                                             {
+                                                 "id":  "D07.1",
+                                                 "text":  "started is boolean.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D07.2",
+                                                 "text":  "moves and elapsedMs are nonnegative safe integers.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D07.3",
+                                                 "text":  "moves is at least matched pair count plus one for pending mismatch.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D07.4",
+                                                 "text":  "Not started requires zero moves and time, no matches and closed selection.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D07.5",
+                                                 "text":  "Started with zero moves requires one revealed card.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D07.6",
+                                                 "text":  "Import pauses clock and mismatch until Resume.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "D08",
+                             "document":  "specs/reproducibility.md",
+                             "heading":  "Replay",
+                             "clauses":  [
+                                             {
+                                                 "id":  "D08.1",
+                                                 "text":  "Replay has exactly version, boardCode, actions and endMs with version 1.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D08.2",
+                                                 "text":  "Each action has exactly atMs and index.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D08.3",
+                                                 "text":  "Indices are in range.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D08.4",
+                                                 "text":  "Times are nonnegative safe integers.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D08.5",
+                                                 "text":  "Action times are nondecreasing.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D08.6",
+                                                 "text":  "With actions, endMs is at least the final atMs.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D08.7",
+                                                 "text":  "Equal-time actions keep array order.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "D09",
+                             "document":  "specs/reproducibility.md",
+                             "heading":  "Replay",
+                             "clauses":  [
+                                             {
+                                                 "id":  "D09.1",
+                                                 "text":  "Replay starts from the code\u0027s hidden deal.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D09.2",
+                                                 "text":  "Advance to each atMs before activating its index then advance to endMs.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D09.3",
+                                                 "text":  "Resolve an interval ending exactly at an action time before that action.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D09.4",
+                                                 "text":  "Apply game rules to ignored activation.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D09.5",
+                                                 "text":  "Reject elapsed-time addition outside safe integers.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D09.6",
+                                                 "text":  "The clock starts at first valid activation and replay time omits hidden-page and imported-pause time.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D09.7",
+                                                 "text":  "A new deal starts another replay.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             }
+                                         ]
+                         },
+                         {
+                             "id":  "D10",
+                             "document":  "specs/reproducibility.md",
+                             "heading":  "Limits",
+                             "clauses":  [
+                                             {
+                                                 "id":  "D10.1",
+                                                 "text":  "Limit snapshot JSON to 65536 UTF-8 bytes.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D10.2",
+                                                 "text":  "Limit replay JSON to 1048576 UTF-8 bytes.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D10.3",
+                                                 "text":  "Limit replay to 10000 actions.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D10.4",
+                                                 "text":  "Reject malformed JSON and unsupported versions.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D10.5",
+                                                 "text":  "Snapshot consistency means D05, D06 and D07.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D10.6",
+                                                 "text":  "Replay consistency means D08 and D09.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D10.7",
+                                                 "text":  "Validate board codes under D01.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D10.8",
+                                                 "text":  "Don\u0027t require reconstruction of earlier turns.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             },
+                                             {
+                                                 "id":  "D10.9",
+                                                 "text":  "Invalid board codes and snapshots keep the browser game.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "D10.10",
+                                                 "text":  "Invalid replay files are rejected by CLI and core.",
+                                                 "firstLayer":  "L3",
+                                                 "method":  "replay"
+                                             }
+                                         ]
+                         }
+                     ]
+}

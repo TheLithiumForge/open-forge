@@ -1,13 +1,15 @@
 # Technology
 Technology is the build and language specification for Neon Pairs.
 
+Status: spec version 2.
+
 The game runs offline from one HTML file. Browser controls and inline SVG provide the board, input and artwork.
 
 ## Stack
 
-T01. Use React with TypeScript and DOM rendering. Use native buttons, a native select and CSS Grid. Canvas adds no required behavior to this game. Shadcn adds a component setup that this fixture doesn't need.
+- T01 - Use React with TypeScript and DOM rendering. Use native buttons, a native select and CSS Grid. Canvas adds no required behavior to this game. Shadcn adds a component setup that this game doesn't need.
 
-T02. Pin these packages and keep the lockfile. The stable versions were checked on 31 October 2026:
+- T02 - Pin these packages and keep the lockfile. The stable versions were checked on 31 October 2026:
 
 | Package | Version | Job |
 | --- | --- | --- |
@@ -25,34 +27,38 @@ TypeScript 7 is a stable release, as the [release announcement](https://devblogs
 
 ## Language
 
-T03. Use Node.js 24.19 or later and npm. Keep browser and Node compiler projects separate. Use ESM, static imports and type-only imports for types.
+- T03 - Use Node.js 24.19 or later and npm. Keep browser and Node compiler projects separate. Use ESM, static imports and type-only imports for types.
 
-T04. Enable TypeScript strictness, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax` and `erasableSyntaxOnly`. Keep type checking separate from bundling. Vite's [TypeScript support](https://vite.dev/guide/features.html#typescript) transpiles code without checking types.
+Use Node `26.12.1`, npm `11.20.0` and Playwright `1.64.1` with Chromium `156.0.8078.4` as the named compatibility combination. Record the locked install, build, unit tests and browser journeys with those exact versions in the project README before calling the combination tested. Other supported versions need their own results.
 
-T05. Model project data with exact types and validate unknown data where it enters the game. Use narrowing instead of `any`, suppressed diagnostics or unchecked casts. Derive state unions from their named values.
+- T04 - Enable TypeScript strictness, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax` and `erasableSyntaxOnly`. Keep type checking separate from bundling. Vite's [TypeScript support](https://vite.dev/guide/features.html#typescript) transpiles code without checking types.
 
-T06. Keep behavior and its code, styles and tests together. Aim for 100 lines per TypeScript file and keep authored files at or below 200 lines. Split by behavior when a file grows. Use direct imports from the file that defines a behavior.
+- T05 - Model project data with exact types and validate unknown data where it enters the game. Use narrowing instead of `any`, suppressed diagnostics or unchecked casts. Derive state unions from their named values.
+
+- T06 - Keep behavior and its code, styles and tests together. Aim for 100 lines per TypeScript file and keep authored files at or below 200 lines. Split by behavior when a file grows. Use direct imports from the file that defines a behavior.
 
 ## Commands
 
-T07. Provide these commands:
+- T07 - Provide these commands:
 
 | Command | Result |
 | --- | --- |
 | `npm ci` | Install the locked dependencies |
 | `npm run dev` | Serve the game locally |
 | `npm run typecheck` | Check every compiler project |
-| `npm test` | Run the unit tests |
-| `npm run test:e2e` | Run browser checks in fresh contexts |
+| `npm test` | Run unit tests for the game rules |
+| `npm run test:e2e` | Build from current source, then run browser checks in fresh contexts against that build |
 | `npm run build` | Type check and emit `dist/index.html` |
 | `npm run replay -- PATH` | Read replay JSON and print its final snapshot |
 
+The browser command must fail if its build fails. It must never fall back to an earlier `dist`. Stop development servers and watchers you start before finishing the work.
+
 ## Distribution
 
-T08. `dist/index.html` contains the script, styles and artwork needed for play. It opens directly from disk without another file or a network request. Use the system font. Keep browser zoom enabled.
+- T08 - `dist/index.html` contains the script, styles and artwork needed for play. It opens directly from disk without another file or a network request. Use the system font. Keep browser zoom enabled.
 
-T09. Serve the game from a local HTTP origin when checking saved preferences. Storage on a `file:` URL differs between browsers, as the [localStorage documentation](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) explains. If storage is unavailable, play continues for the current session.
+- T09 - Serve the game from a local HTTP origin when checking saved preferences. Storage on a `file:` URL differs between browsers, as the [localStorage documentation](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) explains. If storage is unavailable, play continues for the current session.
 
-T10. Keep dependencies in development and build tooling where possible. The game uses no service, account, external asset, analytics or API key. Dependency installation can use the network. Playing the distribution doesn't use it.
+- T10 - Keep dependencies in development and build tooling where possible. The game uses no service, account, external asset, analytics or API key. Dependency installation can use the network. Playing the distribution doesn't use it.
 
 The [game specification](README.md) connects this stack to the other requirements.

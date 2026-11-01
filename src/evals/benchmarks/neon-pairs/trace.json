@@ -1,0 +1,3916 @@
+{
+    "schemaVersion":  1,
+    "specVersion":  2,
+    "entries":  [
+                    {
+                        "clauseId":  "R01.1",
+                        "requirementId":  "R01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R01.2",
+                        "requirementId":  "R01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R01.3",
+                        "requirementId":  "R01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R01.4",
+                        "requirementId":  "R01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R02.1",
+                        "requirementId":  "R02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R02.2",
+                        "requirementId":  "R02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R02.3",
+                        "requirementId":  "R02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R03.1",
+                        "requirementId":  "R03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R03.2",
+                        "requirementId":  "R03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R03.3",
+                        "requirementId":  "R03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R04.1",
+                        "requirementId":  "R04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R04.2",
+                        "requirementId":  "R04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R04.3",
+                        "requirementId":  "R04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R04.4",
+                        "requirementId":  "R04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R04.5",
+                        "requirementId":  "R04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R05.1",
+                        "requirementId":  "R05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R05.2",
+                        "requirementId":  "R05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R05.3",
+                        "requirementId":  "R05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R05.4",
+                        "requirementId":  "R05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R06.1",
+                        "requirementId":  "R06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R06.2",
+                        "requirementId":  "R06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R06.3",
+                        "requirementId":  "R06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R06.4",
+                        "requirementId":  "R06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R06.5",
+                        "requirementId":  "R06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R06.6",
+                        "requirementId":  "R06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R07.1",
+                        "requirementId":  "R07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R07.2",
+                        "requirementId":  "R07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R07.3",
+                        "requirementId":  "R07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R07.4",
+                        "requirementId":  "R07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R07.5",
+                        "requirementId":  "R07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R07.6",
+                        "requirementId":  "R07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R07.7",
+                        "requirementId":  "R07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R07.8",
+                        "requirementId":  "R07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R08.1",
+                        "requirementId":  "R08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R08.2",
+                        "requirementId":  "R08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R08.3",
+                        "requirementId":  "R08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R08.4",
+                        "requirementId":  "R08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R08.5",
+                        "requirementId":  "R08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R08.6",
+                        "requirementId":  "R08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R09.1",
+                        "requirementId":  "R09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R09.2",
+                        "requirementId":  "R09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R09.3",
+                        "requirementId":  "R09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R09.4",
+                        "requirementId":  "R09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R09.5",
+                        "requirementId":  "R09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R09.6",
+                        "requirementId":  "R09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R10.1",
+                        "requirementId":  "R10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R10.2",
+                        "requirementId":  "R10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R10.3",
+                        "requirementId":  "R10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R10.4",
+                        "requirementId":  "R10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R10.5",
+                        "requirementId":  "R10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R10.6",
+                        "requirementId":  "R10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R10.7",
+                        "requirementId":  "R10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R11.1",
+                        "requirementId":  "R11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R11.2",
+                        "requirementId":  "R11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R11.3",
+                        "requirementId":  "R11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R11.4",
+                        "requirementId":  "R11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R12.1",
+                        "requirementId":  "R12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "R12.2",
+                        "requirementId":  "R12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C01.1",
+                        "requirementId":  "C01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C01.2",
+                        "requirementId":  "C01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C01.3",
+                        "requirementId":  "C01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C02.1",
+                        "requirementId":  "C02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C02.2",
+                        "requirementId":  "C02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C02.3",
+                        "requirementId":  "C02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C03.1",
+                        "requirementId":  "C03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C03.2",
+                        "requirementId":  "C03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C03.3",
+                        "requirementId":  "C03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C04.1",
+                        "requirementId":  "C04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C04.2",
+                        "requirementId":  "C04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C04.3",
+                        "requirementId":  "C04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C05.1",
+                        "requirementId":  "C05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C05.2",
+                        "requirementId":  "C05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C05.3",
+                        "requirementId":  "C05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C05.4",
+                        "requirementId":  "C05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C06.1",
+                        "requirementId":  "C06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C06.2",
+                        "requirementId":  "C06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C07.1",
+                        "requirementId":  "C07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C07.2",
+                        "requirementId":  "C07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C07.3",
+                        "requirementId":  "C07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C08.1",
+                        "requirementId":  "C08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C08.2",
+                        "requirementId":  "C08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C08.3",
+                        "requirementId":  "C08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C08.4",
+                        "requirementId":  "C08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C08.5",
+                        "requirementId":  "C08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C09.1",
+                        "requirementId":  "C09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C09.2",
+                        "requirementId":  "C09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C09.3",
+                        "requirementId":  "C09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C09.4",
+                        "requirementId":  "C09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C10.1",
+                        "requirementId":  "C10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C10.2",
+                        "requirementId":  "C10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C10.3",
+                        "requirementId":  "C10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C10.4",
+                        "requirementId":  "C10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C10.5",
+                        "requirementId":  "C10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C10.6",
+                        "requirementId":  "C10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C10.7",
+                        "requirementId":  "C10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C11.1",
+                        "requirementId":  "C11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C11.2",
+                        "requirementId":  "C11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C11.3",
+                        "requirementId":  "C11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C11.4",
+                        "requirementId":  "C11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C12.1",
+                        "requirementId":  "C12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C12.2",
+                        "requirementId":  "C12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C12.3",
+                        "requirementId":  "C12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C12.4",
+                        "requirementId":  "C12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C13.1",
+                        "requirementId":  "C13",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C13.2",
+                        "requirementId":  "C13",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C13.3",
+                        "requirementId":  "C13",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C13.4",
+                        "requirementId":  "C13",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C13.5",
+                        "requirementId":  "C13",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C14.1",
+                        "requirementId":  "C14",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C14.2",
+                        "requirementId":  "C14",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "C14.3",
+                        "requirementId":  "C14",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I01.1",
+                        "requirementId":  "I01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I01.2",
+                        "requirementId":  "I01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I02.1",
+                        "requirementId":  "I02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I03.1",
+                        "requirementId":  "I03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I03.2",
+                        "requirementId":  "I03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I04.1",
+                        "requirementId":  "I04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I04.2",
+                        "requirementId":  "I04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I05.1",
+                        "requirementId":  "I05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I05.2",
+                        "requirementId":  "I05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I05.3",
+                        "requirementId":  "I05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I06.1",
+                        "requirementId":  "I06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I06.2",
+                        "requirementId":  "I06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I06.3",
+                        "requirementId":  "I06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I06.4",
+                        "requirementId":  "I06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I06.5",
+                        "requirementId":  "I06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I06.6",
+                        "requirementId":  "I06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I06.7",
+                        "requirementId":  "I06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I06.8",
+                        "requirementId":  "I06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I06.9",
+                        "requirementId":  "I06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I07.1",
+                        "requirementId":  "I07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I08.1",
+                        "requirementId":  "I08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I08.2",
+                        "requirementId":  "I08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I09.1",
+                        "requirementId":  "I09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I09.2",
+                        "requirementId":  "I09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I09.3",
+                        "requirementId":  "I09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I10.1",
+                        "requirementId":  "I10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I10.2",
+                        "requirementId":  "I10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I11.1",
+                        "requirementId":  "I11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I12.1",
+                        "requirementId":  "I12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I12.2",
+                        "requirementId":  "I12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I13.1",
+                        "requirementId":  "I13",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I14.1",
+                        "requirementId":  "I14",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I14.2",
+                        "requirementId":  "I14",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I14.3",
+                        "requirementId":  "I14",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I15.1",
+                        "requirementId":  "I15",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I15.2",
+                        "requirementId":  "I15",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I16.1",
+                        "requirementId":  "I16",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I16.2",
+                        "requirementId":  "I16",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I16.3",
+                        "requirementId":  "I16",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I16.4",
+                        "requirementId":  "I16",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I16.5",
+                        "requirementId":  "I16",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I17.1",
+                        "requirementId":  "I17",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I17.2",
+                        "requirementId":  "I17",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I17.3",
+                        "requirementId":  "I17",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I17.4",
+                        "requirementId":  "I17",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I17.5",
+                        "requirementId":  "I17",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "I17.6",
+                        "requirementId":  "I17",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V01.1",
+                        "requirementId":  "V01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V01.2",
+                        "requirementId":  "V01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V01.3",
+                        "requirementId":  "V01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V01.4",
+                        "requirementId":  "V01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V02.1",
+                        "requirementId":  "V02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V02.2",
+                        "requirementId":  "V02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V02.3",
+                        "requirementId":  "V02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V03.1",
+                        "requirementId":  "V03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V03.2",
+                        "requirementId":  "V03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V03.3",
+                        "requirementId":  "V03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V04.1",
+                        "requirementId":  "V04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V04.2",
+                        "requirementId":  "V04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V04.3",
+                        "requirementId":  "V04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V04.4",
+                        "requirementId":  "V04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V05.1",
+                        "requirementId":  "V05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V05.2",
+                        "requirementId":  "V05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V06.1",
+                        "requirementId":  "V06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V06.2",
+                        "requirementId":  "V06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V06.3",
+                        "requirementId":  "V06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V06.4",
+                        "requirementId":  "V06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V06.5",
+                        "requirementId":  "V06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V06.6",
+                        "requirementId":  "V06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V06.7",
+                        "requirementId":  "V06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V06.8",
+                        "requirementId":  "V06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V07.1",
+                        "requirementId":  "V07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V08.1",
+                        "requirementId":  "V08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V08.2",
+                        "requirementId":  "V08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V08.3",
+                        "requirementId":  "V08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V08.4",
+                        "requirementId":  "V08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V09.1",
+                        "requirementId":  "V09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V09.2",
+                        "requirementId":  "V09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V10.1",
+                        "requirementId":  "V10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V10.2",
+                        "requirementId":  "V10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V10.3",
+                        "requirementId":  "V10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V10.4",
+                        "requirementId":  "V10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V10.5",
+                        "requirementId":  "V10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V10.6",
+                        "requirementId":  "V10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V10.7",
+                        "requirementId":  "V10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V10.8",
+                        "requirementId":  "V10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V10.9",
+                        "requirementId":  "V10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V11.1",
+                        "requirementId":  "V11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V11.2",
+                        "requirementId":  "V11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V12.1",
+                        "requirementId":  "V12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V12.2",
+                        "requirementId":  "V12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V12.3",
+                        "requirementId":  "V12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V12.4",
+                        "requirementId":  "V12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V12.5",
+                        "requirementId":  "V12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V12.6",
+                        "requirementId":  "V12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V12.7",
+                        "requirementId":  "V12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V13.1",
+                        "requirementId":  "V13",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V13.2",
+                        "requirementId":  "V13",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V14.1",
+                        "requirementId":  "V14",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V14.2",
+                        "requirementId":  "V14",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V15.1",
+                        "requirementId":  "V15",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V15.2",
+                        "requirementId":  "V15",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V15.3",
+                        "requirementId":  "V15",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V16.1",
+                        "requirementId":  "V16",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V16.2",
+                        "requirementId":  "V16",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V17.1",
+                        "requirementId":  "V17",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V17.2",
+                        "requirementId":  "V17",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V18.1",
+                        "requirementId":  "V18",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V18.2",
+                        "requirementId":  "V18",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V18.3",
+                        "requirementId":  "V18",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V18.4",
+                        "requirementId":  "V18",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V19.1",
+                        "requirementId":  "V19",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V19.2",
+                        "requirementId":  "V19",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V19.3",
+                        "requirementId":  "V19",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V19.4",
+                        "requirementId":  "V19",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V19.5",
+                        "requirementId":  "V19",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V20.1",
+                        "requirementId":  "V20",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V20.2",
+                        "requirementId":  "V20",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V20.3",
+                        "requirementId":  "V20",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V20.4",
+                        "requirementId":  "V20",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "V20.5",
+                        "requirementId":  "V20",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "S01.1",
+                        "requirementId":  "S01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "S02.1",
+                        "requirementId":  "S02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "S02.2",
+                        "requirementId":  "S02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "S02.3",
+                        "requirementId":  "S02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T01.1",
+                        "requirementId":  "T01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T01.2",
+                        "requirementId":  "T01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T01.3",
+                        "requirementId":  "T01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T02.1",
+                        "requirementId":  "T02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T02.2",
+                        "requirementId":  "T02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T02.3",
+                        "requirementId":  "T02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T02.4",
+                        "requirementId":  "T02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T02.5",
+                        "requirementId":  "T02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T02.6",
+                        "requirementId":  "T02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T02.7",
+                        "requirementId":  "T02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T02.8",
+                        "requirementId":  "T02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T02.9",
+                        "requirementId":  "T02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T02.10",
+                        "requirementId":  "T02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T03.1",
+                        "requirementId":  "T03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T03.2",
+                        "requirementId":  "T03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T03.3",
+                        "requirementId":  "T03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T03.4",
+                        "requirementId":  "T03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T03.5",
+                        "requirementId":  "T03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T03.6",
+                        "requirementId":  "T03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T04.1",
+                        "requirementId":  "T04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T04.2",
+                        "requirementId":  "T04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T05.1",
+                        "requirementId":  "T05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T05.2",
+                        "requirementId":  "T05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T05.3",
+                        "requirementId":  "T05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T05.4",
+                        "requirementId":  "T05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T06.1",
+                        "requirementId":  "T06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T06.2",
+                        "requirementId":  "T06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T06.3",
+                        "requirementId":  "T06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T06.4",
+                        "requirementId":  "T06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T06.5",
+                        "requirementId":  "T06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T07.1",
+                        "requirementId":  "T07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T07.2",
+                        "requirementId":  "T07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T07.3",
+                        "requirementId":  "T07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T07.4",
+                        "requirementId":  "T07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T07.5",
+                        "requirementId":  "T07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T07.6",
+                        "requirementId":  "T07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T07.7",
+                        "requirementId":  "T07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T07.8",
+                        "requirementId":  "T07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T07.9",
+                        "requirementId":  "T07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T08.1",
+                        "requirementId":  "T08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T08.2",
+                        "requirementId":  "T08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T08.3",
+                        "requirementId":  "T08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T08.4",
+                        "requirementId":  "T08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T09.1",
+                        "requirementId":  "T09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T09.2",
+                        "requirementId":  "T09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T10.1",
+                        "requirementId":  "T10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T10.2",
+                        "requirementId":  "T10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T10.3",
+                        "requirementId":  "T10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "T10.4",
+                        "requirementId":  "T10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A01.1",
+                        "requirementId":  "A01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A01.2",
+                        "requirementId":  "A01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A01.3",
+                        "requirementId":  "A01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A02.1",
+                        "requirementId":  "A02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A02.2",
+                        "requirementId":  "A02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A02.3",
+                        "requirementId":  "A02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A02.4",
+                        "requirementId":  "A02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A03.1",
+                        "requirementId":  "A03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A03.2",
+                        "requirementId":  "A03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A04.1",
+                        "requirementId":  "A04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A04.2",
+                        "requirementId":  "A04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A04.3",
+                        "requirementId":  "A04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A04.4",
+                        "requirementId":  "A04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A04.5",
+                        "requirementId":  "A04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A05.1",
+                        "requirementId":  "A05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A05.2",
+                        "requirementId":  "A05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A05.3",
+                        "requirementId":  "A05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A05.4",
+                        "requirementId":  "A05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A05.5",
+                        "requirementId":  "A05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A05.6",
+                        "requirementId":  "A05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A06.1",
+                        "requirementId":  "A06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A06.2",
+                        "requirementId":  "A06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A06.3",
+                        "requirementId":  "A06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A07.1",
+                        "requirementId":  "A07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A07.2",
+                        "requirementId":  "A07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A07.3",
+                        "requirementId":  "A07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A08.1",
+                        "requirementId":  "A08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A08.2",
+                        "requirementId":  "A08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A08.3",
+                        "requirementId":  "A08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A08.4",
+                        "requirementId":  "A08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A09.1",
+                        "requirementId":  "A09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A09.2",
+                        "requirementId":  "A09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A09.3",
+                        "requirementId":  "A09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A09.4",
+                        "requirementId":  "A09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A10.1",
+                        "requirementId":  "A10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A10.2",
+                        "requirementId":  "A10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A10.3",
+                        "requirementId":  "A10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A10.4",
+                        "requirementId":  "A10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A10.5",
+                        "requirementId":  "A10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A11.1",
+                        "requirementId":  "A11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A11.2",
+                        "requirementId":  "A11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A11.3",
+                        "requirementId":  "A11",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A12.1",
+                        "requirementId":  "A12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A12.2",
+                        "requirementId":  "A12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "A12.3",
+                        "requirementId":  "A12",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D01.1",
+                        "requirementId":  "D01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D01.2",
+                        "requirementId":  "D01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D01.3",
+                        "requirementId":  "D01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D01.4",
+                        "requirementId":  "D01",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D02.1",
+                        "requirementId":  "D02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D02.2",
+                        "requirementId":  "D02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D02.3",
+                        "requirementId":  "D02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D02.4",
+                        "requirementId":  "D02",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D03.1",
+                        "requirementId":  "D03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D03.2",
+                        "requirementId":  "D03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D03.3",
+                        "requirementId":  "D03",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D04.1",
+                        "requirementId":  "D04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D04.2",
+                        "requirementId":  "D04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D04.3",
+                        "requirementId":  "D04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D04.4",
+                        "requirementId":  "D04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D04.5",
+                        "requirementId":  "D04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D04.6",
+                        "requirementId":  "D04",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D05.1",
+                        "requirementId":  "D05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D05.2",
+                        "requirementId":  "D05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D05.3",
+                        "requirementId":  "D05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D05.4",
+                        "requirementId":  "D05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D05.5",
+                        "requirementId":  "D05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D05.6",
+                        "requirementId":  "D05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D05.7",
+                        "requirementId":  "D05",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D06.1",
+                        "requirementId":  "D06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D06.2",
+                        "requirementId":  "D06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D06.3",
+                        "requirementId":  "D06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D06.4",
+                        "requirementId":  "D06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D06.5",
+                        "requirementId":  "D06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D06.6",
+                        "requirementId":  "D06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D06.7",
+                        "requirementId":  "D06",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D07.1",
+                        "requirementId":  "D07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D07.2",
+                        "requirementId":  "D07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D07.3",
+                        "requirementId":  "D07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D07.4",
+                        "requirementId":  "D07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D07.5",
+                        "requirementId":  "D07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D07.6",
+                        "requirementId":  "D07",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D08.1",
+                        "requirementId":  "D08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D08.2",
+                        "requirementId":  "D08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D08.3",
+                        "requirementId":  "D08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D08.4",
+                        "requirementId":  "D08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D08.5",
+                        "requirementId":  "D08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D08.6",
+                        "requirementId":  "D08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D08.7",
+                        "requirementId":  "D08",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D09.1",
+                        "requirementId":  "D09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D09.2",
+                        "requirementId":  "D09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D09.3",
+                        "requirementId":  "D09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D09.4",
+                        "requirementId":  "D09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D09.5",
+                        "requirementId":  "D09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D09.6",
+                        "requirementId":  "D09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D09.7",
+                        "requirementId":  "D09",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D10.1",
+                        "requirementId":  "D10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D10.2",
+                        "requirementId":  "D10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D10.3",
+                        "requirementId":  "D10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D10.4",
+                        "requirementId":  "D10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D10.5",
+                        "requirementId":  "D10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D10.6",
+                        "requirementId":  "D10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D10.7",
+                        "requirementId":  "D10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D10.8",
+                        "requirementId":  "D10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D10.9",
+                        "requirementId":  "D10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    },
+                    {
+                        "clauseId":  "D10.10",
+                        "requirementId":  "D10",
+                        "checks":  [
+
+                                   ],
+                        "reference":  [
+
+                                      ]
+                    }
+                ]
+}

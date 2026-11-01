@@ -1,36 +1,47 @@
 # Acceptance
-The acceptance specification is a check map that connects Neon Pairs requirements to evidence of correct behavior.
+Acceptance is a set of journeys that checks whether Neon Pairs meets its product requirements.
 
-The full game needs checks for the stated rules and for regressions after a change. For example, adding a game option still needs to keep restart, keyboard play and replay working.
+Status: spec version 2.
 
-## Required checks
+Finish a game, then start another one during a mismatch. The first journey checks play and completion. The second checks that an earlier timer can't change a new game.
 
-Each defining document gives its requirements an ID. These checks cover the full specification:
+## Play
 
-| Requirement family | Evidence |
-| --- | --- |
-| Rules `R01-R06` in [Rules](rules.md) | Every size has complete pairs. Reveals, matches, misses, ignored activation, move counts and completion follow the state rules. |
-| Rules `R07-R12` | Controlled time checks cover hidden-page pause, resume, restart during mismatch and stale updates. Browser checks cover saved size, per-size bests, invalid input and unavailable storage. |
-| Reproducibility `D01-D10` in [Reproducibility](reproducibility.md) | Independent golden vectors check generation. Round trips check snapshots. CLI and game-core replay checks cover action order and exact timeout edges. Invalid board codes and snapshots keep the current game. Invalid replays are rejected. |
-| Input `I` in [Input](input.md) | Pointer, keyboard and touch checks cover the same game actions. Focus, accessible names, announcements, right-click, scrolling and blocked actions follow their rules. |
-| Controls `C` in [Controls](controls.md) | Browser checks cover each game control, validation feedback and focus. |
-| Visuals `V` in [Visuals](visuals.md) | Browser measurements check layout and target sizes. Screenshots and a face sheet support review of states, colors, reduced motion and all 128 face identities. |
-| Sound `S` in [Sound](sound.md) | Page load and complete play produce no sound or audio requests. |
-| Technology `T` in [Technology](technology.md) | A locked install, type check, tests and build complete. The distribution opens offline without runtime network requests. |
-| Architecture `A` in [Architecture](architecture.md) | Source review checks local behavior, pure state changes, browser effects and focused tests. Executable checks cover the specified state and lifecycle contracts. |
+Use these journeys with the requirements in [Rules](rules.md):
 
-Use fixed small deals for most rule checks. Check the largest board separately for complete pair generation, layout and navigation. Browser checks activate cards through their documented controls.
+- Finish every supported size with complete pairs.
+- Reveal one card twice, then reveal a different card. Check the exact move count.
+- Match a pair, then miss a pair. Check the immediate match and the 800ms active mismatch interval.
+- Hide the page during a mismatch, then return and finish its remaining interval.
+- Start and restart during a mismatch. Check the cleared state and later timer updates.
+- Finish games with better, equal and worse move counts. Reload and check the current size's best.
 
-## Independent expectations
+## Controls
 
-Expected decks and replay results come from fixed specification examples or independently calculated fixtures. A check can't use the game implementation to generate its expected answer.
+Use pointer, touch and keyboard to follow [Input](input.md) and [Controls](controls.md). Check control labels, row movement, edge stops, native Tab exit and focus after each action. Check that hidden cards reveal no identity in the DOM.
 
-Keep executable requirements separate from source review. A passing browser check doesn't answer whether behavior stays local. A source review doesn't replace a failed turn check.
+Complete the screen reader journey in I17. Hear each turn result once, including consecutive identical results and the final match with its win.
 
-## Results
+## Appearance
 
-Keep a result for every required check with its requirement ID, outcome and supporting artifact. Keep errors, timeouts and missing evidence distinct from passes. Functional success requires every required executable check to pass.
+Measure the layout and review all 128 faces against [Visuals](visuals.md). Use a 44px grayscale face sheet to distinguish shape, marker and fill. Check 16x16 boards at both stated viewport sizes, full focus outlines and 200% browser zoom. Check reduced motion and the static completion banner after its single pulse.
 
-Report judgment answers and uncertainty alongside executable results. Keep feature checks, repair checks and regressions separate in brownfield tasks. Freeze the checks before comparing attempts.
+Play through completion and reset while checking [Sound](sound.md). Every action stays silent.
 
-Return to [Neon Pairs](README.md) for the full specification.
+## Reproduction
+
+Check [Reproducibility](reproducibility.md) with independently calculated literal decks and replay results. Check snapshot round trips and malformed input. Check the exact mismatch timeout before an equal-time replay action.
+
+Load an unfinished snapshot, attempt input while paused, then Resume. Check its remaining active time and focus. Load a completed snapshot and check its static banner and unchanged best score.
+
+## Delivery
+
+Use a locked install, type check, unit tests and a fresh browser build as defined in [Technology](technology.md). Open the resulting HTML directly from disk with network access blocked. Use a local HTTP origin for saved preferences.
+
+Review the pure game functions, browser effects, file sizes and behavior placement against [Architecture](architecture.md). Keep review results separate from executable results. A passing play journey doesn't answer a source structure question.
+
+## Evidence
+
+Record each requirement clause, its result and the artifact that shows it. Keep missing evidence, tool errors and failed behavior distinct. Calculate expected values independently of the implementation being checked.
+
+Back to [Neon Pairs](README.md).

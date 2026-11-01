@@ -6,6 +6,8 @@ open-forge:
 # Rules
 The rules specification is a game contract that defines turns, scores and session changes in Neon Pairs.
 
+Status: spec version 2.
+
 A turn reveals two eligible cards. A match adds one pair, while a miss gives you time to remember the faces before both cards turn back.
 
 ## Board
@@ -36,9 +38,9 @@ The mismatch interval and elapsed clock use the same active time. Showing the pa
 
 ## Session
 
-- R08 - Start with `4` rows and `4` columns unless a saved supported size exists. Remember the last chosen size after reload. A page load starts a fresh deal.
+- R08 - Start with `4` rows and `4` columns unless a saved supported size exists. Remember the last chosen size after reload. A page load starts a fresh deal. Loading a valid board code or snapshot also saves its size as the last chosen size. A failed load keeps the saved size unchanged.
 - R09 - New Game creates a fresh seed at the current size. Restart keeps the current board code. Choosing a different size creates a fresh seed at that size. Each action clears the selection, matched pairs, moves and elapsed time.
-- R10 - When play completes a game, keep its moves if they beat the saved best for that size. Keep these records after reload. An equal or worse result keeps the existing best. Starting or restarting a game keeps these records.
+- R10 - When play completes a game, keep its moves if they beat the saved best for that size. Keep these records after reload. An equal or worse result keeps the existing best. Starting or restarting a game keeps these records. Show the current size's best move count throughout play and after completion. Before that size has a record, show "Best: none".
 - R11 - Invalid board codes and snapshots show an error and keep the current game. Invalid saved preferences are ignored. If storage is unavailable, play continues without saving.
 - R12 - Starting, restarting, replacing or leaving a game invalidates its pending timer updates. An update from an earlier game or turn can't change the current game.
 

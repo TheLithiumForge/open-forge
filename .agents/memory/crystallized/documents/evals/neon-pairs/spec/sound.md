@@ -4,15 +4,17 @@ open-forge:
   tags: ["LoadNow", "Game", "Sound"]
 ---
 # Sound
-Sound is a game requirement that keeps the first version of Neon Pairs silent.
+Sound is a game requirement that keeps Neon Pairs silent.
+
+Status: spec version 2.
 
 You can play in a shared room without starting audio. Card feedback and completion are conveyed by the game display and accessible announcements.
 
 ## Playback
 
-S01 - Keep the game silent for every action and state, including a reveal, a match, a mismatch, a restart and a win.
+- S01 - Keep the game silent for every action and state, including a reveal, a match, a mismatch, a restart and a win.
 
-S02 - Include no audio files, audio API calls or sound toggle in this version. Silence is the required behavior, not an unfinished feature.
+- S02 - Include no audio files, audio API calls or sound toggle in this version. Silence is the required behavior, not an unfinished feature.
 
 ## Feedback
 

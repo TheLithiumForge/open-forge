@@ -9,7 +9,7 @@ import { readProjection, type Projection } from "./projection.ts";
 import { stripDocuments } from "./strip.ts";
 import type { Metadata } from "./frontmatter.ts";
 
-export const SpecsFiles = { manifest: "manifest.json", entrypoint: "_neon-pairs.md", overview: "README.md" } as const;
+export const SpecsFiles = { manifest: "manifest.json", entrypoint: "_spec.md", overview: "README.md" } as const;
 export const ManifestVersion = 1;
 
 export interface SpecRecord extends FileHash {
