@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { readdir, readFile } from "node:fs/promises";
 import type { EvalConfig } from "../config/config.types.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
-import { suiteGradingInputs } from "../benchmarks/registry.ts";
+import { LayerOneCase, suiteGradingInputs } from "../benchmarks/registry.ts";
 import { evalsRoot, EvalPaths } from "../paths.ts";
 import { fileDigests } from "./artifacts.ts";
 import { createFingerprints, fingerprint, sha256 } from "./fingerprints.ts";
@@ -42,11 +42,18 @@ async function harnessSources(root: string) {
     { folder: "benchmarks", files: await fileDigests(join(root, "benchmarks"), new Set(["neon-pairs"])) }];
 }
 
+// Layer 1 grades with the top-level checks alone, so a later layer's checker change leaves its version unchanged.
+export const LaterLayerCheckers: ReadonlySet<string> = new Set(["spec-layers"]);
+
+export function checkerDigests(root: string, suiteId: string): ReturnType<typeof fileDigests> {
+  return suiteId === LayerOneCase ? fileDigests(root, LaterLayerCheckers) : fileDigests(root);
+}
+
 export async function gradingVersions(suite: Suite): Promise<AssessmentVersions> {
   const frozen = [...await suiteGradingInputs(suite.id), ...await documentGradingInputs(suite.id)];
   return {
     ...(suite.documents === undefined ? {} : { spec: fingerprint(suite.documents), specVersion: SpecVersion }),
-    checker: fingerprint({ files: await fileDigests(EvalPaths.checks), frozen }), rubric: fingerprint({ questions: suite.rubric, frozen }),
+    checker: fingerprint({ files: await checkerDigests(EvalPaths.checks, suite.id), frozen }), rubric: fingerprint({ questions: suite.rubric, frozen }),
     judge: fingerprint(await fileDigests(join(evalsRoot, "grading", "judge"))),
   };
 }
@@ -59,7 +66,7 @@ export async function captureExperiment(id: string, config: EvalConfig, suite: S
   const pinnedTools = { ...pkg.dependencies, node: process.version };
   const imageDigests: Readonly<Record<string, string | null>> = paths.imageDigests ?? { eval: null };
   const frozen = [...await suiteGradingInputs(suite.id, paths.root), ...await documentGradingInputs(suite.id, paths.root)];
-  const checkInputs = { files: await fileDigests(paths.checks), frozen };
+  const checkInputs = { files: await checkerDigests(paths.checks, suite.id), frozen };
   const rubricInputs = { questions: suite.rubric, frozen };
   const versions = { checker: fingerprint(checkInputs), rubric: fingerprint(rubricInputs),
     judge: fingerprint(await fileDigests(join(paths.root, "grading", "judge"))) };

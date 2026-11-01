@@ -20,9 +20,11 @@ export function checksForSuite(suite: Suite, baseline?: readonly FileHash[], sco
   return (input) => runBrownfieldChecks(inputs, baseline, input, scope === undefined ? {} : { scope });
 }
 
+export const LayerOneCase = "greenfield-baseline";
+
 /** Each suite's hidden checks, by suite ID. A new suite adds its entry here. */
 export const suiteChecks: Readonly<Record<string, SuiteChecks>> = {
-  "greenfield-baseline": runContainerChecks,
+  [LayerOneCase]: runContainerChecks,
 };
 
 export async function suiteGradingInputs(id: string, root: string = evalsRoot): Promise<readonly { path: string; sha256: string }[]> {
@@ -36,7 +38,7 @@ export async function suiteGradingInputs(id: string, root: string = evalsRoot): 
     for (const path of ["requirements.json", "trace.json"]) files.push({ path, sha256: sha256(await readFile(join(base, path))) });
     return files;
   }
-  const files = id === "greenfield-baseline" ? Object.values(LayerFiles)
+  const files = id === LayerOneCase ? Object.values(LayerFiles)
     : id === DocumentCase.two || id === DocumentCase.three ? ["requirements.json", `cases/${id}/inputs.json`] : [];
   return Promise.all(files.map(async (path) => ({ path,
     sha256: createHash("sha256").update(await readFile(join(root, "benchmarks", "neon-pairs", path))).digest("hex"),

@@ -3,7 +3,9 @@ import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { test } from "node:test";
 import type { Suite } from "../benchmarks/suite.types.ts";
-import { assertFrozenExecution, captureExperiment, withReportedModels } from "./capture.ts";
+import { assertFrozenExecution, captureExperiment, checkerDigests, LaterLayerCheckers, withReportedModels } from "./capture.ts";
+import { LayerOneCase } from "../benchmarks/registry.ts";
+import { FixtureSuite } from "../config/test-fixtures.ts";
 import { fingerprint } from "./fingerprints.ts";
 import { writeJson } from "./json-files.ts";
 import { FixtureCliVersion, temporaryHistory, v2Fixture } from "./test-fixtures.ts";
@@ -46,5 +48,20 @@ test("batch capture freezes installed CLI content, pinned tools, image digests a
     assert.equal(reported.fingerprints.reportedModels, fingerprint(["reported", null]));
     assert.equal(reported.fingerprints.tooling, captured.fingerprints.tooling);
     assert.deepEqual(captured, original);
+  } finally { await cleanup(); }
+});
+
+test("Layer 1 checker digests leave out later layers' checkers while other suites keep them", async () => {
+  const { root, cleanup } = await temporaryHistory();
+  try {
+    const checks = join(root, "checks"), later = join(checks, [...LaterLayerCheckers][0] ?? "");
+    await writeJson(join(checks, "check.json"), { checks: "layer one" });
+    await writeJson(join(later, "check.json"), { checks: "before" });
+    const layerOne = await checkerDigests(checks, LayerOneCase), other = await checkerDigests(checks, FixtureSuite.id);
+    await writeJson(join(later, "check.json"), { checks: "after" });
+    assert.deepEqual(await checkerDigests(checks, LayerOneCase), layerOne);
+    assert.notDeepEqual(await checkerDigests(checks, FixtureSuite.id), other);
+    await writeJson(join(checks, "check.json"), { checks: "changed" });
+    assert.notDeepEqual(await checkerDigests(checks, LayerOneCase), layerOne);
   } finally { await cleanup(); }
 });
