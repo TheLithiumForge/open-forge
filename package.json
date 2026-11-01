@@ -10,6 +10,7 @@
     "url": "git+https://github.com/TheLithiumForge/open-forge.git"
   },
   "scripts": {
+    "evals": "node src/evals/cli.ts",
     "setup": "node scripts/delivery/cli.ts setup",
     "clean": "node scripts/delivery/cli.ts clean",
     "restore": "node scripts/delivery/cli.ts restore",

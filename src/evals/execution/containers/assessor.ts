@@ -11,11 +11,16 @@ import { ContainerStage, type StageOptions } from "./stage.ts";
 import { ToolHome, toolEnvironment, type ToolHomeOptions } from "./tool-home.ts";
 
 export const AssessorEvidenceLimit = 1024 * 1024;
+export const AssessorTools = { off: "off", restricted: "restricted" } as const;
+export const CodexAssessorSettings = ['web_search="disabled"', 'approval_policy="never"', "features.shell_tool=false", "features.multi_agent=false", "features.apps=false", "features.plugins=false", "features.browser_use=false", "features.computer_use=false", "features.image_generation=false", "features.code_mode_host=false"] as const;
+export interface AssessorResult extends ProcessResult { readonly tools?: (typeof AssessorTools)[keyof typeof AssessorTools] }
 
 export function assessorCommand(choice: ModelChoice): string[] {
-  // The pinned Codex CLI has no switch that removes every model tool.
-  if (choice.tool !== Tool.claude) throw new Error("The tools-off assessor currently requires Claude Code.");
+  if (choice.tool === Tool.mock) throw new Error("The assessor needs a model provider.");
   const { model, effort } = choice;
+  if (choice.tool === Tool.codex) return [Tool.codex, "exec", "--json", "--skip-git-repo-check", "--sandbox", "read-only",
+    ...CodexAssessorSettings.flatMap((setting) => ["-c", setting]), ...(model === null ? [] : ["-m", model]),
+    ...(effort === null ? [] : ["-c", `model_reasoning_effort=${JSON.stringify(effort)}`]), "-"];
   return [Tool.claude, "-p", "--output-format", "json", "--strict-mcp-config", "--mcp-config", '{"mcpServers":{}}', "--tools", "", "--max-turns", "1",
     ...(model === null ? [] : ["--model", model]), ...(effort === null ? [] : ["--effort", effort])];
 }
@@ -31,7 +36,7 @@ async function evidence(root: string, folder = root, files: Record<string, strin
   return files;
 }
 
-export async function runAssessorStage(space: RunSpace, choice: ModelChoice, prompt: string, options: StageOptions & ToolHomeOptions): Promise<ProcessResult> {
+export async function runAssessorStage(space: RunSpace, choice: ModelChoice, prompt: string, options: StageOptions & ToolHomeOptions): Promise<AssessorResult> {
   const command = assessorCommand(choice);
   const input = `${prompt}\n\n${JSON.stringify(await evidence(space.work))}`;
   const stage = new ContainerStage(options);
@@ -39,12 +44,14 @@ export async function runAssessorStage(space: RunSpace, choice: ModelChoice, pro
   let ready = false;
   try {
     await stage.open(evalImageTag(StageKind.assessor));
-    await copyProjectIn(stage, space, true);
+    // Codex has restricted tools. Its working folder stays empty and all evidence goes through stdin.
+    if (choice.tool === Tool.claude) await copyProjectIn(stage, space, true);
     await home.copyIn(stage);
     await stage.prepare(ContainerPaths.work, ContainerPaths.home);
     ready = true;
     const child = stage.spawn(command, toolEnvironment(choice.tool), home.auth);
-    return await waitForProcess(child, { timeoutMs: options.timeoutMs, input });
+    const result = await waitForProcess(child, { timeoutMs: options.timeoutMs, input });
+    return { ...result, tools: choice.tool === Tool.codex ? AssessorTools.restricted : AssessorTools.off };
   } finally {
     try {
       if (ready) {

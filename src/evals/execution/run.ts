@@ -17,6 +17,9 @@ import { appendAssessment, readBatch, runFolder, saveRun } from "../history/stor
 import { checksAssessment, failedChecksAssessment, judgeAssessment } from "../history/assessments.ts";
 import { countChecks } from "../grading/counting.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
+import type { SuiteChecks } from "../benchmarks/suite-checks.types.ts";
+import type { HistoryStore } from "../history/store.ts";
+import { SimulatorFailure } from "./conversation/report.ts";
 import { suiteChecks } from "../benchmarks/registry.ts";
 import { converse } from "./conversation/conversation.ts";
 import { oneCheckAtATime } from "./run-queue.ts";
@@ -32,6 +35,18 @@ export interface RunInput {
   readonly position: string;
   readonly signal?: AbortSignal;
   readonly docker?: Docker;
+  readonly services?: RunServices;
+}
+
+export interface RunServices {
+  readonly store?: Pick<HistoryStore, "runFolder" | "readBatch" | "saveRun" | "appendAssessment">;
+  readonly createSpace?: typeof createRunSpace;
+  readonly scratch?: typeof scratchFolder;
+  readonly conversation?: typeof converse;
+  readonly build?: typeof buildProject;
+  readonly checks?: SuiteChecks;
+  readonly judge?: typeof judgeRun;
+  readonly stop?: typeof stopProcessesUnder;
 }
 
 const JudgeTimeoutMs = 15 * 60_000;
@@ -39,8 +54,10 @@ const JudgeTimeoutMs = 15 * 60_000;
 /** One run, start to finish: the agent and its questions, the offline build, the hidden checks and the judge. */
 export async function executeRun(input: RunInput): Promise<RunRecord> {
   const { suite, config } = input;
-  const folder = runFolder(input.run.batchId, input.run.id);
-  const batch = await readBatch(input.run.batchId);
+  const services = input.services ?? {};
+  const store = services.store ?? { runFolder, readBatch, saveRun, appendAssessment };
+  const folder = store.runFolder(input.run.batchId, input.run.id);
+  const batch = await store.readBatch(input.run.batchId);
   const versions = { checker: batch.fingerprints.checks, rubric: batch.fingerprints.rubric, judge: batch.versions["judge"] ?? null };
   await mkdir(folder, { recursive: true });
   await writeFile(join(folder, ExecutionLabelFile), `${JSON.stringify(executionLabel(config.isolation), null, 2)}\n`);
@@ -48,23 +65,23 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
   let run: RunRecord = { ...input.run, status: RunStatus.agent, pipelineStatus: RunStatus.agent, startedAt: new Date().toISOString(), error: null };
   const update = async (changes: Partial<RunRecord>, note: string | null = null): Promise<void> => {
     run = { ...run, ...changes, pipelineStatus: changes.status ?? run.status, reportedModel: changes.telemetry?.model ?? run.reportedModel };
-    await saveRun(run);
+    await store.saveRun(run);
     if (note !== null) progress.report(run.batchId, `Run ${input.position}: ${note}`);
   };
   await update({}, "the agent is working.");
   let space: RunSpace | null = null;
   try {
-    space = await createRunSpace(suite.project, input.snapshot);
+    space = await (services.createSpace ?? createRunSpace)(suite.project, input.snapshot);
     // The mock agent only installs our own reference, and the agent container runs nothing but a real provider's CLI.
-    const agentIsolation = run.agent.tool === Tool.mock ? Isolation.local : config.isolation;
+    const agentIsolation = run.agent.tool === Tool.mock ? Isolation.local : Isolation.docker;
     const context = { isolation: agentIsolation, space, choice: run.agent, eventsPath: join(folder, ResultFiles.events) };
     const stageOptions = { timeoutMs: config.limits.runMinutes * 60_000,
       ...(config.containers === undefined ? {} : { limits: config.containers }),
       ...(input.signal === undefined ? {} : { signal: input.signal }), ...(input.docker === undefined ? {} : { docker: input.docker }) };
-    const talk = config.isolation === Isolation.docker && run.agent.tool !== Tool.mock
-      ? await withAgentStage(space, run.agent.tool, stageOptions, () => converse(context, suite, config))
-      : await converse(context, suite, config);
-    await stopProcessesUnder(space.root);
+    const talk = run.agent.tool !== Tool.mock
+      ? await withAgentStage(space, run.agent.tool, stageOptions, () => (services.conversation ?? converse)(context, suite, config, { options: stageOptions }))
+      : await (services.conversation ?? converse)(context, suite, config, { options: stageOptions });
+    await (services.stop ?? stopProcessesUnder)(space.root);
     if (talk.outcome === TurnOutcome.limited) {
       await freezeFiles(space, join(folder, ResultFiles.files));
       await update({ status: RunStatus.limited, telemetry: talk.telemetry, agentSeconds: talk.seconds, finalMessage: talk.finalMessage, questions: talk.questions, error: talk.error, failureKind: FailureKind.infrastructure, finishedAt: new Date().toISOString() }, "the tool hit a usage limit. The batch pauses.");
@@ -72,35 +89,36 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     }
     await update({ status: RunStatus.building, finalMessage: talk.finalMessage, questions: talk.questions, telemetry: talk.telemetry, agentSeconds: talk.seconds, error: talk.error }, `the agent finished after ${Math.round(talk.seconds)}s. Building offline.`);
     const checkMs = config.limits.checkMinutes * 60_000;
-    const build = await buildProject(config.isolation, space, checkMs, stageOptions);
-    await stopProcessesUnder(space.root);
+    const build = await (services.build ?? buildProject)(Isolation.docker, space, checkMs, stageOptions);
+    await (services.stop ?? stopProcessesUnder)(space.root);
     const html = build.html === null ? null : join(space.work, build.html);
     if (html !== null) await copyFile(html, join(folder, ResultFiles.game));
     await update({ status: RunStatus.checking, build }, `the build ${build.passed ? "passed" : "failed"}. Running the hidden checks.`);
     const project = space.work;
     await freezeFiles(space, join(folder, ResultFiles.files));
-    const checks = await oneCheckAtATime(async () => suiteChecks[suite.id]?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots) }));
+    const checks = await oneCheckAtATime(async () => (services.checks ?? suiteChecks[suite.id])?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots) }));
     await update({ status: RunStatus.judging, checks: checks?.checks ?? [], performance: checks?.performance ?? null, shots: checks?.shots ?? [] }, "checks done. The judge is reading the code.");
     const assessment = checksAssessment(run, checks?.checks ?? [], versions);
-    await appendAssessment(assessment);
+    await store.appendAssessment(assessment);
     await update({ functionalResult: countChecks(assessment.outcomes, assessment.selection), checkOutcomes: assessment.outcomes, checkSelection: assessment.selection, checksAssessmentId: assessment.id });
-    const judgeFolder = await scratchFolder();
+    const judgeFolder = await (services.scratch ?? scratchFolder)();
     try {
       await prepareJudgeFolder(join(folder, ResultFiles.files), join(judgeFolder, "project"));
-      const judge = await judgeRun(suite, config.judge, join(judgeFolder, "project"), join(judgeFolder, "home"), JudgeTimeoutMs);
-      await appendAssessment({ ...judgeAssessment(run, judge, versions), requestedModel: config.judge });
+      const judge = await (services.judge ?? judgeRun)(suite, config.judge, join(judgeFolder, "project"), join(judgeFolder, "home"), JudgeTimeoutMs);
+      await store.appendAssessment({ ...judgeAssessment(run, judge, versions), requestedModel: config.judge });
       await update({ status: RunStatus.done, judge, finishedAt: new Date().toISOString() }, "done.");
     } finally {
       await removeFolder(judgeFolder);
     }
   } catch (error) {
+    if (error instanceof SimulatorFailure) await update({ questions: error.report.questions });
     const failureKind = run.status === RunStatus.agent ? FailureKind.infrastructure : run.status === RunStatus.judging || run.status === RunStatus.checking ? FailureKind.grading : FailureKind.attempt;
-    if (run.status === RunStatus.checking) await appendAssessment(failedChecksAssessment(run, error, versions));
-    if (run.status === RunStatus.judging) await appendAssessment({ ...judgeAssessment(run, [], versions), requestedModel: config.judge, error: error instanceof Error ? error.message : String(error) });
+    if (run.status === RunStatus.checking) await store.appendAssessment(failedChecksAssessment(run, error, versions));
+    if (run.status === RunStatus.judging) await store.appendAssessment({ ...judgeAssessment(run, [], versions), requestedModel: config.judge, error: error instanceof Error ? error.message : String(error) });
     await update({ status: RunStatus.failed, failureKind, error: error instanceof Error ? error.message : String(error), finishedAt: new Date().toISOString() }, "failed.");
   } finally {
     if (space !== null) {
-      await stopProcessesUnder(space.root);
+      await (services.stop ?? stopProcessesUnder)(space.root);
       await removeFolder(space.root);
     }
   }

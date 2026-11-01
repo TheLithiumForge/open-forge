@@ -1,5 +1,6 @@
 import type { Isolation, Tool } from "./choices.ts";
 import type { ContainerLimits } from "../execution/containers/settings.ts";
+import type { FrozenProtocol } from "../execution/conversation/answer-bank.ts";
 
 /** A tool and model. A null model or effort uses the tool's own default. */
 export interface ModelChoice {
@@ -29,5 +30,8 @@ export interface EvalConfig {
   readonly simulatedUser: ModelChoice;
   readonly isolation: Isolation;
   readonly containers?: ContainerLimits;
+  readonly protocol?: FrozenProtocol;
+  readonly layer?: number;
+  readonly development?: boolean;
   readonly limits: EvalLimits;
 }

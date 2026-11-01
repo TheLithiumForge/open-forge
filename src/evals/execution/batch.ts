@@ -1,8 +1,10 @@
 import { randomInt } from "node:crypto";
 import { dirname } from "node:path";
 import { dockerAvailable, ensureEvalImage } from "./containers/docker-image.ts";
-import { Isolation } from "../config/choices.ts";
+import { Isolation, Tool } from "../config/choices.ts";
 import { loadConfig } from "../config/config.ts";
+import type { EvalConfig } from "../config/config.types.ts";
+import { suiteProtocol } from "../config/protocol.ts";
 import type { BatchRecord, RunRecord } from "../history/results.types.ts";
 import { BatchStatus, FailureKind, RecordSchemaVersion, rerunStatuses, RunStatus } from "../history/statuses.ts";
 import { listBatches, readBatch, readRun, readRuns, readSetups, saveBatch, saveRun, saveSetups } from "../history/store.ts";
@@ -15,7 +17,7 @@ import { loadSuite } from "../benchmarks/suite.ts";
 import { progress } from "./progress.ts";
 import { executeRun } from "./run.ts";
 import { runInParallel } from "./run-queue.ts";
-import { prepareSnapshot } from "./snapshot.ts";
+import { generateSetup } from "../config/setups.ts";
 import { opaqueId, removeFolder } from "./workspace.ts";
 
 let activeBatch: string | null = null;
@@ -38,10 +40,11 @@ function shuffled<T>(items: readonly T[]): T[] {
 }
 
 /** Plans every run of the config, in random order so no setup always runs first, and starts them. */
-export async function startBatch(): Promise<BatchRecord> {
+export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   if (activeBatch !== null) throw new Error("A batch is already running.");
-  const config = await loadConfig();
-  const suite = await loadSuite(config.suite);
+  const requested = selected ?? await loadConfig();
+  const suite = await loadSuite(requested.suite);
+  const config = { ...requested, protocol: requested.protocol ?? suiteProtocol(suite) };
   const id = `${new Date().toISOString().replaceAll(/[:.]/g, "-")}-${opaqueId()}`;
   const runs = shuffled(config.agents.flatMap((agent) => config.setups.flatMap((setup) => Array.from({ length: config.runsPerSetup }, (_, repeat) => plannedRun(opaqueId(), id, setup, agent, repeat + 1)))));
   const batch: BatchRecord = { ...await captureExperiment(id, config, suite), runs: runs.map((run) => run.id) };
@@ -78,7 +81,7 @@ async function executeBatch(batchId: string): Promise<void> {
   try {
     await setStatus(BatchStatus.preparing);
     const suite = await loadSuite(batch.suite);
-    if (batch.config.isolation === Isolation.docker) {
+    if (batch.config.isolation === Isolation.docker || batch.config.agents.some((agent) => agent.tool !== Tool.mock)) {
       if (!(await dockerAvailable())) throw new Error("Docker isn't running. Start Docker, or set isolation to local.");
       progress.report(batchId, "Preparing the Docker image. The first time takes a few minutes.");
       await ensureEvalImage();
@@ -86,7 +89,7 @@ async function executeBatch(batchId: string): Promise<void> {
     const records = [];
     for (const setup of batch.config.setups) {
       progress.report(batchId, `Installing setup ${snapshots.size + 1} of ${batch.config.setups.length}.`);
-      const snapshot = await prepareSnapshot(batchId, suite, setup);
+      const snapshot = await generateSetup(suite, setup);
       snapshots.set(setup, snapshot.folder);
       records.push(snapshot.record);
     }
