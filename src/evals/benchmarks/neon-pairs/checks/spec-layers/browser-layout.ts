@@ -7,6 +7,7 @@ export const GameTitle = "Neon Pairs";
 export const ContentMaximum = 1120;
 export const FocusSamples = [0, 255, 136, 119] as const;
 export const OutlineClauses = ["I13.1", "V19.5"] as const;
+export const ScrollMarginClause = "I13.2";
 
 export async function markLayout(page: Page): Promise<void> {
   const title = page.getByText(GameTitle, { exact: true }).filter({ visible: true });

@@ -4,7 +4,7 @@
   "project": "neon-pairs",
   "baseline": "plain-docs",
   "specs": "benchmarks/neon-pairs/specs",
-  "runMinutes": 60,
+  "runMinutes": 180,
   "setups": {
     "plain-docs": { "label": "Plain docs", "commands": [], "delivery": { "kind": "plain-docs" } },
     "linked-agents": { "label": "Linked AGENTS.md", "commands": [], "delivery": { "kind": "linked-agents" } },

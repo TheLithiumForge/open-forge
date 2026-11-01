@@ -6,6 +6,8 @@ import { body, click, Labels, metric, names, reset, solve, step, visibleDeck } f
 import { reporter } from "./browser-play.ts";
 import { faceIn } from "./view-values.ts";
 import { heldMenu } from "./browser-touch.ts";
+import { Announcement, AnnouncementClause } from "./published-text.ts";
+import { LiveRegion, observeAnnouncements } from "./announcements.ts";
 
 export async function navigation(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence);
@@ -77,22 +79,22 @@ export async function controlNames(page: Page, evidence: Evidence): Promise<void
 }
 
 export async function announcements(page: Page, evidence: Evidence): Promise<void> {
-  const put = reporter(evidence), region = page.locator('[aria-live="polite"][aria-atomic="true"]');
+  const put = reporter(evidence), region = page.locator(LiveRegion);
   put("I16.1", await region.count() === 1, "Exactly one polite atomic live region.");
   const deck = await visibleDeck(page); await reset(page);
-  await region.evaluate((element) => {
-    const entries: string[] = [];
-    Object.defineProperty(window, "__evalAnnouncements", { value: entries, configurable: true });
-    new MutationObserver(() => { const text = element.textContent?.trim(); if (text) entries.push(text); }).observe(element, { subtree: true, childList: true, characterData: true });
-  });
-  const count = (): Promise<number> => page.evaluate(() => Reflect.get(window, "__evalAnnouncements").length as number);
+  const entries = await observeAnnouncements(page);
+  const count = async (): Promise<number> => (await entries()).length;
   const wrong = deck.findIndex((face) => face !== deck[0]);
   await click(page, 0); const first = await count(); await click(page, wrong); const one = await count();
   await step(page, 800); await card(page, 2).focus(); await page.keyboard.press("ArrowRight"); await step(page, 3000);
   put("I16.2 I16.5", first === 0 && one === 1 && await count() === one, "One result announcement after a turn, none for focus, clock or mismatch closing.");
   await click(page, 0); await click(page, wrong);
   put("I16.4", await count() === 2, "Two consecutive misses each cause their own live-region update.");
+  put(AnnouncementClause.miss, (await entries()).length === 2 && (await entries()).every((text) => text === Announcement.miss), "Both misses use the published wording exactly.");
   await step(page, 800); await reset(page); const before = await count(); await solve(page, deck);
   const final = await region.innerText();
   put("I16.3", await count() - before === 8 && /(?:match|pair)/i.test(final) && /(?:win|won|complete|every pair|all pairs)/i.test(final), "Eight matches produce eight announcements. The last announces the match and victory together.");
+  const matches = (await entries()).slice(before);
+  put(AnnouncementClause.matches, matches.slice(0, -1).length === 7 && matches.slice(0, -1).every((text, index) => text === Announcement.match(index + 1)), "The first and later matches use the singular and plural published wording.");
+  put(AnnouncementClause.win, final === Announcement.win(8, 0), "The final match announces eight moves and the stopped clock in one published message.");
 }

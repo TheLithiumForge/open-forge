@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { test } from "node:test";
-import { chromium, type Page } from "playwright";
+import { chromium } from "playwright";
 import { CardAttribute, card } from "../board.ts";
 import { markVisibleCards } from "./browser-cards.ts";
-import { ContentMaximum, cssGridBoard, FocusSamples, focusedOutline, focusSamples, GameTitle, LayoutAttribute, OutlineClauses } from "./browser-layout.ts";
+import { ContentMaximum, cssGridBoard, FocusSamples, focusedOutline, focusSamples, LayoutAttribute, OutlineClauses, ScrollMarginClause } from "./browser-layout.ts";
+import { fakeGame } from "./browser-game.fixture.ts";
 import { scroll } from "./browser-access.ts";
 import { layout, spacingOnScale, styles } from "./browser-view.ts";
 import { readableLayout, zoom, ZoomClause, ZoomViewport } from "./browser-zoom.ts";
@@ -12,69 +13,6 @@ import { Labels } from "./browser-session.ts";
 import { Evidence } from "./outcomes.ts";
 import { Rules } from "./rules.ts";
 
-async function fakeGame(page: Page): Promise<void> {
-  await page.clock.install();
-  await page.setContent(`<style>
-    * { box-sizing: border-box } body { margin: 0; font: 16px/24px system-ui }
-    p { margin: 0 } article { max-width: ${ContentMaximum}px; margin: 0 auto; padding: 16px }
-    .title { font-size: 24px; line-height: 32px } .controls { display: flex; gap: 6px; flex-wrap: wrap }
-    .viewport { max-height: min(70dvh, 768px); max-width: 100%; width: fit-content; padding: 6px; border: 1px solid; overflow: auto }
-    .board { display: flex; flex-wrap: wrap; gap: 6px }
-    .card { flex: 0 0 44px; height: 44px; padding: 0; border: 2px solid; border-radius: 8px; scroll-margin: 6px }
-    .card:focus { outline: 3px solid white; outline-offset: 2px }
-  </style><main hidden><h1>${GameTitle}</h1></main><article><section>
-    <div class="title"><span>${GameTitle}</span></div>
-    <div class="controls"><label>${Labels.size}<select><option value="4">4x4</option><option value="16">16x16</option></select></label><button>${Labels.fresh}</button><button>${Labels.restart}</button></div>
-    <p id="status"></p><p id="result"></p><div class="viewport"><div class="board"></div></div>
-    <input aria-label="Unstyled native control"><p id="secondary" style="font-size:14px;margin:0">Secondary text</p>
-  </section></article>`);
-  await page.evaluate(({ colors, sizeLabel }) => {
-    const board = document.querySelector<HTMLElement>(".board"), select = document.querySelector("select");
-    if (!board || !select) throw new Error("Missing fake controls.");
-    select.setAttribute("aria-label", sizeLabel);
-    let size = 4, moves = 0, first: number | null = null;
-    const matched = new Set<number>();
-    const label = (index: number, state: string): string => `Row ${Math.floor(index / size) + 1}, column ${index % size + 1}, ${state}`;
-    const face = (index: number): string => `${colors[Math.floor(index / 2) % colors.length]} solid circle, marker top`;
-    const status = (): void => {
-      const status = document.querySelector("#status"), result = document.querySelector("#result");
-      if (status) status.textContent = `Moves: ${moves} Pairs: ${matched.size / 2}/${size * size / 2} Time: 0:00 Best: none`;
-      if (result) result.textContent = matched.size === size * size ? `You won in ${moves} moves. Time: 0:00` : "";
-    };
-    const start = (): void => {
-      size = Number(select.value); moves = 0; first = null; matched.clear(); board.replaceChildren();
-      board.style.width = `${size * 50 - 6}px`;
-      for (let index = 0; index < size * size; index++) {
-        const button = document.createElement("button"); button.className = "card"; button.tabIndex = index === 0 ? 0 : -1;
-        button.setAttribute("aria-label", label(index, "closed"));
-        button.onfocus = () => { for (const sibling of board.querySelectorAll("button")) sibling.tabIndex = sibling === button ? 0 : -1; button.scrollIntoView({ block: "nearest", inline: "nearest" }); };
-        button.onclick = () => {
-          if (matched.has(index) || first === index) return;
-          button.setAttribute("aria-label", label(index, `${face(index)}, revealed`));
-          if (first === null) first = index;
-          else {
-            moves++;
-            if (face(first) === face(index)) for (const position of [first, index]) {
-              matched.add(position); board.children[position]?.setAttribute("aria-label", label(position, `${face(position)}, matched`));
-            }
-            first = null;
-          }
-          status();
-        };
-        button.onkeydown = (event) => {
-          const next = event.ctrlKey && event.key === "End" ? size * size - 1 : event.ctrlKey && event.key === "Home" ? 0 : event.key === "ArrowRight" ? index + 1 : event.key === "ArrowLeft" ? index - 1 : event.key === "ArrowDown" ? index + size : -1;
-          if (next >= 0 && next < size * size) { event.preventDefault(); (board.children[next] as HTMLElement).focus(); }
-        };
-        board.append(button);
-      }
-      status();
-    };
-    select.onchange = start;
-    for (const button of document.querySelectorAll<HTMLButtonElement>(".controls button")) button.onclick = start;
-    start();
-  }, { colors: Rules.colors, sizeLabel: Labels.size });
-  await markVisibleCards(page);
-}
 
 test("layout discovery accepts named cards in flex containers without main or h1", async () => {
   const browser = await chromium.launch(existsSync(chromium.executablePath()) ? {} : { channel: "chrome" });
@@ -136,10 +74,10 @@ test("scroll clauses pass protected outlines and fail clipped mid-board outlines
   try {
     const page = await browser.newPage({ hasTouch: true }); await fakeGame(page);
     const protectedBoard = new Evidence(); await scroll(page, protectedBoard);
-    for (const clause of OutlineClauses) assert.equal(protectedBoard.outcomes.find((item) => item.clause === clause)?.status, "pass");
+    for (const clause of [...OutlineClauses, ScrollMarginClause]) assert.equal(protectedBoard.outcomes.find((item) => item.clause === clause)?.status, "pass");
     await page.addStyleTag({ content: ".card { scroll-margin: 0 }" });
     const clipped = new Evidence(); await scroll(page, clipped);
-    for (const clause of OutlineClauses) assert.equal(clipped.outcomes.find((item) => item.clause === clause)?.status, "fail");
+    for (const clause of [...OutlineClauses, ScrollMarginClause]) assert.equal(clipped.outcomes.find((item) => item.clause === clause)?.status, "fail");
   } finally { await browser.close(); }
 });
 

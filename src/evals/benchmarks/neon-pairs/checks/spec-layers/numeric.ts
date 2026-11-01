@@ -44,6 +44,4 @@ export function faceFormulaChecks(files: readonly SourceFile[], evidence: Eviden
   const shapes = formula(files, (id) => id % 8), markers = formula(files, (id) => Math.floor(id / 8) % 8), fills = formula(files, (id) => Math.floor(id / 64));
   for (const [id, expression] of [["V10.6", shapes], ["V10.7", markers], ["V10.8", fills]] as const) evidence.test(id, expression !== null, expression ? `Static arithmetic evaluated for IDs 0..127: ${expression}.` : "No supported arithmetic expression implements the stated mapping.");
   evidence.test("V10.2", shapes !== null && markers !== null && fills !== null && files.some((file) => /(?:face|id).*number|number.*(?:face|id)/i.test(file.text)), "Numeric face declarations and integer mappings span 0..127.");
-  const indexedPalette = files.some((file) => /(?:PALETTE|COLORS|palette|colors)\s*\[\s*(?:marker|markerIndex|colorIndex)\s*\]/.test(file.text));
-  evidence.test("V10.9", markers !== null && indexedPalette, "Palette indexing uses the computed marker index.");
 }

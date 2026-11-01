@@ -1,5 +1,5 @@
 {
-    "sourceHash":  "66b339a53d509dd235b9843aa5efade12e3bb607df351bf1a096fe2a755bc583",
+    "sourceHash":  "7c03b21e8648bdec0e181dc7f33c210a7096ffaa91d1c4597302588595837862",
     "files":  [
                   {
                       "path":  "README.md",
@@ -7,11 +7,11 @@
                   },
                   {
                       "path":  "rules.md",
-                      "sha256":  "91bad23d0e1b3c8061cd383d5e95ddbd75392c90c552cdb3d49844e6713fd47e"
+                      "sha256":  "409a98acf2b3b7759c7a7d293ad47b6ae070b8b2f8ebf9bbe50b2216ca01963a"
                   },
                   {
                       "path":  "input.md",
-                      "sha256":  "c1af88b2c36d3d9da6d6b9cf30bfc1b075e2499f6d49b787a108c903156f3d46"
+                      "sha256":  "d218fce15b723688bc1e9382ce4b4b766910ee75e141b033f9b62b42388a6f4a"
                   },
                   {
                       "path":  "controls.md",
@@ -19,7 +19,7 @@
                   },
                   {
                       "path":  "visuals.md",
-                      "sha256":  "49f9ee861beb34fb6490571465733e4ea6f4ce0a2b705fd4b34f2f9903bab1a6"
+                      "sha256":  "3f0b1244f8032c4cdefb55acb56dfe8bf5ade20223174377942a42af04300376"
                   },
                   {
                       "path":  "sound.md",

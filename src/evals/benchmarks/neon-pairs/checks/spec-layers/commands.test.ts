@@ -22,7 +22,7 @@ test("replay comparator rejects dropped moves, invalid success and checker timeo
   const expected = expectedReplay(vector.text); assert.ok(expected);
   assert.equal(compareReplay(vector, { ...Success, stdout: JSON.stringify(expected) }), true);
   assert.equal(compareReplay(vector, { ...Success, stdout: JSON.stringify(freshSnapshot(KnownCode)) }), false);
-  assert.equal(compareReplay({ ...vector, text: "{" }, { ...Success, code: 1 }), true);
+  assert.equal(compareReplay({ ...vector, text: "{" }, { ...Success, code: 1, stderr: "Invalid replay." }), true);
   assert.equal(compareReplay({ ...vector, text: "{" }, Success), false);
   assert.throws(() => compareReplay(vector, { ...Success, timedOut: true }));
   const evidence = new Evidence(); replayOutcomes([vector], [{ ...Success, stdout: JSON.stringify(freshSnapshot(KnownCode)) }], evidence);
@@ -36,7 +36,7 @@ test("frozen vectors cover rejection, valid boundary states and known literal de
   const literal = replays.find((item) => item.name === `known deal ${KnownCode}`);
   assert.ok(literal);
   assert.equal(expectedReplay(literal.text)?.matched.length, 16);
-  const results = replays.map((item) => { const expected = expectedReplay(item.text); return { ...Success, code: expected ? 0 : 1, stdout: expected ? JSON.stringify(expected) : "" }; });
+  const results = replays.map((item) => { const expected = expectedReplay(item.text); return { ...Success, code: expected ? 0 : 1, stdout: expected ? JSON.stringify(expected) : "", stderr: expected ? "" : "Invalid replay." }; });
   const evidence = new Evidence(); replayOutcomes(replays, results, evidence);
   assert.ok(evidence.outcomes.every((item) => item.status === "pass"));
 });

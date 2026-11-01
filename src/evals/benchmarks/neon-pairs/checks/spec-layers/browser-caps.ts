@@ -29,8 +29,9 @@ export async function visibleTimeCap(page: Page, evidence: Evidence): Promise<vo
   const text = await body(page);
   put(CapClause.elapsedPlay, firstMatch && !faceIn(closed[a] ?? "") && !faceIn(closed[b] ?? "") && metric(text, "pairs") === deck.length / 2,
     "After a controlled jump beyond the displayed time limit, a match, an 800ms miss and the remaining game still finish through visible play.");
-  put(CapClause.elapsedDisplay, atLimit === DisplayedMaximumMs && elapsedIn(text) === DisplayedMaximumMs,
-    "The visible clock shows the capped time at its seconds resolution and keeps it through further play. Exact stored milliseconds need Layer 3 snapshots or source review.");
+  const after = elapsedIn(text);
+  put(CapClause.elapsedDisplay, atLimit !== null && after !== null && after >= atLimit && after - atLimit <= 1000,
+    "The visible clock stays at any implemented cap, or advances by the continued active interval. Layer 2 doesn't require a numeric cap. Layer 3 checks the exact stored limit separately.");
 }
 
 export async function snapshotCaps(page: Page, evidence: Evidence): Promise<void> {

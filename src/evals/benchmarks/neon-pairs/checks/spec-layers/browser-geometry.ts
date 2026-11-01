@@ -8,6 +8,7 @@ import { expectedDeck } from "./board-code.ts";
 import { Rules } from "./rules.ts";
 import { near, rgb } from "./view-values.ts";
 import { cssGridBoard } from "./browser-layout.ts";
+import { facePaint, TargetClause } from "./browser-targets.ts";
 
 export async function svgGeometry(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence); await loadBoard(page, "np1-16-1");
@@ -32,6 +33,10 @@ export async function svgGeometry(page: Page, evidence: Evidence): Promise<void>
   put("V12.4", marker.every((shape) => shape && shape.width === 3 && rgb(shape.stroke) === "#111625"), "Markers use a 3-unit Face-background stroke.");
   put("V12.5", marker.every((shape) => !shape || near(shape.box.x + 5, 50) || near(shape.box.y + 5, 50) || near(Math.abs(shape.box.x + 5 - 50), 28.284, 0.01) && near(Math.abs(shape.box.y + 5 - 50), 28.284, 0.01)), "Diagonal marker offsets use the normalized 28.284-unit components.");
   put("V12.6", main.every((shape, index) => (deck[index] ?? 0) < 64 || shape?.width === 5 && shape.fill === "none"), "Outlined main shapes use a 5-unit stroke and no fill.");
+  put(TargetClause.paints, main.every((shape, index) => {
+    const dot = marker[index];
+    return shape && dot && facePaint(deck[index] ?? -1, shape, dot);
+  }), "Every solid fill, outlined stroke and marker fill uses that face's color. Outline fills stay empty and marker strokes keep Face background.");
   put("V01.2", await cssGridBoard(page), "The named card buttons share a CSS Grid board.");
-  put("V01.4", await page.locator("canvas,[data-slot]").count() === 0, "No canvas or shadcn data-slot components occur in the rendered game.");
+  put("V01.4", await page.locator("canvas,[data-slot]").count() === 0, "No canvas or component-library markers occur in the rendered game. Dependency checks also cover T01.4.");
 }

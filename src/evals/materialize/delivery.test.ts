@@ -16,7 +16,7 @@ test("document cases freeze the permitted banks, time limit and delivery cells",
   const two = await loadSuite(DocumentCase.two);
   const three = await loadSuite(DocumentCase.three);
   assert.equal(two.runMinutes, CaseTimeLimitMinutes);
-  assert.equal(three.runMinutes, CaseTimeLimitMinutes);
+  assert.equal(three.runMinutes, 180);
   assert.equal(two.intent.length, 3);
   assert.deepEqual(three.intent, []);
   assert.deepEqual(Object.keys(two.setups), Object.values(DocumentSetups));

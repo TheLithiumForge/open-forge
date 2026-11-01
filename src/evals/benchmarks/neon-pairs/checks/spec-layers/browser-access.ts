@@ -6,7 +6,7 @@ import { reporter } from "./browser-play.ts";
 import { faceIn, VisualTiming } from "./view-values.ts";
 import { styles } from "./browser-view.ts";
 import { touchBoardEnd } from "./browser-touch.ts";
-import { focusSamples, OutlineClauses } from "./browser-layout.ts";
+import { focusSamples, OutlineClauses, ScrollMarginClause } from "./browser-layout.ts";
 export { zoom } from "./browser-zoom.ts";
 
 export async function accessibleNames(page: Page, evidence: Evidence): Promise<void> {
@@ -24,9 +24,11 @@ export async function accessibleNames(page: Page, evidence: Evidence): Promise<v
 
 export async function scroll(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence), results: boolean[] = [], reachable: boolean[] = [], counts: number[] = [], minimum: boolean[] = [], fits: boolean[] = [], touch: boolean[] = [];
+  const margins: boolean[] = [];
   for (const width of [360, 1280]) {
     await page.setViewportSize({ width, height: 800 }); await changeSize(page, 16);
     counts.push((await names(page)).length); const measured = await styles(page);
+    margins.push(await page.locator(`[${CardAttribute}]`).evaluateAll((elements) => elements.length === 256 && elements.every((element) => ["scrollMarginTop", "scrollMarginRight", "scrollMarginBottom", "scrollMarginLeft"].every((property) => Number.parseFloat(Reflect.get(getComputedStyle(element), property) as string) >= 6))));
     minimum.push(measured.cardBox.width >= 44 && measured.cardBox.height >= 44);
     fits.push(measured.pageWidth <= width);
     await card(page, 0).focus(); await page.keyboard.press("Control+End");
@@ -42,6 +44,7 @@ export async function scroll(page: Page, evidence: Evidence): Promise<void> {
     }
   }
   put(OutlineClauses.join(" "), results.every(Boolean), "Corner and mid-board focused cards keep their 5px outline allowance inside every clipping ancestor after focus scrolling.");
+  put(ScrollMarginClause, margins.every(Boolean) && results.every(Boolean), "All 256 cards have at least 6px scroll margin on every side and keep interior outlines visible at both viewport widths.");
   put("V19.1", counts.every((count) => count === 256), `Large card counts at phone and desktop widths: ${counts.join(", ")}.`);
   put("V19.2", fits.every(Boolean) && await page.getByRole("button", { name: "New Game", exact: true }).isVisible(), "Both viewport widths fit the page and keep New Game reachable.");
   put("V19.3", minimum.every(Boolean), "All sampled large-board cards remain at least 44px square.");

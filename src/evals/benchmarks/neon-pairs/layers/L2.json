@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "specVersion": 2,
-  "version": "L2-v3",
+  "specVersion": 2.1,
+  "version": "L2-v4",
   "layer": "L2",
   "checks": [
     {
@@ -258,14 +258,15 @@
         "R05.1",
         "R05.2",
         "R05.3",
-        "R05.4"
+        "R05.4",
+        "R05.9"
       ],
       "assertions": [
         {
           "id": "clause-R05.1",
           "clause": "R05.1",
           "method": "browser",
-          "text": "Add one move on the second valid reveal until the move cap is reached."
+          "text": "Add one move on the second valid reveal."
         },
         {
           "id": "clause-R05.2",
@@ -283,7 +284,13 @@
           "id": "clause-R05.4",
           "clause": "R05.4",
           "method": "browser",
-          "text": "A match and a miss each cost one move until the move cap is reached."
+          "text": "A match and a miss each cost one move."
+        },
+        {
+          "id": "clause-R05.9",
+          "clause": "R05.9",
+          "method": "browser",
+          "text": "Show the current move count throughout play as Moves: N."
         }
       ]
     },
@@ -310,7 +317,7 @@
           "id": "clause-R06.2",
           "clause": "R06.2",
           "method": "browser",
-          "text": "Show matched pairs against the total throughout play."
+          "text": "Show matched pairs against the total throughout play as Pairs: M/T, where M is matched pairs and T is the total."
         },
         {
           "id": "clause-R06.3",
@@ -351,7 +358,8 @@
         "R07.7",
         "R07.8",
         "R07.10",
-        "R07.11"
+        "R07.11",
+        "R07.12"
       ],
       "assertions": [
         {
@@ -407,6 +415,12 @@
           "clause": "R07.11",
           "method": "browser",
           "text": "The clock shows the capped elapsed time."
+        },
+        {
+          "id": "clause-R07.12",
+          "clause": "R07.12",
+          "method": "browser",
+          "text": "Show the clock throughout play as Time: m:ss. Round elapsed seconds down, pad seconds to two digits and let minutes continue past 59. For example, 3600000ms shows Time: 60:00."
         }
       ]
     },
@@ -532,7 +546,7 @@
           "id": "clause-R10.6",
           "clause": "R10.6",
           "method": "browser",
-          "text": "Show the current size's best moves during play and after completion."
+          "text": "Show the current size's best moves during play and after completion as Best: N."
         },
         {
           "id": "clause-R10.7",
@@ -904,7 +918,8 @@
       "area": "requirements",
       "method": "browser",
       "clauses": [
-        "I13.1"
+        "I13.1",
+        "I13.2"
       ],
       "assertions": [
         {
@@ -912,6 +927,12 @@
           "clause": "I13.1",
           "method": "browser",
           "text": "Scroll each focused card into view with nearest alignment inside the board."
+        },
+        {
+          "id": "clause-I13.2",
+          "clause": "I13.2",
+          "method": "browser",
+          "text": "Give every card a scroll margin of at least 6px so its complete focus outline stays in view, including mid-board cards."
         }
       ]
     },
@@ -931,7 +952,7 @@
           "id": "clause-I14.1",
           "clause": "I14.1",
           "method": "browser",
-          "text": "Hidden card names contain the one-based row, column and closed state."
+          "text": "Name hidden cards by one-based row, column and closed state. For example, Row 1, column 1, closed."
         },
         {
           "id": "clause-I14.2",
@@ -968,7 +989,10 @@
         "I16.2",
         "I16.3",
         "I16.4",
-        "I16.5"
+        "I16.5",
+        "I16.6",
+        "I16.7",
+        "I16.8"
       ],
       "assertions": [
         {
@@ -1000,6 +1024,75 @@
           "clause": "I16.5",
           "method": "browser",
           "text": "Focus movement, clock renders and mismatch closing don't repeat a result."
+        },
+        {
+          "id": "clause-I16.6",
+          "clause": "I16.6",
+          "method": "browser",
+          "text": "Announce the first match as \"Pair found. 1 pair matched.\" Announce later matches as \"Pair found. M pairs matched.\", where M is matched pairs."
+        },
+        {
+          "id": "clause-I16.7",
+          "clause": "I16.7",
+          "method": "browser",
+          "text": "Announce a miss as No match. Cards close after a short pause."
+        },
+        {
+          "id": "clause-I16.8",
+          "clause": "I16.8",
+          "method": "browser",
+          "text": "Announce the final match as \"Pair found. All pairs found in N moves and time.\", where N is moves and time uses the R07 display format."
+        }
+      ]
+    },
+    {
+      "id": "l2-screen-reader",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "I17.1",
+        "I17.2",
+        "I17.3",
+        "I17.4",
+        "I17.5",
+        "I17.6"
+      ],
+      "assertions": [
+        {
+          "id": "clause-I17.1",
+          "clause": "I17.1",
+          "method": "browser",
+          "text": "Support a complete 4x4 keyboard game with a screen reader. Deliver automated accessibility-tree evidence for this journey."
+        },
+        {
+          "id": "clause-I17.2",
+          "clause": "I17.2",
+          "method": "browser",
+          "text": "Find Grid size and New Game by name."
+        },
+        {
+          "id": "clause-I17.3",
+          "clause": "I17.3",
+          "method": "browser",
+          "text": "Expose closed positions, revealed face names and states and one live-region result per turn in the accessibility tree."
+        },
+        {
+          "id": "clause-I17.4",
+          "clause": "I17.4",
+          "method": "browser",
+          "text": "Make the win, final moves and time available."
+        },
+        {
+          "id": "clause-I17.5",
+          "clause": "I17.5",
+          "method": "browser",
+          "text": "Tab out of the board and start another game."
+        },
+        {
+          "id": "clause-I17.6",
+          "clause": "I17.6",
+          "method": "browser",
+          "text": "Record the browser and tool versions in the project README and whether a screen reader was used. If used, record its name and version. The user confirms spoken output during acceptance. Spoken confirmation is not the developer deliverable."
         }
       ]
     },
@@ -1145,7 +1238,7 @@
           "id": "clause-V06.2",
           "clause": "V06.2",
           "method": "browser",
-          "text": "Panel background is #141827."
+          "text": "Use #141827 for the board scroll area, reproduction panel and non-card button, select, input and textarea backgrounds."
         },
         {
           "id": "clause-V06.3",
@@ -1169,7 +1262,7 @@
           "id": "clause-V06.6",
           "clause": "V06.6",
           "method": "browser",
-          "text": "Secondary text is #B8BDD2."
+          "text": "Use #B8BDD2 for secondary text, meaning help text, status labels and optional supporting text."
         },
         {
           "id": "clause-V06.7",
@@ -1226,13 +1319,13 @@
           "id": "clause-V08.4",
           "clause": "V08.4",
           "method": "browser",
-          "text": "Secondary text is 14px."
+          "text": "Set secondary text to 14px, meaning help text, status labels and optional supporting text."
         },
         {
           "id": "clause-V09.1",
           "clause": "V09.1",
           "method": "browser",
-          "text": "Layout gaps, padding and margins use 4px, 6px, 8px, 12px, 16px, 24px or 32px."
+          "text": "Positive layout gaps, padding and margins you set use 4px, 6px, 8px, 12px, 16px, 24px or 32px. Allow zero resets and automatic centering. Reset browser default margins. Native control internals are not covered."
         },
         {
           "id": "clause-V09.2",
@@ -1251,6 +1344,7 @@
         "V10.3",
         "V10.4",
         "V10.5",
+        "V10.9",
         "V13.1",
         "V13.2",
         "V14.1",
@@ -1283,6 +1377,12 @@
           "clause": "V10.5",
           "method": "browser",
           "text": "Use solid and outline fills."
+        },
+        {
+          "id": "clause-V10.9",
+          "clause": "V10.9",
+          "method": "browser",
+          "text": "Color is the palette entry at the marker index."
         },
         {
           "id": "clause-V13.1",
@@ -1318,7 +1418,7 @@
           "id": "clause-V15.2",
           "clause": "V15.2",
           "method": "browser",
-          "text": "Matched cards add a green border and check mark."
+          "text": "Matched cards add a Green palette (#8BEA7D) border and check mark."
         },
         {
           "id": "clause-V15.3",
@@ -1347,7 +1447,7 @@
           "id": "clause-V16.2",
           "clause": "V16.2",
           "method": "browser",
-          "text": "Hover changes only the border."
+          "text": "Hover changes only the border to the Text color (#F4F6FF). Matched cards keep their Green border when hovered."
         }
       ]
     },
@@ -1368,13 +1468,13 @@
           "id": "clause-V17.1",
           "clause": "V17.1",
           "method": "browser",
-          "text": "Use 120ms border and opacity transitions."
+          "text": "Use a 120ms border-color transition."
         },
         {
           "id": "clause-V17.2",
           "clause": "V17.2",
           "method": "browser",
-          "text": "Turn those transitions off under prefers-reduced-motion: reduce."
+          "text": "Turn that transition off under prefers-reduced-motion: reduce."
         },
         {
           "id": "clause-V18.1",
@@ -1462,25 +1562,25 @@
           "id": "clause-V20.1",
           "clause": "V20.1",
           "method": "browser",
-          "text": "At 200% browser zoom from 1280x800 keep controls, status and the win summary readable without overlap."
+          "text": "At a 640x400 CSS-pixel viewport with device scale 2, equivalent to 200% browser zoom from 1280x800, keep controls, status and the win summary readable without overlap."
         },
         {
           "id": "clause-V20.2",
           "clause": "V20.2",
           "method": "browser",
-          "text": "Keep the outer page within viewport width at that zoom."
+          "text": "Keep the outer page within viewport width at that equivalent zoom layout."
         },
         {
           "id": "clause-V20.3",
           "clause": "V20.3",
           "method": "browser",
-          "text": "Keep 4x4 and 16x16 playable by pointer and keyboard."
+          "text": "At that equivalent zoom layout keep 4x4 and 16x16 playable by pointer and keyboard."
         },
         {
           "id": "clause-V20.4",
           "clause": "V20.4",
           "method": "browser",
-          "text": "Allow board scrolling and show the whole focused card and outline."
+          "text": "At that equivalent zoom layout allow board scrolling and show the whole focused card and outline."
         },
         {
           "id": "clause-V20.5",
@@ -1647,6 +1747,7 @@
     "l2-scroll",
     "l2-names",
     "l2-announcements",
+    "l2-screen-reader",
     "l2-native",
     "l2-layout",
     "l2-colors",
@@ -1678,50 +1779,6 @@
     }
   ],
   "review": [
-    {
-      "clause": "R05.5",
-      "reason": "Layer 2 has no snapshot import. Reaching 999999 moves needs nearly two million card activations. Review the cap and continued play in source instead of adding a private state hook."
-    },
-    {
-      "clause": "R05.6",
-      "reason": "Layer 2 has no snapshot import. Reaching 999999 moves needs nearly two million card activations. Review the cap and continued play in source instead of adding a private state hook."
-    },
-    {
-      "clause": "R05.7",
-      "reason": "Layer 2 has no snapshot import. Reaching 999999 moves needs nearly two million card activations. Review the cap and continued play in source instead of adding a private state hook."
-    },
-    {
-      "clause": "R05.8",
-      "reason": "Layer 2 has no snapshot import. Reaching 999999 moves needs nearly two million card activations. Review the cap and continued play in source instead of adding a private state hook."
-    },
-    {
-      "clause": "R07.9",
-      "reason": "Layer 2 can reach the displayed time cap with a controlled clock, but its display can round to seconds. Review the exact stored millisecond limit without requiring snapshot controls."
-    },
-    {
-      "clause": "I17.1",
-      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
-    },
-    {
-      "clause": "I17.2",
-      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
-    },
-    {
-      "clause": "I17.3",
-      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
-    },
-    {
-      "clause": "I17.4",
-      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
-    },
-    {
-      "clause": "I17.5",
-      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
-    },
-    {
-      "clause": "I17.6",
-      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
-    },
     {
       "clause": "V11.1",
       "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."

@@ -9,6 +9,10 @@ import { freshSnapshot } from "./replay.ts";
 import { snapshotsEqual } from "./snapshot.ts";
 import { SelectionKind } from "./rules.ts";
 import { KnownCode } from "./vectors.ts";
+import { AnnouncementClause, LoadNotice } from "./published-text.ts";
+import { LiveRegion, observeAnnouncements } from "./announcements.ts";
+
+export const ImportClause = { completedStatus: "C09.5", resume: "C10.1", completed: "C10.7", pause: "D07.6", best: "C12.4", sessionBest: "A06.3", selectedSize: "C01.4" } as const;
 
 export async function invalidLoads(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence); await loadBoard(page, KnownCode); await click(page, 0);
@@ -44,11 +48,11 @@ export async function importedProgress(page: Page, evidence: Evidence): Promise<
   const loadedText = await body(page), loaded = await exported(page);
   put("C09.2 C09.3", loaded !== null && snapshotsEqual(loaded, pending), "A complete valid snapshot replaces progress in a paused state.");
   put("C09.4", loadedText.includes("Loaded snapshot. Select Resume to continue."), "The exact imported-pause status is shown.");
-  put("C10.1", initiallyAbsent && await resume.count() === 1, "Resume is absent in a normal game and appears for imported paused progress.");
+  put(ImportClause.resume, initiallyAbsent && await resume.count() === 1, "Resume is absent in a normal game and appears for imported paused progress.");
   const before = await names(page); await click(page, 2); await card(page, 0).focus(); await page.keyboard.press("ArrowRight");
   put("C10.4 C10.5", JSON.stringify(await names(page)) === JSON.stringify(before) && await card(page, 1).evaluate((element) => element === document.activeElement), "Paused cards ignore activation while arrow focus still moves.");
   await step(page, 5000); const paused = await exported(page);
-  put("R04.5 R07.4 D07.6", paused !== null && snapshotsEqual(paused, pending), "5000 controlled milliseconds change neither imported clock nor remaining mismatch time.");
+  put(`R04.5 R07.4 ${ImportClause.pause}`, paused !== null && snapshotsEqual(paused, pending), "5000 controlled milliseconds change neither imported clock nor remaining mismatch time.");
   await resume.click();
   put("C10.6 C13.4", await card(page, 1).evaluate((element) => element === document.activeElement), "Resume moves focus to the remembered card before disappearing.");
   await step(page, 499); const remaining = await exported(page); await step(page, 1); const closed = await exported(page);
@@ -58,21 +62,27 @@ export async function importedProgress(page: Page, evidence: Evidence): Promise<
   await importText(page, JSON.stringify(completed));
   put("C12.1 C12.2 A06.2", /(?:won|win|complete|every pair)/i.test(await body(page)) && await page.evaluate(() => document.getAnimations().every((animation) => animation.playState !== "running")), "Completed import displays a static completion without celebration.");
   put("C12.3", await page.evaluate(() => JSON.stringify(Object.entries(localStorage))) === saved, "Completed import does not write a best score.");
-  await resume.click(); await step(page, 1000); const still = await exported(page);
-  put("C10.7", still !== null && snapshotsEqual(still, completed), "Resume leaves an imported completed game completed with its fixed time.");
+  const completedUnpaused = await resume.count() === 0 && (await body(page)).includes(LoadNotice.completed);
+  await step(page, 1000); const still = await exported(page);
+  put(`${ImportClause.completedStatus} ${ImportClause.completed}`, completedUnpaused && still !== null && snapshotsEqual(still, completed), "A completed import shows Loaded completed snapshot. without Resume and keeps its fixed time.");
+  evidence.merge(ImportClause.resume, completedUnpaused ? "pass" : "fail", "Completed imports show no Resume button.");
+  evidence.merge(ImportClause.pause, completedUnpaused && still !== null && snapshotsEqual(still, completed) ? "pass" : "fail", "Completed imported progress stays completed without a pause.");
   const unfinished = { ...completed, moves: 7, matched: completed.matched.filter((index) => index !== 0 && index !== 11) };
   await importText(page, JSON.stringify(unfinished)); await resume.click(); await click(page, 0); await click(page, 11);
-  put("C12.4 A06.3", /best(?:\s+moves)?[\s:]*8/i.test(await body(page)), "A genuine later win from unfinished imported progress records eight moves as best.");
+  const recordedBest = /Best:\s*8\b/.test(await body(page));
+  await page.reload(); await markVisibleCards(page);
+  put(`${ImportClause.best} ${ImportClause.sessionBest}`, recordedBest && /Best:\s*8\b/.test(await body(page)), "A genuine later win from unfinished imported progress records eight moves as best and keeps it after reload.");
   put("C07.3", evidence.outcomes.find((item) => item.clause === "D10.1")?.status === "pass", "The snapshot byte-limit vectors exercise the same public textarea parser.");
 }
 
 export async function loadedFocusAndSize(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence), focused: boolean[] = [], first: boolean[] = [];
-  await loadBoard(page, "np1-6-2"); await page.reload();
+  await loadBoard(page, "np1-6-2"); const boardSelected = await page.getByRole("combobox", { name: Labels.size }).inputValue(); await page.reload();
   const boardSaved = await page.getByRole("combobox", { name: Labels.size }).inputValue();
-  await importText(page, JSON.stringify(freshSnapshot("np1-8-3"))); await page.reload();
+  await importText(page, JSON.stringify(freshSnapshot("np1-8-3"))); const snapshotSelected = await page.getByRole("combobox", { name: Labels.size }).inputValue(); await page.reload();
   const snapshotSaved = await page.getByRole("combobox", { name: Labels.size }).inputValue();
   put("R08.5", boardSaved === "6" && snapshotSaved === "8", "Successful board and snapshot loads save their size across same-origin reload.");
+  put(ImportClause.selectedSize, boardSelected === "6" && snapshotSelected === "8", "Both successful load controls select the loaded size immediately.");
   await loadBoard(page, KnownCode);
   for (const label of [Labels.loadBoard, Labels.export, Labels.loadSnapshot]) {
     await card(page, 7).focus(); await reproduction(page);
@@ -84,4 +94,21 @@ export async function loadedFocusAndSize(page: Page, evidence: Evidence): Promis
   }
   put("C13.2", focused.every(Boolean), "Board load, snapshot load and export retain button focus.");
   put("I12.2", first.every(Boolean), "Successful loads reset the remembered board stop to the first card.");
+}
+
+export async function loadAnnouncements(page: Page, evidence: Evidence): Promise<void> {
+  const entries = await observeAnnouncements(page), region = page.locator(LiveRegion);
+  const completed = { ...freshSnapshot(KnownCode), started: true, moves: 8, matched: Array.from({ length: 16 }, (_, index) => index) };
+  const actions: readonly [string, () => Promise<void>][] = [
+    [LoadNotice.unfinished, () => importText(page, JSON.stringify(freshSnapshot(KnownCode)))],
+    [LoadNotice.completed, () => importText(page, JSON.stringify(completed))],
+    [LoadNotice.boardError, () => loadBoard(page, "invalid")],
+    [LoadNotice.snapshotError, () => importText(page, "{")],
+  ];
+  const results: boolean[] = [];
+  for (const [notice, action] of actions) for (let repeat = 0; repeat < 2; repeat++) {
+    const before = (await entries()).length; await action();
+    results.push((await entries()).length === before + 1 && await region.innerText() === notice && await page.locator("details").getByText(notice, { exact: true }).isVisible());
+  }
+  reporter(evidence)(AnnouncementClause.loads, results.every(Boolean), "Unfinished, completed and rejected loads each update the same live region once, including repeated statuses, and show their status beside reproduction controls.");
 }

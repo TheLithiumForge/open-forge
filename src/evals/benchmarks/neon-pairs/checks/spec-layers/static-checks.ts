@@ -4,6 +4,7 @@ import { reporter } from "./browser-play.ts";
 import { authored, compilerOptions, descendants, jsonConfig, jsonObject, syntax, type SourceFile } from "./source.ts";
 import { object } from "./requirements.ts";
 import { productionFiles } from "./production-graph.ts";
+import { toolRecord, TreeClause } from "./browser-tree.ts";
 
 export const Pins = [
   { clause: "T02.1", packages: ["react", "react-dom"], version: "19.3.1" }, { clause: "T02.2", packages: ["typescript"], version: "7.0.2" },
@@ -21,6 +22,8 @@ export function staticChecks(files: readonly SourceFile[], evidence: Evidence, f
   put("T01.1", typeof deps["react"] === "string" && typeof deps["react-dom"] === "string" && sources.length > 0 && /react-dom(?:\/client)?/.test(source), "Read dependency entries, authored TypeScript and DOM mounting imports.");
   put("T01.2", /<button\b/.test(source) && /<select\b/.test(source), "Authored JSX renders native buttons and select.");
   put("S02.3", !/<(?:button|input|select)[^>]*(?:sound|audio|mute)|(?:aria-label|title)\s*=\s*["'][^"']*(?:sound|mute)/i.test(source), "Authored controls contain no sound toggle.");
+  const record = toolRecord(files.find((file) => file.path.toLowerCase() === "readme.md")?.text ?? "");
+  put(TreeClause.versions, record.passed, `Project README tool record: ${record.detail}`);
   if (!full) return;
   for (const pin of Pins) put(pin.clause, pin.packages.every((name) => deps[name] === pin.version), `Exact dependency pins: ${pin.packages.join(", ")} ${pin.version}.`);
   const lock = files.find((file) => file.path === "package-lock.json");
@@ -41,6 +44,8 @@ export function staticChecks(files: readonly SourceFile[], evidence: Evidence, f
   put("S02.1", !files.some((file) => /\.(?:mp3|wav|ogg|m4a|aac|flac|webm)$/i.test(file.path)), "Source tree has no audio asset files.");
   put("S02.2", !nodes.some((node) => (ts.isCallExpression(node) || ts.isNewExpression(node)) && /(?:^|\.)(?:Audio|AudioContext|webkitAudioContext|createOscillator|play)$/.test(node.expression.getText())), "AST contains no audio constructors or playback API calls.");
   const shipped = productionFiles(files);
+  const allowed = new Set(Pins.flatMap((pin) => [...pin.packages] as string[]));
+  put("T01.4", Object.keys(deps).filter((name) => !allowed.has(name)).every((name) => !/(?:radix|shadcn|material-ui|@mui\/|antd|chakra|mantine|headlessui|react-bootstrap|semantic-ui|fluentui|primereact|daisyui)/i.test(name)) && !shipped.some((file) => /(?:data-slot|@radix-ui|@mui\/|@chakra-ui|@mantine\/)/.test(file.text)), "Dependency and production source checks exclude component libraries. Unlisted libraries also need source review.");
   put("A11.1", !shipped.some((file) => /(?:fixture|diagnostic|solver|test-helper)/i.test(file.path) || /__test|window\.(?:deck|solver|gameState)/i.test(file.text)), "The production import graph excludes fixtures, diagnostics and test globals.");
   put("A11.2", !files.filter((file) => /\.test\./.test(file.path)).some((file) => /window\.(?:deck|solver|gameState)/i.test(file.text)), "Tests use no private board or solver global.");
   put("A11.3", !/<(?:button|input|textarea)[^>]*(?:solver|debug|replay)/i.test(source), "Authored controls expose no replay, solver or debug controls.");

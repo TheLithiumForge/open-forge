@@ -47,6 +47,10 @@ test("static package checks keep exact pins and classify malformed source as che
   const full = new Evidence(); staticChecks(files, full, true);
   for (const pin of Pins) assert.equal(full.outcomes.find((item) => item.clause === pin.clause)?.status, "pass");
   assert.equal(full.outcomes.find((item) => item.clause === "T04.1")?.status, "fail");
+  assert.equal(full.outcomes.find((item) => item.clause === "T01.4")?.status, "pass");
+  const library = files.map((file) => file.path === "package.json" ? { ...file, text: JSON.stringify({ type: "module", dependencies: { ...deps, "@radix-ui/react-dialog": "1.0.0" } }) } : file);
+  const rejected = new Evidence(); staticChecks(library, rejected, true);
+  assert.equal(rejected.outcomes.find((item) => item.clause === "T01.4")?.status, "fail");
 });
 
 test("source collection skips excluded folders without loading their code", async (t) => {

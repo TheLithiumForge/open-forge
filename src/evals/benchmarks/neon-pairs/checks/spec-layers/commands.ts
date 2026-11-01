@@ -17,9 +17,9 @@ export function commandResult(value: unknown): CommandResult {
 export function compareReplay(vector: Vector, result: CommandResult): boolean {
   if (result.timedOut) throw new Error("Replay checker timed out.");
   const expected = expectedReplay(vector.text);
-  if (!expected) return result.code !== 0 && decodeSnapshot(result.stdout) === null;
+  if (!expected) return result.code !== null && result.code !== 0 && result.stdout === "" && result.stderr.trim().length > 0;
   const actual = decodeSnapshot(result.stdout);
-  return result.code === 0 && actual !== null && snapshotsEqual(actual, expected);
+  return result.code === 0 && result.stderr === "" && actual !== null && snapshotsEqual(actual, expected);
 }
 export function replayOutcomes(vectors: readonly Vector[], results: readonly CommandResult[], evidence: Evidence): void {
   const collected = new Map<string, { status: "pass" | "fail" | "error"; detail: string[] }>();

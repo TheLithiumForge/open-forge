@@ -4,24 +4,27 @@ import type { Definition } from "./catalog.ts";
 import { Method, LayerId as Layer } from "./requirements.ts";
 import { session, type Session, type SessionOptions } from "./browser-session.ts";
 import { ZoomViewport } from "./browser-zoom.ts";
-import { clock, sizes, turns } from "./browser-play.ts";
+import { clock, publishedClock, sizes, turns } from "./browser-play.ts";
 import { best, invalidPreferences, preferences, stale, storageFailure } from "./browser-storage.ts";
 import { activation, announcements, controlNames, navigation } from "./browser-input.ts";
 import { appearance, faces, layout } from "./browser-view.ts";
 import { accessibleNames, motion, scroll, zoom } from "./browser-access.ts";
 import { boardControls, knownDeals, snapshotCases } from "./browser-formats.ts";
-import { importedProgress, invalidLoads, loadedFocusAndSize } from "./browser-import.ts";
+import { importedProgress, invalidLoads, loadedFocusAndSize, loadAnnouncements } from "./browser-import.ts";
 import { svgGeometry } from "./browser-geometry.ts";
 import { sourceRules } from "./browser-source-rules.ts";
 import { snapshotCaps, visibleTimeCap } from "./browser-caps.ts";
 import { CapClause } from "./cap-policy.ts";
 import { CheckArea, CheckId } from "../check-ids.ts";
 import { CheckStatus } from "../../../../history/statuses.ts";
+import { keyboardTree } from "./browser-tree.ts";
+import { snapshotRounding } from "./browser-rounding.ts";
 
 interface Journey extends SessionOptions { readonly groups: readonly string[]; readonly action: (page: Page, evidence: Evidence) => Promise<void> }
 const journeys: readonly Journey[] = [
   { groups: ["sizes"], action: sizes }, { groups: ["selection", "mismatch", "moves", "completion", "matched"], action: turns },
   { groups: ["clock"], action: clock }, { groups: ["preferences", "reset"], action: preferences }, { groups: ["best"], action: best },
+  { groups: ["clock"], action: publishedClock }, { groups: ["screen-reader"], action: keyboardTree },
   { groups: ["clock"], action: visibleTimeCap },
   { groups: ["stale"], action: stale }, { groups: ["storage"], action: invalidPreferences },
   { groups: ["storage", "offline"], action: storageFailure, blockedStorage: true },
@@ -31,7 +34,7 @@ const journeys: readonly Journey[] = [
   { groups: ["faces"], action: faces }, { groups: ["names", "faces"], action: accessibleNames },
   { groups: ["scroll", "large"], action: scroll }, { groups: ["motion"], action: motion }, { groups: ["zoom", "offline"], action: zoom, ...ZoomViewport },
 ];
-const specJourneys = [boardControls, snapshotCases, knownDeals, invalidLoads, importedProgress, loadedFocusAndSize, svgGeometry, sourceRules, snapshotCaps];
+const specJourneys = [boardControls, snapshotCases, knownDeals, invalidLoads, importedProgress, loadedFocusAndSize, loadAnnouncements, svgGeometry, sourceRules, snapshotCaps, snapshotRounding];
 
 export async function browserChecks(html: string, definition: Definition, evidence: Evidence, launch: () => Promise<Browser> = () => chromium.launch()): Promise<void> {
   evidence.inherited.set(CheckId.facesDistinct, { id: CheckId.facesDistinct, area: CheckArea.faces, status: CheckStatus.error, evidence: "The later-layer checker did not finish its individual face captures." });
@@ -73,7 +76,7 @@ export async function browserChecks(html: string, definition: Definition, eviden
       evidence.test("T10.4", file.requests.length === 0, "Distribution makes no network requests when loaded from disk.");
     } finally { await file.close(); }
     if (definition.layer === Layer.three) for (const journey of specJourneys) {
-      const open = await session(browser, html);
+      const open = await session(browser, html, { fractionalClock: journey === snapshotRounding });
       const start = evidence.outcomes.length;
       try {
         await journey(open.page, evidence);

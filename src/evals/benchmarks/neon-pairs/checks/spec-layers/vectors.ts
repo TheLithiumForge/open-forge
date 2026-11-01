@@ -1,4 +1,4 @@
-import { freshSnapshot } from "./replay.ts";
+import { expectedReplay, freshSnapshot } from "./replay.ts";
 import { Rules, SelectionKind, type Snapshot } from "./rules.ts";
 import { expectedDeck } from "./board-code.ts";
 import { CapClause } from "./cap-policy.ts";
@@ -88,6 +88,7 @@ export function replayVectors(): Vector[] {
   }
   for (const code of ["np1-4-0", "np1-4-01", "np1-04-1", "np1-5-1", `np1-4-${Rules.seedMaximum + 1}`, "np2-4-1", "np1-4-1\n"]) vectors.push(vector(code, "D01.1 D01.2 D01.3 D02.3 D10.7 D10.10", { ...replay, boardCode: code }));
   for (const code of [KnownCode, `np1-4-${Rules.seedMaximum}`, "np1-16-1"]) vectors.push(vector(`valid ${code}`, "D01.1 D01.2 D01.3 D09.1", { ...replay, boardCode: code, actions: [], endMs: 1000 }));
+  for (const boardCode of [` ${KnownCode}`, `${KnownCode} `, `${KnownCode}\n`]) vectors.push(vector("exact parser keeps whitespace invalid", "D01.4", { ...replay, boardCode }));
   const accepted = Array.from({ length: Rules.actionsMaximum }, () => ({ atMs: 0, index: 0 }));
   vectors.push(vector("action limit accepted", "D10.3", { ...replay, actions: accepted }));
   vectors.push(vector("action limit rejected", "D10.3", { ...replay, actions: [...accepted, { atMs: 0, index: 0 }] }));
@@ -100,5 +101,10 @@ export function replayVectors(): Vector[] {
     const actions = [...pairs.values()].flatMap((positions) => positions.map((index) => ({ atMs: 0, index })));
     vectors.push(vector(`known deal ${code}`, `D02.1 D02.2 D02.4 D03.1 D03.2 D04.1 D04.2 D04.3 D04.4 D04.5${code === KnownCode ? " D03.3 D04.6" : ""}`, { ...replay, boardCode: code, actions, endMs: 1000 }));
   }
-  return vectors;
+  return vectors.map((entry) => ({ ...entry, clauses: [...new Set([...entry.clauses, expectedReplayStatus(entry.text) ? "C14.4" : "C14.5"])] }));
+}
+
+function expectedReplayStatus(text: string): boolean {
+  // CLI output rules apply to every vector, including size and byte limits.
+  return expectedReplay(text) !== null;
 }

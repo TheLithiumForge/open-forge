@@ -10,7 +10,8 @@ import { allowedRequest } from "./delivery-request.ts";
 
 export const Labels = { size: "Grid size", fresh: "New Game", restart: "Restart", reproduce: "Reproduce a game", code: "Board code", loadBoard: "Load board", snapshot: "Snapshot JSON", export: "Export snapshot", loadSnapshot: "Load snapshot", resume: "Resume" } as const;
 export interface Session { readonly page: Page; readonly context: BrowserContext; readonly errors: string[]; readonly requests: string[]; readonly origin: string; close(): Promise<void> }
-export interface SessionOptions { readonly file?: boolean; readonly width?: number; readonly height?: number; readonly deviceScaleFactor?: number; readonly blockedStorage?: boolean }
+export const FractionalClockKey = "__evalFractionalMilliseconds";
+export interface SessionOptions { readonly file?: boolean; readonly width?: number; readonly height?: number; readonly deviceScaleFactor?: number; readonly blockedStorage?: boolean; readonly fractionalClock?: boolean }
 
 export async function session(browser: Browser, html: string, options: SessionOptions = {}): Promise<Session> {
   const bytes = await readFile(html);
@@ -52,6 +53,11 @@ export async function session(browser: Browser, html: string, options: SessionOp
     page.setDefaultTimeout(4000);
     page.on("pageerror", (error) => errors.push(error.message));
     await page.clock.install();
+    if (options.fractionalClock) await page.addInitScript((key) => {
+      const now = performance.now.bind(performance);
+      Reflect.set(window, key, 0);
+      Object.defineProperty(performance, "now", { configurable: true, value: () => now() + Number(Reflect.get(window, key)) });
+    }, FractionalClockKey);
     await page.goto(entry);
     await page.clock.pauseAt(new Date(Date.now() + 1000));
     await markCards(page);

@@ -27,7 +27,7 @@
   "isolation": "docker",
   "limits": {
     "questionRounds": 3,
-    "runMinutes": 60
+    "runMinutes": 180
   },
   "judges": [
     {

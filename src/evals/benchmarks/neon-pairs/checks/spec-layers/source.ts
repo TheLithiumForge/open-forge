@@ -3,7 +3,7 @@ import { join, relative, resolve, sep } from "node:path";
 import * as ts from "typescript";
 import { object } from "./requirements.ts";
 
-export const SourceExcluded = new Set(["node_modules", ".git", ".agents", ".codex", ".claude", "dist", "test-results", "playwright-report", "docs", "art", ".eval-command-results"]);
+export const SourceExcluded = new Set(["node_modules", ".git", ".agents", ".codex", ".claude", "dist", "test-results", "playwright-report", "docs", "art", ".eval-command-results", ".npm-cache", ".playwright-browsers", ".browser-work", ".test-tmp"]);
 export interface SourceFile { readonly path: string; readonly text: string }
 export async function sourceFiles(root: string, folder = root): Promise<SourceFile[]> {
   const result: SourceFile[] = [];

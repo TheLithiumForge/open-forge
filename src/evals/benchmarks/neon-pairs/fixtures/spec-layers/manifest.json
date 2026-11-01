@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "specVersion": 2,
+  "specVersion": 2.1,
   "layer": "L3",
   "fixtures": ["reference.json", "wrong-seed.json", "replay-drops-move.json", "snapshot-version.json", "focus-trap.json", "faces-repeat.json", "late-mismatch.json"]
 }

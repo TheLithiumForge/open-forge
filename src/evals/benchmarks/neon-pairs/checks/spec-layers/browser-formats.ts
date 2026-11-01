@@ -11,6 +11,8 @@ import { faceName, Rules, SelectionKind, type Snapshot } from "./rules.ts";
 import { KnownCode, snapshotVectors } from "./vectors.ts";
 import { cardName, faceIn } from "./view-values.ts";
 
+export const BoardTrimClause = "D01.4";
+
 export async function reproduction(page: Page): Promise<void> {
   const summary = page.locator("summary").filter({ hasText: new RegExp(`^${Labels.reproduce}$`) });
   if (!(await summary.evaluate((element) => element.parentElement?.hasAttribute("open")))) await summary.click();
@@ -74,13 +76,14 @@ export async function boardControls(page: Page, evidence: Evidence): Promise<voi
   await reproduction(page);
   const code = page.getByRole("textbox", { name: Labels.code, exact: true }), snapshot = page.getByRole("textbox", { name: Labels.snapshot, exact: true });
   put("C05.1 C05.2", await code.evaluate((element) => element instanceof HTMLInputElement && element.maxLength === 32), "Native Board code input has maxLength 32.");
-  put("C07.1 C07.2", await snapshot.evaluate((element) => element instanceof HTMLTextAreaElement && element.maxLength === Rules.snapshotBytes), "Snapshot JSON is a native textarea with the stated character limit.");
+  put("C07.1 C07.2", await snapshot.evaluate((element, limit) => element instanceof HTMLTextAreaElement && element.maxLength === limit, Rules.snapshotBytes), "Snapshot JSON is a native textarea with the stated character limit.");
   for (const [id, label] of [["C06.1", Labels.loadBoard], ["C08.1", Labels.export], ["C09.1", Labels.loadSnapshot]] as const) put(id, await page.getByRole("button", { name: label, exact: true }).count() === 1, `Native button named ${label}.`);
   await loadBoard(page, KnownCode); const initial = await exported(page);
   put("C06.2", initial !== null && snapshotsEqual(initial, freshSnapshot(KnownCode)), "A valid code replaces the game with its hidden starting state.");
+  await click(page, 0);
   await loadBoard(page, ` ${KnownCode} `);
   const trim = await exported(page);
-  put("D01.4", trim !== null && snapshotsEqual(trim, freshSnapshot(KnownCode)), "Whitespace is either trimmed to the known deal or rejected without changing that deal.");
+  put(BoardTrimClause, trim !== null && snapshotsEqual(trim, freshSnapshot(KnownCode)) && !(await body(page)).includes("Invalid board code."), "The Board code control trims surrounding whitespace and replaces nonzero progress with the starting deal. The CLI parser still rejects whitespace.");
   await code.fill("edited draft"); await click(page, 0);
   put("C05.4", await code.inputValue() === "edited draft", "A card action keeps the edited board-code draft.");
   await reset(page); const restart = await code.inputValue(); await reset(page, true); const fresh = await code.inputValue(); await changeSize(page, 6); const changed = await code.inputValue();

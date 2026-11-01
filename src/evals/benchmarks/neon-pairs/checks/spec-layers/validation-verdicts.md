@@ -34,7 +34,7 @@ V16.2 compares every computed card property and permits only border-color change
 
 All six fixture edits match the reviewed reference exactly once. Their replacement text and declared failed clauses still target the same rules. Their existing anchors needed no change.
 
-The Layer 2 case's `specs/manifest.json` and `inputs.json` refresh only pinned source values. Its product sentences and clause selection stay unchanged. The current requirement pin is `ec07401dcc5fbc5e05e17d204db06a0e67f34624ee4926621fe55ee91646c04c` and its source pin is `66b339a53d509dd235b9843aa5efade12e3bb607df351bf1a096fe2a755bc583`.
+The earlier Layer 2 pin refresh kept product sentences and clause selection unchanged. Spec version 2.1 adds a separate source-pin failure in the protected player pack. The current checker revision records it in the council checks linked from the parent README.
 
 ## Validate
 

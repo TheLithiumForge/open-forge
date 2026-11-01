@@ -7,7 +7,7 @@ import { FixtureConfig } from "../config/test-fixtures.ts";
 import { Isolation } from "../config/choices.ts";
 import { MatrixAgents, MatrixJudges } from "../config/matrix.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
-import { CaseTimeLimitMinutes, DocumentCase } from "../materialize/delivery.ts";
+import { DocumentCase } from "../materialize/delivery.ts";
 import { evalsRoot } from "../paths.ts";
 
 const FullAttempts = 3;
@@ -29,7 +29,7 @@ test("the saved check and full plans freeze their models, limits and complete ca
       assert.deepEqual(plan.judge, MatrixJudges[0]);
       assert.deepEqual(plan.simulatedUser, FixtureConfig.simulatedUser);
       assert.equal(plan.isolation, Isolation.docker);
-      if (index > 0) assert.equal(plan.limits.runMinutes, CaseTimeLimitMinutes);
+      if (index > 0) assert.equal(plan.limits.runMinutes, suite.runMinutes);
     }
   }
 });

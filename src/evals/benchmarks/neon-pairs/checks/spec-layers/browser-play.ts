@@ -5,6 +5,7 @@ import { Evidence } from "./outcomes.ts";
 import { Rules } from "./rules.ts";
 import { body, changeSize, click, hidden, metric, names, reset, solve, step, visibleDeck } from "./browser-session.ts";
 import { faceIn } from "./view-values.ts";
+import { clockText, hasStatus, StatusClause } from "./published-text.ts";
 
 export function reporter(evidence: Evidence) {
   return (ids: string, passed: boolean, detail: string): void => {
@@ -32,8 +33,10 @@ export async function sizes(page: Page, evidence: Evidence): Promise<void> {
 export async function turns(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence), deck = await visibleDeck(page);
   await reset(page);
+  const displays = [{ text: await body(page), moves: 0, pairs: 0 }];
   await click(page, 0);
   const first = await names(page), afterFirst = await body(page);
+  displays.push({ text: afterFirst, moves: 0, pairs: 0 });
   await click(page, 0);
   put("R02.1 R05.2", Boolean(faceIn(first[0] ?? "")) && metric(afterFirst, "moves") === 0, "First reveal shows a face with zero moves.");
   put("R02.2", JSON.stringify(await names(page)) === JSON.stringify(first) && metric(await body(page), "moves") === 0, "Repeated first activation keeps names and moves.");
@@ -41,13 +44,15 @@ export async function turns(page: Page, evidence: Evidence): Promise<void> {
   await click(page, partner);
   const match = await names(page), matchedText = await body(page);
   put("R03.1 R03.2", faceIn(match[partner] ?? "") === deck[0] && /matched/i.test(match[0] ?? ""), "Second reveal retains the matching faces and names their matched state.");
-  put("R03.3 R06.1 R06.2", metric(matchedText, "pairs") === 1 && /1\s*\/\s*8/.test(matchedText), "Pair counter changes immediately to 1 / 8.");
+  put("R03.3 R06.1", metric(matchedText, "pairs") === 1, "Pair counter changes immediately to one pair.");
+  displays.push({ text: matchedText, moves: 1, pairs: 1 });
   await click(page, 0);
   put("R02.3", JSON.stringify(await names(page)) === JSON.stringify(match) && metric(await body(page), "moves") === 1, "Activating a matched card keeps state.");
   const a = deck.findIndex((_, index) => index !== 0 && index !== partner);
   const b = deck.findIndex((face, index) => index !== a && index !== 0 && index !== partner && face !== deck[a]);
   await click(page, a); await click(page, b);
   const miss = await names(page);
+  displays.push({ text: await body(page), moves: 2, pairs: 1 });
   put("R05.1 R05.4", metric(await body(page), "moves") === 2, "One match and one mismatch cost two moves.");
   await click(page, deck.findIndex((_, index) => ![0, partner, a, b].includes(index)));
   put("R04.3 R05.3 I10.2", JSON.stringify(await names(page)) === JSON.stringify(miss) && metric(await body(page), "moves") === 2, "An activation during mismatch changes neither selection nor moves.");
@@ -64,10 +69,25 @@ export async function turns(page: Page, evidence: Evidence): Promise<void> {
   put("I09.1 I09.2 I09.3", await card(page, 0).getAttribute("aria-disabled") === "true" && await card(page, 0).evaluate((element) => element === document.activeElement), "A matched card remains focusable with aria-disabled=true and ignored activation.");
   await reset(page); await solve(page, deck);
   const won = await body(page);
+  displays.push({ text: won, moves: 8, pairs: 8 });
+  put(StatusClause.moves, displays.every((sample) => hasStatus(sample.text, "Moves", sample.moves)), "Moves: N shows the current count before, during and after play.");
+  put(StatusClause.pairs, displays.every((sample) => hasStatus(sample.text, "Pairs", `${sample.pairs}/8`)), "Pairs: M/T shows the current pair count and total throughout play.");
   put("R06.3 V18.1", metric(won, "pairs") === 8 && /(?:win|won|every pair|complete)/i.test(won), "All eight pairs produce a win summary.");
   const summary = await page.locator("body").evaluate((element) => Array.from(element.querySelectorAll("p,section,aside,[role=status]")).map((node) => node.textContent ?? "").filter((text) => /(?:win|won|every pair|complete)/i.test(text)).join(" "));
   put("R06.4", /\b8\b/.test(summary), "The completion summary must contain the final eight moves.");
   put("R06.5", /(?:\d+\s*s\b|\d+:\d{2}|\d+\s*ms\b)/i.test(summary), "The completion summary must include final elapsed time.");
+}
+
+export async function publishedClock(page: Page, evidence: Evidence): Promise<void> {
+  await reset(page); await click(page, 0);
+  let previous = 0;
+  const samples: boolean[] = [];
+  for (const milliseconds of [0, 1600, 61600, 3601600]) {
+    if (milliseconds > previous) await page.clock.fastForward(milliseconds - previous);
+    samples.push(hasStatus(await body(page), "Time", clockText(milliseconds)));
+    previous = milliseconds;
+  }
+  reporter(evidence)(StatusClause.clock, samples.every(Boolean), "Time: m:ss floors seconds, pads them and continues minutes past 59 under a controlled clock.");
 }
 
 export async function clock(page: Page, evidence: Evidence): Promise<void> {

@@ -4,6 +4,7 @@ import { Evidence } from "./outcomes.ts";
 import { body, changeSize, click, metric, names, reset, solve, step, visibleDeck } from "./browser-session.ts";
 import { reporter } from "./browser-play.ts";
 import { faceIn } from "./view-values.ts";
+import { hasStatus, StatusClause } from "./published-text.ts";
 
 export async function preferences(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence);
@@ -34,17 +35,21 @@ async function visibleDeckAfterReset(page: Page): Promise<string[]> { await rese
 
 export async function best(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence);
-  put("R10.7", /Best:\s*none/.test(await body(page)), "A fresh origin must display the exact empty-best text.");
+  const displayed = [hasStatus(await body(page), "Best", "none")];
+  put(StatusClause.emptyBest, displayed[0] === true, "A fresh origin displays Best: none.");
   const deck = await visibleDeck(page); await reset(page);
   const unfinishedHasNoBest = metric(await body(page), "best") === null;
   const wrong = deck.findIndex((face) => face !== deck[0]);
   await click(page, 0); await click(page, wrong); await step(page, 800);
   await solve(page, deck);
   const initialBest = metric(await body(page), "best");
+  displayed.push(hasStatus(await body(page), "Best", 9));
   put("R10.1", unfinishedHasNoBest && initialBest === 9, "Unfinished exploration creates no best. A completed nine-move game records nine.");
   await reset(page); await solve(page, deck);
   const bestMoves = metric(await body(page), "best");
+  displayed.push(hasStatus(await body(page), "Best", 8));
   await reset(page); const kept = metric(await body(page), "best");
+  displayed.push(hasStatus(await body(page), "Best", 8));
   await solve(page, deck);
   const equal = metric(await body(page), "best");
   await reset(page);
@@ -53,9 +58,12 @@ export async function best(page: Page, evidence: Evidence): Promise<void> {
   await reset(page, true);
   put("R10.5", kept === 8 && metric(await body(page), "best") === 8, "Restart and New Game keep the saved best.");
   await page.reload(); await markCards(page);
+  displayed.push(hasStatus(await body(page), "Best", 8));
   put("R10.3", metric(await body(page), "best") === 8, "The best survives reload on the same HTTP origin.");
   await changeSize(page, 6);
-  put("R10.6", bestMoves === 8 && metric(await body(page), "best") === null, "The completed 4x4 best is eight moves and the unplayed 6x6 size has no best.");
+  displayed.push(hasStatus(await body(page), "Best", "none"));
+  await changeSize(page, 4); displayed.push(hasStatus(await body(page), "Best", 8));
+  put(StatusClause.best, displayed.every(Boolean), "Best: N follows the current size before and after completion, restart and reload. An unplayed size shows Best: none.");
 }
 
 export async function stale(page: Page, evidence: Evidence): Promise<void> {

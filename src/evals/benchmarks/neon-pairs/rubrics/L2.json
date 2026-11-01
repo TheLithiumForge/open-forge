@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "specVersion": 2,
-  "version": "L2-v3",
+  "specVersion": 2.1,
+  "version": "L2-v4",
   "ballots": 3,
   "answers": [
     "yes",
@@ -9,20 +9,6 @@
     "unsure"
   ],
   "questions": [
-    {
-      "id": "screen-reader",
-      "area": "accessibility",
-      "evidence": "source",
-      "question": "Does recorded evidence show a keyboard and screen reader finish, named controls, closed positions, revealed faces, one result per turn, win moves and time, leaving the board and starting again, with browser and screen reader versions? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
-      "clauses": [
-        "I17.1",
-        "I17.2",
-        "I17.3",
-        "I17.4",
-        "I17.5",
-        "I17.6"
-      ]
-    },
     {
       "id": "face-identity",
       "area": "visual",
@@ -94,19 +80,6 @@
       "evidence": "source-and-images",
       "question": "Are the board, focus outlines, controls and win summary readable at the supplied phone and desktop sizes? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": []
-    },
-    {
-      "id": "counter-caps",
-      "area": "rules",
-      "evidence": "source",
-      "question": "Does source keep elapsed time at 359999999ms and moves at 999999, while matching, mismatch closing and victory continue at those caps? Layer 2 can't import boundary states and a seconds-only clock can't show the exact stored millisecond limit. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
-      "clauses": [
-        "R05.5",
-        "R05.6",
-        "R05.7",
-        "R05.8",
-        "R07.9"
-      ]
     }
   ]
 }

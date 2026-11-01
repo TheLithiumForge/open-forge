@@ -4,13 +4,15 @@ import { Evidence } from "./outcomes.ts";
 import { changeSize, click, reset, solve, visibleDeck } from "./browser-session.ts";
 import { reporter } from "./browser-play.ts";
 import { Rules } from "./rules.ts";
-import { faceIn, near, pixels, rgb, transitionMs, VisualTiming } from "./view-values.ts";
+import { cardName, faceIn, near, pixels, rgb, transitionMs, VisualTiming } from "./view-values.ts";
 import { hoverChanges } from "./hover-style.ts";
 import { checkMark, sameBacks } from "./drawn-shapes.ts";
 import { drawings } from "./browser-drawing.ts";
 import { signatureOf, type FaceSignature } from "../face-signature.ts";
 import { renderedFaces } from "./rendered-faces.ts";
 import { ContentMaximum, LayoutAttribute, markLayout } from "./browser-layout.ts";
+import { borderTransition, ColorToken, facePalette, namedTargets, TargetClause } from "./browser-targets.ts";
+import { Labels } from "./browser-session.ts";
 
 export function spacingOnScale(values: readonly string[]): boolean {
   return values.every((value) => value === "normal" || value === "auto" || pixels(value) !== null && ((pixels(value) ?? 0) <= 0 || Rules.spacing.some((allowed) => allowed > 0 && near(pixels(value), allowed))));
@@ -79,13 +81,18 @@ export async function appearance(page: Page, evidence: Evidence): Promise<void> 
   const put = reporter(evidence), closed = await styles(page);
   put("V01.1", await page.locator("button,select,input,textarea").count() >= 19 && await page.locator('[role="button"]:not(button)').count() === 0, "Native HTML controls provide the interaction elements.");
   const palette = closed.colors.map(rgb);
-  for (const [id, color] of [["V06.1", "#090B14"], ["V06.2", "#141827"], ["V06.5", "#F4F6FF"], ["V06.6", "#B8BDD2"]]) put(id ?? "", palette.includes(color ?? ""), `Computed element colors include ${color}.`);
+  for (const [id, color] of [["V06.1", "#090B14"], ["V06.5", "#F4F6FF"]]) put(id ?? "", palette.includes(color ?? ""), `Computed element colors include ${color}.`);
+  const summary = page.locator("summary").filter({ hasText: new RegExp(`^${Labels.reproduce}$`) });
+  if (await summary.count() && !await summary.evaluate((element) => element.parentElement?.hasAttribute("open"))) await summary.click();
+  const targets = await namedTargets(page);
+  put(TargetClause.panel, targets.panels.length > 0 && targets.panels.every((color) => rgb(color) === ColorToken.panel), "Board scroll area, reproduction panel and visible non-card native controls use the Panel background.");
+  put(TargetClause.secondaryColor, targets.secondary.length > 0 && targets.secondary.every((target) => rgb(target.color) === ColorToken.secondary), "Board help, status labels and supporting notes use the Secondary color.");
   put("V06.3", rgb(closed.card["backgroundColor"] ?? "") === "#1B2034", "Closed card background matches its token.");
   put("V06.7", rgb(closed.card["borderColor"] ?? "") === "#757C9A", "Closed card border matches its token.");
   put("V08.1 T08.3", /(?:system-ui|-apple-system|BlinkMacSystemFont)/i.test(closed.body["fontFamily"] ?? "") && /sans-serif/i.test(closed.body["fontFamily"] ?? ""), "Computed body font uses the system sans-serif stack.");
   put("V08.2", closed.body["fontSize"] === "16px" && closed.body["lineHeight"] === "24px", "Body text is 16px on 24px lines.");
   put("V08.3", closed.title["fontSize"] === "24px", "Title text is 24px.");
-  put("V08.4", closed.secondary, "Secondary text includes the specified 14px size.");
+  put(TargetClause.secondarySize, targets.secondary.length > 0 && targets.secondary.every((target) => target.size === "14px"), "Board help, status labels and supporting notes are 14px.");
   put("V09.1", spacingOnScale(closed.spacing), "Positive authored spacing uses the scale. Zero, auto and normal pass. Reset margins pass and native control internals are excluded.");
   put("V09.2", closed.card["borderWidth"] === "2px" && closed.card["borderRadius"] === "8px" && closed.body["fontSize"] === "16px", "Border, radius and font metrics keep their separate stated values.");
   await click(page, 0); const open = await styles(page);
@@ -97,9 +104,9 @@ export async function appearance(page: Page, evidence: Evidence): Promise<void> 
   const computed = () => card(page, 0).evaluate((element) => { const style = getComputedStyle(element); return Object.fromEntries(Array.from(style).map((name) => [name, style.getPropertyValue(name)])); });
   await page.mouse.move(0, 0); const beforeHover = await computed();
   await card(page, 0).hover(); await page.waitForTimeout(VisualTiming.transitionMs + VisualTiming.settleMs);
-  const changed = hoverChanges(beforeHover, await computed());
-  put("V16.2", changed.length === 0, `Hover may change only border colors. Other changes: ${changed.join(", ") || "none"}.`);
-  put("V17.1", (transitionMs(focused.card["transitionDuration"] ?? "") ?? [NaN]).every((ms) => ms === VisualTiming.transitionMs) && /border/.test(focused.card["transitionProperty"] ?? "") && /opacity/.test(focused.card["transitionProperty"] ?? ""), "Only stated border and opacity properties have 120ms transitions.");
+  const afterHover = await computed(), changed = hoverChanges(beforeHover, afterHover);
+  put(TargetClause.hover, changed.length === 0 && ["top", "right", "bottom", "left"].every((side) => rgb(afterHover[`border-${side}-color`] ?? "") === ColorToken.text), `Hover changes only border colors to Text. Other changes: ${changed.join(", ") || "none"}.`);
+  put(TargetClause.transition, borderTransition(focused.card["transitionProperty"] ?? "", focused.card["transitionDuration"] ?? ""), "Only border-color properties have 120ms transitions.");
   await page.emulateMedia({ reducedMotion: "reduce" }); const reduced = await styles(page);
   put("V17.2", (transitionMs(reduced.card["transitionDuration"] ?? "") ?? [NaN]).every((ms) => ms === 0), "Reduced motion removes card transitions.");
 }
@@ -108,10 +115,12 @@ export async function faces(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence); await changeSize(page, 16);
   const closed = await drawings(page);
   put("V14.1", sameBacks(closed), "Each hidden card draws the same neutral diamond contour, including CSS borders and SVG geometry.");
-  const colors: string[] = [], captured: FaceSignature[] = [];
+  const colors: string[] = [], captured: FaceSignature[] = [], paletteAtMarker: boolean[] = [];
   const deck = await visibleDeck(page, async (positions) => {
     for (const position of positions) {
-      colors.push(...await card(page, position).locator("svg *").evaluateAll((elements) => elements.flatMap((element) => [getComputedStyle(element).fill, getComputedStyle(element).stroke])));
+      const paints = await card(page, position).locator("svg *").evaluateAll((elements) => elements.flatMap((element) => [getComputedStyle(element).fill, getComputedStyle(element).stroke]));
+      colors.push(...paints);
+      paletteAtMarker.push(facePalette(await card(page, position).getAttribute("aria-label") ?? cardName(await card(page, position).ariaSnapshot()) ?? "", paints));
       captured[position] = signatureOf(await card(page, position).screenshot({ animations: "disabled" }));
     }
   }), unique = new Set(deck);
@@ -120,10 +129,13 @@ export async function faces(page: Page, evidence: Evidence): Promise<void> {
   put("V10.1", unique.size === 128, `Visible play found ${unique.size} named identities.`);
   put("V10.3 V10.4 V10.5 V13.1 V13.2", [...unique].every((name) => faceIn(name) === name) && Rules.shapes.every((shape) => deck.some((name) => name.includes(` ${shape},`))) && Rules.markers.every((marker) => deck.some((name) => name.endsWith(`marker ${marker}`))) && ["solid", "outline"].every((fill) => deck.some((name) => name.includes(` ${fill} `))), "Visible names span all eight shapes, markers and both fills in the specified lowercase form.");
   put("V07.1", Rules.palette.every((color) => colors.map(rgb).includes(color)), "Revealed SVG artwork uses each specified palette entry.");
+  put(TargetClause.palette, paletteAtMarker.length === 256 && paletteAtMarker.every(Boolean), "Each revealed face name and rendered palette color agree with its marker index, without requiring numeric face IDs in Layer 2.");
   await reset(page); await solve(page, deck); await page.waitForTimeout(VisualTiming.transitionMs + VisualTiming.settleMs);
   const matched = await page.locator(`[${CardAttribute}]`).evaluateAll((elements) => elements.filter((element) => element.getAttribute("aria-disabled") === "true").map((element) => ({ svg: element.querySelectorAll("svg").length, opacity: getComputedStyle(element).opacity, color: getComputedStyle(element).borderColor, text: element.textContent ?? "", html: element.innerHTML })));
   put("V15.1", matched.length > 0 && matched.every((entry) => entry.svg > 0), "Revealed matched cards retain inline SVG artwork.");
   const marks = await drawings(page);
   put("V15.2", matched.length === deck.length && matched.every((entry) => rgb(entry.color) === Rules.palette[2]) && marks.every((contours) => contours.some((contour) => rgb(contour.color) === Rules.palette[2] && checkMark(contour.points))), "Every matched card has a green border and a drawn green check contour.");
   put("V15.3", matched.length > 0 && matched.every((entry) => entry.opacity === "1"), "Matched cards keep full opacity.");
+  await card(page, 0).hover(); await page.waitForTimeout(VisualTiming.transitionMs + VisualTiming.settleMs);
+  evidence.merge(TargetClause.hover, rgb(await card(page, 0).evaluate((element) => getComputedStyle(element).borderColor)) === ColorToken.green ? "pass" : "fail", "A matched card keeps the Green border while hovered.");
 }

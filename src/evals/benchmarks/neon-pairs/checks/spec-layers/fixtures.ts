@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { applyEdits, materializeFixture, type Fixture } from "../fixtures.ts";
-import { object } from "./requirements.ts";
+import { object, SpecVersion } from "./requirements.ts";
 import { loadDefinition } from "./load.ts";
 import { LayerId } from "./requirements.ts";
 
@@ -10,7 +10,7 @@ export const SpecLayerFixtures = new URL("../../fixtures/spec-layers/", import.m
 export const SpecLayerReference = new URL("../../reference/", import.meta.url);
 export async function loadSpecLayerFixtures(): Promise<Fixture[]> {
   const manifest: unknown = JSON.parse(await readFile(new URL("manifest.json", SpecLayerFixtures), "utf8"));
-  if (!object(manifest) || manifest["specVersion"] !== 2 || !Array.isArray(manifest["fixtures"])) throw new Error("Invalid spec-layer fixture manifest.");
+  if (!object(manifest) || manifest["specVersion"] !== SpecVersion || !Array.isArray(manifest["fixtures"])) throw new Error("Invalid spec-layer fixture manifest.");
   const definition = await loadDefinition(LayerId.three), clauses = new Set(definition.checks.flatMap((check) => check.clauses));
   const fixtures: Fixture[] = [];
   for (const filename of manifest["fixtures"]) {
