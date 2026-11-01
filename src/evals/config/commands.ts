@@ -1,11 +1,12 @@
-export const Command = { doctor: "doctor", images: "images", smoke: "smoke", qualify: "qualify", run: "run", ui: "ui", recheck: "recheck", rejudge: "rejudge", export: "export", help: "help" } as const;
+export const Command = { doctor: "doctor", images: "images", smoke: "smoke", qualify: "qualify", validateCase: "validate-case", run: "run", ui: "ui", recheck: "recheck", rejudge: "rejudge", export: "export", help: "help" } as const;
 export type Command = (typeof Command)[keyof typeof Command];
-export const Flag = { help: "--help", plan: "--plan", development: "--development", rebuild: "--rebuild", out: "--out" } as const;
+export const Flag = { help: "--help", plan: "--plan", case: "--case", all: "--all", development: "--development", rebuild: "--rebuild", out: "--out" } as const;
 export const CommandHelp = {
   doctor: "Check Docker, Node, pinned tools, sign-ins and image digests. Example: npm run evals -- doctor",
   images: "Build the three images from locked digests. Example: npm run evals -- images",
   smoke: "Run a mock attempt through all stages and saved records, without Docker or models. Example: npm run evals -- smoke",
   qualify: "Check fresh setup files and the pinned Open Forge version without models. Example: npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1.json",
+  [Command.validateCase]: "Validate a Layer 4 starting project and solution in verifiers without models. Examples: npm run evals -- validate-case --case l4-f01 | npm run evals -- validate-case --all --plan src/evals/experiments/neon-pairs-l4-check.json",
   run: "Run a saved plan. Local isolation needs --development. Example: npm run evals -- run --plan src/evals/experiments/neon-pairs-l1.json",
   ui: "Build and open the local results app. Example: npm run evals -- ui",
   recheck: "Append checks for saved attempts. Example: npm run evals -- recheck <batch> --rebuild",

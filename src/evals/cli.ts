@@ -12,6 +12,8 @@ import { buildEvalImages } from "./execution/containers/docker-image.ts";
 import { HistoryStore } from "./history/store.ts";
 import { exportBatch } from "./history/export.ts";
 import { EvalPaths, evalsRoot } from "./paths.ts";
+import { validateCase } from "./grading/brownfield/validate.ts";
+import { BrownfieldFiles } from "./materialize/brownfield-case.ts";
 
 export interface CliServices {
   readonly print: (text: string) => void;
@@ -25,11 +27,13 @@ export interface CliServices {
   readonly ui: typeof launchUi;
   readonly launch: typeof launchNode;
   readonly export: (batch: string, target: string) => Promise<string>;
+  readonly validateCase: typeof validateCase;
 }
 const defaults: CliServices = {
   print: console.log, doctor: configuredDoctor, images: buildEvalImages, smoke: smokeAttempt, qualify: qualifySetups,
   plan: loadPlan, suite: loadSuite, run: runPlan, ui: launchUi, launch: (file, args) => { loadLocalEnv(); return launchNode(file, args); },
   export: (batch, target) => exportBatch(new HistoryStore(EvalPaths.results), batch, target),
+  validateCase,
 };
 
 function checkedArgs(args: readonly string[], flags: readonly string[], values: readonly string[], positions: number): void {
@@ -58,12 +62,38 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     }
     case Command.images: checkedArgs(args, [], [], 0); await services.images(); return 0;
     case Command.smoke: checkedArgs(args, [], [], 0); services.print(`Smoke passed. ${JSON.stringify(await services.smoke())}`); return 0;
+    case Command.validateCase: {
+      checkedArgs(args, [Flag.all], [Flag.case, Flag.plan], 0);
+      const all = args.includes(Flag.all);
+      if (all ? args.includes(Flag.case) || !args.includes(Flag.plan) : !args.includes(Flag.case) || args.includes(Flag.plan)) throw new Error(CommandHelp[Command.validateCase]);
+      const plan = all ? await services.plan(option(args, Flag.plan), true) : undefined;
+      const ids = plan === undefined ? [option(args, Flag.case)] : plan.cases ?? [plan.suite];
+      const suites = await Promise.all(ids.map((id) => services.suite(id)));
+      if (suites.some((suite) => suite.brownfield === undefined)) throw new Error("validate-case accepts Layer 4 cases only.");
+      let passed = true;
+      for (const suite of suites) {
+        try {
+          const report = await services.validateCase(suite);
+          services.print(`${report.passed ? "pass" : "fail"} ${suite.id}: ${suite.brownfield?.case.checks}/${BrownfieldFiles.validation}`);
+          for (const stage of report.stages) {
+            for (const check of stage.outcomes.filter((check) => !check.matches)) services.print(`${stage.phase}: ${check.id} ${check.actual}, expected ${check.expected}`);
+            if (stage.error !== null) services.print(`${stage.phase}: ${stage.error}`);
+          }
+          passed = report.passed && passed;
+        } catch (error) {
+          services.print(`fail ${suite.id}: ${error instanceof Error ? error.message : String(error)}`);
+          passed = false;
+        }
+      }
+      return passed ? 0 : 1;
+    }
     case Command.run:
     case Command.qualify: {
       checkedArgs(args, command === Command.run ? [Flag.development] : [], [Flag.plan], 0);
       const config = await services.plan(option(args, Flag.plan), command === Command.qualify || args.includes(Flag.development));
       if (command === Command.run) return services.run(config, services.print);
-      services.print(JSON.stringify(await services.qualify(await services.suite(config.suite), config.setups), null, 2));
+      const suites = await Promise.all((config.cases ?? [config.suite]).map((id) => services.suite(id)));
+      for (const suite of suites) services.print(JSON.stringify(await services.qualify(suite, config.setups), null, 2));
       return 0;
     }
     case Command.ui: checkedArgs(args, [], [], 0); return services.ui();

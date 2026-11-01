@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFile, stat } from "node:fs/promises";
+import { readFile, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { deflateSync, inflateSync } from "node:zlib";
 import { GitDirectory, inventory, writeNew, type FileBytes } from "./files.ts";
@@ -42,7 +42,7 @@ async function writeTree(root: string, files: readonly FileBytes[], blobs: Reado
   return writeObject(root, ObjectKind.tree, Buffer.concat(bytes));
 }
 
-async function writeIndex(root: string, files: readonly FileBytes[], blobs: ReadonlyMap<string, Buffer>): Promise<void> {
+async function writeIndex(root: string, files: readonly FileBytes[], blobs: ReadonlyMap<string, Buffer>, replace = false): Promise<void> {
   const header = Buffer.alloc(12);
   header.write("DIRC");
   header.writeUInt32BE(IndexVersion, 4);
@@ -66,7 +66,9 @@ async function writeIndex(root: string, files: readonly FileBytes[], blobs: Read
     entries.push(bytes);
   }
   const bytes = Buffer.concat([header, ...entries]);
-  await writeNew(root, `${GitDirectory}/index`, Buffer.concat([bytes, digest(bytes)]));
+  const content = Buffer.concat([bytes, digest(bytes)]);
+  if (replace) await writeFile(join(root, GitDirectory, "index"), content);
+  else await writeNew(root, `${GitDirectory}/index`, content);
 }
 
 /** Setup generation writes seed data without invoking Git or reading a user's Git settings. */
@@ -83,12 +85,29 @@ export async function seedRepository(root: string): Promise<void> {
   await writeIndex(root, [...files].sort((a, b) => Buffer.compare(Buffer.from(a.path), Buffer.from(b.path))), blobs);
 }
 
-export async function initialRepository(root: string): Promise<void> {
+export async function appendSeedCommit(root: string): Promise<{ reference: string; seed: string }> {
+  await initialRepository(root);
+  const reference = (await readFile(join(root, GitDirectory, "refs/heads/main"), "utf8")).trim();
+  const files = await inventory(root), blobs = new Map<string, Buffer>();
+  for (const file of files) blobs.set(file.path, await writeObject(root, ObjectKind.blob, file.bytes));
+  const tree = await writeTree(root, files, blobs);
+  const commit = Buffer.from(`tree ${tree.toString("hex")}\nparent ${reference}\nauthor ${InitialIdentity}\ncommitter ${InitialIdentity}\n\nCase seed\n`);
+  const seed = (await writeObject(root, ObjectKind.commit, commit)).toString("hex");
+  await writeFile(join(root, GitDirectory, "refs/heads/main"), `${seed}\n`);
+  await writeIndex(root, [...files].sort((a, b) => Buffer.compare(Buffer.from(a.path), Buffer.from(b.path))), blobs, true);
+  return { reference, seed };
+}
+
+export async function initialRepository(root: string, commits = 1): Promise<void> {
   if (await readFile(join(root, GitDirectory, "HEAD"), "utf8") !== "ref: refs/heads/main\n") throw new Error("The setup has no initial main branch.");
-  const hash = (await readFile(join(root, GitDirectory, "refs/heads/main"), "utf8")).trim();
-  if (!/^[a-f\d]{40}$/.test(hash)) throw new Error("The initial commit reference is invalid.");
-  const object = inflateSync(await readFile(join(root, GitDirectory, "objects", hash.slice(0, 2), hash.slice(2))));
-  if (digest(object).toString("hex") !== hash || !object.toString().startsWith(`${ObjectKind.commit} `) || /^parent /m.test(object.toString())) throw new Error("The setup must start with one root commit.");
+  let hash = (await readFile(join(root, GitDirectory, "refs/heads/main"), "utf8")).trim();
+  for (let index = 0; index < commits; index += 1) {
+    if (!/^[a-f\d]{40}$/.test(hash)) throw new Error("The initial commit reference is invalid.");
+    const object = inflateSync(await readFile(join(root, GitDirectory, "objects", hash.slice(0, 2), hash.slice(2))));
+    if (digest(object).toString("hex") !== hash || !object.toString().startsWith(`${ObjectKind.commit} `)) throw new Error("Invalid setup history object.");
+    hash = /^parent ([a-f\d]{40})$/m.exec(object.toString())?.[1] ?? "";
+    if ((index === commits - 1) !== (hash === "")) throw new Error("The setup history has the wrong number of commits.");
+  }
   const index = await readFile(join(root, GitDirectory, "index"));
   if (index.toString("utf8", 0, 4) !== "DIRC" || !digest(index.subarray(0, -20)).equals(index.subarray(-20))) throw new Error("The initial repository index is invalid.");
 }

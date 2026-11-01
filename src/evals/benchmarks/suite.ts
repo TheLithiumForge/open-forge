@@ -9,6 +9,7 @@ import { safeRelative, sha256 } from "../materialize/files.ts";
 import { checkSubset } from "../materialize/subset.ts";
 import { DocumentCase } from "../materialize/delivery.ts";
 import type { IntentItem, Suite } from "./suite.types.ts";
+import { loadBrownfieldSuite } from "../materialize/brownfield.ts";
 
 const SuiteFiles = {
   definition: "suite.json",
@@ -30,6 +31,11 @@ function suiteFolder(id: string): string {
 }
 
 export async function loadSuite(id: string): Promise<Suite> {
+  if (/^l4-[\w-]+$/.test(id)) {
+    const folder = join(EvalPaths.suites, id);
+    if (!existsSync(join(folder, "case.json"))) throw new Error(`Missing Layer 4 case folder or case.json: ${id}`);
+    return loadBrownfieldSuite(folder, id);
+  }
   const folder = suiteFolder(id);
   const read = (name: string): Promise<string> => readFile(join(folder, name), "utf8");
   const intentEdited = existsSync(join(folder, SuiteFiles.localIntent));

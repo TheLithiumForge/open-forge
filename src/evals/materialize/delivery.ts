@@ -11,6 +11,7 @@ export const DocumentSetups = { plain: "plain-docs", linked: "linked-agents", mi
 export function setupPrompt(suite: Suite, setup: string): string {
   const delivery = suite.setups[setup]?.delivery;
   if (!delivery) return suite.prompt;
+  if (delivery.kind === SetupKind.code) return suite.prompt;
   if (!suite.documents?.length) throw new Error("A document setup needs frozen product documents.");
   return `${suite.prompt}\n\n${delivery.kind === SetupKind.inline ? suite.documents.join("\n\n") : DocumentPointer}`;
 }

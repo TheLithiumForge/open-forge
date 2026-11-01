@@ -1,5 +1,6 @@
 import type { JudgedBy, RubricArea } from "./suite-values.ts";
 import type { DocumentDelivery } from "../materialize/delivery.ts";
+import type { BrownfieldInputs } from "../materialize/brownfield-inputs.ts";
 
 /** Something the user wants but didn't say. Only the simulated user, the checks and the judges see it. */
 export interface IntentItem {
@@ -37,4 +38,5 @@ export interface Suite {
   readonly documents?: readonly string[];
   readonly runMinutes?: number;
   readonly comparisons?: Readonly<Record<string, readonly string[]>>;
+  readonly brownfield?: BrownfieldInputs;
 }

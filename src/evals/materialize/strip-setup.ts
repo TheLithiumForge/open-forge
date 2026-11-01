@@ -11,9 +11,10 @@ export interface StripOptions {
 
 export async function stripSetup(options: StripOptions): Promise<void> {
   const files = await inventory(options.source);
-  const specifications = options.manifest.kind === SetupKind.inline ? [] : options.manifest.specifications.files;
+  const specifications = options.manifest.kind === SetupKind.inline || options.manifest.kind === SetupKind.code ? [] : options.manifest.specifications.files;
   const specs = new Map(specifications.map((file) => [`${SetupFiles.docs}/${safeRelative(file.path)}`, file]));
-  const scaffold = options.manifest.files.filter((file) => !specs.has(file.path) && file.path !== SetupFiles.readme);
+  const project = new Set(options.manifest.projectFiles?.map((file) => file.path));
+  const scaffold = options.manifest.files.filter((file) => !specs.has(file.path) && !project.has(file.path) && file.path !== SetupFiles.readme);
   for (const file of scaffold) {
     safeRelative(file.path);
     if (sha256(files.find((entry) => entry.path === file.path)?.bytes ?? "") !== file.sha256) throw new Error(`Recorded routing file changed: ${file.path}`);

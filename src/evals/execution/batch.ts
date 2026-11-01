@@ -15,6 +15,8 @@ import { artifactHash } from "../history/artifacts.ts";
 import { plannedRun, replacementRun } from "../history/run-records.ts";
 import type { SetupRecord } from "../history/records.types.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
+import { checksForSuite } from "../benchmarks/registry.ts";
+import type { FileHash } from "../materialize/files.ts";
 import { progress } from "./progress.ts";
 import { executeRun } from "./run.ts";
 import { runInParallel } from "./run-queue.ts";
@@ -80,6 +82,7 @@ async function executeBatch(batchId: string): Promise<void> {
     await saveBatch(batch);
   };
   const snapshots = new Map<string, string>();
+  const baselines = new Map<string, readonly FileHash[]>();
   try {
     await setStatus(BatchStatus.preparing);
     const suite = await loadSuite(batch.suite);
@@ -93,6 +96,7 @@ async function executeBatch(batchId: string): Promise<void> {
       progress.report(batchId, `Installing setup ${snapshots.size + 1} of ${batch.config.setups.length}.`);
       const snapshot = await generateSetup(suite, setup);
       snapshots.set(setup, snapshot.folder);
+      baselines.set(setup, snapshot.record.files);
       records.push(snapshot.record);
     }
     const setups: SetupRecord[] = records.map((record) => ({ schemaVersion: RecordSchemaVersion, id: record.setup, experimentId: batchId,
@@ -118,13 +122,15 @@ async function executeBatch(batchId: string): Promise<void> {
         await saveBatch(batch);
       }
       const attemptSuite = suiteForSetup(suite, run.setup);
-      let done = await executeRun({ run, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} of ${batch.runs.length}` });
+      const checks = suite.brownfield === undefined ? undefined : checksForSuite(suite, baselines.get(run.setup));
+      const services = checks === undefined ? {} : { checks };
+      let done = await executeRun({ run, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} of ${batch.runs.length}`, services });
       if (done.status === RunStatus.failed && done.failureKind === FailureKind.infrastructure && done.replacesRunId === null) {
         const replacement = replacementRun(done, opaqueId(), "One replacement for an infrastructure failure.");
         batch = { ...batch, runs: [...batch.runs, replacement.id] };
         await saveRun(replacement);
         await saveBatch(batch);
-        done = await executeRun({ run: replacement, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} replacement` });
+        done = await executeRun({ run: replacement, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} replacement`, services });
       }
       if (done.status === RunStatus.limited) limited = true;
     }, () => limited);

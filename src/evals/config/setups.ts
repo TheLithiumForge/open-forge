@@ -35,17 +35,19 @@ export async function generateSetup(suite: Suite, setup: string, run: ForgeRunne
   try {
     await mkdir(folder);
     if (definition.delivery !== undefined) {
-      if (!suite.specs || definition.commands.length) throw new Error("Document setups need one frozen pack and no separate setup commands.");
+      if ((!suite.specs && !suite.brownfield) || definition.commands.length) throw new Error("Document setups need one frozen pack and no separate setup commands.");
       const planned = new Set<string>();
       const tracked: ForgeRunner = async (args, cwd) => {
         const result = await run(args, cwd);
         if (args.includes(SetupCliFlags.preview) && result.code === 0) for (const path of plannedFiles(result.stdout)) planned.add(path);
         return result;
       };
-      const result = await materializeSetup({ kind: definition.delivery.kind, destination: folder, specs: join(evalsRoot, safeRelative(suite.specs)),
+      const result = await materializeSetup({ kind: definition.delivery.kind, destination: folder, ...(suite.specs === undefined ? {} : { specs: join(evalsRoot, safeRelative(suite.specs)) }),
+        ...(suite.brownfield === undefined ? {} : { frozen: suite.brownfield.specifications, projectFiles: suite.brownfield.reference, seedFiles: suite.brownfield.seed, referenceDocuments: suite.brownfield.referenceDocuments }),
         ...(definition.delivery.preset === undefined ? {} : { preset: definition.delivery.preset }), runForge: tracked });
       expected.add(SetupFiles.readme);
-      if (definition.delivery.kind !== SetupKind.inline) for (const file of result.manifest.specifications.files) expected.add(`${SetupFiles.docs}/${file.path}`);
+      if (definition.delivery.kind !== SetupKind.inline && definition.delivery.kind !== SetupKind.code) for (const file of result.manifest.specifications.files) expected.add(`${SetupFiles.docs}/${file.path}`);
+      for (const file of suite.brownfield?.seed ?? []) expected.add(file.path);
       if (definition.delivery.kind === SetupKind.linked) expected.add(SetupFiles.agents);
       for (const path of planned) expected.add(path);
       const files = (await inventory(folder)).map((file) => ({ path: file.path, bytes: file.bytes.length, sha256: sha256(file.bytes) }));

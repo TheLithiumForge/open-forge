@@ -52,6 +52,12 @@ Document forms use the same acceptance line naming `docs/`. The inline form says
 
 `stripSetup()` exports plain documents and keeps added application files. Pass the setup manifest kept outside the project. It checks recorded routing files before removing them from the export.
 
+## Brownfield setups
+
+Layer 4 loads `case.json`, copies the reference and applies the optional seed patch as data. Every setup has a reference commit followed by a case-seed commit. Document setups use the full spec with the case's document replacements. Code only keeps the project and public tests without product documents. Manifests stay outside the project.
+
+The batch and recheck commands use the saved starting file hashes for the diff gate. The [brownfield grading contract](../grading/brownfield/README.md) defines the case path fields, verifier worker and reports.
+
 ## Check
 
 From `src/evals`, run:

@@ -13,6 +13,7 @@ function fakeServices() {
     qualify: async () => { calls.push(Command.qualify); return []; }, plan: async (_path, development) => { calls.push(`plan:${development}`); return FixtureConfig; },
     suite: async () => FixtureSuite, run: async () => { calls.push(Command.run); return 0; }, ui: async () => { calls.push(Command.ui); return 0; },
     launch: async () => { calls.push("launch"); return 0; }, export: async (_batch, target) => { calls.push(Command.export); return target; },
+    validateCase: async () => { throw new Error("Unexpected case validation."); },
   };
   return { services, calls, output };
 }

@@ -10,9 +10,9 @@ import { RunStatus } from "../history/statuses.ts";
 import { assessmentBase, checksAssessment, failedChecksAssessment } from "../history/assessments.ts";
 import { gradingVersions } from "../history/capture.ts";
 import type { AssessmentVersions, ChecksAssessment, RunView } from "../history/records.types.ts";
-import { appendAssessment, assessmentEvidenceFolder, readBatch, readRuns, runFolder } from "../history/store.ts";
+import { appendAssessment, assessmentEvidenceFolder, readBatch, readRuns, readSetups, runFolder } from "../history/store.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
-import { suiteChecks } from "../benchmarks/registry.ts";
+import { checksForSuite } from "../benchmarks/registry.ts";
 import type { SuiteCheckOutput } from "../benchmarks/suite-checks.types.ts";
 import type { BuildResult } from "../history/results.types.ts";
 
@@ -44,12 +44,13 @@ async function main(): Promise<void> {
   if (batchId === undefined) throw new Error("Name the batch to check again.");
   const batch = await readBatch(batchId);
   const suite = await loadSuite(batch.suite);
-  const checks = suiteChecks[suite.id];
-  if (checks === undefined) throw new Error(`No hidden checks for ${suite.id}.`);
+  const setups = await readSetups(batch);
   const versions = await gradingVersions(suite);
   const rebuild = args.includes(RebuildFlag);
   if (rebuild && !(await dockerAvailable())) throw new Error("Rebuilding needs Docker, because agent code never builds on this machine.");
   for (const run of await readRuns(batch)) {
+    const checks = checksForSuite(suite, setups.find((setup) => setup.id === run.setup)?.files);
+    if (checks === undefined) throw new Error(`No hidden checks for ${suite.id}.`);
     if (run.build === null || (onlyRun !== undefined && run.id !== onlyRun)) continue;
     if (rebuild && run.status !== RunStatus.done) {
       console.log(`${run.id}: not rebuilt, because the run didn't finish (${run.status}).`);

@@ -21,6 +21,7 @@ export interface EvalLimits {
 
 export interface EvalConfig {
   readonly suite: string;
+  readonly cases?: readonly string[];
   readonly runsPerSetup: number;
   /** How many runs go at once. Hidden checks still run one at a time. */
   readonly parallelRuns: number;

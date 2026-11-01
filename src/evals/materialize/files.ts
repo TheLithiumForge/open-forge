@@ -41,12 +41,12 @@ export async function ordinaryPath(path: string): Promise<void> {
   }
 }
 
-export async function inventory(root: string): Promise<FileBytes[]> {
+export async function inventory(root: string, excluded: ReadonlySet<string> = new Set([GitDirectory])): Promise<FileBytes[]> {
   await ordinaryPath(root);
   const files: FileBytes[] = [];
   async function walk(folder: string, prefix: string): Promise<void> {
     for (const entry of await readdir(folder, { withFileTypes: true })) {
-      if (entry.name === GitDirectory) continue;
+      if (excluded.has(entry.name)) continue;
       const path = prefix ? `${prefix}/${entry.name}` : entry.name;
       const fullPath = join(folder, entry.name);
       if (entry.isSymbolicLink()) throw new Error(`Links are unsupported: ${path}`);

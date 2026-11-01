@@ -5,10 +5,12 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("./", import.meta.url));
 export const ProductTestPatterns = ["config/**/*.test.ts", "execution/**/*.test.ts", "grading/**/*.test.ts", "history/**/*.test.ts", "benchmarks/**/*.test.ts", "materialize/**/*.test.ts", "images/**/*.test.ts", "web/server/**/*.test.ts", "experiments/**/*.test.ts", "*.test.ts"];
 export const ReferenceTestPattern = "**/reference/**";
+export const IgnoredTestFolders = ["node_modules", ".npm-cache", "dist", ".playwright-browsers", "runs", ".git", "coverage", "test-results", "playwright-report"] as const;
+export const ProductTestExclusions = [ReferenceTestPattern, ...IgnoredTestFolders.map((folder) => `**/${folder}/**`)];
 
 export async function productTests(cwd: string = root): Promise<string[]> {
   const files: string[] = [];
-  for await (const file of glob(ProductTestPatterns, { cwd, exclude: [ReferenceTestPattern] })) files.push(file);
+  for await (const file of glob(ProductTestPatterns, { cwd, exclude: ProductTestExclusions })) files.push(file);
   return files.sort();
 }
 
