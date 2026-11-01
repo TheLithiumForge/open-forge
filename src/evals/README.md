@@ -86,4 +86,4 @@ Editing the hidden wishes writes `intent.local.json` and changes the eval's fing
 - `local` isolation keeps the tools' settings and memory apart, but the agent can still read the rest of your disk.
 - Codex reports no dollar cost. Claude Code's cost is its own estimate.
 
-The design behind it is in [Running Evals](../../.agents/memory/crystallized/documents/evals/running-evals.md) and [Eval Judging](../../.agents/memory/crystallized/documents/evals/judging.md).
+The design behind it is in [Vision](../../.agents/memory/crystallized/documents/evals/vision.md), [Architecture](../../.agents/memory/crystallized/documents/evals/architecture.md), [Protocol](../../.agents/memory/crystallized/documents/evals/protocol.md), [Grading](../../.agents/memory/crystallized/documents/evals/grading.md), [Data Points](../../.agents/memory/crystallized/documents/evals/data-points.md), [Running Evals](../../.agents/memory/crystallized/documents/evals/running-evals.md) and [Results](../../.agents/memory/crystallized/documents/evals/results.md).

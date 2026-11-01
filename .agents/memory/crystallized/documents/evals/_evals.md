@@ -1,14 +1,30 @@
 ---
 open-forge:
-  description: Open Forge evals, what each one compares, how we run it and which data points it records
+  description: Open Forge Evals goals, product design, run protocol, grading, measurements and published results
   tags: [Memory, Document, CurrentTruth, Evaluation]
 ---
 
 # Evals
 
-This scope holds Open Forge's evals. Each eval runs the same prompt under different setups on one tool and model, and records the same data points, so the setups can be compared.
+Open Forge Evals is a product that compares the same coding task across setups on one tool and model.
 
-The [Eval Ladder](../../../emerging/ideas/eval-ladder.md) orders the planned evals, from a prompt-only greenfield project up to brownfield. It isn't accepted yet. [Task 58](../../../working/cli-development/tasks/task58-demo-evals.md) tracks the work.
+Status: approved direction on 2026-11-01. The complete product is Not built yet.
+
+For example, a Neon Pairs case runs five times per setup with the same prompt and model, then reports checks and usage apart. The [approved proposal](../../../emerging/analysis/eval-product-proposal.md#approved) sets the scope for [Task 58](../../../working/cli-development/tasks/task58-demo-evals.md).
+
+## Documents
+
+The [Vision](vision.md) defines the goals, four layers, comparison axes and limits on public claims. The current work compares No setup, Minimal, Essentials and Full Core. Helpful and Extension testing wait until later in Task 58.
+
+The [Architecture](architecture.md) defines the product under `src/evals/`, its three images and stage contracts. The [Protocol](protocol.md) defines attempts, the simulated user, fair comparison and pre-registration.
+
+The [Grading](grading.md) defines checks, statuses, the judge and human audits. The [Data Points](data-points.md) defines measurements and usage counting.
+
+The [Running Evals](running-evals.md) guide covers commands, prerequisites, sign-in and recovery. The [Results](results.md) defines versioned records, evidence storage and publication.
+
+The [Neon Pairs](neon-pairs/_neon-pairs.md) pack is the editable game specification the cases use. The Greenfield Baseline stays unchanged until a later packet folds it into the Neon Pairs documents.
+
+Back to [Documents](../_documents.md).
 
 ## Axioms
 
@@ -16,9 +32,13 @@ The [Eval Ladder](../../../emerging/ideas/eval-ladder.md) orders the planned eva
 
 ## Entries
 
-- [The values every Open Forge eval records for each run, and how we get, count, judge and report each one](data-points.md) - #Memory #Document #CurrentTruth #Evaluation #Measurement #Context #Tokens
+- [The approved Evals product folders, three images, container rules and stage inputs and outputs](architecture.md) - #Memory #Document #CurrentTruth #Evaluation #Architecture #Harness #Isolation
+- [The measurements every eval records, their units, counting rules and separate result panels](data-points.md) - #Memory #Document #CurrentTruth #Evaluation #Measurement #Context #Tokens
+- [Checks per layer, check statuses, counting rules, model judge and blind human audits](grading.md) - #Memory #Document #CurrentTruth #Evaluation #Grading #Judging #Measurement
 - [The first Open Forge eval, one short prompt for Neon Pairs, a small React memory game, run in an empty folder, in fresh Open Forge installs and with the Collaboration extension, checking that Open Forge is not worse](greenfield-baseline.md) - #Memory #Document #CurrentTruth #Evaluation #Greenfield #Baseline #Demo
-- [Who judges each Open Forge eval data point, why the headline numbers come only from checks and counts, how the model judge and blind pairwise picks work, and how anyone can rerun them](judging.md) - #Memory #Document #CurrentTruth #Evaluation #Judging #Measurement
 - [Editable Neon Pairs specification and frozen pack generation](neon-pairs/_neon-pairs.md) - #Memory #Document #CurrentTruth #Evaluation #Game #Specification
-- [How every Open Forge eval run starts, runs and ends in isolation on Claude Code and Codex, how the eval tool drives each CLI on a subscription, and what it captures](running-evals.md) - #Memory #Document #CurrentTruth #Evaluation #Harness #Isolation
+- [The shared run steps, simulated user, judge evidence, fair comparison and pre-registration rules](protocol.md) - #Memory #Document #CurrentTruth #Evaluation #Protocol #Conversation
+- [The public results repository, result versions, schema v2 records, evidence assets and publishing flow](results.md) - #Memory #Document #CurrentTruth #Evaluation #Results #History #Publishing
+- [The approved eval commands, prerequisites, provider sessions, sign-in, setup preparation and recovery](running-evals.md) - #Memory #Document #CurrentTruth #Evaluation #Harness #Isolation
+- [What Open Forge Evals must show, the limits on public claims, the four layers and the separate comparison axes](vision.md) - #Memory #Document #CurrentTruth #Evaluation #Vision
 

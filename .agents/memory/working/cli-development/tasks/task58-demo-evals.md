@@ -4,7 +4,7 @@ open-forge:
   tags: [Memory, Working, Task, Evaluation, Demo, Contextual, Active]
 ---
 
-# Task 58 — Demo-based evaluations
+# Task 58 Demo-based evaluations
 
 **Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task58-demo-evals.md). Recommendation:
 Do after 1.0. The review names any details in this record that are out of date.
@@ -143,7 +143,7 @@ These rules make the results hard to dispute:
 
 **2026-10-30:** the maintainer set the expanded outline aside and restarted from the barest case. The [Eval Ladder](../../../emerging/ideas/eval-ladder.md) keeps the new outline, and the [Twelve-Eval Catalogue](../../../emerging/ideas/eval-catalogue.md) keeps the earlier council plan for comparison. The [Evals](../../../crystallized/documents/evals/_evals.md) scope holds the first proposed documents, waiting for review: [Eval Data Points](../../../crystallized/documents/evals/data-points.md) and the [Greenfield Baseline](../../../crystallized/documents/evals/greenfield-baseline.md).
 
-Later on 2026-10-30 the maintainer chose Neon Pairs, a React memory game with grids from 4x4 to 16x16, for the Greenfield Baseline, and added a Helpful setup with the Collaboration extension. [Running Evals](../../../crystallized/documents/evals/running-evals.md) and [Eval Judging](../../../crystallized/documents/evals/judging.md) now cover isolation, the simulated user, the runner and who judges what.
+Later on 2026-10-30 the maintainer chose Neon Pairs, a React memory game with grids from 4x4 to 16x16, for the Greenfield Baseline, and added a Helpful setup with the Collaboration extension. [Running Evals](../../../crystallized/documents/evals/running-evals.md) and [Eval Grading](../../../crystallized/documents/evals/grading.md) now cover isolation, the simulated user, the runner and who judges what.
 
 The maintainer then decided that judging must be repeatable by anyone: headline numbers from checks and counts, a model judge at least as strong as the agents answering yes or no questions, and blind pairwise picks by people. They asked for a simple tool that runs on Claude and Codex subscriptions. A first draft is in [`evals/`](../../../../../src/evals/README.md): `npm start` opens a local web app that runs batches, plays finished games blind and shows the results. It drives the official CLIs directly, pinned on npm. Its hidden checks pass on a reference Neon Pairs build. Only mock runs are tested so far. Real runs wait for the maintainer's sign-in and approval to spend.
 

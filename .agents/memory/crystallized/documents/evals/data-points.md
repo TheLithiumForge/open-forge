@@ -1,111 +1,117 @@
 ---
 open-forge:
-  description: The values every Open Forge eval records for each run, and how we get, count, judge and report each one
+  description: The measurements every eval records, their units, counting rules and separate result panels
   tags: [Memory, Document, CurrentTruth, Evaluation, Measurement, Context, Tokens]
 ---
 
 # Eval Data Points
 
-Eval Data Points is the set of values every Open Forge eval records for each run, and how we get each value.
+Eval Data Points is the measurement contract that records the same outcomes, usage and user effort for every setup.
 
-An eval compares setups, so every setup has to be measured the same way. Keeping the data points in one place does that. For example, the [Greenfield Baseline](greenfield-baseline.md) records functional success, tokens and compactions for runs in an empty folder and for runs in a fresh Open Forge install, then compares the two.
+Status: aligned with the approval of 2026-11-01. Complete measurement support is Not built yet.
 
-Status: proposed on 2026-10-30, then updated the same day with rules followed, intent coverage, build and blind picks. The [eval tool](../../../../../src/evals/README.md) records them, and only its mock runs are tested.
+A run is one agent attempt from the prompt until completion or a limit. Its record identifies the case, setup, tool and version, model, effort, Open Forge version, date and repetition. A setup record keeps its files, hashes, size and setup effort once. Versioned records follow [Results](results.md).
 
-## Runs and setups
+Every layer records tokens, tool calls, failed tool calls, time, peak context, compactions, Open Forge reads and user effort. Simulated user and judge usage stay apart from coding usage. The [proposal's measurement rule](../../../emerging/analysis/eval-product-proposal.md#grading-per-layer) sets this minimum.
 
-A run is one agent session, from the prompt until the agent stops or hits a limit. Each run gets one record with:
+## Outcomes
 
-- Its identity: eval, setup, tool, tool version, model, effort, Open Forge version, date and run number.
-- Every data point below that the eval uses.
+The harness counts usage and build results. Hidden checks run on frozen files after the agent stops. The pinned model judge cites evidence for review questions. People audit results and make blind picks. Their [grading rules](grading.md) define statuses, coverage and audits.
 
-Each setup also gets one record, written once: its files, their hashes and size, and the effort it took to write them.
+Each outcome has its separate measure:
 
-## How we judge
+| Data point | Unit | How it is measured |
+| --- | --- | --- |
+| Functional success | Working gate and stated success | The layer's executable checks |
+| Requirement coverage | Passed checks and percentage | Passed checks out of all applicable checks |
+| Rules followed | Yes, no and unsure ballots per rule | Static checks where possible, judge for review clauses |
+| Wishes | Items met and percentage | Checks where executable, judge for the rest |
+| Blind preference | Share of comparisons won and ties | People play two games with hidden setups |
+| Code quality | Yes, no and unsure ballots | Frozen questions on legibility, structure, complexity and saved data |
+| Build | Outcome, seconds and package count | Rebuild submitted files offline |
+| Code metrics | Type errors, warnings, duplication and complexity | Fixed tools, Not built yet |
+| Performance | Milliseconds and bytes | First render, 95th percentile interaction time and shipped size, ten measurements each |
+| Target met | Value against the stated target | Measured only when the task sets a target |
+| Pipeline completion | Stage outcomes | Execution records, separate from functional success |
 
-Each data point names how we get it:
+Checks test the prompt and the requirements provided at that layer. Extra features earn nothing. A check can't require a file layout or hook the task didn't give.
 
-- Automatic - the harness reads it from the tool's usage records, the transcript or the files, with no judgment.
-- Hidden checks - tests the agent never sees, run after it stops, on a frozen copy of its files.
-- Model judge - a fixed model scores against a written rubric and cites the code it scored.
-- People - judges who don't know the setup score the same screenshots and recordings.
+Wishes measure private preferences and stay apart from requirement coverage and functional success. They show how closely the result matches what the simulated user wanted.
 
-[Eval Judging](judging.md) says who judges each data point and when people check the others.
+## Usage
 
-## Results
+Keep these measurements apart:
 
-| Data point           | Unit                                             | How we get it                                                                                      |
-| -------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
-| Functional success   | Pass or fail                                     | Hidden checks: the result builds, starts and passes every check                                    |
-| Requirement coverage | Checks passed, %                                 | Hidden checks: one check per requirement in the prompt                                             |
-| Rules followed       | Share of yes answers per rule                    | Model judge: each rule the user gave, with the code it cites                                       |
-| Intent coverage      | Intent items met, %                              | Hidden checks where an item can be checked, model judge for the rest                               |
-| Picked               | Share of blind comparisons won                   | People: two finished games played side by side, labeled A and B, setups hidden                    |
-| Code quality         | Share of yes answers                             | Model judge: yes or no questions on readability, structure, needless complexity and saved data     |
-| Code metrics         | Type errors, warnings, duplication %, complexity | Automatic: fixed analysis tools on the code the agent wrote                                        |
-| Build                | Pass or fail, seconds, packages                  | Automatic: the project's build run again offline, and the count of installed packages              |
-| Performance          | Milliseconds, bytes                              | Automatic: first render, interaction time at the 95th percentile and shipped size, ten times each  |
-| Target met           | Measured value against the target                | Automatic, only when the prompt sets a target such as a size limit                                 |
+| Data point | Unit | How it is measured |
+| --- | --- | --- |
+| Tokens | Uncached input, cached input, cache writes, output and reasoning | Tool usage records |
+| Dollars | API-price estimate per attempt | Tokens times a dated price list |
+| Time | Seconds | Install, coding, verifier and assessor stages apart |
+| Tool calls | Calls and failures | Transcript and tool events |
 
-Checks test only what the prompt asks for. Extra features earn nothing, and no check requires a file layout or a name the prompt didn't give.
-
-Intent coverage is the exception, on purpose: it scores what the user wanted but didn't say, from a hidden intent sheet. It stays apart from requirement coverage and never counts toward functional success. It shows whether a setup that asks better questions gets the user closer to what they wanted.
-
-## Cost
-
-| Data point | Unit                                                           | How we get it                                  |
-| ---------- | -------------------------------------------------------------- | ---------------------------------------------- |
-| Tokens     | Uncached input, cached input, cache writes, output, reasoning  | Automatic: the tool's usage records            |
-| Dollars    | Per run, at API prices                                         | Automatic: tokens times a dated price list     |
-| Time       | Seconds                                                        | Automatic: install, agent run and checks apart |
-| Tool calls | Count, failures                                                | Automatic: the transcript                      |
+Subscriptions don't bill per attempt. A dollar figure estimates equivalent API cost. Claude Code reports an estimate. Codex reports none in the draft runner. Cost estimates depend on the price list under Not decided yet.
 
 ## Context
 
-| Data point        | Unit                        | How we get it                                                                                                  |
-| ----------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Peak context      | Tokens, share of the window | Automatic: the largest input of a single request                                                               |
-| Total input       | Tokens                      | Automatic: all request inputs added up                                                                         |
-| Context delivered | Bytes, unique and repeated  | Automatic: text that reached the agent, with Open Forge files counted apart and startup apart from later reads |
-| Compactions       | Count, size before and after| Automatic, where the tool reports them                                                                         |
-| Lost progress     | Requirements, %             | Hidden checks on snapshots saved during the run                                                                |
+Record context where the provider gives evidence:
 
-Context degradation is what an agent forgets during a run, and we can't see that directly. Lost progress is our proxy: a requirement that passes on a snapshot during the run and fails at the end. A short run with no compaction tells us little about it.
+| Data point | Unit | How it is measured |
+| --- | --- | --- |
+| Peak context | Tokens and share of the window | Largest input of one model request |
+| Total input | Tokens | Sum of request inputs |
+| Context delivered | Unique and repeated bytes | Text reaching the agent, with Open Forge files and startup reads apart |
+| Open Forge reads | Paths, bytes and read counts | Files the agent actually reads |
+| Compactions | Count and size before and after | Provider records where reported |
+| Lost progress | Requirements and percentage | A requirement passes during the run and fails at the end |
+
+Lost progress uses saved snapshots as a proxy for forgetting. Snapshot capture for this measure is Not built yet. Capture depends on the snapshot schedule under Not decided yet. A short run without compaction tells us little about context degradation.
 
 ## User effort
 
-| Data point   | Unit                  | How we get it                                                   |
-| ------------ | --------------------- | --------------------------------------------------------------- |
-| Prompt words | Words                 | Automatic: the submitted prompt                                 |
-| Questions    | Count, rounds         | Automatic: the agent's questions                                |
-| Answers      | Words, tokens         | Automatic: the simulated user's answers and what they cost      |
-| Setup effort | Minutes, tokens       | Setup record, counted once per setup                            |
+Record these values without mixing them into coding usage:
 
-## Counting rules
+| Data point | Unit | How it is measured |
+| --- | --- | --- |
+| Prompt | Words | Submitted task prompt |
+| Questions | Decisions and rounds | Agent questions, with bundled decisions counted apart |
+| Answers | Words and tokens | Simulated user replies and usage |
+| Question-driven help | Opportunities asked, answered and used | Registered opportunities and transcript evidence |
+| Avoidable effort | Questions already answered in the documents | Transcript review |
+| Setup effort | Minutes and tokens | Setup record, counted once |
 
-These rules keep the numbers comparable:
+The [conversation protocol](protocol.md#simulated-user) defines answer limits and failures.
 
-- Count each model request once, including helpers and retries. Take differences between running totals instead of adding them up.
-- Cached input counts as input and as context.
-- In Claude Code, a request's input is `input_tokens` plus `cache_read_input_tokens` plus `cache_creation_input_tokens`. In Codex, input already includes cached input.
-- Missing telemetry is "unknown", never zero.
-- Compare tokens only within one tool and model, because tokenizers differ.
-- The simulated user's tokens count as user effort, never as the agent's cost.
-- Screenshots, checks and judges measure one run. They never count as extra runs.
+## Counting
+
+Apply these rules to usage:
+
+- Count each model request once, including helpers and retries.
+- Take differences between running totals instead of adding the totals.
+- Count cached input as input and context.
+- For Claude Code, add `input_tokens`, `cache_read_input_tokens` and `cache_creation_input_tokens` for request input.
+- For Codex, input already includes cached input.
+- Store missing telemetry as `null` and report it as missing, never zero.
+- Compare tokens within one tool and model, because tokenizers differ.
+- Count simulated user usage as user effort and judge usage as assessment cost.
+- Count screenshots, checks and ballots as evidence for an attempt, never extra attempts.
+
+Failures, timeouts, blocked checks and infrastructure replacements follow [Grading](grading.md#counting). The [proposal's counting plan](../../../emerging/analysis/eval-product-proposal.md#grading-per-layer) keeps failed attempts and missing tokens in the result.
 
 ## Reporting
 
-Every eval reports its results the same way:
+Report comparisons in these views:
 
-- One table per tool and model, with one row per setup: runs, success with its interval, coverage, wishes, rules, code, picks, time, tokens, peak context, compactions and lost progress.
-- A chart of each setup's difference from the comparison setup, with its interval.
-- A chart of tokens against coverage, one dot per run.
-- Every run stays in, including failures and timeouts. Quality and cost stay separate, and there's no blended score.
+- One table per tool and model, with runs, success intervals, coverage, wishes, rules, code, picks, time, tokens, peak context, compactions and lost progress.
+- Each setup's difference from its comparison setup, with an interval.
+- Tokens against coverage, one dot per attempt.
+- Separate correctness, rules, cost, wishes and preference panels.
+
+Keep quality and cost separate. There is no blended score. Publish regressions and inconclusive results. Current five-run comparisons support no public claim, as [Vision](vision.md#claims) defines. The [proposal's results views](../../../emerging/analysis/eval-product-proposal.md#results-repository-and-site) define the published panels.
 
 ## Not decided yet
 
-- The dated price list used for dollars.
-- The analysis tools for code metrics.
-- How many snapshots a run saves for lost progress.
+- The dated price list for API-cost estimates.
+- The fixed analysis tools for code metrics.
+- The snapshot schedule for lost progress.
 
 Back to [Evals](_evals.md).
