@@ -2740,6 +2740,21 @@
                                               "path":  "reference/tests/control-contract.e2e.test.ts",
                                               "symbol":  "draft resets, load focus, paused notice and Resume focus order survive remembered positions",
                                               "evidence":  "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+                                          },
+                                          {
+                                              "path": "reference/src/game/session/session.ts",
+                                              "symbol": "replaceGame",
+                                              "evidence": "The visible load notice and keyed live-region text change together once per event."
+                                          },
+                                          {
+                                              "path": "reference/tests/accessibility.e2e.test.ts",
+                                              "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+                                              "evidence": "Each invalid load and valid paused snapshot load is submitted twice. Each event has the exact status text in one polite atomic accessibility node and one live-region mutation."
+                                          },
+                                          {
+                                              "path": "reference-audit/evidence/accessibility-journey.json",
+                                              "symbol": "invalid-board-1, invalid-board-2, invalid-snapshot-1, invalid-snapshot-2, loaded-snapshot-1, loaded-snapshot-2",
+                                              "evidence": "Tree-checked load notices. Spoken output still needs the I17.6 person review."
                                           }
                                       ]
                     },
@@ -3070,6 +3085,21 @@
                                               "path":  "reference/tests/control-contract.e2e.test.ts",
                                               "symbol":  "literal control labels, limits and invalid statuses match the public contract, populated state survives both invalid drafts",
                                               "evidence":  "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+                                          },
+                                          {
+                                              "path": "reference/src/game/session/use-game.ts",
+                                              "symbol": "useGame.notice",
+                                              "evidence": "The visible load notice and keyed live-region text change together once per event."
+                                          },
+                                          {
+                                              "path": "reference/tests/accessibility.e2e.test.ts",
+                                              "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+                                              "evidence": "Each invalid load and valid paused snapshot load is submitted twice. Each event has the exact status text in one polite atomic accessibility node and one live-region mutation."
+                                          },
+                                          {
+                                              "path": "reference-audit/evidence/accessibility-journey.json",
+                                              "symbol": "invalid-board-1, invalid-board-2, invalid-snapshot-1, invalid-snapshot-2, loaded-snapshot-1, loaded-snapshot-2",
+                                              "evidence": "Tree-checked load notices. Spoken output still needs the I17.6 person review."
                                           }
                                       ]
                     },
@@ -3087,6 +3117,21 @@
                                               "path":  "reference/tests/control-contract.e2e.test.ts",
                                               "symbol":  "literal control labels, limits and invalid statuses match the public contract, populated state survives both invalid drafts",
                                               "evidence":  "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+                                          },
+                                          {
+                                              "path": "reference/src/game/session/use-game.ts",
+                                              "symbol": "useGame.notice",
+                                              "evidence": "The visible load notice and keyed live-region text change together once per event."
+                                          },
+                                          {
+                                              "path": "reference/tests/accessibility.e2e.test.ts",
+                                              "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+                                              "evidence": "Each invalid load and valid paused snapshot load is submitted twice. Each event has the exact status text in one polite atomic accessibility node and one live-region mutation."
+                                          },
+                                          {
+                                              "path": "reference-audit/evidence/accessibility-journey.json",
+                                              "symbol": "invalid-board-1, invalid-board-2, invalid-snapshot-1, invalid-snapshot-2, loaded-snapshot-1, loaded-snapshot-2",
+                                              "evidence": "Tree-checked load notices. Spoken output still needs the I17.6 person review."
                                           }
                                       ]
                     },

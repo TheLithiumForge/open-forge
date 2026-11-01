@@ -37,7 +37,7 @@ export function replaceGame(session: Session, game: GameState, paused: boolean):
     celebration: false,
     preferences: { ...session.preferences, size: game.size },
     announcement: session.announcement + 1,
-    feedback: paused ? '' : SessionNotice.newGame,
+    feedback: paused ? SessionNotice.loaded : SessionNotice.newGame,
     loadNotice: paused ? SessionNotice.loaded : '',
   };
 }

@@ -61,7 +61,7 @@ test('the single game result stays beside the board and in view during large-pho
   await page.getByLabel('Snapshot JSON', { exact: true }).fill('{');
   await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
   await expect(page.locator('.load-notice')).toHaveText('Invalid snapshot.');
-  await expect(result).toHaveText('No match. Cards close after a short pause.');
+  await expect(result).toHaveText('Invalid snapshot.');
   await expect(page.locator('.status-row:not(.game-result) [aria-live]')).toHaveCount(0);
 });
 

@@ -88,6 +88,56 @@ test('the I17 keyboard journey exposes names, states and each result in Chromium
   );
   for (const name of expected.closed) accessibilityNode(reset, 'button', name);
   expect(accessibilityNode(reset, 'status').text).toBe(expected.newGame);
+  await page.locator('summary').click();
+  await page.getByRole('button', { name: 'Export snapshot', exact: true }).click();
+  const snapshot = await page.getByLabel('Snapshot JSON', { exact: true }).inputValue();
+  const loadEvents = [
+    {
+      stage: 'invalid-board',
+      field: 'Board code',
+      value: 'invalid',
+      button: 'Load board',
+      notice: 'Invalid board code.',
+    },
+    {
+      stage: 'invalid-snapshot',
+      field: 'Snapshot JSON',
+      value: '{',
+      button: 'Load snapshot',
+      notice: 'Invalid snapshot.',
+    },
+    {
+      stage: 'loaded-snapshot',
+      field: 'Snapshot JSON',
+      value: snapshot,
+      button: 'Load snapshot',
+      notice: 'Loaded snapshot. Select Resume to continue.',
+    },
+  ];
+  for (const event of loadEvents) {
+    await page.getByLabel(event.field, { exact: true }).fill(event.value);
+    const button = page.getByRole('button', { name: event.button, exact: true });
+    for (let repeat = 1; repeat <= 2; repeat += 1) {
+      await button.click();
+      await expect(button).toBeFocused();
+      await expect(page.locator('.load-notice')).toHaveText(event.notice);
+      const tree = await capture(`${event.stage}-${repeat}`);
+      const status = accessibilityNode(tree, 'status');
+      expect(tree.filter((node) => node.role === 'status')).toHaveLength(1);
+      expect(status.properties.live).toBe('polite');
+      expect(status.properties.atomic).toBe(true);
+      expect(status.text).toBe(event.notice);
+    }
+  }
+  await expect(page.getByRole('button', { name: 'Resume', exact: true })).toBeVisible();
+  await expect(page.locator('.card[aria-disabled="true"]')).toHaveCount(expected.closed.length);
+  expect(
+    JSON.parse((await page.getByRole('status').getAttribute('data-result-history')) ?? '[]'),
+  ).toEqual([
+    ...expected.turns,
+    expected.newGame,
+    ...loadEvents.flatMap((event) => [event.notice, event.notice]),
+  ]);
   const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
   expect(readme.split(/\r?\n/)).toContain(expected.readmeRecord);
   const record =

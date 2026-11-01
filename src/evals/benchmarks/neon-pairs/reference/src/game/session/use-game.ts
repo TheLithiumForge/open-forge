@@ -47,7 +47,12 @@ export function useGame() {
   }
 
   function notice(feedback: string): void {
-    commit({ ...current.current, loadNotice: feedback });
+    commit({
+      ...current.current,
+      feedback,
+      loadNotice: feedback,
+      announcement: current.current.announcement + 1,
+    });
   }
 
   function loadBoard(code: string): boolean {

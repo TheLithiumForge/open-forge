@@ -8,7 +8,7 @@ Status: corrected candidate with 97 requirements and 401 clauses. Independent ju
 
 ## Corrections
 
-The first review is recorded in [Reference Review Corrections](review-round-1.md). The eight later corrections are recorded in [Reference Review Two](review-round-2.md). Protected benchmark-check defects stay with the overseer. No specification change is proposed.
+The first review is recorded in [Reference Review Corrections](review-round-1.md). The eight later corrections are recorded in [Reference Review Two](review-round-2.md). The load-status announcement correction is recorded in [Reference Review Three](review-round-3.md). Protected benchmark-check defects stay with the overseer. No specification change is proposed.
 
 ## Decisions
 
@@ -19,7 +19,7 @@ The candidate keeps these product decisions:
 | Rules and constants  | Pure transitions, frozen decks and local states, limits and versions replace the pilot's gathered rules file.                                                                             |
 | Completion           | The banner and final turn announce moves and time.                                                                                                                                        |
 | Type and spacing     | Body, title and secondary text follow the stated sizes and layout scale. Board padding stays 6px for the 3px outline and 2px offset.                                                      |
-| Announcements        | One keyed polite atomic live region gives each result once, including repeated results and the final match with its win.                                                                  |
+| Announcements        | One keyed polite atomic live region gives each turn result and load notice once, including repeated messages and the final match with its win.                                            |
 | Active time          | One monotonic clock feeds elapsed and mismatch time through the same delta. The unsupported second advanceGame time parameter is removed.                                                 |
 | Delayed timer        | Synchronize active time before deciding whether an activation is blocked.                                                                                                                 |
 | Elapsed cap          | The maintainer capped elapsed time at 359999999ms. Play continues. Snapshot validation rejects larger values. Replay timestamps keep their safe-integer range.                            |
@@ -58,7 +58,7 @@ The [verification record](verification.json) gives commands and counts. The [see
 
 ## Screen reader
 
-The [accessibility record](evidence/accessibility-journey.json) contains 22 sanitized Chromium accessibility-tree captures. It includes independent control names, all closed positions, revealed names, disabled matched states, atomic result payloads, the final summary, Tab exit and New Game. A separate observer checks one result change per turn.
+The [accessibility record](evidence/accessibility-journey.json) contains 28 sanitized Chromium accessibility-tree captures. It includes independent control names, all closed positions, revealed names, disabled matched states, atomic result payloads, the final summary, Tab exit and New Game. Six captures check both invalid load notices and the paused snapshot notice, each submitted twice. A separate observer checks one live-region change per turn and per load event.
 
 Tree checks do not record speech. A person follows [Screen Reader Journey](screen-reader-journey.md), records NVDA and browser versions and copies the result into the game README. I17.6 stays open until that happens.
 
@@ -579,10 +579,10 @@ These counts follow Prettier 3.9.6. Physical lines include blank lines. The nonb
 | Configuration       | 10    | 130            | 127            |
 | Styles              | 5     | 304            | 304            |
 | Development scripts | 5     | 90             | 84             |
-| Tests and fixtures  | 63    | 3510           | 3366           |
+| Tests and fixtures  | 63    | 3569           | 3425           |
 | Components          | 8     | 467            | 447            |
 | Game functions      | 12    | 471            | 440            |
-| Browser session     | 7     | 352            | 320            |
+| Browser session     | 7     | 357            | 325            |
 
 Counts exclude Markdown, package-lock.json, HTML, generated distributions, captured evidence, audit tools, command logs, caches, browser downloads and dependencies. Every authored game TypeScript file is within 200 lines. Files above the 100-line aim stay listed in verification.json.
 

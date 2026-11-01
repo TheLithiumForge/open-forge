@@ -3,7 +3,13 @@ import { readFile } from 'node:fs/promises';
 import { test } from 'vitest';
 import { activateCard, createGame, isWon, MISMATCH_MS } from '../game.ts';
 import { boardCode } from '../deck.ts';
-import { activateSession, initialSession, replaceGame, tickSession } from './session.ts';
+import {
+  activateSession,
+  initialSession,
+  replaceGame,
+  tickSession,
+  SessionNotice,
+} from './session.ts';
 import { EXAMPLE_CODE, EXAMPLE_PAIRS } from '../game.fixture.ts';
 
 const EMPTY_PREFERENCES = { size: 4, bestMoves: {} };
@@ -29,6 +35,9 @@ test('an imported session blocks input and active time until Resume', () => {
     1,
   );
   const paused = replaceGame(first, first.game, true);
+  assert.equal(paused.feedback, SessionNotice.loaded);
+  assert.equal(paused.loadNotice, paused.feedback);
+  assert.equal(paused.announcement, first.announcement + 1);
   assert.equal(activateSession(paused, 2), paused);
   assert.equal(tickSession(paused, paused.generation, MISMATCH_MS), paused);
   assert.equal(paused.celebration, false);

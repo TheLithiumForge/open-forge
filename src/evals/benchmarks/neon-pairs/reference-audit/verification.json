@@ -16,12 +16,16 @@
       "lines": 102
     },
     {
+      "path": "reference/src/game/session/session.test.ts",
+      "lines": 107
+    },
+    {
       "path": "reference/src/game/snapshot.test.ts",
       "lines": 115
     },
     {
       "path": "reference/tests/accessibility.e2e.test.ts",
-      "lines": 112
+      "lines": 162
     },
     {
       "path": "reference/tests/browser-test.ts",
@@ -62,8 +66,7 @@
         "builtFromCurrentSource": true,
         "tests": 61,
         "failed": 0,
-        "skipped": 0,
-        "artifactSha256": "fa6cfb55e83a488ab56d38fb65489d1d22171c891be9361341be960876655e33"
+        "skipped": 0
       },
       {
         "run": 2,
@@ -71,8 +74,7 @@
         "builtFromCurrentSource": true,
         "tests": 61,
         "failed": 0,
-        "skipped": 0,
-        "artifactSha256": "fa6cfb55e83a488ab56d38fb65489d1d22171c891be9361341be960876655e33"
+        "skipped": 0
       },
       {
         "run": 3,
@@ -80,8 +82,7 @@
         "builtFromCurrentSource": true,
         "tests": 61,
         "failed": 0,
-        "skipped": 0,
-        "artifactSha256": "fa6cfb55e83a488ab56d38fb65489d1d22171c891be9361341be960876655e33"
+        "skipped": 0
       }
     ],
     "mutations": {
@@ -90,34 +91,30 @@
     },
     "harnessSelfTest": "passed",
     "auditTypecheck": "passed",
-    "standaloneRestart": {
-      "command": "node --test --test-name-pattern \"^Restart clears a mismatch\" tests/lifecycle.e2e.test.ts",
-      "passed": 1,
-      "failed": 0,
-      "skipped": 0
-    },
     "referenceFormatter": "passed",
-    "auditFormatter": "passed"
+    "auditFormatter": "passed",
+    "buildArtifactSha256": "8c74b3a2c4023ae272683c793f1bf4556738db5411289800880baa0069887816"
   },
   "limits": [
     "I17.6 needs a person with NVDA.",
     "Source and process review clauses need independent judgment.",
     "Protected benchmark repairs and final seed freeze stay with the overseer.",
-    "Manual dist and Chromium cleanup stays with the overseer after the earlier policy rejection."
+    "Manual dist and Chromium cleanup stays with the overseer after the earlier policy rejection.",
+    "Automatic approval rejected log-file cleanup as blocked by policy. Generated logs in ignored reference work folders need overseer cleanup."
   ],
   "commands": [
     {
-      "command": "npm ci --cache benchmarks/neon-pairs/reference/.npm-cache",
+      "command": "npm ci --cache .npm-cache",
       "folder": "src/evals",
       "exit": 0
     },
     {
-      "command": "npm run typecheck --cache benchmarks/neon-pairs/reference/.npm-cache",
+      "command": "npm run typecheck --cache .npm-cache",
       "folder": "src/evals",
       "exit": 0
     },
     {
-      "command": "npm test --cache benchmarks/neon-pairs/reference/.npm-cache",
+      "command": "npm test --cache .npm-cache",
       "folder": "src/evals",
       "exit": 0
     },
@@ -166,15 +163,25 @@
   "validation": {
     "clauses": 401,
     "requirements": 97,
-    "links": 16,
+    "links": 20,
     "emptyReferenceSlots": 0,
     "unchangedChecksSlots": 401,
     "proseDashMatches": 0,
-    "hashes": 135
+    "hashes": 136
   },
   "acceptedReview": {
     "clauseId": "V12.7",
     "result": "passed",
     "reason": "The round-2 judge found all 128 grayscale faces distinguishable at 44px."
-  }
+  },
+  "correctionRound": 3,
+  "cleanup": {
+    "referenceLogFiles": 32,
+    "status": "blocked",
+    "reason": "Automatic approval rejected the requested log-file removal as blocked by policy."
+  },
+  "receiptNotes": [
+    "The browser commands passed three times. Optional wrapper metadata commands Get-FileHash and ConvertTo-Json -AsArray were unavailable. The wrapper exited 1 after all browser commands passed. The final build hash was recorded separately with Node.",
+    "I17.6 still needs a person-run spoken journey."
+  ]
 }

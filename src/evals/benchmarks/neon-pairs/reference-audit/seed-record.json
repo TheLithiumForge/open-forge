@@ -13,11 +13,11 @@
     },
     {
       "path": "reference-audit/AUDIT.md",
-      "sha256": "7c2ef9cdfdba348ae48f25205706b6ed1c947b48cad42c50f126a42d9d83e934"
+      "sha256": "c8d80ad1a65f0975fb117208a2c819020fc6633f991afca7fd13fe38be2b934d"
     },
     {
       "path": "reference-audit/evidence/accessibility-journey.json",
-      "sha256": "0a0b3f884681973c923d24714d9a2cf296847037b6fcd46fc8bd2b1584130139"
+      "sha256": "7ac92090ece673024803428f63986f192b135d02bc5bc5f4e667e28ad58193a0"
     },
     {
       "path": "reference-audit/face-sheet-grayscale.png",
@@ -33,7 +33,7 @@
     },
     {
       "path": "reference-audit/mutation-results.json",
-      "sha256": "ea190f8b34aefdcbe10251752953d8835f73f3d866517681bb580c3c6719c4a6"
+      "sha256": "ae38976f7cc04e1d5edc193769ed49f9c5cac012c26138b4a8f118228487448d"
     },
     {
       "path": "reference-audit/mutations.fixture.json",
@@ -52,6 +52,10 @@
       "sha256": "186927603b11c39f11cf1c4d963b1f625f0dc0af1f8c7f8afb24ed3084a53f91"
     },
     {
+      "path": "reference-audit/review-round-3.md",
+      "sha256": "5b3c617b80e54289202eccfb9007cf64c5d27ace1260fe24d64333e05de06c64"
+    },
+    {
       "path": "reference-audit/screen-reader-journey.md",
       "sha256": "e35fb131c762365087b9040421aaca711a92d266002690efb330158229de8106"
     },
@@ -61,7 +65,7 @@
     },
     {
       "path": "reference-audit/verification.json",
-      "sha256": "0aecb071f401bdec6182723239a72c049c97c7ffd5a77e2057cb70b49d8c1dd0"
+      "sha256": "c02350873c07b03291c9975eac97906f8d6aec68390eeb2ea0752d528355735d"
     },
     {
       "path": "reference/.gitignore",
@@ -101,7 +105,7 @@
     },
     {
       "path": "reference/dist/index.html",
-      "sha256": "fa6cfb55e83a488ab56d38fb65489d1d22171c891be9361341be960876655e33"
+      "sha256": "8c74b3a2c4023ae272683c793f1bf4556738db5411289800880baa0069887816"
     },
     {
       "path": "reference/index.html",
@@ -297,11 +301,11 @@
     },
     {
       "path": "reference/src/game/session/session.test.ts",
-      "sha256": "928c86a486fb7702133c0ac0b05fe82108b136a70d268c823b069f4ee5a6a204"
+      "sha256": "c9362a93cff3c72020e0ef88f5ebc31f1199445d0c22a36aeeaae3e7c832a469"
     },
     {
       "path": "reference/src/game/session/session.ts",
-      "sha256": "e391f60a6f417aee0f915b814e7eca256771586bb51ab636217a2ee8274f0dcc"
+      "sha256": "698f7aa606fb01c35a869a5eb36b8a570088c5c1df97e22b7637bbe69a99c833"
     },
     {
       "path": "reference/src/game/session/session.types.ts",
@@ -317,7 +321,7 @@
     },
     {
       "path": "reference/src/game/session/use-game.ts",
-      "sha256": "2a3ee203e9301e5c00a8984d642ce5273547ecbb288e3f2276368f99cc1f9a19"
+      "sha256": "5ff2b2977be6ff47b382b561bda69384505cc6c3fd8de8470ae4b05e20157a80"
     },
     {
       "path": "reference/src/game/session/use-session-clock.ts",
@@ -365,7 +369,7 @@
     },
     {
       "path": "reference/tests/accessibility.e2e.test.ts",
-      "sha256": "334c904c61ee68418007ba2aa6856de4004543a7fdb77c364ee522269646a65e"
+      "sha256": "2798150c9214f7e19abe7cf711c0d52a8dd406468a429bc371c72071685f93ea"
     },
     {
       "path": "reference/tests/accessibility.fixture.json",
@@ -469,7 +473,7 @@
     },
     {
       "path": "reference/tests/status-controls.e2e.test.ts",
-      "sha256": "a8ee9d350e0529fafdf93eb8ade7707ecf1f4a5b60b64964c1817447486259af"
+      "sha256": "26145c02d2cc98f7a9bab1c28e3635b07b9bf712798aa538691213c199db0652"
     },
     {
       "path": "reference/tests/status.e2e.test.ts",
@@ -545,7 +549,7 @@
     },
     {
       "path": "trace.json",
-      "sha256": "53287f32c100dcd019710b348b0ec418e9e5f289bcc0da64df0e5bc0adff41b9"
+      "sha256": "3b9731072d3cc8d7da2560f4d36f90958254d3d8787107bf34f53978591fedb0"
     }
   ]
 }

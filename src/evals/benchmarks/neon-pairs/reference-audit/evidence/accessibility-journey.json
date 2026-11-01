@@ -16192,6 +16192,6972 @@
           "properties": {}
         }
       ]
+    },
+    {
+      "stage": "invalid-board-1",
+      "tree": [
+        {
+          "role": "RootWebArea",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid board code.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotInvalid board code.",
+          "properties": {
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid board code.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotInvalid board code.",
+          "properties": {}
+        },
+        {
+          "role": "main",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid board code.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotInvalid board code.",
+          "properties": {}
+        },
+        {
+          "role": "sectionheader",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "combobox",
+          "name": "Grid size",
+          "value": "4x4",
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "expanded": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DescriptionList",
+          "name": "",
+          "value": null,
+          "text": "Moves0Pairs0 / 8Active time0:00Best:8",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Invalid board code.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
+        },
+        {
+          "role": "region",
+          "name": "Game board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "group",
+          "name": "",
+          "value": null,
+          "text": "Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshot",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Invalid board code.",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "heading",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Grid size",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "MenuListPopup",
+          "name": "",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0 / 8",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Invalid board code.",
+          "value": null,
+          "text": "Invalid board code.",
+          "properties": {}
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DisclosureTriangle",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {
+            "focusable": true,
+            "expanded": true
+          }
+        },
+        {
+          "role": "form",
+          "name": "",
+          "value": null,
+          "text": "Board codeinvalidLoad board",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Snapshot JSON",
+          "value": "{\n  \"version\": 1,\n  \"boardCode\": \"np1-4-144442827\",\n  \"matched\": [],\n  \"selection\": {\n    \"kind\": \"closed\"\n  },\n  \"moves\": 0,\n  \"elapsedMs\": 0,\n  \"started\": false\n}",
+          "text": "{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Invalid board code.",
+          "value": null,
+          "text": "Invalid board code.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Grid size",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "option",
+          "name": "4x4",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": true
+          }
+        },
+        {
+          "role": "option",
+          "name": "6x6",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "8x8",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "10x10",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "12x12",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "14x14",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "16x16",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New Game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Restart",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": " / ",
+          "value": null,
+          "text": " / ",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0:00",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Space reveals a card.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Invalid board code.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Board code",
+          "value": "invalid",
+          "text": "invalid",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Invalid board code.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Moves",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": " / ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Active time",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0:00",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Best:",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Board code",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "invalid",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "{",
+          "value": null,
+          "text": "{",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"version\": 1,",
+          "value": null,
+          "text": "  \"version\": 1,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"boardCode\": \"np1-4-144442827\",",
+          "value": null,
+          "text": "  \"boardCode\": \"np1-4-144442827\",",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"matched\": [],",
+          "value": null,
+          "text": "  \"matched\": [],",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"selection\": {",
+          "value": null,
+          "text": "  \"selection\": {",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "    \"kind\": \"closed\"",
+          "value": null,
+          "text": "    \"kind\": \"closed\"",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  },",
+          "value": null,
+          "text": "  },",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"moves\": 0,",
+          "value": null,
+          "text": "  \"moves\": 0,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"elapsedMs\": 0,",
+          "value": null,
+          "text": "  \"elapsedMs\": 0,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"started\": false",
+          "value": null,
+          "text": "  \"started\": false",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "}",
+          "value": null,
+          "text": "}",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Board code",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "invalid",
+          "value": null,
+          "text": "invalid",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "{",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"version\": 1,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"boardCode\": \"np1-4-144442827\",",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"matched\": [],",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"selection\": {",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "    ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"kind\": \"closed\"",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "},",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"moves\": 0,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"elapsedMs\": 0,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"started\": false",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "}",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "invalid",
+          "value": null,
+          "text": "",
+          "properties": {}
+        }
+      ]
+    },
+    {
+      "stage": "invalid-board-2",
+      "tree": [
+        {
+          "role": "RootWebArea",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid board code.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotInvalid board code.",
+          "properties": {
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid board code.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotInvalid board code.",
+          "properties": {}
+        },
+        {
+          "role": "main",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid board code.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotInvalid board code.",
+          "properties": {}
+        },
+        {
+          "role": "sectionheader",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "combobox",
+          "name": "Grid size",
+          "value": "4x4",
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "expanded": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DescriptionList",
+          "name": "",
+          "value": null,
+          "text": "Moves0Pairs0 / 8Active time0:00Best:8",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Invalid board code.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
+        },
+        {
+          "role": "region",
+          "name": "Game board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "group",
+          "name": "",
+          "value": null,
+          "text": "Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshot",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Invalid board code.",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "heading",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Grid size",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "MenuListPopup",
+          "name": "",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0 / 8",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Invalid board code.",
+          "value": null,
+          "text": "Invalid board code.",
+          "properties": {}
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DisclosureTriangle",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {
+            "focusable": true,
+            "expanded": true
+          }
+        },
+        {
+          "role": "form",
+          "name": "",
+          "value": null,
+          "text": "Board codeinvalidLoad board",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Snapshot JSON",
+          "value": "{\n  \"version\": 1,\n  \"boardCode\": \"np1-4-144442827\",\n  \"matched\": [],\n  \"selection\": {\n    \"kind\": \"closed\"\n  },\n  \"moves\": 0,\n  \"elapsedMs\": 0,\n  \"started\": false\n}",
+          "text": "{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Invalid board code.",
+          "value": null,
+          "text": "Invalid board code.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Grid size",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "option",
+          "name": "4x4",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": true
+          }
+        },
+        {
+          "role": "option",
+          "name": "6x6",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "8x8",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "10x10",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "12x12",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "14x14",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "16x16",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New Game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Restart",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": " / ",
+          "value": null,
+          "text": " / ",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0:00",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Space reveals a card.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Invalid board code.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Board code",
+          "value": "invalid",
+          "text": "invalid",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Invalid board code.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Moves",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": " / ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Active time",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0:00",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Best:",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Board code",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "invalid",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "{",
+          "value": null,
+          "text": "{",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"version\": 1,",
+          "value": null,
+          "text": "  \"version\": 1,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"boardCode\": \"np1-4-144442827\",",
+          "value": null,
+          "text": "  \"boardCode\": \"np1-4-144442827\",",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"matched\": [],",
+          "value": null,
+          "text": "  \"matched\": [],",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"selection\": {",
+          "value": null,
+          "text": "  \"selection\": {",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "    \"kind\": \"closed\"",
+          "value": null,
+          "text": "    \"kind\": \"closed\"",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  },",
+          "value": null,
+          "text": "  },",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"moves\": 0,",
+          "value": null,
+          "text": "  \"moves\": 0,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"elapsedMs\": 0,",
+          "value": null,
+          "text": "  \"elapsedMs\": 0,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"started\": false",
+          "value": null,
+          "text": "  \"started\": false",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "}",
+          "value": null,
+          "text": "}",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Board code",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "invalid",
+          "value": null,
+          "text": "invalid",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "{",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"version\": 1,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"boardCode\": \"np1-4-144442827\",",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"matched\": [],",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"selection\": {",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "    ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"kind\": \"closed\"",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "},",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"moves\": 0,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"elapsedMs\": 0,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"started\": false",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "}",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "invalid",
+          "value": null,
+          "text": "",
+          "properties": {}
+        }
+      ]
+    },
+    {
+      "stage": "invalid-snapshot-1",
+      "tree": [
+        {
+          "role": "RootWebArea",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid snapshot.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{Export snapshotLoad snapshotInvalid snapshot.",
+          "properties": {
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid snapshot.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{Export snapshotLoad snapshotInvalid snapshot.",
+          "properties": {}
+        },
+        {
+          "role": "main",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid snapshot.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{Export snapshotLoad snapshotInvalid snapshot.",
+          "properties": {}
+        },
+        {
+          "role": "sectionheader",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "combobox",
+          "name": "Grid size",
+          "value": "4x4",
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "expanded": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DescriptionList",
+          "name": "",
+          "value": null,
+          "text": "Moves0Pairs0 / 8Active time0:00Best:8",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Invalid snapshot.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
+        },
+        {
+          "role": "region",
+          "name": "Game board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "group",
+          "name": "",
+          "value": null,
+          "text": "Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{Export snapshotLoad snapshot",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Invalid snapshot.",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "heading",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Grid size",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "MenuListPopup",
+          "name": "",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0 / 8",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Invalid snapshot.",
+          "value": null,
+          "text": "Invalid snapshot.",
+          "properties": {}
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DisclosureTriangle",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {
+            "focusable": true,
+            "expanded": true
+          }
+        },
+        {
+          "role": "form",
+          "name": "",
+          "value": null,
+          "text": "Board codeinvalidLoad board",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Snapshot JSON",
+          "value": "{",
+          "text": "{",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Invalid snapshot.",
+          "value": null,
+          "text": "Invalid snapshot.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Grid size",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "option",
+          "name": "4x4",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": true
+          }
+        },
+        {
+          "role": "option",
+          "name": "6x6",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "8x8",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "10x10",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "12x12",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "14x14",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "16x16",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New Game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Restart",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": " / ",
+          "value": null,
+          "text": " / ",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0:00",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Space reveals a card.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Invalid snapshot.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Board code",
+          "value": "invalid",
+          "text": "invalid",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "{",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Invalid snapshot.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Moves",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": " / ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Active time",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0:00",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Best:",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Board code",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "invalid",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "{",
+          "value": null,
+          "text": "{",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Board code",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "invalid",
+          "value": null,
+          "text": "invalid",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "{",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "invalid",
+          "value": null,
+          "text": "",
+          "properties": {}
+        }
+      ]
+    },
+    {
+      "stage": "invalid-snapshot-2",
+      "tree": [
+        {
+          "role": "RootWebArea",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid snapshot.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{Export snapshotLoad snapshotInvalid snapshot.",
+          "properties": {
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid snapshot.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{Export snapshotLoad snapshotInvalid snapshot.",
+          "properties": {}
+        },
+        {
+          "role": "main",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Invalid snapshot.Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{Export snapshotLoad snapshotInvalid snapshot.",
+          "properties": {}
+        },
+        {
+          "role": "sectionheader",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "combobox",
+          "name": "Grid size",
+          "value": "4x4",
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "expanded": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DescriptionList",
+          "name": "",
+          "value": null,
+          "text": "Moves0Pairs0 / 8Active time0:00Best:8",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Invalid snapshot.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
+        },
+        {
+          "role": "region",
+          "name": "Game board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "group",
+          "name": "",
+          "value": null,
+          "text": "Reproduce a gameBoard codeinvalidLoad boardSnapshot JSON{Export snapshotLoad snapshot",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Invalid snapshot.",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "heading",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Grid size",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "MenuListPopup",
+          "name": "",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0 / 8",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Invalid snapshot.",
+          "value": null,
+          "text": "Invalid snapshot.",
+          "properties": {}
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DisclosureTriangle",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {
+            "focusable": true,
+            "expanded": true
+          }
+        },
+        {
+          "role": "form",
+          "name": "",
+          "value": null,
+          "text": "Board codeinvalidLoad board",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Snapshot JSON",
+          "value": "{",
+          "text": "{",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Invalid snapshot.",
+          "value": null,
+          "text": "Invalid snapshot.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Grid size",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "option",
+          "name": "4x4",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": true
+          }
+        },
+        {
+          "role": "option",
+          "name": "6x6",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "8x8",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "10x10",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "12x12",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "14x14",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "16x16",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New Game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Restart",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": " / ",
+          "value": null,
+          "text": " / ",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0:00",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Space reveals a card.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Invalid snapshot.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Board code",
+          "value": "invalid",
+          "text": "invalid",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "{",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Invalid snapshot.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Moves",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": " / ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Active time",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0:00",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Best:",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Board code",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "invalid",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "{",
+          "value": null,
+          "text": "{",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Board code",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "invalid",
+          "value": null,
+          "text": "invalid",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "{",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "invalid",
+          "value": null,
+          "text": "",
+          "properties": {}
+        }
+      ]
+    },
+    {
+      "stage": "loaded-snapshot-1",
+      "tree": [
+        {
+          "role": "RootWebArea",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Loaded snapshot. Select Resume to continue.Reproduce a gameBoard codenp1-4-144442827Load boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotLoaded snapshot. Select Resume to continue.Resume",
+          "properties": {
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Loaded snapshot. Select Resume to continue.Reproduce a gameBoard codenp1-4-144442827Load boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotLoaded snapshot. Select Resume to continue.Resume",
+          "properties": {}
+        },
+        {
+          "role": "main",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Loaded snapshot. Select Resume to continue.Reproduce a gameBoard codenp1-4-144442827Load boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotLoaded snapshot. Select Resume to continue.Resume",
+          "properties": {}
+        },
+        {
+          "role": "sectionheader",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "combobox",
+          "name": "Grid size",
+          "value": "4x4",
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "expanded": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DescriptionList",
+          "name": "",
+          "value": null,
+          "text": "Moves0Pairs0 / 8Active time0:00Best:8",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Loaded snapshot. Select Resume to continue.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
+        },
+        {
+          "role": "region",
+          "name": "Game board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "group",
+          "name": "",
+          "value": null,
+          "text": "Reproduce a gameBoard codenp1-4-144442827Load boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshot",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Loaded snapshot. Select Resume to continue.",
+          "properties": {}
+        },
+        {
+          "role": "button",
+          "name": "Resume",
+          "value": null,
+          "text": "Resume",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "heading",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Grid size",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "MenuListPopup",
+          "name": "",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0 / 8",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Loaded snapshot. Select Resume to continue.",
+          "value": null,
+          "text": "Loaded snapshot. Select Resume to continue.",
+          "properties": {}
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DisclosureTriangle",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {
+            "focusable": true,
+            "expanded": true
+          }
+        },
+        {
+          "role": "form",
+          "name": "",
+          "value": null,
+          "text": "Board codenp1-4-144442827Load board",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Snapshot JSON",
+          "value": "{\n  \"version\": 1,\n  \"boardCode\": \"np1-4-144442827\",\n  \"matched\": [],\n  \"selection\": {\n    \"kind\": \"closed\"\n  },\n  \"moves\": 0,\n  \"elapsedMs\": 0,\n  \"started\": false\n}",
+          "text": "{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Loaded snapshot. Select Resume to continue.",
+          "value": null,
+          "text": "Loaded snapshot. Select Resume to continue.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Resume",
+          "value": null,
+          "text": "Resume",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Grid size",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "option",
+          "name": "4x4",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": true
+          }
+        },
+        {
+          "role": "option",
+          "name": "6x6",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "8x8",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "10x10",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "12x12",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "14x14",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "16x16",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New Game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Restart",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": " / ",
+          "value": null,
+          "text": " / ",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0:00",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Space reveals a card.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Loaded snapshot. Select Resume to continue.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Board code",
+          "value": "np1-4-144442827",
+          "text": "np1-4-144442827",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Loaded snapshot. Select Resume to continue.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Resume",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Moves",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": " / ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Active time",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0:00",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Best:",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Board code",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "np1-4-144442827",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "{",
+          "value": null,
+          "text": "{",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"version\": 1,",
+          "value": null,
+          "text": "  \"version\": 1,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"boardCode\": \"np1-4-144442827\",",
+          "value": null,
+          "text": "  \"boardCode\": \"np1-4-144442827\",",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"matched\": [],",
+          "value": null,
+          "text": "  \"matched\": [],",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"selection\": {",
+          "value": null,
+          "text": "  \"selection\": {",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "    \"kind\": \"closed\"",
+          "value": null,
+          "text": "    \"kind\": \"closed\"",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  },",
+          "value": null,
+          "text": "  },",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"moves\": 0,",
+          "value": null,
+          "text": "  \"moves\": 0,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"elapsedMs\": 0,",
+          "value": null,
+          "text": "  \"elapsedMs\": 0,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"started\": false",
+          "value": null,
+          "text": "  \"started\": false",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "}",
+          "value": null,
+          "text": "}",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Board code",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "np1-4-144442827",
+          "value": null,
+          "text": "np1-4-144442827",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "{",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"version\": 1,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"boardCode\": \"np1-4-144442827\",",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"matched\": [],",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"selection\": {",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "    ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"kind\": \"closed\"",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "},",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"moves\": 0,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"elapsedMs\": 0,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"started\": false",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "}",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "np1-4-144442827",
+          "value": null,
+          "text": "",
+          "properties": {}
+        }
+      ]
+    },
+    {
+      "stage": "loaded-snapshot-2",
+      "tree": [
+        {
+          "role": "RootWebArea",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Loaded snapshot. Select Resume to continue.Reproduce a gameBoard codenp1-4-144442827Load boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotLoaded snapshot. Select Resume to continue.Resume",
+          "properties": {
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Loaded snapshot. Select Resume to continue.Reproduce a gameBoard codenp1-4-144442827Load boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotLoaded snapshot. Select Resume to continue.Resume",
+          "properties": {}
+        },
+        {
+          "role": "main",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon PairsReveal two cards. Match their shape and marker to keep the pair.Grid sizeNew GameRestartMoves0Pairs0 / 8Active time0:00Best:8Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.Loaded snapshot. Select Resume to continue.Reproduce a gameBoard codenp1-4-144442827Load boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshotLoaded snapshot. Select Resume to continue.Resume",
+          "properties": {}
+        },
+        {
+          "role": "sectionheader",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "combobox",
+          "name": "Grid size",
+          "value": "4x4",
+          "text": "",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "expanded": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DescriptionList",
+          "name": "",
+          "value": null,
+          "text": "Moves0Pairs0 / 8Active time0:00Best:8",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "status",
+          "name": "",
+          "value": null,
+          "text": "Loaded snapshot. Select Resume to continue.",
+          "properties": {
+            "live": "polite",
+            "atomic": true,
+            "relevant": "additions text"
+          }
+        },
+        {
+          "role": "region",
+          "name": "Game board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "group",
+          "name": "",
+          "value": null,
+          "text": "Reproduce a gameBoard codenp1-4-144442827Load boardSnapshot JSON{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}Export snapshotLoad snapshot",
+          "properties": {}
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "Loaded snapshot. Select Resume to continue.",
+          "properties": {}
+        },
+        {
+          "role": "button",
+          "name": "Resume",
+          "value": null,
+          "text": "Resume",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "heading",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Grid size",
+          "value": null,
+          "text": "Grid size",
+          "properties": {}
+        },
+        {
+          "role": "MenuListPopup",
+          "name": "",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "New Game",
+          "value": null,
+          "text": "New Game",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Restart",
+          "value": null,
+          "text": "Restart",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0 / 8",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "term",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "definition",
+          "name": "",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "value": null,
+          "text": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Loaded snapshot. Select Resume to continue.",
+          "value": null,
+          "text": "Loaded snapshot. Select Resume to continue.",
+          "properties": {}
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 1, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 2, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 3, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 1, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 2, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 3, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Row 4, column 4, closed",
+          "value": null,
+          "text": "",
+          "properties": {
+            "disabled": true,
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "DisclosureTriangle",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {
+            "focusable": true,
+            "expanded": true
+          }
+        },
+        {
+          "role": "form",
+          "name": "",
+          "value": null,
+          "text": "Board codenp1-4-144442827Load board",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Snapshot JSON",
+          "value": "{\n  \"version\": 1,\n  \"boardCode\": \"np1-4-144442827\",\n  \"matched\": [],\n  \"selection\": {\n    \"kind\": \"closed\"\n  },\n  \"moves\": 0,\n  \"elapsedMs\": 0,\n  \"started\": false\n}",
+          "text": "{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "focused": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Loaded snapshot. Select Resume to continue.",
+          "value": null,
+          "text": "Loaded snapshot. Select Resume to continue.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Resume",
+          "value": null,
+          "text": "Resume",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "A little focus. A perfect pair.",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "Neon Pairs",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reveal two cards. Match their shape and marker to keep the pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Grid size",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "option",
+          "name": "4x4",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": true
+          }
+        },
+        {
+          "role": "option",
+          "name": "6x6",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "8x8",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "10x10",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "12x12",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "14x14",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "option",
+          "name": "16x16",
+          "value": null,
+          "text": "",
+          "properties": {
+            "focusable": true,
+            "selected": false
+          }
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "New Game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Restart",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Moves",
+          "value": null,
+          "text": "Moves",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Pairs",
+          "value": null,
+          "text": "Pairs",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0",
+          "value": null,
+          "text": "0",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": " / ",
+          "value": null,
+          "text": " / ",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Active time",
+          "value": null,
+          "text": "Active time",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "0:00",
+          "value": null,
+          "text": "0:00",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Best:",
+          "value": null,
+          "text": "Best:",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "8",
+          "value": null,
+          "text": "8",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Space reveals a card.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Loaded snapshot. Select Resume to continue.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "Reproduce a game",
+          "properties": {}
+        },
+        {
+          "role": "LabelText",
+          "name": "",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "textbox",
+          "name": "Board code",
+          "value": "np1-4-144442827",
+          "text": "np1-4-144442827",
+          "properties": {
+            "invalid": "false",
+            "focusable": true,
+            "readonly": false,
+            "required": false
+          }
+        },
+        {
+          "role": "button",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {
+            "invalid": "false",
+            "focusable": true
+          }
+        },
+        {
+          "role": "StaticText",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "Snapshot JSON",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "{  \"version\": 1,  \"boardCode\": \"np1-4-144442827\",  \"matched\": [],  \"selection\": {    \"kind\": \"closed\"  },  \"moves\": 0,  \"elapsedMs\": 0,  \"started\": false}",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "Export snapshot",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "Load snapshot",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Loaded snapshot. Select Resume to continue.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Resume",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "A little focus. A perfect pair.",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Neon Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Moves",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Pairs",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": " / ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Active time",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "0:00",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Best:",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "8",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Reproduce a game",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Board code",
+          "value": null,
+          "text": "Board code",
+          "properties": {}
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "value": null,
+          "text": "np1-4-144442827",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "Load board",
+          "value": null,
+          "text": "Load board",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Snapshot JSON",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "{",
+          "value": null,
+          "text": "{",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"version\": 1,",
+          "value": null,
+          "text": "  \"version\": 1,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"boardCode\": \"np1-4-144442827\",",
+          "value": null,
+          "text": "  \"boardCode\": \"np1-4-144442827\",",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"matched\": [],",
+          "value": null,
+          "text": "  \"matched\": [],",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"selection\": {",
+          "value": null,
+          "text": "  \"selection\": {",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "    \"kind\": \"closed\"",
+          "value": null,
+          "text": "    \"kind\": \"closed\"",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  },",
+          "value": null,
+          "text": "  },",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"moves\": 0,",
+          "value": null,
+          "text": "  \"moves\": 0,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"elapsedMs\": 0,",
+          "value": null,
+          "text": "  \"elapsedMs\": 0,",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "  \"started\": false",
+          "value": null,
+          "text": "  \"started\": false",
+          "properties": {}
+        },
+        {
+          "role": "LineBreak",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "}",
+          "value": null,
+          "text": "}",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Export snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load snapshot",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Board code",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "StaticText",
+          "name": "np1-4-144442827",
+          "value": null,
+          "text": "np1-4-144442827",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "Load board",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "{",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"version\": 1,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"boardCode\": \"np1-4-144442827\",",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"matched\": [],",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"selection\": {",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "    ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"kind\": \"closed\"",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "},",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"moves\": 0,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"elapsedMs\": 0,",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "  ",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\"started\": false",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "\n",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "}",
+          "value": null,
+          "text": "",
+          "properties": {}
+        },
+        {
+          "role": "InlineTextBox",
+          "name": "np1-4-144442827",
+          "value": null,
+          "text": "",
+          "properties": {}
+        }
+      ]
     }
   ]
 }
