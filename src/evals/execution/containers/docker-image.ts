@@ -1,13 +1,17 @@
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { EvalPaths, evalsRoot } from "../../paths.ts";
-import { runCommand } from "../process.ts";
+import { docker, requireDockerResult, type Docker } from "./docker.ts";
+import { ContainerTimeouts, StageKind, type StageKind as ImageKind } from "./settings.ts";
+import { lockedImageArguments, ImageLockFile } from "../../images/lock.ts";
 
 interface PackageManifest {
   readonly dependencies: Readonly<Record<string, string>>;
 }
 
 const manifest: PackageManifest = JSON.parse(readFileSync(join(evalsRoot, "package.json"), "utf8"));
+const lockKey = createHash("sha256").update(readFileSync(join(EvalPaths.docker, ImageLockFile))).digest("hex").slice(0, 12);
 
 /** The image carries the same tool versions as package.json, so local and Docker runs match. */
 export const ImageVersions = {
@@ -16,25 +20,30 @@ export const ImageVersions = {
   openForge: manifest.dependencies["@thelithiumforge/open-forge"] ?? "",
 } as const;
 
-const DockerLimits = { checkMs: 30_000, buildMs: 20 * 60_000 } as const;
-
-export function evalImageTag(): string {
-  return `open-forge-evals:claude-${ImageVersions.claude}-codex-${ImageVersions.codex}`;
+export function evalImageTag(kind: ImageKind = StageKind.agent): string {
+  return `open-forge-evals-${kind}:claude-${ImageVersions.claude}-codex-${ImageVersions.codex}-forge-${ImageVersions.openForge}-${lockKey}`;
 }
 
-export async function dockerAvailable(): Promise<boolean> {
-  const info = await runCommand("docker", ["info", "--format", "{{.ServerVersion}}"], { timeoutMs: DockerLimits.checkMs });
-  return info.code === 0;
+export async function dockerAvailable(client: Docker = docker): Promise<boolean> {
+  const info = await client.run(["info", "--format", "{{.ServerVersion}}"], { timeoutMs: ContainerTimeouts.commandMs });
+  return info.code === 0 && !info.timedOut;
 }
 
-/** Builds the image the first time it's needed. Later runs reuse it. */
-export async function ensureEvalImage(): Promise<void> {
-  const tag = evalImageTag();
-  const inspect = await runCommand("docker", ["image", "inspect", tag], { timeoutMs: DockerLimits.checkMs });
-  if (inspect.code === 0) return;
-  const versions = [`CLAUDE_VERSION=${ImageVersions.claude}`, `CODEX_VERSION=${ImageVersions.codex}`];
-  const build = await runCommand("docker", ["build", "-t", tag, ...versions.flatMap((value) => ["--build-arg", value]), EvalPaths.docker], {
-    timeoutMs: DockerLimits.buildMs,
-  });
-  if (build.code !== 0) throw new Error(`Building the eval image failed:\n${build.stderr.slice(-4000)}`);
+export async function buildEvalImages(client: Docker = docker, ensure = false, lock?: unknown): Promise<void> {
+  // Validate the complete lock before Docker can build any image.
+  const locked = lockedImageArguments(lock);
+  const tools = [`CLAUDE_VERSION=${ImageVersions.claude}`, `CODEX_VERSION=${ImageVersions.codex}`, `OPEN_FORGE_VERSION=${ImageVersions.openForge}`];
+  for (const kind of Object.values(StageKind)) {
+    const tag = evalImageTag(kind);
+    if (ensure) {
+      const inspected = await client.run(["image", "inspect", tag], { timeoutMs: ContainerTimeouts.commandMs });
+      if (inspected.code === 0 && !inspected.timedOut) continue;
+    }
+    requireDockerResult(await client.run(["build", "--tag", tag, "--file", join(EvalPaths.docker, `${kind}.Dockerfile`),
+      ...[...locked, ...tools].flatMap((value) => ["--build-arg", value]), EvalPaths.docker], { timeoutMs: ContainerTimeouts.imageMs }));
+  }
+}
+
+export async function ensureEvalImage(client: Docker = docker): Promise<void> {
+  await buildEvalImages(client, true);
 }

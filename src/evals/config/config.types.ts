@@ -1,4 +1,5 @@
 import type { Isolation, Tool } from "./choices.ts";
+import type { ContainerLimits } from "../execution/containers/settings.ts";
 
 /** A tool and model. A null model or effort uses the tool's own default. */
 export interface ModelChoice {
@@ -27,5 +28,6 @@ export interface EvalConfig {
   readonly judge: JudgeChoice;
   readonly simulatedUser: ModelChoice;
   readonly isolation: Isolation;
+  readonly containers?: ContainerLimits;
   readonly limits: EvalLimits;
 }

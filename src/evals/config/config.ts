@@ -3,6 +3,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { EvalPaths } from "../paths.ts";
 import { Isolation, Tool } from "./choices.ts";
 import type { EvalConfig } from "./config.types.ts";
+import { containerLimits } from "../execution/containers/settings.ts";
 
 const tools: readonly string[] = Object.values(Tool);
 const isolations: readonly string[] = Object.values(Isolation);
@@ -30,5 +31,5 @@ export function parseConfig(value: unknown): EvalConfig {
   if (!Number.isInteger(parallelRuns) || parallelRuns < 1) throw new Error("Parallel runs must be at least 1.");
   if (!Number.isInteger(config.judge.repeats) || config.judge.repeats < 1) throw new Error("Judge repeats must be at least 1.");
   if (config.agents.length === 0 || config.setups.length === 0) throw new Error("Pick at least one agent and one setup.");
-  return { ...config, parallelRuns };
+  return { ...config, parallelRuns, containers: containerLimits(config.containers) };
 }

@@ -1,7 +1,9 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile, stat } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
-import type { Isolation } from "../config/choices.ts";
+import { Isolation } from "../config/choices.ts";
+import { verifyInContainer } from "../execution/containers/verifier.ts";
+import type { StageOptions } from "../execution/containers/stage.ts";
 import { NpmCommand, spawnInRun, type RunSpace } from "../execution/containers/executor.ts";
 import { waitForProcess } from "../execution/process.ts";
 import type { BuildResult } from "../history/results.types.ts";
@@ -49,19 +51,21 @@ async function typecheck(isolation: Isolation, space: RunSpace, timeoutMs: numbe
 }
 
 /** Runs the project's own build script again, offline, and finds the index.html it writes. */
-export async function buildProject(isolation: Isolation, space: RunSpace, timeoutMs: number): Promise<BuildResult> {
+export async function buildProject(isolation: Isolation, space: RunSpace, timeoutMs: number, options: Omit<StageOptions, "timeoutMs"> = {}): Promise<BuildResult> {
   const manifest = await readJson<ProjectManifest>(join(space.work, "package.json"));
   const failed = (log: string): BuildResult => ({ passed: false, typecheck: null, seconds: 0, packages: null, html: null, bytes: null, log });
   if (manifest?.scripts?.["build"] === undefined) return failed("The project has no build script.");
   const started = Date.now();
-  const build = await npmOffline(isolation, space, ["run", "build"], timeoutMs);
+  const verified = isolation === Isolation.docker ? await verifyInContainer(space, { ...options, timeoutMs }) : null;
+  const build = verified === null ? await npmOffline(isolation, space, ["run", "build"], timeoutMs)
+    : { ok: verified.build.code === 0 && !verified.build.timedOut, log: `${verified.build.stdout}\n${verified.build.stderr}`.slice(-4000) };
   const seconds = (Date.now() - started) / 1000;
   const pages = (await findPages(space.work, started - 1000)).sort((a, b) => Number(b.includes(`${sep}dist${sep}`)) - Number(a.includes(`${sep}dist${sep}`)));
   const html = pages[0] ?? null;
   const lock = await readJson<LockFile>(join(space.work, "package-lock.json"));
   return {
     passed: build.ok && html !== null,
-    typecheck: await typecheck(isolation, space, timeoutMs),
+    typecheck: verified === null ? await typecheck(isolation, space, timeoutMs) : verified.typecheck,
     seconds,
     packages: lock?.packages === undefined ? null : Object.keys(lock.packages).length - 1,
     html: html === null ? null : relative(space.work, html),

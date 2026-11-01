@@ -64,6 +64,10 @@ export class ClaudeSession implements AgentSession {
   private start(): ChildProcessWithoutNullStreams {
     const child = spawnInRun({ ...this.context, command: PinnedTool.claude, args: claudeArguments(this.context), network: true });
     this.child = child;
+    child.once("error", (error) => {
+      this.child = null;
+      this.settle({ outcome: TurnOutcome.failed, message: "", error: error.message });
+    });
     child.stderr.on("data", (chunk: Buffer) => (this.stderr += chunk.toString()));
     createInterface({ input: child.stdout }).on("line", (line) => this.onLine(line));
     child.on("exit", () => this.settle({ outcome: outcomeForError(this.stderr), message: "", error: this.stderr.slice(-2000) || "Claude Code exited." }));

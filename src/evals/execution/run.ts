@@ -1,9 +1,13 @@
-import { copyFile, mkdir } from "node:fs/promises";
+import { copyFile, mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { TurnOutcome } from "./providers/agent-session.ts";
 import type { RunSpace } from "./containers/executor.ts";
 import { buildProject } from "../grading/build.ts";
 import type { EvalConfig } from "../config/config.types.ts";
+import { Isolation, Tool } from "../config/choices.ts";
+import { withAgentStage } from "./containers/agent.ts";
+import { executionLabel, ExecutionLabelFile, LocalExecutionLabel } from "./containers/eligibility.ts";
+import type { Docker } from "./containers/docker.ts";
 import { judgeRun } from "../grading/judge/judge.ts";
 import { prepareJudgeFolder } from "../grading/judge/judge-folder.ts";
 import { ResultFiles } from "../paths.ts";
@@ -26,6 +30,8 @@ export interface RunInput {
   readonly config: EvalConfig;
   readonly snapshot: string;
   readonly position: string;
+  readonly signal?: AbortSignal;
+  readonly docker?: Docker;
 }
 
 const JudgeTimeoutMs = 15 * 60_000;
@@ -37,6 +43,8 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
   const batch = await readBatch(input.run.batchId);
   const versions = { checker: batch.fingerprints.checks, rubric: batch.fingerprints.rubric, judge: batch.versions["judge"] ?? null };
   await mkdir(folder, { recursive: true });
+  await writeFile(join(folder, ExecutionLabelFile), `${JSON.stringify(executionLabel(config.isolation), null, 2)}\n`);
+  if (config.isolation === Isolation.local) progress.report(input.run.batchId, LocalExecutionLabel.reason);
   let run: RunRecord = { ...input.run, status: RunStatus.agent, pipelineStatus: RunStatus.agent, startedAt: new Date().toISOString(), error: null };
   const update = async (changes: Partial<RunRecord>, note: string | null = null): Promise<void> => {
     run = { ...run, ...changes, pipelineStatus: changes.status ?? run.status, reportedModel: changes.telemetry?.model ?? run.reportedModel };
@@ -48,7 +56,12 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
   try {
     space = await createRunSpace(suite.project, input.snapshot);
     const context = { isolation: config.isolation, space, choice: run.agent, eventsPath: join(folder, ResultFiles.events) };
-    const talk = await converse(context, suite, config);
+    const stageOptions = { timeoutMs: config.limits.runMinutes * 60_000,
+      ...(config.containers === undefined ? {} : { limits: config.containers }),
+      ...(input.signal === undefined ? {} : { signal: input.signal }), ...(input.docker === undefined ? {} : { docker: input.docker }) };
+    const talk = config.isolation === Isolation.docker && run.agent.tool !== Tool.mock
+      ? await withAgentStage(space, run.agent.tool, stageOptions, () => converse(context, suite, config))
+      : await converse(context, suite, config);
     await stopProcessesUnder(space.root);
     if (talk.outcome === TurnOutcome.limited) {
       await freezeFiles(space, join(folder, ResultFiles.files));
@@ -57,7 +70,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     }
     await update({ status: RunStatus.building, finalMessage: talk.finalMessage, questions: talk.questions, telemetry: talk.telemetry, agentSeconds: talk.seconds, error: talk.error }, `the agent finished after ${Math.round(talk.seconds)}s. Building offline.`);
     const checkMs = config.limits.checkMinutes * 60_000;
-    const build = await buildProject(config.isolation, space, checkMs);
+    const build = await buildProject(config.isolation, space, checkMs, stageOptions);
     await stopProcessesUnder(space.root);
     const html = build.html === null ? null : join(space.work, build.html);
     if (html !== null) await copyFile(html, join(folder, ResultFiles.game));

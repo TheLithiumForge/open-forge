@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { EvalPaths } from "../paths.ts";
+import { Tool } from "./choices.ts";
 
 /** Sign-in variables the runs may receive. Every other variable from the maintainer's shell stays out. */
 export const AuthVariables = {
@@ -31,6 +32,13 @@ export function signInStatus(): SignInStatus {
 }
 
 /** The sign-in variables to pass into a run, by name only, so values never land in a command line. */
-export function authVariableNames(): readonly string[] {
-  return Object.values(AuthVariables).filter((name) => (process.env[name] ?? "") !== "");
+export function authVariableNames(provider?: Tool, env: NodeJS.ProcessEnv = process.env): readonly string[] {
+  const names = provider === Tool.claude ? [AuthVariables.claudeToken, AuthVariables.anthropicKey]
+    : provider === Tool.codex ? [AuthVariables.openAiKey, AuthVariables.codexKey]
+      : provider === Tool.mock ? [] : Object.values(AuthVariables);
+  return names.filter((name) => (env[name] ?? "") !== "");
+}
+
+export function providerAuth(provider: Tool, env: NodeJS.ProcessEnv = process.env): Record<string, string> {
+  return Object.fromEntries(authVariableNames(provider, env).map((name) => [name, env[name] ?? ""]));
 }

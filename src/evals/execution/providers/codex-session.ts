@@ -3,7 +3,7 @@ import type { AgentTelemetry } from "../../history/results.types.ts";
 import { outcomeForError, TurnOutcome, type AgentSession, type SessionContext, type TurnResult } from "./agent-session.ts";
 import { codexHomeOf, copySignInTo, keepRefreshedSignIn, type CodexSignInCopy } from "./codex-sign-in.ts";
 import { CodexTelemetry, type CodexEvent } from "./codex-telemetry.ts";
-import { spawnInRun } from "../containers/executor.ts";
+import { spawnInRun, syncRunHome } from "../containers/executor.ts";
 import { stopProcessesUnder } from "../leftovers.ts";
 import { PinnedTool } from "./pinned-tools.ts";
 import { waitForProcess } from "../process.ts";
@@ -81,6 +81,7 @@ export class CodexSession implements AgentSession {
   }
 
   async finish(): Promise<AgentTelemetry> {
+    await syncRunHome(this.context.space);
     keepRefreshedSignIn(this.signIn);
     return this.telemetry.summary(codexHomeOf(this.context.space.home), this.context.choice.model);
   }

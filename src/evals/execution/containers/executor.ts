@@ -1,9 +1,10 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { join } from "node:path";
 import { Isolation } from "../../config/choices.ts";
+import { Tool } from "../../config/choices.ts";
 import { authVariableNames } from "../../config/auth.ts";
-import { imageToolCommand, localToolCommand, type PinnedTool, type ToolCommand } from "../providers/pinned-tools.ts";
-import { evalImageTag } from "./docker-image.ts";
+import { localToolCommand, PinnedTool, type ToolCommand } from "../providers/pinned-tools.ts";
+export { ContainerPaths } from "./settings.ts";
 
 /** One run's folders: the project the agent works in, and a fresh home for the tools' own files. */
 export interface RunSpace {
@@ -13,7 +14,21 @@ export interface RunSpace {
   readonly project: string;
 }
 
-export const ContainerPaths = { home: "/home/agent", work: "/work" } as const;
+export interface ContainerExecutor {
+  spawn(command: ExecRequest["command"], args: readonly string[]): ChildProcessWithoutNullStreams;
+  syncHome(): Promise<void>;
+}
+const activeExecutors = new WeakMap<RunSpace, ContainerExecutor>();
+
+export function registerContainer(space: RunSpace, executor: ContainerExecutor): () => void {
+  if (activeExecutors.has(space)) throw new Error("A container is already running for this space.");
+  activeExecutors.set(space, executor);
+  return () => { activeExecutors.delete(space); };
+}
+
+export async function syncRunHome(space: RunSpace): Promise<void> {
+  await activeExecutors.get(space)?.syncHome();
+}
 
 export interface ExecRequest {
   readonly isolation: Isolation;
@@ -40,9 +55,9 @@ function toolEnvironment(home: string): Record<string, string> {
   };
 }
 
-export function localEnvironment(home: string, network: boolean): Record<string, string> {
+export function localEnvironment(home: string, network: boolean, provider?: Tool): Record<string, string> {
   const base = Object.entries(process.env).filter(([name]) => passedVariables.has(name.toUpperCase()));
-  const auth = authVariableNames().map((name) => [name, process.env[name] ?? ""]);
+  const auth = authVariableNames(provider).map((name) => [name, process.env[name] ?? ""]);
   const offline: Record<string, string> = network ? {} : { npm_config_offline: "true" };
   return { ...Object.fromEntries([...base, ...auth]), ...toolEnvironment(home), ...offline };
 }
@@ -55,32 +70,16 @@ function localCommand(command: ExecRequest["command"]): ToolCommand {
   return { command: process.execPath, args: [npmCli] };
 }
 
-function dockerArguments(request: ExecRequest, tool: ToolCommand): string[] {
-  const { space } = request;
-  const containerWork = `${ContainerPaths.work}/${space.project}`;
-  const env = Object.entries(toolEnvironment(ContainerPaths.home)).map(([name, value]) => `${name}=${value.replaceAll("\\", "/")}`);
-  return [
-    "run", "--rm", "-i",
-    "--network", request.network ? "bridge" : "none",
-    "-v", `${space.work}:${containerWork}`,
-    "-v", `${space.home}:${ContainerPaths.home}`,
-    "-w", containerWork,
-    ...env.flatMap((pair) => ["-e", pair]),
-    // By name only: Docker reads each value from this process, so tokens never appear in arguments.
-    ...authVariableNames().flatMap((name) => ["-e", name]),
-    evalImageTag(), tool.command, ...tool.args, ...request.args,
-  ];
-}
-
 export function spawnInRun(request: ExecRequest): ChildProcessWithoutNullStreams {
   if (request.isolation === Isolation.docker) {
-    const tool = request.command === NpmCommand ? { command: NpmCommand, args: [] } : imageToolCommand(request.command);
-    return spawn("docker", dockerArguments(request, tool), { env: process.env, windowsHide: true });
+    const executor = activeExecutors.get(request.space);
+    if (executor === undefined) throw new Error("Open the container stage before starting a tool.");
+    return executor.spawn(request.command, request.args);
   }
   const tool = localCommand(request.command);
   return spawn(tool.command, [...tool.args, ...request.args], {
     cwd: request.space.work,
-    env: localEnvironment(request.space.home, request.network),
+    env: localEnvironment(request.space.home, request.network, request.command === PinnedTool.codex ? Tool.codex : request.command === PinnedTool.claude ? Tool.claude : Tool.mock),
     windowsHide: true,
   });
 }
