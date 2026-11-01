@@ -1,11 +1,12 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_CODE, EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { StatusLabel } from '../src/game/status/status-labels.ts';
 import { createGame, MOVES_MAX } from '../src/game/game.ts';
 import { encodeSnapshot } from '../src/game/snapshot.ts';
 import { SelectionKind } from '../src/game/selection.ts';
-import { FIXED_BOARD, FIXED_PAIRS, loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
+import { loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
 
 test('an imported game reaches the move cap, wins and keeps its capped best after reload', async ({
   page,
@@ -16,8 +17,8 @@ test('an imported game reaches the move cap, wins and keeps its capped best afte
   const field = page.getByLabel(ReproductionControl.snapshot, { exact: true });
   await field.fill(
     encodeSnapshot({
-      ...createGame(FIXED_BOARD),
-      matched: FIXED_PAIRS.slice(0, -2).flat(),
+      ...createGame(EXAMPLE_CODE),
+      matched: EXAMPLE_PAIRS.slice(0, -2).flat(),
       selection: { kind: SelectionKind.one, index: 0 },
       moves: MOVES_MAX - 1,
       started: true,

@@ -71,6 +71,6 @@
     "Pair found. All pairs found in 8 moves and 0:03."
   ],
   "win": "Every pair found in 8 moves and 0:03. Well played.",
-  "newGame": "New game ready.",
+  "newGame": "",
   "readmeRecord": "Tree record: Chromium 156.0.8078.4 and Playwright 1.64.1. Screen reader: not run. Spoken journey: user acceptance."
 }

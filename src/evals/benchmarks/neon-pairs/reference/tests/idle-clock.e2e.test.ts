@@ -1,10 +1,11 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_CODE } from '../src/game/game.fixture.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { MISMATCH_MS } from '../src/game/game.ts';
 import { SelectionKind } from '../src/game/selection.ts';
 import { SNAPSHOT_VERSION } from '../src/game/snapshot.ts';
-import { FIXED_BOARD, exportedSnapshot, loadTimedBoard } from './game-fixture.ts';
+import { exportedSnapshot, loadTimedBoard } from './game-fixture.ts';
 import type { Page } from '@playwright/test';
 
 // Longer than a whole mismatch, so counting the idle time would close it.
@@ -46,7 +47,7 @@ test('an idle paused import adds no elapsed or mismatch time', async ({ page }) 
   await page.locator('summary').click();
   const pending = {
     version: SNAPSHOT_VERSION,
-    boardCode: FIXED_BOARD,
+    boardCode: EXAMPLE_CODE,
     matched: [],
     selection: { kind: SelectionKind.mismatch, first: 0, second: 1, remainingMs: PENDING_MS },
     moves: 1,

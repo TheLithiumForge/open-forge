@@ -1,7 +1,8 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
-import { loadTimedBoard, exportedSnapshot, FIXED_PAIRS } from './game-fixture.ts';
+import { loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
 
 test('better equal and worse completed scores persist after each reload', async ({
   page,
@@ -24,7 +25,7 @@ test('better equal and worse completed scores persist after each reload', async 
       await page.locator('.card').nth(1).click();
       await page.clock.runFor(800);
     }
-    for (const pair of FIXED_PAIRS)
+    for (const pair of EXAMPLE_PAIRS)
       for (const index of pair) await page.locator('.card').nth(index).click();
     await expect(page.locator('.stats dd').nth(3)).toHaveText(String(expected));
     await page.reload();

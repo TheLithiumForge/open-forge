@@ -1,9 +1,10 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { accessibilityTree, accessibilityNode, moveKeyboardTo } from './accessibility-tree.ts';
 import { accessibilityFixture, playwrightVersion } from './accessibility-fixture.ts';
-import { FIXED_PAIRS, loadTimedBoard } from './game-fixture.ts';
+import { loadTimedBoard } from './game-fixture.ts';
 
 test('a complete keyboard journey exposes names, states and each result in Chromium accessibility trees', async ({
   page,
@@ -44,7 +45,7 @@ test('a complete keyboard journey exposes names, states and each result in Chrom
       element.setAttribute('data-result-history', JSON.stringify(results));
     }).observe(element, { childList: true, subtree: true, characterData: true });
   });
-  for (const [turn, pair] of FIXED_PAIRS.entries()) {
+  for (const [turn, pair] of EXAMPLE_PAIRS.entries()) {
     await moveKeyboardTo(page, pair[0], expected.size);
     await page.keyboard.press('Enter');
     const revealed = await capture(`revealed-${turn + 1}`);

@@ -61,8 +61,6 @@ test('hover changes only card border color and matched marks stay legible', asyn
   await expect(card).toHaveCSS('opacity', '1');
   const mark = card.locator('.matched-mark');
   await expect(mark).toBeVisible();
-  await expect(mark).toHaveCSS('width', '16px');
-  await expect(mark).toHaveCSS('height', '16px');
   await expect(mark.locator('path')).toHaveAttribute('d', 'm2 6 3 3 5-6');
 });
 

@@ -48,6 +48,17 @@ test('a best at the move cap round trips and a larger saved best is ignored', ()
   assert.deepEqual(readPreferences(store), { size: DEFAULT_SIZE, bestMoves: {} });
 });
 
+test('a write keeps a better best that another tab saved in the meantime', () => {
+  const store = memoryStore();
+  writePreferences(store, { size: DEFAULT_SIZE, bestMoves: { [DEFAULT_SIZE]: 9 } });
+  writePreferences(store, { size: 6, bestMoves: {} });
+  assert.deepEqual(readPreferences(store), { size: 6, bestMoves: { [DEFAULT_SIZE]: 9 } });
+  writePreferences(store, { size: 6, bestMoves: { [DEFAULT_SIZE]: 10, 6: 20 } });
+  assert.deepEqual(readPreferences(store).bestMoves, { [DEFAULT_SIZE]: 9, 6: 20 });
+  writePreferences(store, { size: 6, bestMoves: { [DEFAULT_SIZE]: 8 } });
+  assert.equal(readPreferences(store).bestMoves[DEFAULT_SIZE], 8);
+});
+
 const INVALID_PREFERENCES = [
   '{',
   'null',

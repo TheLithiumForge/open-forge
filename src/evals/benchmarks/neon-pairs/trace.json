@@ -335,7 +335,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R04.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R04.1. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.test.ts",
@@ -361,6 +361,16 @@
           "path": "reference/tests/snapshots.e2e.test.ts",
           "symbol": "Resume, invalid draft and completed import cases",
           "evidence": "Clause R04.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/fractional-clock.e2e.test.ts",
+          "symbol": "a mismatch starts its interval at its own activation between milliseconds",
+          "evidence": "Clause R04.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "export rounds fractional time down and a mismatch from its own activation up",
+          "evidence": "Clause R04.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -382,7 +392,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R04.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R04.2. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.test.ts",
@@ -429,7 +439,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R04.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R04.3. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.test.ts",
@@ -476,7 +486,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R04.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R04.4. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.test.ts",
@@ -528,7 +538,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R04.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R04.5. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.test.ts",
@@ -1040,7 +1050,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R07.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R07.1. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.ts",
@@ -1092,7 +1102,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R07.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R07.2. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.ts",
@@ -1144,7 +1154,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R07.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R07.3. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.ts",
@@ -1201,7 +1211,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R07.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R07.4. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.ts",
@@ -1258,7 +1268,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R07.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R07.5. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.ts",
@@ -1310,7 +1320,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R07.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R07.6. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.ts",
@@ -1362,7 +1372,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R07.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R07.7. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.ts",
@@ -1436,7 +1446,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R07.9. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R07.9. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.ts",
@@ -1493,7 +1503,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause R07.10. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause R07.10. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/game.ts",
@@ -1993,6 +2003,21 @@
           "path": "reference/tests/move-cap.e2e.test.ts",
           "symbol": "an imported game reaches the move cap, wins and keeps its capped best after reload",
           "evidence": "Clause R10.3. Browser import, Resume, capped matching and win, export, reload and Restart journey."
+        },
+        {
+          "path": "reference/src/game/session/storage.ts",
+          "symbol": "writePreferences",
+          "evidence": "Clause R10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Each write rereads storage and keeps the better best for every size."
+        },
+        {
+          "path": "reference/src/game/session/storage.test.ts",
+          "symbol": "a write keeps a better best that another tab saved in the meantime",
+          "evidence": "Clause R10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/preferences.e2e.test.ts",
+          "symbol": "a tab opened earlier keeps the best another tab recorded when it starts a new game",
+          "evidence": "Clause R10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3033,7 +3058,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause C08.6. The clock gives the game whole milliseconds and keeps the fraction."
+          "evidence": "Clause C08.6. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/tests/clock-edges.e2e.test.ts",
@@ -3042,8 +3067,23 @@
         },
         {
           "path": "reference/src/game/session/browser-clock.test.ts",
-          "symbol": "active clock keeps fractional time across hidden intervals",
-          "evidence": "Clause C08.6. Whole milliseconds enter the game and the fraction carries forward, so elapsed time rounds down and remaining time rounds up."
+          "symbol": "active clock measures fractional time and leaves out hidden intervals",
+          "evidence": "Clause C08.6. Active time keeps its fractions, and only exports round them."
+        },
+        {
+          "path": "reference/src/game/snapshot.ts",
+          "symbol": "encodeSnapshot",
+          "evidence": "Clause C08.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Export rounds elapsed time down and pending mismatch time up."
+        },
+        {
+          "path": "reference/tests/fractional-clock.e2e.test.ts",
+          "symbol": "a mismatch starts its interval at its own activation between milliseconds",
+          "evidence": "Clause C08.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "export rounds fractional time down and a mismatch from its own activation up",
+          "evidence": "Clause C08.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3060,7 +3100,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause C08.7. The clock gives the game whole milliseconds and keeps the fraction."
+          "evidence": "Clause C08.7. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/tests/clock-edges.e2e.test.ts",
@@ -3069,8 +3109,23 @@
         },
         {
           "path": "reference/src/game/session/browser-clock.test.ts",
-          "symbol": "active clock keeps fractional time across hidden intervals",
-          "evidence": "Clause C08.7. Whole milliseconds enter the game and the fraction carries forward, so elapsed time rounds down and remaining time rounds up."
+          "symbol": "active clock measures fractional time and leaves out hidden intervals",
+          "evidence": "Clause C08.7. Active time keeps its fractions, and only exports round them."
+        },
+        {
+          "path": "reference/src/game/snapshot.ts",
+          "symbol": "encodeSnapshot",
+          "evidence": "Clause C08.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Export rounds elapsed time down and pending mismatch time up."
+        },
+        {
+          "path": "reference/tests/fractional-clock.e2e.test.ts",
+          "symbol": "a mismatch starts its interval at its own activation between milliseconds",
+          "evidence": "Clause C08.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "export rounds fractional time down and a mismatch from its own activation up",
+          "evidence": "Clause C08.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -4109,6 +4164,31 @@
         {
           "path": "reference/tests/input-contract.e2e.test.ts",
           "symbol": "a completed mouse click reveals its card even after the pointer drifts",
+          "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/src/game/board/Board.tsx",
+          "symbol": "cardFocused",
+          "evidence": "Clause I01.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Only keyboard focus scrolls a card, so a pressed card stays under the pointer."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 360x800",
+          "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 1280x720",
+          "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 640x400",
+          "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped board edge",
           "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -5503,6 +5583,16 @@
           "path": "reference/tests/focus-clearance.e2e.test.ts",
           "symbol": "focus clearance survives nearest scroll to an interior card",
           "evidence": "Clause I13.1. Keyboard focus reaches row 9, column 9 with nearest scrolls of the board and the page."
+        },
+        {
+          "path": "reference/src/game/board/Board.tsx",
+          "symbol": "cardFocused",
+          "evidence": "Clause I13.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Only keyboard focus scrolls a card, so a pressed card stays under the pointer."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 360x800",
+          "evidence": "Clause I13.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -7560,6 +7650,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause V12.3. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/tests/matched-mark.e2e.test.ts",
+          "symbol": "check marks leave every matched face uncovered on 16x16 at 360x800",
+          "evidence": "Clause V12.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -7945,6 +8040,26 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause V15.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".matched-mark",
+          "evidence": "Clause V15.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. The mark takes 16% of the card, inside the corner the top-right marker leaves free."
+        },
+        {
+          "path": "reference/tests/matched-mark.e2e.test.ts",
+          "symbol": "check marks leave every matched face uncovered on 16x16 at 360x800",
+          "evidence": "Clause V15.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/matched-mark.e2e.test.ts",
+          "symbol": "check marks leave every matched face uncovered on 16x16 at 1280x800",
+          "evidence": "Clause V15.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/matched-mark.e2e.test.ts",
+          "symbol": "check marks leave every matched face uncovered on 8x8 at 1280x800",
+          "evidence": "Clause V15.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -8398,6 +8513,21 @@
           "path": "reference/tests/status-controls.e2e.test.ts",
           "symbol": "the single game result stays beside the board and in view during large-phone play",
           "evidence": "One live region is composed in Game beside the board. The result stays within the viewport during a 360x800 16x16 mismatch and keyboard movement. Load notices stay separate."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 360x800",
+          "evidence": "Clause V19.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 1280x720",
+          "evidence": "Clause V19.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped board edge",
+          "evidence": "Clause V19.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -8501,6 +8631,11 @@
           "path": "reference/tests/readability.ts",
           "symbol": "expectReadableText",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 640x400",
+          "evidence": "Clause V20.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -10468,6 +10603,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause T10.4. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/tests/build-output.e2e.test.ts",
+          "symbol": "the built page carries no fetch call or module preload code",
+          "evidence": "Clause T10.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -11137,7 +11277,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A04.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A04.1. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11189,7 +11329,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A04.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A04.2. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11258,7 +11398,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A04.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A04.4. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11310,7 +11450,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A04.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A04.5. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11362,7 +11502,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A05.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A05.1. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11414,7 +11554,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A05.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A05.2. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11466,7 +11606,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A05.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A05.3. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11518,7 +11658,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A05.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A05.4. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11570,7 +11710,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A05.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A05.5. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11622,7 +11762,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A05.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A05.6. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11674,7 +11814,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A06.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A06.1. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11726,7 +11866,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A06.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A06.2. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",
@@ -11778,7 +11918,7 @@
         {
           "path": "reference/src/game/session/browser-clock.ts",
           "symbol": "elapsedStep",
-          "evidence": "Clause A06.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+          "evidence": "Clause A06.3. The clock passes fractional active time to the game, so a mismatch runs from its own activation."
         },
         {
           "path": "reference/src/game/session/storage.ts",

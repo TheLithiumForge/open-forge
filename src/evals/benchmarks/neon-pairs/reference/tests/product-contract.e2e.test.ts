@@ -1,8 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
-import { FIXED_PAIRS, loadTimedBoard } from './game-fixture.ts';
+import { loadTimedBoard } from './game-fixture.ts';
 
 test('status formats show current values, continuing minutes and a completed import without Resume', async ({
   page,
@@ -18,14 +19,14 @@ test('status formats show current values, continuing minutes and a completed imp
       }),
     );
   initial.push(...(await status()));
-  for (const index of FIXED_PAIRS[0]) await page.locator('.card').nth(index).click();
+  for (const index of EXAMPLE_PAIRS[0]) await page.locator('.card').nth(index).click();
   const matched = await status();
   await page.locator('summary').click();
   await page.getByLabel(ReproductionControl.snapshot, { exact: true }).fill(
     JSON.stringify({
       version: 1,
       boardCode: 'np1-4-1',
-      matched: FIXED_PAIRS.flat(),
+      matched: EXAMPLE_PAIRS.flat(),
       selection: { kind: 'closed' },
       moves: 8,
       elapsedMs: 3_600_999,
@@ -101,7 +102,7 @@ test('named color targets, reset margins and card focus scroll margins follow th
       'rgb(184, 189, 210)',
     );
   }
-  const card = page.locator('.card').nth(FIXED_PAIRS[0][0]);
+  const card = page.locator('.card').nth(EXAMPLE_PAIRS[0][0]);
   const margin = await card.evaluate((element) => getComputedStyle(element).scrollMargin);
   expect(parseFloat(margin)).toBeGreaterThanOrEqual(6);
   await card.hover();
@@ -113,7 +114,7 @@ test('named color targets, reset margins and card focus scroll margins follow th
   await expect(main).toHaveAttribute('fill', '#63E7FF');
   await expect(marker).toHaveAttribute('fill', '#63E7FF');
   await expect(marker).toHaveAttribute('stroke', 'var(--face)');
-  await page.locator('.card').nth(FIXED_PAIRS[0][1]).click();
+  await page.locator('.card').nth(EXAMPLE_PAIRS[0][1]).click();
   await card.hover();
   await page.clock.runFor(120);
   await expect(card).toHaveCSS('border-color', 'rgb(139, 234, 125)');

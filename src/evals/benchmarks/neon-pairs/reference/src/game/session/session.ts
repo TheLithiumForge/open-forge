@@ -17,13 +17,10 @@ export interface Session {
 }
 
 export const SessionNotice = {
-  ready: 'Find every matching pair.',
-  newGame: 'New game ready.',
   loaded: 'Loaded snapshot. Select Resume to continue.',
   loadedCompleted: 'Loaded completed snapshot.',
   invalidBoard: 'Invalid board code.',
   invalidSnapshot: 'Invalid snapshot.',
-  resumed: 'Game resumed.',
 } as const;
 
 export function initialSession(code: string, preferences: Preferences): Session {
@@ -31,7 +28,7 @@ export function initialSession(code: string, preferences: Preferences): Session 
     game: createGame(code),
     paused: false,
     generation: 0,
-    feedback: SessionNotice.ready,
+    feedback: '',
     loadNotice: '',
     announcement: 0,
     celebration: false,
@@ -53,8 +50,9 @@ export function replaceGame(session: Session, game: GameState, imported: boolean
     generation: session.generation + 1,
     celebration: false,
     preferences: { ...session.preferences, size: game.size },
-    announcement: session.announcement + 1,
-    feedback: loadNotice || SessionNotice.newGame,
+    // Only loads have a published status. A new deal clears the last turn result silently.
+    announcement: imported ? session.announcement + 1 : session.announcement,
+    feedback: loadNotice,
     loadNotice,
   };
 }

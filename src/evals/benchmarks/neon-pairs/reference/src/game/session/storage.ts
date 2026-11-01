@@ -46,11 +46,20 @@ export function readPreferences(store: PreferenceStore | null): Preferences {
   }
 }
 
+// Another tab may have saved a better score since this one loaded, so keep the best of both.
+function mergePreferences(saved: Preferences, current: Preferences): Preferences {
+  let merged: Preferences = { size: current.size, bestMoves: saved.bestMoves };
+  for (const [size, moves] of Object.entries(current.bestMoves))
+    merged = rememberBest(merged, Number(size), moves);
+  return merged;
+}
+
 export function writePreferences(store: PreferenceStore | null, preferences: Preferences): void {
   try {
+    const merged = mergePreferences(readPreferences(store), preferences);
     store?.setItem(
       PREFERENCES_KEY,
-      JSON.stringify({ schemaVersion: PREFERENCES_VERSION, ...preferences }),
+      JSON.stringify({ schemaVersion: PREFERENCES_VERSION, ...merged }),
     );
   } catch {
     // A blocked browser store doesn't stop the current game.

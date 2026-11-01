@@ -143,6 +143,32 @@ test('progress needs one move per matched pair and one for a pending mismatch', 
   assert.equal(decodeSnapshot(short), null, 'matched pairs need two moves');
 });
 
+// A natural clock reveals the second card 10.9ms after the first and exports 0.2ms later.
+const BEFORE_MISMATCH_MS = 10.9;
+const INTO_MISMATCH_MS = 0.2;
+
+test('export rounds fractional time down and a mismatch from its own activation up', () => {
+  const first = activateCard(createGame(EXAMPLE_CODE), 0);
+  const mismatch = activateCard(advanceGame(first, BEFORE_MISMATCH_MS), 1);
+  const exported: unknown = JSON.parse(encodeSnapshot(advanceGame(mismatch, INTO_MISMATCH_MS)));
+  assert.deepEqual(exported, {
+    version: SNAPSHOT_VERSION,
+    boardCode: EXAMPLE_CODE,
+    matched: [],
+    selection: { kind: SelectionKind.mismatch, first: 0, second: 1, remainingMs: MISMATCH_MS },
+    moves: 1,
+    elapsedMs: Math.floor(BEFORE_MISMATCH_MS + INTO_MISMATCH_MS),
+    started: true,
+  });
+  const almost = advanceGame(mismatch, MISMATCH_MS - INTO_MISMATCH_MS);
+  assert.equal(
+    almost.selection.kind,
+    SelectionKind.mismatch,
+    'C08 the mismatch runs its full interval',
+  );
+  assert.equal(advanceGame(mismatch, MISMATCH_MS).selection.kind, SelectionKind.closed);
+});
+
 test('snapshot parsing enforces malformed, missing and exact byte limits', () => {
   for (const text of ['null', '[]', '{}', '{']) assert.equal(decodeSnapshot(text), null);
   const text = snapshot();

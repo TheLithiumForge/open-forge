@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_CODE } from '../src/game/game.fixture.ts';
 import {
   BOARD_CODE_MAX_CHARACTERS,
   DealControl,
@@ -8,7 +9,7 @@ import {
 } from '../src/game/controls/control-labels.ts';
 import { GRID_SIZES } from '../src/game/deck.ts';
 import { SessionNotice } from '../src/game/session/session.ts';
-import { FIXED_BOARD, loadTimedBoard, exportedSnapshot, GAME_URL } from './game-fixture.ts';
+import { loadTimedBoard, exportedSnapshot, GAME_URL } from './game-fixture.ts';
 
 test('native reproduction controls keep drafts, limits, exact errors and action focus', async ({
   page,
@@ -64,7 +65,7 @@ test('native reproduction controls keep drafts, limits, exact errors and action 
       return element.selectionEnd - element.selectionStart;
     }),
   ).toBe(text.length);
-  await code.fill(FIXED_BOARD);
+  await code.fill(EXAMPLE_CODE);
   await load.click();
   await expect(load).toBeFocused();
   await page.locator('summary').click();

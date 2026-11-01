@@ -9,8 +9,6 @@ import type { Page } from '@playwright/test';
 export const GAME_URL = new URL('../dist/index.html', import.meta.url).href;
 export const ART_URL = new URL('../.art/index.html', import.meta.url).href;
 export const SESSION_URL = new URL('../.session/index.html', import.meta.url).href;
-export const FIXED_BOARD = EXAMPLE_CODE;
-export const FIXED_PAIRS = EXAMPLE_PAIRS;
 export const PHONE = { width: 360, height: 800 };
 const CLOCK_START = new Date('2026-01-01T00:00:00Z');
 const CLOCK_PAUSE = new Date(CLOCK_START.getTime() + 60_000);
@@ -18,7 +16,7 @@ const CLOCK_PAUSE = new Date(CLOCK_START.getTime() + 60_000);
 export async function loadFixedBoard(page: Page, url = GAME_URL): Promise<void> {
   await page.goto(url);
   await page.locator('summary').click();
-  await page.getByLabel(ReproductionControl.board, { exact: true }).fill(FIXED_BOARD);
+  await page.getByLabel(ReproductionControl.board, { exact: true }).fill(EXAMPLE_CODE);
   await page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }).click();
   await page.locator('summary').click();
   await expect(page.locator('.card')).toHaveCount(16);
@@ -52,9 +50,9 @@ export async function moves(page: Page): Promise<number> {
 }
 
 export async function finishBoard(page: Page): Promise<void> {
-  for (const pair of FIXED_PAIRS)
+  for (const pair of EXAMPLE_PAIRS)
     for (const index of pair) await page.locator('.card').nth(index).click();
-  await expect(page.locator('.card.matched')).toHaveCount(FIXED_PAIRS.length * 2);
+  await expect(page.locator('.card.matched')).toHaveCount(EXAMPLE_PAIRS.length * 2);
 }
 
 export const SNAPSHOT_PATH = fileURLToPath(new URL('./ui.fixture.json', import.meta.url));

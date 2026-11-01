@@ -1,11 +1,12 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_CODE } from '../src/game/game.fixture.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { activateCard, createGame, ELAPSED_MAX_MS, MISMATCH_MS } from '../src/game/game.ts';
 import { SelectionKind } from '../src/game/selection.ts';
 import { CLOCK_INTERVAL_MS } from '../src/game/session/browser-clock.ts';
 import { encodeSnapshot } from '../src/game/snapshot.ts';
-import { FIXED_BOARD, loadFixedBoard, loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
+import { loadFixedBoard, loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
 
 test('an overdue mismatch resolves before the next click even when its timer is delayed', async ({
   page,
@@ -31,7 +32,7 @@ test('a capped imported clock keeps matching, closing and exporting valid progre
   await loadTimedBoard(page);
   await page.locator('summary').click();
   const field = page.getByLabel(ReproductionControl.snapshot, { exact: true });
-  const initial = { ...activateCard(createGame(FIXED_BOARD), 0), elapsedMs: ELAPSED_MAX_MS };
+  const initial = { ...activateCard(createGame(EXAMPLE_CODE), 0), elapsedMs: ELAPSED_MAX_MS };
   await field.fill(encodeSnapshot(initial));
   await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
   await page.locator('summary').click();

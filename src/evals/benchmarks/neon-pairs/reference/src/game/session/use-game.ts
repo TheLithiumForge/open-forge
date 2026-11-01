@@ -78,9 +78,7 @@ export function useGame() {
   }
 
   function exportSnapshot(): string {
-    // Rendered state can trail the active clock by a tick. Synchronizing keeps whole
-    // milliseconds in the game and carries the fraction, so elapsed time rounds down and
-    // remaining mismatch time rounds up.
+    // Rendered state can trail the active clock by a tick.
     clock.synchronize();
     return encodeSnapshot(current.current.game);
   }
@@ -95,9 +93,8 @@ export function useGame() {
     commit({
       ...current.current,
       paused: false,
-      feedback: SessionNotice.resumed,
+      feedback: '',
       loadNotice: '',
-      announcement: current.current.announcement + 1,
     });
   }
 

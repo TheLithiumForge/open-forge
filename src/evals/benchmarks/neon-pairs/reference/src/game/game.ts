@@ -72,7 +72,7 @@ export function activateCard(state: GameState, index: number): GameState {
 }
 
 export function advanceGame(state: GameState, milliseconds: number): GameState {
-  if (!Number.isSafeInteger(milliseconds) || milliseconds <= 0) return state;
+  if (!Number.isFinite(milliseconds) || milliseconds <= 0) return state;
   if (!state.started || isWon(state)) return state;
   const elapsedMs = Math.min(ELAPSED_MAX_MS, state.elapsedMs + milliseconds);
   if (state.selection.kind !== SelectionKind.mismatch) return { ...state, elapsedMs };

@@ -1,9 +1,10 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_CODE, EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { SelectionKind } from '../src/game/selection.ts';
 import { SNAPSHOT_VERSION } from '../src/game/snapshot.ts';
-import { FIXED_BOARD, FIXED_PAIRS, exportedSnapshot, loadTimedBoard } from './game-fixture.ts';
+import { exportedSnapshot, loadTimedBoard } from './game-fixture.ts';
 import { uiSnapshot } from './ui-snapshot.ts';
 
 const REMAINING_MS = 300;
@@ -26,7 +27,7 @@ test('Resume focuses the remembered card before removal and continues the exact 
   await loadTimedBoard(page);
   const snapshot = {
     version: SNAPSHOT_VERSION,
-    boardCode: FIXED_BOARD,
+    boardCode: EXAMPLE_CODE,
     matched: [],
     moves: 1,
     elapsedMs: 500,
@@ -73,10 +74,10 @@ test('invalid drafts keep the current game and a loaded win changes neither best
   expect(await exportedSnapshot(page)).toEqual(original);
   await loadDraft(page, {
     version: SNAPSHOT_VERSION,
-    boardCode: FIXED_BOARD,
-    matched: FIXED_PAIRS.flat(),
+    boardCode: EXAMPLE_CODE,
+    matched: EXAMPLE_PAIRS.flat(),
     selection: { kind: SelectionKind.closed },
-    moves: FIXED_PAIRS.length,
+    moves: EXAMPLE_PAIRS.length,
     elapsedMs: 500,
     started: true,
   });

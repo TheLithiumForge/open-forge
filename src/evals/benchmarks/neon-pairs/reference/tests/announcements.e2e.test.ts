@@ -1,11 +1,12 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_CODE, EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { MISMATCH_MS } from '../src/game/game.ts';
 import { SelectionKind } from '../src/game/selection.ts';
 import { SessionNotice } from '../src/game/session/session.ts';
 import { SNAPSHOT_VERSION } from '../src/game/snapshot.ts';
-import { FIXED_BOARD, FIXED_PAIRS, loadTimedBoard } from './game-fixture.ts';
+import { loadTimedBoard } from './game-fixture.ts';
 import { uiSnapshot } from './ui-snapshot.ts';
 import type { Locator, Page } from '@playwright/test';
 
@@ -60,7 +61,7 @@ test('every load kind updates the one live region once per event and shows its s
   const results = await recordResults(region);
   const unfinished = {
     version: SNAPSHOT_VERSION,
-    boardCode: FIXED_BOARD,
+    boardCode: EXAMPLE_CODE,
     matched: [],
     selection: { kind: SelectionKind.closed },
     moves: 0,
@@ -69,8 +70,8 @@ test('every load kind updates the one live region once per event and shows its s
   };
   const completed = {
     ...unfinished,
-    matched: FIXED_PAIRS.flat(),
-    moves: FIXED_PAIRS.length,
+    matched: EXAMPLE_PAIRS.flat(),
+    moves: EXAMPLE_PAIRS.length,
     started: true,
   };
   const loads = [

@@ -187,7 +187,12 @@
       "outcome": "caught",
       "exit": 1,
       "assertion": "AssertionError [ERR_ASSERTION]: R10 size six has its separate best\n\nundefined !== 20\n\n    at reference/src/game/session/storage.test.ts:33:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
-      "otherFailures": []
+      "otherFailures": [
+        {
+          "name": "a write keeps a better best that another tab saved in the meantime",
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n    '4': 9,\n-   '6': 20\n  }\n\n    at reference/src/game/session/storage.test.ts:57:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+        }
+      ]
     },
     {
       "id": "M10",
@@ -201,7 +206,12 @@
       "outcome": "caught",
       "exit": 1,
       "assertion": "AssertionError [ERR_ASSERTION]: R10 worse score keeps best\n+ actual - expected\n\n  {\n    bestMoves: {\n+     '4': 13,\n-     '4': 12,\n      '6': 20\n    },\n    size: 6\n  }\n\n    at reference/src/game/session/storage.test.ts:30:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
-      "otherFailures": []
+      "otherFailures": [
+        {
+          "name": "a write keeps a better best that another tab saved in the meantime",
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   '4': 10,\n-   '4': 9,\n    '6': 20\n  }\n\n    at reference/src/game/session/storage.test.ts:57:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+        }
+      ]
     },
     {
       "id": "M11",
@@ -218,6 +228,10 @@
         {
           "name": "a best at the move cap round trips and a larger saved best is ignored",
           "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   bestMoves: {},\n-   bestMoves: {\n-     '4': 999999\n-   },\n    size: 4\n  }\n\n    at reference/src/game/session/storage.test.ts:40:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+        },
+        {
+          "name": "a write keeps a better best that another tab saved in the meantime",
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   bestMoves: {},\n+   size: 4\n-   bestMoves: {\n-     '4': 9\n-   },\n-   size: 6\n  }\n\n    at reference/src/game/session/storage.test.ts:55:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         }
       ]
     },
@@ -441,7 +455,7 @@
       "reason": "V06 secondary color .eyebrow",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "V06 secondary color .eyebrow\n\nexpect(locator).toHaveCSS(expected) failed\n\nLocator:  locator('.eyebrow').first()\nExpected: \"rgb(184, 189, 210)\"\nReceived: \"rgb(99, 231, 255)\"\nTimeout:  5000ms\n\nCall log:\n  - V06 secondary color .eyebrow locator('.eyebrow').first() with timeout 5000ms\n  - waiting for locator('.eyebrow').first()\n    13 × locator resolved to <p class=\"eyebrow\">A little focus. A perfect pair.</p>\n       - unexpected value \"rgb(99, 231, 255)\"\n",
+      "assertion": "V06 secondary color .eyebrow\n\nexpect(locator).toHaveCSS(expected) failed\n\nLocator:  locator('.eyebrow').first()\nExpected: \"rgb(184, 189, 210)\"\nReceived: \"rgb(99, 231, 255)\"\nTimeout:  5000ms\n\nCall log:\n  - V06 secondary color .eyebrow locator('.eyebrow').first() with timeout 5000ms\n  - waiting for locator('.eyebrow').first()\n    14 × locator resolved to <p class=\"eyebrow\">A little focus. A perfect pair.</p>\n       - unexpected value \"rgb(99, 231, 255)\"\n",
       "otherFailures": []
     },
     {
@@ -541,6 +555,63 @@
       "outcome": "caught",
       "exit": 1,
       "assertion": "AssertionError [ERR_ASSERTION]: C14 relative path follows the caller folder: Could not replay replay.json: the file does not exist.\n\n\n1 !== 0\n\n    at reference/scripts/replay.test.ts:97:10\n    at async reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:20",
+      "otherFailures": []
+    },
+    {
+      "id": "M32",
+      "clauses": [
+        "I01.2",
+        "I13.1",
+        "V19.4",
+        "V20.3"
+      ],
+      "test": "tests/pointer-focus.e2e.test.ts",
+      "testName": "pointer clicks reveal the pressed card on 16x16 at 360x800",
+      "reason": "I01 click after scrolling into view",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "I01 click after scrolling into view\n\nexpect(locator).toHaveClass(expected) failed\n\nLocator: locator('.card').nth(255)\nExpected pattern: /revealed/\nReceived string:  \"card closed\"\nTimeout: 5000ms\n\nCall log:\n  - I01 click after scrolling into view locator('.card').nth(255) with timeout 5000ms\n  - waiting for locator('.card').nth(255)\n    14 × locator resolved to <button tabindex=\"0\" type=\"button\" class=\"card closed\" aria-disabled=\"false\" aria-label=\"Row 16, column 16, closed\">…</button>\n       - unexpected value \"card closed\"\n",
+      "otherFailures": []
+    },
+    {
+      "id": "M33",
+      "clauses": [
+        "C08.7",
+        "R04.1"
+      ],
+      "test": "tests/fractional-clock.e2e.test.ts",
+      "testName": "a mismatch starts its interval at its own activation between milliseconds",
+      "reason": "C08 remaining time rounds up from the mismatch start",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "C08 remaining time rounds up from the mismatch start\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n    \"first\": 0,\n    \"kind\": \"mismatch\",\n-   \"remainingMs\": 800,\n+   \"remainingMs\": 799,\n    \"second\": 1,\n  }",
+      "otherFailures": []
+    },
+    {
+      "id": "M34",
+      "clauses": [
+        "V15.1",
+        "V12.3"
+      ],
+      "test": "tests/matched-mark.e2e.test.ts",
+      "testName": "check marks leave every matched face uncovered on 16x16 at 360x800",
+      "reason": "V15 check marks cover no face artwork",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "V15 check marks cover no face artwork\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  -   1\n+ Received  + 290\n\n- Array []\n+ Array [\n+   \"card 0 shape\",\n+   \"card 1 marker\",\n+   \"card 1 shape\",\n+   \"card 2 shape\",\n+   \"card 3 shape\",\n+   \"card 4 shape\",\n+   \"card 5 shape\",\n+   \"card 6 shape\",\n+   \"card 7 shape\",\n+   \"card 8 marker\",\n+   \"card 8 shape\",\n+   \"card 9 marker\",\n+   \"card 9 shape\",\n+   \"card 10 shape\",\n+   \"card 11 shape\",\n+   \"card 12 shape\",\n+   \"card 13 shape\",\n+   \"card 14 shape\",\n+   \"card 15 shape\",\n+   \"card 16 marker\",\n+   \"card 16 shape\",\n+   \"card 17 shape\",\n+   \"card 18 marker\",\n+   \"card 18 shape\",\n+   \"card 19 shape\",\n+   \"card 20 shape\",\n+   \"card 21 shape\",\n+   \"card 22 shape\",\n+   \"card 23 shape\",\n+   \"card 24 shape\",\n+   \"card 25 shape\",\n+   \"card 26 marker\",\n+   \"card 26 shape\",\n+   \"card 27 shape\",\n+   \"card 28 shape\",\n+   \"card 29 shape\",\n+   \"card 30 shape\",\n+   \"card 31 shape\",\n+   \"card 32 shape\",\n+   \"card 33 shape\",\n+   \"card 34 shape\",\n+   \"card 35 marker\",\n+   \"card 35 shape\",\n+   \"card 36 shape\",\n+   \"card 37 marker\",\n+   \"card 37 shape\",\n+   \"card 38 shape\",\n+   \"card 39 marker\",\n+   \"card 39 shape\",\n+   \"card 40 shape\",\n+   \"card 41 shape\",\n+   \"card 42 shape\",\n+   \"card 43 shape\",\n+   \"card 44 marker\",\n+   \"card 44 shape\",\n+   \"card 45 shape\",\n+   \"card 46 shape\",\n+   \"card 47 shape\",\n+   \"card 48 shape\",\n+   \"card 49 marker\",\n+   \"card 49 shape\",\n+   \"card 50 marker\",\n+   \"card 50 shape\",\n+   \"card 51 shape\",\n+   \"card 52 shape\",\n+   \"card 53 shape\",\n+   \"card 54 shape\",\n+   \"card 55 shape\",\n+   \"card 56 shape\",\n+   \"card 57 shape\",\n+   \"card 58 shape\",\n+   \"card 59 shape\",\n+   \"card 60 shape\",\n+   \"card 61 shape\",\n+   \"card 62 shape\",\n+   \"card 63 shape\",\n+   \"card 64 shape\",\n+   \"card 65 shape\",\n+   \"card 66 shape\",\n+   \"card 67 shape\",\n+   \"card 68 shape\",\n+   \"card 69 shape\",\n+   \"card 70 shape\",\n+   \"card 71 marker\",\n+   \"card 71 shape\",\n+   \"card 72 shape\",\n+   \"card 73 shape\",\n+   \"card 74 shape\",\n+   \"card 75 shape\",\n+   \"card 76 shape\",\n+   \"card 77 shape\",\n+   \"card 78 shape\",\n+   \"card 79 shape\",\n+   \"card 80 shape\",\n+   \"card 81 shape\",\n+   \"card 82 marker\",\n+   \"card 82 shape\",\n+   \"card 83 shape\",\n+   \"card 84 shape\",\n+   \"card 85 shape\",\n+   \"card 86 shape\",\n+   \"card 87 shape\",\n+   \"card 88 shape\",\n+   \"card 89 shape\",\n+   \"card 90 shape\",\n+   \"card 91 shape\",\n+   \"card 92 shape\",\n+   \"card 93 shape\",\n+   \"card 94 shape\",\n+   \"card 95 shape\",\n+   \"card 96 shape\",\n+   \"card 97 shape\",\n+   \"card 98 shape\",\n+   \"card 99 shape\",\n+   \"card 100 shape\",\n+   \"card 101 shape\",\n+   \"card 102 shape\",\n+   \"card 103 shape\",\n+   \"card 104 shape\",\n+   \"card 105 shape\",\n+   \"card 106 shape\",\n+   \"card 107 shape\",\n+   \"card 108 shape\",\n+   \"card 109 shape\",\n+   \"card 110 shape\",\n+   \"card 111 shape\",\n+   \"card 112 shape\",\n+   \"card 113 shape\",\n+   \"card 114 shape\",\n+   \"card 115 shape\",\n+   \"card 116 marker\",\n+   \"card 116 shape\",\n+   \"card 117 shape\",\n+   \"card 118 shape\",\n+   \"card 119 shape\",\n+   \"card 120 marker\",\n+   \"card 120 shape\",\n+   \"card 121 shape\",\n+   \"card 122 shape\",\n+   \"card 123 marker\",\n+   \"card 123 shape\",\n+   \"card 124 shape\",\n+   \"card 125 shape\",\n+   \"card 126 shape\",\n+   \"card 127 shape\",\n+   \"card 128 shape\",\n+   \"card 129 shape\",\n+   \"card 130 shape\",\n+   \"card 131 shape\",\n+   \"card 132 shape\",\n+   \"card 133 shape\",\n+   \"card 134 shape\",\n+   \"card 135 shape\",\n+   \"card 136 shape\",\n+   \"card 137 shape\",\n+   \"card 138 shape\",\n+   \"card 139 shape\",\n+   \"card 140 shape\",\n+   \"card 141 shape\",\n+   \"card 142 shape\",\n+   \"card 143 shape\",\n+   \"card 144 shape\",\n+   \"card 145 shape\",\n+   \"card 146 shape\",\n+   \"card 147 shape\",\n+   \"card 148 shape\",\n+   \"card 149 shape\",\n+   \"card 150 shape\",\n+   \"card 151 shape\",\n+   \"card 152 shape\",\n+   \"card 153 shape\",\n+   \"card 154 shape\",\n+   \"card 155 marker\",\n+   \"card 155 shape\",\n+   \"card 156 shape\",\n+   \"card 157 marker\",\n+   \"card 157 shape\",\n+   \"card 158 shape\",\n+   \"card 159 shape\",\n+   \"card 160 marker\",\n+   \"card 160 shape\",\n+   \"card 161 marker\",\n+   \"card 161 shape\",\n+   \"card 162 shape\",\n+   \"card 163 shape\",\n+   \"card 164 shape\",\n+   \"card 165 marker\",\n+   \"card 165 shape\",\n+   \"card 166 shape\",\n+   \"card 167 shape\",\n+   \"card 168 shape\",\n+   \"card 169 shape\",\n+   \"card 170 shape\",\n+   \"card 171 shape\",\n+   \"card 172 shape\",\n+   \"card 173 shape\",\n+   \"card 174 shape\",\n+   \"card 175 shape\",\n+   \"card 176 shape\",\n+   \"card 177 shape\",\n+   \"card 178 shape\",\n+   \"card 179 marker\",\n+   \"card 179 shape\",\n+   \"card 180 shape\",\n+   \"card 181 shape\",\n+   \"card 182 shape\",\n+   \"card 183 shape\",\n+   \"card 184 shape\",\n+   \"card 185 shape\",\n+   \"card 186 marker\",\n+   \"card 186 shape\",\n+   \"card 187 shape\",\n+   \"card 188 shape\",\n+   \"card 189 shape\",\n+   \"card 190 shape\",\n+   \"card 191 shape\",\n+   \"card 192 shape\",\n+   \"card 193 shape\",\n+   \"card 194 marker\",\n+   \"card 194 shape\",\n+   \"card 195 marker\",\n+   \"card 195 shape\",\n+   \"card 196 shape\",\n+   \"card 197 shape\",\n+   \"card 198 shape\",\n+   \"card 199 shape\",\n+   \"card 200 shape\",\n+   \"card 201 shape\",\n+   \"card 202 shape\",\n+   \"card 203 shape\",\n+   \"card 204 shape\",\n+   \"card 205 shape\",\n+   \"card 206 shape\",\n+   \"card 207 shape\",\n+   \"card 208 shape\",\n+   \"card 209 marker\",\n+   \"card 209 shape\",\n+   \"card 210 shape\",\n+   \"card 211 shape\",\n+   \"card 212 shape\",\n+   \"card 213 shape\",\n+   \"card 214 marker\",\n+   \"card 214 shape\",\n+   \"card 215 shape\",\n+   \"card 216 shape\",\n+   \"card 217 marker\",\n+   \"card 217 shape\",\n+   \"card 218 shape\",\n+   \"card 219 shape\",\n+   \"card 220 shape\",\n+   \"card 221 shape\",\n+   \"card 222 shape\",\n+   \"card 223 shape\",\n+   \"card 224 shape\",\n+   \"card 225 shape\",\n+   \"card 226 shape\",\n+   \"card 227 shape\",\n+   \"card 228 shape\",\n+   \"card 229 marker\",\n+   \"card 229 shape\",\n+   \"card 230 shape\",\n+   \"card 231 shape\",\n+   \"card 232 shape\",\n+   \"card 233 shape\",\n+   \"card 234 shape\",\n+   \"card 235 shape\",\n+   \"card 236 shape\",\n+   \"card 237 shape\",\n+   \"card 238 shape\",\n+   \"card 239 shape\",\n+   \"card 240 shape\",\n+   \"card 241 shape\",\n+   \"card 242 shape\",\n+   \"card 243 shape\",\n+   \"card 244 shape\",\n+   \"card 245 shape\",\n+   \"card 246 shape\",\n+   \"card 247 shape\",\n+   \"card 248 shape\",\n+   \"card 249 shape\",\n+   \"card 250 shape\",\n+   \"card 251 shape\",\n+   \"card 252 shape\",\n+   \"card 253 marker\",\n+   \"card 253 shape\",\n+   \"card 254 marker\",\n+   \"card 254 shape\",\n+   \"card 255 shape\",\n+ ]",
+      "otherFailures": []
+    },
+    {
+      "id": "M35",
+      "clauses": [
+        "R10.3"
+      ],
+      "test": "tests/preferences.e2e.test.ts",
+      "testName": "a tab opened earlier keeps the best another tab recorded when it starts a new game",
+      "reason": "R10 the earlier tab keeps the saved best",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "R10 the earlier tab keeps the saved best\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: 8\nReceived: NaN",
       "otherFailures": []
     }
   ]

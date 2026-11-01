@@ -37,12 +37,13 @@
   border: 2px solid var(--secondary);
   transform: rotate(45deg);
 }
+/* A corner mark wider than about 17% of the card would reach the top-right marker. */
 .card > .matched-mark {
   position: absolute;
   right: 0;
   top: 0;
-  width: 16px;
-  height: 16px;
+  width: 16%;
+  height: 16%;
   color: var(--green);
 }
 @media (prefers-reduced-motion: reduce) {

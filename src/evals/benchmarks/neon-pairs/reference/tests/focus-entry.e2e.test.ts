@@ -1,10 +1,11 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_CODE } from '../src/game/game.fixture.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { SNAPSHOT_VERSION } from '../src/game/snapshot.ts';
 import { SelectionKind } from '../src/game/selection.ts';
 import { boardCode, parseBoardCode } from '../src/game/deck.ts';
-import { FIXED_BOARD, loadFixedBoard, PHONE } from './game-fixture.ts';
+import { loadFixedBoard, PHONE } from './game-fixture.ts';
 import { boardGaps } from './focus-bounds.ts';
 import { moveKeyboardTo } from './accessibility-tree.ts';
 import type { Page } from '@playwright/test';
@@ -14,7 +15,7 @@ const SIZE = 16;
 const REMEMBERED = 6 * SIZE + 10;
 // Row 15, column 16 sits past the right and bottom edges of that board.
 const FAR = 14 * SIZE + 15;
-const FIXED_SIZE = parseBoardCode(FIXED_BOARD)?.size ?? 0;
+const EXAMPLE_SIZE = parseBoardCode(EXAMPLE_CODE)?.size ?? 0;
 
 async function scrollBoardToStart(page: Page): Promise<void> {
   await page.locator('.board-viewport').evaluate((viewport) => viewport.scrollTo(0, 0));
@@ -74,9 +75,9 @@ test('every keyboard move after a pointer click shows the focus outline', async 
   const cards = page.locator('.card');
   await cards.nth(5).click();
   for (const [key, index] of [
-    ['Control+End', FIXED_SIZE ** 2 - 1],
+    ['Control+End', EXAMPLE_SIZE ** 2 - 1],
     ['Control+Home', 0],
-    ['End', FIXED_SIZE - 1],
+    ['End', EXAMPLE_SIZE - 1],
   ] as const) {
     await page.keyboard.press(key);
     await expect(cards.nth(index)).toBeFocused();

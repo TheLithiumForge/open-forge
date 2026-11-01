@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 
 interface ScrollPosition {
@@ -6,10 +6,10 @@ interface ScrollPosition {
   readonly top: number;
 }
 
-// Chromium centers a card that Tab, Shift+Tab or another browser action focuses, and it does so
-// before focus handlers run. Scroll events arrive a frame later, so the last positions they
-// reported still show the view from before that scroll. Restoring them first lets the card
-// scroll from where the player was looking, with nearest alignment.
+// Chromium centers a card that Tab or Shift+Tab focuses before focus handlers run. Scroll events
+// arrive a frame later, so the last positions they reported still show the view from before that
+// scroll. Restoring them first lets the card scroll from where the player was looking, with
+// nearest alignment.
 export function useNearestScroll(viewport: RefObject<HTMLElement | null>) {
   const board = useRef<ScrollPosition>({ left: 0, top: 0 });
   const page = useRef<ScrollPosition>({ left: 0, top: 0 });
@@ -31,9 +31,12 @@ export function useNearestScroll(viewport: RefObject<HTMLElement | null>) {
     };
   }, [viewport]);
 
-  return (card: HTMLElement): void => {
-    viewport.current?.scrollTo(board.current.left, board.current.top);
-    window.scrollTo(page.current.left, page.current.top);
-    card.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  };
+  return useCallback(
+    (card: HTMLElement): void => {
+      viewport.current?.scrollTo(board.current.left, board.current.top);
+      window.scrollTo(page.current.left, page.current.top);
+      card.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    },
+    [viewport],
+  );
 }

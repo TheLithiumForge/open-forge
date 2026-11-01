@@ -1,19 +1,13 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
-import {
-  FIXED_PAIRS,
-  GAME_URL,
-  PHONE,
-  exportedSnapshot,
-  loadFixedBoard,
-  moves,
-} from './game-fixture.ts';
+import { EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
+import { GAME_URL, PHONE, exportedSnapshot, loadFixedBoard, moves } from './game-fixture.ts';
 
 test('finishes the literal board by keyboard without inspecting hidden faces', async ({ page }) => {
   await loadFixedBoard(page);
   await expect(page.locator('.card.closed svg'), 'I14 hidden cards mount no face').toHaveCount(0);
   await expect(page.locator('[data-face], [data-face-id]')).toHaveCount(0);
-  for (const pair of FIXED_PAIRS) {
+  for (const pair of EXAMPLE_PAIRS) {
     for (const index of pair) {
       await page.locator('.card').first().focus();
       await page.keyboard.press('Control+Home');
@@ -40,7 +34,7 @@ test('finishes by phone taps with visible 44px targets', async ({ browser }) => 
     const bounds = await page.locator('.card').first().boundingBox();
     expect(bounds?.width).toBeGreaterThanOrEqual(44);
     expect(bounds?.height).toBeGreaterThanOrEqual(44);
-    for (const pair of FIXED_PAIRS)
+    for (const pair of EXAMPLE_PAIRS)
       for (const index of pair) await page.locator('.card').nth(index).tap();
     await expect(page.locator('.card.matched')).toHaveCount(16);
     expect(await moves(page)).toBe(8);

@@ -3,14 +3,14 @@ import { test } from './browser-test.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { StatusLabel } from '../src/game/status/status-labels.ts';
 import { GRID_SIZES, boardCode } from '../src/game/deck.ts';
-import { EXAMPLE_DECK } from '../src/game/game.fixture.ts';
-import { FIXED_BOARD, loadFixedBoard } from './game-fixture.ts';
+import { EXAMPLE_DECK, EXAMPLE_CODE } from '../src/game/game.fixture.ts';
+import { loadFixedBoard } from './game-fixture.ts';
 import { specDeal, specPairs } from './deal-oracle.ts';
 
 const SEED = 1;
 
 test('the independent deal reproduces the published example deck', async () => {
-  expect(boardCode(4, SEED)).toBe(FIXED_BOARD);
+  expect(boardCode(4, SEED)).toBe(EXAMPLE_CODE);
   expect(specDeal(4, SEED)).toEqual(EXAMPLE_DECK);
 });
 

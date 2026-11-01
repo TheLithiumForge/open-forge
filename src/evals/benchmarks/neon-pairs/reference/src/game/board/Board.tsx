@@ -14,6 +14,7 @@ interface BoardProps {
   paused: boolean;
   activate(index: number): void;
 }
+const KEYBOARD_FOCUS = ':focus-visible';
 interface BoardStyle extends CSSProperties {
   '--grid-size': number;
 }
@@ -27,15 +28,17 @@ export function Board({ game, ref, paused, activate }: BoardProps) {
   const element = useRef<HTMLDivElement>(null);
   const [focused, setFocused] = useState(0);
   const scrollToNearest = useNearestScroll(viewport);
-  // Each card scrolls itself into view from its focus handler, so focus calls skip the browser's
-  // centering scroll.
+  // Focus calls skip the browser's centering scroll and then scroll with nearest alignment.
   useImperativeHandle(
     ref,
     () => ({
-      focusRemembered: () =>
-        element.current?.querySelectorAll('button').item(focused)?.focus({ preventScroll: true }),
+      focusRemembered: () => {
+        const card = element.current?.querySelectorAll('button').item(focused);
+        card?.focus({ preventScroll: true });
+        if (card) scrollToNearest(card);
+      },
     }),
-    [focused],
+    [focused, scrollToNearest],
   );
 
   function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number): void {
@@ -48,7 +51,8 @@ export function Board({ game, ref, paused, activate }: BoardProps) {
   }
   function cardFocused(index: number, card: HTMLElement): void {
     setFocused(index);
-    scrollToNearest(card);
+    // Moving a card under a pressed pointer would send the release elsewhere and lose the click.
+    if (card.matches(KEYBOARD_FOCUS)) scrollToNearest(card);
   }
   const style: BoardStyle = { '--grid-size': game.size };
   return (

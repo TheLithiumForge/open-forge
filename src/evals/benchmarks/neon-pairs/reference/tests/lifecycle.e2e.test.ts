@@ -1,14 +1,9 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { EXAMPLE_CODE } from '../src/game/game.fixture.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { MISMATCH_MS } from '../src/game/game.ts';
-import {
-  FIXED_BOARD,
-  exportedSnapshot,
-  loadFixedBoard,
-  loadTimedBoard,
-  moves,
-} from './game-fixture.ts';
+import { exportedSnapshot, loadFixedBoard, loadTimedBoard, moves } from './game-fixture.ts';
 
 const TOUCH = 'touch';
 
@@ -73,7 +68,7 @@ test('Restart clears a mismatch and rejects earlier timer updates', async ({ pag
   await expect(page.locator('.card.closed')).toHaveCount(16);
   const restored = await exportedSnapshot(page);
   expect(restored).toMatchObject({
-    boardCode: FIXED_BOARD,
+    boardCode: EXAMPLE_CODE,
     moves: 1,
     started: true,
     elapsedMs: 800,
@@ -102,11 +97,11 @@ test('New Game and size changes clear progress and reset the remembered tab stop
     selection: { kind: 'closed' },
   });
   const next = await exportedSnapshot(page);
-  expect(next.boardCode).not.toBe(FIXED_BOARD);
+  expect(next.boardCode).not.toBe(EXAMPLE_CODE);
   await expect(page.locator('.card[tabindex="0"]')).toHaveCount(1);
   await expect(page.locator('.card').first()).toHaveAttribute('tabindex', '0');
   await page.locator('summary').click();
-  await page.getByLabel(ReproductionControl.board, { exact: true }).fill(FIXED_BOARD);
+  await page.getByLabel(ReproductionControl.board, { exact: true }).fill(EXAMPLE_CODE);
   await page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }).click();
   await page.locator('summary').click();
   await page.locator('.card').nth(2).click();

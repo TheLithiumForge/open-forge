@@ -71,7 +71,7 @@ test('new states keep earlier games unchanged and reject invalid elapsed input',
   const current = createGame(EXAMPLE_CODE);
   advanceGame(old, MISMATCH_MS);
   assert.deepEqual(current, createGame(EXAMPLE_CODE));
-  for (const delta of [-1, 0.5, Infinity, NaN]) assert.equal(advanceGame(old, delta), old);
+  for (const delta of [-1, 0, Infinity, NaN]) assert.equal(advanceGame(old, delta), old);
   const capped = advanceGame({ ...old, elapsedMs: ELAPSED_MAX_MS - 1 }, Number.MAX_SAFE_INTEGER);
   assert.equal(capped.elapsedMs, ELAPSED_MAX_MS);
   assert.equal(capped.selection.kind, SelectionKind.closed);

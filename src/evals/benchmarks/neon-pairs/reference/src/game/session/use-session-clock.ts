@@ -42,7 +42,7 @@ export function useSessionClock(
       const selection = current.current.game.selection;
       const delay =
         selection.kind === SelectionKind.mismatch
-          ? Math.min(CLOCK_INTERVAL_MS, selection.remainingMs - clock.current.remainderMs)
+          ? Math.min(CLOCK_INTERVAL_MS, selection.remainingMs)
           : CLOCK_INTERVAL_MS;
       timer = window.setTimeout(() => {
         if (!active) return;

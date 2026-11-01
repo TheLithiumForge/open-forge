@@ -299,7 +299,7 @@
   {
     "id": "M28",
     "path": "src/game/board/nearest-scroll.ts",
-    "find": "    viewport.current?.scrollTo(board.current.left, board.current.top);\n    window.scrollTo(page.current.left, page.current.top);\n",
+    "find": "      viewport.current?.scrollTo(board.current.left, board.current.top);\n      window.scrollTo(page.current.left, page.current.top);\n",
     "replace": "",
     "test": "tests/focus-entry.e2e.test.ts",
     "browser": true,
@@ -339,5 +339,49 @@
     "clauses": ["C14.3"],
     "testName": "the replay command reads a relative path from the caller folder and names what failed",
     "reason": "C14 relative path follows the caller folder"
+  },
+  {
+    "id": "M32",
+    "path": "src/game/board/Board.tsx",
+    "find": "    if (card.matches(KEYBOARD_FOCUS)) scrollToNearest(card);",
+    "replace": "    scrollToNearest(card);",
+    "test": "tests/pointer-focus.e2e.test.ts",
+    "browser": true,
+    "clauses": ["I01.2", "I13.1", "V19.4", "V20.3"],
+    "testName": "pointer clicks reveal the pressed card on 16x16 at 360x800",
+    "reason": "I01 click after scrolling into view"
+  },
+  {
+    "id": "M33",
+    "path": "src/game/snapshot.ts",
+    "find": "remainingMs: Math.ceil(state.selection.remainingMs)",
+    "replace": "remainingMs: Math.floor(state.selection.remainingMs)",
+    "test": "tests/fractional-clock.e2e.test.ts",
+    "browser": true,
+    "clauses": ["C08.7", "R04.1"],
+    "testName": "a mismatch starts its interval at its own activation between milliseconds",
+    "reason": "C08 remaining time rounds up from the mismatch start"
+  },
+  {
+    "id": "M34",
+    "path": "src/game/board/card.css",
+    "find": "  width: 16%;\n  height: 16%;",
+    "replace": "  width: 16px;\n  height: 16px;",
+    "test": "tests/matched-mark.e2e.test.ts",
+    "browser": true,
+    "clauses": ["V15.1", "V12.3"],
+    "testName": "check marks leave every matched face uncovered on 16x16 at 360x800",
+    "reason": "V15 check marks cover no face artwork"
+  },
+  {
+    "id": "M35",
+    "path": "src/game/session/storage.ts",
+    "find": "const merged = mergePreferences(readPreferences(store), preferences);",
+    "replace": "const merged = preferences;",
+    "test": "tests/preferences.e2e.test.ts",
+    "browser": true,
+    "clauses": ["R10.3"],
+    "testName": "a tab opened earlier keeps the best another tab recorded when it starts a new game",
+    "reason": "R10 the earlier tab keeps the saved best"
   }
 ]
