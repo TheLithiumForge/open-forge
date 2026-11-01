@@ -38,15 +38,15 @@ index e96579928a71d822d97a929db01d0674cf7b875b..fbe2a6d02173b64a03996460703761e0
          exportSnapshot={controller.exportSnapshot}
          loadBoard={controller.loadBoard}
 diff --git a/src/game/controls/Reproduction.tsx b/src/game/controls/Reproduction.tsx
-index 3fb38c3feb590d76cdb44d32643a429343b0cec8..dc34e79761b6f2f98be7f84c87247bf452580ec6 100644
+index e3d1d4c125c4c3ac33ef91ab958c0c454acfdae7..cde6080cc9ba12779fee1d48c78af78daa16437b 100644
 --- a/src/game/controls/Reproduction.tsx
 +++ b/src/game/controls/Reproduction.tsx
 @@ -1,3 +1,4 @@
 +import type { ReactNode } from 'react';
- import { useRef, useState } from 'react';
- import {
-   BOARD_CODE_MAX_CHARACTERS,
-@@ -11,6 +12,7 @@ import './reproduction.css';
+ import { useState } from 'react';
+ import { BoardCodeForm } from './BoardCodeForm.tsx';
+ import { ReproductionControl } from './control-labels.ts';
+@@ -10,6 +11,7 @@ const SNAPSHOT_MAX_CHARACTERS = 65_536;
  interface ReproductionProps {
    game: GameState;
    generation: number;
@@ -54,7 +54,7 @@ index 3fb38c3feb590d76cdb44d32643a429343b0cec8..dc34e79761b6f2f98be7f84c87247bf4
    exportSnapshot(): string;
    loadBoard(code: string): boolean;
    loadSnapshot(text: string): boolean;
-@@ -22,6 +24,7 @@ interface ReproductionProps {
+@@ -21,6 +23,7 @@ interface ReproductionProps {
  export function Reproduction({
    game,
    generation,
@@ -62,10 +62,10 @@ index 3fb38c3feb590d76cdb44d32643a429343b0cec8..dc34e79761b6f2f98be7f84c87247bf4
    exportSnapshot,
    loadBoard,
    loadSnapshot,
-@@ -67,6 +70,7 @@ export function Reproduction({
-               </button>
-             </div>
-           </form>
+@@ -35,6 +38,7 @@ export function Reproduction({
+         <summary>{ReproductionControl.summary}</summary>
+         <div className="reproduction-body">
+           <BoardCodeForm code={game.boardCode} generation={generation} loadBoard={loadBoard} />
 +          {nameControl}
            <label htmlFor="snapshot-json">{ReproductionControl.snapshot}</label>
            <textarea
@@ -94,7 +94,7 @@ index 0000000000000000000000000000000000000000..532050996623c4a6628dcd0738e0d53c
 +  );
 +}
 diff --git a/src/game/controls/control-labels.ts b/src/game/controls/control-labels.ts
-index afa872c981ffec6ec26779f4c88a42d88df7f92b..2d2360076cfaf5339baafe08b42f3592ce7e4066 100644
+index c00ef62634674b16792582c789c232fcbecdf088..de42f3aa508aedcc38ac7d3cbbf92c141601fed5 100644
 --- a/src/game/controls/control-labels.ts
 +++ b/src/game/controls/control-labels.ts
 @@ -3,6 +3,7 @@ export const ReproductionControl = {
@@ -118,7 +118,7 @@ index acafdf0d63bfbf4cab13e1d098eb269cc349e487..5738843589f100722f2e201c400db198
    readonly selection: Selection;
    readonly moves: number;
 diff --git a/src/game/session/use-game.ts b/src/game/session/use-game.ts
-index b01a7ed69ee79dac0034ee48b7f741d4e53b89d8..b193ae50907d0a58fdf05e8369288760e4fc18aa 100644
+index b8bf7cd0719d538fbf4db9ad5716e7cb75c3ba73..a8701fced2e5c5dacf0e74b8de722f646a362ab4 100644
 --- a/src/game/session/use-game.ts
 +++ b/src/game/session/use-game.ts
 @@ -1,3 +1,4 @@
@@ -126,7 +126,7 @@ index b01a7ed69ee79dac0034ee48b7f741d4e53b89d8..b193ae50907d0a58fdf05e8369288760
  import { useRef, useState } from 'react';
  import { createGame } from '../game.ts';
  import { parseBoardCode, isValidSize } from '../deck.ts';
-@@ -84,6 +85,10 @@ export function useGame() {
+@@ -75,6 +76,10 @@ export function useGame() {
      return encodeSnapshot(current.current.game);
    }
  
@@ -137,7 +137,7 @@ index b01a7ed69ee79dac0034ee48b7f741d4e53b89d8..b193ae50907d0a58fdf05e8369288760
    function activate(index: number): void {
      clock.synchronize();
      commit(activateSession(current.current, index));
-@@ -99,5 +104,15 @@ export function useGame() {
+@@ -90,5 +95,15 @@ export function useGame() {
      });
    }
  
