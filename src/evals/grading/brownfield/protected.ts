@@ -3,13 +3,13 @@ import { contained, inventory, sha256 } from "../../materialize/files.ts";
 import type { BrownfieldCase } from "../../materialize/brownfield-case.ts";
 import type { CheckOutcome } from "../grading.types.ts";
 import { CheckStatus } from "../../history/statuses.ts";
-import { BrownfieldGuard, TransientFiles } from "./scope.ts";
+import { BrownfieldGuard, NeverSource, TransientRootFolders } from "./scope.ts";
 
 export async function protectedHashes(roots: readonly string[], project: string): Promise<readonly string[]> {
   const hashes: string[] = [];
   for (const [index, root] of roots.entries()) {
     if (contained(project, root) || contained(root, project)) throw new Error("Grader inputs must stay outside the submitted project.");
-    for (const file of await inventory(root, TransientFiles)) hashes.push(`${index}/${file.path}:${sha256(file.bytes)}`);
+    for (const file of await inventory(root, NeverSource, TransientRootFolders)) hashes.push(`${index}/${file.path}:${sha256(file.bytes)}`);
   }
   return hashes;
 }
@@ -18,7 +18,7 @@ export async function protectedOutcome(item: BrownfieldCase, project: string, be
   const privateFiles = item.inputs.filter((file) => file.path !== "request.md" && !file.path.startsWith(`${item.specDelta}/`));
   const privateHashes = new Set(privateFiles.map((file) => file.sha256));
   const leaked: string[] = [];
-  for (const file of await inventory(project, TransientFiles)) {
+  for (const file of await inventory(project, NeverSource, TransientRootFolders)) {
     const reserved = /^(?:checks\/|case\.json$|seed\.patch$|solution\.patch$|requirements\.json$|trace\.json$)/.test(file.path);
     if (reserved || file.bytes.length > 16 && privateHashes.has(sha256(file.bytes))) leaked.push(relative(project, join(project, file.path)).replaceAll("\\", "/"));
   }
