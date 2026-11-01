@@ -28,7 +28,7 @@ export function clicking(page: Page): Activate {
   return async (index) => {
     await dismissModal(page);
     await ensureCard(page, index);
-    const captureBacks = await prepareBacks(page);
+    const captureBacks = await prepareBacks(page, index);
     await card(page, index).focus({ timeout: ClickTimeoutMs });
     await captureBacks();
     await card(page, index).click({ force: true, timeout: ClickTimeoutMs });
@@ -40,7 +40,7 @@ export function tapping(page: Page): Activate {
   return async (index) => {
     await dismissModal(page);
     await ensureCard(page, index);
-    const captureBacks = await prepareBacks(page);
+    const captureBacks = await prepareBacks(page, index);
     await card(page, index).focus({ timeout: ClickTimeoutMs });
     await captureBacks();
     await card(page, index).tap({ force: true, timeout: ClickTimeoutMs });
@@ -72,7 +72,7 @@ export function typing(page: Page): Activate {
   const press = async (index: number): Promise<void> => {
     await dismissModal(page);
     await ensureCard(page, index);
-    const captureBacks = await prepareBacks(page);
+    const captureBacks = await prepareBacks(page, index);
     const columns = Math.max(1, Math.round(Math.sqrt(await page.locator(`[${CardAttribute}]`).count())));
     for (let presses = 0; presses < MaxFocusKeys; presses += 1) {
       const current = await focusedCard(page);

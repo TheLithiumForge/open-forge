@@ -6,7 +6,7 @@ import { test } from "node:test";
 import { chromium } from "playwright";
 import { PNG } from "pngjs";
 import { clicking, typing } from "./activation.ts";
-import { backsOf, card, cardSignature, markCards, waitForBacks, waitForFace } from "./board.ts";
+import { backsOf, boardLooks, card, cardSignature, markCards, waitForBacks, waitForFace } from "./board.ts";
 import { CheckId, GameFailure } from "./check-ids.ts";
 import { deliveryChecks } from "./checks-delivery.ts";
 import { colorDistance, looksLikeBack, shapeShare, signatureOf } from "./face-signature.ts";
@@ -14,8 +14,8 @@ import { boardFitsSize, setGridSize } from "./grid-size.ts";
 import { CheckStatus } from "../../../history/statuses.ts";
 import { dismissModal } from "./modal.ts";
 import { readBoard } from "./open-game.ts";
-import { bestIn, identifiesGame, newGameButton, pageText, showsWin } from "./page-text.ts";
-import { bestPage, Finding, FixtureSize, FixtureText, focusGlowGame, modalPage, namedPage, oddBoard, thinGame, winPage } from "./regression-fixtures.ts";
+import { bestIn, identifiesGame, movesIn, newGameButton, pageText, showsWin } from "./page-text.ts";
+import { bestPage, Finding, FixtureSize, FixtureText, focusGlowGame, modalPage, namedPage, oddBoard, repeatGlowGame, thinGame, winPage } from "./regression-fixtures.ts";
 import { playGame } from "./solver.ts";
 
 const OldBackThresholds = { colors: 0.1, shape: 0.07 } as const;
@@ -109,6 +109,51 @@ test(Finding.focus, { skip: !process.env["PLAYWRIGHT_BROWSERS_PATH"] }, async (t
       await activate(page)(0);
       assert.equal(await waitForFace(page, 0, brokenBack), null);
       assert.equal(await card(page, 0).evaluate((element) => element === document.activeElement), true);
+    });
+  } finally { await browser.close(); }
+});
+
+test(Finding.repeated, { skip: !process.env["PLAYWRIGHT_BROWSERS_PATH"] }, async (t) => {
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+  const blur = async (keyboard: boolean): Promise<void> => {
+    if (keyboard) await page.keyboard.press("Tab");
+    else await page.mouse.click(1, 1);
+  };
+  try {
+    for (const activate of [clicking, typing]) await t.test(activate.name, async () => {
+      await page.goto(`data:text/html,${encodeURIComponent(repeatGlowGame())}`);
+      const board = await readBoard(page);
+      const back = board.backs[0]; assert.ok(back);
+      const play = activate(page);
+      await play(0);
+      assert.notEqual(await waitForFace(page, 0, back), null);
+      await blur(activate === typing);
+      // An unfocused face can resemble its back, but the checker already revealed it.
+      assert.equal(looksLikeBack(await cardSignature(page, 0), back), true);
+      await play(0);
+      assert.notEqual(await waitForFace(page, 0, back), null);
+      assert.equal(movesIn(await pageText(page)), 0);
+      assert.equal(looksLikeBack((await boardLooks(page))[0] ?? back, back), false);
+      await play(2);
+      assert.notEqual(await waitForFace(page, 2, board.backs[2] ?? back), null);
+      const moves = movesIn(await pageText(page));
+      await blur(activate === typing);
+      await play(0);
+      assert.notEqual(await waitForFace(page, 0, back), null);
+      assert.equal(movesIn(await pageText(page)), moves);
+      assert.equal(looksLikeBack((await boardLooks(page))[0] ?? back, back), false);
+      const game = await playGame(page, play, board.backs, { extraMisses: 0 });
+      assert.equal(game.won, true, game.error ?? "");
+      assert.equal(showsWin(await pageText(page)), true);
+      await (await newGameButton(page))?.click();
+      const fresh = await readBoard(page);
+      await play(0);
+      assert.notEqual(await waitForFace(page, 0, fresh.backs[0] ?? back), null);
+      await page.goto(`data:text/html,${encodeURIComponent(repeatGlowGame(true))}`);
+      const broken = await readBoard(page);
+      await activate(page)(0);
+      assert.equal(await waitForFace(page, 0, broken.backs[0] ?? back), null);
     });
   } finally { await browser.close(); }
 });

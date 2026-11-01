@@ -1,5 +1,5 @@
 import type { Locator, Page } from "playwright";
-import { decodePng, type FaceSignature, FaceThresholds, looksLikeBack, meanDistance, NoFace, regionSignature, rememberBackState, signatureOf } from "./face-signature.ts";
+import { decodePng, type FaceSignature, FaceThresholds, hasBackSignature, looksLikeBack, meanDistance, NoFace, regionSignature, rememberBackState, signatureOf } from "./face-signature.ts";
 
 // Playwright page callbacks below run in the browser, which is why the project includes DOM types.
 
@@ -9,7 +9,8 @@ const MinimumCards = 16;
 const MinimumCardPixels = 6;
 // Cards of one board differ in area by at most this share, which keeps buttons like New Game out.
 const CardSizeSpread = 0.25;
-const pageBacks = new WeakMap<Page, readonly FaceSignature[]>();
+interface BackBoard { readonly backs: readonly FaceSignature[]; readonly activated: Set<number> }
+const pageBacks = new WeakMap<Page, BackBoard>();
 
 export const Waits = { fastPoll: 40, poll: 120, stable: 2500, reveal: 3000, hide: 4500, settle: 2000 } as const;
 
@@ -109,6 +110,7 @@ export async function waitForFace(page: Page, index: number, back: FaceSignature
     const png = await card(page, index).screenshot({ animations: "disabled" });
     const current = signatureOf(png);
     if (!looksLikeBack(current, back)) {
+      pageBacks.get(page)?.activated.add(index);
       await captured?.(png);
       return current;
     }
@@ -160,22 +162,24 @@ export async function waitForBacks(page: Page, indexes: readonly number[], backs
 
 export async function backsOf(page: Page): Promise<FaceSignature[]> {
   const backs = await stableBoard(page);
-  pageBacks.set(page, backs);
+  pageBacks.set(page, { backs, activated: new Set() });
   return backs;
 }
 
 /** Captures known backs after focus moves, before an input can reveal a face. */
-export async function prepareBacks(page: Page): Promise<() => Promise<void>> {
-  const backs = pageBacks.get(page);
-  if (!backs) return async () => {};
+export async function prepareBacks(page: Page, target: number): Promise<() => Promise<void>> {
+  const board = pageBacks.get(page);
+  if (!board) return async () => {};
   const before = await boardLooks(page);
-  const down = backs.map((back, index) => looksLikeBack(before[index] ?? NoFace, back));
+  const down = board.backs.map((back, index) => !board.activated.has(index) && hasBackSignature(before[index] ?? NoFace, back));
   return async () => {
     const focused = await boardLooks(page);
     // A glow can reach nearby cards, so capture every back that was already down.
-    for (const [index, back] of backs.entries()) {
+    for (const [index, back] of board.backs.entries()) {
       const state = focused[index];
-      if (down[index] && state) rememberBackState(back, state);
+      if (down[index] && !board.activated.has(index) && state) rememberBackState(back, state);
     }
+    // A revealed face can resemble a back. After input, stop learning backs for this card.
+    board.activated.add(target);
   };
 }

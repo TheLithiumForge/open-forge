@@ -42,7 +42,11 @@ The tests compare working and broken pages through the checker functions. Pure t
 
 The focus glow fixture closes a mismatch, then finishes by pointer and by keyboard. Focus stays on the card after the mismatch closes. The inert copy still fails reveal detection in both modes.
 
-Before activation, the checker captures known backs after focus moves. These images give each card alternate backs for the current game. Only cards that matched a known back before focus moved get an alternate back. The pixel comparison ignores gradual light changes near card edges, where a nearby focus glow can reach a closed card. It keeps full resolution changes in the middle of the face, including soft dim strokes. Signatures for comparing faces keep their existing thresholds.
+The repeated activation fixture turns a card, moves focus away, then activates that card again. Its unfocused face is dim enough to resemble its back. The test repeats a matched card too, checks that both repeats keep the move count unchanged and finishes the game. Pointer and keyboard runs check that the face stays classified as a face. The inert copy still fails reveal detection.
+
+Before activation, the checker captures known backs after focus moves. These images give each card alternate backs for the current game. A card can add an alternate back only before its first activation or revealed face, and only when its coarse signature matches its original back before focus moves. An activation attempt excludes the card even if the game ignores that input. A revealed face can resemble a back, so the card stays excluded after a mismatch closes. Reading the next fresh board resets this record.
+
+The pixel comparison ignores gradual light changes near card edges, where a nearby focus glow can reach a closed card. It keeps full resolution changes in the middle of the face, including soft dim strokes. Signatures for comparing faces keep their existing thresholds.
 
 ## Judge
 
@@ -56,7 +60,7 @@ The default judge adapter sends images through the assessor container with model
 
 Dependencies were installed with `npm ci --cache .npm-cache`. Product tests use fakes for Docker and model calls. The regression pages use the installed Chromium.
 
-With the worktree Chromium path set, typecheck passes and `npm test` has 293 passes, one failure and zero skips. Every Layer 1 fixture test passes. The failure is "all preexisting L1 checker files stay byte identical" in `checks/spec-layers/catalog.test.ts`. The overseer needs to freeze that snapshot again after integrating these changes.
+With the worktree Chromium path set, typecheck passes and `npm test` has 312 passes, one failure and zero skips. Every Layer 1 fixture test passes. The failure is "all preexisting L1 checker files stay byte identical" in `checks/spec-layers/catalog.test.ts`. The overseer needs to freeze that snapshot again after integrating these changes.
 
 Chromium was installed inside the worktree. The detector probe passed every even size from 4x4 through 16x16, including 144 cards at 12x12. Run `node benchmarks/neon-pairs/checks/browser-probe.ts` with `PLAYWRIGHT_BROWSERS_PATH` set to your installed browser folder to repeat that check. The probe uses checker markup with scripts disabled.
 

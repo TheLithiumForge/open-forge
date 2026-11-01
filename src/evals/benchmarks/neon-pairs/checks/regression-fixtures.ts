@@ -1,4 +1,4 @@
-export const Finding = { name: "name", turned: "turned", best: "best", win: "win", modal: "modal", odd: "odd", focus: "focus and hover glows" } as const;
+export const Finding = { name: "name", turned: "turned", best: "best", win: "win", modal: "modal", odd: "odd", focus: "focus and hover glows", repeated: "repeated face-up activation" } as const;
 export const FixtureText = { logo: "neonpairs.", title: "Neon Pairs — Find your next match", best: "PERSONAL BEST", win: "All paired up. Nicely done!", alternateWin: "Ready for another round?", noBest: "—set your first" } as const;
 export const FixtureSize = { small: 4, odd: 5, large: 16 } as const;
 export const FixtureTiming = { mismatch: 700 } as const;
@@ -94,4 +94,17 @@ export function thinGame(broken = false, modal = false, glows = false): string {
 
 export function focusGlowGame(broken = false): string {
   return thinGame(broken, false, true);
+}
+
+export function repeatGlowGame(broken = false): string {
+  return focusGlowGame(broken).replace("</head>", `<style>
+    .board:not(.revisited) .card.up:not(:focus) .face{opacity:.12}
+  </style></head>`).replace("</body>", `<script>
+    const board = document.querySelector('.board');
+    let visits = 0;
+    board.querySelector('.card').addEventListener('click', () => {
+      visits += 1;
+      if (visits > 1) board.classList.add('revisited');
+    });
+  </script></body>`);
 }

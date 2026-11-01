@@ -123,8 +123,12 @@ export function faceDistance(a: FaceSignature, b: FaceSignature): number {
 const BackThresholds = { colors: 0.1, shapeShare: 0.07 } as const;
 const backStates = new WeakMap<FaceSignature, FaceSignature[]>();
 
+export function hasBackSignature(look: FaceSignature, back: FaceSignature): boolean {
+  return colorDistance(look, back) <= BackThresholds.colors && shapeShare(look, back) <= BackThresholds.shapeShare;
+}
+
 function matchesBack(look: FaceSignature, back: FaceSignature): boolean {
-  return colorDistance(look, back) <= BackThresholds.colors && shapeShare(look, back) <= BackThresholds.shapeShare && sameBackImage(look, back) !== false;
+  return hasBackSignature(look, back) && sameBackImage(look, back) !== false;
 }
 
 /** Whether a card shows one of its back images captured before activation. */
