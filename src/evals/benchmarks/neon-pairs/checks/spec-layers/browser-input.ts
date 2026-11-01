@@ -5,6 +5,7 @@ import { Evidence } from "./outcomes.ts";
 import { body, click, Labels, metric, names, reset, solve, step, visibleDeck } from "./browser-session.ts";
 import { reporter } from "./browser-play.ts";
 import { faceIn } from "./view-values.ts";
+import { heldMenu } from "./browser-touch.ts";
 
 export async function navigation(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence);
@@ -58,7 +59,8 @@ export async function activation(page: Page, evidence: Evidence): Promise<void> 
   const menuAllowed = await card(page, 0).evaluate((element) => element.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, button: 2 })));
   await card(page, 0).click({ button: "right" });
   put("I03.2", menuAllowed && JSON.stringify(await names(page)) === before, "Context menu is not cancelled and a right click does not reveal a card.");
-  evidence.record("I03.1", "error", "Right-click behavior is exercised. The native long-press context menu needs a headed touch browser. Synthetic contextmenu events cannot validate that platform behavior.");
+  const heldAllowed = await heldMenu(page);
+  put("I03.1", menuAllowed && heldAllowed && JSON.stringify(await names(page)) === before, "Right-click and held native touch keep contextmenu uncancelled and don't activate a card. The operating-system menu itself isn't captured.");
   await card(page, 0).hover();
   put("I04.1", JSON.stringify(await names(page)) === before, "Hover changes no accessible game state.");
   await card(page, 0).dispatchEvent("pointerdown", { pointerId: 1, pointerType: "touch", isPrimary: true });

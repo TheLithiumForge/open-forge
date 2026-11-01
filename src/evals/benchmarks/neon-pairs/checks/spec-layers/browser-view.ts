@@ -1,10 +1,15 @@
 import type { Page } from "playwright";
 import { CardAttribute, card } from "../board.ts";
 import { Evidence } from "./outcomes.ts";
-import { changeSize, click, reset, step, visibleDeck } from "./browser-session.ts";
+import { changeSize, click, reset, solve, visibleDeck } from "./browser-session.ts";
 import { reporter } from "./browser-play.ts";
 import { Rules } from "./rules.ts";
-import { faceIn, near, pixels, rgb, transitionMs } from "./view-values.ts";
+import { faceIn, near, pixels, rgb, transitionMs, VisualTiming } from "./view-values.ts";
+import { hoverChanges } from "./hover-style.ts";
+import { checkMark, sameBacks } from "./drawn-shapes.ts";
+import { drawings } from "./browser-drawing.ts";
+import { signatureOf, type FaceSignature } from "../face-signature.ts";
+import { renderedFaces } from "./rendered-faces.ts";
 
 export async function styles(page: Page) {
   return page.evaluate((attribute) => {
@@ -22,7 +27,11 @@ export async function styles(page: Page) {
       cardBox: box(card), gridBox: box(grid), viewportBox: box(viewport), mainBox: box(document.querySelector("main")), width: innerWidth, height: innerHeight, pageWidth: document.documentElement.scrollWidth,
       colors: all.flatMap((element) => { const style = getComputedStyle(element); return [style.color, style.backgroundColor, style.borderColor]; }),
       secondary: all.some((element) => getComputedStyle(element).fontSize === "14px"),
-      spacing: all.filter((element) => !(element instanceof SVGElement) && !element.closest("svg") && !["OPTION", "SELECT", "BUTTON", "INPUT", "TEXTAREA", "SUMMARY"].includes(element.tagName)).flatMap((element) => { const style = getComputedStyle(element); return [style.marginTop, style.marginBottom, style.marginLeft, style.marginRight, style.paddingTop, style.paddingBottom, style.paddingLeft, style.paddingRight, style.rowGap, style.columnGap]; }),
+      spacing: all.filter((element) => !(element instanceof SVGElement) && !element.closest("svg") && !["OPTION", "SELECT", "BUTTON", "INPUT", "TEXTAREA", "SUMMARY"].includes(element.tagName) && element.getClientRects().length > 0 && getComputedStyle(element).display !== "inline").flatMap((element) => {
+        const style = getComputedStyle(element), typed = element.computedStyleMap();
+        // Typed margins keep auto centering, which resolved style reports as an arbitrary pixel gap.
+        return [...["margin-top", "margin-bottom", "margin-left", "margin-right"].map((name) => typed.get(name)?.toString() ?? style.getPropertyValue(name)), style.paddingTop, style.paddingBottom, style.paddingLeft, style.paddingRight, style.rowGap, style.columnGap];
+      }),
       canvas: document.querySelectorAll("canvas").length, svg: card.querySelectorAll("svg").length, viewportMeta: document.querySelector('meta[name="viewport"]')?.getAttribute("content") ?? "",
     };
   }, CardAttribute);
@@ -56,7 +65,7 @@ export async function appearance(page: Page, evidence: Evidence): Promise<void> 
   put("V08.2", closed.body["fontSize"] === "16px" && closed.body["lineHeight"] === "24px", "Body text is 16px on 24px lines.");
   put("V08.3", closed.title["fontSize"] === "24px", "Title text is 24px.");
   put("V08.4", closed.secondary, "Secondary text includes the specified 14px size.");
-  put("V09.1", closed.spacing.every((value) => value === "normal" || value === "auto" || Rules.spacing.some((allowed) => near(pixels(value), allowed))), "Computed layout spacing uses the scale, with native controls excluded.");
+  put("V09.1", closed.spacing.every((value) => value === "normal" || value === "auto" || Rules.spacing.some((allowed) => near(pixels(value), allowed))), "Layout spacing uses the scale. Auto centering keeps its keyword instead of its resolved pixel offset.");
   put("V09.2", closed.card["borderWidth"] === "2px" && closed.card["borderRadius"] === "8px" && closed.body["fontSize"] === "16px", "Border, radius and font metrics keep their separate stated values.");
   await click(page, 0); const open = await styles(page);
   put("V01.3", open.svg > 0 && open.canvas === 0, "Revealed card artwork uses inline SVG.");
@@ -64,24 +73,36 @@ export async function appearance(page: Page, evidence: Evidence): Promise<void> 
   await reset(page); await card(page, 0).focus(); await page.keyboard.press("ArrowRight"); await page.keyboard.press("ArrowLeft");
   const focused = await styles(page);
   put("V06.8 V16.1", focused.card["outlineWidth"] === "3px" && focused.card["outlineOffset"] === "2px" && rgb(focused.card["outlineColor"] ?? "") === "#FFFFFF", "Keyboard focus has a 3px white outline offset by 2px.");
-  await card(page, 0).hover(); await step(page, 120); const hovered = await styles(page);
-  put("V16.2", ["backgroundColor", "opacity", "borderWidth", "borderRadius"].every((field) => hovered.card[field] === focused.card[field]), "Hover keeps fill, opacity, border width and radius.");
-  put("V17.1", (transitionMs(focused.card["transitionDuration"] ?? "") ?? [NaN]).every((ms) => ms === 120) && /border/.test(focused.card["transitionProperty"] ?? "") && /opacity/.test(focused.card["transitionProperty"] ?? ""), "Only stated border and opacity properties have 120ms transitions.");
+  const computed = () => card(page, 0).evaluate((element) => { const style = getComputedStyle(element); return Object.fromEntries(Array.from(style).map((name) => [name, style.getPropertyValue(name)])); });
+  await page.mouse.move(0, 0); const beforeHover = await computed();
+  await card(page, 0).hover(); await page.waitForTimeout(VisualTiming.transitionMs + VisualTiming.settleMs);
+  const changed = hoverChanges(beforeHover, await computed());
+  put("V16.2", changed.length === 0, `Hover may change only border colors. Other changes: ${changed.join(", ") || "none"}.`);
+  put("V17.1", (transitionMs(focused.card["transitionDuration"] ?? "") ?? [NaN]).every((ms) => ms === VisualTiming.transitionMs) && /border/.test(focused.card["transitionProperty"] ?? "") && /opacity/.test(focused.card["transitionProperty"] ?? ""), "Only stated border and opacity properties have 120ms transitions.");
   await page.emulateMedia({ reducedMotion: "reduce" }); const reduced = await styles(page);
   put("V17.2", (transitionMs(reduced.card["transitionDuration"] ?? "") ?? [NaN]).every((ms) => ms === 0), "Reduced motion removes card transitions.");
 }
 
 export async function faces(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence); await changeSize(page, 16);
-  const closed = await page.locator(`[${CardAttribute}]`).evaluateAll((elements) => elements.map((element) => element.innerHTML.replace(/\s+/g, " ")));
-  put("V14.1", new Set(closed).size === 1 && /(?:polygon|path|diamond|◇|◊|♦|♢)/i.test(closed[0] ?? ""), "All hidden cards have the same neutral diamond back.");
-  const deck = await visibleDeck(page), unique = new Set(deck);
+  const closed = await drawings(page);
+  put("V14.1", sameBacks(closed), "Each hidden card draws the same neutral diamond contour, including CSS borders and SVG geometry.");
+  const colors: string[] = [], captured: FaceSignature[] = [];
+  const deck = await visibleDeck(page, async (positions) => {
+    for (const position of positions) {
+      colors.push(...await card(page, position).locator("svg *").evaluateAll((elements) => elements.flatMap((element) => [getComputedStyle(element).fill, getComputedStyle(element).stroke])));
+      captured[position] = signatureOf(await card(page, position).screenshot({ animations: "disabled" }));
+    }
+  }), unique = new Set(deck);
+  const distinct = renderedFaces(captured);
+  evidence.inherited.set(distinct.id, distinct);
   put("V10.1", unique.size === 128, `Visible play found ${unique.size} named identities.`);
   put("V10.3 V10.4 V10.5 V13.1 V13.2", [...unique].every((name) => faceIn(name) === name) && Rules.shapes.every((shape) => deck.some((name) => name.includes(` ${shape},`))) && Rules.markers.every((marker) => deck.some((name) => name.endsWith(`marker ${marker}`))) && ["solid", "outline"].every((fill) => deck.some((name) => name.includes(` ${fill} `))), "Visible names span all eight shapes, markers and both fills in the specified lowercase form.");
-  const colors = await page.locator(`[${CardAttribute}] svg *`).evaluateAll((elements) => elements.flatMap((element) => [getComputedStyle(element).fill, getComputedStyle(element).stroke]));
   put("V07.1", Rules.palette.every((color) => colors.map(rgb).includes(color)), "Revealed SVG artwork uses each specified palette entry.");
+  await reset(page); await solve(page, deck); await page.waitForTimeout(VisualTiming.transitionMs + VisualTiming.settleMs);
   const matched = await page.locator(`[${CardAttribute}]`).evaluateAll((elements) => elements.filter((element) => element.getAttribute("aria-disabled") === "true").map((element) => ({ svg: element.querySelectorAll("svg").length, opacity: getComputedStyle(element).opacity, color: getComputedStyle(element).borderColor, text: element.textContent ?? "", html: element.innerHTML })));
   put("V15.1", matched.length > 0 && matched.every((entry) => entry.svg > 0), "Revealed matched cards retain inline SVG artwork.");
-  put("V15.2", matched.length > 0 && matched.every((entry) => rgb(entry.color) === Rules.palette[2] && /(?:check|✓|✔|polyline)/i.test(entry.html + entry.text)), "Every matched card has a green border and a check mark.");
+  const marks = await drawings(page);
+  put("V15.2", matched.length === deck.length && matched.every((entry) => rgb(entry.color) === Rules.palette[2]) && marks.every((contours) => contours.some((contour) => rgb(contour.color) === Rules.palette[2] && checkMark(contour.points))), "Every matched card has a green border and a drawn green check contour.");
   put("V15.3", matched.length > 0 && matched.every((entry) => entry.opacity === "1"), "Matched cards keep full opacity.");
 }

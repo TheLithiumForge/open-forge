@@ -6,6 +6,7 @@ import { card } from "../board.ts";
 import { markVisibleCards as markCards } from "./browser-cards.ts";
 import { BehaviorFailure } from "./outcomes.ts";
 import { cardName, elapsedIn, faceIn } from "./view-values.ts";
+import { allowedRequest } from "./delivery-request.ts";
 
 export const Labels = { size: "Grid size", fresh: "New Game", restart: "Restart", reproduce: "Reproduce a game", code: "Board code", loadBoard: "Load board", snapshot: "Snapshot JSON", export: "Export snapshot", loadSnapshot: "Load snapshot", resume: "Resume" } as const;
 export interface Session { readonly page: Page; readonly context: BrowserContext; readonly errors: string[]; readonly requests: string[]; readonly origin: string; close(): Promise<void> }
@@ -20,6 +21,7 @@ export async function session(browser: Browser, html: string, options: { readonl
   const address = server.address();
   if (!address || typeof address === "string") throw new Error("HTTP checker failed to bind.");
   const origin = `http://127.0.0.1:${address.port}`;
+  const entry = options.file ? pathToFileURL(html).href : `${origin}/`;
   const context = await browser.newContext({ viewport: { width: options.width ?? 1280, height: 800 }, hasTouch: true });
   const errors: string[] = [], requests: string[] = [];
   try {
@@ -39,14 +41,17 @@ export async function session(browser: Browser, html: string, options: { readonl
     });
     await context.route("**/*", async (route) => {
       const url = route.request().url();
-      if (url === `${origin}/` || url.startsWith("file:") || url.startsWith("data:")) await route.continue();
-      else { requests.push(url.startsWith(origin) ? url.slice(origin.length) : "external request"); await route.abort(); }
+      if (allowedRequest(url, entry)) await route.continue();
+      else await route.abort();
     });
     const page = await context.newPage();
+    page.on("request", (request) => {
+      if (!allowedRequest(request.url(), entry)) requests.push(request.url().startsWith("file:") ? "additional local file" : "additional request");
+    });
     page.setDefaultTimeout(4000);
     page.on("pageerror", (error) => errors.push(error.message));
     await page.clock.install();
-    await page.goto(options.file ? pathToFileURL(html).href : `${origin}/`);
+    await page.goto(entry);
     await page.clock.pauseAt(new Date(Date.now() + 1000));
     await markCards(page);
     return { page, context, errors, requests, origin, close: async () => { await context.close(); await new Promise<void>((done) => server.close(() => done())); } };
@@ -80,7 +85,7 @@ export async function hidden(page: Page, value: boolean): Promise<void> {
     document.dispatchEvent(new Event("visibilitychange"));
   }, value);
 }
-export async function visibleDeck(page: Page): Promise<string[]> {
+export async function visibleDeck(page: Page, revealed?: (positions: readonly number[]) => Promise<void>): Promise<string[]> {
   const count = await markCards(page), deck: string[] = [];
   for (let index = 0; index < count; index += 2) {
     await click(page, index); await click(page, index + 1);
@@ -89,6 +94,7 @@ export async function visibleDeck(page: Page): Promise<string[]> {
       if (!face) throw new BehaviorFailure(`Card ${position} supplied no stated face name after reveal.`);
       deck[position] = face;
     }
+    await revealed?.([index, index + 1]);
     await step(page, 800);
   }
   return deck;

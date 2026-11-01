@@ -23,6 +23,9 @@ test("report parser rejects invented, duplicate and malformed assertions", async
   await assert.rejects(parseReport({ schemaVersion: 1, layer: LayerId.three, assertions: [assertion] }, declared));
   await assert.rejects(parseReport({ schemaVersion: 1, layer: LayerId.three, assertions: [{ ...assertion, id: "clause-R01.1", status: "success" }] }, declared));
   await assert.rejects(parseReport({}, declared));
+  const first = declared.checks.flatMap((check) => check.assertions)[0]; assert.ok(first);
+  const valid = { id: first.id, clause: first.clause, status: "pass", evidence: "Duplicate evidence" };
+  await assert.rejects(parseReport({ schemaVersion: 1, layer: LayerId.three, assertions: [valid, valid] }, declared));
 });
 test("validation compares required assertions and never treats missing evidence as passed", async () => {
   const definition = await loadDefinition(LayerId.two), evidence = new Evidence();

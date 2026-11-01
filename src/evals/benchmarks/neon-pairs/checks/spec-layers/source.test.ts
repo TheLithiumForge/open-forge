@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import * as ts from "typescript";
 import { authored, compilerOptions, descendants, jsonConfig, jsonObject, sourceFiles, SourceExcluded, syntax } from "./source.ts";
@@ -12,6 +13,7 @@ import { metric } from "./browser-session.ts";
 import { rowOrder } from "./browser-cards.ts";
 import { removeTemporary, temporaryPath } from "./temporary.ts";
 import { Rules } from "./rules.ts";
+import { SpecLayerReference } from "./fixtures.ts";
 
 test("source parsers validate JSON, JSONC, inherited options and cycles", () => {
   assert.deepEqual(jsonObject('{"a":1}'), { a: 1 });
@@ -39,7 +41,7 @@ test("static numeric evaluation accepts supported arithmetic without executing c
 test("static package checks keep exact pins and classify malformed source as checker input errors", () => {
   assert.deepEqual(dependencies({ dependencies: { react: "a" }, devDependencies: { vite: "b" } }), { react: "a", vite: "b" });
   const deps = Object.fromEntries(Pins.flatMap((pin) => pin.packages.map((name) => [name, pin.version])));
-  const files = [{ path: "package.json", text: JSON.stringify({ type: "module", dependencies: deps }) }, { path: "src/Game.tsx", text: 'import {createRoot} from "react-dom/client"; export const Game = () => <><button>New Game</button><select /></>;' }];
+  const files = [{ path: "index.html", text: '<script type="module" src="/src/Game.tsx"></script>' }, { path: "package.json", text: JSON.stringify({ type: "module", dependencies: deps }) }, { path: "src/Game.tsx", text: 'import {createRoot} from "react-dom/client"; export const Game = () => <><button>New Game</button><select /></>;' }];
   const evidence = new Evidence(); staticChecks(files, evidence, false);
   assert.equal(evidence.outcomes.find((item) => item.clause === "T01.1")?.status, "pass");
   const full = new Evidence(); staticChecks(files, full, true);
@@ -53,6 +55,13 @@ test("source collection skips excluded folders without loading their code", asyn
   await writeFile(join(root, "package.json"), "{}");
   for (const folder of SourceExcluded) { await mkdir(join(root, folder)); await writeFile(join(root, folder, "ignored.ts"), "throw new Error('must never execute');"); }
   assert.deepEqual((await sourceFiles(root)).map((file) => file.path), ["package.json"]);
+});
+
+test("reviewed production imports exclude development fixtures without running reference code", async () => {
+  const files = await sourceFiles(fileURLToPath(SpecLayerReference));
+  assert.ok(files.some((file) => file.path.endsWith(".fixture.ts")));
+  const evidence = new Evidence(); staticChecks(files, evidence, true);
+  for (const clause of ["A11.1", "T02.7"]) assert.equal(evidence.outcomes.find((item) => item.clause === clause)?.status, "pass", clause);
 });
 
 test("row-order comparison uses visual positions and cleanup stays inside its named temporary folder", () => {

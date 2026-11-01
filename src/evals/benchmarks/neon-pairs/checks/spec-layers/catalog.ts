@@ -3,8 +3,8 @@ import { LayerId, Method, supplied, type Clause } from "./requirements.ts";
 import { Limitations } from "./limitations.ts";
 import { reviewReason } from "./review-policy.ts";
 
-export const Versions = { L2: "L2-v2", L3: "L3-v2" } as const;
-export const ExpectedCounts = { L2: { checks: 48, assertions: 171, review: 16 }, L3: { checks: 100, assertions: 346, review: 55 } } as const;
+export const Versions = { L2: "L2-v3", L3: "L3-v3" } as const;
+export const ExpectedCounts = { L2: { checks: 48, assertions: 170, review: 17 }, L3: { checks: 100, assertions: 345, review: 56 } } as const;
 export const BrowserGroups = {
   sizes: ["R01"], selection: ["R02", "R03"], mismatch: ["R04"], moves: ["R05"], completion: ["R06"],
   clock: ["R07"], preferences: ["R08"], reset: ["R09"], best: ["R10"], storage: ["R11"], stale: ["R12"],

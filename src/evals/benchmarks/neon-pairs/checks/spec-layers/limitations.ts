@@ -1,5 +1,4 @@
 export const Limitations: Readonly<Record<string, string>> = {
-  "I03.1": "Native long-press context menus need a headed touch browser.",
   "V20.1": "Native browser zoom needs a headed browser at 200%.",
   "V20.2": "Native browser zoom needs a headed browser at 200%.",
   "V20.3": "Native browser zoom needs a headed browser at 200%.",

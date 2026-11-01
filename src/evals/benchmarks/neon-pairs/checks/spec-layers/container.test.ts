@@ -40,7 +40,8 @@ test("later grading isolates candidate commands and validates only plain copied-
   };
   const output = await runLayerChecks(LayerId.two, { project, html, build: Build, shotsFolder: join(root, "shots") }, { docker, timeoutMs: 30_000 });
   assert.equal(output.assertions.length, definition.checks.flatMap((check) => check.assertions).length);
-  assert.equal(output.assertions.find((item) => item.clause === "T07.9")?.status, "error");
+  assert.equal(output.assertions.find((item) => item.clause === "T07.9"), undefined);
+  assert.ok(output.review.some((item) => item.clause === "T07.9"));
   assert.ok(output.checks.filter((check) => check.id !== "l2-build").every((check) => check.status === "pass"));
   const commandCalls = calls.filter((args) => args.includes("timeout") && args.includes("npm"));
   assert.equal(commandCalls.length, [CommandId.ci, CommandId.test, CommandId.build].length);

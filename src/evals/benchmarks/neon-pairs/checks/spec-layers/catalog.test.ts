@@ -55,6 +55,18 @@ test("planned tree evidence leaves spoken screen reader confirmation in human re
   }
 });
 
+test("authoring process cleanup follows the inventory review method in both layers", async () => {
+  const inventory = await loadRequirements();
+  const process = inventory.find((clause) => clause.id === "T07.9"); assert.ok(process);
+  assert.equal(process.method, Method.review);
+  for (const layer of Object.values(LayerId)) {
+    const declared = await loadDefinition(layer);
+    assert.ok(declared.review.some((item) => item.clause === process.id));
+    assert.ok(!declared.checks.some((check) => check.clauses.includes(process.id)));
+    assert.ok(rubric(layer, inventory).questions.some((question) => question.clauses.includes(process.id)));
+  }
+});
+
 test("all preexisting L1 checker files stay byte identical", async () => {
   const value: unknown = JSON.parse(await readFile(new URL("../../fixtures/spec-layers/L1-baseline.json", import.meta.url), "utf8"));
   assert.ok(object(value) && Array.isArray(value["files"]));

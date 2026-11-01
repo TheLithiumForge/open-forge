@@ -6,6 +6,7 @@ export class BehaviorFailure extends Error {}
 export interface AssertionOutcome extends CheckOutcome { readonly clause: string }
 export class Evidence {
   readonly outcomes: AssertionOutcome[] = [];
+  readonly inherited = new Map<string, CheckOutcome>();
   readonly seen = new Set<string>();
   test(clause: string, passed: boolean, evidence: string): void {
     this.record(clause, passed ? CheckStatus.pass : CheckStatus.fail, evidence);

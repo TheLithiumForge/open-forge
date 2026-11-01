@@ -1,10 +1,11 @@
 import type { Page } from "playwright";
 import { CardAttribute, card } from "../board.ts";
 import { Evidence } from "./outcomes.ts";
-import { changeSize, click, names, reset, solve, step, visibleDeck } from "./browser-session.ts";
+import { changeSize, click, names, reset, solve, visibleDeck } from "./browser-session.ts";
 import { reporter } from "./browser-play.ts";
-import { faceIn, fullyVisible } from "./view-values.ts";
+import { faceIn, fullyVisible, VisualTiming } from "./view-values.ts";
 import { styles } from "./browser-view.ts";
+import { touchBoardEnd } from "./browser-touch.ts";
 
 export async function accessibleNames(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence), closed = await names(page);
@@ -29,16 +30,8 @@ export async function scroll(page: Page, evidence: Evidence): Promise<void> {
     await card(page, 0).focus(); await page.keyboard.press("Control+End");
     reachable.push(await card(page, 255).evaluate((element) => element === document.activeElement));
     await page.keyboard.press("Control+Home");
-    const clip = (await styles(page)).viewportBox;
-    const cdp = await page.context().newCDPSession(page);
-    try {
-      await cdp.send("Input.synthesizeScrollGesture", { x: Math.max(1, Math.min(width - 1, clip.x + clip.width / 2)), y: Math.max(1, Math.min(799, clip.y + clip.height / 2)), xDistance: -1600, yDistance: -1600, gestureSourceType: "touch", speed: 1600 });
-      touch.push(await card(page, 255).evaluate((element) => {
-        let parent = element.parentElement;
-        while (parent?.parentElement && !/(auto|scroll)/.test(getComputedStyle(parent).overflowX + getComputedStyle(parent).overflowY)) parent = parent.parentElement;
-        return parent !== null && (parent.scrollWidth <= parent.clientWidth || parent.scrollLeft > 0) && (parent.scrollHeight <= parent.clientHeight || parent.scrollTop > 0);
-      }));
-    } finally { await cdp.detach(); }
+    await card(page, 0).scrollIntoViewIfNeeded();
+    touch.push(await touchBoardEnd(page));
     for (const index of [0, 255]) {
       await card(page, index).focus();
       const geometry = await card(page, index).evaluate((element) => {
@@ -60,12 +53,17 @@ export async function scroll(page: Page, evidence: Evidence): Promise<void> {
 
 export async function motion(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence), deck = await visibleDeck(page); await reset(page); await solve(page, deck);
-  const animations = await page.evaluate(() => document.getAnimations().map((animation) => ({ duration: animation.effect?.getTiming().duration, iterations: animation.effect?.getTiming().iterations })));
-  put("V18.2", animations.some((animation) => animation.duration === 600 && animation.iterations === 1), "Win pulse runs once for 600ms.");
-  await step(page, 601);
+  const animations = await page.evaluate(() => {
+    // Flush style before reading animations after the final React render.
+    document.body.getBoundingClientRect();
+    return document.getAnimations().filter((animation) => !(animation instanceof CSSTransition)).map((animation) => ({ duration: animation.effect?.getTiming().duration, iterations: animation.effect?.getTiming().iterations }));
+  });
+  put("V18.2", animations.some((animation) => animation.duration === VisualTiming.winMs && animation.iterations === 1), "Win pulse runs once for 600ms.");
+  // The controlled game clock doesn't advance Chromium's CSS animation timeline.
+  await page.waitForTimeout(VisualTiming.winMs + VisualTiming.settleMs);
   const staticAfter = await page.evaluate(() => document.getAnimations().filter((animation) => animation.playState === "running").length === 0);
   await page.emulateMedia({ reducedMotion: "reduce" }); await reset(page); await solve(page, deck);
-  put("V18.3", await page.evaluate(() => document.getAnimations().every((animation) => animation.playState !== "running")), "Reduced motion shows completion without an active animation.");
+  put("V18.3", await page.evaluate(() => { document.body.getBoundingClientRect(); return document.getAnimations().every((animation) => animation.playState !== "running"); }), "Reduced motion shows completion without an active animation.");
   put("V18.4", staticAfter && await page.locator('canvas,[class*="confetti"],blink').count() === 0 && animations.every((animation) => animation.iterations === 1), "No continuing flash, confetti canvas or repeating celebration remains.");
 }
 

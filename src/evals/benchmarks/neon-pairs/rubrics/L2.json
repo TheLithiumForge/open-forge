@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "specVersion": 2,
-  "version": "L2-v2",
+  "version": "L2-v3",
   "ballots": 3,
   "answers": [
     "yes",
@@ -46,8 +46,9 @@
       "id": "offline-scope",
       "area": "delivery",
       "evidence": "source",
-      "question": "Does the game avoid services, accounts, external assets, analytics and API keys, while allowing network use only for dependency installation? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Does the game avoid services, accounts, external assets, analytics and API keys, allow network only for dependency installation and record that authoring servers and watchers stopped? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
+        "T07.9",
         "T10.2",
         "T10.3"
       ]

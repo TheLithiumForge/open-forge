@@ -28,6 +28,7 @@ export async function worker(): Promise<void> {
   } catch (error) { evidence.outcomes.push({ id: "source-checker", clause: "checker", area: "checker", status: "error", evidence: error instanceof Error ? error.message : String(error) }); }
   try { await browserChecks(SpecLayerContainer.page, declared, evidence); }
   catch (error) { evidence.outcomes.push({ id: "browser-checker", clause: "checker", area: "checker", status: "error", evidence: error instanceof Error ? error.message : String(error) }); }
-  await writeFile(join(SpecLayerContainer.evidence, SpecLayerContainer.report), JSON.stringify({ schemaVersion: 1, layer, assertions: evidence.outcomes, inherited }));
+  const corrected = { ...inherited, checks: inherited.checks.map((check) => evidence.inherited.get(check.id) ?? check) };
+  await writeFile(join(SpecLayerContainer.evidence, SpecLayerContainer.report), JSON.stringify({ schemaVersion: 1, layer, assertions: evidence.outcomes, inherited: corrected }));
 }
 if (import.meta.main) await worker();

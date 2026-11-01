@@ -68,7 +68,6 @@ export async function turns(page: Page, evidence: Evidence): Promise<void> {
   const summary = await page.locator("body").evaluate((element) => Array.from(element.querySelectorAll("p,section,aside,[role=status]")).map((node) => node.textContent ?? "").filter((text) => /(?:win|won|every pair|complete)/i.test(text)).join(" "));
   put("R06.4", /\b8\b/.test(summary), "The completion summary must contain the final eight moves.");
   put("R06.5", /(?:\d+\s*s\b|\d+:\d{2}|\d+\s*ms\b)/i.test(summary), "The completion summary must include final elapsed time.");
-  put("R06.6", await page.locator("body").evaluate(() => document.getAnimations().some((animation) => Number(animation.effect?.getTiming().duration) === 600)), "Completion starts the specified 600ms animation.");
 }
 
 export async function clock(page: Page, evidence: Evidence): Promise<void> {

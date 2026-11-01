@@ -3,6 +3,7 @@ import { Evidence } from "./outcomes.ts";
 import { reporter } from "./browser-play.ts";
 import { authored, compilerOptions, descendants, jsonConfig, jsonObject, syntax, type SourceFile } from "./source.ts";
 import { object } from "./requirements.ts";
+import { productionFiles } from "./production-graph.ts";
 
 export const Pins = [
   { clause: "T02.1", packages: ["react", "react-dom"], version: "19.3.1" }, { clause: "T02.2", packages: ["typescript"], version: "7.0.2" },
@@ -39,7 +40,8 @@ export function staticChecks(files: readonly SourceFile[], evidence: Evidence, f
   put("T01.3", files.some((file) => /\.css$/.test(file.path) && /display\s*:\s*grid\b/.test(file.text)), "Authored CSS declares grid layout.");
   put("S02.1", !files.some((file) => /\.(?:mp3|wav|ogg|m4a|aac|flac|webm)$/i.test(file.path)), "Source tree has no audio asset files.");
   put("S02.2", !nodes.some((node) => (ts.isCallExpression(node) || ts.isNewExpression(node)) && /(?:^|\.)(?:Audio|AudioContext|webkitAudioContext|createOscillator|play)$/.test(node.expression.getText())), "AST contains no audio constructors or playback API calls.");
-  put("A11.1", !sources.some((file) => /(?:fixture|diagnostic|solver|test-helper)/i.test(file.path)) && !/__test|window\.(?:deck|solver|gameState)/i.test(source), "Shipped source excludes diagnostic files and exported test globals.");
+  const shipped = productionFiles(files);
+  put("A11.1", !shipped.some((file) => /(?:fixture|diagnostic|solver|test-helper)/i.test(file.path) || /__test|window\.(?:deck|solver|gameState)/i.test(file.text)), "The production import graph excludes fixtures, diagnostics and test globals.");
   put("A11.2", !files.filter((file) => /\.test\./.test(file.path)).some((file) => /window\.(?:deck|solver|gameState)/i.test(file.text)), "Tests use no private board or solver global.");
   put("A11.3", !/<(?:button|input|textarea)[^>]*(?:solver|debug|replay)/i.test(source), "Authored controls expose no replay, solver or debug controls.");
 }

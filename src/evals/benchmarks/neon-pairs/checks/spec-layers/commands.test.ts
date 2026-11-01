@@ -43,6 +43,7 @@ test("build assertions use fake isolated commands and leave unsupported evidence
   const result = { ...Success, stdout: "Tests 10 passed\nnpm run typecheck\nvite building\n2 passed\nLocal: http://127.0.0.1", html: "<html><script>inline</script></html>" };
   const commands = new Map(Object.values(CommandId).map((id) => [id, id === CommandId.stale ? { ...result, code: 1 } : result]));
   const evidence = new Evidence(); buildOutcomes(commands, evidence, true);
-  assert.ok(evidence.outcomes.filter((item) => item.clause !== "T03.4" && item.clause !== "T07.9").every((item) => item.status === "pass"));
+  assert.ok(evidence.outcomes.filter((item) => item.clause !== "T03.4").every((item) => item.status === "pass"));
   assert.equal(evidence.outcomes.find((item) => item.clause === "T03.4")?.status, "error");
+  assert.equal(evidence.outcomes.find((item) => item.clause === "T07.9"), undefined);
 });

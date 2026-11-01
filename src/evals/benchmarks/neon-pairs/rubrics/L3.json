@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "specVersion": 2,
-  "version": "L3-v2",
+  "version": "L3-v3",
   "ballots": 3,
   "answers": [
     "yes",
@@ -118,10 +118,11 @@
       "id": "tested-toolchain",
       "area": "delivery",
       "evidence": "source",
-      "question": "Are locked install, build, unit and browser results recorded with exact versions before calling a combination tested, with separate results for other versions? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Are locked install, build, unit and browser results recorded with exact versions before calling a combination tested, with separate results for other versions and evidence that authoring servers and watchers stopped? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "T03.5",
-        "T03.6"
+        "T03.6",
+        "T07.9"
       ]
     },
     {

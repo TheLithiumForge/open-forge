@@ -14,6 +14,8 @@ import { svgGeometry } from "./browser-geometry.ts";
 import { sourceRules } from "./browser-source-rules.ts";
 import { snapshotCaps, visibleTimeCap } from "./browser-caps.ts";
 import { CapClause } from "./cap-policy.ts";
+import { CheckArea, CheckId } from "../check-ids.ts";
+import { CheckStatus } from "../../../../history/statuses.ts";
 
 interface Journey { readonly groups: readonly string[]; readonly action: (page: Page, evidence: Evidence) => Promise<void>; readonly blockedStorage?: boolean; readonly file?: boolean }
 const journeys: readonly Journey[] = [
@@ -31,6 +33,7 @@ const journeys: readonly Journey[] = [
 const specJourneys = [boardControls, snapshotCases, knownDeals, invalidLoads, importedProgress, loadedFocusAndSize, svgGeometry, sourceRules, snapshotCaps];
 
 export async function browserChecks(html: string, definition: Definition, evidence: Evidence, launch: () => Promise<Browser> = () => chromium.launch()): Promise<void> {
+  evidence.inherited.set(CheckId.facesDistinct, { id: CheckId.facesDistinct, area: CheckArea.faces, status: CheckStatus.error, evidence: "The later-layer checker did not finish its individual face captures." });
   const browser = await launch();
   const failures: string[] = [], audio: number[] = [];
   const stopped = new Map<string, { status: "error" | "blocked"; detail: string }>();
@@ -43,6 +46,10 @@ export async function browserChecks(html: string, definition: Definition, eviden
       try {
         open = await session(browser, html, journey);
         await journey.action(open.page, evidence);
+        if (journey.action === faces && open.errors.length > 0) {
+          const distinct = evidence.inherited.get(CheckId.facesDistinct);
+          if (distinct) evidence.inherited.set(distinct.id, { ...distinct, status: CheckStatus.fail, evidence: `${distinct.evidence} Uncaught game error: ${open.errors.join(". ")}` });
+        }
         audio.push(await open.page.evaluate(() => Number(Reflect.get(window, "__evalAudioCalls") ?? 0)));
         if (open.errors.length > 0) for (const outcome of evidence.outcomes.slice(start)) {
           if (outcome.status === "pass") {
@@ -61,7 +68,7 @@ export async function browserChecks(html: string, definition: Definition, eviden
     }
     const file = await session(browser, html, { file: true });
     try {
-      evidence.test("T08.2", file.requests.length === 0 && file.errors.length === 0, "Direct disk load makes no network requests or uncaught errors.");
+      evidence.test("T08.2", file.requests.length === 0 && file.errors.length === 0, "Direct disk load requests only its main HTML file, with no uncaught errors.");
       evidence.test("T10.4", file.requests.length === 0, "Distribution makes no network requests when loaded from disk.");
     } finally { await file.close(); }
     if (definition.layer === Layer.three) for (const journey of specJourneys) {

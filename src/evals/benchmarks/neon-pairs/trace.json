@@ -8973,7 +8973,7 @@
                     {
                         "clauseId":  "T07.9",
                         "requirementId":  "T07",
-                        "checks":  ["L2:l2-build#clause-T07.9","L3:l2-build#clause-T07.9"],
+                        "checks":  ["L2:rubric#offline-scope","L3:rubric#tested-toolchain"],
                         "reference":  [
                                           {
                                               "path":  "reference-audit/AUDIT.md",

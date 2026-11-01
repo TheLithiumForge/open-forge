@@ -1,4 +1,5 @@
 import { Rules } from "./rules.ts";
+export const VisualTiming = { transitionMs: 120, winMs: 600, settleMs: 100 } as const;
 
 export interface Box { readonly x: number; readonly y: number; readonly width: number; readonly height: number }
 export function near(actual: number | null, expected: number, tolerance = 0.6): boolean { return actual !== null && Number.isFinite(actual) && Math.abs(actual - expected) <= tolerance; }

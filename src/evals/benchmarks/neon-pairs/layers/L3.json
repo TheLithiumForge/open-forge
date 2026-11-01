@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "specVersion": 2,
-  "version": "L3-v2",
+  "version": "L3-v3",
   "layer": "L3",
   "checks": [
     {
@@ -1622,7 +1622,6 @@
       "clauses": [
         "T07.4",
         "T07.6",
-        "T07.9",
         "T08.1"
       ],
       "assertions": [
@@ -1637,12 +1636,6 @@
           "clause": "T07.6",
           "method": "build",
           "text": "npm run build type checks and writes dist/index.html."
-        },
-        {
-          "id": "clause-T07.9",
-          "clause": "T07.9",
-          "method": "build",
-          "text": "Stop development servers and watchers started during the work before finishing."
         },
         {
           "id": "clause-T08.1",
@@ -3425,10 +3418,6 @@
   "clausePassRule": "all",
   "uncheckable": [
     {
-      "clause": "I03.1",
-      "reason": "Native long-press context menus need a headed touch browser."
-    },
-    {
       "clause": "V20.1",
       "reason": "Native browser zoom needs a headed browser at 200%."
     },
@@ -3528,6 +3517,10 @@
     },
     {
       "clause": "T06.5",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T07.9",
       "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
     },
     {

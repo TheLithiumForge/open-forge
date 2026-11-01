@@ -11,8 +11,8 @@ The frozen declarations contain these counts:
 
 | Layer | Checks | Clause assertions | Review clauses | Questions |
 | --- | --- | --- | --- | --- |
-| L2-v2 | 48 | 171 | 16 | 11 |
-| L3-v2 | 100 | 346 | 55 | 12 |
+| L2-v3 | 48 | 170 | 17 | 11 |
+| L3-v3 | 100 | 345 | 56 | 12 |
 
 The assertion counts exclude the 16 inherited L1 checks. Each question takes three yes, no or unsure ballots with cited evidence. `layers/L2.json` and `layers/L3.json` list every clause and its method. Their `review` arrays list every review clause with its reason.
 
@@ -22,7 +22,9 @@ Layer 3 imports progress just below both caps, reaches the exact limits and cont
 
 I17 keeps its spoken-output review under the spec notes. Its planned browser method covers tree evidence, which doesn't establish spoken output or a screen reader version. Existing names, focus and announcement checks support that review.
 
-To regenerate these definitions while updating only the ten cap trace slots, run `node benchmarks/neon-pairs/checks/spec-layers/freeze.ts --caps` from `src/evals`.
+T07.9 uses cited process review. It gives no automatic credit because a later verifier can't reconstruct processes left during authoring.
+
+To regenerate these definitions and their checks slots, run `node benchmarks/neon-pairs/checks/spec-layers/freeze.ts` from `src/evals`. Add `--caps` to update only the ten cap trace slots.
 
 ## Validate
 
@@ -54,13 +56,16 @@ Case registration calls `runLayer2Checks` or `runLayer3Checks` from `container.t
 
 The output includes the check sets, clause outcomes, review clauses and inherited board images. Review gets no automated credit. Judge callers use the matching frozen rubric and the same source, prompt and image evidence for both providers.
 
+L2 and L3 capture every revealed face through its card locator, which scrolls it into view before taking the screenshot. This corrects the inherited whole-page sampling of clipped large boards. The duplicate thresholds and L1-v2 files stay unchanged. The [validation verdicts](validation-verdicts.md) record the earlier failures and their checker corrections.
+
 ## Limits
 
-Seven Layer 3 clauses need other evidence. Layer 2 includes six of them. Their outcomes stay `error` and their reasons appear in each layer's `uncheckable` array:
+Five Layer 3 assertions need other evidence. Layer 2 includes four of them. Their outcomes stay `error` and their reasons appear in each layer's `uncheckable` array. T07.9 also appears there as a review limit:
 
-- I03.1 - Native long-press context menus need a headed touch browser. The checker exercises right-click behavior.
 - V20.1, V20.2, V20.3 and V20.4 - Native 200% browser zoom needs a headed browser. Device scale and CSS zoom don't test that browser setting.
 - T07.9 - Leftover authoring processes need a process check before the authoring container shuts down.
 - T03.4 - The named Node 26.12.1, npm 11.20.0, Playwright 1.64.1 and Chromium 156.0.8078.4 combination needs its own toolchain. The shared verifier image uses Node 24.
 
-The validation command reports these limits apart. Its preparation audit has run. Browser and mutation validation against the rebuilt reference waits for the overseer's container run.
+I03.1 checks an uncancelled contextmenu path after right-click and a held native touch. It doesn't capture an operating-system menu.
+
+The validation command reports these limits apart. Its preparation audit has run. Browser and mutation validation against the reviewed reference waits for the overseer's container run.
