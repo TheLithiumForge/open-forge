@@ -1,5 +1,5 @@
 # Later layers
-Later layers is the Neon Pairs checker that grades the supplied Layer 2 clauses and full Layer 3 spec through public controls, replay files, source checks and isolated commands.
+The spec-layer checks are the Neon Pairs checker that grades the supplied Layer 2 clauses and full Layer 3 spec through public controls, replay files, source checks and isolated commands.
 
 Layer 2 learns each deal by revealing cards. Layer 3 also uses documented board codes and snapshot controls, so a known replay can be compared with an independent oracle. Architecture and legibility use cited review.
 
@@ -38,7 +38,7 @@ L2 validates the reference. L3 validates the reference and six broken copies. Yo
 
 Each broken copy declares failed assertions and any passing controls in its `expected` object. Other outcomes are reported. The reference requires all assertions and inherited checks to pass except the listed checker limits.
 
-Candidate installs, builds, tests and replay commands run as the container build user. Chromium and the checker run as a separate user. The checker folder has a root-owned parent, so candidate processes can't replace it. Command results are copied there after each command. Container files reach the host through `copyOutPlain` and bounded report parsers.
+Candidate installs, builds, tests and replay commands run as the container build user. Chromium and the checker run as a separate user. The checker folder has a root-owned parent, so candidate processes can't replace it, and the replay inputs and the stale-build fault file sit inside it. Each command's exit code, output and errors come straight from docker exec, never from a file the candidate could write, and every process the build user started is stopped before the next command runs. Container files reach the host through `copyOutPlain` and bounded report parsers.
 
 ## Integration
 

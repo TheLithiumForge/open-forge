@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { test } from "node:test";
 import type { Docker } from "../../../../execution/containers/docker.ts";
-import { ContainerUsers } from "../../../../execution/containers/settings.ts";
+import { ContainerPaths, ContainerUsers } from "../../../../execution/containers/settings.ts";
 import { loadLayer } from "../layer.ts";
 import { loadDefinition } from "./load.ts";
 import { LayerId, Method } from "./requirements.ts";
@@ -31,10 +31,9 @@ test("later grading isolates candidate commands and validates only plain copied-
           inherited: { checks: inherited.checks.map((check) => ({ ...check, status: "pass", evidence: "Inherited fake evidence" })), shots: [], performance: null },
         }));
       }
-      if (args[0] === "cp" && args[1]?.endsWith(`:${SpecLayerContainer.savedCommands}/.`)) {
-        const target = args[2]; assert.ok(target);
-        for (const id of [CommandId.ci, CommandId.test, CommandId.build]) await writeFile(join(target, `command-${id}.json`), JSON.stringify({ ...Success, stdout: "Tests 1 passed\ntypecheck", html: "<html><script>inline</script></html>" }));
-      }
+      // Candidate results come only from docker exec output, never from files in the container.
+      if (args.includes("timeout") && args.includes("npm")) return { ...Success, stdout: "Tests 1 passed\ntypecheck" };
+      if (args.includes("cat") && args.includes("/work/dist/index.html")) return { ...Success, stdout: "<html><script>inline</script></html>" };
       return Success;
     },
     spawn: () => { throw new Error("No host candidate process is allowed."); },
@@ -43,8 +42,12 @@ test("later grading isolates candidate commands and validates only plain copied-
   assert.equal(output.assertions.length, definition.checks.flatMap((check) => check.assertions).length);
   assert.equal(output.assertions.find((item) => item.clause === "T07.9")?.status, "error");
   assert.ok(output.checks.filter((check) => check.id !== "l2-build").every((check) => check.status === "pass"));
-  const commandCalls = calls.filter((args) => args.includes(SpecLayerContainer.command));
-  assert.ok(commandCalls.length > 0 && commandCalls.every((args) => args[args.indexOf("--user") + 1] === ContainerUsers.build));
+  const commandCalls = calls.filter((args) => args.includes("timeout") && args.includes("npm"));
+  assert.equal(commandCalls.length, [CommandId.ci, CommandId.test, CommandId.build].length);
+  assert.ok(commandCalls.every((args) => args[args.indexOf("--user") + 1] === ContainerUsers.build));
+  const cleanups = calls.filter((args) => args.includes(ContainerPaths.stopTools));
+  assert.ok(cleanups.length >= commandCalls.length, "Every candidate command is followed by stopping the build account's processes.");
+  assert.ok(calls.every((args) => !args.some((arg) => arg.includes(".eval-command-results"))), "No result passes through a folder the candidate can write.");
   const browser = calls.find((args) => args.includes(`${SpecLayerContainer.harness}/${SpecLayerContainer.worker}`));
   assert.equal(browser?.[browser.indexOf("--user") + 1], ContainerUsers.agent);
   assert.ok(calls.some((args) => args.includes("700") && args.includes(SpecLayerContainer.evidence)));

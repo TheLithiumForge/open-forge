@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { commandArguments } from "./command-worker.ts";
+import { commandArguments } from "./candidate-commands.ts";
 import { buildOutcomes, CommandId, commandResult, compareReplay, replayOutcomes } from "./commands.ts";
 import { expectedReplay, freshSnapshot } from "./replay.ts";
 import { decodeSnapshot } from "./snapshot.ts";
@@ -12,7 +12,7 @@ const Success = { code: 0, timedOut: false, stdout: "", stderr: "" };
 test("command parser bounds untrusted results and keeps CLI output exact", () => {
   assert.deepEqual(commandResult(Success), Success);
   for (const value of [{ ...Success, code: "0" }, { ...Success, timedOut: "no" }, { ...Success, stdout: 3 }, { ...Success, html: [] }]) assert.throws(() => commandResult(value));
-  assert.deepEqual(commandArguments(CommandId.replay, "vector-0.json"), ["run", "--silent", "replay", "--", `${SpecLayerContainer.commands}/vector-0.json`]);
+  assert.deepEqual(commandArguments(CommandId.replay, "vector-0.json"), ["run", "--silent", "replay", "--", `${SpecLayerContainer.vectors}/vector-0.json`]);
   assert.throws(() => commandArguments(CommandId.replay, "../input.json"));
   assert.throws(() => commandArguments("arbitrary"));
 });
