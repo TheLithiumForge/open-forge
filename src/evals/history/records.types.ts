@@ -1,5 +1,6 @@
 import type { ModelChoice } from "../config/config.types.ts";
 import type { ScopePolicy } from "../materialize/scope.types.ts";
+import type { BallotFailure } from "../grading/judge/report.ts";
 import type { CheckOutcome, CheckSelection, FunctionalResult } from "../grading/grading.types.ts";
 import type { BuildResult, JudgeAnswer, LegacyBatchRecord, LegacyRunRecord, PerformanceResult } from "./results.types.ts";
 import type { AssessmentKind, FailureKind, PreferenceWinner, RecordSchemaVersion, RunStatus } from "./statuses.ts";
@@ -94,6 +95,8 @@ export interface JudgeAssessment extends AssessmentBase {
   readonly answers: readonly JudgeAnswer[];
   readonly requestedModel: ModelChoice | null;
   readonly reportedModel: string | null;
+  readonly formatRetries?: number;
+  readonly ballotFailures?: readonly BallotFailure[];
 }
 
 export interface PickAssessment extends AssessmentBase {

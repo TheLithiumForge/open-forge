@@ -1,6 +1,5 @@
 import { dirname, join } from "node:path";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { Tool } from "../../config/choices.ts";
 import type { JudgeChoice } from "../../config/config.types.ts";
 import type { JudgeAnswer } from "../../history/results.types.ts";
 import type { Suite } from "../../benchmarks/suite.types.ts";
@@ -9,10 +8,11 @@ import { runAssessorStage } from "../../execution/containers/assessor.ts";
 import type { StageOptions } from "../../execution/containers/stage.ts";
 import type { ToolHomeOptions } from "../../execution/containers/tool-home.ts";
 import type { ProcessResult } from "../../execution/process.ts";
-import { record } from "../../benchmarks/neon-pairs/checks/layer.ts";
 import { parseBallot, tallyBallots, type Ballot } from "./ballots.ts";
 import { judgeEvidence, type JudgeEvidence } from "./evidence.ts";
 import { BallotCount, frozenQuestions, type JudgeQuestion } from "./rubric.ts";
+import { answerObject, assessorReply, JudgeAssessorFailure } from "./reply.ts";
+import { ballotFailure, JudgeFormatRetries, type BallotFailure, type JudgeReport } from "./report.ts";
 export { JudgeVerdict } from "./rubric.ts";
 
 export interface JudgeAssessor {
@@ -23,6 +23,7 @@ export interface JudgeOptions {
   readonly images?: readonly string[];
   readonly assessor?: JudgeAssessor;
   readonly stage?: Omit<StageOptions & ToolHomeOptions, "timeoutMs">;
+  readonly onReport?: (report: JudgeReport) => void;
 }
 const containerAssessor: JudgeAssessor = { supportsImages: true, run: async (space, choice, prompt, options, evidence) => {
   await mkdir(space.root, { recursive: true });
@@ -54,23 +55,6 @@ export function judgePrompt(suite: Suite, questions: readonly JudgeQuestion[], e
   ].join("\n\n");
 }
 
-function modelValue(result: ProcessResult, choice: JudgeChoice): unknown {
-  if (result.code !== 0 || result.timedOut) throw new Error("Judge assessor failed or timed out.");
-  if (choice.tool === Tool.codex) {
-    const events: unknown[] = result.stdout.split("\n").filter((line) => line.trim()).map((line) => JSON.parse(line));
-    if (events.some((event) => record(event) && ["error", "turn.failed"].includes(String(event["type"])))) throw new Error("Judge assessor returned an error.");
-    const messages = events.flatMap((event) => record(event) && record(event["item"]) && event["item"]["type"] === "agent_message" && typeof event["item"]["text"] === "string" ? [event["item"]["text"]] : []);
-    const message = messages.at(-1);
-    if (message === undefined) throw new Error("Judge assessor returned no answer JSON.");
-    return JSON.parse(message);
-  }
-  const envelope: unknown = JSON.parse(result.stdout);
-  if (!record(envelope) || envelope["is_error"] === true) throw new Error("Judge assessor returned an error.");
-  if ("structured_output" in envelope) return envelope["structured_output"];
-  if (typeof envelope["result"] !== "string") throw new Error("Judge assessor returned no answer JSON.");
-  return JSON.parse(envelope["result"]);
-}
-
 export async function judgeRun(suite: Suite, choice: JudgeChoice, folder: string, home: string, timeoutMs: number, options: JudgeOptions = {}): Promise<JudgeAnswer[]> {
   const questions = await judgeQuestions(suite);
   const evidence = await judgeEvidence(folder, options.images);
@@ -78,11 +62,31 @@ export async function judgeRun(suite: Suite, choice: JudgeChoice, folder: string
   if (!assessor.supportsImages) throw new Error("The assessor interface has no image transport. L1-v2 visual ballots are blocked until image evidence can be sent.");
   const prompt = judgePrompt(suite, questions, evidence);
   const ballots: Ballot[][] = [];
-  for (let ballot = 0; ballot < BallotCount; ballot += 1) {
-    const space: RunSpace = { root: dirname(folder), work: folder, home: join(home, `ballot-${ballot}`), project: suite.project };
-    const result = await assessor.run(space, choice, prompt, { ...options.stage, timeoutMs }, evidence);
-    ballots.push(parseBallot(modelValue(result, choice), questions, evidence));
-  }
+  const failures: BallotFailure[] = [];
+  let formatRetries = 0;
+  try {
+    for (let ballot = 0; ballot < BallotCount; ballot += 1) {
+      let reply = "";
+      for (let attempt = 0; attempt <= JudgeFormatRetries; attempt += 1) {
+        if (attempt > 0) formatRetries += 1;
+        const space: RunSpace = { root: dirname(folder), work: folder, home: join(home, `ballot-${ballot}`, `try-${attempt}`), project: suite.project };
+        let result: ProcessResult;
+        try { result = await assessor.run(space, choice, prompt, { ...options.stage, timeoutMs }, evidence); }
+        catch (error) { failures.push(ballotFailure(ballot + 1, attempt, reply, error)); throw error; }
+        reply = result.stdout;
+        try {
+          reply = assessorReply(result, choice);
+          ballots.push(parseBallot(answerObject(reply), questions, evidence));
+          break;
+        } catch (error) {
+          if (error instanceof JudgeAssessorFailure || attempt === JudgeFormatRetries) {
+            failures.push(ballotFailure(ballot + 1, attempt, reply, error));
+            throw error;
+          }
+        }
+      }
+    }
+  } finally { options.onReport?.({ formatRetries, failures }); }
   const manifest = `${JudgeImageManifestLabel}: ${JSON.stringify(evidence.images.map(({ id, sha256, png, width, height }) => ({ id, sha256, bytes: png.length, width, height })))}`;
   return tallyBallots(questions, ballots).map((answer, index) => index === 0 ? { ...answer, evidence: [...answer.evidence, manifest] } : answer);
 }

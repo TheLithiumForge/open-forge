@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { judgeRun } from "./judge/judge.ts";
 import type { JudgeOptions } from "./judge/judge.ts";
+import type { JudgeReport } from "./judge/report.ts";
 import { prepareJudgeFolder } from "./judge/judge-folder.ts";
 import { judgeImagePaths } from "./judge/shot-paths.ts";
 import { ResultFiles } from "../paths.ts";
@@ -22,7 +23,7 @@ import { runInParallel } from "../execution/run-queue.ts";
 const JudgeTimeoutMs = 15 * 60_000;
 
 export interface RejudgeDependencies {
-  readonly evaluate: (run: RunView) => Promise<readonly JudgeAnswer[]>;
+  readonly evaluate: (run: RunView, onReport: (report: JudgeReport) => void) => Promise<readonly JudgeAnswer[]>;
   readonly append: (assessment: JudgeAssessment) => Promise<void>;
   readonly choice?: JudgeChoice;
   readonly previous?: JudgeAssessment;
@@ -30,10 +31,12 @@ export interface RejudgeDependencies {
 
 export async function rejudgeRun(run: RunView, versions: AssessmentVersions, dependencies: RejudgeDependencies): Promise<JudgeAssessment> {
   let assessment: JudgeAssessment;
+  let report: JudgeReport | undefined;
   try {
-    assessment = judgeAssessment(run, await dependencies.evaluate(run), versions);
+    const answers = await dependencies.evaluate(run, (received) => { report = received; });
+    assessment = judgeAssessment(run, answers, versions, report);
   } catch (error) {
-    assessment = { ...judgeAssessment(run, [], versions), error: error instanceof Error ? error.message : String(error) };
+    assessment = { ...judgeAssessment(run, [], versions, report), error: error instanceof Error ? error.message : String(error) };
   }
   if (dependencies.choice !== undefined) assessment = { ...assessment, requestedModel: dependencies.choice, replacesAssessmentId: dependencies.previous?.id ?? null };
   await dependencies.append(assessment);
@@ -55,9 +58,10 @@ export async function judgeSavedRun(suite: Suite, run: RunView, choice: JudgeCho
   try {
     return await rejudgeRun(run, versions, {
       choice, ...(previous === undefined ? {} : { previous }), append: (assessment) => store.appendAssessment(assessment),
-      evaluate: async () => {
+      evaluate: async (_run, onReport) => {
         await prepareJudgeFolder(join(store.runFolder(run.batchId, run.id), ResultFiles.files), join(scratch, "project"), run.build?.html);
-        return (services.judge ?? judgeRun)(suite, choice, join(scratch, "project"), join(scratch, "home"), JudgeTimeoutMs, { ...services.options, images: judgeImagePaths(run) });
+        return (services.judge ?? judgeRun)(suite, choice, join(scratch, "project"), join(scratch, "home"), JudgeTimeoutMs,
+          { ...services.options, images: judgeImagePaths(run), onReport: (report) => { onReport(report); services.options?.onReport?.(report); } });
       },
     });
   } finally { await rm(scratch, { recursive: true, force: true }); }
@@ -69,17 +73,19 @@ export async function completeSavedJudgments(suite: Suite, run: RunView, config:
   for (const choice of configuredJudges(config)) await judgeSavedRun(suite, run, choice, versions, { ...services, options }, true, config.judge);
 }
 
+export async function rejudgeRuns(suite: Suite, runs: readonly RunView[], config: EvalConfig, versions: AssessmentVersions, services: SavedJudgeServices = {}, onlyRun?: string): Promise<void> {
+  const selected = runs.filter((run) => run.startedAt !== null && (onlyRun === undefined || run.id === onlyRun));
+  const options = services.options ?? { stage: { ...(config.containers === undefined ? {} : { limits: config.containers }) } };
+  await runInParallel(selected, config.parallelRuns || 1, async (run) => {
+    for (const choice of configuredJudges(config)) await judgeSavedRun(suite, run, choice, versions, { ...services, options }, false, config.judge);
+  }, () => false);
+}
+
 async function main(): Promise<void> {
   const [batchId, onlyRun] = process.argv.slice(2);
   if (batchId === undefined) throw new Error("Name the batch to judge again.");
-  const batch = await readBatch(batchId);
-  const suite = await loadSuite(batch.suite);
-  const versions = await gradingVersions(suite);
-  const runs = (await readRuns(batch)).filter((run) => run.startedAt !== null && (onlyRun === undefined || run.id === onlyRun));
-  await runInParallel(runs, batch.config.parallelRuns || 1, async (run) => {
-    for (const choice of configuredJudges(batch.config)) await judgeSavedRun(suite, run, choice, versions,
-      { options: { stage: { ...(batch.config.containers === undefined ? {} : { limits: batch.config.containers }) } } }, false, batch.config.judge);
-  }, () => false);
+  const batch = await readBatch(batchId), suite = await loadSuite(batch.suite);
+  await rejudgeRuns(suite, await readRuns(batch), batch.config, await gradingVersions(suite), {}, onlyRun);
 }
 
 if (import.meta.main) await main();

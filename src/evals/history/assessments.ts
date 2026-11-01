@@ -4,6 +4,7 @@ import type { CheckOutcome, CheckSelection } from "../grading/grading.types.ts";
 import type { AssessmentRecord, AssessmentVersions, ChecksAssessment, JudgeAssessment, RunRecord, RunView } from "./records.types.ts";
 import type { CheckResult, JudgeAnswer } from "./results.types.ts";
 import { AssessmentKind, CheckStatus, IntentCheckArea, RecordSchemaVersion } from "./statuses.ts";
+import type { JudgeReport } from "../grading/judge/report.ts";
 
 export function defaultSelection(outcomes: readonly CheckOutcome[]): CheckSelection {
   const stated = [...new Set(outcomes.filter((check) => check.area !== IntentCheckArea).map((check) => check.id))];
@@ -30,10 +31,11 @@ export function failedChecksAssessment(run: RunView, error: unknown, versions: A
     outcomes: [...ids].map((id) => ({ id, area: byId.get(id)?.area ?? "Grading", status: CheckStatus.error, evidence })) };
 }
 
-export function judgeAssessment(run: RunView, answers: readonly JudgeAnswer[], versions: AssessmentVersions): JudgeAssessment {
+export function judgeAssessment(run: RunView, answers: readonly JudgeAnswer[], versions: AssessmentVersions, report?: JudgeReport): JudgeAssessment {
   return {
     ...assessmentBase(run.batchId, versions, run.judgeAssessmentId), kind: AssessmentKind.judge, runId: run.id,
     answers, requestedModel: null, reportedModel: null,
+    formatRetries: report?.formatRetries ?? 0, ballotFailures: report?.failures ?? [],
   };
 }
 

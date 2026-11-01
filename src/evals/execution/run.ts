@@ -9,6 +9,7 @@ import { withAgentStage } from "./containers/agent.ts";
 import { executionLabel, ExecutionLabelFile, LocalExecutionLabel } from "./containers/eligibility.ts";
 import type { Docker } from "./containers/docker.ts";
 import { judgeRun } from "../grading/judge/judge.ts";
+import type { JudgeReport } from "../grading/judge/report.ts";
 import { completeSavedJudgments } from "../grading/rejudge.ts";
 import { configuredJudges } from "../config/judges.ts";
 import { prepareJudgeFolder } from "../grading/judge/judge-folder.ts";
@@ -74,6 +75,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
   };
   await update({}, "the agent is working.");
   let space: RunSpace | null = null;
+  let judgeReport: JudgeReport | undefined;
   try {
     if (config.isolation !== Isolation.docker && run.agent.tool !== Tool.mock) throw new Error("Real agents require container isolation.");
     space = await (services.createSpace ?? createRunSpace)(suite.project, input.snapshot);
@@ -110,8 +112,8 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     try {
       await prepareJudgeFolder(join(folder, ResultFiles.files), join(judgeFolder, "project"), run.build?.html);
       const judge = await (services.judge ?? judgeRun)(suite, primaryJudge, join(judgeFolder, "project"), join(judgeFolder, "home"), JudgeTimeoutMs,
-        { stage: stageOptions, images: judgeImagePaths(run) });
-      const judged = { ...judgeAssessment(run, judge, versions), requestedModel: primaryJudge };
+        { stage: stageOptions, images: judgeImagePaths(run), onReport: (report) => { judgeReport = report; } });
+      const judged = { ...judgeAssessment(run, judge, versions, judgeReport), requestedModel: primaryJudge };
       await store.appendAssessment(judged);
       await update({ status: RunStatus.done, judge, judgeAssessmentId: judged.id, finishedAt: new Date().toISOString() }, "done.");
     } finally {
@@ -128,7 +130,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
       run = { ...run, checksAssessmentId: failed.id, checkOutcomes: failed.outcomes, functionalResult: countChecks(failed.outcomes, failed.selection) };
     }
     if (run.status === RunStatus.judging) {
-      const judged = { ...judgeAssessment(run, [], versions), requestedModel: primaryJudge, error: error instanceof Error ? error.message : String(error) };
+      const judged = { ...judgeAssessment(run, [], versions, judgeReport), requestedModel: primaryJudge, error: error instanceof Error ? error.message : String(error) };
       await store.appendAssessment(judged);
       run = { ...run, judgeAssessmentId: judged.id };
     }
