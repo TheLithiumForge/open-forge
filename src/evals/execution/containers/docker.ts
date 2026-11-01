@@ -9,6 +9,7 @@ export interface DockerOptions {
   readonly signal?: AbortSignal;
   readonly input?: string;
   readonly env?: Readonly<Record<string, string>>;
+  readonly maxBytes?: number;
 }
 
 /** Keeps Docker behind one seam so tests never need the daemon. */
@@ -31,7 +32,7 @@ export const docker: Docker = {
     const stop = (): void => { child.kill(); };
     options.signal?.addEventListener("abort", stop, { once: true });
     try {
-      return await waitForProcess(child, { timeoutMs: options.timeoutMs, ...(options.input === undefined ? {} : { input: options.input }) });
+      return await waitForProcess(child, { timeoutMs: options.timeoutMs, ...(options.input === undefined ? {} : { input: options.input }), ...(options.maxBytes === undefined ? {} : { maxBytes: options.maxBytes }) });
     } finally {
       options.signal?.removeEventListener("abort", stop);
     }

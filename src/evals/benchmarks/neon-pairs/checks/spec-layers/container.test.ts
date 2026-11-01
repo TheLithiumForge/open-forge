@@ -33,7 +33,7 @@ test("later grading isolates candidate commands and validates only plain copied-
       }
       // Candidate results come only from docker exec output, never from files in the container.
       if (args.includes("timeout") && args.includes("npm")) return { ...Success, stdout: "Tests 1 passed\ntypecheck" };
-      if (args.includes("cat") && args.includes("/work/dist/index.html")) return { ...Success, stdout: "<html><script>inline</script></html>" };
+      if (args.includes(SpecLayerContainer.pageReader)) return { ...Success, stdout: "<html><script>inline</script></html>" };
       return Success;
     },
     spawn: () => { throw new Error("No host candidate process is allowed."); },

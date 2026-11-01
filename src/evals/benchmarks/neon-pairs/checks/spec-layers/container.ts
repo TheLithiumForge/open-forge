@@ -33,7 +33,7 @@ async function runCandidate(stage: ContainerStage, id: CommandId, vector?: strin
   if (id === CommandId.stale) requireDockerResult(await stage.exec(["cp", StaleFault.source, StaleFault.target], ContainerUsers.build, Environment));
   let result: ProcessResult;
   try {
-    result = await stage.exec(candidateCommand(id, vector), ContainerUsers.build, Environment);
+    result = await stage.exec(candidateCommand(id, vector), ContainerUsers.build, Environment, undefined, CandidateLimits.outputBytes);
   } finally {
     // Nothing a candidate starts may outlive its own command and touch the next one.
     requireDockerResult(await stage.exec(["node", ContainerPaths.stopTools], ContainerUsers.build, Environment));
@@ -46,9 +46,10 @@ async function runCandidate(stage: ContainerStage, id: CommandId, vector?: strin
   return { code: result.code, timedOut, stdout: limit(result.stdout), stderr: limit(result.stderr), ...(html === undefined ? {} : { html }) };
 }
 
+/** Read as the build account, the candidate's own, and only as a plain file under the size cap. */
 async function builtPage(stage: ContainerStage): Promise<string | undefined> {
-  const page = await stage.exec(["cat", "/work/dist/index.html"], ContainerUsers.agent);
-  return page.code === 0 ? page.stdout : undefined;
+  const page = await stage.exec(["node", SpecLayerContainer.pageReader], ContainerUsers.build, Environment, undefined, CandidateLimits.outputBytes);
+  return page.code === 0 && page.truncated !== true ? page.stdout : undefined;
 }
 
 export async function runLayerChecks(layer: Layer, input: SuiteCheckInput, options: StageOptions = input.stage ?? { timeoutMs: SpecLayerTimeoutMs }): Promise<LayerOutput> {

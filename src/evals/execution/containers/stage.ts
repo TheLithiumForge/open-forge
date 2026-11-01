@@ -89,8 +89,8 @@ export class ContainerStage {
       ...auth.flatMap((key) => ["--env", key]), this.name, ...command];
   }
 
-  async exec(command: readonly string[], user: string = ContainerUsers.agent, env: Readonly<Record<string, string>> = {}, input?: string): Promise<ProcessResult> {
-    return this.client.run(this.execArguments(command, user, env), this.commandOptions(undefined, input));
+  async exec(command: readonly string[], user: string = ContainerUsers.agent, env: Readonly<Record<string, string>> = {}, input?: string, maxBytes?: number): Promise<ProcessResult> {
+    return this.client.run(this.execArguments(command, user, env), { ...this.commandOptions(undefined, input), ...(maxBytes === undefined ? {} : { maxBytes }) });
   }
 
   spawn(command: readonly string[], env: Readonly<Record<string, string>>, auth: Readonly<Record<string, string>>): ChildProcessWithoutNullStreams {
