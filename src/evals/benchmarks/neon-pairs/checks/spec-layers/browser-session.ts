@@ -98,11 +98,12 @@ export async function visibleDeck(page: Page, revealed?: (positions: readonly nu
     await click(page, index); await click(page, index + 1);
     for (const position of [index, index + 1]) {
       const face = faceIn(cardName(await card(page, position).ariaSnapshot()) ?? "");
-      if (!face) throw new BehaviorFailure(`Card ${position} supplied no stated face name after reveal.`);
+      if (!face) throw new BehaviorFailure(`Expected a stated face name after reveal at card ${position}. Observed accessibility tree: ${await card(page, position).ariaSnapshot()}`);
       deck[position] = face;
     }
     await revealed?.([index, index + 1]);
-    await step(page, 800);
+    // Discovery uses Restart to clear a pending miss without assuming its duration.
+    await reset(page);
   }
   return deck;
 }
@@ -110,8 +111,10 @@ export async function solve(page: Page, deck: readonly string[]): Promise<void> 
   const pairs = new Map<string, number[]>();
   deck.forEach((face, index) => pairs.set(face, [...(pairs.get(face) ?? []), index]));
   for (const positions of pairs.values()) {
-    if (positions.length !== 2) throw new BehaviorFailure("Visible play did not find exactly two of each face.");
-    for (const index of positions) await click(page, index);
+    // Repeated identities still allow matched-card checks to collect their evidence.
+    for (let index = 0; index + 1 < positions.length; index += 2) {
+      await click(page, positions[index]!); await click(page, positions[index + 1]!);
+    }
   }
 }
 export async function body(page: Page): Promise<string> { return page.locator("body").innerText(); }

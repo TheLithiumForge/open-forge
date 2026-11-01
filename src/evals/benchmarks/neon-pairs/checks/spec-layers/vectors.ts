@@ -4,6 +4,8 @@ import { expectedDeck } from "./board-code.ts";
 import { CapClause } from "./cap-policy.ts";
 
 export const KnownCode = `${Rules.boardPrefix}-4-1`;
+export const DistinctFacesClause = "D04.1";
+export const DistinctFacesVector = "distinct faces";
 export interface Vector { readonly name: string; readonly clauses: readonly string[]; readonly text: string }
 const snapshot = freshSnapshot(KnownCode);
 const replay = { version: Rules.formatVersion, boardCode: KnownCode, actions: [{ atMs: 10, index: 0 }, { atMs: 20, index: 1 }], endMs: 820 };
@@ -100,6 +102,15 @@ export function replayVectors(): Vector[] {
     deck.forEach((face, index) => pairs.set(face, [...(pairs.get(face) ?? []), index]));
     const actions = [...pairs.values()].flatMap((positions) => positions.map((index) => ({ atMs: 0, index })));
     vectors.push(vector(`known deal ${code}`, `D02.1 D02.2 D02.4 D03.1 D03.2 D04.1 D04.2 D04.3 D04.4 D04.5${code === KnownCode ? " D03.3 D04.6" : ""}`, { ...replay, boardCode: code, actions, endMs: 1000 }));
+  }
+  for (const size of Rules.sizes) {
+    const boardCode = `np1-${size}-1`, deck = expectedDeck(boardCode), anchor = deck.indexOf(0);
+    // Solving expected pairs can't detect additional copies of the same identity.
+    const actions = Array.from({ length: size * size / 2 - 1 }, (_, index) => [
+      { atMs: index * Rules.mismatchMs, index: anchor },
+      { atMs: index * Rules.mismatchMs, index: deck.indexOf(index + 1) },
+    ]).flat();
+    vectors.push(vector(`${DistinctFacesVector} ${boardCode}`, DistinctFacesClause, { ...replay, boardCode, actions, endMs: (size * size / 2 - 1) * Rules.mismatchMs }));
   }
   return vectors.map((entry) => ({ ...entry, clauses: [...new Set([...entry.clauses, expectedReplayStatus(entry.text) ? "C14.4" : "C14.5"])] }));
 }

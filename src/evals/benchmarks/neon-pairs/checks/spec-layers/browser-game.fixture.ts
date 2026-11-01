@@ -5,7 +5,7 @@ import { Labels } from "./browser-session.ts";
 import { Rules } from "./rules.ts";
 import { Announcement } from "./published-text.ts";
 
-export async function fakeGame(page: Page): Promise<void> {
+export async function fakeGame(page: Page, options: { readonly mismatchMs?: number; readonly artwork?: boolean } = {}): Promise<void> {
   await page.clock.install();
   await page.setContent(`<style>
     * { box-sizing: border-box } body { margin: 0; font: 16px/24px system-ui }
@@ -21,15 +21,25 @@ export async function fakeGame(page: Page): Promise<void> {
     <p id="status"></p><p id="result"></p><div aria-live="polite" aria-atomic="true"></div><div class="viewport"><div class="board"></div></div>
     <input aria-label="Unstyled native control"><p id="secondary" style="font-size:14px;margin:0">Secondary text</p>
   </section></article>`);
-  await page.evaluate(({ colors, markers, sizeLabel, miss }) => {
+  await page.evaluate(({ colors, markers, sizeLabel, miss, mismatchMs, artwork, green }) => {
     const board = document.querySelector<HTMLElement>(".board"), select = document.querySelector("select");
     if (!board || !select) throw new Error("Missing fake controls.");
     select.setAttribute("aria-label", sizeLabel);
     let size = 4, moves = 0, first: number | null = null, blocked = false, started: number | null = null, completedTime: number | null = null;
     const matched = new Set<number>();
+    let pending: ReturnType<typeof setTimeout> | undefined, deadline = 0, remaining = 0, closeMiss: (() => void) | undefined;
     const label = (index: number, state: string): string => `Row ${Math.floor(index / size) + 1}, column ${index % size + 1}, ${state}`;
     const face = (index: number): string => `${colors[Math.floor(index / 2) % colors.length]} solid circle, marker ${markers[Math.floor(index / 2) % markers.length]}`;
     const announce = (text: string): void => { const region = document.querySelector('[aria-live="polite"]'); if (region) region.replaceChildren(document.createTextNode(text)); };
+    const paint = (button: Element, found: boolean): void => {
+      if (!artwork) return;
+      button.innerHTML = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="cyan"/>${found ? `<path d="M2 6 L5 9 L10 3" fill="none" stroke="${green}" stroke-width="2"/>` : ""}</svg>`;
+      (button as HTMLElement).style.borderColor = found ? green : "";
+    };
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) { clearTimeout(pending); remaining = Math.max(0, deadline - performance.now()); }
+      else if (blocked && closeMiss) { deadline = performance.now() + remaining; pending = setTimeout(closeMiss, remaining); }
+    });
     const status = (): void => {
       const status = document.querySelector("#status"), result = document.querySelector("#result");
       const seconds = started === null ? 0 : Math.floor(((completedTime ?? performance.now()) - started) / 1000);
@@ -38,6 +48,7 @@ export async function fakeGame(page: Page): Promise<void> {
       if (result) result.textContent = matched.size === size * size ? `You won in ${moves} moves. Time: 0:00` : "";
     };
     const start = (): void => {
+      clearTimeout(pending); closeMiss = undefined;
       size = Number(select.value); moves = 0; first = null; blocked = false; started = null; completedTime = null; matched.clear(); board.replaceChildren();
       board.style.width = `${size * 50 - 6}px`;
       for (let index = 0; index < size * size; index++) {
@@ -48,19 +59,23 @@ export async function fakeGame(page: Page): Promise<void> {
           if (blocked || matched.has(index) || first === index) return;
           started ??= performance.now();
           button.setAttribute("aria-label", label(index, `${face(index)}, revealed`));
+          paint(button, false);
           if (first === null) first = index;
           else {
             moves++;
             if (face(first) === face(index)) {
               for (const position of [first, index]) {
                 matched.add(position); board.children[position]?.setAttribute("aria-label", label(position, `${face(position)}, matched`));
+                board.children[position]?.setAttribute("aria-disabled", "true");
+                if (board.children[position]) paint(board.children[position]!, true);
               }
               const pairs = matched.size / 2;
               if (pairs === size * size / 2) completedTime = performance.now();
               announce(pairs === size * size / 2 ? `Pair found. All pairs found in ${moves} moves and 0:00.` : `Pair found. ${pairs} ${pairs === 1 ? "pair" : "pairs"} matched.`);
             } else {
               const positions = [first, index]; blocked = true; announce(miss);
-              setTimeout(() => { for (const position of positions) board.children[position]?.setAttribute("aria-label", label(position, "closed")); blocked = false; }, 800);
+              closeMiss = () => { for (const position of positions) board.children[position]?.setAttribute("aria-label", label(position, "closed")); blocked = false; };
+              remaining = mismatchMs; deadline = performance.now() + remaining; pending = setTimeout(closeMiss, remaining);
             }
             first = null;
           }
@@ -78,7 +93,7 @@ export async function fakeGame(page: Page): Promise<void> {
     setInterval(status, 100);
     for (const button of document.querySelectorAll<HTMLButtonElement>(".controls button")) button.onclick = start;
     start();
-  }, { colors: Rules.colors, markers: Rules.markers, sizeLabel: Labels.size, miss: Announcement.miss });
+  }, { colors: Rules.colors, markers: Rules.markers, sizeLabel: Labels.size, miss: Announcement.miss, mismatchMs: options.mismatchMs ?? Rules.mismatchMs, artwork: options.artwork ?? false, green: Rules.palette[2] });
   await markVisibleCards(page);
   await page.clock.pauseAt(new Date(Date.now() + 1000));
 }

@@ -3,7 +3,7 @@ import { LayerId, Method, SpecVersion, supplied, type Clause } from "./requireme
 import { Limitations } from "./limitations.ts";
 import { reviewReason } from "./review-policy.ts";
 
-export const Versions = { L2: "L2-v4", L3: "L3-v4" } as const;
+export const Versions = { L2: "L2-v5", L3: "L3-v5" } as const;
 export const ExpectedCounts = { L2: { checks: 49, assertions: 183, review: 6 }, L3: { checks: 104, assertions: 366, review: 50 } } as const;
 export const BrowserGroups = {
   sizes: ["R01"], selection: ["R02", "R03"], mismatch: ["R04"], moves: ["R05"], completion: ["R06"],

@@ -14,6 +14,8 @@ import { ContentMaximum, LayoutAttribute, markLayout } from "./browser-layout.ts
 import { borderTransition, ColorToken, facePalette, namedTargets, TargetClause } from "./browser-targets.ts";
 import { Labels } from "./browser-session.ts";
 
+export const FaceClause = { unique: "V10.1", closed: "V14.2", artwork: "V15.1", check: "V15.2", opacity: "V15.3" } as const;
+
 export function spacingOnScale(values: readonly string[]): boolean {
   return values.every((value) => value === "normal" || value === "auto" || pixels(value) !== null && ((pixels(value) ?? 0) <= 0 || Rules.spacing.some((allowed) => allowed > 0 && near(pixels(value), allowed))));
 }
@@ -126,7 +128,7 @@ export async function faces(page: Page, evidence: Evidence): Promise<void> {
   }), unique = new Set(deck);
   const distinct = renderedFaces(captured);
   evidence.inherited.set(distinct.id, distinct);
-  put("V10.1", unique.size === 128, `Visible play found ${unique.size} named identities.`);
+  put(FaceClause.unique, unique.size === 128, "The 16x16 board must use 128 distinct named identities.", { unique: unique.size, deck });
   put("V10.3 V10.4 V10.5 V13.1 V13.2", [...unique].every((name) => faceIn(name) === name) && Rules.shapes.every((shape) => deck.some((name) => name.includes(` ${shape},`))) && Rules.markers.every((marker) => deck.some((name) => name.endsWith(`marker ${marker}`))) && ["solid", "outline"].every((fill) => deck.some((name) => name.includes(` ${fill} `))), "Visible names span all eight shapes, markers and both fills in the specified lowercase form.");
   put("V07.1", Rules.palette.every((color) => colors.map(rgb).includes(color)), "Revealed SVG artwork uses each specified palette entry.");
   put(TargetClause.palette, paletteAtMarker.length === 256 && paletteAtMarker.every(Boolean), "Each revealed face name and rendered palette color agree with its marker index, without requiring numeric face IDs in Layer 2.");

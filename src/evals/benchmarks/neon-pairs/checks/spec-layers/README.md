@@ -11,8 +11,8 @@ The frozen declarations contain these counts:
 
 | Layer | Checks | Clause assertions | Review clauses | Questions |
 | --- | --- | --- | --- | --- |
-| L2-v4 | 49 | 183 | 6 | 9 |
-| L3-v4 | 104 | 366 | 50 | 11 |
+| L2-v5 | 49 | 183 | 6 | 9 |
+| L3-v5 | 104 | 366 | 50 | 11 |
 
 The assertion counts exclude the 16 inherited L1 checks. Each question takes three yes, no or unsure ballots with cited evidence. `layers/L2.json` and `layers/L3.json` list every clause and its method. Their `review` arrays list every review clause with its reason.
 

@@ -1,5 +1,5 @@
 import { chromium, type Browser, type Page } from "playwright";
-import { BehaviorFailure, Evidence } from "./outcomes.ts";
+import { Evidence } from "./outcomes.ts";
 import type { Definition } from "./catalog.ts";
 import { Method, LayerId as Layer } from "./requirements.ts";
 import { session, type Session, type SessionOptions } from "./browser-session.ts";
@@ -19,6 +19,7 @@ import { CheckArea, CheckId } from "../check-ids.ts";
 import { CheckStatus } from "../../../../history/statuses.ts";
 import { keyboardTree } from "./browser-tree.ts";
 import { snapshotRounding } from "./browser-rounding.ts";
+import { pageObservation } from "./browser-evidence.ts";
 
 interface Journey extends SessionOptions { readonly groups: readonly string[]; readonly action: (page: Page, evidence: Evidence) => Promise<void> }
 const journeys: readonly Journey[] = [
@@ -49,6 +50,7 @@ export async function browserChecks(html: string, definition: Definition, eviden
       const start = evidence.outcomes.length;
       try {
         open = await session(browser, html, journey);
+        evidence.observation = () => pageObservation(open!.page);
         await journey.action(open.page, evidence);
         if (journey.action === faces && open.errors.length > 0) {
           const distinct = evidence.inherited.get(CheckId.facesDistinct);
@@ -58,40 +60,40 @@ export async function browserChecks(html: string, definition: Definition, eviden
         if (open.errors.length > 0) for (const outcome of evidence.outcomes.slice(start)) {
           if (outcome.status === "pass") {
             const index = evidence.outcomes.indexOf(outcome);
-            evidence.outcomes[index] = { ...outcome, status: "fail", evidence: `Uncaught game error: ${open.errors.join(". ")}` };
+            evidence.outcomes[index] = { ...outcome, status: "fail", evidence: `${outcome.evidence}\nExpected no uncaught game errors. Observed: ${open.errors.join(". ")}` };
           }
         }
       } catch (error) {
-        const detail = `${journey.action.name}: ${error instanceof Error ? error.message : String(error)}`;
+        const observed = open ? await pageObservation(open.page).catch((error: unknown) => ({ captureError: String(error) })) : "Session did not open";
+        const detail = `${journey.action.name}: expected probe to finish. Observed error: ${error instanceof Error ? error.message : String(error)}\nObserved page: ${JSON.stringify(observed)}`;
         failures.push(detail);
-        const first = clauses.find((id) => !evidence.seen.has(id));
-        if (error instanceof BehaviorFailure && first) evidence.test(first, false, detail);
         const earlier = evidence.outcomes.slice(start).find((item) => item.status !== "pass");
         for (const clause of clauses) stopped.set(clause, { status: earlier ? "blocked" : "error", detail: earlier ? `Stopped after ${earlier.clause}. ${detail}` : detail });
-      } finally { await open?.close(); }
+      } finally { await evidence.flush(); evidence.observation = undefined; await open?.close(); }
     }
     const file = await session(browser, html, { file: true });
     try {
-      evidence.test("T08.2", file.requests.length === 0 && file.errors.length === 0, "Direct disk load requests only its main HTML file, with no uncaught errors.");
-      evidence.test("T10.4", file.requests.length === 0, "Distribution makes no network requests when loaded from disk.");
+      evidence.test("T08.2", file.requests.length === 0 && file.errors.length === 0, "Direct disk load requests only its main HTML file, with no uncaught errors.", { requests: file.requests, errors: file.errors });
+      evidence.test("T10.4", file.requests.length === 0, "Distribution makes no network requests when loaded from disk.", { requests: file.requests });
     } finally { await file.close(); }
     if (definition.layer === Layer.three) for (const journey of specJourneys) {
       const open = await session(browser, html, { fractionalClock: journey === snapshotRounding });
       const start = evidence.outcomes.length;
+      evidence.observation = () => pageObservation(open.page);
       try {
         await journey(open.page, evidence);
-        if (open.errors.length > 0) for (const [index, outcome] of evidence.outcomes.entries()) if (index >= start && outcome.status === "pass") evidence.outcomes[index] = { ...outcome, status: "fail", evidence: `Uncaught game error: ${open.errors.join(". ")}` };
+        if (open.errors.length > 0) for (const [index, outcome] of evidence.outcomes.entries()) if (index >= start && outcome.status === "pass") evidence.outcomes[index] = { ...outcome, status: "fail", evidence: `${outcome.evidence}\nExpected no uncaught game errors. Observed: ${open.errors.join(". ")}` };
       }
-      catch (error) { failures.push(`${journey.name}: ${error instanceof Error ? error.message : String(error)}`); }
-      finally { await open.close(); }
+      catch (error) { failures.push(`${journey.name}: expected probe to finish. Observed error: ${error instanceof Error ? error.message : String(error)}\nObserved page: ${JSON.stringify(await pageObservation(open.page).catch((error: unknown) => ({ captureError: String(error) })))}`); }
+      finally { await evidence.flush(); evidence.observation = undefined; await open.close(); }
     }
   } finally { await browser.close(); }
-  evidence.test("S01.1", audio.length === journeys.length && audio.every((count) => count === 0), "Audio constructor and playback instrumentation stayed silent across reveal, match, miss, reset, restart and win journeys.");
+  evidence.test("S01.1", audio.length === journeys.length && audio.every((count) => count === 0), "Audio constructor and playback instrumentation stays at zero in every journey.", { expectedJourneys: journeys.length, calls: audio });
   for (const clause of ["V18.1", "V18.2", "V18.3", "V18.4"]) {
     const outcome = evidence.outcomes.find((item) => item.clause === clause);
     if (outcome) evidence.merge("R06.6", outcome.status, `${clause}: ${outcome.evidence}`);
   }
   const browserClauses = definition.checks.filter((check) => check.method === Method.browser).flatMap((check) => check.clauses);
-  for (const clause of browserClauses.filter((id) => !evidence.seen.has(id))) evidence.record(clause, stopped.get(clause)?.status ?? "error", stopped.get(clause)?.detail ?? (failures.join(". ") || "The browser checker did not collect this clause."));
+  for (const clause of browserClauses.filter((id) => !evidence.seen.has(id))) evidence.record(clause, stopped.get(clause)?.status ?? "error", stopped.get(clause)?.detail ?? (failures.join(". ").slice(0, 48000) || "Expected a collected browser assertion. Observed no result."));
   if (definition.layer === Layer.three) for (const outcome of evidence.outcomes.filter((item) => /^(?:D05|D06)\.|^D07\.[1-5]$/.test(item.clause) || item.clause === CapClause.snapshotElapsed || item.clause === CapClause.snapshotMoves)) evidence.merge("C09.2", outcome.status, `${outcome.clause}: ${outcome.evidence}`);
 }

@@ -9,17 +9,19 @@ import { touchBoardEnd } from "./browser-touch.ts";
 import { focusSamples, OutlineClauses, ScrollMarginClause } from "./browser-layout.ts";
 export { zoom } from "./browser-zoom.ts";
 
+export const RevealedNameClauses = ["I15.1", "I15.2"] as const;
+
 export async function accessibleNames(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence), closed = await names(page);
   const positions = (name: string, index: number): boolean => new RegExp(`row\\s*${Math.floor(index / 4) + 1}\\b`, "i").test(name) && new RegExp(`col(?:umn)?\\s*${index % 4 + 1}\\b`, "i").test(name);
   put("I14.1", closed.every((name, index) => positions(name, index) && /closed/i.test(name)), "All closed accessible names give their one-based row and column.");
   const secret = await page.locator(`[${CardAttribute}]`).evaluateAll((elements) => elements.some((element) => /(?:face[-_ ]?id|data-face|marker (?:top|left|right|bottom)|cyan solid|outline chevron)/i.test(element.outerHTML)));
-  put("I14.2 I14.3 V14.2", !secret, "Closed cards carry no face identifiers or named face SVG. Only the common back is mounted.");
+  put("I14.2 I14.3 V14.2", !secret, "Closed cards carry no face identifiers or named face SVG. Only the common back is mounted.", { secret, closed });
   const deck = await visibleDeck(page); await reset(page); await click(page, 0);
   const shown = (await names(page))[0] ?? "";
   const partner = deck.findIndex((face, index) => index !== 0 && face === deck[0]); await click(page, partner);
   const matched = (await names(page))[0] ?? "";
-  put("I15.1 I15.2", positions(shown, 0) && positions(matched, 0) && /revealed/i.test(shown) && /matched/i.test(matched) && faceIn(shown) === deck[0] && faceIn(matched) === deck[0], "Revealed and matched accessible names keep position, specified face name and state.");
+  put(RevealedNameClauses.join(" "), positions(shown, 0) && positions(matched, 0) && /revealed/i.test(shown) && /matched/i.test(matched) && faceIn(shown) === deck[0] && faceIn(matched) === deck[0], "Revealed and matched accessible names keep position, specified face name and state.", { shown, matched, expectedFace: deck[0] });
 }
 
 export async function scroll(page: Page, evidence: Evidence): Promise<void> {

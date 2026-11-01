@@ -17,7 +17,15 @@ export function dependencies(manifest: Record<string, unknown>): Record<string, 
   return { ...(object(manifest["dependencies"]) ? manifest["dependencies"] : {}), ...(object(manifest["devDependencies"]) ? manifest["devDependencies"] : {}) };
 }
 export function staticChecks(files: readonly SourceFile[], evidence: Evidence, full: boolean): void {
-  const put = reporter(evidence), manifest = jsonObject(files.find((file) => file.path === "package.json")?.text ?? "{}"), deps = dependencies(manifest);
+  const put = reporter(evidence, () => ({ dependencies: deps, type: manifest["type"], engines: manifest["engines"], scripts: manifest["scripts"],
+    files: files.map((file) => ({ path: file.path, lines: file.text.replace(/\r\n/g, "\n").replace(/\n$/, "").split("\n").length })),
+    configs: files.filter((file) => /(?:^|\/)tsconfig[^/]*\.json$/.test(file.path)).map((file) => {
+      try { return { path: file.path, options: compilerOptions(files, file.path) }; }
+      catch (error) { return { path: file.path, error: error instanceof Error ? error.message : String(error) }; }
+    }),
+    lockPackages: object(jsonObject(files.find((file) => file.path === "package-lock.json")?.text ?? "{}")["packages"]),
+    sourceMatches: source.match(/.{0,60}(?:<button|<select|react-dom|sound|audio|mute|Audio|play\(|display\s*:\s*grid|data-slot|__test|window\.|debug|replay).{0,80}/gi)?.slice(0, 20) ?? [],
+  })), manifest = jsonObject(files.find((file) => file.path === "package.json")?.text ?? "{}"), deps = dependencies(manifest);
   const sources = files.filter(authored), nodes = sources.flatMap((file) => descendants(syntax(file))), source = sources.map((file) => file.text).join("\n");
   put("T01.1", typeof deps["react"] === "string" && typeof deps["react-dom"] === "string" && sources.length > 0 && /react-dom(?:\/client)?/.test(source), "Read dependency entries, authored TypeScript and DOM mounting imports.");
   put("T01.2", /<button\b/.test(source) && /<select\b/.test(source), "Authored JSX renders native buttons and select.");

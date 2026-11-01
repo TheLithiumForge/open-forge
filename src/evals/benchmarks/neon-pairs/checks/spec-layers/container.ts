@@ -58,7 +58,7 @@ export async function runLayerChecks(layer: Layer, input: SuiteCheckInput, optio
   const declared = await loadDefinition(layer), evidence = new Evidence();
   const selected = { applicable: declared.stated, stated: declared.stated, working: declared.working };
   const result = (inherited: SuiteCheckOutput["checks"] = [], shots: readonly string[] = []): LayerOutput => {
-    for (const check of declared.checks) for (const assertion of check.assertions) if (!evidence.seen.has(assertion.clause)) evidence.record(assertion.clause, "error", "The checker returned no assertion for this clause.");
+    for (const check of declared.checks) for (const assertion of check.assertions) if (!evidence.seen.has(assertion.clause)) evidence.record(assertion.clause, "error", `Expected ${assertion.text}. Observed no assertion returned by the checker.`);
     return { checks: complete(declared, evidence.outcomes, inherited), selection: selected, performance: null, shots, assertions: evidence.outcomes, review: declared.review };
   };
   const blocked = (cause: string): SuiteCheckOutput["checks"] => declared.checks.filter((check) => check.inheritedFrom).map((check) => ({ id: check.id, area: check.area, status: "blocked", evidence: cause }));
@@ -94,7 +94,7 @@ export async function runLayerChecks(layer: Layer, input: SuiteCheckInput, optio
     const install = await runCandidate(stage, CommandId.ci);
     results.set(CommandId.ci, install);
     if (install.code !== 0 || install.timedOut) {
-      for (const check of declared.checks) for (const assertion of check.assertions) evidence.record(assertion.clause, assertion.clause === "T07.1" ? install.timedOut ? "error" : "fail" : "blocked", "The locked dependency installation failed before dependent checks.");
+      for (const check of declared.checks) for (const assertion of check.assertions) evidence.record(assertion.clause, assertion.clause === "T07.1" ? install.timedOut ? "error" : "fail" : "blocked", `Expected ${assertion.text}. The locked dependency installation stopped dependent checks.`, { code: install.code, timedOut: install.timedOut, stdout: install.stdout.slice(-6000), stderr: install.stderr.slice(-6000) });
       return result(blocked("The locked dependency installation failed."));
     }
     await stage.offline();
@@ -117,7 +117,7 @@ export async function runLayerChecks(layer: Layer, input: SuiteCheckInput, optio
     }
     return result(report.inherited.checks, report.inherited.shots);
   } catch (error) {
-    for (const check of declared.checks) for (const assertion of check.assertions) if (!evidence.seen.has(assertion.clause)) evidence.record(assertion.clause, "error", error instanceof Error ? error.message : String(error));
+    for (const check of declared.checks) for (const assertion of check.assertions) if (!evidence.seen.has(assertion.clause)) evidence.record(assertion.clause, "error", `Expected ${assertion.text}. Observed checker error: ${error instanceof Error ? error.message : String(error)}`);
     return result();
   } finally { try { await stage.remove(); } finally { await removeTemporary(scratch, "eval-spec-layers-checks-"); } }
 }

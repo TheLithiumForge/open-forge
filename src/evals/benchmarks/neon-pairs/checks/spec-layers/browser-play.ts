@@ -7,9 +7,12 @@ import { body, changeSize, click, hidden, metric, names, reset, solve, step, vis
 import { faceIn } from "./view-values.ts";
 import { clockText, hasStatus, StatusClause } from "./published-text.ts";
 
-export function reporter(evidence: Evidence) {
-  return (ids: string, passed: boolean, detail: string): void => {
-    for (const id of ids.split(" ")) evidence.test(id, passed, detail);
+export const MismatchClosedClause = "R04.2";
+
+export function reporter(evidence: Evidence, observation?: () => unknown) {
+  return (ids: string, passed: boolean, detail: string, observed?: unknown): void => {
+    const actual = observed ?? (!passed ? observation?.() : undefined);
+    for (const id of ids.split(" ")) evidence.test(id, passed, detail, actual);
   };
 }
 export async function sizes(page: Page, evidence: Evidence): Promise<void> {
@@ -59,12 +62,13 @@ export async function turns(page: Page, evidence: Evidence): Promise<void> {
   await card(page, a).focus(); await page.keyboard.press("ArrowRight");
   put("I10.1", await card(page, a).evaluate((element) => element !== document.activeElement), "Arrow focus moves during mismatch.");
   await step(page, 799);
-  put("R04.1", faceIn((await names(page))[a] ?? "") !== null, "Mismatch stays revealed through 799 controlled active milliseconds.");
+  const pending = await names(page);
+  put("R04.1", faceIn(pending[a] ?? "") !== null, "Mismatch stays revealed through 799 controlled active milliseconds.", { activeMs: 799, a, b, names: pending });
   await hidden(page, true); await step(page, 5000);
   put("R04.4", faceIn((await names(page))[a] ?? "") !== null, "Synthetic browser visibility hides the page for 5000 controlled milliseconds without closing the mismatch.");
   await hidden(page, false); await step(page, 1);
   const closed = await names(page);
-  put("R04.2 R07.8", !faceIn(closed[a] ?? "") && !faceIn(closed[b] ?? ""), "Both mismatching cards close at the remaining active millisecond.");
+  put(`${MismatchClosedClause} R07.8`, !faceIn(closed[a] ?? "") && !faceIn(closed[b] ?? ""), "Both mismatching cards close at 800 active milliseconds with 5000 hidden milliseconds excluded.", { activeMs: 800, hiddenMs: 5000, a, b, names: closed });
   await card(page, 0).focus();
   put("I09.1 I09.2 I09.3", await card(page, 0).getAttribute("aria-disabled") === "true" && await card(page, 0).evaluate((element) => element === document.activeElement), "A matched card remains focusable with aria-disabled=true and ignored activation.");
   await reset(page); await solve(page, deck);

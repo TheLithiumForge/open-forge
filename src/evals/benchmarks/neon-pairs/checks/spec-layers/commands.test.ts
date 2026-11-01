@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { commandArguments } from "./candidate-commands.ts";
-import { buildOutcomes, CommandId, commandResult, compareReplay, replayOutcomes } from "./commands.ts";
+import { buildOutcomes, CommandId, commandResult, compareReplay, replayOutcomes, UnitCommandClause } from "./commands.ts";
 import { expectedReplay, freshSnapshot } from "./replay.ts";
 import { decodeSnapshot } from "./snapshot.ts";
 import { Evidence } from "./outcomes.ts";
@@ -27,6 +27,10 @@ test("replay comparator rejects dropped moves, invalid success and checker timeo
   assert.throws(() => compareReplay(vector, { ...Success, timedOut: true }));
   const evidence = new Evidence(); replayOutcomes([vector], [{ ...Success, stdout: JSON.stringify(freshSnapshot(KnownCode)) }], evidence);
   assert.equal(evidence.outcomes[0]?.status, "fail");
+  assert.match(evidence.outcomes[0]?.evidence ?? "", /Observed:.*expected.*actual.*stdout.*differentFields/s);
+  const timed = new Evidence(); replayOutcomes([vector], [{ ...Success, timedOut: true, stderr: "deadline reached" }], timed);
+  assert.equal(timed.outcomes[0]?.status, "error");
+  assert.match(timed.outcomes[0]?.evidence ?? "", /Observed:.*timedOut.*deadline reached.*Replay checker timed out/s);
 });
 test("frozen vectors cover rejection, valid boundary states and known literal deals", () => {
   const snapshots = snapshotVectors(), replays = replayVectors();
@@ -54,4 +58,9 @@ test("build assertions grade the versions the verifier ran", () => {
     const missing = new Evidence(); buildOutcomes(commands, missing, true, result);
     assert.equal(missing.outcomes.find((item) => item.clause === ToolchainClause)?.status, "error");
   }
+});
+test("failed command assertions include exit, timeout and captured streams", () => {
+  const evidence = new Evidence();
+  buildOutcomes(new Map([[CommandId.test, { ...Success, code: 7, stdout: "0 passed", stderr: "unit failure detail" }]]), evidence, false);
+  assert.match(evidence.outcomes.find((outcome) => outcome.clause === UnitCommandClause)?.evidence ?? "", /Observed:.*code.*7.*timedOut.*stdout.*0 passed.*stderr.*unit failure detail/s);
 });

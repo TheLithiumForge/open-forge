@@ -1,6 +1,6 @@
 {
   "id": "faces-repeat",
   "edits": [{ "path": "src/game/deck.ts", "before": "  const deck = Array.from({ length: parsed.size ** 2 }, (_, index) => Math.floor(index / 2));", "after": "  const deck = Array.from({ length: parsed.size ** 2 }, (_, index) => Math.floor(index / 2) % 32);" }],
-  "expected": { "R01.3": "fail", "V10.1": "fail", "D04.1": "fail" },
+  "expected": { "R01.3": "fail", "V10.1": "fail", "D04.1": "fail", "I15.1": "pass", "I15.2": "pass", "V14.2": "pass", "V15.1": "pass", "V15.2": "pass", "V15.3": "pass" },
   "scope": "Repeat face identities after 32, leaving small deals unchanged."
 }

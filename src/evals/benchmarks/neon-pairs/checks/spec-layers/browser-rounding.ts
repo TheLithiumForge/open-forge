@@ -14,6 +14,7 @@ export async function snapshotRounding(page: Page, evidence: Evidence): Promise<
   await click(page, 1); await fraction(1.5); const pending = await exported(page);
   await fraction(801); const last = await exported(page);
   const put = reporter(evidence);
-  put(RoundingClause.elapsed, elapsed?.elapsedMs === 1 && pending?.elapsedMs === 1 && last?.elapsedMs === 801, "Public exports floor elapsed time at controlled fractional monotonic times.");
-  put(RoundingClause.remaining, pending?.selection.kind === SelectionKind.mismatch && pending.selection.remainingMs === 800 && last?.selection.kind === SelectionKind.mismatch && last.selection.remainingMs === 1, "Public exports ceil 799.75ms to 800 and 0.25ms to 1 without ending the mismatch early.");
+  const observed = { offsetsMs: [1.25, 1.5, 801], elapsed, pending, last };
+  put(RoundingClause.elapsed, elapsed?.elapsedMs === 1 && pending?.elapsedMs === 1 && last?.elapsedMs === 801, "Exports at offsets 1.25, 1.5 and 801ms must floor elapsed time to 1, 1 and 801ms.", observed);
+  put(RoundingClause.remaining, pending?.selection.kind === SelectionKind.mismatch && pending.selection.remainingMs === 800 && last?.selection.kind === SelectionKind.mismatch && last.selection.remainingMs === 1, "Exports at offsets 1.5 and 801ms must ceil remaining mismatch time to 800 and 1ms, with mismatch selection intact.", observed);
 }

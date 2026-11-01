@@ -42,6 +42,7 @@ export function formula(files: readonly SourceFile[], expected: (id: number) => 
 }
 export function faceFormulaChecks(files: readonly SourceFile[], evidence: Evidence): void {
   const shapes = formula(files, (id) => id % 8), markers = formula(files, (id) => Math.floor(id / 8) % 8), fills = formula(files, (id) => Math.floor(id / 64));
-  for (const [id, expression] of [["V10.6", shapes], ["V10.7", markers], ["V10.8", fills]] as const) evidence.test(id, expression !== null, expression ? `Static arithmetic evaluated for IDs 0..127: ${expression}.` : "No supported arithmetic expression implements the stated mapping.");
-  evidence.test("V10.2", shapes !== null && markers !== null && fills !== null && files.some((file) => /(?:face|id).*number|number.*(?:face|id)/i.test(file.text)), "Numeric face declarations and integer mappings span 0..127.");
+  const observed = { shapes, markers, fills, candidates: files.flatMap((file) => descendants(syntax(file)).filter((node) => ts.isBinaryExpression(node) || ts.isCallExpression(node)).map((node) => ({ path: file.path, expression: node.getText().slice(0, 160) }))).slice(0, 20) };
+  for (const [id, expression] of [["V10.6", shapes], ["V10.7", markers], ["V10.8", fills]] as const) evidence.test(id, expression !== null, `Expected the stated arithmetic mapping for IDs 0..127. Found expression: ${expression ?? "none"}.`, observed);
+  evidence.test("V10.2", shapes !== null && markers !== null && fills !== null && files.some((file) => /(?:face|id).*number|number.*(?:face|id)/i.test(file.text)), "Numeric face declarations and integer mappings span 0..127.", observed);
 }

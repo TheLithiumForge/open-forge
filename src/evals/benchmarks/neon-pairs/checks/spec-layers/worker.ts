@@ -4,7 +4,7 @@ import type { SuiteCheckInput } from "../../../suite-checks.types.ts";
 import { runNeonPairsChecks } from "../neon-pairs.ts";
 import { definition } from "./catalog.ts";
 import { browserChecks } from "./browser.ts";
-import { layerId, loadRequirements, object } from "./requirements.ts";
+import { layerId, loadRequirements, Method, object } from "./requirements.ts";
 import { Evidence } from "./outcomes.ts";
 import { sourceFiles } from "./source.ts";
 import { staticChecks } from "./static-checks.ts";
@@ -25,9 +25,17 @@ export async function worker(): Promise<void> {
     const files = await sourceFiles("/work");
     staticChecks(files, evidence, layer === "L3");
     if (layer === "L3") faceFormulaChecks(files.filter((file) => file.path.startsWith("src/") && !file.path.includes("__tests__") && !file.path.includes(".test.")), evidence);
-  } catch (error) { evidence.outcomes.push({ id: "source-checker", clause: "checker", area: "checker", status: "error", evidence: error instanceof Error ? error.message : String(error) }); }
+  } catch (error) {
+    for (const assertion of declared.checks.filter((check) => check.method === Method.static).flatMap((check) => check.assertions)) {
+      if (!evidence.seen.has(assertion.clause)) evidence.record(assertion.clause, "error", `Expected ${assertion.text}. Observed source-checker error: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
   try { await browserChecks(SpecLayerContainer.page, declared, evidence); }
-  catch (error) { evidence.outcomes.push({ id: "browser-checker", clause: "checker", area: "checker", status: "error", evidence: error instanceof Error ? error.message : String(error) }); }
+  catch (error) {
+    for (const assertion of declared.checks.filter((check) => check.method === Method.browser).flatMap((check) => check.assertions)) {
+      if (!evidence.seen.has(assertion.clause)) evidence.record(assertion.clause, "error", `Expected ${assertion.text}. Observed browser-checker error: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
   const corrected = { ...inherited, checks: inherited.checks.map((check) => evidence.inherited.get(check.id) ?? check) };
   await writeFile(join(SpecLayerContainer.evidence, SpecLayerContainer.report), JSON.stringify({ schemaVersion: 1, layer, assertions: evidence.outcomes, inherited: corrected }));
 }

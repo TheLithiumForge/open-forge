@@ -57,7 +57,7 @@ export async function snapshotCaps(page: Page, evidence: Evidence): Promise<void
   put(CapClause.movesWin, completed?.matched.length === totalCards && metric(text, "pairs") === totalCards / 2 && /(?:win|won|every pair|complete)/i.test(text),
     "The capped game completes all eight pairs and shows a win.");
   put(CapClause.elapsedLimit, [reached, missed, pending, closed, completed].every((state) => state?.elapsedMs === Rules.elapsedMaximumMs),
-    "Starting one millisecond below the cap reaches exactly 359999999ms and stays there across mismatch closing, matches, victory and valid version 1 exports.");
+    "Starting one millisecond below the cap reaches exactly 359999999ms and stays there across mismatch closing, matches, victory and valid version 1 exports.", { imported: vector.state, reached, missed, pending, closed, completed });
   evidence.merge(CapClause.elapsedPlay, closed?.selection.kind === SelectionKind.closed && completed?.matched.length === totalCards ? CheckStatus.pass : CheckStatus.fail, "Snapshot-backed play continues after the exact elapsed cap.");
   evidence.merge(CapClause.elapsedDisplay, elapsedIn(text) === DisplayedMaximumMs ? CheckStatus.pass : CheckStatus.fail, "The completed imported game displays its capped elapsed time.");
   await savedBestCap(page, evidence);

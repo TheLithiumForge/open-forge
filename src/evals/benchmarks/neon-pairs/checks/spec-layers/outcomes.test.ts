@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { CheckStatus } from "../../../../history/statuses.ts";
-import { aggregate, Evidence } from "./outcomes.ts";
+import { aggregate, Evidence, EvidenceLimit } from "./outcomes.ts";
 import { assertionId, type Declaration } from "./catalog.ts";
 import { Method } from "./requirements.ts";
 
@@ -24,4 +24,22 @@ test("journey prerequisites produce blocked outcomes and checker faults produce 
   assert.equal(stopped.outcomes[1]?.status, CheckStatus.blocked);
   const crashed = new Evidence(); await crashed.journey(Clauses, async () => { throw new Error("Browser crash"); });
   assert.ok(crashed.outcomes.every((item) => item.status === CheckStatus.error));
+  assert.match(crashed.outcomes[0]?.evidence ?? "", /Expected.*Observed: Browser crash/);
+});
+test("failure samples survive merges, capture errors and report limits", async () => {
+  const evidence = new Evidence(); let samples = 0;
+  evidence.observation = async () => { samples++; return { clockMs: 801, names: ["revealed"] }; };
+  evidence.test(Clauses[0]!, true, "Initial sample");
+  evidence.merge(Clauses[0]!, CheckStatus.fail, "Expected closed at 800ms", { remainingMs: 1 });
+  evidence.merge(Clauses[0]!, CheckStatus.fail, "Second failure");
+  await evidence.flush();
+  assert.equal(samples, 1);
+  assert.match(evidence.outcomes[0]?.evidence ?? "", /Expected closed.*Observed:.*remainingMs.*Observed page:.*clockMs.*revealed/s);
+  evidence.merge(Clauses[0]!, CheckStatus.pass, "x".repeat(EvidenceLimit * 2));
+  assert.ok((evidence.outcomes[0]?.evidence.length ?? Infinity) <= EvidenceLimit);
+  assert.match(evidence.outcomes[0]?.evidence ?? "", /Expected closed/);
+  const broken = new Evidence(); broken.observation = async () => { throw new Error("page closed"); };
+  broken.record(Clauses[0]!, CheckStatus.error, "Expected a completed probe. Observed browser failure.");
+  await broken.flush();
+  assert.match(broken.outcomes[0]?.evidence ?? "", /Observed page:.*captureError.*page closed/);
 });

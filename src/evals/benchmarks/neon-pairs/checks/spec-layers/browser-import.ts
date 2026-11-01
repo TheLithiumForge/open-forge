@@ -105,10 +105,11 @@ export async function loadAnnouncements(page: Page, evidence: Evidence): Promise
     [LoadNotice.boardError, () => loadBoard(page, "invalid")],
     [LoadNotice.snapshotError, () => importText(page, "{")],
   ];
-  const results: boolean[] = [];
+  const results: { notice: string; repeat: number; before: number; entries: readonly string[]; text: string; visible: boolean; passed: boolean }[] = [];
   for (const [notice, action] of actions) for (let repeat = 0; repeat < 2; repeat++) {
     const before = (await entries()).length; await action();
-    results.push((await entries()).length === before + 1 && await region.innerText() === notice && await page.locator("details").getByText(notice, { exact: true }).isVisible());
+    const after = await entries(), text = await region.innerText(), visible = await page.locator("details").getByText(notice, { exact: true }).isVisible();
+    results.push({ notice, repeat, before, entries: after.slice(before), text, visible, passed: after.length === before + 1 && text === notice && visible });
   }
-  reporter(evidence)(AnnouncementClause.loads, results.every(Boolean), "Unfinished, completed and rejected loads each update the same live region once, including repeated statuses, and show their status beside reproduction controls.");
+  reporter(evidence)(AnnouncementClause.loads, results.every((result) => result.passed), "Unfinished, completed and rejected loads each update the same live region once, including repeated statuses, and show their status beside reproduction controls.", results);
 }
