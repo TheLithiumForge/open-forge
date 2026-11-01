@@ -1,0 +1,33 @@
+{
+    "sourceHash":  "5305337d6e5419f0d75423e90fe123958fd046ec683b8d4047e64c5be3516415",
+    "files":  [
+                  {
+                      "path":  "README.md",
+                      "sha256":  "6a942871656a92fe4f66993ed6a6c070eac86af88f54c34e828ba3f663c9acb8"
+                  },
+                  {
+                      "path":  "rules.md",
+                      "sha256":  "dda585f9ef29757a1eec0181f927e8ba319345f6a6df68c31a7d4e2334f67451"
+                  },
+                  {
+                      "path":  "input.md",
+                      "sha256":  "c1af88b2c36d3d9da6d6b9cf30bfc1b075e2499f6d49b787a108c903156f3d46"
+                  },
+                  {
+                      "path":  "controls.md",
+                      "sha256":  "4b3bba20dd7778ced4443915dc77390e6d17083d40bb9ab96d32480db00b5544"
+                  },
+                  {
+                      "path":  "visuals.md",
+                      "sha256":  "49f9ee861beb34fb6490571465733e4ea6f4ce0a2b705fd4b34f2f9903bab1a6"
+                  },
+                  {
+                      "path":  "sound.md",
+                      "sha256":  "87385a8c60a986e63d3ab1d686a0d96c6ede22987cb6d73d21c14f594f94cc75"
+                  },
+                  {
+                      "path":  "technology.md",
+                      "sha256":  "b72c1948e7a6222e497f1878617d4a2043ab796ca2f6a8c72fd51e47fe7b6af7"
+                  }
+              ]
+}

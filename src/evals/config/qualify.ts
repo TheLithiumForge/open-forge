@@ -6,6 +6,7 @@ import { inventory, safeRelative } from "../materialize/files.ts";
 import { ImageVersions } from "../execution/containers/docker-image.ts";
 import { generateSetup, type GeneratedSetup } from "./setups.ts";
 import { object, text } from "./validation.ts";
+import { checkDocumentSetup } from "../materialize/qualification.ts";
 
 export const QualificationFiles = { agents: "AGENTS.md", loader: ".agents/loader.md", lock: ".agents/open-forge.lock.json" } as const;
 export interface QualifiedSetup { readonly setup: string; readonly files: number; readonly frameworkVersion: string | null }
@@ -17,6 +18,7 @@ export async function checkSetup(generated: GeneratedSetup): Promise<QualifiedSe
   const files = await inventory(generated.folder);
   const names = files.map((file) => file.path).filter((path) => !CliStateFiles.has(path)).sort();
   if (JSON.stringify(names) !== JSON.stringify([...generated.expected].sort())) throw new Error("Setup files differ from the fresh CLI plan. Another setup's files may be present.");
+  if (generated.materialized !== undefined) await checkDocumentSetup(generated.folder, generated.materialized);
   if (generated.frameworkVersion !== null) {
     if (generated.frameworkVersion !== ImageVersions.openForge) throw new Error("The setup has the wrong Open Forge version.");
     for (const name of Object.values(QualificationFiles)) if (!names.includes(name)) throw new Error("The setup is missing an entry file.");
@@ -35,10 +37,15 @@ export async function checkSetup(generated: GeneratedSetup): Promise<QualifiedSe
 
 export async function qualifySetups(suite: Suite, setups: readonly string[], run?: ForgeRunner): Promise<QualifiedSetup[]> {
   const results: QualifiedSetup[] = [];
+  const sourceHashes = new Set<string>();
   for (const setup of setups) {
     const generated = await generateSetup(suite, setup, run);
-    try { results.push(await checkSetup(generated)); }
+    try {
+      results.push(await checkSetup(generated));
+      if (generated.materialized !== undefined) sourceHashes.add(generated.materialized.sourceHash);
+    }
     finally { await rm(dirname(generated.folder), { recursive: true, force: true }); }
   }
+  if (sourceHashes.size > 1) throw new Error("Document setups carry different product inputs.");
   return results;
 }

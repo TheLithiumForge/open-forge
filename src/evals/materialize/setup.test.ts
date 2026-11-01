@@ -38,7 +38,7 @@ test("three setups carry the same sentences, descriptions and acceptance with on
   const frozen = await materializeSpecs(options);
   const sentences: string[][] = [];
   const exported = [];
-  for (const kind of Object.values(SetupKind)) {
+  for (const kind of [SetupKind.plain, SetupKind.linked, SetupKind.forge]) {
     const destination = join(options.root, kind);
     const forgeCalls: string[][] = [];
     const gitCalls: { command: string; args: readonly string[] }[] = [];
@@ -60,7 +60,7 @@ test("three setups carry the same sentences, descriptions and acceptance with on
     sentences.push(content.flatMap((text) => text.split(/(?<=[.!?])\s+/)));
     if (kind === SetupKind.linked) assert.equal(await readFile(join(destination, SetupFiles.agents), "utf8"), linkedInstructions(frozen));
     if (kind === SetupKind.forge) {
-      assert.deepEqual(forgeCalls, [[ForgeFlags.version], ...ForgeRequests.flatMap((args) => [[...args, ForgeFlags.dryRun, ForgeFlags.format, ForgeFlags.json], [...args, ForgeFlags.format, ForgeFlags.json]])]);
+      assert.deepEqual(forgeCalls, [[ForgeFlags.version], ...ForgeRequests.flatMap((args) => [[...args, ForgeFlags.dryRun, ForgeFlags.format, ForgeFlags.json, ForgeFlags.detail, ForgeFlags.full], [...args, ForgeFlags.format, ForgeFlags.json, ForgeFlags.detail, ForgeFlags.full]])]);
       const catalogue = await readFile(join(destination, Scaffold.catalogue), "utf8");
       for (const file of frozen.files) assert.ok(catalogue.includes(file.metadata.description));
     } else assert.deepEqual(forgeCalls, []);

@@ -1,0 +1,5 @@
+[
+  { "id": "elapsed-time-display", "text": "Show minutes and seconds. Let minutes grow past 59.", "judgedBy": "judge" },
+  { "id": "supporting-title-copy", "text": "Just use Neon Pairs as the title. I don't need a subtitle.", "judgedBy": "judge" },
+  { "id": "control-arrangement", "text": "Put the size and game buttons above the board. They can wrap on my phone.", "judgedBy": "judge" }
+]

@@ -11,7 +11,8 @@ export interface StripOptions {
 
 export async function stripSetup(options: StripOptions): Promise<void> {
   const files = await inventory(options.source);
-  const specs = new Map(options.manifest.specifications.files.map((file) => [`${SetupFiles.docs}/${safeRelative(file.path)}`, file]));
+  const specifications = options.manifest.kind === SetupKind.inline ? [] : options.manifest.specifications.files;
+  const specs = new Map(specifications.map((file) => [`${SetupFiles.docs}/${safeRelative(file.path)}`, file]));
   const scaffold = options.manifest.files.filter((file) => !specs.has(file.path) && file.path !== SetupFiles.readme);
   for (const file of scaffold) {
     safeRelative(file.path);

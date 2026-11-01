@@ -1,0 +1,1 @@
+Can you build Neon Pairs from the supplied product specification? Please implement the whole game, including its board codes, saved snapshots and replay command. Use the documented build and test commands and give me the offline dist/index.html. Keep the code arranged as the project rules say. If anything is unclear, ask me.

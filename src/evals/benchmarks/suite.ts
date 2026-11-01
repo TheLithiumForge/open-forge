@@ -2,7 +2,12 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { EvalPaths } from "../paths.ts";
+import { evalsRoot, EvalPaths } from "../paths.ts";
+import { readFrozenSpecs } from "../materialize/frozen.ts";
+import { orderedDocuments } from "../materialize/document-order.ts";
+import { safeRelative, sha256 } from "../materialize/files.ts";
+import { checkSubset } from "../materialize/subset.ts";
+import { DocumentCase } from "../materialize/delivery.ts";
 import type { IntentItem, Suite } from "./suite.types.ts";
 
 const SuiteFiles = {
@@ -13,7 +18,7 @@ const SuiteFiles = {
   rubric: "rubric.json",
 } as const;
 
-type SuiteDefinition = Pick<Suite, "id" | "title" | "project" | "baseline" | "setups">;
+type SuiteDefinition = Pick<Suite, "id" | "title" | "project" | "baseline" | "setups" | "specs" | "runMinutes" | "comparisons">;
 
 const suiteId = /^[\w-]+$/;
 
@@ -36,18 +41,28 @@ export async function loadSuite(id: string): Promise<Suite> {
     checks: await readChecks(EvalPaths.checks),
   };
   const definition: SuiteDefinition = JSON.parse(sources.definition);
+  const frozen = definition.specs === undefined ? undefined : await readFrozenSpecs(join(evalsRoot, safeRelative(definition.specs)));
+  if (frozen !== undefined) {
+    if (intentEdited) throw new Error("Document cases use their frozen answer bank. Remove the local intent override before running.");
+    const inputs = JSON.parse(await read("inputs.json"));
+    if (JSON.stringify(inputs) !== JSON.stringify({ sourceHash: frozen.manifest.sourceHash, files: frozen.manifest.files.map(({ path, sha256 }) => ({ path, sha256 })) })) throw new Error("The case product documents differ from their frozen inputs.");
+    if (id === DocumentCase.two) await checkSubset(join(evalsRoot, safeRelative(definition.specs ?? "")));
+  }
+  const documents = frozen === undefined ? undefined : orderedDocuments(frozen.manifest, frozen.documents).map((file) => file.bytes.toString());
   return {
     ...definition,
     prompt: sources.prompt,
     intent: JSON.parse(sources.intent),
     rubric: JSON.parse(sources.rubric),
-    fingerprint: createHash("sha256").update(JSON.stringify(sources)).digest("hex").slice(0, 16),
+    fingerprint: createHash("sha256").update(JSON.stringify({ ...sources, documents: documents?.map(sha256) })).digest("hex").slice(0, 16),
     intentEdited,
+    ...(documents === undefined ? {} : { documents }),
   };
 }
 
 /** Edits from the UI go to a local copy, so the checked-in intent stays the standard one. */
 export async function saveIntent(id: string, intent: readonly IntentItem[]): Promise<void> {
+  if (id === DocumentCase.two || id === DocumentCase.three) throw new Error("Document cases use their frozen answer bank.");
   await writeFile(join(suiteFolder(id), SuiteFiles.localIntent), `${JSON.stringify(intent, null, 2)}\n`);
 }
 

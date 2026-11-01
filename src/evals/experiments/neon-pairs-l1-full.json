@@ -1,0 +1,31 @@
+{
+    "schemaVersion":  1,
+    "layer":  1,
+    "case":  "greenfield-baseline",
+    "setups":  [
+                   "no-setup",
+                   "minimal",
+                   "essentials",
+                   "full-core"
+               ],
+    "runsPerSetup":  3,
+    "parallelRuns":  5,
+    "agents":  [
+                   {
+                       "tool":  "codex",
+                       "model":  "gpt-6.1-sol",
+                       "effort":  "high"
+                   }
+               ],
+    "judge":  {
+                  "tool":  "claude",
+                  "model":  "opus",
+                  "effort":  "high",
+                  "repeats":  3
+              },
+    "simulatedUser":  "local-config",
+    "isolation":  "docker",
+    "limits":  {
+                   "questionRounds":  3
+               }
+}

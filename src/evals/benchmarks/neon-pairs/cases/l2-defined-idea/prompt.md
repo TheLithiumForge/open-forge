@@ -1,0 +1,1 @@
+Can you build me Neon Pairs, a neon memory matching game for my phone and keyboard? Follow the supplied product requirements. Use React and TypeScript and give me one offline dist/index.html. Keep each component's logic, markup and styles together. If you need a choice I've left open, ask me.

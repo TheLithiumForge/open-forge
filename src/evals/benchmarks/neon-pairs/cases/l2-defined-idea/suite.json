@@ -1,0 +1,20 @@
+{
+  "id": "l2-defined-idea",
+  "title": "Defined idea",
+  "project": "neon-pairs",
+  "baseline": "plain-docs",
+  "specs": "benchmarks/neon-pairs/cases/l2-defined-idea/specs",
+  "runMinutes": 60,
+  "setups": {
+    "plain-docs": { "label": "Plain docs", "commands": [], "delivery": { "kind": "plain-docs" } },
+    "linked-agents": { "label": "Linked AGENTS.md", "commands": [], "delivery": { "kind": "linked-agents" } },
+    "minimal": { "label": "Minimal", "commands": [], "delivery": { "kind": "open-forge", "preset": "minimal" } },
+    "essentials": { "label": "Essentials", "commands": [], "delivery": { "kind": "open-forge", "preset": "essentials" } },
+    "full-core": { "label": "Full Core", "commands": [], "delivery": { "kind": "open-forge", "preset": "full-core" } },
+    "spec-in-prompt": { "label": "Spec in prompt", "commands": [], "delivery": { "kind": "spec-in-prompt" } }
+  },
+  "comparisons": {
+    "presets": ["plain-docs", "minimal", "essentials", "full-core"],
+    "delivery": ["plain-docs", "linked-agents", "minimal", "spec-in-prompt"]
+  }
+}

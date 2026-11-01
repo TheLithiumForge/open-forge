@@ -3,6 +3,12 @@ import { cp, mkdir, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
 import type { RunSpace } from "./containers/executor.ts";
 import { EvalPaths } from "../paths.ts";
+import type { Suite } from "../benchmarks/suite.types.ts";
+import { setupPrompt } from "../materialize/delivery.ts";
+
+export function suiteForSetup(suite: Suite, setup: string): Suite {
+  return { ...suite, prompt: setupPrompt(suite, setup) };
+}
 
 const IdBytes = 6;
 const notFrozen = new Set(["node_modules"]);

@@ -1,17 +1,25 @@
 import { materializeSpecs } from "./specs.ts";
-import { materializeSetup, parseSetupKind } from "./setup.ts";
+import { materializeSetup, parseSetupKind, SetupKind } from "./setup.ts";
+import { materializeSubset } from "./subset.ts";
+import { MaterializePaths } from "./paths.ts";
 
-export const MaterializeCommand = { specs: "specs", setup: "setup" } as const;
+export const MaterializeCommand = { specs: "specs", subset: "subset", setup: "setup" } as const;
 
 export async function main(args: readonly string[]): Promise<void> {
   const [command, kind, folder, ...extra] = args;
+  if (command === MaterializeCommand.subset && kind === undefined) {
+    const manifest = await materializeSubset(MaterializePaths.playerSpecs);
+    process.stdout.write(`${manifest.sourceHash}\n`);
+    return;
+  }
   if (command === MaterializeCommand.specs && kind === undefined) {
     const manifest = await materializeSpecs();
     process.stdout.write(`${manifest.sourceHash}\n`);
     return;
   }
   if (command === MaterializeCommand.setup && folder && !extra.length) {
-    const result = await materializeSetup({ kind: parseSetupKind(kind), destination: folder });
+    const delivery = parseSetupKind(kind);
+    const result = await materializeSetup({ kind: delivery, destination: folder, specs: delivery === SetupKind.inline ? MaterializePaths.playerSpecs : MaterializePaths.specs });
     process.stdout.write(`${result.manifest.sourceHash}\n`);
     return;
   }

@@ -1,0 +1,19 @@
+{
+  "id": "l3-full-spec",
+  "title": "Full specification",
+  "project": "neon-pairs",
+  "baseline": "plain-docs",
+  "specs": "benchmarks/neon-pairs/specs",
+  "runMinutes": 60,
+  "setups": {
+    "plain-docs": { "label": "Plain docs", "commands": [], "delivery": { "kind": "plain-docs" } },
+    "linked-agents": { "label": "Linked AGENTS.md", "commands": [], "delivery": { "kind": "linked-agents" } },
+    "minimal": { "label": "Minimal", "commands": [], "delivery": { "kind": "open-forge", "preset": "minimal" } },
+    "essentials": { "label": "Essentials", "commands": [], "delivery": { "kind": "open-forge", "preset": "essentials" } },
+    "full-core": { "label": "Full Core", "commands": [], "delivery": { "kind": "open-forge", "preset": "full-core" } }
+  },
+  "comparisons": {
+    "presets": ["plain-docs", "minimal", "essentials", "full-core"],
+    "delivery": ["plain-docs", "linked-agents", "minimal"]
+  }
+}

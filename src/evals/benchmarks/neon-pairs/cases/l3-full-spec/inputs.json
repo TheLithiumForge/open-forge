@@ -1,0 +1,45 @@
+{
+    "sourceHash":  "e5e2b62ec066f67a2407b9595e59a78d75d614ae48d9a3bb4d323fac4f41698b",
+    "files":  [
+                  {
+                      "path":  "README.md",
+                      "sha256":  "6ee4c2df7374d416eb175e12ddfca298509fab5687174e9ec52c095abac70ee1"
+                  },
+                  {
+                      "path":  "acceptance.md",
+                      "sha256":  "934cb47e577ca2a16293295ea46cf94f4092c30eb59b94f5901e6b1d7ee04032"
+                  },
+                  {
+                      "path":  "architecture.md",
+                      "sha256":  "2170b88ae392b3606927d68701c370385f4a2b180f14bf3b158d02a9a55a70b5"
+                  },
+                  {
+                      "path":  "controls.md",
+                      "sha256":  "dfb3922f2f2acf04e4b98d5d34520c90c303afdd9cc47b2d9f9eefc5d808664f"
+                  },
+                  {
+                      "path":  "input.md",
+                      "sha256":  "3f65afda3d712abd5437886582480607114345e76ade4ddf9d45aacf8cd81a29"
+                  },
+                  {
+                      "path":  "reproducibility.md",
+                      "sha256":  "70fe45ba62462a969fb911d753bc0dbac2f848d860ab67af53745d19f6d491f6"
+                  },
+                  {
+                      "path":  "rules.md",
+                      "sha256":  "8c743ab97ca18c75904b4235930e608c33659084d9657117cde7faebc62a4cd4"
+                  },
+                  {
+                      "path":  "sound.md",
+                      "sha256":  "4dddb45d62e7830d9bf6b90b11af217fad28c0db8a26f4e7b8bf2de595845bbd"
+                  },
+                  {
+                      "path":  "technology.md",
+                      "sha256":  "a6a82a21b69885cae7092cdacdd1a64f19aa73aa2a760b299bec1ece20d99b8d"
+                  },
+                  {
+                      "path":  "visuals.md",
+                      "sha256":  "3123a85c95811eeeef7068fafb97f68303cdd11a0cc75e080d0d70a2ed1879b2"
+                  }
+              ]
+}

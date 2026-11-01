@@ -1,0 +1,331 @@
+{
+  "schemaVersion": 1,
+  "fixture": "neon-pairs-player",
+  "specVersion": 2,
+  "clauseIds": [
+    "R01.1",
+    "R01.2",
+    "R01.3",
+    "R02.1",
+    "R02.2",
+    "R02.3",
+    "R03.1",
+    "R03.2",
+    "R03.3",
+    "R04.1",
+    "R04.2",
+    "R04.3",
+    "R04.4",
+    "R05.1",
+    "R05.2",
+    "R05.3",
+    "R05.4",
+    "R06.1",
+    "R06.2",
+    "R06.3",
+    "R06.4",
+    "R06.5",
+    "R06.6",
+    "R07.1",
+    "R07.2",
+    "R07.3",
+    "R07.5",
+    "R07.6",
+    "R07.7",
+    "R07.8",
+    "R08.1",
+    "R08.2",
+    "R08.3",
+    "R08.4",
+    "R09.1",
+    "R09.2",
+    "R09.3",
+    "R09.4",
+    "R10.1",
+    "R10.2",
+    "R10.3",
+    "R10.4",
+    "R10.5",
+    "R10.6",
+    "R10.7",
+    "R11.3",
+    "R11.4",
+    "R12.1",
+    "R12.2",
+    "I01.1",
+    "I01.2",
+    "I02.1",
+    "I03.1",
+    "I03.2",
+    "I04.1",
+    "I04.2",
+    "I05.1",
+    "I05.2",
+    "I05.3",
+    "I06.1",
+    "I06.2",
+    "I06.3",
+    "I06.4",
+    "I06.5",
+    "I06.6",
+    "I06.7",
+    "I06.8",
+    "I06.9",
+    "I07.1",
+    "I08.1",
+    "I08.2",
+    "I09.1",
+    "I09.2",
+    "I09.3",
+    "I10.1",
+    "I10.2",
+    "I11.1",
+    "I12.1",
+    "I13.1",
+    "I14.1",
+    "I14.2",
+    "I14.3",
+    "I15.1",
+    "I15.2",
+    "I16.1",
+    "I16.2",
+    "I16.3",
+    "I16.4",
+    "I16.5",
+    "I17.1",
+    "I17.2",
+    "I17.3",
+    "I17.4",
+    "I17.5",
+    "I17.6",
+    "C01.1",
+    "C01.2",
+    "C02.1",
+    "C02.2",
+    "C03.1",
+    "C03.2",
+    "C13.1",
+    "C13.3",
+    "C13.5",
+    "V01.1",
+    "V01.3",
+    "V02.1",
+    "V02.2",
+    "V02.3",
+    "V03.1",
+    "V03.2",
+    "V03.3",
+    "V04.1",
+    "V04.2",
+    "V04.3",
+    "V04.4",
+    "V05.1",
+    "V05.2",
+    "V06.1",
+    "V06.2",
+    "V06.3",
+    "V06.4",
+    "V06.5",
+    "V06.6",
+    "V06.7",
+    "V06.8",
+    "V07.1",
+    "V08.1",
+    "V08.2",
+    "V08.3",
+    "V08.4",
+    "V09.1",
+    "V09.2",
+    "V10.1",
+    "V10.3",
+    "V10.4",
+    "V10.5",
+    "V11.1",
+    "V11.2",
+    "V12.7",
+    "V13.1",
+    "V13.2",
+    "V14.1",
+    "V14.2",
+    "V15.1",
+    "V15.2",
+    "V15.3",
+    "V16.1",
+    "V16.2",
+    "V17.1",
+    "V17.2",
+    "V18.1",
+    "V18.2",
+    "V18.3",
+    "V18.4",
+    "V19.1",
+    "V19.2",
+    "V19.3",
+    "V19.4",
+    "V19.5",
+    "V20.1",
+    "V20.2",
+    "V20.3",
+    "V20.4",
+    "V20.5",
+    "S01.1",
+    "S02.3",
+    "T01.1",
+    "T01.2",
+    "T07.4",
+    "T07.6",
+    "T07.9",
+    "T08.1",
+    "T08.2",
+    "T08.3",
+    "T08.4",
+    "T09.2",
+    "T10.2",
+    "T10.3",
+    "T10.4"
+  ],
+  "sourceHash": "5305337d6e5419f0d75423e90fe123958fd046ec683b8d4047e64c5be3516415",
+  "sourceFiles": [
+    {
+      "path": "README.md",
+      "sha256": "91186245c704907e187926a0cfe474d821b4f2ddba522d79947755bf551b4f6f"
+    },
+    {
+      "path": "_spec.md",
+      "sha256": "5726756a9716179529c80ded65ed80467024124851cbcc309f432962b75df522"
+    },
+    {
+      "path": "acceptance.md",
+      "sha256": "1cd54cb3c36301a20d975d992f553933bb96b2989f89d54b77d11b5ad3450b32"
+    },
+    {
+      "path": "architecture.md",
+      "sha256": "c06d14764566226e52198dfb53a36e9aea5f3dbaa7787556885dda64e877c8f4"
+    },
+    {
+      "path": "controls.md",
+      "sha256": "f7d9634a840af9da18a4a56ad3a7eb7849f44aecc9502b26d96f96356540a81d"
+    },
+    {
+      "path": "input.md",
+      "sha256": "038ae6ec125d9fad13f9e352221f193f6cb61facd2b2f9f18df62ed6931a27cd"
+    },
+    {
+      "path": "reproducibility.md",
+      "sha256": "55ee4033721ac3c05c26f9bcdc1bf51ee6e8475d51e57c6eb0853a4235e8f0a6"
+    },
+    {
+      "path": "rules.md",
+      "sha256": "08be8af35df23e8dc82a0366a2e4c0da358d7889cb74eb71470d20dd6c581020"
+    },
+    {
+      "path": "sound.md",
+      "sha256": "f9ac868547f68422c82625357d89e7335458b88f3679947287fa2fcaeeb72f56"
+    },
+    {
+      "path": "technology.md",
+      "sha256": "371ad57bf6f28346a1fb4f34b6904817c713a16e3b59a6a2acc6f08ec583795e"
+    },
+    {
+      "path": "visuals.md",
+      "sha256": "97b984b095266490bda8858105e12492d3d635acc68618ab125cbc36b58e5d3e"
+    },
+    {
+      "path": "requirements.json",
+      "sha256": "03411b6073c6192ebb53a12e23c9e841822e31710d02fff82241d8e31117b72f"
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "6a942871656a92fe4f66993ed6a6c070eac86af88f54c34e828ba3f663c9acb8",
+      "sourceSha256": "91186245c704907e187926a0cfe474d821b4f2ddba522d79947755bf551b4f6f",
+      "metadata": {
+        "description": "Neon Pairs requirements for Neon Pairs",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Specification"
+        ]
+      }
+    },
+    {
+      "path": "rules.md",
+      "sha256": "dda585f9ef29757a1eec0181f927e8ba319345f6a6df68c31a7d4e2334f67451",
+      "sourceSha256": "08be8af35df23e8dc82a0366a2e4c0da358d7889cb74eb71470d20dd6c581020",
+      "metadata": {
+        "description": "Rules requirements for Neon Pairs",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Specification"
+        ]
+      }
+    },
+    {
+      "path": "input.md",
+      "sha256": "c1af88b2c36d3d9da6d6b9cf30bfc1b075e2499f6d49b787a108c903156f3d46",
+      "sourceSha256": "038ae6ec125d9fad13f9e352221f193f6cb61facd2b2f9f18df62ed6931a27cd",
+      "metadata": {
+        "description": "Input requirements for Neon Pairs",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Specification"
+        ]
+      }
+    },
+    {
+      "path": "controls.md",
+      "sha256": "4b3bba20dd7778ced4443915dc77390e6d17083d40bb9ab96d32480db00b5544",
+      "sourceSha256": "f7d9634a840af9da18a4a56ad3a7eb7849f44aecc9502b26d96f96356540a81d",
+      "metadata": {
+        "description": "Controls requirements for Neon Pairs",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Specification"
+        ]
+      }
+    },
+    {
+      "path": "visuals.md",
+      "sha256": "49f9ee861beb34fb6490571465733e4ea6f4ce0a2b705fd4b34f2f9903bab1a6",
+      "sourceSha256": "97b984b095266490bda8858105e12492d3d635acc68618ab125cbc36b58e5d3e",
+      "metadata": {
+        "description": "Visuals requirements for Neon Pairs",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Specification"
+        ]
+      }
+    },
+    {
+      "path": "sound.md",
+      "sha256": "87385a8c60a986e63d3ab1d686a0d96c6ede22987cb6d73d21c14f594f94cc75",
+      "sourceSha256": "f9ac868547f68422c82625357d89e7335458b88f3679947287fa2fcaeeb72f56",
+      "metadata": {
+        "description": "Sound requirements for Neon Pairs",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Specification"
+        ]
+      }
+    },
+    {
+      "path": "technology.md",
+      "sha256": "b72c1948e7a6222e497f1878617d4a2043ab796ca2f6a8c72fd51e47fe7b6af7",
+      "sourceSha256": "371ad57bf6f28346a1fb4f34b6904817c713a16e3b59a6a2acc6f08ec583795e",
+      "metadata": {
+        "description": "Technology requirements for Neon Pairs",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Specification"
+        ]
+      }
+    }
+  ]
+}

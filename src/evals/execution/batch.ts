@@ -5,6 +5,7 @@ import { Isolation, Tool } from "../config/choices.ts";
 import { loadConfig } from "../config/config.ts";
 import type { EvalConfig } from "../config/config.types.ts";
 import { suiteProtocol } from "../config/protocol.ts";
+import { answerBank, freezeProtocol } from "./conversation/answer-bank.ts";
 import type { BatchRecord, RunRecord } from "../history/results.types.ts";
 import { BatchStatus, FailureKind, RecordSchemaVersion, rerunStatuses, RunStatus } from "../history/statuses.ts";
 import { listBatches, readBatch, readRun, readRuns, readSetups, saveBatch, saveRun, saveSetups } from "../history/store.ts";
@@ -18,7 +19,7 @@ import { progress } from "./progress.ts";
 import { executeRun } from "./run.ts";
 import { runInParallel } from "./run-queue.ts";
 import { generateSetup } from "../config/setups.ts";
-import { opaqueId, removeFolder } from "./workspace.ts";
+import { opaqueId, removeFolder, suiteForSetup } from "./workspace.ts";
 
 let activeBatch: string | null = null;
 
@@ -44,7 +45,8 @@ export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   if (activeBatch !== null) throw new Error("A batch is already running.");
   const requested = selected ?? await loadConfig();
   const suite = await loadSuite(requested.suite);
-  const config = { ...requested, protocol: requested.protocol ?? suiteProtocol(suite) };
+  const config = { ...requested, limits: { ...requested.limits, runMinutes: suite.runMinutes ?? requested.limits.runMinutes },
+    protocol: suite.documents === undefined ? requested.protocol ?? suiteProtocol(suite) : freezeProtocol(answerBank(suite.intent), [suite.prompt, ...suite.documents]) };
   const id = `${new Date().toISOString().replaceAll(/[:.]/g, "-")}-${opaqueId()}`;
   const runs = shuffled(config.agents.flatMap((agent) => config.setups.flatMap((setup) => Array.from({ length: config.runsPerSetup }, (_, repeat) => plannedRun(opaqueId(), id, setup, agent, repeat + 1)))));
   const batch: BatchRecord = { ...await captureExperiment(id, config, suite), runs: runs.map((run) => run.id) };
@@ -115,13 +117,14 @@ async function executeBatch(batchId: string): Promise<void> {
         await saveRun(run);
         await saveBatch(batch);
       }
-      let done = await executeRun({ run, suite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} of ${batch.runs.length}` });
+      const attemptSuite = suiteForSetup(suite, run.setup);
+      let done = await executeRun({ run, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} of ${batch.runs.length}` });
       if (done.status === RunStatus.failed && done.failureKind === FailureKind.infrastructure && done.replacesRunId === null) {
         const replacement = replacementRun(done, opaqueId(), "One replacement for an infrastructure failure.");
         batch = { ...batch, runs: [...batch.runs, replacement.id] };
         await saveRun(replacement);
         await saveBatch(batch);
-        done = await executeRun({ run: replacement, suite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} replacement` });
+        done = await executeRun({ run: replacement, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} replacement` });
       }
       if (done.status === RunStatus.limited) limited = true;
     }, () => limited);

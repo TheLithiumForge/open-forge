@@ -1,0 +1,33 @@
+{
+    "schemaVersion":  1,
+    "layer":  3,
+    "case":  "l3-full-spec",
+    "setups":  [
+                   "plain-docs",
+                   "linked-agents",
+                   "minimal",
+                   "essentials",
+                   "full-core"
+               ],
+    "runsPerSetup":  3,
+    "parallelRuns":  5,
+    "agents":  [
+                   {
+                       "tool":  "codex",
+                       "model":  "gpt-6.1-sol",
+                       "effort":  "high"
+                   }
+               ],
+    "judge":  {
+                  "tool":  "claude",
+                  "model":  "opus",
+                  "effort":  "high",
+                  "repeats":  3
+              },
+    "simulatedUser":  "local-config",
+    "isolation":  "docker",
+    "limits":  {
+                   "questionRounds":  3,
+                   "runMinutes":  60
+               }
+}

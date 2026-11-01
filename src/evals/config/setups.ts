@@ -7,10 +7,12 @@ import { createForgeRunner, type ForgeRunner } from "../materialize/forge.ts";
 import { inventory, safeRelative, sha256 } from "../materialize/files.ts";
 import { ImageVersions } from "../execution/containers/docker-image.ts";
 import { object, text } from "./validation.ts";
+import { materializeSetup, SetupFiles, SetupKind, type SetupManifest } from "../materialize/setup.ts";
+import { evalsRoot } from "../paths.ts";
 
 export const SetupCliFlags = { version: "--version", preview: "--dry-run", output: ["--format", "json", "--detail", "full"] } as const;
 export const SetupFileKinds = new Set(["file", "setting", "record", "section"]);
-export interface GeneratedSetup extends Snapshot { readonly expected: readonly string[]; readonly frameworkVersion: string | null }
+export interface GeneratedSetup extends Snapshot { readonly expected: readonly string[]; readonly frameworkVersion: string | null; readonly materialized?: SetupManifest }
 
 export function plannedFiles(stdout: string): string[] {
   const result = object(JSON.parse(stdout));
@@ -32,6 +34,24 @@ export async function generateSetup(suite: Suite, setup: string, run: ForgeRunne
   const output: string[] = [];
   try {
     await mkdir(folder);
+    if (definition.delivery !== undefined) {
+      if (!suite.specs || definition.commands.length) throw new Error("Document setups need one frozen pack and no separate setup commands.");
+      const planned = new Set<string>();
+      const tracked: ForgeRunner = async (args, cwd) => {
+        const result = await run(args, cwd);
+        if (args.includes(SetupCliFlags.preview) && result.code === 0) for (const path of plannedFiles(result.stdout)) planned.add(path);
+        return result;
+      };
+      const result = await materializeSetup({ kind: definition.delivery.kind, destination: folder, specs: join(evalsRoot, safeRelative(suite.specs)),
+        ...(definition.delivery.preset === undefined ? {} : { preset: definition.delivery.preset }), runForge: tracked });
+      expected.add(SetupFiles.readme);
+      if (definition.delivery.kind !== SetupKind.inline) for (const file of result.manifest.specifications.files) expected.add(`${SetupFiles.docs}/${file.path}`);
+      if (definition.delivery.kind === SetupKind.linked) expected.add(SetupFiles.agents);
+      for (const path of planned) expected.add(path);
+      const files = (await inventory(folder)).map((file) => ({ path: file.path, bytes: file.bytes.length, sha256: sha256(file.bytes) }));
+      return { folder, expected: [...expected].sort(), frameworkVersion: result.manifest.frameworkVersion, materialized: result.manifest,
+        record: { setup, label: definition.label, commands: result.manifest.frameworkCommands.filter((command) => !command.args.includes(SetupCliFlags.preview)).map((command) => command.args), output: "", files } };
+    }
     if (definition.commands.length > 0) {
       const version = await run([SetupCliFlags.version], folder);
       if (version.code !== 0 || version.stdout.trim() !== ImageVersions.openForge) throw new Error("The setup CLI differs from its pinned version.");

@@ -1,4 +1,5 @@
 import type { JudgedBy, RubricArea } from "./suite-values.ts";
+import type { DocumentDelivery } from "../materialize/delivery.ts";
 
 /** Something the user wants but didn't say. Only the simulated user, the checks and the judges see it. */
 export interface IntentItem {
@@ -17,6 +18,7 @@ export interface SetupDefinition {
   readonly label: string;
   /** Open Forge CLI arguments, run in order in an empty project folder. */
   readonly commands: readonly (readonly string[])[];
+  readonly delivery?: DocumentDelivery;
 }
 
 export interface Suite {
@@ -31,4 +33,8 @@ export interface Suite {
   /** Changes whenever the prompt, the hidden intent, the rubric or the checks change. */
   readonly fingerprint: string;
   readonly intentEdited: boolean;
+  readonly specs?: string;
+  readonly documents?: readonly string[];
+  readonly runMinutes?: number;
+  readonly comparisons?: Readonly<Record<string, readonly string[]>>;
 }
