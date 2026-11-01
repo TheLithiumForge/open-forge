@@ -60,12 +60,6 @@ p {
 .game-result {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
   min-height: 56px;
   margin: 4px 0 8px;
-}
-.game-result p {
-  flex: 1;
-  min-width: 0;
 }

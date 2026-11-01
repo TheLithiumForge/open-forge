@@ -4,7 +4,7 @@ Version 2.2 Review is the correction record for the maintainer's spec trim and t
 
 For example, Ctrl+End on a card that already has focus is now the browser's key, so the reference no longer needs a fix for its missing outline.
 
-Status: polished candidate for spec version 2.2 after two judges scored it 9.9 and 9.7. Spoken output stays user acceptance.
+Status: polished candidate for spec version 2.2. Two judges scored it 10 and 9.8 before the last polish. Long press needs a real-device review, and spoken output stays user acceptance.
 
 ## Spec trim
 
@@ -47,6 +47,17 @@ A Codex Sol judge scored the committed 2.2 candidate 9.9 and a Claude Opus judge
 | 6, renders       | None                | Cards are memoized. The game core returns the face-up cards as a set, and the board keeps one matched set per state, so a clock tick renders no card.                                                  | The whole browser suite, including the 256-card journeys.                                                                                                               |
 
 Of the files the Layer 4 patches edit, only `Game.tsx` and `README.md` changed. `Game.tsx` stops passing `paused` to the board, and the README change is its last line. All eight Layer 4 patches still apply with `git apply --check`, the seeds first.
+
+Sol then scored the polished candidate 10 and Opus 9.8, again with no clause violation. Opus's remaining points led to these changes:
+
+| Item                   | Clauses      | Change                                                                                                                                                                                                                                                    | Test                                                                          |
+| ---------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| 7, long-press evidence | I03.2        | The long-press test is removed. In this Chromium build `Input.synthesizeTapGesture` sends no click even for a short tap, so its assertion couldn't fail. Real devices open the context menu and send no click. Long press now needs a real-device review. | The right-click journey keeps the executable half of I03.2.                   |
+| 8, file length         | T06.2, T06.4 | The board's focus handling moves to `board/use-board-focus.ts` and the board code form to `controls/BoardCodeForm.tsx`. Browser storage access moves beside the preference hook. `Board.tsx` has 69 lines, `Reproduction.tsx` 75 and `use-game.ts` 94.    | Mutations M32 and M42 follow their code.                                      |
+| 9, result row styles   | None         | `.game-result` keeps its centered flex row, minimum height and margins. The wrap, the gap and the child flex rules are gone.                                                                                                                              | The spacing and readability checks.                                           |
+| 10, input limits       | C05.2, C07.2 | The board code limit sits in `BoardCodeForm.tsx` and the snapshot limit in `Reproduction.tsx`, beside the controls that set them.                                                                                                                         | `tests/controls.e2e.test.ts` checks the published limits as its own literals. |
+
+This round changes two files the Layer 4 patches edit, `controls/Reproduction.tsx` and `session/use-game.ts`. The overseer regenerates the patches and retargets the focus-trap fixture.
 
 ## Verification
 

@@ -1,12 +1,11 @@
-import { useRef, useState } from 'react';
-import {
-  BOARD_CODE_MAX_CHARACTERS,
-  ReproductionControl,
-  SNAPSHOT_MAX_CHARACTERS,
-} from './control-labels.ts';
+import { useState } from 'react';
+import { BoardCodeForm } from './BoardCodeForm.tsx';
+import { ReproductionControl } from './control-labels.ts';
 import type { GameState } from '../game.ts';
 import './control.css';
 import './reproduction.css';
+
+const SNAPSHOT_MAX_CHARACTERS = 65_536;
 
 interface ReproductionProps {
   game: GameState;
@@ -30,43 +29,12 @@ export function Reproduction({
   resume,
 }: ReproductionProps) {
   const [snapshot, setSnapshot] = useState('');
-  const loadButton = useRef<HTMLButtonElement>(null);
   return (
     <>
       <details className="reproduction">
         <summary>{ReproductionControl.summary}</summary>
         <div className="reproduction-body">
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              const code = new FormData(event.currentTarget).get('boardCode');
-              // A loaded deal replaces the input, so focus moves to Load board. An invalid code
-              // keeps focus in the draft for correction.
-              if (typeof code === 'string' && loadBoard(code)) loadButton.current?.focus();
-            }}
-          >
-            <label htmlFor="board-code">{ReproductionControl.board}</label>
-            <div className="control-row">
-              <input
-                key={generation}
-                id="board-code"
-                className="control"
-                name="boardCode"
-                defaultValue={game.boardCode}
-                maxLength={BOARD_CODE_MAX_CHARACTERS}
-                spellCheck={false}
-                autoComplete="off"
-              />
-              <button
-                ref={loadButton}
-                type="submit"
-                className="control"
-                aria-describedby="load-notice"
-              >
-                {ReproductionControl.loadBoard}
-              </button>
-            </div>
-          </form>
+          <BoardCodeForm code={game.boardCode} generation={generation} loadBoard={loadBoard} />
           <label htmlFor="snapshot-json">{ReproductionControl.snapshot}</label>
           <textarea
             id="snapshot-json"

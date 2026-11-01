@@ -320,7 +320,7 @@
   },
   {
     "id": "M32",
-    "path": "src/game/board/Board.tsx",
+    "path": "src/game/board/use-board-focus.ts",
     "find": "    if (card.matches(KEYBOARD_FOCUS)) scrollToNearest(card);",
     "replace": "    scrollToNearest(card);",
     "test": "tests/pointer-focus.e2e.test.ts",
@@ -397,9 +397,9 @@
   },
   {
     "id": "M42",
-    "path": "src/game/controls/Reproduction.tsx",
-    "find": "              if (typeof code === 'string' && loadBoard(code)) loadButton.current?.focus();",
-    "replace": "              loadButton.current?.focus();\n              if (typeof code === 'string') loadBoard(code);",
+    "path": "src/game/controls/BoardCodeForm.tsx",
+    "find": "        if (typeof draft === 'string' && loadBoard(draft)) loadButton.current?.focus();",
+    "replace": "        loadButton.current?.focus();\n        if (typeof draft === 'string') loadBoard(draft);",
     "test": "tests/status-controls.e2e.test.ts",
     "browser": true,
     "clauses": ["C11.2", "C13.2"],

@@ -21,14 +21,6 @@
       "lines": 114
     },
     {
-      "path": "reference/src/game/board/Board.tsx",
-      "lines": 110
-    },
-    {
-      "path": "reference/src/game/controls/Reproduction.tsx",
-      "lines": 107
-    },
-    {
       "path": "reference/src/game/game.test.ts",
       "lines": 105
     },
@@ -39,10 +31,6 @@
     {
       "path": "reference/src/game/session/session.test.ts",
       "lines": 122
-    },
-    {
-      "path": "reference/src/game/session/use-game.ts",
-      "lines": 103
     },
     {
       "path": "reference/src/game/snapshot.test.ts",
@@ -121,8 +109,8 @@
         "repetition": 1,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 94,
-        "passed": 94,
+        "tests": 93,
+        "passed": 93,
         "failed": 0,
         "skipped": 0,
         "exit": 0
@@ -131,8 +119,8 @@
         "repetition": 2,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 94,
-        "passed": 94,
+        "tests": 93,
+        "passed": 93,
         "failed": 0,
         "skipped": 0,
         "exit": 0
@@ -141,8 +129,8 @@
         "repetition": 3,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 94,
-        "passed": 94,
+        "tests": 93,
+        "passed": 93,
         "failed": 0,
         "skipped": 0,
         "exit": 0
@@ -155,7 +143,7 @@
       "cleanBrowserBaseline": "passed",
       "exit": 0
     },
-    "buildArtifactSha256": "05394eb65b6c4c1e70fc3530272085351a406a97fd429e3b5d84d6f1362b7e46"
+    "buildArtifactSha256": "2e0cee7491affa5f209fc65f93532b2c51bbb55bc7305a4ae8101cf9a90a2035"
   },
   "packs": {
     "fullSourceHash": "cb00d6bb3237e7e42e524fa38c657bcfaec4dc144a5787aba9ef6777dd5129fc",
@@ -167,12 +155,12 @@
     "clauses": 412,
     "emptyReferenceSlots": 0,
     "pendingCheckSlots": 1,
-    "reviewClauses": 50,
+    "reviewClauses": 51,
     "treeCaptures": 28,
     "screenReaderUsed": false
   },
   "limits": [
-    "Spoken output is user acceptance. No screen reader was run by the developer.",
+    "Spoken output is user acceptance. No screen reader was run by the developer. Long press needs a real-device review for I03.2, because headless Chromium sends no click for synthesized taps.",
     "Source and process review clauses need independent judgment.",
     "Protected checks, Layer 4 cases, run-limit data and the final seed freeze stay with the following workers. The checks still expect spec 2.1, and I06.10 has an empty check slot.",
     "Chromium's native button activates a card on Shift+Enter, Shift+Space, Ctrl+Space and Alt+Space. The reference leaves these modifier combinations to the browser, and the spec README lists them as out of scope.",
@@ -425,6 +413,27 @@
     "build": "passed",
     "browserRuns": 3,
     "browserPassed": 94,
+    "mutations": "39 caught for their declared reasons",
+    "evalsTypecheck": "passed",
+    "productTestsPassed": 242,
+    "productTestsFailed": 31
+  },
+  "specV22Polish2": {
+    "change": "second polish after the Codex Sol 10 and Claude Opus 9.8 judgments",
+    "record": "reference-audit/review-v2.2.md",
+    "removedTests": ["a real long-press gesture keeps the card closed and a later tap still reveals it"],
+    "reviewClausesAdded": ["I03.2"],
+    "changedMutations": {
+      "M32": "targets board/use-board-focus.ts",
+      "M42": "targets controls/BoardCodeForm.tsx"
+    },
+    "layerFourFilesChanged": ["src/game/controls/Reproduction.tsx", "src/game/session/use-game.ts"],
+    "referenceInstall": "passed offline",
+    "referenceTypecheck": "passed",
+    "vitestPassed": 131,
+    "build": "passed",
+    "browserRuns": 3,
+    "browserPassed": 93,
     "mutations": "39 caught for their declared reasons",
     "evalsTypecheck": "passed",
     "productTestsPassed": 242,

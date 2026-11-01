@@ -1,15 +1,14 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { EXAMPLE_CODE } from '../src/game/game.fixture.ts';
-import {
-  BOARD_CODE_MAX_CHARACTERS,
-  DealControl,
-  ReproductionControl,
-  SNAPSHOT_MAX_CHARACTERS,
-} from '../src/game/controls/control-labels.ts';
+import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { GRID_SIZES } from '../src/game/deck.ts';
 import { SessionNotice } from '../src/game/session/session.ts';
 import { loadTimedBoard, exportedSnapshot, GAME_URL } from './game-fixture.ts';
+
+// The published input limits, kept apart from the components that set them.
+const BOARD_CODE_MAX_CHARACTERS = 32;
+const SNAPSHOT_MAX_CHARACTERS = 65_536;
 
 test('native reproduction controls keep drafts, limits, exact errors and action focus', async ({
   page,

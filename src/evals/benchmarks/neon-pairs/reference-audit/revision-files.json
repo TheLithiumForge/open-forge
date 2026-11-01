@@ -451,5 +451,28 @@
       "src/evals/benchmarks/neon-pairs/trace.json"
     ],
     "deleted": []
+  },
+  "specV22Polish2": {
+    "record": "src/evals/benchmarks/neon-pairs/reference-audit/review-v2.2.md",
+    "created": ["src/evals/benchmarks/neon-pairs/reference/src/game/board/use-board-focus.ts", "src/evals/benchmarks/neon-pairs/reference/src/game/controls/BoardCodeForm.tsx"],
+    "changed": [
+      "src/evals/benchmarks/neon-pairs/reference-audit/AUDIT.md",
+      "src/evals/benchmarks/neon-pairs/reference-audit/evidence/accessibility-journey.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/mutations.fixture.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/review-v2.2.md",
+      "src/evals/benchmarks/neon-pairs/reference-audit/revision-files.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/seed-record.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/verification.json",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/board/Board.tsx",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/controls/Reproduction.tsx",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/controls/control-labels.ts",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/game.css",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/session/use-game.ts",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/session/use-saved-preferences.ts",
+      "src/evals/benchmarks/neon-pairs/reference/tests/controls.e2e.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/tests/input-contract.e2e.test.ts",
+      "src/evals/benchmarks/neon-pairs/trace.json"
+    ],
+    "deleted": []
   }
 }

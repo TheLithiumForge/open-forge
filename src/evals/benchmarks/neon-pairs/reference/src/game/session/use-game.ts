@@ -5,18 +5,9 @@ import { decodeSnapshot, encodeSnapshot } from '../snapshot.ts';
 import { freshBoardCode } from './fresh-board.ts';
 import { activateSession, initialSession, replaceGame, SessionNotice } from './session.ts';
 import { readPreferences } from './storage.ts';
-import { useSavedPreferences } from './use-saved-preferences.ts';
+import { browserStore, useSavedPreferences } from './use-saved-preferences.ts';
 import { useSessionClock } from './use-session-clock.ts';
-import type { PreferenceStore } from './storage.ts';
 import type { Session } from './session.ts';
-
-function browserStore(): PreferenceStore | null {
-  try {
-    return window.localStorage;
-  } catch {
-    return null;
-  }
-}
 
 export function useGame() {
   const [store] = useState(browserStore);

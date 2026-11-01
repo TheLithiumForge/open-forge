@@ -63,29 +63,3 @@ test('hover changes only card border color and matched marks stay legible', asyn
   await expect(mark).toBeVisible();
   await expect(mark.locator('path')).toHaveAttribute('d', 'm2 6 3 3 5-6');
 });
-
-const LONG_PRESS_MS = 1500;
-
-test(
-  'a real long-press gesture keeps the card closed and a later tap still reveals it',
-  async ({ page, context }) => {
-    await loadFixedBoard(page);
-    const card = page.locator('.card').first();
-    const box = await card.boundingBox();
-    if (!box) throw new Error('Missing card');
-    const point = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
-    const cdp = await context.newCDPSession(page);
-    // Chromium's own gesture recognizer turns this held touch into a long press.
-    await cdp.send('Input.synthesizeTapGesture', {
-      ...point,
-      duration: LONG_PRESS_MS,
-      tapCount: 1,
-      gestureSourceType: 'touch',
-    });
-    await expect(page.locator('.card.revealed'), 'I03 long press does not activate').toHaveCount(0);
-    await page.touchscreen.tap(point.x, point.y);
-    await expect(card).toHaveClass(/revealed/);
-    await cdp.detach();
-  },
-  { hasTouch: true, isMobile: true },
-);

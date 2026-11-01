@@ -2658,6 +2658,11 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
+          "path": "reference/src/game/controls/BoardCodeForm.tsx",
+          "symbol": "BoardCodeForm",
+          "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
           "path": "reference/src/game/controls/control-labels.ts",
           "symbol": "ReproductionControl",
           "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
@@ -2680,7 +2685,12 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/src/game/controls/control-labels.ts",
+          "path": "reference/src/game/controls/BoardCodeForm.tsx",
+          "symbol": "BoardCodeForm",
+          "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/controls/BoardCodeForm.tsx",
           "symbol": "BOARD_CODE_MAX_CHARACTERS",
           "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
         },
@@ -2702,6 +2712,11 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
+          "path": "reference/src/game/controls/BoardCodeForm.tsx",
+          "symbol": "BoardCodeForm",
+          "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
           "path": "reference/tests/control-contract.e2e.test.ts",
           "symbol": "draft resets, load focus, paused notice and Resume focus order survive remembered positions",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
@@ -2716,6 +2731,11 @@
         {
           "path": "reference/src/game/controls/Reproduction.tsx",
           "symbol": "Reproduction",
+          "evidence": "Clause C05.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/controls/BoardCodeForm.tsx",
+          "symbol": "BoardCodeForm",
           "evidence": "Clause C05.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -2761,6 +2781,11 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
+          "path": "reference/src/game/controls/BoardCodeForm.tsx",
+          "symbol": "BoardCodeForm",
+          "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
           "path": "reference/src/game/controls/control-labels.ts",
           "symbol": "ReproductionControl",
           "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
@@ -2780,6 +2805,11 @@
         {
           "path": "reference/src/game/controls/Reproduction.tsx",
           "symbol": "Reproduction",
+          "evidence": "Clause C06.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/controls/BoardCodeForm.tsx",
+          "symbol": "BoardCodeForm",
           "evidence": "Clause C06.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -2847,7 +2877,7 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/src/game/controls/control-labels.ts",
+          "path": "reference/src/game/controls/Reproduction.tsx",
           "symbol": "SNAPSHOT_MAX_CHARACTERS",
           "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
         },
@@ -3556,6 +3586,11 @@
           "evidence": "Clause C11.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
+          "path": "reference/src/game/controls/BoardCodeForm.tsx",
+          "symbol": "BoardCodeForm",
+          "evidence": "Clause C11.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
           "path": "reference/src/game/session/use-game.ts",
           "symbol": "loadSnapshot, resume",
           "evidence": "Clause C11.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
@@ -3859,6 +3894,11 @@
         {
           "path": "reference/src/game/controls/Reproduction.tsx",
           "symbol": "Reproduction",
+          "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/controls/BoardCodeForm.tsx",
+          "symbol": "BoardCodeForm",
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
@@ -4167,7 +4207,7 @@
           "evidence": "Clause I01.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Every click activates. Chromium sends no click after a context menu, a long press or a touch scroll."
         },
         {
-          "path": "reference/src/game/board/Board.tsx",
+          "path": "reference/src/game/board/use-board-focus.ts",
           "symbol": "cardFocused",
           "evidence": "Clause I01.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Only keyboard focus scrolls a card, so a pressed card stays under the pointer."
         },
@@ -4214,9 +4254,9 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/tests/input-contract.e2e.test.ts",
-          "symbol": "a real long-press gesture keeps the card closed and a later tap still reveals it, plus native right-click lifecycle journey",
-          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+          "path": "reference/tests/lifecycle.e2e.test.ts",
+          "symbol": "a right-click keeps the native context menu and activates no card",
+          "evidence": "Executed by the recorded unit or browser command. A right-click opens no game action and the card leaves the contextmenu event unprevented."
         }
       ]
     },
@@ -4231,9 +4271,14 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/tests/input-contract.e2e.test.ts",
-          "symbol": "a real long-press gesture keeps the card closed and a later tap still reveals it, plus native right-click lifecycle journey",
-          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+          "path": "reference/tests/lifecycle.e2e.test.ts",
+          "symbol": "a right-click keeps the native context menu and activates no card",
+          "evidence": "Executed by the recorded unit or browser command. A right-click opens no game action and the card leaves the contextmenu event unprevented."
+        },
+        {
+          "path": "reference-audit/AUDIT.md",
+          "symbol": "Real-device review",
+          "evidence": "Long press needs a review on a touch device. Headless Chromium's gesture tool sends no click even for a short tap, so a browser test can't show that a long press leaves the card closed."
         }
       ]
     },
@@ -5357,7 +5402,7 @@
           "evidence": "Clause I13.1. Browser focus scrolls are undone before the card scrolls itself with nearest alignment."
         },
         {
-          "path": "reference/src/game/board/Board.tsx",
+          "path": "reference/src/game/board/use-board-focus.ts",
           "symbol": "navigate",
           "evidence": "Clause I13.1. Arrow focus skips the browser's centering scroll, so the card's nearest scroll is the one that applies."
         },
@@ -5367,7 +5412,7 @@
           "evidence": "Clause I13.1. Keyboard focus reaches row 9, column 9 with nearest scrolls of the board and the page."
         },
         {
-          "path": "reference/src/game/board/Board.tsx",
+          "path": "reference/src/game/board/use-board-focus.ts",
           "symbol": "cardFocused",
           "evidence": "Clause I13.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Only keyboard focus scrolls a card, so a pressed card stays under the pointer."
         },
@@ -7990,7 +8035,7 @@
           "evidence": "Clause V16.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
         },
         {
-          "path": "reference/src/game/board/Board.tsx",
+          "path": "reference/src/game/board/use-board-focus.ts",
           "symbol": "navigate",
           "evidence": "Clause V16.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Keyboard moves request a visible focus outline."
         },
