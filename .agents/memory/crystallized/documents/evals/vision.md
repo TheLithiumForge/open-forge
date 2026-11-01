@@ -41,12 +41,20 @@ Keep these axes separate:
 | Layer | How much of the task is stated | Layer 3, a full spec |
 | Change type | The brownfield work requested | Feature, repair or feature plus repair |
 | Setup | The instructions and context arrangement | No setup or Essentials |
+| Implementer | The tool and model that does the work | Codex `gpt-6.1-sol` or Claude Opus |
+| Judge | The tool and model that grades the work | Claude Opus or Codex `gpt-6.1-sol` |
 
-A richer-context brownfield case is a Layer 4 variant, not another layer. The [proposal's document scopes](../../../emerging/analysis/eval-product-proposal.md#open-forge-documents) carry forward this separation from the council review.
+A richer-context brownfield case is a Layer 4 variant, not another layer.
+
+## Test matrix
+
+The maintainer set the matrix on 2026-11-01: Claude implementing with a Claude judge, Codex implementing with a Claude judge, Codex implementing with a Codex judge, and Claude implementing with a Codex judge. Each attempt runs once with its implementer and is then judged by both judges, the second through an appended rejudge. So two implementers give all four pairs, and a judge's taste for its own family shows up as a difference between the two judges' scores on the same attempt.
+
+Everything frozen as an eval input passes both providers first: the seed reference must score 10 out of 10 with a Claude Opus judge and a Codex `gpt-6.1-sol` judge at xhigh effort, and the spec, the seed code and the brownfield cases go through a council with Claude and Codex members. The [proposal's document scopes](../../../emerging/analysis/eval-product-proposal.md#open-forge-documents) carry forward this separation from the council review.
 
 ## Current work
 
-Each case runs five times per setup, model and tool. The current setups are No setup, Minimal, Essentials and Full Core. These runs screen and compare. They can't support the future margins.
+Each case runs at most five times per setup, model and tool. The maintainer expects that to cover most cases, since the four-pair matrix shows the same work through two implementers and two judges. The full eval uses three runs per setup on every layer. The current setups are No setup, Minimal, Essentials and Full Core. These runs screen and compare. They can't support the future margins.
 
 We build the production-ready product with Layer 1 tested end to end first. Then we write the Layer 2, 3 and 4 documents. Their descriptions here define the approved direction, and their finished packs are Not built yet.
 
