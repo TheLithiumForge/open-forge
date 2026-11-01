@@ -421,5 +421,35 @@
       "src/evals/materialize/subset.ts"
     ],
     "deleted": ["src/evals/benchmarks/neon-pairs/reference/.npmrc", "src/evals/benchmarks/neon-pairs/reference/src/game/status-row.css"]
+  },
+  "specV22Polish": {
+    "record": "src/evals/benchmarks/neon-pairs/reference-audit/review-v2.2.md",
+    "created": ["src/evals/benchmarks/neon-pairs/reference/tests/spacing.e2e.test.ts"],
+    "changed": [
+      "src/evals/benchmarks/neon-pairs/reference-audit/AUDIT.md",
+      "src/evals/benchmarks/neon-pairs/reference-audit/evidence/accessibility-journey.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/mutation-results.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/mutations.fixture.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/review-v2.2.md",
+      "src/evals/benchmarks/neon-pairs/reference-audit/revision-files.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/seed-record.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/verification.json",
+      "src/evals/benchmarks/neon-pairs/reference/README.md",
+      "src/evals/benchmarks/neon-pairs/reference/art/face-sheet.tsx",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/Game.tsx",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/board/Board.tsx",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/board/Card.tsx",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/game.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/game.ts",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/session/storage.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/session/storage.ts",
+      "src/evals/benchmarks/neon-pairs/reference/tests/accessibility.e2e.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/tests/input-contract.e2e.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/tests/lifecycle.e2e.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/tests/preferences.e2e.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/tests/snapshots.e2e.test.ts",
+      "src/evals/benchmarks/neon-pairs/trace.json"
+    ],
+    "deleted": []
   }
 }

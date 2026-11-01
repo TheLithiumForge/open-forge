@@ -20,7 +20,6 @@ createRoot(root).render(
               size={16}
               face={face}
               matched={false}
-              blocked={true}
               tabIndex={-1}
               activate={ignore}
               focus={ignore}

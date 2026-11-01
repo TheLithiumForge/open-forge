@@ -2007,22 +2007,12 @@
         {
           "path": "reference/src/game/session/storage.ts",
           "symbol": "writePreferences",
-          "evidence": "Clause R10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Each write rereads storage and keeps the better best for every size."
-        },
-        {
-          "path": "reference/src/game/session/storage.test.ts",
-          "symbol": "a write keeps a better best that another tab saved in the meantime",
-          "evidence": "Clause R10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/preferences.e2e.test.ts",
-          "symbol": "a tab opened earlier keeps the best another tab recorded when it starts a new game",
-          "evidence": "Clause R10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+          "evidence": "Clause R10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Each write saves this tab's size and bests. Several open tabs are out of scope."
         },
         {
           "path": "reference/src/game/session/use-saved-preferences.ts",
           "symbol": "useSavedPreferences",
-          "evidence": "Clause R10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Each preference change writes this tab's size with the better best stored for every size."
+          "evidence": "Clause R10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Each preference change writes this tab's size and bests."
         }
       ]
     },
@@ -4173,13 +4163,8 @@
         },
         {
           "path": "reference/src/game/board/Card.tsx",
-          "symbol": "Card pointer handlers",
-          "evidence": "Clause I01.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Only a touch that moves or opens the context menu is cancelled."
-        },
-        {
-          "path": "reference/tests/input-contract.e2e.test.ts",
-          "symbol": "a completed mouse click reveals its card even after the pointer drifts",
-          "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+          "symbol": "Card",
+          "evidence": "Clause I01.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Every click activates. Chromium sends no click after a context menu, a long press or a touch scroll."
         },
         {
           "path": "reference/src/game/board/Board.tsx",
@@ -4290,9 +4275,9 @@
           "evidence": "Clause I04.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/tests/lifecycle.e2e.test.ts",
-          "symbol": "native context menus, cancelled taps and touch drags never activate cards",
-          "evidence": "Clause I04.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+          "path": "reference/tests/touch-scroll.e2e.test.ts",
+          "symbol": "touch scrolling reaches the last 16x16 card at 360 by 800",
+          "evidence": "Clause I04.2. A real touch scroll makes Chromium cancel the pointer. No card reveals."
         },
         {
           "path": "reference-audit/AUDIT.md",
@@ -7037,6 +7022,16 @@
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "named color targets, reset margins and card focus scroll margins follow the visual contract",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+        },
+        {
+          "path": "reference/tests/spacing.e2e.test.ts",
+          "symbol": "every margin, padding and gap stays on the spacing scale at 360px",
+          "evidence": "Clause V09.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits. Every computed margin, padding and gap is on the scale, auto or normal."
+        },
+        {
+          "path": "reference/tests/spacing.e2e.test.ts",
+          "symbol": "every margin, padding and gap stays on the spacing scale at 1280px",
+          "evidence": "Clause V09.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits. Every computed margin, padding and gap is on the scale, auto or normal."
         }
       ]
     },
@@ -10560,8 +10555,8 @@
         },
         {
           "path": "reference/src/game/game.ts",
-          "symbol": "isFaceUp",
-          "evidence": "Clause A01.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. The board asks the game core which cards face up."
+          "symbol": "faceUpCards",
+          "evidence": "Clause A01.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. The board asks the game core for the set of cards that face up."
         }
       ]
     },

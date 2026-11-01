@@ -5,11 +5,7 @@ import { DealControl, ReproductionControl } from '../src/game/controls/control-l
 import { MISMATCH_MS } from '../src/game/game.ts';
 import { exportedSnapshot, loadFixedBoard, loadTimedBoard, moves } from './game-fixture.ts';
 
-const TOUCH = 'touch';
-
-test('native context menus, cancelled taps and touch drags never activate cards', async ({
-  page,
-}) => {
+test('a right-click keeps the native context menu and activates no card', async ({ page }) => {
   await loadFixedBoard(page);
   const card = page.locator('.card').first();
   await card.click({ button: 'right' });
@@ -20,14 +16,6 @@ test('native context menus, cancelled taps and touch drags never activate cards'
     return event.defaultPrevented;
   });
   expect(prevented).toBe(false);
-  await card.dispatchEvent('pointerdown', { clientX: 10, clientY: 10, pointerType: TOUCH });
-  await card.dispatchEvent('pointercancel');
-  await card.dispatchEvent('click', { detail: 1 });
-  await expect(page.locator('.card.revealed')).toHaveCount(0);
-  await card.dispatchEvent('pointerdown', { clientX: 10, clientY: 10, pointerType: TOUCH });
-  await card.dispatchEvent('pointermove', { clientX: 30, clientY: 10, pointerType: TOUCH });
-  await card.dispatchEvent('click', { detail: 1 });
-  await expect(page.locator('.card.revealed')).toHaveCount(0);
 });
 
 test('Restart clears a mismatch and rejects earlier timer updates', async ({ page }) => {
@@ -37,7 +25,8 @@ test('Restart clears a mismatch and rejects earlier timer updates', async ({ pag
   await page.clock.runFor(1000);
   await page.locator('.card').nth(0).click();
   await page.locator('.card').nth(1).click();
-  await page.locator('.card').nth(2).click({ force: true });
+  // The pending mismatch blocks this closed card without marking it disabled.
+  await page.locator('.card').nth(3).click();
   await expect(page.locator('.card.revealed')).toHaveCount(2);
   expect(await moves(page)).toBe(2);
   await page.clock.runFor(200);

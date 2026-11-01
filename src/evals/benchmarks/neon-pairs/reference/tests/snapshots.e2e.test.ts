@@ -35,7 +35,7 @@ test('Resume focuses the remembered card before removal and continues the exact 
     selection: { kind: SelectionKind.mismatch, first: 0, second: 1, remainingMs: REMAINING_MS },
   };
   await loadDraft(page, snapshot);
-  await page.locator('.card').nth(2).click({ force: true });
+  await page.locator('.card').nth(2).click();
   await page.keyboard.press('Enter');
   await page.keyboard.press('ArrowRight');
   await expect(page.locator('.card').nth(3)).toBeFocused();

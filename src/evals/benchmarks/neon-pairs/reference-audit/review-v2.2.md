@@ -4,7 +4,7 @@ Version 2.2 Review is the correction record for the maintainer's spec trim and t
 
 For example, Ctrl+End on a card that already has focus is now the browser's key, so the reference no longer needs a fix for its missing outline.
 
-Status: corrected candidate for spec version 2.2. Independent judgment is pending. Spoken output stays user acceptance.
+Status: polished candidate for spec version 2.2 after two judges scored it 9.9 and 9.7. Spoken output stays user acceptance.
 
 ## Spec trim
 
@@ -32,6 +32,21 @@ The paused round aimed at seven findings from the fourth-round judges:
 | 5, acceptance script    | I16.1        | Kept. [Screen Reader Journey](screen-reader-journey.md) no longer expects a New Game announcement or Ctrl+Home.                                                                                                                                | Review only.                                                                                                                                                                                                                           |
 | 6, cache folders        | T07.7        | Kept. `reference/.npmrc` is deleted, because its relative cache setting left `.npm-cache` folders wherever replay ran. `.gitignore` keeps `.npm-cache/`, and the install commands pass `--cache .npm-cache`.                                   | No new test. The replay tests still run the published command from a subfolder.                                                                                                                                                        |
 | 7, cleanups             | I13.1, A12.3 | Kept. The board scroll restore no longer resets the page scroll. Storage parses through `parseJson`, and `readJson` is gone. Status rows import their own styles instead of a parent-folder file. Selectors name the load-status row directly. | Mutation M28 now removes only the board scroll restore. Without the page reset, M32 first loses a click after a wheel scroll, so its declared assertion moves there. The saved-format test checks the byte limit and the parser apart. |
+
+## Polish
+
+A Codex Sol judge scored the committed 2.2 candidate 9.9 and a Claude Opus judge 9.7. Neither found a clause violation. Their points led to these changes:
+
+| Item             | Clauses             | Change                                                                                                                                                                                                 | Test                                                                                                                                                                    |
+| ---------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1, README link   | None                | The closing link pointed to a `docs/` folder the reference doesn't have. Plain text now says that delivered projects from document setups keep the specification in `docs/`.                           | Review only.                                                                                                                                                            |
+| 2, pointer state | I01.2, I03.2, I04.2 | Removed. Chromium sends no click after a context menu, a long press or a touch scroll, so the card's pointer tracking and its keyboard bypass guarded events that never arrive. Every click activates. | The real long-press gesture, the right-click journey and the real touch scroll still reveal no card. The synthetic pointer sequences are gone. Mutation M30 is retired. |
+| 3, spacing       | V09.1               | No product change. Every computed margin, padding and gap on the page must be on the scale, `auto` or `normal`, in a won game with the panel open and in a paused import.                              | `tests/spacing.e2e.test.ts` at 360px and 1280px. Mutation M43 moves a status gap off the scale and M44 replaces the page's automatic centering.                         |
+| 4, blocked cards | I09.2, I10.2, C10.4 | A pending mismatch or a paused import no longer marks cards `aria-disabled`. Only matched cards carry it. Activation stays ignored.                                                                    | Browser tests click blocked cards without `force`. The accessibility journey finds no disabled card during the paused import.                                           |
+| 5, open tabs     | R10.3               | The cross-tab best merge is removed. A write saves this tab's size and bests.                                                                                                                          | The multi-tab journey and the merge unit test are removed with mutation M35. The storage round trips stay.                                                              |
+| 6, renders       | None                | Cards are memoized. The game core returns the face-up cards as a set, and the board keeps one matched set per state, so a clock tick renders no card.                                                  | The whole browser suite, including the 256-card journeys.                                                                                                               |
+
+Of the files the Layer 4 patches edit, only `Game.tsx` and `README.md` changed. `Game.tsx` stops passing `paused` to the board, and the README change is its last line. All eight Layer 4 patches still apply with `git apply --check`, the seeds first.
 
 ## Verification
 

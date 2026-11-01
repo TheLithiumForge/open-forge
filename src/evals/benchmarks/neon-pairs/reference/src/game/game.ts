@@ -30,14 +30,16 @@ export function isWon(state: GameState): boolean {
   return state.matched.length === state.deck.length;
 }
 
-export function isFaceUp(state: GameState, index: number): boolean {
+// The board reads one set per game state instead of searching the matched list for every card.
+export function faceUpCards(state: Pick<GameState, 'matched' | 'selection'>): ReadonlySet<number> {
+  const cards = new Set(state.matched);
   const selection = state.selection;
-  return (
-    state.matched.includes(index) ||
-    (selection.kind === SelectionKind.one && selection.index === index) ||
-    (selection.kind === SelectionKind.mismatch &&
-      (selection.first === index || selection.second === index))
-  );
+  if (selection.kind === SelectionKind.one) cards.add(selection.index);
+  if (selection.kind === SelectionKind.mismatch) {
+    cards.add(selection.first);
+    cards.add(selection.second);
+  }
+  return cards;
 }
 
 export function activateCard(state: GameState, index: number): GameState {

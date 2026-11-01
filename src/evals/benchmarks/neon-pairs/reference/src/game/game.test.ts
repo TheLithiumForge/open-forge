@@ -4,7 +4,7 @@ import {
   activateCard,
   advanceGame,
   createGame,
-  isFaceUp,
+  faceUpCards,
   isWon,
   MISMATCH_MS,
   ELAPSED_MAX_MS,
@@ -93,8 +93,7 @@ test('one active-time step advances elapsed and mismatch together', () => {
 });
 
 test('a card faces up while it is the one selection, either mismatch card or matched', () => {
-  const faceUp = (state: GameState) =>
-    state.deck.flatMap((_, index) => (isFaceUp(state, index) ? [index] : []));
+  const faceUp = (state: GameState) => [...faceUpCards(state)].sort((left, right) => left - right);
   const start = createGame(EXAMPLE_CODE);
   assert.deepEqual(faceUp(start), []);
   const one = activateCard(start, 0);

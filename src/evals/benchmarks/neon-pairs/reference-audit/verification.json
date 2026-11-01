@@ -21,12 +21,16 @@
       "lines": 114
     },
     {
+      "path": "reference/src/game/board/Board.tsx",
+      "lines": 110
+    },
+    {
       "path": "reference/src/game/controls/Reproduction.tsx",
       "lines": 107
     },
     {
       "path": "reference/src/game/game.test.ts",
-      "lines": 106
+      "lines": 105
     },
     {
       "path": "reference/src/game/replay.test.ts",
@@ -46,7 +50,7 @@
     },
     {
       "path": "reference/tests/accessibility.e2e.test.ts",
-      "lines": 163
+      "lines": 164
     },
     {
       "path": "reference/tests/announcements.e2e.test.ts",
@@ -65,12 +69,8 @@
       "lines": 139
     },
     {
-      "path": "reference/tests/input-contract.e2e.test.ts",
-      "lines": 105
-    },
-    {
       "path": "reference/tests/lifecycle.e2e.test.ts",
-      "lines": 125
+      "lines": 114
     },
     {
       "path": "reference/tests/pointer-focus.e2e.test.ts",
@@ -101,8 +101,8 @@
     "referenceInstall": "passed",
     "referenceTypecheck": "passed",
     "vitest": {
-      "tests": 132,
-      "passed": 132,
+      "tests": 131,
+      "passed": 131,
       "failed": 0,
       "skipped": 0,
       "exit": 0
@@ -155,7 +155,7 @@
       "cleanBrowserBaseline": "passed",
       "exit": 0
     },
-    "buildArtifactSha256": "c95414120e80869e930197256056a9585974d79155c6b6cd1db178430cc93bb6"
+    "buildArtifactSha256": "05394eb65b6c4c1e70fc3530272085351a406a97fd429e3b5d84d6f1362b7e46"
   },
   "packs": {
     "fullSourceHash": "cb00d6bb3237e7e42e524fa38c657bcfaec4dc144a5787aba9ef6777dd5129fc",
@@ -178,7 +178,7 @@
     "Chromium's native button activates a card on Shift+Enter, Shift+Space, Ctrl+Space and Alt+Space. The reference leaves these modifier combinations to the browser, and the spec README lists them as out of scope.",
     "The Layer 3 check batch has not measured real completion times yet.",
     "No Docker, WSL, model CLI or sign-in was used.",
-    "Layer 4 case patches that no longer apply to the corrected reference are listed under casePatches. The cases stay unchanged for the overseer."
+    "All eight Layer 4 case patches apply to the polished reference. The Layer 4 case documents keep their version 2.1 rules for the overseer."
   ],
   "commands": [
     {
@@ -273,57 +273,48 @@
   "casePatches": {
     "scratch": "src/evals/.tmp",
     "command": "git apply --check",
-    "note": "Every patch applied to the previous reference. Seeded case solutions were checked without their seed, because no seed applies to the corrected reference.",
-    "applyToPreviousReference": 8,
-    "applyToCorrectedReference": 0,
+    "note": "Each seed is checked first and applied before its case solutions are checked.",
+    "applyToCorrectedReference": 8,
     "results": [
       {
         "case": "l4-f01",
         "patch": "solution.patch",
-        "applies": false,
-        "files": ["src/game/Game.tsx", "src/game/controls/Reproduction.tsx", "src/game/session/use-game.ts", "src/game/snapshot.ts"]
+        "applies": true
       },
       {
         "case": "l4-f01",
         "patch": "alt-solution.patch",
-        "applies": false,
-        "files": ["src/game/Game.tsx", "src/game/controls/Reproduction.tsx", "src/game/session/use-game.ts", "src/game/snapshot.ts"]
+        "applies": true
       },
       {
         "case": "l4-fr01",
         "patch": "seed.patch",
-        "applies": false,
-        "files": ["src/game/snapshot.ts"]
+        "applies": true
       },
       {
         "case": "l4-fr01",
         "patch": "solution.patch",
-        "applies": false,
-        "files": ["src/game/Game.tsx", "src/game/controls/Reproduction.tsx", "src/game/session/use-game.ts", "src/game/snapshot.ts"]
+        "applies": true
       },
       {
         "case": "l4-fr01",
         "patch": "alt-solution.patch",
-        "applies": false,
-        "files": ["src/game/Game.tsx", "src/game/controls/Reproduction.tsx", "src/game/session/use-game.ts", "src/game/snapshot.ts"]
+        "applies": true
       },
       {
         "case": "l4-r01",
         "patch": "seed.patch",
-        "applies": false,
-        "files": ["src/game/snapshot.ts"]
+        "applies": true
       },
       {
         "case": "l4-r01",
         "patch": "solution.patch",
-        "applies": false,
-        "files": ["src/game/snapshot.ts"]
+        "applies": true
       },
       {
         "case": "l4-r01",
         "patch": "alt-solution.patch",
-        "applies": false,
-        "files": ["src/game/snapshot.ts"]
+        "applies": true
       }
     ]
   },
@@ -411,6 +402,26 @@
     "referenceInstall": "passed offline",
     "referenceTypecheck": "passed",
     "vitestPassed": 132,
+    "build": "passed",
+    "browserRuns": 3,
+    "browserPassed": 94,
+    "mutations": "39 caught for their declared reasons",
+    "evalsTypecheck": "passed",
+    "productTestsPassed": 242,
+    "productTestsFailed": 31
+  },
+  "specV22Polish": {
+    "change": "polish after the Codex Sol 9.9 and Claude Opus 9.7 judgments",
+    "record": "reference-audit/review-v2.2.md",
+    "retiredMutations": ["M30", "M35"],
+    "newMutations": ["M43", "M44"],
+    "changedMutations": {
+      "M36": "targets the module-level click scroll"
+    },
+    "layerFourFilesChanged": ["src/game/Game.tsx", "README.md"],
+    "referenceInstall": "passed offline",
+    "referenceTypecheck": "passed",
+    "vitestPassed": 131,
     "build": "passed",
     "browserRuns": 3,
     "browserPassed": 94,

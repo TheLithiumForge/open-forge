@@ -308,17 +308,6 @@
     "reason": "I13 Shift+Tab enters with nearest alignment"
   },
   {
-    "id": "M30",
-    "path": "src/game/board/Card.tsx",
-    "find": "event.pointerType === TOUCH_POINTER",
-    "replace": "true",
-    "test": "tests/input-contract.e2e.test.ts",
-    "browser": true,
-    "clauses": ["I01.2"],
-    "testName": "a completed mouse click reveals its card even after the pointer drifts",
-    "reason": "I01 completed mouse click activates"
-  },
-  {
     "id": "M31",
     "path": "scripts/replay-cli.ts",
     "find": "  callerFolder = process.env.INIT_CWD ?? process.cwd(),",
@@ -363,20 +352,9 @@
     "reason": "V15 check marks cover no face artwork"
   },
   {
-    "id": "M35",
-    "path": "src/game/session/storage.ts",
-    "find": "  const merged = mergeSavedBests(store, preferences);",
-    "replace": "  const merged = preferences;",
-    "test": "src/game/session/storage.test.ts",
-    "browser": false,
-    "clauses": ["R10.3"],
-    "testName": "a write keeps a better best that another tab saved in the meantime",
-    "reason": "R10 a write keeps the saved better best"
-  },
-  {
     "id": "M36",
     "path": "src/game/board/Board.tsx",
-    "find": "    card.scrollIntoView(NEAREST);\n",
+    "find": "  card.scrollIntoView(NEAREST);\n",
     "replace": "",
     "test": "tests/pointer-focus.e2e.test.ts",
     "browser": true,
@@ -427,5 +405,27 @@
     "clauses": ["C11.2", "C13.2"],
     "testName": "Enter moves focus to Load board only when the code loads",
     "reason": "C11 an invalid code keeps focus in its draft"
+  },
+  {
+    "id": "M43",
+    "path": "src/game/status/status.css",
+    "find": "  gap: 12px 24px;",
+    "replace": "  gap: 12px 20px;",
+    "test": "tests/spacing.e2e.test.ts",
+    "browser": true,
+    "clauses": ["V09.1"],
+    "testName": "every margin, padding and gap stays on the spacing scale at 360px",
+    "reason": "V09 won game with the reproduction panel open"
+  },
+  {
+    "id": "M44",
+    "path": "src/game/game.css",
+    "find": "  margin: 0 auto;",
+    "replace": "  margin: 0 10px;",
+    "test": "tests/spacing.e2e.test.ts",
+    "browser": true,
+    "clauses": ["V09.1"],
+    "testName": "every margin, padding and gap stays on the spacing scale at 360px",
+    "reason": "V09 won game with the reproduction panel open"
   }
 ]

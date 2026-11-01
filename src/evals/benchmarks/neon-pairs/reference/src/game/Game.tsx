@@ -38,13 +38,7 @@ export function Game() {
           <span key={session.announcement}>{session.feedback}</span>
         </p>
       </div>
-      <Board
-        key={session.generation}
-        game={game}
-        paused={session.paused}
-        activate={controller.activate}
-        ref={board}
-      />
+      <Board key={session.generation} game={game} activate={controller.activate} ref={board} />
       <Reproduction
         game={game}
         generation={session.generation}

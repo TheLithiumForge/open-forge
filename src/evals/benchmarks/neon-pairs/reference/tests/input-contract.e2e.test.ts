@@ -64,21 +64,7 @@ test('hover changes only card border color and matched marks stay legible', asyn
   await expect(mark.locator('path')).toHaveAttribute('d', 'm2 6 3 3 5-6');
 });
 
-// Farther than the 8px touch drag distance, while staying on the card.
-const MOUSE_DRIFT_PX = 20;
 const LONG_PRESS_MS = 1500;
-
-test('a completed mouse click reveals its card even after the pointer drifts', async ({ page }) => {
-  await loadFixedBoard(page);
-  const card = page.locator('.card').first();
-  const box = await card.boundingBox();
-  if (!box) throw new Error('Missing card');
-  await page.mouse.move(box.x + box.width / 4, box.y + box.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(box.x + box.width / 4 + MOUSE_DRIFT_PX, box.y + box.height / 2);
-  await page.mouse.up();
-  await expect(card, 'I01 completed mouse click activates').toHaveClass(/revealed/);
-});
 
 test(
   'a real long-press gesture keeps the card closed and a later tap still reveals it',

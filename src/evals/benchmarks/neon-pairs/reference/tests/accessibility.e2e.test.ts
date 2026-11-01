@@ -131,7 +131,8 @@ test('a complete keyboard journey exposes names, states and each result in Chrom
     }
   }
   await expect(page.getByRole('button', { name: 'Resume', exact: true })).toBeVisible();
-  await expect(page.locator('.card[aria-disabled="true"]')).toHaveCount(expected.closed.length);
+  // A paused import blocks activation without marking its unmatched cards disabled.
+  await expect(page.locator('.card[aria-disabled="true"]')).toHaveCount(0);
   expect(
     JSON.parse((await page.getByRole('status').getAttribute('data-result-history')) ?? '[]'),
   ).toEqual([

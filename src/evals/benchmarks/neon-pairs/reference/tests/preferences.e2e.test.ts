@@ -44,20 +44,3 @@ test('malformed stored preferences fall back to a playable default game', async 
   await page.goto(gameURL);
   await expect(page.locator('.card')).toHaveCount(16);
 });
-
-test('a tab opened earlier keeps the best another tab recorded when it starts a new game', async ({
-  page,
-  context,
-  gameURL,
-}) => {
-  const earlier = await context.newPage();
-  await earlier.goto(gameURL);
-  await loadFixedBoard(page, gameURL);
-  await finishBoard(page);
-  const best = Number(await page.locator('.stats dd').nth(3).textContent());
-  await earlier.getByRole('button', { name: DealControl.newGame, exact: true }).click();
-  await earlier.reload();
-  const kept = Number(await earlier.locator('.stats dd').nth(3).textContent());
-  expect(kept, 'R10 the earlier tab keeps the saved best').toBe(best);
-  await earlier.close();
-});

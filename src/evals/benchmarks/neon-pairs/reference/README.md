@@ -56,4 +56,4 @@ Playwright checks Chromium's accessibility tree through a complete keyboard jour
 
 Tree record: Chromium 156.0.8078.4 and Playwright 1.64.1. Screen reader: not run. Spoken journey: user acceptance.
 
-Back to [Specification](docs/).
+Delivered projects from document setups keep the product specification in `docs/`.
