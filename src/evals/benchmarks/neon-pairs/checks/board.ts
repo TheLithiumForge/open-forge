@@ -31,7 +31,26 @@ export function markCards(page: Page): Promise<number> {
       const clickable = (element: Element): boolean => element.tagName === "BUTTON" || element.getAttribute("role") === "button" || element.hasAttribute("tabindex");
       let best: Element[] = [];
       let bestScore = 0;
+      const scoped: Element[][] = [];
       for (const group of groups.values()) {
+        const counts = new Map<Element, number>();
+        const scopes = new Map<Element, Element[]>();
+        for (const element of group) {
+          let parent = element.parentElement;
+          while (parent?.parentElement) {
+            let count = counts.get(parent);
+            if (count === undefined) {
+              count = group.filter((candidate) => parent?.contains(candidate)).length;
+              counts.set(parent, count);
+            }
+            if (count >= minimum) break;
+            parent = parent.parentElement;
+          }
+          if (parent) scopes.set(parent, [...(scopes.get(parent) ?? []), element]);
+        }
+        scoped.push(...scopes.values());
+      }
+      for (const group of scoped) {
         const areas = group.map((element) => element.getBoundingClientRect().width * element.getBoundingClientRect().height).sort((a, b) => a - b);
         const median = areas[Math.floor(areas.length / 2)] ?? 0;
         const similar = group.filter((element) => {
@@ -80,11 +99,16 @@ export async function stableSignature(page: Page, index: number): Promise<FaceSi
  * Waits for a card to show something other than its back, and returns that look. Screenshots finish
  * CSS animations first, so the first look that isn't the back is already the face.
  */
-export async function waitForFace(page: Page, index: number, back: FaceSignature): Promise<FaceSignature | null> {
+export async function waitForFace(page: Page, index: number, back: FaceSignature, captured?: (png: Buffer) => void | Promise<void>): Promise<FaceSignature | null> {
   const deadline = Date.now() + Waits.reveal;
   while (Date.now() < deadline) {
-    const current = await cardSignature(page, index);
-    if (!looksLikeBack(current, back)) return current;
+    await ensureCard(page, index);
+    const png = await card(page, index).screenshot({ animations: "disabled" });
+    const current = signatureOf(png);
+    if (!looksLikeBack(current, back)) {
+      await captured?.(png);
+      return current;
+    }
     await page.waitForTimeout(Waits.fastPoll);
   }
   return null;

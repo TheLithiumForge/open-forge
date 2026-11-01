@@ -1,0 +1,133 @@
+{
+    "schemaVersion":  1,
+    "version":  "L1-v2",
+    "suite":  "greenfield-baseline",
+    "checks":  [
+                   {
+                       "id":  "delivery-single-file",
+                       "area":  "Delivery",
+                       "group":  "delivery"
+                   },
+                   {
+                       "id":  "stack-react-typescript",
+                       "area":  "Stack",
+                       "group":  "stack"
+                   },
+                   {
+                       "id":  "grid-4-and-16",
+                       "area":  "Grid sizes",
+                       "group":  "delivery"
+                   },
+                   {
+                       "id":  "grid-sizes-pair-up",
+                       "area":  "Grid sizes",
+                       "group":  "large"
+                   },
+                   {
+                       "id":  "faces-drawn",
+                       "area":  "Faces",
+                       "group":  "large"
+                   },
+                   {
+                       "id":  "faces-distinct-16",
+                       "area":  "Faces",
+                       "group":  "large"
+                   },
+                   {
+                       "id":  "matching-pairs",
+                       "area":  "Matching",
+                       "group":  "play"
+                   },
+                   {
+                       "id":  "input-same-card-twice",
+                       "area":  "Input",
+                       "group":  "play"
+                   },
+                   {
+                       "id":  "input-clicks-during-delay",
+                       "area":  "Input",
+                       "group":  "play"
+                   },
+                   {
+                       "id":  "moves-count",
+                       "area":  "Moves",
+                       "group":  "play"
+                   },
+                   {
+                       "id":  "moves-compared",
+                       "area":  "Moves",
+                       "group":  "score"
+                   },
+                   {
+                       "id":  "new-game-resets",
+                       "area":  "New Game",
+                       "group":  "play"
+                   },
+                   {
+                       "id":  "win-shown",
+                       "area":  "Win",
+                       "group":  "play"
+                   },
+                   {
+                       "id":  "best-score",
+                       "area":  "Best score",
+                       "group":  "score"
+                   },
+                   {
+                       "id":  "phone-full-game",
+                       "area":  "Phone",
+                       "group":  "phone"
+                   },
+                   {
+                       "id":  "keyboard-full-game",
+                       "area":  "Keyboard",
+                       "group":  "keyboard"
+                   },
+                   {
+                       "id":  "start-4x4",
+                       "area":  "Intent",
+                       "group":  "delivery"
+                   },
+                   {
+                       "id":  "remember-size",
+                       "area":  "Intent",
+                       "group":  "delivery"
+                   },
+                   {
+                       "id":  "no-sound",
+                       "area":  "Intent",
+                       "group":  "play"
+                   }
+               ],
+    "stated":  [
+                   "delivery-single-file",
+                   "stack-react-typescript",
+                   "grid-4-and-16",
+                   "grid-sizes-pair-up",
+                   "faces-drawn",
+                   "faces-distinct-16",
+                   "matching-pairs",
+                   "input-same-card-twice",
+                   "input-clicks-during-delay",
+                   "moves-count",
+                   "moves-compared",
+                   "new-game-resets",
+                   "win-shown",
+                   "best-score",
+                   "phone-full-game",
+                   "keyboard-full-game"
+               ],
+    "working":  [
+                    "delivery-single-file",
+                    "matching-pairs",
+                    "phone-full-game",
+                    "keyboard-full-game",
+                    "win-shown",
+                    "new-game-resets"
+                ],
+    "wishes":  [
+                   "start-4x4",
+                   "remember-size",
+                   "no-sound"
+               ]
+}

@@ -2,6 +2,7 @@ import type { Browser, BrowserContext, Page } from "playwright";
 import { frameTimingScript } from "./activation.ts";
 import { backsOf, markCards } from "./board.ts";
 import type { FaceSignature } from "./face-signature.ts";
+import { GameFailure } from "./check-ids.ts";
 
 export const Device = { desktop: "desktop", phone: "phone" } as const;
 export type Device = (typeof Device)[keyof typeof Device];
@@ -39,6 +40,7 @@ export interface OpenGame {
   readonly page: Page;
   /** Every URL the page asked for, apart from the page itself. */
   readonly requests: string[];
+  readonly errors: string[];
   readonly firstRenderMs: number | null;
 }
 
@@ -53,6 +55,8 @@ export async function openGame(browser: Browser, url: string, device: Device, co
   }
   const page = await owned.newPage();
   const requests: string[] = [];
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
   page.on("request", (request) => {
     if (request.url() !== url && !/^(data|blob):/.test(request.url())) requests.push(request.url());
   });
@@ -64,7 +68,7 @@ export async function openGame(browser: Browser, url: string, device: Device, co
     await page.waitForTimeout(200);
     cards = await markCards(page);
   }
-  return { context: owned, page, requests, firstRenderMs: cards === 0 ? null : Date.now() - started };
+  return { context: owned, page, requests, errors, firstRenderMs: cards === 0 ? null : Date.now() - started };
 }
 
 export interface Board {
@@ -75,5 +79,6 @@ export interface Board {
 /** Marks the cards again and remembers each card's back, as the start of a game. */
 export async function readBoard(page: Page): Promise<Board> {
   const count = await markCards(page);
+  if (count === 0) throw new GameFailure("No playable card board appeared.");
   return { count, backs: await backsOf(page) };
 }

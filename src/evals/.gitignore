@@ -1,6 +1,7 @@
 node_modules/
 /web/dist/
 /runs/
+/.playwright-browsers/
 /.auth/
 /.env.local
 *.local.json

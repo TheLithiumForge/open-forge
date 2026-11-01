@@ -121,8 +121,8 @@ The [Results](../../.agents/memory/crystallized/documents/evals/results.md) docu
 
 ## Limits
 
-Five attempts per setup screen behavior. They don't support a claim that Open Forge improves results. The CLI stays beta.
-
-Real Docker builds, model calls and sign-ins need separate smoke tests. Passing the mock command doesn't test those services. Browser checks stay on the host and run one at a time. They can take about six minutes per attempt. Older check groups can retry once and report a second-try pass.
-
-Claude Code reports its own cost estimate. Codex reports no dollar cost. Missing simulator token counts stay missing. The simulated user uses the assessor now. Moving the judge onto the assessor is a separate packet.
+- Five runs per setup screen behavior. They don't support a claim that Open Forge improves results, and the CLI stays beta.
+- Hidden checks take about six minutes a run, most of it playing whole games, one run at a time.
+- Each check keeps its first outcome. Rechecking saved files appends a new assessment and never changes the old one.
+- Real agents always run in Docker. `local` isolation is for harness development with the mock provider, and its runs are marked as not for scoring.
+- Codex reports no dollar cost, and Claude Code's cost is its own estimate. Missing token counts stay missing.

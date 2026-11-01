@@ -1,17 +1,51 @@
-import { cp, mkdir } from "node:fs/promises";
-import { basename } from "node:path";
+import { lstat, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { extname, join } from "node:path";
+import { record } from "../../benchmarks/neon-pairs/checks/layer.ts";
 
-// The judge sees only the app. Open Forge's files, instruction files, the agent's notes and
-// build output come out first, so the judge can't tell which setup a run had.
-const hiddenNames = new Set([".agents", "AGENTS.md", "CLAUDE.md", ".claude", ".codex", "node_modules", "dist", "package-lock.json"]);
-const hiddenExtensions = [".md"];
+const hiddenNames = new Set([".agents", ".open-forge-state", ".git", ".claude", ".codex", "node_modules", "dist", "build", "coverage", "test-results", "playwright-report", "tests", "__tests__", "e2e", "docs", ".next", ".vite", ".cache", "package-lock.json", "fixture-manifest.json", "setup.json", "run.json", "batch.json", "experiment.json", "setups.json", "eval.config.json", "eval.config.local.json"]);
+const sourceExtensions = new Set([".ts", ".tsx", ".js", ".jsx", ".css", ".scss", ".html", ".json"]);
+const toolPackages = new Set(["@thelithiumforge/open-forge", "@openai/codex", "@anthropic-ai/claude-code"]);
+const decoder = new TextDecoder("utf-8", { fatal: true });
 
-function visibleToJudge(path: string): boolean {
-  const name = basename(path);
-  return !hiddenNames.has(name) && !hiddenExtensions.some((extension) => name.endsWith(extension));
+function neutralManifest(bytes: Buffer): Buffer {
+  let value: unknown;
+  try { value = JSON.parse(decoder.decode(bytes)); } catch { return bytes; }
+  if (!record(value)) return bytes;
+  const output: Record<string, unknown> = {};
+  if (typeof value["type"] === "string") output["type"] = value["type"];
+  for (const field of ["dependencies", "devDependencies", "scripts"]) {
+    const entries = value[field];
+    if (!record(entries)) continue;
+    output[field] = Object.fromEntries(Object.entries(entries).filter(([name, text]) => !toolPackages.has(name) && typeof text === "string" && !/\bopen-forge\b/.test(text)).sort(([a], [b]) => a.localeCompare(b)));
+  }
+  return Buffer.from(`${JSON.stringify(output, null, 2)}\n`);
 }
 
-export async function prepareJudgeFolder(frozenFiles: string, judgeFolder: string): Promise<void> {
+export function visibleToJudge(name: string, directory: boolean): boolean {
+  const lower = name.toLowerCase();
+  return !hiddenNames.has(lower) && !lower.startsWith(".env") && !/\.(test|spec)\.[^.]+$/.test(lower)
+    && (directory || sourceExtensions.has(extname(lower)));
+}
+
+/** Frozen source has already passed copyOutPlain. Links are still dropped here before reading it. */
+export async function prepareJudgeFolder(frozenFiles: string, judgeFolder: string, generatedFile?: string | null): Promise<void> {
+  if ((await lstat(frozenFiles)).isSymbolicLink()) throw new Error("Judge source cannot be a link.");
   await mkdir(judgeFolder, { recursive: true });
-  await cp(frozenFiles, judgeFolder, { recursive: true, filter: visibleToJudge });
+  if ((await readdir(judgeFolder)).length) throw new Error("Judge destination must be empty.");
+  const generated = generatedFile?.replaceAll("\\", "/");
+  async function copy(source: string, target: string, prefix: string): Promise<void> {
+    for (const entry of (await readdir(source, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
+      if (entry.isSymbolicLink() || !visibleToJudge(entry.name, entry.isDirectory())) continue;
+      const path = prefix ? `${prefix}/${entry.name}` : entry.name;
+      if (path === generated) continue;
+      const from = join(source, entry.name), to = join(target, entry.name);
+      if (entry.isDirectory()) { await mkdir(to); await copy(from, to, path); }
+      else if (entry.isFile()) {
+        const bytes = await readFile(from);
+        decoder.decode(bytes);
+        await writeFile(to, entry.name === "package.json" ? neutralManifest(bytes) : bytes, { flag: "wx" });
+      }
+    }
+  }
+  await copy(frozenFiles, judgeFolder, "");
 }

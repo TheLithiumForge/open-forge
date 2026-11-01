@@ -1,19 +1,22 @@
 import type { Browser, Page } from "playwright";
-import type { CheckResult, PerformanceResult } from "../../../history/results.types.ts";
+import type { PerformanceResult } from "../../../history/results.types.ts";
+import type { CheckOutcome } from "../../../grading/grading.types.ts";
 import { clicking, frameTimings } from "./activation.ts";
 import { CardAttribute, markCards } from "./board.ts";
-import { CheckArea, CheckId, guarded, result } from "./check-ids.ts";
+import { CheckArea, CheckId, guarded, result, withPageErrors } from "./check-ids.ts";
 import { faceDistance, type FaceSignature } from "./face-signature.ts";
 import { offeredSizes, setGridSize } from "./grid-size.ts";
 import { Device, openGame, readBoard } from "./open-game.ts";
 import { learnFaces } from "./solver.ts";
+import { saveFaceSheet } from "./face-sheet.ts";
 
 const LargeSize = 16;
 const P95 = 0.95;
 
 export interface LargeBoardResult {
-  readonly checks: CheckResult[];
+  readonly checks: CheckOutcome[];
   readonly performance: PerformanceResult;
+  readonly shots: readonly string[];
 }
 
 function percentile(values: readonly number[], share: number): number | null {
@@ -42,38 +45,46 @@ function imageOrEmojiCards(page: Page): Promise<number> {
   return page.evaluate((attribute) => {
     const emoji = /\p{Extended_Pictographic}/u;
     return Array.from(document.querySelectorAll(`[${attribute}]`)).filter((card) => {
-      const images = Array.from(card.querySelectorAll("img, image")).filter((image) => !/^data:/.test(image.getAttribute("src") ?? image.getAttribute("href") ?? "data:"));
+      const images = Array.from(card.querySelectorAll("img, image"));
       return images.length > 0 || emoji.test(card.textContent ?? "");
     }).length;
   }, CardAttribute);
 }
 
 /** The 16x16 board: every face once per pair, faces drawn by code, how fast it answers, and odd sizes. */
-export async function largeBoardChecks(browser: Browser, url: string, firstRenderMs: number | null): Promise<LargeBoardResult> {
+export async function largeBoardChecks(browser: Browser, url: string, firstRenderMs: number | null, shotsFolder: string): Promise<LargeBoardResult> {
   let tapP95: number | null = null;
+  const shots: string[] = [];
   const checks = await guarded(CheckId.facesDistinct, CheckArea.faces, async () => {
     const game = await openGame(browser, url, Device.desktop);
     try {
       const sizes = await offeredSizes(game.page);
       const unpaired: number[] = [];
       for (const size of sizes) {
-        await setGridSize(game.page, size);
-        if ((await markCards(game.page)) % 2 !== 0) unpaired.push(size);
+        const changed = await setGridSize(game.page, size);
+        const count = await markCards(game.page);
+        if (!changed || count !== size * size || count % 2 !== 0) unpaired.push(size);
       }
       if (!(await setGridSize(game.page, LargeSize))) return [result(CheckId.facesDistinct, CheckArea.faces, false, `Couldn't set up a ${LargeSize}x${LargeSize} board.`)];
       const board = await readBoard(game.page);
-      const faces = await learnFaces(game.page, clicking(game.page), board.backs);
+      const frames: Buffer[] = [];
+      let drawnElsewhere = 0;
+      const faces = await learnFaces(game.page, clicking(game.page), board.backs, async (index, png) => {
+        frames[index] = png;
+        drawnElsewhere = Math.max(drawnElsewhere, await imageOrEmojiCards(game.page));
+      });
+      const revealed = faces.length === board.count && faces.every((face) => face.shape.length > 0);
+      if (revealed) shots.push(await saveFaceSheet(shotsFolder, frames));
       tapP95 = percentile(await frameTimings(game.page), P95);
       const wrong = cardsSharingAFace(faces);
-      const drawnElsewhere = await imageOrEmojiCards(game.page);
-      return [
-        result(CheckId.facesDistinct, CheckArea.faces, wrong <= faces.length * SharedFaceShare, wrong === 0 ? `No face among ${faces.length} cards is drawn more than twice.` : `${wrong} of ${faces.length} cards share their face with more than one other card.`),
-        result(CheckId.facesDrawn, CheckArea.faces, drawnElsewhere === 0, drawnElsewhere === 0 ? "No image files or emoji on the cards." : `${drawnElsewhere} cards show an image file or emoji.`),
-        result(CheckId.sizesFinishable, CheckArea.grid, unpaired.length === 0, unpaired.length === 0 ? "Every offered size has an even number of cards." : `Odd card counts at: ${unpaired.join(", ")}.`),
-      ];
+      return withPageErrors([
+        result(CheckId.facesDistinct, CheckArea.faces, revealed && wrong <= faces.length * SharedFaceShare, !revealed ? "Not every card could be revealed through visible play." : wrong === 0 ? `No face among ${faces.length} cards is drawn more than twice.` : `${wrong} of ${faces.length} cards share their face with more than one other card.`),
+        result(CheckId.facesDrawn, CheckArea.faces, revealed ? drawnElsewhere === 0 : null, !revealed ? "Face inspection stopped because some cards could not be revealed." : drawnElsewhere === 0 ? "No image files or emoji on the revealed cards." : `${drawnElsewhere} revealed cards show an image file or emoji.`),
+        result(CheckId.sizesFinishable, CheckArea.grid, unpaired.length === 0, unpaired.length === 0 ? "Every offered size has its requested square board and an even card count." : `Incorrect card counts or unavailable boards at: ${unpaired.join(", ")}.`),
+      ], game.errors);
     } finally {
       await game.context.close();
     }
   });
-  return { checks, performance: { firstRenderMs, largeBoardTapP95Ms: tapP95 } };
+  return { checks, shots, performance: { firstRenderMs, largeBoardTapP95Ms: tapP95 } };
 }

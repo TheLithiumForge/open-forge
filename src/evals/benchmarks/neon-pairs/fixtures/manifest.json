@@ -1,0 +1,11 @@
+{
+    "schemaVersion":  1,
+    "gradingVersion":  "L1-v2",
+    "fixtures":  [
+                     "reference.json",
+                     "faces-repeat-32.json",
+                     "best-overwritten.json",
+                     "new-game-keeps-moves.json",
+                     "keyboard-unreachable.json"
+                 ]
+}

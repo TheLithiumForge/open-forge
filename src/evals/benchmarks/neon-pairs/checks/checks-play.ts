@@ -1,13 +1,17 @@
 import type { Browser, Page } from "playwright";
-import type { CheckResult } from "../../../history/results.types.ts";
+import { mkdir } from "node:fs/promises";
+import { join } from "node:path";
+import type { CheckOutcome } from "../../../grading/grading.types.ts";
 import { clicking, type Activate } from "./activation.ts";
 import { waitForBacks, waitForFace, Waits } from "./board.ts";
-import { CheckArea, CheckId, guarded, result } from "./check-ids.ts";
+import { CheckArea, CheckId, guarded, result, withPageErrors } from "./check-ids.ts";
+import { CheckStatus } from "../../../history/statuses.ts";
 import { NoFace, sameFace } from "./face-signature.ts";
 import { setGridSize } from "./grid-size.ts";
 import { Device, openGame, readBoard, type Board } from "./open-game.ts";
 import { movesIn, newGameButton, pageText, showsWin } from "./page-text.ts";
 import { playGame } from "./solver.ts";
+import { CompletionShot } from "./screenshots.ts";
 
 const PlaySize = 4;
 
@@ -26,26 +30,29 @@ async function mismatch(page: Page, activate: Activate, board: Board, a: number,
   return faceA !== null && faceB !== null && !sameFace(faceA, faceB);
 }
 
-async function newGameDuringDelay(page: Page, activate: Activate): Promise<CheckResult> {
+async function newGameDuringDelay(page: Page, activate: Activate): Promise<CheckOutcome> {
   const board = await freshGame(page);
   const different = await mismatch(page, activate, board, 0, 1);
   await (await newGameButton(page))?.click();
   const allBacks = await waitForBacks(page, board.backs.map((_, index) => index), board.backs, Waits.hide);
   const moves = movesIn(await pageText(page));
-  const passed = allBacks && (moves === null || moves === 0);
+  const passed = allBacks && moves === 0;
   return result(CheckId.newGame, CheckArea.newGame, passed, `${different ? "During the flip-back delay" : "After a turn"}, New Game left ${allBacks ? "every card face down" : "cards face up"} and moves at ${moves ?? "no counter found"}.`);
 }
 
-async function sameCardTwice(page: Page, activate: Activate): Promise<CheckResult> {
+async function sameCardTwice(page: Page, activate: Activate): Promise<CheckOutcome> {
   const board = await freshGame(page);
+  const before = movesIn(await pageText(page));
   await activate(0);
   const first = await waitForFace(page, 0, board.backs[0] ?? NoFace);
   await activate(0);
   await page.waitForTimeout(Waits.settle);
+  const afterDouble = movesIn(await pageText(page));
   await activate(1);
   const second = await waitForFace(page, 1, board.backs[1] ?? NoFace);
   if (first === null || second === null) return result(CheckId.sameCardTwice, CheckArea.input, false, "A card didn't turn over.");
-  if (sameFace(first, second)) return result(CheckId.sameCardTwice, CheckArea.input, null, "The next card happened to match, so this run couldn't tell.");
+  if (afterDouble !== before) return result(CheckId.sameCardTwice, CheckArea.input, false, "Activating the same card twice counted a move.");
+  if (sameFace(first, second)) return result(CheckId.sameCardTwice, CheckArea.input, true, "Repeated activation kept the move count unchanged before the next matching card.");
   // The game can keep the card selected or let the second click put it back. Either way it must end face down.
   const down = await waitForBacks(page, [0], board.backs);
   return result(CheckId.sameCardTwice, CheckArea.input, down, down ? "Clicking a card twice didn't pair it with itself." : "The card clicked twice stayed face up, as if it had been paired with itself.");
@@ -61,10 +68,10 @@ async function findMismatch(page: Page, activate: Activate, board: Board): Promi
   return null;
 }
 
-async function clicksDuringDelay(page: Page, activate: Activate): Promise<CheckResult> {
+async function clicksDuringDelay(page: Page, activate: Activate): Promise<CheckOutcome> {
   const board = await freshGame(page);
   const pair = await findMismatch(page, activate, board);
-  if (pair === null) return result(CheckId.clicksDuringDelay, CheckArea.input, null, "Every pair matched, so this run couldn't test the delay.");
+  if (pair === null) return { id: CheckId.clicksDuringDelay, area: CheckArea.input, status: CheckStatus.error, evidence: "The checker found no mismatch to exercise the delay." };
   const extra = pair[1] + 1;
   await activate(extra);
   const firstTwoDown = await waitForBacks(page, pair, board.backs);
@@ -80,7 +87,7 @@ async function clicksDuringDelay(page: Page, activate: Activate): Promise<CheckR
   return result(CheckId.clicksDuringDelay, CheckArea.input, firstTwoDown && rest.won, detail);
 }
 
-async function fullGame(page: Page, activate: Activate): Promise<CheckResult[]> {
+async function fullGame(page: Page, activate: Activate, shotsFolder?: string): Promise<CheckOutcome[]> {
   const board = await freshGame(page);
   const before = await pageText(page);
   const game = await playGame(page, activate, board.backs, { extraMisses: 0 });
@@ -89,6 +96,10 @@ async function fullGame(page: Page, activate: Activate): Promise<CheckResult[]> 
   const movesBefore = movesIn(before) ?? 0;
   const movesAfter = movesIn(after);
   const won = game.won && showsWin(after) && !showsWin(before);
+  if (won && shotsFolder) {
+    await mkdir(shotsFolder, { recursive: true });
+    await page.screenshot({ path: join(shotsFolder, CompletionShot), fullPage: true });
+  }
   return [
     result(CheckId.matching, CheckArea.matching, game.won, game.won ? `Every pair matched in ${game.turns} turns.` : (game.error ?? "The game didn't finish.")),
     result(CheckId.win, CheckArea.win, won, won ? "The game showed that it was won." : "No win message appeared after the last pair."),
@@ -97,17 +108,19 @@ async function fullGame(page: Page, activate: Activate): Promise<CheckResult[]> 
 }
 
 /** Matching, the win, moves, New Game and odd clicks, on one desktop board played with the mouse. */
-export function playChecks(browser: Browser, url: string): Promise<CheckResult[]> {
+export function playChecks(browser: Browser, url: string, shotsFolder?: string): Promise<CheckOutcome[]> {
   return guarded(CheckId.matching, CheckArea.matching, async () => {
     const game = await openGame(browser, url, Device.desktop);
     try {
       if ((await readBoard(game.page)).count !== PlaySize * PlaySize) await setGridSize(game.page, PlaySize);
       const activate = clicking(game.page);
-      const results = [...(await fullGame(game.page, activate))];
+      const results = [...(await fullGame(game.page, activate, shotsFolder))];
       results.push(...(await guarded(CheckId.newGame, CheckArea.newGame, async () => [await newGameDuringDelay(game.page, activate)])));
       results.push(...(await guarded(CheckId.sameCardTwice, CheckArea.input, async () => [await sameCardTwice(game.page, activate)])));
       results.push(...(await guarded(CheckId.clicksDuringDelay, CheckArea.input, async () => [await clicksDuringDelay(game.page, activate)])));
-      return results;
+      const sounds = await game.page.evaluate(() => window.__evalSounds ?? 0);
+      results.push(result(CheckId.noSound, CheckArea.intent, sounds === 0, sounds === 0 ? "No sound started during visible play." : `The game started ${sounds} sounds.`));
+      return withPageErrors(results, game.errors);
     } finally {
       await game.context.close();
     }

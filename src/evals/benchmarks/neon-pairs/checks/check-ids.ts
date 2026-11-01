@@ -1,4 +1,5 @@
-import type { CheckResult } from "../../../history/results.types.ts";
+import type { CheckOutcome } from "../../../grading/grading.types.ts";
+import { CheckStatus } from "../../../history/statuses.ts";
 
 /** Every hidden check of Neon Pairs, by the area of the prompt it covers. */
 export const CheckArea = {
@@ -39,29 +40,24 @@ export const CheckId = {
   noSound: "no-sound",
 } as const;
 
-export function result(id: string, area: string, passed: boolean | null, detail: string): CheckResult {
-  return { id, area, passed, detail };
+export function result(id: string, area: string, passed: boolean | null, evidence: string): CheckOutcome {
+  return { id, area, status: passed === null ? CheckStatus.blocked : passed ? CheckStatus.pass : CheckStatus.fail, evidence };
 }
 
-/** Runs one check. A check that throws fails with the error, instead of stopping the others. */
-export async function guarded(id: string, area: string, check: () => Promise<CheckResult[]>): Promise<CheckResult[]> {
+export class GameFailure extends Error {}
+
+/** A checker exception stays separate from a game that fails its check. */
+export async function guarded(id: string, area: string, check: () => Promise<CheckOutcome[]>): Promise<CheckOutcome[]> {
   try {
     return await check();
   } catch (error) {
-    return [result(id, area, false, `The check stopped: ${error instanceof Error ? error.message.split("\n")[0] : String(error)}`)];
+    return [{ id, area, status: error instanceof GameFailure ? CheckStatus.fail : CheckStatus.error,
+      evidence: `The check stopped: ${error instanceof Error ? error.message.split("\n")[0] : String(error)}` }];
   }
 }
 
-/**
- * Runs a group of checks again when one fails, since a busy machine can miss a short flip-back delay.
- * A pass on the second try says so, so people can still see an intermittent game bug.
- */
-export async function retriedOnce(group: () => Promise<CheckResult[]>): Promise<CheckResult[]> {
-  const first = await group();
-  if (first.every((check) => check.passed !== false)) return first;
-  const second = await group();
-  return second.map((check) => {
-    const earlier = first.find((other) => other.id === check.id);
-    return check.passed === true && earlier?.passed === false ? { ...check, detail: `${check.detail} Passed on the second try, after: ${earlier.detail}` } : check;
-  });
+export function withPageErrors(checks: readonly CheckOutcome[], errors: readonly string[]): CheckOutcome[] {
+  return checks.map((check) => errors.length && check.status === CheckStatus.pass
+    ? { ...check, status: CheckStatus.fail, evidence: `${check.evidence} Uncaught page errors: ${errors.join(" | ")}` }
+    : check);
 }

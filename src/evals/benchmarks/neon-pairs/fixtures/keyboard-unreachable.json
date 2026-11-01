@@ -1,0 +1,33 @@
+{
+    "schemaVersion":  1,
+    "id":  "keyboard-unreachable",
+    "gradingVersion":  "L1-v2",
+    "edits":  [
+                  {
+                      "path":  "src/Card.tsx",
+                      "before":  "\u003cbutton type=\"button\" aria-label=",
+                      "after":  "\u003cbutton type=\"button\" tabIndex={label === \"Card 1\" ? 0 : -1} aria-label="
+                  }
+              ],
+    "expected":  {
+                     "delivery-single-file":  "pass",
+                     "stack-react-typescript":  "pass",
+                     "grid-4-and-16":  "pass",
+                     "grid-sizes-pair-up":  "pass",
+                     "faces-drawn":  "pass",
+                     "faces-distinct-16":  "pass",
+                     "matching-pairs":  "pass",
+                     "input-same-card-twice":  "pass",
+                     "input-clicks-during-delay":  "pass",
+                     "moves-count":  "pass",
+                     "moves-compared":  "pass",
+                     "new-game-resets":  "pass",
+                     "win-shown":  "pass",
+                     "best-score":  "pass",
+                     "phone-full-game":  "pass",
+                     "keyboard-full-game":  "fail",
+                     "start-4x4":  "pass",
+                     "remember-size":  "pass",
+                     "no-sound":  "pass"
+                 }
+}

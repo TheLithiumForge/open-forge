@@ -1,0 +1,33 @@
+{
+    "schemaVersion":  1,
+    "id":  "new-game-keeps-moves",
+    "gradingVersion":  "L1-v2",
+    "edits":  [
+                  {
+                      "path":  "src/Game.tsx",
+                      "before":  "    setMoves(0);",
+                      "after":  "    setMoves((previous) =\u003e previous);"
+                  }
+              ],
+    "expected":  {
+                     "delivery-single-file":  "pass",
+                     "stack-react-typescript":  "pass",
+                     "grid-4-and-16":  "pass",
+                     "grid-sizes-pair-up":  "pass",
+                     "faces-drawn":  "pass",
+                     "faces-distinct-16":  "pass",
+                     "matching-pairs":  "pass",
+                     "input-same-card-twice":  "pass",
+                     "input-clicks-during-delay":  "pass",
+                     "moves-count":  "pass",
+                     "moves-compared":  "fail",
+                     "new-game-resets":  "fail",
+                     "win-shown":  "pass",
+                     "best-score":  "fail",
+                     "phone-full-game":  "pass",
+                     "keyboard-full-game":  "pass",
+                     "start-4x4":  "pass",
+                     "remember-size":  "pass",
+                     "no-sound":  "pass"
+                 }
+}

@@ -1,5 +1,6 @@
 {
   "id": "greenfield-baseline",
+  "gradingVersion": "L1-v2",
   "title": "Greenfield Baseline",
   "project": "neon-pairs",
   "baseline": "no-setup",

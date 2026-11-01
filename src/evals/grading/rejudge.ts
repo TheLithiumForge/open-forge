@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { judgeRun } from "./judge/judge.ts";
 import { prepareJudgeFolder } from "./judge/judge-folder.ts";
+import { judgeImagePaths } from "./judge/shot-paths.ts";
 import { ResultFiles } from "../paths.ts";
 import { judgeAssessment } from "../history/assessments.ts";
 import { gradingVersions } from "../history/capture.ts";
@@ -40,10 +41,10 @@ async function main(): Promise<void> {
   await runInParallel(runs, batch.config.parallelRuns || 1, async (run) => {
     const scratch = await mkdtemp(join(tmpdir(), "eval-rejudge-"));
     try {
-      await prepareJudgeFolder(join(runFolder(batch.id, run.id), ResultFiles.files), join(scratch, "project"));
+      await prepareJudgeFolder(join(runFolder(batch.id, run.id), ResultFiles.files), join(scratch, "project"), run.build?.html);
       await rejudgeRun(run, versions, {
         append: (assessment) => appendAssessment({ ...assessment, requestedModel: batch.config.judge }),
-        evaluate: () => judgeRun(suite, batch.config.judge, join(scratch, "project"), join(scratch, "home"), JudgeTimeoutMs),
+        evaluate: () => judgeRun(suite, batch.config.judge, join(scratch, "project"), join(scratch, "home"), JudgeTimeoutMs, { images: judgeImagePaths(run) }),
       });
     } finally {
       await rm(scratch, { recursive: true, force: true });

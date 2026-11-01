@@ -2,11 +2,18 @@ import type { CheckResult, TokenCounts } from "../history/results.types.ts";
 import { CheckStatus } from "../history/statuses.ts";
 import type { CheckOutcome, CheckSelection, Coverage, FunctionalResult, MeasurementSummary } from "./grading.types.ts";
 
-export function adaptCheck(check: CheckResult): CheckOutcome {
+export function adaptCheck(check: CheckResult | CheckOutcome): CheckOutcome {
+  if ("status" in check) return check;
   return {
     id: check.id, area: check.area, evidence: check.detail,
     status: check.passed === null ? CheckStatus.blocked : check.passed ? CheckStatus.pass : CheckStatus.fail,
   };
+}
+
+/** The old display shape stays at the saved-run compatibility edge. */
+export function legacyCheckView(check: CheckOutcome): CheckResult {
+  return { id: check.id, area: check.area, detail: check.evidence,
+    passed: check.status === CheckStatus.pass ? true : check.status === CheckStatus.fail ? false : null };
 }
 
 /** Keep the first outcome when a checker retries a check within one assessment. */

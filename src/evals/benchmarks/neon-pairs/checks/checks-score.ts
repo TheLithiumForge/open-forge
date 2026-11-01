@@ -1,8 +1,8 @@
 import type { Browser, Page } from "playwright";
-import type { CheckResult } from "../../../history/results.types.ts";
+import type { CheckOutcome } from "../../../grading/grading.types.ts";
 import { clicking, type Activate } from "./activation.ts";
 import { Waits } from "./board.ts";
-import { CheckArea, CheckId, guarded, result } from "./check-ids.ts";
+import { CheckArea, CheckId, guarded, result, withPageErrors } from "./check-ids.ts";
 import { setGridSize } from "./grid-size.ts";
 import { Device, openGame, readBoard } from "./open-game.ts";
 import { bestIn, movesIn, newGameButton, pageText } from "./page-text.ts";
@@ -40,7 +40,7 @@ async function unfinished(page: Page, activate: Activate): Promise<string | null
 }
 
 /** The best score and the move counter, over a run of clearly worse and better games. */
-export function scoreChecks(browser: Browser, url: string): Promise<CheckResult[]> {
+export function scoreChecks(browser: Browser, url: string): Promise<CheckOutcome[]> {
   return guarded(CheckId.best, CheckArea.best, async () => {
     const game = await openGame(browser, url, Device.desktop);
     try {
@@ -65,12 +65,12 @@ export function scoreChecks(browser: Browser, url: string): Promise<CheckResult[
         reloaded === better.best,
         otherSize !== better.best,
       ];
-      const detail = `Best went ${start ?? "none"} → ${afterUnfinished ?? "none"} (unfinished) → ${worse.best ?? "none"} (worse) → ${better.best ?? "none"} (better) → ${worst.best ?? "none"} (worst) → ${reloaded ?? "none"} (reload), and showed ${otherSize ?? "none"} for ${OtherSize}x${OtherSize}.`;
+      const detail = `Best went ${start ?? "none"}, ${afterUnfinished ?? "none"} (unfinished), ${worse.best ?? "none"} (worse), ${better.best ?? "none"} (better), ${worst.best ?? "none"} (worst), ${reloaded ?? "none"} (reload), and showed ${otherSize ?? "none"} for ${OtherSize}x${OtherSize}.`;
       const movesShown = worse.moves !== null && better.moves !== null && worse.moves > better.moves;
-      return [
+      return withPageErrors([
         result(CheckId.best, CheckArea.best, steps.every(Boolean), detail),
         result(CheckId.movesCompared, CheckArea.moves, movesShown, `A game with ${Misses.worse} extra misses showed ${worse.moves ?? "no"} moves, a careful one ${better.moves ?? "no"}.`),
-      ];
+      ], game.errors);
     } finally {
       await game.context.close();
     }

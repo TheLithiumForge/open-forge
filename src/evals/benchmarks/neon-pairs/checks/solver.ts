@@ -116,7 +116,7 @@ function closestPair(cards: readonly number[], known: ReadonlyMap<number, FaceSi
  * the two are twins, whatever matched style the second one shows. A pair still up after the next
  * click was matched. A pair that turned back then was a mismatch the game flips on the next click.
  */
-export async function learnFaces(page: Page, activate: Activate, backs: readonly FaceSignature[]): Promise<FaceSignature[]> {
+export async function learnFaces(page: Page, activate: Activate, backs: readonly FaceSignature[], captured?: (index: number, png: Buffer) => void | Promise<void>): Promise<FaceSignature[]> {
   const faces: FaceSignature[] = [];
   let pending: readonly [number, number] | null = null;
   const settlePending = async (): Promise<void> => {
@@ -127,10 +127,10 @@ export async function learnFaces(page: Page, activate: Activate, backs: readonly
   };
   for (let index = 0; index + 1 < backs.length; index += 2) {
     await activate(index);
-    faces[index] = (await waitForFace(page, index, backs[index] ?? NoFace)) ?? NoFace;
+    faces[index] = (await waitForFace(page, index, backs[index] ?? NoFace, (png) => captured?.(index, png))) ?? NoFace;
     await settlePending();
     await activate(index + 1);
-    faces[index + 1] = (await waitForFace(page, index + 1, backs[index + 1] ?? NoFace)) ?? NoFace;
+    faces[index + 1] = (await waitForFace(page, index + 1, backs[index + 1] ?? NoFace, (png) => captured?.(index + 1, png))) ?? NoFace;
     const alike = sameFace(faces[index] ?? NoFace, faces[index + 1] ?? NoFace);
     if (!(await waitForBacks(page, [index, index + 1], backs, alike ? Waits.settle : Waits.hide))) pending = [index, index + 1];
   }

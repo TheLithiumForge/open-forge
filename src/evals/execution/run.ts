@@ -10,12 +10,13 @@ import { executionLabel, ExecutionLabelFile, LocalExecutionLabel } from "./conta
 import type { Docker } from "./containers/docker.ts";
 import { judgeRun } from "../grading/judge/judge.ts";
 import { prepareJudgeFolder } from "../grading/judge/judge-folder.ts";
+import { judgeImagePaths } from "../grading/judge/shot-paths.ts";
 import { ResultFiles } from "../paths.ts";
 import type { RunRecord } from "../history/results.types.ts";
 import { FailureKind, RunStatus } from "../history/statuses.ts";
 import { appendAssessment, readBatch, runFolder, saveRun } from "../history/store.ts";
 import { checksAssessment, failedChecksAssessment, judgeAssessment } from "../history/assessments.ts";
-import { countChecks } from "../grading/counting.ts";
+import { countChecks, legacyCheckView } from "../grading/counting.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
 import type { SuiteChecks } from "../benchmarks/suite-checks.types.ts";
 import type { HistoryStore } from "../history/store.ts";
@@ -71,6 +72,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
   await update({}, "the agent is working.");
   let space: RunSpace | null = null;
   try {
+    if (config.isolation !== Isolation.docker && run.agent.tool !== Tool.mock) throw new Error("Real agents require container isolation.");
     space = await (services.createSpace ?? createRunSpace)(suite.project, input.snapshot);
     // The mock agent only installs our own reference, and the agent container runs nothing but a real provider's CLI.
     const agentIsolation = run.agent.tool === Tool.mock ? Isolation.local : Isolation.docker;
@@ -96,15 +98,16 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     await update({ status: RunStatus.checking, build }, `the build ${build.passed ? "passed" : "failed"}. Running the hidden checks.`);
     const project = space.work;
     await freezeFiles(space, join(folder, ResultFiles.files));
-    const checks = await oneCheckAtATime(async () => (services.checks ?? suiteChecks[suite.id])?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots) }));
-    await update({ status: RunStatus.judging, checks: checks?.checks ?? [], performance: checks?.performance ?? null, shots: checks?.shots ?? [] }, "checks done. The judge is reading the code.");
-    const assessment = checksAssessment(run, checks?.checks ?? [], versions);
+    const checks = await oneCheckAtATime(async () => (services.checks ?? suiteChecks[suite.id])?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots), stage: { ...stageOptions, timeoutMs: checkMs } }));
+    await update({ status: RunStatus.judging, checks: checks?.checks.map(legacyCheckView) ?? [], performance: checks?.performance ?? null, shots: checks?.shots ?? [] }, "checks done. The judge is reading the code.");
+    const assessment = checksAssessment(run, checks?.checks ?? [], versions, checks?.selection);
     await store.appendAssessment(assessment);
     await update({ functionalResult: countChecks(assessment.outcomes, assessment.selection), checkOutcomes: assessment.outcomes, checkSelection: assessment.selection, checksAssessmentId: assessment.id });
     const judgeFolder = await (services.scratch ?? scratchFolder)();
     try {
-      await prepareJudgeFolder(join(folder, ResultFiles.files), join(judgeFolder, "project"));
-      const judge = await (services.judge ?? judgeRun)(suite, config.judge, join(judgeFolder, "project"), join(judgeFolder, "home"), JudgeTimeoutMs);
+      await prepareJudgeFolder(join(folder, ResultFiles.files), join(judgeFolder, "project"), run.build?.html);
+      const judge = await (services.judge ?? judgeRun)(suite, config.judge, join(judgeFolder, "project"), join(judgeFolder, "home"), JudgeTimeoutMs,
+        { stage: stageOptions, images: judgeImagePaths(run) });
       await store.appendAssessment({ ...judgeAssessment(run, judge, versions), requestedModel: config.judge });
       await update({ status: RunStatus.done, judge, finishedAt: new Date().toISOString() }, "done.");
     } finally {

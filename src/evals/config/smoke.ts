@@ -57,7 +57,10 @@ export async function smokeAttempt(): Promise<{ status: RunStatus; questions: nu
         await writeFile(join(space.work, ResultFiles.game), SmokePage);
         return { passed: true, typecheck: null, seconds: 0, packages: 0, html: ResultFiles.game, bytes: Buffer.byteLength(SmokePage), log: "Mock verifier." };
       },
-      checks: async ({ html }) => ({ checks: [{ id: SmokeCheck, area: "Smoke", passed: html !== null && await readFile(html, "utf8") === SmokePage, detail: "Mock browser reads the copied game." }], performance: null, shots: [] }),
+      checks: async ({ html }) => {
+        const read = html !== null && await readFile(html, "utf8") === SmokePage;
+        return { checks: [{ id: SmokeCheck, area: "Smoke", status: read ? CheckStatus.pass : CheckStatus.fail, evidence: "Mock browser reads the copied game." }], performance: null, shots: [] };
+      },
       judge: async () => [],
     } });
     await store.saveBatch({ ...batch, status: BatchStatus.done });

@@ -29,7 +29,7 @@ export async function recheckRun(run: RunView, versions: AssessmentVersions, dep
   let assessment: ChecksAssessment;
   try {
     const result = await dependencies.evaluate(run, base.id);
-    const selection = run.checkSelection.working.length === 0 ? undefined : run.checkSelection;
+    const selection = result.selection ?? (run.checkSelection.working.length === 0 ? undefined : run.checkSelection);
     assessment = { ...checksAssessment({ ...run, build: result.build ?? run.build, performance: result.performance, shots: result.shots }, result.checks, versions, selection), ...base };
   } catch (error) {
     assessment = { ...base, ...failedChecksAssessment(run, error, versions), id: base.id };

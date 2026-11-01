@@ -14,7 +14,7 @@ export function assessmentBase(experimentId: string, versions: AssessmentVersion
   return { schemaVersion: RecordSchemaVersion, id: randomUUID(), experimentId, createdAt: new Date().toISOString(), versions, replacesAssessmentId, error: null } as const;
 }
 
-export function checksAssessment(run: RunView, checks: readonly CheckResult[], versions: AssessmentVersions, selection?: CheckSelection): ChecksAssessment {
+export function checksAssessment(run: RunView, checks: readonly (CheckResult | CheckOutcome)[], versions: AssessmentVersions, selection?: CheckSelection): ChecksAssessment {
   const outcomes = uniqueChecks(checks.map(adaptCheck));
   return {
     ...assessmentBase(run.batchId, versions, run.checksAssessmentId), kind: AssessmentKind.checks, runId: run.id,

@@ -1,5 +1,6 @@
 import type { Page } from "playwright";
 import { card, CardAttribute, ensureCard } from "./board.ts";
+import { GameFailure } from "./check-ids.ts";
 
 declare global {
   interface Window {
@@ -76,6 +77,7 @@ export function typing(page: Page): Activate {
         await page.keyboard.press(index < current ? "Shift+Tab" : "Tab");
       }
     }
+    if ((await focusedCard(page)) !== index) throw new GameFailure("Keyboard navigation could not reach the requested card.");
     await page.keyboard.press("Enter");
   };
   return Object.assign(press, { fallback: () => page.keyboard.press("Space") });

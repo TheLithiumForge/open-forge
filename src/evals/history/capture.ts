@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { readdir, readFile } from "node:fs/promises";
 import type { EvalConfig } from "../config/config.types.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
+import { suiteGradingInputs } from "../benchmarks/registry.ts";
 import { evalsRoot, EvalPaths } from "../paths.ts";
 import { fileDigests } from "./artifacts.ts";
 import { createFingerprints, fingerprint, sha256 } from "./fingerprints.ts";
@@ -40,8 +41,9 @@ async function harnessSources(root: string) {
 }
 
 export async function gradingVersions(suite: Suite): Promise<AssessmentVersions> {
+  const frozen = await suiteGradingInputs(suite.id);
   return {
-    checker: fingerprint(await fileDigests(EvalPaths.checks)), rubric: fingerprint(suite.rubric),
+    checker: fingerprint({ files: await fileDigests(EvalPaths.checks), frozen }), rubric: fingerprint({ questions: suite.rubric, frozen }),
     judge: fingerprint(await fileDigests(join(evalsRoot, "grading", "judge"))),
   };
 }
@@ -53,14 +55,17 @@ export async function captureExperiment(id: string, config: EvalConfig, suite: S
   const harnessSource = await harnessSources(paths.root);
   const pinnedTools = { ...pkg.dependencies, node: process.version };
   const imageDigests: Readonly<Record<string, string | null>> = paths.imageDigests ?? { eval: null };
-  const versions = { checker: fingerprint(await fileDigests(paths.checks)), rubric: fingerprint(suite.rubric),
+  const frozen = await suiteGradingInputs(suite.id, paths.root);
+  const checkInputs = { files: await fileDigests(paths.checks), frozen };
+  const rubricInputs = { questions: suite.rubric, frozen };
+  const versions = { checker: fingerprint(checkInputs), rubric: fingerprint(rubricInputs),
     judge: fingerprint(await fileDigests(join(paths.root, "grading", "judge"))) };
   const requestedModels = config.agents;
   const fingerprints = createFingerprints({
     cliPackage: await fileDigests(cliRoot),
     benchmarkInputs: { id: suite.id, project: suite.project, baseline: suite.baseline, prompt: suite.prompt, intent: suite.intent,
       files: (await fileDigests(join(paths.suites, suite.id))).filter((file) => !loadedSuiteFiles.has(file.path)) },
-    setupContent: suite.setups, checks: await fileDigests(paths.checks), rubric: suite.rubric, harnessSource,
+    setupContent: suite.setups, checks: checkInputs, rubric: rubricInputs, harnessSource,
     tooling: { pinnedTools, imageDigests, images: await fileDigests(paths.docker) },
     requestedModels, reportedModels: null,
   });

@@ -31,7 +31,7 @@ test("recheck and rejudge append independently and readers can choose an earlier
         const shots = join(store.assessmentEvidenceFolder(batch.id, assessmentId), ResultFiles.shots);
         await mkdir(shots, { recursive: true });
         await writeFile(join(shots, "proof.png"), "fake screenshot");
-        return { checks: [{ id: FixtureCheckId, area: "play", passed: null, detail: "blocked" }], performance: null, shots: [`${assessmentId}/proof.png`] };
+        return { checks: [{ id: FixtureCheckId, area: "play", status: CheckStatus.blocked, evidence: "blocked" }], performance: null, shots: [`${assessmentId}/proof.png`] };
       } }),
       rejudgeRun(saved, FixtureVersions, { append: (record) => store.appendAssessment(record), evaluate: async () => [{
         id: "legible", area: "code", question: "legible", yes: 1, no: 0, unsure: 0, evidence: ["source"],

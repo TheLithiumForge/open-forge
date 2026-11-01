@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "version": "L1-v2",
+  "prompt": "cases/greenfield-baseline/prompt.md",
+  "clauses": [
+    { "id": "L1-01", "text": "Build a neon-style memory matching game called Neon Pairs.", "checks": ["matching-pairs", "win-shown", "input-same-card-twice", "input-clicks-during-delay", "delivery-single-file"], "judgeQuestions": ["neon-look"] },
+    { "id": "L1-02", "text": "Let the player pick the grid size from 4x4 up to 16x16.", "checks": ["grid-4-and-16", "grid-sizes-pair-up"], "judgeQuestions": [] },
+    { "id": "L1-03", "text": "Draw the card faces as shapes in code, without images or emoji.", "checks": ["faces-drawn", "faces-distinct-16"], "judgeQuestions": ["face-legibility"] },
+    { "id": "L1-04", "text": "Add a move counter.", "checks": ["moves-count", "moves-compared"], "judgeQuestions": [] },
+    { "id": "L1-05", "text": "Add a New Game button.", "checks": ["new-game-resets"], "judgeQuestions": [] },
+    { "id": "L1-06", "text": "Remember the best score for each grid size between visits.", "checks": ["best-score"], "judgeQuestions": [] },
+    { "id": "L1-07", "text": "Work on a phone.", "checks": ["phone-full-game"], "judgeQuestions": [] },
+    { "id": "L1-08", "text": "Work with the keyboard.", "checks": ["keyboard-full-game"], "judgeQuestions": [] },
+    { "id": "L1-09", "text": "Use React and TypeScript.", "checks": ["stack-react-typescript"], "judgeQuestions": [] },
+    { "id": "L1-10", "text": "Use a small build step that gives one index.html that opens directly.", "checks": ["delivery-single-file"], "judgeQuestions": [] },
+    { "id": "L1-11", "text": "Keep each component's logic, markup and styles together.", "checks": [], "judgeQuestions": ["locality"], "reportedAs": "source review" },
+    { "id": "L1-12", "text": "If there are questions, ask.", "checks": [], "judgeQuestions": [], "reportedAs": "collaboration", "condition": "The agent has a question. Asking is separate from wishes and correctness." }
+  ]
+}

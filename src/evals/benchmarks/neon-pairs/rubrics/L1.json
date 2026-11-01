@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "version": "L1-v2",
+  "ballots": 3,
+  "answers": ["yes", "no", "unsure"],
+  "questions": [
+    { "id": "locality", "area": "rules", "evidence": "source", "question": "Does each component keep its logic, markup and styles together? Cite the files and lines that show where those parts live." },
+    { "id": "findable", "area": "code", "evidence": "source", "question": "Can a developer find shuffling, matching, moves and saved scores from the file and function names? Cite the relevant files and lines." },
+    { "id": "typed", "area": "code", "evidence": "source", "question": "Do the main game data shapes have useful TypeScript types without any or broad casts hiding their shape? Cite the definitions and their use." },
+    { "id": "simple", "area": "code", "evidence": "source", "question": "Does the game avoid layers, patterns and dependencies that add work without helping this task? Cite the source and package entries behind the answer." },
+    { "id": "neon-look", "area": "visual", "evidence": "images", "question": "Do the board screenshots show a neon style? Cite the screenshot IDs and the features that support the answer." },
+    { "id": "face-legibility", "area": "visual", "evidence": "images", "question": "Can a player tell the card faces apart in the face sheet and board screenshots? Cite the image IDs and any faces that are hard to distinguish." },
+    { "id": "colors", "area": "wishes", "evidence": "images", "question": "Do the screenshots show the private visual wish of cyan and magenta on a near-black background? Cite image IDs. This wish is reported apart from correctness." },
+    { "id": "celebration", "area": "wishes", "evidence": "source-and-images", "question": "Does the code and completion screenshot support the private wish of a short celebration when the game is won? Cite files and lines and the image ID. A static image alone cannot show motion." }
+  ]
+}
