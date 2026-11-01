@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { SelectionKind } from '../src/game/selection.ts';
 import { SNAPSHOT_VERSION } from '../src/game/snapshot.ts';
-import { ReproductionControl } from './control-labels.ts';
 import { FIXED_BOARD, FIXED_PAIRS, exportedSnapshot, loadTimedBoard } from './game-fixture.ts';
 import { uiSnapshot } from './ui-snapshot.ts';
 

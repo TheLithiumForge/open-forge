@@ -1,12 +1,12 @@
 import type { Board } from './game.types.ts';
 
 export const GRID_SIZES = [4, 6, 8, 10, 12, 14, 16] as const;
-export const BOARD_VERSION = 'np1';
+const BOARD_VERSION = 'np1';
 export const SEED_MAX = 2_147_483_646;
 const PRNG_MODULUS = SEED_MAX + 1;
 const PRNG_MULTIPLIER = 16_807;
 
-export function validSize(value: number): boolean {
+export function isValidSize(value: number): boolean {
   return GRID_SIZES.some((size) => size === value);
 }
 
@@ -19,7 +19,9 @@ export function parseBoardCode(code: string): { size: number; seed: number } | n
   if (!parts) return null;
   const size = Number(parts[1]);
   const seed = Number(parts[2]);
-  return validSize(size) && Number.isSafeInteger(seed) && seed <= SEED_MAX ? { size, seed } : null;
+  return isValidSize(size) && Number.isSafeInteger(seed) && seed <= SEED_MAX
+    ? { size, seed }
+    : null;
 }
 
 export function boardCode(size: number, seed: number): string {

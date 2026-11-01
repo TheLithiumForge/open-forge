@@ -1,4 +1,4 @@
-export const FACE_COLORS = [
+const FACE_COLORS = [
   '#63E7FF',
   '#FF71D6',
   '#8BEA7D',

@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
-import { DealControl } from './control-labels.ts';
+import { DealControl } from '../src/game/controls/control-labels.ts';
 import { loadTimedBoard, moves } from './game-fixture.ts';
 
 test('native Tab remembers board focus and matched cards stay focusable and inactive', async ({

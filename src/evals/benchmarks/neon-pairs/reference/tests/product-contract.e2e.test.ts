@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { FIXED_PAIRS, loadTimedBoard } from './game-fixture.ts';
 
 test('status formats show current values, continuing minutes and a completed import without Resume', async ({
@@ -8,17 +9,19 @@ test('status formats show current values, continuing minutes and a completed imp
 }) => {
   const initial: string[] = [];
   await loadTimedBoard(page);
+  // Rendered text shows whether each value sits on its label's line.
   const status = () =>
-    page
-      .locator('.stats > div')
-      .evaluateAll((elements) =>
-        elements.map((element) => (element.textContent ?? '').replace(/\s+/g, ' ').trim()),
-      );
+    page.locator('.stats > div').evaluateAll((elements) =>
+      elements.map((element) => {
+        if (!(element instanceof HTMLElement)) throw new Error('Expected a rendered status.');
+        return element.innerText;
+      }),
+    );
   initial.push(...(await status()));
   for (const index of FIXED_PAIRS[0]) await page.locator('.card').nth(index).click();
   const matched = await status();
   await page.locator('summary').click();
-  await page.getByLabel('Snapshot JSON', { exact: true }).fill(
+  await page.getByLabel(ReproductionControl.snapshot, { exact: true }).fill(
     JSON.stringify({
       version: 1,
       boardCode: 'np1-4-1',
@@ -29,9 +32,11 @@ test('status formats show current values, continuing minutes and a completed imp
       started: true,
     }),
   );
-  await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
+  await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
   const loaded = await status();
-  await expect(page.getByRole('button', { name: 'Resume', exact: true })).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: ReproductionControl.resume, exact: true }),
+  ).toHaveCount(0);
   await expect(page.getByRole('status')).toHaveText('Loaded completed snapshot.');
   await expect(page.locator('.load-notice')).toHaveText('Loaded completed snapshot.');
   await expect(page.locator('.victory.celebrate')).toHaveCount(0);
@@ -48,13 +53,13 @@ test('the Board code control trims surrounding whitespace and both successful lo
 }) => {
   await loadTimedBoard(page);
   await page.locator('summary').click();
-  const board = page.getByLabel('Board code', { exact: true });
+  const board = page.getByLabel(ReproductionControl.board, { exact: true });
   await board.fill('  np1-6-1  ');
   await board.press('Enter');
   await expect(board).toHaveValue('np1-6-1');
-  await expect(page.getByLabel('Grid size', { exact: true })).toHaveValue('6');
+  await expect(page.getByLabel(DealControl.size, { exact: true })).toHaveValue('6');
   await expect(page.locator('.card')).toHaveCount(36);
-  await page.getByLabel('Snapshot JSON', { exact: true }).fill(
+  await page.getByLabel(ReproductionControl.snapshot, { exact: true }).fill(
     JSON.stringify({
       version: 1,
       boardCode: 'np1-8-1',
@@ -65,10 +70,12 @@ test('the Board code control trims surrounding whitespace and both successful lo
       started: false,
     }),
   );
-  await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
-  await expect(page.getByLabel('Grid size', { exact: true })).toHaveValue('8');
+  await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
+  await expect(page.getByLabel(DealControl.size, { exact: true })).toHaveValue('8');
   await expect(page.locator('.card')).toHaveCount(64);
-  await expect(page.getByRole('button', { name: 'Resume', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: ReproductionControl.resume, exact: true }),
+  ).toBeVisible();
 });
 
 test('named color targets, reset margins and card focus scroll margins follow the visual contract', async ({
@@ -86,9 +93,13 @@ test('named color targets, reset margins and card focus scroll margins follow th
     await expect(page.locator(selector).first()).toHaveCSS('background-color', 'rgb(20, 24, 39)');
   }
   await expect(page.locator('body')).toHaveCSS('margin', '0px');
-  for (const selector of ['.help', '.intro', '.stats dt']) {
-    await expect(page.locator(selector).first()).toHaveCSS('font-size', '14px');
-    await expect(page.locator(selector).first()).toHaveCSS('color', 'rgb(184, 189, 210)');
+  for (const selector of ['.eyebrow', '.help', '.intro', '.stats dt']) {
+    const secondary = page.locator(selector).first();
+    await expect(secondary, `V08 secondary size ${selector}`).toHaveCSS('font-size', '14px');
+    await expect(secondary, `V06 secondary color ${selector}`).toHaveCSS(
+      'color',
+      'rgb(184, 189, 210)',
+    );
   }
   const card = page.locator('.card').nth(FIXED_PAIRS[0][0]);
   const margin = await card.evaluate((element) => getComputedStyle(element).scrollMargin);

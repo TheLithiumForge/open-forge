@@ -1,5 +1,4 @@
 import { generateBoard } from './deck.ts';
-import { safeNonnegative } from './saved-format.ts';
 import { SelectionKind } from './selection.ts';
 import type { GameState } from './game.types.ts';
 
@@ -23,13 +22,8 @@ export function isWon(state: GameState): boolean {
 }
 
 export function activateCard(state: GameState, index: number): GameState {
-  if (
-    !safeNonnegative(index) ||
-    index >= state.deck.length ||
-    state.matched.includes(index) ||
-    isWon(state)
-  )
-    return state;
+  if (!Number.isInteger(index) || index < 0 || index >= state.deck.length) return state;
+  if (state.matched.includes(index)) return state;
   switch (state.selection.kind) {
     case SelectionKind.closed:
       return { ...state, started: true, selection: { kind: SelectionKind.one, index } };
@@ -59,8 +53,8 @@ export function activateCard(state: GameState, index: number): GameState {
 }
 
 export function advanceGame(state: GameState, milliseconds: number): GameState {
-  if (!safeNonnegative(milliseconds) || !state.started || isWon(state)) return state;
-  if (milliseconds === 0) return state;
+  if (!Number.isSafeInteger(milliseconds) || milliseconds <= 0) return state;
+  if (!state.started || isWon(state)) return state;
   const elapsedMs = Math.min(ELAPSED_MAX_MS, state.elapsedMs + milliseconds);
   if (state.selection.kind !== SelectionKind.mismatch) return { ...state, elapsedMs };
   const remainingMs = state.selection.remainingMs - milliseconds;

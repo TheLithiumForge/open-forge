@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { loadTimedBoard, exportedSnapshot, FIXED_PAIRS } from './game-fixture.ts';
 
 test('better equal and worse completed scores persist after each reload', async ({
@@ -15,8 +16,8 @@ test('better equal and worse completed scores persist after each reload', async 
   ]) {
     if (misses === undefined || expected === undefined) throw new Error('Missing score case');
     await page.locator('summary').click();
-    await page.getByLabel('Board code', { exact: true }).fill('np1-4-1');
-    await page.getByRole('button', { name: 'Load board', exact: true }).click();
+    await page.getByLabel(ReproductionControl.board, { exact: true }).fill('np1-4-1');
+    await page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }).click();
     await page.locator('summary').click();
     for (let miss = 0; miss < misses; miss++) {
       await page.locator('.card').nth(0).click();
@@ -44,7 +45,7 @@ test('snapshot loads save only a valid size and every reload starts fresh', asyn
 }) => {
   await loadTimedBoard(page, gameURL);
   await page.locator('summary').click();
-  const field = page.getByLabel('Snapshot JSON', { exact: true });
+  const field = page.getByLabel(ReproductionControl.snapshot, { exact: true });
   const valid = {
     version: 1,
     boardCode: 'np1-6-1',
@@ -55,10 +56,10 @@ test('snapshot loads save only a valid size and every reload starts fresh', asyn
     selection: { kind: 'one', index: 5 },
   };
   await field.fill(JSON.stringify(valid));
-  await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
-  await expect(page.getByLabel('Grid size', { exact: true })).toHaveValue('6');
+  await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
+  await expect(page.getByLabel(DealControl.size, { exact: true })).toHaveValue('6');
   await page.reload();
-  await expect(page.getByLabel('Grid size', { exact: true })).toHaveValue('6');
+  await expect(page.getByLabel(DealControl.size, { exact: true })).toHaveValue('6');
   expect(await exportedSnapshot(page)).toMatchObject({
     matched: [],
     moves: 0,
@@ -68,7 +69,7 @@ test('snapshot loads save only a valid size and every reload starts fresh', asyn
   });
   await page.locator('summary').click();
   await field.fill(JSON.stringify({ ...valid, boardCode: 'np1-8-1', extra: true }));
-  await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
+  await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
   await page.reload();
-  await expect(page.getByLabel('Grid size', { exact: true })).toHaveValue('6');
+  await expect(page.getByLabel(DealControl.size, { exact: true })).toHaveValue('6');
 });

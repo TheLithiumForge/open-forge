@@ -8,7 +8,6 @@
   overflow: auto;
   overscroll-behavior: contain;
   padding: var(--board-padding);
-  scroll-padding: var(--board-padding);
   border: var(--board-border) solid var(--border);
   border-radius: 12px;
   background: var(--panel);
@@ -19,12 +18,10 @@
   display: grid;
   gap: var(--card-gap);
   grid-template-columns: repeat(var(--grid-size), minmax(var(--card-min), var(--card-max)));
+  /* The scroll area's content box already leaves room for page and board scrollbars. */
   width: clamp(
     calc(var(--grid-size) * var(--card-min) + (var(--grid-size) - 1) * var(--card-gap)),
-    calc(
-      min(100vw, var(--content-max)) - 2 * var(--page-padding) - 2 * var(--board-padding) - 2 *
-        var(--board-border)
-    ),
+    100%,
     calc(var(--grid-size) * var(--card-max) + (var(--grid-size) - 1) * var(--card-gap))
   );
 }

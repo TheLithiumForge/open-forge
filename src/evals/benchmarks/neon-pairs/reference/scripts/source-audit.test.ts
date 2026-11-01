@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'vitest';
 import { sourceFiles } from './source-files.ts';
-import { record } from '../src/game/saved-format.ts';
+import { isJsonObject } from '../src/game/saved-format.ts';
 
 test('packages and lock use the reviewed exact versions and strict separate compiler projects', async () => {
   const pkg: unknown = JSON.parse(await readFile('package.json', 'utf8'));
@@ -10,20 +10,23 @@ test('packages and lock use the reviewed exact versions and strict separate comp
     await readFile(new URL('./package.fixture.json', import.meta.url), 'utf8'),
   );
   assert.ok(
-    record(pkg) && record(pkg.dependencies) && record(pkg.devDependencies) && record(expected),
+    isJsonObject(pkg) &&
+      isJsonObject(pkg.dependencies) &&
+      isJsonObject(pkg.devDependencies) &&
+      isJsonObject(expected),
   );
   const installed = { ...pkg.dependencies, ...pkg.devDependencies };
   assert.deepEqual(Object.keys(pkg.dependencies).sort(), ['react', 'react-dom']);
   for (const [name, version] of Object.entries(expected)) assert.equal(installed[name], version);
   const lock: unknown = JSON.parse(await readFile('package-lock.json', 'utf8'));
-  assert.ok(record(lock) && record(lock.packages));
+  assert.ok(isJsonObject(lock) && isJsonObject(lock.packages));
   const locked = lock.packages[''];
-  assert.ok(record(locked));
+  assert.ok(isJsonObject(locked));
   assert.deepEqual(locked.dependencies, pkg.dependencies);
   assert.deepEqual(locked.devDependencies, pkg.devDependencies);
   assert.equal(pkg.type, 'module');
   const config: unknown = JSON.parse(await readFile('tsconfig.base.json', 'utf8'));
-  assert.ok(record(config) && record(config.compilerOptions));
+  assert.ok(isJsonObject(config) && isJsonObject(config.compilerOptions));
   for (const key of [
     'strict',
     'noUncheckedIndexedAccess',
@@ -34,7 +37,7 @@ test('packages and lock use the reviewed exact versions and strict separate comp
     assert.equal(config.compilerOptions[key], true);
   for (const project of ['app', 'node', 'e2e'])
     assert.ok(await readFile(`tsconfig.${project}.json`, 'utf8'));
-  assert.ok(record(pkg.scripts));
+  assert.ok(isJsonObject(pkg.scripts));
   assert.equal(
     pkg.scripts.typecheck,
     'tsc -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p tsconfig.e2e.json',

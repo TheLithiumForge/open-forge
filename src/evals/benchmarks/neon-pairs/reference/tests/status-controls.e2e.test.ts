@@ -1,5 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { ReproductionControl } from '../src/game/controls/control-labels.ts';
+import { StatusLabel } from '../src/game/status/status-labels.ts';
 import { loadTimedBoard, finishBoard } from './game-fixture.ts';
 import { expectFocusInside } from './focus-bounds.ts';
 
@@ -8,16 +10,20 @@ test('Enter submits a board code with focus on Load board before the input is re
 }) => {
   await loadTimedBoard(page);
   await page.locator('summary').click();
-  const code = page.getByLabel('Board code', { exact: true });
+  const code = page.getByLabel(ReproductionControl.board, { exact: true });
   await code.fill('np1-6-1');
   await code.press('Enter');
-  await expect(page.getByRole('button', { name: 'Load board', exact: true })).toBeFocused();
+  await expect(
+    page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }),
+  ).toBeFocused();
   await expect(code).toHaveValue('np1-6-1');
   await expect(page.locator('.card')).toHaveCount(36);
   await expect(page.locator('.card').first()).toHaveAttribute('tabindex', '0');
   await code.fill('invalid');
   await code.press('Enter');
-  await expect(page.getByRole('button', { name: 'Load board', exact: true })).toBeFocused();
+  await expect(
+    page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }),
+  ).toBeFocused();
   await expect(code).toHaveValue('invalid');
   await expect(page.locator('.load-notice')).toHaveText('Invalid board code.');
   await expect(page.locator('.card')).toHaveCount(36);
@@ -29,8 +35,8 @@ test('the single game result stays beside the board and in view during large-pho
   await page.setViewportSize({ width: 360, height: 800 });
   await loadTimedBoard(page);
   await page.locator('summary').click();
-  await page.getByLabel('Board code', { exact: true }).fill('np1-16-1');
-  await page.getByRole('button', { name: 'Load board', exact: true }).click();
+  await page.getByLabel(ReproductionControl.board, { exact: true }).fill('np1-16-1');
+  await page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }).click();
   await page.locator('summary').click();
   const result = page.getByRole('status');
   await expect(page.locator('[aria-live]')).toHaveCount(1);
@@ -58,8 +64,8 @@ test('the single game result stays beside the board and in view during large-pho
   expect(bounds.right).toBeLessThanOrEqual(bounds.width);
   await expect(page.locator('.help')).toHaveCSS('margin-bottom', '12px');
   await page.locator('summary').click();
-  await page.getByLabel('Snapshot JSON', { exact: true }).fill('{');
-  await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
+  await page.getByLabel(ReproductionControl.snapshot, { exact: true }).fill('{');
+  await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
   await expect(page.locator('.load-notice')).toHaveText('Invalid snapshot.');
   await expect(result).toHaveText('Invalid snapshot.');
   await expect(page.locator('.status-row:not(.game-result) [aria-live]')).toHaveCount(0);
@@ -68,9 +74,9 @@ test('the single game result stays beside the board and in view during large-pho
 test('the best label uses one wording before and after a record exists', async ({ page }) => {
   await loadTimedBoard(page);
   const label = page.locator('.stats dt').nth(3);
-  await expect(label).toHaveText('Best:');
+  await expect(label).toHaveText(StatusLabel.best);
   await expect(page.locator('.stats dd').nth(3)).toHaveText('none');
   await finishBoard(page);
-  await expect(label).toHaveText('Best:');
+  await expect(label).toHaveText(StatusLabel.best);
   await expect(page.locator('.stats dd').nth(3)).toHaveText('8');
 });

@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { DealControl } from '../src/game/controls/control-labels.ts';
 import {
   GAME_URL,
   exportedSnapshot,
@@ -75,7 +76,7 @@ test('keeps the initial focus and produces no audio during play', async ({ page 
   });
   await loadFixedBoard(page);
   await finishBoard(page);
-  await page.getByRole('button', { name: 'Restart', exact: true }).click();
+  await page.getByRole('button', { name: DealControl.restart, exact: true }).click();
   await expect(page.locator('audio, video')).toHaveCount(0);
   expect(audioRequests).toBe(0);
 });

@@ -48,6 +48,7 @@ export function Game() {
       <Reproduction
         game={game}
         generation={session.generation}
+        exportSnapshot={controller.exportSnapshot}
         loadBoard={controller.loadBoard}
         loadSnapshot={controller.loadSnapshot}
         notice={session.loadNotice}

@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { MISMATCH_MS } from '../src/game/game.ts';
-import { DealControl } from './control-labels.ts';
 import {
   FIXED_BOARD,
   exportedSnapshot,
@@ -102,8 +102,8 @@ test('New Game and size changes clear progress and reset the remembered tab stop
   await expect(page.locator('.card[tabindex="0"]')).toHaveCount(1);
   await expect(page.locator('.card').first()).toHaveAttribute('tabindex', '0');
   await page.locator('summary').click();
-  await page.getByLabel('Board code', { exact: true }).fill(FIXED_BOARD);
-  await page.getByRole('button', { name: 'Load board', exact: true }).click();
+  await page.getByLabel(ReproductionControl.board, { exact: true }).fill(FIXED_BOARD);
+  await page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }).click();
   await page.locator('summary').click();
   await page.locator('.card').nth(2).click();
   await page.locator('.card').nth(6).click();

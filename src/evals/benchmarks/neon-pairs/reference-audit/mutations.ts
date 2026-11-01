@@ -2,14 +2,16 @@ import assert from "node:assert/strict";
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile, access } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import { record } from "../reference/src/game/saved-format.ts";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { isJsonObject } from "../reference/src/game/saved-format.ts";
 import { failures, matchingFailure } from "./mutation-report.ts";
 
 const AUDIT = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(AUDIT, "../reference");
 const WORK = join(ROOT, ".test-work");
 const VITEST = join(ROOT, "node_modules/vitest/vitest.mjs");
+// Browser failures reach the harness through a reporter, so the game's tests need no audit hook.
+const FAILURE_REPORTER = pathToFileURL(join(AUDIT, "failure-reporter.ts")).href;
 const INPUTS = [
   ".npmrc",
   "src",
@@ -39,12 +41,12 @@ interface Mutation extends Patch {
   patches: Patch[];
 }
 function patch(value: unknown): Patch {
-  assert.ok(record(value) && typeof value["path"] === "string" && typeof value["find"] === "string" && typeof value["replace"] === "string");
+  assert.ok(isJsonObject(value) && typeof value["path"] === "string" && typeof value["find"] === "string" && typeof value["replace"] === "string");
   return { path: value["path"], find: value["find"], replace: value["replace"] };
 }
 function mutation(value: unknown): Mutation {
   assert.ok(
-    record(value) &&
+    isJsonObject(value) &&
       typeof value["id"] === "string" &&
       typeof value["test"] === "string" &&
       typeof value["testName"] === "string" &&
@@ -64,11 +66,11 @@ function mutation(value: unknown): Mutation {
     patches: (value["patches"] ?? []).map(patch),
   };
 }
-function run(folder: string, args: string[], report?: string) {
+function run(folder: string, args: string[]) {
   const result = spawnSync(process.execPath, args, {
     cwd: folder,
     encoding: "utf8",
-    env: { ...process.env, TEMP: join(ROOT, ".browser-work"), TMP: join(ROOT, ".browser-work"), ...(report ? { NEON_TEST_FAILURE: report } : {}) },
+    env: { ...process.env, TEMP: join(ROOT, ".browser-work"), TMP: join(ROOT, ".browser-work") },
     timeout: 120_000,
     maxBuffer: 4 * 1024 * 1024,
   });
@@ -88,7 +90,7 @@ export async function mutationCheck(): Promise<void> {
   const input: unknown = JSON.parse(await readFile(new URL("./mutations.fixture.json", import.meta.url), "utf8"));
   assert.ok(Array.isArray(input));
   const mutations = input.map(mutation);
-  assert.equal(mutations.length, 21);
+  assert.equal(mutations.length, 25);
   await mkdir(WORK, { recursive: true });
   assert.equal(run(ROOT, [VITEST, "run"]).status, 0, "Clean unit baseline");
   const browserFiles = [...new Set(mutations.filter((m) => m.browser).map((m) => m.test))];
@@ -115,7 +117,7 @@ export async function mutationCheck(): Promise<void> {
       }
       const report = join(folder, "failure.json");
       const result = m.browser
-        ? run(folder, ["--test", "--test-name-pattern", m.testName, m.test], report)
+        ? run(folder, ["--test", "--test-reporter", FAILURE_REPORTER, "--test-reporter-destination", report, "--test-reporter", "spec", "--test-reporter-destination", "stdout", "--test-name-pattern", m.testName, m.test])
         : run(folder, [VITEST, "run", m.test, "--reporter=json", "--outputFile", report]);
       const exists = await access(report).then(
         () => true,

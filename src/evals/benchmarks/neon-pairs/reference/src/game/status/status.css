@@ -7,6 +7,10 @@
 .stats div {
   min-width: 8ch;
 }
+dt,
+dd {
+  display: inline;
+}
 dt {
   color: var(--secondary);
   font-size: 14px;
@@ -18,8 +22,8 @@ dd {
 .victory {
   padding: 12px 16px;
   margin-bottom: 12px;
-  color: var(--green);
-  border: 1px solid var(--green);
+  color: var(--text);
+  border: 1px solid var(--border);
   border-radius: 8px;
 }
 .celebrate {

@@ -1,10 +1,15 @@
 import { useRef, useState } from 'react';
-import { encodeSnapshot } from '../snapshot.ts';
+import {
+  BOARD_CODE_MAX_CHARACTERS,
+  ReproductionControl,
+  SNAPSHOT_MAX_CHARACTERS,
+} from './control-labels.ts';
 import type { GameState } from '../game.types.ts';
 
 interface ReproductionProps {
   game: GameState;
   generation: number;
+  exportSnapshot(): string;
   loadBoard(code: string): boolean;
   loadSnapshot(text: string): boolean;
   notice: string;
@@ -15,6 +20,7 @@ interface ReproductionProps {
 export function Reproduction({
   game,
   generation,
+  exportSnapshot,
   loadBoard,
   loadSnapshot,
   notice,
@@ -62,7 +68,7 @@ export function Reproduction({
             onChange={(event) => setSnapshot(event.currentTarget.value)}
           />
           <div className="control-row">
-            <button type="button" onClick={() => setSnapshot(encodeSnapshot(game))}>
+            <button type="button" onClick={() => setSnapshot(exportSnapshot())}>
               {ReproductionControl.exportSnapshot}
             </button>
             <button
@@ -88,15 +94,3 @@ export function Reproduction({
     </>
   );
 }
-
-export const ReproductionControl = {
-  summary: 'Reproduce a game',
-  board: 'Board code',
-  loadBoard: 'Load board',
-  snapshot: 'Snapshot JSON',
-  exportSnapshot: 'Export snapshot',
-  loadSnapshot: 'Load snapshot',
-  resume: 'Resume',
-} as const;
-export const BOARD_CODE_MAX_CHARACTERS = 32;
-export const SNAPSHOT_MAX_CHARACTERS = 65_536;

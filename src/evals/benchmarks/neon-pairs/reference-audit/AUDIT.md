@@ -12,30 +12,35 @@ The [spec revision record](revision-v2.1.md) connects the council decisions to t
 
 ## Corrections
 
-The first review is recorded in [Reference Review Corrections](review-round-1.md). The eight later corrections are recorded in [Reference Review Two](review-round-2.md). The load-status announcement correction is recorded in [Reference Review Three](review-round-3.md). Protected benchmark-check updates stay with the overseer. The current revision applies the approved spec changes.
+The first review is recorded in [Reference Review Corrections](review-round-1.md). The eight later corrections are recorded in [Reference Review Two](review-round-2.md). The load-status announcement correction is recorded in [Reference Review Three](review-round-3.md). The ten v2.1 judge corrections are recorded in [Version 2.1 Review](review-v2.1.md). Protected benchmark-check updates stay with the overseer. The current revision applies the approved spec changes.
 
 ## Decisions
 
 The candidate keeps these product decisions:
 
-| Subject              | Decision and reason                                                                                                                                                                       |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Rules and constants  | Pure transitions, frozen decks and local states, limits and versions replace the pilot's gathered rules file.                                                                             |
-| Completion           | The banner and final turn announce moves and time.                                                                                                                                        |
-| Type and spacing     | Body, title and secondary text follow the stated sizes and layout scale. Board padding stays 6px for the 3px outline and 2px offset.                                                      |
-| Announcements        | One keyed polite atomic live region gives each turn result and load notice once, including repeated messages and the final match with its win.                                            |
-| Active time          | One monotonic clock feeds elapsed and mismatch time through the same delta. The unsupported second advanceGame time parameter is removed.                                                 |
-| Delayed timer        | Synchronize active time before deciding whether an activation is blocked.                                                                                                                 |
-| Elapsed cap          | The maintainer capped elapsed time at 359999999ms. Play continues. Snapshot validation rejects larger values. Replay timestamps keep their safe-integer range.                            |
-| Move cap             | The maintainer capped moves at 999999. Matching and winning continue. Snapshots and saved bests reject larger values.                                                                     |
-| Formats              | Board code, snapshot and replay format versions stay at 1. Product spec is 2.1. Local data formats stay at 1.                                                                             |
-| Test runner          | The maintainer requires Vitest 5.0.5 for game unit tests. Product-rule coverage is kept. The removed second-clock parameter's test is replaced with shared-time assertions.               |
-| Rejection vector     | A literal BigInt-calculated shuffle fixture exercises the rejection branch independently.                                                                                                 |
-| Half-pair gap        | The first half-pair mutation exposed an overlapping-invalid-input gap. An otherwise-valid fixture now isolates it.                                                                        |
-| Reference separation | Game files stay in reference. Audit records, captures and mutation tools stay here.                                                                                                       |
-| Focus and controls   | Board handles its remembered focus. Input reset uses a keyed input while keeping action buttons mounted. Game results sit beside the board. Load feedback follows reproduction controls.  |
-| Mutations            | Several clauses can break together. A kill requires the declared test and assertion reason. M07 exercises real timer cancellation. M19 leaves padding unchanged and fails outline bounds. |
-| Screen reader        | I17.1 through I17.6 are tree-checked. The README records the browser and tool versions and that no screen reader was used.                                                                |
+| Subject              | Decision and reason                                                                                                                                                                                                           |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Rules and constants  | Pure transitions, frozen decks and local states, limits and versions replace the pilot's gathered rules file.                                                                                                                 |
+| Completion           | The banner and final turn announce moves and time.                                                                                                                                                                            |
+| Type and spacing     | Body, title and secondary text follow the stated sizes and layout scale. Board padding stays 6px for the 3px outline and 2px offset.                                                                                          |
+| Announcements        | One keyed polite atomic live region gives each turn result and load notice once, including repeated messages and the final match with its win.                                                                                |
+| Active time          | One monotonic clock feeds elapsed and mismatch time through the same delta. The unsupported second advanceGame time parameter is removed.                                                                                     |
+| Delayed timer        | Synchronize active time before deciding whether an activation is blocked.                                                                                                                                                     |
+| Elapsed cap          | The maintainer capped elapsed time at 359999999ms. Play continues. Snapshot validation rejects larger values. Replay timestamps keep their safe-integer range.                                                                |
+| Move cap             | The maintainer capped moves at 999999. Matching and winning continue. Snapshots and saved bests reject larger values.                                                                                                         |
+| Formats              | Board code, snapshot and replay format versions stay at 1. Product spec is 2.1. Local data formats stay at 1.                                                                                                                 |
+| Test runner          | The maintainer requires Vitest 5.0.5 for game unit tests. Product-rule coverage is kept. The removed second-clock parameter's test is replaced with shared-time assertions.                                                   |
+| Rejection vector     | A literal BigInt-calculated shuffle fixture exercises the rejection branch independently.                                                                                                                                     |
+| Half-pair gap        | The first half-pair mutation exposed an overlapping-invalid-input gap. An otherwise-valid fixture now isolates it.                                                                                                            |
+| Reference separation | Game files stay in reference. Audit records, captures and mutation tools stay here.                                                                                                                                           |
+| Focus and controls   | Board handles its remembered focus. Input reset uses a keyed input while keeping action buttons mounted. Game results sit beside the board. Load feedback follows reproduction controls.                                      |
+| Mutations            | Several clauses can break together. A kill requires the declared test and assertion reason. M07 exercises real timer cancellation. M19 leaves padding unchanged and fails outline bounds. M25 removes the card scroll margin. |
+| Board width          | The board takes its width from its scroll area, so visible page and board scrollbars never cut off the last column.                                                                                                           |
+| Export time          | Export synchronizes the active clock first. The clock keeps whole milliseconds and carries the fraction, so elapsed time rounds down and remaining time rounds up.                                                            |
+| Labels               | Label and limit owners sit beside their components. Browser journeys import them. The control contract keeps independent literals for the published text.                                                                     |
+| Focus scroll         | Arrow focus skips the browser's centering scroll, so the card's nearest scroll and 6px scroll margin decide what stays in view.                                                                                               |
+| Mutation reports     | A Node test reporter in this folder records browser failures, so the game's tests carry no audit hook.                                                                                                                        |
+| Screen reader        | I17.1 through I17.6 are tree-checked. The README records the browser and tool versions and that no screen reader was used.                                                                                                    |
 
 ## Checks
 
@@ -43,20 +48,20 @@ The named combination is Node 26.12.1, npm 11.20.0, Playwright 1.64.1 and Chromi
 
 The locked install and checks have these results:
 
-| Gate                           | Result                                                              |
-| ------------------------------ | ------------------------------------------------------------------- |
-| Product install and type check | Passed                                                              |
-| Product tests                  | 191 passed, 26 failed on protected v2 inputs, zero skipped          |
-| Reference install              | Passed from the lockfile with the worktree-local npm cache          |
-| Reference type check           | All three projects passed                                           |
-| Vitest unit and static checks  | 128 passed, zero failed and zero skipped                            |
-| Build                          | Current source emitted one offline HTML file                        |
-| Browser command                | 65 passed in the replay follow-up run, zero failed and zero skipped |
-| Mutation harness               | 21 caught for their declared assertion reasons                      |
-| Harness self-test              | Passed. Unrelated test names and failure reasons are rejected       |
-| Audit type check               | Passed                                                              |
+| Gate                           | Result                                                                                                                           |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Product install and type check | Passed                                                                                                                           |
+| Product tests                  | 264 of 272 passed, zero skipped. Six failures predate this round. Two read protected text that names the old reference code      |
+| Reference install              | Passed from the lockfile with the worktree-local npm cache                                                                       |
+| Reference type check           | All three projects passed                                                                                                        |
+| Vitest unit and static checks  | 127 passed, zero failed and zero skipped                                                                                         |
+| Build                          | Current source emitted one offline HTML file                                                                                     |
+| Browser command                | 71 passed in each of three consecutive runs, zero failed and zero skipped                                                        |
+| Mutation harness               | 25 caught for their declared assertion reasons                                                                                   |
+| Harness self-test              | Passed. Unrelated test names and failure reasons are rejected. The failure reporter keeps each failed name and assertion message |
+| Audit type check               | Passed                                                                                                                           |
 
-Each browser command builds the game and diagnostic sheet afresh. Vite clears its output before writing. Fresh contexts run against that build. The zoom journey uses the specified 640x400 CSS-pixel viewport and device scale 2. Text bounds check its contents as well as outer layout. Offline delivery permits only the HTML's own file request.
+Each browser command builds the game and diagnostic sheet afresh. Vite clears its output before writing. Fresh contexts run against that build. The zoom journey uses the specified 640x400 CSS-pixel viewport and device scale 2. Text bounds check its contents as well as outer layout. The scrollbar journey launches Chromium with scrollbars that take layout space, as on a Windows desktop. Offline delivery permits only the HTML's own file request.
 
 The [verification record](verification.json) gives commands and counts. The [seed record](seed-record.json) binds source, configuration, trace and evidence hashes. Raw command logs are disposable outputs. The seed is not frozen.
 
@@ -560,9 +565,9 @@ Every clause has real paths in the [trace map](../trace.json). Existing check sl
 
 ## Mutations
 
-Run from reference with the documented local browser settings, then call `node ../reference-audit/mutations.ts`. The harness checks clean unit and browser baselines first. It changes temporary copies under the game test-work folder and removes each copy afterward.
+Run from reference with the documented local browser settings, then call `node ../reference-audit/mutations.ts`. The harness checks clean unit and browser baselines first. It changes temporary copies under the game test-work folder and removes each copy afterward. Browser failures reach it through [failure-reporter.ts](failure-reporter.ts), a Node test reporter, so the game's tests need no hook for it.
 
-Each fixture lists directly affected clauses, one test and a required assertion reason. The report records the actual assertion and other failed tests. An unrelated failure, build error or missing report cannot count as a kill. The [mutation results](mutation-results.json) contain all 21 reasons:
+Each fixture lists directly affected clauses, one test and a required assertion reason. The report records the actual assertion and other failed tests. An unrelated failure, build error or missing report cannot count as a kill. The [mutation results](mutation-results.json) contain all 25 reasons:
 
 | Mutation | Clauses                    | Result | Required assertion                       |
 | -------- | -------------------------- | ------ | ---------------------------------------- |
@@ -587,6 +592,10 @@ Each fixture lists directly affected clauses, one test and a required assertion 
 | M19      | V16.1, V19.5, V20.4        | Caught | V19 full focus outline                   |
 | M20      | I14.2, A08.1, V14.2        | Caught | I14 hidden cards mount no face           |
 | M21      | R05.5, R05.8, D07.8        | Caught | R05 move count saturates                 |
+| M22      | V04.1, V05.2               | Caught | V04 board fits beside its scrollbars     |
+| M23      | C08.6, C08.7               | Caught | C08 export reads the active clock        |
+| M24      | V06.6                      | Caught | V06 secondary color .eyebrow             |
+| M25      | I13.2, V19.5               | Caught | V19 full focus outline                   |
 
 ## Size
 
@@ -595,18 +604,18 @@ These counts follow Prettier 3.9.6. Physical lines include blank lines. The nonb
 | Tier                | Files | Physical lines | Nonblank lines |
 | ------------------- | ----- | -------------- | -------------- |
 | Configuration       | 10    | 125            | 122            |
-| Styles              | 5     | 302            | 302            |
+| Styles              | 5     | 303            | 303            |
 | Development scripts | 5     | 90             | 84             |
-| Tests and fixtures  | 65    | 3713           | 3567           |
-| Components          | 8     | 465            | 445            |
-| Game functions      | 12    | 474            | 443            |
-| Browser session     | 7     | 365            | 333            |
+| Tests and fixtures  | 64    | 3797           | 3639           |
+| Components          | 10    | 472            | 455            |
+| Game functions      | 12    | 471            | 440            |
+| Browser session     | 7     | 373            | 340            |
 
-Counts exclude Markdown, package-lock.json, HTML, generated distributions, captured evidence, audit tools, command logs, caches, browser downloads and dependencies. Every authored game TypeScript file is within 200 lines. Files above the 100-line aim are listed in verification.json.
+Counts exclude Markdown, package-lock.json, HTML, generated distributions, captured evidence, audit tools, command logs, caches, browser downloads and dependencies. Components include the two label modules beside them. Every authored game TypeScript file is within 200 lines. Files above the 100-line aim are listed in verification.json.
 
 ## Revision files
 
-The [revision file inventory](revision-files.json) lists every created, changed and deleted file for v2.1. The following table keeps the earlier v2 correction history.
+The [revision file inventory](revision-files.json) lists every created, changed and deleted file for v2.1, with a separate section for the v2.1 review corrections. The following table keeps the earlier v2 correction history.
 
 ## File changes
 

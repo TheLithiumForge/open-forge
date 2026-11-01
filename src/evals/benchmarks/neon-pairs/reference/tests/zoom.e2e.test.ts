@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
-import { DealControl } from './control-labels.ts';
+import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { loadFixedBoard, finishBoard, exportedSnapshot } from './game-fixture.ts';
 import { expectFocusInside } from './focus-bounds.ts';
 import { expectReadableText } from './readability.ts';
@@ -29,11 +29,15 @@ test(
     await page.screenshot({ path: artifacts.outputPath('zoom-win.png'), fullPage: true });
     const completed = await exportedSnapshot(page);
     await page.locator('summary').click();
-    await page.getByLabel('Snapshot JSON', { exact: true }).fill(JSON.stringify(completed));
-    await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'Resume', exact: true })).toHaveCount(0);
+    await page
+      .getByLabel(ReproductionControl.snapshot, { exact: true })
+      .fill(JSON.stringify(completed));
+    await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
+    await expect(
+      page.getByRole('button', { name: ReproductionControl.resume, exact: true }),
+    ).toHaveCount(0);
     await expectReadableText(page);
-    await page.getByLabel('Snapshot JSON', { exact: true }).fill(
+    await page.getByLabel(ReproductionControl.snapshot, { exact: true }).fill(
       JSON.stringify({
         ...completed,
         matched: [],
@@ -41,10 +45,12 @@ test(
         selection: { kind: 'one', index: 0 },
       }),
     );
-    await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'Resume', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
+    await expect(
+      page.getByRole('button', { name: ReproductionControl.resume, exact: true }),
+    ).toBeVisible();
     await expectReadableText(page);
-    await page.getByRole('button', { name: 'Resume', exact: true }).click();
+    await page.getByRole('button', { name: ReproductionControl.resume, exact: true }).click();
     await page.locator('summary').click();
     await page.getByRole('button', { name: DealControl.restart, exact: true }).click();
     await page.locator('.card').first().focus();

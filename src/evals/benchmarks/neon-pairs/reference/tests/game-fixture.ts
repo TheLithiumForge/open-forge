@@ -1,9 +1,9 @@
 import { fileURLToPath } from 'node:url';
 import { expect } from '@playwright/test';
-import { record } from '../src/game/saved-format.ts';
+import { isJsonObject } from '../src/game/saved-format.ts';
 import { EXAMPLE_CODE, EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
-import { ReproductionControl } from './control-labels.ts';
-import { StatusLabel } from './control-labels.ts';
+import { ReproductionControl } from '../src/game/controls/control-labels.ts';
+import { StatusLabel } from '../src/game/status/status-labels.ts';
 import type { Page } from '@playwright/test';
 
 export const GAME_URL = new URL('../dist/index.html', import.meta.url).href;
@@ -37,7 +37,7 @@ export async function exportedSnapshot(page: Page): Promise<Record<string, unkno
     await page.getByLabel(ReproductionControl.snapshot, { exact: true }).inputValue(),
   );
   await page.locator('summary').click();
-  if (!record(value)) throw new Error('Expected an exported snapshot object.');
+  if (!isJsonObject(value)) throw new Error('Expected an exported snapshot object.');
   return value;
 }
 

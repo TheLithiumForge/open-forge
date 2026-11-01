@@ -36,7 +36,8 @@ export function Board({ game, ref, paused, activate }: BoardProps) {
     if (target === null) return;
     event.preventDefault();
     const card = element.current?.querySelectorAll('button').item(target);
-    card?.focus();
+    // The browser would center the card. Its focus handler scrolls with nearest alignment instead.
+    card?.focus({ preventScroll: true });
   }
   function revealed(index: number): boolean {
     const selection = game.selection;

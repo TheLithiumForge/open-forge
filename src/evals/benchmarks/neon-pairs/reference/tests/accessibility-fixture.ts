@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
-import { record } from '../src/game/saved-format.ts';
+import { isJsonObject } from '../src/game/saved-format.ts';
 
-function strings(value: unknown): value is readonly string[] {
+function isStringList(value: unknown): value is readonly string[] {
   return Array.isArray(value) && value.every((item) => typeof item === 'string');
 }
 
@@ -10,17 +10,17 @@ export async function accessibilityFixture() {
     await readFile(new URL('./accessibility.fixture.json', import.meta.url), 'utf8'),
   );
   if (
-    !record(value) ||
+    !isJsonObject(value) ||
     typeof value.size !== 'number' ||
-    !record(value.controls) ||
+    !isJsonObject(value.controls) ||
     typeof value.controls.size !== 'string' ||
     typeof value.controls.newGame !== 'string' ||
     typeof value.controls.restart !== 'string' ||
     typeof value.controls.summary !== 'string' ||
-    !strings(value.closed) ||
-    !strings(value.revealed) ||
-    !strings(value.matched) ||
-    !strings(value.turns) ||
+    !isStringList(value.closed) ||
+    !isStringList(value.revealed) ||
+    !isStringList(value.matched) ||
+    !isStringList(value.turns) ||
     typeof value.win !== 'string' ||
     typeof value.newGame !== 'string' ||
     typeof value.readmeRecord !== 'string'
@@ -48,7 +48,7 @@ export async function playwrightVersion(): Promise<string> {
   const value: unknown = JSON.parse(
     await readFile(new URL(import.meta.resolve('@playwright/test/package.json')), 'utf8'),
   );
-  if (!record(value) || typeof value.version !== 'string')
+  if (!isJsonObject(value) || typeof value.version !== 'string')
     throw new Error('Missing Playwright version.');
   return value.version;
 }

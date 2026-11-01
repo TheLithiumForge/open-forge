@@ -1,8 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { PREFERENCES_KEY } from '../src/game/session/storage.ts';
-import { DealControl } from './control-labels.ts';
-import { ReproductionControl } from './control-labels.ts';
 import { finishBoard, loadFixedBoard } from './game-fixture.ts';
 
 test('saved size and per-size completed bests survive reload and resets', async ({

@@ -1,6 +1,6 @@
-import { createGame, isWon, MOVES_MAX, ELAPSED_MAX_MS } from './game.ts';
+import { createGame, MOVES_MAX, ELAPSED_MAX_MS } from './game.ts';
 import { parseBoardCode } from './deck.ts';
-import { exactKeys, readJson, record, safeNonnegative } from './saved-format.ts';
+import { hasExactKeys, isJsonObject, isNonnegativeSafeInteger, readJson } from './saved-format.ts';
 import { readMatched, readSelection } from './snapshot-selection.ts';
 import { SelectionKind } from './selection.ts';
 import type { GameState } from './game.types.ts';
@@ -23,12 +23,9 @@ export function encodeSnapshot(state: GameState): string {
       version: SNAPSHOT_VERSION,
       boardCode: state.boardCode,
       matched: [...state.matched].sort((left, right) => left - right),
-      selection:
-        state.selection.kind === SelectionKind.mismatch
-          ? { ...state.selection, remainingMs: Math.ceil(state.selection.remainingMs) }
-          : state.selection,
+      selection: state.selection,
       moves: state.moves,
-      elapsedMs: Math.floor(state.elapsedMs),
+      elapsedMs: state.elapsedMs,
       started: state.started,
     },
     null,
@@ -38,13 +35,17 @@ export function encodeSnapshot(state: GameState): string {
 
 export function decodeSnapshot(text: string): GameState | null {
   const value = readJson(text, SNAPSHOT_MAX_BYTES);
-  if (!record(value) || !exactKeys(value, SNAPSHOT_KEYS) || value.version !== SNAPSHOT_VERSION)
+  if (
+    !isJsonObject(value) ||
+    !hasExactKeys(value, SNAPSHOT_KEYS) ||
+    value.version !== SNAPSHOT_VERSION
+  )
     return null;
   if (typeof value.boardCode !== 'string' || !parseBoardCode(value.boardCode)) return null;
   if (
-    !safeNonnegative(value.moves) ||
+    !isNonnegativeSafeInteger(value.moves) ||
     value.moves > MOVES_MAX ||
-    !safeNonnegative(value.elapsedMs) ||
+    !isNonnegativeSafeInteger(value.elapsedMs) ||
     value.elapsedMs > ELAPSED_MAX_MS ||
     typeof value.started !== 'boolean'
   )
@@ -62,7 +63,6 @@ export function decodeSnapshot(text: string): GameState | null {
     elapsedMs: value.elapsedMs,
     started: value.started,
   };
-  if (isWon(state) && selection.kind !== SelectionKind.closed) return null;
   const minimumMoves = matched.length / 2 + (selection.kind === SelectionKind.mismatch ? 1 : 0);
   if (state.moves < minimumMoves) return null;
   if (

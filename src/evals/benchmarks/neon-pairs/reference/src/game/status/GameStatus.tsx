@@ -1,5 +1,6 @@
 import { isWon } from '../game.ts';
 import { formatElapsed } from '../elapsed-time.ts';
+import { StatusLabel } from './status-labels.ts';
 import type { GameState } from '../game.types.ts';
 import './status.css';
 
@@ -37,10 +38,3 @@ export function GameStatus({ game, best, celebration }: GameStatusProps) {
     </>
   );
 }
-
-export const StatusLabel = {
-  moves: 'Moves:',
-  pairs: 'Pairs:',
-  time: 'Time:',
-  best: 'Best:',
-} as const;

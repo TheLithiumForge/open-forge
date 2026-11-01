@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'vitest';
-import { activateCard, advanceGame, createGame, MISMATCH_MS } from './game.ts';
+import { activateCard, advanceGame, createGame, MISMATCH_MS, MOVES_MAX } from './game.ts';
 import {
   decodeSnapshot,
   encodeSnapshot,
@@ -95,6 +95,7 @@ const INVALID_SNAPSHOTS: readonly Record<string, unknown>[] = [
     moves: 1,
   },
   { matched: [2, 6], selection: { kind: SelectionKind.one, index: 2 }, started: true, moves: 1 },
+  { moves: MOVES_MAX + 1, started: true },
 ];
 for (const [index, overrides] of INVALID_SNAPSHOTS.entries()) {
   test(`snapshot validation rejects inconsistent state ${index + 1}`, () => {
@@ -105,6 +106,42 @@ for (const [index, overrides] of INVALID_SNAPSHOTS.entries()) {
     );
   });
 }
+
+// Started play with one revealed card is valid at zero moves, so each variant breaks one rule.
+const ONE_REVEALED = { started: true, selection: { kind: SelectionKind.one, index: 0 } };
+const PENDING = {
+  started: true,
+  moves: 1,
+  selection: { kind: SelectionKind.mismatch, first: 0, second: 1, remainingMs: MISMATCH_MS },
+};
+
+test('started progress rejects a nonboolean flag and negative or fractional counters', () => {
+  assert.ok(decodeSnapshot(snapshot(ONE_REVEALED)), 'valid started baseline');
+  const nonboolean = snapshot({ ...ONE_REVEALED, started: 'true' });
+  assert.equal(decodeSnapshot(nonboolean), null, 'nonboolean started');
+  for (const field of ['moves', 'elapsedMs'])
+    for (const value of [-1, 0.5])
+      assert.equal(
+        decodeSnapshot(snapshot({ ...ONE_REVEALED, [field]: value })),
+        null,
+        `${field} must be a nonnegative integer`,
+      );
+});
+
+test('progress needs one move per matched pair and one for a pending mismatch', () => {
+  assert.ok(decodeSnapshot(snapshot(PENDING)), 'valid mismatch baseline');
+  const unpaid = snapshot({ ...PENDING, moves: 0 });
+  assert.equal(decodeSnapshot(unpaid), null, 'pending mismatch needs one move');
+  const twoPairs = {
+    ...ONE_REVEALED,
+    matched: [2, 6, 0, 11],
+    moves: 2,
+    selection: { kind: SelectionKind.one, index: 3 },
+  };
+  assert.ok(decodeSnapshot(snapshot(twoPairs)), 'valid two-pair baseline');
+  const short = snapshot({ ...twoPairs, moves: 1 });
+  assert.equal(decodeSnapshot(short), null, 'matched pairs need two moves');
+});
 
 test('snapshot parsing enforces malformed, missing and exact byte limits', () => {
   for (const text of ['null', '[]', '{}', '{']) assert.equal(decodeSnapshot(text), null);

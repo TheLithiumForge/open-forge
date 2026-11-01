@@ -263,7 +263,7 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R03.1. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -569,7 +569,7 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R05.1. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -596,7 +596,7 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R05.2. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -623,7 +623,7 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R05.3. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -650,7 +650,7 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R05.4. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -667,7 +667,7 @@
       "reference": [
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R05.5. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -689,7 +689,7 @@
       "reference": [
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R05.6. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -711,7 +711,7 @@
       "reference": [
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R05.7. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -733,7 +733,7 @@
       "reference": [
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R05.8. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -755,13 +755,23 @@
       "reference": [
         {
           "path": "reference/src/game/status/GameStatus.tsx",
-          "symbol": "GameStatus, StatusLabel",
+          "symbol": "GameStatus",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/status/status-labels.ts",
+          "symbol": "StatusLabel",
+          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/status/status.css",
+          "symbol": "dt, dd",
+          "evidence": "Clause R05.9. Each value renders on its label's line, so visible text reads as the published format."
         },
         {
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "status formats show current values, continuing minutes and a completed import without Resume",
-          "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+          "evidence": "Spec v2.1 executable assertion. Rendered status text must equal the published formats. See reference-audit/verification.json for the local gate results."
         }
       ]
     },
@@ -814,13 +824,23 @@
       "reference": [
         {
           "path": "reference/src/game/status/GameStatus.tsx",
-          "symbol": "GameStatus, StatusLabel",
+          "symbol": "GameStatus",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/status/status-labels.ts",
+          "symbol": "StatusLabel",
+          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/status/status.css",
+          "symbol": "dt, dd",
+          "evidence": "Clause R06.2. Each value renders on its label's line, so visible text reads as the published format."
         },
         {
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "status formats show current values, continuing minutes and a completed import without Resume",
-          "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+          "evidence": "Spec v2.1 executable assertion. Rendered status text must equal the published formats. See reference-audit/verification.json for the local gate results."
         }
       ]
     },
@@ -1501,13 +1521,23 @@
       "reference": [
         {
           "path": "reference/src/game/status/GameStatus.tsx",
-          "symbol": "GameStatus, StatusLabel",
+          "symbol": "GameStatus",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/status/status-labels.ts",
+          "symbol": "StatusLabel",
+          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/status/status.css",
+          "symbol": "dt, dd",
+          "evidence": "Clause R07.12. Each value renders on its label's line, so visible text reads as the published format."
         },
         {
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "status formats show current values, continuing minutes and a completed import without Resume",
-          "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+          "evidence": "Spec v2.1 executable assertion. Rendered status text must equal the published formats. See reference-audit/verification.json for the local gate results."
         }
       ]
     },
@@ -1832,8 +1862,18 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R10.1. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
+        },
+        {
+          "path": "reference/src/game/session/session.test.ts",
+          "symbol": "an imported game at the move cap records the capped count as its best",
+          "evidence": "Clause R10.1. Session code records a capped win as the best."
+        },
+        {
+          "path": "reference/src/game/session/storage.test.ts",
+          "symbol": "a best at the move cap round trips and a larger saved best is ignored",
+          "evidence": "Clause R10.1. Storage code keeps a capped best and ignores a larger saved value."
         },
         {
           "path": "reference/tests/move-cap.e2e.test.ts",
@@ -1896,8 +1936,18 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R10.3. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
+        },
+        {
+          "path": "reference/src/game/session/session.test.ts",
+          "symbol": "an imported game at the move cap records the capped count as its best",
+          "evidence": "Clause R10.3. Session code records a capped win as the best."
+        },
+        {
+          "path": "reference/src/game/session/storage.test.ts",
+          "symbol": "a best at the move cap round trips and a larger saved best is ignored",
+          "evidence": "Clause R10.3. Storage code keeps a capped best and ignores a larger saved value."
         },
         {
           "path": "reference/tests/move-cap.e2e.test.ts",
@@ -1960,8 +2010,18 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause R10.5. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
+        },
+        {
+          "path": "reference/src/game/session/session.test.ts",
+          "symbol": "an imported game at the move cap records the capped count as its best",
+          "evidence": "Clause R10.5. Session code records a capped win as the best."
+        },
+        {
+          "path": "reference/src/game/session/storage.test.ts",
+          "symbol": "a best at the move cap round trips and a larger saved best is ignored",
+          "evidence": "Clause R10.5. Storage code keeps a capped best and ignores a larger saved value."
         },
         {
           "path": "reference/tests/move-cap.e2e.test.ts",
@@ -1977,13 +2037,23 @@
       "reference": [
         {
           "path": "reference/src/game/status/GameStatus.tsx",
-          "symbol": "GameStatus, StatusLabel",
+          "symbol": "GameStatus",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/status/status-labels.ts",
+          "symbol": "StatusLabel",
+          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/status/status.css",
+          "symbol": "dt, dd",
+          "evidence": "Clause R10.6. Each value renders on its label's line, so visible text reads as the published format."
         },
         {
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "status formats show current values, continuing minutes and a completed import without Resume",
-          "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+          "evidence": "Spec v2.1 executable assertion. Rendered status text must equal the published formats. See reference-audit/verification.json for the local gate results."
         }
       ]
     },
@@ -1994,13 +2064,23 @@
       "reference": [
         {
           "path": "reference/src/game/status/GameStatus.tsx",
-          "symbol": "GameStatus, StatusLabel",
+          "symbol": "GameStatus",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/status/status-labels.ts",
+          "symbol": "StatusLabel",
+          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/status/status.css",
+          "symbol": "dt, dd",
+          "evidence": "Clause R10.7. Each value renders on its label's line, so visible text reads as the published format."
         },
         {
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "status formats show current values, continuing minutes and a completed import without Resume",
-          "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+          "evidence": "Spec v2.1 executable assertion. Rendered status text must equal the published formats. See reference-audit/verification.json for the local gate results."
         }
       ]
     },
@@ -2124,7 +2204,7 @@
         },
         {
           "path": "reference/tests/timer-lifecycle.e2e.test.ts",
-          "symbol": "A04 R12 unmount clears the active timer and visibility listener",
+          "symbol": "unmount clears the active timer and visibility listener",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         },
         {
@@ -2146,7 +2226,7 @@
         },
         {
           "path": "reference/tests/timer-lifecycle.e2e.test.ts",
-          "symbol": "R12 a prior turn deadline cannot close a later mismatch in the same deal",
+          "symbol": "a prior turn deadline cannot close a later mismatch in the same deal",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         },
         {
@@ -2165,6 +2245,11 @@
           "path": "reference/src/game/controls/Controls.tsx",
           "symbol": "Controls",
           "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "DealControl",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
         },
         {
           "path": "reference/tests/control-contract.e2e.test.ts",
@@ -2255,6 +2340,11 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "DealControl",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
+        },
+        {
           "path": "reference/tests/control-contract.e2e.test.ts",
           "symbol": "literal control labels, limits and invalid statuses match the public contract",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
@@ -2324,6 +2414,11 @@
           "path": "reference/src/game/controls/Controls.tsx",
           "symbol": "Controls",
           "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "DealControl",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
         },
         {
           "path": "reference/tests/control-contract.e2e.test.ts",
@@ -2417,8 +2512,8 @@
           "evidence": "Clause C04.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause C04.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -2459,8 +2554,8 @@
           "evidence": "Clause C04.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause C04.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -2481,6 +2576,11 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "ReproductionControl",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
+        },
+        {
           "path": "reference/tests/control-contract.e2e.test.ts",
           "symbol": "literal control labels, limits and invalid statuses match the public contract",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
@@ -2498,6 +2598,11 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "ReproductionControl",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
+        },
+        {
           "path": "reference/tests/control-contract.e2e.test.ts",
           "symbol": "literal control labels, limits and invalid statuses match the public contract",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
@@ -2513,6 +2618,11 @@
           "path": "reference/src/game/controls/Reproduction.tsx",
           "symbol": "Reproduction",
           "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "BOARD_CODE_MAX_CHARACTERS",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
         },
         {
           "path": "reference/tests/control-contract.e2e.test.ts",
@@ -2569,8 +2679,8 @@
           "evidence": "Clause C05.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause C05.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -2589,6 +2699,11 @@
           "path": "reference/src/game/controls/Reproduction.tsx",
           "symbol": "Reproduction",
           "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "ReproductionControl",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
         },
         {
           "path": "reference/tests/control-contract.e2e.test.ts",
@@ -2628,8 +2743,8 @@
           "evidence": "Clause C06.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause C06.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -2650,6 +2765,11 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "ReproductionControl",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
+        },
+        {
           "path": "reference/tests/control-contract.e2e.test.ts",
           "symbol": "literal control labels, limits and invalid statuses match the public contract",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
@@ -2665,6 +2785,11 @@
           "path": "reference/src/game/controls/Reproduction.tsx",
           "symbol": "Reproduction",
           "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "SNAPSHOT_MAX_CHARACTERS",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
         },
         {
           "path": "reference/tests/control-contract.e2e.test.ts",
@@ -2699,6 +2824,11 @@
           "path": "reference/src/game/controls/Reproduction.tsx",
           "symbol": "Reproduction",
           "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "ReproductionControl",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
         },
         {
           "path": "reference/tests/control-contract.e2e.test.ts",
@@ -2738,8 +2868,8 @@
           "evidence": "Clause C08.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause C08.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -2780,8 +2910,8 @@
           "evidence": "Clause C08.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause C08.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -2839,8 +2969,8 @@
           "evidence": "Clause C08.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause C08.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -2856,14 +2986,24 @@
       "checks": ["L3:l3-c08-replay#clause-C08.6"],
       "reference": [
         {
-          "path": "reference/src/game/snapshot.ts",
-          "symbol": "encodeSnapshot",
-          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+          "path": "reference/src/game/session/use-game.ts",
+          "symbol": "exportSnapshot",
+          "evidence": "Clause C08.6. Export synchronizes the active clock before encoding the current game."
         },
         {
-          "path": "reference/src/game/snapshot-rounding.test.ts",
-          "symbol": "snapshot export rounds elapsed down and remaining mismatch up from ${remainingMs}ms",
-          "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+          "path": "reference/src/game/session/browser-clock.ts",
+          "symbol": "elapsedStep",
+          "evidence": "Clause C08.6. The clock gives the game whole milliseconds and keeps the fraction."
+        },
+        {
+          "path": "reference/tests/clock-edges.e2e.test.ts",
+          "symbol": "export reads the active clock between render ticks",
+          "evidence": "Clause C08.6. Chromium waits 1035ms and then 330ms, neither a multiple of the 40ms render tick. Export reports the active clock instead of the last render."
+        },
+        {
+          "path": "reference/src/game/session/browser-clock.test.ts",
+          "symbol": "active clock keeps fractional time across hidden intervals",
+          "evidence": "Clause C08.6. Whole milliseconds enter the game and the fraction carries forward, so elapsed time rounds down and remaining time rounds up."
         }
       ]
     },
@@ -2873,14 +3013,24 @@
       "checks": ["L3:l3-c08-replay#clause-C08.7"],
       "reference": [
         {
-          "path": "reference/src/game/snapshot.ts",
-          "symbol": "encodeSnapshot",
-          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+          "path": "reference/src/game/session/use-game.ts",
+          "symbol": "exportSnapshot",
+          "evidence": "Clause C08.7. Export synchronizes the active clock before encoding the current game."
         },
         {
-          "path": "reference/src/game/snapshot-rounding.test.ts",
-          "symbol": "snapshot export rounds elapsed down and remaining mismatch up from ${remainingMs}ms",
-          "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+          "path": "reference/src/game/session/browser-clock.ts",
+          "symbol": "elapsedStep",
+          "evidence": "Clause C08.7. The clock gives the game whole milliseconds and keeps the fraction."
+        },
+        {
+          "path": "reference/tests/clock-edges.e2e.test.ts",
+          "symbol": "export reads the active clock between render ticks",
+          "evidence": "Clause C08.7. Chromium waits 1035ms and then 330ms, neither a multiple of the 40ms render tick. Export reports the active clock instead of the last render."
+        },
+        {
+          "path": "reference/src/game/session/browser-clock.test.ts",
+          "symbol": "active clock keeps fractional time across hidden intervals",
+          "evidence": "Clause C08.7. Whole milliseconds enter the game and the fraction carries forward, so elapsed time rounds down and remaining time rounds up."
         }
       ]
     },
@@ -2893,6 +3043,11 @@
           "path": "reference/src/game/controls/Reproduction.tsx",
           "symbol": "Reproduction",
           "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "ReproductionControl",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
         },
         {
           "path": "reference/tests/control-contract.e2e.test.ts",
@@ -2987,7 +3142,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Each invalid load and valid paused snapshot load is submitted twice. Each event has the exact status text in one polite atomic accessibility node and one live-region mutation."
         },
         {
@@ -3028,6 +3183,11 @@
           "path": "reference/src/game/session/session.ts",
           "symbol": "replaceGame, SessionNotice",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/controls/control-labels.ts",
+          "symbol": "ReproductionControl",
+          "evidence": "Label owner. Components and browser journeys import it. The control contract checks the published text against independent literals."
         },
         {
           "path": "reference/src/game/session/session.test.ts",
@@ -3125,7 +3285,7 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause C10.3. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -3339,7 +3499,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Each invalid load and valid paused snapshot load is submitted twice. Each event has the exact status text in one polite atomic accessibility node and one live-region mutation."
         },
         {
@@ -3371,7 +3531,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Each invalid load and valid paused snapshot load is submitted twice. Each event has the exact status text in one polite atomic accessibility node and one live-region mutation."
         },
         {
@@ -5208,6 +5368,16 @@
           "path": "reference/tests/input-contract.e2e.test.ts",
           "symbol": "focus requests nearest alignment on both axes",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/board/Board.tsx",
+          "symbol": "navigate",
+          "evidence": "Clause I13.1. Arrow focus skips the browser's centering scroll, so the card's nearest scroll is the one that applies."
+        },
+        {
+          "path": "reference/tests/focus-clearance.e2e.test.ts",
+          "symbol": "focus clearance survives nearest scroll to an interior card",
+          "evidence": "Clause I13.1. Keyboard focus reaches row 9, column 9 with nearest scrolls of the board and the page."
         }
       ]
     },
@@ -5223,8 +5393,8 @@
         },
         {
           "path": "reference/tests/focus-clearance.e2e.test.ts",
-          "symbol": "V19 focus clearance survives nearest scroll to an interior row",
-          "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+          "symbol": "focus clearance survives nearest scroll to an interior card",
+          "evidence": "Spec v2.1 executable assertion. Without the scroll margin the outline is cut at the board and window edges, as mutation M25 shows."
         },
         {
           "path": "reference/tests/product-contract.e2e.test.ts",
@@ -5510,7 +5680,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
         },
         {
@@ -5532,7 +5702,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
         },
         {
@@ -5554,7 +5724,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
         },
         {
@@ -5576,7 +5746,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
         },
         {
@@ -5598,7 +5768,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
         },
         {
@@ -5620,7 +5790,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
         },
         {
@@ -5642,7 +5812,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
         },
         {
@@ -5664,7 +5834,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
         },
         {
@@ -5686,7 +5856,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
         },
         {
@@ -5708,7 +5878,7 @@
         },
         {
           "path": "reference/tests/accessibility.e2e.test.ts",
-          "symbol": "the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees",
+          "symbol": "a complete keyboard journey exposes names, states and each result in Chromium accessibility trees",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
         },
         {
@@ -5984,6 +6154,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause V02.3. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/tests/scrollbars.e2e.test.ts",
+          "symbol": "a board fits beside visible scrollbars at four desktop sizes and a phone",
+          "evidence": "Clause V02.3. Chromium shows scrollbars that take layout space. The page and every board above the 44px minimum stay free of sideways scrolling."
         }
       ]
     },
@@ -6097,6 +6272,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause V04.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/tests/scrollbars.e2e.test.ts",
+          "symbol": "a board fits beside visible scrollbars at four desktop sizes and a phone",
+          "evidence": "Clause V04.1. Chromium shows scrollbars that take layout space. The page and every board above the 44px minimum stay free of sideways scrolling."
         }
       ]
     },
@@ -6257,6 +6437,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause V05.2. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/tests/scrollbars.e2e.test.ts",
+          "symbol": "a board fits beside visible scrollbars at four desktop sizes and a phone",
+          "evidence": "Clause V05.2. Chromium shows scrollbars that take layout space. The page and every board above the 44px minimum stay free of sideways scrolling."
         }
       ]
     },
@@ -6407,6 +6592,16 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause V06.5. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/src/game/status/status.css",
+          "symbol": ".victory",
+          "evidence": "Clause V06.5. The win banner text uses the main text color."
+        },
+        {
+          "path": "reference/tests/status.e2e.test.ts",
+          "symbol": "completion shows final moves and time and keeps the completed clock stopped",
+          "evidence": "Clause V06.5. The browser checks that the win banner text uses the main text color."
         }
       ]
     },
@@ -6429,6 +6624,11 @@
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "named color targets, reset margins and card focus scroll margins follow the visual contract",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+        },
+        {
+          "path": "reference/src/game/game.css",
+          "symbol": ".eyebrow",
+          "evidence": "Clause V06.6. The tagline is optional supporting text and uses Secondary. The color check covers it with help, intro and status labels."
         }
       ]
     },
@@ -6461,6 +6661,16 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause V06.7. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/src/game/status/status.css",
+          "symbol": ".victory",
+          "evidence": "Clause V06.7. The win banner border uses the neutral border color."
+        },
+        {
+          "path": "reference/tests/status.e2e.test.ts",
+          "symbol": "completion shows final moves and time and keeps the completed clock stopped",
+          "evidence": "Clause V06.7. The browser checks that the win banner border uses the neutral border color."
         }
       ]
     },
@@ -6508,7 +6718,7 @@
         },
         {
           "path": "reference/src/game/board/face-design.test.ts",
-          "symbol": "V07 V10 V10 V10 all ordered parts match independent literal values",
+          "symbol": "every face takes its shape, color, fill, marker and name from the ordered tables",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -6857,7 +7067,7 @@
         },
         {
           "path": "reference/src/game/board/face-design.test.ts",
-          "symbol": "V07 V10 V10 V10 all ordered parts match independent literal values",
+          "symbol": "every face takes its shape, color, fill, marker and name from the ordered tables",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -6874,7 +7084,7 @@
         },
         {
           "path": "reference/src/game/board/face-design.test.ts",
-          "symbol": "V07 V10 V10 V10 all ordered parts match independent literal values",
+          "symbol": "every face takes its shape, color, fill, marker and name from the ordered tables",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -7883,7 +8093,7 @@
         },
         {
           "path": "reference/tests/focus-clearance.e2e.test.ts",
-          "symbol": "V19 focus clearance survives nearest scroll to an interior row, board and browser intersections",
+          "symbol": "focus clearance survives nearest scroll to an interior card, board and browser intersections",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -9165,6 +9375,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause T06.5. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/scripts/source-conventions.test.ts",
+          "symbol": "export owners and importers, question names for checks, behavior test names and runner environment",
+          "evidence": "Clause T06.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -9932,8 +10147,8 @@
           "evidence": "Clause A01.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause A01.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -10004,8 +10219,8 @@
           "evidence": "Clause A01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause A01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -10076,8 +10291,8 @@
           "evidence": "Clause A01.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause A01.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -10148,8 +10363,8 @@
           "evidence": "Clause A02.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause A02.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -10220,8 +10435,8 @@
           "evidence": "Clause A02.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause A02.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -10292,8 +10507,8 @@
           "evidence": "Clause A02.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause A02.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -10364,8 +10579,8 @@
           "evidence": "Clause A02.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause A02.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -10436,8 +10651,8 @@
           "evidence": "Clause A03.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause A03.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -10508,8 +10723,8 @@
           "evidence": "Clause A03.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause A03.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -10640,7 +10855,7 @@
         },
         {
           "path": "reference/tests/timer-lifecycle.e2e.test.ts",
-          "symbol": "A04 R12 unmount clears the active timer and visibility listener",
+          "symbol": "unmount clears the active timer and visibility listener",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -11893,6 +12108,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause A10.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/scripts/source-conventions.test.ts",
+          "symbol": "export owners and importers, question names for checks, behavior test names and runner environment",
+          "evidence": "Clause A10.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -12816,8 +13036,8 @@
           "evidence": "Clause D05.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D05.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12858,8 +13078,8 @@
           "evidence": "Clause D05.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D05.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12900,8 +13120,8 @@
           "evidence": "Clause D05.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D05.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12942,8 +13162,8 @@
           "evidence": "Clause D05.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D05.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12974,8 +13194,13 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/src/game/snapshot-isolation.test.ts",
-          "symbol": "clause-labelled independent valid baselines and one-rule invalid variants",
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "one-rule started progress, counter and move cases",
+          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "extra selection keys, remaining-time endpoints and whole matched pairs",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -13001,8 +13226,8 @@
           "evidence": "Clause D05.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D05.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -13033,8 +13258,13 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/src/game/snapshot-isolation.test.ts",
-          "symbol": "clause-labelled independent valid baselines and one-rule invalid variants",
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "one-rule started progress, counter and move cases",
+          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "extra selection keys, remaining-time endpoints and whole matched pairs",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -13060,8 +13290,8 @@
           "evidence": "Clause D06.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D06.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -13092,8 +13322,13 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/src/game/snapshot-isolation.test.ts",
-          "symbol": "clause-labelled independent valid baselines and one-rule invalid variants",
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "one-rule started progress, counter and move cases",
+          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "extra selection keys, remaining-time endpoints and whole matched pairs",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -13109,8 +13344,13 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/src/game/snapshot-isolation.test.ts",
-          "symbol": "clause-labelled independent valid baselines and one-rule invalid variants",
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "one-rule started progress, counter and move cases",
+          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "extra selection keys, remaining-time endpoints and whole matched pairs",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -13136,8 +13376,8 @@
           "evidence": "Clause D06.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D06.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -13178,8 +13418,8 @@
           "evidence": "Clause D06.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D06.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -13210,8 +13450,13 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/src/game/snapshot-isolation.test.ts",
-          "symbol": "clause-labelled independent valid baselines and one-rule invalid variants",
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "one-rule started progress, counter and move cases",
+          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "extra selection keys, remaining-time endpoints and whole matched pairs",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -13237,8 +13482,8 @@
           "evidence": "Clause D06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -13269,8 +13514,13 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/src/game/snapshot-isolation.test.ts",
-          "symbol": "clause-labelled independent valid baselines and one-rule invalid variants",
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "one-rule started progress, counter and move cases",
+          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "extra selection keys, remaining-time endpoints and whole matched pairs",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -13286,8 +13536,13 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/src/game/snapshot-isolation.test.ts",
-          "symbol": "clause-labelled independent valid baselines and one-rule invalid variants",
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "one-rule started progress, counter and move cases",
+          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "extra selection keys, remaining-time endpoints and whole matched pairs",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         },
         {
@@ -13308,8 +13563,13 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/src/game/snapshot-isolation.test.ts",
-          "symbol": "clause-labelled independent valid baselines and one-rule invalid variants",
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "one-rule started progress, counter and move cases",
+          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "extra selection keys, remaining-time endpoints and whole matched pairs",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -13335,8 +13595,8 @@
           "evidence": "Clause D07.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D07.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -13356,7 +13616,7 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause D07.4. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -13387,8 +13647,8 @@
           "evidence": "Clause D07.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D07.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -13408,7 +13668,7 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause D07.5. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -13461,8 +13721,8 @@
           "evidence": "Clause D07.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D07.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -13482,7 +13742,7 @@
         },
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause D07.7. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
         },
         {
@@ -13499,8 +13759,13 @@
       "reference": [
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause D07.8. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
+        },
+        {
+          "path": "reference/src/game/snapshot.test.ts",
+          "symbol": "snapshot validation rejects inconsistent state 26",
+          "evidence": "Clause D07.8. A started closed snapshot with 1000000 moves is otherwise valid and is rejected."
         },
         {
           "path": "reference/tests/move-cap.e2e.test.ts",
@@ -13521,8 +13786,18 @@
       "reference": [
         {
           "path": "reference/src/game/move-cap.test.ts",
-          "symbol": "move-cap endpoint, continued play, snapshot and saved-best cases",
+          "symbol": "move-cap endpoint, continued play and capped snapshot cases",
           "evidence": "Clause D07.9. Valid games stop counting at 999999 while matching, mismatch closing and victory continue. Larger snapshot and saved-best values are rejected."
+        },
+        {
+          "path": "reference/src/game/session/session.test.ts",
+          "symbol": "an imported game at the move cap records the capped count as its best",
+          "evidence": "Clause D07.9. Session code records a capped win as the best."
+        },
+        {
+          "path": "reference/src/game/session/storage.test.ts",
+          "symbol": "a best at the move cap round trips and a larger saved best is ignored",
+          "evidence": "Clause D07.9. Storage code keeps a capped best and ignores a larger saved value."
         },
         {
           "path": "reference/tests/move-cap.e2e.test.ts",
@@ -13861,7 +14136,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, exactKeys",
+          "symbol": "readJson, hasExactKeys",
           "evidence": "Clause D10.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -13880,8 +14155,8 @@
           "evidence": "Clause D10.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D10.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -13940,7 +14215,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, exactKeys",
+          "symbol": "readJson, hasExactKeys",
           "evidence": "Clause D10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -13959,8 +14234,8 @@
           "evidence": "Clause D10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -14002,7 +14277,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, exactKeys",
+          "symbol": "readJson, hasExactKeys",
           "evidence": "Clause D10.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -14021,8 +14296,8 @@
           "evidence": "Clause D10.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D10.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -14064,7 +14339,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, exactKeys",
+          "symbol": "readJson, hasExactKeys",
           "evidence": "Clause D10.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -14083,8 +14358,8 @@
           "evidence": "Clause D10.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D10.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -14126,7 +14401,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, exactKeys",
+          "symbol": "readJson, hasExactKeys",
           "evidence": "Clause D10.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -14145,8 +14420,8 @@
           "evidence": "Clause D10.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D10.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -14188,7 +14463,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, exactKeys",
+          "symbol": "readJson, hasExactKeys",
           "evidence": "Clause D10.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -14207,8 +14482,8 @@
           "evidence": "Clause D10.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D10.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -14250,7 +14525,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, exactKeys",
+          "symbol": "readJson, hasExactKeys",
           "evidence": "Clause D10.8. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -14269,8 +14544,8 @@
           "evidence": "Clause D10.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D10.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -14312,7 +14587,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, exactKeys",
+          "symbol": "readJson, hasExactKeys",
           "evidence": "Clause D10.9. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -14331,8 +14606,8 @@
           "evidence": "Clause D10.9. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D10.9. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -14374,7 +14649,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, exactKeys",
+          "symbol": "readJson, hasExactKeys",
           "evidence": "Clause D10.10. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -14393,8 +14668,8 @@
           "evidence": "Clause D10.10. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
-          "path": "reference/src/game/snapshot-pairs.test.ts",
-          "symbol": "matched indices need whole pairs even when every other field is consistent",
+          "path": "reference/src/game/snapshot-selection.test.ts",
+          "symbol": "matched positions need whole pairs without duplicates",
           "evidence": "Clause D10.10. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {

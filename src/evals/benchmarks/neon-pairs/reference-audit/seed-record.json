@@ -1,580 +1,592 @@
 {
-    "schemaVersion":  2,
-    "status":  "candidate",
-    "specVersion":  2.1,
-    "specSourceHash":  "0466a72761d5e1d316ad9aab131c0862c6b63def04e91753baa3f79d7445d74d",
-    "formatter":  "prettier@3.9.6",
-    "traceEntries":  416,
-    "freezeApproved":  false,
-    "buildArtifactSha256":  "38ff3ff9dce746cc25e5ddbdad2087b92c2e9945d9a64515016561b0d975ee97",
-    "files":  [
-                  {
-                      "path":  "cases/l2-defined-idea/specs/manifest.json",
-                      "sha256":  "7e8fd580549d4b8665405220359186ddf5e23a827c68a6413fa95cf618112acb"
-                  },
-                  {
-                      "path":  "reference/.gitignore",
-                      "sha256":  "3528bf1f87c9d2fb52f4bf4b94ef0e0d7280b103021c8258a683b459744c1ebe"
-                  },
-                  {
-                      "path":  "reference/.npmrc",
-                      "sha256":  "8f65a38bcd4e6fefd454f51ae9c3bd1c130d23a63164d60fb15fdaf852bde871"
-                  },
-                  {
-                      "path":  "reference/.prettierignore",
-                      "sha256":  "3c3241d83bd1eab02cd74ab60a19c633b971268a054f23aeb019697e5172aba2"
-                  },
-                  {
-                      "path":  "reference/.prettierrc.json",
-                      "sha256":  "c6bc6fc6b031c97774bea2caa5e77ae85d2d02d4ea80962ffafc7a2b1f50d734"
-                  },
-                  {
-                      "path":  "reference/art/face-sheet.css",
-                      "sha256":  "9a65d6e6b93de3ff307593b981f770a841b4e2dfe8eee3b560ed7c7120c407a9"
-                  },
-                  {
-                      "path":  "reference/art/face-sheet.tsx",
-                      "sha256":  "9c02e05b74b5cd5e91ee6806b03f1ffe639f66cc42256797c51c3ebe6e0c1620"
-                  },
-                  {
-                      "path":  "reference/art/index.html",
-                      "sha256":  "87771cdc870271c2858205a8c509842649c6f573fbe6348fe4a2f61e5c793595"
-                  },
-                  {
-                      "path":  "reference/art/session/index.html",
-                      "sha256":  "1ca8be0f977b4298a7d38392ef5a2298e461e4cb968c4a7d787be48948ad1741"
-                  },
-                  {
-                      "path":  "reference/art/session/session-harness.tsx",
-                      "sha256":  "2f5c3751153b173061f8c7f578ddb47b9e8343a6ae20a11709f743d4b64ee193"
-                  },
-                  {
-                      "path":  "reference/index.html",
-                      "sha256":  "be38f0ef7863bc0d1534d78af23faaa0ebd867f14e1a7a61c3129c32829e65aa"
-                  },
-                  {
-                      "path":  "reference/package.json",
-                      "sha256":  "82df37b094ca8e910bfdf995a661b622cdfc73d2db0f45436c136e118b320956"
-                  },
-                  {
-                      "path":  "reference/package-lock.json",
-                      "sha256":  "2c3e3274fd301d69253c93e99b75fd0f91c7cd49cdad1f1d96251a4f3aec3c71"
-                  },
-                  {
-                      "path":  "reference/README.md",
-                      "sha256":  "ebf9583f6e00e60ede3241d9f21efac1c4cba5085643723cbf2f2448b4b04a9a"
-                  },
-                  {
-                      "path":  "reference/scripts/package.fixture.json",
-                      "sha256":  "78a64bf2bc1c856aa03ff0f5d01d83d25b9422518048f5fa9c7b9fb86c6cd7a5"
-                  },
-                  {
-                      "path":  "reference/scripts/replay.test.ts",
-                      "sha256":  "4867bf90b4657156a243c1f4ef1e87fe5ae40133119716fdbc41f3c591e6ca79"
-                  },
-                  {
-                      "path":  "reference/scripts/replay.ts",
-                      "sha256":  "3eeaa49405c73263c4f204cc962a1d16bd79b2cc3fd169d864f7a5e9670d268d"
-                  },
-                  {
-                      "path":  "reference/scripts/replay-cli.ts",
-                      "sha256":  "d615437672ac5d3d65134d7067b441b52508b972b66076e9f20d2eea0679e19c"
-                  },
-                  {
-                      "path":  "reference/scripts/source-audit.test.ts",
-                      "sha256":  "fc768a38ca36cae7634b3be0b767156c65e8b1208bc2d165374d2e266191cc89"
-                  },
-                  {
-                      "path":  "reference/scripts/source-files.ts",
-                      "sha256":  "4892d978b06acffe9a973ac21e6b9d320c5b1d2a06407a1e48f50e4546258d80"
-                  },
-                  {
-                      "path":  "reference/src/game/board/board.css",
-                      "sha256":  "a010dc51f3ac0ab51459d0400cf9eb2a51cdc68d40ee3f3f1d0f69b508446bdd"
-                  },
-                  {
-                      "path":  "reference/src/game/board/Board.tsx",
-                      "sha256":  "493ac731745aa2f94ecd69900f1fe8464d014f954eae255d2eaf8d76fcde8647"
-                  },
-                  {
-                      "path":  "reference/src/game/board/Card.tsx",
-                      "sha256":  "0c702ae3a62fa72bfd879f97817309717a7aea742f2bf241f161a785ba974519"
-                  },
-                  {
-                      "path":  "reference/src/game/board/card-state.fixture.json",
-                      "sha256":  "f34f97abdfa921dfb752044172692c5ec4eef877abecb236eb8ea595dcd10c36"
-                  },
-                  {
-                      "path":  "reference/src/game/board/card-state.test.ts",
-                      "sha256":  "2a68f0aa97572e192d24dddfa2378bdfe42882e6ec3deee35351cb2f1d1d243f"
-                  },
-                  {
-                      "path":  "reference/src/game/board/card-state.ts",
-                      "sha256":  "d6877cb31d66b7d5e17eb615a53d3cf7f9387d01058f687b20efe8c28a84fc3a"
-                  },
-                  {
-                      "path":  "reference/src/game/board/Face.tsx",
-                      "sha256":  "3985b66cd53e68f05ebecf7d1263b9eb23c345088e2a9f1ae66dbd0cfa494957"
-                  },
-                  {
-                      "path":  "reference/src/game/board/face-design.fixture.json",
-                      "sha256":  "af68731d013aac76628f9a542d9ec1a22797067f9ec3780cf8cfae209d82c5b1"
-                  },
-                  {
-                      "path":  "reference/src/game/board/face-design.test.ts",
-                      "sha256":  "fa9b573cb025a2797d4fad055be64fd84014a3116f0830964d5db76935ec2552"
-                  },
-                  {
-                      "path":  "reference/src/game/board/face-design.ts",
-                      "sha256":  "060648f025372fc392741ce54fedf5a3f955b080224382251495a9eabdd212f3"
-                  },
-                  {
-                      "path":  "reference/src/game/board/keyboard.test.ts",
-                      "sha256":  "7cdb4f1aa1685e173d18c3b43d437063ba583e52ac9e7ce7676168e6966b6a5b"
-                  },
-                  {
-                      "path":  "reference/src/game/board/keyboard.ts",
-                      "sha256":  "6780d4ded5c947b48c02ad1f5ea9aa50c2f5394c074b571967f61614ddee9c56"
-                  },
-                  {
-                      "path":  "reference/src/game/completion.test.ts",
-                      "sha256":  "2ef6d56d455df5ca04aa630421776cc088c0d6df5b1370b2831cdb1fec15e031"
-                  },
-                  {
-                      "path":  "reference/src/game/controls/controls.css",
-                      "sha256":  "84a8c9f04d8094995f3b9425de42a2a311bdb82b5b5069acb6082966a81c1779"
-                  },
-                  {
-                      "path":  "reference/src/game/controls/Controls.tsx",
-                      "sha256":  "121a5c5db2a2988f83083573751d5218cbf571afa2b9c74725d20ecbff5c2940"
-                  },
-                  {
-                      "path":  "reference/src/game/controls/Reproduction.tsx",
-                      "sha256":  "90973fae6f806887bb5ea740eef740ddb39aec6c8e739e628eaae65711bdab80"
-                  },
-                  {
-                      "path":  "reference/src/game/deck.test.ts",
-                      "sha256":  "35fa3f448c3c0814c45097c4d69b79ec1ceca7031df402571b992b25f715a441"
-                  },
-                  {
-                      "path":  "reference/src/game/deck.ts",
-                      "sha256":  "537c05efa4ccc1baa06f5c1a1ffb9e51d426e1cc2e9535012154fa0ec3834809"
-                  },
-                  {
-                      "path":  "reference/src/game/deck-rejection.fixture.json",
-                      "sha256":  "42d48094827008db46d7020d15f31b9702f90e65257bb9839473e7b559a0dfc1"
-                  },
-                  {
-                      "path":  "reference/src/game/deck-rejection.test.ts",
-                      "sha256":  "ecf157e9a76a153bcfb217af8ca760e486ca74937f0c64da0feeeae3b6c312a3"
-                  },
-                  {
-                      "path":  "reference/src/game/elapsed-time.test.ts",
-                      "sha256":  "d6466412203a4d4110b27099757ab456d8cf83cad96f2a5f80f684a6c558f70e"
-                  },
-                  {
-                      "path":  "reference/src/game/elapsed-time.ts",
-                      "sha256":  "bc263e9ee435c30d047c49cd1f037d1a9c6df9a171247c83b4fd596edd621f49"
-                  },
-                  {
-                      "path":  "reference/src/game/game.css",
-                      "sha256":  "a42a7a461fc9b54eb73682e68e5e6302ab7f92e00df68d2091b226cc21f01db9"
-                  },
-                  {
-                      "path":  "reference/src/game/game.fixture.ts",
-                      "sha256":  "dba19c664d03f4f3bc07a02386a5fb87815c45a1e892511eb9a189f1ed036072"
-                  },
-                  {
-                      "path":  "reference/src/game/game.test.ts",
-                      "sha256":  "5ca5b80ebf87421e457a49479057a483f16db295f01409f4882095f15c5ae6ab"
-                  },
-                  {
-                      "path":  "reference/src/game/game.ts",
-                      "sha256":  "3393fc5aef62fa78b8e432209d10f00cc102f26a141b03750130ef0bddc21b6f"
-                  },
-                  {
-                      "path":  "reference/src/game/Game.tsx",
-                      "sha256":  "f557c1d529198b451e0914798a61251bb9fe45d0c8762120d60b602a30fc1b99"
-                  },
-                  {
-                      "path":  "reference/src/game/game.types.ts",
-                      "sha256":  "17249725f4870e99784fc6a2ff9b5f68bef58c3d81587674e40794e72e094575"
-                  },
-                  {
-                      "path":  "reference/src/game/move-cap.test.ts",
-                      "sha256":  "935db34b863dfaa0469d651318e2496ee72a70499459666742d2da17cf256313"
-                  },
-                  {
-                      "path":  "reference/src/game/replay.test.ts",
-                      "sha256":  "ed5fb6b0081da595afe3bbaf90e2661f168c79afe8485a1fd1c9a55844e7ccc8"
-                  },
-                  {
-                      "path":  "reference/src/game/replay.ts",
-                      "sha256":  "03a44ee79421629687353fc81dc668495db7d9428351da29f856d4af4b8be026"
-                  },
-                  {
-                      "path":  "reference/src/game/replay-order.test.ts",
-                      "sha256":  "69955ff21a4154c476ddcfb28831aa52b9d7f52308622c0aa1cd17195eeb4f0c"
-                  },
-                  {
-                      "path":  "reference/src/game/saved-format.test.ts",
-                      "sha256":  "b5a16e614a93a77c771829e0c9c06951ae784aa244ce71a4010b1e5eae8f8577"
-                  },
-                  {
-                      "path":  "reference/src/game/saved-format.ts",
-                      "sha256":  "844f3ebb7c5a836a6a18271afe289abd05414baf97829900ae162535743a1d83"
-                  },
-                  {
-                      "path":  "reference/src/game/selection.ts",
-                      "sha256":  "97fe77db7c2fe61f86c2cbbe8995e23b602d29165b9231db7a108596e9b60d74"
-                  },
-                  {
-                      "path":  "reference/src/game/session/browser-clock.test.ts",
-                      "sha256":  "ee04c8a45c94025ef61549ab1b7735bfc2ba12fef570ad67693d1a0c41dbe7b1"
-                  },
-                  {
-                      "path":  "reference/src/game/session/browser-clock.ts",
-                      "sha256":  "787e783362f3de5ca2b4a587e330d6757d2d097ddff35f728083793ff6d12101"
-                  },
-                  {
-                      "path":  "reference/src/game/session/fresh-board.ts",
-                      "sha256":  "0fd5f98325e3c6a00afc37b65d2a27e7ed0f6e45de7a79a1a1fe7ba2a3e9a1f6"
-                  },
-                  {
-                      "path":  "reference/src/game/session/session.feedback.fixture.json",
-                      "sha256":  "5f95c1177ce316ef4d16ab528bad658696e8536a4c7a031c6914a57dbc5271cc"
-                  },
-                  {
-                      "path":  "reference/src/game/session/session.test.ts",
-                      "sha256":  "959f2cc0cf756970315dc55d751360b7436c504120426fbbd057045411d6527d"
-                  },
-                  {
-                      "path":  "reference/src/game/session/session.ts",
-                      "sha256":  "9e2c39ea99df04717dee294988f536709f657ec09709a96f9ebc2042d48c0dbe"
-                  },
-                  {
-                      "path":  "reference/src/game/session/session.types.ts",
-                      "sha256":  "6188aefcc628c5ca36fba81685406c04739373360f7f684dc60db253201b0814"
-                  },
-                  {
-                      "path":  "reference/src/game/session/storage.test.ts",
-                      "sha256":  "95fa8f1683f0e178fcda8afe1d3abae909ee0ab6cc2abfea2872814d514e7cea"
-                  },
-                  {
-                      "path":  "reference/src/game/session/storage.ts",
-                      "sha256":  "98fe044b7552bfba65e0b72ef333b0edf5146e1f0a70925bca10877edd097b8f"
-                  },
-                  {
-                      "path":  "reference/src/game/session/use-game.ts",
-                      "sha256":  "0f1b61e3de5284eb2f080c67766942db963ec8134445dcfea9809751a0b5c70a"
-                  },
-                  {
-                      "path":  "reference/src/game/session/use-session-clock.ts",
-                      "sha256":  "17ba7024aa7cd18cb931cf3b1ef219aae17f042c034368b791032df2011ac82c"
-                  },
-                  {
-                      "path":  "reference/src/game/snapshot.test.ts",
-                      "sha256":  "6542b1f3f0d8e70b2f902d57b9dd1c18775a5580d6e76bbceea397fd736c9ac2"
-                  },
-                  {
-                      "path":  "reference/src/game/snapshot.ts",
-                      "sha256":  "f88ad7f033d0a3adf22344da8bf2d8627d4b211627adab95be4cc7909b9cf958"
-                  },
-                  {
-                      "path":  "reference/src/game/snapshot-isolation.test.ts",
-                      "sha256":  "c4d7a772ccd0f5d824ec0085172e936cc698592cc243edaf5c85cfaf4c93c855"
-                  },
-                  {
-                      "path":  "reference/src/game/snapshot-pairs.test.ts",
-                      "sha256":  "109a8e607d4cfccb7657b427b1a22a3b923df01ed9bd2b21d30d653a32fc99e1"
-                  },
-                  {
-                      "path":  "reference/src/game/snapshot-rounding.test.ts",
-                      "sha256":  "2d836f2e2755d215944c2f87cc1ae66cccfa45843be5e553e9216f160980ff66"
-                  },
-                  {
-                      "path":  "reference/src/game/snapshot-selection.ts",
-                      "sha256":  "6b1b6f8be1bd317a28cff130fc49e126dd4f254b3a266390f8221b9e929d3dd3"
-                  },
-                  {
-                      "path":  "reference/src/game/status/GameStatus.tsx",
-                      "sha256":  "4f65cdbaf4fef87fb835c5cf8c899cc5b1ead8288185eab0bc2d5d2ad9491ac4"
-                  },
-                  {
-                      "path":  "reference/src/game/status/status.css",
-                      "sha256":  "53c3b6cb0cf8ae8c560b49345f5333a277ecc957f7ab722529351a8890e49912"
-                  },
-                  {
-                      "path":  "reference/src/main.tsx",
-                      "sha256":  "a365b787c8116f6fcccdd6573af202238fdd44d8f2aff1351203761315922e2c"
-                  },
-                  {
-                      "path":  "reference/tests/accessibility.e2e.test.ts",
-                      "sha256":  "c17dac43782f2a0256c36e285a9c2a5fc6c80a0c14d0373db658be7a4e9db8f7"
-                  },
-                  {
-                      "path":  "reference/tests/accessibility.fixture.json",
-                      "sha256":  "812e55be0934e15db12e0104b5d66c0f6c39f4a4bad3eaa15e48fe86fbf029a5"
-                  },
-                  {
-                      "path":  "reference/tests/accessibility-fixture.ts",
-                      "sha256":  "0908be90e31f977167cf3a224f243f73e13d85349138768f37c5f286300338c5"
-                  },
-                  {
-                      "path":  "reference/tests/accessibility-tree.ts",
-                      "sha256":  "b8674ac11ceec6da1a950b90785c05d7e8ef82e1a8e0a8853592b7f33e727261"
-                  },
-                  {
-                      "path":  "reference/tests/all-sizes.e2e.test.ts",
-                      "sha256":  "327596a8820064cc41d9f9bc9023d345d9be654706e944356a402f0d55645960"
-                  },
-                  {
-                      "path":  "reference/tests/announcements.e2e.test.ts",
-                      "sha256":  "b23b241e483c0d31237c040693ab61e671daf361540fdf44fc584745a1548365"
-                  },
-                  {
-                      "path":  "reference/tests/art.e2e.test.ts",
-                      "sha256":  "bff4a3f0183c27ab276764cdd60050f171e361df911a74ca0f49bbcd689a57eb"
-                  },
-                  {
-                      "path":  "reference/tests/artifact-server.ts",
-                      "sha256":  "4f8fcd62d9f682b5838849a96eab901d6c2de6f3af50e68fa0767692e4a4193e"
-                  },
-                  {
-                      "path":  "reference/tests/browser-environment.e2e.test.ts",
-                      "sha256":  "34644b17d060d4777f537115a7996bfb9fd6b83f823cbb7713bcc61eb268ff1f"
-                  },
-                  {
-                      "path":  "reference/tests/browser-test.ts",
-                      "sha256":  "919897fe195d45968074c56881ce16a49317b671f5c64e3f278d861db6bf03b1"
-                  },
-                  {
-                      "path":  "reference/tests/clock-edges.e2e.test.ts",
-                      "sha256":  "81a2e65c8d32d8b1475ac49329f8f853742e30c079c6dae2122b409bae117087"
-                  },
-                  {
-                      "path":  "reference/tests/control-contract.e2e.test.ts",
-                      "sha256":  "4c1e43f8c7a4bd8bb94a332e0d6910511015f5952ccdea018c1adaca3ae0ef15"
-                  },
-                  {
-                      "path":  "reference/tests/control-labels.ts",
-                      "sha256":  "0f11367fe6a8eb615bc9d721f88711ef90e3dbae06bacc3b7883f3af593fa7fb"
-                  },
-                  {
-                      "path":  "reference/tests/controls.e2e.test.ts",
-                      "sha256":  "b3fd77264de74ecce440ffdbca5a23c2380a22a271df709ca6ae814007d65a74"
-                  },
-                  {
-                      "path":  "reference/tests/focus-bounds.ts",
-                      "sha256":  "af2784fd233cdce29e62edadbb4464fb4b01367bfaa336579f4f2e0b92d1185d"
-                  },
-                  {
-                      "path":  "reference/tests/focus-clearance.e2e.test.ts",
-                      "sha256":  "02f25ca626e8fb387f2f6287584b5c35670f32383c67016dc8c0497292e75766"
-                  },
-                  {
-                      "path":  "reference/tests/game-fixture.ts",
-                      "sha256":  "133043fc97ae5c456feff8b60731bf4a9f1735ccc629d1a8866585fd0e3ab221"
-                  },
-                  {
-                      "path":  "reference/tests/input-contract.e2e.test.ts",
-                      "sha256":  "dfa22a187db54d2ba86b7d1cc1ac616f42df9d2196b437f183647f6b37b3291d"
-                  },
-                  {
-                      "path":  "reference/tests/keyboard.e2e.test.ts",
-                      "sha256":  "3e9730c1a8e2f9ed1289ab12133f87fda930924d743d1e3bc4924d5aa1cba880"
-                  },
-                  {
-                      "path":  "reference/tests/layout.e2e.test.ts",
-                      "sha256":  "b5757d123f853ffd6226f565d4d96a68d1e2332324bd0516896eaef0bb60a532"
-                  },
-                  {
-                      "path":  "reference/tests/lifecycle.e2e.test.ts",
-                      "sha256":  "d37321658e6499c2aef2dfeea188818b83baf8979620e6dc743232ed1882d2a1"
-                  },
-                  {
-                      "path":  "reference/tests/motion.e2e.test.ts",
-                      "sha256":  "d100f3f43787d983661d0d2c7826194f89ca1a18b5f29ba389eb696d9022ced9"
-                  },
-                  {
-                      "path":  "reference/tests/move-cap.e2e.test.ts",
-                      "sha256":  "5a8e694f0a3a84e6bc879f970dc9d581281affc0604d38cd56c3a3febfe8e6ec"
-                  },
-                  {
-                      "path":  "reference/tests/persistence-contract.e2e.test.ts",
-                      "sha256":  "e44b88d0880470b3322dd51ccd8d19a2574f4afbd4affca30d66127562760917"
-                  },
-                  {
-                      "path":  "reference/tests/play.e2e.test.ts",
-                      "sha256":  "c36b278f1c9f50721ccb24a894c5c47a7dc9a5c7b2657c1b2e3c9ee006e47c1c"
-                  },
-                  {
-                      "path":  "reference/tests/preferences.e2e.test.ts",
-                      "sha256":  "9e6b72d7cc6c83b7c3e544a0d6d20b390046ad3db30c3417bb7ccf8d0898fb8f"
-                  },
-                  {
-                      "path":  "reference/tests/product-contract.e2e.test.ts",
-                      "sha256":  "981b1c6ad9d992b99fa8df071288fbabe7b0d8b88c69d43cfaee791ac551f516"
-                  },
-                  {
-                      "path":  "reference/tests/readability.ts",
-                      "sha256":  "5257aea9b5feb37ce91bb34fe0db641fb70b527e6074e3fe535e9dad5f0bf6b5"
-                  },
-                  {
-                      "path":  "reference/tests/snapshots.e2e.test.ts",
-                      "sha256":  "187adbd8b252e021879971b99b15547f4e7e676922dd1c0e0f4e929ca2e13b99"
-                  },
-                  {
-                      "path":  "reference/tests/status.e2e.test.ts",
-                      "sha256":  "8410c0415fcb3feef19bd4b5b4dc78b0f946820dfd5f63c983bbc45f37894bdc"
-                  },
-                  {
-                      "path":  "reference/tests/status-controls.e2e.test.ts",
-                      "sha256":  "26145c02d2cc98f7a9bab1c28e3635b07b9bf712798aa538691213c199db0652"
-                  },
-                  {
-                      "path":  "reference/tests/status-format.fixture.json",
-                      "sha256":  "0b7103ea3d8d75fc515a4c1976d046d3dd522a1e2785afe0ae2ca30f6d5e3232"
-                  },
-                  {
-                      "path":  "reference/tests/style.e2e.test.ts",
-                      "sha256":  "71e00682b404c1b1eb7118b5fdff8ef7c357ce8112db4b8da1274a7c1ebb7f3a"
-                  },
-                  {
-                      "path":  "reference/tests/timer-lifecycle.e2e.test.ts",
-                      "sha256":  "4a2be90dc7fbe09fbc3b8a27a333306dfff7403919301444bff6a321131ce566"
-                  },
-                  {
-                      "path":  "reference/tests/touch-scroll.e2e.test.ts",
-                      "sha256":  "5b3638086b41450c1c6ea5702a378ee809eb35305ee49e7175fb32959d14ee80"
-                  },
-                  {
-                      "path":  "reference/tests/ui.fixture.json",
-                      "sha256":  "2be167d72f3183bb189eb8f37550e823c7b99ac8f58b820290557996395edca3"
-                  },
-                  {
-                      "path":  "reference/tests/ui-snapshot.ts",
-                      "sha256":  "299756fac25f1682174b0b69ee026fb3b31558023c63541a79b9cf4b33e1dc36"
-                  },
-                  {
-                      "path":  "reference/tests/zoom.e2e.test.ts",
-                      "sha256":  "07ce3468a519e4d8665346918fa20a94e5a3b677f028c9122720f50fd48c9310"
-                  },
-                  {
-                      "path":  "reference/tsconfig.app.json",
-                      "sha256":  "ef8147feba45db5b286219a3a1ff496afa93fad3a43dcfd6665f012fc127e6eb"
-                  },
-                  {
-                      "path":  "reference/tsconfig.base.json",
-                      "sha256":  "9929e25d4aaf686c65f8530eedcbfa96f58df59db44540424b44ccb395e9a923"
-                  },
-                  {
-                      "path":  "reference/tsconfig.e2e.json",
-                      "sha256":  "1107781734a7d0ae937fe28239684715787ed6cea183d4ddb233997494f8f4e4"
-                  },
-                  {
-                      "path":  "reference/tsconfig.node.json",
-                      "sha256":  "49b7b4463836bd4eab053da389b4bd8d62e9a3e4df9e585885bfb427a6e54f8e"
-                  },
-                  {
-                      "path":  "reference/vite.art.config.ts",
-                      "sha256":  "3ed3781e7ea9fa46cf365a78828f56a8cc947f925e61d2522faa2c55c80d6f23"
-                  },
-                  {
-                      "path":  "reference/vite.config.ts",
-                      "sha256":  "013b2a219c28fe308338b65844eea66b7efe239b352dc1b290817df396dd36d1"
-                  },
-                  {
-                      "path":  "reference/vite.session.config.ts",
-                      "sha256":  "ff123691f9a124985dddc634ba9b14a2d09f9f5c95128b291036620a253cdb34"
-                  },
-                  {
-                      "path":  "reference/vitest.config.ts",
-                      "sha256":  "82c2b20983ff990ae584f1e614d24b01bcda05e1e2910e4f0e49f79655c78905"
-                  },
-                  {
-                      "path":  "reference-audit/.gitignore",
-                      "sha256":  "3da97dfd9b5d9415cbd24601ac7f20caa620dd773f104926bd41712ceb63941d"
-                  },
-                  {
-                      "path":  "reference-audit/AUDIT.md",
-                      "sha256":  "997186c7d4c85b917bc7a760923ff39c99a87f8d6d9636550063fadffcf749d9"
-                  },
-                  {
-                      "path":  "reference-audit/evidence/accessibility-journey.json",
-                      "sha256":  "f9366293146586c2eb716e5304bb159dcd40f2e275cf2698f04922a91ad5267f"
-                  },
-                  {
-                      "path":  "reference-audit/face-sheet-grayscale.png",
-                      "sha256":  "d7bde3928b0be2a7b818a282b17314b19c868fe1b72e406e48bab244fae9eb22"
-                  },
-                  {
-                      "path":  "reference-audit/judge-verdicts.md",
-                      "sha256":  "86dd4e77af06626ee5a9336d4e718fd8a950c92da6e93dbe61fce70813f7d206"
-                  },
-                  {
-                      "path":  "reference-audit/mutation-report.test.ts",
-                      "sha256":  "fe6af287c0b822d0ca9f0a968c23efb1ddcb7b1755abaacc8e18edaa3bcf5657"
-                  },
-                  {
-                      "path":  "reference-audit/mutation-report.ts",
-                      "sha256":  "e7295075e349df76c18d07a76980b9ccbc9656dd6154068d84a8a74e4d39bb61"
-                  },
-                  {
-                      "path":  "reference-audit/mutation-results.json",
-                      "sha256":  "da494a9330ad8879f6472862b90f8e3cdd7a166349c4bd306688c312fb656f69"
-                  },
-                  {
-                      "path":  "reference-audit/mutations.fixture.json",
-                      "sha256":  "558893e096bc087d4061525c28fea8e2e01f9cd8751948167d7e1491931c74be"
-                  },
-                  {
-                      "path":  "reference-audit/mutations.ts",
-                      "sha256":  "5469176881162224a6b7e4054cafbc88aebb90b9c7f57ea1a2cdb64f0afdcae1"
-                  },
-                  {
-                      "path":  "reference-audit/review-round-1.md",
-                      "sha256":  "389f1127e2894c91efe66a2bf06f8dbf944449c9ebbd5c243f5c2e3a399ee996"
-                  },
-                  {
-                      "path":  "reference-audit/review-round-2.md",
-                      "sha256":  "186927603b11c39f11cf1c4d963b1f625f0dc0af1f8c7f8afb24ed3084a53f91"
-                  },
-                  {
-                      "path":  "reference-audit/review-round-3.md",
-                      "sha256":  "5b3c617b80e54289202eccfb9007cf64c5d27ace1260fe24d64333e05de06c64"
-                  },
-                  {
-                      "path":  "reference-audit/revision-files.json",
-                      "sha256":  "08acd0ee8842cce093e8779716bf048201fe69d3120a323be367b1ca65927694"
-                  },
-                  {
-                      "path":  "reference-audit/revision-v2.1.md",
-                      "sha256":  "cb5a5a1a35241972d9938c02e02bf6357e2243603aa0452622f918aaf4637c6b"
-                  },
-                  {
-                      "path":  "reference-audit/screen-reader-journey.md",
-                      "sha256":  "1c11fd16983b7312627fa7479c10d59155d3a766aac013845b76cab28861fba0"
-                  },
-                  {
-                      "path":  "reference-audit/tsconfig.json",
-                      "sha256":  "8e09c355983ab5331a12265825cedd6cca1f181b7bdfa9c5b30742db83a8c8c9"
-                  },
-                  {
-                      "path":  "reference-audit/verification.json",
-                      "sha256":  "44e7d64e05e2ba9d2f5228b39c1bfcf04abb950e7e018d95e03513cea2edbded"
-                  },
-                  {
-                      "path":  "requirements.json",
-                      "sha256":  "c584f5f72f236dd23838e5110368b00d2976bfa90c54cbec0553d407f2565487"
-                  },
-                  {
-                      "path":  "specs/manifest.json",
-                      "sha256":  "a97e2dd770706081cc68f2faf948f15bb15549fea6886a0c55c820a7f8c49698"
-                  },
-                  {
-                      "path":  "trace.json",
-                      "sha256":  "d25b4111f5a918615cc2914fef0a75a8128823d97b7d6e0c03ffb5d71af17ce4"
-                  }
-              ]
+  "schemaVersion": 2,
+  "status": "candidate",
+  "specVersion": 2.1,
+  "specSourceHash": "0466a72761d5e1d316ad9aab131c0862c6b63def04e91753baa3f79d7445d74d",
+  "formatter": "prettier@3.9.6",
+  "traceEntries": 416,
+  "freezeApproved": false,
+  "buildArtifactSha256": "9c0c05fb01cf5d6eacfee6ede830c5cb8a3796d447a162f8f447130403d18a60",
+  "files": [
+    {
+      "path": "cases/l2-defined-idea/specs/manifest.json",
+      "sha256": "05cde0d3cfe4d91cdbffd5c5c4338517d1b99744b3e99d91a425d2a3dac2ef9c"
+    },
+    {
+      "path": "reference-audit/.gitignore",
+      "sha256": "3da97dfd9b5d9415cbd24601ac7f20caa620dd773f104926bd41712ceb63941d"
+    },
+    {
+      "path": "reference-audit/AUDIT.md",
+      "sha256": "10c799477bf34754be2ff55d6da5fd5fdf89cda8a518c3ba7ceb75774888b649"
+    },
+    {
+      "path": "reference-audit/evidence/accessibility-journey.json",
+      "sha256": "b406495cadd111eb8183a8cded66538a46a9afdf724a2293ffcea5e4ee2d691b"
+    },
+    {
+      "path": "reference-audit/face-sheet-grayscale.png",
+      "sha256": "d7bde3928b0be2a7b818a282b17314b19c868fe1b72e406e48bab244fae9eb22"
+    },
+    {
+      "path": "reference-audit/failure-reporter.ts",
+      "sha256": "b9dfc8d2068d84e06ce9a450f980f115a65ff48a1cabe3d9931c869a6cb3dda3"
+    },
+    {
+      "path": "reference-audit/judge-verdicts.md",
+      "sha256": "86dd4e77af06626ee5a9336d4e718fd8a950c92da6e93dbe61fce70813f7d206"
+    },
+    {
+      "path": "reference-audit/mutation-report.test.ts",
+      "sha256": "13b3b6270eb77c6f27360b464c315304e825c013d0b8b028988a174138ff3495"
+    },
+    {
+      "path": "reference-audit/mutation-report.ts",
+      "sha256": "5c9bc49da0fc40280e4e6023337bf76d90f47987b05d27e2e5e45ca7ac971a48"
+    },
+    {
+      "path": "reference-audit/mutation-results.json",
+      "sha256": "b5a08fa37387cc874d1eeb302275338921984daed43254627a6dad2c30a4afa7"
+    },
+    {
+      "path": "reference-audit/mutations.fixture.json",
+      "sha256": "c850ae48b8c89a0d03ac2032967b2f877fcbb607b561ae8590879798ed677101"
+    },
+    {
+      "path": "reference-audit/mutations.ts",
+      "sha256": "3b82b3f34bfb792b84a864b21eb830dc7b3afc6b5bca02355c2d19639894f877"
+    },
+    {
+      "path": "reference-audit/review-round-1.md",
+      "sha256": "389f1127e2894c91efe66a2bf06f8dbf944449c9ebbd5c243f5c2e3a399ee996"
+    },
+    {
+      "path": "reference-audit/review-round-2.md",
+      "sha256": "186927603b11c39f11cf1c4d963b1f625f0dc0af1f8c7f8afb24ed3084a53f91"
+    },
+    {
+      "path": "reference-audit/review-round-3.md",
+      "sha256": "5b3c617b80e54289202eccfb9007cf64c5d27ace1260fe24d64333e05de06c64"
+    },
+    {
+      "path": "reference-audit/review-v2.1.md",
+      "sha256": "a80c4c0ee28b432aa071e981fbb2e593f7dd9e00b1cfdcad0e94cce45c7aa138"
+    },
+    {
+      "path": "reference-audit/revision-files.json",
+      "sha256": "7eed4f734216b73e015bc0da111a033cbc90a8e2ce2167f5dfe21849b8363f2e"
+    },
+    {
+      "path": "reference-audit/revision-v2.1.md",
+      "sha256": "cb5a5a1a35241972d9938c02e02bf6357e2243603aa0452622f918aaf4637c6b"
+    },
+    {
+      "path": "reference-audit/screen-reader-journey.md",
+      "sha256": "1c11fd16983b7312627fa7479c10d59155d3a766aac013845b76cab28861fba0"
+    },
+    {
+      "path": "reference-audit/tsconfig.json",
+      "sha256": "8e09c355983ab5331a12265825cedd6cca1f181b7bdfa9c5b30742db83a8c8c9"
+    },
+    {
+      "path": "reference-audit/verification.json",
+      "sha256": "05f132ce58221d528d18c41829c160e35ab081941e115b43427abea4e0a43570"
+    },
+    {
+      "path": "reference/.gitignore",
+      "sha256": "3528bf1f87c9d2fb52f4bf4b94ef0e0d7280b103021c8258a683b459744c1ebe"
+    },
+    {
+      "path": "reference/.npmrc",
+      "sha256": "8f65a38bcd4e6fefd454f51ae9c3bd1c130d23a63164d60fb15fdaf852bde871"
+    },
+    {
+      "path": "reference/.prettierignore",
+      "sha256": "3c3241d83bd1eab02cd74ab60a19c633b971268a054f23aeb019697e5172aba2"
+    },
+    {
+      "path": "reference/.prettierrc.json",
+      "sha256": "c6bc6fc6b031c97774bea2caa5e77ae85d2d02d4ea80962ffafc7a2b1f50d734"
+    },
+    {
+      "path": "reference/README.md",
+      "sha256": "ebf9583f6e00e60ede3241d9f21efac1c4cba5085643723cbf2f2448b4b04a9a"
+    },
+    {
+      "path": "reference/art/face-sheet.css",
+      "sha256": "9a65d6e6b93de3ff307593b981f770a841b4e2dfe8eee3b560ed7c7120c407a9"
+    },
+    {
+      "path": "reference/art/face-sheet.tsx",
+      "sha256": "9c02e05b74b5cd5e91ee6806b03f1ffe639f66cc42256797c51c3ebe6e0c1620"
+    },
+    {
+      "path": "reference/art/index.html",
+      "sha256": "87771cdc870271c2858205a8c509842649c6f573fbe6348fe4a2f61e5c793595"
+    },
+    {
+      "path": "reference/art/session/index.html",
+      "sha256": "1ca8be0f977b4298a7d38392ef5a2298e461e4cb968c4a7d787be48948ad1741"
+    },
+    {
+      "path": "reference/art/session/session-harness.tsx",
+      "sha256": "2f5c3751153b173061f8c7f578ddb47b9e8343a6ae20a11709f743d4b64ee193"
+    },
+    {
+      "path": "reference/index.html",
+      "sha256": "be38f0ef7863bc0d1534d78af23faaa0ebd867f14e1a7a61c3129c32829e65aa"
+    },
+    {
+      "path": "reference/package-lock.json",
+      "sha256": "2c3e3274fd301d69253c93e99b75fd0f91c7cd49cdad1f1d96251a4f3aec3c71"
+    },
+    {
+      "path": "reference/package.json",
+      "sha256": "82df37b094ca8e910bfdf995a661b622cdfc73d2db0f45436c136e118b320956"
+    },
+    {
+      "path": "reference/scripts/package.fixture.json",
+      "sha256": "78a64bf2bc1c856aa03ff0f5d01d83d25b9422518048f5fa9c7b9fb86c6cd7a5"
+    },
+    {
+      "path": "reference/scripts/replay-cli.ts",
+      "sha256": "d615437672ac5d3d65134d7067b441b52508b972b66076e9f20d2eea0679e19c"
+    },
+    {
+      "path": "reference/scripts/replay.test.ts",
+      "sha256": "4867bf90b4657156a243c1f4ef1e87fe5ae40133119716fdbc41f3c591e6ca79"
+    },
+    {
+      "path": "reference/scripts/replay.ts",
+      "sha256": "3eeaa49405c73263c4f204cc962a1d16bd79b2cc3fd169d864f7a5e9670d268d"
+    },
+    {
+      "path": "reference/scripts/source-audit.test.ts",
+      "sha256": "6649940d45f1afb13f47fbb007b91ba0b35b8c608a3d29868329cb2d4e08e998"
+    },
+    {
+      "path": "reference/scripts/source-conventions.test.ts",
+      "sha256": "012c2009f1637ef6740ca755e0cee9b874f8f7152982c3b2a695eaae0e76d576"
+    },
+    {
+      "path": "reference/scripts/source-files.ts",
+      "sha256": "4892d978b06acffe9a973ac21e6b9d320c5b1d2a06407a1e48f50e4546258d80"
+    },
+    {
+      "path": "reference/src/game/Game.tsx",
+      "sha256": "e125641d203d2917f9f395d37ec8f775607d04464c3de6f84a4c263e22eb302e"
+    },
+    {
+      "path": "reference/src/game/board/Board.tsx",
+      "sha256": "aef20e5ddd8a9ad5c75394b8da2dad6f92f21b43a43761e7d7fd333379deb61a"
+    },
+    {
+      "path": "reference/src/game/board/Card.tsx",
+      "sha256": "0c702ae3a62fa72bfd879f97817309717a7aea742f2bf241f161a785ba974519"
+    },
+    {
+      "path": "reference/src/game/board/Face.tsx",
+      "sha256": "3985b66cd53e68f05ebecf7d1263b9eb23c345088e2a9f1ae66dbd0cfa494957"
+    },
+    {
+      "path": "reference/src/game/board/board.css",
+      "sha256": "d1e02340e33b3ed13a1558ae9d6a6793c2b29088da8463ccfe1ddffb41d3f484"
+    },
+    {
+      "path": "reference/src/game/board/card-state.fixture.json",
+      "sha256": "f34f97abdfa921dfb752044172692c5ec4eef877abecb236eb8ea595dcd10c36"
+    },
+    {
+      "path": "reference/src/game/board/card-state.test.ts",
+      "sha256": "2a68f0aa97572e192d24dddfa2378bdfe42882e6ec3deee35351cb2f1d1d243f"
+    },
+    {
+      "path": "reference/src/game/board/card-state.ts",
+      "sha256": "d579207052473916a41317e588a3c4ad4b466bafa690ea115a28e3180943466f"
+    },
+    {
+      "path": "reference/src/game/board/face-design.fixture.json",
+      "sha256": "af68731d013aac76628f9a542d9ec1a22797067f9ec3780cf8cfae209d82c5b1"
+    },
+    {
+      "path": "reference/src/game/board/face-design.test.ts",
+      "sha256": "b44588c541d6cefd18b1683d9515a9607baac012096f7ba0b413e279a213e86e"
+    },
+    {
+      "path": "reference/src/game/board/face-design.ts",
+      "sha256": "fb5b68553d4e9a64f7f8fd7fa996d2f67fadfaa5f9998b1b7da9a91ccf496e15"
+    },
+    {
+      "path": "reference/src/game/board/keyboard.test.ts",
+      "sha256": "7cdb4f1aa1685e173d18c3b43d437063ba583e52ac9e7ce7676168e6966b6a5b"
+    },
+    {
+      "path": "reference/src/game/board/keyboard.ts",
+      "sha256": "6780d4ded5c947b48c02ad1f5ea9aa50c2f5394c074b571967f61614ddee9c56"
+    },
+    {
+      "path": "reference/src/game/completion.test.ts",
+      "sha256": "2ef6d56d455df5ca04aa630421776cc088c0d6df5b1370b2831cdb1fec15e031"
+    },
+    {
+      "path": "reference/src/game/controls/Controls.tsx",
+      "sha256": "83f4b05a039f947d3bfad8483487e5b582b17db34524feef5c8cf694571ba01a"
+    },
+    {
+      "path": "reference/src/game/controls/Reproduction.tsx",
+      "sha256": "7794109780c94b23334092b67e4487ed6be539a56d52be96edbe5d78bc7515de"
+    },
+    {
+      "path": "reference/src/game/controls/control-labels.ts",
+      "sha256": "a5afdd64baa75a8ffb9afb5a6671ba6ad12d01b4f6313831cb2bd3c3480e4cab"
+    },
+    {
+      "path": "reference/src/game/controls/controls.css",
+      "sha256": "84a8c9f04d8094995f3b9425de42a2a311bdb82b5b5069acb6082966a81c1779"
+    },
+    {
+      "path": "reference/src/game/deck-rejection.fixture.json",
+      "sha256": "42d48094827008db46d7020d15f31b9702f90e65257bb9839473e7b559a0dfc1"
+    },
+    {
+      "path": "reference/src/game/deck-rejection.test.ts",
+      "sha256": "18b3214547aded9f84c646fe1d9b5060bff50694cd38836c8655e82ec5d6c47a"
+    },
+    {
+      "path": "reference/src/game/deck.test.ts",
+      "sha256": "2efd689ecefd7ab2d49d6f80bdb764f316b996cfdcbd80c022cb3d1b9d945cc7"
+    },
+    {
+      "path": "reference/src/game/deck.ts",
+      "sha256": "659206802517abb556fd72ab7dcce2c91292336468b53949c35c3a8815864e72"
+    },
+    {
+      "path": "reference/src/game/elapsed-time.test.ts",
+      "sha256": "d6466412203a4d4110b27099757ab456d8cf83cad96f2a5f80f684a6c558f70e"
+    },
+    {
+      "path": "reference/src/game/elapsed-time.ts",
+      "sha256": "bc263e9ee435c30d047c49cd1f037d1a9c6df9a171247c83b4fd596edd621f49"
+    },
+    {
+      "path": "reference/src/game/game.css",
+      "sha256": "ea663c78528d7958cd323f87798278745c4cdf9b064925d292ae6d743cf6aa2a"
+    },
+    {
+      "path": "reference/src/game/game.fixture.ts",
+      "sha256": "dba19c664d03f4f3bc07a02386a5fb87815c45a1e892511eb9a189f1ed036072"
+    },
+    {
+      "path": "reference/src/game/game.test.ts",
+      "sha256": "5ca5b80ebf87421e457a49479057a483f16db295f01409f4882095f15c5ae6ab"
+    },
+    {
+      "path": "reference/src/game/game.ts",
+      "sha256": "b7c329521953dba265b42a7f4cc86e071a6f44ad10e81ad9af2983d68778ced4"
+    },
+    {
+      "path": "reference/src/game/game.types.ts",
+      "sha256": "17249725f4870e99784fc6a2ff9b5f68bef58c3d81587674e40794e72e094575"
+    },
+    {
+      "path": "reference/src/game/move-cap.test.ts",
+      "sha256": "bd31e2a5e58b23461a0c3bfda4e6520bed7790ce10130749f30486510933a43a"
+    },
+    {
+      "path": "reference/src/game/replay-order.test.ts",
+      "sha256": "69955ff21a4154c476ddcfb28831aa52b9d7f52308622c0aa1cd17195eeb4f0c"
+    },
+    {
+      "path": "reference/src/game/replay.test.ts",
+      "sha256": "ed5fb6b0081da595afe3bbaf90e2661f168c79afe8485a1fd1c9a55844e7ccc8"
+    },
+    {
+      "path": "reference/src/game/replay.ts",
+      "sha256": "0fa35b9ed1b20adccecfe378de10832972ed996635270d05cbdfc1f21b0861f1"
+    },
+    {
+      "path": "reference/src/game/saved-format.test.ts",
+      "sha256": "07aec23d39c94704528a7f90c6499df64105627719b1bd2dfd8d848683f835f4"
+    },
+    {
+      "path": "reference/src/game/saved-format.ts",
+      "sha256": "a16b50a3060bc570794a8ad0e6e6b3debe4eeffd1bda3e95061d317a0d1b606d"
+    },
+    {
+      "path": "reference/src/game/selection.ts",
+      "sha256": "97fe77db7c2fe61f86c2cbbe8995e23b602d29165b9231db7a108596e9b60d74"
+    },
+    {
+      "path": "reference/src/game/session/browser-clock.test.ts",
+      "sha256": "ee04c8a45c94025ef61549ab1b7735bfc2ba12fef570ad67693d1a0c41dbe7b1"
+    },
+    {
+      "path": "reference/src/game/session/browser-clock.ts",
+      "sha256": "9a76bdf38ed9173316c62fad24e3a9ea8fd1a7f7bfd5a31111de3116ac9b5f51"
+    },
+    {
+      "path": "reference/src/game/session/fresh-board.ts",
+      "sha256": "0fd5f98325e3c6a00afc37b65d2a27e7ed0f6e45de7a79a1a1fe7ba2a3e9a1f6"
+    },
+    {
+      "path": "reference/src/game/session/session.feedback.fixture.json",
+      "sha256": "5f95c1177ce316ef4d16ab528bad658696e8536a4c7a031c6914a57dbc5271cc"
+    },
+    {
+      "path": "reference/src/game/session/session.test.ts",
+      "sha256": "e431e340c34e1b8b5ca4b0f6025aa6e8fa12286c3651e767ea5c7c1e1608e307"
+    },
+    {
+      "path": "reference/src/game/session/session.ts",
+      "sha256": "9e2c39ea99df04717dee294988f536709f657ec09709a96f9ebc2042d48c0dbe"
+    },
+    {
+      "path": "reference/src/game/session/session.types.ts",
+      "sha256": "6188aefcc628c5ca36fba81685406c04739373360f7f684dc60db253201b0814"
+    },
+    {
+      "path": "reference/src/game/session/storage.test.ts",
+      "sha256": "035ddb5eeecd272ade275a41bbef0363db9f19234351aa3bf80ba55e7c854b8a"
+    },
+    {
+      "path": "reference/src/game/session/storage.ts",
+      "sha256": "7840b7f9f022ccf333d48e06e00b9c88703643a72f527c4cdeb2e4aa858ca910"
+    },
+    {
+      "path": "reference/src/game/session/use-game.ts",
+      "sha256": "e1787f2432996469672be4bc5ed2352c1a97a16c7d0f9285589b5cdcd6af89da"
+    },
+    {
+      "path": "reference/src/game/session/use-session-clock.ts",
+      "sha256": "17ba7024aa7cd18cb931cf3b1ef219aae17f042c034368b791032df2011ac82c"
+    },
+    {
+      "path": "reference/src/game/snapshot-selection.test.ts",
+      "sha256": "ea8a457626276b66415efb9fd849b48094f03decfbfd634d7c0e39720a81a67d"
+    },
+    {
+      "path": "reference/src/game/snapshot-selection.ts",
+      "sha256": "96aaec7d4e5713bdf79f7e128a6975a0fc626b9c1c1494161ca57c9dee4f43b6"
+    },
+    {
+      "path": "reference/src/game/snapshot.test.ts",
+      "sha256": "a727ea832a961b268cac8a05a9e6e6d25a010de5afe1207992c84a5f138845fe"
+    },
+    {
+      "path": "reference/src/game/snapshot.ts",
+      "sha256": "d05ce1b6fa43524ae309b6ce061c80e08ee387b833a0122694ffc48b8046d928"
+    },
+    {
+      "path": "reference/src/game/status/GameStatus.tsx",
+      "sha256": "61c5afbc7cb80284a0cd09b68bf7627483b1a3798c2f5c4e1fb85a8c5ff29835"
+    },
+    {
+      "path": "reference/src/game/status/status-labels.ts",
+      "sha256": "12b321c0669514e06651c2965353f5547733db7b7bf56bf798db985b13e1a7b8"
+    },
+    {
+      "path": "reference/src/game/status/status.css",
+      "sha256": "40d8df8a544487453eb7fb39c175a3db745fbae93fa64c276d8749eecda914a8"
+    },
+    {
+      "path": "reference/src/main.tsx",
+      "sha256": "a365b787c8116f6fcccdd6573af202238fdd44d8f2aff1351203761315922e2c"
+    },
+    {
+      "path": "reference/tests/accessibility-fixture.ts",
+      "sha256": "e83518f65f2247d374d7da79e1a5e1d6b97f3e47ea32f3ea93bb58cc814c82a9"
+    },
+    {
+      "path": "reference/tests/accessibility-tree.ts",
+      "sha256": "b8674ac11ceec6da1a950b90785c05d7e8ef82e1a8e0a8853592b7f33e727261"
+    },
+    {
+      "path": "reference/tests/accessibility.e2e.test.ts",
+      "sha256": "1dbe96d08281c9e4aecfa42fe46cb80fa6d1ca3e649142a8915826f16c1d60b6"
+    },
+    {
+      "path": "reference/tests/accessibility.fixture.json",
+      "sha256": "812e55be0934e15db12e0104b5d66c0f6c39f4a4bad3eaa15e48fe86fbf029a5"
+    },
+    {
+      "path": "reference/tests/all-sizes.e2e.test.ts",
+      "sha256": "6d01c19cb4dd7dfd7243cb098727311dc8aa5717645257a0d14e82e54084a7f4"
+    },
+    {
+      "path": "reference/tests/announcements.e2e.test.ts",
+      "sha256": "b23b241e483c0d31237c040693ab61e671daf361540fdf44fc584745a1548365"
+    },
+    {
+      "path": "reference/tests/art.e2e.test.ts",
+      "sha256": "bff4a3f0183c27ab276764cdd60050f171e361df911a74ca0f49bbcd689a57eb"
+    },
+    {
+      "path": "reference/tests/artifact-server.ts",
+      "sha256": "4f8fcd62d9f682b5838849a96eab901d6c2de6f3af50e68fa0767692e4a4193e"
+    },
+    {
+      "path": "reference/tests/browser-environment.e2e.test.ts",
+      "sha256": "23181bf0765b59f3fe6f357c2f1f5be96d6bd29f20006539c4a6dbe29188b273"
+    },
+    {
+      "path": "reference/tests/browser-test.ts",
+      "sha256": "9a09f45d972799f04ebaaf83e340de864ec777a481b789b1fd3f94a677cd301e"
+    },
+    {
+      "path": "reference/tests/clock-edges.e2e.test.ts",
+      "sha256": "d9d3e0ccfc51d8f2ac06e7ce277fbc686e154d0871c68448bc087744d03fc6d8"
+    },
+    {
+      "path": "reference/tests/control-contract.e2e.test.ts",
+      "sha256": "4c1e43f8c7a4bd8bb94a332e0d6910511015f5952ccdea018c1adaca3ae0ef15"
+    },
+    {
+      "path": "reference/tests/controls.e2e.test.ts",
+      "sha256": "83d5519cb390292652ae217b5a5b7efc896e5d07ce0246dfcd9fb76e711f591c"
+    },
+    {
+      "path": "reference/tests/focus-bounds.ts",
+      "sha256": "af2784fd233cdce29e62edadbb4464fb4b01367bfaa336579f4f2e0b92d1185d"
+    },
+    {
+      "path": "reference/tests/focus-clearance.e2e.test.ts",
+      "sha256": "d1ae44ae1e823a078738b81b29d13f5615e27debf42548ab8c722364424f2afa"
+    },
+    {
+      "path": "reference/tests/game-fixture.ts",
+      "sha256": "4b64e83baa3de7a26c46264ddd3bf517e9340e1d2ebb0d8d7d13bd2bf5ccf14d"
+    },
+    {
+      "path": "reference/tests/input-contract.e2e.test.ts",
+      "sha256": "dfa22a187db54d2ba86b7d1cc1ac616f42df9d2196b437f183647f6b37b3291d"
+    },
+    {
+      "path": "reference/tests/keyboard.e2e.test.ts",
+      "sha256": "9f1eba059790c2784c3a76b4bb3b997d4f28a969a3f71a00179e297ac92d3e0c"
+    },
+    {
+      "path": "reference/tests/layout.e2e.test.ts",
+      "sha256": "4efb55c23111ffa400395f4041bb1e0ef3169d1e23e354c03b2413b33dd095aa"
+    },
+    {
+      "path": "reference/tests/lifecycle.e2e.test.ts",
+      "sha256": "62921863aa7e87915b2722f82e805f7856e7d9a4fee85f61fcb8ee8df0296879"
+    },
+    {
+      "path": "reference/tests/motion.e2e.test.ts",
+      "sha256": "d100f3f43787d983661d0d2c7826194f89ca1a18b5f29ba389eb696d9022ced9"
+    },
+    {
+      "path": "reference/tests/move-cap.e2e.test.ts",
+      "sha256": "41468f5dacb2199d9b3996b1cb94537c56f37bc2a200d4cdce9fdf584cf9380a"
+    },
+    {
+      "path": "reference/tests/persistence-contract.e2e.test.ts",
+      "sha256": "848a7a081bc6d1f7bf1a7ad83edb733bf20fa5a10b7ef7687952fa5092fba135"
+    },
+    {
+      "path": "reference/tests/play.e2e.test.ts",
+      "sha256": "c36b278f1c9f50721ccb24a894c5c47a7dc9a5c7b2657c1b2e3c9ee006e47c1c"
+    },
+    {
+      "path": "reference/tests/preferences.e2e.test.ts",
+      "sha256": "56de1d9026819f7154efabb98795bbf753c7aec33c5219d1c66b983c8ac46a3b"
+    },
+    {
+      "path": "reference/tests/product-contract.e2e.test.ts",
+      "sha256": "a4505fa7918979bbea9a621f87346f33571dd2722666317de7708faa644db253"
+    },
+    {
+      "path": "reference/tests/readability.ts",
+      "sha256": "5257aea9b5feb37ce91bb34fe0db641fb70b527e6074e3fe535e9dad5f0bf6b5"
+    },
+    {
+      "path": "reference/tests/scrollbars.e2e.test.ts",
+      "sha256": "267ef3c78a9cae36b8f76e5ac9a67c6bbbe71c0d8ee486c11557c1af7bd50a75"
+    },
+    {
+      "path": "reference/tests/snapshots.e2e.test.ts",
+      "sha256": "79f2146b99f8f36b388dff133c358a1707299cf2945d9e03bd7db6762f4ac7cc"
+    },
+    {
+      "path": "reference/tests/status-controls.e2e.test.ts",
+      "sha256": "ef373a12c227a614c50092813e5be22ef9be37608b8d3a3af79005148424c378"
+    },
+    {
+      "path": "reference/tests/status-format.fixture.json",
+      "sha256": "0b7103ea3d8d75fc515a4c1976d046d3dd522a1e2785afe0ae2ca30f6d5e3232"
+    },
+    {
+      "path": "reference/tests/status.e2e.test.ts",
+      "sha256": "1ddb0eb72a7e0fd026b04dd511358875db5919549370884724dd0fb05a47909a"
+    },
+    {
+      "path": "reference/tests/style.e2e.test.ts",
+      "sha256": "71e00682b404c1b1eb7118b5fdff8ef7c357ce8112db4b8da1274a7c1ebb7f3a"
+    },
+    {
+      "path": "reference/tests/timer-lifecycle.e2e.test.ts",
+      "sha256": "9a34e656621126c1b20a26470c46e84b10927edf03e00a5de3f2abac70ce8e91"
+    },
+    {
+      "path": "reference/tests/touch-scroll.e2e.test.ts",
+      "sha256": "692a65dfc6586d830e8013048bcaecd78f0ba0ef8b34e8748796bb049318df38"
+    },
+    {
+      "path": "reference/tests/ui-snapshot.ts",
+      "sha256": "eb551ff43c2d3c844287710b9103f023f3f297841e3c3a22f0bf483174bdbf6d"
+    },
+    {
+      "path": "reference/tests/ui.fixture.json",
+      "sha256": "2be167d72f3183bb189eb8f37550e823c7b99ac8f58b820290557996395edca3"
+    },
+    {
+      "path": "reference/tests/zoom.e2e.test.ts",
+      "sha256": "ec4fb64c679c68a31ca7dd30585235fbcbb34028b04a7f4a1ea704daa7ed49fb"
+    },
+    {
+      "path": "reference/tsconfig.app.json",
+      "sha256": "ef8147feba45db5b286219a3a1ff496afa93fad3a43dcfd6665f012fc127e6eb"
+    },
+    {
+      "path": "reference/tsconfig.base.json",
+      "sha256": "9929e25d4aaf686c65f8530eedcbfa96f58df59db44540424b44ccb395e9a923"
+    },
+    {
+      "path": "reference/tsconfig.e2e.json",
+      "sha256": "1107781734a7d0ae937fe28239684715787ed6cea183d4ddb233997494f8f4e4"
+    },
+    {
+      "path": "reference/tsconfig.node.json",
+      "sha256": "49b7b4463836bd4eab053da389b4bd8d62e9a3e4df9e585885bfb427a6e54f8e"
+    },
+    {
+      "path": "reference/vite.art.config.ts",
+      "sha256": "3ed3781e7ea9fa46cf365a78828f56a8cc947f925e61d2522faa2c55c80d6f23"
+    },
+    {
+      "path": "reference/vite.config.ts",
+      "sha256": "013b2a219c28fe308338b65844eea66b7efe239b352dc1b290817df396dd36d1"
+    },
+    {
+      "path": "reference/vite.session.config.ts",
+      "sha256": "ff123691f9a124985dddc634ba9b14a2d09f9f5c95128b291036620a253cdb34"
+    },
+    {
+      "path": "reference/vitest.config.ts",
+      "sha256": "82c2b20983ff990ae584f1e614d24b01bcda05e1e2910e4f0e49f79655c78905"
+    },
+    {
+      "path": "requirements.json",
+      "sha256": "2488fae0ba781dfe987f02b7a4e0dbb1c50c89661cc6f296825aa8ed2a3078f2"
+    },
+    {
+      "path": "specs/manifest.json",
+      "sha256": "a97e2dd770706081cc68f2faf948f15bb15549fea6886a0c55c820a7f8c49698"
+    },
+    {
+      "path": "trace.json",
+      "sha256": "fcdbd47df41df100dbab0ef5786c9580adff3bfc1c6d93fb3b55ff0d0d159b55"
+    }
+  ]
 }

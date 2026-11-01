@@ -1,9 +1,8 @@
 import assert from 'node:assert/strict';
 import { before, after, test as nodeTest } from 'node:test';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { chromium } from '@playwright/test';
-import { readFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { REFERENCE_ROOT, serveArtifact } from './artifact-server.ts';
 import type { Browser, BrowserContext, BrowserContextOptions, Page } from '@playwright/test';
@@ -12,7 +11,12 @@ const BROWSER_TEMP = join(REFERENCE_ROOT, '.browser-work');
 const RESULTS = join(REFERENCE_ROOT, 'test-results');
 const CHROMIUM_VERSION = '156.0.8078.4';
 const EXECUTABLE_ENV = 'PLAYWRIGHT_CHROMIUM_EXECUTABLE';
+// Playwright hides scrollbars by default. Visible ones take layout space, as on a Windows desktop.
+const HIDE_SCROLLBARS = '--hide-scrollbars';
+export const Scrollbars = { hidden: 'hidden', visible: 'visible' } as const;
+type ScrollbarMode = (typeof Scrollbars)[keyof typeof Scrollbars];
 let browser: Browser | undefined;
+let scrollbarBrowser: Promise<Browser> | undefined;
 let artifact: Awaited<ReturnType<typeof serveArtifact>> | undefined;
 
 before(async () => {
@@ -20,7 +24,6 @@ before(async () => {
   await mkdir(RESULTS, { recursive: true });
   process.env.TEMP = BROWSER_TEMP;
   process.env.TMP = BROWSER_TEMP;
-  const executable = process.env[EXECUTABLE_ENV];
   const npmResult =
     process.platform === 'win32'
       ? spawnSync('cmd.exe', ['/d', '/c', 'npm --version'], { encoding: 'utf8' })
@@ -34,10 +37,7 @@ before(async () => {
   assert.equal(npm, '11.20.0', 'T03 named npm');
   assert.ok(playwright && typeof playwright === 'object' && 'version' in playwright);
   assert.equal(playwright.version, '1.64.1', 'T03 named Playwright');
-  browser = await chromium.launch({
-    headless: true,
-    ...(executable ? { executablePath: executable } : {}),
-  });
+  browser = await launch(Scrollbars.hidden);
   assert.equal(browser.version(), CHROMIUM_VERSION);
   artifact = await serveArtifact();
   await writeFile(
@@ -57,8 +57,18 @@ before(async () => {
 
 after(async () => {
   await browser?.close();
+  await (await scrollbarBrowser)?.close();
   await artifact?.close();
 });
+
+function launch(scrollbars: ScrollbarMode): Promise<Browser> {
+  const executable = process.env[EXECUTABLE_ENV];
+  return chromium.launch({
+    headless: true,
+    ...(executable ? { executablePath: executable } : {}),
+    ...(scrollbars === Scrollbars.visible ? { ignoreDefaultArgs: [HIDE_SCROLLBARS] } : {}),
+  });
+}
 
 interface BrowserFixture {
   browser: Browser;
@@ -74,10 +84,13 @@ export function test(
   name: string,
   body: (fixture: BrowserFixture, artifacts: Artifacts) => Promise<void>,
   options: BrowserContextOptions = {},
+  scrollbars: ScrollbarMode = Scrollbars.hidden,
 ): void {
   nodeTest(name, { timeout: 30_000 }, async (t) => {
     if (!browser || !artifact) throw new Error('Browser verification did not start.');
-    const context = await browser.newContext(options);
+    const owner =
+      scrollbars === Scrollbars.visible ? await (scrollbarBrowser ??= launch(scrollbars)) : browser;
+    const context = await owner.newContext(options);
     t.after(() => context.close());
     const page = await context.newPage();
     const pageErrors: string[] = [];
@@ -90,16 +103,7 @@ export function test(
         return join(directory, file);
       },
     };
-    try {
-      await body({ browser, context, page, gameURL: artifact.url }, artifacts);
-    } catch (error) {
-      if (process.env.NEON_TEST_FAILURE)
-        await writeFile(
-          process.env.NEON_TEST_FAILURE,
-          JSON.stringify({ name, message: error instanceof Error ? error.message : String(error) }),
-        );
-      throw error;
-    }
+    await body({ browser: owner, context, page, gameURL: artifact.url }, artifacts);
     assert.deepEqual(pageErrors, []);
   });
 }

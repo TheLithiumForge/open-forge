@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createGame } from '../game.ts';
-import { parseBoardCode, validSize } from '../deck.ts';
-import { decodeSnapshot } from '../snapshot.ts';
+import { parseBoardCode, isValidSize } from '../deck.ts';
+import { decodeSnapshot, encodeSnapshot } from '../snapshot.ts';
 import { freshBoardCode } from './fresh-board.ts';
 import { activateSession, initialSession, replaceGame, SessionNotice } from './session.ts';
 import { readPreferences, writePreferences } from './storage.ts';
@@ -35,7 +35,7 @@ export function useGame() {
   useEffect(() => writePreferences(store, session.preferences), [session.preferences, store]);
 
   function newGame(size = current.current.game.size): void {
-    if (!validSize(size)) return;
+    if (!isValidSize(size)) return;
     const next = createGame(freshBoardCode(size, current.current.game.seed));
     clock.reset();
     commit(replaceGame(current.current, next, false));
@@ -77,6 +77,14 @@ export function useGame() {
     return true;
   }
 
+  function exportSnapshot(): string {
+    // Rendered state can trail the active clock by a tick. Synchronizing keeps whole
+    // milliseconds in the game and carries the fraction, so elapsed time rounds down and
+    // remaining mismatch time rounds up.
+    clock.synchronize();
+    return encodeSnapshot(current.current.game);
+  }
+
   function activate(index: number): void {
     clock.synchronize();
     commit(activateSession(current.current, index));
@@ -93,5 +101,5 @@ export function useGame() {
     });
   }
 
-  return { session, newGame, restart, loadBoard, loadSnapshot, activate, resume };
+  return { session, newGame, restart, loadBoard, loadSnapshot, exportSnapshot, activate, resume };
 }

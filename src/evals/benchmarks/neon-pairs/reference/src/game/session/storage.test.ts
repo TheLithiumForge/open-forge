@@ -8,6 +8,7 @@ import {
   rememberBest,
   writePreferences,
 } from './storage.ts';
+import { MOVES_MAX } from '../game.ts';
 import { SPEC_VECTOR } from '../game.fixture.ts';
 import type { PreferenceStore } from './storage.ts';
 
@@ -30,6 +31,21 @@ test('preferences round trip size and separate minimum moves per size', () => {
   assert.equal(rememberBest(preferences, 4, 12), preferences);
   assert.equal(rememberBest(preferences, 4, 9).bestMoves['4'], 9, 'R10 better score replaces best');
   assert.equal(preferences.bestMoves['6'], 20, 'R10 size six has its separate best');
+});
+
+test('a best at the move cap round trips and a larger saved best is ignored', () => {
+  const store = memoryStore();
+  const capped = { size: DEFAULT_SIZE, bestMoves: { [DEFAULT_SIZE]: MOVES_MAX } };
+  writePreferences(store, capped);
+  assert.deepEqual(readPreferences(store), capped);
+  assert.equal(rememberBest(capped, DEFAULT_SIZE, MOVES_MAX), capped);
+  const larger = {
+    schemaVersion: PREFERENCES_VERSION,
+    size: DEFAULT_SIZE,
+    bestMoves: { [DEFAULT_SIZE]: MOVES_MAX + 1 },
+  };
+  store.setItem(PREFERENCES_KEY, JSON.stringify(larger));
+  assert.deepEqual(readPreferences(store), { size: DEFAULT_SIZE, bestMoves: {} });
 });
 
 const INVALID_PREFERENCES = [

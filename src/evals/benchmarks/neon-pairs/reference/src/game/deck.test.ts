@@ -25,7 +25,7 @@ test('generation matches the independent specification vectors', () => {
   assert.equal(SEED_MAX, SPEC_VECTOR.seedMax);
 });
 
-test('D01 accepts the inclusive maximum seed', () => {
+test('board codes accept the inclusive maximum seed', () => {
   assert.deepEqual(
     parseBoardCode('np1-4-2147483646'),
     { size: 4, seed: 2147483646 },

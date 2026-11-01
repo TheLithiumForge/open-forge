@@ -1,6 +1,6 @@
 export const CLOCK_INTERVAL_MS = 40;
 
-export interface ActiveClock {
+interface ActiveClock {
   readonly observedAt: number;
   readonly remainderMs: number;
 }

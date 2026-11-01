@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { SESSION_URL, loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
 
-test('A04 R12 unmount clears the active timer and visibility listener', async ({ page }) => {
+test('unmount clears the active timer and visibility listener', async ({ page }) => {
   await page.addInitScript(() => {
     const pending = new Set<number>();
     const listeners = new Set<EventListenerOrEventListenerObject>();
@@ -70,9 +70,7 @@ test('A04 R12 unmount clears the active timer and visibility listener', async ({
   );
 });
 
-test('R12 a prior turn deadline cannot close a later mismatch in the same deal', async ({
-  page,
-}) => {
+test('a prior turn deadline cannot close a later mismatch in the same deal', async ({ page }) => {
   await loadTimedBoard(page);
   await page.locator('.card').nth(0).click();
   await page.locator('.card').nth(1).click();

@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
-import { DealControl } from './control-labels.ts';
+import { DealControl } from '../src/game/controls/control-labels.ts';
 import { loadFixedBoard, PHONE } from './game-fixture.ts';
 
 for (const screen of [PHONE, { width: 1280, height: 800 }]) {

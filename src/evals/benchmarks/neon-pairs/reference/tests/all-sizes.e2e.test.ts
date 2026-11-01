@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { ReproductionControl } from '../src/game/controls/control-labels.ts';
+import { StatusLabel } from '../src/game/status/status-labels.ts';
 import { GRID_SIZES, boardCode, generateBoard } from '../src/game/deck.ts';
-import { ReproductionControl } from './control-labels.ts';
-import { StatusLabel } from './control-labels.ts';
 import { loadFixedBoard } from './game-fixture.ts';
 
 for (const size of GRID_SIZES) {

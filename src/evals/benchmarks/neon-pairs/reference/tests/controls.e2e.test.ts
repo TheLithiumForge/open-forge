@@ -1,12 +1,12 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
-import { GRID_SIZES } from '../src/game/deck.ts';
-import { DealControl } from './control-labels.ts';
 import {
   BOARD_CODE_MAX_CHARACTERS,
+  DealControl,
   ReproductionControl,
   SNAPSHOT_MAX_CHARACTERS,
-} from './control-labels.ts';
+} from '../src/game/controls/control-labels.ts';
+import { GRID_SIZES } from '../src/game/deck.ts';
 import { SessionNotice } from '../src/game/session/session.ts';
 import { FIXED_BOARD, loadTimedBoard, exportedSnapshot, GAME_URL } from './game-fixture.ts';
 

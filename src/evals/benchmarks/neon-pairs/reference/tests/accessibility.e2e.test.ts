@@ -5,7 +5,7 @@ import { accessibilityTree, accessibilityNode, moveKeyboardTo } from './accessib
 import { accessibilityFixture, playwrightVersion } from './accessibility-fixture.ts';
 import { FIXED_PAIRS, loadTimedBoard } from './game-fixture.ts';
 
-test('the I17 keyboard journey exposes names, states and each result in Chromium accessibility trees', async ({
+test('a complete keyboard journey exposes names, states and each result in Chromium accessibility trees', async ({
   page,
   context,
   browser,

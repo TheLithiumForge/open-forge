@@ -1,11 +1,11 @@
 import { readFile } from 'node:fs/promises';
-import { record } from '../src/game/saved-format.ts';
+import { isJsonObject } from '../src/game/saved-format.ts';
 import { SNAPSHOT_PATH } from './game-fixture.ts';
 
 export async function uiSnapshot() {
   const value: unknown = JSON.parse(await readFile(SNAPSHOT_PATH, 'utf8'));
   if (
-    !record(value) ||
+    !isJsonObject(value) ||
     typeof value.bestNone !== 'string' ||
     typeof value.winBanner !== 'string' ||
     typeof value.mismatch !== 'string' ||

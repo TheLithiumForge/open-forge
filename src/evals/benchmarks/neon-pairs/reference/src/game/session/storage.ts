@@ -1,6 +1,6 @@
-import { GRID_SIZES, validSize } from '../deck.ts';
+import { GRID_SIZES, isValidSize } from '../deck.ts';
 import { MOVES_MAX } from '../game.ts';
-import { record, safeNonnegative } from '../saved-format.ts';
+import { isJsonObject, isNonnegativeSafeInteger } from '../saved-format.ts';
 
 export const DEFAULT_SIZE = GRID_SIZES[0];
 export const PREFERENCES_KEY = 'neon-pairs.preferences.v1';
@@ -21,19 +21,19 @@ export function readPreferences(store: PreferenceStore | null): Preferences {
     if (!text) return fallback;
     const value: unknown = JSON.parse(text);
     if (
-      !record(value) ||
+      !isJsonObject(value) ||
       value.schemaVersion !== PREFERENCES_VERSION ||
       typeof value.size !== 'number'
     )
       return fallback;
-    if (!validSize(value.size) || !record(value.bestMoves)) return fallback;
+    if (!isValidSize(value.size) || !isJsonObject(value.bestMoves)) return fallback;
     const bestMoves: Record<string, number> = {};
     for (const [size, moves] of Object.entries(value.bestMoves)) {
       const numberSize = Number(size);
       if (
         String(numberSize) !== size ||
-        !validSize(numberSize) ||
-        !safeNonnegative(moves) ||
+        !isValidSize(numberSize) ||
+        !isNonnegativeSafeInteger(moves) ||
         moves > MOVES_MAX ||
         moves < numberSize ** 2 / 2
       )

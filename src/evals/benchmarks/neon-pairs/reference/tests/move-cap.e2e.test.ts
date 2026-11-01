@@ -1,11 +1,10 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
+import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
+import { StatusLabel } from '../src/game/status/status-labels.ts';
 import { createGame, MOVES_MAX } from '../src/game/game.ts';
 import { encodeSnapshot } from '../src/game/snapshot.ts';
 import { SelectionKind } from '../src/game/selection.ts';
-import { DealControl } from './control-labels.ts';
-import { ReproductionControl } from './control-labels.ts';
-import { StatusLabel } from './control-labels.ts';
 import { FIXED_BOARD, FIXED_PAIRS, loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
 
 test('an imported game reaches the move cap, wins and keeps its capped best after reload', async ({

@@ -73,7 +73,7 @@
     "test": "tests/timer-lifecycle.e2e.test.ts",
     "browser": true,
     "clauses": ["A04.3", "R12.1"],
-    "testName": "A04 R12 unmount clears the active timer and visibility listener",
+    "testName": "unmount clears the active timer and visibility listener",
     "reason": "A04 active timer cancelled at unmount"
   },
   {
@@ -139,13 +139,13 @@
     "test": "src/game/deck.test.ts",
     "browser": false,
     "clauses": ["D01.2"],
-    "testName": "D01 accepts the inclusive maximum seed",
+    "testName": "board codes accept the inclusive maximum seed",
     "reason": "D01 inclusive maximum seed"
   },
   {
     "id": "M14",
     "path": "src/game/snapshot.ts",
-    "find": "!exactKeys(value, SNAPSHOT_KEYS)",
+    "find": "!hasExactKeys(value, SNAPSHOT_KEYS)",
     "replace": "false",
     "test": "src/game/snapshot.test.ts",
     "browser": false,
@@ -158,10 +158,10 @@
     "path": "src/game/snapshot-selection.ts",
     "find": "every((count) =\u003e count === 2)",
     "replace": "every((count) =\u003e count \u003e= 1)",
-    "test": "src/game/snapshot-pairs.test.ts",
+    "test": "src/game/snapshot-selection.test.ts",
     "browser": false,
     "clauses": ["D06.3"],
-    "testName": "matched indices need whole pairs even when every other field is consistent",
+    "testName": "matched positions need whole pairs without duplicates",
     "reason": "D06 half pair is invalid"
   },
   {
@@ -205,7 +205,7 @@
     "test": "tests/focus-clearance.e2e.test.ts",
     "browser": true,
     "clauses": ["V16.1", "V19.5", "V20.4"],
-    "testName": "V19 focus clearance survives nearest scroll to an interior row",
+    "testName": "focus clearance survives nearest scroll to an interior card",
     "reason": "V19 full focus outline"
   },
   {
@@ -227,7 +227,51 @@
     "test": "src/game/move-cap.test.ts",
     "browser": false,
     "clauses": ["R05.5", "R05.8", "D07.8"],
-    "testName": "a capped mismatch closes and larger imported move counts are rejected",
+    "testName": "a capped mismatch keeps its move count and still closes and exports",
     "reason": "R05 move count saturates"
+  },
+  {
+    "id": "M22",
+    "path": "src/game/board/board.css",
+    "find": "    100%,\n",
+    "replace": "    calc(min(100vw, var(--content-max)) - 2 * var(--page-padding) - 2 * var(--board-padding) - 2 * var(--board-border)),\n",
+    "test": "tests/scrollbars.e2e.test.ts",
+    "browser": true,
+    "clauses": ["V04.1", "V05.2"],
+    "testName": "a 10x10 board fits beside visible scrollbars at 900x600",
+    "reason": "V04 board fits beside its scrollbars"
+  },
+  {
+    "id": "M23",
+    "path": "src/game/session/use-game.ts",
+    "find": "    clock.synchronize();\n    return encodeSnapshot(current.current.game);",
+    "replace": "    return encodeSnapshot(current.current.game);",
+    "test": "tests/clock-edges.e2e.test.ts",
+    "browser": true,
+    "clauses": ["C08.6", "C08.7"],
+    "testName": "export reads the active clock between render ticks",
+    "reason": "C08 export reads the active clock"
+  },
+  {
+    "id": "M24",
+    "path": "src/game/game.css",
+    "find": ".eyebrow {\n  color: var(--secondary);",
+    "replace": ".eyebrow {\n  color: #63e7ff;",
+    "test": "tests/product-contract.e2e.test.ts",
+    "browser": true,
+    "clauses": ["V06.6"],
+    "testName": "named color targets, reset margins and card focus scroll margins follow the visual contract",
+    "reason": "V06 secondary color .eyebrow"
+  },
+  {
+    "id": "M25",
+    "path": "src/game/board/board.css",
+    "find": "  scroll-margin: 6px;",
+    "replace": "  scroll-margin: 0;",
+    "test": "tests/focus-clearance.e2e.test.ts",
+    "browser": true,
+    "clauses": ["I13.2", "V19.5"],
+    "testName": "focus clearance survives nearest scroll to an interior card",
+    "reason": "V19 full focus outline"
   }
 ]

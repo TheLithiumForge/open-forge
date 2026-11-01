@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'vitest';
-import { activateCard, createGame, isWon, MISMATCH_MS } from '../game.ts';
+import { activateCard, createGame, isWon, MISMATCH_MS, MOVES_MAX } from '../game.ts';
 import { boardCode } from '../deck.ts';
 import {
   activateSession,
@@ -90,6 +90,15 @@ test('a new completion records bests but completed imports never do', () => {
   for (const index of EXAMPLE_PAIRS[EXAMPLE_PAIRS.length - 1] ?? [])
     restored = activateSession(restored, index);
   assert.equal(restored.preferences.bestMoves['4'], EXAMPLE_PAIRS.length);
+});
+
+test('an imported game at the move cap records the capped count as its best', () => {
+  const game = { ...createGame(EXAMPLE_CODE), started: true, moves: MOVES_MAX };
+  const imported = replaceGame(initialSession(EXAMPLE_CODE, EMPTY_PREFERENCES), game, true);
+  let session = { ...imported, paused: false };
+  for (const pair of EXAMPLE_PAIRS)
+    for (const index of pair) session = activateSession(session, index);
+  assert.equal(session.preferences.bestMoves['4'], MOVES_MAX);
 });
 
 test('turn feedback matches the reviewed message snapshot', async () => {

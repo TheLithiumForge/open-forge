@@ -8,11 +8,5 @@ export const ReproductionControl = {
   loadSnapshot: 'Load snapshot',
   resume: 'Resume',
 } as const;
-export const StatusLabel = {
-  moves: 'Moves:',
-  pairs: 'Pairs:',
-  time: 'Time:',
-  best: 'Best:',
-} as const;
 export const BOARD_CODE_MAX_CHARACTERS = 32;
 export const SNAPSHOT_MAX_CHARACTERS = 65_536;

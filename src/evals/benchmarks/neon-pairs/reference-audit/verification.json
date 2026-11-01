@@ -17,16 +17,16 @@
   },
   "aboveAim": [
     {
-      "path": "reference/src/game/controls/Reproduction.tsx",
-      "lines": 102
+      "path": "reference/src/game/session/session.test.ts",
+      "lines": 122
     },
     {
-      "path": "reference/src/game/session/session.test.ts",
-      "lines": 113
+      "path": "reference/src/game/session/use-game.ts",
+      "lines": 105
     },
     {
       "path": "reference/src/game/snapshot.test.ts",
-      "lines": 115
+      "lines": 152
     },
     {
       "path": "reference/tests/accessibility.e2e.test.ts",
@@ -38,7 +38,7 @@
     },
     {
       "path": "reference/tests/browser-test.ts",
-      "lines": 105
+      "lines": 109
     },
     {
       "path": "reference/tests/control-contract.e2e.test.ts",
@@ -54,7 +54,7 @@
     },
     {
       "path": "reference/tests/product-contract.e2e.test.ts",
-      "lines": 110
+      "lines": 121
     }
   ],
   "gates": {
@@ -62,22 +62,23 @@
     "productTypecheck": "passed",
     "productTests": {
       "status": "failed",
-      "tests": 217,
-      "passed": 191,
-      "failed": 26,
+      "tests": 272,
+      "passed": 264,
+      "failed": 8,
       "skipped": 0,
       "exit": 1,
       "reasons": [
-        "Protected benchmark loaders and catalogs still require spec v2.",
-        "Layer 2 and Layer 3 case input hashes still describe the old packs.",
-        "The protected source scan enters installed reference cache files."
+        "Before this round: the saved Layer 1 plan expects Codex where the current plans use Claude.",
+        "Before this round: five document and player-pack tests read a changed player pack fingerprint.",
+        "This round: the Layer 4 case contract finds its patch context changed in the corrected reference.",
+        "This round: the snapshot-version check fixture still edits the old record and exactKeys line in snapshot.ts."
       ]
     },
     "referenceInstall": "passed",
     "referenceTypecheck": "passed",
     "vitest": {
-      "tests": 128,
-      "passed": 128,
+      "tests": 127,
+      "passed": 127,
       "failed": 0,
       "skipped": 0,
       "exit": 0
@@ -96,21 +97,41 @@
         "repetition": 1,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 65,
-        "passed": 65,
+        "tests": 71,
+        "passed": 71,
+        "failed": 0,
+        "skipped": 0,
+        "exit": 0
+      },
+      {
+        "repetition": 2,
+        "command": "npm run test:e2e",
+        "builtFromCurrentSource": true,
+        "tests": 71,
+        "passed": 71,
+        "failed": 0,
+        "skipped": 0,
+        "exit": 0
+      },
+      {
+        "repetition": 3,
+        "command": "npm run test:e2e",
+        "builtFromCurrentSource": true,
+        "tests": 71,
+        "passed": 71,
         "failed": 0,
         "skipped": 0,
         "exit": 0
       }
     ],
     "mutations": {
-      "caught": 21,
+      "caught": 25,
       "survived": 0,
       "cleanUnitBaseline": "passed",
       "cleanBrowserBaseline": "passed",
       "exit": 0
     },
-    "buildArtifactSha256": "38ff3ff9dce746cc25e5ddbdad2087b92c2e9945d9a64515016561b0d975ee97"
+    "buildArtifactSha256": "9c0c05fb01cf5d6eacfee6ede830c5cb8a3796d447a162f8f447130403d18a60"
   },
   "packs": {
     "fullSourceHash": "0466a72761d5e1d316ad9aab131c0862c6b63def04e91753baa3f79d7445d74d",
@@ -131,41 +152,22 @@
     "Source and process review clauses need independent judgment.",
     "Protected checks, cases, run-limit data and the final seed freeze stay with the following workers.",
     "The Layer 3 check batch has not measured real completion times yet.",
-    "No Docker, WSL, model CLI or sign-in was used."
+    "No Docker, WSL, model CLI or sign-in was used.",
+    "Layer 4 case patches that no longer apply to the corrected reference are listed under casePatches. The cases stay unchanged for the overseer."
   ],
   "commands": [
     {
-      "command": "npm ci --cache .npm-cache",
+      "command": "npm run typecheck",
       "folder": "src/evals",
       "exit": 0
     },
     {
-      "command": "npm run typecheck --cache .npm-cache",
-      "folder": "src/evals",
-      "exit": 0
-    },
-    {
-      "command": "npm test --cache .npm-cache",
+      "command": "npm test",
       "folder": "src/evals",
       "exit": 1
     },
     {
-      "command": "node materialize/cli.ts specs",
-      "folder": "src/evals",
-      "exit": 0
-    },
-    {
-      "command": "node materialize/cli.ts subset --accept-selection-change REASON",
-      "folder": "src/evals",
-      "exit": 0
-    },
-    {
       "command": "npm ci --cache .npm-cache",
-      "folder": "reference",
-      "exit": 0
-    },
-    {
-      "command": "npm exec --cache .npm-cache -- playwright install chromium",
       "folder": "reference",
       "exit": 0
     },
@@ -187,7 +189,7 @@
     {
       "command": "npm run test:e2e",
       "folder": "reference",
-      "repetitions": 1,
+      "repetitions": 3,
       "exit": 0
     },
     {
@@ -202,6 +204,11 @@
     },
     {
       "command": "node ../reference/node_modules/typescript/bin/tsc -p tsconfig.json",
+      "folder": "reference-audit",
+      "exit": 0
+    },
+    {
+      "command": "node --test mutation-report.test.ts",
       "folder": "reference-audit",
       "exit": 0
     }
@@ -221,5 +228,78 @@
     "mutations": "21 caught for their declared reasons",
     "productTestsPassed": 191,
     "productTestsFailed": 26
+  },
+  "reviewV21": {
+    "change": "ten v2.1 judge corrections",
+    "record": "reference-audit/review-v2.1.md",
+    "clauses": ["V02.3", "V04.1", "V05.2", "C08.6", "C08.7", "V06.5", "V06.6", "V06.7", "V07.1", "V08.4", "R05.9", "R06.2", "R07.12", "R10.6", "R10.7", "I13.1", "I13.2"],
+    "newMutations": ["M22", "M23", "M24", "M25"],
+    "referenceInstall": "passed",
+    "referenceTypecheck": "passed",
+    "vitestPassed": 127,
+    "build": "passed",
+    "browserRuns": 3,
+    "browserPassed": 71,
+    "mutations": "25 caught for their declared reasons",
+    "evalsTypecheck": "passed",
+    "productTestsPassed": 264,
+    "productTestsFailed": 8
+  },
+  "casePatches": {
+    "scratch": "src/evals/.tmp",
+    "command": "git apply --check",
+    "note": "Every patch applied to the previous reference. Seeded case solutions were checked without their seed, because no seed applies to the corrected reference.",
+    "applyToPreviousReference": 8,
+    "applyToCorrectedReference": 0,
+    "results": [
+      {
+        "case": "l4-f01",
+        "patch": "solution.patch",
+        "applies": false,
+        "files": ["src/game/Game.tsx", "src/game/controls/Reproduction.tsx", "src/game/session/use-game.ts", "src/game/snapshot.ts"]
+      },
+      {
+        "case": "l4-f01",
+        "patch": "alt-solution.patch",
+        "applies": false,
+        "files": ["src/game/Game.tsx", "src/game/controls/Reproduction.tsx", "src/game/session/use-game.ts", "src/game/snapshot.ts"]
+      },
+      {
+        "case": "l4-fr01",
+        "patch": "seed.patch",
+        "applies": false,
+        "files": ["src/game/snapshot.ts"]
+      },
+      {
+        "case": "l4-fr01",
+        "patch": "solution.patch",
+        "applies": false,
+        "files": ["src/game/Game.tsx", "src/game/controls/Reproduction.tsx", "src/game/session/use-game.ts", "src/game/snapshot.ts"]
+      },
+      {
+        "case": "l4-fr01",
+        "patch": "alt-solution.patch",
+        "applies": false,
+        "files": ["src/game/Game.tsx", "src/game/controls/Reproduction.tsx", "src/game/session/use-game.ts", "src/game/snapshot.ts"]
+      },
+      {
+        "case": "l4-r01",
+        "patch": "seed.patch",
+        "applies": false,
+        "files": ["src/game/snapshot.ts"]
+      },
+      {
+        "case": "l4-r01",
+        "patch": "solution.patch",
+        "applies": false,
+        "files": ["src/game/snapshot.ts"]
+      },
+      {
+        "case": "l4-r01",
+        "patch": "alt-solution.patch",
+        "applies": false,
+        "files": ["src/game/snapshot.ts"]
+      }
+    ]
   }
 }

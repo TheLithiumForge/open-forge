@@ -39,7 +39,7 @@ p {
   margin: 0;
 }
 .eyebrow {
-  color: #63e7ff;
+  color: var(--secondary);
   font-size: 14px;
 }
 .intro {
