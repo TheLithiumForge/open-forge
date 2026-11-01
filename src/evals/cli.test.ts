@@ -44,6 +44,6 @@ test("CLI rejects unknown and conflicting input before running anything", async 
 
 test("CLI dispatches smoke, images, UI, saved grading and export", async () => {
   const fake = fakeServices();
-  for (const args of [[Command.smoke], [Command.images], [Command.ui], [Command.recheck, "batch", Flag.rebuild], [Command.rejudge, "batch"], [Command.export, "batch", Flag.out, "destination"]]) assert.equal(await runCli(args, fake.services), 0);
-  assert.deepEqual(fake.calls, [Command.smoke, Command.images, Command.ui, "launch", "launch", Command.export]);
+  for (const args of [[Command.smoke], [Command.images], [Command.ui], [Command.recheck, "batch", Flag.rebuild], [Command.rejudge, "batch"], [Command.rejudge, "batch", Flag.plan, "plan.json"], [Command.rejudge, "batch", "run", Flag.plan, "plan.json"], [Command.export, "batch", Flag.out, "destination"]]) assert.equal(await runCli(args, fake.services), 0);
+  assert.deepEqual(fake.calls, [Command.smoke, Command.images, Command.ui, "launch", "launch", "launch", "launch", Command.export]);
 });

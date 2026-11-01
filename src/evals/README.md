@@ -76,10 +76,10 @@ Every command accepts `--help`. Each help text includes an example:
 | `summary` | Print the implementer and judge matrix | `npm run evals -- summary --batch <id>` |
 | `ui` | Open the local results app | `npm run evals -- ui` |
 | `recheck` | Append checks for saved files | `npm run evals -- recheck <batch> --rebuild` |
-| `rejudge` | Append judge ballots | `npm run evals -- rejudge <batch>` |
+| `rejudge` | Append judge ballots | `npm run evals -- rejudge <batch> --plan <plan>` |
 | `export` | Write sanitized finished records | `npm run evals -- export <batch> --out ./eval-export` |
 
-`recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. `rejudge` grades the saved work with every judge registered in its plan. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
+`recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. `rejudge` grades the saved work with every judge registered in its plan, or with the judges of the plan named by `--plan`. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
 
 ## Protocol
 

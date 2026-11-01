@@ -11,7 +11,7 @@ export const CommandHelp = {
   summary: "Print the implementer and judge pairs and matched judge differences for a saved batch. Example: npm run evals -- summary --batch <id>",
   ui: "Build and open the local results app. Example: npm run evals -- ui",
   recheck: "Append checks for saved attempts. Example: npm run evals -- recheck <batch> --rebuild",
-  rejudge: "Append judge assessments for saved attempts. Example: npm run evals -- rejudge <batch>",
+  rejudge: "Append judge assessments for saved attempts. Example: npm run evals -- rejudge <batch> --plan experiments/neon-pairs-l1-check.json",
   export: "Export sanitized finished records to a new folder. Example: npm run evals -- export <batch> --out ./eval-export",
   help: "Show command help. Example: npm run evals -- help run",
 } as const satisfies Record<Command, string>;

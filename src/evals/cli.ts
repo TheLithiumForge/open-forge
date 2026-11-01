@@ -106,9 +106,10 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     case Command.ui: checkedArgs(args, [], [], 0); return services.ui();
     case Command.recheck:
     case Command.rejudge: {
-      const operands = args.filter((arg) => arg !== Flag.rebuild);
+      const values: readonly string[] = command === Command.rejudge ? [Flag.plan] : [];
+      const operands = args.filter((arg, index) => arg !== Flag.rebuild && !values.includes(arg) && !values.includes(args[index - 1] ?? ""));
       if (operands.length < 1 || operands.length > 2) throw new Error(CommandHelp[command]);
-      checkedArgs(args, command === Command.recheck ? [Flag.rebuild] : [], [], operands.length);
+      checkedArgs(args, command === Command.recheck ? [Flag.rebuild] : [], values, operands.length);
       return services.launch(join(evalsRoot, command === Command.recheck ? CliScripts.recheck : CliScripts.rejudge), args);
     }
     case Command.export: {
