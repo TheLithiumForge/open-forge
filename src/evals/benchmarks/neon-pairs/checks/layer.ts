@@ -3,7 +3,7 @@ import { CheckStatus } from "../../../history/statuses.ts";
 import type { CheckOutcome, CheckSelection } from "../../../grading/grading.types.ts";
 import { CheckId } from "./check-ids.ts";
 
-export const LayerVersion = "L1-v2";
+export const LayerVersion = "L1-v3";
 export const LayerFiles = { layer: "layers/L1.json", requirements: "layers/L1.requirements.json", rubric: "rubrics/L1.json" } as const;
 export const CheckGroup = { delivery: "delivery", stack: "stack", large: "large", play: "play", score: "score", phone: "phone", keyboard: "keyboard" } as const;
 type CheckGroup = (typeof CheckGroup)[keyof typeof CheckGroup];
@@ -44,7 +44,7 @@ export function parseLayer(value: unknown): Layer {
     return { id: check["id"], area: check["area"], group: group(check["group"]) };
   });
   const stated = ids(value["stated"]), working = ids(value["working"]), wishes = ids(value["wishes"]);
-  if (stated.length !== ExpectedCounts.stated || working.length !== ExpectedCounts.working || wishes.length !== ExpectedCounts.wishes || checks.length !== checkValues.length || new Set(checks.map((check) => check.id)).size !== checks.length) throw new Error("Layer 1 check counts differ from L1-v2.");
+  if (stated.length !== ExpectedCounts.stated || working.length !== ExpectedCounts.working || wishes.length !== ExpectedCounts.wishes || checks.length !== checkValues.length || new Set(checks.map((check) => check.id)).size !== checks.length) throw new Error("Layer 1 check counts differ from L1-v3.");
   if (working.some((id) => !stated.includes(id)) || wishes.some((id) => stated.includes(id)) || new Set([...stated, ...wishes]).size !== checks.length) throw new Error("Layer 1 sets overlap or omit checks.");
   return { version: LayerVersion, suite: value["suite"], checks, stated, working, wishes };
 }

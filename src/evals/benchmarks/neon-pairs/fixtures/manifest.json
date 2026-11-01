@@ -1,6 +1,6 @@
 {
     "schemaVersion":  1,
-    "gradingVersion":  "L1-v2",
+    "gradingVersion":  "L1-v3",
     "fixtures":  [
                      "reference.json",
                      "faces-repeat-32.json",

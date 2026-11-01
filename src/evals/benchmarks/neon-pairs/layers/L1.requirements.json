@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "L1-v2",
+  "version": "L1-v3",
   "prompt": "cases/greenfield-baseline/prompt.md",
   "clauses": [
     { "id": "L1-01", "text": "Build a neon-style memory matching game called Neon Pairs.", "checks": ["matching-pairs", "win-shown", "input-same-card-twice", "input-clicks-during-delay", "delivery-single-file"], "judgeQuestions": ["neon-look"] },

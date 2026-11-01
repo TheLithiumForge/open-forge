@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "L1-v2",
+  "version": "L1-v3",
   "ballots": 3,
   "answers": ["yes", "no", "unsure"],
   "questions": [

@@ -12,6 +12,7 @@ export interface GameOutcome {
 export interface PlayOptions {
   /** Extra turns spent on known mismatches, to play a clearly worse game. */
   readonly extraMisses: number;
+  readonly beforeLastPair?: () => Promise<void>;
 }
 
 const TurnsPerCard = 4;
@@ -35,6 +36,7 @@ export async function playGame(page: Page, activate: Activate, backs: readonly F
   let turns = 0;
   const latest = new Map<number, FaceSignature>();
   const reveal = async (index: number): Promise<boolean> => {
+    if (matched.size === backs.length - 2) await options.beforeLastPair?.();
     await activate(index);
     let face = await waitForFace(page, index, backs[index] ?? NoFace);
     if (face === null && activate.fallback !== undefined) {

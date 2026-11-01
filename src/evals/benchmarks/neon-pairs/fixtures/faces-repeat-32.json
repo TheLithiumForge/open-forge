@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
     "id":  "faces-repeat-32",
-    "gradingVersion":  "L1-v2",
+    "gradingVersion":  "L1-v3",
     "edits":  [
                   {
                       "path":  "src/Card.tsx",

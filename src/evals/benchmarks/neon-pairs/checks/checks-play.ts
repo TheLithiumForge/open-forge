@@ -90,12 +90,13 @@ async function clicksDuringDelay(page: Page, activate: Activate): Promise<CheckO
 async function fullGame(page: Page, activate: Activate, shotsFolder?: string): Promise<CheckOutcome[]> {
   const board = await freshGame(page);
   const before = await pageText(page);
-  const game = await playGame(page, activate, board.backs, { extraMisses: 0 });
+  let beforeLastPair = before;
+  const game = await playGame(page, activate, board.backs, { extraMisses: 0, beforeLastPair: async () => { beforeLastPair = await pageText(page); } });
   await page.waitForTimeout(Waits.settle);
   const after = await pageText(page);
   const movesBefore = movesIn(before) ?? 0;
   const movesAfter = movesIn(after);
-  const won = game.won && showsWin(after) && !showsWin(before);
+  const won = game.won && showsWin(after, beforeLastPair);
   if (won && shotsFolder) {
     await mkdir(shotsFolder, { recursive: true });
     await page.screenshot({ path: join(shotsFolder, CompletionShot), fullPage: true });

@@ -5,6 +5,7 @@ import { CheckArea, CheckId, guarded, result, withPageErrors } from "./check-ids
 import { setGridSize } from "./grid-size.ts";
 import { Device, openGame, readBoard } from "./open-game.ts";
 import { playGame } from "./solver.ts";
+import { dismissModal } from "./modal.ts";
 
 const PlaySize = 4;
 
@@ -30,6 +31,7 @@ export function keyboardCheck(browser: Browser, url: string): Promise<CheckOutco
     const game = await openGame(browser, url, Device.desktop);
     try {
       if ((await readBoard(game.page)).count !== PlaySize * PlaySize) await setGridSize(game.page, PlaySize);
+      await dismissModal(game.page);
       await game.page.mouse.click(1, 1);
       const outcome = await playGame(game.page, typing(game.page), (await readBoard(game.page)).backs, { extraMisses: 0 });
       return withPageErrors([

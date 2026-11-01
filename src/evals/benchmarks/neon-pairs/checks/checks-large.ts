@@ -2,7 +2,7 @@ import type { Browser, Page } from "playwright";
 import type { PerformanceResult } from "../../../history/results.types.ts";
 import type { CheckOutcome } from "../../../grading/grading.types.ts";
 import { clicking, frameTimings } from "./activation.ts";
-import { CardAttribute, markCards } from "./board.ts";
+import { CardAttribute } from "./board.ts";
 import { CheckArea, CheckId, guarded, result, withPageErrors } from "./check-ids.ts";
 import { faceDistance, type FaceSignature } from "./face-signature.ts";
 import { offeredSizes, setGridSize } from "./grid-size.ts";
@@ -62,8 +62,7 @@ export async function largeBoardChecks(browser: Browser, url: string, firstRende
       const unpaired: number[] = [];
       for (const size of sizes) {
         const changed = await setGridSize(game.page, size);
-        const count = await markCards(game.page);
-        if (!changed || count !== size * size || count % 2 !== 0) unpaired.push(size);
+        if (!changed) unpaired.push(size);
       }
       if (!(await setGridSize(game.page, LargeSize))) return [result(CheckId.facesDistinct, CheckArea.faces, false, `Couldn't set up a ${LargeSize}x${LargeSize} board.`)];
       const board = await readBoard(game.page);
@@ -80,7 +79,7 @@ export async function largeBoardChecks(browser: Browser, url: string, firstRende
       return withPageErrors([
         result(CheckId.facesDistinct, CheckArea.faces, revealed && wrong <= faces.length * SharedFaceShare, !revealed ? "Not every card could be revealed through visible play." : wrong === 0 ? `No face among ${faces.length} cards is drawn more than twice.` : `${wrong} of ${faces.length} cards share their face with more than one other card.`),
         result(CheckId.facesDrawn, CheckArea.faces, revealed ? drawnElsewhere === 0 : null, !revealed ? "Face inspection stopped because some cards could not be revealed." : drawnElsewhere === 0 ? "No image files or emoji on the revealed cards." : `${drawnElsewhere} revealed cards show an image file or emoji.`),
-        result(CheckId.sizesFinishable, CheckArea.grid, unpaired.length === 0, unpaired.length === 0 ? "Every offered size has its requested square board and an even card count." : `Incorrect card counts or unavailable boards at: ${unpaired.join(", ")}.`),
+        result(CheckId.sizesFinishable, CheckArea.grid, unpaired.length === 0, unpaired.length === 0 ? "Every offered size has its requested square layout and an even card count, with one empty cell on odd boards." : `Incorrect card counts or unavailable boards at: ${unpaired.join(", ")}.`),
       ], game.errors);
     } finally {
       await game.context.close();

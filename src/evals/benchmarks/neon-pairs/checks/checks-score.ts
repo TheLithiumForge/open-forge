@@ -7,6 +7,7 @@ import { setGridSize } from "./grid-size.ts";
 import { Device, openGame, readBoard } from "./open-game.ts";
 import { bestIn, movesIn, newGameButton, pageText } from "./page-text.ts";
 import { playGame } from "./solver.ts";
+import { dismissModal } from "./modal.ts";
 
 const PlaySize = 4;
 const OtherSize = 6;
@@ -52,6 +53,7 @@ export function scoreChecks(browser: Browser, url: string): Promise<CheckOutcome
       const worse = await play(page, activate, Misses.worse);
       const better = await play(page, activate, 0);
       const worst = await play(page, activate, Misses.worst);
+      await dismissModal(page);
       await page.reload();
       await page.waitForTimeout(Waits.settle);
       if ((await readBoard(page)).count !== PlaySize * PlaySize) await setGridSize(page, PlaySize);

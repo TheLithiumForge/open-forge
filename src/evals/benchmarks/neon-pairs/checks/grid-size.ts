@@ -1,6 +1,7 @@
 import type { Page } from "playwright";
-import { markCards } from "./board.ts";
+import { CardAttribute, markCards } from "./board.ts";
 import { newGameButton } from "./page-text.ts";
+import { dismissModal } from "./modal.ts";
 
 const ApplyWaitMs = 400;
 
@@ -60,12 +61,32 @@ async function chooseSize(page: Page, size: number): Promise<boolean> {
   return true;
 }
 
-/** Picks a grid size, starting a new game if the size only applies then. True when the board has size × size cards. */
+/** Checks the card count and square layout, allowing one empty cell on odd boards. */
+export async function boardFitsSize(page: Page, size: number): Promise<boolean> {
+  const count = await markCards(page);
+  if (count !== size * size - size % 2) return false;
+  return page.evaluate(({ attribute, size }) => {
+    const boxes = Array.from(document.querySelectorAll(`[${attribute}]`)).map((element) => element.getBoundingClientRect());
+    const groups = (values: number[], tolerance: number): number[] => values.sort((a, b) => a - b).reduce<number[]>((result, value) => {
+      if (!result.some((other) => Math.abs(other - value) < tolerance)) result.push(value);
+      return result;
+    }, []);
+    const first = boxes[0];
+    if (!first) return false;
+    const columns = groups(boxes.map((box) => box.x + box.width / 2), first.width / 4);
+    const rows = groups(boxes.map((box) => box.y + box.height / 2), first.height / 4);
+    const cells = boxes.map((box) => `${columns.findIndex((x) => Math.abs(x - box.x - box.width / 2) < first.width / 4)}:${rows.findIndex((y) => Math.abs(y - box.y - box.height / 2) < first.height / 4)}`);
+    return columns.length === size && rows.length === size && new Set(cells).size === boxes.length;
+  }, { attribute: CardAttribute, size });
+}
+
+/** Picks a grid size, starting a new game if the size only applies then. */
 export async function setGridSize(page: Page, size: number): Promise<boolean> {
+  await dismissModal(page);
   if (!(await chooseSize(page, size))) return false;
   await page.waitForTimeout(ApplyWaitMs);
-  if ((await markCards(page)) === size * size) return true;
+  if (await boardFitsSize(page, size)) return true;
   await (await newGameButton(page))?.click();
   await page.waitForTimeout(ApplyWaitMs);
-  return (await markCards(page)) === size * size;
+  return boardFitsSize(page, size);
 }

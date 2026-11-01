@@ -78,6 +78,7 @@ export function card(page: Page, index: number): Locator {
 }
 
 export async function cardSignature(page: Page, index: number): Promise<FaceSignature> {
+  await page.mouse.move(0, 0);
   await ensureCard(page, index);
   return signatureOf(await card(page, index).screenshot({ animations: "disabled" }));
 }
@@ -100,6 +101,7 @@ export async function stableSignature(page: Page, index: number): Promise<FaceSi
  * CSS animations first, so the first look that isn't the back is already the face.
  */
 export async function waitForFace(page: Page, index: number, back: FaceSignature, captured?: (png: Buffer) => void | Promise<void>): Promise<FaceSignature | null> {
+  await page.mouse.move(0, 0);
   const deadline = Date.now() + Waits.reveal;
   while (Date.now() < deadline) {
     await ensureCard(page, index);
@@ -116,6 +118,7 @@ export async function waitForFace(page: Page, index: number, back: FaceSignature
 
 /** Every card's look from one screenshot of the page, in card order. */
 export async function boardLooks(page: Page): Promise<FaceSignature[]> {
+  await page.mouse.move(0, 0);
   await ensureCard(page, 0);
   const layout = await page.evaluate((attribute) => {
     const cards = Array.from(document.querySelectorAll(`[${attribute}]`));

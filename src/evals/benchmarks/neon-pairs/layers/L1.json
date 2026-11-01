@@ -1,6 +1,6 @@
 {
     "schemaVersion":  1,
-    "version":  "L1-v2",
+    "version":  "L1-v3",
     "suite":  "greenfield-baseline",
     "checks":  [
                    {

@@ -1,6 +1,7 @@
 import type { Page } from "playwright";
 import { card, CardAttribute, ensureCard } from "./board.ts";
 import { GameFailure } from "./check-ids.ts";
+import { dismissModal } from "./modal.ts";
 
 declare global {
   interface Window {
@@ -25,6 +26,7 @@ const MaxFocusKeys = 600;
 // The mouse moves off afterwards, so a hover style doesn't hide that a card turned back.
 export function clicking(page: Page): Activate {
   return async (index) => {
+    await dismissModal(page);
     await ensureCard(page, index);
     await card(page, index).click({ force: true, timeout: ClickTimeoutMs });
     await page.mouse.move(0, 0);
@@ -33,6 +35,7 @@ export function clicking(page: Page): Activate {
 
 export function tapping(page: Page): Activate {
   return async (index) => {
+    await dismissModal(page);
     await ensureCard(page, index);
     await card(page, index).tap({ force: true, timeout: ClickTimeoutMs });
   };
@@ -61,6 +64,7 @@ function arrowToward(current: number, target: number, columns: number): string {
 export function typing(page: Page): Activate {
   let arrows: boolean | null = null;
   const press = async (index: number): Promise<void> => {
+    await dismissModal(page);
     await ensureCard(page, index);
     const columns = Math.max(1, Math.round(Math.sqrt(await page.locator(`[${CardAttribute}]`).count())));
     for (let presses = 0; presses < MaxFocusKeys; presses += 1) {
@@ -80,7 +84,7 @@ export function typing(page: Page): Activate {
     if ((await focusedCard(page)) !== index) throw new GameFailure("Keyboard navigation could not reach the requested card.");
     await page.keyboard.press("Enter");
   };
-  return Object.assign(press, { fallback: () => page.keyboard.press("Space") });
+  return Object.assign(press, { fallback: async () => { await dismissModal(page); await page.keyboard.press("Space"); } });
 }
 
 /** Records how long each click takes to reach the next painted frame. Install before the page loads. */

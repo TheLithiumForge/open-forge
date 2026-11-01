@@ -1,4 +1,5 @@
 import { PNG } from "pngjs";
+import { rememberImage, sameBackImage } from "./turn-image.ts";
 
 /**
  * A card's look, from the middle of the card: which colors it has, which doesn't depend on exact
@@ -67,10 +68,10 @@ export function regionSignature(image: PNG, whole: Region): FaceSignature {
       counts[cell] = (counts[cell] ?? 0) + 1;
     }
   }
-  return {
+  return rememberImage({
     colors: colors.map((count) => count / (width * height)),
     shape: sums.map((sum, cell) => sum / Math.max(1, counts[cell] ?? 1)),
-  };
+  }, image, whole);
 }
 
 export function colorDistance(a: FaceSignature, b: FaceSignature): number {
@@ -123,7 +124,7 @@ const BackThresholds = { colors: 0.1, shapeShare: 0.07 } as const;
 
 /** Whether a card still shows its back, allowing for hover, focus and similar tints. */
 export function looksLikeBack(look: FaceSignature, back: FaceSignature): boolean {
-  return colorDistance(look, back) <= BackThresholds.colors && shapeShare(look, back) <= BackThresholds.shapeShare;
+  return colorDistance(look, back) <= BackThresholds.colors && shapeShare(look, back) <= BackThresholds.shapeShare && sameBackImage(look, back) !== false;
 }
 
 export function sameFace(a: FaceSignature, b: FaceSignature): boolean {

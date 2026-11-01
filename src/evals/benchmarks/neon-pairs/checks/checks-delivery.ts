@@ -8,7 +8,8 @@ import { offeredSizes, setGridSize } from "./grid-size.ts";
 import { Device, openGame } from "./open-game.ts";
 import { CheckStatus } from "../../../history/statuses.ts";
 import { record } from "./layer.ts";
-import { pageText } from "./page-text.ts";
+import { identifiesGame, pageText } from "./page-text.ts";
+import { dismissModal } from "./modal.ts";
 
 const StartSize = 4;
 const LargeSize = 16;
@@ -37,7 +38,7 @@ export function deliveryChecks(browser: Browser, url: string, built: boolean): P
       const cards = await markCards(game.page);
       const sizes = await offeredSizes(game.page);
       const loaded = cards > 0;
-      const named = /\bNeon Pairs\b/i.test(await pageText(game.page));
+      const named = identifiesGame(await game.page.title(), await pageText(game.page));
       const results = [
         result(CheckId.singleFile, CheckArea.delivery, loaded && named && game.requests.length === 0, !named ? "The page does not identify the game as Neon Pairs." : loaded ? (game.requests.length === 0 ? "Opens from disk with no other files or requests." : `It asked for: ${game.requests.slice(0, 5).join(", ")}`) : "No cards appeared."),
         result(CheckId.sizesOffered, CheckArea.grid, sizes.includes(StartSize) && sizes.includes(LargeSize), `Offered sizes: ${sizes.join(", ") || "none found"}.`),
@@ -46,6 +47,7 @@ export function deliveryChecks(browser: Browser, url: string, built: boolean): P
       const other = sizes.find((size) => size !== StartSize && size % 2 === 0);
       if (other === undefined) return withPageErrors([...results, result(CheckId.rememberSize, CheckArea.intent, false, "No other even size to pick.")], game.errors);
       const picked = await setGridSize(game.page, other);
+      await dismissModal(game.page);
       await game.page.reload();
       await game.page.waitForTimeout(ReloadWaitMs);
       const cardsAfter = await markCards(game.page);

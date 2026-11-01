@@ -3,11 +3,11 @@
     "files":  [
                   {
                       "path":  "checks/activation.ts",
-                      "sha256":  "f071042a9ff32152205e2dd05b31d0570f47b7dda2bd9f231bcfdbedfcd2aab5"
+                      "sha256":  "e223051fdc68e3a810f1a5e3a28441c7068643e99d561c4c1efa3b921a89a56f"
                   },
                   {
                       "path":  "checks/board.ts",
-                      "sha256":  "4cfe382ce3435755bb72dc331bae09888695672a3d1f50c1f1a78205ee614fd8"
+                      "sha256":  "1ed964c9a18e6b60be53448ca52238746ecbb59a32f21f676424377d07699b58"
                   },
                   {
                       "path":  "checks/browser-probe.ts",
@@ -23,23 +23,23 @@
                   },
                   {
                       "path":  "checks/checks-delivery.ts",
-                      "sha256":  "3f91c5826beb373c84f49f101ddabb7883b5a02cb6aeb93af2fe52336b4e27ff"
+                      "sha256":  "888d892d5135ec92f3c62ebef0d7d0152b2e8d368000e8047797cdc4974d2e9c"
                   },
                   {
                       "path":  "checks/checks-devices.ts",
-                      "sha256":  "7f77f8b827f94bf8f97720556bccb26740327daf8bdf89dbcbb160fb10ef24b8"
+                      "sha256":  "41035145ca9dd87da2d9ca599cbb4db5e8ecc341519d8b6d95b69112e7e4be88"
                   },
                   {
                       "path":  "checks/checks-large.ts",
-                      "sha256":  "fb4af830f0a689ce9e7cb21a3d21909e58ec9b8d19d3815a310bfcae3dc248c3"
+                      "sha256":  "5b624f8a411bd086be1317592562d0cd311820690947095bfa7b812ed6a98e82"
                   },
                   {
                       "path":  "checks/checks-play.ts",
-                      "sha256":  "0089cd9d11bee057531f2dc21d12681c57499bf0f0d57ffd66105725cf624574"
+                      "sha256":  "d4282e715f417389b7677aee37c91d3e078cd49a66518c7d6445f035503b069a"
                   },
                   {
                       "path":  "checks/checks-score.ts",
-                      "sha256":  "ea8e4afe86c59c86e1b3e6cdf494afe32781e0e063b3c20199c61c7fec0972f9"
+                      "sha256":  "4e0fe0e93042ca791eceb4616c71e562a6410773757f26023e66182852cbd7a1"
                   },
                   {
                       "path":  "checks/container-paths.ts",
@@ -59,7 +59,7 @@
                   },
                   {
                       "path":  "checks/face-signature.ts",
-                      "sha256":  "b39dd37d65088b735ed9cba67fa0d2a2a42221d5689eaa86e482878f1ea1ce94"
+                      "sha256":  "c6873eb65133c23e5760c25915027c7de36bbbc649d80781687dd891b701bf2d"
                   },
                   {
                       "path":  "checks/fixtures.test.ts",
@@ -71,7 +71,7 @@
                   },
                   {
                       "path":  "checks/grid-size.ts",
-                      "sha256":  "88288d18cfd2409b1e0fc7a6d552dd105c3770655767265f18b804d4e8d79dde"
+                      "sha256":  "ff9454acf3557e9457482dd79c0c3c9821707b83607fc1b915f9ea4fdcf8fb63"
                   },
                   {
                       "path":  "checks/layer.test.ts",
@@ -79,7 +79,7 @@
                   },
                   {
                       "path":  "checks/layer.ts",
-                      "sha256":  "9d0059801cbe0ed7587411ec57b4c34cb78a1c7d809ff7afe40bb36c62ed6e6d"
+                      "sha256":  "0bd43b9e53bcbba5e660adca729ad3a06d3a36bcf86ce99c31baddf6c7e1e147"
                   },
                   {
                       "path":  "checks/neon-pairs.ts",
@@ -91,11 +91,11 @@
                   },
                   {
                       "path":  "checks/page-text.ts",
-                      "sha256":  "842d27b98cb7acc1fd7aadaed35fd05be8a8f9de14180229c311b9f6ef8aff51"
+                      "sha256":  "08aa13c5ba9ab1d484724e9889f4cea0fe9252ea4daba44ea627c128b805b345"
                   },
                   {
                       "path":  "checks/README.md",
-                      "sha256":  "7dd14ca6255e07b25b408f0ab817ba8f80aded41d557d9fcf7112f4ea688eb5f"
+                      "sha256":  "a96e38a7f2875f512b5f36af0e0ee99d310f7da4d460436480f7c98361a47189"
                   },
                   {
                       "path":  "checks/report.test.ts",
@@ -111,7 +111,7 @@
                   },
                   {
                       "path":  "checks/solver.ts",
-                      "sha256":  "09d5aea675f7f75b54e4ac794647f80722c9be9497988234a0c8d558a1942fdd"
+                      "sha256":  "63d490cbebc4941091be89fc4041ba053e4d5027d3793b26cfe555be099615d7"
                   },
                   {
                       "path":  "checks/validate.ts",
