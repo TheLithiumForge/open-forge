@@ -1673,22 +1673,6 @@
   "clausePassRule": "all",
   "uncheckable": [
     {
-      "clause": "V20.1",
-      "reason": "Native browser zoom needs a headed browser at 200%."
-    },
-    {
-      "clause": "V20.2",
-      "reason": "Native browser zoom needs a headed browser at 200%."
-    },
-    {
-      "clause": "V20.3",
-      "reason": "Native browser zoom needs a headed browser at 200%."
-    },
-    {
-      "clause": "V20.4",
-      "reason": "Native browser zoom needs a headed browser at 200%."
-    },
-    {
       "clause": "T07.9",
       "reason": "Leftover authoring processes must be checked before that container shuts down."
     }

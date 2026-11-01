@@ -7,6 +7,7 @@ import { decodeSnapshot } from "./snapshot.ts";
 import { Evidence } from "./outcomes.ts";
 import { KnownCode, replayVectors, snapshotVectors } from "./vectors.ts";
 import { SpecLayerContainer } from "./paths.ts";
+import { NamedToolchain, ToolchainClause } from "./toolchain.ts";
 
 const Success = { code: 0, timedOut: false, stdout: "", stderr: "" };
 test("command parser bounds untrusted results and keeps CLI output exact", () => {
@@ -39,11 +40,18 @@ test("frozen vectors cover rejection, valid boundary states and known literal de
   const evidence = new Evidence(); replayOutcomes(replays, results, evidence);
   assert.ok(evidence.outcomes.every((item) => item.status === "pass"));
 });
-test("build assertions use fake isolated commands and leave unsupported evidence as errors", () => {
+test("build assertions grade the versions the verifier ran", () => {
   const result = { ...Success, stdout: "Tests 10 passed\nnpm run typecheck\nvite building\n2 passed\nLocal: http://127.0.0.1", html: "<html><script>inline</script></html>" };
   const commands = new Map(Object.values(CommandId).map((id) => [id, id === CommandId.stale ? { ...result, code: 1 } : result]));
-  const evidence = new Evidence(); buildOutcomes(commands, evidence, true);
-  assert.ok(evidence.outcomes.filter((item) => item.clause !== "T03.4").every((item) => item.status === "pass"));
-  assert.equal(evidence.outcomes.find((item) => item.clause === "T03.4")?.status, "error");
+  const evidence = new Evidence(); buildOutcomes(commands, evidence, true, { ...Success, stdout: JSON.stringify(NamedToolchain) });
+  assert.ok(evidence.outcomes.every((item) => item.status === "pass"));
   assert.equal(evidence.outcomes.find((item) => item.clause === "T07.9"), undefined);
+  for (const name of Object.keys(NamedToolchain)) {
+    const wrong = new Evidence(); buildOutcomes(commands, wrong, true, { ...Success, stdout: JSON.stringify({ ...NamedToolchain, [name]: "0.0.0" }) });
+    assert.equal(wrong.outcomes.find((item) => item.clause === ToolchainClause)?.status, "fail", name);
+  }
+  for (const result of [undefined, { ...Success, timedOut: true }, { ...Success, code: 1 }, { ...Success, stdout: "{}" }]) {
+    const missing = new Evidence(); buildOutcomes(commands, missing, true, result);
+    assert.equal(missing.outcomes.find((item) => item.clause === ToolchainClause)?.status, "error");
+  }
 });

@@ -10,8 +10,9 @@ import { allowedRequest } from "./delivery-request.ts";
 
 export const Labels = { size: "Grid size", fresh: "New Game", restart: "Restart", reproduce: "Reproduce a game", code: "Board code", loadBoard: "Load board", snapshot: "Snapshot JSON", export: "Export snapshot", loadSnapshot: "Load snapshot", resume: "Resume" } as const;
 export interface Session { readonly page: Page; readonly context: BrowserContext; readonly errors: string[]; readonly requests: string[]; readonly origin: string; close(): Promise<void> }
+export interface SessionOptions { readonly file?: boolean; readonly width?: number; readonly height?: number; readonly deviceScaleFactor?: number; readonly blockedStorage?: boolean }
 
-export async function session(browser: Browser, html: string, options: { readonly file?: boolean; readonly width?: number; readonly blockedStorage?: boolean } = {}): Promise<Session> {
+export async function session(browser: Browser, html: string, options: SessionOptions = {}): Promise<Session> {
   const bytes = await readFile(html);
   const server = createServer((request, response) => {
     if (request.url !== "/" && request.url !== "/index.html") { response.writeHead(404).end(); return; }
@@ -22,7 +23,7 @@ export async function session(browser: Browser, html: string, options: { readonl
   if (!address || typeof address === "string") throw new Error("HTTP checker failed to bind.");
   const origin = `http://127.0.0.1:${address.port}`;
   const entry = options.file ? pathToFileURL(html).href : `${origin}/`;
-  const context = await browser.newContext({ viewport: { width: options.width ?? 1280, height: 800 }, hasTouch: true });
+  const context = await browser.newContext({ viewport: { width: options.width ?? 1280, height: options.height ?? 800 }, deviceScaleFactor: options.deviceScaleFactor ?? 1, hasTouch: true });
   const errors: string[] = [], requests: string[] = [];
   try {
     await context.addInitScript(() => {

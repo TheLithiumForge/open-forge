@@ -3,9 +3,11 @@ import { CardAttribute, card } from "../board.ts";
 import { Evidence } from "./outcomes.ts";
 import { changeSize, click, names, reset, solve, visibleDeck } from "./browser-session.ts";
 import { reporter } from "./browser-play.ts";
-import { faceIn, fullyVisible, VisualTiming } from "./view-values.ts";
+import { faceIn, VisualTiming } from "./view-values.ts";
 import { styles } from "./browser-view.ts";
 import { touchBoardEnd } from "./browser-touch.ts";
+import { focusSamples, OutlineClauses } from "./browser-layout.ts";
+export { zoom } from "./browser-zoom.ts";
 
 export async function accessibleNames(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence), closed = await names(page);
@@ -29,22 +31,17 @@ export async function scroll(page: Page, evidence: Evidence): Promise<void> {
     fits.push(measured.pageWidth <= width);
     await card(page, 0).focus(); await page.keyboard.press("Control+End");
     reachable.push(await card(page, 255).evaluate((element) => element === document.activeElement));
+    results.push(await focusSamples(page));
     await page.keyboard.press("Control+Home");
     await card(page, 0).scrollIntoViewIfNeeded();
     touch.push(await touchBoardEnd(page));
     for (const index of [0, 255]) {
       await card(page, index).focus();
-      const geometry = await card(page, index).evaluate((element) => {
-        let parent = element.parentElement;
-        while (parent?.parentElement && !/(auto|scroll)/.test(getComputedStyle(parent).overflowX + getComputedStyle(parent).overflowY)) parent = parent.parentElement;
-        const box = (node: Element | null) => { const rect = node?.getBoundingClientRect(); return { x: rect?.x ?? 0, y: rect?.y ?? 0, width: rect?.width ?? 0, height: rect?.height ?? 0 }; };
-        return { card: box(element), viewport: box(parent), focused: document.activeElement === element };
-      });
-      results.push(fullyVisible(geometry.card, geometry.viewport));
-      await card(page, index).tap({ force: true }); reachable.push(geometry.focused);
+      reachable.push(await card(page, index).evaluate((element) => document.activeElement === element));
+      await card(page, index).tap({ force: true });
     }
   }
-  put("I13.1 V19.5", results.every(Boolean), "First and last focused cards, including their 5px outline allowance, fit inside the board after native focus scrolling.");
+  put(OutlineClauses.join(" "), results.every(Boolean), "Corner and mid-board focused cards keep their 5px outline allowance inside every clipping ancestor after focus scrolling.");
   put("V19.1", counts.every((count) => count === 256), `Large card counts at phone and desktop widths: ${counts.join(", ")}.`);
   put("V19.2", fits.every(Boolean) && await page.getByRole("button", { name: "New Game", exact: true }).isVisible(), "Both viewport widths fit the page and keep New Game reachable.");
   put("V19.3", minimum.every(Boolean), "All sampled large-board cards remain at least 44px square.");
@@ -67,8 +64,3 @@ export async function motion(page: Page, evidence: Evidence): Promise<void> {
   put("V18.4", staticAfter && await page.locator('canvas,[class*="confetti"],blink').count() === 0 && animations.every((animation) => animation.iterations === 1), "No continuing flash, confetti canvas or repeating celebration remains.");
 }
 
-export async function zoom(page: Page, evidence: Evidence): Promise<void> {
-  const put = reporter(evidence), measured = await styles(page);
-  put("V20.5 T08.4", !/(?:user-scalable\s*=\s*(?:no|0)|maximum-scale\s*=\s*1(?:\D|$))/i.test(measured.viewportMeta), "The viewport metadata keeps browser zoom enabled.");
-  for (const id of ["V20.1", "V20.2", "V20.3", "V20.4"]) evidence.record(id, "error", "Headless Playwright has no native browser zoom control. Device scale and CSS zoom are different. Validate this clause at native 200% browser zoom.");
-}

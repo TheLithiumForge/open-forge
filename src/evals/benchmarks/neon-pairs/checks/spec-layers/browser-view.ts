@@ -10,36 +10,57 @@ import { checkMark, sameBacks } from "./drawn-shapes.ts";
 import { drawings } from "./browser-drawing.ts";
 import { signatureOf, type FaceSignature } from "../face-signature.ts";
 import { renderedFaces } from "./rendered-faces.ts";
+import { ContentMaximum, LayoutAttribute, markLayout } from "./browser-layout.ts";
+
+export function spacingOnScale(values: readonly string[]): boolean {
+  return values.every((value) => value === "normal" || value === "auto" || pixels(value) !== null && ((pixels(value) ?? 0) <= 0 || Rules.spacing.some((allowed) => allowed > 0 && near(pixels(value), allowed))));
+}
 
 export async function styles(page: Page) {
-  return page.evaluate((attribute) => {
+  await markLayout(page);
+  return page.evaluate(({ attribute, layout }) => {
     const card = document.querySelector(`[${attribute}="0"]`);
     if (!card) throw new Error("No visible card to measure.");
-    let grid = card.parentElement;
-    while (grid?.parentElement && getComputedStyle(grid).display !== "grid") grid = grid.parentElement;
+    const grid = document.querySelector(`[${layout}="board"]`);
     let viewport = grid;
     while (viewport?.parentElement && !/(auto|scroll)/.test(getComputedStyle(viewport).overflowX + getComputedStyle(viewport).overflowY)) viewport = viewport.parentElement;
     const fields = ["backgroundColor", "color", "borderColor", "borderWidth", "borderRadius", "outlineColor", "outlineWidth", "outlineOffset", "opacity", "display", "gap", "padding", "maxWidth", "maxHeight", "overflowX", "overflowY", "fontFamily", "fontSize", "lineHeight", "transitionDuration", "transitionProperty"];
     const style = (element: Element | null): Record<string, string> => Object.fromEntries(fields.map((field) => [field, element ? Reflect.get(getComputedStyle(element), field) as string : ""]));
     const box = (element: Element | null) => { const rect = element?.getBoundingClientRect(); return { x: rect?.x ?? 0, y: rect?.y ?? 0, width: rect?.width ?? 0, height: rect?.height ?? 0 }; };
     const all = [document.documentElement, document.body, ...Array.from(document.querySelectorAll("body *"))];
-    return { body: style(document.body), main: style(document.querySelector("main")), card: style(card), grid: style(grid), viewport: style(viewport), title: style(document.querySelector("h1")),
-      cardBox: box(card), gridBox: box(grid), viewportBox: box(viewport), mainBox: box(document.querySelector("main")), width: innerWidth, height: innerHeight, pageWidth: document.documentElement.scrollWidth,
+    const content = document.querySelector(`[${layout}="content"]`), title = document.querySelector(`[${layout}="title"]`);
+    const authored: CSSStyleRule[] = [];
+    const collect = (rules: CSSRuleList): void => {
+      for (const rule of rules) {
+        if (rule instanceof CSSMediaRule && !matchMedia(rule.conditionText).matches || rule instanceof CSSSupportsRule && !CSS.supports(rule.conditionText)) continue;
+        if (rule instanceof CSSStyleRule) authored.push(rule);
+        if ("cssRules" in rule) collect(rule.cssRules as CSSRuleList);
+      }
+    };
+    for (const sheet of [...document.styleSheets, ...document.adoptedStyleSheets]) {
+      try { collect(sheet.cssRules); } catch { /* Offline pages can't read external stylesheets. */ }
+    }
+    return { body: style(document.body), main: style(content), card: style(card), grid: style(grid), viewport: style(viewport), title: style(title),
+      cardBox: box(card), gridBox: box(grid), viewportBox: box(viewport), mainBox: box(content), width: innerWidth, height: innerHeight, pageWidth: document.documentElement.scrollWidth,
       colors: all.flatMap((element) => { const style = getComputedStyle(element); return [style.color, style.backgroundColor, style.borderColor]; }),
       secondary: all.some((element) => getComputedStyle(element).fontSize === "14px"),
-      spacing: all.filter((element) => !(element instanceof SVGElement) && !element.closest("svg") && !["OPTION", "SELECT", "BUTTON", "INPUT", "TEXTAREA", "SUMMARY"].includes(element.tagName) && element.getClientRects().length > 0 && getComputedStyle(element).display !== "inline").flatMap((element) => {
+      spacing: all.filter((element) => !(element instanceof SVGElement) && !element.closest("svg") && element.tagName !== "OPTION" && element.getClientRects().length > 0).flatMap((element) => {
         const style = getComputedStyle(element), typed = element.computedStyleMap();
+        const control = element.matches("select,button,input,textarea,summary");
+        const set = (name: string): boolean => element instanceof HTMLElement && Boolean(element.style.getPropertyValue(name)) || authored.some((rule) => {
+          try { return Boolean(rule.style.getPropertyValue(name)) && element.matches(rule.selectorText); } catch { return false; }
+        });
         // Typed margins keep auto centering, which resolved style reports as an arbitrary pixel gap.
-        return [...["margin-top", "margin-bottom", "margin-left", "margin-right"].map((name) => typed.get(name)?.toString() ?? style.getPropertyValue(name)), style.paddingTop, style.paddingBottom, style.paddingLeft, style.paddingRight, style.rowGap, style.columnGap];
+        return ["margin-top", "margin-bottom", "margin-left", "margin-right", "padding-top", "padding-bottom", "padding-left", "padding-right", "row-gap", "column-gap"].filter((name) => !control || set(name)).map((name) => name.startsWith("margin") ? typed.get(name)?.toString() ?? style.getPropertyValue(name) : style.getPropertyValue(name));
       }),
       canvas: document.querySelectorAll("canvas").length, svg: card.querySelectorAll("svg").length, viewportMeta: document.querySelector('meta[name="viewport"]')?.getAttribute("content") ?? "",
     };
-  }, CardAttribute);
+  }, { attribute: CardAttribute, layout: LayoutAttribute });
 }
 
 export async function layout(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence), measured = await styles(page);
-  put("V02.1", near(pixels(measured.main["maxWidth"] ?? ""), 1120) && near(measured.mainBox.x, (measured.width - measured.mainBox.width) / 2), "Measured main max-width and centered geometry.");
+  put("V02.1", near(pixels(measured.main["maxWidth"] ?? ""), ContentMaximum) && near(measured.mainBox.x, (measured.width - measured.mainBox.width) / 2), "Measured content max-width and centered geometry.");
   put("V02.2", measured.main["padding"] === "16px", "Content padding is 16px.");
   put("V02.3", measured.pageWidth <= measured.width, "Outer page fits the viewport.");
   put("V03.1", near(pixels(measured.viewport["maxHeight"] ?? ""), Math.min(measured.height * 0.7, 768)), "Board height cap is the lesser of 70dvh and 768px.");
@@ -65,7 +86,7 @@ export async function appearance(page: Page, evidence: Evidence): Promise<void> 
   put("V08.2", closed.body["fontSize"] === "16px" && closed.body["lineHeight"] === "24px", "Body text is 16px on 24px lines.");
   put("V08.3", closed.title["fontSize"] === "24px", "Title text is 24px.");
   put("V08.4", closed.secondary, "Secondary text includes the specified 14px size.");
-  put("V09.1", closed.spacing.every((value) => value === "normal" || value === "auto" || Rules.spacing.some((allowed) => near(pixels(value), allowed))), "Layout spacing uses the scale. Auto centering keeps its keyword instead of its resolved pixel offset.");
+  put("V09.1", spacingOnScale(closed.spacing), "Positive authored spacing uses the scale. Zero, auto and normal pass. Reset margins pass and native control internals are excluded.");
   put("V09.2", closed.card["borderWidth"] === "2px" && closed.card["borderRadius"] === "8px" && closed.body["fontSize"] === "16px", "Border, radius and font metrics keep their separate stated values.");
   await click(page, 0); const open = await styles(page);
   put("V01.3", open.svg > 0 && open.canvas === 0, "Revealed card artwork uses inline SVG.");

@@ -22,9 +22,21 @@ Layer 3 imports progress just below both caps, reaches the exact limits and cont
 
 I17 keeps its spoken-output review under the spec notes. Its planned browser method covers tree evidence, which doesn't establish spoken output or a screen reader version. Existing names, focus and announcement checks support that review.
 
-T07.9 uses cited process review. It gives no automatic credit because a later verifier can't reconstruct processes left during authoring.
+T07.9 uses cited process review. It gives no automatic credit because a later verifier can't reconstruct processes left during authoring. The runner needs to collect a bounded process table and listening sockets from the agent container after the final reply, before cleanup and shutdown. Record process IDs, parents, accounts and executable names, exclude known runner tools and remove credentials before saving the evidence.
 
-To regenerate these definitions and their checks slots, run `node benchmarks/neon-pairs/checks/spec-layers/freeze.ts` from `src/evals`. Add `--caps` to update only the ten cap trace slots.
+To regenerate only the layer definitions, run `node benchmarks/neon-pairs/checks/spec-layers/freeze.ts --layers` from `src/evals`. This keeps the trace, rubrics and spec packs unchanged. Without `--layers`, the command also updates rubrics and checks slots. Add `--caps` to update only the ten cap trace slots.
+
+## Geometry
+
+The checker finds cards by their button role and row and column names. Their common container gives the board. The visible "Neon Pairs" title and board give the content container. These measurements work with flex layout and other markup. Only V01.2 and T01.3 require CSS Grid.
+
+V09.1 checks positive layout spacing against the scale. Zero, `auto` and `normal` pass. Reset browser margins pass. Native control internals are excluded, while authored spacing on controls and inline elements is measured.
+
+I13.1 and V19.5 visit corners and interior cards at phone and desktop widths. Adjacent arrow moves expose outlines that direct focus jumps can hide by centering the card. The checker includes the 5px outline allowance and uses every clipping ancestor's inner area, so borders and scrollbars can't hide clipping.
+
+V20.1 through V20.4 run at a 640x400 CSS-pixel viewport with device scale 2. The journey checks text and control overlap, outer width, pointer and keyboard turns on both sizes, a 4x4 win summary and focused outlines during board scrolling. V20.5 still checks that viewport metadata allows zoom.
+
+T03.4 compares the Node, npm, Playwright and launched Chromium versions collected in the verifier before candidate commands. A different version fails. Missing or malformed version evidence returns `error`. Install, build, unit and browser outcomes stay separate.
 
 ## Validate
 
@@ -60,12 +72,8 @@ L2 and L3 capture every revealed face through its card locator, which scrolls it
 
 ## Limits
 
-Five Layer 3 assertions need other evidence. Layer 2 includes four of them. Their outcomes stay `error` and their reasons appear in each layer's `uncheckable` array. T07.9 also appears there as a review limit:
-
-- V20.1, V20.2, V20.3 and V20.4 - Native 200% browser zoom needs a headed browser. Device scale and CSS zoom don't test that browser setting.
-- T07.9 - Leftover authoring processes need a process check before the authoring container shuts down.
-- T03.4 - The named Node 26.12.1, npm 11.20.0, Playwright 1.64.1 and Chromium 156.0.8078.4 combination needs its own toolchain. The shared verifier image uses Node 24.
+T07.9 is the only entry in each layer's `uncheckable` array. It stays in cited review until the runner supplies authoring-process evidence.
 
 I03.1 checks an uncancelled contextmenu path after right-click and a held native touch. It doesn't capture an operating-system menu.
 
-The validation command reports these limits apart. Its preparation audit has run. Browser and mutation validation against the reviewed reference waits for the overseer's container run.
+Typecheck, product tests, the plan and the fixture audit pass. Browser regressions use synthetic pages. The reference and broken-fixture browser matrix still needs the overseer's container run.

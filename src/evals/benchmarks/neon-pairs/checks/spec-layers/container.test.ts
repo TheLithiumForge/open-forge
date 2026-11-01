@@ -11,40 +11,48 @@ import { LayerId, Method } from "./requirements.ts";
 import { SpecLayerContainer } from "./paths.ts";
 import { runLayerChecks } from "./container.ts";
 import { CommandId } from "./commands.ts";
+import { NamedToolchain, ToolchainClause, ToolchainWorker } from "./toolchain.ts";
 
 const Success = { code: 0, timedOut: false, stdout: "", stderr: "" };
 const Build = { passed: true, typecheck: true, seconds: 0, packages: null, html: "dist/index.html", bytes: null, log: "" };
-test("later grading isolates candidate commands and validates only plain copied-out artifacts", async (t) => {
+for (const layer of Object.values(LayerId)) test(`${layer} grading isolates candidate commands and validates only plain copied-out artifacts`, async (t) => {
   const root = await mkdtemp(join(tmpdir(), "eval-spec-layers-fake-"));
   t.after(async () => { assert.equal(dirname(resolve(root)), resolve(tmpdir())); await rm(root, { recursive: true, force: true }); });
   const project = join(root, "project"); await mkdir(project);
   await writeFile(join(project, "package.json"), "{}");
   const html = join(project, "index.html"); await writeFile(html, "<html></html>");
-  const definition = await loadDefinition(LayerId.two), inherited = await loadLayer(), calls: (readonly string[])[] = [];
+  const definition = await loadDefinition(layer), inherited = await loadLayer(), calls: (readonly string[])[] = [];
   const docker: Docker = {
     run: async (args) => {
       calls.push(args);
       if (args[0] === "cp" && args[1]?.endsWith(`:${SpecLayerContainer.evidence}/.`)) {
         const target = args[2]; assert.ok(target);
-        await writeFile(join(target, SpecLayerContainer.report), JSON.stringify({ schemaVersion: 1, layer: LayerId.two,
+        await writeFile(join(target, SpecLayerContainer.report), JSON.stringify({ schemaVersion: 1, layer,
           assertions: definition.checks.filter((check) => check.method !== Method.build).flatMap((check) => check.assertions.map((assertion) => ({ id: assertion.id, clause: assertion.clause, status: "pass", evidence: "Fake browser and source evidence" }))),
           inherited: { checks: inherited.checks.map((check) => ({ ...check, status: "pass", evidence: "Inherited fake evidence" })), shots: [], performance: null },
         }));
       }
       // Candidate results come only from docker exec output, never from files in the container.
-      if (args.includes("timeout") && args.includes("npm")) return { ...Success, stdout: "Tests 1 passed\ntypecheck" };
+      if (args.includes(`${SpecLayerContainer.harness}/${ToolchainWorker}`)) return { ...Success, stdout: JSON.stringify(NamedToolchain) };
+      if (args.includes("timeout") && args.includes("npm")) return { ...Success, stdout: "Tests 1 passed\ntypecheck\nvite building\nLocal: http://127.0.0.1" };
       if (args.includes(SpecLayerContainer.pageReader)) return { ...Success, stdout: "<html><script>inline</script></html>" };
       return Success;
     },
     spawn: () => { throw new Error("No host candidate process is allowed."); },
   };
-  const output = await runLayerChecks(LayerId.two, { project, html, build: Build, shotsFolder: join(root, "shots") }, { docker, timeoutMs: 30_000 });
+  const output = await runLayerChecks(layer, { project, html, build: Build, shotsFolder: join(root, "shots") }, { docker, timeoutMs: 30_000 });
   assert.equal(output.assertions.length, definition.checks.flatMap((check) => check.assertions).length);
   assert.equal(output.assertions.find((item) => item.clause === "T07.9"), undefined);
   assert.ok(output.review.some((item) => item.clause === "T07.9"));
-  assert.ok(output.checks.filter((check) => check.id !== "l2-build").every((check) => check.status === "pass"));
+  assert.ok(output.checks.filter((check) => check.id.startsWith("l2-") && check.id !== "l2-build").every((check) => check.status === "pass"));
   const commandCalls = calls.filter((args) => args.includes("timeout") && args.includes("npm"));
-  assert.equal(commandCalls.length, [CommandId.ci, CommandId.test, CommandId.build].length);
+  if (layer === LayerId.two) assert.equal(commandCalls.length, [CommandId.ci, CommandId.test, CommandId.build].length);
+  else {
+    const probe = calls.findIndex((args) => args.includes(`${SpecLayerContainer.harness}/${ToolchainWorker}`));
+    assert.ok(probe >= 0 && probe < calls.indexOf(commandCalls[0]!));
+    assert.equal(calls[probe]?.[calls[probe]!.indexOf("--user") + 1], ContainerUsers.agent);
+    assert.equal(output.assertions.find((item) => item.clause === ToolchainClause)?.status, "pass");
+  }
   assert.ok(commandCalls.every((args) => args[args.indexOf("--user") + 1] === ContainerUsers.build));
   const cleanups = calls.filter((args) => args.includes(ContainerPaths.stopTools));
   assert.ok(cleanups.length >= commandCalls.length, "Every candidate command is followed by stopping the build account's processes.");

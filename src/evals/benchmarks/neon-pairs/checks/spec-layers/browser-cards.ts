@@ -1,5 +1,7 @@
 import type { Page } from "playwright";
-import { CardAttribute, markCards } from "../board.ts";
+import { CardAttribute } from "../board.ts";
+
+export const CardName = /\brow\s*\d+\s*,?\s*col(?:umn)?\s*\d+\b/i;
 
 export interface Position { readonly x: number; readonly y: number; readonly index: number }
 export function rowOrder(positions: readonly Position[]): number[] {
@@ -7,7 +9,10 @@ export function rowOrder(positions: readonly Position[]): number[] {
   return [...positions].sort((a, b) => Math.abs(a.y - b.y) > 0.6 ? a.y - b.y : a.x - b.x).map((position) => position.index);
 }
 export async function markVisibleCards(page: Page): Promise<number> {
-  const count = await markCards(page);
+  await page.locator(`[${CardAttribute}]`).evaluateAll((elements, attribute) => elements.forEach((element) => element.removeAttribute(attribute)), CardAttribute);
+  const cards = page.getByRole("button", { name: CardName });
+  const count = await cards.count();
+  await cards.evaluateAll((elements, attribute) => elements.forEach((element, index) => element.setAttribute(attribute, String(index))), CardAttribute);
   const positions = await page.locator(`[${CardAttribute}]`).evaluateAll((elements) => elements.map((element, index) => {
     const rect = element.getBoundingClientRect(); return { x: rect.x, y: rect.y, index };
   }));

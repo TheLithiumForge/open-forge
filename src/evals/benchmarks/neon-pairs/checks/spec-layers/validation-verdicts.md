@@ -47,6 +47,6 @@ node benchmarks/neon-pairs/checks/spec-layers/validate.ts --run L2
 node benchmarks/neon-pairs/checks/spec-layers/validate.ts --run L3
 ```
 
-V20.1 through V20.4 keep their native browser zoom errors. T03.4 needs the named toolchain. T07.9 stays a process review limit and emits no automatic assertion.
+V20.1 through V20.4 now check the equivalent 640x400 CSS-pixel viewport at device scale 2. T03.4 grades versions collected from the verifier. T07.9 stays a process review limit and emits no automatic assertion.
 
 Back to [Later layers](README.md).

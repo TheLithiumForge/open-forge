@@ -20,6 +20,7 @@ import { replayVectors } from "./vectors.ts";
 import { parseReport } from "./report.ts";
 import { removeTemporary } from "./temporary.ts";
 import { packageClosure } from "./harness-packages.ts";
+import { ToolchainWorker } from "./toolchain.ts";
 
 export interface LayerOutput extends SuiteCheckOutput { readonly assertions: readonly AssertionOutcome[]; readonly review: readonly { readonly clause: string; readonly reason: string }[] }
 const Environment = { HOME: ContainerPaths.buildHome, PLAYWRIGHT_BROWSERS_PATH: "/ms-playwright", npm_config_audit: "false", npm_config_fund: "false" } as const;
@@ -87,6 +88,8 @@ export async function runLayerChecks(layer: Layer, input: SuiteCheckInput, optio
     // The checker account makes its evidence folder in its own home, which the build account can't write.
     // Root has no capabilities in a stage, so it can't chown a folder over to the checker.
     await stage.exec(["mkdir", "-m", "700", SpecLayerContainer.evidence], ContainerUsers.agent).then(requireDockerResult);
+    // Collect image versions before any candidate command can change its dependencies or environment.
+    const toolchain = layer === LayerId.three ? await stage.exec(["node", `${SpecLayerContainer.harness}/${ToolchainWorker}`], ContainerUsers.agent, SpecLayerEnvironment, undefined, 1024) : undefined;
     const results = new Map<CommandId, CommandResult>();
     const install = await runCandidate(stage, CommandId.ci);
     results.set(CommandId.ci, install);
@@ -104,7 +107,7 @@ export async function runLayerChecks(layer: Layer, input: SuiteCheckInput, optio
     await copyOutPlain(stage, SpecLayerContainer.evidence, collected, scratch);
     const report = await parseReport(await json(join(collected, SpecLayerContainer.report)), declared);
     for (const assertion of report.assertions) evidence.record(assertion.clause, assertion.status, assertion.evidence);
-    buildOutcomes(results, evidence, layer === LayerId.three);
+    buildOutcomes(results, evidence, layer === LayerId.three, toolchain);
     replayOutcomes(vectors, replays, evidence);
     await mkdir(input.shotsFolder, { recursive: true });
     for (const name of report.inherited.shots) {

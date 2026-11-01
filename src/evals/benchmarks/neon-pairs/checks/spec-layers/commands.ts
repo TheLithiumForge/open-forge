@@ -5,6 +5,7 @@ import { Evidence } from "./outcomes.ts";
 import { reporter } from "./browser-play.ts";
 import type { Vector } from "./vectors.ts";
 import { passedTests } from "./test-summary.ts";
+import { NamedToolchain, parseToolchain, ToolchainClause } from "./toolchain.ts";
 
 export const CommandId = { ci: "ci", test: "test", build: "build", typecheck: "typecheck", dev: "dev", e2e: "e2e", stale: "stale", replay: "replay" } as const;
 export type CommandId = (typeof CommandId)[keyof typeof CommandId];
@@ -34,7 +35,7 @@ export function replayOutcomes(vectors: readonly Vector[], results: readonly Com
   });
   for (const [id, result] of collected) evidence.merge(id, result.status, `Required replay CLI compared with an independent oracle. ${result.detail.join(". ")}`);
 }
-export function buildOutcomes(results: ReadonlyMap<CommandId, CommandResult>, evidence: Evidence, full: boolean): void {
+export function buildOutcomes(results: ReadonlyMap<CommandId, CommandResult>, evidence: Evidence, full: boolean, toolchain?: CommandResult): void {
   const put = reporter(evidence), ok = (id: CommandId): boolean => { const result = results.get(id); return result !== undefined && result.code === 0 && !result.timedOut; };
   const build = results.get(CommandId.build), unit = results.get(CommandId.test);
   put("T07.4", ok(CommandId.test) && passedTests(`${unit?.stdout ?? ""}\n${unit?.stderr ?? ""}`), "The required unit-test command exits successfully and reports tests that passed.");
@@ -48,5 +49,9 @@ export function buildOutcomes(results: ReadonlyMap<CommandId, CommandResult>, ev
   const e2e = results.get(CommandId.e2e), stale = results.get(CommandId.stale);
   put("T07.5", ok(CommandId.e2e) && /(?:npm run build|vite.*build|building)/i.test(e2e?.stdout ?? "") && passedTests(`${e2e?.stdout ?? ""}\n${e2e?.stderr ?? ""}`), "The browser-test command builds current source and reports passing browser tests.");
   put("T07.8", stale !== undefined && stale.code !== 0 && !stale.timedOut, "A type error injected into a compiler input makes browser testing fail while stale dist is present.");
-  evidence.record("T03.4", "error", "The shared verifier image uses a different Node version. Validate the named Node 26.12.1, npm 11.20.0, Playwright 1.64.1 and Chromium 156.0.8078.4 combination in that toolchain.");
+  try {
+    if (!toolchain || toolchain.code !== 0 || toolchain.timedOut) throw new Error("The verifier didn't collect its toolchain versions.");
+    const actual = parseToolchain(toolchain.stdout);
+    put(ToolchainClause, Object.entries(NamedToolchain).every(([name, version]) => actual[name as keyof typeof actual] === version), `Verifier versions: ${JSON.stringify(actual)}. Install, unit, build and browser results are recorded separately.`);
+  } catch (error) { evidence.record(ToolchainClause, "error", error instanceof Error ? error.message : String(error)); }
 }

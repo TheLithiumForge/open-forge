@@ -7,6 +7,7 @@ import { Evidence } from "./outcomes.ts";
 import { expectedDeck } from "./board-code.ts";
 import { Rules } from "./rules.ts";
 import { near, rgb } from "./view-values.ts";
+import { cssGridBoard } from "./browser-layout.ts";
 
 export async function svgGeometry(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence); await loadBoard(page, "np1-16-1");
@@ -31,6 +32,6 @@ export async function svgGeometry(page: Page, evidence: Evidence): Promise<void>
   put("V12.4", marker.every((shape) => shape && shape.width === 3 && rgb(shape.stroke) === "#111625"), "Markers use a 3-unit Face-background stroke.");
   put("V12.5", marker.every((shape) => !shape || near(shape.box.x + 5, 50) || near(shape.box.y + 5, 50) || near(Math.abs(shape.box.x + 5 - 50), 28.284, 0.01) && near(Math.abs(shape.box.y + 5 - 50), 28.284, 0.01)), "Diagonal marker offsets use the normalized 28.284-unit components.");
   put("V12.6", main.every((shape, index) => (deck[index] ?? 0) < 64 || shape?.width === 5 && shape.fill === "none"), "Outlined main shapes use a 5-unit stroke and no fill.");
-  put("V01.2", await card(page, 0).evaluate((element) => { let node = element.parentElement; while (node && getComputedStyle(node).display !== "grid") node = node.parentElement; return element.tagName === "BUTTON" && node !== null; }), "DOM card buttons sit in a CSS Grid.");
+  put("V01.2", await cssGridBoard(page), "The named card buttons share a CSS Grid board.");
   put("V01.4", await page.locator("canvas,[data-slot]").count() === 0, "No canvas or shadcn data-slot components occur in the rendered game.");
 }

@@ -2,7 +2,8 @@ import { chromium, type Browser, type Page } from "playwright";
 import { BehaviorFailure, Evidence } from "./outcomes.ts";
 import type { Definition } from "./catalog.ts";
 import { Method, LayerId as Layer } from "./requirements.ts";
-import { session, type Session } from "./browser-session.ts";
+import { session, type Session, type SessionOptions } from "./browser-session.ts";
+import { ZoomViewport } from "./browser-zoom.ts";
 import { clock, sizes, turns } from "./browser-play.ts";
 import { best, invalidPreferences, preferences, stale, storageFailure } from "./browser-storage.ts";
 import { activation, announcements, controlNames, navigation } from "./browser-input.ts";
@@ -17,7 +18,7 @@ import { CapClause } from "./cap-policy.ts";
 import { CheckArea, CheckId } from "../check-ids.ts";
 import { CheckStatus } from "../../../../history/statuses.ts";
 
-interface Journey { readonly groups: readonly string[]; readonly action: (page: Page, evidence: Evidence) => Promise<void>; readonly blockedStorage?: boolean; readonly file?: boolean }
+interface Journey extends SessionOptions { readonly groups: readonly string[]; readonly action: (page: Page, evidence: Evidence) => Promise<void> }
 const journeys: readonly Journey[] = [
   { groups: ["sizes"], action: sizes }, { groups: ["selection", "mismatch", "moves", "completion", "matched"], action: turns },
   { groups: ["clock"], action: clock }, { groups: ["preferences", "reset"], action: preferences }, { groups: ["best"], action: best },
@@ -28,7 +29,7 @@ const journeys: readonly Journey[] = [
   { groups: ["activation"], action: activation }, { groups: ["announcements"], action: announcements },
   { groups: ["layout"], action: layout }, { groups: ["native", "colors", "typography", "outline", "motion", "offline"], action: appearance },
   { groups: ["faces"], action: faces }, { groups: ["names", "faces"], action: accessibleNames },
-  { groups: ["scroll", "large"], action: scroll }, { groups: ["motion"], action: motion }, { groups: ["zoom", "offline"], action: zoom },
+  { groups: ["scroll", "large"], action: scroll }, { groups: ["motion"], action: motion }, { groups: ["zoom", "offline"], action: zoom, ...ZoomViewport },
 ];
 const specJourneys = [boardControls, snapshotCases, knownDeals, invalidLoads, importedProgress, loadedFocusAndSize, svgGeometry, sourceRules, snapshotCaps];
 
