@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "specVersion": 2,
+  "version": "L3-v1",
+  "ballots": 3,
+  "answers": [
+    "yes",
+    "no",
+    "unsure"
+  ],
+  "questions": [
+    {
+      "id": "pure-core",
+      "area": "architecture",
+      "evidence": "source",
+      "question": "Are generation, transitions, logical time, snapshot validation and replay pure in src/game, with direct inputs and no DOM, storage, external randomness or browser clock? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "A01.1",
+        "A01.2",
+        "A01.3"
+      ]
+    },
+    {
+      "id": "state",
+      "area": "architecture",
+      "evidence": "source",
+      "question": "Are board and deck immutable, progress represented by the documented state and formats, victory and pairs derived, and closed, one and mismatch branches direct and exhaustive with nearby named constants? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "A02.1",
+        "A02.2",
+        "A02.3",
+        "A02.4",
+        "A03.1",
+        "A03.2"
+      ]
+    },
+    {
+      "id": "lifecycle",
+      "area": "architecture",
+      "evidence": "source",
+      "question": "Does src/game/session handle React state, monotonic time, visibility and pending-work cleanup with callback invalidation on deal changes? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "A04.1",
+        "A04.2",
+        "A04.3",
+        "A04.4"
+      ]
+    },
+    {
+      "id": "storage",
+      "area": "architecture",
+      "evidence": "source",
+      "question": "Does the session storage module validate unknown saved JSON, sizes and finite integer scores, catch failures, keep unrelated keys and hold active progress in memory until import or export? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "A05.1",
+        "A05.2",
+        "A05.3",
+        "A05.4",
+        "A05.5",
+        "A06.1"
+      ]
+    },
+    {
+      "id": "components",
+      "area": "architecture",
+      "evidence": "source",
+      "question": "Does Game.tsx compose status, board, controls and reproduction, with board navigation, control and session behavior in their specified folders, nearby props and styles, native input and board-local focus? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "A07.1",
+        "A07.2",
+        "A07.3",
+        "A09.1",
+        "A09.2",
+        "A09.4"
+      ]
+    },
+    {
+      "id": "tests-and-change",
+      "area": "architecture",
+      "evidence": "source",
+      "question": "Are focused tests beside behavior and journeys at application level, with independent vectors, rule transitions, disk and served storage tests, and changes made at their behavior without speculative shared support, global stores, buses, routers or generic utility folders? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "A10.1",
+        "A10.2",
+        "A10.3",
+        "A10.4",
+        "A10.5",
+        "A12.1",
+        "A12.2",
+        "A12.3"
+      ]
+    },
+    {
+      "id": "exact-types",
+      "area": "code",
+      "evidence": "source",
+      "question": "Are data shapes exact, unknown inputs validated, unions derived from named values and narrowing used instead of any, suppressed errors or unchecked casts? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "T05.1",
+        "T05.2",
+        "T05.3",
+        "T05.4"
+      ]
+    },
+    {
+      "id": "findability",
+      "area": "code",
+      "evidence": "source",
+      "question": "Are code, styles and tests together, files near the 100-line aim, growing files split by behavior and imports direct from definitions? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "T06.1",
+        "T06.2",
+        "T06.4",
+        "T06.5"
+      ]
+    },
+    {
+      "id": "tested-toolchain",
+      "area": "delivery",
+      "evidence": "source",
+      "question": "Are locked install, build, unit and browser results recorded with exact versions before calling a combination tested, with separate results for other versions? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "T03.5",
+        "T03.6"
+      ]
+    },
+    {
+      "id": "dependencies",
+      "area": "delivery",
+      "evidence": "source",
+      "question": "Are dependencies kept in development and build tooling where practical, with no service, account, external asset, analytics or API key and network allowed for installation? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "T10.1",
+        "T10.2",
+        "T10.3"
+      ]
+    },
+    {
+      "id": "screen-reader",
+      "area": "accessibility",
+      "evidence": "source",
+      "question": "Does the recorded screen reader journey cover every I17 step and give exact screen reader and browser versions? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "I17.1",
+        "I17.2",
+        "I17.3",
+        "I17.4",
+        "I17.5",
+        "I17.6"
+      ]
+    },
+    {
+      "id": "face-legibility",
+      "area": "visual",
+      "evidence": "source-and-images",
+      "question": "Do shape, marker and fill define identity, color repeat marker distinction and all 128 faces remain distinct at 44px in grayscale, including outlined and solid squares with diagonal markers? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "V11.1",
+        "V11.2",
+        "V12.7"
+      ]
+    }
+  ]
+}

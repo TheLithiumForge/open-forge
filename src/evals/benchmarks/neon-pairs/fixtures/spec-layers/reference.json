@@ -1,0 +1,6 @@
+{
+  "id": "reference",
+  "edits": [],
+  "expected": {},
+  "scope": "Every declared assertion and inherited stated check must pass apart from the listed checker limitations."
+}

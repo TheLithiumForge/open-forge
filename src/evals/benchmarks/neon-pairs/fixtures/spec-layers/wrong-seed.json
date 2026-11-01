@@ -1,0 +1,6 @@
+{
+  "id": "wrong-seed",
+  "edits": [{ "path": "src/game/deck.ts", "before": "let state = parsed.seed;", "after": "let state = 1;" }],
+  "expected": { "R01.4": "fail", "D02.1": "fail", "D04.6": "pass" },
+  "scope": "Ignore the encoded seed. Known deals and replay pairs for other seeds must fail."
+}

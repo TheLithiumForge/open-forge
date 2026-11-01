@@ -1,0 +1,3608 @@
+{
+  "schemaVersion": 1,
+  "specVersion": 2,
+  "version": "L3-v1",
+  "layer": "L3",
+  "checks": [
+    {
+      "id": "delivery-single-file",
+      "area": "Delivery",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "stack-react-typescript",
+      "area": "Stack",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "grid-4-and-16",
+      "area": "Grid sizes",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "grid-sizes-pair-up",
+      "area": "Grid sizes",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "faces-drawn",
+      "area": "Faces",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "faces-distinct-16",
+      "area": "Faces",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "matching-pairs",
+      "area": "Matching",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "input-same-card-twice",
+      "area": "Input",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "input-clicks-during-delay",
+      "area": "Input",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "moves-count",
+      "area": "Moves",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "moves-compared",
+      "area": "Moves",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "new-game-resets",
+      "area": "New Game",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "win-shown",
+      "area": "Win",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "best-score",
+      "area": "Best score",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "phone-full-game",
+      "area": "Phone",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "keyboard-full-game",
+      "area": "Keyboard",
+      "method": "browser",
+      "clauses": [],
+      "assertions": [],
+      "inheritedFrom": "L1-v2"
+    },
+    {
+      "id": "l2-sizes",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R01.1",
+        "R01.2",
+        "R01.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R01.1",
+          "clause": "R01.1",
+          "method": "browser",
+          "text": "Support side lengths 4, 6, 8, 10, 12, 14 and 16."
+        },
+        {
+          "id": "clause-R01.2",
+          "clause": "R01.2",
+          "method": "browser",
+          "text": "Each board is square."
+        },
+        {
+          "id": "clause-R01.3",
+          "clause": "R01.3",
+          "method": "browser",
+          "text": "Every face occurs exactly twice."
+        }
+      ]
+    },
+    {
+      "id": "l2-selection",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R02.1",
+        "R02.2",
+        "R02.3",
+        "R03.1",
+        "R03.2",
+        "R03.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R02.1",
+          "clause": "R02.1",
+          "method": "browser",
+          "text": "Reveal the first eligible card."
+        },
+        {
+          "id": "clause-R02.2",
+          "clause": "R02.2",
+          "method": "browser",
+          "text": "Reactivating that card has no game effect."
+        },
+        {
+          "id": "clause-R02.3",
+          "clause": "R02.3",
+          "method": "browser",
+          "text": "Activating a matched card has no game effect."
+        },
+        {
+          "id": "clause-R03.1",
+          "clause": "R03.1",
+          "method": "browser",
+          "text": "Reveal a different unmatched card on the second valid activation."
+        },
+        {
+          "id": "clause-R03.2",
+          "clause": "R03.2",
+          "method": "browser",
+          "text": "Keep a matching pair revealed."
+        },
+        {
+          "id": "clause-R03.3",
+          "clause": "R03.3",
+          "method": "browser",
+          "text": "Add one matched pair immediately."
+        }
+      ]
+    },
+    {
+      "id": "l2-mismatch",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R04.1",
+        "R04.2",
+        "R04.3",
+        "R04.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R04.1",
+          "clause": "R04.1",
+          "method": "browser",
+          "text": "Show mismatching faces for 800 active milliseconds."
+        },
+        {
+          "id": "clause-R04.2",
+          "clause": "R04.2",
+          "method": "browser",
+          "text": "Close both cards together when that interval ends."
+        },
+        {
+          "id": "clause-R04.3",
+          "clause": "R04.3",
+          "method": "browser",
+          "text": "Ignore every card activation during the interval."
+        },
+        {
+          "id": "clause-R04.4",
+          "clause": "R04.4",
+          "method": "browser",
+          "text": "Pause the interval while the page is hidden."
+        }
+      ]
+    },
+    {
+      "id": "l2-moves",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R05.1",
+        "R05.2",
+        "R05.3",
+        "R05.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R05.1",
+          "clause": "R05.1",
+          "method": "browser",
+          "text": "Add one move on the second valid reveal."
+        },
+        {
+          "id": "clause-R05.2",
+          "clause": "R05.2",
+          "method": "browser",
+          "text": "The first reveal adds no move."
+        },
+        {
+          "id": "clause-R05.3",
+          "clause": "R05.3",
+          "method": "browser",
+          "text": "Ignored activation adds no move."
+        },
+        {
+          "id": "clause-R05.4",
+          "clause": "R05.4",
+          "method": "browser",
+          "text": "A match and a miss each cost one move."
+        }
+      ]
+    },
+    {
+      "id": "l2-completion",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R06.1",
+        "R06.2",
+        "R06.3",
+        "R06.4",
+        "R06.5",
+        "R06.6"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R06.1",
+          "clause": "R06.1",
+          "method": "browser",
+          "text": "Give one point per matched pair and no other score."
+        },
+        {
+          "id": "clause-R06.2",
+          "clause": "R06.2",
+          "method": "browser",
+          "text": "Show matched pairs against the total throughout play."
+        },
+        {
+          "id": "clause-R06.3",
+          "clause": "R06.3",
+          "method": "browser",
+          "text": "Complete the game when every pair is matched."
+        },
+        {
+          "id": "clause-R06.4",
+          "clause": "R06.4",
+          "method": "browser",
+          "text": "Show final moves in the completion banner."
+        },
+        {
+          "id": "clause-R06.5",
+          "clause": "R06.5",
+          "method": "browser",
+          "text": "Show final elapsed time in the completion banner."
+        },
+        {
+          "id": "clause-R06.6",
+          "clause": "R06.6",
+          "method": "browser",
+          "text": "Apply the completion motion in V18."
+        }
+      ]
+    },
+    {
+      "id": "l2-clock",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R07.1",
+        "R07.2",
+        "R07.3",
+        "R07.5",
+        "R07.6",
+        "R07.7",
+        "R07.8"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R07.1",
+          "clause": "R07.1",
+          "method": "browser",
+          "text": "Start elapsed time on the first valid reveal."
+        },
+        {
+          "id": "clause-R07.2",
+          "clause": "R07.2",
+          "method": "browser",
+          "text": "Count active milliseconds while the page is shown."
+        },
+        {
+          "id": "clause-R07.3",
+          "clause": "R07.3",
+          "method": "browser",
+          "text": "Pause elapsed time while the page is hidden."
+        },
+        {
+          "id": "clause-R07.5",
+          "clause": "R07.5",
+          "method": "browser",
+          "text": "Stop elapsed time at completion."
+        },
+        {
+          "id": "clause-R07.6",
+          "clause": "R07.6",
+          "method": "browser",
+          "text": "Rendering frequency doesn't change elapsed time."
+        },
+        {
+          "id": "clause-R07.7",
+          "clause": "R07.7",
+          "method": "browser",
+          "text": "Use the same active time for the clock and mismatch interval."
+        },
+        {
+          "id": "clause-R07.8",
+          "clause": "R07.8",
+          "method": "browser",
+          "text": "Continue a hidden-page mismatch from its remaining time when the page is shown."
+        }
+      ]
+    },
+    {
+      "id": "l2-preferences",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R08.1",
+        "R08.2",
+        "R08.3",
+        "R08.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R08.1",
+          "clause": "R08.1",
+          "method": "browser",
+          "text": "Start at 4x4 when there is no supported saved size."
+        },
+        {
+          "id": "clause-R08.2",
+          "clause": "R08.2",
+          "method": "browser",
+          "text": "Use a supported saved size on reload."
+        },
+        {
+          "id": "clause-R08.3",
+          "clause": "R08.3",
+          "method": "browser",
+          "text": "Remember the last chosen size after reload."
+        },
+        {
+          "id": "clause-R08.4",
+          "clause": "R08.4",
+          "method": "browser",
+          "text": "Start a fresh deal on page load."
+        }
+      ]
+    },
+    {
+      "id": "l2-reset",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R09.1",
+        "R09.2",
+        "R09.3",
+        "R09.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R09.1",
+          "clause": "R09.1",
+          "method": "browser",
+          "text": "New Game starts another deal at the current size."
+        },
+        {
+          "id": "clause-R09.2",
+          "clause": "R09.2",
+          "method": "browser",
+          "text": "Restart repeats the same deal."
+        },
+        {
+          "id": "clause-R09.3",
+          "clause": "R09.3",
+          "method": "browser",
+          "text": "Changing size starts another deal at that size."
+        },
+        {
+          "id": "clause-R09.4",
+          "clause": "R09.4",
+          "method": "browser",
+          "text": "Each of these actions clears selection, matches, moves and elapsed time."
+        }
+      ]
+    },
+    {
+      "id": "l2-best",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R10.1",
+        "R10.2",
+        "R10.3",
+        "R10.4",
+        "R10.5",
+        "R10.6",
+        "R10.7"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R10.1",
+          "clause": "R10.1",
+          "method": "browser",
+          "text": "Record only completed games as a best score for their size."
+        },
+        {
+          "id": "clause-R10.2",
+          "clause": "R10.2",
+          "method": "browser",
+          "text": "Replace the best only with fewer moves."
+        },
+        {
+          "id": "clause-R10.3",
+          "clause": "R10.3",
+          "method": "browser",
+          "text": "Keep the best after reload."
+        },
+        {
+          "id": "clause-R10.4",
+          "clause": "R10.4",
+          "method": "browser",
+          "text": "Equal or worse results keep the saved best."
+        },
+        {
+          "id": "clause-R10.5",
+          "clause": "R10.5",
+          "method": "browser",
+          "text": "Starting or restarting keeps best scores."
+        },
+        {
+          "id": "clause-R10.6",
+          "clause": "R10.6",
+          "method": "browser",
+          "text": "Show the current size's best moves during play and after completion."
+        },
+        {
+          "id": "clause-R10.7",
+          "clause": "R10.7",
+          "method": "browser",
+          "text": "Show Best: none before a size has a record."
+        }
+      ]
+    },
+    {
+      "id": "l2-storage",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R11.3",
+        "R11.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R11.3",
+          "clause": "R11.3",
+          "method": "browser",
+          "text": "Ignore invalid saved preferences."
+        },
+        {
+          "id": "clause-R11.4",
+          "clause": "R11.4",
+          "method": "browser",
+          "text": "Continue playing without saving when storage is unavailable."
+        }
+      ]
+    },
+    {
+      "id": "l2-stale",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R12.1",
+        "R12.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R12.1",
+          "clause": "R12.1",
+          "method": "browser",
+          "text": "Starting, restarting, replacing or leaving a game invalidates pending timer updates."
+        },
+        {
+          "id": "clause-R12.2",
+          "clause": "R12.2",
+          "method": "browser",
+          "text": "An earlier game or turn's update can't change the current game."
+        }
+      ]
+    },
+    {
+      "id": "l2-controls",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C01.1",
+        "C01.2",
+        "C02.1",
+        "C02.2",
+        "C03.1",
+        "C03.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C01.1",
+          "clause": "C01.1",
+          "method": "browser",
+          "text": "Use a native select named Grid size."
+        },
+        {
+          "id": "clause-C01.2",
+          "clause": "C01.2",
+          "method": "browser",
+          "text": "Offer 4x4, 6x6, 8x8, 10x10, 12x12, 14x14 and 16x16."
+        },
+        {
+          "id": "clause-C02.1",
+          "clause": "C02.1",
+          "method": "browser",
+          "text": "Name the fresh-deal button New Game."
+        },
+        {
+          "id": "clause-C02.2",
+          "clause": "C02.2",
+          "method": "browser",
+          "text": "Start a fresh deal at the current size."
+        },
+        {
+          "id": "clause-C03.1",
+          "clause": "C03.1",
+          "method": "browser",
+          "text": "Name the repeat-deal button Restart."
+        },
+        {
+          "id": "clause-C03.2",
+          "clause": "C03.2",
+          "method": "browser",
+          "text": "Repeat the same deal."
+        }
+      ]
+    },
+    {
+      "id": "l2-focus",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C13.1",
+        "C13.3",
+        "C13.5",
+        "I11.1",
+        "I12.1"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C13.1",
+          "clause": "C13.1",
+          "method": "browser",
+          "text": "Keep focus on New Game and Restart after activation."
+        },
+        {
+          "id": "clause-C13.3",
+          "clause": "C13.3",
+          "method": "browser",
+          "text": "These actions don't move focus to the board."
+        },
+        {
+          "id": "clause-C13.5",
+          "clause": "C13.5",
+          "method": "browser",
+          "text": "Use I12 for the remembered board tab stop after a deal change."
+        },
+        {
+          "id": "clause-I11.1",
+          "clause": "I11.1",
+          "method": "browser",
+          "text": "Initial load keeps the browser's current focus."
+        },
+        {
+          "id": "clause-I12.1",
+          "clause": "I12.1",
+          "method": "browser",
+          "text": "A new deal or Restart resets the remembered tab stop to the first card."
+        }
+      ]
+    },
+    {
+      "id": "l2-activation",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "I01.1",
+        "I01.2",
+        "I02.1",
+        "I03.1",
+        "I03.2",
+        "I04.1",
+        "I04.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-I01.1",
+          "clause": "I01.1",
+          "method": "browser",
+          "text": "Each card is a native button."
+        },
+        {
+          "id": "clause-I01.2",
+          "clause": "I01.2",
+          "method": "browser",
+          "text": "Primary click, completed tap, Enter and Space use the same activation action."
+        },
+        {
+          "id": "clause-I02.1",
+          "clause": "I02.1",
+          "method": "browser",
+          "text": "Ignore keyboard autorepeat for Enter and Space."
+        },
+        {
+          "id": "clause-I03.1",
+          "clause": "I03.1",
+          "method": "browser",
+          "text": "Keep the normal context menu for right-click and long-press."
+        },
+        {
+          "id": "clause-I03.2",
+          "clause": "I03.2",
+          "method": "browser",
+          "text": "Opening that menu doesn't activate a card."
+        },
+        {
+          "id": "clause-I04.1",
+          "clause": "I04.1",
+          "method": "browser",
+          "text": "Hover leaves game state unchanged."
+        },
+        {
+          "id": "clause-I04.2",
+          "clause": "I04.2",
+          "method": "browser",
+          "text": "Pointer cancellation leaves game state unchanged."
+        }
+      ]
+    },
+    {
+      "id": "l2-navigation",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "I05.1",
+        "I05.2",
+        "I05.3",
+        "I06.1",
+        "I06.2",
+        "I06.3",
+        "I06.4",
+        "I06.5",
+        "I06.6",
+        "I06.7",
+        "I06.8",
+        "I06.9",
+        "I07.1",
+        "I08.1",
+        "I08.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-I05.1",
+          "clause": "I05.1",
+          "method": "browser",
+          "text": "Give the board one remembered tab stop."
+        },
+        {
+          "id": "clause-I05.2",
+          "clause": "I05.2",
+          "method": "browser",
+          "text": "Tab enters at that card."
+        },
+        {
+          "id": "clause-I05.3",
+          "clause": "I05.3",
+          "method": "browser",
+          "text": "Use the first card before any board focus is remembered."
+        },
+        {
+          "id": "clause-I06.1",
+          "clause": "I06.1",
+          "method": "browser",
+          "text": "ArrowLeft moves to the previous card in the same row."
+        },
+        {
+          "id": "clause-I06.2",
+          "clause": "I06.2",
+          "method": "browser",
+          "text": "ArrowRight moves to the next card in the same row."
+        },
+        {
+          "id": "clause-I06.3",
+          "clause": "I06.3",
+          "method": "browser",
+          "text": "ArrowUp moves to the previous row in the same column."
+        },
+        {
+          "id": "clause-I06.4",
+          "clause": "I06.4",
+          "method": "browser",
+          "text": "ArrowDown moves to the next row in the same column."
+        },
+        {
+          "id": "clause-I06.5",
+          "clause": "I06.5",
+          "method": "browser",
+          "text": "Home moves to the first card in the row."
+        },
+        {
+          "id": "clause-I06.6",
+          "clause": "I06.6",
+          "method": "browser",
+          "text": "End moves to the last card in the row."
+        },
+        {
+          "id": "clause-I06.7",
+          "clause": "I06.7",
+          "method": "browser",
+          "text": "Ctrl+Home moves to the first card on the board."
+        },
+        {
+          "id": "clause-I06.8",
+          "clause": "I06.8",
+          "method": "browser",
+          "text": "Ctrl+End moves to the last card on the board."
+        },
+        {
+          "id": "clause-I06.9",
+          "clause": "I06.9",
+          "method": "browser",
+          "text": "Movement changes focus without activating a card."
+        },
+        {
+          "id": "clause-I07.1",
+          "clause": "I07.1",
+          "method": "browser",
+          "text": "Arrow movement stops at board edges without wrapping."
+        },
+        {
+          "id": "clause-I08.1",
+          "clause": "I08.1",
+          "method": "browser",
+          "text": "Native Tab and Shift+Tab leave the board."
+        },
+        {
+          "id": "clause-I08.2",
+          "clause": "I08.2",
+          "method": "browser",
+          "text": "Movement keys navigate without putting every card in the page tab order."
+        }
+      ]
+    },
+    {
+      "id": "l2-matched",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "I09.1",
+        "I09.2",
+        "I09.3",
+        "I10.1",
+        "I10.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-I09.1",
+          "clause": "I09.1",
+          "method": "browser",
+          "text": "Matched cards stay focusable."
+        },
+        {
+          "id": "clause-I09.2",
+          "clause": "I09.2",
+          "method": "browser",
+          "text": "Matched cards have aria-disabled=true."
+        },
+        {
+          "id": "clause-I09.3",
+          "clause": "I09.3",
+          "method": "browser",
+          "text": "Matched-card activation follows R02."
+        },
+        {
+          "id": "clause-I10.1",
+          "clause": "I10.1",
+          "method": "browser",
+          "text": "Allow focus movement during a mismatch interval."
+        },
+        {
+          "id": "clause-I10.2",
+          "clause": "I10.2",
+          "method": "browser",
+          "text": "Block card activation during that interval."
+        }
+      ]
+    },
+    {
+      "id": "l2-scroll",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "I13.1"
+      ],
+      "assertions": [
+        {
+          "id": "clause-I13.1",
+          "clause": "I13.1",
+          "method": "browser",
+          "text": "Scroll each focused card into view with nearest alignment inside the board."
+        }
+      ]
+    },
+    {
+      "id": "l2-names",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "I14.1",
+        "I14.2",
+        "I14.3",
+        "I15.1",
+        "I15.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-I14.1",
+          "clause": "I14.1",
+          "method": "browser",
+          "text": "Hidden card names contain the one-based row, column and closed state."
+        },
+        {
+          "id": "clause-I14.2",
+          "clause": "I14.2",
+          "method": "browser",
+          "text": "Hidden cards keep face SVG out of the DOM."
+        },
+        {
+          "id": "clause-I14.3",
+          "clause": "I14.3",
+          "method": "browser",
+          "text": "Hidden cards keep face identifiers out of attributes and accessible text."
+        },
+        {
+          "id": "clause-I15.1",
+          "clause": "I15.1",
+          "method": "browser",
+          "text": "Revealed and matched names include position, face name and state."
+        },
+        {
+          "id": "clause-I15.2",
+          "clause": "I15.2",
+          "method": "browser",
+          "text": "Use V13's face names."
+        }
+      ]
+    },
+    {
+      "id": "l2-announcements",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "I16.1",
+        "I16.2",
+        "I16.3",
+        "I16.4",
+        "I16.5"
+      ],
+      "assertions": [
+        {
+          "id": "clause-I16.1",
+          "clause": "I16.1",
+          "method": "browser",
+          "text": "Use one polite atomic live region."
+        },
+        {
+          "id": "clause-I16.2",
+          "clause": "I16.2",
+          "method": "browser",
+          "text": "Announce each turn result exactly once."
+        },
+        {
+          "id": "clause-I16.3",
+          "clause": "I16.3",
+          "method": "browser",
+          "text": "Announce a final match and win together once."
+        },
+        {
+          "id": "clause-I16.4",
+          "clause": "I16.4",
+          "method": "browser",
+          "text": "Consecutive identical results each have their own announcement."
+        },
+        {
+          "id": "clause-I16.5",
+          "clause": "I16.5",
+          "method": "browser",
+          "text": "Focus movement, clock renders and mismatch closing don't repeat a result."
+        }
+      ]
+    },
+    {
+      "id": "l2-native",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V01.1",
+        "V01.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V01.1",
+          "clause": "V01.1",
+          "method": "browser",
+          "text": "Use native controls."
+        },
+        {
+          "id": "clause-V01.3",
+          "clause": "V01.3",
+          "method": "browser",
+          "text": "Use inline SVG artwork."
+        }
+      ]
+    },
+    {
+      "id": "l2-layout",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V02.1",
+        "V02.2",
+        "V02.3",
+        "V03.1",
+        "V03.2",
+        "V03.3",
+        "V04.1",
+        "V04.2",
+        "V04.3",
+        "V04.4",
+        "V05.1",
+        "V05.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V02.1",
+          "clause": "V02.1",
+          "method": "browser",
+          "text": "Center content at a maximum width of 1120px."
+        },
+        {
+          "id": "clause-V02.2",
+          "clause": "V02.2",
+          "method": "browser",
+          "text": "Use 16px content padding."
+        },
+        {
+          "id": "clause-V02.3",
+          "clause": "V02.3",
+          "method": "browser",
+          "text": "Keep the outer page within viewport width."
+        },
+        {
+          "id": "clause-V03.1",
+          "clause": "V03.1",
+          "method": "browser",
+          "text": "Limit board height to 70dvh capped at 768px."
+        },
+        {
+          "id": "clause-V03.2",
+          "clause": "V03.2",
+          "method": "browser",
+          "text": "Use 6px board padding."
+        },
+        {
+          "id": "clause-V03.3",
+          "clause": "V03.3",
+          "method": "browser",
+          "text": "Allow both axes to scroll inside the board area."
+        },
+        {
+          "id": "clause-V04.1",
+          "clause": "V04.1",
+          "method": "browser",
+          "text": "Keep cards square between 44px and 88px based on available board width."
+        },
+        {
+          "id": "clause-V04.2",
+          "clause": "V04.2",
+          "method": "browser",
+          "text": "Use a 6px grid gap."
+        },
+        {
+          "id": "clause-V04.3",
+          "clause": "V04.3",
+          "method": "browser",
+          "text": "Use a 2px card border."
+        },
+        {
+          "id": "clause-V04.4",
+          "clause": "V04.4",
+          "method": "browser",
+          "text": "Use an 8px card radius."
+        },
+        {
+          "id": "clause-V05.1",
+          "clause": "V05.1",
+          "method": "browser",
+          "text": "Fit the four-column board within a phone viewport."
+        },
+        {
+          "id": "clause-V05.2",
+          "clause": "V05.2",
+          "method": "browser",
+          "text": "Keep 44px cards and scroll inside the board when a larger board reaches that minimum."
+        }
+      ]
+    },
+    {
+      "id": "l2-colors",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V06.1",
+        "V06.2",
+        "V06.3",
+        "V06.4",
+        "V06.5",
+        "V06.6",
+        "V06.7",
+        "V06.8",
+        "V07.1"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V06.1",
+          "clause": "V06.1",
+          "method": "browser",
+          "text": "Page background is #090B14."
+        },
+        {
+          "id": "clause-V06.2",
+          "clause": "V06.2",
+          "method": "browser",
+          "text": "Panel background is #141827."
+        },
+        {
+          "id": "clause-V06.3",
+          "clause": "V06.3",
+          "method": "browser",
+          "text": "Hidden card background is #1B2034."
+        },
+        {
+          "id": "clause-V06.4",
+          "clause": "V06.4",
+          "method": "browser",
+          "text": "Revealed card background is #111625."
+        },
+        {
+          "id": "clause-V06.5",
+          "clause": "V06.5",
+          "method": "browser",
+          "text": "Main text is #F4F6FF."
+        },
+        {
+          "id": "clause-V06.6",
+          "clause": "V06.6",
+          "method": "browser",
+          "text": "Secondary text is #B8BDD2."
+        },
+        {
+          "id": "clause-V06.7",
+          "clause": "V06.7",
+          "method": "browser",
+          "text": "Neutral borders are #757C9A."
+        },
+        {
+          "id": "clause-V06.8",
+          "clause": "V06.8",
+          "method": "browser",
+          "text": "Focus outline is #FFFFFF."
+        },
+        {
+          "id": "clause-V07.1",
+          "clause": "V07.1",
+          "method": "browser",
+          "text": "Use the ordered palette Cyan #63E7FF, Magenta #FF71D6, Green #8BEA7D, Yellow #FFE082, Orange #FFB064, Violet #B49AFF, Rose #FF8296 and Ice #D9F3FF."
+        }
+      ]
+    },
+    {
+      "id": "l2-typography",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V08.1",
+        "V08.2",
+        "V08.3",
+        "V08.4",
+        "V09.1",
+        "V09.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V08.1",
+          "clause": "V08.1",
+          "method": "browser",
+          "text": "Use the system sans-serif font stack."
+        },
+        {
+          "id": "clause-V08.2",
+          "clause": "V08.2",
+          "method": "browser",
+          "text": "Body text is 16px with 24px line height."
+        },
+        {
+          "id": "clause-V08.3",
+          "clause": "V08.3",
+          "method": "browser",
+          "text": "Title text is 24px."
+        },
+        {
+          "id": "clause-V08.4",
+          "clause": "V08.4",
+          "method": "browser",
+          "text": "Secondary text is 14px."
+        },
+        {
+          "id": "clause-V09.1",
+          "clause": "V09.1",
+          "method": "browser",
+          "text": "Layout gaps, padding and margins use 4px, 6px, 8px, 12px, 16px, 24px or 32px."
+        },
+        {
+          "id": "clause-V09.2",
+          "clause": "V09.2",
+          "method": "browser",
+          "text": "Borders, radii, focus, font metrics and SVG coordinates use their own stated values."
+        }
+      ]
+    },
+    {
+      "id": "l2-faces",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V10.1",
+        "V10.3",
+        "V10.4",
+        "V10.5",
+        "V13.1",
+        "V13.2",
+        "V14.1",
+        "V14.2",
+        "V15.1",
+        "V15.2",
+        "V15.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V10.1",
+          "clause": "V10.1",
+          "method": "browser",
+          "text": "Generate 128 distinguishable face identities."
+        },
+        {
+          "id": "clause-V10.3",
+          "clause": "V10.3",
+          "method": "browser",
+          "text": "Use circle, square, triangle, diamond, star, hexagon, plus and chevron shapes."
+        },
+        {
+          "id": "clause-V10.4",
+          "clause": "V10.4",
+          "method": "browser",
+          "text": "Use top, top-right, right, bottom-right, bottom, bottom-left, left and top-left markers."
+        },
+        {
+          "id": "clause-V10.5",
+          "clause": "V10.5",
+          "method": "browser",
+          "text": "Use solid and outline fills."
+        },
+        {
+          "id": "clause-V13.1",
+          "clause": "V13.1",
+          "method": "browser",
+          "text": "Name faces with lowercase palette, fill, shape and marker names."
+        },
+        {
+          "id": "clause-V13.2",
+          "clause": "V13.2",
+          "method": "browser",
+          "text": "Use the form {color} {fill} {shape}, marker {position}."
+        },
+        {
+          "id": "clause-V14.1",
+          "clause": "V14.1",
+          "method": "browser",
+          "text": "Use the same neutral-diamond back for every hidden card."
+        },
+        {
+          "id": "clause-V14.2",
+          "clause": "V14.2",
+          "method": "browser",
+          "text": "Keep hidden face artwork out of the DOM under I14."
+        },
+        {
+          "id": "clause-V15.1",
+          "clause": "V15.1",
+          "method": "browser",
+          "text": "Show face artwork on revealed and matched cards."
+        },
+        {
+          "id": "clause-V15.2",
+          "clause": "V15.2",
+          "method": "browser",
+          "text": "Matched cards add a green border and check mark."
+        },
+        {
+          "id": "clause-V15.3",
+          "clause": "V15.3",
+          "method": "browser",
+          "text": "Keep matched cards at full opacity."
+        }
+      ]
+    },
+    {
+      "id": "l2-outline",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V16.1",
+        "V16.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V16.1",
+          "clause": "V16.1",
+          "method": "browser",
+          "text": "Keyboard focus has a 3px white outline offset by 2px."
+        },
+        {
+          "id": "clause-V16.2",
+          "clause": "V16.2",
+          "method": "browser",
+          "text": "Hover changes only the border."
+        }
+      ]
+    },
+    {
+      "id": "l2-motion",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V17.1",
+        "V17.2",
+        "V18.1",
+        "V18.2",
+        "V18.3",
+        "V18.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V17.1",
+          "clause": "V17.1",
+          "method": "browser",
+          "text": "Use 120ms border and opacity transitions."
+        },
+        {
+          "id": "clause-V17.2",
+          "clause": "V17.2",
+          "method": "browser",
+          "text": "Turn those transitions off under prefers-reduced-motion: reduce."
+        },
+        {
+          "id": "clause-V18.1",
+          "clause": "V18.1",
+          "method": "browser",
+          "text": "Show a win banner on completion."
+        },
+        {
+          "id": "clause-V18.2",
+          "clause": "V18.2",
+          "method": "browser",
+          "text": "Pulse it once for 600ms then keep it static."
+        },
+        {
+          "id": "clause-V18.3",
+          "clause": "V18.3",
+          "method": "browser",
+          "text": "Reduced motion shows the static banner immediately."
+        },
+        {
+          "id": "clause-V18.4",
+          "clause": "V18.4",
+          "method": "browser",
+          "text": "Use neither flashing nor confetti."
+        }
+      ]
+    },
+    {
+      "id": "l2-large",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V19.1",
+        "V19.2",
+        "V19.3",
+        "V19.4",
+        "V19.5"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V19.1",
+          "clause": "V19.1",
+          "method": "browser",
+          "text": "Render all 256 cards at 360x800 and 1280x800 viewports."
+        },
+        {
+          "id": "clause-V19.2",
+          "clause": "V19.2",
+          "method": "browser",
+          "text": "Keep the page within viewport width and controls reachable."
+        },
+        {
+          "id": "clause-V19.3",
+          "clause": "V19.3",
+          "method": "browser",
+          "text": "Keep cards at least 44px square with board scrolling when needed."
+        },
+        {
+          "id": "clause-V19.4",
+          "clause": "V19.4",
+          "method": "browser",
+          "text": "Reach first and last cards through touch scrolling and keyboard."
+        },
+        {
+          "id": "clause-V19.5",
+          "clause": "V19.5",
+          "method": "browser",
+          "text": "Keep the full focused card and outline in view."
+        }
+      ]
+    },
+    {
+      "id": "l2-zoom",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V20.1",
+        "V20.2",
+        "V20.3",
+        "V20.4",
+        "V20.5"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V20.1",
+          "clause": "V20.1",
+          "method": "browser",
+          "text": "At 200% browser zoom from 1280x800 keep controls, status and the win summary readable without overlap."
+        },
+        {
+          "id": "clause-V20.2",
+          "clause": "V20.2",
+          "method": "browser",
+          "text": "Keep the outer page within viewport width at that zoom."
+        },
+        {
+          "id": "clause-V20.3",
+          "clause": "V20.3",
+          "method": "browser",
+          "text": "Keep 4x4 and 16x16 playable by pointer and keyboard."
+        },
+        {
+          "id": "clause-V20.4",
+          "clause": "V20.4",
+          "method": "browser",
+          "text": "Allow board scrolling and show the whole focused card and outline."
+        },
+        {
+          "id": "clause-V20.5",
+          "clause": "V20.5",
+          "method": "browser",
+          "text": "Keep pinch zoom enabled."
+        }
+      ]
+    },
+    {
+      "id": "l2-silence",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "S01.1"
+      ],
+      "assertions": [
+        {
+          "id": "clause-S01.1",
+          "clause": "S01.1",
+          "method": "browser",
+          "text": "Every action and state stays silent, including reveal, match, mismatch, restart and win."
+        }
+      ]
+    },
+    {
+      "id": "l2-offline",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "T08.2",
+        "T08.3",
+        "T08.4",
+        "T09.2",
+        "T10.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T08.2",
+          "clause": "T08.2",
+          "method": "browser",
+          "text": "Open it directly from disk without other files or network requests."
+        },
+        {
+          "id": "clause-T08.3",
+          "clause": "T08.3",
+          "method": "browser",
+          "text": "Use the system font."
+        },
+        {
+          "id": "clause-T08.4",
+          "clause": "T08.4",
+          "method": "browser",
+          "text": "Keep browser zoom enabled."
+        },
+        {
+          "id": "clause-T09.2",
+          "clause": "T09.2",
+          "method": "browser",
+          "text": "Storage failure leaves the current session playable."
+        },
+        {
+          "id": "clause-T10.4",
+          "clause": "T10.4",
+          "method": "browser",
+          "text": "Playing the distribution makes no network requests."
+        }
+      ]
+    },
+    {
+      "id": "l2-static",
+      "area": "requirements",
+      "method": "static",
+      "clauses": [
+        "S02.3",
+        "T01.1",
+        "T01.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-S02.3",
+          "clause": "S02.3",
+          "method": "static",
+          "text": "Include no sound toggle in this version."
+        },
+        {
+          "id": "clause-T01.1",
+          "clause": "T01.1",
+          "method": "static",
+          "text": "Use React and TypeScript with DOM rendering."
+        },
+        {
+          "id": "clause-T01.2",
+          "clause": "T01.2",
+          "method": "static",
+          "text": "Use native buttons and a native select."
+        }
+      ]
+    },
+    {
+      "id": "l2-build",
+      "area": "requirements",
+      "method": "build",
+      "clauses": [
+        "T07.4",
+        "T07.6",
+        "T07.9",
+        "T08.1"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T07.4",
+          "clause": "T07.4",
+          "method": "build",
+          "text": "npm test runs game rule unit tests."
+        },
+        {
+          "id": "clause-T07.6",
+          "clause": "T07.6",
+          "method": "build",
+          "text": "npm run build type checks and writes dist/index.html."
+        },
+        {
+          "id": "clause-T07.9",
+          "clause": "T07.9",
+          "method": "build",
+          "text": "Stop development servers and watchers started during the work before finishing."
+        },
+        {
+          "id": "clause-T08.1",
+          "clause": "T08.1",
+          "method": "build",
+          "text": "dist/index.html contains all script, styles and artwork for play."
+        }
+      ]
+    },
+    {
+      "id": "l3-r01-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R01.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R01.4",
+          "clause": "R01.4",
+          "method": "browser",
+          "text": "Number positions from zero in row order."
+        }
+      ]
+    },
+    {
+      "id": "l3-r04-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R04.5"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R04.5",
+          "clause": "R04.5",
+          "method": "browser",
+          "text": "Pause the interval while an imported snapshot awaits Resume."
+        }
+      ]
+    },
+    {
+      "id": "l3-r07-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R07.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R07.4",
+          "clause": "R07.4",
+          "method": "browser",
+          "text": "Pause elapsed time while an imported snapshot awaits Resume."
+        }
+      ]
+    },
+    {
+      "id": "l3-r08-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R08.5",
+        "R08.6"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R08.5",
+          "clause": "R08.5",
+          "method": "browser",
+          "text": "A successful board-code or snapshot load saves its size as the last chosen size."
+        },
+        {
+          "id": "clause-R08.6",
+          "clause": "R08.6",
+          "method": "browser",
+          "text": "A failed load keeps the saved size unchanged."
+        }
+      ]
+    },
+    {
+      "id": "l3-r09-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R09.5",
+        "R09.6"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R09.5",
+          "clause": "R09.5",
+          "method": "browser",
+          "text": "New Game and a size change create a fresh seed."
+        },
+        {
+          "id": "clause-R09.6",
+          "clause": "R09.6",
+          "method": "browser",
+          "text": "Restart keeps the current board code."
+        }
+      ]
+    },
+    {
+      "id": "l3-r11-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "R11.1",
+        "R11.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-R11.1",
+          "clause": "R11.1",
+          "method": "browser",
+          "text": "Invalid board codes show an error and keep the game."
+        },
+        {
+          "id": "clause-R11.2",
+          "clause": "R11.2",
+          "method": "browser",
+          "text": "Invalid snapshots show an error and keep the game."
+        }
+      ]
+    },
+    {
+      "id": "l3-c01-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C01.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C01.3",
+          "clause": "C01.3",
+          "method": "browser",
+          "text": "Each option value is its numeric side length."
+        }
+      ]
+    },
+    {
+      "id": "l3-c02-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C02.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C02.3",
+          "clause": "C02.3",
+          "method": "browser",
+          "text": "Create a fresh seed for the new deal."
+        }
+      ]
+    },
+    {
+      "id": "l3-c03-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C03.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C03.3",
+          "clause": "C03.3",
+          "method": "browser",
+          "text": "Keep the current board code."
+        }
+      ]
+    },
+    {
+      "id": "l3-c04-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C04.1",
+        "C04.2",
+        "C04.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C04.1",
+          "clause": "C04.1",
+          "method": "browser",
+          "text": "Put reproduction controls inside native details."
+        },
+        {
+          "id": "clause-C04.2",
+          "clause": "C04.2",
+          "method": "browser",
+          "text": "Start the details collapsed."
+        },
+        {
+          "id": "clause-C04.3",
+          "clause": "C04.3",
+          "method": "browser",
+          "text": "Use the exact summary Reproduce a game."
+        }
+      ]
+    },
+    {
+      "id": "l3-c05-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C05.1",
+        "C05.2",
+        "C05.3",
+        "C05.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C05.1",
+          "clause": "C05.1",
+          "method": "browser",
+          "text": "Name the input Board code."
+        },
+        {
+          "id": "clause-C05.2",
+          "clause": "C05.2",
+          "method": "browser",
+          "text": "Limit its text to 32 characters."
+        },
+        {
+          "id": "clause-C05.3",
+          "clause": "C05.3",
+          "method": "browser",
+          "text": "Show the current code after a new deal, Restart or successful load."
+        },
+        {
+          "id": "clause-C05.4",
+          "clause": "C05.4",
+          "method": "browser",
+          "text": "Keep an edited draft across card actions."
+        }
+      ]
+    },
+    {
+      "id": "l3-c06-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C06.1",
+        "C06.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C06.1",
+          "clause": "C06.1",
+          "method": "browser",
+          "text": "Name the button Load board."
+        },
+        {
+          "id": "clause-C06.2",
+          "clause": "C06.2",
+          "method": "browser",
+          "text": "Validate the draft before replacing the game with the deal's starting state."
+        }
+      ]
+    },
+    {
+      "id": "l3-c07-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C07.1",
+        "C07.2",
+        "C07.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C07.1",
+          "clause": "C07.1",
+          "method": "browser",
+          "text": "Name the textarea Snapshot JSON."
+        },
+        {
+          "id": "clause-C07.2",
+          "clause": "C07.2",
+          "method": "browser",
+          "text": "Limit it to 65536 characters."
+        },
+        {
+          "id": "clause-C07.3",
+          "clause": "C07.3",
+          "method": "browser",
+          "text": "Also apply D10's UTF-8 byte limit in parsing."
+        }
+      ]
+    },
+    {
+      "id": "l3-c08-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C08.1",
+        "C08.2",
+        "C08.3",
+        "C08.4",
+        "C08.5"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C08.1",
+          "clause": "C08.1",
+          "method": "browser",
+          "text": "Name the button Export snapshot."
+        },
+        {
+          "id": "clause-C08.2",
+          "clause": "C08.2",
+          "method": "browser",
+          "text": "Write readable version 1 snapshot JSON into the textarea."
+        },
+        {
+          "id": "clause-C08.3",
+          "clause": "C08.3",
+          "method": "browser",
+          "text": "Allow manual selection and copying."
+        },
+        {
+          "id": "clause-C08.4",
+          "clause": "C08.4",
+          "method": "browser",
+          "text": "Leave game state and clock unchanged."
+        },
+        {
+          "id": "clause-C08.5",
+          "clause": "C08.5",
+          "method": "browser",
+          "text": "Require no Clipboard API."
+        }
+      ]
+    },
+    {
+      "id": "l3-c09-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C09.1",
+        "C09.2",
+        "C09.3",
+        "C09.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C09.1",
+          "clause": "C09.1",
+          "method": "browser",
+          "text": "Name the button Load snapshot."
+        },
+        {
+          "id": "clause-C09.2",
+          "clause": "C09.2",
+          "method": "browser",
+          "text": "Validate the complete draft before replacing the game."
+        },
+        {
+          "id": "clause-C09.3",
+          "clause": "C09.3",
+          "method": "browser",
+          "text": "Load valid progress paused."
+        },
+        {
+          "id": "clause-C09.4",
+          "clause": "C09.4",
+          "method": "browser",
+          "text": "Show Loaded snapshot. Select Resume to continue."
+        }
+      ]
+    },
+    {
+      "id": "l3-c10-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C10.1",
+        "C10.2",
+        "C10.3",
+        "C10.4",
+        "C10.5",
+        "C10.6",
+        "C10.7"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C10.1",
+          "clause": "C10.1",
+          "method": "browser",
+          "text": "Show Resume only for an imported paused game."
+        },
+        {
+          "id": "clause-C10.2",
+          "clause": "C10.2",
+          "method": "browser",
+          "text": "Resume clears the imported pause."
+        },
+        {
+          "id": "clause-C10.3",
+          "clause": "C10.3",
+          "method": "browser",
+          "text": "Continue unfinished loaded progress."
+        },
+        {
+          "id": "clause-C10.4",
+          "clause": "C10.4",
+          "method": "browser",
+          "text": "Block every card activation while paused."
+        },
+        {
+          "id": "clause-C10.5",
+          "clause": "C10.5",
+          "method": "browser",
+          "text": "Allow board focus movement while paused."
+        },
+        {
+          "id": "clause-C10.6",
+          "clause": "C10.6",
+          "method": "browser",
+          "text": "Move focus to the remembered board tab stop before removing Resume."
+        },
+        {
+          "id": "clause-C10.7",
+          "clause": "C10.7",
+          "method": "browser",
+          "text": "A completed imported game stays completed after Resume."
+        }
+      ]
+    },
+    {
+      "id": "l3-c11-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C11.1",
+        "C11.2",
+        "C11.3",
+        "C11.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C11.1",
+          "clause": "C11.1",
+          "method": "browser",
+          "text": "On invalid input keep the current game."
+        },
+        {
+          "id": "clause-C11.2",
+          "clause": "C11.2",
+          "method": "browser",
+          "text": "Keep the invalid draft for correction."
+        },
+        {
+          "id": "clause-C11.3",
+          "clause": "C11.3",
+          "method": "browser",
+          "text": "Load board shows Invalid board code."
+        },
+        {
+          "id": "clause-C11.4",
+          "clause": "C11.4",
+          "method": "browser",
+          "text": "Load snapshot shows Invalid snapshot."
+        }
+      ]
+    },
+    {
+      "id": "l3-c12-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C12.1",
+        "C12.2",
+        "C12.3",
+        "C12.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C12.1",
+          "clause": "C12.1",
+          "method": "browser",
+          "text": "A completed snapshot shows a static win banner."
+        },
+        {
+          "id": "clause-C12.2",
+          "clause": "C12.2",
+          "method": "browser",
+          "text": "Import plays no celebration."
+        },
+        {
+          "id": "clause-C12.3",
+          "clause": "C12.3",
+          "method": "browser",
+          "text": "Import doesn't write a best score."
+        },
+        {
+          "id": "clause-C12.4",
+          "clause": "C12.4",
+          "method": "browser",
+          "text": "A later win from unfinished imported progress can record a best."
+        }
+      ]
+    },
+    {
+      "id": "l3-c13-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "C13.2",
+        "C13.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C13.2",
+          "clause": "C13.2",
+          "method": "browser",
+          "text": "Keep focus on load and export buttons after activation."
+        },
+        {
+          "id": "clause-C13.4",
+          "clause": "C13.4",
+          "method": "browser",
+          "text": "Resume moves focus as required by C10."
+        }
+      ]
+    },
+    {
+      "id": "l3-c14-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "C14.1",
+        "C14.2",
+        "C14.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-C14.1",
+          "clause": "C14.1",
+          "method": "replay",
+          "text": "Keep replay in the developer CLI and game core."
+        },
+        {
+          "id": "clause-C14.2",
+          "clause": "C14.2",
+          "method": "replay",
+          "text": "Provide no replay controls in the game UI."
+        },
+        {
+          "id": "clause-C14.3",
+          "clause": "C14.3",
+          "method": "replay",
+          "text": "npm run replay -- PATH reads replay JSON and prints the final snapshot."
+        }
+      ]
+    },
+    {
+      "id": "l3-i12-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "I12.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-I12.2",
+          "clause": "I12.2",
+          "method": "browser",
+          "text": "A successful board or snapshot load resets it to the first card."
+        }
+      ]
+    },
+    {
+      "id": "l3-v01-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V01.2",
+        "V01.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V01.2",
+          "clause": "V01.2",
+          "method": "browser",
+          "text": "Use CSS Grid and DOM card buttons."
+        },
+        {
+          "id": "clause-V01.4",
+          "clause": "V01.4",
+          "method": "browser",
+          "text": "Render without canvas or shadcn components."
+        }
+      ]
+    },
+    {
+      "id": "l3-v10-static",
+      "area": "requirements",
+      "method": "static",
+      "clauses": [
+        "V10.2",
+        "V10.6",
+        "V10.7",
+        "V10.8",
+        "V10.9"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V10.2",
+          "clause": "V10.2",
+          "method": "static",
+          "text": "Use integer face IDs from 0 through 127."
+        },
+        {
+          "id": "clause-V10.6",
+          "clause": "V10.6",
+          "method": "static",
+          "text": "Shape is id % 8 in the stated shape order."
+        },
+        {
+          "id": "clause-V10.7",
+          "clause": "V10.7",
+          "method": "static",
+          "text": "Marker is floor(id / 8) % 8 in the stated marker order."
+        },
+        {
+          "id": "clause-V10.8",
+          "clause": "V10.8",
+          "method": "static",
+          "text": "Fill is floor(id / 64) with solid then outline."
+        },
+        {
+          "id": "clause-V10.9",
+          "clause": "V10.9",
+          "method": "static",
+          "text": "Color is the palette entry at the marker index."
+        }
+      ]
+    },
+    {
+      "id": "l3-v12-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "V12.1",
+        "V12.2",
+        "V12.3",
+        "V12.4",
+        "V12.5",
+        "V12.6"
+      ],
+      "assertions": [
+        {
+          "id": "clause-V12.1",
+          "clause": "V12.1",
+          "method": "browser",
+          "text": "Use viewBox 0 0 100 100."
+        },
+        {
+          "id": "clause-V12.2",
+          "clause": "V12.2",
+          "method": "browser",
+          "text": "Center the main shape within x=25..75 and y=25..75."
+        },
+        {
+          "id": "clause-V12.3",
+          "clause": "V12.3",
+          "method": "browser",
+          "text": "Draw the marker above the shape as a radius-5 circle 40 units from the center."
+        },
+        {
+          "id": "clause-V12.4",
+          "clause": "V12.4",
+          "method": "browser",
+          "text": "Give the marker a 3-unit Face-background stroke."
+        },
+        {
+          "id": "clause-V12.5",
+          "clause": "V12.5",
+          "method": "browser",
+          "text": "Normalize diagonal offsets to about 28.284 units per axis."
+        },
+        {
+          "id": "clause-V12.6",
+          "clause": "V12.6",
+          "method": "browser",
+          "text": "Use a 5-unit stroke for outlined shapes."
+        }
+      ]
+    },
+    {
+      "id": "l3-s02-static",
+      "area": "requirements",
+      "method": "static",
+      "clauses": [
+        "S02.1",
+        "S02.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-S02.1",
+          "clause": "S02.1",
+          "method": "static",
+          "text": "Include no audio files."
+        },
+        {
+          "id": "clause-S02.2",
+          "clause": "S02.2",
+          "method": "static",
+          "text": "Include no audio API calls."
+        }
+      ]
+    },
+    {
+      "id": "l3-t01-static",
+      "area": "requirements",
+      "method": "static",
+      "clauses": [
+        "T01.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T01.3",
+          "clause": "T01.3",
+          "method": "static",
+          "text": "Use CSS Grid."
+        }
+      ]
+    },
+    {
+      "id": "l3-t02-static",
+      "area": "requirements",
+      "method": "static",
+      "clauses": [
+        "T02.1",
+        "T02.2",
+        "T02.3",
+        "T02.4",
+        "T02.5",
+        "T02.6",
+        "T02.7",
+        "T02.8",
+        "T02.9",
+        "T02.10"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T02.1",
+          "clause": "T02.1",
+          "method": "static",
+          "text": "Pin react and react-dom to 19.3.1."
+        },
+        {
+          "id": "clause-T02.2",
+          "clause": "T02.2",
+          "method": "static",
+          "text": "Pin typescript to 7.0.2."
+        },
+        {
+          "id": "clause-T02.3",
+          "clause": "T02.3",
+          "method": "static",
+          "text": "Pin @types/react and @types/react-dom to 19.3.0."
+        },
+        {
+          "id": "clause-T02.4",
+          "clause": "T02.4",
+          "method": "static",
+          "text": "Pin vite to 8.3.5."
+        },
+        {
+          "id": "clause-T02.5",
+          "clause": "T02.5",
+          "method": "static",
+          "text": "Pin @vitejs/plugin-react to 6.1.2."
+        },
+        {
+          "id": "clause-T02.6",
+          "clause": "T02.6",
+          "method": "static",
+          "text": "Pin vite-plugin-singlefile to 2.3.4."
+        },
+        {
+          "id": "clause-T02.7",
+          "clause": "T02.7",
+          "method": "static",
+          "text": "Pin vitest to 5.0.5."
+        },
+        {
+          "id": "clause-T02.8",
+          "clause": "T02.8",
+          "method": "static",
+          "text": "Pin @playwright/test to 1.64.1."
+        },
+        {
+          "id": "clause-T02.9",
+          "clause": "T02.9",
+          "method": "static",
+          "text": "Pin @types/node to 24.19.2."
+        },
+        {
+          "id": "clause-T02.10",
+          "clause": "T02.10",
+          "method": "static",
+          "text": "Keep the dependency lockfile."
+        }
+      ]
+    },
+    {
+      "id": "l3-t03-static",
+      "area": "requirements",
+      "method": "static",
+      "clauses": [
+        "T03.1",
+        "T03.2",
+        "T03.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T03.1",
+          "clause": "T03.1",
+          "method": "static",
+          "text": "Use Node 24.19 or later and npm."
+        },
+        {
+          "id": "clause-T03.2",
+          "clause": "T03.2",
+          "method": "static",
+          "text": "Separate browser and Node compiler projects."
+        },
+        {
+          "id": "clause-T03.3",
+          "clause": "T03.3",
+          "method": "static",
+          "text": "Use ESM with static imports and type-only imports for types."
+        }
+      ]
+    },
+    {
+      "id": "l3-t03-build",
+      "area": "requirements",
+      "method": "build",
+      "clauses": [
+        "T03.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T03.4",
+          "clause": "T03.4",
+          "method": "build",
+          "text": "Use Node 26.12.1, npm 11.20.0 and Playwright 1.64.1 with Chromium 156.0.8078.4 as the named combination."
+        }
+      ]
+    },
+    {
+      "id": "l3-t04-static",
+      "area": "requirements",
+      "method": "static",
+      "clauses": [
+        "T04.1",
+        "T04.2"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T04.1",
+          "clause": "T04.1",
+          "method": "static",
+          "text": "Enable strict, noUncheckedIndexedAccess, exactOptionalPropertyTypes, verbatimModuleSyntax and erasableSyntaxOnly."
+        },
+        {
+          "id": "clause-T04.2",
+          "clause": "T04.2",
+          "method": "static",
+          "text": "Keep type checking separate from bundling."
+        }
+      ]
+    },
+    {
+      "id": "l3-t06-static",
+      "area": "requirements",
+      "method": "static",
+      "clauses": [
+        "T06.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T06.3",
+          "clause": "T06.3",
+          "method": "static",
+          "text": "Keep authored TypeScript files at or below 200 lines."
+        }
+      ]
+    },
+    {
+      "id": "l3-t07-build",
+      "area": "requirements",
+      "method": "build",
+      "clauses": [
+        "T07.1",
+        "T07.2",
+        "T07.3",
+        "T07.5",
+        "T07.8"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T07.1",
+          "clause": "T07.1",
+          "method": "build",
+          "text": "npm ci installs locked dependencies."
+        },
+        {
+          "id": "clause-T07.2",
+          "clause": "T07.2",
+          "method": "build",
+          "text": "npm run dev serves locally."
+        },
+        {
+          "id": "clause-T07.3",
+          "clause": "T07.3",
+          "method": "build",
+          "text": "npm run typecheck checks every compiler project."
+        },
+        {
+          "id": "clause-T07.5",
+          "clause": "T07.5",
+          "method": "build",
+          "text": "npm run test:e2e builds current source then tests that build in fresh browser contexts."
+        },
+        {
+          "id": "clause-T07.8",
+          "clause": "T07.8",
+          "method": "build",
+          "text": "Fail browser testing on a failed build without using stale dist."
+        }
+      ]
+    },
+    {
+      "id": "l3-t07-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "T07.7"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T07.7",
+          "clause": "T07.7",
+          "method": "replay",
+          "text": "npm run replay -- PATH reads replay JSON and prints the final snapshot."
+        }
+      ]
+    },
+    {
+      "id": "l3-t09-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "T09.1"
+      ],
+      "assertions": [
+        {
+          "id": "clause-T09.1",
+          "clause": "T09.1",
+          "method": "browser",
+          "text": "Check saved preferences on a local HTTP origin."
+        }
+      ]
+    },
+    {
+      "id": "l3-a04-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "A04.5"
+      ],
+      "assertions": [
+        {
+          "id": "clause-A04.5",
+          "clause": "A04.5",
+          "method": "browser",
+          "text": "Earlier deal callbacks can't change the current deal."
+        }
+      ]
+    },
+    {
+      "id": "l3-a05-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "A05.6"
+      ],
+      "assertions": [
+        {
+          "id": "clause-A05.6",
+          "clause": "A05.6",
+          "method": "browser",
+          "text": "Storage failure leaves play working."
+        }
+      ]
+    },
+    {
+      "id": "l3-a06-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "A06.2",
+        "A06.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-A06.2",
+          "clause": "A06.2",
+          "method": "browser",
+          "text": "Importing a completed snapshot doesn't update bests or celebrate."
+        },
+        {
+          "id": "clause-A06.3",
+          "clause": "A06.3",
+          "method": "browser",
+          "text": "A later win from an unfinished imported game can update bests."
+        }
+      ]
+    },
+    {
+      "id": "l3-a08-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "A08.1",
+        "A08.2",
+        "A08.3",
+        "A08.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-A08.1",
+          "clause": "A08.1",
+          "method": "browser",
+          "text": "Mount a card's face SVG only while revealed or matched."
+        },
+        {
+          "id": "clause-A08.2",
+          "clause": "A08.2",
+          "method": "browser",
+          "text": "Keep hidden face identity out of attributes, accessible names and diagnostic globals."
+        },
+        {
+          "id": "clause-A08.3",
+          "clause": "A08.3",
+          "method": "browser",
+          "text": "Tests can know the deck from documented board codes."
+        },
+        {
+          "id": "clause-A08.4",
+          "clause": "A08.4",
+          "method": "browser",
+          "text": "Expose no solver endpoint."
+        }
+      ]
+    },
+    {
+      "id": "l3-a09-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "A09.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-A09.3",
+          "clause": "A09.3",
+          "method": "browser",
+          "text": "Focus movement changes neither deck nor moves."
+        }
+      ]
+    },
+    {
+      "id": "l3-a11-static",
+      "area": "requirements",
+      "method": "static",
+      "clauses": [
+        "A11.1",
+        "A11.2",
+        "A11.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-A11.1",
+          "clause": "A11.1",
+          "method": "static",
+          "text": "Keep development fixtures and diagnostic helpers out of the shipped game."
+        },
+        {
+          "id": "clause-A11.2",
+          "clause": "A11.2",
+          "method": "static",
+          "text": "Tests can use board-code, snapshot and replay formats."
+        },
+        {
+          "id": "clause-A11.3",
+          "clause": "A11.3",
+          "method": "static",
+          "text": "The shipped game exposes only documented controls."
+        }
+      ]
+    },
+    {
+      "id": "l3-d01-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "D01.1",
+        "D01.2",
+        "D01.3",
+        "D01.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D01.1",
+          "clause": "D01.1",
+          "method": "replay",
+          "text": "Parse exactly np1-N-seed with a supported side length."
+        },
+        {
+          "id": "clause-D01.2",
+          "clause": "D01.2",
+          "method": "replay",
+          "text": "Seed is an integer from 1 through 2147483646."
+        },
+        {
+          "id": "clause-D01.3",
+          "clause": "D01.3",
+          "method": "replay",
+          "text": "Use decimal digits without leading zeros."
+        },
+        {
+          "id": "clause-D01.4",
+          "clause": "D01.4",
+          "method": "replay",
+          "text": "A text control can trim surrounding whitespace before parsing."
+        }
+      ]
+    },
+    {
+      "id": "l3-d02-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "D02.1",
+        "D02.2",
+        "D02.3",
+        "D02.4"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D02.1",
+          "clause": "D02.1",
+          "method": "replay",
+          "text": "np1 fixes the generation algorithm."
+        },
+        {
+          "id": "clause-D02.2",
+          "clause": "D02.2",
+          "method": "replay",
+          "text": "The same code gives the same deck in every supported runtime."
+        },
+        {
+          "id": "clause-D02.3",
+          "clause": "D02.3",
+          "method": "replay",
+          "text": "Generation changes need another version."
+        },
+        {
+          "id": "clause-D02.4",
+          "clause": "D02.4",
+          "method": "replay",
+          "text": "Time, animation and other random draws can't change the deck."
+        }
+      ]
+    },
+    {
+      "id": "l3-d03-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "D03.1",
+        "D03.2",
+        "D03.3"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D03.1",
+          "clause": "D03.1",
+          "method": "replay",
+          "text": "Initialize Park-Miller state to seed."
+        },
+        {
+          "id": "clause-D03.2",
+          "clause": "D03.2",
+          "method": "replay",
+          "text": "Each draw sets state = (state * 16807) % 2147483647 with exact integer arithmetic."
+        },
+        {
+          "id": "clause-D03.3",
+          "clause": "D03.3",
+          "method": "replay",
+          "text": "Seed 1 begins 16807, 282475249, 1622650073, 984943658 and 1144108930."
+        }
+      ]
+    },
+    {
+      "id": "l3-d04-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "D04.1",
+        "D04.2",
+        "D04.3",
+        "D04.4",
+        "D04.5",
+        "D04.6"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D04.1",
+          "clause": "D04.1",
+          "method": "replay",
+          "text": "Build paired faces from 0 through N * N / 2 - 1 in ascending order."
+        },
+        {
+          "id": "clause-D04.2",
+          "clause": "D04.2",
+          "method": "replay",
+          "text": "Shuffle downward from N * N - 1 through 1 by swapping i with a draw in 0..i."
+        },
+        {
+          "id": "clause-D04.3",
+          "clause": "D04.3",
+          "method": "replay",
+          "text": "Use q=2147483646 and limit=floor(q / b) * b for a draw with b results."
+        },
+        {
+          "id": "clause-D04.4",
+          "clause": "D04.4",
+          "method": "replay",
+          "text": "Advance the generator and set x=state - 1."
+        },
+        {
+          "id": "clause-D04.5",
+          "clause": "D04.5",
+          "method": "replay",
+          "text": "Retry when x >= limit and otherwise return x % b."
+        },
+        {
+          "id": "clause-D04.6",
+          "clause": "D04.6",
+          "method": "replay",
+          "text": "np1-4-1 yields [6,7,0,5,2,2,0,5,3,7,1,6,4,4,1,3]."
+        }
+      ]
+    },
+    {
+      "id": "l3-d05-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "D05.1",
+        "D05.2",
+        "D05.3",
+        "D05.4",
+        "D05.5",
+        "D05.6",
+        "D05.7"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D05.1",
+          "clause": "D05.1",
+          "method": "replay",
+          "text": "Snapshots have exactly version, boardCode, matched, selection, moves, elapsedMs and started."
+        },
+        {
+          "id": "clause-D05.2",
+          "clause": "D05.2",
+          "method": "replay",
+          "text": "Snapshot version is 1."
+        },
+        {
+          "id": "clause-D05.3",
+          "clause": "D05.3",
+          "method": "replay",
+          "text": "matched contains matched position indices."
+        },
+        {
+          "id": "clause-D05.4",
+          "clause": "D05.4",
+          "method": "replay",
+          "text": "Derive deck, pair count and completion from the fields."
+        },
+        {
+          "id": "clause-D05.5",
+          "clause": "D05.5",
+          "method": "replay",
+          "text": "Closed selection has only kind=closed."
+        },
+        {
+          "id": "clause-D05.6",
+          "clause": "D05.6",
+          "method": "replay",
+          "text": "One-card selection has only kind=one and index."
+        },
+        {
+          "id": "clause-D05.7",
+          "clause": "D05.7",
+          "method": "replay",
+          "text": "Mismatch selection has only kind=mismatch, first, second and remainingMs."
+        }
+      ]
+    },
+    {
+      "id": "l3-d06-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "D06.1",
+        "D06.2",
+        "D06.3",
+        "D06.4",
+        "D06.5",
+        "D06.6",
+        "D06.7"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D06.1",
+          "clause": "D06.1",
+          "method": "replay",
+          "text": "Validate the whole snapshot before replacement."
+        },
+        {
+          "id": "clause-D06.2",
+          "clause": "D06.2",
+          "method": "replay",
+          "text": "Reject unknown keys."
+        },
+        {
+          "id": "clause-D06.3",
+          "clause": "D06.3",
+          "method": "replay",
+          "text": "Require unique in-range matched indices containing whole face pairs."
+        },
+        {
+          "id": "clause-D06.4",
+          "clause": "D06.4",
+          "method": "replay",
+          "text": "Selection indices are in range and unmatched."
+        },
+        {
+          "id": "clause-D06.5",
+          "clause": "D06.5",
+          "method": "replay",
+          "text": "Mismatch indices are distinct and have different faces."
+        },
+        {
+          "id": "clause-D06.6",
+          "clause": "D06.6",
+          "method": "replay",
+          "text": "remainingMs is an integer from 1 through 800."
+        },
+        {
+          "id": "clause-D06.7",
+          "clause": "D06.7",
+          "method": "replay",
+          "text": "Completion requires closed selection."
+        }
+      ]
+    },
+    {
+      "id": "l3-d07-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "D07.1",
+        "D07.2",
+        "D07.3",
+        "D07.4",
+        "D07.5"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D07.1",
+          "clause": "D07.1",
+          "method": "replay",
+          "text": "started is boolean."
+        },
+        {
+          "id": "clause-D07.2",
+          "clause": "D07.2",
+          "method": "replay",
+          "text": "moves and elapsedMs are nonnegative safe integers."
+        },
+        {
+          "id": "clause-D07.3",
+          "clause": "D07.3",
+          "method": "replay",
+          "text": "moves is at least matched pair count plus one for pending mismatch."
+        },
+        {
+          "id": "clause-D07.4",
+          "clause": "D07.4",
+          "method": "replay",
+          "text": "Not started requires zero moves and time, no matches and closed selection."
+        },
+        {
+          "id": "clause-D07.5",
+          "clause": "D07.5",
+          "method": "replay",
+          "text": "Started with zero moves requires one revealed card."
+        }
+      ]
+    },
+    {
+      "id": "l3-d07-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "D07.6"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D07.6",
+          "clause": "D07.6",
+          "method": "browser",
+          "text": "Import pauses clock and mismatch until Resume."
+        }
+      ]
+    },
+    {
+      "id": "l3-d08-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "D08.1",
+        "D08.2",
+        "D08.3",
+        "D08.4",
+        "D08.5",
+        "D08.6",
+        "D08.7"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D08.1",
+          "clause": "D08.1",
+          "method": "replay",
+          "text": "Replay has exactly version, boardCode, actions and endMs with version 1."
+        },
+        {
+          "id": "clause-D08.2",
+          "clause": "D08.2",
+          "method": "replay",
+          "text": "Each action has exactly atMs and index."
+        },
+        {
+          "id": "clause-D08.3",
+          "clause": "D08.3",
+          "method": "replay",
+          "text": "Indices are in range."
+        },
+        {
+          "id": "clause-D08.4",
+          "clause": "D08.4",
+          "method": "replay",
+          "text": "Times are nonnegative safe integers."
+        },
+        {
+          "id": "clause-D08.5",
+          "clause": "D08.5",
+          "method": "replay",
+          "text": "Action times are nondecreasing."
+        },
+        {
+          "id": "clause-D08.6",
+          "clause": "D08.6",
+          "method": "replay",
+          "text": "With actions, endMs is at least the final atMs."
+        },
+        {
+          "id": "clause-D08.7",
+          "clause": "D08.7",
+          "method": "replay",
+          "text": "Equal-time actions keep array order."
+        }
+      ]
+    },
+    {
+      "id": "l3-d09-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "D09.1",
+        "D09.2",
+        "D09.3",
+        "D09.4",
+        "D09.5",
+        "D09.6",
+        "D09.7"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D09.1",
+          "clause": "D09.1",
+          "method": "replay",
+          "text": "Replay starts from the code's hidden deal."
+        },
+        {
+          "id": "clause-D09.2",
+          "clause": "D09.2",
+          "method": "replay",
+          "text": "Advance to each atMs before activating its index then advance to endMs."
+        },
+        {
+          "id": "clause-D09.3",
+          "clause": "D09.3",
+          "method": "replay",
+          "text": "Resolve an interval ending exactly at an action time before that action."
+        },
+        {
+          "id": "clause-D09.4",
+          "clause": "D09.4",
+          "method": "replay",
+          "text": "Apply game rules to ignored activation."
+        },
+        {
+          "id": "clause-D09.5",
+          "clause": "D09.5",
+          "method": "replay",
+          "text": "Reject elapsed-time addition outside safe integers."
+        },
+        {
+          "id": "clause-D09.6",
+          "clause": "D09.6",
+          "method": "replay",
+          "text": "The clock starts at first valid activation and replay time omits hidden-page and imported-pause time."
+        },
+        {
+          "id": "clause-D09.7",
+          "clause": "D09.7",
+          "method": "replay",
+          "text": "A new deal starts another replay."
+        }
+      ]
+    },
+    {
+      "id": "l3-d10-replay",
+      "area": "requirements",
+      "method": "replay",
+      "clauses": [
+        "D10.1",
+        "D10.2",
+        "D10.3",
+        "D10.4",
+        "D10.5",
+        "D10.6",
+        "D10.7",
+        "D10.8",
+        "D10.10"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D10.1",
+          "clause": "D10.1",
+          "method": "replay",
+          "text": "Limit snapshot JSON to 65536 UTF-8 bytes."
+        },
+        {
+          "id": "clause-D10.2",
+          "clause": "D10.2",
+          "method": "replay",
+          "text": "Limit replay JSON to 1048576 UTF-8 bytes."
+        },
+        {
+          "id": "clause-D10.3",
+          "clause": "D10.3",
+          "method": "replay",
+          "text": "Limit replay to 10000 actions."
+        },
+        {
+          "id": "clause-D10.4",
+          "clause": "D10.4",
+          "method": "replay",
+          "text": "Reject malformed JSON and unsupported versions."
+        },
+        {
+          "id": "clause-D10.5",
+          "clause": "D10.5",
+          "method": "replay",
+          "text": "Snapshot consistency means D05, D06 and D07."
+        },
+        {
+          "id": "clause-D10.6",
+          "clause": "D10.6",
+          "method": "replay",
+          "text": "Replay consistency means D08 and D09."
+        },
+        {
+          "id": "clause-D10.7",
+          "clause": "D10.7",
+          "method": "replay",
+          "text": "Validate board codes under D01."
+        },
+        {
+          "id": "clause-D10.8",
+          "clause": "D10.8",
+          "method": "replay",
+          "text": "Don't require reconstruction of earlier turns."
+        },
+        {
+          "id": "clause-D10.10",
+          "clause": "D10.10",
+          "method": "replay",
+          "text": "Invalid replay files are rejected by CLI and core."
+        }
+      ]
+    },
+    {
+      "id": "l3-d10-browser",
+      "area": "requirements",
+      "method": "browser",
+      "clauses": [
+        "D10.9"
+      ],
+      "assertions": [
+        {
+          "id": "clause-D10.9",
+          "clause": "D10.9",
+          "method": "browser",
+          "text": "Invalid board codes and snapshots keep the browser game."
+        }
+      ]
+    }
+  ],
+  "stated": [
+    "delivery-single-file",
+    "stack-react-typescript",
+    "grid-4-and-16",
+    "grid-sizes-pair-up",
+    "faces-drawn",
+    "faces-distinct-16",
+    "matching-pairs",
+    "input-same-card-twice",
+    "input-clicks-during-delay",
+    "moves-count",
+    "moves-compared",
+    "new-game-resets",
+    "win-shown",
+    "best-score",
+    "phone-full-game",
+    "keyboard-full-game",
+    "l2-sizes",
+    "l2-selection",
+    "l2-mismatch",
+    "l2-moves",
+    "l2-completion",
+    "l2-clock",
+    "l2-preferences",
+    "l2-reset",
+    "l2-best",
+    "l2-storage",
+    "l2-stale",
+    "l2-controls",
+    "l2-focus",
+    "l2-activation",
+    "l2-navigation",
+    "l2-matched",
+    "l2-scroll",
+    "l2-names",
+    "l2-announcements",
+    "l2-native",
+    "l2-layout",
+    "l2-colors",
+    "l2-typography",
+    "l2-faces",
+    "l2-outline",
+    "l2-motion",
+    "l2-large",
+    "l2-zoom",
+    "l2-silence",
+    "l2-offline",
+    "l2-static",
+    "l2-build",
+    "l3-r01-browser",
+    "l3-r04-browser",
+    "l3-r07-browser",
+    "l3-r08-browser",
+    "l3-r09-browser",
+    "l3-r11-browser",
+    "l3-c01-browser",
+    "l3-c02-browser",
+    "l3-c03-browser",
+    "l3-c04-browser",
+    "l3-c05-browser",
+    "l3-c06-browser",
+    "l3-c07-browser",
+    "l3-c08-browser",
+    "l3-c09-browser",
+    "l3-c10-browser",
+    "l3-c11-browser",
+    "l3-c12-browser",
+    "l3-c13-browser",
+    "l3-c14-replay",
+    "l3-i12-browser",
+    "l3-v01-browser",
+    "l3-v10-static",
+    "l3-v12-browser",
+    "l3-s02-static",
+    "l3-t01-static",
+    "l3-t02-static",
+    "l3-t03-static",
+    "l3-t03-build",
+    "l3-t04-static",
+    "l3-t06-static",
+    "l3-t07-build",
+    "l3-t07-replay",
+    "l3-t09-browser",
+    "l3-a04-browser",
+    "l3-a05-browser",
+    "l3-a06-browser",
+    "l3-a08-browser",
+    "l3-a09-browser",
+    "l3-a11-static",
+    "l3-d01-replay",
+    "l3-d02-replay",
+    "l3-d03-replay",
+    "l3-d04-replay",
+    "l3-d05-replay",
+    "l3-d06-replay",
+    "l3-d07-replay",
+    "l3-d07-browser",
+    "l3-d08-replay",
+    "l3-d09-replay",
+    "l3-d10-replay",
+    "l3-d10-browser"
+  ],
+  "working": [
+    "delivery-single-file",
+    "matching-pairs",
+    "phone-full-game",
+    "keyboard-full-game",
+    "win-shown",
+    "new-game-resets"
+  ],
+  "wishes": [],
+  "clausePassRule": "all",
+  "uncheckable": [
+    {
+      "clause": "I03.1",
+      "reason": "Native long-press context menus need a headed touch browser."
+    },
+    {
+      "clause": "V20.1",
+      "reason": "Native browser zoom needs a headed browser at 200%."
+    },
+    {
+      "clause": "V20.2",
+      "reason": "Native browser zoom needs a headed browser at 200%."
+    },
+    {
+      "clause": "V20.3",
+      "reason": "Native browser zoom needs a headed browser at 200%."
+    },
+    {
+      "clause": "V20.4",
+      "reason": "Native browser zoom needs a headed browser at 200%."
+    },
+    {
+      "clause": "T03.4",
+      "reason": "The named toolchain needs its own verifier image instead of the shared Node 24 image."
+    },
+    {
+      "clause": "T07.9",
+      "reason": "Leftover authoring processes must be checked before that container shuts down."
+    }
+  ],
+  "review": [
+    {
+      "clause": "I17.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "I17.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "I17.3",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "I17.4",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "I17.5",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "I17.6",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "V11.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "V11.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "V12.7",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T03.5",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T03.6",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T05.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T05.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T05.3",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T05.4",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T06.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T06.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T06.4",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T06.5",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T10.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T10.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "T10.3",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A01.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A01.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A01.3",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A02.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A02.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A02.3",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A02.4",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A03.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A03.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A04.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A04.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A04.3",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A04.4",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A05.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A05.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A05.3",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A05.4",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A05.5",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A06.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A07.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A07.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A07.3",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A09.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A09.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A09.4",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A10.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A10.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A10.3",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A10.4",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A10.5",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A12.1",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A12.2",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    },
+    {
+      "clause": "A12.3",
+      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+    }
+  ]
+}

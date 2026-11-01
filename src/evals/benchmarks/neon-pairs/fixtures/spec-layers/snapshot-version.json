@@ -1,0 +1,6 @@
+{
+  "id": "snapshot-version",
+  "edits": [{ "path": "src/game/snapshot.ts", "before": "value.version !== SNAPSHOT_VERSION", "after": "value.version === -SNAPSHOT_VERSION" }],
+  "expected": { "D05.2": "fail", "D06.2": "pass", "D08.1": "pass" },
+  "scope": "Accept snapshot version 2 while keeping unknown-field rejection and replay version checks."
+}

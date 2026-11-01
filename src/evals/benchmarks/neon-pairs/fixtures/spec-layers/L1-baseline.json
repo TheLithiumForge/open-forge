@@ -1,0 +1,125 @@
+{
+    "schemaVersion":  1,
+    "files":  [
+                  {
+                      "path":  "checks/activation.ts",
+                      "sha256":  "f071042a9ff32152205e2dd05b31d0570f47b7dda2bd9f231bcfdbedfcd2aab5"
+                  },
+                  {
+                      "path":  "checks/board.ts",
+                      "sha256":  "4cfe382ce3435755bb72dc331bae09888695672a3d1f50c1f1a78205ee614fd8"
+                  },
+                  {
+                      "path":  "checks/browser-probe.ts",
+                      "sha256":  "6f91ace7f35577d829ef26cdb33563cd602641f8a35137eacdb15f0988ec87ef"
+                  },
+                  {
+                      "path":  "checks/check-ids.test.ts",
+                      "sha256":  "73d89f8d1ff9eb31dd3b0937efebfb0af1a0eb06cb4aae744c7912dae1f7d3ed"
+                  },
+                  {
+                      "path":  "checks/check-ids.ts",
+                      "sha256":  "0e105fa0d51682864a58dc47853da1419d2830870d3dc1bfcbc3f6c979a0955e"
+                  },
+                  {
+                      "path":  "checks/checks-delivery.ts",
+                      "sha256":  "3f91c5826beb373c84f49f101ddabb7883b5a02cb6aeb93af2fe52336b4e27ff"
+                  },
+                  {
+                      "path":  "checks/checks-devices.ts",
+                      "sha256":  "7f77f8b827f94bf8f97720556bccb26740327daf8bdf89dbcbb160fb10ef24b8"
+                  },
+                  {
+                      "path":  "checks/checks-large.ts",
+                      "sha256":  "fb4af830f0a689ce9e7cb21a3d21909e58ec9b8d19d3815a310bfcae3dc248c3"
+                  },
+                  {
+                      "path":  "checks/checks-play.ts",
+                      "sha256":  "0089cd9d11bee057531f2dc21d12681c57499bf0f0d57ffd66105725cf624574"
+                  },
+                  {
+                      "path":  "checks/checks-score.ts",
+                      "sha256":  "ea8e4afe86c59c86e1b3e6cdf494afe32781e0e063b3c20199c61c7fec0972f9"
+                  },
+                  {
+                      "path":  "checks/container-paths.ts",
+                      "sha256":  "6432704fcd28eef95636555802d756066186e9e0a076fe06ed964aa7967e3402"
+                  },
+                  {
+                      "path":  "checks/container.test.ts",
+                      "sha256":  "a864f3972c9d4c6900915a3077fa52557726e2926d274090134f9c5518d897ac"
+                  },
+                  {
+                      "path":  "checks/container.ts",
+                      "sha256":  "bcb1eb867e3cf0ec1bf3d3a0dce97b9bc583d009e682c10b890c75d66bcfb987"
+                  },
+                  {
+                      "path":  "checks/face-sheet.ts",
+                      "sha256":  "2c95b53626cb5a7e56693677754b91663d11661be8cffb5cb190afc92fc573fc"
+                  },
+                  {
+                      "path":  "checks/face-signature.ts",
+                      "sha256":  "b39dd37d65088b735ed9cba67fa0d2a2a42221d5689eaa86e482878f1ea1ce94"
+                  },
+                  {
+                      "path":  "checks/fixtures.test.ts",
+                      "sha256":  "b49df66513cf89ff93c9230f30afcc6689a6d007c0281aa0d5a7bd01d91747a1"
+                  },
+                  {
+                      "path":  "checks/fixtures.ts",
+                      "sha256":  "93d3b7e11a00994d6dddcf01b216fb145b631c9a0ce7720e8fbaaa858f2c97e2"
+                  },
+                  {
+                      "path":  "checks/grid-size.ts",
+                      "sha256":  "88288d18cfd2409b1e0fc7a6d552dd105c3770655767265f18b804d4e8d79dde"
+                  },
+                  {
+                      "path":  "checks/layer.test.ts",
+                      "sha256":  "5b4815584485e4a58ec1472d23a9f026a5627678f9889cbdf6e0ce67e2f88af7"
+                  },
+                  {
+                      "path":  "checks/layer.ts",
+                      "sha256":  "9d0059801cbe0ed7587411ec57b4c34cb78a1c7d809ff7afe40bb36c62ed6e6d"
+                  },
+                  {
+                      "path":  "checks/neon-pairs.ts",
+                      "sha256":  "f7760671559deb5592afb9f9e02c8cce9c5715bedb52976dfba034fa84ad66f3"
+                  },
+                  {
+                      "path":  "checks/open-game.ts",
+                      "sha256":  "1a90322d1360a1608300303c20e22d79fed229ae64c3f63cba6ec4b78a7f7285"
+                  },
+                  {
+                      "path":  "checks/page-text.ts",
+                      "sha256":  "842d27b98cb7acc1fd7aadaed35fd05be8a8f9de14180229c311b9f6ef8aff51"
+                  },
+                  {
+                      "path":  "checks/README.md",
+                      "sha256":  "7dd14ca6255e07b25b408f0ab817ba8f80aded41d557d9fcf7112f4ea688eb5f"
+                  },
+                  {
+                      "path":  "checks/report.test.ts",
+                      "sha256":  "5b3c113199bd5912c1106f38708d1441a4a2e649e0632aec1f488a7d7089f01f"
+                  },
+                  {
+                      "path":  "checks/report.ts",
+                      "sha256":  "081b9ab42239498b85f31e34f9e5bb080162749da2aa4e3d0e1f3ebd9b2e1edc"
+                  },
+                  {
+                      "path":  "checks/screenshots.ts",
+                      "sha256":  "fb4d5b5d6b8179757ae6c6149a18c1d5560d52816dbf0e953251955409f032af"
+                  },
+                  {
+                      "path":  "checks/solver.ts",
+                      "sha256":  "09d5aea675f7f75b54e4ac794647f80722c9be9497988234a0c8d558a1942fdd"
+                  },
+                  {
+                      "path":  "checks/validate.ts",
+                      "sha256":  "8f32ca965f47e79e409e3136b7dc6f34f2756379b202aa8d884723b462f692ff"
+                  },
+                  {
+                      "path":  "checks/worker.ts",
+                      "sha256":  "da5beb7c4e6ae9735c5f38c33bd0bea29840f12d102c8e1dab2b2d1852c5f67f"
+                  }
+              ]
+}

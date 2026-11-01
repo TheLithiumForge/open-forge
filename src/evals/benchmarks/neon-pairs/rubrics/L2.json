@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "specVersion": 2,
+  "version": "L2-v1",
+  "ballots": 3,
+  "answers": [
+    "yes",
+    "no",
+    "unsure"
+  ],
+  "questions": [
+    {
+      "id": "screen-reader",
+      "area": "accessibility",
+      "evidence": "source",
+      "question": "Does recorded evidence show a keyboard and screen reader finish, named controls, closed positions, revealed faces, one result per turn, win moves and time, leaving the board and starting again, with browser and screen reader versions? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "I17.1",
+        "I17.2",
+        "I17.3",
+        "I17.4",
+        "I17.5",
+        "I17.6"
+      ]
+    },
+    {
+      "id": "face-identity",
+      "area": "visual",
+      "evidence": "source-and-images",
+      "question": "Do shape, marker and fill identify faces, with color repeating marker position? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "V11.1",
+        "V11.2"
+      ]
+    },
+    {
+      "id": "grayscale",
+      "area": "visual",
+      "evidence": "images",
+      "question": "Can you distinguish all 128 identities at 44px in grayscale, including solid and outline squares with diagonal markers? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "V12.7"
+      ]
+    },
+    {
+      "id": "offline-scope",
+      "area": "delivery",
+      "evidence": "source",
+      "question": "Does the game avoid services, accounts, external assets, analytics and API keys, while allowing network use only for dependency installation? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "T10.2",
+        "T10.3"
+      ]
+    },
+    {
+      "id": "locality",
+      "area": "code",
+      "evidence": "source",
+      "question": "Does each behavior keep its code, styles and tests together where practical? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": []
+    },
+    {
+      "id": "findability",
+      "area": "code",
+      "evidence": "source",
+      "question": "Can a developer find matching, timing, focus and saved scores from names and direct calls? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": []
+    },
+    {
+      "id": "types",
+      "area": "code",
+      "evidence": "source",
+      "question": "Do useful types and narrowing describe game states and saved data? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": []
+    },
+    {
+      "id": "complexity",
+      "area": "code",
+      "evidence": "source",
+      "question": "Does the implementation avoid abstractions and dependencies that add work without helping this game? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": []
+    },
+    {
+      "id": "neon",
+      "area": "visual",
+      "evidence": "images",
+      "question": "Do the board images show the specified dark neon appearance with clear controls and status? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": []
+    },
+    {
+      "id": "legibility",
+      "area": "visual",
+      "evidence": "source-and-images",
+      "question": "Are the board, focus outlines, controls and win summary readable at the supplied phone and desktop sizes? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": []
+    }
+  ]
+}

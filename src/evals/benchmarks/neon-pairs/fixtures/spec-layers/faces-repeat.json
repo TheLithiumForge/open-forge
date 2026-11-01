@@ -1,0 +1,6 @@
+{
+  "id": "faces-repeat",
+  "edits": [{ "path": "src/game/deck.ts", "before": "(_, index) => Math.floor(index / 2)", "after": "(_, index) => Math.floor(index / 2) % 32" }],
+  "expected": { "R01.3": "fail", "V10.1": "fail", "D04.1": "fail" },
+  "scope": "Repeat face identities after 32, leaving small deals unchanged."
+}
