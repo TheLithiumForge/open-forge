@@ -1,12 +1,12 @@
 import { existsSync } from "node:fs";
 import { copyFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
-import { NpmCommand, spawnInRun } from "../execution/containers/executor.ts";
-import { waitForProcess } from "../execution/process.ts";
+import { dockerAvailable } from "../execution/containers/docker-image.ts";
 import { createRunSpace, removeFolder } from "../execution/workspace.ts";
 import { buildProject } from "./build.ts";
 import { Isolation } from "../config/choices.ts";
 import { ResultFiles } from "../paths.ts";
+import { RunStatus } from "../history/statuses.ts";
 import { assessmentBase, checksAssessment, failedChecksAssessment } from "../history/assessments.ts";
 import { gradingVersions } from "../history/capture.ts";
 import type { AssessmentVersions, ChecksAssessment, RunView } from "../history/records.types.ts";
@@ -17,8 +17,7 @@ import type { SuiteCheckOutput } from "../benchmarks/suite-checks.types.ts";
 import type { BuildResult } from "../history/results.types.ts";
 
 const RebuildFlag = "--rebuild";
-const InstallMs = 10 * 60_000;
-const BuildMs = 15 * 60_000;
+const BuildMs = 25 * 60_000;
 
 export interface RecheckDependencies {
   readonly evaluate: (run: RunView, assessmentId: string) => Promise<SuiteCheckOutput & { readonly build?: BuildResult }>;
@@ -48,8 +47,14 @@ async function main(): Promise<void> {
   const checks = suiteChecks[suite.id];
   if (checks === undefined) throw new Error(`No hidden checks for ${suite.id}.`);
   const versions = await gradingVersions(suite);
+  const rebuild = args.includes(RebuildFlag);
+  if (rebuild && !(await dockerAvailable())) throw new Error("Rebuilding needs Docker, because agent code never builds on this machine.");
   for (const run of await readRuns(batch)) {
     if (run.build === null || (onlyRun !== undefined && run.id !== onlyRun)) continue;
+    if (rebuild && run.status !== RunStatus.done) {
+      console.log(`${run.id}: not rebuilt, because the run didn't finish (${run.status}).`);
+      continue;
+    }
     const savedBuild = run.build;
     await recheckRun(run, versions, { append: appendAssessment, evaluate: async (_, assessmentId) => {
       const folder = runFolder(batchId, run.id);
@@ -61,10 +66,10 @@ async function main(): Promise<void> {
         let build = savedBuild;
         let project = join(folder, ResultFiles.files);
         let game = join(folder, ResultFiles.game);
-        if (args.includes(RebuildFlag) || !build.passed) {
+        if (rebuild) {
+          // Agent code only ever builds in the verifier container: no install scripts, no network, no credentials.
           space = await createRunSpace(suite.project, project);
-          await waitForProcess(spawnInRun({ isolation: Isolation.local, space, command: NpmCommand, args: ["ci", "--no-audit", "--no-fund"], network: true }), { timeoutMs: InstallMs });
-          build = await buildProject(Isolation.local, space, BuildMs);
+          build = await buildProject(Isolation.docker, space, BuildMs);
           project = space.work;
           game = build.html === null ? "" : join(project, build.html);
           if (existsSync(game)) await copyFile(game, join(evidence, ResultFiles.game));

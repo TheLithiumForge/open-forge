@@ -4,7 +4,7 @@ import { CodexAuthFile, providerAuth } from "../../config/auth.ts";
 import { Tool } from "../../config/choices.ts";
 import { stageSignInCopy, keepRefreshedSignIn, type CodexSignInCopy } from "../providers/codex-sign-in.ts";
 import { ContainerPaths } from "./settings.ts";
-import { freshHome } from "./files.ts";
+import { copyOutPlain, freshHome } from "./files.ts";
 import type { ContainerStage } from "./stage.ts";
 import type { RunSpace } from "./executor.ts";
 
@@ -48,7 +48,7 @@ export class ToolHome {
 
   async sync(stage: ContainerStage): Promise<void> {
     if (this.provider !== Tool.codex) return;
-    await stage.copyOut(`${ContainerPaths.home}/${CodexDirectory}/.`, join(this.space.home, CodexDirectory));
+    await copyOutPlain(stage, `${ContainerPaths.home}/${CodexDirectory}`, join(this.space.home, CodexDirectory), this.space.root);
     if (this.signIn !== null && existsSync(this.signIn.path)) keepRefreshedSignIn(this.signIn);
   }
 

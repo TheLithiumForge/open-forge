@@ -12,7 +12,7 @@ import assert from "node:assert/strict";
 
 export const FakeResult: ProcessResult = { code: 0, stdout: "", stderr: "", timedOut: false };
 export const FixtureFiles = { source: "source.txt", built: "dist/index.html", config: "tsconfig.json", lock: "package-lock.json", manifest: "package.json" } as const;
-export const FixtureText = { source: "project input", built: "<html>built</html>", before: '{"token":"before"}', after: '{"token":"after"}', response: '{"result":"done"}' } as const;
+export const FixtureText = { source: "project input", built: "<html>built</html>", before: '{"tokens":{"account_id":"fixture-account","refresh_token":"before"}}', after: '{"tokens":{"account_id":"fixture-account","refresh_token":"after"}}', response: '{"result":"done"}' } as const;
 
 export interface DockerCall { readonly args: readonly string[]; readonly options: DockerOptions; }
 

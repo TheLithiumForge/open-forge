@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, mkdirSync, statSync } from "node:fs";
+import { copyFileSync, existsSync, lstatSync, mkdirSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -40,11 +40,39 @@ export function copySignInTo(home: string, signInHome: string = EvalPaths.codexA
 
 /** Codex refreshes its sign-in during a run. Keeping the newer copy keeps the next run signed in. */
 export function keepRefreshedSignIn(copy: CodexSignInCopy | null): void {
-  if (copy === null || !existsSync(copy.path) || !existsSync(copy.source)) return;
-  if (fileHash(copy.path) === copy.hash || fileHash(copy.source) !== copy.hash) return;
-  copyFileSync(copy.path, copy.source);
+  if (copy === null || !existsSync(copy.source)) return;
+  // The copy sat in a folder the agent could write, so it must still be a plain file holding the same account's sign-in.
+  const stats = lstatSync(copy.path, { throwIfNoEntry: false });
+  if (stats === undefined || !stats.isFile() || stats.size > MaxSignInBytes) return;
+  const returned = readFileSync(copy.path);
+  if (bytesHash(returned) === copy.hash || fileHash(copy.source) !== copy.hash) return;
+  if (!sameAccountSignIn(readFileSync(copy.source, "utf8"), returned.toString("utf8"))) return;
+  writeFileSync(copy.source, returned);
+}
+
+const MaxSignInBytes = 64 * 1024;
+
+function signInAccount(text: string): string | null {
+  try {
+    const tokens: unknown = (JSON.parse(text) as { tokens?: unknown }).tokens; // Checked field by field below.
+    if (tokens === null || typeof tokens !== "object") return null;
+    const { account_id: account, refresh_token: refresh } = tokens as Record<string, unknown>;
+    return typeof account === "string" && account !== "" && typeof refresh === "string" && refresh !== "" ? account : null;
+  } catch {
+    return null;
+  }
+}
+
+/** A refreshed sign-in is kept only when it still parses as a Codex sign-in for the original account. */
+export function sameAccountSignIn(original: string, returned: string): boolean {
+  const account = signInAccount(original);
+  return account !== null && account === signInAccount(returned);
+}
+
+function bytesHash(bytes: Buffer): string {
+  return createHash("sha256").update(bytes).digest("hex");
 }
 
 function fileHash(path: string): string {
-  return createHash("sha256").update(readFileSync(path)).digest("hex");
+  return bytesHash(readFileSync(path));
 }

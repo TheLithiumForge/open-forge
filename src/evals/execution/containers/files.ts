@@ -1,4 +1,4 @@
-import { cp, mkdtemp, mkdir, rename, rm } from "node:fs/promises";
+import { cp, mkdtemp, mkdir, readdir, rename, rm } from "node:fs/promises";
 import { basename, join, sep } from "node:path";
 import type { RunSpace } from "./executor.ts";
 import { ContainerPaths } from "./settings.ts";
@@ -22,15 +22,35 @@ export async function copyProjectIn(stage: ContainerStage, space: RunSpace, veri
   }
 }
 
-export async function collectProject(stage: ContainerStage, space: RunSpace, source: string = ContainerPaths.work): Promise<void> {
-  const staging = await mkdtemp(join(space.root, "output-"));
+/** An agent can plant links in its container that point at this machine's files, so only plain files and folders come out. */
+export async function dropLinks(root: string): Promise<number> {
+  let dropped = 0;
+  for (const entry of await readdir(root, { withFileTypes: true })) {
+    const path = join(root, entry.name);
+    if (entry.isDirectory()) dropped += await dropLinks(path);
+    else if (!entry.isFile()) {
+      await rm(path, { recursive: true, force: true });
+      dropped += 1;
+    }
+  }
+  return dropped;
+}
+
+/** Replaces a host folder with a container folder's plain files and folders. */
+export async function copyOutPlain(stage: ContainerStage, source: string, target: string, scratch: string): Promise<void> {
+  const staging = await mkdtemp(join(scratch, "output-"));
   try {
     await stage.copyOut(`${source}/.`, staging);
-    await rm(space.work, { recursive: true, force: true });
-    await rename(staging, space.work);
+    await dropLinks(staging);
+    await rm(target, { recursive: true, force: true });
+    await rename(staging, target);
   } finally {
     await rm(staging, { recursive: true, force: true });
   }
+}
+
+export async function collectProject(stage: ContainerStage, space: RunSpace, source: string = ContainerPaths.work): Promise<void> {
+  await copyOutPlain(stage, source, space.work, space.root);
 }
 
 export async function freshHome(stage: ContainerStage, root: string, home: string): Promise<void> {

@@ -55,7 +55,9 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
   let space: RunSpace | null = null;
   try {
     space = await createRunSpace(suite.project, input.snapshot);
-    const context = { isolation: config.isolation, space, choice: run.agent, eventsPath: join(folder, ResultFiles.events) };
+    // The mock agent only installs our own reference, and the agent container runs nothing but a real provider's CLI.
+    const agentIsolation = run.agent.tool === Tool.mock ? Isolation.local : config.isolation;
+    const context = { isolation: agentIsolation, space, choice: run.agent, eventsPath: join(folder, ResultFiles.events) };
     const stageOptions = { timeoutMs: config.limits.runMinutes * 60_000,
       ...(config.containers === undefined ? {} : { limits: config.containers }),
       ...(input.signal === undefined ? {} : { signal: input.signal }), ...(input.docker === undefined ? {} : { docker: input.docker }) };
