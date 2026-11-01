@@ -6,7 +6,7 @@ open-forge:
 # Layer Four
 Layer Four is the brownfield case that asks agents to change a council-built Neon Pairs game while keeping its earlier behavior working.
 
-Status: plan ready. The spec version 2 seed, its audit and the frozen cases aren't built yet.
+Status: the maintainer froze the reference after a 10 out of 10 judgment. The first three case workers match the runner contract and are locally validated. Product validation is pending.
 
 Every attempt starts from the same audited solution or a registered defect copy of it. Code from a Layer 3 attempt never becomes the seed. For example, Hard mode needs a recorded format change, while a session repair starts with a symptom that doesn't reveal its cause.
 
@@ -25,7 +25,49 @@ Use this process in order:
 7. Record the decision log, including every spec amendment, review disagreement and mutation outcome that changed the result. If a product rule changes, bump the spec version and rebuild its evidence before using the seed.
 8. Freeze source, dependency lock, formatter and configuration, full check set, fixtures, trace map, decisions, line counts and evidence hashes as one seed record. Confirm that every executable clause passes and every review clause has two decided verdicts.
 
-The council process is future seed work, not a claim that this document packet has audited the application. The runtime and screen reader records must include the versions actually tested. Complete the missing version 2 record before declaring the seed eligible.
+The maintainer accepted the reference after three correction rounds and a 10 out of 10 judgment. That reference is the frozen seed for these cases. The process above governs a later seed rebuild. Runtime and screen reader records still name the versions actually tested.
+
+## First cases
+
+The first cases use named snapshot saves and a snapshot import repair. The Hard mode examples below describe other case shapes. They aren't the first feature delta.
+
+The registered cases are:
+
+| Case | Type | Request | Checks | Starting result |
+| --- | --- | --- | --- | --- |
+| [F01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f01/README.md) | F | Name a game and keep the name with saved progress | 10 | Nine feature failures and one compatibility pass |
+| [R01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r01/README.md) | R | Some copied saved games don't open while local exports work | 10 | Ten repair failures |
+| [FR01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-fr01/README.md) | FR | Add names and repair copied saved games | 20 | Nineteen failures and one compatibility pass |
+
+F01 and FR01 replace C08.2, D05.1 and D05.2. Named games use snapshot version 2. Unnamed games and version 1 replay output keep version 1. Both versions import with the existing pause, focus, validation and best-score rules. The product rules live in each case's complete replacement Controls and Reproducibility documents. R01 changes no product clause.
+
+Each folder records its request, answer bank, patches, check entry, expected outcomes, exact diff scope and validation results. The starting seed patch stays private. The known solution applies to that starting project. The repair checks use version 1 snapshots and work independently of the feature. The combined feature checks use the normal snapshot member order and work independently of the repair. The feature changes the same import path that carries the defect.
+
+The product runner handles patch application, builds, regressions, diffScope and protected-input checks. Each case has a private worker that checks the built page. A case's validation.json records its current detached worker results. The earlier case-local tooling has been removed.
+
+The initial implementation validation had these results. Each starting project passed 123 public unit tests and all 61 public browser journeys. The requests, product deltas and patches are byte unchanged during the worker conversion:
+
+| Case | Starting change checks | Solution change checks | Solution unit tests | Solution browser journeys |
+| --- | --- | --- | --- | --- |
+| F01 | One pass and nine failures | 10 passed | 125 passed | 61 passed |
+| R01 | Ten failures | 10 passed | 124 passed | 61 passed |
+| FR01 | One pass and nineteen failures | 20 passed | 126 passed | 61 passed |
+
+The combined worker also passes an independence check. Its feature-only solution passes all ten feature checks and fails all ten repair checks. Its repair-only solution passes all ten repair checks while the feature results match the starting project. The original implementation validation also checked a named snapshot with its name before its version. The feature-only solution rejected it through the planted defect. The full solution accepted it. The original scope and protected-input checks passed.
+
+The parent eval type check passes. Its current test run has 182 passes and six pre-existing failures. Five failures concern a stale Layer 2 source fingerprint. One source scan enters installed reference cache and Chromium folders and rejects an oversized file. Those files and checks are outside this packet. The [packet validation record](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f01/packet-validation.json) gives the limits.
+
+Every reference game file matches its recorded seed hash. The integrated trace.json differs from the older hash in seed-record.json. Both files are outside this packet and stay unchanged. The overseer needs to refresh that metadata before integration qualification.
+
+## Worker contract
+
+Each case provides `checks/checks.json` and `checks/worker.ts` as the [brownfield worker contract](../../../../../../src/evals/grading/brownfield/README.md) defines. The manifest gives each check a feature or repair kind and keeps its starting and solution expectations. The worker takes one input JSON path and writes one report outcome per declared ID.
+
+The runner accepts check IDs made of word characters and hyphens. The converted IDs run from `F01-01` through `F01-10` and `R01-01` through `R01-10`. Each manifest entry keeps its earlier dotted ID in `previousId`. Product clause IDs and check behavior stay unchanged.
+
+Workers use Node built-ins, Playwright and files inside their own case folder. Each case packages its shared probes because the runner copies one case folder. No worker imports the submitted Node source or another case. Each check gets a fresh browser context. A missing built page returns blocked outcomes for all browser checks. An absent feature still allows unrelated repair checks to run.
+
+Detached local validation built fresh starting and solution pages and invoked each packaged worker as a CLI. The product manifest and report parsers accepted every report. All 80 starting and solution outcomes matched their expectations. Another 40 outcomes were blocked for missing builds. Private checker file faults returned 40 error outcomes. The combined worker also matched all 40 expected outcomes on feature-only and repair-only copies. Four protocol tests cover malformed inputs, group matching and missing-build reports. Full validation through the product stays with the overseer.
 
 ## Change cases
 
@@ -103,8 +145,8 @@ Give every delivery form the same extra bodies and descriptions. Open Forge can 
 
 ## Not decided yet
 
-- The council members and build allocation. Choose them when seed work starts.
-- The exact private mutations, added check sets and case limits after testing. Freeze them before scored runs.
+- The council members and build allocation for a later seed rebuild.
+- The case limits after timed agent testing. Freeze them before scored runs.
 - The extra documents for the richer-context variant. Check information equality before freezing them.
 
 Back to [Neon Pairs](_neon-pairs.md).

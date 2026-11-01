@@ -1,0 +1,602 @@
+--- /dev/null
++++ b/src/game/deal-name.ts
+@@ -0,0 +1,13 @@
++import type { GameState } from './game.types.ts';
++
++export const DEAL_NAME_MAX_LENGTH = 40;
++export function validDealName(value: unknown): value is string {
++  return typeof value === 'string' && value.length <= DEAL_NAME_MAX_LENGTH && !/[\r\n]/.test(value);
++}
++export function withDealName(game: GameState, name: string): GameState {
++  if (!validDealName(name)) return game;
++  const next = { ...game };
++  delete next.name;
++  if (name) next.name = name;
++  return next;
++}
+--- /dev/null
++++ b/src/game/deal-name.test.ts
+@@ -0,0 +1,24 @@
++import assert from 'node:assert/strict';
++import { test } from 'vitest';
++import { createGame, activateCard, advanceGame } from './game.ts';
++import { validDealName, withDealName, DEAL_NAME_MAX_LENGTH } from './deal-name.ts';
++import { encodeSnapshot, decodeSnapshot, NAMED_SNAPSHOT_VERSION } from './snapshot.ts';
++import { EXAMPLE_CODE } from './game.fixture.ts';
++
++test('names preserve the pending game and round trip only through the named format', () => {
++  const game = advanceGame(activateCard(activateCard(createGame(EXAMPLE_CODE), 0), 1), 175);
++  const named = withDealName(game, 'Café');
++  assert.equal(named.selection, game.selection);
++  assert.equal(named.elapsedMs, game.elapsedMs);
++  assert.equal(JSON.parse(encodeSnapshot(named)).version, NAMED_SNAPSHOT_VERSION);
++  assert.deepEqual(decodeSnapshot(encodeSnapshot(named)), named);
++  assert.deepEqual(withDealName(named, ''), game);
++});
++test('names enforce the stated code unit limit without trimming', () => {
++  assert.equal(validDealName(' '.repeat(DEAL_NAME_MAX_LENGTH)), true);
++  assert.equal(validDealName('x'.repeat(DEAL_NAME_MAX_LENGTH + 1)), false);
++  assert.equal(validDealName('a\nb'), false);
++  assert.equal(validDealName(null), false);
++  const game = createGame(EXAMPLE_CODE);
++  assert.equal(withDealName(game, 'x'.repeat(DEAL_NAME_MAX_LENGTH + 1)), game);
++});
+--- a/src/game/game.types.ts
++++ b/src/game/game.types.ts
+@@ -8,6 +8,7 @@
+ }
+ 
+ export interface GameState extends Board {
++  readonly name?: string;
+   readonly matched: readonly number[];
+   readonly selection: Selection;
+   readonly moves: number;
+--- a/src/game/snapshot.ts
++++ b/src/game/snapshot.ts
+@@ -1,59 +1,66 @@
+ import { createGame, isWon, MOVES_MAX, ELAPSED_MAX_MS } from './game.ts';
+-import { parseBoardCode } from './deck.ts';
+-import { exactKeys, readJson, record, safeNonnegative } from './saved-format.ts';
+-import { readMatched, readSelection } from './snapshot-selection.ts';
+-import { SelectionKind } from './selection.ts';
+-import type { GameState } from './game.types.ts';
+-
+-export const SNAPSHOT_VERSION = 1;
+-export const SNAPSHOT_MAX_BYTES = 65_536;
+-export const SNAPSHOT_KEYS = [
+-  'version',
+-  'boardCode',
+-  'matched',
+-  'selection',
+-  'moves',
+-  'elapsedMs',
+-  'started',
+-] as const;
+-
+-export function encodeSnapshot(state: GameState): string {
+-  return JSON.stringify(
+-    {
+-      version: SNAPSHOT_VERSION,
+-      boardCode: state.boardCode,
+-      matched: [...state.matched].sort((left, right) => left - right),
+-      selection: state.selection,
+-      moves: state.moves,
+-      elapsedMs: state.elapsedMs,
+-      started: state.started,
+-    },
+-    null,
+-    2,
+-  );
+-}
+-
+-export function decodeSnapshot(text: string): GameState | null {
+-  const value = readJson(text, SNAPSHOT_MAX_BYTES);
+-  if (record(value) && Object.keys(value)[0] !== 'version') return null;
+-  if (!record(value) || !exactKeys(value, SNAPSHOT_KEYS) || value.version !== SNAPSHOT_VERSION)
+-    return null;
+-  if (typeof value.boardCode !== 'string' || !parseBoardCode(value.boardCode)) return null;
+-  if (
+-    !safeNonnegative(value.moves) ||
+-    value.moves > MOVES_MAX ||
+-    !safeNonnegative(value.elapsedMs) ||
+-    value.elapsedMs > ELAPSED_MAX_MS ||
+-    typeof value.started !== 'boolean'
+-  )
+-    return null;
+-  const initial = createGame(value.boardCode);
+-  const matched = readMatched(value.matched, initial);
+-  if (!matched) return null;
+-  const selection = readSelection(value.selection, initial, matched);
+-  if (!selection) return null;
+-  const state: GameState = {
+-    ...initial,
++import { validDealName } from './deal-name.ts';
++import { parseBoardCode } from './deck.ts';
++import { exactKeys, readJson, record, safeNonnegative } from './saved-format.ts';
++import { readMatched, readSelection } from './snapshot-selection.ts';
++import { SelectionKind } from './selection.ts';
++import type { GameState } from './game.types.ts';
++
++export const SNAPSHOT_VERSION = 1;
++export const NAMED_SNAPSHOT_VERSION = 2;
++export const SNAPSHOT_MAX_BYTES = 65_536;
++export const SNAPSHOT_KEYS = [
++  'version',
++  'boardCode',
++  'matched',
++  'selection',
++  'moves',
++  'elapsedMs',
++  'started',
++] as const;
++
++export function encodeSnapshot(state: GameState): string {
++  return JSON.stringify(
++    {
++      version: state.name ? NAMED_SNAPSHOT_VERSION : SNAPSHOT_VERSION,
++      ...(state.name ? { name: state.name } : {}),
++      boardCode: state.boardCode,
++      matched: [...state.matched].sort((left, right) => left - right),
++      selection: state.selection,
++      moves: state.moves,
++      elapsedMs: state.elapsedMs,
++      started: state.started,
++    },
++    null,
++    2,
++  );
++}
++
++export function decodeSnapshot(text: string): GameState | null {
++  const value = readJson(text, SNAPSHOT_MAX_BYTES);
++  if (!record(value)) return null;
++  const named = value.version === NAMED_SNAPSHOT_VERSION;
++  if (!exactKeys(value, named ? [...SNAPSHOT_KEYS, 'name'] : SNAPSHOT_KEYS)) return null;
++  if (named ? !validDealName(value.name) || value.name === '' : value.version !== SNAPSHOT_VERSION)
++    return null;
++  const name = named && typeof value.name === 'string' ? value.name : '';
++  if (typeof value.boardCode !== 'string' || !parseBoardCode(value.boardCode)) return null;
++  if (
++    !safeNonnegative(value.moves) ||
++    value.moves > MOVES_MAX ||
++    !safeNonnegative(value.elapsedMs) ||
++    value.elapsedMs > ELAPSED_MAX_MS ||
++    typeof value.started !== 'boolean'
++  )
++    return null;
++  const initial = createGame(value.boardCode);
++  const matched = readMatched(value.matched, initial);
++  if (!matched) return null;
++  const selection = readSelection(value.selection, initial, matched);
++  if (!selection) return null;
++  const state: GameState = {
++    ...initial,
++    ...(name ? { name } : {}),
+     matched,
+     selection,
+     moves: value.moves,
+--- a/src/game/session/use-game.ts
++++ b/src/game/session/use-game.ts
+@@ -1,96 +1,101 @@
+ import { useEffect, useRef, useState } from 'react';
+-import { createGame } from '../game.ts';
+-import { parseBoardCode, validSize } from '../deck.ts';
+-import { decodeSnapshot } from '../snapshot.ts';
+-import { freshBoardCode } from './fresh-board.ts';
+-import { activateSession, initialSession, replaceGame, SessionNotice } from './session.ts';
+-import { readPreferences, writePreferences } from './storage.ts';
+-import { useSessionClock } from './use-session-clock.ts';
+-import type { PreferenceStore } from './storage.ts';
+-import type { Session } from './session.types.ts';
+-
+-function browserStore(): PreferenceStore | null {
+-  try {
+-    return window.localStorage;
+-  } catch {
+-    return null;
+-  }
+-}
+-
+-export function useGame() {
+-  const [store] = useState(browserStore);
+-  const [session, setSession] = useState(() => {
+-    const preferences = readPreferences(store);
+-    return initialSession(freshBoardCode(preferences.size), preferences);
+-  });
+-  const current = useRef(session);
+-
+-  function commit(next: Session): void {
+-    if (next === current.current) return;
+-    current.current = next;
+-    setSession(next);
+-  }
+-
+-  const clock = useSessionClock(session, current, commit);
+-  useEffect(() => writePreferences(store, session.preferences), [session.preferences, store]);
+-
+-  function newGame(size = current.current.game.size): void {
+-    if (!validSize(size)) return;
+-    const next = createGame(freshBoardCode(size, current.current.game.seed));
+-    clock.reset();
+-    commit(replaceGame(current.current, next, false));
+-  }
+-
+-  function restart(): void {
+-    clock.reset();
+-    commit(replaceGame(current.current, createGame(current.current.game.boardCode), false));
+-  }
+-
+-  function notice(feedback: string): void {
+-    commit({
+-      ...current.current,
+-      feedback,
+-      loadNotice: feedback,
+-      announcement: current.current.announcement + 1,
+-    });
+-  }
+-
+-  function loadBoard(code: string): boolean {
+-    if (!parseBoardCode(code)) {
+-      notice(SessionNotice.invalidBoard);
+-      return false;
+-    }
+-    clock.reset();
+-    commit(replaceGame(current.current, createGame(code), false));
+-    return true;
+-  }
+-
+-  function loadSnapshot(text: string): boolean {
+-    const game = decodeSnapshot(text);
+-    if (!game) {
+-      notice(SessionNotice.invalidSnapshot);
+-      return false;
+-    }
+-    clock.reset();
+-    commit(replaceGame(current.current, game, true));
+-    return true;
+-  }
+-
+-  function activate(index: number): void {
+-    clock.synchronize();
+-    commit(activateSession(current.current, index));
+-  }
+-
+-  function resume(): void {
+-    clock.reset();
+-    commit({
+-      ...current.current,
+-      paused: false,
+-      feedback: SessionNotice.resumed,
+-      loadNotice: '',
+-      announcement: current.current.announcement + 1,
+-    });
+-  }
+-
+-  return { session, newGame, restart, loadBoard, loadSnapshot, activate, resume };
++import { withDealName } from '../deal-name.ts';
++import { createGame } from '../game.ts';
++import { parseBoardCode, validSize } from '../deck.ts';
++import { decodeSnapshot } from '../snapshot.ts';
++import { freshBoardCode } from './fresh-board.ts';
++import { activateSession, initialSession, replaceGame, SessionNotice } from './session.ts';
++import { readPreferences, writePreferences } from './storage.ts';
++import { useSessionClock } from './use-session-clock.ts';
++import type { PreferenceStore } from './storage.ts';
++import type { Session } from './session.types.ts';
++
++function browserStore(): PreferenceStore | null {
++  try {
++    return window.localStorage;
++  } catch {
++    return null;
++  }
++}
++
++export function useGame() {
++  const [store] = useState(browserStore);
++  const [session, setSession] = useState(() => {
++    const preferences = readPreferences(store);
++    return initialSession(freshBoardCode(preferences.size), preferences);
++  });
++  const current = useRef(session);
++
++  function commit(next: Session): void {
++    if (next === current.current) return;
++    current.current = next;
++    setSession(next);
++  }
++
++  const clock = useSessionClock(session, current, commit);
++  useEffect(() => writePreferences(store, session.preferences), [session.preferences, store]);
++
++  function newGame(size = current.current.game.size): void {
++    if (!validSize(size)) return;
++    const next = createGame(freshBoardCode(size, current.current.game.seed));
++    clock.reset();
++    commit(replaceGame(current.current, next, false));
++  }
++
++  function restart(): void {
++    clock.reset();
++    commit(replaceGame(current.current, createGame(current.current.game.boardCode), false));
++  }
++
++  function notice(feedback: string): void {
++    commit({
++      ...current.current,
++      feedback,
++      loadNotice: feedback,
++      announcement: current.current.announcement + 1,
++    });
++  }
++
++  function loadBoard(code: string): boolean {
++    if (!parseBoardCode(code)) {
++      notice(SessionNotice.invalidBoard);
++      return false;
++    }
++    clock.reset();
++    commit(replaceGame(current.current, createGame(code), false));
++    return true;
++  }
++
++  function loadSnapshot(text: string): boolean {
++    const game = decodeSnapshot(text);
++    if (!game) {
++      notice(SessionNotice.invalidSnapshot);
++      return false;
++    }
++    clock.reset();
++    commit(replaceGame(current.current, game, true));
++    return true;
++  }
++
++  function renameDeal(name: string): void {
++    commit({ ...current.current, game: withDealName(current.current.game, name) });
++  }
++
++  function activate(index: number): void {
++    clock.synchronize();
++    commit(activateSession(current.current, index));
++  }
++
++  function resume(): void {
++    clock.reset();
++    commit({
++      ...current.current,
++      paused: false,
++      feedback: SessionNotice.resumed,
++      loadNotice: '',
++      announcement: current.current.announcement + 1,
++    });
++  }
++
++  return { session, newGame, restart, loadBoard, loadSnapshot, activate, resume, renameDeal };
+ }
+--- a/src/game/Game.tsx
++++ b/src/game/Game.tsx
+@@ -47,6 +47,7 @@
+       />
+       <Reproduction
+         game={game}
++        renameDeal={controller.renameDeal}
+         generation={session.generation}
+         loadBoard={controller.loadBoard}
+         loadSnapshot={controller.loadSnapshot}
+--- a/src/game/controls/Reproduction.tsx
++++ b/src/game/controls/Reproduction.tsx
+@@ -1,96 +1,107 @@
+ import { useRef, useState } from 'react';
+-import { encodeSnapshot } from '../snapshot.ts';
+-import type { GameState } from '../game.types.ts';
+-
+-interface ReproductionProps {
+-  game: GameState;
+-  generation: number;
+-  loadBoard(code: string): boolean;
+-  loadSnapshot(text: string): boolean;
+-  notice: string;
+-  paused: boolean;
+-  resume(): void;
+-}
+-
+-export function Reproduction({
+-  game,
+-  generation,
+-  loadBoard,
+-  loadSnapshot,
+-  notice,
+-  paused,
+-  resume,
+-}: ReproductionProps) {
+-  const [snapshot, setSnapshot] = useState('');
+-  const loadButton = useRef<HTMLButtonElement>(null);
+-  return (
+-    <>
+-      <details className="reproduction">
+-        <summary>{ReproductionControl.summary}</summary>
+-        <div className="reproduction-body">
+-          <form
+-            onSubmit={(event) => {
+-              event.preventDefault();
+-              const code = new FormData(event.currentTarget).get('boardCode');
+-              loadButton.current?.focus();
+-              if (typeof code === 'string') loadBoard(code);
+-            }}
+-          >
+-            <label htmlFor="board-code">{ReproductionControl.board}</label>
+-            <div className="control-row">
+-              <input
+-                key={generation}
+-                id="board-code"
+-                name="boardCode"
+-                defaultValue={game.boardCode}
+-                maxLength={BOARD_CODE_MAX_CHARACTERS}
+-                spellCheck={false}
+-                autoComplete="off"
+-              />
+-              <button ref={loadButton} type="submit" aria-describedby="load-notice">
+-                {ReproductionControl.loadBoard}
+-              </button>
+-            </div>
+-          </form>
+-          <label htmlFor="snapshot-json">{ReproductionControl.snapshot}</label>
+-          <textarea
+-            id="snapshot-json"
+-            rows={5}
+-            value={snapshot}
+-            maxLength={SNAPSHOT_MAX_CHARACTERS}
+-            spellCheck={false}
+-            onChange={(event) => setSnapshot(event.currentTarget.value)}
+-          />
+-          <div className="control-row">
+-            <button type="button" onClick={() => setSnapshot(encodeSnapshot(game))}>
+-              {ReproductionControl.exportSnapshot}
+-            </button>
+-            <button
+-              type="button"
+-              aria-describedby="load-notice"
+-              onClick={() => loadSnapshot(snapshot)}
+-            >
+-              {ReproductionControl.loadSnapshot}
+-            </button>
+-          </div>
+-        </div>
+-      </details>
+-      <div className="status-row">
+-        <p id="load-notice" className="load-notice">
+-          {notice}
+-        </p>
+-        {paused && (
+-          <button type="button" onClick={resume}>
+-            {ReproductionControl.resume}
+-          </button>
+-        )}
+-      </div>
+-    </>
+-  );
+-}
+-
+-export const ReproductionControl = {
+-  summary: 'Reproduce a game',
++import { DEAL_NAME_MAX_LENGTH } from '../deal-name.ts';
++import { encodeSnapshot } from '../snapshot.ts';
++import type { GameState } from '../game.types.ts';
++
++interface ReproductionProps {
++  game: GameState;
++  generation: number;
++  renameDeal(name: string): void;
++  loadBoard(code: string): boolean;
++  loadSnapshot(text: string): boolean;
++  notice: string;
++  paused: boolean;
++  resume(): void;
++}
++
++export function Reproduction({
++  game,
++  generation,
++  renameDeal,
++  loadBoard,
++  loadSnapshot,
++  notice,
++  paused,
++  resume,
++}: ReproductionProps) {
++  const [snapshot, setSnapshot] = useState('');
++  const loadButton = useRef<HTMLButtonElement>(null);
++  return (
++    <>
++      <details className="reproduction">
++        <summary>{ReproductionControl.summary}</summary>
++        <div className="reproduction-body">
++          <form
++            onSubmit={(event) => {
++              event.preventDefault();
++              const code = new FormData(event.currentTarget).get('boardCode');
++              loadButton.current?.focus();
++              if (typeof code === 'string') loadBoard(code);
++            }}
++          >
++            <label htmlFor="board-code">{ReproductionControl.board}</label>
++            <div className="control-row">
++              <input
++                key={generation}
++                id="board-code"
++                name="boardCode"
++                defaultValue={game.boardCode}
++                maxLength={BOARD_CODE_MAX_CHARACTERS}
++                spellCheck={false}
++                autoComplete="off"
++              />
++              <button ref={loadButton} type="submit" aria-describedby="load-notice">
++                {ReproductionControl.loadBoard}
++              </button>
++            </div>
++          </form>
++          <label htmlFor="deal-name">{ReproductionControl.name}</label>
++          <input
++            id="deal-name"
++            value={game.name ?? ''}
++            maxLength={DEAL_NAME_MAX_LENGTH}
++            onChange={(event) => renameDeal(event.currentTarget.value)}
++          />
++          <label htmlFor="snapshot-json">{ReproductionControl.snapshot}</label>
++          <textarea
++            id="snapshot-json"
++            rows={5}
++            value={snapshot}
++            maxLength={SNAPSHOT_MAX_CHARACTERS}
++            spellCheck={false}
++            onChange={(event) => setSnapshot(event.currentTarget.value)}
++          />
++          <div className="control-row">
++            <button type="button" onClick={() => setSnapshot(encodeSnapshot(game))}>
++              {ReproductionControl.exportSnapshot}
++            </button>
++            <button
++              type="button"
++              aria-describedby="load-notice"
++              onClick={() => loadSnapshot(snapshot)}
++            >
++              {ReproductionControl.loadSnapshot}
++            </button>
++          </div>
++        </div>
++      </details>
++      <div className="status-row">
++        <p id="load-notice" className="load-notice">
++          {notice}
++        </p>
++        {paused && (
++          <button type="button" onClick={resume}>
++            {ReproductionControl.resume}
++          </button>
++        )}
++      </div>
++    </>
++  );
++}
++
++export const ReproductionControl = {
++  summary: 'Reproduce a game',
++  name: 'Deal name',
+   board: 'Board code',
+   loadBoard: 'Load board',
+   snapshot: 'Snapshot JSON',
+--- /dev/null
++++ b/src/game/snapshot-order.test.ts
+@@ -0,0 +1,12 @@
++import assert from 'node:assert/strict';
++import { test } from 'vitest';
++import { createGame, activateCard } from './game.ts';
++import { encodeSnapshot, decodeSnapshot } from './snapshot.ts';
++import { EXAMPLE_CODE } from './game.fixture.ts';
++test('snapshot object member order does not change valid progress', () => {
++  const game = activateCard(createGame(EXAMPLE_CODE), 2);
++  const value: unknown = JSON.parse(encodeSnapshot(game));
++  assert.ok(value && typeof value === 'object' && 'selection' in value);
++  const { selection, ...rest } = value;
++  assert.deepEqual(decodeSnapshot(JSON.stringify({ selection, ...rest })), game);
++});

@@ -1,0 +1,1 @@
+Could you let me name a game and keep its name with my saved progress? Also, some saved games won't open after I paste them, even though my own exports work. Please fix that and keep the rest working.

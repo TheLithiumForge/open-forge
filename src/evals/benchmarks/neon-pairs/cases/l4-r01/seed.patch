@@ -1,0 +1,10 @@
+--- a/src/game/snapshot.ts
++++ b/src/game/snapshot.ts
+@@ -35,6 +35,7 @@
+ 
+ export function decodeSnapshot(text: string): GameState | null {
+   const value = readJson(text, SNAPSHOT_MAX_BYTES);
++  if (record(value) && Object.keys(value)[0] !== 'version') return null;
+   if (!record(value) || !exactKeys(value, SNAPSHOT_KEYS) || value.version !== SNAPSHOT_VERSION)
+     return null;
+   if (typeof value.boardCode !== 'string' || !parseBoardCode(value.boardCode)) return null;

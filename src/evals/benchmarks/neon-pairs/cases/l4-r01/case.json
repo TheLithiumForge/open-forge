@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "l4-r01",
+  "changeType": "R",
+  "title": "Open copied saved games",
+  "request": "request.md",
+  "specDelta": null,
+  "seedPatch": "seed.patch",
+  "solutionPatch": "solution.patch",
+  "checks": "checks",
+  "answers": "answers.json",
+  "supersedes": [],
+  "diffScope": [
+    "src/game/snapshot.ts",
+    "src/game/snapshot-order.test.ts"
+  ]
+}

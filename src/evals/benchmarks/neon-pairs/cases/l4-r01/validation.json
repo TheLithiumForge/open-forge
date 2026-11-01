@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "validation": "Detached worker CLI with product manifest and report parsers.",
+  "node": "26.12.1",
+  "checks": 10,
+  "stages": [
+    {
+      "stage": "starting",
+      "outcomes": [
+        {
+          "id": "repair-R01-01",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation. Assertion failed."
+        },
+        {
+          "id": "repair-R01-02",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation. Assertion failed."
+        },
+        {
+          "id": "repair-R01-03",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation. Assertion failed."
+        },
+        {
+          "id": "repair-R01-04",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation. Assertion failed."
+        },
+        {
+          "id": "repair-R01-05",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation. Assertion failed."
+        },
+        {
+          "id": "repair-R01-06",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation. Assertion failed."
+        },
+        {
+          "id": "repair-R01-07",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation. Assertion failed."
+        },
+        {
+          "id": "repair-R01-08",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation. Assertion failed."
+        },
+        {
+          "id": "repair-R01-09",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation. Assertion failed."
+        },
+        {
+          "id": "repair-R01-10",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation. Assertion failed."
+        }
+      ],
+      "artifactSha256": "f45c211812484cfd7c87a14c5a54c3e1b5213af50af8de35e27636ce26c72f30"
+    },
+    {
+      "stage": "solution",
+      "outcomes": [
+        {
+          "id": "repair-R01-01",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation."
+        },
+        {
+          "id": "repair-R01-02",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation."
+        },
+        {
+          "id": "repair-R01-03",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation."
+        },
+        {
+          "id": "repair-R01-04",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation."
+        },
+        {
+          "id": "repair-R01-05",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation."
+        },
+        {
+          "id": "repair-R01-06",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation."
+        },
+        {
+          "id": "repair-R01-07",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation."
+        },
+        {
+          "id": "repair-R01-08",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation."
+        },
+        {
+          "id": "repair-R01-09",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation."
+        },
+        {
+          "id": "repair-R01-10",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation."
+        }
+      ],
+      "artifactSha256": "8c74b3a2c4023ae272683c793f1bf4556738db5411289800880baa0069887816"
+    },
+    {
+      "stage": "missing-build",
+      "outcomes": [
+        {
+          "id": "repair-R01-01",
+          "area": "repair",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "repair-R01-02",
+          "area": "repair",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "repair-R01-03",
+          "area": "repair",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "repair-R01-04",
+          "area": "repair",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "repair-R01-05",
+          "area": "repair",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "repair-R01-06",
+          "area": "repair",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "repair-R01-07",
+          "area": "repair",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "repair-R01-08",
+          "area": "repair",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "repair-R01-09",
+          "area": "repair",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "repair-R01-10",
+          "area": "repair",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Docker execution and full product grading stay with the overseer."
+  ],
+  "checkerFailure": {
+    "condition": "Private built-page file unavailable.",
+    "outcomes": [
+      {
+        "id": "repair-R01-01",
+        "area": "repair",
+        "status": "error",
+        "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation. Checker did not complete."
+      },
+      {
+        "id": "repair-R01-02",
+        "area": "repair",
+        "status": "error",
+        "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation. Checker did not complete."
+      },
+      {
+        "id": "repair-R01-03",
+        "area": "repair",
+        "status": "error",
+        "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation. Checker did not complete."
+      },
+      {
+        "id": "repair-R01-04",
+        "area": "repair",
+        "status": "error",
+        "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation. Checker did not complete."
+      },
+      {
+        "id": "repair-R01-05",
+        "area": "repair",
+        "status": "error",
+        "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation. Checker did not complete."
+      },
+      {
+        "id": "repair-R01-06",
+        "area": "repair",
+        "status": "error",
+        "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation. Checker did not complete."
+      },
+      {
+        "id": "repair-R01-07",
+        "area": "repair",
+        "status": "error",
+        "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation. Checker did not complete."
+      },
+      {
+        "id": "repair-R01-08",
+        "area": "repair",
+        "status": "error",
+        "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation. Checker did not complete."
+      },
+      {
+        "id": "repair-R01-09",
+        "area": "repair",
+        "status": "error",
+        "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation. Checker did not complete."
+      },
+      {
+        "id": "repair-R01-10",
+        "area": "repair",
+        "status": "error",
+        "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation. Checker did not complete."
+      }
+    ]
+  }
+}

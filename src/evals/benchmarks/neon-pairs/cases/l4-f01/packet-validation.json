@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "status": "case-contract-validation-passed-product-tests-blocked",
+  "cases": [
+    {
+      "id": "l4-f01",
+      "checks": 10,
+      "status": "passed"
+    },
+    {
+      "id": "l4-r01",
+      "checks": 10,
+      "status": "passed"
+    },
+    {
+      "id": "l4-fr01",
+      "checks": 20,
+      "status": "passed"
+    }
+  ],
+  "protectedCaseInputs": {
+    "files": 15,
+    "status": "byte-unchanged"
+  },
+  "isolatedHarness": "Only case files, playwright, playwright-core and Node built-ins.",
+  "duplicateProbeParity": "passed",
+  "typecheck": "passed",
+  "protocolTests": {
+    "passed": 4,
+    "failed": 0
+  },
+  "productTests": {
+    "total": 188,
+    "passed": 182,
+    "failed": 6,
+    "skipped": 0,
+    "limits": [
+      "Five stale Layer 2 fingerprint failures and one reference-cache source-scan failure are outside this packet."
+    ]
+  },
+  "limits": [
+    "No Docker or model calls were run. Product validation stays with the overseer."
+  ]
+}

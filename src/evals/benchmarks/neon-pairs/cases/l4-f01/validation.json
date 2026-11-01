@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "validation": "Detached worker CLI with product manifest and report parsers.",
+  "node": "26.12.1",
+  "checks": 10,
+  "stages": [
+    {
+      "stage": "starting",
+      "outcomes": [
+        {
+          "id": "feature-F01-01",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units. Assertion failed."
+        },
+        {
+          "id": "feature-F01-02",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.2: editing a name keeps cards, progress, active time and board code unchanged. Assertion failed."
+        },
+        {
+          "id": "feature-F01-03",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name. Assertion failed."
+        },
+        {
+          "id": "feature-F01-04",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields."
+        },
+        {
+          "id": "feature-F01-05",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.4: a named import restores its name paused and a later legacy import clears it. Assertion failed."
+        },
+        {
+          "id": "feature-F01-06",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "D05: isolated invalid names, fields and versions are rejected before changing the named game. Assertion failed."
+        },
+        {
+          "id": "feature-F01-07",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.5: Restart, New Game, size change and board-code load each clear the name. Assertion failed."
+        },
+        {
+          "id": "feature-F01-08",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval. Assertion failed."
+        },
+        {
+          "id": "feature-F01-09",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.4: a named completed import stays static and never writes a best score. Assertion failed."
+        },
+        {
+          "id": "feature-F01-10",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more. Assertion failed."
+        }
+      ],
+      "artifactSha256": "8c74b3a2c4023ae272683c793f1bf4556738db5411289800880baa0069887816"
+    },
+    {
+      "stage": "solution",
+      "outcomes": [
+        {
+          "id": "feature-F01-01",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units."
+        },
+        {
+          "id": "feature-F01-02",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.2: editing a name keeps cards, progress, active time and board code unchanged."
+        },
+        {
+          "id": "feature-F01-03",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name."
+        },
+        {
+          "id": "feature-F01-04",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields."
+        },
+        {
+          "id": "feature-F01-05",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.4: a named import restores its name paused and a later legacy import clears it."
+        },
+        {
+          "id": "feature-F01-06",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05: isolated invalid names, fields and versions are rejected before changing the named game."
+        },
+        {
+          "id": "feature-F01-07",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.5: Restart, New Game, size change and board-code load each clear the name."
+        },
+        {
+          "id": "feature-F01-08",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval."
+        },
+        {
+          "id": "feature-F01-09",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.4: a named completed import stays static and never writes a best score."
+        },
+        {
+          "id": "feature-F01-10",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more."
+        }
+      ],
+      "artifactSha256": "1adebd1b471e2264b48e2160048abf97c1807aa87a475fd88bcfdc7a530a7024"
+    },
+    {
+      "stage": "missing-build",
+      "outcomes": [
+        {
+          "id": "feature-F01-01",
+          "area": "feature",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "feature-F01-02",
+          "area": "feature",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "feature-F01-03",
+          "area": "feature",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "feature-F01-04",
+          "area": "feature",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "feature-F01-05",
+          "area": "feature",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "feature-F01-06",
+          "area": "feature",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "feature-F01-07",
+          "area": "feature",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "feature-F01-08",
+          "area": "feature",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "feature-F01-09",
+          "area": "feature",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        },
+        {
+          "id": "feature-F01-10",
+          "area": "feature",
+          "status": "blocked",
+          "evidence": "No built page is available for this browser check."
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Docker execution and full product grading stay with the overseer."
+  ],
+  "checkerFailure": {
+    "condition": "Private built-page file unavailable.",
+    "outcomes": [
+      {
+        "id": "feature-F01-01",
+        "area": "feature",
+        "status": "error",
+        "evidence": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units. Checker did not complete."
+      },
+      {
+        "id": "feature-F01-02",
+        "area": "feature",
+        "status": "error",
+        "evidence": "C15.2: editing a name keeps cards, progress, active time and board code unchanged. Checker did not complete."
+      },
+      {
+        "id": "feature-F01-03",
+        "area": "feature",
+        "status": "error",
+        "evidence": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name. Checker did not complete."
+      },
+      {
+        "id": "feature-F01-04",
+        "area": "feature",
+        "status": "error",
+        "evidence": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields. Checker did not complete."
+      },
+      {
+        "id": "feature-F01-05",
+        "area": "feature",
+        "status": "error",
+        "evidence": "C15.4: a named import restores its name paused and a later legacy import clears it. Checker did not complete."
+      },
+      {
+        "id": "feature-F01-06",
+        "area": "feature",
+        "status": "error",
+        "evidence": "D05: isolated invalid names, fields and versions are rejected before changing the named game. Checker did not complete."
+      },
+      {
+        "id": "feature-F01-07",
+        "area": "feature",
+        "status": "error",
+        "evidence": "C15.5: Restart, New Game, size change and board-code load each clear the name. Checker did not complete."
+      },
+      {
+        "id": "feature-F01-08",
+        "area": "feature",
+        "status": "error",
+        "evidence": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval. Checker did not complete."
+      },
+      {
+        "id": "feature-F01-09",
+        "area": "feature",
+        "status": "error",
+        "evidence": "C15.4: a named completed import stays static and never writes a best score. Checker did not complete."
+      },
+      {
+        "id": "feature-F01-10",
+        "area": "feature",
+        "status": "error",
+        "evidence": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more. Checker did not complete."
+      }
+    ]
+  }
+}

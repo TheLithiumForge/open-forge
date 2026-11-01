@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "checks": [
+    {
+      "id": "R01-01",
+      "method": "browser",
+      "description": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair",
+      "previousId": "R01.01"
+    },
+    {
+      "id": "R01-02",
+      "method": "browser",
+      "description": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair",
+      "previousId": "R01.02"
+    },
+    {
+      "id": "R01-03",
+      "method": "browser",
+      "description": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair",
+      "previousId": "R01.03"
+    },
+    {
+      "id": "R01-04",
+      "method": "browser",
+      "description": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair",
+      "previousId": "R01.04"
+    },
+    {
+      "id": "R01-05",
+      "method": "browser",
+      "description": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair",
+      "previousId": "R01.05"
+    },
+    {
+      "id": "R01-06",
+      "method": "browser",
+      "description": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair",
+      "previousId": "R01.06"
+    },
+    {
+      "id": "R01-07",
+      "method": "browser",
+      "description": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair",
+      "previousId": "R01.07"
+    },
+    {
+      "id": "R01-08",
+      "method": "browser",
+      "description": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair",
+      "previousId": "R01.08"
+    },
+    {
+      "id": "R01-09",
+      "method": "browser",
+      "description": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair",
+      "previousId": "R01.09"
+    },
+    {
+      "id": "R01-10",
+      "method": "browser",
+      "description": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair",
+      "previousId": "R01.10"
+    }
+  ]
+}

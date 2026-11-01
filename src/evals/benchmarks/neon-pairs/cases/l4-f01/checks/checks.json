@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "checks": [
+    {
+      "id": "F01-01",
+      "method": "browser",
+      "description": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature",
+      "previousId": "F01.01"
+    },
+    {
+      "id": "F01-02",
+      "method": "browser",
+      "description": "C15.2: editing a name keeps cards, progress, active time and board code unchanged.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature",
+      "previousId": "F01.02"
+    },
+    {
+      "id": "F01-03",
+      "method": "browser",
+      "description": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature",
+      "previousId": "F01.03"
+    },
+    {
+      "id": "F01-04",
+      "method": "browser",
+      "description": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields.",
+      "expected": {
+        "starting": "pass",
+        "solution": "pass"
+      },
+      "kind": "feature",
+      "previousId": "F01.04"
+    },
+    {
+      "id": "F01-05",
+      "method": "browser",
+      "description": "C15.4: a named import restores its name paused and a later legacy import clears it.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature",
+      "previousId": "F01.05"
+    },
+    {
+      "id": "F01-06",
+      "method": "browser",
+      "description": "D05: isolated invalid names, fields and versions are rejected before changing the named game.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature",
+      "previousId": "F01.06"
+    },
+    {
+      "id": "F01-07",
+      "method": "browser",
+      "description": "C15.5: Restart, New Game, size change and board-code load each clear the name.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature",
+      "previousId": "F01.07"
+    },
+    {
+      "id": "F01-08",
+      "method": "browser",
+      "description": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature",
+      "previousId": "F01.08"
+    },
+    {
+      "id": "F01-09",
+      "method": "browser",
+      "description": "C15.4: a named completed import stays static and never writes a best score.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature",
+      "previousId": "F01.09"
+    },
+    {
+      "id": "F01-10",
+      "method": "browser",
+      "description": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature",
+      "previousId": "F01.10"
+    }
+  ]
+}
