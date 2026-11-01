@@ -3,11 +3,11 @@
     "files":  [
                   {
                       "path":  "checks/activation.ts",
-                      "sha256":  "e223051fdc68e3a810f1a5e3a28441c7068643e99d561c4c1efa3b921a89a56f"
+                      "sha256":  "ade165a815d6beebcdff389820aa26d00455bbec56a947dad009e2848d418868"
                   },
                   {
                       "path":  "checks/board.ts",
-                      "sha256":  "1ed964c9a18e6b60be53448ca52238746ecbb59a32f21f676424377d07699b58"
+                      "sha256":  "13c7a891ad208e4610afbc875d40ece1c4ff73cd16fb78883af1ac146f8301d9"
                   },
                   {
                       "path":  "checks/browser-probe.ts",
@@ -59,7 +59,7 @@
                   },
                   {
                       "path":  "checks/face-signature.ts",
-                      "sha256":  "c6873eb65133c23e5760c25915027c7de36bbbc649d80781687dd891b701bf2d"
+                      "sha256":  "8b07068c739076af0dccb8ecbb26f510b31776e69717202c63cd82a63de4a9e1"
                   },
                   {
                       "path":  "checks/fixtures.test.ts",
@@ -95,7 +95,7 @@
                   },
                   {
                       "path":  "checks/README.md",
-                      "sha256":  "a96e38a7f2875f512b5f36af0e0ee99d310f7da4d460436480f7c98361a47189"
+                      "sha256":  "71fb14e3fabda78e42e29ea0f1a32c69f2c88a148b00a93d7a2f0821d8ce0777"
                   },
                   {
                       "path":  "checks/report.test.ts",

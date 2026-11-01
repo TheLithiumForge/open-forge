@@ -6,7 +6,7 @@ import { test } from "node:test";
 import { chromium } from "playwright";
 import { PNG } from "pngjs";
 import { clicking, typing } from "./activation.ts";
-import { backsOf, card, markCards, waitForBacks, waitForFace } from "./board.ts";
+import { backsOf, card, cardSignature, markCards, waitForBacks, waitForFace } from "./board.ts";
 import { CheckId, GameFailure } from "./check-ids.ts";
 import { deliveryChecks } from "./checks-delivery.ts";
 import { colorDistance, looksLikeBack, shapeShare, signatureOf } from "./face-signature.ts";
@@ -15,7 +15,7 @@ import { CheckStatus } from "../../../history/statuses.ts";
 import { dismissModal } from "./modal.ts";
 import { readBoard } from "./open-game.ts";
 import { bestIn, identifiesGame, newGameButton, pageText, showsWin } from "./page-text.ts";
-import { bestPage, Finding, FixtureSize, FixtureText, modalPage, namedPage, oddBoard, thinGame, winPage } from "./regression-fixtures.ts";
+import { bestPage, Finding, FixtureSize, FixtureText, focusGlowGame, modalPage, namedPage, oddBoard, thinGame, winPage } from "./regression-fixtures.ts";
 import { playGame } from "./solver.ts";
 
 const OldBackThresholds = { colors: 0.1, shape: 0.07 } as const;
@@ -57,6 +57,60 @@ test(`${Finding.turned}: full pixels catch a dim outline that the old signature 
   assert.equal(oldBack(face, back), true);
   assert.equal(looksLikeBack(face, back), false);
   assert.equal(looksLikeBack(back, back), true);
+});
+
+test(`${Finding.focus}: gradual light changes keep thin strokes distinct`, () => {
+  const image = new PNG({ width: 120, height: 120 });
+  for (let offset = 0; offset < image.data.length; offset += 4) image.data.set([16, 16, 24, 255], offset);
+  const back = signatureOf(PNG.sync.write(image));
+  for (let y = 0; y < image.height; y += 1) {
+    for (let x = 0; x < image.width; x += 1) {
+      const light = Math.round(20 * (1 - x / image.width));
+      image.data.set([16 + light, 16 + light, 24 + light, 255], (y * image.width + x) * 4);
+    }
+  }
+  assert.equal(looksLikeBack(signatureOf(PNG.sync.write(image)), back), true);
+  for (let y = 30; y < 90; y += 1) image.data.set([48, 48, 56, 255], (y * image.width + 40) * 4);
+  assert.equal(looksLikeBack(signatureOf(PNG.sync.write(image)), back), false);
+  for (let offset = 0; offset < image.data.length; offset += 4) image.data.set([16, 16, 24, 255], offset);
+  for (let y = 30; y < 90; y += 1) {
+    for (const [column, light] of [6, 12, 6].entries()) image.data.set([16 + light, 16 + light, 24 + light, 255], (y * image.width + 40 + column) * 4);
+  }
+  assert.equal(looksLikeBack(signatureOf(PNG.sync.write(image)), back), false);
+});
+
+test(Finding.focus, { skip: !process.env["PLAYWRIGHT_BROWSERS_PATH"] }, async (t) => {
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+  try {
+    for (const activate of [clicking, typing]) await t.test(activate.name, async () => {
+      await page.goto(`data:text/html,${encodeURIComponent(focusGlowGame())}`);
+      const board = await readBoard(page);
+      const back = board.backs[1]; assert.ok(back);
+      const play = activate(page);
+      await play(0);
+      assert.notEqual(await waitForFace(page, 0, board.backs[0] ?? back), null);
+      await play(1);
+      assert.notEqual(await waitForFace(page, 1, back), null);
+      assert.equal(await waitForBacks(page, [0, 1], board.backs), true);
+      assert.equal(looksLikeBack(await cardSignature(page, 1), back), true);
+      assert.equal(await card(page, 1).evaluate((element) => element === document.activeElement), true);
+      await card(page, 0).hover();
+      assert.equal(looksLikeBack(await cardSignature(page, 0), board.backs[0] ?? back), true);
+      const game = await playGame(page, play, board.backs, { extraMisses: 0 });
+      assert.equal(game.won, true, game.error ?? "");
+      assert.equal(showsWin(await pageText(page)), true);
+      await (await newGameButton(page))?.click();
+      assert.equal(await waitForBacks(page, board.backs.map((_, index) => index), board.backs), true);
+      await page.goto(`data:text/html,${encodeURIComponent(focusGlowGame(true))}`);
+      const broken = await readBoard(page);
+      const brokenBack = broken.backs[0]; assert.ok(brokenBack);
+      await card(page, 0).hover();
+      await activate(page)(0);
+      assert.equal(await waitForFace(page, 0, brokenBack), null);
+      assert.equal(await card(page, 0).evaluate((element) => element === document.activeElement), true);
+    });
+  } finally { await browser.close(); }
 });
 
 test("small browser fixtures exercise each finding and its broken counterpart", { skip: !process.env["PLAYWRIGHT_BROWSERS_PATH"] }, async (t) => {

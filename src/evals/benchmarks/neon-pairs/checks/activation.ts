@@ -1,5 +1,5 @@
 import type { Page } from "playwright";
-import { card, CardAttribute, ensureCard } from "./board.ts";
+import { card, CardAttribute, ensureCard, prepareBacks } from "./board.ts";
 import { GameFailure } from "./check-ids.ts";
 import { dismissModal } from "./modal.ts";
 
@@ -28,6 +28,9 @@ export function clicking(page: Page): Activate {
   return async (index) => {
     await dismissModal(page);
     await ensureCard(page, index);
+    const captureBacks = await prepareBacks(page);
+    await card(page, index).focus({ timeout: ClickTimeoutMs });
+    await captureBacks();
     await card(page, index).click({ force: true, timeout: ClickTimeoutMs });
     await page.mouse.move(0, 0);
   };
@@ -37,6 +40,9 @@ export function tapping(page: Page): Activate {
   return async (index) => {
     await dismissModal(page);
     await ensureCard(page, index);
+    const captureBacks = await prepareBacks(page);
+    await card(page, index).focus({ timeout: ClickTimeoutMs });
+    await captureBacks();
     await card(page, index).tap({ force: true, timeout: ClickTimeoutMs });
   };
 }
@@ -66,6 +72,7 @@ export function typing(page: Page): Activate {
   const press = async (index: number): Promise<void> => {
     await dismissModal(page);
     await ensureCard(page, index);
+    const captureBacks = await prepareBacks(page);
     const columns = Math.max(1, Math.round(Math.sqrt(await page.locator(`[${CardAttribute}]`).count())));
     for (let presses = 0; presses < MaxFocusKeys; presses += 1) {
       const current = await focusedCard(page);
@@ -82,6 +89,7 @@ export function typing(page: Page): Activate {
       }
     }
     if ((await focusedCard(page)) !== index) throw new GameFailure("Keyboard navigation could not reach the requested card.");
+    await captureBacks();
     await page.keyboard.press("Enter");
   };
   return Object.assign(press, { fallback: async () => { await dismissModal(page); await page.keyboard.press("Space"); } });

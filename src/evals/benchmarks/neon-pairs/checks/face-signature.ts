@@ -121,10 +121,19 @@ export function faceDistance(a: FaceSignature, b: FaceSignature): number {
 
 // A face down card can carry a hover or focus tint, so "still its back" allows more than "the same face".
 const BackThresholds = { colors: 0.1, shapeShare: 0.07 } as const;
+const backStates = new WeakMap<FaceSignature, FaceSignature[]>();
 
-/** Whether a card still shows its back, allowing for hover, focus and similar tints. */
-export function looksLikeBack(look: FaceSignature, back: FaceSignature): boolean {
+function matchesBack(look: FaceSignature, back: FaceSignature): boolean {
   return colorDistance(look, back) <= BackThresholds.colors && shapeShare(look, back) <= BackThresholds.shapeShare && sameBackImage(look, back) !== false;
+}
+
+/** Whether a card shows one of its back images captured before activation. */
+export function looksLikeBack(look: FaceSignature, back: FaceSignature): boolean {
+  return matchesBack(look, back) || (backStates.get(back) ?? []).some((state) => matchesBack(look, state));
+}
+
+export function rememberBackState(back: FaceSignature, state: FaceSignature): void {
+  if (!looksLikeBack(state, back)) backStates.set(back, [...(backStates.get(back) ?? []), state]);
 }
 
 export function sameFace(a: FaceSignature, b: FaceSignature): boolean {

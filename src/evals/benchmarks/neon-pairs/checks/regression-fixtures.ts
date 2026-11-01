@@ -1,6 +1,7 @@
-export const Finding = { name: "name", turned: "turned", best: "best", win: "win", modal: "modal", odd: "odd" } as const;
+export const Finding = { name: "name", turned: "turned", best: "best", win: "win", modal: "modal", odd: "odd", focus: "focus and hover glows" } as const;
 export const FixtureText = { logo: "neonpairs.", title: "Neon Pairs — Find your next match", best: "PERSONAL BEST", win: "All paired up. Nicely done!", alternateWin: "Ready for another round?", noBest: "—set your first" } as const;
 export const FixtureSize = { small: 4, odd: 5, large: 16 } as const;
+export const FixtureTiming = { mismatch: 700 } as const;
 
 function documentWith(body: string, title = FixtureText.title): string {
   return `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title><style>
@@ -48,30 +49,40 @@ export function modalPage(kind: "escape" | "close" | "again" | "fallback" | "stu
   </script>`);
 }
 
-export function thinGame(broken = false, modal = false): string {
-  const cards = Array.from({ length: FixtureSize.small ** 2 }, (_, index) => `<button class="card" aria-label="Card ${index + 1}"><span class="inner"><span class="back"></span><span class="face"><svg viewBox="0 0 60 60"><path d="M${10 + Math.floor(index / 2) * 3} 10V50H50" fill="none" stroke="#303038" stroke-width="1"/></svg></span></span></button>`).join("");
-  return documentWith(`<h1>${FixtureText.logo}</h1><button id="new">New Game</button><select aria-label="Size"><option>4</option><option>16</option></select><p id="moves">Moves: 0</p><p id="win"></p><div class="board" style="grid-template-columns:repeat(4,60px)">${cards}</div><dialog><p>${FixtureText.win}</p><button>Close</button></dialog><script>
-    let first = null, moves = 0, matched = 0;
+export function thinGame(broken = false, modal = false, glows = false): string {
+  const faceOf = (index: number): number => glows && index < FixtureSize.small ? index % 2 : Math.floor(index / 2);
+  const cards = Array.from({ length: FixtureSize.small ** 2 }, (_, index) => `<button class="card" aria-label="Card ${index + 1}"><span class="inner"><span class="back"></span><span class="face"><svg viewBox="0 0 60 60"><path d="M${10 + faceOf(index) * 3} 10V50H50" fill="none" stroke="#303038" stroke-width="1"/></svg></span></span></button>`).join("");
+  return documentWith(`${glows ? `<style>
+    .inner,.back,.face{border-radius:18%}
+    .card:focus .inner,.card:focus-visible .inner{outline:2px solid white;outline-offset:2px;box-shadow:0 0 16px #fff}
+    .card:focus:not(.up) .back{box-shadow:inset 0 0 12px #fff8}
+    .card:not(.up):hover .back{border:1px solid #c9b3ff;box-shadow:0 0 14px #a07dff,inset 0 0 13px #8a5cff88}
+  </style>` : ""}<h1>${FixtureText.logo}</h1><button id="new">New Game</button><select aria-label="Size"><option>4</option><option>16</option></select><p id="moves">Moves: 0</p><p id="win"></p><div class="board" style="grid-template-columns:repeat(4,60px)">${cards}</div><dialog><p>${FixtureText.win}</p><button>Close</button></dialog><script>
+    let first = null, moves = 0, matched = 0, locked = false;
     const cards = [...document.querySelectorAll('.card')];
     const dialog = document.querySelector('dialog');
     dialog.querySelector('button').onclick = () => dialog.close();
     document.querySelector('#new').onclick = () => {
-      first = null; moves = 0; matched = 0;
-      cards.forEach(card => { card.classList.remove('up'); card.disabled = false; });
+      first = null; moves = 0; matched = 0; locked = false;
+      cards.forEach(card => { card.classList.remove('up'); card.disabled = false; card.removeAttribute('aria-disabled'); });
       document.querySelector('#moves').textContent = 'Moves: 0';
       document.querySelector('#win').textContent = '';
     };
     cards.forEach((card, index) => card.onclick = () => {
       ${broken ? "return;" : ""}
-      if (card.classList.contains('up')) return;
+      if (card.classList.contains('up') || locked) return;
       card.classList.add('up');
       if (first === null) { first = index; return; }
       moves += 1; document.querySelector('#moves').textContent = 'Moves: ' + moves;
       const previous = first; first = null;
-      if (Math.floor(previous / 2) === Math.floor(index / 2)) {
-        cards[previous].disabled = true; card.disabled = true; matched += 2;
+      const faceOf = index => ${glows ? `index < ${FixtureSize.small} ? index % 2 : Math.floor(index / 2)` : "Math.floor(index / 2)"};
+      if (faceOf(previous) === faceOf(index)) {
+        ${glows ? "cards[previous].setAttribute('aria-disabled', 'true'); card.setAttribute('aria-disabled', 'true');" : "cards[previous].disabled = true; card.disabled = true;"} matched += 2;
         if (matched === cards.length) { document.querySelector('#win').textContent = ${JSON.stringify(FixtureText.win)}; ${modal ? "dialog.showModal();" : ""} }
-      } else setTimeout(() => { cards[previous].classList.remove('up'); card.classList.remove('up'); }, 700);
+      } else {
+        ${glows ? "locked = true;" : ""}
+        setTimeout(() => { cards[previous].classList.remove('up'); card.classList.remove('up'); locked = false; }, ${FixtureTiming.mismatch});
+      }
     });
     document.querySelector('select').onchange = () => {
       const size = Number(document.querySelector('select').value);
@@ -79,4 +90,8 @@ export function thinGame(broken = false, modal = false): string {
       if (size === 16) document.querySelector('.board').innerHTML = '<button class="card" aria-label="Card"></button>'.repeat(256);
     };
   </script>`);
+}
+
+export function focusGlowGame(broken = false): string {
+  return thinGame(broken, false, true);
 }

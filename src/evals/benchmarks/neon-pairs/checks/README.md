@@ -40,6 +40,10 @@ node --test benchmarks/neon-pairs/checks/regressions.test.ts
 
 The tests compare working and broken pages through the checker functions. Pure tests also show which names, face pixels and win phrases the old checker misses. Browser tests run when `PLAYWRIGHT_BROWSERS_PATH` is set. They cover pointer and keyboard games, reset after play, dialog controls and every size from 4 through 16.
 
+The focus glow fixture closes a mismatch, then finishes by pointer and by keyboard. Focus stays on the card after the mismatch closes. The inert copy still fails reveal detection in both modes.
+
+Before activation, the checker captures known backs after focus moves. These images give each card alternate backs for the current game. Only cards that matched a known back before focus moved get an alternate back. The pixel comparison ignores gradual light changes near card edges, where a nearby focus glow can reach a closed card. It keeps full resolution changes in the middle of the face, including soft dim strokes. Signatures for comparing faces keep their existing thresholds.
+
 ## Judge
 
 `rubrics/L1.json` defines eight questions and three ballots each. Rules, code, visuals and wishes have separate areas. Ballots need valid verdicts and citations to files, lines or image IDs. Invalid model output fails the judge assessment and keeps the check results.
@@ -52,6 +56,8 @@ The default judge adapter sends images through the assessor container with model
 
 Dependencies were installed with `npm ci --cache .npm-cache`. Product tests use fakes for Docker and model calls. The regression pages use the installed Chromium.
 
+With the worktree Chromium path set, typecheck passes and `npm test` has 293 passes, one failure and zero skips. Every Layer 1 fixture test passes. The failure is "all preexisting L1 checker files stay byte identical" in `checks/spec-layers/catalog.test.ts`. The overseer needs to freeze that snapshot again after integrating these changes.
+
 Chromium was installed inside the worktree. The detector probe passed every even size from 4x4 through 16x16, including 144 cards at 12x12. Run `node benchmarks/neon-pairs/checks/browser-probe.ts` with `PLAYWRIGHT_BROWSERS_PATH` set to your installed browser folder to repeat that check. The probe uses checker markup with scripts disabled.
 
 The Docker validation matrix wasn't run in this packet. The previous validation record is cleared so `L1-v3` can't reuse results from the old checker.
@@ -63,7 +69,7 @@ Each correction keeps a broken case in `regressions.test.ts`:
 | Finding | Correction | Broken case |
 | --- | --- | --- |
 | Name | Accept the document title or the page text with only letters and case ignored | Different title and logo |
-| Turned cards | Compare full resolution pixels against each card's back with the pointer off the cards | Inert cards with a hover tint |
+| Turned cards | Compare full resolution pixels against each card's backs captured before activation, with the pointer off the cards | Inert cards with focus and hover glows |
 | Best score | Read a score followed by its unit under the label and a dash with text as an empty best | Text without a score and unrelated card counts |
 | Win message | Read new finishing text after the last pair | No new message and unchanged finishing text |
 | Modal win | Try Escape, then a close, dismiss or play again button before actions | Dialog that cancels Escape and has no exit |
