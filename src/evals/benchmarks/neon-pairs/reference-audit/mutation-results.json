@@ -187,12 +187,7 @@
       "outcome": "caught",
       "exit": 1,
       "assertion": "AssertionError [ERR_ASSERTION]: R10 size six has its separate best\n\nundefined !== 20\n\n    at reference/src/game/session/storage.test.ts:33:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
-      "otherFailures": [
-        {
-          "name": "a write keeps a better best that another tab saved in the meantime",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n    '4': 9,\n-   '6': 20\n  }\n\n    at reference/src/game/session/storage.test.ts:57:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
-        }
-      ]
+      "otherFailures": []
     },
     {
       "id": "M10",
@@ -209,7 +204,7 @@
       "otherFailures": [
         {
           "name": "a write keeps a better best that another tab saved in the meantime",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   '4': 10,\n-   '4': 9,\n    '6': 20\n  }\n\n    at reference/src/game/session/storage.test.ts:57:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   '4': 10,\n-   '4': 9,\n    '6': 20\n  }\n\n    at reference/src/game/session/storage.test.ts:61:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         }
       ]
     },
@@ -231,7 +226,7 @@
         },
         {
           "name": "a write keeps a better best that another tab saved in the meantime",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   bestMoves: {},\n+   size: 4\n-   bestMoves: {\n-     '4': 9\n-   },\n-   size: 6\n  }\n\n    at reference/src/game/session/storage.test.ts:55:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: R10 a write keeps the saved better best\n+ actual - expected\n\n  {\n+   bestMoves: {},\n+   size: 4\n-   bestMoves: {\n-     '4': 9\n-   },\n-   size: 6\n  }\n\n    at reference/src/game/session/storage.test.ts:55:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         }
       ]
     },
@@ -606,12 +601,81 @@
       "clauses": [
         "R10.3"
       ],
-      "test": "tests/preferences.e2e.test.ts",
-      "testName": "a tab opened earlier keeps the best another tab recorded when it starts a new game",
-      "reason": "R10 the earlier tab keeps the saved best",
+      "test": "src/game/session/storage.test.ts",
+      "testName": "a write keeps a better best that another tab saved in the meantime",
+      "reason": "R10 a write keeps the saved better best",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "R10 the earlier tab keeps the saved best\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: 8\nReceived: NaN",
+      "assertion": "AssertionError [ERR_ASSERTION]: R10 a write keeps the saved better best\n+ actual - expected\n\n  {\n+   bestMoves: {},\n-   bestMoves: {\n-     '4': 9\n-   },\n    size: 6\n  }\n\n    at reference/src/game/session/storage.test.ts:55:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "otherFailures": []
+    },
+    {
+      "id": "M36",
+      "clauses": [
+        "I13.1",
+        "V19.5",
+        "V20.4"
+      ],
+      "test": "tests/pointer-focus.e2e.test.ts",
+      "testName": "pointer clicks reveal the pressed card on 16x16 at 640x400",
+      "reason": "I13 a clicked card ends in view",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "I13 a clicked card ends in view\n\nexpect(received).toBeGreaterThanOrEqual(expected)\n\nExpected: >= 5.75\nReceived:    -22",
+      "otherFailures": []
+    },
+    {
+      "id": "M37",
+      "clauses": [
+        "R10.6"
+      ],
+      "test": "tests/saved-bests.e2e.test.ts",
+      "testName": "a win shows the saved best when another tab saved a better one first",
+      "reason": "R10 the shown best matches the saved best",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "R10 the shown best matches the saved best\n\nexpect(locator).toHaveText(expected) failed\n\nLocator:  locator('.stats > div').filter({ has: getByText('Best:', { exact: true }) }).locator('dd')\nExpected: \"8\"\nReceived: \"9\"\nTimeout:  5000ms\n\nCall log:\n  - R10 the shown best matches the saved best locator('.stats > div').filter({ has: getByText('Best:', { exact: true }) }).locator('dd') with timeout 5000ms\n  - waiting for locator('.stats > div').filter({ has: getByText('Best:', { exact: true }) }).locator('dd')\n    14 × locator resolved to <dd>9</dd>\n       - unexpected value \"9\"\n",
+      "otherFailures": []
+    },
+    {
+      "id": "M38",
+      "clauses": [
+        "C08.6",
+        "C08.7"
+      ],
+      "test": "tests/fractional-clock.e2e.test.ts",
+      "testName": "a mismatch starts its interval at its own activation between milliseconds",
+      "reason": "C08 remaining time rounds up from the mismatch start",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "C08 remaining time rounds up from the mismatch start\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n    \"first\": 0,\n    \"kind\": \"mismatch\",\n-   \"remainingMs\": 800,\n+   \"remainingMs\": 799,\n    \"second\": 1,\n  }",
+      "otherFailures": []
+    },
+    {
+      "id": "M39",
+      "clauses": [
+        "C12.3",
+        "A06.2"
+      ],
+      "test": "tests/saved-bests.e2e.test.ts",
+      "testName": "a completed import in 8 moves leaves a saved best of 12 alone",
+      "reason": "C12 import leaves the shown best alone",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "C12 import leaves the shown best alone\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"8\",\n+ ]",
+      "otherFailures": []
+    },
+    {
+      "id": "M40",
+      "clauses": [
+        "C12.3"
+      ],
+      "test": "tests/saved-bests.e2e.test.ts",
+      "testName": "a completed import in 10 moves leaves a saved best of 8 alone",
+      "reason": "C12 import leaves the shown best alone",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "C12 import leaves the shown best alone\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 4\n\n- Array []\n+ Array [\n+   \"none\",\n+   \"8\",\n+ ]",
       "otherFailures": []
     }
   ]

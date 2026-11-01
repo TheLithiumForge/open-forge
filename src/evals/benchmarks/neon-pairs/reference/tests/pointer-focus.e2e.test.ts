@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { loadFixedBoard } from './game-fixture.ts';
+import { boardGaps } from './focus-bounds.ts';
 import type { Locator, Page } from '@playwright/test';
 
 const SIZE = 16;
@@ -9,11 +10,28 @@ const LAST = SIZE ** 2 - 1;
 // Pressed 4px inside the board edge, so the card shows only a sliver there.
 const EDGE_INSET_PX = 4;
 const WHEEL_PX = 240;
+const SUBPIXEL_PX = 0.25;
 const VIEWS = [
   { width: 360, height: 800, scale: 1 },
   { width: 1280, height: 720, scale: 1 },
+  { width: 1280, height: 800, scale: 1 },
   { width: 640, height: 400, scale: 2 },
 ] as const;
+const TOUCH_VIEWS = VIEWS.filter((view) => view.height !== 720);
+
+// After the press completes, the focused card sits fully inside the board and the window, with
+// nearest alignment leaving just the card's scroll margin at the edge it came in by.
+async function expectSettledInView(card: Locator, message: string): Promise<void> {
+  await expect(card).toBeFocused();
+  const gaps = await boardGaps(card);
+  // Scroll offsets are whole pixels, so fractional card sizes can leave up to 1px more.
+  expect(gaps.bottom, message).toBeGreaterThanOrEqual(gaps.margin - SUBPIXEL_PX);
+  expect(gaps.bottom, message).toBeLessThan(gaps.margin + 1);
+  const box = await card.boundingBox();
+  const view = card.page().viewportSize();
+  if (!box || !view) throw new Error('Missing card or viewport.');
+  expect(box.y + box.height, message).toBeLessThanOrEqual(view.height);
+}
 
 async function largeBoard(page: Page): Promise<Locator> {
   await loadFixedBoard(page);
@@ -109,27 +127,35 @@ for (const view of VIEWS)
       const clipped = await clippedPoint(page);
       await page.mouse.click(clipped.x, clipped.y);
       await expect(cards.nth(clipped.index), 'V19 click on a clipped card').toHaveClass(/revealed/);
+      await expectSettledInView(cards.nth(clipped.index), 'I13 a clicked card ends in view');
     },
     { viewport: { width: view.width, height: view.height }, deviceScaleFactor: view.scale },
   );
 
-test(
-  'taps reveal the tapped card after a scroll and at a clipped board edge',
-  async ({ page }) => {
-    const cards = await largeBoard(page);
-    await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
-    const point = await cards.nth(1).evaluate((card) => {
-      card.closest('.board-viewport')?.scrollIntoView({ block: 'start' });
-      const box = card.getBoundingClientRect();
-      return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
-    });
-    await page.touchscreen.tap(point.x, point.y);
-    await expect(cards.nth(1), 'I01 tap after a programmatic scroll').toHaveClass(/revealed/);
-    await restart(page);
-    await showBoardEnd(page);
-    const clipped = await clippedPoint(page);
-    await page.touchscreen.tap(clipped.x, clipped.y);
-    await expect(cards.nth(clipped.index), 'V19 tap on a clipped card').toHaveClass(/revealed/);
-  },
-  { viewport: { width: 360, height: 800 }, hasTouch: true, isMobile: true },
-);
+for (const view of TOUCH_VIEWS)
+  test(
+    `taps reveal the tapped card after a scroll and at a clipped edge at ${view.width}x${view.height}`,
+    async ({ page }) => {
+      const cards = await largeBoard(page);
+      await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+      const point = await cards.nth(1).evaluate((card) => {
+        card.closest('.board-viewport')?.scrollIntoView({ block: 'start' });
+        const box = card.getBoundingClientRect();
+        return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+      });
+      await page.touchscreen.tap(point.x, point.y);
+      await expect(cards.nth(1), 'I01 tap after a programmatic scroll').toHaveClass(/revealed/);
+      await restart(page);
+      await showBoardEnd(page);
+      const clipped = await clippedPoint(page);
+      await page.touchscreen.tap(clipped.x, clipped.y);
+      await expect(cards.nth(clipped.index), 'V19 tap on a clipped card').toHaveClass(/revealed/);
+      await expectSettledInView(cards.nth(clipped.index), 'I13 a tapped card ends in view');
+    },
+    {
+      viewport: { width: view.width, height: view.height },
+      deviceScaleFactor: view.scale,
+      hasTouch: true,
+      isMobile: true,
+    },
+  );

@@ -376,12 +376,68 @@
   {
     "id": "M35",
     "path": "src/game/session/storage.ts",
-    "find": "const merged = mergePreferences(readPreferences(store), preferences);",
-    "replace": "const merged = preferences;",
-    "test": "tests/preferences.e2e.test.ts",
-    "browser": true,
+    "find": "  const merged = mergeSavedBests(store, preferences);",
+    "replace": "  const merged = preferences;",
+    "test": "src/game/session/storage.test.ts",
+    "browser": false,
     "clauses": ["R10.3"],
-    "testName": "a tab opened earlier keeps the best another tab recorded when it starts a new game",
-    "reason": "R10 the earlier tab keeps the saved best"
+    "testName": "a write keeps a better best that another tab saved in the meantime",
+    "reason": "R10 a write keeps the saved better best"
+  },
+  {
+    "id": "M36",
+    "path": "src/game/board/Board.tsx",
+    "find": "    card.scrollIntoView(NEAREST);\n",
+    "replace": "",
+    "test": "tests/pointer-focus.e2e.test.ts",
+    "browser": true,
+    "clauses": ["I13.1", "V19.5", "V20.4"],
+    "testName": "pointer clicks reveal the pressed card on 16x16 at 640x400",
+    "reason": "I13 a clicked card ends in view"
+  },
+  {
+    "id": "M37",
+    "path": "src/game/session/use-saved-preferences.ts",
+    "find": "    show(writePreferences(store, current.current.preferences));",
+    "replace": "    writePreferences(store, current.current.preferences);",
+    "test": "tests/saved-bests.e2e.test.ts",
+    "browser": true,
+    "clauses": ["R10.6"],
+    "testName": "a win shows the saved best when another tab saved a better one first",
+    "reason": "R10 the shown best matches the saved best"
+  },
+  {
+    "id": "M38",
+    "path": "src/game/snapshot.ts",
+    "find": "remainingMs: Math.ceil(state.selection.remainingMs)",
+    "replace": "remainingMs: Math.round(state.selection.remainingMs)",
+    "test": "tests/fractional-clock.e2e.test.ts",
+    "browser": true,
+    "clauses": ["C08.6", "C08.7"],
+    "testName": "a mismatch starts its interval at its own activation between milliseconds",
+    "reason": "C08 remaining time rounds up from the mismatch start",
+    "patches": [{ "path": "src/game/snapshot.ts", "find": "elapsedMs: Math.floor(state.elapsedMs)", "replace": "elapsedMs: Math.round(state.elapsedMs)" }]
+  },
+  {
+    "id": "M39",
+    "path": "src/game/session/session.ts",
+    "find": "    preferences: { ...session.preferences, size: game.size },\n",
+    "replace": "    preferences:\n      imported \u0026\u0026 isWon(game)\n        ? rememberBest({ ...session.preferences, size: game.size }, game.size, game.moves)\n        : { ...session.preferences, size: game.size },\n",
+    "test": "tests/saved-bests.e2e.test.ts",
+    "browser": true,
+    "clauses": ["C12.3", "A06.2"],
+    "testName": "a completed import in 8 moves leaves a saved best of 12 alone",
+    "reason": "C12 import leaves the shown best alone"
+  },
+  {
+    "id": "M40",
+    "path": "src/game/session/session.ts",
+    "find": "    preferences: { ...session.preferences, size: game.size },\n",
+    "replace": "    preferences: { size: game.size, bestMoves: imported ? {} : session.preferences.bestMoves },\n",
+    "test": "tests/saved-bests.e2e.test.ts",
+    "browser": true,
+    "clauses": ["C12.3"],
+    "testName": "a completed import in 10 moves leaves a saved best of 8 alone",
+    "reason": "C12 import leaves the shown best alone"
   }
 ]

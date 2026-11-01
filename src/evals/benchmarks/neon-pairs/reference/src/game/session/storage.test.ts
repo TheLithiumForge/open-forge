@@ -52,7 +52,11 @@ test('a write keeps a better best that another tab saved in the meantime', () =>
   const store = memoryStore();
   writePreferences(store, { size: DEFAULT_SIZE, bestMoves: { [DEFAULT_SIZE]: 9 } });
   writePreferences(store, { size: 6, bestMoves: {} });
-  assert.deepEqual(readPreferences(store), { size: 6, bestMoves: { [DEFAULT_SIZE]: 9 } });
+  assert.deepEqual(
+    readPreferences(store),
+    { size: 6, bestMoves: { [DEFAULT_SIZE]: 9 } },
+    'R10 a write keeps the saved better best',
+  );
   writePreferences(store, { size: 6, bestMoves: { [DEFAULT_SIZE]: 10, 6: 20 } });
   assert.deepEqual(readPreferences(store).bestMoves, { [DEFAULT_SIZE]: 9, 6: 20 });
   writePreferences(store, { size: 6, bestMoves: { [DEFAULT_SIZE]: 8 } });

@@ -16,6 +16,7 @@ interface CardProps {
   tabIndex: number;
   activate(index: number): void;
   focus(index: number, card: HTMLElement): void;
+  clicked(card: HTMLElement): void;
   navigate(event: KeyboardEvent<HTMLButtonElement>, index: number): void;
 }
 
@@ -28,6 +29,7 @@ export function Card({
   tabIndex,
   activate,
   focus,
+  clicked,
   navigate,
 }: CardProps) {
   const pointer = useRef<{ x: number; y: number; cancelled: boolean } | null>(null);
@@ -71,7 +73,9 @@ export function Card({
         if (pointer.current) pointer.current.cancelled = true;
       }}
       onClick={(event) => {
-        if (!(event.detail > 0 && pointer.current?.cancelled)) activate(index);
+        if (event.detail > 0 && pointer.current?.cancelled) return;
+        activate(index);
+        clicked(event.currentTarget);
       }}
     >
       {face === null ? <span className="card-back" aria-hidden="true" /> : <Face face={face} />}

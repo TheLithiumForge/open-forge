@@ -24,6 +24,7 @@ createRoot(root).render(
               tabIndex={-1}
               activate={ignore}
               focus={ignore}
+              clicked={ignore}
               navigate={ignore}
             />
           </div>

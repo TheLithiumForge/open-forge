@@ -2018,6 +2018,11 @@
           "path": "reference/tests/preferences.e2e.test.ts",
           "symbol": "a tab opened earlier keeps the best another tab recorded when it starts a new game",
           "evidence": "Clause R10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/src/game/session/use-saved-preferences.ts",
+          "symbol": "useSavedPreferences",
+          "evidence": "Clause R10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Each write and each storage event shows the merged bests."
         }
       ]
     },
@@ -2119,6 +2124,21 @@
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "status formats show current values, continuing minutes and a completed import without Resume",
           "evidence": "Spec v2.1 executable assertion. Rendered status text must equal the published formats. See reference-audit/verification.json for the local gate results."
+        },
+        {
+          "path": "reference/src/game/session/use-saved-preferences.ts",
+          "symbol": "useSavedPreferences",
+          "evidence": "Clause R10.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Each write and each storage event shows the merged bests."
+        },
+        {
+          "path": "reference/tests/saved-bests.e2e.test.ts",
+          "symbol": "an idle tab shows another tab's best and keeps it through deals and sizes",
+          "evidence": "Clause R10.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/saved-bests.e2e.test.ts",
+          "symbol": "a win shows the saved best when another tab saved a better one first",
+          "evidence": "Clause R10.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3764,6 +3784,16 @@
           "path": "reference/tests/controls.e2e.test.ts",
           "symbol": "native reproduction controls keep drafts, limits, exact errors and action focus",
           "evidence": "Clause C12.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/saved-bests.e2e.test.ts",
+          "symbol": "a completed import in 10 moves leaves a saved best of 8 alone",
+          "evidence": "Clause C12.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/saved-bests.e2e.test.ts",
+          "symbol": "a completed import in 8 moves leaves a saved best of 12 alone",
+          "evidence": "Clause C12.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -4188,7 +4218,17 @@
         },
         {
           "path": "reference/tests/pointer-focus.e2e.test.ts",
-          "symbol": "taps reveal the tapped card after a scroll and at a clipped board edge",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 360x800",
+          "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 1280x800",
+          "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 640x400",
           "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -5592,6 +5632,36 @@
         {
           "path": "reference/tests/pointer-focus.e2e.test.ts",
           "symbol": "pointer clicks reveal the pressed card on 16x16 at 360x800",
+          "evidence": "Clause I13.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/src/game/board/Board.tsx",
+          "symbol": "cardClicked",
+          "evidence": "Clause I13.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. A completed click or tap scrolls the focused card into view with nearest alignment."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 640x400",
+          "evidence": "Clause I13.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 1280x800",
+          "evidence": "Clause I13.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 360x800",
+          "evidence": "Clause I13.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 1280x800",
+          "evidence": "Clause I13.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 640x400",
           "evidence": "Clause I13.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -8526,7 +8596,17 @@
         },
         {
           "path": "reference/tests/pointer-focus.e2e.test.ts",
-          "symbol": "taps reveal the tapped card after a scroll and at a clipped board edge",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 360x800",
+          "evidence": "Clause V19.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 1280x800",
+          "evidence": "Clause V19.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 640x400",
           "evidence": "Clause V19.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -8550,6 +8630,31 @@
           "path": "reference/tests/focus-clearance.e2e.test.ts",
           "symbol": "focus clearance survives nearest scroll to an interior card, board and browser intersections",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/board/Board.tsx",
+          "symbol": "cardClicked",
+          "evidence": "Clause V19.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. A completed click or tap scrolls the focused card into view with nearest alignment."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 360x800",
+          "evidence": "Clause V19.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 1280x800",
+          "evidence": "Clause V19.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 360x800",
+          "evidence": "Clause V19.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 1280x800",
+          "evidence": "Clause V19.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -8663,6 +8768,21 @@
           "path": "reference/tests/readability.ts",
           "symbol": "expectReadableText",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+        },
+        {
+          "path": "reference/src/game/board/Board.tsx",
+          "symbol": "cardClicked",
+          "evidence": "Clause V20.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. A completed click or tap scrolls the focused card into view with nearest alignment."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "pointer clicks reveal the pressed card on 16x16 at 640x400",
+          "evidence": "Clause V20.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/pointer-focus.e2e.test.ts",
+          "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 640x400",
+          "evidence": "Clause V20.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -11902,6 +12022,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause A06.2. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/tests/saved-bests.e2e.test.ts",
+          "symbol": "a completed import in 8 moves leaves a saved best of 12 alone",
+          "evidence": "Clause A06.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },

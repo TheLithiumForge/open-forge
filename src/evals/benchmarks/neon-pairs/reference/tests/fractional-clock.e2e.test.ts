@@ -6,10 +6,12 @@ import { exportedSnapshot, loadFixedBoard } from './game-fixture.ts';
 import type { Page } from '@playwright/test';
 
 const CLOCK_EVENT = 'test-clock';
-// Natural clock readings from a judge's run: a reveal, a second reveal and an export.
-const FIRST_MS = 351.6;
-const SECOND_MS = 362.5;
-const EXPORT_MS = 362.7;
+// Clock readings for a reveal, a second reveal and two exports. Quarter milliseconds are exact in
+// binary, and each export rounds differently from Math.round.
+const FIRST_MS = 351.25;
+const SECOND_MS = 362.25;
+const EXPORT_MS = 363;
+const NEAR_CLOSE_MS = SECOND_MS + MISMATCH_MS - 0.25;
 
 // The game reads only performance.now for active time, so the test sets that reading itself.
 async function controlClock(page: Page): Promise<(now: number) => Promise<void>> {
@@ -47,4 +49,13 @@ test('a mismatch starts its interval at its own activation between milliseconds'
     remainingMs: MISMATCH_MS,
   });
   expect(exported.elapsedMs, 'C08 elapsed time rounds down').toBe(Math.floor(EXPORT_MS - FIRST_MS));
+  await setNow(NEAR_CLOSE_MS);
+  const nearClose = await exportedSnapshot(page);
+  expect(nearClose.selection, 'C08 the last quarter millisecond exports as 1ms').toMatchObject({
+    kind: SelectionKind.mismatch,
+    remainingMs: 1,
+  });
+  expect(nearClose.elapsedMs, 'C08 elapsed time rounds down').toBe(
+    Math.floor(NEAR_CLOSE_MS - FIRST_MS),
+  );
 });

@@ -315,5 +315,31 @@
       "src/evals/benchmarks/neon-pairs/trace.json"
     ],
     "deleted": []
+  },
+  "reviewV21Round4": {
+    "record": "src/evals/benchmarks/neon-pairs/reference-audit/review-v2.1.md",
+    "created": ["src/evals/benchmarks/neon-pairs/reference/src/game/session/use-saved-preferences.ts", "src/evals/benchmarks/neon-pairs/reference/tests/saved-bests.e2e.test.ts"],
+    "changed": [
+      "src/evals/benchmarks/neon-pairs/reference-audit/AUDIT.md",
+      "src/evals/benchmarks/neon-pairs/reference-audit/evidence/accessibility-journey.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/mutation-results.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/mutations.fixture.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/mutations.ts",
+      "src/evals/benchmarks/neon-pairs/reference-audit/review-v2.1.md",
+      "src/evals/benchmarks/neon-pairs/reference-audit/revision-files.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/seed-record.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/verification.json",
+      "src/evals/benchmarks/neon-pairs/reference/art/face-sheet.tsx",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/board/Board.tsx",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/board/Card.tsx",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/session/storage.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/session/storage.ts",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/session/use-game.ts",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/snapshot.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/tests/fractional-clock.e2e.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/tests/pointer-focus.e2e.test.ts",
+      "src/evals/benchmarks/neon-pairs/trace.json"
+    ],
+    "deleted": []
   }
 }

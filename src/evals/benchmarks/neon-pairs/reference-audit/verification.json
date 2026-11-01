@@ -38,11 +38,11 @@
     },
     {
       "path": "reference/src/game/session/use-game.ts",
-      "lines": 102
+      "lines": 103
     },
     {
       "path": "reference/src/game/snapshot.test.ts",
-      "lines": 178
+      "lines": 187
     },
     {
       "path": "reference/tests/accessibility.e2e.test.ts",
@@ -74,11 +74,15 @@
     },
     {
       "path": "reference/tests/pointer-focus.e2e.test.ts",
-      "lines": 135
+      "lines": 161
     },
     {
       "path": "reference/tests/product-contract.e2e.test.ts",
       "lines": 122
+    },
+    {
+      "path": "reference/tests/saved-bests.e2e.test.ts",
+      "lines": 117
     }
   ],
   "gates": {
@@ -121,8 +125,8 @@
         "repetition": 1,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 90,
-        "passed": 90,
+        "tests": 97,
+        "passed": 97,
         "failed": 0,
         "skipped": 0,
         "exit": 0
@@ -131,8 +135,8 @@
         "repetition": 2,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 90,
-        "passed": 90,
+        "tests": 97,
+        "passed": 97,
         "failed": 0,
         "skipped": 0,
         "exit": 0
@@ -141,21 +145,21 @@
         "repetition": 3,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 90,
-        "passed": 90,
+        "tests": 97,
+        "passed": 97,
         "failed": 0,
         "skipped": 0,
         "exit": 0
       }
     ],
     "mutations": {
-      "caught": 35,
+      "caught": 40,
       "survived": 0,
       "cleanUnitBaseline": "passed",
       "cleanBrowserBaseline": "passed",
       "exit": 0
     },
-    "buildArtifactSha256": "cb9883bb195d5aa061a65da1d3f288d36645724093bc35142f2936949ba02af0"
+    "buildArtifactSha256": "46907aa48acf48b9fbc60595b770413c1c8ae253b438c734978919b6147dd92d"
   },
   "packs": {
     "fullSourceHash": "0466a72761d5e1d316ad9aab131c0862c6b63def04e91753baa3f79d7445d74d",
@@ -375,6 +379,21 @@
     "browserRuns": 3,
     "browserPassed": 90,
     "mutations": "35 caught for their declared reasons",
+    "productTestsPassed": 265,
+    "productTestsFailed": 8
+  },
+  "reviewV21Round4": {
+    "change": "four findings from the second Codex Sol and Claude Opus rejudge",
+    "record": "reference-audit/review-v2.1.md",
+    "clauses": ["I13.1", "V19.5", "V20.4", "R10.6", "C08.6", "C08.7", "C12.3", "A06.2"],
+    "newMutations": ["M36", "M37", "M38", "M39", "M40"],
+    "changedMutations": {
+      "M35": "runs against the storage unit test"
+    },
+    "vitestPassed": 132,
+    "browserRuns": 3,
+    "browserPassed": 97,
+    "mutations": "40 caught for their declared reasons",
     "productTestsPassed": 265,
     "productTestsFailed": 8
   }

@@ -15,6 +15,7 @@ interface BoardProps {
   activate(index: number): void;
 }
 const KEYBOARD_FOCUS = ':focus-visible';
+const NEAREST: ScrollIntoViewOptions = { block: 'nearest', inline: 'nearest' };
 interface BoardStyle extends CSSProperties {
   '--grid-size': number;
 }
@@ -54,6 +55,10 @@ export function Board({ game, ref, paused, activate }: BoardProps) {
     // Moving a card under a pressed pointer would send the release elsewhere and lose the click.
     if (card.matches(KEYBOARD_FOCUS)) scrollToNearest(card);
   }
+  // Once a click or tap completes, the focused card can move fully into view.
+  function cardClicked(card: HTMLElement): void {
+    card.scrollIntoView(NEAREST);
+  }
   const style: BoardStyle = { '--grid-size': game.size };
   return (
     <div
@@ -75,6 +80,7 @@ export function Board({ game, ref, paused, activate }: BoardProps) {
             tabIndex={focused === index ? 0 : -1}
             activate={activate}
             focus={cardFocused}
+            clicked={cardClicked}
             navigate={navigate}
           />
         ))}

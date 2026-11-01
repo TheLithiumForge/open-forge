@@ -1,6 +1,6 @@
 # Version 2.1 Review
 
-Version 2.1 Review is the correction record for three judge rounds on the v2.1 reference. Claude Opus scored it 8.5 out of 10 with ten defects, then 8.8 with eight more. A Codex Sol judge scored the next candidate 9.4 and an Opus judge 9.0, with six findings between them.
+Version 2.1 Review is the correction record for three judge rounds on the v2.1 reference. Claude Opus scored it 8.5 out of 10 with ten defects, then 8.8 with eight more. A Codex Sol judge scored the next candidate 9.4 and an Opus judge 9.0, with six findings between them. The same pair then scored 9.5 and 9.4 and found four more.
 
 For example, a 10x10 board at 900x600 with visible scrollbars no longer scrolls sideways or cuts off its last column.
 
@@ -51,6 +51,19 @@ Each correction names the test that fails on the previous behavior:
 | 5, unpublished notices | I16.1                      | No clause asks to announce a new deal or Resume, so "New game ready.", "Game resumed." and the opening "Find every matching pair." are gone. A new deal or Resume clears the last result without an announcement.          | The accessibility journey expects an empty live region after New Game, and the session fixture an empty opening result.                                                                                                                                                                                                     |
 | 6, leftovers           | T06.5, T10.4               | Tests import `EXAMPLE_CODE` and `EXAMPLE_PAIRS` from `game.fixture.ts`. Module preload is off.                                                                                                                             | `tests/build-output.e2e.test.ts` reads the built page and finds no fetch call and no preload code.                                                                                                                                                                                                                          |
 
+## Fourth round
+
+Each correction names the test that fails on the previous behavior:
+
+| Item                 | Clauses             | Change                                                                                                                                                                        | Test                                                                                                                                                                                                                       |
+| -------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1, clipped focus     | I13.1, V19.5, V20.4 | A pressed card still stays put, so the click lands. Once the click or tap completes, the focused card scrolls fully into view with nearest alignment and its 6px margin.      | `tests/pointer-focus.e2e.test.ts` checks the final bounds after mouse and touch activation of clipped cards at 360x800, 1280x800 and 640x400 at scale 2, and keeps the lost-click checks. Mutation M36 removes the scroll. |
+| 2, shown best        | R10.6               | The tab shows the merged bests after every write and after a storage event from another tab.                                                                                  | `tests/saved-bests.e2e.test.ts` checks an idle tab through New Game, Restart and size changes without reloading, and a win in 9 moves after a saved 8. Mutation M37 stops showing the merge.                               |
+| 3, rounding cases    | C08.6, C08.7        | No product change. The cases now use quarter milliseconds, where rounding to nearest gives a different answer: 11.75ms exports 11, 799.25ms exports 800 and 0.25ms exports 1. | The unit and browser clock tests. Mutation M38 rounds both values to nearest.                                                                                                                                              |
+| 4, imports and bests | C12.3, A06.2        | No product change.                                                                                                                                                            | Two imports of completed games over a better and a worse saved best leave the shown and saved best untouched. Mutation M39 records the import as a best and M40 clears bests on import.                                    |
+
+Mutation M35 now runs against the storage unit test, because the storage event refresh also protects the earlier two-tab journey.
+
 ## Layer 3 results
 
 A Docker run of the Layer 3 checks against the previous reference failed C08.6, C08.7, R07.9 and I16.9:
@@ -68,7 +81,7 @@ The [verification record](verification.json) gives install, type check, Vitest, 
 
 The Layer 4 case patches were checked with `git apply --check` against a scratch copy of this reference. All eight applied to the previous reference and none applies now. The renamed saved-format checks change the import line every seed patch edits, and the solution patches also edit lines this round changed for export and labels. The cases stay unchanged for the overseer.
 
-The second and third rounds reran the same gates. The verification record gives the latest counts, and all 35 mutations are caught. The harness now passes each browser test name to Node as an exact escaped pattern, because the plus sign in Shift+Tab otherwise matched no test.
+Every later round reran the same gates. The verification record gives the latest counts, and all 40 mutations are caught. The harness now passes each browser test name to Node as an exact escaped pattern, because the plus sign in Shift+Tab otherwise matched no test.
 
 In `src/evals`, the type check passes and 265 of 273 tests pass. Six failures predate the v2.1 review. The Layer 4 case contract and the snapshot-version check fixture still fail because their protected text names the old reference code.
 
