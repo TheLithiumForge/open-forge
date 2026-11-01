@@ -12,12 +12,20 @@ export function hasExactKeys(value: Record<string, unknown>, keys: readonly stri
   );
 }
 
-export function readJson(text: string, maxBytes: number): unknown {
-  if (new TextEncoder().encode(text).byteLength > maxBytes) return null;
+export function isWithinBytes(text: string, maxBytes: number): boolean {
+  return new TextEncoder().encode(text).byteLength <= maxBytes;
+}
+
+// No JSON text parses to undefined, so it marks malformed input.
+export function parseJson(text: string): unknown {
   try {
     const value: unknown = JSON.parse(text);
     return value;
   } catch {
-    return null;
+    return undefined;
   }
+}
+
+export function readJson(text: string, maxBytes: number): unknown {
+  return isWithinBytes(text, maxBytes) ? (parseJson(text) ?? null) : null;
 }

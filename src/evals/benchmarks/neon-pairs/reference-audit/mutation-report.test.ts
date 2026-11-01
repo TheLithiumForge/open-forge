@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { failures, matchingFailure } from "./mutation-report.ts";
+import { exactName } from "./mutations.ts";
 
 test("a kill needs both the declared test and its declared assertion", () => {
   const expected = { name: "matching pair", message: "R03.2 matching pair stays matched" };
@@ -30,4 +31,11 @@ test("the failure reporter records each failed test with its own assertion messa
   } finally {
     await rm(folder, { recursive: true });
   }
+});
+
+test("a browser name filter matches its declared test name and nothing longer", () => {
+  const name = "Tab and Shift+Tab enter (once)";
+  const filter = new RegExp(exactName(name));
+  assert.ok(filter.test(name));
+  assert.equal(filter.test(`${name} again`), false);
 });

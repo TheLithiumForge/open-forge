@@ -17,19 +17,23 @@
       "reason": "R03 matching pair stays matched",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R03 matching pair stays matched\n+ actual - expected\n\n+ []\n- [\n-   2,\n-   6\n- ]\n\n    at reference/src/game/game.test.ts:29:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R03 matching pair stays matched\n+ actual - expected\n\n+ []\n- [\n-   2,\n-   6\n- ]\n\n    at reference/src/game/game.test.ts:31:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "a mismatch blocks all activation and closes together at the exact interval",
-          "message": "AssertionError [ERR_ASSERTION]: R04 mismatch blocks activation\n+ actual - expected\n... Skipped lines\n\n  {\n    boardCode: 'np1-4-1',\n    deck: [\n      6,\n      7,\n...\n    selection: {\n+     index: 2,\n+     kind: 'one'\n-     kind: 'closed'\n    },\n    size: 4,\n    started: true\n  }\n\n    at reference/src/game/game.test.ts:40:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: R04 mismatch blocks activation\n+ actual - expected\n... Skipped lines\n\n  {\n    boardCode: 'np1-4-1',\n    deck: [\n      6,\n      7,\n...\n    selection: {\n+     index: 2,\n+     kind: 'one'\n-     kind: 'closed'\n    },\n    size: 4,\n    started: true\n  }\n\n    at reference/src/game/game.test.ts:42:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         },
         {
           "name": "completion counts only matched pairs and stops the clock and later activation",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at reference/src/game/game.test.ts:59:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at reference/src/game/game.test.ts:61:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         },
         {
           "name": "one active-time step advances elapsed and mismatch together",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   kind: 'closed'\n-   first: 0,\n-   kind: 'mismatch',\n-   remainingMs: 1,\n-   second: 1\n  }\n\n    at reference/src/game/game.test.ts:84:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   kind: 'closed'\n-   first: 0,\n-   kind: 'mismatch',\n-   remainingMs: 1,\n-   second: 1\n  }\n\n    at reference/src/game/game.test.ts:86:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+        },
+        {
+          "name": "a card faces up while it is the one selection, either mismatch card or matched",
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n+   0,\n+   1,\n    2,\n    6\n  ]\n\n    at reference/src/game/game.test.ts:105:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         }
       ]
     },
@@ -44,15 +48,15 @@
       "reason": "R05 second distinct reveal adds one move",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R05 second distinct reveal adds one move\n\n2 !== 1\n\n    at reference/src/game/game.test.ts:31:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R05 second distinct reveal adds one move\n\n2 !== 1\n\n    at reference/src/game/game.test.ts:33:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "a mismatch blocks all activation and closes together at the exact interval",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n2 !== 1\n\n    at reference/src/game/game.test.ts:38:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n2 !== 1\n\n    at reference/src/game/game.test.ts:40:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         },
         {
           "name": "completion counts only matched pairs and stops the clock and later activation",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n16 !== 8\n\n    at reference/src/game/game.test.ts:61:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n16 !== 8\n\n    at reference/src/game/game.test.ts:63:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         }
       ]
     },
@@ -67,23 +71,27 @@
       "reason": "R07 first reveal starts time",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R07 first reveal starts time\n\nfalse !== true\n\n    at reference/src/game/game.test.ts:19:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R07 first reveal starts time\n\nfalse !== true\n\n    at reference/src/game/game.test.ts:21:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "a mismatch blocks all activation and closes together at the exact interval",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n    first: 0,\n    kind: 'mismatch',\n+   remainingMs: 800,\n-   remainingMs: 1,\n    second: 1\n  }\n\n    at reference/src/game/game.test.ts:42:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n    first: 0,\n    kind: 'mismatch',\n+   remainingMs: 800,\n-   remainingMs: 1,\n    second: 1\n  }\n\n    at reference/src/game/game.test.ts:44:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         },
         {
           "name": "completion counts only matched pairs and stops the clock and later activation",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 80\n\n    at reference/src/game/game.test.ts:62:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 80\n\n    at reference/src/game/game.test.ts:64:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         },
         {
           "name": "new states keep earlier games unchanged and reject invalid elapsed input",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 359999998\n- 359999999\n          ^\n\n    at reference/src/game/game.test.ts:74:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 359999998\n- 359999999\n          ^\n\n    at reference/src/game/game.test.ts:76:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         },
         {
           "name": "one active-time step advances elapsed and mismatch together",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 799\n\n    at reference/src/game/game.test.ts:83:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 799\n\n    at reference/src/game/game.test.ts:85:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+        },
+        {
+          "name": "a card faces up while it is the one selection, either mismatch card or matched",
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n+   0,\n+   1\n-   2,\n-   6\n  ]\n\n    at reference/src/game/game.test.ts:105:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         }
       ]
     },
@@ -99,7 +107,7 @@
       "reason": "R04 mismatch blocks activation",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R04 mismatch blocks activation\n+ actual - expected\n... Skipped lines\n\n  {\n    boardCode: 'np1-4-1',\n    deck: [\n      6,\n      7,\n...\n    selection: {\n+     index: 0,\n+     kind: 'one'\n-     first: 0,\n-     kind: 'mismatch',\n-     remainingMs: 800,\n-     second: 1\n    },\n    size: 4,\n    started: true\n  }\n\n    at reference/src/game/game.test.ts:40:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R04 mismatch blocks activation\n+ actual - expected\n... Skipped lines\n\n  {\n    boardCode: 'np1-4-1',\n    deck: [\n      6,\n      7,\n...\n    selection: {\n+     index: 0,\n+     kind: 'one'\n-     first: 0,\n-     kind: 'mismatch',\n-     remainingMs: 800,\n-     second: 1\n    },\n    size: 4,\n    started: true\n  }\n\n    at reference/src/game/game.test.ts:42:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
@@ -113,11 +121,15 @@
       "reason": "R04 mismatch closes at 800ms",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: R04 mismatch closes at 800ms\n+ actual - expected\n\n+ 'mismatch'\n- 'closed'\n\n    at reference/src/game/game.test.ts:49:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: R04 mismatch closes at 800ms\n+ actual - expected\n\n+ 'mismatch'\n- 'closed'\n\n    at reference/src/game/game.test.ts:51:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "one active-time step advances elapsed and mismatch together",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'mismatch'\n- 'closed'\n\n    at reference/src/game/game.test.ts:90:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'mismatch'\n- 'closed'\n\n    at reference/src/game/game.test.ts:92:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+        },
+        {
+          "name": "a card faces up while it is the one selection, either mismatch card or matched",
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n+   0,\n+   1\n-   2,\n-   6\n  ]\n\n    at reference/src/game/game.test.ts:105:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         }
       ]
     },
@@ -238,31 +250,31 @@
       "otherFailures": [
         {
           "name": "generation deals complete immutable pairs at size 4",
-          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:29:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
+          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:34:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
         },
         {
           "name": "generation deals complete immutable pairs at size 6",
-          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:29:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
+          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:34:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
         },
         {
           "name": "generation deals complete immutable pairs at size 8",
-          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:29:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
+          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:34:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
         },
         {
           "name": "generation deals complete immutable pairs at size 10",
-          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:29:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
+          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:34:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
         },
         {
           "name": "generation deals complete immutable pairs at size 12",
-          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:29:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
+          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:34:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
         },
         {
           "name": "generation deals complete immutable pairs at size 14",
-          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:29:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
+          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:34:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
         },
         {
           "name": "generation deals complete immutable pairs at size 16",
-          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:29:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
+          "message": "Error: Invalid board code.\n    at boardCode (reference/src/game/deck.ts:34:36)\n    at reference/src/game/deck.test.ts:38:33\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)"
         }
       ]
     },
@@ -305,11 +317,11 @@
       "reason": "D09 time advances before activation",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: D09 time advances before activation\n\n200 !== 100\n\n    at reference/src/game/replay.test.ts:24:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: D09 time advances before activation\n\n200 !== 100\n\n    at reference/src/game/replay.test.ts:31:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": [
         {
           "name": "replay resolves exact timeout edges before equal-time ordered activation",
-          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   kind: 'closed'\n-   index: 2,\n-   kind: 'one'\n  }\n\n    at reference/src/game/replay.test.ts:45:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
+          "message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   kind: 'closed'\n-   index: 2,\n-   kind: 'one'\n  }\n\n    at reference/src/game/replay.test.ts:52:10\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64"
         }
       ]
     },
@@ -429,7 +441,7 @@
       "reason": "V06 secondary color .eyebrow",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "V06 secondary color .eyebrow\n\nexpect(locator).toHaveCSS(expected) failed\n\nLocator:  locator('.eyebrow').first()\nExpected: \"rgb(184, 189, 210)\"\nReceived: \"rgb(99, 231, 255)\"\nTimeout:  5000ms\n\nCall log:\n  - V06 secondary color .eyebrow locator('.eyebrow').first() with timeout 5000ms\n  - waiting for locator('.eyebrow').first()\n    14 × locator resolved to <p class=\"eyebrow\">A little focus. A perfect pair.</p>\n       - unexpected value \"rgb(99, 231, 255)\"\n",
+      "assertion": "V06 secondary color .eyebrow\n\nexpect(locator).toHaveCSS(expected) failed\n\nLocator:  locator('.eyebrow').first()\nExpected: \"rgb(184, 189, 210)\"\nReceived: \"rgb(99, 231, 255)\"\nTimeout:  5000ms\n\nCall log:\n  - V06 secondary color .eyebrow locator('.eyebrow').first() with timeout 5000ms\n  - waiting for locator('.eyebrow').first()\n    13 × locator resolved to <p class=\"eyebrow\">A little focus. A perfect pair.</p>\n       - unexpected value \"rgb(99, 231, 255)\"\n",
       "otherFailures": []
     },
     {
@@ -444,6 +456,91 @@
       "outcome": "caught",
       "exit": 1,
       "assertion": "V19 full focus outline right\n\nexpect(received).toBeGreaterThanOrEqual(expected)\n\nExpected: >= -0.25\nReceived:    -5",
+      "otherFailures": []
+    },
+    {
+      "id": "M26",
+      "clauses": [
+        "R04.4",
+        "R07.3",
+        "R07.8"
+      ],
+      "test": "tests/idle-clock.e2e.test.ts",
+      "testName": "an idle hidden period adds no elapsed or mismatch time",
+      "reason": "R04 hidden time leaves the mismatch",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "R04 hidden time leaves the mismatch\n\nexpect(locator).toHaveCount(expected) failed\n\nLocator:  locator('.card.revealed')\nExpected: 2\nReceived: 0\nTimeout:  5000ms\n\nCall log:\n  - R04 hidden time leaves the mismatch locator('.card.revealed') with timeout 5000ms\n  - waiting for locator('.card.revealed')\n    14 × locator resolved to 0 elements\n       - unexpected value \"0\"\n",
+      "otherFailures": []
+    },
+    {
+      "id": "M27",
+      "clauses": [
+        "R04.5",
+        "R07.4",
+        "C10.3"
+      ],
+      "test": "tests/idle-clock.e2e.test.ts",
+      "testName": "an idle paused import adds no elapsed or mismatch time",
+      "reason": "R04 paused time leaves the mismatch",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "R04 paused time leaves the mismatch\n\nexpect(locator).toHaveCount(expected) failed\n\nLocator:  locator('.card.revealed')\nExpected: 2\nReceived: 0\nTimeout:  5000ms\n\nCall log:\n  - R04 paused time leaves the mismatch locator('.card.revealed') with timeout 5000ms\n  - waiting for locator('.card.revealed')\n    14 × locator resolved to 0 elements\n       - unexpected value \"0\"\n",
+      "otherFailures": []
+    },
+    {
+      "id": "M28",
+      "clauses": [
+        "I05.1",
+        "I13.1"
+      ],
+      "test": "tests/focus-entry.e2e.test.ts",
+      "testName": "Tab and Shift+Tab bring the remembered card in with nearest alignment",
+      "reason": "I13 Shift+Tab enters with nearest alignment",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "I13 Shift+Tab enters with nearest alignment\n\nexpect(received).toBeCloseTo(expected, precision)\n\nExpected: 6\nReceived: 141\n\nExpected precision:    0\nExpected difference: < 0.5\nReceived difference:   135",
+      "otherFailures": []
+    },
+    {
+      "id": "M29",
+      "clauses": [
+        "V16.1",
+        "I06.7",
+        "I06.8"
+      ],
+      "test": "tests/focus-entry.e2e.test.ts",
+      "testName": "every keyboard move after a pointer click shows the focus outline",
+      "reason": "V16 outline after Control+End",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "V16 outline after Control+End\n\nexpect(locator).toHaveCSS(expected) failed\n\nLocator:  locator('.card').nth(15)\nExpected: \"solid\"\nReceived: \"none\"\nTimeout:  5000ms\n\nCall log:\n  - V16 outline after Control+End locator('.card').nth(15) with timeout 5000ms\n  - waiting for locator('.card').nth(15)\n    14 × locator resolved to <button tabindex=\"0\" type=\"button\" class=\"card closed\" aria-disabled=\"false\" aria-label=\"Row 4, column 4, closed\">…</button>\n       - unexpected value \"none\"\n",
+      "otherFailures": []
+    },
+    {
+      "id": "M30",
+      "clauses": [
+        "I01.2"
+      ],
+      "test": "tests/input-contract.e2e.test.ts",
+      "testName": "a completed mouse click reveals its card even after the pointer drifts",
+      "reason": "I01 completed mouse click activates",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "I01 completed mouse click activates\n\nexpect(locator).toHaveClass(expected) failed\n\nLocator: locator('.card').first()\nExpected pattern: /revealed/\nReceived string:  \"card closed\"\nTimeout: 5000ms\n\nCall log:\n  - I01 completed mouse click activates locator('.card').first() with timeout 5000ms\n  - waiting for locator('.card').first()\n    14 × locator resolved to <button tabindex=\"0\" type=\"button\" class=\"card closed\" aria-disabled=\"false\" aria-label=\"Row 1, column 1, closed\">…</button>\n       - unexpected value \"card closed\"\n",
+      "otherFailures": []
+    },
+    {
+      "id": "M31",
+      "clauses": [
+        "C14.3"
+      ],
+      "test": "scripts/replay.test.ts",
+      "testName": "the replay command reads a relative path from the caller folder and names what failed",
+      "reason": "C14 relative path follows the caller folder",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "AssertionError [ERR_ASSERTION]: C14 relative path follows the caller folder: Could not replay replay.json: the file does not exist.\n\n\n1 !== 0\n\n    at reference/scripts/replay.test.ts:97:10\n    at async reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:20",
       "otherFailures": []
     }
   ]

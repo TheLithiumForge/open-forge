@@ -1,12 +1,12 @@
 # Version 2.1 Review
 
-Version 2.1 Review is the correction record for the ten defects a Claude Opus judge found after scoring the v2.1 reference 8.5 out of 10.
+Version 2.1 Review is the correction record for two Claude Opus judge rounds on the v2.1 reference. The first scored it 8.5 out of 10 and found ten defects. The second confirmed those fixes, scored it 8.8 and found eight more.
 
 For example, a 10x10 board at 900x600 with visible scrollbars no longer scrolls sideways or cuts off its last column.
 
 Status: corrected candidate. Independent judgment is pending. I17.6 still needs a person with NVDA.
 
-## Corrections
+## First round
 
 Each correction names the test that fails if the defect returns:
 
@@ -23,6 +23,28 @@ Each correction names the test that fails if the defect returns:
 | 9, audit hook      | T07.5                              | The browser harness no longer reads `NEON_TEST_FAILURE`. `reference-audit/failure-reporter.ts` is a Node test reporter that records failed test names and assertion messages for the mutation harness.                                                                                      | `scripts/source-conventions.test.ts` limits environment reads to what the test runners need. `mutation-report.test.ts` runs the reporter on a failing sample.               |
 | 10, dead checks    | R06.3, D06.7                       | `activateCard` and `decodeSnapshot` no longer test for a win that their position checks already exclude.                                                                                                                                                                                    | No test can observe these checks, which is why they were removed. Completion and snapshot tests still pass, and D06.4 rejects a revealed selection in a completed snapshot. |
 
+## Second round
+
+Each correction names the test that checks its outcome:
+
+| Item                  | Clauses                                  | Change                                                                                                                                                                                                                                                 | Test                                                                                                                                                |
+| --------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1, focus entry        | I05.2, I13.1, C10.6                      | Chromium centers a card that Tab or Shift+Tab focuses before focus handlers run. The board keeps the last scroll positions its scroll events reported and restores them before the card's nearest scroll. Resume focuses without the browser's scroll. | `tests/focus-entry.e2e.test.ts` measures the card 6px from the board edge after Tab, Shift+Tab and Resume. Mutation M28 removes the restore.        |
+| 2, focus outline      | V16.1, I06.7, I06.8                      | Keyboard moves request a visible outline, which Chromium otherwise drops after Ctrl+Home or Ctrl+End.                                                                                                                                                  | The same file checks a solid 3px outline after a pointer click and three key moves. Mutation M29 removes the request.                               |
+| 3, mouse clicks       | I01.2, I03.2, I04.2                      | A completed mouse or pen click always activates. Only a touch that moves 8px or opens the context menu is cancelled.                                                                                                                                   | `tests/input-contract.e2e.test.ts` drags a mouse 20px within a card and expects it revealed. Mutation M30 restores the rule for every pointer.      |
+| 4, replay command     | C14.3, C14.5                             | A relative path follows the caller's folder from INIT_CWD. `readReplay` names the problem, and the message says whether the file is missing, malformed or breaks a named rule.                                                                         | `scripts/replay.test.ts` runs npm from a subfolder and compares the messages with a reviewed fixture. Mutation M31 drops INIT_CWD.                  |
+| 5, style ownership    | A07.3, T06.1, V06.2                      | Card, board, deal controls, reproduction panel and status rows each import their own styles. Native controls carry a `control` class from `control.css`, so no element rule reaches the cards.                                                         | `tests/card-render.e2e.test.ts` compares every computed style of a face-sheet card with a game card, apart from size and grid placement.            |
+| 6, type ownership     | T05.1, A01.1                             | `GameState` lives in `game.ts`, `Board` in `deck.ts` and `Session` in `session.ts`. `isFaceUp` in the game core tells the board which cards face up.                                                                                                   | `game.test.ts` checks `isFaceUp` for closed, one-card, mismatch and matched states.                                                                 |
+| 7, idle time          | R04.4, R04.5, R07.3, R07.4, R07.8, C10.3 | No product change. The clock was right, but no test stayed idle.                                                                                                                                                                                       | `tests/idle-clock.e2e.test.ts` stays idle through a hidden page and a paused import. Mutations M26 and M27 are the two regressions the judge found. |
+| 8, gestures and deals | I03.1, I03.2, A10.3                      | The long-press test sends a real touch gesture through Chromium's recognizer. The all-sizes journey computes its pairs with an independent BigInt reading of D03 and D04.                                                                              | The oracle reproduces the published example deck before the journeys use it.                                                                        |
+
+## Layer 3 results
+
+A Docker run of the Layer 3 checks against the previous reference failed C08.6, C08.7, R07.9 and I16.9:
+
+- C08.6, C08.7 and R07.9 failed because export read the last 40ms render. The first-round clock fix covers them. `tests/elapsed-cap.e2e.test.ts` starts 1ms below the cap and finds exactly 359999999ms in valid exports after a match, a miss, its closing and the win.
+- I16.9 failed on placement. The check looks for the visible status inside `details`. The spec asks for it beside the reproduction controls, and the reference shows it in the row that directly follows the panel, next to Resume, so it stays visible with the panel closed. The load test in `tests/announcements.e2e.test.ts` checks one live-region change for each of the four load kinds, twice each, and the status in that row. The check needs widening rather than the reference.
+
 ## Focus scrolling
 
 The interior focus test first passed without the card scroll margin. Arrow focus let Chromium center an out-of-view card, and the board's scroll padding repeated the margin. Arrow focus now skips the browser's own scroll, so the card's nearest scroll from I13.1 applies. The duplicate scroll padding is removed. Without the margin, the outline is now cut at the board and window edges.
@@ -33,6 +55,8 @@ The [verification record](verification.json) gives install, type check, Vitest, 
 
 The Layer 4 case patches were checked with `git apply --check` against a scratch copy of this reference. All eight applied to the previous reference and none applies now. The renamed saved-format checks change the import line every seed patch edits, and the solution patches also edit lines this round changed for export and labels. The cases stay unchanged for the overseer.
 
-In `src/evals`, the type check passes and 264 of 272 tests pass. Six failures predate this round. The Layer 4 case contract and the snapshot-version check fixture fail because their protected text still names the old reference code.
+The second round reran the same gates. The verification record gives its counts, and all 31 mutations are caught. The harness now passes each browser test name to Node as an exact escaped pattern, because the plus sign in Shift+Tab otherwise matched no test.
+
+In `src/evals`, the type check passes and 265 of 273 tests pass. Six failures predate the v2.1 review. The Layer 4 case contract and the snapshot-version check fixture still fail because their protected text names the old reference code.
 
 Back to [Reference Audit](AUDIT.md).

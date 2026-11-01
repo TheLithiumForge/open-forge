@@ -1,0 +1,17 @@
+.control {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+}
+button.control,
+select.control {
+  cursor: pointer;
+}
+input.control,
+textarea.control {
+  min-width: 0;
+}

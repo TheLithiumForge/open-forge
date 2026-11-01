@@ -3,7 +3,7 @@ import { parseBoardCode } from './deck.ts';
 import { hasExactKeys, isJsonObject, isNonnegativeSafeInteger, readJson } from './saved-format.ts';
 import { readMatched, readSelection } from './snapshot-selection.ts';
 import { SelectionKind } from './selection.ts';
-import type { GameState } from './game.types.ts';
+import type { GameState } from './game.ts';
 
 export const SNAPSHOT_VERSION = 1;
 export const SNAPSHOT_MAX_BYTES = 65_536;

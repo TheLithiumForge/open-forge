@@ -6,6 +6,7 @@ import { GameStatus } from './status/GameStatus.tsx';
 import type { BoardFocus } from './board/Board.tsx';
 import { useGame } from './session/use-game.ts';
 import './game.css';
+import './status-row.css';
 
 export function Game() {
   const controller = useGame();

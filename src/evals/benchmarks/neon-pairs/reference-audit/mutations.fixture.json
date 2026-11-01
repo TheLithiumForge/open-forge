@@ -178,8 +178,8 @@
   {
     "id": "M17",
     "path": "src/game/replay.ts",
-    "find": "for (const action of value.actions)",
-    "replace": "for (const action of [...value.actions].sort((left, right) =\u003e left.atMs - right.atMs || right.index - left.index))",
+    "find": "for (const [position, action] of value.actions.entries())",
+    "replace": "for (const [position, action] of [...value.actions].sort((left, right) =\u003e left.atMs - right.atMs || right.index - left.index).entries())",
     "test": "src/game/replay-order.test.ts",
     "browser": false,
     "clauses": ["D08.5", "D08.7"],
@@ -265,7 +265,7 @@
   },
   {
     "id": "M25",
-    "path": "src/game/board/board.css",
+    "path": "src/game/board/card.css",
     "find": "  scroll-margin: 6px;",
     "replace": "  scroll-margin: 0;",
     "test": "tests/focus-clearance.e2e.test.ts",
@@ -273,5 +273,71 @@
     "clauses": ["I13.2", "V19.5"],
     "testName": "focus clearance survives nearest scroll to an interior card",
     "reason": "V19 full focus outline"
+  },
+  {
+    "id": "M26",
+    "path": "src/game/session/use-session-clock.ts",
+    "find": "      synchronize(generation);\n      visible.current = !document.hidden;",
+    "replace": "      visible.current = !document.hidden;\n      synchronize(generation);",
+    "test": "tests/idle-clock.e2e.test.ts",
+    "browser": true,
+    "clauses": ["R04.4", "R07.3", "R07.8"],
+    "testName": "an idle hidden period adds no elapsed or mismatch time",
+    "reason": "R04 hidden time leaves the mismatch"
+  },
+  {
+    "id": "M27",
+    "path": "src/game/session/use-game.ts",
+    "find": "  function resume(): void {\n    clock.reset();\n",
+    "replace": "  function resume(): void {\n",
+    "test": "tests/idle-clock.e2e.test.ts",
+    "browser": true,
+    "clauses": ["R04.5", "R07.4", "C10.3"],
+    "testName": "an idle paused import adds no elapsed or mismatch time",
+    "reason": "R04 paused time leaves the mismatch"
+  },
+  {
+    "id": "M28",
+    "path": "src/game/board/nearest-scroll.ts",
+    "find": "    viewport.current?.scrollTo(board.current.left, board.current.top);\n    window.scrollTo(page.current.left, page.current.top);\n",
+    "replace": "",
+    "test": "tests/focus-entry.e2e.test.ts",
+    "browser": true,
+    "clauses": ["I05.1", "I13.1"],
+    "testName": "Tab and Shift+Tab bring the remembered card in with nearest alignment",
+    "reason": "I13 Shift+Tab enters with nearest alignment"
+  },
+  {
+    "id": "M29",
+    "path": "src/game/board/Board.tsx",
+    "find": "card?.focus({ preventScroll: true, focusVisible: true });",
+    "replace": "card?.focus({ preventScroll: true });",
+    "test": "tests/focus-entry.e2e.test.ts",
+    "browser": true,
+    "clauses": ["V16.1", "I06.7", "I06.8"],
+    "testName": "every keyboard move after a pointer click shows the focus outline",
+    "reason": "V16 outline after Control+End"
+  },
+  {
+    "id": "M30",
+    "path": "src/game/board/Card.tsx",
+    "find": "event.pointerType === TOUCH_POINTER",
+    "replace": "true",
+    "test": "tests/input-contract.e2e.test.ts",
+    "browser": true,
+    "clauses": ["I01.2"],
+    "testName": "a completed mouse click reveals its card even after the pointer drifts",
+    "reason": "I01 completed mouse click activates"
+  },
+  {
+    "id": "M31",
+    "path": "scripts/replay-cli.ts",
+    "find": "  callerFolder = process.env.INIT_CWD ?? process.cwd(),",
+    "replace": "  callerFolder = process.cwd(),",
+    "test": "scripts/replay.test.ts",
+    "browser": false,
+    "clauses": ["C14.3"],
+    "testName": "the replay command reads a relative path from the caller folder and names what failed",
+    "reason": "C14 relative path follows the caller folder"
   }
 ]

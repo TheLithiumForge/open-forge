@@ -2,7 +2,6 @@ import { createRoot } from 'react-dom/client';
 import { Card } from '../src/game/board/Card.tsx';
 import { FACE_COUNT, faceDesign } from '../src/game/board/face-design.ts';
 import '../src/game/game.css';
-import '../src/game/board/board.css';
 import './face-sheet.css';
 
 const root = document.getElementById('root');

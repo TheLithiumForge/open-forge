@@ -1,7 +1,7 @@
 import { hasExactKeys, isJsonObject, isNonnegativeSafeInteger } from './saved-format.ts';
 import { MISMATCH_MS } from './game.ts';
 import { SelectionKind, type Selection } from './selection.ts';
-import type { GameState } from './game.types.ts';
+import type { GameState } from './game.ts';
 
 export function readSelection(
   value: unknown,

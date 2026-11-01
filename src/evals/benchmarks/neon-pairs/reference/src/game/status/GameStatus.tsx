@@ -1,7 +1,7 @@
 import { isWon } from '../game.ts';
 import { formatElapsed } from '../elapsed-time.ts';
 import { StatusLabel } from './status-labels.ts';
-import type { GameState } from '../game.types.ts';
+import type { GameState } from '../game.ts';
 import './status.css';
 
 interface GameStatusProps {

@@ -4,6 +4,7 @@ import {
   activateCard,
   advanceGame,
   createGame,
+  isFaceUp,
   isWon,
   MISMATCH_MS,
   ELAPSED_MAX_MS,
@@ -11,6 +12,7 @@ import {
 import { SelectionKind } from './selection.ts';
 import { EXAMPLE_CODE, EXAMPLE_PAIRS, SPEC_VECTOR } from './game.fixture.ts';
 import { formatElapsed } from './elapsed-time.ts';
+import type { GameState } from './game.ts';
 
 test('first reveal starts play without a move and ignores invalid activation', () => {
   const start = createGame(EXAMPLE_CODE);
@@ -88,4 +90,17 @@ test('one active-time step advances elapsed and mismatch together', () => {
     remainingMs: 1,
   });
   assert.equal(advanceGame(before, 1).selection.kind, SelectionKind.closed);
+});
+
+test('a card faces up while it is the one selection, either mismatch card or matched', () => {
+  const faceUp = (state: GameState) =>
+    state.deck.flatMap((_, index) => (isFaceUp(state, index) ? [index] : []));
+  const start = createGame(EXAMPLE_CODE);
+  assert.deepEqual(faceUp(start), []);
+  const one = activateCard(start, 0);
+  assert.deepEqual(faceUp(one), [0]);
+  const mismatch = activateCard(one, 1);
+  assert.deepEqual(faceUp(mismatch), [0, 1]);
+  const matched = activateCard(activateCard(advanceGame(mismatch, MISMATCH_MS), 2), 6);
+  assert.deepEqual(faceUp(matched), [2, 6]);
 });

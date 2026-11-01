@@ -4,7 +4,7 @@ import { SelectionKind } from '../selection.ts';
 import { CLOCK_INTERVAL_MS, createClock, elapsedStep } from './browser-clock.ts';
 import { tickSession } from './session.ts';
 import type { RefObject } from 'react';
-import type { Session } from './session.types.ts';
+import type { Session } from './session.ts';
 
 export function useSessionClock(
   session: Session,

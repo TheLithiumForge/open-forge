@@ -2,22 +2,27 @@ import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { StatusLabel } from '../src/game/status/status-labels.ts';
-import { GRID_SIZES, boardCode, generateBoard } from '../src/game/deck.ts';
-import { loadFixedBoard } from './game-fixture.ts';
+import { GRID_SIZES, boardCode } from '../src/game/deck.ts';
+import { EXAMPLE_DECK } from '../src/game/game.fixture.ts';
+import { FIXED_BOARD, loadFixedBoard } from './game-fixture.ts';
+import { specDeal, specPairs } from './deal-oracle.ts';
+
+const SEED = 1;
+
+test('the independent deal reproduces the published example deck', async () => {
+  expect(boardCode(4, SEED)).toBe(FIXED_BOARD);
+  expect(specDeal(4, SEED)).toEqual(EXAMPLE_DECK);
+});
 
 for (const size of GRID_SIZES) {
   test(`the delivered game completes every pair at size ${size}`, async ({ page }) => {
     await loadFixedBoard(page);
-    const code = boardCode(size, 1);
+    const code = boardCode(size, SEED);
     await page.locator('summary').click();
     await page.getByLabel(ReproductionControl.board, { exact: true }).fill(code);
     await page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }).click();
     await page.locator('summary').click();
-    const pairs = new Map<number, number[]>();
-    generateBoard(code).deck.forEach((face, index) =>
-      pairs.set(face, [...(pairs.get(face) ?? []), index]),
-    );
-    for (const pair of pairs.values()) {
+    for (const pair of specPairs(size, SEED)) {
       for (const index of pair) {
         await page.locator('.card').nth(index).focus();
         await page.keyboard.press('Enter');

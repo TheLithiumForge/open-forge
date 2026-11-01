@@ -66,6 +66,10 @@ function mutation(value: unknown): Mutation {
     patches: (value["patches"] ?? []).map(patch),
   };
 }
+// Node reads the name filter as a regular expression, so a name such as Shift+Tab must match itself.
+export function exactName(name: string): string {
+  return `^${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`;
+}
 function run(folder: string, args: string[]) {
   const result = spawnSync(process.execPath, args, {
     cwd: folder,
@@ -90,7 +94,7 @@ export async function mutationCheck(): Promise<void> {
   const input: unknown = JSON.parse(await readFile(new URL("./mutations.fixture.json", import.meta.url), "utf8"));
   assert.ok(Array.isArray(input));
   const mutations = input.map(mutation);
-  assert.equal(mutations.length, 25);
+  assert.equal(mutations.length, 31);
   await mkdir(WORK, { recursive: true });
   assert.equal(run(ROOT, [VITEST, "run"]).status, 0, "Clean unit baseline");
   const browserFiles = [...new Set(mutations.filter((m) => m.browser).map((m) => m.test))];
@@ -117,7 +121,7 @@ export async function mutationCheck(): Promise<void> {
       }
       const report = join(folder, "failure.json");
       const result = m.browser
-        ? run(folder, ["--test", "--test-reporter", FAILURE_REPORTER, "--test-reporter-destination", report, "--test-reporter", "spec", "--test-reporter-destination", "stdout", "--test-name-pattern", m.testName, m.test])
+        ? run(folder, ["--test", "--test-reporter", FAILURE_REPORTER, "--test-reporter-destination", report, "--test-reporter", "spec", "--test-reporter-destination", "stdout", "--test-name-pattern", exactName(m.testName), m.test])
         : run(folder, [VITEST, "run", m.test, "--reporter=json", "--outputFile", report]);
       const exists = await access(report).then(
         () => true,

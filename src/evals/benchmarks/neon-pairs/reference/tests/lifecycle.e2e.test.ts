@@ -10,7 +10,11 @@ import {
   moves,
 } from './game-fixture.ts';
 
-test('native context menus, cancelled taps and dragging never activate cards', async ({ page }) => {
+const TOUCH = 'touch';
+
+test('native context menus, cancelled taps and touch drags never activate cards', async ({
+  page,
+}) => {
   await loadFixedBoard(page);
   const card = page.locator('.card').first();
   await card.click({ button: 'right' });
@@ -21,12 +25,12 @@ test('native context menus, cancelled taps and dragging never activate cards', a
     return event.defaultPrevented;
   });
   expect(prevented).toBe(false);
-  await card.dispatchEvent('pointerdown', { clientX: 10, clientY: 10 });
+  await card.dispatchEvent('pointerdown', { clientX: 10, clientY: 10, pointerType: TOUCH });
   await card.dispatchEvent('pointercancel');
   await card.dispatchEvent('click', { detail: 1 });
   await expect(page.locator('.card.revealed')).toHaveCount(0);
-  await card.dispatchEvent('pointerdown', { clientX: 10, clientY: 10 });
-  await card.dispatchEvent('pointermove', { clientX: 30, clientY: 10 });
+  await card.dispatchEvent('pointerdown', { clientX: 10, clientY: 10, pointerType: TOUCH });
+  await card.dispatchEvent('pointermove', { clientX: 30, clientY: 10, pointerType: TOUCH });
   await card.dispatchEvent('click', { detail: 1 });
   await expect(page.locator('.card.revealed')).toHaveCount(0);
 });

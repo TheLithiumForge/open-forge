@@ -2,9 +2,19 @@ import { activateCard, advanceGame, createGame, isWon } from '../game.ts';
 import { SelectionKind } from '../selection.ts';
 import { formatElapsed } from '../elapsed-time.ts';
 import { rememberBest } from './storage.ts';
-import type { GameState } from '../game.types.ts';
+import type { GameState } from '../game.ts';
 import type { Preferences } from './storage.ts';
-import type { Session } from './session.types.ts';
+
+export interface Session {
+  readonly game: GameState;
+  readonly paused: boolean;
+  readonly generation: number;
+  readonly feedback: string;
+  readonly loadNotice: string;
+  readonly announcement: number;
+  readonly celebration: boolean;
+  readonly preferences: Preferences;
+}
 
 export const SessionNotice = {
   ready: 'Find every matching pair.',

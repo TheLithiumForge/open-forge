@@ -4,7 +4,10 @@ import {
   ReproductionControl,
   SNAPSHOT_MAX_CHARACTERS,
 } from './control-labels.ts';
-import type { GameState } from '../game.types.ts';
+import type { GameState } from '../game.ts';
+import '../status-row.css';
+import './control.css';
+import './reproduction.css';
 
 interface ReproductionProps {
   game: GameState;
@@ -47,13 +50,19 @@ export function Reproduction({
               <input
                 key={generation}
                 id="board-code"
+                className="control"
                 name="boardCode"
                 defaultValue={game.boardCode}
                 maxLength={BOARD_CODE_MAX_CHARACTERS}
                 spellCheck={false}
                 autoComplete="off"
               />
-              <button ref={loadButton} type="submit" aria-describedby="load-notice">
+              <button
+                ref={loadButton}
+                type="submit"
+                className="control"
+                aria-describedby="load-notice"
+              >
                 {ReproductionControl.loadBoard}
               </button>
             </div>
@@ -61,6 +70,7 @@ export function Reproduction({
           <label htmlFor="snapshot-json">{ReproductionControl.snapshot}</label>
           <textarea
             id="snapshot-json"
+            className="control"
             rows={5}
             value={snapshot}
             maxLength={SNAPSHOT_MAX_CHARACTERS}
@@ -68,11 +78,12 @@ export function Reproduction({
             onChange={(event) => setSnapshot(event.currentTarget.value)}
           />
           <div className="control-row">
-            <button type="button" onClick={() => setSnapshot(exportSnapshot())}>
+            <button type="button" className="control" onClick={() => setSnapshot(exportSnapshot())}>
               {ReproductionControl.exportSnapshot}
             </button>
             <button
               type="button"
+              className="control"
               aria-describedby="load-notice"
               onClick={() => loadSnapshot(snapshot)}
             >
@@ -86,7 +97,7 @@ export function Reproduction({
           {notice}
         </p>
         {paused && (
-          <button type="button" onClick={resume}>
+          <button type="button" className="control" onClick={resume}>
             {ReproductionControl.resume}
           </button>
         )}

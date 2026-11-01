@@ -17,6 +17,22 @@
   },
   "aboveAim": [
     {
+      "path": "reference/scripts/replay.test.ts",
+      "lines": 114
+    },
+    {
+      "path": "reference/src/game/controls/Reproduction.tsx",
+      "lines": 107
+    },
+    {
+      "path": "reference/src/game/game.test.ts",
+      "lines": 106
+    },
+    {
+      "path": "reference/src/game/replay.test.ts",
+      "lines": 109
+    },
+    {
       "path": "reference/src/game/session/session.test.ts",
       "lines": 122
     },
@@ -46,11 +62,11 @@
     },
     {
       "path": "reference/tests/input-contract.e2e.test.ts",
-      "lines": 109
+      "lines": 107
     },
     {
       "path": "reference/tests/lifecycle.e2e.test.ts",
-      "lines": 126
+      "lines": 130
     },
     {
       "path": "reference/tests/product-contract.e2e.test.ts",
@@ -62,23 +78,23 @@
     "productTypecheck": "passed",
     "productTests": {
       "status": "failed",
-      "tests": 272,
-      "passed": 264,
+      "tests": 273,
+      "passed": 265,
       "failed": 8,
       "skipped": 0,
       "exit": 1,
       "reasons": [
-        "Before this round: the saved Layer 1 plan expects Codex where the current plans use Claude.",
-        "Before this round: five document and player-pack tests read a changed player pack fingerprint.",
-        "This round: the Layer 4 case contract finds its patch context changed in the corrected reference.",
-        "This round: the snapshot-version check fixture still edits the old record and exactKeys line in snapshot.ts."
+        "Before the v2.1 review: the saved Layer 1 plan expects Codex where the current plans use Claude.",
+        "Before the v2.1 review: five document and player-pack tests read a changed player pack fingerprint.",
+        "Since the first v2.1 round: the Layer 4 case contract finds its patch context changed in the corrected reference.",
+        "Since the first v2.1 round: the snapshot-version check fixture still edits the old record and exactKeys line in snapshot.ts."
       ]
     },
     "referenceInstall": "passed",
     "referenceTypecheck": "passed",
     "vitest": {
-      "tests": 127,
-      "passed": 127,
+      "tests": 130,
+      "passed": 130,
       "failed": 0,
       "skipped": 0,
       "exit": 0
@@ -97,8 +113,8 @@
         "repetition": 1,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 71,
-        "passed": 71,
+        "tests": 80,
+        "passed": 80,
         "failed": 0,
         "skipped": 0,
         "exit": 0
@@ -107,8 +123,8 @@
         "repetition": 2,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 71,
-        "passed": 71,
+        "tests": 80,
+        "passed": 80,
         "failed": 0,
         "skipped": 0,
         "exit": 0
@@ -117,21 +133,21 @@
         "repetition": 3,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 71,
-        "passed": 71,
+        "tests": 80,
+        "passed": 80,
         "failed": 0,
         "skipped": 0,
         "exit": 0
       }
     ],
     "mutations": {
-      "caught": 25,
+      "caught": 31,
       "survived": 0,
       "cleanUnitBaseline": "passed",
       "cleanBrowserBaseline": "passed",
       "exit": 0
     },
-    "buildArtifactSha256": "9c0c05fb01cf5d6eacfee6ede830c5cb8a3796d447a162f8f447130403d18a60"
+    "buildArtifactSha256": "3bdd2ad43376b74d547930630f20a3efab974dca77412dec758095721e7712eb"
   },
   "packs": {
     "fullSourceHash": "0466a72761d5e1d316ad9aab131c0862c6b63def04e91753baa3f79d7445d74d",
@@ -301,5 +317,45 @@
         "files": ["src/game/snapshot.ts"]
       }
     ]
+  },
+  "reviewV21Round2": {
+    "change": "eight second-round v2.1 judge corrections",
+    "record": "reference-audit/review-v2.1.md",
+    "clauses": [
+      "I01.2",
+      "I05.2",
+      "I06.7",
+      "I06.8",
+      "I13.1",
+      "V16.1",
+      "C10.6",
+      "C14.3",
+      "C14.5",
+      "A07.3",
+      "T06.1",
+      "T05.1",
+      "R04.4",
+      "R04.5",
+      "R07.3",
+      "R07.4",
+      "R07.8",
+      "C10.3",
+      "I03.1",
+      "I03.2",
+      "A10.3"
+    ],
+    "layerThreeChecks": {
+      "C08.6": "fixed in the first round, export reads the active clock",
+      "C08.7": "fixed in the first round, export reads the active clock",
+      "R07.9": "fixed in the first round, tests/elapsed-cap.e2e.test.ts reproduces the check",
+      "I16.9": "reference kept, the check expects the visible status inside details while the spec asks for it beside the reproduction controls"
+    },
+    "newMutations": ["M26", "M27", "M28", "M29", "M30", "M31"],
+    "vitestPassed": 130,
+    "browserRuns": 3,
+    "browserPassed": 80,
+    "mutations": "31 caught for their declared reasons",
+    "productTestsPassed": 265,
+    "productTestsFailed": 8
   }
 }

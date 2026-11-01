@@ -1,10 +1,15 @@
-import type { Board } from './game.types.ts';
-
 export const GRID_SIZES = [4, 6, 8, 10, 12, 14, 16] as const;
 const BOARD_VERSION = 'np1';
 export const SEED_MAX = 2_147_483_646;
 const PRNG_MODULUS = SEED_MAX + 1;
 const PRNG_MULTIPLIER = 16_807;
+
+export interface Board {
+  readonly boardCode: string;
+  readonly size: number;
+  readonly seed: number;
+  readonly deck: readonly number[];
+}
 
 export function isValidSize(value: number): boolean {
   return GRID_SIZES.some((size) => size === value);

@@ -47,11 +47,12 @@ test('test names describe behavior without requirement IDs', async () => {
       assert.doesNotMatch(name, REQUIREMENT_ID, `${file.path} test name ${name}`);
 });
 
-test('tests read only the environment their runners need', async () => {
+test('source reads only the environment its command and test runners need', async () => {
   const reads = (await typescriptFiles()).flatMap((file) =>
     [...file.text.matchAll(ENVIRONMENT)].map((match) => `${file.path}:${match[1] ?? match[2]}`),
   );
   const runners = [
+    'scripts/replay-cli.ts:INIT_CWD',
     'scripts/replay.test.ts:npm_execpath',
     'tests/browser-test.ts:EXECUTABLE_ENV',
     'tests/browser-test.ts:TEMP',

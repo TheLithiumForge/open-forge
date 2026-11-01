@@ -1,0 +1,5 @@
+{
+  "missing.json": "Could not replay missing.json: the file does not exist.\n",
+  "broken.json": "Could not replay broken.json: the file is not valid JSON.\n",
+  "rule.json": "Could not replay rule.json: action 1 names a card outside the board.\n"
+}

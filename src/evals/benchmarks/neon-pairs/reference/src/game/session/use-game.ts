@@ -7,7 +7,7 @@ import { activateSession, initialSession, replaceGame, SessionNotice } from './s
 import { readPreferences, writePreferences } from './storage.ts';
 import { useSessionClock } from './use-session-clock.ts';
 import type { PreferenceStore } from './storage.ts';
-import type { Session } from './session.types.ts';
+import type { Session } from './session.ts';
 
 function browserStore(): PreferenceStore | null {
   try {

@@ -502,6 +502,11 @@
           "path": "reference/tests/snapshots.e2e.test.ts",
           "symbol": "Resume, invalid draft and completed import cases",
           "evidence": "Clause R04.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/idle-clock.e2e.test.ts",
+          "symbol": "an idle hidden period adds no elapsed or mismatch time",
+          "evidence": "Clause R04.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -548,6 +553,11 @@
         {
           "path": "reference/tests/snapshots.e2e.test.ts",
           "symbol": "Resume, invalid draft and completed import cases",
+          "evidence": "Clause R04.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/idle-clock.e2e.test.ts",
+          "symbol": "an idle paused import adds no elapsed or mismatch time",
           "evidence": "Clause R04.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -1165,6 +1175,11 @@
           "path": "reference/src/game/elapsed-time.test.ts",
           "symbol": "elapsed cap endpoint, continued play and export",
           "evidence": "Clause R07.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/idle-clock.e2e.test.ts",
+          "symbol": "an idle hidden period adds no elapsed or mismatch time",
+          "evidence": "Clause R07.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -1216,6 +1231,11 @@
         {
           "path": "reference/src/game/elapsed-time.test.ts",
           "symbol": "elapsed cap endpoint, continued play and export",
+          "evidence": "Clause R07.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/idle-clock.e2e.test.ts",
+          "symbol": "an idle paused import adds no elapsed or mismatch time",
           "evidence": "Clause R07.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -1390,6 +1410,11 @@
           "path": "reference/tests/browser-environment.e2e.test.ts",
           "symbol": "pauses elapsed time and a mismatch while the document is hidden, 599ms pending then 600ms closed",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/tests/idle-clock.e2e.test.ts",
+          "symbol": "an idle hidden period adds no elapsed or mismatch time",
+          "evidence": "Clause R07.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -1441,6 +1466,11 @@
         {
           "path": "reference/src/game/elapsed-time.test.ts",
           "symbol": "elapsed cap endpoint, continued play and export",
+          "evidence": "Clause R07.9. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/elapsed-cap.e2e.test.ts",
+          "symbol": "an import one millisecond below the elapsed cap reaches it and keeps it to the win",
           "evidence": "Clause R07.9. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -1494,6 +1524,11 @@
           "path": "reference/src/game/elapsed-time.test.ts",
           "symbol": "elapsed cap endpoint, continued play and export",
           "evidence": "Clause R07.10. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/elapsed-cap.e2e.test.ts",
+          "symbol": "an import one millisecond below the elapsed cap reaches it and keeps it to the win",
+          "evidence": "Clause R07.10. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -1511,6 +1546,11 @@
           "path": "reference/tests/clock-edges.e2e.test.ts",
           "symbol": "a capped imported clock keeps matching, closing and exporting valid progress, 5999:59 display",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/tests/elapsed-cap.e2e.test.ts",
+          "symbol": "an import one millisecond below the elapsed cap reaches it and keeps it to the win",
+          "evidence": "Clause R07.11. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3149,6 +3189,11 @@
           "path": "reference-audit/evidence/accessibility-journey.json",
           "symbol": "invalid-board-1, invalid-board-2, invalid-snapshot-1, invalid-snapshot-2, loaded-snapshot-1, loaded-snapshot-2",
           "evidence": "Tree-checked load notices. Spoken output belongs to user acceptance. The I17 developer deliverable is tree evidence and a tool record."
+        },
+        {
+          "path": "reference/tests/announcements.e2e.test.ts",
+          "symbol": "every load kind updates the one live region once per event and shows its status beside the reproduction panel",
+          "evidence": "Clause C09.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3171,6 +3216,11 @@
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "status formats show current values, continuing minutes and a completed import without Resume",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+        },
+        {
+          "path": "reference/tests/announcements.e2e.test.ts",
+          "symbol": "every load kind updates the one live region once per event and shows its status beside the reproduction panel",
+          "evidence": "Clause C09.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3292,6 +3342,11 @@
           "path": "reference/tests/move-cap.e2e.test.ts",
           "symbol": "an imported game reaches the move cap, wins and keeps its capped best after reload",
           "evidence": "Clause C10.3. Browser import, Resume, capped matching and win, export, reload and Restart journey."
+        },
+        {
+          "path": "reference/tests/idle-clock.e2e.test.ts",
+          "symbol": "an idle paused import adds no elapsed or mismatch time",
+          "evidence": "Clause C10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3393,6 +3448,11 @@
           "path": "reference/tests/control-contract.e2e.test.ts",
           "symbol": "draft resets, load focus, paused notice and Resume focus order survive remembered positions",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/tests/focus-entry.e2e.test.ts",
+          "symbol": "Resume returns focus to the remembered card with nearest alignment",
+          "evidence": "Clause C10.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3506,6 +3566,11 @@
           "path": "reference-audit/evidence/accessibility-journey.json",
           "symbol": "invalid-board-1, invalid-board-2, invalid-snapshot-1, invalid-snapshot-2, loaded-snapshot-1, loaded-snapshot-2",
           "evidence": "Tree-checked load notices. Spoken output belongs to user acceptance. The I17 developer deliverable is tree evidence and a tool record."
+        },
+        {
+          "path": "reference/tests/announcements.e2e.test.ts",
+          "symbol": "every load kind updates the one live region once per event and shows its status beside the reproduction panel",
+          "evidence": "Clause C11.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3538,6 +3603,11 @@
           "path": "reference-audit/evidence/accessibility-journey.json",
           "symbol": "invalid-board-1, invalid-board-2, invalid-snapshot-1, invalid-snapshot-2, loaded-snapshot-1, loaded-snapshot-2",
           "evidence": "Tree-checked load notices. Spoken output belongs to user acceptance. The I17 developer deliverable is tree evidence and a tool record."
+        },
+        {
+          "path": "reference/tests/announcements.e2e.test.ts",
+          "symbol": "every load kind updates the one live region once per event and shows its status beside the reproduction panel",
+          "evidence": "Clause C11.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3917,6 +3987,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause C14.3. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/scripts/replay.test.ts",
+          "symbol": "the replay command reads a relative path from the caller folder and names what failed",
+          "evidence": "Clause C14.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3951,6 +4026,16 @@
           "path": "reference/scripts/replay.test.ts",
           "symbol": "replay CLI prints a final snapshot and rejects invalid files and arguments",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+        },
+        {
+          "path": "reference/src/game/replay.ts",
+          "symbol": "readReplay, ReplayProblem",
+          "evidence": "Clause C14.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. The message names a missing file, malformed JSON or the broken rule."
+        },
+        {
+          "path": "reference/scripts/replay.test.ts",
+          "symbol": "the replay command reads a relative path from the caller folder and names what failed",
+          "evidence": "Clause C14.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -4015,6 +4100,16 @@
           "path": "reference/tests/keyboard.e2e.test.ts",
           "symbol": "native Tab, matched-card focus and autorepeat cases",
           "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/src/game/board/Card.tsx",
+          "symbol": "Card pointer handlers",
+          "evidence": "Clause I01.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Only a touch that moves or opens the context menu is cancelled."
+        },
+        {
+          "path": "reference/tests/input-contract.e2e.test.ts",
+          "symbol": "a completed mouse click reveals its card even after the pointer drifts",
+          "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -4052,7 +4147,7 @@
         },
         {
           "path": "reference/tests/input-contract.e2e.test.ts",
-          "symbol": "a held touch opens the native context-menu path without activating, plus native right-click lifecycle journey",
+          "symbol": "a real long-press gesture keeps the card closed and a later tap still reveals it, plus native right-click lifecycle journey",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -4069,7 +4164,7 @@
         },
         {
           "path": "reference/tests/input-contract.e2e.test.ts",
-          "symbol": "a held touch opens the native context-menu path without activating, plus native right-click lifecycle journey",
+          "symbol": "a real long-press gesture keeps the card closed and a later tap still reveals it, plus native right-click lifecycle journey",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -4082,6 +4177,11 @@
         {
           "path": "reference/src/game/board/board.css",
           "symbol": "board",
+          "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card scroll-margin",
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
@@ -4108,7 +4208,7 @@
         },
         {
           "path": "reference/tests/lifecycle.e2e.test.ts",
-          "symbol": "native context menus, cancelled taps and dragging never activate cards",
+          "symbol": "native context menus, cancelled taps and touch drags never activate cards",
           "evidence": "Clause I04.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -4228,6 +4328,11 @@
         {
           "path": "reference/tests/style.e2e.test.ts",
           "symbol": "layout, typography, colors and card geometry match the product values",
+          "evidence": "Clause I05.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/focus-entry.e2e.test.ts",
+          "symbol": "Tab and Shift+Tab bring the remembered card in with nearest alignment",
           "evidence": "Clause I05.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -4685,6 +4790,11 @@
           "path": "reference/tests/style.e2e.test.ts",
           "symbol": "layout, typography, colors and card geometry match the product values",
           "evidence": "Clause I06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/focus-entry.e2e.test.ts",
+          "symbol": "every keyboard move after a pointer click shows the focus outline",
+          "evidence": "Clause I06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -4741,6 +4851,11 @@
         {
           "path": "reference/tests/style.e2e.test.ts",
           "symbol": "layout, typography, colors and card geometry match the product values",
+          "evidence": "Clause I06.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/focus-entry.e2e.test.ts",
+          "symbol": "every keyboard move after a pointer click shows the focus outline",
           "evidence": "Clause I06.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -5365,9 +5480,19 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
-          "path": "reference/tests/input-contract.e2e.test.ts",
-          "symbol": "focus requests nearest alignment on both axes",
+          "path": "reference/tests/focus-entry.e2e.test.ts",
+          "symbol": "Tab and Shift+Tab bring the remembered card in with nearest alignment",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/tests/focus-entry.e2e.test.ts",
+          "symbol": "Resume returns focus to the remembered card with nearest alignment",
+          "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+        },
+        {
+          "path": "reference/src/game/board/nearest-scroll.ts",
+          "symbol": "useNearestScroll",
+          "evidence": "Clause I13.1. Browser focus scrolls are undone before the card scrolls itself with nearest alignment."
         },
         {
           "path": "reference/src/game/board/Board.tsx",
@@ -5387,7 +5512,7 @@
       "checks": ["L2:l2-scroll#clause-I13.2","L3:l2-scroll#clause-I13.2"],
       "reference": [
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": ".card scroll-margin",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
@@ -5753,6 +5878,11 @@
           "path": "reference/tests/announcements.e2e.test.ts",
           "symbol": "each mismatch is announced once while clocks, focus and closing stay silent",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+        },
+        {
+          "path": "reference/tests/announcements.e2e.test.ts",
+          "symbol": "every load kind updates the one live region once per event and shows its status beside the reproduction panel",
+          "evidence": "Clause I16.9. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -5895,7 +6025,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V01.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V01.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -5947,7 +6082,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V01.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V01.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -5999,7 +6139,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V01.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V01.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6068,7 +6213,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V02.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V02.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6100,7 +6250,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V02.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V02.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6132,7 +6287,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V02.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V02.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6173,6 +6333,11 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card scroll-margin",
+          "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
           "path": "reference/tests/layout.e2e.test.ts",
           "symbol": "1280x1400 viewport separately checks the 768px height cap",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
@@ -6186,7 +6351,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V03.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V03.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6218,7 +6388,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V03.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V03.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6250,7 +6425,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V04.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V04.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6287,7 +6467,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V04.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V04.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6319,7 +6504,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V04.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V04.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6351,7 +6541,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V04.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V04.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6383,7 +6578,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V05.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V05.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6415,7 +6615,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V05.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V05.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6452,7 +6657,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V06.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V06.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6488,7 +6698,7 @@
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": "matched and hover states",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
@@ -6496,6 +6706,16 @@
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "named color targets, reset margins and card focus scroll margins follow the visual contract",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
+        },
+        {
+          "path": "reference/src/game/controls/control.css",
+          "symbol": ".control",
+          "evidence": "Clause V06.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Native controls use the Panel background."
+        },
+        {
+          "path": "reference/src/game/controls/reproduction.css",
+          "symbol": ".reproduction",
+          "evidence": "Clause V06.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. The reproduction panel uses the Panel background."
         }
       ]
     },
@@ -6506,7 +6726,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V06.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V06.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6538,7 +6763,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V06.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V06.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6570,7 +6800,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V06.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V06.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6616,7 +6851,7 @@
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": "matched and hover states",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
@@ -6639,7 +6874,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V06.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V06.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6681,7 +6921,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V06.8. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V06.8. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6730,7 +6975,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V08.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V08.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6762,7 +7012,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V08.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V08.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6794,7 +7049,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V08.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V08.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -6830,7 +7090,7 @@
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": "matched and hover states",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
@@ -6852,7 +7112,7 @@
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": "matched and hover states",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
@@ -6870,7 +7130,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V09.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V09.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -7514,7 +7779,12 @@
         },
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V14.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V14.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -7571,7 +7841,12 @@
         },
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V14.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V14.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -7628,7 +7903,12 @@
         },
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V15.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V15.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -7679,7 +7959,7 @@
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": "matched and hover states",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
@@ -7698,6 +7978,11 @@
         {
           "path": "reference/src/game/board/board.css",
           "symbol": "board",
+          "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card scroll-margin",
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
@@ -7724,7 +8009,12 @@
         },
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V16.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V16.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -7761,6 +8051,16 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause V16.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/src/game/board/Board.tsx",
+          "symbol": "navigate",
+          "evidence": "Clause V16.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Keyboard moves request a visible focus outline."
+        },
+        {
+          "path": "reference/tests/focus-entry.e2e.test.ts",
+          "symbol": "every keyboard move after a pointer click shows the focus outline",
+          "evidence": "Clause V16.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -7775,7 +8075,7 @@
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": "matched and hover states",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
@@ -7792,7 +8092,7 @@
       "checks": ["L2:l2-motion#clause-V17.1","L3:l2-motion#clause-V17.1"],
       "reference": [
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": ".card transition and reduced motion",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
@@ -7809,7 +8109,7 @@
       "checks": ["L2:l2-motion#clause-V17.2","L3:l2-motion#clause-V17.2"],
       "reference": [
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": ".card transition and reduced motion",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
@@ -7826,7 +8126,7 @@
       "checks": ["L2:l2-motion#clause-V18.1","L3:l2-motion#clause-V18.1"],
       "reference": [
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": ".card, reduced motion",
           "evidence": "Clause V18.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -7848,7 +8148,7 @@
       "checks": ["L2:l2-motion#clause-V18.2","L3:l2-motion#clause-V18.2"],
       "reference": [
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": ".card, reduced motion",
           "evidence": "Clause V18.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -7870,7 +8170,7 @@
       "checks": ["L2:l2-motion#clause-V18.3","L3:l2-motion#clause-V18.3"],
       "reference": [
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": ".card, reduced motion",
           "evidence": "Clause V18.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -7892,7 +8192,7 @@
       "checks": ["L2:l2-motion#clause-V18.4","L3:l2-motion#clause-V18.4"],
       "reference": [
         {
-          "path": "reference/src/game/board/board.css",
+          "path": "reference/src/game/board/card.css",
           "symbol": ".card, reduced motion",
           "evidence": "Clause V18.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -7915,7 +8215,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V19.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V19.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -7957,7 +8262,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V19.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V19.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -7999,7 +8309,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V19.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V19.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -8041,7 +8356,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V19.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V19.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -8092,6 +8412,11 @@
           "evidence": "Product behavior, with the following focused assertion."
         },
         {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card scroll-margin",
+          "evidence": "Product behavior, with the following focused assertion."
+        },
+        {
           "path": "reference/tests/focus-clearance.e2e.test.ts",
           "symbol": "focus clearance survives nearest scroll to an interior card, board and browser intersections",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
@@ -8106,6 +8431,11 @@
         {
           "path": "reference/src/game/board/board.css",
           "symbol": "board geometry and focus clearance",
+          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card scroll-margin",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
         {
@@ -8131,6 +8461,11 @@
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
         {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card scroll-margin",
+          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
           "path": "reference/tests/zoom.e2e.test.ts",
           "symbol": "the equivalent zoom layout keeps both board sizes playable",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
@@ -8150,6 +8485,11 @@
         {
           "path": "reference/src/game/board/board.css",
           "symbol": "board geometry and focus clearance",
+          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card scroll-margin",
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
         {
@@ -8175,6 +8515,11 @@
           "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
         },
         {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card scroll-margin",
+          "evidence": "Spec v2.1 implementation. See reference-audit/revision-v2.1.md and verification.json."
+        },
+        {
           "path": "reference/tests/zoom.e2e.test.ts",
           "symbol": "the equivalent zoom layout keeps both board sizes playable",
           "evidence": "Spec v2.1 executable assertion. See reference-audit/verification.json for the local gate results."
@@ -8193,7 +8538,12 @@
       "reference": [
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause V20.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause V20.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -8353,7 +8703,12 @@
         },
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause T01.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause T01.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -8395,7 +8750,12 @@
         },
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause T01.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause T01.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -8437,7 +8797,12 @@
         },
         {
           "path": "reference/src/game/board/board.css",
-          "symbol": ".board-viewport, .board, .card",
+          "symbol": ".board-viewport, .board",
+          "evidence": "Clause T01.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
           "evidence": "Clause T01.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -8710,7 +9075,7 @@
           "evidence": "Clause T03.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T03.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -8752,7 +9117,7 @@
           "evidence": "Clause T03.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T03.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -8794,7 +9159,7 @@
           "evidence": "Clause T03.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T03.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -8853,7 +9218,7 @@
           "evidence": "Clause T03.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T03.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -8895,7 +9260,7 @@
           "evidence": "Clause T03.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T03.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -8937,7 +9302,7 @@
           "evidence": "Clause T04.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T04.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -8979,7 +9344,7 @@
           "evidence": "Clause T04.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T04.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -9021,7 +9386,7 @@
           "evidence": "Clause T05.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T05.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -9039,6 +9404,16 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause T05.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/src/game/deck.ts",
+          "symbol": "Board",
+          "evidence": "Clause T05.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
+        },
+        {
+          "path": "reference/src/game/session/session.ts",
+          "symbol": "Session",
+          "evidence": "Clause T05.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         }
       ]
     },
@@ -9063,7 +9438,7 @@
           "evidence": "Clause T05.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T05.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -9105,7 +9480,7 @@
           "evidence": "Clause T05.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T05.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -9147,7 +9522,7 @@
           "evidence": "Clause T05.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T05.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -9189,7 +9564,7 @@
           "evidence": "Clause T06.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T06.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -9207,6 +9582,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause T06.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/tests/card-render.e2e.test.ts",
+          "symbol": "the face sheet draws the same card as the game outside the control styles",
+          "evidence": "Clause T06.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -9231,7 +9611,7 @@
           "evidence": "Clause T06.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T06.2. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -9273,7 +9653,7 @@
           "evidence": "Clause T06.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T06.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -9315,7 +9695,7 @@
           "evidence": "Clause T06.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T06.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -9357,7 +9737,7 @@
           "evidence": "Clause T06.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
-          "path": "reference/src/game/game.types.ts",
+          "path": "reference/src/game/game.ts",
           "symbol": "GameState",
           "evidence": "Clause T06.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
@@ -10160,6 +10540,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause A01.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/src/game/game.ts",
+          "symbol": "isFaceUp",
+          "evidence": "Clause A01.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. The board asks the game core which cards face up."
         }
       ]
     },
@@ -11605,6 +11990,26 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause A07.3. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/src/game/board/card.css",
+          "symbol": ".card",
+          "evidence": "Clause A07.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Card imports its own styles."
+        },
+        {
+          "path": "reference/src/game/controls/control.css",
+          "symbol": ".control",
+          "evidence": "Clause A07.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Both control components import the shared native control look."
+        },
+        {
+          "path": "reference/src/game/controls/reproduction.css",
+          "symbol": ".reproduction",
+          "evidence": "Clause A07.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Reproduction imports its own styles."
+        },
+        {
+          "path": "reference/tests/card-render.e2e.test.ts",
+          "symbol": "the face sheet draws the same card as the game outside the control styles",
+          "evidence": "Clause A07.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -12207,6 +12612,16 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause A10.3. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/tests/deal-oracle.ts",
+          "symbol": "specDeal",
+          "evidence": "Clause A10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. An independent BigInt reading of D03 and D04 gives the browser journeys their pairs."
+        },
+        {
+          "path": "reference/tests/all-sizes.e2e.test.ts",
+          "symbol": "the independent deal reproduces the published example deck",
+          "evidence": "Clause A10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },

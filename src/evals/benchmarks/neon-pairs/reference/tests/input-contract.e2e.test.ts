@@ -66,43 +66,41 @@ test('hover changes only card border color and matched marks stay legible', asyn
   await expect(mark.locator('path')).toHaveAttribute('d', 'm2 6 3 3 5-6');
 });
 
-test('focus requests nearest alignment on both axes', async ({ page }) => {
+// Farther than the 8px touch drag distance, while staying on the card.
+const MOUSE_DRIFT_PX = 20;
+const LONG_PRESS_MS = 1500;
+
+test('a completed mouse click reveals its card even after the pointer drifts', async ({ page }) => {
   await loadFixedBoard(page);
-  await page.evaluate(() => {
-    const original = Element.prototype.scrollIntoView;
-    Element.prototype.scrollIntoView = function (options) {
-      if (this.matches('.card')) this.setAttribute('data-scroll-options', JSON.stringify(options));
-      original.call(this, options);
-    };
-  });
-  await page.locator('.card').nth(3).focus();
-  await expect(page.locator('.card').nth(3)).toHaveAttribute(
-    'data-scroll-options',
-    '{"block":"nearest","inline":"nearest"}',
-  );
+  const card = page.locator('.card').first();
+  const box = await card.boundingBox();
+  if (!box) throw new Error('Missing card');
+  await page.mouse.move(box.x + box.width / 4, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 4 + MOUSE_DRIFT_PX, box.y + box.height / 2);
+  await page.mouse.up();
+  await expect(card, 'I01 completed mouse click activates').toHaveClass(/revealed/);
 });
 
 test(
-  'a held touch opens the native context-menu path without activating',
+  'a real long-press gesture keeps the card closed and a later tap still reveals it',
   async ({ page, context }) => {
     await loadFixedBoard(page);
     const card = page.locator('.card').first();
     const box = await card.boundingBox();
     if (!box) throw new Error('Missing card');
+    const point = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
     const cdp = await context.newCDPSession(page);
-    await cdp.send('Input.dispatchTouchEvent', {
-      type: 'touchStart',
-      touchPoints: [{ x: box.x + box.width / 2, y: box.y + box.height / 2 }],
+    // Chromium's own gesture recognizer turns this held touch into a long press.
+    await cdp.send('Input.synthesizeTapGesture', {
+      ...point,
+      duration: LONG_PRESS_MS,
+      tapCount: 1,
+      gestureSourceType: 'touch',
     });
-    await page.waitForTimeout(1200);
-    const menu = await card.evaluate((button) => {
-      const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
-      button.dispatchEvent(event);
-      return event.defaultPrevented;
-    });
-    expect(menu).toBe(false);
-    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-    await expect(page.locator('.card.revealed')).toHaveCount(0);
+    await expect(page.locator('.card.revealed'), 'I03 long press does not activate').toHaveCount(0);
+    await page.touchscreen.tap(point.x, point.y);
+    await expect(card).toHaveClass(/revealed/);
     await cdp.detach();
   },
   { hasTouch: true, isMobile: true },

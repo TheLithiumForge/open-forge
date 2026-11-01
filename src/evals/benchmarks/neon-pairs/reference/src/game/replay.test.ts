@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'vitest';
-import { replayGame, REPLAY_MAX_ACTIONS, REPLAY_MAX_BYTES, REPLAY_VERSION } from './replay.ts';
+import {
+  readReplay,
+  replayGame,
+  REPLAY_MAX_ACTIONS,
+  REPLAY_MAX_BYTES,
+  REPLAY_VERSION,
+  ReplayProblem,
+} from './replay.ts';
 import { MISMATCH_MS } from './game.ts';
 import { SelectionKind } from './selection.ts';
 import { EXAMPLE_CODE, SPEC_VECTOR } from './game.fixture.ts';
@@ -46,30 +53,44 @@ test('replay resolves exact timeout edges before equal-time ordered activation',
   assert.equal(result?.elapsedMs, MISMATCH_MS);
 });
 
-const INVALID_REPLAYS: readonly Record<string, unknown>[] = [
-  { version: 2 },
-  { boardCode: 'bad' },
-  { extra: true },
-  { actions: null },
-  { endMs: -1 },
-  { endMs: 149 },
-  {
-    actions: [
-      { atMs: 2, index: 0 },
-      { atMs: 1, index: 2 },
-    ],
-  },
-  { actions: [{ atMs: 0, index: 16 }] },
-  { actions: [{ atMs: 0, index: -1 }] },
-  { actions: [{ atMs: 0, index: 0, extra: true }] },
-  { actions: [{ atMs: 0.5, index: 0 }] },
-  { actions: [{ atMs: 0, index: 0.5 }] },
-  { endMs: Number.MAX_SAFE_INTEGER + 1 },
-];
-for (const [index, overrides] of INVALID_REPLAYS.entries()) {
-  test(`replay validation rejects invalid input ${index + 1}`, () =>
-    assert.equal(replayGame(replay(overrides)), null));
+const INVALID_REPLAYS = [
+  [{ version: 2 }, ReplayProblem.format],
+  [{ boardCode: 'bad' }, ReplayProblem.boardCode],
+  [{ extra: true }, ReplayProblem.format],
+  [{ actions: null }, ReplayProblem.actions],
+  [{ endMs: -1 }, ReplayProblem.endTime],
+  [{ endMs: 149 }, ReplayProblem.order],
+  [
+    {
+      actions: [
+        { atMs: 2, index: 0 },
+        { atMs: 1, index: 2 },
+      ],
+    },
+    ReplayProblem.order,
+  ],
+  [{ actions: [{ atMs: 0, index: 16 }] }, ReplayProblem.index],
+  [{ actions: [{ atMs: 0, index: -1 }] }, ReplayProblem.action],
+  [{ actions: [{ atMs: 0, index: 0, extra: true }] }, ReplayProblem.action],
+  [{ actions: [{ atMs: 0.5, index: 0 }] }, ReplayProblem.action],
+  [{ actions: [{ atMs: 0, index: 0.5 }] }, ReplayProblem.action],
+  [{ endMs: Number.MAX_SAFE_INTEGER + 1 }, ReplayProblem.endTime],
+] as const;
+for (const [index, [overrides, problem]] of INVALID_REPLAYS.entries()) {
+  test(`replay validation rejects invalid input ${index + 1}`, () => {
+    assert.equal(replayGame(replay(overrides)), null);
+    const result = readReplay(replay(overrides));
+    assert.equal('problem' in result ? result.problem : null, problem);
+  });
 }
+
+test('replay names a malformed or oversized file before checking its rules', () => {
+  assert.deepEqual(readReplay('{'), { problem: ReplayProblem.malformedJson });
+  assert.deepEqual(readReplay(' '.repeat(REPLAY_MAX_BYTES + 1)), {
+    problem: ReplayProblem.tooLarge,
+  });
+  assert.deepEqual(readReplay('null'), { problem: ReplayProblem.format });
+});
 
 test('replay enforces bounded actions, bytes and safe elapsed endpoints', () => {
   const actions = Array.from({ length: REPLAY_MAX_ACTIONS }, () => ({ atMs: 0, index: 0 }));

@@ -1,10 +1,19 @@
 import { generateBoard } from './deck.ts';
 import { SelectionKind } from './selection.ts';
-import type { GameState } from './game.types.ts';
+import type { Board } from './deck.ts';
+import type { Selection } from './selection.ts';
 
 export const ELAPSED_MAX_MS = 359_999_999;
 export const MISMATCH_MS = 800;
 export const MOVES_MAX = 999_999;
+
+export interface GameState extends Board {
+  readonly matched: readonly number[];
+  readonly selection: Selection;
+  readonly moves: number;
+  readonly elapsedMs: number;
+  readonly started: boolean;
+}
 
 export function createGame(boardCode: string): GameState {
   return {
@@ -19,6 +28,16 @@ export function createGame(boardCode: string): GameState {
 
 export function isWon(state: GameState): boolean {
   return state.matched.length === state.deck.length;
+}
+
+export function isFaceUp(state: GameState, index: number): boolean {
+  const selection = state.selection;
+  return (
+    state.matched.includes(index) ||
+    (selection.kind === SelectionKind.one && selection.index === index) ||
+    (selection.kind === SelectionKind.mismatch &&
+      (selection.first === index || selection.second === index))
+  );
 }
 
 export function activateCard(state: GameState, index: number): GameState {
