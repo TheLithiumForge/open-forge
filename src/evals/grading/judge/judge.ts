@@ -1,4 +1,6 @@
 import { dirname, join } from "node:path";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { Tool } from "../../config/choices.ts";
 import type { JudgeChoice } from "../../config/config.types.ts";
 import type { JudgeAnswer } from "../../history/results.types.ts";
 import type { Suite } from "../../benchmarks/suite.types.ts";
@@ -22,7 +24,20 @@ export interface JudgeOptions {
   readonly assessor?: JudgeAssessor;
   readonly stage?: Omit<StageOptions & ToolHomeOptions, "timeoutMs">;
 }
-const containerAssessor: JudgeAssessor = { supportsImages: false, run: (space, choice, prompt, options) => runAssessorStage(space, choice, prompt, options) };
+const containerAssessor: JudgeAssessor = { supportsImages: true, run: async (space, choice, prompt, options, evidence) => {
+  await mkdir(space.root, { recursive: true });
+  const folder = await mkdtemp(join(space.root, "judge-images-"));
+  try {
+    const images: string[] = [];
+    for (const image of evidence.images) {
+      const path = join(folder, image.id);
+      await writeFile(path, image.png, { flag: "wx" });
+      images.push(path);
+    }
+    return await runAssessorStage(space, choice, prompt, { ...options, images });
+  } finally { await rm(folder, { recursive: true, force: true }); }
+} };
+export const JudgeImageManifestLabel = "Images sent";
 
 export function judgeQuestions(_suite: Suite): Promise<JudgeQuestion[]> {
   return frozenQuestions();
@@ -39,8 +54,16 @@ export function judgePrompt(suite: Suite, questions: readonly JudgeQuestion[], e
   ].join("\n\n");
 }
 
-function modelValue(result: ProcessResult): unknown {
+function modelValue(result: ProcessResult, choice: JudgeChoice): unknown {
   if (result.code !== 0 || result.timedOut) throw new Error("Judge assessor failed or timed out.");
+  if (choice.tool === Tool.codex) {
+    const events: unknown[] = result.stdout.split("\n").filter((line) => line.trim()).map((line) => JSON.parse(line));
+    if (events.some((event) => record(event) && ["error", "turn.failed"].includes(String(event["type"])))) throw new Error("Judge assessor returned an error.");
+    const messages = events.flatMap((event) => record(event) && record(event["item"]) && event["item"]["type"] === "agent_message" && typeof event["item"]["text"] === "string" ? [event["item"]["text"]] : []);
+    const message = messages.at(-1);
+    if (message === undefined) throw new Error("Judge assessor returned no answer JSON.");
+    return JSON.parse(message);
+  }
   const envelope: unknown = JSON.parse(result.stdout);
   if (!record(envelope) || envelope["is_error"] === true) throw new Error("Judge assessor returned an error.");
   if ("structured_output" in envelope) return envelope["structured_output"];
@@ -58,7 +81,8 @@ export async function judgeRun(suite: Suite, choice: JudgeChoice, folder: string
   for (let ballot = 0; ballot < BallotCount; ballot += 1) {
     const space: RunSpace = { root: dirname(folder), work: folder, home: join(home, `ballot-${ballot}`), project: suite.project };
     const result = await assessor.run(space, choice, prompt, { ...options.stage, timeoutMs }, evidence);
-    ballots.push(parseBallot(modelValue(result), questions, evidence));
+    ballots.push(parseBallot(modelValue(result, choice), questions, evidence));
   }
-  return tallyBallots(questions, ballots);
+  const manifest = `${JudgeImageManifestLabel}: ${JSON.stringify(evidence.images.map(({ id, sha256, png, width, height }) => ({ id, sha256, bytes: png.length, width, height })))}`;
+  return tallyBallots(questions, ballots).map((answer, index) => index === 0 ? { ...answer, evidence: [...answer.evidence, manifest] } : answer);
 }

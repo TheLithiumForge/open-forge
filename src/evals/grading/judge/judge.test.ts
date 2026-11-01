@@ -8,7 +8,11 @@ import { Tool } from "../../config/choices.ts";
 import type { Suite } from "../../benchmarks/suite.types.ts";
 import { judgeEvidence, type JudgeEvidence } from "./evidence.ts";
 import { prepareJudgeFolder } from "./judge-folder.ts";
-import { judgeRun, type JudgeAssessor } from "./judge.ts";
+import { JudgeImageManifestLabel, judgeRun, type JudgeAssessor } from "./judge.ts";
+import { containerFixture } from "../../execution/containers/test-docker.ts";
+import { ContainerPaths } from "../../execution/containers/settings.ts";
+import { AssessorImageLimits } from "../../execution/containers/files.ts";
+import { AssessorImagePrefix } from "../../execution/containers/assessor.ts";
 import { parseBallot } from "./ballots.ts";
 import { BallotCount, frozenQuestions, JudgeEvidenceKind, JudgeVerdict } from "./rubric.ts";
 
@@ -48,7 +52,9 @@ test("both providers get identical filtered source and image bytes with three co
   const assessor: JudgeAssessor = { supportsImages: true, run: async (_space, _choice, prompt, _options, evidence) => {
     prompts.push(prompt); bundles.push(evidence);
     const answers = questions.map((question) => ({ id: question.id, answer: JudgeVerdict.yes, evidence: "Fixture evidence", citations: question.evidence === JudgeEvidenceKind.source ? [`source:${SourcePath}:1`] : [ImageFile, `source:${SourcePath}:1`] }));
-    return { code: 0, timedOut: false, stderr: "", stdout: JSON.stringify({ structured_output: { answers } }) };
+    return { code: 0, timedOut: false, stderr: "", stdout: _choice.tool === Tool.codex
+      ? JSON.stringify({ type: "item.completed", item: { type: "agent_message", text: JSON.stringify({ answers }) } })
+      : JSON.stringify({ structured_output: { answers } }) };
   } };
   for (const tool of [Tool.claude, Tool.codex]) {
     const source = await application(root, tool);
@@ -79,9 +85,68 @@ test("malformed ballots, invented citations and a missing image transport are ju
   const first = answers[0];
   assert.ok(first);
   for (const changes of [{ answer: "maybe" }, { citations: [`source:${SourcePath}:9999`] }, { evidence: 1 }]) assert.throws(() => parseBallot({ answers: [{ ...first, ...changes }, ...answers.slice(1)] }, questions, evidence));
-  await assert.rejects(judgeRun(suite, choice, folder, join(root, "home"), 1000));
+  const noImages: JudgeAssessor = { supportsImages: false, run: async () => { throw new Error("Unreachable assessor."); } };
+  await assert.rejects(judgeRun(suite, choice, folder, join(root, "home"), 1000, { assessor: noImages }));
   const failed: JudgeAssessor = { supportsImages: true, run: async () => ({ code: 1, timedOut: false, stdout: "", stderr: "assessor failed" }) };
   await assert.rejects(judgeRun(suite, choice, folder, join(root, "home"), 1000, { assessor: failed }));
+});
+
+test("the container adapter sends identical board and face sheet images and records their manifest", async () => {
+  const questions = await frozenQuestions();
+  const received: Buffer[][] = [];
+  for (const tool of [Tool.claude, Tool.codex]) {
+    const fixture = await containerFixture();
+    try {
+      await mkdir(join(fixture.space.work, "src"));
+      await writeFile(join(fixture.space.work, SourcePath), "export const pairCount = 8;\n");
+      const names = [ImageFile, "faces.png"];
+      const bytes = names.map((_, index) => PNG.sync.write(new PNG({ width: 4 + index, height: 4 })));
+      const images: string[] = [];
+      for (const [index, name] of names.entries()) {
+        const path = join(fixture.space.root, name);
+        await writeFile(path, bytes[index] ?? Buffer.alloc(0));
+        images.push(path);
+      }
+      const answers = questions.map((question) => ({ id: question.id, answer: JudgeVerdict.yes, evidence: "Fixture evidence", citations: [ImageFile, `source:${SourcePath}:1`] }));
+      fixture.client.spawnOutput = tool === Tool.codex
+        ? JSON.stringify({ type: "item.completed", item: { type: "agent_message", text: JSON.stringify({ answers }) } })
+        : JSON.stringify({ result: JSON.stringify({ answers }) });
+      const judged = await judgeRun(suite, { ...choice, tool }, fixture.space.work, fixture.space.home, 10_000, { images, stage: { docker: fixture.client, env: {} } });
+      const bundle = await judgeEvidence(fixture.space.work, images);
+      const manifest = judged[0]?.evidence.at(-1);
+      assert.ok(manifest);
+      assert.deepEqual(JSON.parse(manifest.slice(`${JudgeImageManifestLabel}: `.length)), bundle.images.map(({ id, sha256, png, width, height }) => ({ id, sha256, bytes: png.length, width, height })));
+      assert.equal(fixture.client.names.length, BallotCount);
+      const delivered: Buffer[] = [];
+      if (tool === Tool.claude) {
+        for (const input of fixture.client.inputs) {
+          const message: { message: { content: { type: string; source?: { data: string } }[] } } = JSON.parse(input);
+          const attachments = message.message.content.filter((block) => block.type === "image").map((block) => Buffer.from(block.source?.data ?? "", "base64"));
+          assert.deepEqual(attachments, bytes);
+          delivered.push(...attachments);
+        }
+      } else for (const name of fixture.client.names) {
+        const attachments = await Promise.all(bytes.map((_, index) => readFile(fixture.client.path(name, `${ContainerPaths.work}/${AssessorImagePrefix}${index}.png`))));
+        assert.deepEqual(attachments, bytes);
+        delivered.push(...attachments);
+      }
+      received.push(delivered);
+    } finally { await fixture.dispose(); }
+  }
+  assert.deepEqual(received[0], received[1]);
+});
+
+test("invalid judge image input fails before any assessor call", async (t) => {
+  const root = await temporary(t);
+  const folder = await application(root, "source");
+  const path = join(root, ImageFile);
+  await writeFile(path, "invalid image");
+  let calls = 0;
+  const assessor: JudgeAssessor = { supportsImages: true, run: async () => { calls += 1; throw new Error("Unreachable assessor."); } };
+  for (const images of [[path], Array.from({ length: AssessorImageLimits.count + 1 }, () => path)]) {
+    await assert.rejects(judgeRun(suite, choice, folder, join(root, "home"), 1000, { images, assessor }));
+  }
+  assert.equal(calls, 0);
 });
 
 test("usable partial source survives a malformed manifest while generated HTML stays out", async (t) => {

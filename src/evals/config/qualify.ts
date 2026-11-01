@@ -10,9 +10,12 @@ import { object, text } from "./validation.ts";
 export const QualificationFiles = { agents: "AGENTS.md", loader: ".agents/loader.md", lock: ".agents/open-forge.lock.json" } as const;
 export interface QualifiedSetup { readonly setup: string; readonly files: number; readonly frameworkVersion: string | null }
 
+// The CLI keeps its own workspace lock here. It isn't a plan effect, but every user's install gets it too.
+export const CliStateFiles = new Set([".open-forge-state/.gitignore", ".open-forge-state/workspace.lock"]);
+
 export async function checkSetup(generated: GeneratedSetup): Promise<QualifiedSetup> {
   const files = await inventory(generated.folder);
-  const names = files.map((file) => file.path).sort();
+  const names = files.map((file) => file.path).filter((path) => !CliStateFiles.has(path)).sort();
   if (JSON.stringify(names) !== JSON.stringify([...generated.expected].sort())) throw new Error("Setup files differ from the fresh CLI plan. Another setup's files may be present.");
   if (generated.frameworkVersion !== null) {
     if (generated.frameworkVersion !== ImageVersions.openForge) throw new Error("The setup has the wrong Open Forge version.");

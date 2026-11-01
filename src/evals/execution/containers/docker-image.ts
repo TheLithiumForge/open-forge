@@ -11,7 +11,9 @@ interface PackageManifest {
 }
 
 const manifest: PackageManifest = JSON.parse(readFileSync(join(evalsRoot, "package.json"), "utf8"));
-const lockKey = createHash("sha256").update(readFileSync(join(EvalPaths.docker, ImageLockFile))).digest("hex").slice(0, 12);
+// The tag changes with the lock and with every file an image is built from, so an edited image never reuses an old build.
+const ImageSources = [ImageLockFile, "agent.Dockerfile", "verifier.Dockerfile", "assessor.Dockerfile", "prepare.ts", "collect.ts", "stop-tools.ts"] as const;
+const lockKey = ImageSources.reduce((hash, name) => hash.update(name).update(readFileSync(join(EvalPaths.docker, name))), createHash("sha256")).digest("hex").slice(0, 12);
 
 /** The image carries the same tool versions as package.json, so local and Docker runs match. */
 export const ImageVersions = {

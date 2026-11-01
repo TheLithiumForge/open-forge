@@ -9,7 +9,8 @@ RUN apt-get update \
 RUN npm install --global "@anthropic-ai/claude-code@${CLAUDE_VERSION}" "@openai/codex@${CODEX_VERSION}" "@thelithiumforge/open-forge@${OPEN_FORGE_VERSION}"
 RUN groupadd --gid 10000 agent && useradd --uid 10000 --gid 10000 --create-home agent \
   && mkdir -p /work /home/agent/.codex /home/agent/.claude /opt/evals \
-  && chmod 777 /work
+  && chmod 777 /work \
+  && chown -R root:root /home/agent && chmod -R a+rwX /home/agent
 COPY prepare.ts /opt/evals/prepare.ts
 COPY stop-tools.ts /opt/evals/stop-tools.ts
 WORKDIR /work

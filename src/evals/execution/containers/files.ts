@@ -1,11 +1,47 @@
-import { cp, mkdtemp, mkdir, readdir, rename, rm } from "node:fs/promises";
-import { basename, join, sep } from "node:path";
+import { cp, lstat, mkdtemp, mkdir, readFile, readdir, rename, rm } from "node:fs/promises";
+import { basename, extname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import type { RunSpace } from "./executor.ts";
 import { ContainerPaths } from "./settings.ts";
 import type { ContainerStage } from "./stage.ts";
 
 export const PrivateProjectFiles = new Set([".codex", ".claude", ".auth", ".npmrc", ".yarnrc", ".yarnrc.yml", ".netrc", ".git-credentials"]);
 export const VerifierExcludedFiles = new Set([...PrivateProjectFiles, "node_modules", ".git"]);
+export const AssessorImageLimits = { count: 12, bytes: 5 * 1024 * 1024 } as const;
+export const ImageMediaType = { png: "image/png", jpeg: "image/jpeg" } as const;
+const PngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+const JpegSignature = Buffer.from([255, 216, 255]);
+export interface AssessorImage {
+  readonly name: string;
+  readonly mediaType: (typeof ImageMediaType)[keyof typeof ImageMediaType];
+  readonly bytes: Buffer;
+}
+
+/** Image paths stay under the run's folder. Every component must be plain before any bytes are read. */
+export async function readAssessorImages(root: string, paths: readonly string[]): Promise<AssessorImage[]> {
+  if (paths.length > AssessorImageLimits.count) throw new Error("Too many assessor images.");
+  const folder = await lstat(root);
+  if (!folder.isDirectory() || folder.isSymbolicLink()) throw new Error("Assessor image folder must be a plain folder.");
+  const images: AssessorImage[] = [];
+  for (const path of paths) {
+    const name = relative(resolve(root), resolve(path));
+    if (!name || isAbsolute(name) || name.split(sep).includes("..")) throw new Error("Assessor image is outside the run folder.");
+    let current = resolve(root);
+    const parts = name.split(sep);
+    for (const [index, part] of parts.entries()) {
+      current = join(current, part);
+      const file = await lstat(current);
+      if (file.isSymbolicLink() || (index < parts.length - 1 ? !file.isDirectory() : !file.isFile() || file.nlink !== 1 || file.size >= AssessorImageLimits.bytes)) throw new Error("Assessor images must be plain files under the image size limit.");
+    }
+    const bytes = await readFile(current);
+    if (bytes.length >= AssessorImageLimits.bytes) throw new Error("Assessor image exceeds the image size limit.");
+    const extension = extname(name).toLowerCase();
+    const png = extension === ".png" && bytes.subarray(0, PngSignature.length).equals(PngSignature);
+    const jpeg = [".jpg", ".jpeg"].includes(extension) && bytes.subarray(0, JpegSignature.length).equals(JpegSignature) && bytes.subarray(-2).equals(Buffer.from([255, 217]));
+    if (!png && !jpeg) throw new Error("Assessor images must be PNG or JPEG files with matching file content.");
+    images.push({ name: basename(name), mediaType: png ? ImageMediaType.png : ImageMediaType.jpeg, bytes });
+  }
+  return images;
+}
 
 export function projectFileAllowed(path: string, verifier = false): boolean {
   const name = basename(path);

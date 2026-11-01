@@ -1,18 +1,19 @@
 import { createHash } from "node:crypto";
 import { lstat, readFile, readdir } from "node:fs/promises";
-import { basename, join } from "node:path";
+import { dirname, join } from "node:path";
 import { PNG } from "pngjs";
 import { AssessorEvidenceLimit } from "../../execution/containers/assessor.ts";
+import { AssessorImageLimits, readAssessorImages } from "../../execution/containers/files.ts";
 import { visibleToJudge } from "./judge-folder.ts";
 
 export interface JudgeSource { readonly path: string; readonly text: string; readonly lines: number }
 export interface JudgeImage { readonly id: string; readonly sha256: string; readonly png: Buffer; readonly width: number; readonly height: number }
 export interface JudgeEvidence { readonly sources: readonly JudgeSource[]; readonly images: readonly JudgeImage[] }
-const MaxImageBytes = 8 * 1024 * 1024;
 const MaxImagePixels = 16 * 1024 * 1024;
 const decoder = new TextDecoder("utf-8", { fatal: true });
 
 export async function judgeEvidence(folder: string, imagePaths: readonly string[] = []): Promise<JudgeEvidence> {
+  if (imagePaths.length > AssessorImageLimits.count) throw new Error("Too many judge images.");
   const sources: JudgeSource[] = [];
   if ((await lstat(folder)).isSymbolicLink()) throw new Error("Judge evidence cannot be a link.");
   async function read(path: string, prefix: string): Promise<void> {
@@ -30,12 +31,12 @@ export async function judgeEvidence(folder: string, imagePaths: readonly string[
   await read(folder, "");
   const images: JudgeImage[] = [];
   for (const path of imagePaths) {
-    const file = await lstat(path);
-    if (!file.isFile() || file.isSymbolicLink() || file.size > MaxImageBytes) throw new Error("Invalid judge image file.");
-    const png = await readFile(path);
+    const [image] = await readAssessorImages(dirname(path), [path]);
+    if (image === undefined) throw new Error("Missing judge image.");
+    const png = image.bytes;
     if (png.length < 24 || png.readUInt32BE(16) * png.readUInt32BE(20) > MaxImagePixels) throw new Error("Judge image exceeds the pixel limit.");
     const decoded = PNG.sync.read(png);
-    const id = basename(path);
+    const id = image.name;
     if (images.some((image) => image.id === id)) throw new Error("Duplicate judge image ID.");
     images.push({ id, sha256: createHash("sha256").update(png).digest("hex"), png, width: decoded.width, height: decoded.height });
   }
