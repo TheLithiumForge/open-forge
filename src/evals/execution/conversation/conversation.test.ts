@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { converse } from "./conversation.ts";
 import { ConversationFile, DefaultReply, QuestionRounds } from "./answer-bank.ts";
-import { SimulatorFailure, type ConversationReport } from "./report.ts";
+import { ConversationRole, SimulatorFailure, type ConversationReport } from "./report.ts";
 import { Answer, classification, conversationFixture, Question, TestConfig, TestSuite, TestUsage } from "./test-fixtures.ts";
 
 test("bundled decisions get only literal bank answers and count separately", async () => {
@@ -57,6 +57,21 @@ test("simulator failure rejects as infrastructure evidence and finishes the agen
     assert.equal(report.error, failure.message);
     assert.equal(report.calls.length, 1);
     assert.equal(report.calls[0]?.tokens, null);
+    assert.equal(report.messages?.findLast((message) => message.role === ConversationRole.agent)?.text, Question.sound);
     assert.equal(fixture.finished(), true);
+  } finally { await fixture.dispose(); }
+});
+
+test("agent cleanup errors can't discard the conversation or replace the classifier failure", async () => {
+  const fixture = await conversationFixture([Question.sound]);
+  try {
+    await assert.rejects(converse(fixture.context, TestSuite, TestConfig, {
+      open: () => ({ ...fixture.session, finish: async () => { throw new Error("Fixture cleanup failure."); } }),
+      classify: async () => { throw new Error("Fixture classifier failure."); },
+    }), SimulatorFailure);
+    const report: ConversationReport = JSON.parse(await readFile(join(fixture.context.space.root, ConversationFile), "utf8"));
+    assert.equal(report.messages?.at(-1)?.text, Question.sound);
+    assert.ok(report.calls[0]?.error);
+    assert.equal(report.error, report.calls[0]?.error);
   } finally { await fixture.dispose(); }
 });

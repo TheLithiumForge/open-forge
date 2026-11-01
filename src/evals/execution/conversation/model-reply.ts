@@ -1,6 +1,7 @@
 import { Tool } from "../../config/choices.ts";
 import type { TokenCounts } from "../../history/results.types.ts";
 import type { AssessorTools } from "../containers/assessor.ts";
+import { replyJson } from "../reply-json.ts";
 
 export interface SimulatorUsage {
   readonly tokens: TokenCounts | null;
@@ -8,7 +9,9 @@ export interface SimulatorUsage {
   readonly tools: (typeof AssessorTools)[keyof typeof AssessorTools];
   readonly seconds: number;
   readonly error?: string;
+  readonly reply?: string;
 }
+export class SimulatorModelFailure extends Error {}
 function record(value: unknown): Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value) ? Object.fromEntries(Object.entries(value)) : {};
 }
@@ -25,15 +28,20 @@ function tokens(value: unknown): TokenCounts | null {
     cacheWrite: count(usage["cache_creation_input_tokens"]), output: count(usage["output_tokens"]), reasoning: count(usage["reasoning_output_tokens"]) };
 }
 
-export function parseAssessorReply(stdout: string, tool: Tool): { value: unknown; usage: Pick<SimulatorUsage, "tokens" | "model"> } {
+export function readAssessorMessage(stdout: string, tool: Tool): { reply: string; usage: Pick<SimulatorUsage, "tokens" | "model"> } {
   if (tool === Tool.claude) {
     const result = record(JSON.parse(stdout));
-    if (result["is_error"] === true) throw new Error("The simulated user model returned an error.");
-    const value: unknown = result["structured_output"] ?? JSON.parse(typeof result["result"] === "string" ? result["result"] : "null");
-    return { value, usage: { tokens: tokens(result["usage"]), model: typeof result["model"] === "string" ? result["model"] : null } };
+    if (result["is_error"] === true) throw new SimulatorModelFailure("The simulated user model returned an error.");
+    const reply = result["structured_output"] === undefined ? typeof result["result"] === "string" ? result["result"] : "null" : JSON.stringify(result["structured_output"]);
+    return { reply, usage: { tokens: tokens(result["usage"]), model: typeof result["model"] === "string" ? result["model"] : null } };
   }
   const events = stdout.split("\n").filter((line) => line.trim()).map((line) => record(JSON.parse(line)));
-  if (events.some((event) => ["turn.failed", "error"].includes(String(event["type"])))) throw new Error("The simulated user model returned an error.");
+  if (events.some((event) => ["turn.failed", "error"].includes(String(event["type"])))) throw new SimulatorModelFailure("The simulated user model returned an error.");
   const text = events.map((event) => record(event["item"])).filter((item) => item["type"] === "agent_message").at(-1)?.["text"];
-  return { value: JSON.parse(typeof text === "string" ? text : "null"), usage: { tokens: tokens(events.findLast((event) => event["type"] === "turn.completed")?.["usage"]), model: null } };
+  return { reply: typeof text === "string" ? text : "null", usage: { tokens: tokens(events.findLast((event) => event["type"] === "turn.completed")?.["usage"]), model: null } };
+}
+
+export function parseAssessorReply(stdout: string, tool: Tool): { value: unknown; usage: Pick<SimulatorUsage, "tokens" | "model"> } {
+  const parsed = readAssessorMessage(stdout, tool);
+  return { value: replyJson(parsed.reply), usage: parsed.usage };
 }

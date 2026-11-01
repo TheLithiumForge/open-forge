@@ -6,9 +6,9 @@ import { answerObject } from "./reply.ts";
 import { BallotCount } from "./rubric.ts";
 import { assessorResult, ballotFixture, BallotTimeoutMs } from "./test-fixture.ts";
 
-test("both assessors accept the ballot alone, in a fence and with prose", async (t) => {
+test("both assessors accept the ballot object or answers array alone, in a fence and with prose", async (t) => {
   const fixture = await ballotFixture(t);
-  const replies = [fixture.reply, `\`\`\`json\n${fixture.reply}\n\`\`\``, `Here is the ballot.\n${fixture.reply}\nReview complete.`];
+  const replies = [fixture.reply, JSON.stringify(fixture.answers)].flatMap((reply) => [reply, `\`\`\`json\n${reply}\n\`\`\``, `Here is the ballot.\n${reply}\nReview complete.`]);
   for (const choice of MatrixJudges) for (const reply of replies) {
     let calls = 0;
     const assessor: JudgeAssessor = { supportsImages: true, run: async () => { calls += 1; return assessorResult(choice.tool, reply); } };
@@ -22,5 +22,5 @@ test("only one outer object can be read and quoted delimiters don't create candi
   const value = { answers: [{ evidence: 'A brace } and an escaped " quote {' }] };
   const reply = JSON.stringify(value);
   assert.deepEqual(answerObject(`Result:\n${reply}\nDone.`), value);
-  for (const invalid of ["No answer.", "{} {}", "```json\n{}\n```\n```json\n{}\n```", '[{"answers":[]}]', '{"answers": [}', '{"answers":[]', `{} ${reply}`]) assert.throws(() => answerObject(invalid));
+  for (const invalid of ["No answer.", "{} {}", "```json\n{}\n```\n```json\n{}\n```", '[] {}', '{"answers": [}', '{"answers":[]', `{} ${reply}`]) assert.throws(() => answerObject(invalid));
 });

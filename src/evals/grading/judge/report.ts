@@ -1,5 +1,7 @@
+import { capReply, ReplyEvidenceBytes } from "../../execution/reply-json.ts";
+
 export const JudgeFormatRetries = 2;
-export const JudgeFailureReplyBytes = 64 * 1024;
+export const JudgeFailureReplyBytes = ReplyEvidenceBytes;
 
 export interface BallotFailure {
   readonly ballot: number;
@@ -13,7 +15,5 @@ export interface JudgeReport {
 }
 
 export function ballotFailure(ballot: number, formatRetries: number, reply: string, error: unknown): BallotFailure {
-  // Streaming decode leaves an incomplete final UTF-8 character outside the byte limit.
-  const capped = new TextDecoder().decode(Buffer.from(reply).subarray(0, JudgeFailureReplyBytes), { stream: true });
-  return { ballot, formatRetries, reply: capped, error: error instanceof Error ? error.message : String(error) };
+  return { ballot, formatRetries, reply: capReply(reply), error: error instanceof Error ? error.message : String(error) };
 }

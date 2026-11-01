@@ -23,7 +23,8 @@ import { countChecks, legacyCheckView } from "../grading/counting.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
 import type { SuiteChecks } from "../benchmarks/suite-checks.types.ts";
 import type { HistoryStore } from "../history/store.ts";
-import { SimulatorFailure } from "./conversation/report.ts";
+import { ConversationRole, emptyConversation, SimulatorFailure } from "./conversation/report.ts";
+import { ConversationFile } from "./conversation/answer-bank.ts";
 import { suiteChecks } from "../benchmarks/registry.ts";
 import { converse } from "./conversation/conversation.ts";
 import { oneCheckAtATime } from "./run-queue.ts";
@@ -65,6 +66,8 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
   const batch = await store.readBatch(input.run.batchId);
   const versions = { checker: batch.fingerprints.checks, rubric: batch.fingerprints.rubric, judge: batch.versions["judge"] ?? null };
   await mkdir(folder, { recursive: true });
+  await writeFile(join(folder, ResultFiles.events), "", { flag: "a" });
+  await writeFile(join(folder, ConversationFile), `${JSON.stringify(emptyConversation(config), null, 2)}\n`);
   await writeFile(join(folder, ExecutionLabelFile), `${JSON.stringify(executionLabel(config.isolation), null, 2)}\n`);
   if (config.isolation === Isolation.local) progress.report(input.run.batchId, LocalExecutionLabel.reason);
   let run: RunRecord = { ...input.run, status: RunStatus.agent, pipelineStatus: RunStatus.agent, startedAt: new Date().toISOString(), error: null };
@@ -120,7 +123,10 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
       await removeFolder(judgeFolder);
     }
   } catch (error) {
-    if (error instanceof SimulatorFailure) await update({ questions: error.report.questions });
+    if (error instanceof SimulatorFailure) {
+      await writeFile(join(folder, ConversationFile), `${JSON.stringify(error.report, null, 2)}\n`);
+      await update({ questions: error.report.questions, finalMessage: error.report.messages?.findLast((message) => message.role === ConversationRole.agent)?.text ?? run.finalMessage });
+    }
     // Both judges can still read the source when a verifier build fails.
     if (run.status === RunStatus.building && space !== null) await freezeFiles(space, join(folder, ResultFiles.files)).catch(() => undefined);
     const failureKind = run.status === RunStatus.agent ? FailureKind.infrastructure : run.status === RunStatus.judging || run.status === RunStatus.checking ? FailureKind.grading : FailureKind.attempt;
