@@ -4,6 +4,8 @@ import { runCli, type CliServices } from "./cli.ts";
 import { Command, commandHelp, Flag } from "./config/commands.ts";
 import { FixtureConfig, FixtureSuite } from "./config/test-fixtures.ts";
 import { RunStatus } from "./history/statuses.ts";
+import { ImplementerPresets, JudgePresets, UserPresets, PresetName } from "./config/presets.ts";
+import type { EvalConfig } from "./config/config.types.ts";
 
 function fakeServices() {
   const calls: string[] = [], output: string[] = [];
@@ -44,6 +46,27 @@ test("CLI rejects unknown and conflicting input before running anything", async 
 
 test("CLI dispatches smoke, images, UI, saved grading and export", async () => {
   const fake = fakeServices();
-  for (const args of [[Command.smoke], [Command.images], [Command.ui], [Command.recheck, "batch", Flag.rebuild], [Command.rejudge, "batch"], [Command.rejudge, "batch", Flag.plan, "plan.json"], [Command.rejudge, "batch", "run", Flag.plan, "plan.json"], [Command.export, "batch", Flag.out, "destination"]]) assert.equal(await runCli(args, fake.services), 0);
+  for (const args of [[Command.smoke], [Command.images], [Command.ui], [Command.recheck, "batch", Flag.rebuild], [Command.rejudge, "batch"], [Command.rejudge, "batch", Flag.judges, PresetName.both], [Command.rejudge, "batch", "run", Flag.judges, PresetName.codex], [Command.export, "batch", Flag.out, "destination"]]) assert.equal(await runCli(args, fake.services), 0);
   assert.deepEqual(fake.calls, [Command.smoke, Command.images, Command.ui, "launch", "launch", "launch", "launch", Command.export]);
+});
+
+test("run preset flags override only the requested plan roles before any implementation starts", async () => {
+  const fake = fakeServices(), started: EvalConfig[] = [];
+  await runCli([Command.run, Flag.plan, "fixture.json", Flag.implementers, PresetName.both, Flag.judges, PresetName.codex, Flag.user, PresetName.claude],
+    { ...fake.services, run: async (config) => { started.push(config); return 0; } });
+  assert.equal(started.length, 1);
+  assert.deepEqual(started[0], { ...FixtureConfig, agents: ImplementerPresets[PresetName.both], judges: JudgePresets[PresetName.codex],
+    judge: JudgePresets[PresetName.codex][0], simulatedUser: UserPresets[PresetName.claude] });
+  await runCli([Command.run, Flag.plan, "fixture.json", Flag.user, PresetName.codex],
+    { ...fake.services, run: async (config) => { started.push(config); return 0; } });
+  assert.deepEqual(started[1], { ...FixtureConfig, simulatedUser: UserPresets[PresetName.codex] });
+});
+
+test("unknown role presets and removed rejudge plan flags fail without loading or launching anything", async () => {
+  const fake = fakeServices();
+  for (const flag of [Flag.implementers, Flag.judges, Flag.user]) await assert.rejects(runCli([Command.run, Flag.plan, "fixture.json", flag, "unknown"], fake.services));
+  for (const args of [[Command.run, Flag.plan, "fixture.json", Flag.user, PresetName.both],
+    [Command.rejudge, "batch", Flag.plan, "fixture.json"], [Command.rejudge, "batch", Flag.judges, "unknown"],
+    [Command.rejudge, "batch", Flag.judges, PresetName.claude, Flag.judges, PresetName.codex]]) await assert.rejects(runCli(args, fake.services));
+  assert.deepEqual(fake.calls, []);
 });

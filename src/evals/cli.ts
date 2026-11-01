@@ -15,6 +15,7 @@ import { EvalPaths, evalsRoot } from "./paths.ts";
 import { validateCase } from "./grading/brownfield/validate.ts";
 import { BrownfieldFiles } from "./materialize/brownfield-case.ts";
 import { batchMatrixSummary } from "./config/summary.ts";
+import { rejudgeOptions, runPresetOptions } from "./config/preset-options.ts";
 
 export interface CliServices {
   readonly print: (text: string) => void;
@@ -96,21 +97,24 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     }
     case Command.run:
     case Command.qualify: {
-      checkedArgs(args, command === Command.run ? [Flag.development] : [], [Flag.plan], 0);
-      const config = await services.plan(option(args, Flag.plan), command === Command.qualify || args.includes(Flag.development));
+      checkedArgs(args, command === Command.run ? [Flag.development] : [], command === Command.run ? [Flag.plan, Flag.implementers, Flag.judges, Flag.user] : [Flag.plan], 0);
+      const overrides = command === Command.run ? runPresetOptions(args) : {};
+      const config = { ...await services.plan(option(args, Flag.plan), command === Command.qualify || args.includes(Flag.development)), ...overrides };
       if (command === Command.run) return services.run(config, services.print);
       const suites = await Promise.all((config.cases ?? [config.suite]).map((id) => services.suite(id)));
       for (const suite of suites) services.print(JSON.stringify(await services.qualify(suite, config.setups), null, 2));
       return 0;
     }
     case Command.ui: checkedArgs(args, [], [], 0); return services.ui();
-    case Command.recheck:
     case Command.rejudge: {
-      const values: readonly string[] = command === Command.rejudge ? [Flag.plan] : [];
-      const operands = args.filter((arg, index) => arg !== Flag.rebuild && !values.includes(arg) && !values.includes(args[index - 1] ?? ""));
-      if (operands.length < 1 || operands.length > 2) throw new Error(CommandHelp[command]);
-      checkedArgs(args, command === Command.recheck ? [Flag.rebuild] : [], values, operands.length);
-      return services.launch(join(evalsRoot, command === Command.recheck ? CliScripts.recheck : CliScripts.rejudge), args);
+      rejudgeOptions(args);
+      return services.launch(join(evalsRoot, CliScripts.rejudge), args);
+    }
+    case Command.recheck: {
+      const operands = args.filter((arg) => arg !== Flag.rebuild);
+      if (operands.length < 1 || operands.length > 2) throw new Error(CommandHelp.recheck);
+      checkedArgs(args, [Flag.rebuild], [], operands.length);
+      return services.launch(join(evalsRoot, CliScripts.recheck), args);
     }
     case Command.export: {
       checkedArgs(args, [], [Flag.out], 1);

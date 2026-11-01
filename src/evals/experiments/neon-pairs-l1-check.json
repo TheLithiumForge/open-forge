@@ -2,32 +2,12 @@
   "schemaVersion": 1,
   "layer": 1,
   "case": "greenfield-baseline",
-  "setups": [
-    "no-setup",
-    "minimal",
-    "essentials",
-    "full-core"
-  ],
+  "setups": ["no-setup", "minimal", "essentials", "full-core"],
   "runsPerSetup": 1,
   "parallelRuns": 4,
-  "agents": [
-    {
-      "tool": "claude",
-      "model": "opus",
-      "effort": "high"
-    }
-  ],
-  "simulatedUser": "local-config",
+  "agents": "claude",
+  "judges": "claude",
+  "simulatedUser": "claude",
   "isolation": "docker",
-  "limits": {
-    "questionRounds": 3
-  },
-  "judges": [
-    {
-      "tool": "claude",
-      "model": "opus",
-      "effort": "high",
-      "repeats": 3
-    }
-  ]
+  "limits": { "questionRounds": 3 }
 }

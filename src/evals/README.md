@@ -1,7 +1,7 @@
 ﻿# Open Forge Evals
 Open Forge Evals is a local tool that runs the same case through Claude Code and Codex under different Open Forge setups and saves comparable results.
 
-For example, the Layer 1 check plan runs Neon Pairs once with each implementer on No setup, Minimal, Essentials and Full Core. Claude and Codex then judge each saved attempt. Every attempt starts with one prompt and gets literal answers from the same frozen answer bank when it asks questions.
+For example, the Layer 1 check plan runs Neon Pairs once with Claude on No setup, Minimal, Essentials and Full Core. Claude then judges each saved attempt. Every attempt starts with one prompt and gets literal answers from the same frozen answer bank when it asks questions.
 
 ## Requirements
 
@@ -72,14 +72,14 @@ Every command accepts `--help`. Each help text includes an example:
 | `images` | Build the three locked images | `npm run evals -- images` |
 | `smoke` | Run the mock attempt | `npm run evals -- smoke` |
 | `qualify` | Check generated setups | `npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1-check.json` |
-| `run` | Run a saved plan | `npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json` |
+| `run` | Run a saved plan with optional role presets | `npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude` |
 | `summary` | Print the implementer and judge matrix | `npm run evals -- summary --batch <id>` |
 | `ui` | Open the local results app | `npm run evals -- ui` |
 | `recheck` | Append checks for saved files | `npm run evals -- recheck <batch> --rebuild` |
-| `rejudge` | Append judge ballots | `npm run evals -- rejudge <batch> --plan <plan>` |
+| `rejudge` | Append judge ballots with optional judge presets | `npm run evals -- rejudge <batch> --judges both` |
 | `export` | Write sanitized finished records | `npm run evals -- export <batch> --out ./eval-export` |
 
-`recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. `rejudge` grades the saved work with every judge registered in its plan, or with the judges of the plan named by `--plan`. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
+`recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. `rejudge` uses the batch's saved judges unless you pass `--judges`. It accepts a judge preset instead of `--plan`. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
 
 ## Protocol
 
@@ -101,15 +101,29 @@ Claude assessor calls turn model tools off. Codex assessor calls use an empty wo
 
 ## Plans
 
-Each layer has a check plan and a full plan in `experiments/`. Start with [neon-pairs-l1-check.json](experiments/neon-pairs-l1-check.json). Check plans run once per setup and implementer. Full plans run three times. For now every plan fixes Claude `opus` at high effort as the implementer, as the [vision](../../.agents/memory/crystallized/documents/evals/vision.md#test-matrix) records. Adding Codex `gpt-6.1-sol` back to `agents` and `judges` restores the four-pair matrix. Helpful stays out because Extension testing waits.
+Each layer has a check plan and a full plan in `experiments/`. Start with [neon-pairs-l1-check.json](experiments/neon-pairs-l1-check.json). Check plans run once per setup and implementer. Full plans run three times. Every saved plan chooses the `claude` presets for now, as the [vision](../../.agents/memory/crystallized/documents/evals/vision.md#test-matrix) records. Helpful stays out because Extension testing waits.
 
-The ordered `judges` list fixes Claude `opus` at high effort. Each judge casts three ballots per question. The first judges an attempt as it finishes. Each later judge reads the same saved source and images through append-only rejudge. A resumed batch fills missing judgments without repeating a finished implementation.
+The role presets are:
 
-These two implementations and two judgments give four pairs per setup: Claude with a Claude judge, Codex with a Claude judge, Codex with a Codex judge and Claude with a Codex judge. Older plans with one `judge`, including `neon-pairs-l1.json`, still work.
+| Role | `claude` | `codex` | `both` |
+| --- | --- | --- | --- |
+| Implementers | Claude `opus`, high | Codex `gpt-6.1-sol`, high | Codex then Claude |
+| Judges | Claude `opus`, high | Codex `gpt-6.1-sol`, xhigh | Claude then Codex |
+| Simulated user | Claude `sonnet`, medium | Codex `gpt-6-luna`, low | Unavailable |
 
-The plan's `local-config` choices copy the named judge choices or simulated user from `src/evals/eval.config.local.json`, or `eval.config.json` when no local file exists. Those resolved choices are saved with the batch. Plans can select other cases and layers that the benchmark provides. Later layers use banks with only their permitted facts.
+`run --implementers`, `--judges` and `--user` each replace only that role in the plan. Unknown names fail before the run starts. For example, `run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both` restores all four pairs without changing a plan file. The two implementers produce two attempts per cell. Both judges read each saved attempt.
+
+Every judge preset casts three ballots per question. The first judge runs as an attempt finishes. Each later judge reads the same saved source and images through append-only rejudge. A resumed batch fills missing judgments without repeating a finished implementation.
+
+A plan's `agents`, `judges` and `simulatedUser` can name these presets, give explicit model choices or use `local-config`. `local-config` copies that role from `src/evals/eval.config.local.json`, or `eval.config.json` when no local file exists. Older plans with one `judge` still work. Batches save resolved model choices, so later preset changes never alter saved history. Plans can select other cases and layers that the benchmark provides. Later layers use banks with only their permitted facts.
 
 `run` refuses a plan with `local` isolation unless you pass `--development`. Such attempts are labeled unfit for scored results. Model agents and verifier builds still use containers so project code never runs on this machine. The mock smoke command supplies mock stages for development without Docker.
+
+## Config
+
+In the local app's config editor, choose a preset above the rows for each role. A preset switch saves the config through the existing API right away, so the next batch started in the app uses it. The simulated user offers `claude` and `codex`.
+
+The switch shows the matching preset name. If the rows match none, it shows "Custom". You can still edit tools, models, efforts and judge ballot counts in the rows. Use Save after custom edits. The app writes resolved choices to `src/evals/eval.config.local.json`. CLI preset flags affect only the command you run.
 
 ## Results
 

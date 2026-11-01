@@ -6,6 +6,7 @@ import { Isolation } from "./choices.ts";
 import { loadConfig, parseConfig } from "./config.ts";
 import type { EvalConfig } from "./config.types.ts";
 import { integer, modelChoice, object, strings, text } from "./validation.ts";
+import { implementerPreset, judgePreset, userPreset } from "./presets.ts";
 
 export const PlanVersion = 1;
 export const LocalModel = "local-config";
@@ -19,12 +20,12 @@ export function resolvePlan(value: unknown, current: EvalConfig, development = f
   const layer = integer(plan["layer"]);
   if (layer > 4) throw new Error("An experiment layer must be between 1 and 4.");
   if (plan["isolation"] === Isolation.local && !development) throw new Error("Local plans need --development and cannot produce scored results.");
-  const agents = plan["agents"];
+  const agents = plan["agents"] === LocalModel ? current.agents : typeof plan["agents"] === "string" ? implementerPreset(plan["agents"]) : plan["agents"];
   if (!Array.isArray(agents)) throw new Error("The experiment plan needs agent choices.");
   const judge = plan["judge"] === LocalModel ? current.judge : plan["judge"];
-  const judges = plan["judges"] === LocalModel ? current.judges ?? [current.judge] : plan["judges"];
+  const judges = plan["judges"] === LocalModel ? current.judges ?? [current.judge] : typeof plan["judges"] === "string" ? judgePreset(plan["judges"]) : plan["judges"];
   if (plan["judge"] !== undefined && plan["judges"] !== undefined) throw new Error("Use judge or judges in a plan.");
-  const simulatedUser = plan["simulatedUser"] === LocalModel ? current.simulatedUser : modelChoice(plan["simulatedUser"]);
+  const simulatedUser = plan["simulatedUser"] === LocalModel ? current.simulatedUser : typeof plan["simulatedUser"] === "string" ? userPreset(plan["simulatedUser"]) : modelChoice(plan["simulatedUser"]);
   const cases = plan["cases"] === undefined ? undefined : strings(plan["cases"]);
   if (cases !== undefined && (!cases.length || cases.some((id) => !/^l4-[\w-]+$/.test(id)) || new Set(cases).size !== cases.length || plan["case"] !== undefined || layer !== 4)) throw new Error("A multi-case plan needs distinct Layer 4 cases and no single case field.");
   const config = parseConfig({ ...current, suite: cases === undefined ? text(plan["case"]) : text(cases[0]), layer, development, protocol: undefined,

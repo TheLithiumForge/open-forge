@@ -2,35 +2,12 @@
   "schemaVersion": 1,
   "layer": 2,
   "case": "l2-defined-idea",
-  "setups": [
-    "plain-docs",
-    "linked-agents",
-    "minimal",
-    "essentials",
-    "full-core",
-    "spec-in-prompt"
-  ],
+  "setups": ["plain-docs", "linked-agents", "minimal", "essentials", "full-core", "spec-in-prompt"],
   "runsPerSetup": 3,
   "parallelRuns": 5,
-  "agents": [
-    {
-      "tool": "claude",
-      "model": "opus",
-      "effort": "high"
-    }
-  ],
-  "simulatedUser": "local-config",
+  "agents": "claude",
+  "judges": "claude",
+  "simulatedUser": "claude",
   "isolation": "docker",
-  "limits": {
-    "questionRounds": 3,
-    "runMinutes": 60
-  },
-  "judges": [
-    {
-      "tool": "claude",
-      "model": "opus",
-      "effort": "high",
-      "repeats": 3
-    }
-  ]
+  "limits": { "questionRounds": 3, "runMinutes": 60, "checkMinutes": 90 }
 }

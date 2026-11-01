@@ -10,9 +10,11 @@ import { Isolation, Tool } from "../../config/choices.ts";
 import type { EvalConfig, JudgeChoice } from "../../config/config.types.ts";
 import { configuredJudges } from "../../config/judges.ts";
 import { MatrixBallots } from "../../config/matrix.ts";
+import { ImplementerPresets, JudgePresets, UserPresets, matchImplementers, matchJudges, matchUser, presetChoices, type PresetSelection } from "../../config/presets.ts";
 import type { StateResponse } from "../server/api.types.ts";
 import { api } from "./api.ts";
 import { ModelChoiceRow } from "./ModelChoiceRow.tsx";
+import { ModelPresetSwitch } from "./ModelPresetSwitch.tsx";
 
 interface ConfigEditorProps {
   readonly state: StateResponse;
@@ -25,6 +27,7 @@ const isolations = Object.values(Isolation);
 export function ConfigEditor({ state, onChange }: ConfigEditorProps) {
   const [config, setConfig] = useState<EvalConfig>(state.config);
   const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
   const change = (next: Partial<EvalConfig>) => {
     setConfig({ ...config, ...next });
     setMessage("Not saved yet.");
@@ -35,16 +38,24 @@ export function ConfigEditor({ state, onChange }: ConfigEditorProps) {
     const first = next[0];
     if (first !== undefined) change({ judge: first, judges: next });
   };
-  const save = () =>
-    api.saveConfig(config).then(
-      () => api.state().then(onChange),
-      (reason: unknown) => setMessage(String(reason)),
-    );
+  const save = async (next: EvalConfig) => {
+    setSaving(true);
+    setMessage("Saving.");
+    try { await api.saveConfig(next); onChange(await api.state()); setMessage("Saved."); }
+    catch (reason) { setMessage(String(reason)); }
+    finally { setSaving(false); }
+  };
+  const choosePreset = (selection: PresetSelection) => {
+    const next = { ...config, ...presetChoices(selection) };
+    setConfig(next);
+    void save(next);
+  };
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label>Agents under test</Label>
+        <ModelPresetSwitch id="implementer-preset" label="Implementers" value={matchImplementers(config.agents)} names={Object.keys(ImplementerPresets)} disabled={saving}
+          onChange={(implementers) => choosePreset({ implementers })} />
         {config.agents.map((agent, index) => (
           <ModelChoiceRow
             key={index}
@@ -58,7 +69,8 @@ export function ConfigEditor({ state, onChange }: ConfigEditorProps) {
         </Button>
       </div>
       <div className="space-y-2">
-        <Label>Judges, in order</Label>
+        <ModelPresetSwitch id="judge-preset" label="Judges, in order" value={matchJudges(judges)} names={Object.keys(JudgePresets)} disabled={saving}
+          onChange={(judges) => choosePreset({ judges })} />
         <p className="text-sm text-muted-foreground">Each attempt is implemented once. The first judge runs as it finishes. Every later judge reads the same saved attempt.</p>
         {judges.map((judge, index) => <div className="space-y-2" key={index}>
           <ModelChoiceRow choice={judge} onChange={(next) => changeJudges(judges.map((item, position) => position === index ? { ...judge, ...next } : item))}
@@ -74,7 +86,8 @@ export function ConfigEditor({ state, onChange }: ConfigEditorProps) {
         </Button>
       </div>
       <div className="space-y-2">
-        <Label>Simulated user</Label>
+        <ModelPresetSwitch id="user-preset" label="Simulated user" value={matchUser(config.simulatedUser)} names={Object.keys(UserPresets)} disabled={saving}
+          onChange={(user) => choosePreset({ user })} />
         <ModelChoiceRow choice={config.simulatedUser} onChange={(next) => change({ simulatedUser: next })} />
       </div>
       <Separator />
@@ -114,7 +127,7 @@ export function ConfigEditor({ state, onChange }: ConfigEditorProps) {
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <Button variant="secondary" onClick={save}>
+        <Button variant="secondary" disabled={saving} onClick={() => void save(config)}>
           <Save /> Save
         </Button>
         <span className="text-sm text-muted-foreground">{message}</span>

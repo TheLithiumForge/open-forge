@@ -5,7 +5,8 @@ import { join } from "node:path";
 import { evalsRoot } from "../paths.ts";
 import { LayerOnePlan, resolvePlan, ScreeningRuns, ScreeningSetups } from "./plans.ts";
 import { FixtureConfig } from "./test-fixtures.ts";
-import { Isolation, Tool } from "./choices.ts";
+import { Isolation } from "./choices.ts";
+import { ImplementerPresets, JudgePresets, UserPresets, PresetName } from "./presets.ts";
 import { freezeProtocol, QuestionRounds } from "../execution/conversation/answer-bank.ts";
 import { readProtocol } from "./protocol.ts";
 
@@ -14,11 +15,11 @@ test("the saved Layer 1 plan screens four setups and freezes current assessor ch
   const config = resolvePlan(source, FixtureConfig);
   assert.equal(config.runsPerSetup, ScreeningRuns);
   assert.deepEqual(config.setups, [...ScreeningSetups]);
-  assert.equal(config.agents[0]?.tool, Tool.codex);
+  assert.deepEqual(config.agents, ImplementerPresets[PresetName.claude]);
   assert.equal(config.isolation, Isolation.docker);
   assert.equal(config.limits.questionRounds, QuestionRounds);
-  assert.deepEqual(config.judge, FixtureConfig.judge);
-  assert.deepEqual(config.simulatedUser, FixtureConfig.simulatedUser);
+  assert.deepEqual(config.judges, JudgePresets[PresetName.claude]);
+  assert.deepEqual(config.simulatedUser, UserPresets[PresetName.claude]);
   assert.equal(config.parallelRuns, 1);
 });
 

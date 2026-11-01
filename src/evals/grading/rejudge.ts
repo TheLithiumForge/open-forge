@@ -16,8 +16,7 @@ import { loadSuite } from "../benchmarks/suite.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
 import type { EvalConfig, JudgeChoice } from "../config/config.types.ts";
 import { configuredJudges } from "../config/judges.ts";
-import { Flag } from "../config/commands.ts";
-import { loadPlan } from "../config/plans.ts";
+import { rejudgeOptions } from "../config/preset-options.ts";
 import { latestJudgeFor } from "../history/summary.ts";
 import { FailureKind } from "../history/statuses.ts";
 import { runInParallel } from "../execution/run-queue.ts";
@@ -83,17 +82,10 @@ export async function rejudgeRuns(suite: Suite, runs: readonly RunView[], config
   }, () => false);
 }
 
-/** A plan's judges replace the batch's saved ones, so saved attempts can be judged by the judges a plan uses now. */
-export function withPlanJudges(saved: EvalConfig, plan: EvalConfig): EvalConfig {
-  return { ...saved, judge: plan.judge, judges: configuredJudges(plan) };
-}
-
 async function main(): Promise<void> {
-  const args = process.argv.slice(2), at = args.indexOf(Flag.plan), planPath = at < 0 ? undefined : args[at + 1];
-  const [batchId, onlyRun] = args.filter((_, index) => at < 0 || (index !== at && index !== at + 1));
-  if (batchId === undefined) throw new Error("Name the batch to judge again.");
+  const { batchId, onlyRun, overrides } = rejudgeOptions(process.argv.slice(2));
   const batch = await readBatch(batchId), suite = await loadSuite(batch.suite);
-  const config = planPath === undefined ? batch.config : withPlanJudges(batch.config, await loadPlan(planPath));
+  const config = { ...batch.config, ...overrides };
   await rejudgeRuns(suite, await readRuns(batch), config, await gradingVersions(suite), {}, onlyRun);
 }
 

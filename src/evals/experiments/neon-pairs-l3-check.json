@@ -2,34 +2,12 @@
   "schemaVersion": 1,
   "layer": 3,
   "case": "l3-full-spec",
-  "setups": [
-    "plain-docs",
-    "linked-agents",
-    "minimal",
-    "essentials",
-    "full-core"
-  ],
+  "setups": ["plain-docs", "linked-agents", "minimal", "essentials", "full-core"],
   "runsPerSetup": 1,
   "parallelRuns": 5,
-  "agents": [
-    {
-      "tool": "claude",
-      "model": "opus",
-      "effort": "high"
-    }
-  ],
-  "simulatedUser": "local-config",
+  "agents": "claude",
+  "judges": "claude",
+  "simulatedUser": "claude",
   "isolation": "docker",
-  "limits": {
-    "questionRounds": 3,
-    "runMinutes": 180
-  },
-  "judges": [
-    {
-      "tool": "claude",
-      "model": "opus",
-      "effort": "high",
-      "repeats": 3
-    }
-  ]
+  "limits": { "questionRounds": 3, "runMinutes": 180, "checkMinutes": 90 }
 }

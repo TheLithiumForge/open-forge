@@ -5,7 +5,7 @@ import { test } from "node:test";
 import { resolvePlan } from "../config/plans.ts";
 import { FixtureConfig } from "../config/test-fixtures.ts";
 import { Isolation } from "../config/choices.ts";
-import { PlanAgents, PlanJudges } from "../config/matrix.ts";
+import { ImplementerPresets, JudgePresets, UserPresets, PresetName } from "../config/presets.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { DocumentCase } from "../materialize/delivery.ts";
 import { evalsRoot } from "../paths.ts";
@@ -24,10 +24,10 @@ test("the saved check and full plans freeze their models, limits and complete ca
       assert.deepEqual(plan.setups, Object.keys(suite.setups).filter((setup) => setup !== "helpful"));
       assert.equal(plan.runsPerSetup, variant === "check" ? 1 : FullAttempts);
       assert.equal(plan.parallelRuns, variant === "check" ? plan.setups.length : FullParallel);
-      assert.deepEqual(plan.agents, PlanAgents);
-      assert.deepEqual(plan.judges, PlanJudges);
-      assert.deepEqual(plan.judge, PlanJudges[0]);
-      assert.deepEqual(plan.simulatedUser, FixtureConfig.simulatedUser);
+      assert.deepEqual(plan.agents, ImplementerPresets[PresetName.claude]);
+      assert.deepEqual(plan.judges, JudgePresets[PresetName.claude]);
+      assert.deepEqual(plan.judge, JudgePresets[PresetName.claude][0]);
+      assert.deepEqual(plan.simulatedUser, UserPresets[PresetName.claude]);
       assert.equal(plan.isolation, Isolation.docker);
       if (index > 0) assert.equal(plan.limits.runMinutes, suite.runMinutes);
     }

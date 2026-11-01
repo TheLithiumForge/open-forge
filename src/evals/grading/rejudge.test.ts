@@ -2,12 +2,16 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { test } from "node:test";
-import { FixtureConfig, FixtureSuite } from "../config/test-fixtures.ts";
-import { MatrixJudges, PlanJudges } from "../config/matrix.ts";
+import { FixtureSuite } from "../config/test-fixtures.ts";
+import { MatrixJudges } from "../config/matrix.ts";
+import { rejudgeOptions } from "../config/preset-options.ts";
+import { JudgePresets, PresetName } from "../config/presets.ts";
+import { Flag } from "../config/commands.ts";
+import { AssessmentKind } from "../history/statuses.ts";
 import { FixtureVersions, temporaryHistory, v2Fixture } from "../history/test-fixtures.ts";
 import { ResultFiles } from "../paths.ts";
 import { writeNew } from "../materialize/files.ts";
-import { judgeSavedRun, withPlanJudges } from "./rejudge.ts";
+import { judgeSavedRun, rejudgeRuns } from "./rejudge.ts";
 
 test("rejudging replaces only a prior assessment from the same judge and keeps every earlier record", async (t) => {
   const history = await temporaryHistory(); t.after(history.cleanup);
@@ -27,12 +31,15 @@ test("rejudging replaces only a prior assessment from the same judge and keeps e
   assert.deepEqual(await readFile(path), before);
 });
 
-test("a plan's judges replace the batch's saved judges and keep the rest of its config", () => {
-  const { batch } = v2Fixture();
-  const saved = { ...batch.config, judge: MatrixJudges[0], judges: MatrixJudges };
-  const plan = { ...FixtureConfig, judge: PlanJudges[0], judges: PlanJudges };
-  const config = withPlanJudges(saved, plan);
-  assert.deepEqual(config.judges, PlanJudges);
-  assert.deepEqual(config.judge, PlanJudges[0]);
-  assert.deepEqual({ ...config, judge: saved.judge, judges: saved.judges }, saved);
+test("rejudge judge presets append the chosen judges without altering the batch config", async (t) => {
+  const history = await temporaryHistory(); t.after(history.cleanup);
+  const { batch, run } = v2Fixture();
+  await history.store.saveBatch(batch); await history.store.saveRun(run);
+  await writeNew(join(history.store.runFolder(batch.id, run.id), ResultFiles.files), "game.ts", "export const game = true;\n");
+  const request = rejudgeOptions([batch.id, Flag.judges, PresetName.both]);
+  await rejudgeRuns(FixtureSuite, [run], { ...batch.config, ...request.overrides }, FixtureVersions,
+    { store: history.store, judge: async () => [] }, request.onlyRun);
+  const judgments = await history.store.readAssessments(batch.id);
+  assert.deepEqual(judgments.map((assessment) => assessment.kind === AssessmentKind.judge ? assessment.requestedModel : null), JudgePresets[PresetName.both]);
+  assert.deepEqual((await history.store.readBatch(batch.id)).config, batch.config);
 });

@@ -11,7 +11,7 @@ import { loadSuite } from "../benchmarks/suite.ts";
 import { runCli, type CliServices } from "../cli.ts";
 import { Command, Flag } from "../config/commands.ts";
 import { FixtureSuite } from "../config/test-fixtures.ts";
-import { PlanAgents, PlanJudges } from "../config/matrix.ts";
+import { ImplementerPresets, JudgePresets, UserPresets, PresetName } from "../config/presets.ts";
 
 test("Layer 4 plans list all cases and setups with frozen models and independent case batches", async () => {
   for (const variant of ["check", "full"]) {
@@ -20,10 +20,10 @@ test("Layer 4 plans list all cases and setups with frozen models and independent
     assert.deepEqual(plan.setups, Object.keys(BrownfieldSetups));
     assert.ok(plan.setups.includes(CodeOnlySetup));
     assert.equal(plan.runsPerSetup, variant === "check" ? 1 : 3);
-    assert.deepEqual(plan.agents, PlanAgents);
-    assert.deepEqual(plan.judges, PlanJudges);
-    assert.deepEqual(plan.judge, PlanJudges[0]);
-    assert.deepEqual(plan.simulatedUser, FixtureConfig.simulatedUser);
+    assert.deepEqual(plan.agents, ImplementerPresets[PresetName.claude]);
+    assert.deepEqual(plan.judges, JudgePresets[PresetName.claude]);
+    assert.deepEqual(plan.judge, JudgePresets[PresetName.claude][0]);
+    assert.deepEqual(plan.simulatedUser, UserPresets[PresetName.claude]);
     assert.equal(plan.isolation, "docker");
   }
   await assert.rejects(loadSuite("l4-missing-fixture"));
