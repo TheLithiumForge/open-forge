@@ -5,6 +5,13 @@ import { test } from './browser-test.ts';
 import { FACE_COUNT } from '../src/game/board/face-design.ts';
 import { ART_URL, loadFixedBoard } from './game-fixture.ts';
 
+test('the face sheet stays a face sheet without a session-harness branch', async ({ page }) => {
+  await page.goto(ART_URL + '#session');
+  await expect(page.locator('figure')).toHaveCount(128);
+  await expect(page.locator('.board-viewport')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Unmount game', exact: true })).toHaveCount(0);
+});
+
 function silhouette(png: Buffer): string {
   const image = PNG.sync.read(png);
   assert.equal(image.width, 44);

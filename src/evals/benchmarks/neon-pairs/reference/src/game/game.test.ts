@@ -1,10 +1,16 @@
 import assert from 'node:assert/strict';
 import { test } from 'vitest';
-import { activateCard, advanceGame, createGame, isWon, MISMATCH_MS } from './game.ts';
+import {
+  activateCard,
+  advanceGame,
+  createGame,
+  isWon,
+  MISMATCH_MS,
+  ELAPSED_MAX_MS,
+} from './game.ts';
 import { SelectionKind } from './selection.ts';
 import { EXAMPLE_CODE, EXAMPLE_PAIRS, SPEC_VECTOR } from './game.fixture.ts';
 import { formatElapsed } from './elapsed-time.ts';
-import { ELAPSED_MAX_MS } from './game.ts';
 
 test('first reveal starts play without a move and ignores invalid activation', () => {
   const start = createGame(EXAMPLE_CODE);

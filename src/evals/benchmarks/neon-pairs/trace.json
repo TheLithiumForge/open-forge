@@ -1788,6 +1788,11 @@
                                               "path":  "reference/tests/control-contract.e2e.test.ts",
                                               "symbol":  "literal control labels, limits and invalid statuses match the public contract, Best: none and no aria-label on dd",
                                               "evidence":  "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+                                          },
+                                          {
+                                              "path":  "reference/tests/status-controls.e2e.test.ts",
+                                              "symbol":  "the best label uses one wording before and after a record exists",
+                                              "evidence":  "StatusLabel defines Best: for empty and recorded scores."
                                           }
                                       ]
                     },
@@ -1913,6 +1918,11 @@
                                               "path":  "reference/tests/timer-lifecycle.e2e.test.ts",
                                               "symbol":  "A04.3 R12.1 unmount clears the active timer and visibility listener",
                                               "evidence":  "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+                                          },
+                                          {
+                                              "path":  "reference/tests/lifecycle.e2e.test.ts",
+                                              "symbol":  "Restart clears a mismatch and rejects earlier timer updates",
+                                              "evidence":  "The standalone journey creates a later mismatch after Restart, crosses the prior deal deadline and checks the new mismatch at its own 799 and 800ms edges."
                                           }
                                       ]
                     },
@@ -1930,6 +1940,11 @@
                                               "path":  "reference/tests/timer-lifecycle.e2e.test.ts",
                                               "symbol":  "R12.2 a prior turn deadline cannot close a later mismatch in the same deal",
                                               "evidence":  "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+                                          },
+                                          {
+                                              "path":  "reference/tests/lifecycle.e2e.test.ts",
+                                              "symbol":  "Restart clears a mismatch and rejects earlier timer updates",
+                                              "evidence":  "The standalone journey creates a later mismatch after Restart, crosses the prior deal deadline and checks the new mismatch at its own 799 and 800ms edges."
                                           }
                                       ]
                     },
@@ -3269,6 +3284,11 @@
                                               "path":  "reference/tests/control-contract.e2e.test.ts",
                                               "symbol":  "draft resets, load focus, paused notice and Resume focus order survive remembered positions",
                                               "evidence":  "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+                                          },
+                                          {
+                                              "path":  "reference/tests/status-controls.e2e.test.ts",
+                                              "symbol":  "Enter submits a board code with focus on Load board before the input is replaced",
+                                              "evidence":  "Valid and invalid Enter submissions leave focus on Load board. Valid submission replaces the input and resets board focus."
                                           }
                                       ]
                     },
@@ -3360,6 +3380,11 @@
                                               "path":  "reference/tests/control-contract.e2e.test.ts",
                                               "symbol":  "draft resets, load focus, paused notice and Resume focus order survive remembered positions",
                                               "evidence":  "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+                                          },
+                                          {
+                                              "path":  "reference/tests/status-controls.e2e.test.ts",
+                                              "symbol":  "Enter submits a board code with focus on Load board before the input is replaced",
+                                              "evidence":  "Valid and invalid Enter submissions leave focus on Load board. Valid submission replaces the input and resets board focus."
                                           }
                                       ]
                     },
@@ -5010,6 +5035,11 @@
                                               "path":  "reference/tests/announcements.e2e.test.ts",
                                               "symbol":  "each mismatch is announced once while clocks, focus and closing stay silent",
                                               "evidence":  "Clause I16.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+                                          },
+                                          {
+                                              "path":  "reference/tests/status-controls.e2e.test.ts",
+                                              "symbol":  "the single game result stays beside the board and in view during large-phone play",
+                                              "evidence":  "One live region is composed in Game beside the board. The result stays within the viewport during a 360x800 16x16 mismatch and keyboard movement. Load notices stay separate."
                                           }
                                       ]
                     },
@@ -6757,7 +6787,12 @@
                                           {
                                               "path":  "reference-audit/face-sheet-grayscale.png",
                                               "symbol":  "128 rendered faces at 44px",
-                                              "evidence":  "PNG provided for the next judge with vision. Visual distinction needs review."
+                                              "evidence":  "The round-2 judge passed all 128 grayscale faces as distinguishable at 44px. The accepted PNG is unchanged."
+                                          },
+                                          {
+                                              "path":  "reference-audit/review-round-2.md",
+                                              "symbol":  "Accepted review",
+                                              "evidence":  "The review packet records V12.7 as passed by the round-2 judge."
                                           }
                                       ]
                     },
@@ -7401,6 +7436,11 @@
                                               "path":  "reference/tests/touch-scroll.e2e.test.ts",
                                               "symbol":  "touch scrolling reaches the last 16x16 card at each required viewport",
                                               "evidence":  "Clause V19.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+                                          },
+                                          {
+                                              "path":  "reference/tests/status-controls.e2e.test.ts",
+                                              "symbol":  "the single game result stays beside the board and in view during large-phone play",
+                                              "evidence":  "One live region is composed in Game beside the board. The result stays within the viewport during a 360x800 16x16 mismatch and keyboard movement. Load notices stay separate."
                                           }
                                       ]
                     },
@@ -7435,6 +7475,11 @@
                                               "path":  "reference/tests/zoom.e2e.test.ts",
                                               "symbol":  "actual 200 percent browser zoom keeps both board sizes playable, individual text rectangles checked by readability.ts",
                                               "evidence":  "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
+                                          },
+                                          {
+                                              "path":  "reference/tests/readability.ts",
+                                              "symbol":  "expectReadableText",
+                                              "evidence":  "Text rectangles cover controls, stats, victory, game result, load notice and Resume at 200 percent zoom."
                                           }
                                       ]
                     },
@@ -10817,6 +10862,11 @@
                                               "path":  "reference-audit/AUDIT.md",
                                               "symbol":  "Reviews",
                                               "evidence":  "Clause A07.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
+                                          },
+                                          {
+                                              "path":  "reference/tests/status-controls.e2e.test.ts",
+                                              "symbol":  "the single game result stays beside the board and in view during large-phone play",
+                                              "evidence":  "One live region is composed in Game beside the board. The result stays within the viewport during a 360x800 16x16 mismatch and keyboard movement. Load notices stay separate."
                                           }
                                       ]
                     },
@@ -11669,6 +11719,21 @@
                                               "path":  "reference-audit/AUDIT.md",
                                               "symbol":  "Reviews",
                                               "evidence":  "Clause A11.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
+                                          },
+                                          {
+                                              "path":  "reference/tests/art.e2e.test.ts",
+                                              "symbol":  "the face sheet stays a face sheet without a session-harness branch",
+                                              "evidence":  "The face entry renders 128 faces even at the former session hash. The independently built session entry is exercised by the timer lifecycle test."
+                                          },
+                                          {
+                                              "path":  "reference/art/session/session-harness.tsx",
+                                              "symbol":  "independent session entry",
+                                              "evidence":  "The timer harness has its own HTML entry and build output. The face sheet imports no Game component."
+                                          },
+                                          {
+                                              "path":  "reference/vite.session.config.ts",
+                                              "symbol":  "default build configuration",
+                                              "evidence":  "The session diagnostic builds separately from both the face sheet and shipped game."
                                           }
                                       ]
                     },

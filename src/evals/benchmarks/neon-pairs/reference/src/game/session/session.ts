@@ -21,6 +21,7 @@ export function initialSession(code: string, preferences: Preferences): Session 
     paused: false,
     generation: 0,
     feedback: SessionNotice.ready,
+    loadNotice: '',
     announcement: 0,
     celebration: false,
     preferences,
@@ -36,7 +37,8 @@ export function replaceGame(session: Session, game: GameState, paused: boolean):
     celebration: false,
     preferences: { ...session.preferences, size: game.size },
     announcement: session.announcement + 1,
-    feedback: paused ? SessionNotice.loaded : SessionNotice.newGame,
+    feedback: paused ? '' : SessionNotice.newGame,
+    loadNotice: paused ? SessionNotice.loaded : '',
   };
 }
 

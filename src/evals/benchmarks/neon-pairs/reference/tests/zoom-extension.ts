@@ -27,10 +27,13 @@ export async function zoomExtension(profile: string): Promise<string> {
 }
 
 export function zoomGameTab(url: string): Promise<void> {
-  return new Promise((resolve) =>
+  return new Promise((resolve, reject) =>
     chrome.tabs.query({ url }, (tabs) => {
       const tab = tabs[0];
-      if (tab?.id === undefined) throw new Error('Game tab missing.');
+      if (tab?.id === undefined) {
+        reject(new Error('Game tab missing.'));
+        return;
+      }
       chrome.tabs.setZoom(tab.id, 2);
       resolve();
     }),

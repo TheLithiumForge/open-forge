@@ -40,7 +40,7 @@ test('native reproduction controls keep drafts, limits, exact errors and action 
   const load = page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true });
   await load.click();
   await expect(load).toBeFocused();
-  await expect(page.getByRole('status')).toHaveText(SessionNotice.invalidBoard);
+  await expect(page.locator('.load-notice')).toHaveText(SessionNotice.invalidBoard);
   await field.fill('{');
   const importButton = page.getByRole('button', {
     name: ReproductionControl.loadSnapshot,
@@ -48,7 +48,7 @@ test('native reproduction controls keep drafts, limits, exact errors and action 
   });
   await importButton.click();
   await expect(importButton).toBeFocused();
-  await expect(page.getByRole('status')).toHaveText(SessionNotice.invalidSnapshot);
+  await expect(page.locator('.load-notice')).toHaveText(SessionNotice.invalidSnapshot);
   const exportButton = page.getByRole('button', {
     name: ReproductionControl.exportSnapshot,
     exact: true,

@@ -1,7 +1,6 @@
 import { generateBoard } from './deck.ts';
 import { safeNonnegative } from './saved-format.ts';
 import { SelectionKind } from './selection.ts';
-
 import type { GameState } from './game.types.ts';
 
 export const ELAPSED_MAX_MS = 359_999_999;

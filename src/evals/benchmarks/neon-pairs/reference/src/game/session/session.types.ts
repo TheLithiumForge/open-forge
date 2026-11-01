@@ -6,6 +6,7 @@ export interface Session {
   readonly paused: boolean;
   readonly generation: number;
   readonly feedback: string;
+  readonly loadNotice: string;
   readonly announcement: number;
   readonly celebration: boolean;
   readonly preferences: Preferences;

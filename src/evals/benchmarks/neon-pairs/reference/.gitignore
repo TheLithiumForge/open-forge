@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .art/
+.session/
 test-results/
 playwright-report/
 .npm-cache/

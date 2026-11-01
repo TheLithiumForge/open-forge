@@ -10,7 +10,19 @@ const AUDIT = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(AUDIT, "../reference");
 const WORK = join(ROOT, ".test-work");
 const VITEST = join(ROOT, "node_modules/vitest/vitest.mjs");
-const INPUTS = ["src", "tests", "scripts", "art", "package.json", "package-lock.json", "index.html", "vite.config.ts", "vite.art.config.ts", "vitest.config.ts"];
+const INPUTS = [
+  "src",
+  "tests",
+  "scripts",
+  "art",
+  "package.json",
+  "package-lock.json",
+  "index.html",
+  "vite.config.ts",
+  "vite.art.config.ts",
+  "vite.session.config.ts",
+  "vitest.config.ts",
+];
 interface Patch {
   path: string;
   find: string;
@@ -97,6 +109,7 @@ export async function mutationCheck(): Promise<void> {
       if (m.browser) {
         assert.equal(run(folder, [join(ROOT, "node_modules/vite/bin/vite.js"), "build"]).status, 0, `${m.id} built game`);
         assert.equal(run(folder, [join(ROOT, "node_modules/vite/bin/vite.js"), "build", "--config", "vite.art.config.ts"]).status, 0, `${m.id} built diagnostic`);
+        assert.equal(run(folder, [join(ROOT, "node_modules/vite/bin/vite.js"), "build", "--config", "vite.session.config.ts"]).status, 0, `${m.id} built session harness`);
         if (m.id === "M19") assert.match(await readFile(join(folder, "dist/index.html"), "utf8"), /outline-offset:4px/, "M19 changed CSS reaches the delivered game");
       }
       const report = join(folder, "failure.json");

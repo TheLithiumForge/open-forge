@@ -44,7 +44,7 @@ npm run test:e2e
 npm run format:check
 ```
 
-`npm test` runs the unit and static checks with Vitest 5.0.5. `test:e2e` type checks and builds current source before opening the new HTML. It also builds the separate diagnostic face sheet. The game distribution contains no diagnostic entry.
+`npm test` runs the unit and static checks with Vitest 5.0.5. `test:e2e` type checks and builds current source before opening the new HTML. It also builds the face sheet and session harness as separate diagnostic entries. The game distribution contains no diagnostic entry.
 
 The locked install, type check, Vitest unit tests, build from current source and Chromium journeys have passed on the named combination. The browser command asserts all four runtime versions. Other versions have no test record here.
 

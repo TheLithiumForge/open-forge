@@ -28,7 +28,7 @@ export function GameStatus({ game, best, celebration }: GameStatusProps) {
           <dd>{formatElapsed(game.elapsedMs)}</dd>
         </div>
         <div>
-          <dt>{best === undefined ? 'Best:' : StatusLabel.best}</dt> <dd>{best ?? 'none'}</dd>
+          <dt>{StatusLabel.best}</dt> <dd>{best ?? 'none'}</dd>
         </div>
       </dl>
       {isWon(game) && (
@@ -44,5 +44,5 @@ export const StatusLabel = {
   moves: 'Moves',
   pairs: 'Pairs',
   time: 'Active time',
-  best: 'Best moves',
+  best: 'Best:',
 } as const;

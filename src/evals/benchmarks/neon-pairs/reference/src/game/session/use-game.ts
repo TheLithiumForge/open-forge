@@ -47,7 +47,7 @@ export function useGame() {
   }
 
   function notice(feedback: string): void {
-    commit({ ...current.current, feedback, announcement: current.current.announcement + 1 });
+    commit({ ...current.current, loadNotice: feedback });
   }
 
   function loadBoard(code: string): boolean {
@@ -82,6 +82,7 @@ export function useGame() {
       ...current.current,
       paused: false,
       feedback: SessionNotice.resumed,
+      loadNotice: '',
       announcement: current.current.announcement + 1,
     });
   }

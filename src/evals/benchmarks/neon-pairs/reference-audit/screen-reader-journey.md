@@ -2,7 +2,7 @@
 
 Screen Reader Journey is a manual NVDA check that records the spoken result of playing one complete Neon Pairs game with the keyboard.
 
-For example, matching positions 3 and 7 on `np1-4-1` should announce one found pair. Moving focus afterward should leave that result silent.
+For example, matching row 1, column 3 with row 2, column 3 on `np1-4-1` should announce one found pair. Rows and columns start at one. Moving focus afterward should leave that result silent.
 
 Status: I17.6 is open for a person. Chromium tree checks cover I17.1 through I17.5. No spoken result is recorded yet.
 

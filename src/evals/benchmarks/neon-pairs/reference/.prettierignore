@@ -2,6 +2,7 @@ node_modules
 .playwright-browsers
 dist
 .art
+.session
 .npm-cache
 .browser-work
 .mutation-work

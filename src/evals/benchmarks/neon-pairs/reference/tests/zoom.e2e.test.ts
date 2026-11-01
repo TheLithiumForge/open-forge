@@ -4,7 +4,7 @@ import { chromium, expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { REFERENCE_ROOT } from './artifact-server.ts';
 import { DealControl } from './control-labels.ts';
-import { loadFixedBoard, finishBoard } from './game-fixture.ts';
+import { loadFixedBoard, finishBoard, exportedSnapshot } from './game-fixture.ts';
 import { zoomExtension, zoomGameTab } from './zoom-extension.ts';
 import { expectFocusInside } from './focus-bounds.ts';
 import { expectReadableText } from './readability.ts';
@@ -27,6 +27,9 @@ test('actual 200 percent browser zoom keeps both board sizes playable', async (_
     await loadFixedBoard(page);
     const worker = context.serviceWorkers()[0];
     if (!worker) throw new Error('Zoom worker missing.');
+    await expect(
+      worker.evaluate(zoomGameTab, 'https://neon-pairs.invalid/missing'),
+    ).rejects.toThrow('Game tab missing.');
     await worker.evaluate(zoomGameTab, page.url());
     await expect
       .poll(() => page.evaluate(() => ({ width: innerWidth, ratio: devicePixelRatio })))
@@ -46,6 +49,14 @@ test('actual 200 percent browser zoom keeps both board sizes playable', async (_
     expect(readable).toBe(true);
     await expectReadableText(page);
     await page.screenshot({ path: artifacts.outputPath('zoom-win.png'), fullPage: true });
+    const completed = await exportedSnapshot(page);
+    await page.locator('summary').click();
+    await page.getByLabel('Snapshot JSON', { exact: true }).fill(JSON.stringify(completed));
+    await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Resume', exact: true })).toBeVisible();
+    await expectReadableText(page);
+    await page.getByRole('button', { name: 'Resume', exact: true }).click();
+    await page.locator('summary').click();
     await page.getByRole('button', { name: DealControl.restart, exact: true }).click();
     await page.locator('.card').first().focus();
     await page.keyboard.press('Space');

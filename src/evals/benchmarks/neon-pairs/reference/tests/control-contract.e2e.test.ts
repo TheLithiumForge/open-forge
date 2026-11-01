@@ -40,12 +40,12 @@ test('literal control labels, limits and invalid statuses match the public contr
   const board = page.getByLabel('Board code', { exact: true });
   await board.fill('invalid');
   await page.getByRole('button', { name: 'Load board', exact: true }).click();
-  await expect(page.getByRole('status')).toHaveText('Invalid board code.');
+  await expect(page.locator('.load-notice')).toHaveText('Invalid board code.');
   await expect(board).toHaveValue('invalid');
   const snapshot = page.getByLabel('Snapshot JSON', { exact: true });
   await snapshot.fill('{');
   await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
-  await expect(page.getByRole('status')).toHaveText('Invalid snapshot.');
+  await expect(page.locator('.load-notice')).toHaveText('Invalid snapshot.');
   await expect(snapshot).toHaveValue('{');
   await page.locator('summary').click();
   expect(await exportedSnapshot(page)).toEqual(before);
@@ -85,7 +85,9 @@ test('draft resets, load focus, paused notice and Resume focus order survive rem
   await expect(load).toBeFocused();
   await expect(board).toHaveValue('np1-4-1');
   await expect(page.locator('.card').first()).toHaveAttribute('tabindex', '0');
-  await expect(page.getByRole('status')).toHaveText('Loaded snapshot. Select Resume to continue.');
+  await expect(page.locator('.load-notice')).toHaveText(
+    'Loaded snapshot. Select Resume to continue.',
+  );
   const resume = page.getByRole('button', { name: 'Resume', exact: true });
   await expect(resume).toBeVisible();
   await page.locator('.card').nth(3).focus();

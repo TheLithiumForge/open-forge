@@ -12,6 +12,10 @@
   },
   "aboveAim": [
     {
+      "path": "reference/src/game/controls/Reproduction.tsx",
+      "lines": 102
+    },
+    {
       "path": "reference/src/game/snapshot.test.ts",
       "lines": 115
     },
@@ -25,7 +29,7 @@
     },
     {
       "path": "reference/tests/control-contract.e2e.test.ts",
-      "lines": 137
+      "lines": 139
     },
     {
       "path": "reference/tests/input-contract.e2e.test.ts",
@@ -33,7 +37,7 @@
     },
     {
       "path": "reference/tests/lifecycle.e2e.test.ts",
-      "lines": 107
+      "lines": 126
     }
   ],
   "gates": {
@@ -56,28 +60,28 @@
         "run": 1,
         "command": "npm run test:e2e --cache .npm-cache",
         "builtFromCurrentSource": true,
-        "tests": 57,
+        "tests": 61,
         "failed": 0,
         "skipped": 0,
-        "artifactSha256": "fcf9f69af9879481075f071c6987cf8e5d9f1c97da755fd1f77dd1f71a3285f8"
+        "artifactSha256": "fa6cfb55e83a488ab56d38fb65489d1d22171c891be9361341be960876655e33"
       },
       {
         "run": 2,
         "command": "npm run test:e2e --cache .npm-cache",
         "builtFromCurrentSource": true,
-        "tests": 57,
+        "tests": 61,
         "failed": 0,
         "skipped": 0,
-        "artifactSha256": "fcf9f69af9879481075f071c6987cf8e5d9f1c97da755fd1f77dd1f71a3285f8"
+        "artifactSha256": "fa6cfb55e83a488ab56d38fb65489d1d22171c891be9361341be960876655e33"
       },
       {
         "run": 3,
         "command": "npm run test:e2e --cache .npm-cache",
         "builtFromCurrentSource": true,
-        "tests": 57,
+        "tests": 61,
         "failed": 0,
         "skipped": 0,
-        "artifactSha256": "fcf9f69af9879481075f071c6987cf8e5d9f1c97da755fd1f77dd1f71a3285f8"
+        "artifactSha256": "fa6cfb55e83a488ab56d38fb65489d1d22171c891be9361341be960876655e33"
       }
     ],
     "mutations": {
@@ -85,11 +89,18 @@
       "survived": 0
     },
     "harnessSelfTest": "passed",
-    "auditTypecheck": "passed"
+    "auditTypecheck": "passed",
+    "standaloneRestart": {
+      "command": "node --test --test-name-pattern \"^Restart clears a mismatch\" tests/lifecycle.e2e.test.ts",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "referenceFormatter": "passed",
+    "auditFormatter": "passed"
   },
   "limits": [
     "I17.6 needs a person with NVDA.",
-    "V12.7 needs the next vision judgment.",
     "Source and process review clauses need independent judgment.",
     "Protected benchmark repairs and final seed freeze stay with the overseer.",
     "Manual dist and Chromium cleanup stays with the overseer after the earlier policy rejection."
@@ -154,10 +165,16 @@
   ],
   "validation": {
     "clauses": 401,
-    "hashes": 131,
-    "proseDashMatches": 0,
-    "unchangedChecksSlots": 401,
+    "requirements": 97,
+    "links": 16,
     "emptyReferenceSlots": 0,
-    "links": 12
+    "unchangedChecksSlots": 401,
+    "proseDashMatches": 0,
+    "hashes": 135
+  },
+  "acceptedReview": {
+    "clauseId": "V12.7",
+    "result": "passed",
+    "reason": "The round-2 judge found all 128 grayscale faces distinguishable at 44px."
   }
 }

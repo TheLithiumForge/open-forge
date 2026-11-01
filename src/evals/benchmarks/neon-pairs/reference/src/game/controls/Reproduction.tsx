@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { encodeSnapshot } from '../snapshot.ts';
 import type { GameState } from '../game.types.ts';
 
@@ -7,8 +7,7 @@ interface ReproductionProps {
   generation: number;
   loadBoard(code: string): boolean;
   loadSnapshot(text: string): boolean;
-  feedback: string;
-  announcement: number;
+  notice: string;
   paused: boolean;
   resume(): void;
 }
@@ -18,12 +17,12 @@ export function Reproduction({
   generation,
   loadBoard,
   loadSnapshot,
-  feedback,
-  announcement,
+  notice,
   paused,
   resume,
 }: ReproductionProps) {
   const [snapshot, setSnapshot] = useState('');
+  const loadButton = useRef<HTMLButtonElement>(null);
   return (
     <>
       <details className="reproduction">
@@ -33,6 +32,7 @@ export function Reproduction({
             onSubmit={(event) => {
               event.preventDefault();
               const code = new FormData(event.currentTarget).get('boardCode');
+              loadButton.current?.focus();
               if (typeof code === 'string') loadBoard(code);
             }}
           >
@@ -47,7 +47,9 @@ export function Reproduction({
                 spellCheck={false}
                 autoComplete="off"
               />
-              <button type="submit">{ReproductionControl.loadBoard}</button>
+              <button ref={loadButton} type="submit" aria-describedby="load-notice">
+                {ReproductionControl.loadBoard}
+              </button>
             </div>
           </form>
           <label htmlFor="snapshot-json">{ReproductionControl.snapshot}</label>
@@ -63,15 +65,19 @@ export function Reproduction({
             <button type="button" onClick={() => setSnapshot(encodeSnapshot(game))}>
               {ReproductionControl.exportSnapshot}
             </button>
-            <button type="button" onClick={() => loadSnapshot(snapshot)}>
+            <button
+              type="button"
+              aria-describedby="load-notice"
+              onClick={() => loadSnapshot(snapshot)}
+            >
               {ReproductionControl.loadSnapshot}
             </button>
           </div>
         </div>
       </details>
       <div className="status-row">
-        <p role="status" aria-live="polite" aria-atomic="true">
-          <span key={announcement}>{feedback}</span>
+        <p id="load-notice" className="load-notice">
+          {notice}
         </p>
         {paused && (
           <button type="button" onClick={resume}>

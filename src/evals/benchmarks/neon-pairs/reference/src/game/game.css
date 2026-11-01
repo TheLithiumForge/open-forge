@@ -51,6 +51,7 @@ p {
   color: var(--secondary);
   font-size: 14px;
   max-width: 70ch;
+  margin-bottom: 12px;
 }
 .status-row {
   display: flex;

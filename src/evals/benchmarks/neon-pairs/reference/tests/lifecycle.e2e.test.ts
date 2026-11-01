@@ -41,6 +41,7 @@ test('Restart clears a mismatch and rejects earlier timer updates', async ({ pag
   await page.locator('.card').nth(2).click({ force: true });
   await expect(page.locator('.card.revealed')).toHaveCount(2);
   expect(await moves(page)).toBe(2);
+  await page.clock.runFor(200);
   const restart = page.getByRole('button', { name: DealControl.restart, exact: true });
   await restart.click();
   await expect(restart).toBeFocused();
@@ -51,11 +52,29 @@ test('Restart clears a mismatch and rejects earlier timer updates', async ({ pag
     started: false,
     selection: { kind: 'closed' },
   });
+  await page.clock.runFor(400);
   await page.locator('.card').nth(2).click();
-  await page.clock.runFor(MISMATCH_MS + 1);
-  await expect(page.locator('.card.revealed')).toHaveCount(1);
+  await page.locator('.card').nth(3).click();
+  await page.clock.runFor(200);
+  await expect(page.locator('.card.revealed')).toHaveCount(2);
+  expect((await exportedSnapshot(page)).selection).toEqual({
+    kind: 'mismatch',
+    first: 2,
+    second: 3,
+    remainingMs: 600,
+  });
+  await page.clock.runFor(MISMATCH_MS - 201);
+  await expect(page.locator('.card.revealed')).toHaveCount(2);
+  await page.clock.runFor(1);
+  await expect(page.locator('.card.closed')).toHaveCount(16);
   const restored = await exportedSnapshot(page);
-  expect(restored).toMatchObject({ boardCode: FIXED_BOARD, moves: 0, started: true });
+  expect(restored).toMatchObject({
+    boardCode: FIXED_BOARD,
+    moves: 1,
+    started: true,
+    elapsedMs: 800,
+    selection: { kind: 'closed' },
+  });
 });
 
 test('New Game and size changes clear progress and reset the remembered tab stop', async ({

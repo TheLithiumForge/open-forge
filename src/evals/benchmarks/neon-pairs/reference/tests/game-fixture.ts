@@ -8,6 +8,7 @@ import type { Page } from '@playwright/test';
 
 export const GAME_URL = new URL('../dist/index.html', import.meta.url).href;
 export const ART_URL = new URL('../.art/index.html', import.meta.url).href;
+export const SESSION_URL = new URL('../.session/index.html', import.meta.url).href;
 export const FIXED_BOARD = EXAMPLE_CODE;
 export const FIXED_PAIRS = EXAMPLE_PAIRS;
 export const PHONE = { width: 360, height: 800 };

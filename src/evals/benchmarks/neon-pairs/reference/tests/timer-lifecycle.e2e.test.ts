@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
-import { ART_URL, loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
+import { SESSION_URL, loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
 
 test('A04.3 R12.1 unmount clears the active timer and visibility listener', async ({ page }) => {
   await page.addInitScript(() => {
@@ -55,7 +55,7 @@ test('A04.3 R12.1 unmount clears the active timer and visibility listener', asyn
       },
     });
   });
-  await page.goto(ART_URL + '#session');
+  await page.goto(SESSION_URL);
   await page.locator('.card').first().click();
   await expect(page.locator('html')).toHaveAttribute('data-pending-timers', '1');
   await expect(page.locator('html')).toHaveAttribute('data-visibility-listeners', '1');

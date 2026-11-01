@@ -1,9 +1,8 @@
-import { createGame, isWon, MOVES_MAX } from './game.ts';
+import { createGame, isWon, MOVES_MAX, ELAPSED_MAX_MS } from './game.ts';
 import { parseBoardCode } from './deck.ts';
 import { exactKeys, readJson, record, safeNonnegative } from './saved-format.ts';
 import { readMatched, readSelection } from './snapshot-selection.ts';
 import { SelectionKind } from './selection.ts';
-import { ELAPSED_MAX_MS } from './game.ts';
 import type { GameState } from './game.types.ts';
 
 export const SNAPSHOT_VERSION = 1;

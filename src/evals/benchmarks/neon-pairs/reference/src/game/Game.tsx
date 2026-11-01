@@ -33,6 +33,11 @@ export function Game() {
         Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space
         reveals a card.
       </p>
+      <div className="status-row game-result">
+        <p role="status" aria-live="polite" aria-atomic="true">
+          <span key={session.announcement}>{session.feedback}</span>
+        </p>
+      </div>
       <Board
         key={session.generation}
         game={game}
@@ -45,8 +50,7 @@ export function Game() {
         generation={session.generation}
         loadBoard={controller.loadBoard}
         loadSnapshot={controller.loadSnapshot}
-        feedback={session.feedback}
-        announcement={session.announcement}
+        notice={session.loadNotice}
         paused={session.paused}
         resume={resume}
       />
