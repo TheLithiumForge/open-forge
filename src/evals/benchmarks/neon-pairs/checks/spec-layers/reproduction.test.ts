@@ -10,7 +10,7 @@ import { reproductionFixture } from "./reproduction.fixture.ts";
 import { removeTemporary } from "./temporary.ts";
 import { snapshotRounding, RoundingClause } from "./browser-rounding.ts";
 import { Evidence } from "./outcomes.ts";
-import { ImportClause, importedProgress, loadedFocusAndSize, loadAnnouncements } from "./browser-import.ts";
+import { BesideControlsPx, boxGap, ImportClause, importedProgress, loadedFocusAndSize, loadAnnouncements } from "./browser-import.ts";
 import { BoardTrimClause, boardControls } from "./browser-formats.ts";
 import { AnnouncementClause } from "./published-text.ts";
 
@@ -56,6 +56,12 @@ test("completed loads have no Resume, unfinished wins record bests and load stat
       for (const clause of [ImportClause.best, ImportClause.sessionBest]) assert.equal(unsaved.outcomes.find((item) => item.clause === clause)?.status, "fail", clause);
       const loads = new Evidence(); await loadAnnouncements(open.page, loads);
       assert.equal(loads.outcomes.find((item) => item.clause === AnnouncementClause.loads)?.status, "pass");
+      await open.page.evaluate(() => { document.querySelector("details")!.after(document.querySelector("#notice")!); });
+      const nextTo = new Evidence(); await loadAnnouncements(open.page, nextTo);
+      assert.equal(nextTo.outcomes.find((item) => item.clause === AnnouncementClause.loads)?.status, "pass");
+      await open.page.evaluate((space) => { const spacer = document.createElement("div"); spacer.style.height = `${space}px`; document.querySelector("details")!.after(spacer); }, BesideControlsPx * 4);
+      const far = new Evidence(); await loadAnnouncements(open.page, far);
+      assert.equal(far.outcomes.find((item) => item.clause === AnnouncementClause.loads)?.status, "fail");
       await open.page.evaluate(() => {
         const region = document.querySelector("#live")!;
         region.replaceChildren = () => {};
@@ -99,4 +105,12 @@ test("the board control must trim whitespace and replace existing progress", asy
       assert.equal(rejected.outcomes.find((item) => item.clause === BoardTrimClause)?.status, "fail");
     } finally { await open.close(); }
   } finally { await browser.close(); await removeTemporary(root, "eval-trim-"); }
+});
+
+test("box gaps are zero for touching boxes and grow with the empty space between them", () => {
+  const panel = { x: 0, y: 0, width: 100, height: 50 };
+  assert.equal(boxGap({ x: 20, y: 10, width: 10, height: 10 }, panel), 0);
+  assert.equal(boxGap({ x: 0, y: 50, width: 100, height: 20 }, panel), 0);
+  assert.equal(boxGap({ x: 0, y: 80, width: 100, height: 20 }, panel), 30);
+  assert.equal(boxGap({ x: 103, y: 54, width: 10, height: 10 }, panel), 5);
 });

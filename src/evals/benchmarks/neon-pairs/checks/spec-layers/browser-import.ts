@@ -96,6 +96,28 @@ export async function loadedFocusAndSize(page: Page, evidence: Evidence): Promis
   put("I12.2", first.every(Boolean), "Successful loads reset the remembered board stop to the first card.");
 }
 
+// "Beside reproduction controls" leaves the markup open, so a notice counts inside the disclosure or right next to it.
+export const BesideControlsPx = 48;
+interface Box { readonly x: number; readonly y: number; readonly width: number; readonly height: number }
+
+/** The empty space between two boxes, zero when they touch or overlap. */
+export function boxGap(a: Box, b: Box): number {
+  const across = Math.max(0, a.x - (b.x + b.width), b.x - (a.x + a.width)), down = Math.max(0, a.y - (b.y + b.height), b.y - (a.y + a.height));
+  return Math.hypot(across, down);
+}
+
+async function besideControls(page: Page, notice: string): Promise<boolean> {
+  const panel = await page.locator("summary").filter({ hasText: new RegExp(`^${Labels.reproduce}$`) }).locator("xpath=..").boundingBox();
+  if (panel === null) return false;
+  for (const item of await page.getByText(notice, { exact: true }).all()) {
+    // The live region repeats the text for assistive technology, so it isn't the visible status.
+    if (await item.evaluate((element, region) => element.closest(region) !== null, LiveRegion)) continue;
+    const box = (await item.isVisible()) ? await item.boundingBox() : null;
+    if (box !== null && boxGap(box, panel) <= BesideControlsPx) return true;
+  }
+  return false;
+}
+
 export async function loadAnnouncements(page: Page, evidence: Evidence): Promise<void> {
   const entries = await observeAnnouncements(page), region = page.locator(LiveRegion);
   const completed = { ...freshSnapshot(KnownCode), started: true, moves: 8, matched: Array.from({ length: 16 }, (_, index) => index) };
@@ -108,7 +130,7 @@ export async function loadAnnouncements(page: Page, evidence: Evidence): Promise
   const results: { notice: string; repeat: number; before: number; entries: readonly string[]; text: string; visible: boolean; passed: boolean }[] = [];
   for (const [notice, action] of actions) for (let repeat = 0; repeat < 2; repeat++) {
     const before = (await entries()).length; await action();
-    const after = await entries(), text = await region.innerText(), visible = await page.locator("details").getByText(notice, { exact: true }).isVisible();
+    const after = await entries(), text = await region.innerText(), visible = await besideControls(page, notice);
     results.push({ notice, repeat, before, entries: after.slice(before), text, visible, passed: after.length === before + 1 && text === notice && visible });
   }
   reporter(evidence)(AnnouncementClause.loads, results.every((result) => result.passed), "Unfinished, completed and rejected loads each update the same live region once, including repeated statuses, and show their status beside reproduction controls.", results);
