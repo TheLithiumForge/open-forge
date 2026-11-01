@@ -46,8 +46,8 @@
   {
     "id": "M05",
     "path": "src/game/game.ts",
-    "find": "remainingMs \u003e 0 ?",
-    "replace": "remainingMs \u003e= 0 ?",
+    "find": "remainingMs > 0 ?",
+    "replace": "remainingMs >= 0 ?",
     "test": "src/game/game.test.ts",
     "browser": false,
     "clauses": ["R04.1", "D09.3"],
@@ -101,8 +101,8 @@
   {
     "id": "M10",
     "path": "src/game/session/storage.ts",
-    "find": "previous \u003c= moves",
-    "replace": "previous \u003e= moves",
+    "find": "previous <= moves",
+    "replace": "previous >= moves",
     "test": "src/game/session/storage.test.ts",
     "browser": false,
     "clauses": ["R10.2", "R10.4"],
@@ -113,7 +113,7 @@
     "id": "M11",
     "path": "src/game/session/storage.ts",
     "find": "store?.setItem(",
-    "replace": "false \u0026\u0026 store?.setItem(",
+    "replace": "false && store?.setItem(",
     "test": "src/game/session/storage.test.ts",
     "browser": false,
     "clauses": ["R10.3"],
@@ -134,8 +134,8 @@
   {
     "id": "M13",
     "path": "src/game/deck.ts",
-    "find": "seed \u003c= SEED_MAX",
-    "replace": "seed \u003c SEED_MAX",
+    "find": "seed <= SEED_MAX",
+    "replace": "seed < SEED_MAX",
     "test": "src/game/deck.test.ts",
     "browser": false,
     "clauses": ["D01.2"],
@@ -156,8 +156,8 @@
   {
     "id": "M15",
     "path": "src/game/snapshot-selection.ts",
-    "find": "every((count) =\u003e count === 2)",
-    "replace": "every((count) =\u003e count \u003e= 1)",
+    "find": "every((count) => count === 2)",
+    "replace": "every((count) => count >= 1)",
     "test": "src/game/snapshot-selection.test.ts",
     "browser": false,
     "clauses": ["D06.3"],
@@ -179,7 +179,7 @@
     "id": "M17",
     "path": "src/game/replay.ts",
     "find": "for (const [position, action] of value.actions.entries())",
-    "replace": "for (const [position, action] of [...value.actions].sort((left, right) =\u003e left.atMs - right.atMs || right.index - left.index).entries())",
+    "replace": "for (const [position, action] of [...value.actions].sort((left, right) => left.atMs - right.atMs || right.index - left.index).entries())",
     "test": "src/game/replay-order.test.ts",
     "browser": false,
     "clauses": ["D08.5", "D08.7"],
@@ -211,8 +211,8 @@
   {
     "id": "M20",
     "path": "src/game/board/Card.tsx",
-    "find": "\u003cspan className=\"card-back\" aria-hidden=\"true\" /\u003e",
-    "replace": "\u003cFace face={0} /\u003e",
+    "find": "<span className=\"card-back\" aria-hidden=\"true\" />",
+    "replace": "<Face face={0} />",
     "test": "tests/play.e2e.test.ts",
     "browser": true,
     "clauses": ["I14.2", "A08.1", "V14.2"],
@@ -299,24 +299,13 @@
   {
     "id": "M28",
     "path": "src/game/board/nearest-scroll.ts",
-    "find": "      viewport.current?.scrollTo(board.current.left, board.current.top);\n      window.scrollTo(page.current.left, page.current.top);\n",
+    "find": "      viewport.current?.scrollTo(board.current.left, board.current.top);\n",
     "replace": "",
     "test": "tests/focus-entry.e2e.test.ts",
     "browser": true,
     "clauses": ["I05.1", "I13.1"],
     "testName": "Tab and Shift+Tab bring the remembered card in with nearest alignment",
     "reason": "I13 Shift+Tab enters with nearest alignment"
-  },
-  {
-    "id": "M29",
-    "path": "src/game/board/Board.tsx",
-    "find": "card?.focus({ preventScroll: true, focusVisible: true });",
-    "replace": "card?.focus({ preventScroll: true });",
-    "test": "tests/focus-entry.e2e.test.ts",
-    "browser": true,
-    "clauses": ["V16.1", "I06.7", "I06.8"],
-    "testName": "every keyboard move after a pointer click shows the focus outline",
-    "reason": "V16 outline after Control+End"
   },
   {
     "id": "M30",
@@ -349,7 +338,7 @@
     "browser": true,
     "clauses": ["I01.2", "I13.1", "V19.4", "V20.3"],
     "testName": "pointer clicks reveal the pressed card on 16x16 at 360x800",
-    "reason": "I01 click after scrolling into view"
+    "reason": "I01 click after a wheel scroll"
   },
   {
     "id": "M33",
@@ -360,7 +349,7 @@
     "browser": true,
     "clauses": ["C08.7", "R04.1"],
     "testName": "a mismatch starts its interval at its own activation between milliseconds",
-    "reason": "C08 remaining time rounds up from the mismatch start"
+    "reason": "C08 the last quarter millisecond exports as 1ms"
   },
   {
     "id": "M34",
@@ -396,33 +385,10 @@
     "reason": "I13 a clicked card ends in view"
   },
   {
-    "id": "M37",
-    "path": "src/game/session/use-saved-preferences.ts",
-    "find": "    show(writePreferences(store, current.current.preferences));",
-    "replace": "    writePreferences(store, current.current.preferences);",
-    "test": "tests/saved-bests.e2e.test.ts",
-    "browser": true,
-    "clauses": ["R10.6"],
-    "testName": "a win shows the saved best when another tab saved a better one first",
-    "reason": "R10 the shown best matches the saved best"
-  },
-  {
-    "id": "M38",
-    "path": "src/game/snapshot.ts",
-    "find": "remainingMs: Math.ceil(state.selection.remainingMs)",
-    "replace": "remainingMs: Math.round(state.selection.remainingMs)",
-    "test": "tests/fractional-clock.e2e.test.ts",
-    "browser": true,
-    "clauses": ["C08.6", "C08.7"],
-    "testName": "a mismatch starts its interval at its own activation between milliseconds",
-    "reason": "C08 remaining time rounds up from the mismatch start",
-    "patches": [{ "path": "src/game/snapshot.ts", "find": "elapsedMs: Math.floor(state.elapsedMs)", "replace": "elapsedMs: Math.round(state.elapsedMs)" }]
-  },
-  {
     "id": "M39",
     "path": "src/game/session/session.ts",
     "find": "    preferences: { ...session.preferences, size: game.size },\n",
-    "replace": "    preferences:\n      imported \u0026\u0026 isWon(game)\n        ? rememberBest({ ...session.preferences, size: game.size }, game.size, game.moves)\n        : { ...session.preferences, size: game.size },\n",
+    "replace": "    preferences:\n      imported && isWon(game)\n        ? rememberBest({ ...session.preferences, size: game.size }, game.size, game.moves)\n        : { ...session.preferences, size: game.size },\n",
     "test": "tests/saved-bests.e2e.test.ts",
     "browser": true,
     "clauses": ["C12.3", "A06.2"],
@@ -439,5 +405,27 @@
     "clauses": ["C12.3"],
     "testName": "a completed import in 10 moves leaves a saved best of 8 alone",
     "reason": "C12 import leaves the shown best alone"
+  },
+  {
+    "id": "M41",
+    "path": "src/game/board/keyboard.ts",
+    "find": "  if (modifiers.ctrlKey || modifiers.altKey || modifiers.shiftKey || modifiers.metaKey) return null;\n",
+    "replace": "",
+    "test": "src/game/board/keyboard.test.ts",
+    "browser": false,
+    "clauses": ["I06.10"],
+    "testName": "only plain arrow keys move focus, leaving other keys and modifiers to the browser",
+    "reason": "I06 unlisted key"
+  },
+  {
+    "id": "M42",
+    "path": "src/game/controls/Reproduction.tsx",
+    "find": "              if (typeof code === 'string' && loadBoard(code)) loadButton.current?.focus();",
+    "replace": "              loadButton.current?.focus();\n              if (typeof code === 'string') loadBoard(code);",
+    "test": "tests/status-controls.e2e.test.ts",
+    "browser": true,
+    "clauses": ["C11.2", "C13.2"],
+    "testName": "Enter moves focus to Load board only when the code loads",
+    "reason": "C11 an invalid code keeps focus in its draft"
   }
 ]

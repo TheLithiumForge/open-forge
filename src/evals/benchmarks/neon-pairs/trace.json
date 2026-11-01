@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "specVersion": 2.1,
+  "specVersion": 2.2,
   "entries": [
     {
       "clauseId": "R01.1",
@@ -369,7 +369,7 @@
         },
         {
           "path": "reference/src/game/snapshot.test.ts",
-          "symbol": "export rounds fractional time down and a mismatch from its own activation up",
+          "symbol": "export writes whole milliseconds and keeps a pending mismatch at 1ms or more",
           "evidence": "Clause R04.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -2022,7 +2022,7 @@
         {
           "path": "reference/src/game/session/use-saved-preferences.ts",
           "symbol": "useSavedPreferences",
-          "evidence": "Clause R10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Each write and each storage event shows the merged bests."
+          "evidence": "Clause R10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Each preference change writes this tab's size with the better best stored for every size."
         }
       ]
     },
@@ -2124,21 +2124,6 @@
           "path": "reference/tests/product-contract.e2e.test.ts",
           "symbol": "status formats show current values, continuing minutes and a completed import without Resume",
           "evidence": "Spec v2.1 executable assertion. Rendered status text must equal the published formats. See reference-audit/verification.json for the local gate results."
-        },
-        {
-          "path": "reference/src/game/session/use-saved-preferences.ts",
-          "symbol": "useSavedPreferences",
-          "evidence": "Clause R10.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Each write and each storage event shows the merged bests."
-        },
-        {
-          "path": "reference/tests/saved-bests.e2e.test.ts",
-          "symbol": "an idle tab shows another tab's best and keeps it through deals and sizes",
-          "evidence": "Clause R10.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/saved-bests.e2e.test.ts",
-          "symbol": "a win shows the saved best when another tab saved a better one first",
-          "evidence": "Clause R10.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -3093,7 +3078,7 @@
         {
           "path": "reference/src/game/snapshot.ts",
           "symbol": "encodeSnapshot",
-          "evidence": "Clause C08.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Export rounds elapsed time down and pending mismatch time up."
+          "evidence": "Clause C08.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Export writes whole milliseconds. Rounding pending mismatch time up keeps it at 1ms or more."
         },
         {
           "path": "reference/tests/fractional-clock.e2e.test.ts",
@@ -3102,7 +3087,7 @@
         },
         {
           "path": "reference/src/game/snapshot.test.ts",
-          "symbol": "export rounds fractional time down and a mismatch from its own activation up",
+          "symbol": "export writes whole milliseconds and keeps a pending mismatch at 1ms or more",
           "evidence": "Clause C08.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -3135,7 +3120,7 @@
         {
           "path": "reference/src/game/snapshot.ts",
           "symbol": "encodeSnapshot",
-          "evidence": "Clause C08.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Export rounds elapsed time down and pending mismatch time up."
+          "evidence": "Clause C08.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Export writes whole milliseconds. Rounding pending mismatch time up keeps it at 1ms or more."
         },
         {
           "path": "reference/tests/fractional-clock.e2e.test.ts",
@@ -3144,7 +3129,7 @@
         },
         {
           "path": "reference/src/game/snapshot.test.ts",
-          "symbol": "export rounds fractional time down and a mismatch from its own activation up",
+          "symbol": "export writes whole milliseconds and keeps a pending mismatch at 1ms or more",
           "evidence": "Clause C08.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -3893,8 +3878,8 @@
         },
         {
           "path": "reference/tests/status-controls.e2e.test.ts",
-          "symbol": "Enter submits a board code with focus on Load board before the input is replaced",
-          "evidence": "Valid and invalid Enter submissions leave focus on Load board. Valid submission replaces the input and resets board focus."
+          "symbol": "Enter moves focus to Load board only when the code loads",
+          "evidence": "Clause C13.2. A valid Enter submission moves focus to Load board, replaces the input and resets board focus. An invalid code keeps focus in its draft for correction."
         }
       ]
     },
@@ -3989,8 +3974,8 @@
         },
         {
           "path": "reference/tests/status-controls.e2e.test.ts",
-          "symbol": "Enter submits a board code with focus on Load board before the input is replaced",
-          "evidence": "Valid and invalid Enter submissions leave focus on Load board. Valid submission replaces the input and resets board focus."
+          "symbol": "Enter moves focus to Load board only when the code loads",
+          "evidence": "Clause C13.5. A valid Enter submission moves focus to Load board, replaces the input and resets board focus. An invalid code keeps focus in its draft for correction."
         }
       ]
     },
@@ -4146,12 +4131,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I01.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I01.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
@@ -4178,12 +4163,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -4230,28 +4215,6 @@
           "path": "reference/tests/pointer-focus.e2e.test.ts",
           "symbol": "taps reveal the tapped card after a scroll and at a clipped edge at 640x400",
           "evidence": "Clause I01.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        }
-      ]
-    },
-    {
-      "clauseId": "I02.1",
-      "requirementId": "I02",
-      "checks": ["L2:l2-activation#clause-I02.1","L3:l2-activation#clause-I02.1"],
-      "reference": [
-        {
-          "path": "reference/src/game/board/Card.tsx",
-          "symbol": "Card",
-          "evidence": "Clause I02.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/card-state.ts",
-          "symbol": "describeCard",
-          "evidence": "Clause I02.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "holding Enter and Space across focus movement ignores autorepeat",
-          "evidence": "Clause I02.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -4365,12 +4328,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I05.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I05.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -4422,12 +4385,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I05.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I05.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -4484,12 +4447,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I05.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I05.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -4541,12 +4504,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I06.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I06.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -4598,12 +4561,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I06.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I06.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -4655,12 +4618,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I06.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I06.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -4712,12 +4675,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I06.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I06.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -4739,244 +4702,6 @@
           "path": "reference/tests/style.e2e.test.ts",
           "symbol": "layout, typography, colors and card geometry match the product values",
           "evidence": "Clause I06.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        }
-      ]
-    },
-    {
-      "clauseId": "I06.5",
-      "requirementId": "I06",
-      "checks": ["L2:l2-navigation#clause-I06.5","L3:l2-navigation#clause-I06.5"],
-      "reference": [
-        {
-          "path": "reference/src/game/board/keyboard.ts",
-          "symbol": "navigationTarget",
-          "evidence": "Clause I06.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/Board.tsx",
-          "symbol": "Board",
-          "evidence": "Clause I06.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/Card.tsx",
-          "symbol": "Card",
-          "evidence": "Clause I06.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/card-state.ts",
-          "symbol": "describeCard",
-          "evidence": "Clause I06.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
-          "evidence": "Clause I06.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
-          "evidence": "Clause I06.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/play.e2e.test.ts",
-          "symbol": "keyboard completion, phone taps, offline distribution and navigation cases",
-          "evidence": "Clause I06.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/snapshots.e2e.test.ts",
-          "symbol": "Resume, invalid draft and completed import cases",
-          "evidence": "Clause I06.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/layout.e2e.test.ts",
-          "symbol": "16x16 viewport, card bounds and full focus outline cases",
-          "evidence": "Clause I06.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/style.e2e.test.ts",
-          "symbol": "layout, typography, colors and card geometry match the product values",
-          "evidence": "Clause I06.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        }
-      ]
-    },
-    {
-      "clauseId": "I06.6",
-      "requirementId": "I06",
-      "checks": ["L2:l2-navigation#clause-I06.6","L3:l2-navigation#clause-I06.6"],
-      "reference": [
-        {
-          "path": "reference/src/game/board/keyboard.ts",
-          "symbol": "navigationTarget",
-          "evidence": "Clause I06.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/Board.tsx",
-          "symbol": "Board",
-          "evidence": "Clause I06.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/Card.tsx",
-          "symbol": "Card",
-          "evidence": "Clause I06.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/card-state.ts",
-          "symbol": "describeCard",
-          "evidence": "Clause I06.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
-          "evidence": "Clause I06.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
-          "evidence": "Clause I06.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/play.e2e.test.ts",
-          "symbol": "keyboard completion, phone taps, offline distribution and navigation cases",
-          "evidence": "Clause I06.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/snapshots.e2e.test.ts",
-          "symbol": "Resume, invalid draft and completed import cases",
-          "evidence": "Clause I06.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/layout.e2e.test.ts",
-          "symbol": "16x16 viewport, card bounds and full focus outline cases",
-          "evidence": "Clause I06.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/style.e2e.test.ts",
-          "symbol": "layout, typography, colors and card geometry match the product values",
-          "evidence": "Clause I06.6. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        }
-      ]
-    },
-    {
-      "clauseId": "I06.7",
-      "requirementId": "I06",
-      "checks": ["L2:l2-navigation#clause-I06.7","L3:l2-navigation#clause-I06.7"],
-      "reference": [
-        {
-          "path": "reference/src/game/board/keyboard.ts",
-          "symbol": "navigationTarget",
-          "evidence": "Clause I06.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/Board.tsx",
-          "symbol": "Board",
-          "evidence": "Clause I06.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/Card.tsx",
-          "symbol": "Card",
-          "evidence": "Clause I06.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/card-state.ts",
-          "symbol": "describeCard",
-          "evidence": "Clause I06.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
-          "evidence": "Clause I06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
-          "evidence": "Clause I06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/play.e2e.test.ts",
-          "symbol": "keyboard completion, phone taps, offline distribution and navigation cases",
-          "evidence": "Clause I06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/snapshots.e2e.test.ts",
-          "symbol": "Resume, invalid draft and completed import cases",
-          "evidence": "Clause I06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/layout.e2e.test.ts",
-          "symbol": "16x16 viewport, card bounds and full focus outline cases",
-          "evidence": "Clause I06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/style.e2e.test.ts",
-          "symbol": "layout, typography, colors and card geometry match the product values",
-          "evidence": "Clause I06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/focus-entry.e2e.test.ts",
-          "symbol": "every keyboard move after a pointer click shows the focus outline",
-          "evidence": "Clause I06.7. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        }
-      ]
-    },
-    {
-      "clauseId": "I06.8",
-      "requirementId": "I06",
-      "checks": ["L2:l2-navigation#clause-I06.8","L3:l2-navigation#clause-I06.8"],
-      "reference": [
-        {
-          "path": "reference/src/game/board/keyboard.ts",
-          "symbol": "navigationTarget",
-          "evidence": "Clause I06.8. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/Board.tsx",
-          "symbol": "Board",
-          "evidence": "Clause I06.8. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/Card.tsx",
-          "symbol": "Card",
-          "evidence": "Clause I06.8. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/card-state.ts",
-          "symbol": "describeCard",
-          "evidence": "Clause I06.8. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
-        },
-        {
-          "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
-          "evidence": "Clause I06.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
-          "evidence": "Clause I06.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/play.e2e.test.ts",
-          "symbol": "keyboard completion, phone taps, offline distribution and navigation cases",
-          "evidence": "Clause I06.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/snapshots.e2e.test.ts",
-          "symbol": "Resume, invalid draft and completed import cases",
-          "evidence": "Clause I06.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/layout.e2e.test.ts",
-          "symbol": "16x16 viewport, card bounds and full focus outline cases",
-          "evidence": "Clause I06.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/style.e2e.test.ts",
-          "symbol": "layout, typography, colors and card geometry match the product values",
-          "evidence": "Clause I06.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
-        },
-        {
-          "path": "reference/tests/focus-entry.e2e.test.ts",
-          "symbol": "every keyboard move after a pointer click shows the focus outline",
-          "evidence": "Clause I06.8. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         }
       ]
     },
@@ -5007,12 +4732,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I06.9. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I06.9. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -5034,6 +4759,38 @@
           "path": "reference/tests/style.e2e.test.ts",
           "symbol": "layout, typography, colors and card geometry match the product values",
           "evidence": "Clause I06.9. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        }
+      ]
+    },
+    {
+      "clauseId": "I06.10",
+      "requirementId": "I06",
+      "checks": [],
+      "reference": [
+        {
+          "path": "reference/src/game/board/keyboard.ts",
+          "symbol": "navigationTarget",
+          "evidence": "Clause I06.10. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Only the four arrow keys without modifiers return a target. Every other key and modifier combination returns none."
+        },
+        {
+          "path": "reference/src/game/board/Board.tsx",
+          "symbol": "Board",
+          "evidence": "Clause I06.10. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. The board prevents the browser default only for a returned target, so other keys keep their browser behavior."
+        },
+        {
+          "path": "reference/src/game/board/Card.tsx",
+          "symbol": "Card",
+          "evidence": "Clause I06.10. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md. Enter and Space reach the native button activation. The card adds no key handling of its own."
+        },
+        {
+          "path": "reference/src/game/board/keyboard.test.ts",
+          "symbol": "only plain arrow keys move focus, leaving other keys and modifiers to the browser",
+          "evidence": "Clause I06.10. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/tests/keyboard.e2e.test.ts",
+          "symbol": "Alt+ArrowLeft and Ctrl+End stay with the browser and leave the board alone",
+          "evidence": "Clause I06.10. Chromium keeps focus on the same card, reveals no card, counts no move and stays on the page after both keys."
         }
       ]
     },
@@ -5064,12 +4821,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I07.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I07.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -5121,12 +4878,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I08.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I08.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -5178,12 +4935,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I08.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I08.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -5235,12 +4992,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I09.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I09.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -5292,12 +5049,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I09.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I09.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -5349,12 +5106,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I09.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I09.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -5406,12 +5163,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I10.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I10.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -5463,12 +5220,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I10.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I10.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -5542,12 +5299,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause I12.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause I12.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12124,12 +11881,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A07.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A07.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12186,12 +11943,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A07.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A07.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12243,12 +12000,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A07.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A07.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12320,12 +12077,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A08.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A08.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12377,12 +12134,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A08.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A08.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12434,12 +12191,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A08.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A08.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12491,12 +12248,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A08.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A08.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12548,12 +12305,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A09.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A09.1. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12605,12 +12362,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A09.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A09.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12662,12 +12419,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A09.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A09.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -12719,12 +12476,12 @@
         },
         {
           "path": "reference/src/game/board/keyboard.test.ts",
-          "symbol": "arrow, Home and End movement cases",
+          "symbol": "arrow movement and unlisted key cases",
           "evidence": "Clause A09.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
           "path": "reference/tests/keyboard.e2e.test.ts",
-          "symbol": "native Tab, matched-card focus and autorepeat cases",
+          "symbol": "native Tab, matched-card focus and unlisted key cases",
           "evidence": "Clause A09.4. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
         },
         {
@@ -14816,7 +14573,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, hasExactKeys",
+          "symbol": "isWithinBytes, parseJson, hasExactKeys",
           "evidence": "Clause D10.1. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -14895,7 +14652,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, hasExactKeys",
+          "symbol": "isWithinBytes, parseJson, hasExactKeys",
           "evidence": "Clause D10.3. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -14957,7 +14714,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, hasExactKeys",
+          "symbol": "isWithinBytes, parseJson, hasExactKeys",
           "evidence": "Clause D10.4. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -15019,7 +14776,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, hasExactKeys",
+          "symbol": "isWithinBytes, parseJson, hasExactKeys",
           "evidence": "Clause D10.5. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -15081,7 +14838,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, hasExactKeys",
+          "symbol": "isWithinBytes, parseJson, hasExactKeys",
           "evidence": "Clause D10.6. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -15143,7 +14900,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, hasExactKeys",
+          "symbol": "isWithinBytes, parseJson, hasExactKeys",
           "evidence": "Clause D10.7. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -15205,7 +14962,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, hasExactKeys",
+          "symbol": "isWithinBytes, parseJson, hasExactKeys",
           "evidence": "Clause D10.8. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -15267,7 +15024,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, hasExactKeys",
+          "symbol": "isWithinBytes, parseJson, hasExactKeys",
           "evidence": "Clause D10.9. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {
@@ -15329,7 +15086,7 @@
         },
         {
           "path": "reference/src/game/saved-format.ts",
-          "symbol": "readJson, hasExactKeys",
+          "symbol": "isWithinBytes, parseJson, hasExactKeys",
           "evidence": "Clause D10.10. Supporting assertions are listed in the test references. Source review is recorded in reference-audit/AUDIT.md."
         },
         {

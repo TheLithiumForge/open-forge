@@ -24,13 +24,13 @@ Status: the maintainer froze the reference after a 10 out of 10 judgment. The th
 
 ## Council seed
 
-Build the seed only after spec version 2.1 and its clause map are frozen. The council builds a separate solution to the full product contract. It can use earlier code as design context, but an earlier reference isn't compliant until every version 2.1 clause has evidence.
+Build the seed only after spec version 2.2 and its clause map are frozen. The council builds a separate solution to the full product contract. It can use earlier code as design context, but an earlier reference isn't compliant until every version 2.2 clause has evidence.
 
 Use this process in order:
 
 1. Have the council agree on the product clauses, supported runtime combination and architecture before implementation. Record disagreements and their decisions without changing a rule silently.
 2. Build the complete game and run the locked install, type check, unit tests, fresh browser build, replay and offline delivery journeys in the verifier container. Keep credentials out and keep network off after install.
-3. Audit each of the 416 clauses by an independent executable test, a static check or a verdict from two reviewers. Calculate expected decks and results independently. An unsure or disputed verdict leaves that clause open.
+3. Audit each of the 412 clauses by an independent executable test, a static check or a verdict from two reviewers. Calculate expected decks and results independently. An unsure or disputed verdict leaves that clause open.
 4. Fill every clause's `checks` and `reference` slots in `trace.json`. Link check IDs to exact assertions and evidence. Link reference paths and symbols to the same clause. A two-reviewer verdict records both reasons and the source each reviewer read.
 5. Mutate one rule at a time. Include broken moves, best-score scope, mismatch edges, pause, stale callbacks, format validation, keyboard movement, hidden names, face separation, focus clipping and stale builds. Show that its target check fails and that the clean seed passes. Record surviving and equivalent mutations. Resolve a surviving material mutation before freezing.
 6. Format the complete seed with Prettier `3.9.6`, pinned with its configuration. Record line counts after formatting for pure game functions, browser session, components and styles, application tests, tooling and configuration. For each tier, give file count, physical lines and nonblank lines. List generated and dependency files as exclusions. Check T06's authored TypeScript ceiling per file. Report the 100-line aim separately from the 200-line limit.

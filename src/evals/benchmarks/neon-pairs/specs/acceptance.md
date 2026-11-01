@@ -1,7 +1,7 @@
 # Acceptance
 Acceptance is a set of journeys that checks whether Neon Pairs meets its product requirements.
 
-Status: spec version 2.1.
+Status: spec version 2.2.
 
 Finish a game, then start another one during a mismatch. The first journey checks play and completion. The second checks that an earlier timer can't change a new game.
 

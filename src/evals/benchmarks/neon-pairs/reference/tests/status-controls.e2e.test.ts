@@ -4,10 +4,9 @@ import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { StatusLabel } from '../src/game/status/status-labels.ts';
 import { loadTimedBoard, finishBoard } from './game-fixture.ts';
 import { expectFocusInside } from './focus-bounds.ts';
+import { moveKeyboardTo } from './accessibility-tree.ts';
 
-test('Enter submits a board code with focus on Load board before the input is replaced', async ({
-  page,
-}) => {
+test('Enter moves focus to Load board only when the code loads', async ({ page }) => {
   await loadTimedBoard(page);
   await page.locator('summary').click();
   const code = page.getByLabel(ReproductionControl.board, { exact: true });
@@ -21,9 +20,7 @@ test('Enter submits a board code with focus on Load board before the input is re
   await expect(page.locator('.card').first()).toHaveAttribute('tabindex', '0');
   await code.fill('invalid');
   await code.press('Enter');
-  await expect(
-    page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }),
-  ).toBeFocused();
+  await expect(code, 'C11 an invalid code keeps focus in its draft').toBeFocused();
   await expect(code).toHaveValue('invalid');
   await expect(page.locator('.load-notice')).toHaveText('Invalid board code.');
   await expect(page.locator('.card')).toHaveCount(36);
@@ -45,7 +42,7 @@ test('the single game result stays beside the board and in view during large-pho
   await page.locator('.card').nth(0).click();
   await page.locator('.card').nth(1).click();
   await expect(result).toHaveText('No match. Cards close after a short pause.');
-  await page.keyboard.press('Control+End');
+  await moveKeyboardTo(page, 16 ** 2 - 1, 16);
   await expectFocusInside(page.locator('.card').last());
   const bounds = await result.evaluate((e) => {
     const b = e.getBoundingClientRect();
@@ -68,7 +65,7 @@ test('the single game result stays beside the board and in view during large-pho
   await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
   await expect(page.locator('.load-notice')).toHaveText('Invalid snapshot.');
   await expect(result).toHaveText('Invalid snapshot.');
-  await expect(page.locator('.status-row:not(.game-result) [aria-live]')).toHaveCount(0);
+  await expect(page.locator('.load-status [aria-live]')).toHaveCount(0);
 });
 
 test('the best label uses one wording before and after a record exists', async ({ page }) => {

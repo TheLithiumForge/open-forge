@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 import { Face } from './Face.tsx';
 import { describeCard } from './card-state.ts';
-import { ActivationKey } from './keyboard.ts';
 import type { KeyboardEvent } from 'react';
 import './card.css';
 
@@ -42,14 +41,7 @@ export function Card({
       aria-disabled={blocked || matched}
       tabIndex={tabIndex}
       onFocus={(event) => focus(index, event.currentTarget)}
-      onKeyDown={(event) => {
-        if (
-          event.repeat &&
-          (event.key === ActivationKey.enter || event.key === ActivationKey.space)
-        )
-          event.preventDefault();
-        navigate(event, index);
-      }}
+      onKeyDown={(event) => navigate(event, index)}
       onPointerDown={(event) => {
         // A touch that moves or opens the context menu isn't a completed tap. A mouse or pen
         // click always counts.

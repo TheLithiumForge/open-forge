@@ -96,6 +96,6 @@ test('every load kind updates the one live region once per event and shows its s
       expected.push(notice);
       expect(await results(), 'I16 one live-region change per load').toEqual(expected);
       await expect(region).toHaveText(notice);
-      await expect(page.locator('details + .status-row .load-notice')).toHaveText(notice);
+      await expect(page.locator('details + .load-status .load-notice')).toHaveText(notice);
     }
 });

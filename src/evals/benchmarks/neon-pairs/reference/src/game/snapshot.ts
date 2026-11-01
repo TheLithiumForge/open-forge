@@ -1,6 +1,12 @@
 import { createGame, MOVES_MAX, ELAPSED_MAX_MS } from './game.ts';
 import { parseBoardCode } from './deck.ts';
-import { hasExactKeys, isJsonObject, isNonnegativeSafeInteger, readJson } from './saved-format.ts';
+import {
+  hasExactKeys,
+  isJsonObject,
+  isNonnegativeSafeInteger,
+  isWithinBytes,
+  parseJson,
+} from './saved-format.ts';
 import { readMatched, readSelection } from './snapshot-selection.ts';
 import { SelectionKind } from './selection.ts';
 import type { GameState } from './game.ts';
@@ -23,7 +29,8 @@ export function encodeSnapshot(state: GameState): string {
       version: SNAPSHOT_VERSION,
       boardCode: state.boardCode,
       matched: [...state.matched].sort((left, right) => left - right),
-      // Active time keeps its fractions in play, so elapsed time rounds down and pending time up.
+      // Active time keeps its fractions in play. Export writes whole milliseconds, and rounding
+      // pending time up keeps a mismatch at 1ms or more.
       selection:
         state.selection.kind === SelectionKind.mismatch
           ? { ...state.selection, remainingMs: Math.ceil(state.selection.remainingMs) }
@@ -38,7 +45,7 @@ export function encodeSnapshot(state: GameState): string {
 }
 
 export function decodeSnapshot(text: string): GameState | null {
-  const value = readJson(text, SNAPSHOT_MAX_BYTES);
+  const value = isWithinBytes(text, SNAPSHOT_MAX_BYTES) ? parseJson(text) : undefined;
   if (
     !isJsonObject(value) ||
     !hasExactKeys(value, SNAPSHOT_KEYS) ||

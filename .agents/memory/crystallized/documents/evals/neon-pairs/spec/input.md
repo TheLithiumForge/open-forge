@@ -6,7 +6,7 @@ open-forge:
 # Input
 Input is a set of controls that lets you play Neon Pairs with a pointer, touch or keyboard.
 
-Status: spec version 2.1.
+Status: spec version 2.2.
 
 You can reveal a card with a tap, then move to its partner with the arrow keys. Every activation uses the same game action, so changing input methods keeps the same turn.
 
@@ -15,7 +15,6 @@ You can reveal a card with a tap, then move to its partner with the arrow keys. 
 The card controls follow these rules:
 
 - I01 - Render each card as a native button. A primary click, a completed tap, Enter and Space activate the card through the same action.
-- I02 - Ignore keyboard autorepeat. Holding Enter or Space doesn't cause repeated activations.
 - I03 - Keep the browser's normal context menu on right-click or long-press. Opening that menu doesn't activate a card.
 - I04 - Hover and pointer cancellation leave the game state unchanged.
 
@@ -33,10 +32,8 @@ The game decides whether an activation changes a card. See [Rules](rules.md) for
 | ArrowRight | Next card in the same row |
 | ArrowUp | Card in the previous row and same column |
 | ArrowDown | Card in the next row and same column |
-| Home | First card in the current row |
-| End | Last card in the current row |
-| Ctrl+Home | First card on the board |
-| Ctrl+End | Last card on the board |
+
+The board handles only these four arrow keys without modifiers, plus Enter and Space. It leaves every other key and modifier combination to the browser and doesn't use them to move focus or activate a card.
 
 - I07 - Stop arrow movement at a board edge. Moving left from the first column keeps focus on the same card.
 

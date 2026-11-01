@@ -1,7 +1,7 @@
 # Visuals
 Visuals is a design specification that defines the layout, colors and card artwork for Neon Pairs.
 
-Status: spec version 2.1.
+Status: spec version 2.2.
 
 A card face combines a shape, a marker position and a fill. You can identify a pair from those features even when you can't distinguish its color.
 

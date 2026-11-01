@@ -1,6 +1,6 @@
 import { GRID_SIZES, isValidSize } from '../deck.ts';
 import { MOVES_MAX } from '../game.ts';
-import { isJsonObject, isNonnegativeSafeInteger } from '../saved-format.ts';
+import { isJsonObject, isNonnegativeSafeInteger, parseJson } from '../saved-format.ts';
 
 export const DEFAULT_SIZE = GRID_SIZES[0];
 export const PREFERENCES_KEY = 'neon-pairs.preferences.v1';
@@ -19,7 +19,7 @@ export function readPreferences(store: PreferenceStore | null): Preferences {
   try {
     const text = store?.getItem(PREFERENCES_KEY);
     if (!text) return fallback;
-    const value: unknown = JSON.parse(text);
+    const value = parseJson(text);
     if (
       !isJsonObject(value) ||
       value.schemaVersion !== PREFERENCES_VERSION ||
@@ -47,21 +47,15 @@ export function readPreferences(store: PreferenceStore | null): Preferences {
 }
 
 // Another tab may have saved a better score since this one loaded. Keeps this tab's size and
-// the better best for each size, and returns the same preferences when storage adds nothing.
-export function mergeSavedBests(
-  store: PreferenceStore | null,
-  preferences: Preferences,
-): Preferences {
+// the better best for each size.
+function mergeSavedBests(store: PreferenceStore | null, preferences: Preferences): Preferences {
   let merged = preferences;
   for (const [size, moves] of Object.entries(readPreferences(store).bestMoves))
     merged = rememberBest(merged, Number(size), moves);
   return merged;
 }
 
-export function writePreferences(
-  store: PreferenceStore | null,
-  preferences: Preferences,
-): Preferences {
+export function writePreferences(store: PreferenceStore | null, preferences: Preferences): void {
   const merged = mergeSavedBests(store, preferences);
   try {
     store?.setItem(
@@ -71,7 +65,6 @@ export function writePreferences(
   } catch {
     // A blocked browser store doesn't stop the current game.
   }
-  return merged;
 }
 
 export function rememberBest(preferences: Preferences, size: number, moves: number): Preferences {

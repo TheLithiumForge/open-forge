@@ -6,8 +6,6 @@ Input is a specification that defines requirements for Neon Pairs.
 - I01.1 - Each card is a native button.
 - I01.2 - Primary click, completed tap, Enter and Space use the same activation action.
 
-- I02.1 - Ignore keyboard autorepeat for Enter and Space.
-
 - I03.1 - Keep the normal context menu for right-click and long-press.
 - I03.2 - Opening that menu doesn't activate a card.
 
@@ -24,11 +22,8 @@ Input is a specification that defines requirements for Neon Pairs.
 - I06.2 - ArrowRight moves to the next card in the same row.
 - I06.3 - ArrowUp moves to the previous row in the same column.
 - I06.4 - ArrowDown moves to the next row in the same column.
-- I06.5 - Home moves to the first card in the row.
-- I06.6 - End moves to the last card in the row.
-- I06.7 - Ctrl+Home moves to the first card on the board.
-- I06.8 - Ctrl+End moves to the last card on the board.
 - I06.9 - Movement changes focus without activating a card.
+- I06.10 - Handle only ArrowLeft, ArrowRight, ArrowUp and ArrowDown without modifiers, plus Enter and Space. Leave every other key and modifier combination to the browser, without using it to move focus or activate a card.
 
 - I07.1 - Arrow movement stops at board edges without wrapping.
 

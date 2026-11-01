@@ -3,17 +3,24 @@ export const BoardKey = {
   right: 'ArrowRight',
   up: 'ArrowUp',
   down: 'ArrowDown',
-  home: 'Home',
-  end: 'End',
 } as const;
-export const ActivationKey = { enter: 'Enter', space: ' ' } as const;
 
+interface KeyModifiers {
+  readonly ctrlKey: boolean;
+  readonly altKey: boolean;
+  readonly shiftKey: boolean;
+  readonly metaKey: boolean;
+}
+
+// I06 lists only the plain arrow keys. Every other key and modifier combination, such as
+// Alt+ArrowLeft for Back or Ctrl+End, stays with the browser.
 export function navigationTarget(
   index: number,
   size: number,
   key: string,
-  control: boolean,
+  modifiers: KeyModifiers,
 ): number | null {
+  if (modifiers.ctrlKey || modifiers.altKey || modifiers.shiftKey || modifiers.metaKey) return null;
   const rowStart = Math.floor(index / size) * size;
   switch (key) {
     case BoardKey.left:
@@ -24,10 +31,6 @@ export function navigationTarget(
       return Math.max(index % size, index - size);
     case BoardKey.down:
       return Math.min(size * (size - 1) + (index % size), index + size);
-    case BoardKey.home:
-      return control ? 0 : rowStart;
-    case BoardKey.end:
-      return control ? size ** 2 - 1 : rowStart + size - 1;
     default:
       return null;
   }

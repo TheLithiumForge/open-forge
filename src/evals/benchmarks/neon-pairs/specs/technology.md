@@ -1,7 +1,7 @@
 # Technology
 Technology is the build and language specification for Neon Pairs.
 
-Status: spec version 2.1.
+Status: spec version 2.2.
 
 The game runs offline from one HTML file. Browser controls and inline SVG provide the board, input and artwork.
 

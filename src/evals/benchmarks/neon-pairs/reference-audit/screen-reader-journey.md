@@ -35,7 +35,7 @@ Set up the fixed deal with the keyboard:
 
 ## Finish a game
 
-Use Ctrl+Home before each destination. Then press ArrowDown once for each preceding row and ArrowRight once for each preceding column. Arrow movement should announce the destination's position and closed state without revealing it or repeating a turn result.
+Move to each destination with the arrow keys, one row or column per press. Arrow movement should announce the destination's position and closed state without revealing it or repeating a turn result.
 
 For each row below, reveal the first position with Enter. Hear its face name and revealed state. Reveal the second position with Space. Hear that face and one turn result. The matched buttons should expose their matched state and disabled state while still allowing focus:
 
@@ -54,7 +54,7 @@ The final turn has one result that combines the match and win. Its elapsed time 
 
 ## Start again
 
-From the final card, Tab leaves the board and reaches Reproduce a game. Shift+Tab returns to the remembered card. Shift+Tab reaches Restart. Shift+Tab reaches New Game. Press Enter. Hear the new-game status once. Focus stays on New Game. Tab through Restart to the first card and hear its closed position.
+From the final card, Tab leaves the board and reaches Reproduce a game. Shift+Tab returns to the remembered card. Shift+Tab reaches Restart. Shift+Tab reaches New Game. Press Enter. Focus stays on New Game, and the new deal makes no announcement. Tab through Restart to the first card and hear its closed position.
 
 Record whether names, roles, states, face identities and each single turn result were heard. Record whether moves and time could be read and whether Tab exit and New Game worked. A tree capture records accessibility data. Only this person-run check records speech.
 

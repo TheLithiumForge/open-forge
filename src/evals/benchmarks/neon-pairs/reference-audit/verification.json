@@ -1,12 +1,12 @@
 {
   "schemaVersion": 2,
-  "specVersion": 2.1,
-  "requirements": 97,
-  "clauses": 416,
+  "specVersion": 2.2,
+  "requirements": 96,
+  "clauses": 412,
   "layerTwo": {
-    "requirements": 60,
-    "clauses": 189,
-    "words": 1723
+    "requirements": 59,
+    "clauses": 185,
+    "words": 1713
   },
   "runtime": {
     "node": "26.12.1",
@@ -42,7 +42,7 @@
     },
     {
       "path": "reference/src/game/snapshot.test.ts",
-      "lines": 187
+      "lines": 177
     },
     {
       "path": "reference/tests/accessibility.e2e.test.ts",
@@ -79,10 +79,6 @@
     {
       "path": "reference/tests/product-contract.e2e.test.ts",
       "lines": 122
-    },
-    {
-      "path": "reference/tests/saved-bests.e2e.test.ts",
-      "lines": 117
     }
   ],
   "gates": {
@@ -91,15 +87,15 @@
     "productTests": {
       "status": "failed",
       "tests": 273,
-      "passed": 265,
-      "failed": 8,
+      "passed": 242,
+      "failed": 31,
       "skipped": 0,
       "exit": 1,
       "reasons": [
+        "Expected for spec 2.2: 13 tests in checks/spec-layers read requirements.json with the protected spec 2.1 version.",
+        "Expected for spec 2.2: 16 brownfield grading tests load the Layer 3 check definition, which still expects spec 2.1.",
         "Before the v2.1 review: the saved Layer 1 plan expects Codex where the current plans use Claude.",
-        "Before the v2.1 review: five document and player-pack tests read a changed player pack fingerprint.",
-        "Since the first v2.1 round: the Layer 4 case contract finds its patch context changed in the corrected reference.",
-        "Since the first v2.1 round: the snapshot-version check fixture still edits the old record and exactKeys line in snapshot.ts."
+        "Since the first v2.1 round: the Layer 4 case contract finds its patch context changed in the corrected reference."
       ]
     },
     "referenceInstall": "passed",
@@ -125,8 +121,8 @@
         "repetition": 1,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 97,
-        "passed": 97,
+        "tests": 94,
+        "passed": 94,
         "failed": 0,
         "skipped": 0,
         "exit": 0
@@ -135,8 +131,8 @@
         "repetition": 2,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 97,
-        "passed": 97,
+        "tests": 94,
+        "passed": 94,
         "failed": 0,
         "skipped": 0,
         "exit": 0
@@ -145,32 +141,32 @@
         "repetition": 3,
         "command": "npm run test:e2e",
         "builtFromCurrentSource": true,
-        "tests": 97,
-        "passed": 97,
+        "tests": 94,
+        "passed": 94,
         "failed": 0,
         "skipped": 0,
         "exit": 0
       }
     ],
     "mutations": {
-      "caught": 40,
+      "caught": 39,
       "survived": 0,
       "cleanUnitBaseline": "passed",
       "cleanBrowserBaseline": "passed",
       "exit": 0
     },
-    "buildArtifactSha256": "46907aa48acf48b9fbc60595b770413c1c8ae253b438c734978919b6147dd92d"
+    "buildArtifactSha256": "c95414120e80869e930197256056a9585974d79155c6b6cd1db178430cc93bb6"
   },
   "packs": {
-    "fullSourceHash": "0466a72761d5e1d316ad9aab131c0862c6b63def04e91753baa3f79d7445d74d",
-    "playerSourceHash": "7c03b21e8648bdec0e181dc7f33c210a7096ffaa91d1c4597302588595837862",
-    "selectionChanges": 3
+    "fullSourceHash": "cb00d6bb3237e7e42e524fa38c657bcfaec4dc144a5787aba9ef6777dd5129fc",
+    "playerSourceHash": "cb9df64f6f600796fa8a7707acd387930fc32b95740fe87557b110f5a86e7ebb",
+    "selectionChanges": 4
   },
   "validation": {
-    "requirements": 97,
-    "clauses": 416,
+    "requirements": 96,
+    "clauses": 412,
     "emptyReferenceSlots": 0,
-    "pendingCheckSlots": 15,
+    "pendingCheckSlots": 1,
     "reviewClauses": 50,
     "treeCaptures": 28,
     "screenReaderUsed": false
@@ -178,7 +174,8 @@
   "limits": [
     "Spoken output is user acceptance. No screen reader was run by the developer.",
     "Source and process review clauses need independent judgment.",
-    "Protected checks, cases, run-limit data and the final seed freeze stay with the following workers.",
+    "Protected checks, Layer 4 cases, run-limit data and the final seed freeze stay with the following workers. The checks still expect spec 2.1, and I06.10 has an empty check slot.",
+    "Chromium's native button activates a card on Shift+Enter, Shift+Space, Ctrl+Space and Alt+Space. The reference leaves these modifier combinations to the browser, and the spec README lists them as out of scope.",
     "The Layer 3 check batch has not measured real completion times yet.",
     "No Docker, WSL, model CLI or sign-in was used.",
     "Layer 4 case patches that no longer apply to the corrected reference are listed under casePatches. The cases stay unchanged for the overseer."
@@ -195,7 +192,7 @@
       "exit": 1
     },
     {
-      "command": "npm ci --cache .npm-cache",
+      "command": "npm ci --cache .npm-cache --offline",
       "folder": "reference",
       "exit": 0
     },
@@ -396,5 +393,30 @@
     "mutations": "40 caught for their declared reasons",
     "productTestsPassed": 265,
     "productTestsFailed": 8
+  },
+  "specV22": {
+    "change": "maintainer trim to spec 2.2 and the fifth reference round",
+    "record": "reference-audit/review-v2.2.md",
+    "retiredClauses": ["I02.1", "I06.5", "I06.6", "I06.7", "I06.8"],
+    "addedClauses": ["I06.10"],
+    "restatedClauses": ["C08.6", "C08.7"],
+    "retiredMutations": ["M29", "M37", "M38"],
+    "newMutations": ["M41", "M42"],
+    "changedMutations": {
+      "M28": "removes only the board scroll restore",
+      "M32": "declares the click after a wheel scroll",
+      "M33": "declares the last quarter millisecond exporting as 1ms"
+    },
+    "caseInputs": "Layer 2 and Layer 3 inputs repinned to the refrozen packs",
+    "referenceInstall": "passed offline",
+    "referenceTypecheck": "passed",
+    "vitestPassed": 132,
+    "build": "passed",
+    "browserRuns": 3,
+    "browserPassed": 94,
+    "mutations": "39 caught for their declared reasons",
+    "evalsTypecheck": "passed",
+    "productTestsPassed": 242,
+    "productTestsFailed": 31
   }
 }

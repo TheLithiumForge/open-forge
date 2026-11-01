@@ -10,7 +10,6 @@ test('finishes the literal board by keyboard without inspecting hidden faces', a
   for (const pair of EXAMPLE_PAIRS) {
     for (const index of pair) {
       await page.locator('.card').first().focus();
-      await page.keyboard.press('Control+Home');
       for (let row = 0; row < Math.floor(index / 4); row += 1)
         await page.keyboard.press('ArrowDown');
       for (let column = 0; column < index % 4; column += 1) await page.keyboard.press('ArrowRight');
@@ -59,23 +58,22 @@ test('loads the built file with the network offline and no external requests', a
   expect(requested).toEqual([GAME_URL]);
 });
 
-test('keeps navigation focus, ignores repeat and leaves the board with Tab', async ({ page }) => {
+test('keeps navigation focus at the board edges and leaves the board with Tab', async ({
+  page,
+}) => {
   await loadFixedBoard(page);
   const cards = page.locator('.card');
   await cards.first().focus();
   await page.keyboard.press('ArrowLeft');
   await expect(cards.first()).toBeFocused();
-  await page.keyboard.press('End');
+  await page.keyboard.press('ArrowUp');
+  await expect(cards.first()).toBeFocused();
+  // A 4x4 row or column takes three presses, so the fourth tests the edge.
+  for (let step = 0; step < 4; step += 1) await page.keyboard.press('ArrowRight');
   await expect(cards.nth(3)).toBeFocused();
-  await page.keyboard.press('ArrowRight');
-  await expect(cards.nth(3)).toBeFocused();
-  await page.keyboard.press('Control+End');
+  for (let step = 0; step < 4; step += 1) await page.keyboard.press('ArrowDown');
   await expect(cards.last()).toBeFocused();
-  await page.keyboard.press('Control+Home');
-  await page.keyboard.down('Enter');
-  await page.keyboard.down('Enter');
-  await page.keyboard.up('Enter');
-  await expect(page.locator('.card.revealed')).toHaveCount(1);
+  await expect(page.locator('.card.revealed')).toHaveCount(0);
   await page.keyboard.press('Tab');
   expect(await page.locator('.card:focus').count()).toBe(0);
   expect(await moves(page)).toBe(0);

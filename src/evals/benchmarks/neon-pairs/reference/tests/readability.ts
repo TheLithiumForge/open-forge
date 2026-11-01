@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test';
 
 export async function expectReadableText(page: Page): Promise<void> {
   const result = await page
-    .locator('.controls, .stats, .victory, .game-result, .load-notice, .status-row > button')
+    .locator('.controls, .stats, .victory, .game-result, .load-notice, .load-status > button')
     .evaluateAll((elements) => {
       const boxes: { left: number; right: number; top: number; bottom: number; source: number }[] =
         [];

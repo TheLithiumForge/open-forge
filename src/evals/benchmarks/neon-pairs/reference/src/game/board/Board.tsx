@@ -43,12 +43,11 @@ export function Board({ game, ref, paused, activate }: BoardProps) {
   );
 
   function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number): void {
-    const target = navigationTarget(index, game.size, event.key, event.ctrlKey);
+    const target = navigationTarget(index, game.size, event.key, event);
     if (target === null) return;
     event.preventDefault();
     const card = element.current?.querySelectorAll('button').item(target);
-    // Chromium hides the outline after a modified key like Ctrl+End, so keyboard moves ask for it.
-    card?.focus({ preventScroll: true, focusVisible: true });
+    card?.focus({ preventScroll: true });
   }
   function cardFocused(index: number, card: HTMLElement): void {
     setFocused(index);

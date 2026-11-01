@@ -11,8 +11,8 @@ import { ManifestVersion, SpecsFiles, type SpecsManifest } from "./specs.ts";
 import { selectedClauses, selectionChanges, type SelectionChange } from "./subset-selection.ts";
 import { subsetBaseline, writeSubset } from "./subset-output.ts";
 
-export const LayerTwoClauseCount = 189;
-export const LayerTwoRequirementCount = 60;
+export const LayerTwoClauseCount = 185;
+export const LayerTwoRequirementCount = 59;
 export const LayerTwoFixture = "neon-pairs-player";
 export const SubsetFiles = { requirements: "requirements.json" } as const;
 export interface SubsetManifest extends SpecsManifest {

@@ -6,13 +6,13 @@ open-forge:
 # Neon Pairs
 The Neon Pairs pack is a set of product specifications and layer plans that defines the memory game used by Open Forge Evals.
 
-Status: spec version 2 and layer plans written. The reference rebuild and later-layer execution are still needed.
+Status: spec version 2.2 and layer plans written. The reference rebuild and later-layer execution are still needed.
 
-The [Neon Pairs Spec](spec/_spec.md) holds the ten game documents an agent receives: play, controls, artwork, reproducible games, build commands and acceptance. For example, a board code lets you start a reported problem from the same cards. The [Spec Notes](spec-notes.md) keep the requirement IDs, the data maps, the measured size and the version 2 decisions.
+The [Neon Pairs Spec](spec/_spec.md) holds the ten game documents an agent receives: play, controls, artwork, reproducible games, build commands and acceptance. For example, a board code lets you start a reported problem from the same cards. The [Spec Notes](spec-notes.md) keep the requirement IDs, the data maps, the measured size and the decisions through version 2.2.
 
 ## Frozen pack
 
-Edit the game documents in the spec folder. From `src/evals`, `node materialize/cli.ts specs` strips their frontmatter and writes the frozen pack under `benchmarks/neon-pairs/specs/`, with a manifest of the source hash and each file's SHA-256. The spec has 97 requirement IDs, mapped in `benchmarks/neon-pairs/requirements.json` and `trace.json`.
+Edit the game documents in the spec folder. From `src/evals`, `node materialize/cli.ts specs` strips their frontmatter and writes the frozen pack under `benchmarks/neon-pairs/specs/`, with a manifest of the source hash and each file's SHA-256. The spec has 96 requirement IDs, mapped in `benchmarks/neon-pairs/requirements.json` and `trace.json`.
 
 ## Layer plans
 

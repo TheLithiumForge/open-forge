@@ -1,6 +1,6 @@
 {
     "schemaVersion":  1,
-    "specVersion":  2.1,
+    "specVersion":  2.2,
     "requirements":  [
                          {
                              "id":  "R01",
@@ -706,13 +706,13 @@
                                              },
                                              {
                                                  "id":  "C08.6",
-                                                 "text":  "Round exported elapsedMs down to integer milliseconds.",
+                                                 "text":  "Export elapsedMs as whole milliseconds.",
                                                  "firstLayer":  "L3",
                                                  "method":  "replay"
                                              },
                                              {
                                                  "id":  "C08.7",
-                                                 "text":  "Round pending mismatch remainingMs up to integer milliseconds, at least 1ms.",
+                                                 "text":  "Export a pending mismatch's remainingMs as whole milliseconds, at least 1ms.",
                                                  "firstLayer":  "L3",
                                                  "method":  "replay"
                                              }
@@ -960,19 +960,6 @@
                                          ]
                          },
                          {
-                             "id":  "I02",
-                             "document":  "specs/input.md",
-                             "heading":  "Activation",
-                             "clauses":  [
-                                             {
-                                                 "id":  "I02.1",
-                                                 "text":  "Ignore keyboard autorepeat for Enter and Space.",
-                                                 "firstLayer":  "L2",
-                                                 "method":  "browser"
-                                             }
-                                         ]
-                         },
-                         {
                              "id":  "I03",
                              "document":  "specs/input.md",
                              "heading":  "Activation",
@@ -1065,32 +1052,14 @@
                                                  "method":  "browser"
                                              },
                                              {
-                                                 "id":  "I06.5",
-                                                 "text":  "Home moves to the first card in the row.",
-                                                 "firstLayer":  "L2",
-                                                 "method":  "browser"
-                                             },
-                                             {
-                                                 "id":  "I06.6",
-                                                 "text":  "End moves to the last card in the row.",
-                                                 "firstLayer":  "L2",
-                                                 "method":  "browser"
-                                             },
-                                             {
-                                                 "id":  "I06.7",
-                                                 "text":  "Ctrl+Home moves to the first card on the board.",
-                                                 "firstLayer":  "L2",
-                                                 "method":  "browser"
-                                             },
-                                             {
-                                                 "id":  "I06.8",
-                                                 "text":  "Ctrl+End moves to the last card on the board.",
-                                                 "firstLayer":  "L2",
-                                                 "method":  "browser"
-                                             },
-                                             {
                                                  "id":  "I06.9",
                                                  "text":  "Movement changes focus without activating a card.",
+                                                 "firstLayer":  "L2",
+                                                 "method":  "browser"
+                                             },
+                                             {
+                                                 "id":  "I06.10",
+                                                 "text":  "Handle only ArrowLeft, ArrowRight, ArrowUp and ArrowDown without modifiers, plus Enter and Space. Leave every other key and modifier combination to the browser, without using it to move focus or activate a card.",
                                                  "firstLayer":  "L2",
                                                  "method":  "browser"
                                              }

@@ -1,13 +1,20 @@
 import assert from 'node:assert/strict';
 import { test } from 'vitest';
-import { hasExactKeys, isJsonObject, isNonnegativeSafeInteger, readJson } from './saved-format.ts';
+import {
+  hasExactKeys,
+  isJsonObject,
+  isNonnegativeSafeInteger,
+  isWithinBytes,
+  parseJson,
+} from './saved-format.ts';
 
 test('JSON limits count UTF-8 bytes before parsing', () => {
   const text = JSON.stringify('\u00e9');
   const bytes = Buffer.byteLength(text, 'utf8');
-  assert.equal(readJson(text, bytes), '\u00e9');
-  assert.equal(readJson(text, bytes - 1), null);
-  assert.equal(readJson('{', bytes), null);
+  assert.equal(isWithinBytes(text, bytes), true);
+  assert.equal(isWithinBytes(text, bytes - 1), false);
+  assert.equal(parseJson(text), '\u00e9');
+  assert.equal(parseJson('{'), undefined);
 });
 
 test('unknown input needs an object, exact own keys and nonnegative safe integers', () => {

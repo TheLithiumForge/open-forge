@@ -4,7 +4,7 @@ Version 2.1 Review is the correction record for three judge rounds on the v2.1 r
 
 For example, a 10x10 board at 900x600 with visible scrollbars no longer scrolls sideways or cuts off its last column.
 
-Status: corrected candidate. Independent judgment is pending. I17.6 still needs a person with NVDA.
+Status: superseded by spec version 2.2. [Version 2.2 Review](review-v2.2.md) records the maintainer's trim and the fifth round. I17.6 still needs a person with NVDA.
 
 ## First round
 

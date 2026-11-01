@@ -58,8 +58,7 @@ test('Resume returns focus to the remembered card with nearest alignment', async
   await page.getByLabel(ReproductionControl.snapshot, { exact: true }).fill(JSON.stringify(paused));
   await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
   await page.locator('.card').first().focus();
-  await page.keyboard.press('Control+End');
-  await page.keyboard.press('ArrowUp');
+  await moveKeyboardTo(page, FAR, SIZE);
   const card = page.locator('.card').nth(FAR);
   await expect(card).toBeFocused();
   await scrollBoardToStart(page);
@@ -75,9 +74,10 @@ test('every keyboard move after a pointer click shows the focus outline', async 
   const cards = page.locator('.card');
   await cards.nth(5).click();
   for (const [key, index] of [
-    ['Control+End', EXAMPLE_SIZE ** 2 - 1],
-    ['Control+Home', 0],
-    ['End', EXAMPLE_SIZE - 1],
+    ['ArrowRight', 6],
+    ['ArrowDown', 6 + EXAMPLE_SIZE],
+    ['ArrowLeft', 5 + EXAMPLE_SIZE],
+    ['ArrowUp', 5],
   ] as const) {
     await page.keyboard.press(key);
     await expect(cards.nth(index)).toBeFocused();

@@ -1,14 +1,11 @@
 import { expect } from '@playwright/test';
 import { test } from './browser-test.ts';
 import { EXAMPLE_CODE, EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
-import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
+import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { DEFAULT_SIZE, PREFERENCES_KEY, PREFERENCES_VERSION } from '../src/game/session/storage.ts';
-import { MISMATCH_MS } from '../src/game/game.ts';
 import { SelectionKind } from '../src/game/selection.ts';
 import { SNAPSHOT_VERSION } from '../src/game/snapshot.ts';
 import { StatusLabel } from '../src/game/status/status-labels.ts';
-import { finishBoard, loadFixedBoard, loadTimedBoard } from './game-fixture.ts';
-import { uiSnapshot } from './ui-snapshot.ts';
 import type { Page } from '@playwright/test';
 
 const PERFECT = EXAMPLE_PAIRS.length;
@@ -20,7 +17,7 @@ function shownBest(page: Page) {
     .locator('dd');
 }
 
-// Writing from the page itself fires no storage event there, as when another tab's event is late.
+// Stores a best as an earlier visit would have saved it.
 async function saveBest(page: Page, moves: number): Promise<void> {
   const saved = JSON.stringify({
     schemaVersion: PREFERENCES_VERSION,
@@ -36,43 +33,6 @@ async function saveBest(page: Page, moves: number): Promise<void> {
 function savedBest(page: Page) {
   return page.evaluate((key) => localStorage.getItem(key), PREFERENCES_KEY);
 }
-
-test("an idle tab shows another tab's best and keeps it through deals and sizes", async ({
-  page,
-  context,
-  gameURL,
-}) => {
-  const idle = await context.newPage();
-  await idle.goto(gameURL);
-  await loadFixedBoard(page, gameURL);
-  await finishBoard(page);
-  const best = shownBest(idle);
-  await expect(best, "R10 an idle tab shows another tab's best").toHaveText(String(PERFECT));
-  await idle.getByRole('button', { name: DealControl.newGame, exact: true }).click();
-  await expect(best).toHaveText(String(PERFECT));
-  await idle.getByRole('button', { name: DealControl.restart, exact: true }).click();
-  await expect(best).toHaveText(String(PERFECT));
-  await idle.getByLabel(DealControl.size, { exact: true }).selectOption('6');
-  await expect(best).toHaveText((await uiSnapshot()).bestNone);
-  await idle.getByLabel(DealControl.size, { exact: true }).selectOption(String(DEFAULT_SIZE));
-  await expect(best).toHaveText(String(PERFECT));
-  await idle.close();
-});
-
-test('a win shows the saved best when another tab saved a better one first', async ({
-  page,
-  gameURL,
-}) => {
-  await loadTimedBoard(page, gameURL);
-  await saveBest(page, PERFECT);
-  await page.locator('.card').nth(0).click();
-  await page.locator('.card').nth(1).click();
-  await page.clock.runFor(MISMATCH_MS);
-  await finishBoard(page);
-  await expect(shownBest(page), 'R10 the shown best matches the saved best').toHaveText(
-    String(PERFECT),
-  );
-});
 
 for (const [saved, imported] of [
   [PERFECT, PERFECT + 2],

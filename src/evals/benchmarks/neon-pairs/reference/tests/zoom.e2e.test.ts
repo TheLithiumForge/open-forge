@@ -3,6 +3,7 @@ import { test } from './browser-test.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { loadFixedBoard, finishBoard, exportedSnapshot } from './game-fixture.ts';
 import { expectFocusInside } from './focus-bounds.ts';
+import { moveKeyboardTo } from './accessibility-tree.ts';
 import { expectReadableText } from './readability.ts';
 
 test(
@@ -60,9 +61,8 @@ test(
     await expect(page.locator('.card')).toHaveCount(256);
     await page.locator('.card').first().click();
     await page.locator('.card').first().focus();
-    await page.keyboard.press('Control+Home');
     await expectFocusInside(page.locator('.card').first());
-    await page.keyboard.press('Control+End');
+    await moveKeyboardTo(page, 16 ** 2 - 1, 16);
     await expect(page.locator('.card').last()).toBeFocused();
     await expectFocusInside(page.locator('.card').last());
     await page.keyboard.press('Enter');

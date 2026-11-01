@@ -59,9 +59,16 @@ export function accessibilityNode(
   return node;
 }
 
+// Arrow keys reach a card from the focused one, one row or column per press.
 export async function moveKeyboardTo(page: Page, index: number, size: number): Promise<void> {
-  await page.keyboard.press('Control+Home');
-  for (let row = 0; row < Math.floor(index / size); row += 1)
-    await page.keyboard.press('ArrowDown');
-  for (let column = 0; column < index % size; column += 1) await page.keyboard.press('ArrowRight');
+  const from = await page
+    .locator('.card')
+    .evaluateAll((cards) => cards.findIndex((card) => card === document.activeElement));
+  if (from < 0) throw new Error('Focus a card before moving by keyboard.');
+  const rows = Math.floor(index / size) - Math.floor(from / size);
+  const columns = (index % size) - (from % size);
+  for (let step = 0; step < Math.abs(rows); step += 1)
+    await page.keyboard.press(rows < 0 ? 'ArrowUp' : 'ArrowDown');
+  for (let step = 0; step < Math.abs(columns); step += 1)
+    await page.keyboard.press(columns < 0 ? 'ArrowLeft' : 'ArrowRight');
 }

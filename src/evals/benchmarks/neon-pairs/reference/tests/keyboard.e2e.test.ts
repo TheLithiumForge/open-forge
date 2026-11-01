@@ -26,18 +26,18 @@ test('native Tab remembers board focus and matched cards stay focusable and inac
   expect(await page.locator('.card:focus').count()).toBe(0);
 });
 
-for (const key of ['Enter', 'Space']) {
-  test(`holding ${key} across focus movement ignores autorepeat on the next card`, async ({
-    page,
-  }) => {
-    await loadTimedBoard(page);
-    await page.locator('.card').first().focus();
-    if (key === 'Space') await page.keyboard.press(key);
-    await page.keyboard.down(key);
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.down(key);
-    await page.keyboard.up(key);
-    await expect(page.locator('.card.revealed')).toHaveCount(1);
-    expect(await moves(page)).toBe(0);
-  });
-}
+test('Alt+ArrowLeft and Ctrl+End stay with the browser and leave the board alone', async ({
+  page,
+}) => {
+  await loadTimedBoard(page);
+  const card = page.locator('.card').nth(5);
+  await card.focus();
+  const url = page.url();
+  for (const key of ['Alt+ArrowLeft', 'Control+End']) {
+    await page.keyboard.press(key);
+    await expect(card, `I06 ${key} keeps focus`).toBeFocused();
+    await expect(page.locator('.card.revealed'), `I06 ${key} reveals no card`).toHaveCount(0);
+  }
+  expect(await moves(page)).toBe(0);
+  expect(page.url()).toBe(url);
+});

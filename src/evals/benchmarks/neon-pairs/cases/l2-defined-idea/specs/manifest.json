@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "fixture": "neon-pairs-player",
-  "specVersion": 2.1,
+  "specVersion": 2.2,
   "clauseIds": [
     "R01.1",
     "R01.2",
@@ -58,7 +58,6 @@
     "R12.2",
     "I01.1",
     "I01.2",
-    "I02.1",
     "I03.1",
     "I03.2",
     "I04.1",
@@ -70,11 +69,8 @@
     "I06.2",
     "I06.3",
     "I06.4",
-    "I06.5",
-    "I06.6",
-    "I06.7",
-    "I06.8",
     "I06.9",
+    "I06.10",
     "I07.1",
     "I08.1",
     "I08.2",
@@ -193,55 +189,55 @@
     "T10.3",
     "T10.4"
   ],
-  "sourceHash": "6d9e56d54c2d9fce5d38804fb1bf8b66e73ddd05c3465cc05c9a5cbb5ffe01b1",
+  "sourceHash": "cb9df64f6f600796fa8a7707acd387930fc32b95740fe87557b110f5a86e7ebb",
   "sourceFiles": [
     {
       "path": "README.md",
-      "sha256": "12c9ff28ede5eeccc7b3c411087b9b8d070093c5d2b2d7c7770054496022d303"
+      "sha256": "cb84bc20c7da12aa84a0d002f8b6b9aa44d9384ae2dbb12e551aa21de960bb5a"
     },
     {
       "path": "_spec.md",
-      "sha256": "0ce8201b3fd6afedf8623cc2f02074090a0a36009d3863784d7aa4543b9aba13"
+      "sha256": "80198e39bd8cbd4b3a97406ea4bee7d1cea39ed5e21f1960ca52fe45134048fb"
     },
     {
       "path": "acceptance.md",
-      "sha256": "0e41aa8275274fa4c057bedb003b3465f4b6259b3bc370d938da93cb65a5f3ce"
+      "sha256": "ffde561037f33d9079988ce7facad262d1adc762e0575e608c12ee951ba9c859"
     },
     {
       "path": "architecture.md",
-      "sha256": "fce5004eccde7f8faa24c93a1372bdbe2df00c531b7b5ffcce819c6a587047d6"
+      "sha256": "06bfd6a37caa570360365c0310b4cbeb29c2c35486cb27d8ae40c25b21979bb0"
     },
     {
       "path": "controls.md",
-      "sha256": "752c7f77a55bd4f5ec57d4963756dd5547e0727be3faa057a96c4dfb743ee290"
+      "sha256": "2e95d11a5e43c6b73db5555515205f8208e9c399c337c55f534b402888040079"
     },
     {
       "path": "input.md",
-      "sha256": "fb673c80b985e1b9f8b337225f0f633f4528429c05ea64fcf7bba7623a4390df"
+      "sha256": "a6cd4420fc12c3954c8da46625a018974e29a1454d75b324e7bee9e371245215"
     },
     {
       "path": "reproducibility.md",
-      "sha256": "beaecb042a9be55cd4e7fba38f6d263208f58736c36ffd445ea49d294de691a2"
+      "sha256": "b09f608df5b095be0b6a07643c3829c80c216648d96efa6cc225a2f02169ba0b"
     },
     {
       "path": "rules.md",
-      "sha256": "76f3e1aa9288ffaa039822d247bf58101a54f8f286d7ae5649121ef4b1e0ebef"
+      "sha256": "3a69482926e89ba0739e1242ec076d0b055a3a63ef6c2a6e1833e7ec6ecd1468"
     },
     {
       "path": "sound.md",
-      "sha256": "d73c9aa8c2ba72e6b693a97045141d194a9629cd7e878630c29772334b76426d"
+      "sha256": "f2e45b5233c5d449d0c73db583a0a3660d85e689dddeab50b3f46606ef8746d1"
     },
     {
       "path": "technology.md",
-      "sha256": "d68bffeebb5214c6cfeca40b59c13b2aa9dfcee83466feb415e917cd77da8b0d"
+      "sha256": "beb2cf63f623ae286e617485c7bd9d42909cc896fc6e6db3a559b3772e65b640"
     },
     {
       "path": "visuals.md",
-      "sha256": "94ba278d591ed8be8ba1f721c694e14b7416a886ff22b79622efcd1c81713173"
+      "sha256": "5c1b1224d6eeb38203dea7d587f87e6df649b1f00a9abb24adbf823273e423c7"
     },
     {
       "path": "requirements.json",
-      "sha256": "2488fae0ba781dfe987f02b7a4e0dbb1c50c89661cc6f296825aa8ed2a3078f2"
+      "sha256": "75467972f77261a9d1223d1746d6abc9b1f78d4b6aa0a2ff5bd8da9dacb98cee"
     }
   ],
   "selectionChanges": [
@@ -342,13 +338,37 @@
         "I16.8",
         "V06.2"
       ]
+    },
+    {
+      "from": {
+        "sha256": "6d3eaf8a58050ea022e8ec5daddbb48b38c6bc6c53a4d02a0c82a883fc5905b6",
+        "count": 189,
+        "sourceHash": "6d9e56d54c2d9fce5d38804fb1bf8b66e73ddd05c3465cc05c9a5cbb5ffe01b1"
+      },
+      "to": {
+        "sha256": "3f842f9b8e2fcf2f976f125266616c6a90489bb3fe1bf9dbdc52f4299a0de0db",
+        "count": 185,
+        "sourceHash": "cb9df64f6f600796fa8a7707acd387930fc32b95740fe87557b110f5a86e7ebb"
+      },
+      "reason": "Spec 2.2 maintainer trim: retire I02.1 and I06.5 to I06.8, add I06.10 for keys left to the browser.",
+      "added": [
+        "I06.10"
+      ],
+      "removed": [
+        "I02.1",
+        "I06.5",
+        "I06.6",
+        "I06.7",
+        "I06.8"
+      ],
+      "updated": []
     }
   ],
   "files": [
     {
       "path": "README.md",
       "sha256": "6a942871656a92fe4f66993ed6a6c070eac86af88f54c34e828ba3f663c9acb8",
-      "sourceSha256": "12c9ff28ede5eeccc7b3c411087b9b8d070093c5d2b2d7c7770054496022d303",
+      "sourceSha256": "cb84bc20c7da12aa84a0d002f8b6b9aa44d9384ae2dbb12e551aa21de960bb5a",
       "metadata": {
         "description": "Neon Pairs requirements for Neon Pairs",
         "tags": [
@@ -361,7 +381,7 @@
     {
       "path": "rules.md",
       "sha256": "409a98acf2b3b7759c7a7d293ad47b6ae070b8b2f8ebf9bbe50b2216ca01963a",
-      "sourceSha256": "76f3e1aa9288ffaa039822d247bf58101a54f8f286d7ae5649121ef4b1e0ebef",
+      "sourceSha256": "3a69482926e89ba0739e1242ec076d0b055a3a63ef6c2a6e1833e7ec6ecd1468",
       "metadata": {
         "description": "Rules requirements for Neon Pairs",
         "tags": [
@@ -373,8 +393,8 @@
     },
     {
       "path": "input.md",
-      "sha256": "d218fce15b723688bc1e9382ce4b4b766910ee75e141b033f9b62b42388a6f4a",
-      "sourceSha256": "fb673c80b985e1b9f8b337225f0f633f4528429c05ea64fcf7bba7623a4390df",
+      "sha256": "96f796cbef79ce4c827744778f474a368617b2b8e9dc269976a0336c61b468f7",
+      "sourceSha256": "a6cd4420fc12c3954c8da46625a018974e29a1454d75b324e7bee9e371245215",
       "metadata": {
         "description": "Input requirements for Neon Pairs",
         "tags": [
@@ -387,7 +407,7 @@
     {
       "path": "controls.md",
       "sha256": "4b3bba20dd7778ced4443915dc77390e6d17083d40bb9ab96d32480db00b5544",
-      "sourceSha256": "752c7f77a55bd4f5ec57d4963756dd5547e0727be3faa057a96c4dfb743ee290",
+      "sourceSha256": "2e95d11a5e43c6b73db5555515205f8208e9c399c337c55f534b402888040079",
       "metadata": {
         "description": "Controls requirements for Neon Pairs",
         "tags": [
@@ -400,7 +420,7 @@
     {
       "path": "visuals.md",
       "sha256": "3f0b1244f8032c4cdefb55acb56dfe8bf5ade20223174377942a42af04300376",
-      "sourceSha256": "94ba278d591ed8be8ba1f721c694e14b7416a886ff22b79622efcd1c81713173",
+      "sourceSha256": "5c1b1224d6eeb38203dea7d587f87e6df649b1f00a9abb24adbf823273e423c7",
       "metadata": {
         "description": "Visuals requirements for Neon Pairs",
         "tags": [
@@ -413,7 +433,7 @@
     {
       "path": "sound.md",
       "sha256": "87385a8c60a986e63d3ab1d686a0d96c6ede22987cb6d73d21c14f594f94cc75",
-      "sourceSha256": "d73c9aa8c2ba72e6b693a97045141d194a9629cd7e878630c29772334b76426d",
+      "sourceSha256": "f2e45b5233c5d449d0c73db583a0a3660d85e689dddeab50b3f46606ef8746d1",
       "metadata": {
         "description": "Sound requirements for Neon Pairs",
         "tags": [
@@ -426,7 +446,7 @@
     {
       "path": "technology.md",
       "sha256": "b72c1948e7a6222e497f1878617d4a2043ab796ca2f6a8c72fd51e47fe7b6af7",
-      "sourceSha256": "d68bffeebb5214c6cfeca40b59c13b2aa9dfcee83466feb415e917cd77da8b0d",
+      "sourceSha256": "beb2cf63f623ae286e617485c7bd9d42909cc896fc6e6db3a559b3772e65b640",
       "metadata": {
         "description": "Technology requirements for Neon Pairs",
         "tags": [

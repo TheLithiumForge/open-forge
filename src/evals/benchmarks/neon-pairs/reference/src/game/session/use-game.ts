@@ -33,7 +33,7 @@ export function useGame() {
   }
 
   const clock = useSessionClock(session, current, commit);
-  useSavedPreferences(store, session, current, commit);
+  useSavedPreferences(store, session.preferences);
 
   function newGame(size = current.current.game.size): void {
     if (!isValidSize(size)) return;

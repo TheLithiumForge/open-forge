@@ -1,45 +1,45 @@
 {
-    "sourceHash":  "0466a72761d5e1d316ad9aab131c0862c6b63def04e91753baa3f79d7445d74d",
+    "sourceHash":  "cb00d6bb3237e7e42e524fa38c657bcfaec4dc144a5787aba9ef6777dd5129fc",
     "files":  [
                   {
                       "path":  "README.md",
-                      "sha256":  "65df46797fb1034b7e52e803ec2ba327e38ee00de9ffc95b4776a4079903e897"
+                      "sha256":  "e12e7db449c3adacfcb429225a6e515855582c652d0e33cd87dafd1c4f785ed7"
                   },
                   {
                       "path":  "acceptance.md",
-                      "sha256":  "eb3eaf50c186b24a82b1803400252897dcdad7ab407557553dea76a727fa34d2"
+                      "sha256":  "b10c9502e036d3c76cbba8d47d65ff6facb282d91f9d6f7c794c1cac54cce5bd"
                   },
                   {
                       "path":  "architecture.md",
-                      "sha256":  "8b54f83967a857f1907ee7173d97796e64bc44ea81fe7b445094a9bb022171aa"
+                      "sha256":  "8707282e3b30a5e5a771cfa8651a481e683d8d0f9bc48e68be8de37d89a34f52"
                   },
                   {
                       "path":  "controls.md",
-                      "sha256":  "f53df8bfd07b51738937baf0bf70b88e6944185fd530813c5519b336b59bb6ea"
+                      "sha256":  "a199800ba9c73479eb83af0f39c40815b92a8b81b9819ff212365b3e06fd7442"
                   },
                   {
                       "path":  "input.md",
-                      "sha256":  "91185fbe8af93dbf8ca3c652711563d7fdf73027cb59af350d9ca8dea7ec0b4f"
+                      "sha256":  "561521000c174f0d3dba669739599b816a2df5edf325c56597195b3f0ebcdc53"
                   },
                   {
                       "path":  "reproducibility.md",
-                      "sha256":  "ca18a4ddc8b809ee29178be205984998317f7cf42ad3615d6e019bcc3b14a3d4"
+                      "sha256":  "00610b3365bbccefd942a3b53f961f6062251d6ec080c1dbeef4ee075effbb8d"
                   },
                   {
                       "path":  "rules.md",
-                      "sha256":  "285e9dcfe7397f206ecda3c3f42ef0f11b592dd9b206ff6fc6dcb0de7095e1a7"
+                      "sha256":  "5bc52beb2a0af82dde856db4a8092e499c75f0e395db553f814ec6df0f5f5cb2"
                   },
                   {
                       "path":  "sound.md",
-                      "sha256":  "ddf7c9f2a23789ca5fbba974cc4fa32f9c2e8498884f4fefa29a9712f0e4b9e9"
+                      "sha256":  "ac13cd631905b38c47279868c12826bd57babdcde0a73974fa4bd071ff29b05d"
                   },
                   {
                       "path":  "technology.md",
-                      "sha256":  "a078681f7414c2c98f6953a3cef93db9b63c547acf0ab84a13092b5f1bf5e83e"
+                      "sha256":  "8af9ea621c07687b75543a282c119f4d66f9b5df82a2d5621f9cfdef3076605e"
                   },
                   {
                       "path":  "visuals.md",
-                      "sha256":  "e215a20482b13b0945b812a2d61bddd4558b118a388d323d4a0c5ea2bca5acb7"
+                      "sha256":  "3686d12b2ee43f357e05d1e4777d5f3f0a3b4e407b2a276eb828196a5fe59642"
                   }
               ]
 }

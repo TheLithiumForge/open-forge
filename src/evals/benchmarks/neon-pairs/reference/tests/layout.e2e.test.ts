@@ -3,6 +3,7 @@ import { test } from './browser-test.ts';
 import { DealControl } from '../src/game/controls/control-labels.ts';
 import { loadFixedBoard, PHONE } from './game-fixture.ts';
 import { expectFocusInside } from './focus-bounds.ts';
+import { moveKeyboardTo } from './accessibility-tree.ts';
 
 for (const viewport of [PHONE, { width: 1280, height: 800 }, { width: 1280, height: 1400 }]) {
   test(`16x16 fits the page and keeps both end focus outlines at ${viewport.width}x${viewport.height}`, async ({
@@ -28,9 +29,8 @@ for (const viewport of [PHONE, { width: 1280, height: 800 }, { width: 1280, heig
     expect(card?.width).toBeGreaterThanOrEqual(44);
     expect(card?.height).toBe(card?.width);
     await page.locator('.card').first().focus();
-    await page.keyboard.press('Control+Home');
     await expectFocusInside(page.locator('.card').first());
-    await page.keyboard.press('Control+End');
+    await moveKeyboardTo(page, 16 ** 2 - 1, 16);
     await expect(page.locator('.card').last()).toBeFocused();
     await expectFocusInside(page.locator('.card').last());
   });

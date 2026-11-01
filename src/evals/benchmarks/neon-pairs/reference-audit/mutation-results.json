@@ -359,7 +359,7 @@
       "reason": "I07 left movement stops at row edge",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "AssertionError [ERR_ASSERTION]: I07 left movement stops at row edge\n\n3 !== 4\n\n    at reference/src/game/board/keyboard.test.ts:15:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "assertion": "AssertionError [ERR_ASSERTION]: I07 left movement stops at row edge\n\n3 !== 4\n\n    at reference/src/game/board/keyboard.test.ts:17:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
       "otherFailures": []
     },
     {
@@ -389,7 +389,7 @@
       "reason": "I14 hidden cards mount no face",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "I14 hidden cards mount no face\n\nexpect(locator).toHaveCount(expected) failed\n\nLocator:  locator('.card.closed svg')\nExpected: 0\nReceived: 16\nTimeout:  5000ms\n\nCall log:\n  - I14 hidden cards mount no face locator('.card.closed svg') with timeout 5000ms\n  - waiting for locator('.card.closed svg')\n    14 × locator resolved to 16 elements\n       - unexpected value \"16\"\n",
+      "assertion": "I14 hidden cards mount no face\n\nexpect(locator).toHaveCount(expected) failed\n\nLocator:  locator('.card.closed svg')\nExpected: 0\nReceived: 16\nTimeout:  5000ms\n\nCall log:\n  - I14 hidden cards mount no face locator('.card.closed svg') with timeout 5000ms\n  - waiting for locator('.card.closed svg')\n    13 × locator resolved to 16 elements\n       - unexpected value \"16\"\n",
       "otherFailures": []
     },
     {
@@ -512,21 +512,6 @@
       "otherFailures": []
     },
     {
-      "id": "M29",
-      "clauses": [
-        "V16.1",
-        "I06.7",
-        "I06.8"
-      ],
-      "test": "tests/focus-entry.e2e.test.ts",
-      "testName": "every keyboard move after a pointer click shows the focus outline",
-      "reason": "V16 outline after Control+End",
-      "outcome": "caught",
-      "exit": 1,
-      "assertion": "V16 outline after Control+End\n\nexpect(locator).toHaveCSS(expected) failed\n\nLocator:  locator('.card').nth(15)\nExpected: \"solid\"\nReceived: \"none\"\nTimeout:  5000ms\n\nCall log:\n  - V16 outline after Control+End locator('.card').nth(15) with timeout 5000ms\n  - waiting for locator('.card').nth(15)\n    14 × locator resolved to <button tabindex=\"0\" type=\"button\" class=\"card closed\" aria-disabled=\"false\" aria-label=\"Row 4, column 4, closed\">…</button>\n       - unexpected value \"none\"\n",
-      "otherFailures": []
-    },
-    {
       "id": "M30",
       "clauses": [
         "I01.2"
@@ -562,10 +547,10 @@
       ],
       "test": "tests/pointer-focus.e2e.test.ts",
       "testName": "pointer clicks reveal the pressed card on 16x16 at 360x800",
-      "reason": "I01 click after scrolling into view",
+      "reason": "I01 click after a wheel scroll",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "I01 click after scrolling into view\n\nexpect(locator).toHaveClass(expected) failed\n\nLocator: locator('.card').nth(255)\nExpected pattern: /revealed/\nReceived string:  \"card closed\"\nTimeout: 5000ms\n\nCall log:\n  - I01 click after scrolling into view locator('.card').nth(255) with timeout 5000ms\n  - waiting for locator('.card').nth(255)\n    14 × locator resolved to <button tabindex=\"0\" type=\"button\" class=\"card closed\" aria-disabled=\"false\" aria-label=\"Row 16, column 16, closed\">…</button>\n       - unexpected value \"card closed\"\n",
+      "assertion": "I01 click after a wheel scroll\n\nexpect(locator).toHaveClass(expected) failed\n\nLocator: locator('.card').nth(240)\nExpected pattern: /revealed/\nReceived string:  \"card closed\"\nTimeout: 5000ms\n\nCall log:\n  - I01 click after a wheel scroll locator('.card').nth(240) with timeout 5000ms\n  - waiting for locator('.card').nth(240)\n    14 × locator resolved to <button tabindex=\"0\" type=\"button\" class=\"card closed\" aria-disabled=\"false\" aria-label=\"Row 16, column 1, closed\">…</button>\n       - unexpected value \"card closed\"\n",
       "otherFailures": []
     },
     {
@@ -576,10 +561,10 @@
       ],
       "test": "tests/fractional-clock.e2e.test.ts",
       "testName": "a mismatch starts its interval at its own activation between milliseconds",
-      "reason": "C08 remaining time rounds up from the mismatch start",
+      "reason": "C08 the last quarter millisecond exports as 1ms",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "C08 remaining time rounds up from the mismatch start\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n    \"first\": 0,\n    \"kind\": \"mismatch\",\n-   \"remainingMs\": 800,\n+   \"remainingMs\": 799,\n    \"second\": 1,\n  }",
+      "assertion": "C08 the last quarter millisecond exports as 1ms\n\nexpect(received).toMatchObject(expected)\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n    \"kind\": \"mismatch\",\n-   \"remainingMs\": 1,\n+   \"remainingMs\": 0,\n  }",
       "otherFailures": []
     },
     {
@@ -625,33 +610,6 @@
       "otherFailures": []
     },
     {
-      "id": "M37",
-      "clauses": [
-        "R10.6"
-      ],
-      "test": "tests/saved-bests.e2e.test.ts",
-      "testName": "a win shows the saved best when another tab saved a better one first",
-      "reason": "R10 the shown best matches the saved best",
-      "outcome": "caught",
-      "exit": 1,
-      "assertion": "R10 the shown best matches the saved best\n\nexpect(locator).toHaveText(expected) failed\n\nLocator:  locator('.stats > div').filter({ has: getByText('Best:', { exact: true }) }).locator('dd')\nExpected: \"8\"\nReceived: \"9\"\nTimeout:  5000ms\n\nCall log:\n  - R10 the shown best matches the saved best locator('.stats > div').filter({ has: getByText('Best:', { exact: true }) }).locator('dd') with timeout 5000ms\n  - waiting for locator('.stats > div').filter({ has: getByText('Best:', { exact: true }) }).locator('dd')\n    14 × locator resolved to <dd>9</dd>\n       - unexpected value \"9\"\n",
-      "otherFailures": []
-    },
-    {
-      "id": "M38",
-      "clauses": [
-        "C08.6",
-        "C08.7"
-      ],
-      "test": "tests/fractional-clock.e2e.test.ts",
-      "testName": "a mismatch starts its interval at its own activation between milliseconds",
-      "reason": "C08 remaining time rounds up from the mismatch start",
-      "outcome": "caught",
-      "exit": 1,
-      "assertion": "C08 remaining time rounds up from the mismatch start\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n    \"first\": 0,\n    \"kind\": \"mismatch\",\n-   \"remainingMs\": 800,\n+   \"remainingMs\": 799,\n    \"second\": 1,\n  }",
-      "otherFailures": []
-    },
-    {
       "id": "M39",
       "clauses": [
         "C12.3",
@@ -675,7 +633,34 @@
       "reason": "C12 import leaves the shown best alone",
       "outcome": "caught",
       "exit": 1,
-      "assertion": "C12 import leaves the shown best alone\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 4\n\n- Array []\n+ Array [\n+   \"none\",\n+   \"8\",\n+ ]",
+      "assertion": "C12 import leaves the shown best alone\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"none\",\n+ ]",
+      "otherFailures": []
+    },
+    {
+      "id": "M41",
+      "clauses": [
+        "I06.10"
+      ],
+      "test": "src/game/board/keyboard.test.ts",
+      "testName": "only plain arrow keys move focus, leaving other keys and modifiers to the browser",
+      "reason": "I06 unlisted key",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "AssertionError [ERR_ASSERTION]: I06 unlisted key\n\n4 !== null\n\n    at reference/src/game/board/keyboard.test.ts:36:12\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1632:35\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:26\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3338:20\n    at new Promise (<anonymous>)\n    at runWithCancel (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3333:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3318:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3276:10)\n    at reference/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3904:64",
+      "otherFailures": []
+    },
+    {
+      "id": "M42",
+      "clauses": [
+        "C11.2",
+        "C13.2"
+      ],
+      "test": "tests/status-controls.e2e.test.ts",
+      "testName": "Enter moves focus to Load board only when the code loads",
+      "reason": "C11 an invalid code keeps focus in its draft",
+      "outcome": "caught",
+      "exit": 1,
+      "assertion": "C11 an invalid code keeps focus in its draft\n\nexpect(locator).toBeFocused() failed\n\nLocator:  getByLabel('Board code', { exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  5000ms\n\nCall log:\n  - C11 an invalid code keeps focus in its draft getByLabel('Board code', { exact: true }) with timeout 5000ms\n  - waiting for getByLabel('Board code', { exact: true })\n    14 × locator resolved to <input maxlength=\"32\" id=\"board-code\" class=\"control\" value=\"np1-6-1\" name=\"boardCode\" spellcheck=\"false\" autocomplete=\"off\"/>\n       - unexpected value \"inactive\"\n",
       "otherFailures": []
     }
   ]

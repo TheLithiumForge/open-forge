@@ -5,7 +5,6 @@ import {
   SNAPSHOT_MAX_CHARACTERS,
 } from './control-labels.ts';
 import type { GameState } from '../game.ts';
-import '../status-row.css';
 import './control.css';
 import './reproduction.css';
 
@@ -41,8 +40,9 @@ export function Reproduction({
             onSubmit={(event) => {
               event.preventDefault();
               const code = new FormData(event.currentTarget).get('boardCode');
-              loadButton.current?.focus();
-              if (typeof code === 'string') loadBoard(code);
+              // A loaded deal replaces the input, so focus moves to Load board. An invalid code
+              // keeps focus in the draft for correction.
+              if (typeof code === 'string' && loadBoard(code)) loadButton.current?.focus();
             }}
           >
             <label htmlFor="board-code">{ReproductionControl.board}</label>
@@ -92,7 +92,7 @@ export function Reproduction({
           </div>
         </div>
       </details>
-      <div className="status-row">
+      <div className="load-status">
         <p id="load-notice" className="load-notice">
           {notice}
         </p>

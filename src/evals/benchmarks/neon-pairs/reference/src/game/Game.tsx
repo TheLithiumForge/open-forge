@@ -6,7 +6,6 @@ import { GameStatus } from './status/GameStatus.tsx';
 import type { BoardFocus } from './board/Board.tsx';
 import { useGame } from './session/use-game.ts';
 import './game.css';
-import './status-row.css';
 
 export function Game() {
   const controller = useGame();
@@ -34,7 +33,7 @@ export function Game() {
         Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space
         reveals a card.
       </p>
-      <div className="status-row game-result">
+      <div className="game-result">
         <p role="status" aria-live="polite" aria-atomic="true">
           <span key={session.announcement}>{session.feedback}</span>
         </p>

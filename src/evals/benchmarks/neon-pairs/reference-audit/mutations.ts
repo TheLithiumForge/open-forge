@@ -13,7 +13,6 @@ const VITEST = join(ROOT, "node_modules/vitest/vitest.mjs");
 // Browser failures reach the harness through a reporter, so the game's tests need no audit hook.
 const FAILURE_REPORTER = pathToFileURL(join(AUDIT, "failure-reporter.ts")).href;
 const INPUTS = [
-  ".npmrc",
   "src",
   "tests",
   "scripts",
@@ -94,7 +93,7 @@ export async function mutationCheck(): Promise<void> {
   const input: unknown = JSON.parse(await readFile(new URL("./mutations.fixture.json", import.meta.url), "utf8"));
   assert.ok(Array.isArray(input));
   const mutations = input.map(mutation);
-  assert.equal(mutations.length, 40);
+  assert.equal(mutations.length, 39);
   await mkdir(WORK, { recursive: true });
   assert.equal(run(ROOT, [VITEST, "run"]).status, 0, "Clean unit baseline");
   const browserFiles = [...new Set(mutations.filter((m) => m.browser).map((m) => m.test))];

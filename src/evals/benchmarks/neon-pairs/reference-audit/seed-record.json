@@ -1,16 +1,16 @@
 {
   "schemaVersion": 2,
   "status": "candidate",
-  "specVersion": 2.1,
-  "specSourceHash": "0466a72761d5e1d316ad9aab131c0862c6b63def04e91753baa3f79d7445d74d",
+  "specVersion": 2.2,
+  "specSourceHash": "cb00d6bb3237e7e42e524fa38c657bcfaec4dc144a5787aba9ef6777dd5129fc",
   "formatter": "prettier@3.9.6",
-  "traceEntries": 416,
+  "traceEntries": 412,
   "freezeApproved": false,
-  "buildArtifactSha256": "46907aa48acf48b9fbc60595b770413c1c8ae253b438c734978919b6147dd92d",
+  "buildArtifactSha256": "c95414120e80869e930197256056a9585974d79155c6b6cd1db178430cc93bb6",
   "files": [
     {
       "path": "cases/l2-defined-idea/specs/manifest.json",
-      "sha256": "05cde0d3cfe4d91cdbffd5c5c4338517d1b99744b3e99d91a425d2a3dac2ef9c"
+      "sha256": "71aabecd398c4d72a654c83ca131d70e0a1c57b144a22d562f9eb2c709b637e8"
     },
     {
       "path": "reference-audit/.gitignore",
@@ -18,11 +18,11 @@
     },
     {
       "path": "reference-audit/AUDIT.md",
-      "sha256": "f2f8de4707a0b089be34574d9e4c56c136f7dd4b8f15850057de6c49caea9c8f"
+      "sha256": "b619ac6c850a4aeba0d4db6e33bf08dbc2914878435057505e4f4f886360e30a"
     },
     {
       "path": "reference-audit/evidence/accessibility-journey.json",
-      "sha256": "4a7771a28999abeb9303fdae83efc93c14cab2afac1ae31ef13935d486f79132"
+      "sha256": "62d27a69bd3118dbb8460735a3b9947c6eb49032e057192cfdb3e994650dfd7c"
     },
     {
       "path": "reference-audit/face-sheet-grayscale.png",
@@ -46,15 +46,15 @@
     },
     {
       "path": "reference-audit/mutation-results.json",
-      "sha256": "98acf550d37734ee0aec71618765e40c84c4f7e29bac9d6e2fcbacd4cecb9c7a"
+      "sha256": "41584b5645d78a260a2bf5243b3f16dbed5f268a606b77f65579d1e9fb4332d2"
     },
     {
       "path": "reference-audit/mutations.fixture.json",
-      "sha256": "10eac46b1d5d4992d13f58cf36fba312c5fac5061f0edfc5755e2df5561eb15d"
+      "sha256": "bb9313454adc2e544cbaa6af5bd5fd1c8dffe6380624140f65bfd149356bca36"
     },
     {
       "path": "reference-audit/mutations.ts",
-      "sha256": "b76f1c2af80114e1c6f5ef1fd49e1a70d2d6ca149b4fe0ba2c6c9c5ceffaabc9"
+      "sha256": "ba3ac5af2ee211e828bb7b9ca71700d678a57af22c9926f7e4d346d9f4299cac"
     },
     {
       "path": "reference-audit/review-round-1.md",
@@ -70,11 +70,15 @@
     },
     {
       "path": "reference-audit/review-v2.1.md",
-      "sha256": "34daa7b798f944d4ce5086d30e52a6801b2112a11f12be0fa36781ec45e431f2"
+      "sha256": "2fa48b02238707d1f6db805f44913ceb79e0e7237244ad49c41bbd409b9fe007"
+    },
+    {
+      "path": "reference-audit/review-v2.2.md",
+      "sha256": "328b30922dfcadd9b109738636e990ccf853b9fe7b0ebc2b27ca868e1768af82"
     },
     {
       "path": "reference-audit/revision-files.json",
-      "sha256": "d7db2a1d47161434c0cdc616363c9ad6a0571865b50cebe10f8ed0015316b7b1"
+      "sha256": "b7c9a23943c8ca2f754d5a57bcd3c5803da6f33fb51856cd1124c986bd7921d4"
     },
     {
       "path": "reference-audit/revision-v2.1.md",
@@ -82,7 +86,7 @@
     },
     {
       "path": "reference-audit/screen-reader-journey.md",
-      "sha256": "1c11fd16983b7312627fa7479c10d59155d3a766aac013845b76cab28861fba0"
+      "sha256": "c9951d4c09774589e84e38d0bdc43e439ab925bf49204193c28e219b90dac8f3"
     },
     {
       "path": "reference-audit/tsconfig.json",
@@ -90,15 +94,11 @@
     },
     {
       "path": "reference-audit/verification.json",
-      "sha256": "ca4bc4274a192e979307fcebb168f70f5b187642953fbca64abfe6dcc8fdb3c4"
+      "sha256": "c5e07f3dc38d699b3b951501a827dc934bf8fe1d082735645d79fb9a59b43dc9"
     },
     {
       "path": "reference/.gitignore",
       "sha256": "3528bf1f87c9d2fb52f4bf4b94ef0e0d7280b103021c8258a683b459744c1ebe"
-    },
-    {
-      "path": "reference/.npmrc",
-      "sha256": "8f65a38bcd4e6fefd454f51ae9c3bd1c130d23a63164d60fb15fdaf852bde871"
     },
     {
       "path": "reference/.prettierignore",
@@ -110,7 +110,7 @@
     },
     {
       "path": "reference/README.md",
-      "sha256": "ebf9583f6e00e60ede3241d9f21efac1c4cba5085643723cbf2f2448b4b04a9a"
+      "sha256": "627cc983181f9c5513e801f9955856972d7619dccedf3bfcc8b7648292297162"
     },
     {
       "path": "reference/art/face-sheet.css",
@@ -178,15 +178,15 @@
     },
     {
       "path": "reference/src/game/Game.tsx",
-      "sha256": "6f3a837ba425dc51657f649a2930313eced87bcaa81f8e3f20dc44760fd6f776"
+      "sha256": "10cab626c932f8af2b7c1c39183209a248f1443870049ee5e08eabad7dde625b"
     },
     {
       "path": "reference/src/game/board/Board.tsx",
-      "sha256": "214420bcd159a895a34c9c331a25d6de105a0143c3315da81be09a694b4fb22c"
+      "sha256": "67fac314c078ac435af33e0ce2fa046aec418c16098c75f18fe55c74a5d45b4b"
     },
     {
       "path": "reference/src/game/board/Card.tsx",
-      "sha256": "4111d515c1804fe0dbc1e21d379e0c4164fc6972ea0cbc10aef888936ce76d3d"
+      "sha256": "a44e715d88cb5480fd61a6b921212a7b2d0e6fcba775166105cbc8b1bc363211"
     },
     {
       "path": "reference/src/game/board/Face.tsx",
@@ -226,15 +226,15 @@
     },
     {
       "path": "reference/src/game/board/keyboard.test.ts",
-      "sha256": "7cdb4f1aa1685e173d18c3b43d437063ba583e52ac9e7ce7676168e6966b6a5b"
+      "sha256": "ab76d7aa2b9da00e862cc63576f79ccfaa0814edcb6588c79034583172d0595e"
     },
     {
       "path": "reference/src/game/board/keyboard.ts",
-      "sha256": "6780d4ded5c947b48c02ad1f5ea9aa50c2f5394c074b571967f61614ddee9c56"
+      "sha256": "5755705fb20c3d506b8f83138c43028b3c180152da82e00282fec99e2655c76d"
     },
     {
       "path": "reference/src/game/board/nearest-scroll.ts",
-      "sha256": "8bf8cb6d49bba814e676642bbaf4ae67058e67b3bb236a988460a1d6e2e6f77f"
+      "sha256": "1490f0211b87f1226610e7c1908358719ddc741bc892b4f61af3413e8774fd27"
     },
     {
       "path": "reference/src/game/completion.test.ts",
@@ -246,7 +246,7 @@
     },
     {
       "path": "reference/src/game/controls/Reproduction.tsx",
-      "sha256": "48e7b14fc5be40c9cd17198088ce388145ba0a9c1eb20ed937bb96ef4ee18e42"
+      "sha256": "b2a68527677228b85ee33d3a2f095fbf32103d7fd7ca68650f2225780747377a"
     },
     {
       "path": "reference/src/game/controls/control-labels.ts",
@@ -262,7 +262,7 @@
     },
     {
       "path": "reference/src/game/controls/reproduction.css",
-      "sha256": "e5edbad093b6d4bbeea5a76fa3b519232637b41cf5ddd94df498d26c2a354b6a"
+      "sha256": "ae618088e911ec07495950d776fa3032892f7e2c1799876fcb70633b02bfd304"
     },
     {
       "path": "reference/src/game/deck-rejection.fixture.json",
@@ -290,7 +290,7 @@
     },
     {
       "path": "reference/src/game/game.css",
-      "sha256": "bcf87b7b336e21b1aec6c4118441314f3f0779a6357dbf5c2a42c15ba00ad635"
+      "sha256": "461ebdb0a8d780d4ff940375315fb2307db983212b4feb978dd4027f296ff3f4"
     },
     {
       "path": "reference/src/game/game.fixture.ts",
@@ -322,11 +322,11 @@
     },
     {
       "path": "reference/src/game/saved-format.test.ts",
-      "sha256": "07aec23d39c94704528a7f90c6499df64105627719b1bd2dfd8d848683f835f4"
+      "sha256": "680f902a5aca9600a38c6fbb0b8d1462b4297f69f3513a272ded015f6083f293"
     },
     {
       "path": "reference/src/game/saved-format.ts",
-      "sha256": "9e07486c9ca955c5bb26343c3d4d7492fffc9799c20d608f9abed283fb119e9f"
+      "sha256": "0cbcf35232e68e3a50c6ea6b1f6b254a776e28854426b466d222be81d2854fda"
     },
     {
       "path": "reference/src/game/selection.ts",
@@ -362,15 +362,15 @@
     },
     {
       "path": "reference/src/game/session/storage.ts",
-      "sha256": "65b7e747b9ec5ef4f082df72e12cfa0de7300f1014c0ed321ba2771feaeedb84"
+      "sha256": "b02dc52d2ca627abda491b25766d1475636814f4e6976b7bae4d93a0c204d894"
     },
     {
       "path": "reference/src/game/session/use-game.ts",
-      "sha256": "b6fc4f34f481c2d80e1867113c1921c742c55d1f5a041399ca85895566361c6f"
+      "sha256": "7340dc3a7a627bc99be589b52ff01cc49e3477959b66c35411fd5606d1fd0af1"
     },
     {
       "path": "reference/src/game/session/use-saved-preferences.ts",
-      "sha256": "62e4967c0f3c98622faff1b28018f56fa45580714a869d6975f7dfa09efac52a"
+      "sha256": "b181c8581efe1cb65a47ad965c61aef73d8c24623bebc36b9cb9cdf0e6a2b98d"
     },
     {
       "path": "reference/src/game/session/use-session-clock.ts",
@@ -386,15 +386,11 @@
     },
     {
       "path": "reference/src/game/snapshot.test.ts",
-      "sha256": "758f4f59de1dad7b0fd7204cfed17816c03f5b5d0f79259907a73c9920ce0bf3"
+      "sha256": "ac06662ec5ee952b6aa190e4fd4fb064a5a120afc5dd34d1799c30b15126aa49"
     },
     {
       "path": "reference/src/game/snapshot.ts",
-      "sha256": "d35fe0120ba58df65eaa8399935f1e502fc5a775c5c18dc0c7948bc41fb26ae7"
-    },
-    {
-      "path": "reference/src/game/status-row.css",
-      "sha256": "fc6828a1f793d44e698a6bda269a3f1b1fa017ca701d94842162287e02ae7193"
+      "sha256": "913eefa580e370e10c69e0591228cf97d11495c31f8dc2c1db1aaae104bf9531"
     },
     {
       "path": "reference/src/game/status/GameStatus.tsx",
@@ -418,7 +414,7 @@
     },
     {
       "path": "reference/tests/accessibility-tree.ts",
-      "sha256": "b8674ac11ceec6da1a950b90785c05d7e8ef82e1a8e0a8853592b7f33e727261"
+      "sha256": "320c557f1b4dd64043fe63d214605b2105a3b845410ef65d1e14a8d193da4d72"
     },
     {
       "path": "reference/tests/accessibility.e2e.test.ts",
@@ -434,7 +430,7 @@
     },
     {
       "path": "reference/tests/announcements.e2e.test.ts",
-      "sha256": "40514e9a6707fbdd56e01b02ef5faa0472a3fdf8f2de37f5b5d5d71cadc7025b"
+      "sha256": "4f4cd3cfe1797be72651d337b6cdf70eb82ca77ce132f965de4989172edcb52e"
     },
     {
       "path": "reference/tests/art.e2e.test.ts",
@@ -490,11 +486,11 @@
     },
     {
       "path": "reference/tests/focus-entry.e2e.test.ts",
-      "sha256": "6da87f89d89f9ee68db6115e544cf1851f86249514b4b1479eab241c2e18b070"
+      "sha256": "1dc218db18bf45d25a61be87b45d08c5b60afa6f45948608c29b417d808cc8bc"
     },
     {
       "path": "reference/tests/fractional-clock.e2e.test.ts",
-      "sha256": "dd018bd41d1c8e58efb638457ce0dd11be27f87411b465e879eeebbcf6acc537"
+      "sha256": "c588f6f877e4fbadfd7f3aaa076adad8b03be2269b9a083db7090265c0172573"
     },
     {
       "path": "reference/tests/game-fixture.ts",
@@ -510,11 +506,11 @@
     },
     {
       "path": "reference/tests/keyboard.e2e.test.ts",
-      "sha256": "9f1eba059790c2784c3a76b4bb3b997d4f28a969a3f71a00179e297ac92d3e0c"
+      "sha256": "7881ae04a70c6bcc4262726e46c89567d3c4595db0d15b947bad15da63f358ab"
     },
     {
       "path": "reference/tests/layout.e2e.test.ts",
-      "sha256": "4efb55c23111ffa400395f4041bb1e0ef3169d1e23e354c03b2413b33dd095aa"
+      "sha256": "7307728f41eb2dc5d746aca1dd6169eb7e1d2d39eb0bbc2dd4c1c090d024feda"
     },
     {
       "path": "reference/tests/lifecycle.e2e.test.ts",
@@ -538,7 +534,7 @@
     },
     {
       "path": "reference/tests/play.e2e.test.ts",
-      "sha256": "1af266f6d45d591fe8856376e2d139cb22f82e3fe0598d0519efcab80401fd82"
+      "sha256": "3895d8c1d8df14c3a4f0cb4bef29030608406060ba98aed15a278f2c6af692f3"
     },
     {
       "path": "reference/tests/pointer-focus.e2e.test.ts",
@@ -554,11 +550,11 @@
     },
     {
       "path": "reference/tests/readability.ts",
-      "sha256": "5257aea9b5feb37ce91bb34fe0db641fb70b527e6074e3fe535e9dad5f0bf6b5"
+      "sha256": "978641f36b55a78519ae529cbd7775113a4edcd09f72edd2960c3680573e7b08"
     },
     {
       "path": "reference/tests/saved-bests.e2e.test.ts",
-      "sha256": "adbe344fa083e6ca20f9d89c345ab71710fa24d2ed76c5c0878ea54b927141b3"
+      "sha256": "2fd7ea94dc8d386699efaf3eceeacbcb35a6f6072b6b8653a962c8cc058d3518"
     },
     {
       "path": "reference/tests/scrollbars.e2e.test.ts",
@@ -570,7 +566,7 @@
     },
     {
       "path": "reference/tests/status-controls.e2e.test.ts",
-      "sha256": "ef373a12c227a614c50092813e5be22ef9be37608b8d3a3af79005148424c378"
+      "sha256": "138fc0f3a36949b19cf697e2b3b210d96852ee7a926aa83d6f3093d4704b06e2"
     },
     {
       "path": "reference/tests/status-format.fixture.json",
@@ -602,7 +598,7 @@
     },
     {
       "path": "reference/tests/zoom.e2e.test.ts",
-      "sha256": "ec4fb64c679c68a31ca7dd30585235fbcbb34028b04a7f4a1ea704daa7ed49fb"
+      "sha256": "22adf036b1734622fdc49bf15c62532a80e74899ac63e4edca99771ff1c92a88"
     },
     {
       "path": "reference/tsconfig.app.json",
@@ -638,15 +634,15 @@
     },
     {
       "path": "requirements.json",
-      "sha256": "2488fae0ba781dfe987f02b7a4e0dbb1c50c89661cc6f296825aa8ed2a3078f2"
+      "sha256": "75467972f77261a9d1223d1746d6abc9b1f78d4b6aa0a2ff5bd8da9dacb98cee"
     },
     {
       "path": "specs/manifest.json",
-      "sha256": "a97e2dd770706081cc68f2faf948f15bb15549fea6886a0c55c820a7f8c49698"
+      "sha256": "6651a027c567a39d4b81fa2e13ee1d69f19ee27797adae985db38212df7f0865"
     },
     {
       "path": "trace.json",
-      "sha256": "fb006eb1bf6f6fcf4917d8b88c1e0228f587c8842203674d4b7233d719911888"
+      "sha256": "f1367d79800f4f89418a958d3b65c7d1deabe6047d93daabcb3fd0ec877739f1"
     }
   ]
 }

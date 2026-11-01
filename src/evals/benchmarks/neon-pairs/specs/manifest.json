@@ -1,58 +1,58 @@
 {
   "schemaVersion": 1,
   "fixture": "neon-pairs",
-  "sourceHash": "0466a72761d5e1d316ad9aab131c0862c6b63def04e91753baa3f79d7445d74d",
+  "sourceHash": "cb00d6bb3237e7e42e524fa38c657bcfaec4dc144a5787aba9ef6777dd5129fc",
   "sourceFiles": [
     {
       "path": "README.md",
-      "sha256": "12c9ff28ede5eeccc7b3c411087b9b8d070093c5d2b2d7c7770054496022d303"
+      "sha256": "cb84bc20c7da12aa84a0d002f8b6b9aa44d9384ae2dbb12e551aa21de960bb5a"
     },
     {
       "path": "_spec.md",
-      "sha256": "0ce8201b3fd6afedf8623cc2f02074090a0a36009d3863784d7aa4543b9aba13"
+      "sha256": "80198e39bd8cbd4b3a97406ea4bee7d1cea39ed5e21f1960ca52fe45134048fb"
     },
     {
       "path": "acceptance.md",
-      "sha256": "0e41aa8275274fa4c057bedb003b3465f4b6259b3bc370d938da93cb65a5f3ce"
+      "sha256": "ffde561037f33d9079988ce7facad262d1adc762e0575e608c12ee951ba9c859"
     },
     {
       "path": "architecture.md",
-      "sha256": "fce5004eccde7f8faa24c93a1372bdbe2df00c531b7b5ffcce819c6a587047d6"
+      "sha256": "06bfd6a37caa570360365c0310b4cbeb29c2c35486cb27d8ae40c25b21979bb0"
     },
     {
       "path": "controls.md",
-      "sha256": "752c7f77a55bd4f5ec57d4963756dd5547e0727be3faa057a96c4dfb743ee290"
+      "sha256": "2e95d11a5e43c6b73db5555515205f8208e9c399c337c55f534b402888040079"
     },
     {
       "path": "input.md",
-      "sha256": "fb673c80b985e1b9f8b337225f0f633f4528429c05ea64fcf7bba7623a4390df"
+      "sha256": "a6cd4420fc12c3954c8da46625a018974e29a1454d75b324e7bee9e371245215"
     },
     {
       "path": "reproducibility.md",
-      "sha256": "beaecb042a9be55cd4e7fba38f6d263208f58736c36ffd445ea49d294de691a2"
+      "sha256": "b09f608df5b095be0b6a07643c3829c80c216648d96efa6cc225a2f02169ba0b"
     },
     {
       "path": "rules.md",
-      "sha256": "76f3e1aa9288ffaa039822d247bf58101a54f8f286d7ae5649121ef4b1e0ebef"
+      "sha256": "3a69482926e89ba0739e1242ec076d0b055a3a63ef6c2a6e1833e7ec6ecd1468"
     },
     {
       "path": "sound.md",
-      "sha256": "d73c9aa8c2ba72e6b693a97045141d194a9629cd7e878630c29772334b76426d"
+      "sha256": "f2e45b5233c5d449d0c73db583a0a3660d85e689dddeab50b3f46606ef8746d1"
     },
     {
       "path": "technology.md",
-      "sha256": "d68bffeebb5214c6cfeca40b59c13b2aa9dfcee83466feb415e917cd77da8b0d"
+      "sha256": "beb2cf63f623ae286e617485c7bd9d42909cc896fc6e6db3a559b3772e65b640"
     },
     {
       "path": "visuals.md",
-      "sha256": "94ba278d591ed8be8ba1f721c694e14b7416a886ff22b79622efcd1c81713173"
+      "sha256": "5c1b1224d6eeb38203dea7d587f87e6df649b1f00a9abb24adbf823273e423c7"
     }
   ],
   "files": [
     {
       "path": "README.md",
-      "sha256": "65df46797fb1034b7e52e803ec2ba327e38ee00de9ffc95b4776a4079903e897",
-      "sourceSha256": "12c9ff28ede5eeccc7b3c411087b9b8d070093c5d2b2d7c7770054496022d303",
+      "sha256": "e12e7db449c3adacfcb429225a6e515855582c652d0e33cd87dafd1c4f785ed7",
+      "sourceSha256": "cb84bc20c7da12aa84a0d002f8b6b9aa44d9384ae2dbb12e551aa21de960bb5a",
       "metadata": {
         "description": "Neon Pairs game specification and document map",
         "tags": [
@@ -64,8 +64,8 @@
     },
     {
       "path": "acceptance.md",
-      "sha256": "eb3eaf50c186b24a82b1803400252897dcdad7ab407557553dea76a727fa34d2",
-      "sourceSha256": "0e41aa8275274fa4c057bedb003b3465f4b6259b3bc370d938da93cb65a5f3ce",
+      "sha256": "b10c9502e036d3c76cbba8d47d65ff6facb282d91f9d6f7c794c1cac54cce5bd",
+      "sourceSha256": "ffde561037f33d9079988ce7facad262d1adc762e0575e608c12ee951ba9c859",
       "metadata": {
         "description": "Public game acceptance examples",
         "tags": [
@@ -76,8 +76,8 @@
     },
     {
       "path": "architecture.md",
-      "sha256": "8b54f83967a857f1907ee7173d97796e64bc44ea81fe7b445094a9bb022171aa",
-      "sourceSha256": "fce5004eccde7f8faa24c93a1372bdbe2df00c531b7b5ffcce819c6a587047d6",
+      "sha256": "8707282e3b30a5e5a771cfa8651a481e683d8d0f9bc48e68be8de37d89a34f52",
+      "sourceSha256": "06bfd6a37caa570360365c0310b4cbeb29c2c35486cb27d8ae40c25b21979bb0",
       "metadata": {
         "description": "Game code structure and module responsibilities",
         "tags": [
@@ -89,8 +89,8 @@
     },
     {
       "path": "controls.md",
-      "sha256": "f53df8bfd07b51738937baf0bf70b88e6944185fd530813c5519b336b59bb6ea",
-      "sourceSha256": "752c7f77a55bd4f5ec57d4963756dd5547e0727be3faa057a96c4dfb743ee290",
+      "sha256": "a199800ba9c73479eb83af0f39c40815b92a8b81b9819ff212365b3e06fd7442",
+      "sourceSha256": "2e95d11a5e43c6b73db5555515205f8208e9c399c337c55f534b402888040079",
       "metadata": {
         "description": "Game options and reproduction controls",
         "tags": [
@@ -102,8 +102,8 @@
     },
     {
       "path": "input.md",
-      "sha256": "91185fbe8af93dbf8ca3c652711563d7fdf73027cb59af350d9ca8dea7ec0b4f",
-      "sourceSha256": "fb673c80b985e1b9f8b337225f0f633f4528429c05ea64fcf7bba7623a4390df",
+      "sha256": "561521000c174f0d3dba669739599b816a2df5edf325c56597195b3f0ebcdc53",
+      "sourceSha256": "a6cd4420fc12c3954c8da46625a018974e29a1454d75b324e7bee9e371245215",
       "metadata": {
         "description": "Pointer, touch, keyboard and focus behavior",
         "tags": [
@@ -115,8 +115,8 @@
     },
     {
       "path": "reproducibility.md",
-      "sha256": "ca18a4ddc8b809ee29178be205984998317f7cf42ad3615d6e019bcc3b14a3d4",
-      "sourceSha256": "beaecb042a9be55cd4e7fba38f6d263208f58736c36ffd445ea49d294de691a2",
+      "sha256": "00610b3365bbccefd942a3b53f961f6062251d6ec080c1dbeef4ee075effbb8d",
+      "sourceSha256": "b09f608df5b095be0b6a07643c3829c80c216648d96efa6cc225a2f02169ba0b",
       "metadata": {
         "description": "Board codes, snapshots and replay formats",
         "tags": [
@@ -128,8 +128,8 @@
     },
     {
       "path": "rules.md",
-      "sha256": "285e9dcfe7397f206ecda3c3f42ef0f11b592dd9b206ff6fc6dcb0de7095e1a7",
-      "sourceSha256": "76f3e1aa9288ffaa039822d247bf58101a54f8f286d7ae5649121ef4b1e0ebef",
+      "sha256": "5bc52beb2a0af82dde856db4a8092e499c75f0e395db553f814ec6df0f5f5cb2",
+      "sourceSha256": "3a69482926e89ba0739e1242ec076d0b055a3a63ef6c2a6e1833e7ec6ecd1468",
       "metadata": {
         "description": "Card matching, moves, timing and victory rules",
         "tags": [
@@ -141,8 +141,8 @@
     },
     {
       "path": "sound.md",
-      "sha256": "ddf7c9f2a23789ca5fbba974cc4fa32f9c2e8498884f4fefa29a9712f0e4b9e9",
-      "sourceSha256": "d73c9aa8c2ba72e6b693a97045141d194a9629cd7e878630c29772334b76426d",
+      "sha256": "ac13cd631905b38c47279868c12826bd57babdcde0a73974fa4bd071ff29b05d",
+      "sourceSha256": "f2e45b5233c5d449d0c73db583a0a3660d85e689dddeab50b3f46606ef8746d1",
       "metadata": {
         "description": "Game sound behavior",
         "tags": [
@@ -154,8 +154,8 @@
     },
     {
       "path": "technology.md",
-      "sha256": "a078681f7414c2c98f6953a3cef93db9b63c547acf0ab84a13092b5f1bf5e83e",
-      "sourceSha256": "d68bffeebb5214c6cfeca40b59c13b2aa9dfcee83466feb415e917cd77da8b0d",
+      "sha256": "8af9ea621c07687b75543a282c119f4d66f9b5df82a2d5621f9cfdef3076605e",
+      "sourceSha256": "beb2cf63f623ae286e617485c7bd9d42909cc896fc6e6db3a559b3772e65b640",
       "metadata": {
         "description": "Language, package versions, build and distribution",
         "tags": [
@@ -167,8 +167,8 @@
     },
     {
       "path": "visuals.md",
-      "sha256": "e215a20482b13b0945b812a2d61bddd4558b118a388d323d4a0c5ea2bca5acb7",
-      "sourceSha256": "94ba278d591ed8be8ba1f721c694e14b7416a886ff22b79622efcd1c81713173",
+      "sha256": "3686d12b2ee43f357e05d1e4777d5f3f0a3b4e407b2a276eb828196a5fe59642",
+      "sourceSha256": "5c1b1224d6eeb38203dea7d587f87e6df649b1f00a9abb24adbf823273e423c7",
       "metadata": {
         "description": "Layout, card artwork, colors and motion",
         "tags": [

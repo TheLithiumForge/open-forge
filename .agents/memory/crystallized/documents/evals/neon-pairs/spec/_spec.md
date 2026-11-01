@@ -8,7 +8,7 @@ open-forge:
 
 The Neon Pairs Spec is the product specification of the memory game, written the way a user would hand it to a developer.
 
-Status: spec version 2.1. Edit these documents, then refreeze them with `node materialize/cli.ts specs` from `src/evals`. Only these documents go into the frozen pack under `src/evals/benchmarks/neon-pairs/specs/`.
+Status: spec version 2.2. Edit these documents, then refreeze them with `node materialize/cli.ts specs` from `src/evals`. Only these documents go into the frozen pack under `src/evals/benchmarks/neon-pairs/specs/`.
 
 Start with the [game overview](README.md). Back to [Neon Pairs](../_neon-pairs.md).
 

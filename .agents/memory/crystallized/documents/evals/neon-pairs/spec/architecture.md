@@ -6,7 +6,7 @@ open-forge:
 # Architecture
 Architecture is the code structure for Neon Pairs that keeps game rules separate from browser effects.
 
-Status: spec version 2.1.
+Status: spec version 2.2.
 
 A card activation changes game data first. React renders that data, then the session adapter handles time and saved preferences. The same rules run in browser tests and replay without a browser.
 

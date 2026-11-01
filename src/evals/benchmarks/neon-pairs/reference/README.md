@@ -4,7 +4,7 @@ Neon Pairs is a memory game that runs offline from one HTML file and keeps local
 
 You can repeat a deal with its board code, save progress as a snapshot or run timed actions through the replay command.
 
-Status: implements product spec version 2.1.
+Status: implements product spec version 2.2.
 
 ## Install
 
@@ -25,7 +25,7 @@ These settings keep the browser download and temporary files inside the project.
 
 Run `npm run build`, then open `dist/index.html` from disk. The game makes no network requests. To keep saved sizes and scores on a stable HTTP origin, run `npm run dev`. Stop it when you finish.
 
-Use Grid size to choose a board. Reveal two cards with a click, tap, Enter or Space. Arrow keys, Home and End move board focus. Ctrl+Home and Ctrl+End reach the board ends. Tab leaves the board. New Game gives another deal. Restart repeats the current deal.
+Use Grid size to choose a board. Reveal two cards with a click, tap, Enter or Space. Arrow keys move board focus. Other keys stay with the browser. Tab leaves the board. New Game gives another deal. Restart repeats the current deal.
 
 Open Reproduce a game to load a board code or export progress. Loading an unfinished snapshot pauses it. Resume returns focus to the remembered card and continues the remaining mismatch interval. A completed snapshot loads as completed without Resume. Elapsed time stops at 359999999ms while play continues. The minutes and seconds display reaches 5999:59. Moves stop at 999999. Matching and victory continue at that count. Saved bests use the same move limit.
 

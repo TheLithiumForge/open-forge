@@ -143,37 +143,27 @@ test('progress needs one move per matched pair and one for a pending mismatch', 
   assert.equal(decodeSnapshot(short), null, 'matched pairs need two moves');
 });
 
-// Quarter milliseconds are exact in binary, and each case rounds differently from Math.round.
+// Quarter milliseconds are exact in binary.
 const BEFORE_MISMATCH_MS = 11;
 const INTO_MISMATCH_MS = 0.75;
 const NEAR_CLOSE_MS = MISMATCH_MS - 0.25;
 
-test('export rounds fractional time down and a mismatch from its own activation up', () => {
+test('export writes whole milliseconds and keeps a pending mismatch at 1ms or more', () => {
   const first = activateCard(createGame(EXAMPLE_CODE), 0);
   const mismatch = activateCard(advanceGame(first, BEFORE_MISMATCH_MS), 1);
-  const exported = (milliseconds: number): unknown =>
-    JSON.parse(encodeSnapshot(advanceGame(mismatch, milliseconds)));
-  const pending = (remainingMs: number, elapsedMs: number) => ({
-    version: SNAPSHOT_VERSION,
-    boardCode: EXAMPLE_CODE,
-    matched: [],
-    selection: { kind: SelectionKind.mismatch, first: 0, second: 1, remainingMs },
-    moves: 1,
-    elapsedMs,
-    started: true,
-  });
-  // 11.75ms elapsed and 799.25ms remaining export as 11 and 800.
-  assert.deepEqual(
-    exported(INTO_MISMATCH_MS),
-    pending(MISMATCH_MS, BEFORE_MISMATCH_MS),
-    'C08 rounding',
-  );
-  // A quarter millisecond left still exports a valid 1ms.
-  assert.deepEqual(
-    exported(NEAR_CLOSE_MS),
-    pending(1, Math.floor(BEFORE_MISMATCH_MS + NEAR_CLOSE_MS)),
-    'C08 pending time exports at least 1ms',
-  );
+  for (const milliseconds of [INTO_MISMATCH_MS, NEAR_CLOSE_MS]) {
+    const state = advanceGame(mismatch, milliseconds);
+    // Import accepts only whole elapsed time and a pending mismatch from 1ms through 800ms.
+    const exported = decodeSnapshot(encodeSnapshot(state));
+    assert.ok(exported, 'C08 export has whole milliseconds and pending time of at least 1ms');
+    assert.ok(Math.abs(exported.elapsedMs - state.elapsedMs) < 1, 'C08 elapsed time is within 1ms');
+    assert.ok(
+      exported.selection.kind === SelectionKind.mismatch &&
+        state.selection.kind === SelectionKind.mismatch &&
+        Math.abs(exported.selection.remainingMs - state.selection.remainingMs) < 1,
+      'C08 pending time is within 1ms',
+    );
+  }
   assert.equal(advanceGame(mismatch, NEAR_CLOSE_MS).selection.kind, SelectionKind.mismatch);
   assert.equal(advanceGame(mismatch, MISMATCH_MS).selection.kind, SelectionKind.closed);
 });

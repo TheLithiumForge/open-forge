@@ -6,7 +6,7 @@ open-forge:
 # Rules
 The rules specification is a game contract that defines turns, scores and session changes in Neon Pairs.
 
-Status: spec version 2.1.
+Status: spec version 2.2.
 
 A turn reveals two eligible cards. A match adds one pair, while a miss gives you time to remember the faces before both cards turn back.
 

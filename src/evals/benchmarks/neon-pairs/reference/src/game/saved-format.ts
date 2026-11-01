@@ -25,7 +25,3 @@ export function parseJson(text: string): unknown {
     return undefined;
   }
 }
-
-export function readJson(text: string, maxBytes: number): unknown {
-  return isWithinBytes(text, maxBytes) ? (parseJson(text) ?? null) : null;
-}
