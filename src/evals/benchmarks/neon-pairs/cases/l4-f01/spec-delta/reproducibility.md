@@ -1,9 +1,9 @@
 # Reproducibility
 The reproducibility specification is a set of versioned formats that recreates Neon Pairs deals, progress and actions.
 
-A board code reproduces the starting cards. A snapshot restores a later position. A replay shows the actions that produced a position, so each format answers a different debugging question.
-
 Status: spec version 3.
+
+A board code reproduces the starting cards. A snapshot restores a later position. A replay shows the actions that produced a position, so each format answers a different debugging question.
 
 ## Board code
 

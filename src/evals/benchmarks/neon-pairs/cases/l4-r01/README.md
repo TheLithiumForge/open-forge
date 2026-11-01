@@ -3,7 +3,7 @@ L4-R01 is a repair case that repairs copied snapshots that fail while local expo
 
 You can paste a saved game from another tool and recover its progress without losing the current game when the draft is invalid.
 
-Status: all local worker expectations pass for the starting project, solution and alternative solution. Full product validation is pending.
+Status: local validation passed on reference 2.2. Docker validation through the product and the reference's final 10 out of 10 judgment are pending.
 
 ## Case
 
@@ -29,9 +29,7 @@ Run `node checks/worker.ts INPUT_JSON` through the [worker contract](../../../..
 
 ## Validation
 
-Local validation builds the starting project, `solution.patch` and `alt-solution.patch` from scratch copies under `src/evals/.tmp/`. Public unit tests pass on all three trees. Both solutions pass every case worker check and all 65 public browser journeys. The product patch parser accepts both solution patches. Direct scope and protected-input checks pass on all three source trees. The case's `validation.json` records the results.
-
-The product typecheck passes. Its test run has 199 passes and 29 external failures. The [packet record](../l4-f01/packet-validation.json) lists every failure and every changed file. The shared requirements loader still expects spec version 2, while the inputs use 2.1. Stale Layer 2 input records also block product tests. Full frozen regression and Docker validation need those shared fixes.
+Local validation applies every patch with `git apply --check` to fresh reference copies under `src/evals/.tmp/`. The starting project, `solution.patch` and `alt-solution.patch` build, pass their unit suites and pass all 94 public browser journeys. Every local worker outcome matches its registered expectation. Direct scope and protected-input checks pass on all three source trees. The case's `validation.json` records hashes, counts and evidence paths.
 
 From the repository root, the overseer can validate this case with `npm run evals -- validate-case --case l4-r01`. No models or sign-ins are needed. Docker validation was left to the overseer as requested.
 

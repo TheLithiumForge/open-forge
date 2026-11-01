@@ -1,9 +1,9 @@
 # Architecture
 Architecture is the code structure for Neon Pairs that keeps game rules separate from browser effects.
 
-A card activation changes game data first. React renders that data, then the session adapter handles time and saved preferences. The same rules run in browser tests and replay without a browser.
-
 Status: spec version 3.
+
+A card activation changes game data first. React renders that data, then the session adapter handles time and saved preferences. The same rules run in browser tests and replay without a browser.
 
 ## Game core
 

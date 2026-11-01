@@ -1,6 +1,8 @@
 {
   "schemaVersion": 1,
   "status": "local-validation-passed-product-tests-blocked",
+  "referenceSpecVersion": 2.2,
+  "referenceHash": "d7d3840660da2f1aa6a0b19996b7c539b7b6f2cbc6add70e42986f16957386f1",
   "cases": [
     {
       "id": "l4-f01",
@@ -11,30 +13,36 @@
           "stage": "starting",
           "units": {
             "status": "passed",
-            "passed": 128
+            "passed": 132
           },
-          "browser": null
+          "browser": {
+            "status": "passed",
+            "passed": 94,
+            "failed": 0
+          }
         },
         {
           "stage": "solution",
           "units": {
             "status": "passed",
-            "passed": 130
+            "passed": 134
           },
           "browser": {
             "status": "passed",
-            "passed": 65
+            "passed": 94,
+            "failed": 0
           }
         },
         {
           "stage": "alternative",
           "units": {
             "status": "passed",
-            "passed": 130
+            "passed": 134
           },
           "browser": {
             "status": "passed",
-            "passed": 65
+            "passed": 94,
+            "failed": 0
           }
         }
       ]
@@ -48,30 +56,36 @@
           "stage": "starting",
           "units": {
             "status": "passed",
-            "passed": 128
+            "passed": 132
           },
-          "browser": null
+          "browser": {
+            "status": "passed",
+            "passed": 94,
+            "failed": 0
+          }
         },
         {
           "stage": "solution",
           "units": {
             "status": "passed",
-            "passed": 129
+            "passed": 133
           },
           "browser": {
             "status": "passed",
-            "passed": 65
+            "passed": 94,
+            "failed": 0
           }
         },
         {
           "stage": "alternative",
           "units": {
             "status": "passed",
-            "passed": 129
+            "passed": 133
           },
           "browser": {
             "status": "passed",
-            "passed": 65
+            "passed": 94,
+            "failed": 0
           }
         }
       ]
@@ -85,30 +99,36 @@
           "stage": "starting",
           "units": {
             "status": "passed",
-            "passed": 128
+            "passed": 132
           },
-          "browser": null
+          "browser": {
+            "status": "passed",
+            "passed": 94,
+            "failed": 0
+          }
         },
         {
           "stage": "solution",
           "units": {
             "status": "passed",
-            "passed": 131
+            "passed": 135
           },
           "browser": {
             "status": "passed",
-            "passed": 65
+            "passed": 94,
+            "failed": 0
           }
         },
         {
           "stage": "alternative",
           "units": {
             "status": "passed",
-            "passed": 131
+            "passed": 135
           },
           "browser": {
             "status": "passed",
-            "passed": 65
+            "passed": 94,
+            "failed": 0
           }
         }
       ]
@@ -123,83 +143,113 @@
     "matched": 120,
     "mismatched": 0
   },
+  "publicBrowsers": {
+    "projects": 9,
+    "passedPerProject": 94,
+    "passed": 846,
+    "failed": 0
+  },
   "productTests": {
-    "total": 228,
-    "passed": 199,
+    "total": 305,
+    "passed": 273,
     "failed": 29,
-    "baselineFailed": 29,
+    "skipped": 3,
     "failures": [
       {
         "path": "benchmarks/neon-pairs/checks/spec-layers/catalog.test.ts",
         "line": 14,
         "test": "frozen sets cover every supplied clause with its declared method and cited review",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "benchmarks/neon-pairs/checks/spec-layers/catalog.test.ts",
         "line": 38,
-        "test": "Layer 2 reviews unreachable cap states while Layer 3 checks every cap clause",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "test": "numeric cap clauses belong only to Layer 3",
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "benchmarks/neon-pairs/checks/spec-layers/catalog.test.ts",
         "line": 49,
-        "test": "planned tree evidence leaves spoken screen reader confirmation in human review",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "test": "the complete accessibility-tree journey is executable without spoken confirmation",
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "benchmarks/neon-pairs/checks/spec-layers/catalog.test.ts",
-        "line": 58,
+        "line": 61,
         "test": "authoring process cleanup follows the inventory review method in both layers",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
+      },
+      {
+        "path": "benchmarks/neon-pairs/checks/spec-layers/catalog.test.ts",
+        "line": 94,
+        "test": "every v2.1 trace slot names exactly its layer assertions and review questions",
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "benchmarks/neon-pairs/checks/spec-layers/container.test.ts",
-        "line": 17,
-        "test": "later grading isolates candidate commands and validates only plain copied-out artifacts",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "line": 18,
+        "test": "L2 grading isolates candidate commands and validates only plain copied-out artifacts",
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
+      },
+      {
+        "path": "benchmarks/neon-pairs/checks/spec-layers/container.test.ts",
+        "line": 18,
+        "test": "L3 grading isolates candidate commands and validates only plain copied-out artifacts",
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "benchmarks/neon-pairs/checks/spec-layers/fixtures.test.ts",
         "line": 12,
         "test": "fixture mutations match the reference exactly once and declare failed assertions",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "benchmarks/neon-pairs/checks/spec-layers/fixtures.test.ts",
         "line": 20,
         "test": "report parser rejects invented, duplicate and malformed assertions",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "benchmarks/neon-pairs/checks/spec-layers/fixtures.test.ts",
         "line": 30,
         "test": "validation compares required assertions and never treats missing evidence as passed",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
-        "path": "experiments/document-plans.test.ts",
-        "line": 17,
-        "test": "the saved check and full plans freeze their models, limits and complete case cells",
-        "reason": "Error: The case product documents differ from their frozen inputs."
+        "path": "benchmarks/neon-pairs/checks/spec-layers/freeze.test.ts",
+        "line": 8,
+        "test": "layers-only regeneration leaves trace, rubrics and specs untouched",
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
+      },
+      {
+        "path": "benchmarks/neon-pairs/checks/spec-layers/freeze.test.ts",
+        "line": 16,
+        "test": "full regeneration changes only check slots in the reference trace",
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
+      },
+      {
+        "path": "benchmarks/neon-pairs/checks/spec-layers/toolchain.test.ts",
+        "line": 14,
+        "test": "implemented zoom and toolchain clauses have no checker limit",
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/gates.test.ts",
         "line": 26,
         "test": "regressions remove only superseded clauses inside a grouped check",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/gates.test.ts",
         "line": 38,
         "test": "combined cases report feature failures apart from repairs and frozen regressions",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/gates.test.ts",
         "line": 60,
         "test": "scope and protected inputs fail independently and a regression error doesn't block repair checks",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/product.test.ts",
@@ -211,161 +261,127 @@
         "path": "grading/brownfield/regression.test.ts",
         "line": 9,
         "test": "declared checker limits and reviews stay pending while all gradable clauses can pass",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validate.test.ts",
         "line": 16,
         "test": "case validation builds starting and solution snapshots, saves bound inputs and can run again",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validate.test.ts",
         "line": 38,
         "test": "validation rejects unexpected starting passes and solution scope or regression failures",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validate.test.ts",
         "line": 58,
         "test": "build and protected-input failures leave a failed report and still check the solution",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validate.test.ts",
         "line": 76,
         "test": "validation requires declared starting results and rejects unknown regression expectations",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validate.test.ts",
         "line": 88,
         "test": "stale solution patches and verifier faults produce failed reports with paths removed",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validate.test.ts",
         "line": 109,
         "test": "a reference changed during the build fails the input guard",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validation-command.test.ts",
         "line": 15,
         "test": "validate-case runs a case through the product and fake verifier stages without model services",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validation-command.test.ts",
         "line": 22,
         "test": "validate-case all preflights plan cases, visits every case and exits nonzero on a mismatch",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validation-expectations.test.ts",
         "line": 11,
         "test": "starting regression exceptions are registered by ID and feature cases cannot waive regressions",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validation-solutions.test.ts",
         "line": 19,
         "test": "both solution patches run the project's test commands before gates and ignored output cannot fail scope",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       },
       {
         "path": "grading/brownfield/validation-solutions.test.ts",
         "line": 56,
         "test": "a failing project test fails validation even when all solution gates pass",
-        "reason": "Error: Expected Neon Pairs requirements for spec v2."
-      },
-      {
-        "path": "materialize/delivery.test.ts",
-        "line": 15,
-        "test": "document cases freeze the permitted banks, time limit and delivery cells",
-        "reason": "Error: The case product documents differ from their frozen inputs."
-      },
-      {
-        "path": "materialize/delivery.test.ts",
-        "line": 39,
-        "test": "qualification checks every document cell with fake installs and fresh repositories",
-        "reason": "Error: The case product documents differ from their frozen inputs."
-      },
-      {
-        "path": "materialize/delivery.test.ts",
-        "line": 50,
-        "test": "document qualification rejects changed product sentences and foreign files",
-        "reason": "Error: The case product documents differ from their frozen inputs."
-      },
-      {
-        "path": "materialize/subset.test.ts",
-        "line": 18,
-        "test": "the frozen player pack contains each L2 clause once in document and clause order",
-        "reason": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:"
+        "reason": "Error: Expected Neon Pairs requirements for spec v2.1."
       }
-    ]
+    ],
+    "summary": "13 spec-layers tests and 16 brownfield grading tests fail while loading protected checks that expect spec 2.1. F01 case-contract tests pass."
   },
   "files": {
-    "created": [
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/alt-solution.patch",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/case-contract.test.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/checks/invalid-progress.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/spec-delta/README.md",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/spec-delta/architecture.md",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/alt-solution.patch",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/checks/compatibility.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/checks/invalid-progress.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/spec-delta/README.md",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/spec-delta/architecture.md",
-      "src/evals/benchmarks/neon-pairs/cases/l4-r01/alt-solution.patch",
-      "src/evals/benchmarks/neon-pairs/cases/l4-r01/checks/invalid-progress.ts"
-    ],
+    "created": [],
     "changed": [
       ".agents/memory/crystallized/documents/evals/neon-pairs/layer-4.md",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/README.md",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/case.json",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/checks/browser.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/checks/checks.json",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/checks/game.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/checks/names.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-f01/checks/snapshots.ts",
+      "src/evals/benchmarks/neon-pairs/cases/l4-f01/alt-solution.patch",
       "src/evals/benchmarks/neon-pairs/cases/l4-f01/packet-validation.json",
       "src/evals/benchmarks/neon-pairs/cases/l4-f01/solution.patch",
+      "src/evals/benchmarks/neon-pairs/cases/l4-f01/spec-delta/README.md",
+      "src/evals/benchmarks/neon-pairs/cases/l4-f01/spec-delta/architecture.md",
       "src/evals/benchmarks/neon-pairs/cases/l4-f01/spec-delta/controls.md",
       "src/evals/benchmarks/neon-pairs/cases/l4-f01/spec-delta/reproducibility.md",
       "src/evals/benchmarks/neon-pairs/cases/l4-f01/validation.json",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/README.md",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/answers.json",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/case.json",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/checks/browser.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/checks/checks.json",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/checks/game.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/checks/names.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/checks/repair.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/checks/snapshots.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/checks/worker.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/request.md",
+      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/alt-solution.patch",
       "src/evals/benchmarks/neon-pairs/cases/l4-fr01/seed.patch",
       "src/evals/benchmarks/neon-pairs/cases/l4-fr01/solution.patch",
+      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/spec-delta/README.md",
+      "src/evals/benchmarks/neon-pairs/cases/l4-fr01/spec-delta/architecture.md",
       "src/evals/benchmarks/neon-pairs/cases/l4-fr01/spec-delta/controls.md",
       "src/evals/benchmarks/neon-pairs/cases/l4-fr01/spec-delta/reproducibility.md",
       "src/evals/benchmarks/neon-pairs/cases/l4-fr01/validation.json",
-      "src/evals/benchmarks/neon-pairs/cases/l4-r01/README.md",
-      "src/evals/benchmarks/neon-pairs/cases/l4-r01/answers.json",
-      "src/evals/benchmarks/neon-pairs/cases/l4-r01/case.json",
-      "src/evals/benchmarks/neon-pairs/cases/l4-r01/checks/browser.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-r01/checks/checks.json",
-      "src/evals/benchmarks/neon-pairs/cases/l4-r01/checks/game.ts",
-      "src/evals/benchmarks/neon-pairs/cases/l4-r01/checks/repair.ts",
+      "src/evals/benchmarks/neon-pairs/cases/l4-r01/alt-solution.patch",
       "src/evals/benchmarks/neon-pairs/cases/l4-r01/seed.patch",
       "src/evals/benchmarks/neon-pairs/cases/l4-r01/solution.patch",
       "src/evals/benchmarks/neon-pairs/cases/l4-r01/validation.json"
     ],
     "deleted": [],
-    "scratch": "Temporary dependency, patch-work and validation artifacts stay under the worktree and are excluded from the source file list."
+    "comparedWith": "Saved pre-rebase case inputs in src/evals/.tmp/layer4-v22-inputs.",
+    "scratch": "Patch-work projects, logs, browser artifacts and validation scripts stay under ignored src/evals/.tmp/."
   },
+  "evidence": [
+    {
+      "path": "src/evals/.tmp/layer4-v22-evidence/progress.json",
+      "sha256": "4eddd816a5bfef9611ccd1e8a9c412b4826ba3a9d739b0009c4513c4821e84e8"
+    },
+    {
+      "path": "src/evals/.tmp/layer4-v22-evidence/root-typecheck.log",
+      "sha256": "4d935281a7c56bb16f1b3955290f410f4a172729b55ae464258a3335b7f6aebc"
+    },
+    {
+      "path": "src/evals/.tmp/layer4-v22-evidence/root-test.log",
+      "sha256": "ccb35b14ba5eda109faaf397faad3b41fda875fc7dde00d46010ee46b773c623"
+    },
+    {
+      "path": "src/evals/.tmp/layer4-v22-evidence/case-tests.log",
+      "sha256": "0f745063e0d28c1813bbbf13a50a2d792181abcb5c1e6562e8ed542e8973dde1"
+    }
+  ],
   "limits": [
-    "No Docker or WSL, real models or sign-ins were run. Full regression and isolated product validation need shared loader and Layer 2 input fixes outside this packet. Reference-cache scanning did not fail in this worktree."
+    "No Docker or WSL, models, sign-ins, network, downloads or dependency installs were used.",
+    "Full frozen regression and container validation stay with the overseer after the separate checker packet is updated. Reference, frozen specs and checker code were not changed."
   ],
   "overseerCommands": [
     "npm run evals -- validate-case --all",

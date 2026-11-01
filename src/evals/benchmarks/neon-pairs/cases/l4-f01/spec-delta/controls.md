@@ -1,9 +1,9 @@
 # Controls
 Controls is a specification that defines the game options and reproduction tools in Neon Pairs.
 
-You can start another deal, repeat the current one or load saved progress. Each control keeps the same label, so you can find the same action after a game changes.
-
 Status: spec version 3.
+
+You can start another deal, repeat the current one or load saved progress. Each control keeps the same label, so you can find the same action after a game changes.
 
 ## Deal controls
 
@@ -35,7 +35,7 @@ For example, loading `np1-4-1` starts its hidden four-column board. Entering tha
 
 - C08 - Label the export button "Export snapshot". Fill the textarea with readable snapshot JSON. Use version 2 for a named game and version 1 for an unnamed game. You can select and copy manually. Export leaves the game state and clock unchanged. It requires no Clipboard API.
 
-If the active clock has fractional milliseconds, round exported `elapsedMs` down and pending mismatch `remainingMs` up. A pending mismatch always exports at least 1ms.
+Export `elapsedMs` and a pending mismatch's `remainingMs` as whole milliseconds. A pending mismatch always exports at least 1ms.
 
 - C09 - Label the import button "Load snapshot". Validate the complete draft before replacing the current game. Load unfinished progress paused and show "Loaded snapshot. Select Resume to continue." Load completed progress as completed without pausing and show "Loaded completed snapshot."
 

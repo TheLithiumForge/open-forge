@@ -18,30 +18,26 @@ index 0000000..4970c5f
 +  assert.equal(decodeSnapshot(JSON.stringify({ selection, ...rest, unknown: true })), null);
 +});
 diff --git a/src/game/snapshot.ts b/src/game/snapshot.ts
-index 690f6c4..8efbee2 100644
+index 7ec77cd..2163a76 100644
 --- a/src/game/snapshot.ts
 +++ b/src/game/snapshot.ts
-@@ -1,6 +1,6 @@
- import { createGame, isWon, MOVES_MAX, ELAPSED_MAX_MS } from './game.ts';
+@@ -1,6 +1,7 @@
+ import { createGame, MOVES_MAX, ELAPSED_MAX_MS } from './game.ts';
  import { parseBoardCode } from './deck.ts';
--import { readJson, record, safeNonnegative } from './saved-format.ts';
-+import { exactKeys, readJson, record, safeNonnegative } from './saved-format.ts';
- import { readMatched, readSelection } from './snapshot-selection.ts';
- import { SelectionKind } from './selection.ts';
- import type { GameState } from './game.types.ts';
-@@ -38,14 +38,7 @@ export function encodeSnapshot(state: GameState): string {
- 
- export function decodeSnapshot(text: string): GameState | null {
-   const value = readJson(text, SNAPSHOT_MAX_BYTES);
--  if (
--    !record(value) ||
+ import {
++  hasExactKeys,
+   isJsonObject,
+   isNonnegativeSafeInteger,
+   isWithinBytes,
+@@ -47,10 +48,7 @@ export function decodeSnapshot(text: string): GameState | null {
+   const value = isWithinBytes(text, SNAPSHOT_MAX_BYTES) ? parseJson(text) : undefined;
+   if (
+     !isJsonObject(value) ||
 -    !Object.keys(value).every((key, index) =>
 -      index === 0 ? key === SNAPSHOT_KEYS[0] : SNAPSHOT_KEYS.some((field) => field === key),
 -    ) ||
 -    Object.keys(value).length !== SNAPSHOT_KEYS.length ||
--    value.version !== SNAPSHOT_VERSION
--  )
-+  if (!record(value) || !exactKeys(value, SNAPSHOT_KEYS) || value.version !== SNAPSHOT_VERSION)
++    !hasExactKeys(value, SNAPSHOT_KEYS) ||
+     value.version !== SNAPSHOT_VERSION
+   )
      return null;
-   if (typeof value.boardCode !== 'string' || !parseBoardCode(value.boardCode)) return null;
-   if (

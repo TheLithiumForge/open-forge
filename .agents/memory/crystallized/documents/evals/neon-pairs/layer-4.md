@@ -8,7 +8,7 @@ Layer Four is the brownfield case that asks agents to change a council-built Neo
 
 Every attempt starts from the same audited solution or a registered defect copy of it. Code from a Layer 3 attempt never becomes the seed. For example, Hard mode needs a recorded format change, while a session repair starts with a symptom that doesn't reveal its cause.
 
-Status: the maintainer froze the reference after a 10 out of 10 judgment. The three revised cases have local starting, solution and alternative solution evidence. Full product validation is blocked by the shared spec-version loader and stays with the overseer.
+Status: the seed is the spec 2.2 reference, which needs 10 out of 10 from both a Claude Opus and a Codex Sol judge before this layer freezes. The three cases pass local starting, solution and alternative solution validation on it. Docker validation through the product is next.
 
 ## Contents
 

@@ -1,80 +1,87 @@
 {
   "schemaVersion": 1,
   "status": "local-validation-passed-product-validation-pending",
-  "validation": "Fresh local builds, public tests, worker CLI, product patch and report parsers, and direct scope and protected-input functions.",
+  "validation": "Fresh reference patch checks, builds, unit tests and public browser suites on all nine projects, local worker CLI, product patch and report parsers, and direct scope and protected-input checks.",
   "node": "26.12.1",
   "playwright": "1.64.1",
   "chromium": "156.0.8078.4",
-  "specVersion": 2.1,
-  "referenceHash": "b82b3bd844545f854551c7ad16489e8797ae369f77a369d3cf8c8e54f1d0dbe1",
+  "specVersion": 2.2,
+  "referenceSpecVersion": 2.2,
+  "referenceHash": "d7d3840660da2f1aa6a0b19996b7c539b7b6f2cbc6add70e42986f16957386f1",
   "productDocuments": [
     {
       "path": "README.md",
-      "sha256": "65df46797fb1034b7e52e803ec2ba327e38ee00de9ffc95b4776a4079903e897"
+      "sha256": "e12e7db449c3adacfcb429225a6e515855582c652d0e33cd87dafd1c4f785ed7"
     },
     {
       "path": "acceptance.md",
-      "sha256": "eb3eaf50c186b24a82b1803400252897dcdad7ab407557553dea76a727fa34d2"
+      "sha256": "b10c9502e036d3c76cbba8d47d65ff6facb282d91f9d6f7c794c1cac54cce5bd"
     },
     {
       "path": "architecture.md",
-      "sha256": "8b54f83967a857f1907ee7173d97796e64bc44ea81fe7b445094a9bb022171aa"
+      "sha256": "8707282e3b30a5e5a771cfa8651a481e683d8d0f9bc48e68be8de37d89a34f52"
     },
     {
       "path": "controls.md",
-      "sha256": "f53df8bfd07b51738937baf0bf70b88e6944185fd530813c5519b336b59bb6ea"
+      "sha256": "a199800ba9c73479eb83af0f39c40815b92a8b81b9819ff212365b3e06fd7442"
     },
     {
       "path": "input.md",
-      "sha256": "91185fbe8af93dbf8ca3c652711563d7fdf73027cb59af350d9ca8dea7ec0b4f"
+      "sha256": "561521000c174f0d3dba669739599b816a2df5edf325c56597195b3f0ebcdc53"
     },
     {
       "path": "reproducibility.md",
-      "sha256": "ca18a4ddc8b809ee29178be205984998317f7cf42ad3615d6e019bcc3b14a3d4"
+      "sha256": "00610b3365bbccefd942a3b53f961f6062251d6ec080c1dbeef4ee075effbb8d"
     },
     {
       "path": "rules.md",
-      "sha256": "285e9dcfe7397f206ecda3c3f42ef0f11b592dd9b206ff6fc6dcb0de7095e1a7"
+      "sha256": "5bc52beb2a0af82dde856db4a8092e499c75f0e395db553f814ec6df0f5f5cb2"
     },
     {
       "path": "sound.md",
-      "sha256": "ddf7c9f2a23789ca5fbba974cc4fa32f9c2e8498884f4fefa29a9712f0e4b9e9"
+      "sha256": "ac13cd631905b38c47279868c12826bd57babdcde0a73974fa4bd071ff29b05d"
     },
     {
       "path": "technology.md",
-      "sha256": "a078681f7414c2c98f6953a3cef93db9b63c547acf0ab84a13092b5f1bf5e83e"
+      "sha256": "8af9ea621c07687b75543a282c119f4d66f9b5df82a2d5621f9cfdef3076605e"
     },
     {
       "path": "visuals.md",
-      "sha256": "e215a20482b13b0945b812a2d61bddd4558b118a388d323d4a0c5ea2bca5acb7"
+      "sha256": "3686d12b2ee43f357e05d1e4777d5f3f0a3b4e407b2a276eb828196a5fe59642"
     }
   ],
   "patchHashes": [
     {
       "path": "seed.patch",
-      "sha256": "83b5171c91bd62745b3de9e8338fb59da1e4b66c83d83d936c84149b2881d972"
+      "sha256": "a3a384556ec6237694ef4c5a3a26ceb7b9869857c2253722a271ba9be29fd6bc"
     },
     {
       "path": "solution.patch",
-      "sha256": "013ade50c25450cc9564055e106a4236c3477e5a51e8aef91e80d5f275efa055"
+      "sha256": "eb1e91b34289b31318e241064685d525dff3a4a4b644cde5d1052f0d145f21bf"
     },
     {
       "path": "alt-solution.patch",
-      "sha256": "e60a5ce5f04d35b3acb2e988ff20d5a5204fff4e5753a9388db02c11666f9733"
+      "sha256": "b587d0a626c8df83eed10397a073cd519aeefd0679640f58a9d3a6c039926058"
     }
   ],
+  "supersedes": [],
   "stages": [
     {
       "stage": "starting",
       "patch": null,
-      "sourceHash": "394bd9618fa68484b79d9a11b4ebd267c31c1fde14ce4d194598e1feb4c43697",
+      "sourceHash": "dca005d2169efad9aae23a7a82d00f079308b87471845ec58239824366bf4509",
+      "patchCheck": "passed",
       "build": "passed",
       "typecheck": "passed",
       "units": {
         "status": "passed",
-        "passed": 128
+        "passed": 132
       },
-      "browser": null,
+      "browser": {
+        "status": "passed",
+        "passed": 94,
+        "failed": 0
+      },
       "expected": [
         {
           "id": "R01-01",
@@ -191,21 +198,53 @@
           "status": "pass",
           "evidence": "C08 and C09: the app continues to load its own exported snapshot text."
         }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-starting/build.log",
+          "sha256": "428511e4a8ebf1b08ca7495b08cc80a1447cb2ae1950e51f5545b5f4ee48f965"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-starting/unit.log",
+          "sha256": "26d7a65e81454352c72638b19d5ab3f5471e30d25ec54953eb6e058b49275401"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-starting/browser.log",
+          "sha256": "c1b6619387b7ee491a3db51ac6d2ba9ccaf9486460380debe96197bd65355b1e"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-starting/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-starting/worker-input.json",
+          "sha256": "7ab9a72075be67ffa4eea2a4d572fc1d2ade5e590a70b70bd816bf8e9ae480bb"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-starting/worker-report.json",
+          "sha256": "e12b6ee2269f5b1a3e136d1db7874ed77869d35a2670696bbefeee62d0f9e5f4"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-starting/seed-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
       ]
     },
     {
       "stage": "solution",
       "patch": "solution.patch",
-      "sourceHash": "c402685af9fd6df16b8a97a1494e4600b9b7487b45f3c3bbf0df1debe4248bfa",
+      "sourceHash": "5658ab59ca79044bbbe3eaaa2ca997cfbc8414fea0c48b8713fdb4c883702d1b",
+      "patchCheck": "passed",
       "build": "passed",
       "typecheck": "passed",
       "units": {
         "status": "passed",
-        "passed": 129
+        "passed": 133
       },
       "browser": {
         "status": "passed",
-        "passed": 65
+        "passed": 94,
+        "failed": 0
       },
       "expected": [
         {
@@ -323,21 +362,57 @@
           "status": "pass",
           "evidence": "C08 and C09: the app continues to load its own exported snapshot text."
         }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-solution/build.log",
+          "sha256": "e46791f88e4a56384f375c8b1cd7888213caa891429444dadf9ffe22c1f3ca6d"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-solution/unit.log",
+          "sha256": "a24311363a03df8d3d9f97e61e9c837598e8981b2e1f8f0e2da4310ce35ff44d"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-solution/browser.log",
+          "sha256": "8a3a64a54ce3c30bf44b87b584d33c3809e15d10ccc8eb2fb694c884bbe1448d"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-solution/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-solution/worker-input.json",
+          "sha256": "f63d13b04187a733bbeb10ef224f5926fcfbbf448be3954302c6b69f60fc18b1"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-solution/worker-report.json",
+          "sha256": "7819f7894769ff030bd5e5dce2112c77afa11fee9f70eb676eff53567bb37b05"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-solution/seed-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-solution/solution-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
       ]
     },
     {
       "stage": "alternative",
       "patch": "alt-solution.patch",
-      "sourceHash": "3f4e3a9f6643ad0a432c043ebf454c1de9c69e34bd82d53917e37074de3f8b10",
+      "sourceHash": "4067b954890a31a2153ea1aa34375fb7cf08c50e84a1b9bf53134c4543c7167b",
+      "patchCheck": "passed",
       "build": "passed",
       "typecheck": "passed",
       "units": {
         "status": "passed",
-        "passed": 129
+        "passed": 133
       },
       "browser": {
         "status": "passed",
-        "passed": 65
+        "passed": 94,
+        "failed": 0
       },
       "expected": [
         {
@@ -455,11 +530,46 @@
           "status": "pass",
           "evidence": "C08 and C09: the app continues to load its own exported snapshot text."
         }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-alternative/build.log",
+          "sha256": "70ec59af596e436a6b1534a62a410b8b82c308ccce58947179ccb59fd2a2fb9c"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-alternative/unit.log",
+          "sha256": "4ee34586533795b63bd8d579570a14dd49c6032a889aeee57989a31a712f8772"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-alternative/browser.log",
+          "sha256": "d4bf686380c3db9aaba0afd0151fb11643047e76d99e23a0e7084c5d083945bf"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-alternative/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-alternative/worker-input.json",
+          "sha256": "c60f516237e082dd85210b59d8ea648c78204ca4327186536533680a24a65238"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-alternative/worker-report.json",
+          "sha256": "7819f7894769ff030bd5e5dce2112c77afa11fee9f70eb676eff53567bb37b05"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-alternative/seed-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-r01-alternative/solution-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
       ]
     }
   ],
   "limits": [
-    "Full product regression and Docker validation are pending. The shared requirements loader rejects spec 2.1. No Docker, WSL, models or sign-ins were run.",
-    "Starting trees have build, unit and change-worker evidence. Public browser suites ran on both solutions. Direct guard checks used plain reconstructed source trees, outside containers."
+    "Full frozen Layer 3 regression validation is pending the separate checker update. The shared requirements loader still expects spec 2.1 while the pack is 2.2.",
+    "No Docker, WSL, model calls, sign-ins, downloads or dependency installs were run. Browser validation used src/evals/.playwright-browsers.",
+    "Direct scope and protected-input checks used reconstructed source trees outside containers. They do not establish container isolation."
   ]
 }

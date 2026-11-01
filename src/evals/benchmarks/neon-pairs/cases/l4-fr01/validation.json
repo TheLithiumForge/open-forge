@@ -1,80 +1,91 @@
 {
   "schemaVersion": 1,
   "status": "local-validation-passed-product-validation-pending",
-  "validation": "Fresh local builds, public tests, worker CLI, product patch and report parsers, and direct scope and protected-input functions.",
+  "validation": "Fresh reference patch checks, builds, unit tests and public browser suites on all nine projects, local worker CLI, product patch and report parsers, and direct scope and protected-input checks.",
   "node": "26.12.1",
   "playwright": "1.64.1",
   "chromium": "156.0.8078.4",
   "specVersion": 3,
-  "referenceHash": "b82b3bd844545f854551c7ad16489e8797ae369f77a369d3cf8c8e54f1d0dbe1",
+  "referenceSpecVersion": 2.2,
+  "referenceHash": "d7d3840660da2f1aa6a0b19996b7c539b7b6f2cbc6add70e42986f16957386f1",
   "productDocuments": [
     {
       "path": "README.md",
-      "sha256": "b57fb8b848d2d76619ac6af6fe8f9180933332018d4663d060a0153e1296e76f"
+      "sha256": "327d0333f97f0cf6fac50248fb66e08417451252e94119991ed1508da56ad0dc"
     },
     {
       "path": "acceptance.md",
-      "sha256": "eb3eaf50c186b24a82b1803400252897dcdad7ab407557553dea76a727fa34d2"
+      "sha256": "b10c9502e036d3c76cbba8d47d65ff6facb282d91f9d6f7c794c1cac54cce5bd"
     },
     {
       "path": "architecture.md",
-      "sha256": "31052dcd9c48372be62b5dfa7e119098b9cf7092a2b637c2aa2b80e8e23812c9"
+      "sha256": "2630515990aad980857df69b8295d6e17a94cc8c75bbd9215ad344ac00ffdafd"
     },
     {
       "path": "controls.md",
-      "sha256": "c8d7e44ee45713bf83651b0012539621346dba9f92df357ff3baf8bbc6bd9103"
+      "sha256": "905512bc21cd29bcf48639d4c0f66ece8eff393bc5fb2d7ebe520385b8fbed9b"
     },
     {
       "path": "input.md",
-      "sha256": "91185fbe8af93dbf8ca3c652711563d7fdf73027cb59af350d9ca8dea7ec0b4f"
+      "sha256": "561521000c174f0d3dba669739599b816a2df5edf325c56597195b3f0ebcdc53"
     },
     {
       "path": "reproducibility.md",
-      "sha256": "d5b32665781a2b12d04368f66acabaa9ab5c04ecd768283a152812c1fb6c9e92"
+      "sha256": "f30d6e693918fdec272c868961b3da5c21c44f885559978424926203fddc43ec"
     },
     {
       "path": "rules.md",
-      "sha256": "285e9dcfe7397f206ecda3c3f42ef0f11b592dd9b206ff6fc6dcb0de7095e1a7"
+      "sha256": "5bc52beb2a0af82dde856db4a8092e499c75f0e395db553f814ec6df0f5f5cb2"
     },
     {
       "path": "sound.md",
-      "sha256": "ddf7c9f2a23789ca5fbba974cc4fa32f9c2e8498884f4fefa29a9712f0e4b9e9"
+      "sha256": "ac13cd631905b38c47279868c12826bd57babdcde0a73974fa4bd071ff29b05d"
     },
     {
       "path": "technology.md",
-      "sha256": "a078681f7414c2c98f6953a3cef93db9b63c547acf0ab84a13092b5f1bf5e83e"
+      "sha256": "8af9ea621c07687b75543a282c119f4d66f9b5df82a2d5621f9cfdef3076605e"
     },
     {
       "path": "visuals.md",
-      "sha256": "e215a20482b13b0945b812a2d61bddd4558b118a388d323d4a0c5ea2bca5acb7"
+      "sha256": "3686d12b2ee43f357e05d1e4777d5f3f0a3b4e407b2a276eb828196a5fe59642"
     }
   ],
   "patchHashes": [
     {
       "path": "seed.patch",
-      "sha256": "83b5171c91bd62745b3de9e8338fb59da1e4b66c83d83d936c84149b2881d972"
+      "sha256": "a3a384556ec6237694ef4c5a3a26ceb7b9869857c2253722a271ba9be29fd6bc"
     },
     {
       "path": "solution.patch",
-      "sha256": "9c978d3cfd551a661c90466b9b3b55e4747270cb6b3bafd336ef69b228b6201f"
+      "sha256": "10e0b1f45f07d53150301480d0e28b3921661a91926dacec05d1594d57d7d1a3"
     },
     {
       "path": "alt-solution.patch",
-      "sha256": "5cce4d963afdaed5f9c668f2aca71463411065010c823407825b0a6a2d2c7e8b"
+      "sha256": "44abe3d36115cc2a527141785573d87cf54f69e868af2a5e94cf57571e740f38"
     }
+  ],
+  "supersedes": [
+    "C08.2",
+    "D05.1",
+    "D05.2"
   ],
   "stages": [
     {
       "stage": "starting",
       "patch": null,
-      "sourceHash": "394bd9618fa68484b79d9a11b4ebd267c31c1fde14ce4d194598e1feb4c43697",
+      "sourceHash": "dca005d2169efad9aae23a7a82d00f079308b87471845ec58239824366bf4509",
+      "patchCheck": "passed",
       "build": "passed",
       "typecheck": "passed",
       "units": {
         "status": "passed",
-        "passed": 128
+        "passed": 132
       },
-      "browser": null,
+      "browser": {
+        "status": "passed",
+        "passed": 94,
+        "failed": 0
+      },
       "expected": [
         {
           "id": "F01-01",
@@ -291,21 +302,53 @@
           "status": "fail",
           "evidence": "D05: reordered named version 2 snapshots restore both the name and progress. Assertion failed."
         }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-starting/build.log",
+          "sha256": "78317c7dd61f8bd9665b72ec080bbeb9a483b7c1043e6ce117d4330775a692c8"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-starting/unit.log",
+          "sha256": "186dc0cde6c5ee11995aa3cd305bdced5a4285079330bc71d7f7b22d3b77f5da"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-starting/browser.log",
+          "sha256": "61c991753bd93bcbb294a378193f8738673edfc4af9ab22f90d164a3cacce998"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-starting/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-starting/worker-input.json",
+          "sha256": "c1b5202b1ac30e83e2b1f49e4bdc8b0b250655e5b024f6eefa81a26f0655b78d"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-starting/worker-report.json",
+          "sha256": "bb98cf246969551470c574562d0cb95d27cf8ad1b7c0f2f9e6ec0ae0f76edf38"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-starting/seed-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
       ]
     },
     {
       "stage": "solution",
       "patch": "solution.patch",
-      "sourceHash": "8d51aaeeeeb449c8f2f9d0807c1aaa88bd4ab4263eed35872ab972a559c4df72",
+      "sourceHash": "da0fdcce6df5d5948eb38d5e5a9f482016ec7b0da78459cf19fc10de27590e2e",
+      "patchCheck": "passed",
       "build": "passed",
       "typecheck": "passed",
       "units": {
         "status": "passed",
-        "passed": 131
+        "passed": 135
       },
       "browser": {
         "status": "passed",
-        "passed": 65
+        "passed": 94,
+        "failed": 0
       },
       "expected": [
         {
@@ -394,7 +437,7 @@
         "id": "brownfield-diff-scope",
         "area": "scope",
         "status": "pass",
-        "evidence": "changed README.md: within diffScope\nchanged src/game/Game.tsx: within diffScope\nchanged src/game/controls/Reproduction.tsx: within diffScope\nadded src/game/deal-name.test.ts: within diffScope\nadded src/game/deal-name.ts: within diffScope\nchanged src/game/game.types.ts: within diffScope\nchanged src/game/session/use-game.ts: within diffScope\nadded src/game/snapshot-order.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
+        "evidence": "changed README.md: within diffScope\nchanged src/game/Game.tsx: within diffScope\nchanged src/game/controls/Reproduction.tsx: within diffScope\nchanged src/game/controls/control-labels.ts: within diffScope\nadded src/game/deal-name.test.ts: within diffScope\nadded src/game/deal-name.ts: within diffScope\nchanged src/game/game.ts: within diffScope\nchanged src/game/session/use-game.ts: within diffScope\nadded src/game/snapshot-order.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
       },
       "protectedInputs": {
         "id": "brownfield-protected-inputs",
@@ -522,22 +565,58 @@
           "area": "feature",
           "status": "pass",
           "evidence": "D05: reordered named version 2 snapshots restore both the name and progress."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-solution/build.log",
+          "sha256": "24625f42e498e1c2020c8c94891638d00e38d2864fa753ab631fd1e3d009bd71"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-solution/unit.log",
+          "sha256": "42e9d7ace52a823156a0bf751da42793d8cf728ddfbac4e5fd72183a48dee285"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-solution/browser.log",
+          "sha256": "2ce8be2074a010c9aab1af6eae6e67b5bf51250267470358608aa61ce896e0e5"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-solution/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-solution/worker-input.json",
+          "sha256": "9bc1fae7e9b5e8d11de85ca218dae8653621c18830903afa6e76316ced3b44ab"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-solution/worker-report.json",
+          "sha256": "7023336175f089e1574dde8eb8c08d6b95cc7979a267a6a68ab3c2ca7d799186"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-solution/seed-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-solution/solution-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ]
     },
     {
       "stage": "alternative",
       "patch": "alt-solution.patch",
-      "sourceHash": "b0513b1c0369dec3b83c1f136e61d12c188ed71327f77925c2e1dcb642c8afbd",
+      "sourceHash": "8ce73c0800c4f2cd1d634c32fd763cd6ad8518bfd8dcf8baa73edb5e978605c5",
+      "patchCheck": "passed",
       "build": "passed",
       "typecheck": "passed",
       "units": {
         "status": "passed",
-        "passed": 131
+        "passed": 135
       },
       "browser": {
         "status": "passed",
-        "passed": 65
+        "passed": 94,
+        "failed": 0
       },
       "expected": [
         {
@@ -626,7 +705,7 @@
         "id": "brownfield-diff-scope",
         "area": "scope",
         "status": "pass",
-        "evidence": "changed README.md: within diffScope\nchanged src/game/Game.tsx: within diffScope\nchanged src/game/controls/Reproduction.tsx: within diffScope\nadded src/game/controls/SnapshotName.tsx: within diffScope\nchanged src/game/game.types.ts: within diffScope\nadded src/game/saved-format/snapshot-fields.ts: within diffScope\nchanged src/game/session/use-game.ts: within diffScope\nadded src/game/snapshot-copy.test.ts: within diffScope\nadded src/game/snapshot-name.ts: within diffScope\nadded src/game/snapshot-names.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
+        "evidence": "changed README.md: within diffScope\nchanged src/game/Game.tsx: within diffScope\nchanged src/game/controls/Reproduction.tsx: within diffScope\nadded src/game/controls/SnapshotName.tsx: within diffScope\nchanged src/game/controls/control-labels.ts: within diffScope\nchanged src/game/game.ts: within diffScope\nadded src/game/saved-format/snapshot-fields.ts: within diffScope\nchanged src/game/session/use-game.ts: within diffScope\nadded src/game/snapshot-copy.test.ts: within diffScope\nadded src/game/snapshot-name.ts: within diffScope\nadded src/game/snapshot-names.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
       },
       "protectedInputs": {
         "id": "brownfield-protected-inputs",
@@ -755,11 +834,46 @@
           "status": "pass",
           "evidence": "D05: reordered named version 2 snapshots restore both the name and progress."
         }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-alternative/build.log",
+          "sha256": "9d558ad1eabaa4fecc9c74472f858893805b73e5791d643fd4d87dbf61931caa"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-alternative/unit.log",
+          "sha256": "83ef5ed85ac19c13d6b5a0905d3d9b7f76c606c0a78409216ef8dd0534747120"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-alternative/browser.log",
+          "sha256": "fdb6dfcb39cd7111625c08d3059ee893bf40112b37fd931f6751d92431a0b3ec"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-alternative/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-alternative/worker-input.json",
+          "sha256": "908a1fd4ad67eae98a6345411a71ae1317d96654edd9c0ceb39b86bab75d1553"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-alternative/worker-report.json",
+          "sha256": "7023336175f089e1574dde8eb8c08d6b95cc7979a267a6a68ab3c2ca7d799186"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-alternative/seed-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-fr01-alternative/solution-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
       ]
     }
   ],
   "limits": [
-    "Full product regression and Docker validation are pending. The shared requirements loader rejects spec 2.1. No Docker, WSL, models or sign-ins were run.",
-    "Starting trees have build, unit and change-worker evidence. Public browser suites ran on both solutions. Direct guard checks used plain reconstructed source trees, outside containers."
+    "Full frozen Layer 3 regression validation is pending the separate checker update. The shared requirements loader still expects spec 2.1 while the pack is 2.2.",
+    "No Docker, WSL, model calls, sign-ins, downloads or dependency installs were run. Browser validation used src/evals/.playwright-browsers.",
+    "Direct scope and protected-input checks used reconstructed source trees outside containers. They do not establish container isolation."
   ]
 }
