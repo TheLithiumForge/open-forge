@@ -1,12 +1,28 @@
 import { freshSnapshot } from "./replay.ts";
-import { Rules, SelectionKind } from "./rules.ts";
+import { Rules, SelectionKind, type Snapshot } from "./rules.ts";
 import { expectedDeck } from "./board-code.ts";
+import { CapClause } from "./cap-policy.ts";
 
 export const KnownCode = `${Rules.boardPrefix}-4-1`;
 export interface Vector { readonly name: string; readonly clauses: readonly string[]; readonly text: string }
 const snapshot = freshSnapshot(KnownCode);
 const replay = { version: Rules.formatVersion, boardCode: KnownCode, actions: [{ atMs: 10, index: 0 }, { atMs: 20, index: 1 }], endMs: 820 };
 const vector = (name: string, clauses: string, value: unknown): Vector => ({ name, clauses: clauses.split(" "), text: JSON.stringify(value) });
+
+export interface PairIndices { readonly first: number; readonly second: number }
+export function cappedProgress(): { readonly state: Snapshot; readonly first: PairIndices; readonly remaining: readonly PairIndices[] } {
+  const deck = expectedDeck(KnownCode), groups = new Map<number, number[]>();
+  deck.forEach((face, index) => groups.set(face, [...(groups.get(face) ?? []), index]));
+  const pairs = [...groups.values()].slice(0, 3).map((positions): PairIndices => {
+    const [first, second] = positions;
+    if (first === undefined || second === undefined) throw new Error("The cap vector needs whole pairs.");
+    return { first, second };
+  });
+  const unmatched = pairs.flatMap((pair) => [pair.first, pair.second]), first = pairs.shift();
+  if (!first || pairs.length !== 2) throw new Error("The cap vector needs three unmatched pairs.");
+  return { first, remaining: pairs, state: { ...snapshot, started: true, moves: Rules.movesMaximum - 1, elapsedMs: Rules.elapsedMaximumMs - 1,
+    matched: deck.map((_, index) => index).filter((index) => !unmatched.includes(index)), selection: { kind: SelectionKind.one, index: first.first } } };
+}
 
 export function snapshotVectors(): Vector[] {
   const one = { ...snapshot, started: true, selection: { kind: SelectionKind.one, index: 0 } };
@@ -32,6 +48,11 @@ export function snapshotVectors(): Vector[] {
     vector("moves too small", "D07.3", { ...matched, moves: 0 }), vector("miss too small", "D07.3", { ...mismatch, moves: 0 }),
     vector("started empty", "D07.5", { ...snapshot, started: true }),
     vector("history not reconstructed", "D10.8", { ...one, moves: 999, elapsedMs: 1 }),
+    vector("elapsed cap accepted", CapClause.snapshotElapsed, { ...one, elapsedMs: Rules.elapsedMaximumMs }),
+    vector("elapsed cap rejected", CapClause.snapshotElapsed, { ...one, elapsedMs: Rules.elapsedMaximumMs + 1 }),
+    vector("move cap accepted", CapClause.snapshotMoves, { ...one, moves: Rules.movesMaximum }),
+    vector("move cap rejected", CapClause.snapshotMoves, { ...one, moves: Rules.movesMaximum + 1 }),
+    vector("both caps accepted", `${CapClause.snapshotElapsed} ${CapClause.snapshotMoves}`, { ...one, elapsedMs: Rules.elapsedMaximumMs, moves: Rules.movesMaximum }),
   ];
   for (const remainingMs of [0, 801, 1.5]) vectors.push(vector(`remaining ${remainingMs}`, "D06.6", { ...mismatch, selection: { ...mismatch.selection, remainingMs } }));
   for (const field of ["moves", "elapsedMs"]) for (const value of [-1, 0.5, Number.MAX_SAFE_INTEGER + 1, "0"]) vectors.push(vector(`${field} ${value}`, "D07.2", { ...one, [field]: value }));
@@ -49,6 +70,7 @@ export function replayVectors(): Vector[] {
     vector("exact expiry", "D09.3", { ...replay, actions: [...replay.actions, { atMs: 820, index: 2 }], endMs: 1000 }),
     vector("locked", "D09.4", { ...replay, actions: [...replay.actions, { atMs: 819, index: 2 }], endMs: 819 }),
     vector("equal time", "D08.7", { ...replay, actions: [{ atMs: 10, index: 0 }, { atMs: 10, index: 11 }], endMs: 10 }),
+    vector("pair activation", "D09.2", { ...replay, actions: [{ atMs: 10, index: 0 }, { atMs: 10, index: 11 }], endMs: 10 }),
     vector("version", "D08.1 D10.4 D10.10", { ...replay, version: 2 }), vector("unknown field", "D08.1", { ...replay, extra: 0 }),
     vector("action field", "D08.2", { ...replay, actions: [{ atMs: 0, index: 0, extra: 0 }] }),
     vector("negative index", "D08.3", { ...replay, actions: [{ atMs: 0, index: -1 }] }),
@@ -56,6 +78,9 @@ export function replayVectors(): Vector[] {
     vector("descending time", "D08.5", { ...replay, actions: [{ atMs: 20, index: 0 }, { atMs: 10, index: 1 }] }),
     vector("early end", "D08.6", { ...replay, endMs: 19 }),
     vector("safe elapsed boundary", "D09.5", { ...replay, actions: [{ atMs: 0, index: 0 }], endMs: Number.MAX_SAFE_INTEGER }),
+    vector("elapsed reaches cap", "D09.5", { ...replay, actions: [{ atMs: 0, index: 0 }], endMs: Rules.elapsedMaximumMs }),
+    vector("elapsed passes cap", "D09.5", { ...replay, actions: [{ atMs: 0, index: 0 }], endMs: Rules.elapsedMaximumMs + 1 }),
+    vector("play after elapsed cap", "D09.3 D09.5", { ...replay, actions: [{ atMs: 0, index: 0 }, { atMs: Rules.elapsedMaximumMs, index: 1 }, { atMs: Rules.elapsedMaximumMs + Rules.mismatchMs, index: 2 }], endMs: Rules.elapsedMaximumMs + Rules.mismatchMs }),
   ];
   for (const value of [-1, 0.1, Number.MAX_SAFE_INTEGER + 1]) {
     vectors.push(vector(`action time ${value}`, "D08.4", { ...replay, actions: [{ atMs: value, index: 0 }] }));

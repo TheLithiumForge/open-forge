@@ -20,6 +20,10 @@
     "R05.2",
     "R05.3",
     "R05.4",
+    "R05.5",
+    "R05.6",
+    "R05.7",
+    "R05.8",
     "R06.1",
     "R06.2",
     "R06.3",
@@ -33,6 +37,9 @@
     "R07.6",
     "R07.7",
     "R07.8",
+    "R07.9",
+    "R07.10",
+    "R07.11",
     "R08.1",
     "R08.2",
     "R08.3",
@@ -184,7 +191,7 @@
     "T10.3",
     "T10.4"
   ],
-  "sourceHash": "5305337d6e5419f0d75423e90fe123958fd046ec683b8d4047e64c5be3516415",
+  "sourceHash": "4d7beb16456f6c0ec4f2db934bb4b9276208cbef5a4e5ab7072c64f09c598d03",
   "sourceFiles": [
     {
       "path": "README.md",
@@ -212,11 +219,11 @@
     },
     {
       "path": "reproducibility.md",
-      "sha256": "55ee4033721ac3c05c26f9bcdc1bf51ee6e8475d51e57c6eb0853a4235e8f0a6"
+      "sha256": "9ff74bb360e06aae852de6ed6db3232b8c69c03084a48fa176eb6d4d98c080c0"
     },
     {
       "path": "rules.md",
-      "sha256": "08be8af35df23e8dc82a0366a2e4c0da358d7889cb74eb71470d20dd6c581020"
+      "sha256": "a8702449b47711bcee3025c0181a94d1ea4382ea9a4640eb1126195cb639f4ab"
     },
     {
       "path": "sound.md",
@@ -232,7 +239,36 @@
     },
     {
       "path": "requirements.json",
-      "sha256": "03411b6073c6192ebb53a12e23c9e841822e31710d02fff82241d8e31117b72f"
+      "sha256": "345c18ba65422b3d0c665cdf2bfbed7b61dfe8db24b3732a5b5c23acd7f3d422"
+    }
+  ],
+  "selectionChanges": [
+    {
+      "from": {
+        "sha256": "ab69e0d5e6053781194278416ad6200eeec43f3c5a0949505c99fa826bffdb02",
+        "count": 180,
+        "sourceHash": "5305337d6e5419f0d75423e90fe123958fd046ec683b8d4047e64c5be3516415"
+      },
+      "to": {
+        "sha256": "f54b94aa3891a868912b98f225b9577d8bf9330cde1d9d52bbcfe4154ebd1552",
+        "count": 187,
+        "sourceHash": "4d7beb16456f6c0ec4f2db934bb4b9276208cbef5a4e5ab7072c64f09c598d03"
+      },
+      "reason": "Accept the spec v2 elapsed-time and move caps recorded in spec-notes.md.",
+      "added": [
+        "R05.5",
+        "R05.6",
+        "R05.7",
+        "R05.8",
+        "R07.9",
+        "R07.10",
+        "R07.11"
+      ],
+      "removed": [],
+      "updated": [
+        "R05.1",
+        "R05.4"
+      ]
     }
   ],
   "files": [
@@ -251,8 +287,8 @@
     },
     {
       "path": "rules.md",
-      "sha256": "dda585f9ef29757a1eec0181f927e8ba319345f6a6df68c31a7d4e2334f67451",
-      "sourceSha256": "08be8af35df23e8dc82a0366a2e4c0da358d7889cb74eb71470d20dd6c581020",
+      "sha256": "91bad23d0e1b3c8061cd383d5e95ddbd75392c90c552cdb3d49844e6713fd47e",
+      "sourceSha256": "a8702449b47711bcee3025c0181a94d1ea4382ea9a4640eb1126195cb639f4ab",
       "metadata": {
         "description": "Rules requirements for Neon Pairs",
         "tags": [

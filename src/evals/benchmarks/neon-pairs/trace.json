@@ -15677,9 +15677,7 @@
                     {
                         "clauseId":  "R07.9",
                         "requirementId":  "R07",
-                        "checks":  [
-
-                                   ],
+                        "checks":  ["L2:rubric#counter-caps","L3:l2-clock#clause-R07.9"],
                         "reference":  [
                                           {
                                               "path":  "reference/src/game/game.ts",
@@ -15731,9 +15729,7 @@
                     {
                         "clauseId":  "R07.10",
                         "requirementId":  "R07",
-                        "checks":  [
-
-                                   ],
+                        "checks":  ["L2:l2-clock#clause-R07.10","L3:l2-clock#clause-R07.10"],
                         "reference":  [
                                           {
                                               "path":  "reference/src/game/game.ts",
@@ -15785,9 +15781,7 @@
                     {
                         "clauseId":  "R07.11",
                         "requirementId":  "R07",
-                        "checks":  [
-
-                                   ],
+                        "checks":  ["L2:l2-clock#clause-R07.11","L3:l2-clock#clause-R07.11"],
                         "reference":  [
                                           {
                                               "path":  "reference/src/game/game.ts",
@@ -15839,9 +15833,7 @@
                     {
                         "clauseId":  "D07.7",
                         "requirementId":  "D07",
-                        "checks":  [
-
-                                   ],
+                        "checks":  ["L3:l3-d07-replay#clause-D07.7"],
                         "reference":  [
                                           {
                                               "path":  "reference/src/game/snapshot.ts",
@@ -15893,9 +15885,7 @@
                     {
                         "clauseId":  "R05.5",
                         "requirementId":  "R05",
-                        "checks":  [
-
-                                   ],
+                        "checks":  ["L2:rubric#counter-caps","L3:l2-moves#clause-R05.5"],
                         "reference":  [
                                           {
                                               "path":  "reference/src/game/move-cap.test.ts",
@@ -15917,9 +15907,7 @@
                     {
                         "clauseId":  "R05.6",
                         "requirementId":  "R05",
-                        "checks":  [
-
-                                   ],
+                        "checks":  ["L2:rubric#counter-caps","L3:l2-moves#clause-R05.6"],
                         "reference":  [
                                           {
                                               "path":  "reference/src/game/move-cap.test.ts",
@@ -15941,9 +15929,7 @@
                     {
                         "clauseId":  "R05.7",
                         "requirementId":  "R05",
-                        "checks":  [
-
-                                   ],
+                        "checks":  ["L2:rubric#counter-caps","L3:l2-moves#clause-R05.7"],
                         "reference":  [
                                           {
                                               "path":  "reference/src/game/move-cap.test.ts",
@@ -15965,9 +15951,7 @@
                     {
                         "clauseId":  "R05.8",
                         "requirementId":  "R05",
-                        "checks":  [
-
-                                   ],
+                        "checks":  ["L2:rubric#counter-caps","L3:l2-moves#clause-R05.8"],
                         "reference":  [
                                           {
                                               "path":  "reference/src/game/move-cap.test.ts",
@@ -15989,9 +15973,7 @@
                     {
                         "clauseId":  "D07.8",
                         "requirementId":  "D07",
-                        "checks":  [
-
-                                   ],
+                        "checks":  ["L3:l3-d07-replay#clause-D07.8"],
                         "reference":  [
                                           {
                                               "path":  "reference/src/game/move-cap.test.ts",
@@ -16013,9 +15995,7 @@
                     {
                         "clauseId":  "D07.9",
                         "requirementId":  "D07",
-                        "checks":  [
-
-                                   ],
+                        "checks":  ["L3:l3-d07-browser#clause-D07.9"],
                         "reference":  [
                                           {
                                               "path":  "reference/src/game/move-cap.test.ts",

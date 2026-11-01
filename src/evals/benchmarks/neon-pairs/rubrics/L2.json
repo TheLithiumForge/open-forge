@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "specVersion": 2,
-  "version": "L2-v1",
+  "version": "L2-v2",
   "ballots": 3,
   "answers": [
     "yes",
@@ -93,6 +93,19 @@
       "evidence": "source-and-images",
       "question": "Are the board, focus outlines, controls and win summary readable at the supplied phone and desktop sizes? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": []
+    },
+    {
+      "id": "counter-caps",
+      "area": "rules",
+      "evidence": "source",
+      "question": "Does source keep elapsed time at 359999999ms and moves at 999999, while matching, mismatch closing and victory continue at those caps? Layer 2 can't import boundary states and a seconds-only clock can't show the exact stored millisecond limit. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "clauses": [
+        "R05.5",
+        "R05.6",
+        "R05.7",
+        "R05.8",
+        "R07.9"
+      ]
     }
   ]
 }

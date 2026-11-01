@@ -3,8 +3,10 @@ import { definition } from "./catalog.ts";
 import { LayerId, loadRequirements } from "./requirements.ts";
 import { rubric } from "./rubrics.ts";
 import { fillTrace } from "./trace.ts";
+import { NewCapClauses } from "./cap-policy.ts";
 
-export async function freeze(): Promise<void> {
+export const CapTraceFlag = "--caps";
+export async function freeze(traceClauses?: readonly string[]): Promise<void> {
   const inventory = await loadRequirements();
   const slots = new Map<string, string[]>();
   for (const layer of Object.values(LayerId)) {
@@ -18,6 +20,11 @@ export async function freeze(): Promise<void> {
     for (const question of review.questions) for (const clause of question.clauses) slots.set(clause, [...(slots.get(clause) ?? []), `${layer}:rubric#${question.id}`]);
   }
   const path = new URL("../../trace.json", import.meta.url);
-  await writeFile(path, fillTrace(await readFile(path, "utf8"), slots));
+  const selected = traceClauses === undefined ? slots : new Map([...slots].filter(([clause]) => traceClauses.includes(clause)));
+  await writeFile(path, fillTrace(await readFile(path, "utf8"), selected));
 }
-if (import.meta.main) await freeze();
+if (import.meta.main) {
+  const [flag, extra] = process.argv.slice(2);
+  if (extra || flag !== undefined && flag !== CapTraceFlag) throw new Error(`Use freeze.ts [${CapTraceFlag}].`);
+  await freeze(flag === CapTraceFlag ? NewCapClauses : undefined);
+}

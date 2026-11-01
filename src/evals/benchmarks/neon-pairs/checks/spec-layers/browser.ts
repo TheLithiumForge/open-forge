@@ -12,11 +12,14 @@ import { boardControls, knownDeals, snapshotCases } from "./browser-formats.ts";
 import { importedProgress, invalidLoads, loadedFocusAndSize } from "./browser-import.ts";
 import { svgGeometry } from "./browser-geometry.ts";
 import { sourceRules } from "./browser-source-rules.ts";
+import { snapshotCaps, visibleTimeCap } from "./browser-caps.ts";
+import { CapClause } from "./cap-policy.ts";
 
 interface Journey { readonly groups: readonly string[]; readonly action: (page: Page, evidence: Evidence) => Promise<void>; readonly blockedStorage?: boolean; readonly file?: boolean }
 const journeys: readonly Journey[] = [
   { groups: ["sizes"], action: sizes }, { groups: ["selection", "mismatch", "moves", "completion", "matched"], action: turns },
   { groups: ["clock"], action: clock }, { groups: ["preferences", "reset"], action: preferences }, { groups: ["best"], action: best },
+  { groups: ["clock"], action: visibleTimeCap },
   { groups: ["stale"], action: stale }, { groups: ["storage"], action: invalidPreferences },
   { groups: ["storage", "offline"], action: storageFailure, blockedStorage: true },
   { groups: ["controls"], action: controlNames }, { groups: ["focus", "navigation"], action: navigation },
@@ -25,7 +28,7 @@ const journeys: readonly Journey[] = [
   { groups: ["faces"], action: faces }, { groups: ["names", "faces"], action: accessibleNames },
   { groups: ["scroll", "large"], action: scroll }, { groups: ["motion"], action: motion }, { groups: ["zoom", "offline"], action: zoom },
 ];
-const specJourneys = [boardControls, snapshotCases, knownDeals, invalidLoads, importedProgress, loadedFocusAndSize, svgGeometry, sourceRules];
+const specJourneys = [boardControls, snapshotCases, knownDeals, invalidLoads, importedProgress, loadedFocusAndSize, svgGeometry, sourceRules, snapshotCaps];
 
 export async function browserChecks(html: string, definition: Definition, evidence: Evidence, launch: () => Promise<Browser> = () => chromium.launch()): Promise<void> {
   const browser = await launch();
@@ -79,5 +82,5 @@ export async function browserChecks(html: string, definition: Definition, eviden
   }
   const browserClauses = definition.checks.filter((check) => check.method === Method.browser).flatMap((check) => check.clauses);
   for (const clause of browserClauses.filter((id) => !evidence.seen.has(id))) evidence.record(clause, stopped.get(clause)?.status ?? "error", stopped.get(clause)?.detail ?? (failures.join(". ") || "The browser checker did not collect this clause."));
-  if (definition.layer === Layer.three) for (const outcome of evidence.outcomes.filter((item) => /^(?:D05|D06|D07)\./.test(item.clause))) evidence.merge("C09.2", outcome.status, `${outcome.clause}: ${outcome.evidence}`);
+  if (definition.layer === Layer.three) for (const outcome of evidence.outcomes.filter((item) => /^(?:D05|D06)\.|^D07\.[1-5]$/.test(item.clause) || item.clause === CapClause.snapshotElapsed || item.clause === CapClause.snapshotMoves)) evidence.merge("C09.2", outcome.status, `${outcome.clause}: ${outcome.evidence}`);
 }

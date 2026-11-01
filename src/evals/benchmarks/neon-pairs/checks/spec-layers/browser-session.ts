@@ -5,7 +5,7 @@ import type { Browser, BrowserContext, Page } from "playwright";
 import { card } from "../board.ts";
 import { markVisibleCards as markCards } from "./browser-cards.ts";
 import { BehaviorFailure } from "./outcomes.ts";
-import { cardName, faceIn } from "./view-values.ts";
+import { cardName, elapsedIn, faceIn } from "./view-values.ts";
 
 export const Labels = { size: "Grid size", fresh: "New Game", restart: "Restart", reproduce: "Reproduce a game", code: "Board code", loadBoard: "Load board", snapshot: "Snapshot JSON", export: "Export snapshot", loadSnapshot: "Load snapshot", resume: "Resume" } as const;
 export interface Session { readonly page: Page; readonly context: BrowserContext; readonly errors: string[]; readonly requests: string[]; readonly origin: string; close(): Promise<void> }
@@ -103,6 +103,7 @@ export async function solve(page: Page, deck: readonly string[]): Promise<void> 
 }
 export async function body(page: Page): Promise<string> { return page.locator("body").innerText(); }
 export function metric(text: string, label: "moves" | "pairs" | "time" | "best"): number | null {
+  if (label === "time") { const milliseconds = elapsedIn(text); return milliseconds === null ? null : milliseconds / 1000; }
   const prefixes = { moves: "(?<!best[ \\t])moves", pairs: "(?:matched[ \\t]+)?pairs", time: "(?:active[ \\t]+)?(?:time|elapsed)", best: "best(?:[ \\t]+moves)?" };
   const match = new RegExp(`${prefixes[label]}[ \\t:\\n]*(\\d+)`, "i").exec(text);
   return match ? Number(match[1]) : null;

@@ -32,7 +32,7 @@ export function decodeSnapshot(input: unknown): Snapshot | null {
   if ([...faces.values()].some((count) => count !== 2)) return null;
   const chosen = selection(value["selection"], deck.length, matched, deck);
   const moves = value["moves"], elapsedMs = value["elapsedMs"], started = value["started"];
-  if (!chosen || !nonnegativeInteger(moves) || !nonnegativeInteger(elapsedMs) || typeof started !== "boolean" || moves < matched.length / 2 + (chosen.kind === SelectionKind.mismatch ? 1 : 0)) return null;
+  if (!chosen || !nonnegativeInteger(moves) || moves > Rules.movesMaximum || !nonnegativeInteger(elapsedMs) || elapsedMs > Rules.elapsedMaximumMs || typeof started !== "boolean" || moves < matched.length / 2 + (chosen.kind === SelectionKind.mismatch ? 1 : 0)) return null;
   if (matched.length === deck.length && chosen.kind !== SelectionKind.closed) return null;
   if (!started && (moves !== 0 || elapsedMs !== 0 || matched.length !== 0 || chosen.kind !== SelectionKind.closed)) return null;
   if (started && moves === 0 && chosen.kind !== SelectionKind.one) return null;

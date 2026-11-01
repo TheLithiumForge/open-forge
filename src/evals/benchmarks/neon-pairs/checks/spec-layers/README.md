@@ -11,10 +11,18 @@ The frozen declarations contain these counts:
 
 | Layer | Checks | Clause assertions | Review clauses | Questions |
 | --- | --- | --- | --- | --- |
-| L2-v1 | 48 | 169 | 11 | 10 |
-| L3-v1 | 100 | 336 | 55 | 12 |
+| L2-v2 | 48 | 171 | 16 | 11 |
+| L3-v2 | 100 | 346 | 55 | 12 |
 
 The assertion counts exclude the 16 inherited L1 checks. Each question takes three yes, no or unsure ballots with cited evidence. `layers/L2.json` and `layers/L3.json` list every clause and its method. Their `review` arrays list every review clause with its reason.
+
+Layer 2 reaches the displayed elapsed cap with a controlled clock and continues matching, closing a miss and winning. R07.9 stays in source review because a seconds-only display can't show the exact stored millisecond limit. R05.5 through R05.8 stay in source review because nearly two million card activations would be needed without snapshot import. Those five clauses keep their planned browser method in the requirement inventory.
+
+Layer 3 imports progress just below both caps, reaches the exact limits and continues through a miss, matches, victory and snapshot export. It also rejects above-cap imports and saved best scores. Replay timestamps keep their safe-integer range while exported elapsed time stays capped.
+
+I17 keeps its spoken-output review under the spec notes. Its planned browser method covers tree evidence, which doesn't establish spoken output or a screen reader version. Existing names, focus and announcement checks support that review.
+
+To regenerate these definitions while updating only the ten cap trace slots, run `node benchmarks/neon-pairs/checks/spec-layers/freeze.ts --caps` from `src/evals`.
 
 ## Validate
 
@@ -27,7 +35,7 @@ node benchmarks/neon-pairs/checks/spec-layers/validate.ts --audit
 
 The audit checks every fixture search text matches exactly once. If the reference changes, update the fixture against the new source before running validation. A missing or repeated match stops validation.
 
-When the new reference and verifier image are ready, run these commands:
+With the rebuilt reference and verifier image ready, run these commands:
 
 ```powershell
 node benchmarks/neon-pairs/checks/spec-layers/validate.ts --run L2
@@ -55,4 +63,4 @@ Seven Layer 3 clauses need other evidence. Layer 2 includes six of them. Their o
 - T07.9 - Leftover authoring processes need a process check before the authoring container shuts down.
 - T03.4 - The named Node 26.12.1, npm 11.20.0, Playwright 1.64.1 and Chromium 156.0.8078.4 combination needs its own toolchain. The shared verifier image uses Node 24.
 
-The validation command reports these limits apart. Its preparation audit has run. Browser and mutation validation waits for the new reference and the overseer's container run.
+The validation command reports these limits apart. Its preparation audit has run. Browser and mutation validation against the rebuilt reference waits for the overseer's container run.

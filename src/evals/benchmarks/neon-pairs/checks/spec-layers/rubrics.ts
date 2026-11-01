@@ -1,11 +1,14 @@
 import type { Clause, LayerId } from "./requirements.ts";
-import { LayerId as Layer, Method, supplied } from "./requirements.ts";
+import { LayerId as Layer, supplied } from "./requirements.ts";
 import { Versions } from "./catalog.ts";
+import { LayerTwoCapReview } from "./cap-policy.ts";
+import { reviewReason } from "./review-policy.ts";
+import { Rules } from "./rules.ts";
 
 interface Question { readonly id: string; readonly area: string; readonly evidence: string; readonly question: string; readonly clauses: readonly string[] }
 const question = (id: string, area: string, evidence: string, text: string, clauses: readonly string[] = []): Question => ({ id, area, evidence, question: `${text} Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.`, clauses });
 export function rubric(layer: LayerId, inventory: readonly Clause[]) {
-  const review = supplied(inventory, layer).filter((clause) => clause.method === Method.review);
+  const review = supplied(inventory, layer).filter((clause) => reviewReason(clause, layer) !== undefined);
   const ids = (prefixes: readonly string[]): string[] => review.filter((clause) => prefixes.some((prefix) => clause.id === prefix || clause.id.startsWith(`${prefix}.`))).map((clause) => clause.id);
   const questions = layer === Layer.two ? [
     question("screen-reader", "accessibility", "source", "Does recorded evidence show a keyboard and screen reader finish, named controls, closed positions, revealed faces, one result per turn, win moves and time, leaving the board and starting again, with browser and screen reader versions?", ids(["I17"])),
@@ -18,6 +21,7 @@ export function rubric(layer: LayerId, inventory: readonly Clause[]) {
     question("complexity", "code", "source", "Does the implementation avoid abstractions and dependencies that add work without helping this game?"),
     question("neon", "visual", "images", "Do the board images show the specified dark neon appearance with clear controls and status?"),
     question("legibility", "visual", "source-and-images", "Are the board, focus outlines, controls and win summary readable at the supplied phone and desktop sizes?"),
+    question("counter-caps", "rules", "source", `Does source keep elapsed time at ${Rules.elapsedMaximumMs}ms and moves at ${Rules.movesMaximum}, while matching, mismatch closing and victory continue at those caps? Layer 2 can't import boundary states and a seconds-only clock can't show the exact stored millisecond limit.`, ids(Object.keys(LayerTwoCapReview))),
   ] : [
     question("pure-core", "architecture", "source", "Are generation, transitions, logical time, snapshot validation and replay pure in src/game, with direct inputs and no DOM, storage, external randomness or browser clock?", ids(["A01"])),
     question("state", "architecture", "source", "Are board and deck immutable, progress represented by the documented state and formats, victory and pairs derived, and closed, one and mismatch branches direct and exhaustive with nearby named constants?", ids(["A02", "A03"])),

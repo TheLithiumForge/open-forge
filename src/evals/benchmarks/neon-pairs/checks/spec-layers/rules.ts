@@ -1,6 +1,7 @@
 export const Rules = {
   sizes: [4, 6, 8, 10, 12, 14, 16], mismatchMs: 800, seedMaximum: 2147483646, modulus: 2147483647,
   multiplier: 16807, formatVersion: 1, boardPrefix: "np1", snapshotBytes: 65536, replayBytes: 1048576, actionsMaximum: 10000,
+  elapsedMaximumMs: 359999999, movesMaximum: 999999,
   palette: ["#63E7FF", "#FF71D6", "#8BEA7D", "#FFE082", "#FFB064", "#B49AFF", "#FF8296", "#D9F3FF"],
   colors: ["cyan", "magenta", "green", "yellow", "orange", "violet", "rose", "ice"],
   shapes: ["circle", "square", "triangle", "diamond", "star", "hexagon", "plus", "chevron"],

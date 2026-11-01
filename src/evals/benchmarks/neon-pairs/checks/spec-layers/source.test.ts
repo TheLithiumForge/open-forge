@@ -11,6 +11,7 @@ import { Evidence } from "./outcomes.ts";
 import { metric } from "./browser-session.ts";
 import { rowOrder } from "./browser-cards.ts";
 import { removeTemporary, temporaryPath } from "./temporary.ts";
+import { Rules } from "./rules.ts";
 
 test("source parsers validate JSON, JSONC, inherited options and cycles", () => {
   assert.deepEqual(jsonObject('{"a":1}'), { a: 1 });
@@ -68,5 +69,7 @@ test("status text parser separates moves from best and reads named values", () =
   assert.equal(metric(text, "best"), 8);
   assert.equal(metric(text, "pairs"), 1);
   assert.equal(metric(text, "time"), 3);
+  assert.equal(metric("Active time\n1:02:03", "time"), 3723);
+  assert.equal(metric("Active time\n5999:59", "time"), Math.floor(Rules.elapsedMaximumMs / 1000));
   assert.equal(metric("Moves: none", "moves"), null);
 });

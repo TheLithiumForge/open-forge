@@ -1,6 +1,6 @@
 {
   "id": "late-mismatch",
-  "edits": [{ "path": "src/game/rules.ts", "before": "export const MISMATCH_MS = 800;", "after": "export const MISMATCH_MS = 801;" }],
+  "edits": [{ "path": "src/game/game.ts", "before": "export const MISMATCH_MS = 800;\nexport const MOVES_MAX = 999_999;", "after": "export const MISMATCH_MS = 801;\nexport const MOVES_MAX = 999_999;" }],
   "expected": { "R04.2": "fail", "D09.3": "fail", "D05.2": "pass" },
   "scope": "Delay mismatch resolution by one millisecond."
 }

@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { emptyDestination, hashes, inventory, jsonBytes, sha256, sourceFingerprint, writeNew, type FileBytes } from "./files.ts";
+import { hashes, inventory, sha256, sourceFingerprint, type FileBytes } from "./files.ts";
 import { orderedDocuments } from "./document-order.ts";
 import { readFrozenSpecs } from "./frozen.ts";
 import { validateLinks } from "./markdown.ts";
@@ -8,12 +8,19 @@ import { isRecord } from "./frontmatter.ts";
 import { MaterializePaths } from "./paths.ts";
 import { CaseLayer, readRequirements, SpecVersion, type ProductRequirement } from "./requirements.ts";
 import { ManifestVersion, SpecsFiles, type SpecsManifest } from "./specs.ts";
+import { selectedClauses, selectionChanges, type SelectionChange } from "./subset-selection.ts";
+import { subsetBaseline, writeSubset } from "./subset-output.ts";
 
-export const LayerTwoClauseCount = 180;
+export const LayerTwoClauseCount = 187;
 export const LayerTwoRequirementCount = 60;
 export const LayerTwoFixture = "neon-pairs-player";
 export const SubsetFiles = { requirements: "requirements.json" } as const;
-export interface SubsetManifest extends SpecsManifest { readonly specVersion: number; readonly clauseIds: readonly string[] }
+export interface SubsetManifest extends SpecsManifest {
+  readonly specVersion: number;
+  readonly clauseIds: readonly string[];
+  readonly selectionChanges: readonly SelectionChange[];
+}
+export interface SubsetOptions { readonly acceptSelectionChange?: string }
 
 function title(file: FileBytes): string {
   const heading = /^# (.+)\r?$/m.exec(file.bytes.toString())?.[1];
@@ -51,22 +58,22 @@ export function playerDocuments(requirements: readonly ProductRequirement[], sou
   return result;
 }
 
-export async function materializeSubset(destination: string, specs: string = MaterializePaths.specs, requirementsPath: string = MaterializePaths.requirements): Promise<SubsetManifest> {
+export async function materializeSubset(destination: string, specs: string = MaterializePaths.specs, requirementsPath: string = MaterializePaths.requirements, options: SubsetOptions = {}): Promise<SubsetManifest> {
   const frozen = await readFrozenSpecs(specs);
   const requirementBytes = await readFile(requirementsPath);
   const requirements = readRequirements(JSON.parse(requirementBytes.toString()));
   const documents = playerDocuments(requirements, orderedDocuments(frozen.manifest, frozen.documents));
-  const clauseIds = documents.flatMap((file) => [...file.bytes.toString().matchAll(/^- ([A-Z]\d{2}\.\d+) - /gm)].flatMap((match) => match[1] ?? []));
-  if (clauseIds.length !== LayerTwoClauseCount || new Set(clauseIds).size !== LayerTwoClauseCount
-    || new Set(clauseIds.map((id) => id.split(".")[0])).size !== LayerTwoRequirementCount) throw new Error("The frozen Layer 2 clause selection changed.");
+  const clauses = selectedClauses(documents);
+  const clauseIds = clauses.map((clause) => clause.id);
   const sourceFiles = [...frozen.manifest.sourceFiles, { path: SubsetFiles.requirements, sha256: sha256(requirementBytes) }];
+  const sources = [specs, MaterializePaths.source];
+  const baseline = await subsetBaseline(destination, sources);
+  const changes = selectionChanges(baseline.selection, sourceFingerprint(sourceFiles), clauses, options.acceptSelectionChange);
   const manifest: SubsetManifest = { schemaVersion: ManifestVersion, fixture: LayerTwoFixture, specVersion: SpecVersion, clauseIds,
-    sourceHash: sourceFingerprint(sourceFiles), sourceFiles,
+    sourceHash: sourceFingerprint(sourceFiles), sourceFiles, selectionChanges: changes,
     files: documents.map((file) => ({ path: file.path, sha256: sha256(file.bytes), sourceSha256: frozen.manifest.files.find((record) => record.path === file.path)?.sourceSha256 ?? "",
       metadata: { description: `${title(file)} requirements for Neon Pairs`, tags: ["LoadNow", "Game", "Specification"] } })) };
-  const target = await emptyDestination(destination, [specs, MaterializePaths.source]);
-  for (const file of documents) await writeNew(target, file.path, file.bytes);
-  await writeNew(target, SpecsFiles.manifest, jsonBytes(manifest));
+  await writeSubset(destination, documents, manifest, baseline, sources);
   return manifest;
 }
 

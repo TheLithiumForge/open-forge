@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "specVersion": 2,
-  "version": "L3-v1",
+  "version": "L3-v2",
   "layer": "L3",
   "checks": [
     {
@@ -258,14 +258,18 @@
         "R05.1",
         "R05.2",
         "R05.3",
-        "R05.4"
+        "R05.4",
+        "R05.5",
+        "R05.6",
+        "R05.7",
+        "R05.8"
       ],
       "assertions": [
         {
           "id": "clause-R05.1",
           "clause": "R05.1",
           "method": "browser",
-          "text": "Add one move on the second valid reveal."
+          "text": "Add one move on the second valid reveal until the move cap is reached."
         },
         {
           "id": "clause-R05.2",
@@ -283,7 +287,31 @@
           "id": "clause-R05.4",
           "clause": "R05.4",
           "method": "browser",
-          "text": "A match and a miss each cost one move."
+          "text": "A match and a miss each cost one move until the move cap is reached."
+        },
+        {
+          "id": "clause-R05.5",
+          "clause": "R05.5",
+          "method": "browser",
+          "text": "Stop increasing the move count at 999999."
+        },
+        {
+          "id": "clause-R05.6",
+          "clause": "R05.6",
+          "method": "browser",
+          "text": "Play continues normally at the move cap."
+        },
+        {
+          "id": "clause-R05.7",
+          "clause": "R05.7",
+          "method": "browser",
+          "text": "Pairs still match at the move cap."
+        },
+        {
+          "id": "clause-R05.8",
+          "clause": "R05.8",
+          "method": "browser",
+          "text": "The game can still be won at the move cap."
         }
       ]
     },
@@ -349,7 +377,10 @@
         "R07.5",
         "R07.6",
         "R07.7",
-        "R07.8"
+        "R07.8",
+        "R07.9",
+        "R07.10",
+        "R07.11"
       ],
       "assertions": [
         {
@@ -393,6 +424,24 @@
           "clause": "R07.8",
           "method": "browser",
           "text": "Continue a hidden-page mismatch from its remaining time when the page is shown."
+        },
+        {
+          "id": "clause-R07.9",
+          "clause": "R07.9",
+          "method": "browser",
+          "text": "Cap elapsed time at 359999999 milliseconds."
+        },
+        {
+          "id": "clause-R07.10",
+          "clause": "R07.10",
+          "method": "browser",
+          "text": "Play continues normally at the elapsed-time cap."
+        },
+        {
+          "id": "clause-R07.11",
+          "clause": "R07.11",
+          "method": "browser",
+          "text": "The clock shows the capped elapsed time."
         }
       ]
     },
@@ -2985,7 +3034,9 @@
         "D07.2",
         "D07.3",
         "D07.4",
-        "D07.5"
+        "D07.5",
+        "D07.7",
+        "D07.8"
       ],
       "assertions": [
         {
@@ -3017,6 +3068,18 @@
           "clause": "D07.5",
           "method": "replay",
           "text": "Started with zero moves requires one revealed card."
+        },
+        {
+          "id": "clause-D07.7",
+          "clause": "D07.7",
+          "method": "replay",
+          "text": "Reject elapsedMs above 359999999."
+        },
+        {
+          "id": "clause-D07.8",
+          "clause": "D07.8",
+          "method": "replay",
+          "text": "Reject moves above 999999."
         }
       ]
     },
@@ -3025,7 +3088,8 @@
       "area": "requirements",
       "method": "browser",
       "clauses": [
-        "D07.6"
+        "D07.6",
+        "D07.9"
       ],
       "assertions": [
         {
@@ -3033,6 +3097,12 @@
           "clause": "D07.6",
           "method": "browser",
           "text": "Import pauses clock and mismatch until Resume."
+        },
+        {
+          "id": "clause-D07.9",
+          "clause": "D07.9",
+          "method": "browser",
+          "text": "Apply the 999999 move cap to saved best scores too."
         }
       ]
     },
@@ -3136,7 +3206,7 @@
           "id": "clause-D09.5",
           "clause": "D09.5",
           "method": "replay",
-          "text": "Reject elapsed-time addition outside safe integers."
+          "text": "Cap replayed elapsed time at 359999999 milliseconds. Action times and endMs stay nonnegative safe integers."
         },
         {
           "id": "clause-D09.6",
@@ -3386,27 +3456,27 @@
   "review": [
     {
       "clause": "I17.1",
-      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
     },
     {
       "clause": "I17.2",
-      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
     },
     {
       "clause": "I17.3",
-      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
     },
     {
       "clause": "I17.4",
-      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
     },
     {
       "clause": "I17.5",
-      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
     },
     {
       "clause": "I17.6",
-      "reason": "The inventory assigns this clause to cited review. Automated outcomes give it no credit."
+      "reason": "Accessibility-tree checks support names, focus and live-region payloads. The spec notes still require person confirmation of spoken output and a screen reader version. Tree evidence alone leaves this review pending."
     },
     {
       "clause": "V11.1",

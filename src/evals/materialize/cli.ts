@@ -1,14 +1,21 @@
 import { materializeSpecs } from "./specs.ts";
 import { materializeSetup, parseSetupKind, SetupKind } from "./setup.ts";
-import { materializeSubset } from "./subset.ts";
+import { materializeSubset, type SubsetOptions } from "./subset.ts";
+import { SubsetFlag } from "./subset-selection.ts";
 import { MaterializePaths } from "./paths.ts";
 
 export const MaterializeCommand = { specs: "specs", subset: "subset", setup: "setup" } as const;
 
+export function subsetOptions(args: readonly string[]): SubsetOptions {
+  if (!args.length) return {};
+  if (args.length === 2 && args[0] === SubsetFlag.acceptSelectionChange && args[1]?.trim() && !args[1].startsWith("--")) return { acceptSelectionChange: args[1] };
+  throw new Error(`Use ${SubsetFlag.acceptSelectionChange} <reason> to accept a changed Layer 2 selection.`);
+}
+
 export async function main(args: readonly string[]): Promise<void> {
   const [command, kind, folder, ...extra] = args;
-  if (command === MaterializeCommand.subset && kind === undefined) {
-    const manifest = await materializeSubset(MaterializePaths.playerSpecs);
+  if (command === MaterializeCommand.subset) {
+    const manifest = await materializeSubset(MaterializePaths.playerSpecs, MaterializePaths.specs, MaterializePaths.requirements, subsetOptions(args.slice(1)));
     process.stdout.write(`${manifest.sourceHash}\n`);
     return;
   }
@@ -23,7 +30,7 @@ export async function main(args: readonly string[]): Promise<void> {
     process.stdout.write(`${result.manifest.sourceHash}\n`);
     return;
   }
-  throw new Error("Run node materialize/cli.ts specs or node materialize/cli.ts setup <kind> <folder>.");
+  throw new Error("Run node materialize/cli.ts specs, subset or setup <kind> <folder>.");
 }
 
 if (import.meta.main) {

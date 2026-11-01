@@ -17,7 +17,15 @@ node materialize/cli.ts specs
 
 This strips frontmatter while keeping the body bytes. It writes the ten documents and `manifest.json`, then refreshes `projection.json` from the source descriptions and tags. The command prints the source hash. Repeating it without source changes gives the same hashes.
 
-Layer 2 uses the frozen player pack in `benchmarks/neon-pairs/cases/l2-defined-idea/specs/`. `materializeSubset()` selects only clauses marked `L2` in `requirements.json`, keeps their defining headings and writes a separate manifest. It refuses a nonempty destination. Tests compare all 180 clauses across 60 requirement IDs with the frozen files.
+Layer 2 uses the frozen player pack in `benchmarks/neon-pairs/cases/l2-defined-idea/specs/`. `materializeSubset()` selects only clauses marked `L2` in `requirements.json`, keeps their defining headings and writes a separate manifest. Tests compare all 187 clauses across 60 requirement IDs with the frozen files.
+
+`node materialize/cli.ts subset` regenerates a validated player pack when its clause selection and text stay the same. To accept changed clause IDs, order or text, give the reason:
+
+```sh
+node materialize/cli.ts subset --accept-selection-change "Accept the spec v2 counter caps."
+```
+
+The manifest's `selectionChanges` records the reason, old and new fingerprints and counts, added and removed IDs and IDs with updated text. Regeneration keeps earlier records. The flag keeps the existing file and hash checks, so edited packs and unrelated files still stop the command.
 
 ## Build setups
 

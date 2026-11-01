@@ -8,6 +8,8 @@ import { gradingFingerprint, loadDefinition } from "./load.ts";
 import { rubric } from "./rubrics.ts";
 import { loadLayer } from "../layer.ts";
 import { fillTrace } from "./trace.ts";
+import { CapClause, LayerTwoCapReview } from "./cap-policy.ts";
+import { reviewReason, SpokenJourneyRequirement } from "./review-policy.ts";
 
 test("frozen sets cover every supplied clause with its declared method and cited review", async () => {
   const inventory = await loadRequirements();
@@ -18,7 +20,7 @@ test("frozen sets cover every supplied clause with its declared method and cited
     const assertions = frozen.checks.flatMap((check) => check.assertions);
     assert.equal(assertions.length, counts.assertions);
     assert.equal(frozen.review.length, counts.review);
-    assert.deepEqual(new Set(assertions.map((item) => item.clause)), new Set(supplied(inventory, layer).filter((item) => item.method !== Method.review).map((item) => item.id)));
+    assert.deepEqual(new Set(assertions.map((item) => item.clause)), new Set(supplied(inventory, layer).filter((item) => reviewReason(item, layer) === undefined).map((item) => item.id)));
     for (const check of frozen.checks) for (const assertion of check.assertions) {
       assert.equal(assertion.method, inventory.find((clause) => clause.id === assertion.clause)?.method);
       assert.equal(check.method, assertion.method);
@@ -30,6 +32,26 @@ test("frozen sets cover every supplied clause with its declared method and cited
     assert.equal(await gradingFingerprint(layer), await gradingFingerprint(layer));
     assert.match(await gradingFingerprint(layer), /^[a-f0-9]{64}$/);
     assert.deepEqual(frozen.checks.filter((check) => check.inheritedFrom).map((check) => check.id), (await loadLayer()).stated);
+  }
+});
+
+test("Layer 2 reviews unreachable cap states while Layer 3 checks every cap clause", async () => {
+  const inventory = await loadRequirements(), l2 = await loadDefinition(LayerId.two), l3 = await loadDefinition(LayerId.three);
+  for (const clause of Object.keys(LayerTwoCapReview)) {
+    assert.ok(l2.review.some((item) => item.clause === clause && item.reason.length > 0));
+    assert.ok(!l2.checks.some((check) => check.clauses.includes(clause)));
+    assert.ok(l3.checks.some((check) => check.clauses.includes(clause)));
+  }
+  for (const clause of [CapClause.elapsedPlay, CapClause.elapsedDisplay]) assert.ok(l2.checks.some((check) => check.clauses.includes(clause)));
+  assert.ok(inventory.filter((clause) => Object.keys(LayerTwoCapReview).includes(clause.id)).every((clause) => clause.method === Method.browser));
+});
+
+test("planned tree evidence leaves spoken screen reader confirmation in human review", async () => {
+  const inventory = await loadRequirements(), clauses = inventory.filter((clause) => clause.requirement === SpokenJourneyRequirement);
+  assert.ok(clauses.length > 0 && clauses.every((clause) => clause.method === Method.browser));
+  for (const layer of Object.values(LayerId)) {
+    const declared = await loadDefinition(layer);
+    for (const clause of clauses) assert.ok(declared.review.some((item) => item.clause === clause.id));
   }
 });
 

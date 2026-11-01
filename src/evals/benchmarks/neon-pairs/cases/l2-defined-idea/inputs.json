@@ -1,5 +1,5 @@
 {
-    "sourceHash":  "5305337d6e5419f0d75423e90fe123958fd046ec683b8d4047e64c5be3516415",
+    "sourceHash":  "4d7beb16456f6c0ec4f2db934bb4b9276208cbef5a4e5ab7072c64f09c598d03",
     "files":  [
                   {
                       "path":  "README.md",
@@ -7,7 +7,7 @@
                   },
                   {
                       "path":  "rules.md",
-                      "sha256":  "dda585f9ef29757a1eec0181f927e8ba319345f6a6df68c31a7d4e2334f67451"
+                      "sha256":  "91bad23d0e1b3c8061cd383d5e95ddbd75392c90c552cdb3d49844e6713fd47e"
                   },
                   {
                       "path":  "input.md",

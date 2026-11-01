@@ -25,10 +25,10 @@ export function freshSnapshot(boardCode: string): Snapshot {
 }
 
 export function advance(state: Snapshot, milliseconds: number): Snapshot | null {
-  if (!nonnegativeInteger(milliseconds)) return null;
+  if (!nonnegativeInteger(milliseconds) || !nonnegativeInteger(state.elapsedMs) || state.elapsedMs > Rules.elapsedMaximumMs) return null;
   const won = state.matched.length === expectedDeck(state.boardCode).length;
-  const elapsedMs = state.elapsedMs + (state.started && !won ? milliseconds : 0);
-  if (!Number.isSafeInteger(elapsedMs)) return null;
+  const active = state.started && !won ? Math.min(milliseconds, Rules.elapsedMaximumMs - state.elapsedMs) : 0;
+  const elapsedMs = state.elapsedMs + active;
   const chosen = state.selection;
   if (chosen.kind !== SelectionKind.mismatch) return { ...state, elapsedMs };
   return { ...state, elapsedMs, selection: milliseconds >= chosen.remainingMs ? { kind: SelectionKind.closed } : { ...chosen, remainingMs: chosen.remainingMs - milliseconds } };
@@ -39,7 +39,7 @@ export function activate(state: Snapshot, index: number): Snapshot {
   const chosen = state.selection;
   if (!nonnegativeInteger(index) || index >= deck.length || state.matched.includes(index) || chosen.kind === SelectionKind.mismatch || (chosen.kind === SelectionKind.one && chosen.index === index)) return state;
   if (chosen.kind === SelectionKind.closed) return { ...state, started: true, selection: { kind: SelectionKind.one, index } };
-  const moves = state.moves + 1;
+  const moves = Math.min(Rules.movesMaximum, state.moves + 1);
   return deck[chosen.index] === deck[index]
     ? { ...state, moves, matched: [...state.matched, chosen.index, index], selection: { kind: SelectionKind.closed } }
     : { ...state, moves, selection: { kind: SelectionKind.mismatch, first: chosen.index, second: index, remainingMs: Rules.mismatchMs } };

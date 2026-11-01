@@ -22,10 +22,14 @@ Rules is a specification that defines requirements for Neon Pairs.
 - R04.3 - Ignore every card activation during the interval.
 - R04.4 - Pause the interval while the page is hidden.
 
-- R05.1 - Add one move on the second valid reveal.
+- R05.1 - Add one move on the second valid reveal until the move cap is reached.
 - R05.2 - The first reveal adds no move.
 - R05.3 - Ignored activation adds no move.
-- R05.4 - A match and a miss each cost one move.
+- R05.4 - A match and a miss each cost one move until the move cap is reached.
+- R05.5 - Stop increasing the move count at 999999.
+- R05.6 - Play continues normally at the move cap.
+- R05.7 - Pairs still match at the move cap.
+- R05.8 - The game can still be won at the move cap.
 
 ## Completion
 
@@ -45,6 +49,9 @@ Rules is a specification that defines requirements for Neon Pairs.
 - R07.6 - Rendering frequency doesn't change elapsed time.
 - R07.7 - Use the same active time for the clock and mismatch interval.
 - R07.8 - Continue a hidden-page mismatch from its remaining time when the page is shown.
+- R07.9 - Cap elapsed time at 359999999 milliseconds.
+- R07.10 - Play continues normally at the elapsed-time cap.
+- R07.11 - The clock shows the capped elapsed time.
 
 ## Session
 

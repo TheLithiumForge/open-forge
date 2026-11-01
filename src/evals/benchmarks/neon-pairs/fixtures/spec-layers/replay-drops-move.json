@@ -1,6 +1,6 @@
 {
   "id": "replay-drops-move",
-  "edits": [{ "path": "src/game/replay.ts", "before": "state = activateCard(advanceGame(state, action.atMs - previousTime), action.index);", "after": "state = action.index === 11 ? advanceGame(state, action.atMs - previousTime) : activateCard(advanceGame(state, action.atMs - previousTime), action.index);" }],
+  "edits": [{ "path": "src/game/replay.ts", "before": "    state = activateCard(advanceGame(state, action.atMs - previousTime), action.index);\n    previousTime = action.atMs;", "after": "    state = action.index === 11 ? advanceGame(state, action.atMs - previousTime) : activateCard(advanceGame(state, action.atMs - previousTime), action.index);\n    previousTime = action.atMs;" }],
   "expected": { "D08.7": "fail", "D09.2": "fail", "D05.2": "pass" },
   "scope": "Drop position 11 during replay while keeping snapshot validation working."
 }
