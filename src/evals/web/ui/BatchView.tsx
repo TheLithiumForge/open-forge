@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import type { ProgressMessage } from "../../execution/progress.ts";
 import { BatchStatus, RunStatus } from "../../history/statuses.ts";
+import { Isolation } from "../../config/choices.ts";
 import type { BatchResponse } from "../server/api.types.ts";
 import { api } from "./api.ts";
 import { BlindCompare } from "./BlindCompare.tsx";
@@ -59,6 +60,7 @@ export function BatchView({ batchId, onChange }: BatchViewProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
+        {batch.config.isolation === Isolation.local ? <Badge variant="destructive">Local isolation. Not for scoring.</Badge> : null}
         <Badge variant={batch.status === BatchStatus.failed ? "destructive" : batch.status === BatchStatus.done ? "default" : "secondary"}>{batch.status}</Badge>
         <span className="text-sm text-muted-foreground">
           {finished} of {view.hidden.length} runs done · eval <code>{batch.fingerprint}</code>

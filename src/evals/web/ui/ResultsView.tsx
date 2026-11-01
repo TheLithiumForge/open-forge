@@ -6,9 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { agentLabel } from "../../history/summary.ts";
 import type { BatchResponse } from "../server/api.types.ts";
 import { api } from "./api.ts";
-import { QualityChart, TokensChart } from "./Charts.tsx";
 import { RunDetails } from "./RunDetails.tsx";
-import { SummaryTable } from "./SummaryTable.tsx";
+import { ResultPanel, SummaryTable } from "./SummaryTable.tsx";
 
 interface ResultsViewProps {
   readonly view: BatchResponse;
@@ -31,26 +30,26 @@ export function ResultsView({ view, onChange }: ResultsViewProps) {
       </Alert>
     );
   }
-  const agents = [...new Set(view.summary.map((row) => row.agent))];
+  const groups = view.gradingGroups ?? [{ grading: "Historical grading", reportedModel: null, summary: view.summary, runs: view.runs }];
   return (
     <div className="space-y-4 pt-2">
-      {agents.map((agent) => {
-        const rows = (view.summary ?? []).filter((row) => row.agent === agent);
-        const runs = (view.runs ?? []).filter((run) => agentLabel(run.agent) === agent);
+      {groups.flatMap((group) => [...new Set(group.summary.map((row) => row.agent))].map((agent) => {
+        const rows = group.summary.filter((row) => row.agent === agent);
+        const runs = group.runs.filter((run) => agentLabel(run.agent) === agent);
         return (
-          <Card key={agent}>
+          <Card key={`${group.grading}/${group.reportedModel}/${agent}`}>
             <CardHeader>
-              <CardTitle>{agent}</CardTitle>
+              <CardTitle>{agent}. Reported model: {group.reportedModel ?? "unreported"}</CardTitle>
               <CardDescription>
                 Coverage counts every applicable check. The working gate and stated success use their declared checks. Intent, Rules, Code and blind picks stay separate. Missing tokens are reported beside the measured mean.
               </CardDescription>
+              <p className="break-all text-xs text-muted-foreground">Grading versions: {group.grading}</p>
             </CardHeader>
             <CardContent className="space-y-6">
-              <SummaryTable rows={rows} />
-              <div className="grid gap-4 2xl:grid-cols-2">
-                <QualityChart rows={rows} />
-                <TokensChart runs={runs} />
-              </div>
+              {Object.values(ResultPanel).map((panel) => <Card key={panel}>
+                <CardHeader><CardTitle className="capitalize">{panel}</CardTitle></CardHeader>
+                <CardContent><SummaryTable rows={rows} panel={panel} /></CardContent>
+              </Card>)}
               <Accordion type="multiple">
                 {runs.map((run) => (
                   <RunDetails key={run.id} run={run} />
@@ -59,7 +58,7 @@ export function ResultsView({ view, onChange }: ResultsViewProps) {
             </CardContent>
           </Card>
         );
-      })}
+      }))}
     </div>
   );
 }

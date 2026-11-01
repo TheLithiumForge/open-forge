@@ -7,6 +7,14 @@ interface Column {
   readonly value: (row: SetupSummary) => string;
 }
 
+export const ResultPanel = { correctness: "correctness", rules: "rules", cost: "cost", wishes: "wishes", picks: "picks" } as const;
+type ResultPanel = (typeof ResultPanel)[keyof typeof ResultPanel];
+const panelLabels: Readonly<Record<ResultPanel, readonly string[]>> = {
+  correctness: ["Runs", "Working gate", "Stated success", "Coverage", "Check errors"], rules: ["Rules", "Code"],
+  wishes: ["Intent"], picks: ["Picked"],
+  cost: ["Tokens", "Tool calls", "Failed tool calls", "Peak context", "Compactions", "OF reads", "Questions", "Minutes", "Cost", "KB", "Tap p95"],
+};
+
 const columns: readonly Column[] = [
   { label: "Runs", value: (row) => `${row.finished}/${row.runs}` },
   { label: "Working gate", value: (row) => percent(row.workingGate) },
@@ -31,14 +39,15 @@ const columns: readonly Column[] = [
 ];
 
 /** One row per setup. Quality and cost stay in separate columns. */
-export function SummaryTable({ rows }: { rows: readonly SetupSummary[] }) {
+export function SummaryTable({ rows, panel }: { rows: readonly SetupSummary[]; panel?: ResultPanel }) {
+  const shown = panel === undefined ? columns : columns.filter((column) => panelLabels[panel].includes(column.label));
   return (
     <div className="overflow-x-auto rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Setup</TableHead>
-            {columns.map((column) => (
+            {shown.map((column) => (
               <TableHead key={column.label} className="text-right">
                 {column.label}
               </TableHead>
@@ -49,7 +58,7 @@ export function SummaryTable({ rows }: { rows: readonly SetupSummary[] }) {
           {rows.map((row) => (
             <TableRow key={row.setup}>
               <TableCell className="font-medium">{row.setup}</TableCell>
-              {columns.map((column) => (
+              {shown.map((column) => (
                 <TableCell key={column.label} className="text-right tabular-nums">
                   {column.value(row)}
                 </TableCell>

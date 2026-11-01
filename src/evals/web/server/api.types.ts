@@ -41,6 +41,14 @@ export interface BatchResponse {
   readonly progress: readonly ProgressMessage[];
   readonly compared: number;
   readonly pairs: number;
+  readonly gradingGroups?: readonly ResultGroup[];
+}
+
+export interface ResultGroup {
+  readonly grading: string;
+  readonly reportedModel: string | null;
+  readonly runs: readonly RunRecord[];
+  readonly summary: readonly SetupSummary[];
 }
 
 export interface ComparePair {

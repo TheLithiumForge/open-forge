@@ -5,11 +5,12 @@ import { progress } from "../../execution/progress.ts";
 import { signInStatus } from "../../config/auth.ts";
 import { loadConfig, saveConfig } from "../../config/config.ts";
 import { PreferenceWinner } from "../../history/statuses.ts";
-import { addPreference, listBatches, readBatch, readPreferences, readRuns, saveBatch } from "../../history/store.ts";
-import { summarize } from "../../history/summary.ts";
+import { listBatches, readAssessments, readBatch, readPreferences, readRuns, runFolder, saveBatch } from "../../history/store.ts";
 import { loadSuite, saveIntent } from "../../benchmarks/suite.ts";
 import type { BatchResponse, StateResponse } from "./api.types.ts";
 import { allPairs, nextPair } from "./compare.ts";
+import { resultGroups } from "./result-groups.ts";
+import { recordPick } from "./picks.ts";
 
 export const ApiPaths = {
   state: "/api/state",
@@ -47,18 +48,21 @@ async function state(): Promise<StateResponse> {
 }
 
 /** Until the reveal, a batch shows only what can't tell a run's setup. */
-export async function batchView(batchId: string, history = { readBatch, readRuns, readPreferences }): Promise<BatchResponse> {
+export async function batchView(batchId: string, history: { readBatch: typeof readBatch; readRuns: typeof readRuns; readPreferences: typeof readPreferences; readAssessments?: typeof readAssessments } = { readBatch, readRuns, readPreferences, readAssessments }): Promise<BatchResponse> {
   const batch = await history.readBatch(batchId);
   const runs = await history.readRuns(batch);
   const preferences = await history.readPreferences(batchId);
+  const assessments = await history.readAssessments?.(batchId) ?? [];
+  const groups = resultGroups(runs, preferences, assessments);
   return {
     batch,
     hidden: runs.map((run) => ({ id: run.id, status: run.status, agent: run.agent })),
     runs: batch.revealed ? runs : null,
-    summary: batch.revealed ? summarize(runs, preferences) : null,
-    progress: progress.history(batchId),
+    summary: batch.revealed ? groups.flatMap((group) => group.summary) : null,
+    progress: batch.revealed ? progress.history(batchId) : [],
     compared: preferences.length,
-    pairs: allPairs(runs).length,
+    pairs: allPairs(runs, runFolder, assessments).length,
+    gradingGroups: batch.revealed ? groups : [],
   };
 }
 
@@ -84,7 +88,7 @@ export async function handleApi(request: IncomingMessage, response: ServerRespon
   if (action === "resume") return sendJson(response, 200, await resumeBatch(batchId));
   if (action === "pair") {
     const batch = await readBatch(batchId);
-    return sendJson(response, 200, nextPair(await readRuns(batch), await readPreferences(batchId), port));
+    return sendJson(response, 200, nextPair(await readRuns(batch), await readPreferences(batchId), port, runFolder, await readAssessments(batchId)));
   }
   if (action === "preference") {
     const body = await readBody(request);
@@ -93,7 +97,8 @@ export async function handleApi(request: IncomingMessage, response: ServerRespon
       return sendJson(response, 400, { error: "Send left, right and winner." });
     }
     const winner = Object.values(PreferenceWinner).find((value) => value === body.winner) ?? PreferenceWinner.tie;
-    await addPreference(batchId, { left: body.left, right: body.right, winner, at: new Date().toISOString() });
+    const eligible = await recordPick(batchId, { left: body.left, right: body.right, winner, at: new Date().toISOString() });
+    if (!eligible) return sendJson(response, 400, { error: "Choose two available games on the same tool and model." });
     return sendJson(response, 200, await batchView(batchId));
   }
   await saveBatch({ ...(await readBatch(batchId)), revealed: true });

@@ -1,15 +1,17 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import { readdir, readFile } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { extname, join, normalize, sep } from "node:path";
 import { pauseInterruptedBatches } from "../../execution/batch.ts";
 import { progress } from "../../execution/progress.ts";
 import { loadLocalEnv } from "../../config/auth.ts";
 import { EvalPaths, ResultFiles } from "../../paths.ts";
-import { assessmentEvidenceFolder, runFolder } from "../../history/store.ts";
+import { assessmentEvidenceFolder, readBatch, runFolder } from "../../history/store.ts";
 import { refusal, type RequestFacts } from "./guard.ts";
 import { ApiPaths, handleApi, sendJson } from "./routes.ts";
+import { gameHeaders } from "../game-policy.ts";
+import { readPlainFile } from "./plain-file.ts";
 
 const Port = Number(process.env["EVALS_PORT"] ?? "4318");
 const contentTypes: Readonly<Record<string, string>> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml" };
@@ -17,9 +19,11 @@ const runHost = /^([0-9a-f]{12})\.localhost(?::\d+)?$/;
 const shotPath = /^\/shots\/([\w-]+)\/([0-9a-f]{12})\/([\w.-]+\.png)$/;
 const assessmentShotPath = /^\/shots\/([\w-]+)\/([0-9a-f]{12})\/([\w-]+)\/([\w.-]+\.png)$/;
 
-async function sendFile(response: ServerResponse, path: string): Promise<void> {
+async function sendFile(response: ServerResponse, path: string, headers: Readonly<Record<string, string>> = {}): Promise<void> {
   if (!existsSync(path)) return void response.writeHead(404).end();
-  response.writeHead(200, { "content-type": contentTypes[extname(path)] ?? "application/octet-stream" }).end(await readFile(path));
+  const root = path.startsWith(EvalPaths.uiDist + sep) ? EvalPaths.uiDist : EvalPaths.results;
+  const bytes = await readPlainFile(root, path);
+  response.writeHead(200, { "content-type": contentTypes[extname(path)] ?? "application/octet-stream", "x-content-type-options": "nosniff", ...headers }).end(bytes);
 }
 
 /** Finds which batch a run belongs to, for a game opened on its own origin. */
@@ -32,7 +36,9 @@ async function batchOfRun(runId: string): Promise<string | null> {
 function streamEvents(request: IncomingMessage, response: ServerResponse, batchId: string): void {
   response.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-cache", connection: "keep-alive" });
   const unsubscribe = progress.subscribe((message) => {
-    if (message.batchId === batchId) response.write(`data: ${JSON.stringify(message)}\n\n`);
+    if (message.batchId === batchId) void readBatch(batchId).then((batch) => {
+      if (batch.revealed && !response.destroyed) response.write(`data: ${JSON.stringify(message)}\n\n`);
+    }).catch(() => {});
   });
   request.on("close", unsubscribe);
 }
@@ -52,7 +58,7 @@ async function handle(request: IncomingMessage, response: ServerResponse): Promi
   const game = runHost.exec(request.headers.host ?? "");
   if (game?.[1] !== undefined) {
     const batchId = await batchOfRun(game[1]);
-    return sendFile(response, batchId === null ? "" : join(runFolder(batchId, game[1]), ResultFiles.game));
+    return sendFile(response, batchId === null ? "" : join(runFolder(batchId, game[1]), ResultFiles.game), gameHeaders(Port));
   }
   if (url.pathname === ApiPaths.events) return streamEvents(request, response, url.searchParams.get("batch") ?? "");
   if (url.pathname.startsWith("/api/")) return handleApi(request, response, url, Port);

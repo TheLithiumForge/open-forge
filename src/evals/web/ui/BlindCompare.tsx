@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { PreferenceWinner } from "../../history/statuses.ts";
 import type { BatchResponse, ComparePair } from "../server/api.types.ts";
 import { api } from "./api.ts";
+import { GameSandbox } from "../game-policy.ts";
 
 interface BlindCompareProps {
   readonly view: BatchResponse;
@@ -23,7 +24,7 @@ function GameFrame({ label, url, width }: { label: string; url: string; width: W
         <CardTitle>Game {label}</CardTitle>
       </CardHeader>
       <CardContent className="flex justify-center px-4">
-        <iframe title={`Game ${label}`} src={url} className={cn("h-[640px] rounded-md border bg-black", width === Width.phone ? "w-[390px] max-w-full" : "w-full")} />
+        <iframe title={`Game ${label}`} src={url} sandbox={GameSandbox} referrerPolicy="no-referrer" className={cn("h-[640px] rounded-md border bg-black", width === Width.phone ? "w-[390px] max-w-full" : "w-full")} />
       </CardContent>
     </Card>
   );
@@ -36,16 +37,22 @@ function GameFrame({ label, url, width }: { label: string; url: string; width: W
 export function BlindCompare({ view, onChange }: BlindCompareProps) {
   const [pair, setPair] = useState<ComparePair | null | undefined>(undefined);
   const [width, setWidth] = useState<Width>(Width.desktop);
+  const [error, setError] = useState<string | null>(null);
   const batchId = view.batch.id;
 
   useEffect(() => {
-    api.pair(batchId).then(setPair, () => setPair(null));
+    let active = true;
+    setPair(undefined);
+    api.pair(batchId).then((next) => { if (active) setPair(next); }, () => { if (active) setPair(null); });
+    return () => { active = false; };
   }, [batchId, view.compared]);
 
   const choose = async (winner: PreferenceWinner) => {
     if (pair === null || pair === undefined) return;
     setPair(undefined);
-    onChange(await api.prefer(batchId, pair.left, pair.right, winner));
+    setError(null);
+    try { onChange(await api.prefer(batchId, pair.left, pair.right, winner)); }
+    catch (problem) { setPair(pair); setError(problem instanceof Error ? problem.message : "The pick couldn't be saved."); }
   };
 
   return (
@@ -69,13 +76,14 @@ export function BlindCompare({ view, onChange }: BlindCompareProps) {
         )}
       </div>
       {pair === undefined ? <p className="text-sm text-muted-foreground">Loading the next pair…</p> : null}
+      {error === null ? null : <p role="alert" className="text-sm text-destructive">{error}</p>}
       {pair === null ? <p className="text-sm text-muted-foreground">No pairs left to compare. Finished games appear here as runs complete.</p> : null}
       {pair === null || pair === undefined ? null : (
         <>
           <p className="text-sm">Play both games. Which one would you rather keep playing?</p>
           <div className="grid gap-4 xl:grid-cols-2">
-            <GameFrame label="A" url={pair.leftGame} width={width} />
-            <GameFrame label="B" url={pair.rightGame} width={width} />
+            <GameFrame label={view.batch.revealed ? `A (${view.runs?.find((run) => run.id === pair.left)?.setup ?? "unknown"})` : "A"} url={pair.leftGame} width={width} />
+            <GameFrame label={view.batch.revealed ? `B (${view.runs?.find((run) => run.id === pair.right)?.setup ?? "unknown"})` : "B"} url={pair.rightGame} width={width} />
           </div>
           <div className="flex flex-wrap justify-center gap-2">
             <Button onClick={() => choose(PreferenceWinner.left)}>A is better</Button>
