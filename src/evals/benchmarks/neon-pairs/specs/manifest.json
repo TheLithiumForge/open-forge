@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "fixture": "neon-pairs",
+  "sourceHash": "233542325a6e40264b269ca3b3c13d7e928e1f9d1b41682827fffe6286c8987b",
+  "sourceFiles": [
+    {
+      "path": "README.md",
+      "sha256": "d3a7cac3b34133723531961cfbc04bb7762a128c5986a1eef75d51975dab80f2"
+    },
+    {
+      "path": "_neon-pairs.md",
+      "sha256": "be488116d3f46719be870827c34d8c45b04f8eadc3d856596bfca7aa6c92fcb0"
+    },
+    {
+      "path": "acceptance.md",
+      "sha256": "295cca8670b0cf91a6c32bd4ef07e6cb98f4312afb941586a99c2209c2f7a646"
+    },
+    {
+      "path": "architecture.md",
+      "sha256": "8f2af85638669824fcf4f8026e4fd49f56f30ec1e1f3b704073dcc73803781b6"
+    },
+    {
+      "path": "controls.md",
+      "sha256": "2f135d3c2d7f5b35b6eb463b3b3c96398004e120d397e29f036450ed31a43286"
+    },
+    {
+      "path": "input.md",
+      "sha256": "8886ac9aaf27e6c469c35288ddfa8460933d85b24848e835ef39696492818561"
+    },
+    {
+      "path": "reproducibility.md",
+      "sha256": "567876007094e0e2317a3854a28829f8c8b7c0b88784ec2fe03a2b2a3a17df4f"
+    },
+    {
+      "path": "rules.md",
+      "sha256": "e6cba2567395edf53620b7dbe44e2022685d9efd1df5bdf1f9b3da35daea09fc"
+    },
+    {
+      "path": "sound.md",
+      "sha256": "568de2c92b8e377239e817020bf632f06ea8c04dde0a2ceeab02421058e8ff88"
+    },
+    {
+      "path": "technology.md",
+      "sha256": "c11d7a7b45b34621765d3983fcc3fbc1cb0745f4e68d2e35d9035b44e8bd5b9f"
+    },
+    {
+      "path": "visuals.md",
+      "sha256": "f960d7a34be7caf8f3e2f6c3bf8b1f4029e09dceb86e54029134577f01aea3db"
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "ade457025505c941b40e22b50625ca812a43f5dd7b197f00d025993e28b3813f",
+      "sourceSha256": "d3a7cac3b34133723531961cfbc04bb7762a128c5986a1eef75d51975dab80f2",
+      "metadata": {
+        "description": "Neon Pairs game specification and document map",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Specification"
+        ]
+      }
+    },
+    {
+      "path": "acceptance.md",
+      "sha256": "aff1d0ceb725166b7642a19683addb7bfb2a3ffeb7bd120aa80e23bfcf98e9ae",
+      "sourceSha256": "295cca8670b0cf91a6c32bd4ef07e6cb98f4312afb941586a99c2209c2f7a646",
+      "metadata": {
+        "description": "Public game acceptance examples",
+        "tags": [
+          "Game",
+          "Acceptance"
+        ]
+      }
+    },
+    {
+      "path": "architecture.md",
+      "sha256": "f948fcb90ed557419be8129a73fa4dc5ae66b087e6e474a5a5e08b65bcebdef6",
+      "sourceSha256": "8f2af85638669824fcf4f8026e4fd49f56f30ec1e1f3b704073dcc73803781b6",
+      "metadata": {
+        "description": "Game code structure and module responsibilities",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "controls.md",
+      "sha256": "5a264757d581b3ec13f59e6b68824c054d5c5dd1c4b91a509d59a9336ecee31f",
+      "sourceSha256": "2f135d3c2d7f5b35b6eb463b3b3c96398004e120d397e29f036450ed31a43286",
+      "metadata": {
+        "description": "Game options and reproduction controls",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Controls"
+        ]
+      }
+    },
+    {
+      "path": "input.md",
+      "sha256": "78ba8c4f87d6b094dfbc175bbcc4c14d4cdfaafc58eb6c9d1e633068e070087d",
+      "sourceSha256": "8886ac9aaf27e6c469c35288ddfa8460933d85b24848e835ef39696492818561",
+      "metadata": {
+        "description": "Pointer, touch, keyboard and focus behavior",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Input"
+        ]
+      }
+    },
+    {
+      "path": "reproducibility.md",
+      "sha256": "6bb4bead37f3dca32c3007ace83db54af98f707d2b7f8226b96feb49c1a6654a",
+      "sourceSha256": "567876007094e0e2317a3854a28829f8c8b7c0b88784ec2fe03a2b2a3a17df4f",
+      "metadata": {
+        "description": "Board codes, snapshots and replay formats",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Reproducibility"
+        ]
+      }
+    },
+    {
+      "path": "rules.md",
+      "sha256": "6b19a851fc479fc82ae1e5c5ad3598dd6ae4f8dfe0da69185305db90f71ac568",
+      "sourceSha256": "e6cba2567395edf53620b7dbe44e2022685d9efd1df5bdf1f9b3da35daea09fc",
+      "metadata": {
+        "description": "Card matching, moves, timing and victory rules",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Rules"
+        ]
+      }
+    },
+    {
+      "path": "sound.md",
+      "sha256": "eec33f9a496ecfbc18d35e626d0af830807899fd4784e58a2c880da3c49557b0",
+      "sourceSha256": "568de2c92b8e377239e817020bf632f06ea8c04dde0a2ceeab02421058e8ff88",
+      "metadata": {
+        "description": "Game sound behavior",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Sound"
+        ]
+      }
+    },
+    {
+      "path": "technology.md",
+      "sha256": "49d5a963dcc2e75a76839dc33060273bed6d30eb4ec05610a707b970b5286b38",
+      "sourceSha256": "c11d7a7b45b34621765d3983fcc3fbc1cb0745f4e68d2e35d9035b44e8bd5b9f",
+      "metadata": {
+        "description": "Language, package versions, build and distribution",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Technology"
+        ]
+      }
+    },
+    {
+      "path": "visuals.md",
+      "sha256": "f7b83a1e9c2bb02b100af7167acfc6ef01784921d06b133f01e3cb459f7c9a07",
+      "sourceSha256": "f960d7a34be7caf8f3e2f6c3bf8b1f4029e09dceb86e54029134577f01aea3db",
+      "metadata": {
+        "description": "Layout, card artwork, colors and motion",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Visuals"
+        ]
+      }
+    }
+  ]
+}

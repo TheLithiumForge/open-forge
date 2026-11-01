@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neon Pairs projection",
+  "type": "object",
+  "required": ["schemaVersion", "fixture", "level", "frameworkVersion", "documents"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "fixture": { "type": "string", "minLength": 1 },
+    "level": { "const": "full" },
+    "frameworkVersion": { "type": "string", "minLength": 1 },
+    "documents": {
+      "type": "object",
+      "required": ["README.md"],
+      "additionalProperties": { "$ref": "#/$defs/metadata" }
+    }
+  },
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "required": ["description", "tags"],
+      "additionalProperties": false,
+      "properties": {
+        "description": { "type": "string", "minLength": 1 },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    }
+  }
+}

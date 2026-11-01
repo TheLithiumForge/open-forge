@@ -19,5 +19,6 @@ The [Eval Ladder](../../../emerging/ideas/eval-ladder.md) orders the planned eva
 - [The values every Open Forge eval records for each run, and how we get, count, judge and report each one](data-points.md) - #Memory #Document #CurrentTruth #Evaluation #Measurement #Context #Tokens
 - [The first Open Forge eval, one short prompt for Neon Pairs, a small React memory game, run in an empty folder, in fresh Open Forge installs and with the Collaboration extension, checking that Open Forge is not worse](greenfield-baseline.md) - #Memory #Document #CurrentTruth #Evaluation #Greenfield #Baseline #Demo
 - [Who judges each Open Forge eval data point, why the headline numbers come only from checks and counts, how the model judge and blind pairwise picks work, and how anyone can rerun them](judging.md) - #Memory #Document #CurrentTruth #Evaluation #Judging #Measurement
+- [Editable Neon Pairs specification and frozen pack generation](neon-pairs/_neon-pairs.md) - #Memory #Document #CurrentTruth #Evaluation #Game #Specification
 - [How every Open Forge eval run starts, runs and ends in isolation on Claude Code and Codex, how the eval tool drives each CLI on a subscription, and what it captures](running-evals.md) - #Memory #Document #CurrentTruth #Evaluation #Harness #Isolation
 

@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "fixture": "neon-pairs",
+  "level": "full",
+  "frameworkVersion": "0.9.0-beta.18",
+  "documents": {
+    "README.md": {
+      "description": "Neon Pairs game specification and document map",
+      "tags": [
+        "LoadNow",
+        "Game",
+        "Specification"
+      ]
+    },
+    "acceptance.md": {
+      "description": "Public game acceptance examples",
+      "tags": [
+        "Game",
+        "Acceptance"
+      ]
+    },
+    "architecture.md": {
+      "description": "Game code structure and module responsibilities",
+      "tags": [
+        "LoadNow",
+        "Game",
+        "Architecture"
+      ]
+    },
+    "controls.md": {
+      "description": "Game options and reproduction controls",
+      "tags": [
+        "LoadNow",
+        "Game",
+        "Controls"
+      ]
+    },
+    "input.md": {
+      "description": "Pointer, touch, keyboard and focus behavior",
+      "tags": [
+        "LoadNow",
+        "Game",
+        "Input"
+      ]
+    },
+    "reproducibility.md": {
+      "description": "Board codes, snapshots and replay formats",
+      "tags": [
+        "LoadNow",
+        "Game",
+        "Reproducibility"
+      ]
+    },
+    "rules.md": {
+      "description": "Card matching, moves, timing and victory rules",
+      "tags": [
+        "LoadNow",
+        "Game",
+        "Rules"
+      ]
+    },
+    "sound.md": {
+      "description": "Game sound behavior",
+      "tags": [
+        "LoadNow",
+        "Game",
+        "Sound"
+      ]
+    },
+    "technology.md": {
+      "description": "Language, package versions, build and distribution",
+      "tags": [
+        "LoadNow",
+        "Game",
+        "Technology"
+      ]
+    },
+    "visuals.md": {
+      "description": "Layout, card artwork, colors and motion",
+      "tags": [
+        "LoadNow",
+        "Game",
+        "Visuals"
+      ]
+    }
+  }
+}

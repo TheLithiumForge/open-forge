@@ -25,6 +25,6 @@
     "erasableSyntaxOnly": true,
     "paths": { "@/*": ["./web/ui/*"] }
   },
-  "include": ["*.ts", "config/**/*.ts", "execution/**/*.ts", "images/**/*.ts", "grading/**/*.ts", "history/**/*.ts", "benchmarks/**/*.ts", "web/server/**/*.ts"],
+  "include": ["*.ts", "config/**/*.ts", "execution/**/*.ts", "images/**/*.ts", "grading/**/*.ts", "history/**/*.ts", "benchmarks/**/*.ts", "materialize/**/*.ts", "web/server/**/*.ts"],
   "exclude": ["benchmarks/**/reference/**", "node_modules", "*.tmp.ts"]
 }

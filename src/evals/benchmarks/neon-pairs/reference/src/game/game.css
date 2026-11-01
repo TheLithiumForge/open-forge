@@ -1,0 +1,36 @@
+:root {
+  font-family: system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: #F4F6FF;
+  background: #090B14;
+  color-scheme: dark;
+  --text: #F4F6FF;
+  --secondary: #B8BDD2;
+  --panel: #141827;
+  --back: #1B2034;
+  --face: #111625;
+  --border: #757C9A;
+  --green: #8BEA7D;
+  --content-max: 1120px;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 240px; }
+main { width: 100%; max-width: var(--content-max); margin: 0 auto; padding: 16px; }
+header { margin: 4px 0 12px; }
+h1 { font-size: 24px; line-height: 32px; margin: 4px 0; }
+p { margin: 0; }
+.eyebrow { color: #63E7FF; font-size: 14px; }
+.intro { color: var(--secondary); margin-bottom: 24px; }
+.stats { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 0 0 16px; }
+.stats div { min-width: 70px; }
+dt, .help { color: var(--secondary); font-size: 14px; }
+dd { margin: 0; font-size: 20px; line-height: 28px; font-variant-numeric: tabular-nums; }
+.help { max-width: 70ch; }
+.status-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; min-height: 56px; margin: 4px 0 8px; }
+.status-row p { flex: 1; min-width: 15ch; }
+.victory { padding: 12px 16px; margin-bottom: 12px; color: var(--green); border: 1px solid var(--green); border-radius: 8px; }
+.celebrate { animation: victory-pulse 600ms ease-out 1; }
+:focus-visible { outline: 3px solid white; outline-offset: 2px; }
+@keyframes victory-pulse { 50% { background: #24442C; } }
+@media (prefers-reduced-motion: reduce) { .celebrate { animation: none; } }

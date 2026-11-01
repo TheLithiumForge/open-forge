@@ -1,0 +1,8 @@
+:root { font-family: system-ui, sans-serif; color: #F4F6FF; background: #090B14; font-size: 14px; }
+body { margin: 0; }
+main { max-width: 1120px; padding: 16px; margin: auto; }
+h1 { font-size: 24px; }
+.face-sheet { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
+figure { margin: 0; padding: 8px; border: 1px solid #757C9A; border-radius: 8px; background: #111625; }
+svg { display: block; width: 88px; height: 88px; margin: auto; }
+figcaption { min-height: 72px; color: #B8BDD2; }
