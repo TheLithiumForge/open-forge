@@ -1,7 +1,7 @@
 ﻿# Open Forge Evals
 Open Forge Evals is a local tool that runs the same case through Claude Code and Codex under different Open Forge setups and saves comparable results.
 
-For example, the Layer 1 plan runs Neon Pairs five times on each of No setup, Minimal, Essentials and Full Core. Every attempt starts with one prompt and gets literal answers from the same frozen answer bank when it asks questions.
+For example, the Layer 1 check plan runs Neon Pairs once with each implementer on No setup, Minimal, Essentials and Full Core. Claude and Codex then judge each saved attempt. Every attempt starts with one prompt and gets literal answers from the same frozen answer bank when it asks questions.
 
 ## Requirements
 
@@ -56,8 +56,8 @@ Before a model run, fill both base-image digests in `src/evals/images/lock.json`
 ```powershell
 npm run evals -- doctor
 npm run evals -- images
-npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1.json
-npm run evals -- run --plan src/evals/experiments/neon-pairs-l1.json
+npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1-check.json
+npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json
 ```
 
 `doctor` checks Node, Docker, installed tool package versions, configured sign-ins and image digests. It doesn't perform a model sign-in or a paid probe. `images` refuses to build while a digest is missing. `qualify` installs fresh setups with the pinned Open Forge CLI and checks entry files, the framework lock, planned files and unwanted files before the scored sample starts.
@@ -71,14 +71,15 @@ Every command accepts `--help`. Each help text includes an example:
 | `doctor` | Check prerequisites | `npm run evals -- doctor` |
 | `images` | Build the three locked images | `npm run evals -- images` |
 | `smoke` | Run the mock attempt | `npm run evals -- smoke` |
-| `qualify` | Check generated setups | `npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1.json` |
-| `run` | Run a saved plan | `npm run evals -- run --plan src/evals/experiments/neon-pairs-l1.json` |
+| `qualify` | Check generated setups | `npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1-check.json` |
+| `run` | Run a saved plan | `npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json` |
+| `summary` | Print the implementer and judge matrix | `npm run evals -- summary --batch <id>` |
 | `ui` | Open the local results app | `npm run evals -- ui` |
 | `recheck` | Append checks for saved files | `npm run evals -- recheck <batch> --rebuild` |
 | `rejudge` | Append judge ballots | `npm run evals -- rejudge <batch>` |
 | `export` | Write sanitized finished records | `npm run evals -- export <batch> --out ./eval-export` |
 
-`recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
+`recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. `rejudge` grades the saved work with every judge registered in its plan. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
 
 ## Protocol
 
@@ -100,9 +101,13 @@ Claude assessor calls turn model tools off. Codex assessor calls use an empty wo
 
 ## Plans
 
-The saved plan is [neon-pairs-l1.json](experiments/neon-pairs-l1.json). It fixes Codex `gpt-6.1-sol` at high effort, Docker isolation, one attempt at a time and five attempts per setup. Helpful stays defined in the suite and is left out because Extension testing waits.
+Each layer has a check plan and a full plan in `experiments/`. Start with [neon-pairs-l1-check.json](experiments/neon-pairs-l1-check.json). Check plans run once per setup and implementer. Full plans run three times. Every plan fixes Codex `gpt-6.1-sol` and Claude `opus` at high effort as implementers. Helpful stays out because Extension testing waits.
 
-The plan's `local-config` choices copy the judge and simulated user from `src/evals/eval.config.local.json`, or `eval.config.json` when no local file exists. Those resolved choices are saved with the batch. Plans can select other cases and layers that the benchmark provides. Later layers use banks with only their permitted facts.
+The ordered `judges` list fixes Claude `opus` at high effort first and Codex `gpt-6.1-sol` at xhigh effort second. Each judge casts three ballots per question. The first judges an attempt as it finishes. Each later judge reads the same saved source and images through append-only rejudge. A resumed batch fills missing judgments without repeating a finished implementation.
+
+These two implementations and two judgments give four pairs per setup: Claude with a Claude judge, Codex with a Claude judge, Codex with a Codex judge and Claude with a Codex judge. Older plans with one `judge`, including `neon-pairs-l1.json`, still work.
+
+The plan's `local-config` choices copy the named judge choices or simulated user from `src/evals/eval.config.local.json`, or `eval.config.json` when no local file exists. Those resolved choices are saved with the batch. Plans can select other cases and layers that the benchmark provides. Later layers use banks with only their permitted facts.
 
 `run` refuses a plan with `local` isolation unless you pass `--development`. Such attempts are labeled unfit for scored results. Model agents and verifier builds still use containers so project code never runs on this machine. The mock smoke command supplies mock stages for development without Docker.
 
@@ -114,6 +119,10 @@ The UI has these views:
 
 - Play and compare - play games A and B on separate origins and pick one before revealing the setups.
 - Results - read tables, charts, checks, judge answers, questions and screenshots for each tool and model.
+
+To print the same matrix from saved records, run `npm run evals -- summary --batch <id>`. Results group each implementer and judge apart, with every setup inside its pair. Different grading versions and reported models stay in separate groups. Each judge keeps its latest assessment. The judge difference is the second judge's score minus the first judge's score on matching attempts and grading versions. Missing judgments, errors and comparisons with different grading versions are counted apart.
+
+Implementation usage appears in each pair for comparison. It comes from one attempt and isn't added again for each judge.
 
 The pinned `mock` provider still hands in the reference game for harness development. Editing intent through the UI writes `intent.local.json` and changes the input fingerprint. A batch keeps its frozen bank even if a later edit changes that file.
 

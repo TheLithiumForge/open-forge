@@ -29,7 +29,7 @@ export async function smokeAttempt(): Promise<{ status: RunStatus; questions: nu
   const store = new HistoryStore(join(root, "records"));
   try {
     const suite = await loadSuite("greenfield-baseline");
-    const current = await loadConfig();
+    const { judges: _judges, ...current } = await loadConfig();
     const config = { ...current, isolation: Isolation.local, development: true, agents: [MockChoice], simulatedUser: MockChoice,
       judge: { ...MockChoice, repeats: 1 }, setups: [suite.baseline], runsPerSetup: 1, parallelRuns: 1, protocol: suiteProtocol(suite) };
     const batchId = randomUUID();

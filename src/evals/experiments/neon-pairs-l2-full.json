@@ -1,34 +1,47 @@
 {
-    "schemaVersion":  1,
-    "layer":  2,
-    "case":  "l2-defined-idea",
-    "setups":  [
-                   "plain-docs",
-                   "linked-agents",
-                   "minimal",
-                   "essentials",
-                   "full-core",
-                   "spec-in-prompt"
-               ],
-    "runsPerSetup":  3,
-    "parallelRuns":  5,
-    "agents":  [
-                   {
-                       "tool":  "codex",
-                       "model":  "gpt-6.1-sol",
-                       "effort":  "high"
-                   }
-               ],
-    "judge":  {
-                  "tool":  "claude",
-                  "model":  "opus",
-                  "effort":  "high",
-                  "repeats":  3
-              },
-    "simulatedUser":  "local-config",
-    "isolation":  "docker",
-    "limits":  {
-                   "questionRounds":  3,
-                   "runMinutes":  60
-               }
+  "schemaVersion": 1,
+  "layer": 2,
+  "case": "l2-defined-idea",
+  "setups": [
+    "plain-docs",
+    "linked-agents",
+    "minimal",
+    "essentials",
+    "full-core",
+    "spec-in-prompt"
+  ],
+  "runsPerSetup": 3,
+  "parallelRuns": 5,
+  "agents": [
+    {
+      "tool": "codex",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    {
+      "tool": "claude",
+      "model": "opus",
+      "effort": "high"
+    }
+  ],
+  "simulatedUser": "local-config",
+  "isolation": "docker",
+  "limits": {
+    "questionRounds": 3,
+    "runMinutes": 60
+  },
+  "judges": [
+    {
+      "tool": "claude",
+      "model": "opus",
+      "effort": "high",
+      "repeats": 3
+    },
+    {
+      "tool": "codex",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "repeats": 3
+    }
+  ]
 }

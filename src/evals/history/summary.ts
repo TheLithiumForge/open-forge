@@ -1,10 +1,17 @@
 import type { ModelChoice } from "../config/config.types.ts";
 import { coverage, summarizeMeasurements, tokenTotal } from "../grading/counting.ts";
 import type { JudgeAnswer, Preference, RunRecord } from "./results.types.ts";
-import { FailureKind, IntentCheckArea, PreferenceWinner, RunStatus } from "./statuses.ts";
+import type { AssessmentRecord, JudgeAssessment } from "./records.types.ts";
+import { modelKey } from "../config/judges.ts";
+import { AssessmentKind, FailureKind, IntentCheckArea, PreferenceWinner, RunStatus } from "./statuses.ts";
 
 export { IntentCheckArea } from "./statuses.ts";
 export const JudgeAreas = { rules: "rules", code: "code", intent: "intent" } as const;
+
+export function latestJudgeFor(runId: string, assessments: readonly AssessmentRecord[], choice: ModelChoice, legacyChoice?: ModelChoice): JudgeAssessment | undefined {
+  return assessments.filter((item): item is JudgeAssessment => item.kind === AssessmentKind.judge && item.runId === runId
+    && (item.requestedModel !== null ? modelKey(item.requestedModel) === modelKey(choice) : legacyChoice !== undefined && modelKey(legacyChoice) === modelKey(choice))).at(-1);
+}
 
 export interface SetupSummary {
   readonly agent: string;
@@ -44,7 +51,7 @@ function mean(values: readonly (number | null | undefined)[]): number | null {
   return summarizeMeasurements(values.map((value) => value ?? null)).mean;
 }
 
-function yesShare(answers: readonly JudgeAnswer[], area: string): number | null {
+export function yesShare(answers: readonly JudgeAnswer[], area: string): number | null {
   const scoped = answers.filter((answer) => answer.area === area);
   const asked = scoped.reduce((sum, answer) => sum + answer.yes + answer.no, 0);
   return asked === 0 ? null : scoped.reduce((sum, answer) => sum + answer.yes, 0) / asked;

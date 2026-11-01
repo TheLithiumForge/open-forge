@@ -28,6 +28,7 @@ export interface EvalConfig {
   readonly setups: readonly string[];
   readonly agents: readonly ModelChoice[];
   readonly judge: JudgeChoice;
+  readonly judges?: readonly JudgeChoice[];
   readonly simulatedUser: ModelChoice;
   readonly isolation: Isolation;
   readonly containers?: ContainerLimits;

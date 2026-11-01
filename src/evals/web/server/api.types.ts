@@ -3,6 +3,7 @@ import type { EvalConfig, ModelChoice } from "../../config/config.types.ts";
 import type { BatchRecord, RunRecord } from "../../history/results.types.ts";
 import type { RunStatus } from "../../history/statuses.ts";
 import type { SetupSummary } from "../../history/summary.ts";
+import type { JudgeDifference } from "../../history/summary-matrix.ts";
 import type { IntentItem, RubricQuestion } from "../../benchmarks/suite.types.ts";
 import type { ProgressMessage } from "../../execution/progress.ts";
 
@@ -42,9 +43,15 @@ export interface BatchResponse {
   readonly compared: number;
   readonly pairs: number;
   readonly gradingGroups?: readonly ResultGroup[];
+  readonly judgeDifferences?: readonly JudgeDifference[];
+  readonly implementationAttempts?: number;
 }
 
 export interface ResultGroup {
+  readonly judge?: string;
+  readonly reportedJudgeModel?: string | null;
+  readonly judgeMissing?: number;
+  readonly judgeErrors?: number;
   readonly grading: string;
   readonly reportedModel: string | null;
   readonly runs: readonly RunRecord[];

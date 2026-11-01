@@ -19,6 +19,7 @@ import { checksForSuite } from "../benchmarks/registry.ts";
 import type { FileHash } from "../materialize/files.ts";
 import { progress } from "./progress.ts";
 import { executeRun } from "./run.ts";
+import { completeSavedJudgments } from "../grading/rejudge.ts";
 import { runInParallel } from "./run-queue.ts";
 import { generateSetup } from "../config/setups.ts";
 import { opaqueId, removeFolder, suiteForSetup } from "./workspace.ts";
@@ -42,6 +43,10 @@ function shuffled<T>(items: readonly T[]): T[] {
   return copy;
 }
 
+export function planBatchRuns(config: EvalConfig, batchId: string): RunRecord[] {
+  return shuffled(config.agents.flatMap((agent) => config.setups.flatMap((setup) => Array.from({ length: config.runsPerSetup }, (_, repeat) => plannedRun(opaqueId(), batchId, setup, agent, repeat + 1)))));
+}
+
 /** Plans every run of the config, in random order so no setup always runs first, and starts them. */
 export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   if (activeBatch !== null) throw new Error("A batch is already running.");
@@ -50,7 +55,7 @@ export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   const config = { ...requested, limits: { ...requested.limits, runMinutes: suite.runMinutes ?? requested.limits.runMinutes },
     protocol: suite.documents === undefined ? requested.protocol ?? suiteProtocol(suite) : freezeProtocol(answerBank(suite.intent), [suite.prompt, ...suite.documents]) };
   const id = `${new Date().toISOString().replaceAll(/[:.]/g, "-")}-${opaqueId()}`;
-  const runs = shuffled(config.agents.flatMap((agent) => config.setups.flatMap((setup) => Array.from({ length: config.runsPerSetup }, (_, repeat) => plannedRun(opaqueId(), id, setup, agent, repeat + 1)))));
+  const runs = planBatchRuns(config, id);
   const batch: BatchRecord = { ...await captureExperiment(id, config, suite), runs: runs.map((run) => run.id) };
   await saveBatch(batch);
   for (const run of runs) await saveRun(run);
@@ -112,7 +117,11 @@ async function executeBatch(batchId: string): Promise<void> {
     // Batches saved before parallel runs existed have no setting, so they run one at a time.
     await runInParallel(batch.runs, batch.config.parallelRuns || 1, async (runId, index) => {
       let run: RunRecord = await readRun(batchId, runId);
-      if (!rerunStatuses.includes(run.status)) return;
+      if (!rerunStatuses.includes(run.status)) {
+        await completeSavedJudgments(suiteForSetup(suite, run.setup), run, batch.config,
+          { checker: batch.fingerprints.checks, rubric: batch.fingerprints.rubric, judge: batch.versions["judge"] ?? null });
+        return;
+      }
       if (run.status !== RunStatus.pending) {
         if (run.finishedAt === null) await saveRun({ ...run, status: RunStatus.failed, failureKind: FailureKind.infrastructure, finishedAt: new Date().toISOString() });
         if (run.replacesRunId !== null) return;

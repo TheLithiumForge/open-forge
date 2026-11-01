@@ -9,12 +9,14 @@ import { withAgentStage } from "./containers/agent.ts";
 import { executionLabel, ExecutionLabelFile, LocalExecutionLabel } from "./containers/eligibility.ts";
 import type { Docker } from "./containers/docker.ts";
 import { judgeRun } from "../grading/judge/judge.ts";
+import { completeSavedJudgments } from "../grading/rejudge.ts";
+import { configuredJudges } from "../config/judges.ts";
 import { prepareJudgeFolder } from "../grading/judge/judge-folder.ts";
 import { judgeImagePaths } from "../grading/judge/shot-paths.ts";
 import { ResultFiles } from "../paths.ts";
 import type { RunRecord } from "../history/results.types.ts";
 import { FailureKind, RunStatus } from "../history/statuses.ts";
-import { appendAssessment, readBatch, runFolder, saveRun } from "../history/store.ts";
+import { appendAssessment, readAssessments, readBatch, runFolder, saveRun } from "../history/store.ts";
 import { checksAssessment, failedChecksAssessment, judgeAssessment } from "../history/assessments.ts";
 import { countChecks, legacyCheckView } from "../grading/counting.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
@@ -40,7 +42,7 @@ export interface RunInput {
 }
 
 export interface RunServices {
-  readonly store?: Pick<HistoryStore, "runFolder" | "readBatch" | "saveRun" | "appendAssessment">;
+  readonly store?: Pick<HistoryStore, "runFolder" | "readBatch" | "saveRun" | "appendAssessment" | "readAssessments">;
   readonly createSpace?: typeof createRunSpace;
   readonly scratch?: typeof scratchFolder;
   readonly conversation?: typeof converse;
@@ -56,7 +58,8 @@ const JudgeTimeoutMs = 15 * 60_000;
 export async function executeRun(input: RunInput): Promise<RunRecord> {
   const { suite, config } = input;
   const services = input.services ?? {};
-  const store = services.store ?? { runFolder, readBatch, saveRun, appendAssessment };
+  const store = services.store ?? { runFolder, readBatch, saveRun, appendAssessment, readAssessments };
+  const primaryJudge = configuredJudges(config)[0] ?? config.judge;
   const folder = store.runFolder(input.run.batchId, input.run.id);
   const batch = await store.readBatch(input.run.batchId);
   const versions = { checker: batch.fingerprints.checks, rubric: batch.fingerprints.rubric, judge: batch.versions["judge"] ?? null };
@@ -106,18 +109,29 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     const judgeFolder = await (services.scratch ?? scratchFolder)();
     try {
       await prepareJudgeFolder(join(folder, ResultFiles.files), join(judgeFolder, "project"), run.build?.html);
-      const judge = await (services.judge ?? judgeRun)(suite, config.judge, join(judgeFolder, "project"), join(judgeFolder, "home"), JudgeTimeoutMs,
+      const judge = await (services.judge ?? judgeRun)(suite, primaryJudge, join(judgeFolder, "project"), join(judgeFolder, "home"), JudgeTimeoutMs,
         { stage: stageOptions, images: judgeImagePaths(run) });
-      await store.appendAssessment({ ...judgeAssessment(run, judge, versions), requestedModel: config.judge });
-      await update({ status: RunStatus.done, judge, finishedAt: new Date().toISOString() }, "done.");
+      const judged = { ...judgeAssessment(run, judge, versions), requestedModel: primaryJudge };
+      await store.appendAssessment(judged);
+      await update({ status: RunStatus.done, judge, judgeAssessmentId: judged.id, finishedAt: new Date().toISOString() }, "done.");
     } finally {
       await removeFolder(judgeFolder);
     }
   } catch (error) {
     if (error instanceof SimulatorFailure) await update({ questions: error.report.questions });
+    // Both judges can still read the source when a verifier build fails.
+    if (run.status === RunStatus.building && space !== null) await freezeFiles(space, join(folder, ResultFiles.files)).catch(() => undefined);
     const failureKind = run.status === RunStatus.agent ? FailureKind.infrastructure : run.status === RunStatus.judging || run.status === RunStatus.checking ? FailureKind.grading : FailureKind.attempt;
-    if (run.status === RunStatus.checking) await store.appendAssessment(failedChecksAssessment(run, error, versions));
-    if (run.status === RunStatus.judging) await store.appendAssessment({ ...judgeAssessment(run, [], versions), requestedModel: config.judge, error: error instanceof Error ? error.message : String(error) });
+    if (run.status === RunStatus.checking) {
+      const failed = failedChecksAssessment(run, error, versions);
+      await store.appendAssessment(failed);
+      run = { ...run, checksAssessmentId: failed.id, checkOutcomes: failed.outcomes, functionalResult: countChecks(failed.outcomes, failed.selection) };
+    }
+    if (run.status === RunStatus.judging) {
+      const judged = { ...judgeAssessment(run, [], versions), requestedModel: primaryJudge, error: error instanceof Error ? error.message : String(error) };
+      await store.appendAssessment(judged);
+      run = { ...run, judgeAssessmentId: judged.id };
+    }
     await update({ status: RunStatus.failed, failureKind, error: error instanceof Error ? error.message : String(error), finishedAt: new Date().toISOString() }, "failed.");
   } finally {
     if (space !== null) {
@@ -125,5 +139,9 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
       await removeFolder(space.root);
     }
   }
+  await completeSavedJudgments(suite, run, config, versions, { store, ...(services.judge === undefined ? {} : { judge: services.judge }),
+    ...(services.scratch === undefined ? {} : { scratch: services.scratch }), options: { stage: {
+      ...(config.containers === undefined ? {} : { limits: config.containers }), ...(input.signal === undefined ? {} : { signal: input.signal }), ...(input.docker === undefined ? {} : { docker: input.docker }),
+    } } });
   return run;
 }

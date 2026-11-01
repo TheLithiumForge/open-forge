@@ -7,6 +7,7 @@ import { containerLimits } from "../execution/containers/settings.ts";
 import { QuestionRounds } from "../execution/conversation/answer-bank.ts";
 import { integer, modelChoice, object, positive, strings, text } from "./validation.ts";
 import { readProtocol } from "./protocol.ts";
+import { readJudges } from "./judges.ts";
 
 export async function loadConfig(): Promise<EvalConfig> {
   const path = existsSync(EvalPaths.localConfig) ? EvalPaths.localConfig : EvalPaths.config;
@@ -25,13 +26,13 @@ export function parseConfig(value: unknown): EvalConfig {
   if (!Array.isArray(agents) || agents.length === 0) throw new Error("Pick at least one agent.");
   const isolation = source["isolation"];
   if (isolation !== Isolation.local && isolation !== Isolation.docker) throw new Error("Unknown isolation.");
-  const judge = object(source["judge"]);
+  const judges = readJudges(source["judge"], source["judges"]);
   const limits = object(source["limits"]);
   const resources = source["containers"] === undefined ? undefined : object(source["containers"]);
   const containers = resources === undefined ? containerLimits() : containerLimits({ cpus: positive(resources["cpus"]), memory: text(resources["memory"]), processes: integer(resources["processes"]) });
   return { suite, isolation, agents: agents.map(modelChoice), setups: strings(source["setups"]),
     runsPerSetup: integer(source["runsPerSetup"]), parallelRuns: integer(source["parallelRuns"] ?? 1),
-    judge: { ...modelChoice(judge), repeats: integer(judge["repeats"]) }, simulatedUser: modelChoice(source["simulatedUser"]), containers,
+    ...judges, simulatedUser: modelChoice(source["simulatedUser"]), containers,
     limits: { runMinutes: positive(limits["runMinutes"]), checkMinutes: positive(limits["checkMinutes"]), questionRounds: QuestionRounds },
     ...(source["protocol"] === undefined ? {} : { protocol: readProtocol(source["protocol"]) }),
     ...(source["layer"] === undefined ? {} : { layer: integer(source["layer"]) }),

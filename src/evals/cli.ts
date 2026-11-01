@@ -14,6 +14,7 @@ import { exportBatch } from "./history/export.ts";
 import { EvalPaths, evalsRoot } from "./paths.ts";
 import { validateCase } from "./grading/brownfield/validate.ts";
 import { BrownfieldFiles } from "./materialize/brownfield-case.ts";
+import { batchMatrixSummary } from "./config/summary.ts";
 
 export interface CliServices {
   readonly print: (text: string) => void;
@@ -28,6 +29,7 @@ export interface CliServices {
   readonly launch: typeof launchNode;
   readonly export: (batch: string, target: string) => Promise<string>;
   readonly validateCase: typeof validateCase;
+  readonly summary?: typeof batchMatrixSummary;
 }
 const defaults: CliServices = {
   print: console.log, doctor: configuredDoctor, images: buildEvalImages, smoke: smokeAttempt, qualify: qualifySetups,
@@ -62,6 +64,11 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     }
     case Command.images: checkedArgs(args, [], [], 0); await services.images(); return 0;
     case Command.smoke: checkedArgs(args, [], [], 0); services.print(`Smoke passed. ${JSON.stringify(await services.smoke())}`); return 0;
+    case Command.summary: {
+      checkedArgs(args, [], [Flag.batch], 0);
+      services.print(JSON.stringify(await (services.summary ?? batchMatrixSummary)(option(args, Flag.batch)), null, 2));
+      return 0;
+    }
     case Command.validateCase: {
       checkedArgs(args, [Flag.all], [Flag.case, Flag.plan], 0);
       const all = args.includes(Flag.all);

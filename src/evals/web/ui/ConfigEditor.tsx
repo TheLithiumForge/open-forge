@@ -7,7 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Isolation, Tool } from "../../config/choices.ts";
-import type { EvalConfig } from "../../config/config.types.ts";
+import type { EvalConfig, JudgeChoice } from "../../config/config.types.ts";
+import { configuredJudges } from "../../config/judges.ts";
+import { MatrixBallots } from "../../config/matrix.ts";
 import type { StateResponse } from "../server/api.types.ts";
 import { api } from "./api.ts";
 import { ModelChoiceRow } from "./ModelChoiceRow.tsx";
@@ -28,6 +30,11 @@ export function ConfigEditor({ state, onChange }: ConfigEditorProps) {
     setMessage("Not saved yet.");
   };
   const toggleSetup = (setup: string) => change({ setups: config.setups.includes(setup) ? config.setups.filter((item) => item !== setup) : [...config.setups, setup] });
+  const judges = configuredJudges(config);
+  const changeJudges = (next: readonly JudgeChoice[]) => {
+    const first = next[0];
+    if (first !== undefined) change({ judge: first, judges: next });
+  };
   const save = () =>
     api.saveConfig(config).then(
       () => api.state().then(onChange),
@@ -51,13 +58,20 @@ export function ConfigEditor({ state, onChange }: ConfigEditorProps) {
         </Button>
       </div>
       <div className="space-y-2">
-        <Label>Judge, at least as strong as the agents</Label>
-        <ModelChoiceRow choice={config.judge} onChange={(next) => change({ judge: { ...config.judge, ...next } })} />
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          Scores each run
-          <Input type="number" min={1} className="w-16" value={config.judge.repeats} onChange={(event) => change({ judge: { ...config.judge, repeats: Number(event.target.value) } })} />
-          times
-        </div>
+        <Label>Judges, in order</Label>
+        <p className="text-sm text-muted-foreground">Each attempt is implemented once. The first judge runs as it finishes. Every later judge reads the same saved attempt.</p>
+        {judges.map((judge, index) => <div className="space-y-2" key={index}>
+          <ModelChoiceRow choice={judge} onChange={(next) => changeJudges(judges.map((item, position) => position === index ? { ...judge, ...next } : item))}
+            {...(judges.length > 1 ? { onRemove: () => changeJudges(judges.filter((_, position) => position !== index)) } : {})} />
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            Ballots per question
+            <Input type="number" min={1} className="w-16" aria-label={`Judge ${index + 1} ballots`} value={judge.repeats}
+              onChange={(event) => changeJudges(judges.map((item, position) => position === index ? { ...judge, repeats: Number(event.target.value) } : item))} />
+          </div>
+        </div>)}
+        <Button variant="outline" size="sm" onClick={() => changeJudges([...judges, { tool: Tool.codex, model: null, effort: null, repeats: MatrixBallots }])}>
+          <Plus /> Add a judge
+        </Button>
       </div>
       <div className="space-y-2">
         <Label>Simulated user</Label>

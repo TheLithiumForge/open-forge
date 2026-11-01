@@ -9,7 +9,7 @@ import { listBatches, readAssessments, readBatch, readPreferences, readRuns, run
 import { loadSuite, saveIntent } from "../../benchmarks/suite.ts";
 import type { BatchResponse, StateResponse } from "./api.types.ts";
 import { allPairs, nextPair } from "./compare.ts";
-import { resultGroups } from "./result-groups.ts";
+import { summarizeMatrix } from "../../history/summary-matrix.ts";
 import { recordPick } from "./picks.ts";
 
 export const ApiPaths = {
@@ -53,7 +53,8 @@ export async function batchView(batchId: string, history: { readBatch: typeof re
   const runs = await history.readRuns(batch);
   const preferences = await history.readPreferences(batchId);
   const assessments = await history.readAssessments?.(batchId) ?? [];
-  const groups = resultGroups(runs, preferences, assessments);
+  const matrix = batch.revealed ? summarizeMatrix(batch.config, runs, assessments, preferences) : null;
+  const groups = matrix?.pairs ?? [];
   return {
     batch,
     hidden: runs.map((run) => ({ id: run.id, status: run.status, agent: run.agent })),
@@ -63,6 +64,8 @@ export async function batchView(batchId: string, history: { readBatch: typeof re
     compared: preferences.length,
     pairs: allPairs(runs, runFolder, assessments).length,
     gradingGroups: batch.revealed ? groups : [],
+    judgeDifferences: matrix?.differences ?? [],
+    implementationAttempts: matrix?.implementationAttempts ?? 0,
   };
 }
 
