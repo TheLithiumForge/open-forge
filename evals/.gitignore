@@ -1,6 +1,0 @@
-node_modules/
-/ui-dist/
-/results/
-/.auth/
-/.env.local
-*.local.json

@@ -62,7 +62,7 @@ The maintainer added these on 2026-10-30, after the first Baseline draft:
 
 ## Next step
 
-Run the first real Greenfield Baseline batch with the [eval tool](../../../../evals/README.md). Then write the next greenfield evals.
+Run the first real Greenfield Baseline batch with the [eval tool](../../../../src/evals/README.md). Then write the next greenfield evals.
 
 ## Not decided yet
 

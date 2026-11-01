@@ -10,7 +10,7 @@ Eval Judging says who scores each data point of an Open Forge eval, and how the 
 
 Anyone who downloads Open Forge should be able to rerun an eval and check our results. So the headline numbers come only from checks and counts, which give the same kind of answer on every machine. A model judge answers yes or no questions about the code, and anyone can rerun it on the saved results. People pick the better of two games they play blind, which checks the model judge instead of setting the headline. For example, in the [Greenfield Baseline](greenfield-baseline.md) a hidden check plays a 4x4 game, the judge answers whether each component keeps its logic, markup and styles together, and the maintainer picks between two games labeled A and B.
 
-Status: proposed on 2026-10-30, with the maintainer's decisions of the same day. A first draft is built into the [eval tool](../../../../../evals/README.md).
+Status: proposed on 2026-10-30, with the maintainer's decisions of the same day. A first draft is built into the [eval tool](../../../../../src/evals/README.md).
 
 ## Who judges what
 

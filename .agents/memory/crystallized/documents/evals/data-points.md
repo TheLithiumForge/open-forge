@@ -10,7 +10,7 @@ Eval Data Points is the set of values every Open Forge eval records for each run
 
 An eval compares setups, so every setup has to be measured the same way. Keeping the data points in one place does that. For example, the [Greenfield Baseline](greenfield-baseline.md) records functional success, tokens and compactions for runs in an empty folder and for runs in a fresh Open Forge install, then compares the two.
 
-Status: proposed on 2026-10-30, then updated the same day with rules followed, intent coverage, build and blind picks. The [eval tool](../../../../../evals/README.md) records them, and only its mock runs are tested.
+Status: proposed on 2026-10-30, then updated the same day with rules followed, intent coverage, build and blind picks. The [eval tool](../../../../../src/evals/README.md) records them, and only its mock runs are tested.
 
 ## Runs and setups
 

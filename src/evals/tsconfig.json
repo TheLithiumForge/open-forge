@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "moduleDetection": "force",
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "types": ["node"],
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "erasableSyntaxOnly": true,
+    "paths": { "@/*": ["./web/ui/*"] }
+  },
+  "include": ["*.ts", "config/**/*.ts", "execution/**/*.ts", "grading/**/*.ts", "history/**/*.ts", "benchmarks/**/*.ts", "web/server/**/*.ts"],
+  "exclude": ["benchmarks/**/reference/**", "node_modules", "*.tmp.ts"]
+}

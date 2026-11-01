@@ -8,7 +8,7 @@ open-forge:
 
 Running Evals says how every Open Forge eval run starts, runs and ends, so that runs can't see each other or anything else on the machine.
 
-A run that can read the maintainer's settings, memory or earlier runs no longer measures its setup. So each run gets its own fresh folder, its own fresh tool settings and, with Docker, its own container. The [eval tool](../../../../../evals/README.md) does all of it: `npm start` opens a local web app, Run starts a batch, and results come back as tables, charts and games to play. For example, a [Greenfield Baseline](greenfield-baseline.md) run copies the Essentials snapshot into a fresh `neon-pairs` folder, runs Codex there with the prompt, freezes the files, and only then builds and checks the game.
+A run that can read the maintainer's settings, memory or earlier runs no longer measures its setup. So each run gets its own fresh folder, its own fresh tool settings and, with Docker, its own container. The [eval tool](../../../../../src/evals/README.md) does all of it: `npm start` opens a local web app, Run starts a batch, and results come back as tables, charts and games to play. For example, a [Greenfield Baseline](greenfield-baseline.md) run copies the Essentials snapshot into a fresh `neon-pairs` folder, runs Codex there with the prompt, freezes the files, and only then builds and checks the game.
 
 Status: proposed on 2026-10-30. A first draft of the tool is built, and only its mock runs are tested. No real model run has happened yet.
 

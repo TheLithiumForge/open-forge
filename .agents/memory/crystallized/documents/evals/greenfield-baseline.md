@@ -10,7 +10,7 @@ Greenfield Baseline is the first Open Forge eval: one short prompt asks for Neon
 
 Someone who starts a new project with no docs should lose nothing by installing Open Forge first. This eval checks that in the barest case, where the only context is the prompt. For example, the same prompt runs five times in an empty folder and five times in an Essentials install, and we compare whether the games work, how they look, how well they follow the prompt's one rule and what they cost.
 
-Status: proposed on 2026-10-30, then updated the same day with the maintainer's project choice and decisions. The [eval tool](../../../../../evals/README.md) runs it, and its hidden checks pass on a reference build of the game. No real model run has happened yet. It's the first step of the [Eval Ladder](../../../emerging/ideas/eval-ladder.md), which isn't accepted yet.
+Status: proposed on 2026-10-30, then updated the same day with the maintainer's project choice and decisions. The [eval tool](../../../../../src/evals/README.md) runs it, and its hidden checks pass on a reference build of the game. No real model run has happened yet. It's the first step of the [Eval Ladder](../../../emerging/ideas/eval-ladder.md), which isn't accepted yet.
 
 ## What we compare
 

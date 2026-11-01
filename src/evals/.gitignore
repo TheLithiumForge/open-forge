@@ -1,0 +1,6 @@
+node_modules/
+/web/dist/
+/runs/
+/.auth/
+/.env.local
+*.local.json
