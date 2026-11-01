@@ -1,1 +1,3 @@
-Could you let me name a game and keep its name with my saved progress? Also, some saved games won't open after I paste them, even though my own exports work. Please fix that and keep the rest working.
+Could you let me name a game before I save it, so its name comes back when I load my saved progress? Please follow the project rules.
+
+Some saved games won't open after I paste them, even though my own exports work. Could you fix that and keep the rest working?

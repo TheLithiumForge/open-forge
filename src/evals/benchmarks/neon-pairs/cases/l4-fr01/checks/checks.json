@@ -9,8 +9,7 @@
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.01"
+      "kind": "feature"
     },
     {
       "id": "F01-02",
@@ -20,19 +19,17 @@
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.02"
+      "kind": "feature"
     },
     {
       "id": "F01-03",
       "method": "browser",
-      "description": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name.",
+      "description": "D05 and C15.3: name, play a mismatch, wait 800ms, export, New Game and load the app text to restore the name and progress.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.03"
+      "kind": "feature"
     },
     {
       "id": "F01-04",
@@ -42,8 +39,7 @@
         "starting": "pass",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.04"
+      "kind": "feature"
     },
     {
       "id": "F01-05",
@@ -53,30 +49,27 @@
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.05"
+      "kind": "feature"
     },
     {
       "id": "F01-06",
       "method": "browser",
-      "description": "D05: isolated invalid names, fields and versions are rejected before changing the named game.",
+      "description": "D05, D06 and D07: invalid names, missing fields, versions and version 1 state vectors are rejected inside named snapshots without changing progress.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.06"
+      "kind": "feature"
     },
     {
       "id": "F01-07",
       "method": "browser",
-      "description": "C15.5: Restart, New Game, size change and board-code load each clear the name.",
+      "description": "C15.5: fresh-deal actions and reload clear names, which never enter browser preferences.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.07"
+      "kind": "feature"
     },
     {
       "id": "F01-08",
@@ -86,19 +79,17 @@
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.08"
+      "kind": "feature"
     },
     {
       "id": "F01-09",
       "method": "browser",
-      "description": "C15.4: a named completed import stays static and never writes a best score.",
+      "description": "C15.2 and C15.4: completed progress stays static, permits renaming and clearing, and keeps the best score.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.09"
+      "kind": "feature"
     },
     {
       "id": "F01-10",
@@ -108,118 +99,107 @@
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.10"
+      "kind": "feature"
     },
     {
       "id": "R01-01",
       "method": "browser",
-      "description": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation.",
+      "description": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "repair",
-      "previousId": "R01.01"
+      "kind": "repair"
     },
     {
       "id": "R01-02",
       "method": "browser",
-      "description": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation.",
+      "description": "D06: selection member order has no effect for one-card and mismatch states.",
       "expected": {
-        "starting": "fail",
+        "starting": "pass",
         "solution": "pass"
       },
-      "kind": "repair",
-      "previousId": "R01.02"
+      "kind": "repair"
     },
     {
       "id": "R01-03",
       "method": "browser",
-      "description": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation.",
+      "description": "D06: reordered unknown top-level members are rejected without changing progress or the draft.",
       "expected": {
-        "starting": "fail",
+        "starting": "pass",
         "solution": "pass"
       },
-      "kind": "repair",
-      "previousId": "R01.03"
+      "kind": "repair"
     },
     {
       "id": "R01-04",
       "method": "browser",
-      "description": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation.",
+      "description": "D05: every missing top-level member is rejected in reordered input with progress unchanged.",
       "expected": {
-        "starting": "fail",
+        "starting": "pass",
         "solution": "pass"
       },
-      "kind": "repair",
-      "previousId": "R01.04"
+      "kind": "repair"
     },
     {
       "id": "R01-05",
       "method": "browser",
-      "description": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation.",
+      "description": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged.",
       "expected": {
-        "starting": "fail",
+        "starting": "pass",
         "solution": "pass"
       },
-      "kind": "repair",
-      "previousId": "R01.05"
+      "kind": "repair"
     },
     {
       "id": "R01-06",
       "method": "browser",
-      "description": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation.",
+      "description": "D06: reordered nested selections still reject unknown and missing members.",
       "expected": {
-        "starting": "fail",
+        "starting": "pass",
         "solution": "pass"
       },
-      "kind": "repair",
-      "previousId": "R01.06"
+      "kind": "repair"
     },
     {
       "id": "R01-07",
       "method": "browser",
-      "description": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation.",
+      "description": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps.",
       "expected": {
-        "starting": "fail",
+        "starting": "pass",
         "solution": "pass"
       },
-      "kind": "repair",
-      "previousId": "R01.07"
+      "kind": "repair"
     },
     {
       "id": "R01-08",
       "method": "browser",
-      "description": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation.",
+      "description": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "repair",
-      "previousId": "R01.08"
+      "kind": "repair"
     },
     {
       "id": "R01-09",
       "method": "browser",
-      "description": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation.",
+      "description": "C09 and C12: reordered completed imports stay completed without Resume or a new best.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "repair",
-      "previousId": "R01.09"
+      "kind": "repair"
     },
     {
-      "id": "R01-10",
+      "id": "FR01-01",
       "method": "browser",
-      "description": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation.",
+      "description": "D05: reordered named version 2 snapshots restore both the name and progress.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "repair",
-      "previousId": "R01.10"
+      "kind": "feature"
     }
   ]
 }

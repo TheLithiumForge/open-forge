@@ -1,1 +1,7 @@
-[]
+[
+  {
+    "id": "failing-example",
+    "text": "This saved game fails to open: {\"boardCode\":\"np1-4-1\",\"elapsedMs\":0,\"matched\":[],\"moves\":0,\"selection\":{\"index\":2,\"kind\":\"one\"},\"started\":true,\"version\":1}",
+    "judgedBy": "checks"
+  }
+]

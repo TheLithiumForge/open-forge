@@ -9,8 +9,7 @@
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.01"
+      "kind": "feature"
     },
     {
       "id": "F01-02",
@@ -20,19 +19,17 @@
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.02"
+      "kind": "feature"
     },
     {
       "id": "F01-03",
       "method": "browser",
-      "description": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name.",
+      "description": "D05 and C15.3: name, play a mismatch, wait 800ms, export, New Game and load the app text to restore the name and progress.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.03"
+      "kind": "feature"
     },
     {
       "id": "F01-04",
@@ -42,8 +39,7 @@
         "starting": "pass",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.04"
+      "kind": "feature"
     },
     {
       "id": "F01-05",
@@ -53,30 +49,27 @@
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.05"
+      "kind": "feature"
     },
     {
       "id": "F01-06",
       "method": "browser",
-      "description": "D05: isolated invalid names, fields and versions are rejected before changing the named game.",
+      "description": "D05, D06 and D07: invalid names, missing fields, versions and version 1 state vectors are rejected inside named snapshots without changing progress.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.06"
+      "kind": "feature"
     },
     {
       "id": "F01-07",
       "method": "browser",
-      "description": "C15.5: Restart, New Game, size change and board-code load each clear the name.",
+      "description": "C15.5: fresh-deal actions and reload clear names, which never enter browser preferences.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.07"
+      "kind": "feature"
     },
     {
       "id": "F01-08",
@@ -86,19 +79,17 @@
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.08"
+      "kind": "feature"
     },
     {
       "id": "F01-09",
       "method": "browser",
-      "description": "C15.4: a named completed import stays static and never writes a best score.",
+      "description": "C15.2 and C15.4: completed progress stays static, permits renaming and clearing, and keeps the best score.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.09"
+      "kind": "feature"
     },
     {
       "id": "F01-10",
@@ -108,8 +99,7 @@
         "starting": "fail",
         "solution": "pass"
       },
-      "kind": "feature",
-      "previousId": "F01.10"
+      "kind": "feature"
     }
   ]
 }

@@ -1,12 +1,175 @@
 {
   "schemaVersion": 1,
-  "status": "passed",
-  "validation": "Detached worker CLI with product manifest and report parsers.",
+  "status": "local-validation-passed-product-validation-pending",
+  "validation": "Fresh local builds, public tests, worker CLI, product patch and report parsers, and direct scope and protected-input functions.",
   "node": "26.12.1",
-  "checks": 20,
+  "playwright": "1.64.1",
+  "chromium": "156.0.8078.4",
+  "specVersion": 3,
+  "referenceHash": "b82b3bd844545f854551c7ad16489e8797ae369f77a369d3cf8c8e54f1d0dbe1",
+  "productDocuments": [
+    {
+      "path": "README.md",
+      "sha256": "b57fb8b848d2d76619ac6af6fe8f9180933332018d4663d060a0153e1296e76f"
+    },
+    {
+      "path": "acceptance.md",
+      "sha256": "eb3eaf50c186b24a82b1803400252897dcdad7ab407557553dea76a727fa34d2"
+    },
+    {
+      "path": "architecture.md",
+      "sha256": "31052dcd9c48372be62b5dfa7e119098b9cf7092a2b637c2aa2b80e8e23812c9"
+    },
+    {
+      "path": "controls.md",
+      "sha256": "c8d7e44ee45713bf83651b0012539621346dba9f92df357ff3baf8bbc6bd9103"
+    },
+    {
+      "path": "input.md",
+      "sha256": "91185fbe8af93dbf8ca3c652711563d7fdf73027cb59af350d9ca8dea7ec0b4f"
+    },
+    {
+      "path": "reproducibility.md",
+      "sha256": "d5b32665781a2b12d04368f66acabaa9ab5c04ecd768283a152812c1fb6c9e92"
+    },
+    {
+      "path": "rules.md",
+      "sha256": "285e9dcfe7397f206ecda3c3f42ef0f11b592dd9b206ff6fc6dcb0de7095e1a7"
+    },
+    {
+      "path": "sound.md",
+      "sha256": "ddf7c9f2a23789ca5fbba974cc4fa32f9c2e8498884f4fefa29a9712f0e4b9e9"
+    },
+    {
+      "path": "technology.md",
+      "sha256": "a078681f7414c2c98f6953a3cef93db9b63c547acf0ab84a13092b5f1bf5e83e"
+    },
+    {
+      "path": "visuals.md",
+      "sha256": "e215a20482b13b0945b812a2d61bddd4558b118a388d323d4a0c5ea2bca5acb7"
+    }
+  ],
+  "patchHashes": [
+    {
+      "path": "seed.patch",
+      "sha256": "83b5171c91bd62745b3de9e8338fb59da1e4b66c83d83d936c84149b2881d972"
+    },
+    {
+      "path": "solution.patch",
+      "sha256": "9c978d3cfd551a661c90466b9b3b55e4747270cb6b3bafd336ef69b228b6201f"
+    },
+    {
+      "path": "alt-solution.patch",
+      "sha256": "5cce4d963afdaed5f9c668f2aca71463411065010c823407825b0a6a2d2c7e8b"
+    }
+  ],
   "stages": [
     {
       "stage": "starting",
+      "patch": null,
+      "sourceHash": "394bd9618fa68484b79d9a11b4ebd267c31c1fde14ce4d194598e1feb4c43697",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 128
+      },
+      "browser": null,
+      "expected": [
+        {
+          "id": "F01-01",
+          "status": "fail"
+        },
+        {
+          "id": "F01-02",
+          "status": "fail"
+        },
+        {
+          "id": "F01-03",
+          "status": "fail"
+        },
+        {
+          "id": "F01-04",
+          "status": "pass"
+        },
+        {
+          "id": "F01-05",
+          "status": "fail"
+        },
+        {
+          "id": "F01-06",
+          "status": "fail"
+        },
+        {
+          "id": "F01-07",
+          "status": "fail"
+        },
+        {
+          "id": "F01-08",
+          "status": "fail"
+        },
+        {
+          "id": "F01-09",
+          "status": "fail"
+        },
+        {
+          "id": "F01-10",
+          "status": "fail"
+        },
+        {
+          "id": "R01-01",
+          "status": "fail"
+        },
+        {
+          "id": "R01-02",
+          "status": "pass"
+        },
+        {
+          "id": "R01-03",
+          "status": "pass"
+        },
+        {
+          "id": "R01-04",
+          "status": "pass"
+        },
+        {
+          "id": "R01-05",
+          "status": "pass"
+        },
+        {
+          "id": "R01-06",
+          "status": "pass"
+        },
+        {
+          "id": "R01-07",
+          "status": "pass"
+        },
+        {
+          "id": "R01-08",
+          "status": "fail"
+        },
+        {
+          "id": "R01-09",
+          "status": "fail"
+        },
+        {
+          "id": "FR01-01",
+          "status": "fail"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "No source paths changed."
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
       "outcomes": [
         {
           "id": "feature-F01-01",
@@ -24,7 +187,7 @@
           "id": "feature-F01-03",
           "area": "feature",
           "status": "fail",
-          "evidence": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name. Assertion failed."
+          "evidence": "D05 and C15.3: name, play a mismatch, wait 800ms, export, New Game and load the app text to restore the name and progress. Assertion failed."
         },
         {
           "id": "feature-F01-04",
@@ -42,13 +205,13 @@
           "id": "feature-F01-06",
           "area": "feature",
           "status": "fail",
-          "evidence": "D05: isolated invalid names, fields and versions are rejected before changing the named game. Assertion failed."
+          "evidence": "D05, D06 and D07: invalid names, missing fields, versions and version 1 state vectors are rejected inside named snapshots without changing progress. Assertion failed."
         },
         {
           "id": "feature-F01-07",
           "area": "feature",
           "status": "fail",
-          "evidence": "C15.5: Restart, New Game, size change and board-code load each clear the name. Assertion failed."
+          "evidence": "C15.5: fresh-deal actions and reload clear names, which never enter browser preferences. Assertion failed."
         },
         {
           "id": "feature-F01-08",
@@ -60,7 +223,7 @@
           "id": "feature-F01-09",
           "area": "feature",
           "status": "fail",
-          "evidence": "C15.4: a named completed import stays static and never writes a best score. Assertion failed."
+          "evidence": "C15.2 and C15.4: completed progress stays static, permits renaming and clearing, and keeps the best score. Assertion failed."
         },
         {
           "id": "feature-F01-10",
@@ -72,67 +235,173 @@
           "id": "repair-R01-01",
           "area": "repair",
           "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation. Assertion failed."
+          "evidence": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result. Assertion failed."
         },
         {
           "id": "repair-R01-02",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D06: selection member order has no effect for one-card and mismatch states."
         },
         {
           "id": "repair-R01-03",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D06: reordered unknown top-level members are rejected without changing progress or the draft."
         },
         {
           "id": "repair-R01-04",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D05: every missing top-level member is rejected in reordered input with progress unchanged."
         },
         {
           "id": "repair-R01-05",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged."
         },
         {
           "id": "repair-R01-06",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D06: reordered nested selections still reject unknown and missing members."
         },
         {
           "id": "repair-R01-07",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps."
         },
         {
           "id": "repair-R01-08",
           "area": "repair",
           "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation. Assertion failed."
+          "evidence": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume. Assertion failed."
         },
         {
           "id": "repair-R01-09",
           "area": "repair",
           "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation. Assertion failed."
+          "evidence": "C09 and C12: reordered completed imports stay completed without Resume or a new best. Assertion failed."
         },
         {
-          "id": "repair-R01-10",
-          "area": "repair",
+          "id": "feature-FR01-01",
+          "area": "feature",
           "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation. Assertion failed."
+          "evidence": "D05: reordered named version 2 snapshots restore both the name and progress. Assertion failed."
         }
-      ],
-      "artifactSha256": "f45c211812484cfd7c87a14c5a54c3e1b5213af50af8de35e27636ce26c72f30"
+      ]
     },
     {
       "stage": "solution",
+      "patch": "solution.patch",
+      "sourceHash": "8d51aaeeeeb449c8f2f9d0807c1aaa88bd4ab4263eed35872ab972a559c4df72",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 131
+      },
+      "browser": {
+        "status": "passed",
+        "passed": 65
+      },
+      "expected": [
+        {
+          "id": "F01-01",
+          "status": "pass"
+        },
+        {
+          "id": "F01-02",
+          "status": "pass"
+        },
+        {
+          "id": "F01-03",
+          "status": "pass"
+        },
+        {
+          "id": "F01-04",
+          "status": "pass"
+        },
+        {
+          "id": "F01-05",
+          "status": "pass"
+        },
+        {
+          "id": "F01-06",
+          "status": "pass"
+        },
+        {
+          "id": "F01-07",
+          "status": "pass"
+        },
+        {
+          "id": "F01-08",
+          "status": "pass"
+        },
+        {
+          "id": "F01-09",
+          "status": "pass"
+        },
+        {
+          "id": "F01-10",
+          "status": "pass"
+        },
+        {
+          "id": "R01-01",
+          "status": "pass"
+        },
+        {
+          "id": "R01-02",
+          "status": "pass"
+        },
+        {
+          "id": "R01-03",
+          "status": "pass"
+        },
+        {
+          "id": "R01-04",
+          "status": "pass"
+        },
+        {
+          "id": "R01-05",
+          "status": "pass"
+        },
+        {
+          "id": "R01-06",
+          "status": "pass"
+        },
+        {
+          "id": "R01-07",
+          "status": "pass"
+        },
+        {
+          "id": "R01-08",
+          "status": "pass"
+        },
+        {
+          "id": "R01-09",
+          "status": "pass"
+        },
+        {
+          "id": "FR01-01",
+          "status": "pass"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "changed README.md: within diffScope\nchanged src/game/Game.tsx: within diffScope\nchanged src/game/controls/Reproduction.tsx: within diffScope\nadded src/game/deal-name.test.ts: within diffScope\nadded src/game/deal-name.ts: within diffScope\nchanged src/game/game.types.ts: within diffScope\nchanged src/game/session/use-game.ts: within diffScope\nadded src/game/snapshot-order.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
       "outcomes": [
         {
           "id": "feature-F01-01",
@@ -150,7 +419,7 @@
           "id": "feature-F01-03",
           "area": "feature",
           "status": "pass",
-          "evidence": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name."
+          "evidence": "D05 and C15.3: name, play a mismatch, wait 800ms, export, New Game and load the app text to restore the name and progress."
         },
         {
           "id": "feature-F01-04",
@@ -168,13 +437,13 @@
           "id": "feature-F01-06",
           "area": "feature",
           "status": "pass",
-          "evidence": "D05: isolated invalid names, fields and versions are rejected before changing the named game."
+          "evidence": "D05, D06 and D07: invalid names, missing fields, versions and version 1 state vectors are rejected inside named snapshots without changing progress."
         },
         {
           "id": "feature-F01-07",
           "area": "feature",
           "status": "pass",
-          "evidence": "C15.5: Restart, New Game, size change and board-code load each clear the name."
+          "evidence": "C15.5: fresh-deal actions and reload clear names, which never enter browser preferences."
         },
         {
           "id": "feature-F01-08",
@@ -186,7 +455,7 @@
           "id": "feature-F01-09",
           "area": "feature",
           "status": "pass",
-          "evidence": "C15.4: a named completed import stays static and never writes a best score."
+          "evidence": "C15.2 and C15.4: completed progress stays static, permits renaming and clearing, and keeps the best score."
         },
         {
           "id": "feature-F01-10",
@@ -198,569 +467,299 @@
           "id": "repair-R01-01",
           "area": "repair",
           "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation."
+          "evidence": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result."
         },
         {
           "id": "repair-R01-02",
           "area": "repair",
           "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation."
+          "evidence": "D06: selection member order has no effect for one-card and mismatch states."
         },
         {
           "id": "repair-R01-03",
           "area": "repair",
           "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation."
+          "evidence": "D06: reordered unknown top-level members are rejected without changing progress or the draft."
         },
         {
           "id": "repair-R01-04",
           "area": "repair",
           "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation."
+          "evidence": "D05: every missing top-level member is rejected in reordered input with progress unchanged."
         },
         {
           "id": "repair-R01-05",
           "area": "repair",
           "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation."
+          "evidence": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged."
         },
         {
           "id": "repair-R01-06",
           "area": "repair",
           "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation."
+          "evidence": "D06: reordered nested selections still reject unknown and missing members."
         },
         {
           "id": "repair-R01-07",
           "area": "repair",
           "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation."
+          "evidence": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps."
         },
         {
           "id": "repair-R01-08",
           "area": "repair",
           "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation."
+          "evidence": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume."
         },
         {
           "id": "repair-R01-09",
           "area": "repair",
           "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation."
+          "evidence": "C09 and C12: reordered completed imports stay completed without Resume or a new best."
         },
         {
-          "id": "repair-R01-10",
-          "area": "repair",
+          "id": "feature-FR01-01",
+          "area": "feature",
           "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation."
+          "evidence": "D05: reordered named version 2 snapshots restore both the name and progress."
         }
-      ],
-      "artifactSha256": "1adebd1b471e2264b48e2160048abf97c1807aa87a475fd88bcfdc7a530a7024"
+      ]
     },
     {
-      "stage": "missing-build",
+      "stage": "alternative",
+      "patch": "alt-solution.patch",
+      "sourceHash": "b0513b1c0369dec3b83c1f136e61d12c188ed71327f77925c2e1dcb642c8afbd",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 131
+      },
+      "browser": {
+        "status": "passed",
+        "passed": 65
+      },
+      "expected": [
+        {
+          "id": "F01-01",
+          "status": "pass"
+        },
+        {
+          "id": "F01-02",
+          "status": "pass"
+        },
+        {
+          "id": "F01-03",
+          "status": "pass"
+        },
+        {
+          "id": "F01-04",
+          "status": "pass"
+        },
+        {
+          "id": "F01-05",
+          "status": "pass"
+        },
+        {
+          "id": "F01-06",
+          "status": "pass"
+        },
+        {
+          "id": "F01-07",
+          "status": "pass"
+        },
+        {
+          "id": "F01-08",
+          "status": "pass"
+        },
+        {
+          "id": "F01-09",
+          "status": "pass"
+        },
+        {
+          "id": "F01-10",
+          "status": "pass"
+        },
+        {
+          "id": "R01-01",
+          "status": "pass"
+        },
+        {
+          "id": "R01-02",
+          "status": "pass"
+        },
+        {
+          "id": "R01-03",
+          "status": "pass"
+        },
+        {
+          "id": "R01-04",
+          "status": "pass"
+        },
+        {
+          "id": "R01-05",
+          "status": "pass"
+        },
+        {
+          "id": "R01-06",
+          "status": "pass"
+        },
+        {
+          "id": "R01-07",
+          "status": "pass"
+        },
+        {
+          "id": "R01-08",
+          "status": "pass"
+        },
+        {
+          "id": "R01-09",
+          "status": "pass"
+        },
+        {
+          "id": "FR01-01",
+          "status": "pass"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "changed README.md: within diffScope\nchanged src/game/Game.tsx: within diffScope\nchanged src/game/controls/Reproduction.tsx: within diffScope\nadded src/game/controls/SnapshotName.tsx: within diffScope\nchanged src/game/game.types.ts: within diffScope\nadded src/game/saved-format/snapshot-fields.ts: within diffScope\nchanged src/game/session/use-game.ts: within diffScope\nadded src/game/snapshot-copy.test.ts: within diffScope\nadded src/game/snapshot-name.ts: within diffScope\nadded src/game/snapshot-names.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
       "outcomes": [
         {
           "id": "feature-F01-01",
           "area": "feature",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units."
         },
         {
           "id": "feature-F01-02",
           "area": "feature",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C15.2: editing a name keeps cards, progress, active time and board code unchanged."
         },
         {
           "id": "feature-F01-03",
           "area": "feature",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D05 and C15.3: name, play a mismatch, wait 800ms, export, New Game and load the app text to restore the name and progress."
         },
         {
           "id": "feature-F01-04",
           "area": "feature",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields."
         },
         {
           "id": "feature-F01-05",
           "area": "feature",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C15.4: a named import restores its name paused and a later legacy import clears it."
         },
         {
           "id": "feature-F01-06",
           "area": "feature",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D05, D06 and D07: invalid names, missing fields, versions and version 1 state vectors are rejected inside named snapshots without changing progress."
         },
         {
           "id": "feature-F01-07",
           "area": "feature",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C15.5: fresh-deal actions and reload clear names, which never enter browser preferences."
         },
         {
           "id": "feature-F01-08",
           "area": "feature",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval."
         },
         {
           "id": "feature-F01-09",
           "area": "feature",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C15.2 and C15.4: completed progress stays static, permits renaming and clearing, and keeps the best score."
         },
         {
           "id": "feature-F01-10",
           "area": "feature",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more."
         },
         {
           "id": "repair-R01-01",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result."
         },
         {
           "id": "repair-R01-02",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D06: selection member order has no effect for one-card and mismatch states."
         },
         {
           "id": "repair-R01-03",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D06: reordered unknown top-level members are rejected without changing progress or the draft."
         },
         {
           "id": "repair-R01-04",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D05: every missing top-level member is rejected in reordered input with progress unchanged."
         },
         {
           "id": "repair-R01-05",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged."
         },
         {
           "id": "repair-R01-06",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D06: reordered nested selections still reject unknown and missing members."
         },
         {
           "id": "repair-R01-07",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps."
         },
         {
           "id": "repair-R01-08",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume."
         },
         {
           "id": "repair-R01-09",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C09 and C12: reordered completed imports stay completed without Resume or a new best."
         },
         {
-          "id": "repair-R01-10",
-          "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "id": "feature-FR01-01",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05: reordered named version 2 snapshots restore both the name and progress."
         }
       ]
     }
   ],
   "limits": [
-    "Docker execution and full product grading stay with the overseer."
-  ],
-  "independence": [
-    {
-      "mode": "feature-only",
-      "outcomes": [
-        {
-          "id": "feature-F01-01",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units."
-        },
-        {
-          "id": "feature-F01-02",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "C15.2: editing a name keeps cards, progress, active time and board code unchanged."
-        },
-        {
-          "id": "feature-F01-03",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name."
-        },
-        {
-          "id": "feature-F01-04",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields."
-        },
-        {
-          "id": "feature-F01-05",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "C15.4: a named import restores its name paused and a later legacy import clears it."
-        },
-        {
-          "id": "feature-F01-06",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "D05: isolated invalid names, fields and versions are rejected before changing the named game."
-        },
-        {
-          "id": "feature-F01-07",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "C15.5: Restart, New Game, size change and board-code load each clear the name."
-        },
-        {
-          "id": "feature-F01-08",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval."
-        },
-        {
-          "id": "feature-F01-09",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "C15.4: a named completed import stays static and never writes a best score."
-        },
-        {
-          "id": "feature-F01-10",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more."
-        },
-        {
-          "id": "repair-R01-01",
-          "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation. Assertion failed."
-        },
-        {
-          "id": "repair-R01-02",
-          "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation. Assertion failed."
-        },
-        {
-          "id": "repair-R01-03",
-          "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation. Assertion failed."
-        },
-        {
-          "id": "repair-R01-04",
-          "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation. Assertion failed."
-        },
-        {
-          "id": "repair-R01-05",
-          "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation. Assertion failed."
-        },
-        {
-          "id": "repair-R01-06",
-          "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation. Assertion failed."
-        },
-        {
-          "id": "repair-R01-07",
-          "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation. Assertion failed."
-        },
-        {
-          "id": "repair-R01-08",
-          "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation. Assertion failed."
-        },
-        {
-          "id": "repair-R01-09",
-          "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation. Assertion failed."
-        },
-        {
-          "id": "repair-R01-10",
-          "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation. Assertion failed."
-        }
-      ]
-    },
-    {
-      "mode": "repair-only",
-      "outcomes": [
-        {
-          "id": "feature-F01-01",
-          "area": "feature",
-          "status": "fail",
-          "evidence": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units. Assertion failed."
-        },
-        {
-          "id": "feature-F01-02",
-          "area": "feature",
-          "status": "fail",
-          "evidence": "C15.2: editing a name keeps cards, progress, active time and board code unchanged. Assertion failed."
-        },
-        {
-          "id": "feature-F01-03",
-          "area": "feature",
-          "status": "fail",
-          "evidence": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name. Assertion failed."
-        },
-        {
-          "id": "feature-F01-04",
-          "area": "feature",
-          "status": "pass",
-          "evidence": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields."
-        },
-        {
-          "id": "feature-F01-05",
-          "area": "feature",
-          "status": "fail",
-          "evidence": "C15.4: a named import restores its name paused and a later legacy import clears it. Assertion failed."
-        },
-        {
-          "id": "feature-F01-06",
-          "area": "feature",
-          "status": "fail",
-          "evidence": "D05: isolated invalid names, fields and versions are rejected before changing the named game. Assertion failed."
-        },
-        {
-          "id": "feature-F01-07",
-          "area": "feature",
-          "status": "fail",
-          "evidence": "C15.5: Restart, New Game, size change and board-code load each clear the name. Assertion failed."
-        },
-        {
-          "id": "feature-F01-08",
-          "area": "feature",
-          "status": "fail",
-          "evidence": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval. Assertion failed."
-        },
-        {
-          "id": "feature-F01-09",
-          "area": "feature",
-          "status": "fail",
-          "evidence": "C15.4: a named completed import stays static and never writes a best score. Assertion failed."
-        },
-        {
-          "id": "feature-F01-10",
-          "area": "feature",
-          "status": "fail",
-          "evidence": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more. Assertion failed."
-        },
-        {
-          "id": "repair-R01-01",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation."
-        },
-        {
-          "id": "repair-R01-02",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation."
-        },
-        {
-          "id": "repair-R01-03",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation."
-        },
-        {
-          "id": "repair-R01-04",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation."
-        },
-        {
-          "id": "repair-R01-05",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation."
-        },
-        {
-          "id": "repair-R01-06",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation."
-        },
-        {
-          "id": "repair-R01-07",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation."
-        },
-        {
-          "id": "repair-R01-08",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation."
-        },
-        {
-          "id": "repair-R01-09",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation."
-        },
-        {
-          "id": "repair-R01-10",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation."
-        }
-      ]
-    }
-  ],
-  "checkerFailure": {
-    "condition": "Private built-page file unavailable.",
-    "outcomes": [
-      {
-        "id": "feature-F01-01",
-        "area": "feature",
-        "status": "error",
-        "evidence": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units. Checker did not complete."
-      },
-      {
-        "id": "feature-F01-02",
-        "area": "feature",
-        "status": "error",
-        "evidence": "C15.2: editing a name keeps cards, progress, active time and board code unchanged. Checker did not complete."
-      },
-      {
-        "id": "feature-F01-03",
-        "area": "feature",
-        "status": "error",
-        "evidence": "D05 and C15.3: named exports use version 2 and exactly the original fields plus the unchanged name. Checker did not complete."
-      },
-      {
-        "id": "feature-F01-04",
-        "area": "feature",
-        "status": "error",
-        "evidence": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields. Checker did not complete."
-      },
-      {
-        "id": "feature-F01-05",
-        "area": "feature",
-        "status": "error",
-        "evidence": "C15.4: a named import restores its name paused and a later legacy import clears it. Checker did not complete."
-      },
-      {
-        "id": "feature-F01-06",
-        "area": "feature",
-        "status": "error",
-        "evidence": "D05: isolated invalid names, fields and versions are rejected before changing the named game. Checker did not complete."
-      },
-      {
-        "id": "feature-F01-07",
-        "area": "feature",
-        "status": "error",
-        "evidence": "C15.5: Restart, New Game, size change and board-code load each clear the name. Checker did not complete."
-      },
-      {
-        "id": "feature-F01-08",
-        "area": "feature",
-        "status": "error",
-        "evidence": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval. Checker did not complete."
-      },
-      {
-        "id": "feature-F01-09",
-        "area": "feature",
-        "status": "error",
-        "evidence": "C15.4: a named completed import stays static and never writes a best score. Checker did not complete."
-      },
-      {
-        "id": "feature-F01-10",
-        "area": "feature",
-        "status": "error",
-        "evidence": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-01",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-02",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-03",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-04",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-05",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-06",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-07",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-08",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-09",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-10",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation. Checker did not complete."
-      }
-    ]
-  }
+    "Full product regression and Docker validation are pending. The shared requirements loader rejects spec 2.1. No Docker, WSL, models or sign-ins were run.",
+    "Starting trees have build, unit and change-worker evidence. Public browser suites ran on both solutions. Direct guard checks used plain reconstructed source trees, outside containers."
+  ]
 }

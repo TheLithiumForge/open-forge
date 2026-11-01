@@ -11,7 +11,12 @@
   "answers": "answers.json",
   "supersedes": [],
   "diffScope": [
-    "src/game/snapshot.ts",
-    "src/game/snapshot-order.test.ts"
+    "src/game/snapshot*.ts",
+    "src/game/snapshot/**",
+    "src/game/saved-format*.ts",
+    "src/game/saved-format/**",
+    "src/game/**/*.test.ts",
+    "tests/**",
+    "README.md"
   ]
 }

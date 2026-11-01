@@ -15,12 +15,8 @@
     "D05.2"
   ],
   "diffScope": [
-    "src/game/Game.tsx",
-    "src/game/controls/Reproduction.tsx",
-    "src/game/game.types.ts",
-    "src/game/snapshot.ts",
-    "src/game/deal-name*.ts",
-    "src/game/session/use-game.ts",
-    "src/game/snapshot-order.test.ts"
+    "src/game/**",
+    "tests/**",
+    "README.md"
   ]
 }

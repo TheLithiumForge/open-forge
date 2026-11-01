@@ -42,6 +42,8 @@ export async function importText(page: Page, text: string): Promise<void> {
     if (!setter) throw new Error('Native textarea setter missing.');
     setter.call(element, value); element.dispatchEvent(new Event('input', { bubbles: true }));
   }, text);
-  if (await field.inputValue() !== text) throw new Error('The snapshot draft changed in delivery.');
+  // Native textarea values use LF after pasted CRLF drafts.
+  const draft = text.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+  if (await field.inputValue() !== draft) throw new Error('The snapshot draft changed in delivery.');
   await page.getByRole('button', { name: 'Load snapshot', exact: true }).click();
 }

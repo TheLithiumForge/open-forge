@@ -6,19 +6,31 @@ open-forge:
 # Layer Four
 Layer Four is the brownfield case that asks agents to change a council-built Neon Pairs game while keeping its earlier behavior working.
 
-Status: the maintainer froze the reference after a 10 out of 10 judgment. The first three case workers match the runner contract and are locally validated. Product validation is pending.
-
 Every attempt starts from the same audited solution or a registered defect copy of it. Code from a Layer 3 attempt never becomes the seed. For example, Hard mode needs a recorded format change, while a session repair starts with a symptom that doesn't reveal its cause.
+
+Status: the maintainer froze the reference after a 10 out of 10 judgment. The three revised cases have local starting, solution and alternative solution evidence. Full product validation is blocked by the shared spec-version loader and stays with the overseer.
+
+## Contents
+
+- [Council seed](#council-seed)
+- [First cases](#first-cases)
+- [Starting project](#starting-project)
+- [Worker contract](#worker-contract)
+- [Change cases](#change-cases)
+- [Gates](#gates)
+- [Setups](#setups)
+- [Richer context](#richer-context)
+- [Not decided yet](#not-decided-yet)
 
 ## Council seed
 
-Build the seed only after spec version 2 and its clause map are frozen. The council builds a separate solution to the full product contract. It can use earlier code as design context, but an earlier reference isn't compliant until every version 2 clause has evidence.
+Build the seed only after spec version 2.1 and its clause map are frozen. The council builds a separate solution to the full product contract. It can use earlier code as design context, but an earlier reference isn't compliant until every version 2.1 clause has evidence.
 
 Use this process in order:
 
 1. Have the council agree on the product clauses, supported runtime combination and architecture before implementation. Record disagreements and their decisions without changing a rule silently.
 2. Build the complete game and run the locked install, type check, unit tests, fresh browser build, replay and offline delivery journeys in the verifier container. Keep credentials out and keep network off after install.
-3. Audit each of the 401 clauses by an independent executable test, a static check or a verdict from two reviewers. Calculate expected decks and results independently. An unsure or disputed verdict leaves that clause open.
+3. Audit each of the 416 clauses by an independent executable test, a static check or a verdict from two reviewers. Calculate expected decks and results independently. An unsure or disputed verdict leaves that clause open.
 4. Fill every clause's `checks` and `reference` slots in `trace.json`. Link check IDs to exact assertions and evidence. Link reference paths and symbols to the same clause. A two-reviewer verdict records both reasons and the source each reviewer read.
 5. Mutate one rule at a time. Include broken moves, best-score scope, mismatch edges, pause, stale callbacks, format validation, keyboard movement, hidden names, face separation, focus clipping and stale builds. Show that its target check fails and that the clean seed passes. Record surviving and equivalent mutations. Resolve a surviving material mutation before freezing.
 6. Format the complete seed with Prettier `3.9.6`, pinned with its configuration. Record line counts after formatting for pure game functions, browser session, components and styles, application tests, tooling and configuration. For each tier, give file count, physical lines and nonblank lines. List generated and dependency files as exclusions. Check T06's authored TypeScript ceiling per file. Report the 100-line aim separately from the 200-line limit.
@@ -29,45 +41,41 @@ The maintainer accepted the reference after three correction rounds and a 10 out
 
 ## First cases
 
-The first cases use named snapshot saves and a snapshot import repair. The Hard mode examples below describe other case shapes. They aren't the first feature delta.
+The first cases add named snapshots and repair copied snapshots. The Hard mode examples below describe other case shapes.
 
-The registered cases are:
+The registered cases and their local starting results are:
 
 | Case | Type | Request | Checks | Starting result |
 | --- | --- | --- | --- | --- |
-| [F01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f01/README.md) | F | Name a game and keep the name with saved progress | 10 | Nine feature failures and one compatibility pass |
-| [R01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r01/README.md) | R | Some copied saved games don't open while local exports work | 10 | Ten repair failures |
-| [FR01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-fr01/README.md) | FR | Add names and repair copied saved games | 20 | Nineteen failures and one compatibility pass |
+| [F01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f01/README.md) | F | Name a game and keep the name with saved progress | 10 | One pass and nine feature failures |
+| [R01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r01/README.md) | R | Some copied saved games don't open while local exports work | 10 | Seven passes and three repair failures |
+| [FR01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-fr01/README.md) | FR | Add names and repair copied saved games | 20 | Seven passes and thirteen failures |
 
-F01 and FR01 replace C08.2, D05.1 and D05.2. Named games use snapshot version 2. Unnamed games and version 1 replay output keep version 1. Both versions import with the existing pause, focus, validation and best-score rules. The product rules live in each case's complete replacement Controls and Reproducibility documents. R01 changes no product clause.
+F01 and FR01 replace C08.2, D05.1 and D05.2 under spec version 3. Their complete Controls, Reproducibility, Architecture and overview replacements keep the unchanged version 2.1 rules. C15.1 through C15.5 follow C14. Named games use snapshot version 2. Unnamed games, board codes and replay output keep version 1. Both snapshot versions keep the existing validation, pause, focus and best-score rules. Completed imports stay completed without Resume. R01 changes no product clause.
 
-Each folder records its request, answer bank, patches, check entry, expected outcomes, exact diff scope and validation results. The starting seed patch stays private. The known solution applies to that starting project. The repair checks use version 1 snapshots and work independently of the feature. The combined feature checks use the normal snapshot member order and work independently of the repair. The feature changes the same import path that carries the defect.
+The feature checks name a deal, play a mismatch, wait 800ms, export it, start New Game and reload the app's text. They also cover editing paused and completed progress, clearing names, browser reload, preferences, UTF-16 limits and the version 1 invalid-state vectors inside version 2 snapshots.
 
-The product runner handles patch application, builds, regressions, diffScope and protected-input checks. Each case has a private worker that checks the built page. A case's validation.json records its current detached worker results. The earlier case-local tooling has been removed.
+The repair checks cover top-level order variants as one result. Separate results cover nested selection order, invalid fields and progress, paused input and completed imports. CRLF drafts pass through the native textarea. The repair probes use published best-score text, card names and live-region text. They don't need the name control. FR01 uses ten feature results, nine repair results and one separate compatibility result for reordered named version 2 snapshots. The compatibility result is in the feature group under the worker contract. R01's own-export check is already covered by FR01's feature journeys.
 
-The initial implementation validation had these results. Each starting project passed 123 public unit tests and all 61 public browser journeys. The requests, product deltas and patches are byte unchanged during the worker conversion:
+FR01's request joins F01's sentences and R01's sentences unchanged. R01 and FR01 can answer a request for a failing example with one copied snapshot. The bank describes the symptom without naming its cause.
 
-| Case | Starting change checks | Solution change checks | Solution unit tests | Solution browser journeys |
-| --- | --- | --- | --- | --- |
-| F01 | One pass and nine failures | 10 passed | 125 passed | 61 passed |
-| R01 | Ten failures | 10 passed | 124 passed | 61 passed |
-| FR01 | One pass and nineteen failures | 20 passed | 126 passed | 61 passed |
+## Starting project
 
-The combined worker also passes an independence check. Its feature-only solution passes all ten feature checks and fails all ten repair checks. Its repair-only solution passes all ten repair checks while the feature results match the starting project. The original implementation validation also checked a named snapshot with its name before its version. The feature-only solution rejected it through the planted defect. The full solution accepted it. The original scope and protected-input checks passed.
+Materialize the reference, private seed patch and applicable product delta before creating the single starting commit. The agent receives that tree and its one commit. The clean reference and private patch stay outside the project, so the Git parent and commit diff can't reveal the plant.
 
-The parent eval type check passes. Its current test run has 182 passes and six pre-existing failures. Five failures concern a stale Layer 2 source fingerprint. One source scan enters installed reference cache and Chromium folders and rejects an oversized file. Those files and checks are outside this packet. The [packet validation record](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f01/packet-validation.json) gives the limits.
+Each folder keeps its request, bank, check manifest, seed where needed, known solution and alternative solution. The alternative uses different local modules and tests. Every patch is regenerated with minimal Git hunks from scratch copies under `src/evals/.tmp/` against the current reference or the resulting starting tree.
 
-Every reference game file matches its recorded seed hash. The integrated trace.json differs from the older hash in seed-record.json. Both files are outside this packet and stay unchanged. The overseer needs to refresh that metadata before integration qualification.
+The runner applies patches, builds, checks frozen regressions and enforces diff scope and protected inputs. F01 and FR01 allow the game source area, application tests and README. R01 allows the snapshot and saved-format areas, their tests, application tests and README. These areas allow different implementations. They don't prescribe the known solution's file choices.
 
 ## Worker contract
 
-Each case provides `checks/checks.json` and `checks/worker.ts` as the [brownfield worker contract](../../../../../../src/evals/grading/brownfield/README.md) defines. The manifest gives each check a feature or repair kind and keeps its starting and solution expectations. The worker takes one input JSON path and writes one report outcome per declared ID.
+Each case provides `checks/checks.json` and `checks/worker.ts` as the [brownfield worker contract](../../../../../../src/evals/grading/brownfield/README.md) defines. Each declared ID has one outcome and a feature or repair group. IDs use word characters and hyphens. The combined compatibility result uses `FR01-01`.
 
-The runner accepts check IDs made of word characters and hyphens. The converted IDs run from `F01-01` through `F01-10` and `R01-01` through `R01-10`. Each manifest entry keeps its earlier dotted ID in `previousId`. Product clause IDs and check behavior stay unchanged.
+Workers use Node built-ins, Playwright and files inside their case folder. Each case packages its probes because the runner copies one folder. Workers never import submitted Node source. Each check gets a fresh browser context. Missing built HTML blocks browser checks. An absent feature still allows repair checks to run.
 
-Workers use Node built-ins, Playwright and files inside their own case folder. Each case packages its shared probes because the runner copies one case folder. No worker imports the submitted Node source or another case. Each check gets a fresh browser context. A missing built page returns blocked outcomes for all browser checks. An absent feature still allows unrelated repair checks to run.
+Local validation builds each starting project, known solution and alternative solution. The public unit tests pass on all nine trees. The case workers match all 120 starting and solution expectations. Both solutions pass each case's change checks and all 65 public browser journeys. The product patch parser accepts all six solution patches. Direct scope and protected-input checks pass on all nine source trees.
 
-Detached local validation built fresh starting and solution pages and invoked each packaged worker as a CLI. The product manifest and report parsers accepted every report. All 80 starting and solution outcomes matched their expectations. Another 40 outcomes were blocked for missing builds. Private checker file faults returned 40 error outcomes. The combined worker also matched all 40 expected outcomes on feature-only and repair-only copies. Four protocol tests cover malformed inputs, group matching and missing-build reports. Full validation through the product stays with the overseer.
+Each case's `validation.json` records local evidence. The [packet validation record](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f01/packet-validation.json) lists product-test failures, the changed files and validation limits. Typechecking passes. Full frozen regression and Docker validation need the shared spec-version loader and stale Layer 2 input records fixed outside this packet.
 
 ## Change cases
 
@@ -125,7 +133,7 @@ Confirm seed eligibility before every case starts. A repair case also needs its 
 | Diff scope | The diff changes only behavior, tests, styles, docs and format updates needed by the request. Keep unrelated rewrites, broad reformatting, dependency churn and removed tests out. Register the allowed behavior areas before the batch. |
 | Protected inputs | The frozen specifications, requirement and trace maps, check definitions, expected fixtures, mutation patches, rubrics, case records and input hashes stay unchanged outside the agent workspace. Compare their hashes before and after verification. |
 
-For diff scope, compare against the case's starting tree after the pinned formatter. Record added, changed and deleted paths with the reason each belongs to the task. Two reviewers decide a disputed scope result with cited hunks. A formatter change can't hide a broad rewrite.
+For diff scope, compare against the case's starting tree after the pinned formatter. Ignore files according to the starting `.gitignore`, so later ignore edits can't hide changes. In Open Forge cells, allow and report edits to installed Open Forge files, routes and `.agents/` work records. Other cells get no Open Forge exemption. Record added, changed and deleted paths with the reason each belongs to the task. Two reviewers decide a disputed scope result with cited hunks. A formatter change can't hide a broad rewrite.
 
 For protected inputs, build as an account that can't read grading files. Keep the verifier and assessor separate from the submitted project. Read copied output only through `copyOutPlain` and validate it as untrusted. Agent test reports never replace independent expected results.
 
@@ -135,11 +143,11 @@ The guards report separate outcomes. A changed expectation without a published d
 
 Use code only, plain docs, linked AGENTS.md and Open Forge. Open Forge has separate Minimal, Essentials and Full Core cells. Give each the identical case seed, request and public tests. Code only provides the source, public tests and request without product documents. Report it as a separate information ablation. The plain, linked and Open Forge forms get identical product facts and differ only in delivery. Don't include code only in an equal-information routing conclusion.
 
-Run each registered case five times per cell, model and tool. Keep F, R and FR as separate case types, not setups. Pin the time limit before the batch. Start with 60 minutes per case in testing, then freeze the measured limit before scored attempts. Helpful and Extension testing wait.
+Run each registered case at most five times per cell, model and tool. The full eval runs three times per cell. The check eval runs once. Keep F, R and FR as separate case types, not setups. Pin the time limit before the batch. Start with 60 minutes per case in testing, then freeze the measured limit before scored attempts. Helpful and Extension testing wait.
 
 ## Richer context
 
-The richer-context variant is still Layer 4. Keep the seed, request, rules, change checks, regression gates, limits and five-run count fixed. Add reviewed project history, architecture explanations and decision records, with realistic extra documents that make finding the relevant rule matter.
+The richer-context variant is still Layer 4. Keep the seed, request, rules, change checks, regression gates, limits and registered run count fixed. Add reviewed project history, architecture explanations and decision records, with realistic extra documents that make finding the relevant rule matter.
 
 Give every delivery form the same extra bodies and descriptions. Open Forge can route them while the linked form uses the same descriptions. Extra context can't add a requirement or reveal a defect. Record a separate context-variant axis and compare it within the same change type, tool and model.
 

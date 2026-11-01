@@ -1,25 +1,47 @@
---- a/src/game/snapshot.ts
-+++ b/src/game/snapshot.ts
-@@ -35,7 +35,6 @@
- 
- export function decodeSnapshot(text: string): GameState | null {
-   const value = readJson(text, SNAPSHOT_MAX_BYTES);
--  if (record(value) && Object.keys(value)[0] !== 'version') return null;
-   if (!record(value) || !exactKeys(value, SNAPSHOT_KEYS) || value.version !== SNAPSHOT_VERSION)
-     return null;
-   if (typeof value.boardCode !== 'string' || !parseBoardCode(value.boardCode)) return null;
+diff --git a/src/game/snapshot-order.test.ts b/src/game/snapshot-order.test.ts
+new file mode 100644
+index 0000000..4970c5f
 --- /dev/null
 +++ b/src/game/snapshot-order.test.ts
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,13 @@
 +import assert from 'node:assert/strict';
 +import { test } from 'vitest';
 +import { createGame, activateCard } from './game.ts';
 +import { encodeSnapshot, decodeSnapshot } from './snapshot.ts';
 +import { EXAMPLE_CODE } from './game.fixture.ts';
-+test('snapshot object member order does not change valid progress', () => {
++
++test('copied snapshots keep progress when members move', () => {
 +  const game = activateCard(createGame(EXAMPLE_CODE), 2);
-+  const value: unknown = JSON.parse(encodeSnapshot(game));
-+  assert.ok(value && typeof value === 'object' && 'selection' in value);
++  const value = JSON.parse(encodeSnapshot(game));
 +  const { selection, ...rest } = value;
 +  assert.deepEqual(decodeSnapshot(JSON.stringify({ selection, ...rest })), game);
++  assert.equal(decodeSnapshot(JSON.stringify({ selection, ...rest, unknown: true })), null);
 +});
+diff --git a/src/game/snapshot.ts b/src/game/snapshot.ts
+index 690f6c4..8efbee2 100644
+--- a/src/game/snapshot.ts
++++ b/src/game/snapshot.ts
+@@ -1,6 +1,6 @@
+ import { createGame, isWon, MOVES_MAX, ELAPSED_MAX_MS } from './game.ts';
+ import { parseBoardCode } from './deck.ts';
+-import { readJson, record, safeNonnegative } from './saved-format.ts';
++import { exactKeys, readJson, record, safeNonnegative } from './saved-format.ts';
+ import { readMatched, readSelection } from './snapshot-selection.ts';
+ import { SelectionKind } from './selection.ts';
+ import type { GameState } from './game.types.ts';
+@@ -38,14 +38,7 @@ export function encodeSnapshot(state: GameState): string {
+ 
+ export function decodeSnapshot(text: string): GameState | null {
+   const value = readJson(text, SNAPSHOT_MAX_BYTES);
+-  if (
+-    !record(value) ||
+-    !Object.keys(value).every((key, index) =>
+-      index === 0 ? key === SNAPSHOT_KEYS[0] : SNAPSHOT_KEYS.some((field) => field === key),
+-    ) ||
+-    Object.keys(value).length !== SNAPSHOT_KEYS.length ||
+-    value.version !== SNAPSHOT_VERSION
+-  )
++  if (!record(value) || !exactKeys(value, SNAPSHOT_KEYS) || value.version !== SNAPSHOT_VERSION)
+     return null;
+   if (typeof value.boardCode !== 'string' || !parseBoardCode(value.boardCode)) return null;
+   if (

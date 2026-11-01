@@ -1,274 +1,465 @@
 {
   "schemaVersion": 1,
-  "status": "passed",
-  "validation": "Detached worker CLI with product manifest and report parsers.",
+  "status": "local-validation-passed-product-validation-pending",
+  "validation": "Fresh local builds, public tests, worker CLI, product patch and report parsers, and direct scope and protected-input functions.",
   "node": "26.12.1",
-  "checks": 10,
+  "playwright": "1.64.1",
+  "chromium": "156.0.8078.4",
+  "specVersion": 2.1,
+  "referenceHash": "b82b3bd844545f854551c7ad16489e8797ae369f77a369d3cf8c8e54f1d0dbe1",
+  "productDocuments": [
+    {
+      "path": "README.md",
+      "sha256": "65df46797fb1034b7e52e803ec2ba327e38ee00de9ffc95b4776a4079903e897"
+    },
+    {
+      "path": "acceptance.md",
+      "sha256": "eb3eaf50c186b24a82b1803400252897dcdad7ab407557553dea76a727fa34d2"
+    },
+    {
+      "path": "architecture.md",
+      "sha256": "8b54f83967a857f1907ee7173d97796e64bc44ea81fe7b445094a9bb022171aa"
+    },
+    {
+      "path": "controls.md",
+      "sha256": "f53df8bfd07b51738937baf0bf70b88e6944185fd530813c5519b336b59bb6ea"
+    },
+    {
+      "path": "input.md",
+      "sha256": "91185fbe8af93dbf8ca3c652711563d7fdf73027cb59af350d9ca8dea7ec0b4f"
+    },
+    {
+      "path": "reproducibility.md",
+      "sha256": "ca18a4ddc8b809ee29178be205984998317f7cf42ad3615d6e019bcc3b14a3d4"
+    },
+    {
+      "path": "rules.md",
+      "sha256": "285e9dcfe7397f206ecda3c3f42ef0f11b592dd9b206ff6fc6dcb0de7095e1a7"
+    },
+    {
+      "path": "sound.md",
+      "sha256": "ddf7c9f2a23789ca5fbba974cc4fa32f9c2e8498884f4fefa29a9712f0e4b9e9"
+    },
+    {
+      "path": "technology.md",
+      "sha256": "a078681f7414c2c98f6953a3cef93db9b63c547acf0ab84a13092b5f1bf5e83e"
+    },
+    {
+      "path": "visuals.md",
+      "sha256": "e215a20482b13b0945b812a2d61bddd4558b118a388d323d4a0c5ea2bca5acb7"
+    }
+  ],
+  "patchHashes": [
+    {
+      "path": "seed.patch",
+      "sha256": "83b5171c91bd62745b3de9e8338fb59da1e4b66c83d83d936c84149b2881d972"
+    },
+    {
+      "path": "solution.patch",
+      "sha256": "013ade50c25450cc9564055e106a4236c3477e5a51e8aef91e80d5f275efa055"
+    },
+    {
+      "path": "alt-solution.patch",
+      "sha256": "e60a5ce5f04d35b3acb2e988ff20d5a5204fff4e5753a9388db02c11666f9733"
+    }
+  ],
   "stages": [
     {
       "stage": "starting",
+      "patch": null,
+      "sourceHash": "394bd9618fa68484b79d9a11b4ebd267c31c1fde14ce4d194598e1feb4c43697",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 128
+      },
+      "browser": null,
+      "expected": [
+        {
+          "id": "R01-01",
+          "status": "fail"
+        },
+        {
+          "id": "R01-02",
+          "status": "pass"
+        },
+        {
+          "id": "R01-03",
+          "status": "pass"
+        },
+        {
+          "id": "R01-04",
+          "status": "pass"
+        },
+        {
+          "id": "R01-05",
+          "status": "pass"
+        },
+        {
+          "id": "R01-06",
+          "status": "pass"
+        },
+        {
+          "id": "R01-07",
+          "status": "pass"
+        },
+        {
+          "id": "R01-08",
+          "status": "fail"
+        },
+        {
+          "id": "R01-09",
+          "status": "fail"
+        },
+        {
+          "id": "R01-10",
+          "status": "pass"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "No source paths changed."
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
       "outcomes": [
         {
           "id": "repair-R01-01",
           "area": "repair",
           "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation. Assertion failed."
+          "evidence": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result. Assertion failed."
         },
         {
           "id": "repair-R01-02",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D06: selection member order has no effect for one-card and mismatch states."
         },
         {
           "id": "repair-R01-03",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D06: reordered unknown top-level members are rejected without changing progress or the draft."
         },
         {
           "id": "repair-R01-04",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D05: every missing top-level member is rejected in reordered input with progress unchanged."
         },
         {
           "id": "repair-R01-05",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged."
         },
         {
           "id": "repair-R01-06",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D06: reordered nested selections still reject unknown and missing members."
         },
         {
           "id": "repair-R01-07",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps."
         },
         {
           "id": "repair-R01-08",
           "area": "repair",
           "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation. Assertion failed."
+          "evidence": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume. Assertion failed."
         },
         {
           "id": "repair-R01-09",
           "area": "repair",
           "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation. Assertion failed."
+          "evidence": "C09 and C12: reordered completed imports stay completed without Resume or a new best. Assertion failed."
         },
         {
           "id": "repair-R01-10",
           "area": "repair",
-          "status": "fail",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation. Assertion failed."
+          "status": "pass",
+          "evidence": "C08 and C09: the app continues to load its own exported snapshot text."
         }
-      ],
-      "artifactSha256": "f45c211812484cfd7c87a14c5a54c3e1b5213af50af8de35e27636ce26c72f30"
+      ]
     },
     {
       "stage": "solution",
-      "outcomes": [
+      "patch": "solution.patch",
+      "sourceHash": "c402685af9fd6df16b8a97a1494e4600b9b7487b45f3c3bbf0df1debe4248bfa",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 129
+      },
+      "browser": {
+        "status": "passed",
+        "passed": 65
+      },
+      "expected": [
         {
-          "id": "repair-R01-01",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation."
+          "id": "R01-01",
+          "status": "pass"
         },
         {
-          "id": "repair-R01-02",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation."
+          "id": "R01-02",
+          "status": "pass"
         },
         {
-          "id": "repair-R01-03",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation."
+          "id": "R01-03",
+          "status": "pass"
         },
         {
-          "id": "repair-R01-04",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation."
+          "id": "R01-04",
+          "status": "pass"
         },
         {
-          "id": "repair-R01-05",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation."
+          "id": "R01-05",
+          "status": "pass"
         },
         {
-          "id": "repair-R01-06",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation."
+          "id": "R01-06",
+          "status": "pass"
         },
         {
-          "id": "repair-R01-07",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation."
+          "id": "R01-07",
+          "status": "pass"
         },
         {
-          "id": "repair-R01-08",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation."
+          "id": "R01-08",
+          "status": "pass"
         },
         {
-          "id": "repair-R01-09",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation."
+          "id": "R01-09",
+          "status": "pass"
         },
         {
-          "id": "repair-R01-10",
-          "area": "repair",
-          "status": "pass",
-          "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation."
+          "id": "R01-10",
+          "status": "pass"
         }
       ],
-      "artifactSha256": "8c74b3a2c4023ae272683c793f1bf4556738db5411289800880baa0069887816"
-    },
-    {
-      "stage": "missing-build",
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "added src/game/snapshot-order.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
       "outcomes": [
         {
           "id": "repair-R01-01",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result."
         },
         {
           "id": "repair-R01-02",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D06: selection member order has no effect for one-card and mismatch states."
         },
         {
           "id": "repair-R01-03",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D06: reordered unknown top-level members are rejected without changing progress or the draft."
         },
         {
           "id": "repair-R01-04",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D05: every missing top-level member is rejected in reordered input with progress unchanged."
         },
         {
           "id": "repair-R01-05",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged."
         },
         {
           "id": "repair-R01-06",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D06: reordered nested selections still reject unknown and missing members."
         },
         {
           "id": "repair-R01-07",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps."
         },
         {
           "id": "repair-R01-08",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume."
         },
         {
           "id": "repair-R01-09",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C09 and C12: reordered completed imports stay completed without Resume or a new best."
         },
         {
           "id": "repair-R01-10",
           "area": "repair",
-          "status": "blocked",
-          "evidence": "No built page is available for this browser check."
+          "status": "pass",
+          "evidence": "C08 and C09: the app continues to load its own exported snapshot text."
+        }
+      ]
+    },
+    {
+      "stage": "alternative",
+      "patch": "alt-solution.patch",
+      "sourceHash": "3f4e3a9f6643ad0a432c043ebf454c1de9c69e34bd82d53917e37074de3f8b10",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 129
+      },
+      "browser": {
+        "status": "passed",
+        "passed": 65
+      },
+      "expected": [
+        {
+          "id": "R01-01",
+          "status": "pass"
+        },
+        {
+          "id": "R01-02",
+          "status": "pass"
+        },
+        {
+          "id": "R01-03",
+          "status": "pass"
+        },
+        {
+          "id": "R01-04",
+          "status": "pass"
+        },
+        {
+          "id": "R01-05",
+          "status": "pass"
+        },
+        {
+          "id": "R01-06",
+          "status": "pass"
+        },
+        {
+          "id": "R01-07",
+          "status": "pass"
+        },
+        {
+          "id": "R01-08",
+          "status": "pass"
+        },
+        {
+          "id": "R01-09",
+          "status": "pass"
+        },
+        {
+          "id": "R01-10",
+          "status": "pass"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "added src/game/saved-format/snapshot-fields.ts: within diffScope\nadded src/game/snapshot-copy.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
+      "outcomes": [
+        {
+          "id": "repair-R01-01",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result."
+        },
+        {
+          "id": "repair-R01-02",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: selection member order has no effect for one-card and mismatch states."
+        },
+        {
+          "id": "repair-R01-03",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: reordered unknown top-level members are rejected without changing progress or the draft."
+        },
+        {
+          "id": "repair-R01-04",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05: every missing top-level member is rejected in reordered input with progress unchanged."
+        },
+        {
+          "id": "repair-R01-05",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged."
+        },
+        {
+          "id": "repair-R01-06",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: reordered nested selections still reject unknown and missing members."
+        },
+        {
+          "id": "repair-R01-07",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps."
+        },
+        {
+          "id": "repair-R01-08",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume."
+        },
+        {
+          "id": "repair-R01-09",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "C09 and C12: reordered completed imports stay completed without Resume or a new best."
+        },
+        {
+          "id": "repair-R01-10",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "C08 and C09: the app continues to load its own exported snapshot text."
         }
       ]
     }
   ],
   "limits": [
-    "Docker execution and full product grading stay with the overseer."
-  ],
-  "checkerFailure": {
-    "condition": "Private built-page file unavailable.",
-    "outcomes": [
-      {
-        "id": "repair-R01-01",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a single revealed card without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-02",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a pending mismatch without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-03",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for one whole matched pair without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-04",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a completed game without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-05",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a different board size without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-06",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for the elapsed cap without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-07",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for the move cap without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-08",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for an unstarted board without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-09",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a nearly closed mismatch without weakening validation. Checker did not complete."
-      },
-      {
-        "id": "repair-R01-10",
-        "area": "repair",
-        "status": "error",
-        "evidence": "D05, D06 and D07: accept reordered JSON for a large board with progress without weakening validation. Checker did not complete."
-      }
-    ]
-  }
+    "Full product regression and Docker validation are pending. The shared requirements loader rejects spec 2.1. No Docker, WSL, models or sign-ins were run.",
+    "Starting trees have build, unit and change-worker evidence. Public browser suites ran on both solutions. Direct guard checks used plain reconstructed source trees, outside containers."
+  ]
 }

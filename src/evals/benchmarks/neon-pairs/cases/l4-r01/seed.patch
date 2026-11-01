@@ -1,10 +1,28 @@
+diff --git a/src/game/snapshot.ts b/src/game/snapshot.ts
+index 8efbee2..690f6c4 100644
 --- a/src/game/snapshot.ts
 +++ b/src/game/snapshot.ts
-@@ -35,6 +35,7 @@
+@@ -1,6 +1,6 @@
+ import { createGame, isWon, MOVES_MAX, ELAPSED_MAX_MS } from './game.ts';
+ import { parseBoardCode } from './deck.ts';
+-import { exactKeys, readJson, record, safeNonnegative } from './saved-format.ts';
++import { readJson, record, safeNonnegative } from './saved-format.ts';
+ import { readMatched, readSelection } from './snapshot-selection.ts';
+ import { SelectionKind } from './selection.ts';
+ import type { GameState } from './game.types.ts';
+@@ -38,7 +38,14 @@ export function encodeSnapshot(state: GameState): string {
  
  export function decodeSnapshot(text: string): GameState | null {
    const value = readJson(text, SNAPSHOT_MAX_BYTES);
-+  if (record(value) && Object.keys(value)[0] !== 'version') return null;
-   if (!record(value) || !exactKeys(value, SNAPSHOT_KEYS) || value.version !== SNAPSHOT_VERSION)
+-  if (!record(value) || !exactKeys(value, SNAPSHOT_KEYS) || value.version !== SNAPSHOT_VERSION)
++  if (
++    !record(value) ||
++    !Object.keys(value).every((key, index) =>
++      index === 0 ? key === SNAPSHOT_KEYS[0] : SNAPSHOT_KEYS.some((field) => field === key),
++    ) ||
++    Object.keys(value).length !== SNAPSHOT_KEYS.length ||
++    value.version !== SNAPSHOT_VERSION
++  )
      return null;
    if (typeof value.boardCode !== 'string' || !parseBoardCode(value.boardCode)) return null;
+   if (

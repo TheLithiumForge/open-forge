@@ -1,13 +1,13 @@
 # Reproducibility
 The reproducibility specification is a set of versioned formats that recreates Neon Pairs deals, progress and actions.
 
-Status: spec version 2. Board codes and replays keep format version 1. Snapshots use version 1 for unnamed games and version 2 for named games.
-
 A board code reproduces the starting cards. A snapshot restores a later position. A replay shows the actions that produced a position, so each format answers a different debugging question.
+
+Status: spec version 3.
 
 ## Board code
 
-- D01 - Use `np1-N-seed`, where `N` is a supported side length and `seed` is an integer from `1` through `2147483646`. Use decimal digits without leading zeros. The parser accepts exactly this form. A text control can trim surrounding whitespace before parsing.
+- D01 - Use `np1-N-seed`, where `N` is a supported side length and `seed` is an integer from `1` through `2147483646`. Use decimal digits without leading zeros. The parser accepts exactly this form. Trim surrounding whitespace in the Board code control before parsing.
 - D02 - Version `np1` fixes the generation algorithm below. The same code produces the same deck in every supported runtime. Changing generation requires another version. Time, animation and other random draws can't change this deck.
 
 For example, `np1-4-1` describes a 4 by 4 board with generation version 1 and seed 1. It contains no progress.
@@ -23,7 +23,15 @@ The resulting deck for `np1-4-1` is `[6, 7, 0, 5, 2, 2, 0, 5, 3, 7, 1, 6, 4, 4, 
 
 ## Snapshot
 
-- D05 - Encode unnamed progress as a version 1 JSON object with exactly `version`, `boardCode`, `matched`, `selection`, `moves`, `elapsedMs` and `started`. Encode named progress as version 2 with those fields plus `name`. Version 2 requires a nonempty string name that follows C15. Version 1 has no name field. Accept both versions on import and reject every other version. JSON object member order has no effect. Keep array order where the existing rules require it. The CLI still accepts version 1 replays and emits their unnamed version 1 snapshots. `matched` is an array of matched position indices. Derive the deck, pair count and completion from these fields.
+- D05 - Encode unnamed progress as a version 1 JSON object with exactly `version`, `boardCode`, `matched`, `selection`, `moves`, `elapsedMs` and `started`. Encode named progress as version 2 with those fields plus `name`. Version 2 requires a nonempty string name that follows C15. Version 1 has no name field. Accept both versions on import and reject every other version. The CLI still accepts version 1 replays and emits their unnamed version 1 snapshots. `matched` is an array of matched position indices. Derive the deck, pair count and completion from these fields.
+
+Illustrative named snapshot:
+
+```json
+{"version":2,"name":"Café","boardCode":"np1-4-1","matched":[],"selection":{"kind":"one","index":2},"moves":0,"elapsedMs":0,"started":true}
+```
+
+Importing this snapshot restores the name "Café" and one revealed card. Resume continues its saved progress.
 
 The `selection` object has one of these forms:
 
@@ -34,7 +42,7 @@ The `selection` object has one of these forms:
 | `mismatch` | `first`, `second`, `remainingMs` | Two different faces await closing |
 
 - D06 - Validate the complete object before replacing the game. Reject unknown keys. Require unique in-range matched indices containing whole face pairs. Selection indices must be in range and unmatched. A mismatch needs distinct indices with different faces and an integer `remainingMs` from `1` through `800`. Completion requires a closed selection.
-- D07 - Require boolean `started` and nonnegative safe integers for `moves` and `elapsedMs`. Reject `elapsedMs` above `359999999` and `moves` above `999999`. Apply the move cap to saved best scores too. Require at least one move per matched pair and one further move for a pending mismatch. If `started` is false, require zero moves, zero elapsed time, no matches and a closed selection. A started game with zero moves requires one revealed card. Import pauses the clock and pending mismatch until Resume.
+- D07 - Require boolean `started` and nonnegative safe integers for `moves` and `elapsedMs`. Reject `elapsedMs` above `359999999` and `moves` above `999999`. Apply the move cap to saved best scores too. Require at least one move per matched pair and one further move for a pending mismatch. If `started` is false, require zero moves, zero elapsed time, no matches and a closed selection. A started game with zero moves requires one revealed card. Import of unfinished progress pauses the clock and pending mismatch until Resume. Completed imports stay completed without a pause.
 
 Illustrative snapshot:
 
