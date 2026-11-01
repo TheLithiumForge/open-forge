@@ -1,5 +1,5 @@
 diff --git a/src/game/snapshot.ts b/src/game/snapshot.ts
-index 2163a76..7ec77cd 100644
+index 2163a76551aaa10fd8da29b6291286de480be664..7ec77cd2a465090c42c6d61fbf0bb91fcd0ae508 100644
 --- a/src/game/snapshot.ts
 +++ b/src/game/snapshot.ts
 @@ -1,7 +1,6 @@

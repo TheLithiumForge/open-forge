@@ -1,5 +1,5 @@
 diff --git a/README.md b/README.md
-index 7c3a852..ab35ce5 100644
+index afea605b6d7d801414233e3811ef87fdcd3a8cc6..d805accbbba17ca53d81cdb7718b1e582a5f913b 100644
 --- a/README.md
 +++ b/README.md
 @@ -4,7 +4,7 @@ Neon Pairs is a memory game that runs offline from one HTML file and keeps local
@@ -21,7 +21,7 @@ index 7c3a852..ab35ce5 100644
  
  Run `npm run --silent replay -- PATH` with a version 1 replay JSON file. Valid input prints only its final version 1 snapshot JSON to stdout and exits 0. Invalid input prints nothing to stdout, writes a message to stderr and exits nonzero. The command's silent flag suppresses its npm banner so stdout stays JSON. Other npm commands keep their errors and warnings. Replay timestamps can reach the safe integer limit. Elapsed time uses the same cap as browser play.
 diff --git a/src/game/Game.tsx b/src/game/Game.tsx
-index cb81cea..140d2f8 100644
+index e96579928a71d822d97a929db01d0674cf7b875b..fbe2a6d02173b64a03996460703761e0200749f1 100644
 --- a/src/game/Game.tsx
 +++ b/src/game/Game.tsx
 @@ -1,3 +1,4 @@
@@ -29,8 +29,8 @@ index cb81cea..140d2f8 100644
  import { useRef } from 'react';
  import { Board } from './board/Board.tsx';
  import { Controls } from './controls/Controls.tsx';
-@@ -47,6 +48,7 @@ export function Game() {
-       />
+@@ -41,6 +42,7 @@ export function Game() {
+       <Board key={session.generation} game={game} activate={controller.activate} ref={board} />
        <Reproduction
          game={game}
 +        nameControl={<SnapshotName game={game} rename={controller.renameDeal} />}
@@ -38,7 +38,7 @@ index cb81cea..140d2f8 100644
          exportSnapshot={controller.exportSnapshot}
          loadBoard={controller.loadBoard}
 diff --git a/src/game/controls/Reproduction.tsx b/src/game/controls/Reproduction.tsx
-index 3fb38c3..dc34e79 100644
+index 3fb38c3feb590d76cdb44d32643a429343b0cec8..dc34e79761b6f2f98be7f84c87247bf452580ec6 100644
 --- a/src/game/controls/Reproduction.tsx
 +++ b/src/game/controls/Reproduction.tsx
 @@ -1,3 +1,4 @@
@@ -72,7 +72,7 @@ index 3fb38c3..dc34e79 100644
              id="snapshot-json"
 diff --git a/src/game/controls/SnapshotName.tsx b/src/game/controls/SnapshotName.tsx
 new file mode 100644
-index 0000000..5320509
+index 0000000000000000000000000000000000000000..532050996623c4a6628dcd0738e0d53c0ef0f810
 --- /dev/null
 +++ b/src/game/controls/SnapshotName.tsx
 @@ -0,0 +1,17 @@
@@ -94,7 +94,7 @@ index 0000000..5320509
 +  );
 +}
 diff --git a/src/game/controls/control-labels.ts b/src/game/controls/control-labels.ts
-index afa872c..2d23600 100644
+index afa872c981ffec6ec26779f4c88a42d88df7f92b..2d2360076cfaf5339baafe08b42f3592ce7e4066 100644
 --- a/src/game/controls/control-labels.ts
 +++ b/src/game/controls/control-labels.ts
 @@ -3,6 +3,7 @@ export const ReproductionControl = {
@@ -106,7 +106,7 @@ index afa872c..2d23600 100644
    exportSnapshot: 'Export snapshot',
    loadSnapshot: 'Load snapshot',
 diff --git a/src/game/game.ts b/src/game/game.ts
-index 51ce3ff..c02f31c 100644
+index acafdf0d63bfbf4cab13e1d098eb269cc349e487..5738843589f100722f2e201c400db198a69795df 100644
 --- a/src/game/game.ts
 +++ b/src/game/game.ts
 @@ -8,6 +8,7 @@ export const MISMATCH_MS = 800;
@@ -119,7 +119,7 @@ index 51ce3ff..c02f31c 100644
    readonly moves: number;
 diff --git a/src/game/saved-format/snapshot-fields.ts b/src/game/saved-format/snapshot-fields.ts
 new file mode 100644
-index 0000000..585993e
+index 0000000000000000000000000000000000000000..585993eafb7eb19182fb1cfe336251d159cf28ad
 --- /dev/null
 +++ b/src/game/saved-format/snapshot-fields.ts
 @@ -0,0 +1,8 @@
@@ -132,7 +132,7 @@ index 0000000..585993e
 +  return remaining.size === 0;
 +}
 diff --git a/src/game/session/use-game.ts b/src/game/session/use-game.ts
-index b01a7ed..b193ae5 100644
+index b01a7ed69ee79dac0034ee48b7f741d4e53b89d8..b193ae50907d0a58fdf05e8369288760e4fc18aa 100644
 --- a/src/game/session/use-game.ts
 +++ b/src/game/session/use-game.ts
 @@ -1,3 +1,4 @@
@@ -170,7 +170,7 @@ index b01a7ed..b193ae5 100644
  }
 diff --git a/src/game/snapshot-copy.test.ts b/src/game/snapshot-copy.test.ts
 new file mode 100644
-index 0000000..4970c5f
+index 0000000000000000000000000000000000000000..4970c5f8add2f622df28159529df93a486a3b426
 --- /dev/null
 +++ b/src/game/snapshot-copy.test.ts
 @@ -0,0 +1,13 @@
@@ -189,7 +189,7 @@ index 0000000..4970c5f
 +});
 diff --git a/src/game/snapshot-name.ts b/src/game/snapshot-name.ts
 new file mode 100644
-index 0000000..c628558
+index 0000000000000000000000000000000000000000..c6285581eae0bbf7d9d0af50adc23fb84233bfcd
 --- /dev/null
 +++ b/src/game/snapshot-name.ts
 @@ -0,0 +1,13 @@
@@ -208,7 +208,7 @@ index 0000000..c628558
 +}
 diff --git a/src/game/snapshot-names.test.ts b/src/game/snapshot-names.test.ts
 new file mode 100644
-index 0000000..5cd0fb3
+index 0000000000000000000000000000000000000000..5cd0fb367b72ac102c50a4c2954f458b930aee62
 --- /dev/null
 +++ b/src/game/snapshot-names.test.ts
 @@ -0,0 +1,24 @@
@@ -237,7 +237,7 @@ index 0000000..5cd0fb3
 +  assert.equal(withDealName(game, 'x'.repeat(DEAL_NAME_MAX_LENGTH + 1)), game);
 +});
 diff --git a/src/game/snapshot.ts b/src/game/snapshot.ts
-index 7ec77cd..58c205f 100644
+index 7ec77cd2a465090c42c6d61fbf0bb91fcd0ae508..58c205f05d1dc70e8be5a1b309b33bbe8e5110c3 100644
 --- a/src/game/snapshot.ts
 +++ b/src/game/snapshot.ts
 @@ -1,3 +1,5 @@
