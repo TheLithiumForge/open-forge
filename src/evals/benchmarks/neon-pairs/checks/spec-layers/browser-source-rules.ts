@@ -1,7 +1,7 @@
 import type { Page } from "playwright";
 import { CardAttribute, card } from "../board.ts";
 import { exported, loadBoard } from "./browser-formats.ts";
-import { names } from "./browser-session.ts";
+import { moveFocus, names } from "./browser-session.ts";
 import { reporter } from "./browser-play.ts";
 import { Evidence } from "./outcomes.ts";
 import { snapshotsEqual } from "./snapshot.ts";
@@ -10,7 +10,7 @@ import { KnownCode } from "./vectors.ts";
 export async function sourceRules(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence); await loadBoard(page, KnownCode);
   const closed = await page.locator(`[${CardAttribute}]`).evaluateAll((elements) => elements.map((element) => element.innerHTML));
-  const before = await exported(page); await card(page, 0).focus(); await page.keyboard.press("Control+End");
+  const before = await exported(page); await card(page, 0).focus(); await moveFocus(page, 15, 4);
   const after = await exported(page);
   put("A09.3", before !== null && after !== null && snapshotsEqual(before, after), "Focus movement keeps every snapshot field, including board code, unchanged.");
   const secrets = await page.evaluate(() => Object.getOwnPropertyNames(window).filter((key) => /^(?:__.*(?:deck|face|solver|gameState)|(?:deck|solver|gameState|neonPairs))$/i.test(key)));

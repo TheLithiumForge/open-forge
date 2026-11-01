@@ -2,7 +2,7 @@ import type { Page } from "playwright";
 import { CardAttribute, card } from "../board.ts";
 import { observeAnnouncements } from "./announcements.ts";
 import { markVisibleCards } from "./browser-cards.ts";
-import { body, changeSize, Labels, metric, names, step } from "./browser-session.ts";
+import { body, changeSize, Labels, metric, moveFocus, names, step } from "./browser-session.ts";
 import { reporter } from "./browser-play.ts";
 import { Evidence } from "./outcomes.ts";
 import { Announcement } from "./published-text.ts";
@@ -15,12 +15,6 @@ export function toolRecord(text: string): { readonly passed: boolean; readonly d
   const unused = /\bscreen reader\s*:\s*(?:not run|not used|none)\b|\bno (?:actual )?screen reader (?:was )?(?:run|used)\b/i.exec(text)?.[0];
   const used = /\bscreen reader(?: used)?\s*:\s*(?:used[\s,:]+)?(?:NVDA|JAWS|VoiceOver|Narrator|Orca|TalkBack|ChromeVox)\s+v?(\d+(?:\.\d+)*)/i.exec(text)?.[0] ?? /\bscreen reader\s*:\s*used[\s,:]+[a-z][\w .-]+?\s+v?\d+(?:\.\d+)*/i.exec(text)?.[0];
   return { passed: Boolean(browser && tool && (unused || used)), detail: [browser, tool, unused ?? used].filter(Boolean).join(". ") || "No browser, tool and screen-reader-use record in the project README." };
-}
-
-async function position(page: Page, index: number): Promise<void> {
-  await page.keyboard.press("Control+Home");
-  for (let row = 0; row < Math.floor(index / 4); row++) await page.keyboard.press("ArrowDown");
-  for (let column = 0; column < index % 4; column++) await page.keyboard.press("ArrowRight");
 }
 
 export async function keyboardTree(page: Page, evidence: Evidence): Promise<void> {
@@ -38,7 +32,7 @@ export async function keyboardTree(page: Page, evidence: Evidence): Promise<void
   }
   const deck: string[] = [], reveals: string[] = [];
   for (let index = 0; index < 16; index++) {
-    await position(page, index); await page.keyboard.press(index % 2 ? "Space" : "Enter");
+    await moveFocus(page, index, 4); await page.keyboard.press(index % 2 ? "Space" : "Enter");
     const snapshot = await card(page, index).ariaSnapshot(), name = cardName(snapshot) ?? "";
     deck.push(faceIn(name) ?? ""); reveals.push(snapshot);
     if (index % 2) await step(page, 800);
@@ -52,7 +46,7 @@ export async function keyboardTree(page: Page, evidence: Evidence): Promise<void
   let pairs = 0;
   for (const positions of groups.values()) {
     if (positions.length !== 2) { results.push(false); continue; }
-    for (const index of positions) { await position(page, index); await page.keyboard.press("Enter"); }
+    for (const index of positions) { await moveFocus(page, index, 4); await page.keyboard.press("Enter"); }
     pairs++;
     const entries = await messages();
     results.push(entries.length === pairs && entries.at(-1) === (pairs === 8 ? Announcement.win(8, 0) : Announcement.match(pairs)));

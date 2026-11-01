@@ -1,6 +1,6 @@
 {
   "id": "focus-trap",
-  "edits": [{ "path": "src/game/board/Board.tsx", "before": "  function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number): void {\n    const target = navigationTarget(index, game.size, event.key, event.ctrlKey);", "after": "  function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number): void {\n    if (event.key === 'Tab') { event.preventDefault(); return; }\n    const target = navigationTarget(index, game.size, event.key, event.ctrlKey);" }],
-  "expected": { "I08.1": "fail", "I06.8": "pass", "D08.7": "pass" },
+  "edits": [{ "path": "src/game/board/Board.tsx", "before": "  function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number): void {\n    const target = navigationTarget(index, game.size, event.key, event);", "after": "  function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number): void {\n    if (event.key === 'Tab') { event.preventDefault(); return; }\n    const target = navigationTarget(index, game.size, event.key, event);" }],
+  "expected": { "I08.1": "fail", "I06.4": "pass", "I06.10": "pass", "D08.7": "pass" },
   "scope": "Trap native Tab without changing arrow navigation or replay."
 }

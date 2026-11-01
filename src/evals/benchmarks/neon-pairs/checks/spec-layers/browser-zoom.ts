@@ -2,7 +2,7 @@ import type { Page } from "playwright";
 import { CardAttribute, card } from "../board.ts";
 import { focusSamples, focusedOutline } from "./browser-layout.ts";
 import { reporter } from "./browser-play.ts";
-import { body, changeSize, metric, names, reset, solve, visibleDeck } from "./browser-session.ts";
+import { body, changeSize, metric, moveFocus, names, reset, solve, visibleDeck } from "./browser-session.ts";
 import { BehaviorFailure, Evidence } from "./outcomes.ts";
 import { faceIn, overlaps } from "./view-values.ts";
 import { styles } from "./browser-view.ts";
@@ -51,7 +51,7 @@ export async function zoom(page: Page, evidence: Evidence): Promise<void> {
     playable.push((await names(page)).slice(0, 2).every((name) => faceIn(name) !== null) && metric(await body(page), "moves") === 1);
     if (size === 16) {
       outlines.push(await focusSamples(page));
-      await card(page, 0).focus(); await page.keyboard.press("Control+End");
+      await card(page, 0).focus(); await moveFocus(page, size * size - 1, size);
       playable.push(await card(page, size * size - 1).evaluate((element) => element === document.activeElement));
     } else {
       outlines.push(await focusedOutline(page, 1));

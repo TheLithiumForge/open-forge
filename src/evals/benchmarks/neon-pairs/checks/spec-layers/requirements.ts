@@ -4,7 +4,7 @@ export const LayerId = { two: "L2", three: "L3" } as const;
 export type LayerId = (typeof LayerId)[keyof typeof LayerId];
 export const Method = { browser: "browser", replay: "replay", static: "static", build: "build", review: "review" } as const;
 export type Method = (typeof Method)[keyof typeof Method];
-export const SpecVersion = 2.1;
+export const SpecVersion = 2.2;
 export const RequirementsFile = new URL("../../requirements.json", import.meta.url);
 export interface Clause { readonly id: string; readonly requirement: string; readonly text: string; readonly firstLayer: LayerId; readonly method: Method }
 

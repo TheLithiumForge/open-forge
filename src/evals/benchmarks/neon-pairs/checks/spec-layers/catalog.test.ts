@@ -5,11 +5,12 @@ import { test } from "node:test";
 import { definition, ExpectedCounts } from "./catalog.ts";
 import { LayerId, loadRequirements, Method, object, parseRequirements, SpecVersion, supplied } from "./requirements.ts";
 import { gradingFingerprint, loadDefinition } from "./load.ts";
-import { rubric } from "./rubrics.ts";
+import { ReviewScope, rubric } from "./rubrics.ts";
 import { loadLayer } from "../layer.ts";
 import { fillTrace } from "./trace.ts";
 import { CapClause, LayerThreeCaps } from "./cap-policy.ts";
 import { reviewReason, SpokenJourneyRequirement } from "./review-policy.ts";
+import { BrowserKeyClause } from "./browser-input.ts";
 
 test("frozen sets cover every supplied clause with its declared method and cited review", async () => {
   const inventory = await loadRequirements();
@@ -28,6 +29,7 @@ test("frozen sets cover every supplied clause with its declared method and cited
     const review = rubric(layer, inventory);
     assert.deepEqual(new Set(review.questions.flatMap((question) => question.clauses)), new Set(frozen.review.map((item) => item.clause)));
     assert.equal(review.ballots, 3);
+    assert.ok(review.questions.every((question) => question.question.includes(ReviewScope)));
     assert.deepEqual(review.answers, ["yes", "no", "unsure"]);
     assert.equal(await gradingFingerprint(layer), await gradingFingerprint(layer));
     assert.match(await gradingFingerprint(layer), /^[a-f0-9]{64}$/);
@@ -91,7 +93,7 @@ test("requirement parser rejects duplicate clauses, wrong layers and methods", (
   assert.throws(() => parseRequirements({ ...input([clause]), specVersion: 2 }));
 });
 
-test("every v2.1 trace slot names exactly its layer assertions and review questions", async () => {
+test("every current trace slot names exactly its layer assertions and review questions", async () => {
   const inventory = await loadRequirements(), expected = new Map<string, string[]>();
   for (const layer of Object.values(LayerId)) {
     const declared = await loadDefinition(layer);
@@ -102,6 +104,20 @@ test("every v2.1 trace slot names exactly its layer assertions and review questi
   assert.ok(object(value) && value["specVersion"] === SpecVersion && Array.isArray(value["entries"]));
   assert.equal(value["entries"].length, inventory.length);
   for (const entry of value["entries"]) { assert.ok(object(entry) && typeof entry["clauseId"] === "string"); assert.deepEqual(entry["checks"], expected.get(entry["clauseId"]), entry["clauseId"]); }
+});
+
+test("trimmed input clauses leave both maps and the browser-key clause grades both layers", async () => {
+  const retired = ["I02.1", "I06.5", "I06.6", "I06.7", "I06.8"], inventory = await loadRequirements();
+  const trace = JSON.parse(await readFile(new URL("../../trace.json", import.meta.url), "utf8")) as { entries: { clauseId: string }[] };
+  for (const clause of retired) {
+    assert.ok(!inventory.some((entry) => entry.id === clause));
+    assert.ok(!trace.entries.some((entry) => entry.clauseId === clause));
+  }
+  for (const layer of Object.values(LayerId)) {
+    const declared = await loadDefinition(layer), assertions = declared.checks.flatMap((check) => check.assertions);
+    assert.ok(assertions.some((assertion) => assertion.clause === BrowserKeyClause && assertion.method === Method.browser));
+    assert.ok(assertions.every((assertion) => !retired.includes(assertion.clause)));
+  }
 });
 
 test("trace edits replace only checks slots and keep reference bytes", () => {

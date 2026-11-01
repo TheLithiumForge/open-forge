@@ -5,14 +5,14 @@ Layer 2 learns each deal by revealing cards. Layer 3 also uses documented board 
 
 ## Check sets
 
-Each layer keeps the 16 stated L1-v2 checks. Its additional assertions cover the supplied clauses from `requirements.json`. Every probe for a clause must pass before that clause passes. Every assertion in a check must pass before that check passes.
+Each layer keeps the 16 stated L1-v3 checks. Its additional assertions cover the supplied clauses from `requirements.json`. Every probe for a clause must pass before that clause passes. Every assertion in a check must pass before that check passes.
 
 The frozen declarations contain these counts:
 
 | Layer | Checks | Clause assertions | Review clauses | Questions |
 | --- | --- | --- | --- | --- |
-| L2-v5 | 49 | 183 | 6 | 9 |
-| L3-v5 | 104 | 366 | 50 | 11 |
+| L2-v6 | 49 | 179 | 6 | 9 |
+| L3-v6 | 104 | 362 | 50 | 11 |
 
 The assertion counts exclude the 16 inherited L1 checks. Each question takes three yes, no or unsure ballots with cited evidence. `layers/L2.json` and `layers/L3.json` list every clause and its method. Their `review` arrays list every review clause with its reason.
 
@@ -20,13 +20,21 @@ R05.5 through R05.8 and R07.9 belong only to Layer 3. Layer 2 checks continued p
 
 Layer 3 imports progress just below both caps, reaches the exact limits and continues through a miss, matches, victory and snapshot export. It also rejects above-cap imports and saved best scores. Replay timestamps keep their safe-integer range while exported elapsed time stays capped.
 
-I17 runs a complete 4x4 keyboard journey through the accessibility tree. It records control names, closed positions, revealed states, turn messages, completion, Tab exit and New Game. The README check requires browser and tool versions plus a statement of screen-reader use. Spoken confirmation belongs to user acceptance.
+I17 runs a complete 4x4 keyboard journey through the accessibility tree. It records control names, closed positions, revealed states, turn messages, completion, Tab exit and New Game. The README check requires browser and tool versions plus a statement of screen-reader use.
 
-The [council checks](revision-v2.1.md) map every changed clause to its check and record the remaining pack integration failure.
+The [council checks](revision-v2.1.md) map the earlier v2.1 corrections and record their verification limits at that time.
 
 T07.9 uses cited process review. It gives no automatic credit because a later verifier can't reconstruct processes left during authoring. The runner's process evidence needs to come from the agent container after the final reply, before cleanup and shutdown. It needs process IDs, parents, accounts and executable names, with known runner tools and credentials excluded.
 
 To regenerate only the layer definitions, run `node benchmarks/neon-pairs/checks/spec-layers/freeze.ts --layers` from `src/evals`. This keeps the trace, rubrics and spec packs unchanged. Without `--layers`, the command also updates rubrics and checks slots. Add `--caps` to update only the ten cap trace slots.
+
+## Scope
+
+Spec v2.2 retires I02.1 and I06.5 through I06.8. Their assertions leave both layers. I06.10 belongs to `l2-navigation` in both layers. Home, End, Ctrl+End and Alt+ArrowLeft keep card focus and game state unchanged. Enter and Space with modifiers keep their native button behavior. Keyboard journeys reach cards with plain arrows.
+
+C08.6 and C08.7 accept whole milliseconds within 1ms of independent active and remaining times. A pending mismatch exports at least 1ms. For example, 799ms and 800ms both pass for 799.75ms remaining, while 0ms fails for a pending 0.25ms.
+
+Automated checks and review questions grade only the supplied scope. Keys beyond the stated controls and I06.10, held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output stay out of grading. Spoken output stays user acceptance. Right-click, long press, pointer cancellation and native touch scrolling still follow their stated clauses.
 
 ## Geometry
 
@@ -72,7 +80,7 @@ Case registration calls `runLayer2Checks` or `runLayer3Checks` from `container.t
 
 The output includes the check sets, clause outcomes, review clauses and inherited board images. Review gets no automated credit. Judge callers use the matching frozen rubric and the same source, prompt and image evidence for both providers.
 
-L2 and L3 capture every revealed face through its card locator, which scrolls it into view before taking the screenshot. This corrects the inherited whole-page sampling of clipped large boards. The duplicate thresholds and L1-v2 files stay unchanged. The [validation verdicts](validation-verdicts.md) record the earlier failures and their checker corrections.
+L2 and L3 capture every revealed face through its card locator, which scrolls it into view before taking the screenshot. This corrects the inherited whole-page sampling of clipped large boards. The duplicate thresholds and inherited Layer 1 files stay unchanged. The [validation verdicts](validation-verdicts.md) record the earlier failures and their checker corrections.
 
 ## Limits
 
@@ -80,4 +88,4 @@ T07.9 is the only entry in each layer's `uncheckable` array. It stays in cited r
 
 I03.1 checks an uncancelled contextmenu path after right-click and a held native touch. It doesn't capture an operating-system menu.
 
-The last completed typecheck, checker tests, plan and fixture audit pass. Five product tests still fail because the protected player pack has a stale source fingerprint. A final README-parser extension passes nine manual parsing checks. Windows process-start error 1909 prevents its repository test rerun. Browser regressions use synthetic pages. The reference and broken-fixture browser matrix still needs the overseer's container run.
+Browser regressions use synthetic pages. The reference and broken-fixture browser matrix still needs the overseer's container run.

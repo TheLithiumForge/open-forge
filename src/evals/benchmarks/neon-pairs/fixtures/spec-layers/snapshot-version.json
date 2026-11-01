@@ -1,6 +1,6 @@
 {
   "id": "snapshot-version",
-  "edits": [{ "path": "src/game/snapshot.ts", "before": "  if (!record(value) || !exactKeys(value, SNAPSHOT_KEYS) || value.version !== SNAPSHOT_VERSION)\n    return null;", "after": "  if (!record(value) || !exactKeys(value, SNAPSHOT_KEYS) || value.version === -SNAPSHOT_VERSION)\n    return null;" }],
+  "edits": [{ "path": "src/game/snapshot.ts", "before": "    !isJsonObject(value) ||\n    !hasExactKeys(value, SNAPSHOT_KEYS) ||\n    value.version !== SNAPSHOT_VERSION", "after": "    !isJsonObject(value) ||\n    !hasExactKeys(value, SNAPSHOT_KEYS) ||\n    value.version === -SNAPSHOT_VERSION" }],
   "expected": { "D05.2": "fail", "D06.2": "pass", "D08.1": "pass" },
   "scope": "Accept snapshot version 2 while keeping unknown-field rejection and replay version checks."
 }

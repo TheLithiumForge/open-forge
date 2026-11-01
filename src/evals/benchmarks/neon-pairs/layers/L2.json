@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "specVersion": 2.1,
-  "version": "L2-v5",
+  "specVersion": 2.2,
+  "version": "L2-v6",
   "layer": "L2",
   "checks": [
     {
@@ -704,7 +704,6 @@
       "clauses": [
         "I01.1",
         "I01.2",
-        "I02.1",
         "I03.1",
         "I03.2",
         "I04.1",
@@ -722,12 +721,6 @@
           "clause": "I01.2",
           "method": "browser",
           "text": "Primary click, completed tap, Enter and Space use the same activation action."
-        },
-        {
-          "id": "clause-I02.1",
-          "clause": "I02.1",
-          "method": "browser",
-          "text": "Ignore keyboard autorepeat for Enter and Space."
         },
         {
           "id": "clause-I03.1",
@@ -767,11 +760,8 @@
         "I06.2",
         "I06.3",
         "I06.4",
-        "I06.5",
-        "I06.6",
-        "I06.7",
-        "I06.8",
         "I06.9",
+        "I06.10",
         "I07.1",
         "I08.1",
         "I08.2"
@@ -820,34 +810,16 @@
           "text": "ArrowDown moves to the next row in the same column."
         },
         {
-          "id": "clause-I06.5",
-          "clause": "I06.5",
-          "method": "browser",
-          "text": "Home moves to the first card in the row."
-        },
-        {
-          "id": "clause-I06.6",
-          "clause": "I06.6",
-          "method": "browser",
-          "text": "End moves to the last card in the row."
-        },
-        {
-          "id": "clause-I06.7",
-          "clause": "I06.7",
-          "method": "browser",
-          "text": "Ctrl+Home moves to the first card on the board."
-        },
-        {
-          "id": "clause-I06.8",
-          "clause": "I06.8",
-          "method": "browser",
-          "text": "Ctrl+End moves to the last card on the board."
-        },
-        {
           "id": "clause-I06.9",
           "clause": "I06.9",
           "method": "browser",
           "text": "Movement changes focus without activating a card."
+        },
+        {
+          "id": "clause-I06.10",
+          "clause": "I06.10",
+          "method": "browser",
+          "text": "Handle only ArrowLeft, ArrowRight, ArrowUp and ArrowDown without modifiers, plus Enter and Space. Leave every other key and modifier combination to the browser, without using it to move focus or activate a card."
         },
         {
           "id": "clause-I07.1",

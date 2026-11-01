@@ -3,12 +3,12 @@ import { LayerId, Method, SpecVersion, supplied, type Clause } from "./requireme
 import { Limitations } from "./limitations.ts";
 import { reviewReason } from "./review-policy.ts";
 
-export const Versions = { L2: "L2-v5", L3: "L3-v5" } as const;
-export const ExpectedCounts = { L2: { checks: 49, assertions: 183, review: 6 }, L3: { checks: 104, assertions: 366, review: 50 } } as const;
+export const Versions = { L2: "L2-v6", L3: "L3-v6" } as const;
+export const ExpectedCounts = { L2: { checks: 49, assertions: 179, review: 6 }, L3: { checks: 104, assertions: 362, review: 50 } } as const;
 export const BrowserGroups = {
   sizes: ["R01"], selection: ["R02", "R03"], mismatch: ["R04"], moves: ["R05"], completion: ["R06"],
   clock: ["R07"], preferences: ["R08"], reset: ["R09"], best: ["R10"], storage: ["R11"], stale: ["R12"],
-  controls: ["C01", "C02", "C03"], focus: ["C13", "I11", "I12"], activation: ["I01", "I02", "I03", "I04"],
+  controls: ["C01", "C02", "C03"], focus: ["C13", "I11", "I12"], activation: ["I01", "I03", "I04"],
   navigation: ["I05", "I06", "I07", "I08"], matched: ["I09", "I10"], scroll: ["I13"], names: ["I14", "I15"],
   announcements: ["I16"], "screen-reader": ["I17"], native: ["V01"], layout: ["V02", "V03", "V04", "V05"], colors: ["V06", "V07"],
   typography: ["V08", "V09"], faces: ["V10", "V13", "V14", "V15"], outline: ["V16"], motion: ["V17", "V18"],

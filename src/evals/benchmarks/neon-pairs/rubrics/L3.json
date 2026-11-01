@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "specVersion": 2.1,
-  "version": "L3-v4",
+  "specVersion": 2.2,
+  "version": "L3-v6",
   "ballots": 3,
   "answers": [
     "yes",
@@ -13,7 +13,7 @@
       "id": "pure-core",
       "area": "architecture",
       "evidence": "source",
-      "question": "Are generation, transitions, logical time, snapshot validation and replay pure in src/game, with direct inputs and no DOM, storage, external randomness or browser clock? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Are generation, transitions, logical time, snapshot validation and replay pure in src/game, with direct inputs and no DOM, storage, external randomness or browser clock? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "A01.1",
         "A01.2",
@@ -24,7 +24,7 @@
       "id": "state",
       "area": "architecture",
       "evidence": "source",
-      "question": "Are board and deck immutable, progress represented by the documented state and formats, victory and pairs derived, and closed, one and mismatch branches direct and exhaustive with nearby named constants? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Are board and deck immutable, progress represented by the documented state and formats, victory and pairs derived, and closed, one and mismatch branches direct and exhaustive with nearby named constants? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "A02.1",
         "A02.2",
@@ -38,7 +38,7 @@
       "id": "lifecycle",
       "area": "architecture",
       "evidence": "source",
-      "question": "Does src/game/session handle React state, monotonic time, visibility and pending-work cleanup with callback invalidation on deal changes? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Does src/game/session handle React state, monotonic time, visibility and pending-work cleanup with callback invalidation on deal changes? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "A04.1",
         "A04.2",
@@ -50,7 +50,7 @@
       "id": "storage",
       "area": "architecture",
       "evidence": "source",
-      "question": "Does the session storage module validate unknown saved JSON, sizes and finite integer scores, catch failures, keep unrelated keys and hold active progress in memory until import or export? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Does the session storage module validate unknown saved JSON, sizes and finite integer scores, catch failures, keep unrelated keys and hold active progress in memory until import or export? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "A05.1",
         "A05.2",
@@ -64,7 +64,7 @@
       "id": "components",
       "area": "architecture",
       "evidence": "source",
-      "question": "Does Game.tsx compose status, board, controls and reproduction, with board navigation, control and session behavior in their specified folders, nearby props and styles, native input and board-local focus? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Does Game.tsx compose status, board, controls and reproduction, with board navigation, control and session behavior in their specified folders, nearby props and styles, native input and board-local focus? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "A07.1",
         "A07.2",
@@ -78,7 +78,7 @@
       "id": "tests-and-change",
       "area": "architecture",
       "evidence": "source",
-      "question": "Are focused tests beside behavior and journeys at application level, with independent vectors, rule transitions, disk and served storage tests, and changes made at their behavior? Does the implementation follow the rule against adding a global store, event bus, router or generic utility folder, and share support only when two actual behaviors need the same meaning? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Are focused tests beside behavior and journeys at application level, with independent vectors, rule transitions, disk and served storage tests, and changes made at their behavior? Does the implementation follow the rule against adding a global store, event bus, router or generic utility folder, and share support only when two actual behaviors need the same meaning? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "A10.1",
         "A10.2",
@@ -94,7 +94,7 @@
       "id": "exact-types",
       "area": "code",
       "evidence": "source",
-      "question": "Are data shapes exact, unknown inputs validated, unions derived from named values and narrowing used instead of any, suppressed errors or unchecked casts? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Are data shapes exact, unknown inputs validated, unions derived from named values and narrowing used instead of any, suppressed errors or unchecked casts? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "T05.1",
         "T05.2",
@@ -106,7 +106,7 @@
       "id": "findability",
       "area": "code",
       "evidence": "source",
-      "question": "Are code, styles and tests together, files near the 100-line aim, growing files split by behavior and imports direct from definitions? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Are code, styles and tests together, files near the 100-line aim, growing files split by behavior and imports direct from definitions? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "T06.1",
         "T06.2",
@@ -118,7 +118,7 @@
       "id": "tested-toolchain",
       "area": "delivery",
       "evidence": "source",
-      "question": "Are locked install, build, unit and browser results recorded with exact versions before calling a combination tested, with separate results for other versions and evidence that authoring servers and watchers stopped? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Are locked install, build, unit and browser results recorded with exact versions before calling a combination tested, with separate results for other versions and evidence that authoring servers and watchers stopped? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "T03.5",
         "T03.6",
@@ -129,7 +129,7 @@
       "id": "dependencies",
       "area": "delivery",
       "evidence": "source",
-      "question": "Are dependencies kept in development and build tooling where practical, with no service, account, external asset, analytics or API key and network allowed for installation? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Are dependencies kept in development and build tooling where practical, with no service, account, external asset, analytics or API key and network allowed for installation? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "T10.1",
         "T10.2",
@@ -140,7 +140,7 @@
       "id": "face-legibility",
       "area": "visual",
       "evidence": "source-and-images",
-      "question": "Do shape, marker and fill define identity, color repeat marker distinction and all 128 faces remain distinct at 44px in grayscale, including outlined and solid squares with diagonal markers? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Do shape, marker and fill define identity, color repeat marker distinction and all 128 faces remain distinct at 44px in grayscale, including outlined and solid squares with diagonal markers? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "V11.1",
         "V11.2",

@@ -82,7 +82,8 @@ export async function fakeGame(page: Page, options: { readonly mismatchMs?: numb
           status();
         };
         button.onkeydown = (event) => {
-          const next = event.ctrlKey && event.key === "End" ? size * size - 1 : event.ctrlKey && event.key === "Home" ? 0 : event.key === "ArrowRight" ? index + 1 : event.key === "ArrowLeft" ? index - 1 : event.key === "ArrowDown" ? index + size : -1;
+          if (event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+          const next = event.key === "ArrowRight" && index % size < size - 1 ? index + 1 : event.key === "ArrowLeft" && index % size > 0 ? index - 1 : event.key === "ArrowDown" ? index + size : event.key === "ArrowUp" ? index - size : -1;
           if (next >= 0 && next < size * size) { event.preventDefault(); (board.children[next] as HTMLElement).focus(); }
         };
         board.append(button);

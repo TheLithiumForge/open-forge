@@ -4765,7 +4765,7 @@
     {
       "clauseId": "I06.10",
       "requirementId": "I06",
-      "checks": [],
+      "checks": ["L2:l2-navigation#clause-I06.10","L3:l2-navigation#clause-I06.10"],
       "reference": [
         {
           "path": "reference/src/game/board/keyboard.ts",

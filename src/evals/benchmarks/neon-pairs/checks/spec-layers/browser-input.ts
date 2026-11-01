@@ -9,6 +9,9 @@ import { heldMenu } from "./browser-touch.ts";
 import { Announcement, AnnouncementClause } from "./published-text.ts";
 import { LiveRegion, observeAnnouncements } from "./announcements.ts";
 
+export const BrowserKeyClause = "I06.10";
+export const BrowserKeys = ["Home", "End", "Control+End", "Alt+ArrowLeft"] as const;
+
 export async function navigation(page: Page, evidence: Evidence): Promise<void> {
   const put = reporter(evidence);
   const initialFocus = await page.evaluate(() => document.activeElement?.tagName);
@@ -21,11 +24,18 @@ export async function navigation(page: Page, evidence: Evidence): Promise<void> 
   };
   for (const [id, key, start, expected] of [
     ["I06.1", "ArrowLeft", 5, 4], ["I06.2", "ArrowRight", 5, 6], ["I06.3", "ArrowUp", 5, 1], ["I06.4", "ArrowDown", 5, 9],
-    ["I06.5", "Home", 6, 4], ["I06.6", "End", 5, 7], ["I06.7", "Control+Home", 6, 0], ["I06.8", "Control+End", 5, 15],
   ] as const) put(id, await target(start, key, expected), `${key} from ${start} must focus ${expected}.`);
   const edges = await target(0, "ArrowLeft", 0) && await target(0, "ArrowUp", 0) && await target(3, "ArrowRight", 3) && await target(15, "ArrowDown", 15);
   put("I07.1", edges, "All four edges stop arrow movement without wrapping.");
   put("I06.9", (await names(page)).every((name) => !faceIn(name)) && metric(await body(page), "moves") === 0, "All navigation leaves every card closed at zero moves.");
+  const unused: { key: string; focused: boolean; before: string[]; after: string[]; beforeText: string; afterText: string }[] = [];
+  for (const key of BrowserKeys) {
+    await card(page, 5).focus();
+    const before = await names(page), beforeText = await body(page);
+    await page.keyboard.press(key);
+    unused.push({ key, focused: await card(page, 5).evaluate((element) => element === document.activeElement), before, after: await names(page), beforeText, afterText: await body(page) });
+  }
+  put(BrowserKeyClause, unused.every((sample) => sample.focused && JSON.stringify(sample.before) === JSON.stringify(sample.after) && sample.beforeText === sample.afterText), "Home, End, Ctrl+End and Alt+ArrowLeft keep card focus and game state unchanged.", unused);
   await card(page, 5).focus(); await page.keyboard.press("Tab");
   const leftForward = await page.locator(`[${CardAttribute}]`).evaluateAll((elements) => !elements.some((element) => element === document.activeElement));
   await page.keyboard.press("Shift+Tab");
@@ -50,13 +60,6 @@ export async function activation(page: Page, evidence: Evidence): Promise<void> 
     await reset(page); await action(); results.push(JSON.stringify(await names(page)));
   }
   put("I01.2", new Set(results).size === 1 && results[0]?.includes("revealed") === true, "Pointer, completed tap, Enter and Space produce the same revealed board.");
-  let repeatSafe = true;
-  for (const key of ["Enter", " "]) {
-    await reset(page); await card(page, 0).focus();
-    const allowed = await card(page, 0).evaluate((element, key) => element.dispatchEvent(new KeyboardEvent("keydown", { key, code: key === "Enter" ? key : "Space", repeat: true, bubbles: true, cancelable: true })), key);
-    repeatSafe &&= !allowed && (await names(page)).every((name) => !faceIn(name));
-  }
-  put("I02.1", repeatSafe, "Repeated Enter and Space keydown events leave a closed board untouched.");
   await reset(page); const before = JSON.stringify(await names(page));
   const menuAllowed = await card(page, 0).evaluate((element) => element.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, button: 2 })));
   await card(page, 0).click({ button: "right" });

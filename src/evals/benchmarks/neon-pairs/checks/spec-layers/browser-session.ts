@@ -2,7 +2,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import type { Browser, BrowserContext, Page } from "playwright";
-import { card } from "../board.ts";
+import { CardAttribute, card } from "../board.ts";
 import { markVisibleCards as markCards } from "./browser-cards.ts";
 import { BehaviorFailure } from "./outcomes.ts";
 import { cardName, elapsedIn, faceIn } from "./view-values.ts";
@@ -77,6 +77,13 @@ export async function click(page: Page, index: number): Promise<void> {
   await page.mouse.move(0, 0);
 }
 export async function step(page: Page, ms: number): Promise<void> { await page.clock.runFor(ms); }
+export async function moveFocus(page: Page, target: number, size: number): Promise<void> {
+  const current = await page.evaluate((attribute) => document.activeElement?.getAttribute(attribute), CardAttribute);
+  if (current === null || current === undefined || !/^\d+$/.test(current)) throw new BehaviorFailure(`Expected a focused card before arrow navigation. Observed card index: ${current}.`);
+  const index = Number(current), rows = Math.floor(target / size) - Math.floor(index / size), columns = target % size - index % size;
+  for (let step = 0; step < Math.abs(rows); step++) await page.keyboard.press(rows > 0 ? "ArrowDown" : "ArrowUp");
+  for (let step = 0; step < Math.abs(columns); step++) await page.keyboard.press(columns > 0 ? "ArrowRight" : "ArrowLeft");
+}
 export async function changeSize(page: Page, size: number): Promise<void> {
   const select = page.getByRole("combobox", { name: Labels.size, exact: true });
   const option = select.locator("option").filter({ hasText: new RegExp(`^${size}\\s*[x×]\\s*${size}$`) });

@@ -14,7 +14,7 @@ import { BesideControlsPx, boxGap, ImportClause, importedProgress, loadedFocusAn
 import { BoardTrimClause, boardControls } from "./browser-formats.ts";
 import { AnnouncementClause } from "./published-text.ts";
 
-test("public exports round cached fractional clocks down and pending intervals up", async () => {
+test("public exports accept whole milliseconds within tolerance and reject stale or zero pending times", async () => {
   const root = await mkdtemp(join(tmpdir(), "eval-rounding-"));
   const browser = await chromium.launch(existsSync(chromium.executablePath()) ? {} : { channel: "chrome" });
   try {
@@ -25,7 +25,13 @@ test("public exports round cached fractional clocks down and pending intervals u
       for (const clause of Object.values(RoundingClause)) assert.equal(evidence.outcomes.find((item) => item.clause === clause)?.status, "pass", JSON.stringify(evidence.outcomes));
       await open.page.evaluate(() => {
         const original = JSON.stringify;
-        Object.defineProperty(JSON, "stringify", { configurable: true, value: (...args: unknown[]) => (Reflect.apply(original, JSON, args) as string).replace(/"elapsedMs": 1(?=,)/g, '"elapsedMs": 2').replace(/"remainingMs": 1(?=\s*})/g, '"remainingMs": 0') });
+        Object.defineProperty(JSON, "stringify", { configurable: true, value: (...args: unknown[]) => (Reflect.apply(original, JSON, args) as string).replace(/"elapsedMs": 1(?=,)/g, '"elapsedMs": 2').replace(/"remainingMs": 800(?=\s*})/g, '"remainingMs": 799') });
+      });
+      const alternate = new Evidence(); await snapshotRounding(open.page, alternate);
+      for (const clause of Object.values(RoundingClause)) assert.equal(alternate.outcomes.find((item) => item.clause === clause)?.status, "pass", JSON.stringify(alternate.outcomes));
+      await open.page.evaluate(() => {
+        const original = JSON.stringify;
+        Object.defineProperty(JSON, "stringify", { configurable: true, value: (...args: unknown[]) => (Reflect.apply(original, JSON, args) as string).replace(/"elapsedMs": 2(?=,)/g, '"elapsedMs": 3').replace(/"remainingMs": 1(?=\s*})/g, '"remainingMs": 0') });
       });
       const broken = new Evidence(); await snapshotRounding(open.page, broken);
       for (const clause of Object.values(RoundingClause)) assert.equal(broken.outcomes.find((item) => item.clause === clause)?.status, "fail", clause);

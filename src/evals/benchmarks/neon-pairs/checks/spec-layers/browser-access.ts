@@ -1,7 +1,7 @@
 import type { Page } from "playwright";
 import { CardAttribute, card } from "../board.ts";
 import { Evidence } from "./outcomes.ts";
-import { changeSize, click, names, reset, solve, visibleDeck } from "./browser-session.ts";
+import { changeSize, click, moveFocus, names, reset, solve, visibleDeck } from "./browser-session.ts";
 import { reporter } from "./browser-play.ts";
 import { faceIn, VisualTiming } from "./view-values.ts";
 import { styles } from "./browser-view.ts";
@@ -33,10 +33,10 @@ export async function scroll(page: Page, evidence: Evidence): Promise<void> {
     margins.push(await page.locator(`[${CardAttribute}]`).evaluateAll((elements) => elements.length === 256 && elements.every((element) => ["scrollMarginTop", "scrollMarginRight", "scrollMarginBottom", "scrollMarginLeft"].every((property) => Number.parseFloat(Reflect.get(getComputedStyle(element), property) as string) >= 6))));
     minimum.push(measured.cardBox.width >= 44 && measured.cardBox.height >= 44);
     fits.push(measured.pageWidth <= width);
-    await card(page, 0).focus(); await page.keyboard.press("Control+End");
+    await card(page, 0).focus(); await moveFocus(page, 255, 16);
     reachable.push(await card(page, 255).evaluate((element) => element === document.activeElement));
     results.push(await focusSamples(page));
-    await page.keyboard.press("Control+Home");
+    await moveFocus(page, 0, 16);
     await card(page, 0).scrollIntoViewIfNeeded();
     touch.push(await touchBoardEnd(page));
     for (const index of [0, 255]) {
@@ -50,7 +50,7 @@ export async function scroll(page: Page, evidence: Evidence): Promise<void> {
   put("V19.1", counts.every((count) => count === 256), `Large card counts at phone and desktop widths: ${counts.join(", ")}.`);
   put("V19.2", fits.every(Boolean) && await page.getByRole("button", { name: "New Game", exact: true }).isVisible(), "Both viewport widths fit the page and keep New Game reachable.");
   put("V19.3", minimum.every(Boolean), "All sampled large-board cards remain at least 44px square.");
-  put("V19.4", reachable.every(Boolean) && touch.every(Boolean), "Native touch scroll gestures move the board on each overflowing axis. Ctrl+End reaches the last card and first and last cards accept completed taps at both widths.");
+  put("V19.4", reachable.every(Boolean) && touch.every(Boolean), "Native touch scroll gestures move the board on each overflowing axis. Plain arrows reach the last card and first and last cards accept completed taps at both widths.");
 }
 
 export async function motion(page: Page, evidence: Evidence): Promise<void> {

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "specVersion": 2.1,
-  "version": "L2-v4",
+  "specVersion": 2.2,
+  "version": "L2-v6",
   "ballots": 3,
   "answers": [
     "yes",
@@ -13,7 +13,7 @@
       "id": "face-identity",
       "area": "visual",
       "evidence": "source-and-images",
-      "question": "Do shape, marker and fill identify faces, with color repeating marker position? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Do shape, marker and fill identify faces, with color repeating marker position? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "V11.1",
         "V11.2"
@@ -23,7 +23,7 @@
       "id": "grayscale",
       "area": "visual",
       "evidence": "images",
-      "question": "Can you distinguish all 128 identities at 44px in grayscale, including solid and outline squares with diagonal markers? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Can you distinguish all 128 identities at 44px in grayscale, including solid and outline squares with diagonal markers? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "V12.7"
       ]
@@ -32,7 +32,7 @@
       "id": "offline-scope",
       "area": "delivery",
       "evidence": "source",
-      "question": "Does the game avoid services, accounts, external assets, analytics and API keys, allow network only for dependency installation and record that authoring servers and watchers stopped? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Does the game avoid services, accounts, external assets, analytics and API keys, allow network only for dependency installation and record that authoring servers and watchers stopped? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": [
         "T07.9",
         "T10.2",
@@ -43,42 +43,42 @@
       "id": "locality",
       "area": "code",
       "evidence": "source",
-      "question": "Does each behavior keep its code, styles and tests together where practical? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Does each behavior keep its code, styles and tests together where practical? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": []
     },
     {
       "id": "findability",
       "area": "code",
       "evidence": "source",
-      "question": "Can a developer find matching, timing, focus and saved scores from names and direct calls? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Can a developer find matching, timing, focus and saved scores from names and direct calls? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": []
     },
     {
       "id": "types",
       "area": "code",
       "evidence": "source",
-      "question": "Do useful types and narrowing describe game states and saved data? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Do useful types and narrowing describe game states and saved data? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": []
     },
     {
       "id": "complexity",
       "area": "code",
       "evidence": "source",
-      "question": "Does the implementation avoid abstractions and dependencies that add work without helping this game? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Does the implementation avoid abstractions and dependencies that add work without helping this game? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": []
     },
     {
       "id": "neon",
       "area": "visual",
       "evidence": "images",
-      "question": "Do the board images show the specified dark neon appearance with clear controls and status? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Do the board images show the specified dark neon appearance with clear controls and status? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": []
     },
     {
       "id": "legibility",
       "area": "visual",
       "evidence": "source-and-images",
-      "question": "Are the board, focus outlines, controls and win summary readable at the supplied phone and desktop sizes? Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
+      "question": "Are the board, focus outlines, controls and win summary readable at the supplied phone and desktop sizes? Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10. Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.",
       "clauses": []
     }
   ]

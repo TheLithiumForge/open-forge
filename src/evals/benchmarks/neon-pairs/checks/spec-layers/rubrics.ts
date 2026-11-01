@@ -4,7 +4,8 @@ import { Versions } from "./catalog.ts";
 import { reviewReason } from "./review-policy.ts";
 
 interface Question { readonly id: string; readonly area: string; readonly evidence: string; readonly question: string; readonly clauses: readonly string[] }
-const question = (id: string, area: string, evidence: string, text: string, clauses: readonly string[] = []): Question => ({ id, area, evidence, question: `${text} Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.`, clauses });
+export const ReviewScope = "Leave held keys, several open tabs, drifting or dragged pointer presses, exotic file encodings and spoken screen-reader output out of this judgment. For keyboard behavior, grade only the stated controls and I06.10.";
+const question = (id: string, area: string, evidence: string, text: string, clauses: readonly string[] = []): Question => ({ id, area, evidence, question: `${text} ${ReviewScope} Answer yes, no or unsure and cite file lines or image IDs. Use unsure when the evidence cannot answer it.`, clauses });
 export function rubric(layer: LayerId, inventory: readonly Clause[]) {
   const review = supplied(inventory, layer).filter((clause) => reviewReason(clause, layer) !== undefined);
   const ids = (prefixes: readonly string[]): string[] => review.filter((clause) => prefixes.some((prefix) => clause.id === prefix || clause.id.startsWith(`${prefix}.`))).map((clause) => clause.id);
