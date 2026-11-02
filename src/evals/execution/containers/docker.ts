@@ -40,6 +40,7 @@ export const docker: Docker = {
 };
 
 export function requireDockerResult(result: ProcessResult): ProcessResult {
-  if (result.code !== 0 || result.timedOut) throw new Error(`Docker command failed (${result.code ?? "no exit code"}): ${result.stderr.slice(-2000)}`);
+  if (result.timedOut) throw new Error(`Docker command timed out: ${result.stderr.slice(-2000)}`);
+  if (result.code !== 0) throw new Error(`Docker command failed (${result.code ?? "no exit code"}): ${result.stderr.slice(-2000)}`);
   return result;
 }

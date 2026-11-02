@@ -129,10 +129,10 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       return 0;
     }
     case Command.resume: {
-      checkedArgs(args, [], [Flag.parallel], 1);
+      checkedArgs(args, [Flag.acceptHarness], [Flag.parallel], 1);
       const [batch] = args;
       if (batch === undefined || batch.startsWith("--")) throw new Error(CommandHelp.resume);
-      return (services.resume ?? resumePlan)(batch, services.print, args.includes(Flag.parallel) ? parallelOption(args) : undefined);
+      return (services.resume ?? resumePlan)(batch, services.print, args.includes(Flag.parallel) ? parallelOption(args) : undefined, args.includes(Flag.acceptHarness));
     }
     case Command.ui: checkedArgs(args, [], [], 0); return services.ui();
     case Command.rejudge: {

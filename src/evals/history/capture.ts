@@ -93,7 +93,27 @@ export function withReportedModels(batch: ExperimentRecord, runs: readonly RunRe
   return { ...batch, reportedModels, fingerprints: { ...batch.fingerprints, reportedModels: fingerprint(reportedModels) } };
 }
 
+const FrozenKeys = ["cliPackage", "benchmarkInputs", "checks", "rubric", "harnessSource", "tooling", "requestedModels", "schema"] as const;
+export type FrozenKey = (typeof FrozenKeys)[number];
+
+export function frozenDifferences(saved: ExperimentRecord, current: ExperimentRecord): FrozenKey[] {
+  return FrozenKeys.filter((key) => saved.fingerprints[key] !== current.fingerprints[key]);
+}
+
 export function assertFrozenExecution(saved: ExperimentRecord, current: ExperimentRecord): void {
-  const keys = ["cliPackage", "benchmarkInputs", "checks", "rubric", "harnessSource", "tooling", "requestedModels", "schema"] as const;
-  if (keys.some((key) => saved.fingerprints[key] !== current.fingerprints[key])) throw new Error("The batch inputs or tooling changed. Start a new batch.");
+  if (frozenDifferences(saved, current).length) throw new Error("The batch inputs or tooling changed. Start a new batch.");
+}
+
+/**
+ * The record a resume continues under. Changed runner code alone may continue when the caller accepts it, and the
+ * batch then lists it. Changed inputs, checks, rubric, tooling, models or schema always need a new batch.
+ */
+export function resumableExperiment(saved: ExperimentRecord, current: ExperimentRecord, acceptHarness: boolean, at = new Date().toISOString()): ExperimentRecord {
+  const changed = frozenDifferences(saved, current);
+  if (!changed.length) return saved;
+  if (changed.some((key) => key !== "harnessSource")) throw new Error(`The batch's ${changed.join(", ")} changed. Start a new batch.`);
+  if (!acceptHarness) throw new Error("The runner code changed since this batch started. Resume with --accept-harness to continue and record the change, or start a new batch.");
+  const known = saved.harnessChanges ?? [];
+  if (known.at(-1)?.harnessSource === current.fingerprints.harnessSource) return saved;
+  return { ...saved, harnessChanges: [...known, { at, harnessSource: current.fingerprints.harnessSource }] };
 }

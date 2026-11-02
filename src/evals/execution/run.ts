@@ -30,6 +30,7 @@ import { ConversationFile } from "./conversation/answer-bank.ts";
 import { layerChecks } from "../grading/document-layers.ts";
 import { converse } from "./conversation/conversation.ts";
 import { oneCheckAtATime } from "./run-queue.ts";
+import { withCheckSlot } from "./check-slot.ts";
 import { progress } from "./progress.ts";
 import { stopProcessesUnder } from "./leftovers.ts";
 import { createRunSpace, freezeFiles, removeFolder, scratchFolder } from "./workspace.ts";
@@ -114,7 +115,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     await update({ status: RunStatus.checking, build }, `the build ${build.passed ? "passed" : "failed"}. Running the hidden checks.`);
     const project = space.work;
     if (!reference) await freezeFiles(space, join(folder, ResultFiles.files));
-    const checks = await oneCheckAtATime(async () => (services.checks ?? layerChecks(suite.id))?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots), stage: { ...stageOptions, timeoutMs: checkMs } }));
+    const checks = await oneCheckAtATime(() => withCheckSlot(async () => (services.checks ?? layerChecks(suite.id))?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots), stage: { ...stageOptions, timeoutMs: checkMs } })));
     await update({ status: RunStatus.judging, checks: checks?.checks.map(legacyCheckView) ?? [], performance: checks?.performance ?? null, shots: checks?.shots ?? [] }, "checks done. The judge is reading the code.");
     const assessment = checksAssessment(run, checks?.checks ?? [], versions, checks?.selection);
     await store.appendAssessment(assessment);

@@ -75,13 +75,14 @@ test("run --case narrows a multi-case plan to one case and refuses a case the pl
 });
 
 test("resume continues one named batch and needs exactly one", async () => {
-  const fake = fakeServices(), resumed: [string, number | undefined][] = [];
-  const services = { ...fake.services, resume: async (batch: string, _print: (text: string) => void, parallel?: number) => { resumed.push([batch, parallel]); return 0; } };
+  const fake = fakeServices(), resumed: [string, number | undefined, boolean | undefined][] = [];
+  const services = { ...fake.services, resume: async (batch: string, _print: (text: string) => void, parallel?: number, accept?: boolean) => { resumed.push([batch, parallel, accept]); return 0; } };
   assert.equal(await runCli([Command.resume, "batch"], services), 0);
   assert.equal(await runCli([Command.resume, "batch", Flag.parallel, "2"], services), 0);
-  assert.deepEqual(resumed, [["batch", undefined], ["batch", 2]]);
+  assert.equal(await runCli([Command.resume, "batch", Flag.acceptHarness], services), 0);
+  assert.deepEqual(resumed, [["batch", undefined, false], ["batch", 2, false], ["batch", undefined, true]]);
   for (const args of [[Command.resume], [Command.resume, "batch", "other"], [Command.resume, "batch", Flag.plan, "fixture.json"], [Command.resume, "batch", Flag.parallel, "0"], [Command.resume, Flag.parallel, "2"]]) await assert.rejects(runCli(args, services));
-  assert.equal(resumed.length, 2);
+  assert.equal(resumed.length, 3);
 });
 
 test("run --parallel caps the plan's parallel attempts and refuses anything but a positive whole number", async () => {

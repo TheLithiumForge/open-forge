@@ -9,7 +9,7 @@ import { answerBank, freezeProtocol } from "./conversation/answer-bank.ts";
 import type { BatchRecord, RunRecord } from "../history/results.types.ts";
 import { BatchStatus, FailureKind, RecordSchemaVersion, rerunStatuses, RunStatus } from "../history/statuses.ts";
 import { listBatches, readBatch, readRun, readRuns, readSetups, saveBatch, saveRun, saveSetups } from "../history/store.ts";
-import { assertFrozenExecution, captureExperiment, withReportedModels } from "../history/capture.ts";
+import { captureExperiment, resumableExperiment, withReportedModels } from "../history/capture.ts";
 import { fingerprint } from "../history/fingerprints.ts";
 import { artifactHash } from "../history/artifacts.ts";
 import { plannedRun, replacementRun } from "../history/run-records.ts";
@@ -79,12 +79,13 @@ export async function pauseInterruptedBatches(): Promise<void> {
 }
 
 /** Continues a paused batch. A parallel count overrides the saved one for this resume only, since it changes no attempt. */
-export async function resumeBatch(batchId: string, parallel?: number): Promise<void> {
+export async function resumeBatch(batchId: string, parallel?: number, acceptHarness = false): Promise<void> {
   if (activeBatch !== null) throw new Error("A batch is already running.");
   const batch = await readBatch(batchId);
   if (batch.reference !== undefined) throw new Error("Start a new reference grading with the reference command.");
   if (batch.legacy) throw new Error("Legacy batches are read only. Start a new batch.");
-  assertFrozenExecution(batch, await captureExperiment(batchId, batch.config, await loadSuite(batch.suite), batch.candidateLabel));
+  const resumable = resumableExperiment(batch, await captureExperiment(batchId, batch.config, await loadSuite(batch.suite), batch.candidateLabel), acceptHarness);
+  if (resumable !== batch) await saveBatch({ ...batch, harnessChanges: resumable.harnessChanges ?? [] });
   void executeBatch(batchId, parallel);
 }
 

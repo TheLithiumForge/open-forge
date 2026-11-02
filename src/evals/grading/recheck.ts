@@ -14,6 +14,7 @@ import { appendAssessment, assessmentEvidenceFolder, readBatch, readRuns, readSe
 import { loadSuite } from "../benchmarks/suite.ts";
 import { checksForSuite } from "../benchmarks/registry.ts";
 import { layerChecks } from "./document-layers.ts";
+import { withCheckSlot } from "../execution/check-slot.ts";
 import type { SuiteCheckOutput } from "../benchmarks/suite-checks.types.ts";
 import type { BuildResult } from "../history/results.types.ts";
 
@@ -77,7 +78,7 @@ async function main(): Promise<void> {
           game = build.html === null ? "" : join(project, build.html);
           if (existsSync(game)) await copyFile(game, join(evidence, ResultFiles.game));
         }
-        const result = await checks({ project, build, html: existsSync(game) && build.passed ? game : null, shotsFolder });
+        const result = await withCheckSlot(() => checks({ project, build, html: existsSync(game) && build.passed ? game : null, shotsFolder }));
         return { ...result, shots: result.shots.map((shot) => `${assessmentId}/${shot}`), build };
       } finally {
         if (space !== null) await removeFolder(space.root);

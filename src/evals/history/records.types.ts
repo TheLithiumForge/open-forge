@@ -19,7 +19,11 @@ export interface Fingerprints {
   readonly schema: string | null;
 }
 
+/** A resume on changed runner code that measures the same inputs, tooling and models. */
+export interface HarnessChange { readonly at: string; readonly harnessSource: string | null }
+
 export interface ExperimentRecord extends LegacyBatchRecord {
+  readonly harnessChanges?: readonly HarnessChange[];
   readonly reference?: ReferenceVersion;
   readonly schemaVersion: typeof RecordSchemaVersion;
   readonly legacy: boolean;

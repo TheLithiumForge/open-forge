@@ -3,12 +3,12 @@ import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { test } from "node:test";
 import type { Suite } from "../benchmarks/suite.types.ts";
-import { assertFrozenExecution, captureExperiment, checkerDigests, LaterLayerCheckers, withReportedModels } from "./capture.ts";
+import { assertFrozenExecution, captureExperiment, checkerDigests, LaterLayerCheckers, resumableExperiment, withReportedModels } from "./capture.ts";
 import { LayerOneCase } from "../benchmarks/registry.ts";
 import { FixtureSuite } from "../config/test-fixtures.ts";
 import { fingerprint } from "./fingerprints.ts";
 import { writeJson } from "./json-files.ts";
-import { FixtureCliVersion, temporaryHistory, v2Fixture } from "./test-fixtures.ts";
+import { FixtureCliVersion, FixtureTime, temporaryHistory, v2Fixture } from "./test-fixtures.ts";
 
 test("batch capture freezes installed CLI content, pinned tools, image digests and source versions", async () => {
   const { root, cleanup } = await temporaryHistory();
@@ -64,4 +64,17 @@ test("Layer 1 checker digests leave out later layers' checkers while other suite
     await writeJson(join(checks, "check.json"), { checks: "changed" });
     assert.notDeepEqual(await checkerDigests(checks, LayerOneCase), layerOne);
   } finally { await cleanup(); }
+});
+
+test("resume continues on changed runner code only when accepted, records it once and refuses any measured change", () => {
+  const { batch } = v2Fixture();
+  const harness = { ...batch, fingerprints: { ...batch.fingerprints, harnessSource: `${batch.fingerprints.harnessSource}-changed` } };
+  assert.equal(resumableExperiment(batch, batch, false), batch);
+  assert.throws(() => resumableExperiment(batch, harness, false));
+  const accepted = resumableExperiment(batch, harness, true, FixtureTime);
+  assert.deepEqual(accepted.harnessChanges, [{ at: FixtureTime, harnessSource: harness.fingerprints.harnessSource }]);
+  assert.equal(resumableExperiment(accepted, harness, true, FixtureTime), accepted);
+  for (const key of ["checks", "rubric", "benchmarkInputs", "tooling", "requestedModels", "cliPackage", "schema"] as const) {
+    assert.throws(() => resumableExperiment(batch, { ...harness, fingerprints: { ...harness.fingerprints, [key]: "changed" } }, true));
+  }
 });
