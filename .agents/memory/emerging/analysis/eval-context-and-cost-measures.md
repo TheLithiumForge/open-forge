@@ -86,7 +86,7 @@ The maintainer wants progressive disclosure designed explicitly, since it lets a
 
 Audit, 2026-11-02: the spec has ten documents, 571 lines and 39 KB, about 10 thousand tokens. They are already split by topic: overview, rules, controls, input, visuals, sound, technology, architecture, acceptance and reproducibility. Every Open Forge setup routes them with `--tag LoadNow`, so all ten load at the start and are sent again with every request. The feature case changes only the overview, architecture, controls and reproducibility documents. The repair case changes none of them.
 
-The scoped variant routes the same documents without `LoadNow`, as on-demand entries whose descriptions say what each covers. Only the overview loads up front. The first scoped setup is Full Core, scoped, as the maintainer asked. Essentials, scoped follows if Full Core shows the effect, since Essentials is the cheapest preset today. Before building it, finish the audit: each document should answer one concern, link instead of repeating, and name its scope clearly enough that an agent can choose it from the description alone. Today's setups stay as the data points for Open Forge without scoping.
+The scoped variant puts each document in a scope folder with its own entrypoint, decided by the maintainer on 2026-11-02, since the layout affects no other eval. Only the overview loads up front. Links between documents are rewritten to the new paths and the bodies otherwise stay the same, so the setup check compares bodies with links normalized. The first scoped setup is Full Core, scoped, as the maintainer asked. Essentials, scoped follows if Full Core shows the effect, since Essentials is the cheapest preset today. Before building it, finish the audit: each document should answer one concern, link instead of repeating, and name its scope clearly enough that an agent can choose it from the description alone. Today's setups stay as the data points for Open Forge without scoping.
 
 Expected results: about the same or slightly more tokens for a full build, fewer documents read and fewer tokens for scoped work.
 
@@ -135,6 +135,5 @@ Usage measures are derived from saved evidence, so they are stored as versioned 
 
 - Which price table and date the cost estimate uses, since cached tokens cost far less than new ones.
 - Whether a scenario's relevant documents are listed by hand or derived from the requirements a task touches.
-- Whether the scoped variant changes only the routing or also splits the documents further.
 
 Back to [Analysis](_analysis.md).
