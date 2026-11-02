@@ -46,10 +46,10 @@ export function Results({ batches, layer }: {
       <div className="eval-scroll" tabIndex={0} role="region" aria-label="Judge differences"><table><thead><tr>{["Setup", "Implementer", "First judge", "Second judge", "Rules", "Code", "Wishes", "Missing", "Errors", "Different grading"].map((name) => <th key={name}>{name}</th>)}</tr></thead>
         <tbody>{deltas.map((item, index) => <tr key={`${item.key}-${index}`}><th scope="row">{item.setup}</th><td>{item.implementer}</td><td>{item.first}</td><td>{item.second}</td>{item.scores.map((score) => <td key={score.area}><Metric value={score.value} /></td>)}<td>{item.missing}</td><td>{item.errors}</td><td>{item.incompatible}</td></tr>)}</tbody>
       </table></div></details>}
-    <h2>Attempts</h2><p>Open an attempt to read its saved checks and judge evidence. Replaced attempts stay listed. Reference attempts stay out of setup comparisons.</p>
+    <h2>Runs</h2><p>Open a run to see its saved files, checks and judge answers. Replaced runs stay listed. Reference runs stay out of setup comparisons.</p>
     {active === undefined ? null : runs.map((run) => <details className="eval-panel" key={run.id}>
-      <summary>{run.setup}. {choiceLabel(run.agent)}. Attempt {run.repeat}. {run.pipelineStatus}.</summary><Attempt batch={active.batch} run={run} />
+      <summary>{run.setup}. {choiceLabel(run.agent)}. Repeat {run.repeat}. {run.pipelineStatus}.</summary><Attempt batch={active.batch} run={run} />
     </details>)}
-    {referenceRuns.map(({ run, batch }) => <details className="eval-panel" key={run.id}><summary>Reference. CLI {batch.experiment.cliVersion}. Attempt {run.repeat}.</summary><Attempt batch={batch} run={run} /></details>)}
+    {referenceRuns.map(({ run, batch }) => <details className="eval-panel" key={run.id}><summary>Reference. CLI {batch.experiment.cliVersion}. Repeat {run.repeat}.</summary><Attempt batch={batch} run={run} /></details>)}
   </>;
 }

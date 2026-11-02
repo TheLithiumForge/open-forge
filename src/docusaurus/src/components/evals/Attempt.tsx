@@ -11,13 +11,13 @@ export function Attempt({ batch, run }: {
   const records = batch.assessments.filter((item): item is Checks | Judge => item.kind !== "pick" && item.runId === run.id);
   const json = `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify({ run, assessments: records, artifacts: batch.artifacts.filter((item) => item.runId === run.id) }, null, 2))}`;
   return <div className="eval-attempt">
-    <h3>Attempt</h3>
+    <h3>Run</h3>
     <p>Batch <code>{batch.experiment.id}</code>. Run <code>{run.id}</code>.</p>
     <p>Requested model: {run.requestedModel ?? "Missing"}. Reported model: {run.reportedModel ?? "Missing"}.</p>
     <p>Latest check coverage: {percent(view.result?.coverage.share ?? null)}. Time: {number(run.agentSeconds)} seconds. Tokens: {number(tokenTotal(run))}.</p>
     <p>Failure kind: {run.failureKind ?? "None"}. {run.replacesRunId === null ? "" : `Replaces ${run.replacesRunId}. ${run.replacementReason ?? "Missing reason"}`}</p>
     {run.error === null ? null : <pre>{run.error}</pre>}
-    <a href={json} download={`${run.id}.json`}>Download attempt records</a>
+    <a href={json} download={`${run.id}.json`}>Download run records</a>
     <h3>Saved files</h3>
     <Evidence batch={batch} artifacts={batch.artifacts.filter((item) => item.runId === run.id && item.assessmentId === null)} />
     {records.length === 0 ? <p>Check and judge assessments are missing.</p> : null}
