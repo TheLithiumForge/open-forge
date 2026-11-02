@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "artifact.json",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "runId": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "assessmentId": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "path": {
+      "$ref": "common.json#/$defs/relativePath"
+    },
+    "bytes": {
+      "$ref": "common.json#/$defs/count"
+    },
+    "sha256": {
+      "$ref": "common.json#/$defs/digest"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "runId",
+    "assessmentId",
+    "path",
+    "bytes",
+    "sha256"
+  ],
+  "additionalProperties": true
+}

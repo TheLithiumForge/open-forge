@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "setup.json",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "id": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "experimentId": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "label": {
+      "type": "string"
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "contentHash": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "$ref": "common.json#/$defs/relativePath"
+          },
+          "bytes": {
+            "$ref": "common.json#/$defs/count"
+          },
+          "sha256": {
+            "$ref": "common.json#/$defs/digest"
+          }
+        },
+        "required": [
+          "path",
+          "bytes",
+          "sha256"
+        ],
+        "additionalProperties": true
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "experimentId",
+    "label",
+    "commands",
+    "contentHash",
+    "files"
+  ],
+  "additionalProperties": true
+}

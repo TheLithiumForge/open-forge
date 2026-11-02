@@ -1,0 +1,771 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "common.json",
+  "$defs": {
+    "reference": {
+      "type": "object",
+      "properties": {
+        "commit": {
+          "type": "string"
+        },
+        "contentHash": {
+          "type": "string"
+        },
+        "specHash": {
+          "type": "string"
+        },
+        "specVersion": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "commit",
+        "contentHash",
+        "specHash",
+        "specVersion"
+      ],
+      "additionalProperties": true
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "number": {
+      "type": "number",
+      "minimum": 0
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/|[A-Za-z]:|.*\\\\|.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "choice": {
+      "type": "object",
+      "properties": {
+        "tool": {
+          "enum": [
+            "claude",
+            "codex",
+            "mock"
+          ]
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "effort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "model",
+        "effort"
+      ],
+      "additionalProperties": true
+    },
+    "selection": {
+      "type": "object",
+      "properties": {
+        "applicable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "working": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stated": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "applicable",
+        "working",
+        "stated"
+      ],
+      "additionalProperties": true
+    },
+    "answer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "area": {
+          "type": "string"
+        },
+        "question": {
+          "type": "string"
+        },
+        "yes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "no": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unsure": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "area",
+        "question",
+        "yes",
+        "no",
+        "unsure",
+        "evidence"
+      ],
+      "additionalProperties": true
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "layer": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "judges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tool": {
+                "enum": [
+                  "claude",
+                  "codex",
+                  "mock"
+                ]
+              },
+              "model": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "effort": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "tool",
+              "model",
+              "effort"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "suite": {
+          "type": "string"
+        },
+        "runsPerSetup": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parallelRuns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "setups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "agents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tool": {
+                "enum": [
+                  "claude",
+                  "codex",
+                  "mock"
+                ]
+              },
+              "model": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "effort": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "tool",
+              "model",
+              "effort"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "judge": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "enum": [
+                "claude",
+                "codex",
+                "mock"
+              ]
+            },
+            "model": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "effort": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "repeats": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "tool",
+            "model",
+            "effort",
+            "repeats"
+          ],
+          "additionalProperties": true
+        },
+        "simulatedUser": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "enum": [
+                "claude",
+                "codex",
+                "mock"
+              ]
+            },
+            "model": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "effort": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "tool",
+            "model",
+            "effort"
+          ],
+          "additionalProperties": true
+        },
+        "isolation": {
+          "enum": [
+            "docker",
+            "local"
+          ]
+        },
+        "containers": {
+          "type": "object",
+          "properties": {
+            "cpus": {
+              "type": "number",
+              "minimum": 0
+            },
+            "memory": {
+              "type": "string"
+            },
+            "processes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "cpus",
+            "memory",
+            "processes"
+          ],
+          "additionalProperties": true
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "runMinutes": {
+              "type": "number",
+              "minimum": 0
+            },
+            "questionRounds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "checkMinutes": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "runMinutes",
+            "questionRounds",
+            "checkMinutes"
+          ],
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "suite",
+        "runsPerSetup",
+        "parallelRuns",
+        "setups",
+        "agents",
+        "judge",
+        "simulatedUser",
+        "isolation",
+        "limits"
+      ],
+      "additionalProperties": true
+    },
+    "build": {
+      "type": "object",
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "typecheck": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "packages": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bytes": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "log": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "passed",
+        "typecheck",
+        "seconds",
+        "packages",
+        "html",
+        "bytes",
+        "log"
+      ],
+      "additionalProperties": true
+    },
+    "performance": {
+      "type": "object",
+      "properties": {
+        "firstRenderMs": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "largeBoardTapP95Ms": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "firstRenderMs",
+        "largeBoardTapP95Ms"
+      ],
+      "additionalProperties": true
+    },
+    "telemetry": {
+      "type": "object",
+      "properties": {
+        "tokens": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "cachedInput": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "cacheWrite": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "output": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "reasoning": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "input",
+                "cachedInput",
+                "cacheWrite",
+                "output",
+                "reasoning"
+              ],
+              "additionalProperties": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requests": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "peakContext": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contextWindow": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "compactions": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "toolCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failedToolCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "openForgeReads": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "openForgeBytes": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reportedCostUsd": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "tokens",
+        "requests",
+        "peakContext",
+        "contextWindow",
+        "compactions",
+        "toolCalls",
+        "failedToolCalls",
+        "openForgeReads",
+        "openForgeBytes",
+        "reportedCostUsd",
+        "model"
+      ],
+      "additionalProperties": true
+    },
+    "functional": {
+      "type": "object",
+      "properties": {
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "applicable": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "blocked": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "errors": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "share": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "passed",
+            "applicable",
+            "blocked",
+            "errors",
+            "share"
+          ],
+          "additionalProperties": true
+        },
+        "workingGate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "statedSuccess": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "coverage",
+        "workingGate",
+        "statedSuccess"
+      ],
+      "additionalProperties": true
+    },
+    "outcome": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "area": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "error",
+            "blocked"
+          ]
+        },
+        "evidence": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "area",
+        "status",
+        "evidence"
+      ],
+      "additionalProperties": true
+    }
+  }
+}

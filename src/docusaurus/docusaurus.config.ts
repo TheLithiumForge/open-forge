@@ -41,7 +41,7 @@ const config: Config = {
     ],
   ],
 
-  plugins: [["@docusaurus/plugin-content-docs", guideDocs]],
+  plugins: [["@docusaurus/plugin-content-docs", guideDocs], "./scripts/evals/plugin.ts"],
 
   // Local search: the index is built with the site and searched in the browser,
   // with no external service. The optional AI answer widget is not installed.

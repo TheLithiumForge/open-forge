@@ -12,6 +12,8 @@ Status: approved design on 2026-11-01. The complete command flow is Not built ye
 
 A draft runner exists under `src/evals/`. Its earlier real runs are recorded in [Task 58](../../../working/cli-development/tasks/task58-demo-evals.md#current-state). The approved flow below replaces its folder-only and single-image arrangements. For example, a saved Layer 1 plan will run the four current setups and leave frozen games and separate assessments.
 
+The public [run guide](https://thelithiumforge.github.io/open-forge/docs/evals/run) covers the implemented commands, model presets, reference data point and local UI. Published checks and judge pairs appear in [Results](https://thelithiumforge.github.io/open-forge/docs/evals/results). CLI and reference trends appear in [History](https://thelithiumforge.github.io/open-forge/docs/evals/history). These pages live in the main documentation site and read records from the results repository.
+
 ## Requirements
 
 The approved product needs these prerequisites:
@@ -26,7 +28,7 @@ Container rules follow [Architecture](architecture.md#images). The [proposal's p
 
 ## Commands
 
-Run the planned command family from the repository root as `npm run evals -- <command>`. This command family is Not built yet.
+Run commands from the repository root as `npm run evals -- <command>`. The public run guide above describes the implemented commands. The `publish` command below is planned.
 
 | Command | Result |
 | --- | --- |

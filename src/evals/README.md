@@ -145,6 +145,8 @@ The switch shows the matching preset name. If the rows match none, it shows "Cus
 
 ## Results
 
+Published batches appear in the main documentation site under [Evals](https://thelithiumforge.github.io/open-forge/docs/evals). The [run guide](https://thelithiumforge.github.io/open-forge/docs/evals/run) covers commands and presets. The [results browser](https://thelithiumforge.github.io/open-forge/docs/evals/results) shows checks and judge pairs. The [history browser](https://thelithiumforge.github.io/open-forge/docs/evals/history) compares CLI versions and reference assessments. Fetch latest results loads validated records from the public results repository without a docs rebuild.
+
 Attempts stay in the ignored `src/evals/runs/` folder until you export them. Open the UI with `npm run evals -- ui`. It serves `http://localhost:4318/`.
 
 The UI has these views:

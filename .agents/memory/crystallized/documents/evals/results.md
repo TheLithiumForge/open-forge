@@ -6,11 +6,11 @@ open-forge:
 
 # Eval Results
 
-Eval Results is the public record of Open Forge comparisons, with versioned measurements, saved evidence and a separate results site.
+Eval Results is the public record of Open Forge comparisons, with versioned measurements and saved evidence shown in the main documentation site.
 
-Status: approved on 2026-11-01. The repository, its site and the submodule were created the same day, with no batches published yet. The publish command is Not built yet.
+Status: approved on 2026-11-01. The repository, its original site and the submodule were created the same day, with no batches published yet. The publish command is Not built yet.
 
-The public [`open-forge-eval-results`](https://github.com/TheLithiumForge/open-forge-eval-results) repository holds the records, evidence manifests and its Docusaurus site, published at [the results site](https://thelithiumforge.github.io/open-forge-eval-results/). It's a submodule at `src/evals/results/`. The runner, specs and local UI stay in `src/evals/`. The [approval](../../../emerging/analysis/eval-product-proposal.md#approved) makes the repository public.
+The public [`open-forge-eval-results`](https://github.com/TheLithiumForge/open-forge-eval-results) repository holds the records, schemas, generated `index.json` and evidence manifests. The [Evals pages](https://thelithiumforge.github.io/open-forge/docs/evals) in the main Docusaurus site show them. It's a submodule at `src/evals/results/`. The runner, specs and local UI stay in `src/evals/`. The [approval](../../../emerging/analysis/eval-product-proposal.md#approved) makes the repository public.
 
 ## Versions
 
@@ -41,7 +41,7 @@ The planned repository layout is:
 | `schemas/v2/` | JSON Schemas |
 | `benchmarks/<input-hash>/manifest.json` | Frozen input manifest |
 | `versions/<cli-version>/batches/<batch>/` | `experiment.json`, `setups.jsonl`, `runs.jsonl`, `assessments/` and `artifacts.json` |
-| `site/` | Docusaurus source |
+| `index.json` | Generated batch catalogue, including layers, models, grading versions and record paths |
 | `scripts/` | Validation, views and publication tools |
 
 Local unpublished runs stay in gitignored `src/evals/runs/`.
@@ -52,7 +52,7 @@ Store each kind of evidence in its chosen place:
 
 | Place | Contents |
 | --- | --- |
-| Git | Records, schemas, manifests, site source and lockfiles |
+| Git | Records, schemas, manifests, catalogue and lockfiles |
 | Release assets | Compressed agent source, built games, screenshots, transcripts and tooling snapshots |
 
 Use one immutable release per batch. Checksum the assets and split them at 1 GiB. Remove credentials and machine paths during export. A correction creates a new release linked to the earlier release. The [proposal's storage rules](../../../emerging/analysis/eval-product-proposal.md#results-repository-and-site) define this split.
@@ -66,15 +66,17 @@ Publishing follows these steps:
 1. Check batch completeness, freeze the records, remove private data and bundle evidence.
 2. Open a results change and a draft release with the staged files.
 3. Validate schemas, references and comparison groups in CI.
-4. On merge, verify uploaded asset hashes, publish the release and rebuild the site.
+4. On merge, verify uploaded asset hashes, publish the release and update the catalogue.
 
-Each publication changes a remote repository and needs the maintainer's go. A failed check or deploy leaves the previous site up. The [proposal's publish flow](../../../emerging/analysis/eval-product-proposal.md#results-repository-and-site) defines these steps and permission.
+Each publication changes a remote repository and needs the maintainer's go. A failed validation keeps invalid records out of the site. The [proposal's publish flow](../../../emerging/analysis/eval-product-proposal.md#results-repository-and-site) defines these steps and permission.
 
 ## Results site
 
-The site publishes to GitHub Pages from its repository's `main` on every push. New results need neither a CLI release nor a docs release. Open Forge's docs link to it under "Evaluation results". The submodule pins a reviewed snapshot for local use, and publishing doesn't need a new pin.
+The Evals section lives in Open Forge's main documentation site under `src/docusaurus/`. The results repository is a data store with validation CI and no Pages deployment. The submodule pins the initial data copy read at build time.
 
-The site provides an overview, CLI history with the model fixed, model history with Open Forge and its control side by side, batch comparisons with intervals, single attempts and run details with downloads. Every chart shows its data commit and analysis version.
+Fetch latest results resolves the public results repository's current commit. It then reads `index.json` and records through raw GitHub URLs pinned to that commit. The site validates their schemas and references before replacing the displayed data. A failed fetch keeps the previous copy. Record text is plain data. Each view shows its data commit, copy or fetch time and analysis version. New records can be read without a CLI or docs release.
+
+The site provides layer overviews, setup tables for each implementer and judge pair, charts, attempt evidence, CLI history and the reference trend. Wilson and bootstrap intervals describe screening variation. Different grading versions stay apart. Missing values stay missing.
 
 Keep correctness, rules, cost, wishes and preferences in separate panels. Show regressions and inconclusive results. The [proposal's site design](../../../emerging/analysis/eval-product-proposal.md#results-repository-and-site) defines these views. The current sample and limits on claims follow [Vision](vision.md#claims).
 

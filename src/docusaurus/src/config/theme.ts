@@ -1,6 +1,6 @@
 import type { ThemeConfig } from "@docusaurus/preset-classic";
 import { themes as prismThemes } from "prism-react-renderer";
-import { evalResultsUrl, guidesRouteBasePath, npmPackageUrl, releasesUrl, repositoryUrl } from "./site";
+import { guidesRouteBasePath, npmPackageUrl, releasesUrl, repositoryUrl } from "./site";
 
 const guidesSidebarRoute = `/${guidesRouteBasePath}`;
 
@@ -18,6 +18,7 @@ export const themeConfig = {
     items: [
       { type: "docSidebar", sidebarId: "docs", position: "left", label: "Docs" },
       { to: "/docs/extensions", label: "Extensions", position: "left" },
+      { to: "/docs/evals", label: "Evals", position: "left" },
       { to: "/docs/demos", label: "Demos", position: "left" },
       { to: "/docs/cli", label: "CLI", position: "left" },
       { to: `${guidesSidebarRoute}/development`, label: "Contributing", position: "left" },
@@ -59,7 +60,7 @@ export const themeConfig = {
         items: [
           { label: "GitHub", href: repositoryUrl },
           { label: "Releases", href: releasesUrl },
-          { label: "Evaluation results", href: evalResultsUrl },
+          { label: "Evaluation results", to: "/docs/evals/results" },
           { label: "npm package", href: npmPackageUrl },
         ],
       },

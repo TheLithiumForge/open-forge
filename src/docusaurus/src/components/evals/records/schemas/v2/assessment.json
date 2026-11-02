@@ -1,0 +1,521 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assessment.json",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 2
+        },
+        "id": {
+          "$ref": "common.json#/$defs/id"
+        },
+        "experimentId": {
+          "$ref": "common.json#/$defs/id"
+        },
+        "createdAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "versions": {
+          "type": "object",
+          "properties": {
+            "checker": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rubric": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "judge": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "spec": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "specVersion": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "checker",
+            "rubric",
+            "judge"
+          ],
+          "additionalProperties": true
+        },
+        "replacesAssessmentId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kind": {
+          "const": "checks"
+        },
+        "runId": {
+          "$ref": "common.json#/$defs/id"
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "$ref": "common.json#/$defs/outcome"
+          }
+        },
+        "selection": {
+          "$ref": "common.json#/$defs/selection"
+        },
+        "build": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/build"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "performance": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/performance"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "shots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "experimentId",
+        "createdAt",
+        "versions",
+        "replacesAssessmentId",
+        "error",
+        "kind",
+        "runId",
+        "outcomes",
+        "selection",
+        "build",
+        "performance",
+        "shots"
+      ],
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 2
+        },
+        "id": {
+          "$ref": "common.json#/$defs/id"
+        },
+        "experimentId": {
+          "$ref": "common.json#/$defs/id"
+        },
+        "createdAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "versions": {
+          "type": "object",
+          "properties": {
+            "checker": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rubric": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "judge": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "spec": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "specVersion": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "checker",
+            "rubric",
+            "judge"
+          ],
+          "additionalProperties": true
+        },
+        "replacesAssessmentId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kind": {
+          "const": "judge"
+        },
+        "ballots": {
+          "$ref": "common.json#/$defs/count"
+        },
+        "runId": {
+          "$ref": "common.json#/$defs/id"
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "common.json#/$defs/answer"
+          }
+        },
+        "requestedModel": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/choice"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reportedModel": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "experimentId",
+        "createdAt",
+        "versions",
+        "replacesAssessmentId",
+        "error",
+        "kind",
+        "runId",
+        "answers",
+        "requestedModel",
+        "reportedModel"
+      ],
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 2
+        },
+        "id": {
+          "$ref": "common.json#/$defs/id"
+        },
+        "experimentId": {
+          "$ref": "common.json#/$defs/id"
+        },
+        "createdAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "versions": {
+          "type": "object",
+          "properties": {
+            "checker": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rubric": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "judge": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "spec": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "specVersion": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "checker",
+            "rubric",
+            "judge"
+          ],
+          "additionalProperties": true
+        },
+        "replacesAssessmentId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kind": {
+          "const": "pick"
+        },
+        "left": {
+          "type": "object",
+          "properties": {
+            "runId": {
+              "$ref": "common.json#/$defs/id"
+            },
+            "artifactHash": {
+              "anyOf": [
+                {
+                  "$ref": "common.json#/$defs/digest"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "side": {
+              "const": "left"
+            }
+          },
+          "required": [
+            "runId",
+            "artifactHash",
+            "side"
+          ],
+          "additionalProperties": true
+        },
+        "right": {
+          "type": "object",
+          "properties": {
+            "runId": {
+              "$ref": "common.json#/$defs/id"
+            },
+            "artifactHash": {
+              "anyOf": [
+                {
+                  "$ref": "common.json#/$defs/digest"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "side": {
+              "const": "right"
+            }
+          },
+          "required": [
+            "runId",
+            "artifactHash",
+            "side"
+          ],
+          "additionalProperties": true
+        },
+        "winner": {
+          "enum": [
+            "left",
+            "right",
+            "tie"
+          ]
+        },
+        "revealed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "experimentId",
+        "createdAt",
+        "versions",
+        "replacesAssessmentId",
+        "error",
+        "kind",
+        "left",
+        "right",
+        "winner",
+        "revealed"
+      ],
+      "additionalProperties": true
+    }
+  ]
+}

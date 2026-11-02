@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "experiment.json",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "reference": {
+      "$ref": "common.json#/$defs/reference"
+    },
+    "id": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "suite": {
+      "type": "string"
+    },
+    "fingerprint": {
+      "type": "string"
+    },
+    "intentEdited": {
+      "type": "boolean"
+    },
+    "config": {
+      "$ref": "common.json#/$defs/config"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "preparing",
+        "running",
+        "paused",
+        "done",
+        "failed"
+      ]
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "versions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "revealed": {
+      "type": "boolean"
+    },
+    "legacy": {
+      "type": "boolean"
+    },
+    "cliVersion": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidateLabel": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "capturedAt": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fingerprints": {
+      "type": "object",
+      "properties": {
+        "cliPackage": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "benchmarkInputs": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "setupContent": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checks": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rubric": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "harnessSource": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tooling": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requestedModels": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reportedModels": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "cliPackage",
+        "benchmarkInputs",
+        "setupContent",
+        "checks",
+        "rubric",
+        "harnessSource",
+        "tooling",
+        "requestedModels",
+        "reportedModels",
+        "schema"
+      ],
+      "additionalProperties": true
+    },
+    "pinnedTools": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "imageDigests": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "requestedModels": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/choice"
+      }
+    },
+    "reportedModels": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "suite",
+    "fingerprint",
+    "intentEdited",
+    "config",
+    "createdAt",
+    "status",
+    "runs",
+    "versions",
+    "revealed",
+    "legacy",
+    "cliVersion",
+    "candidateLabel",
+    "capturedAt",
+    "fingerprints",
+    "pinnedTools",
+    "imageDigests",
+    "requestedModels",
+    "reportedModels"
+  ],
+  "additionalProperties": true
+}

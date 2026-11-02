@@ -1,0 +1,18 @@
+---
+title: Results
+hide_table_of_contents: true
+---
+# Results
+Eval Results is a browser that compares published coding attempts by layer, setup, implementer and judge.
+
+For example, choose Layer 1 to compare each setup's coverage with its judge answers, then open an attempt to read the checks and evidence. These are screening results. Every CLI stays beta. Nothing is a claim yet.
+
+When the results submodule is present, the initial records come from it at build time. Without it, the page starts with no published batches and an unknown data commit. The checked-in schemas let Fetch latest results work in either case. Fetch latest results reads the public repository at one data commit and validates its catalogue, records and references before showing them. A failed fetch keeps the previous data. Loaded gives the copy time for the initial data and the fetch time for refreshed data.
+
+Binary gates use 95% Wilson intervals. Other attempt metrics use 2,000 fixed-seed bootstrap samples and the 2.5th and 97.5th percentiles. Single attempts have no interval. Missing values stay missing. Different grading versions stay apart. Implementation time and tokens appear in each judge pair for comparison and count once per attempt within that pair.
+
+import Evals from '@site/src/components/evals/Evals'
+
+<Evals />
+
+Back to [Evals](index.md).

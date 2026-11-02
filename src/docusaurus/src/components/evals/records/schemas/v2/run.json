@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "run.json",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "implementer": {
+      "const": "reference"
+    },
+    "reference": {
+      "$ref": "common.json#/$defs/reference"
+    },
+    "id": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "batchId": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "setup": {
+      "type": "string"
+    },
+    "agent": {
+      "$ref": "common.json#/$defs/choice"
+    },
+    "repeat": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pipelineStatus": {
+      "enum": [
+        "pending",
+        "agent",
+        "building",
+        "checking",
+        "judging",
+        "done",
+        "failed",
+        "limited"
+      ]
+    },
+    "functionalResult": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/functional"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "failureKind": {
+      "anyOf": [
+        {
+          "enum": [
+            "infrastructure",
+            "attempt",
+            "grading"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "replacesRunId": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "replacementReason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "artifactHash": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "requestedModel": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reportedModel": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "startedAt": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "finishedAt": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "agentSeconds": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/number"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "finalMessage": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "question",
+          "answer"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "telemetry": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/telemetry"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "build": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/build"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "performance": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/performance"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "shots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "batchId",
+    "setup",
+    "agent",
+    "repeat",
+    "pipelineStatus",
+    "functionalResult",
+    "failureKind",
+    "replacesRunId",
+    "replacementReason",
+    "artifactHash",
+    "requestedModel",
+    "reportedModel",
+    "error",
+    "startedAt",
+    "finishedAt",
+    "agentSeconds",
+    "finalMessage",
+    "questions",
+    "telemetry",
+    "build",
+    "performance",
+    "shots"
+  ],
+  "additionalProperties": true
+}

@@ -69,6 +69,12 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
+      label: "Evals",
+      link: { type: "doc", id: "evals/index" },
+      items: ["evals/run", "evals/results", "evals/history"],
+    },
+    {
+      type: "category",
       label: "Reference",
       items: ["glossary", { type: "link", label: "Command reference", href: "/guides/cli" }],
     },
