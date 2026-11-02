@@ -161,6 +161,8 @@ The maintainer then decided that judging must be repeatable by anyone: headline 
 
 Terms: an implementation run is one agent building one setup once. Grading is checks and judging, run any time after on saved files. A full run is both.
 
+Built the same day: phases 1 to 4. `results add`, `check`, `judge --missing`, `progress`, `site` and the generated CLI reference replace export, recheck, rejudge, summary tables and the local app. Resume grades saved files after a stop during grading, replaces a run at most once and pauses on a rejected sign-in. Open after the running batches finish: remove the retired app's packages, which the batch tooling fingerprint counts, then add finished batches and review the pages with real data.
+
 **Later:** testing Extensions, starting with the Helpful setup. [Task 90](task90-extensions-install-their-routes.md) covers Extensions that need routes a preset left out, and the [Plan-Ahead Skill](../../../emerging/ideas/plan-ahead-skill.md) idea covers Guidance that doesn't change how agents ask.
 
 **Related:** the Emerging idea on
