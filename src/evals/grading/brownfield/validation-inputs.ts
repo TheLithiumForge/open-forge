@@ -10,10 +10,16 @@ export const ValidationSources = {
   files: ["grading/build.ts", "grading/counting.ts", "grading/grading.types.ts", "history/statuses.ts", "materialize/patch.ts", "package-lock.json", "benchmarks/neon-pairs/requirements.json", "benchmarks/neon-pairs/trace.json"],
 } as const;
 
+// Another layer's validation writes its report beside these sources while this one runs. A report is an output, not a grader input.
+const ValidationReport = /\.validation\.json$/;
+export function validationReport(path: string): boolean {
+  return ValidationReport.test(path);
+}
+
 export async function validationInputs(inputs: BrownfieldInputs) {
   const tooling: FileHash[] = [];
   for (const folder of ValidationSources.folders) {
-    for (const file of await inventory(join(evalsRoot, folder), ReferenceExcluded)) tooling.push({ path: `${folder}/${file.path}`, sha256: sha256(file.bytes) });
+    for (const file of await inventory(join(evalsRoot, folder), ReferenceExcluded, new Set(), validationReport)) tooling.push({ path: `${folder}/${file.path}`, sha256: sha256(file.bytes) });
   }
   for (const path of ValidationSources.files) tooling.push({ path, sha256: sha256(await readFile(join(evalsRoot, path))) });
   return { case: hashesWithoutValidation(await inventory(inputs.case.root), inputs.case.checks), reference: hashes(inputs.reference),
