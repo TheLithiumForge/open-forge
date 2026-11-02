@@ -1,0 +1,1562 @@
+{
+  "schemaVersion": 1,
+  "layer": "L2",
+  "fingerprint": "c44eb50e0c4d6840a2e7478ac22a4269654e5ee3b4b10e85e0be956b98c871f4",
+  "results": [
+    {
+      "fixture": "reference",
+      "checks": [
+        {
+          "id": "delivery-single-file",
+          "area": "Delivery",
+          "status": "pass",
+          "evidence": "Opens from disk with no other files or requests."
+        },
+        {
+          "id": "stack-react-typescript",
+          "area": "Stack",
+          "status": "pass",
+          "evidence": "React and TypeScript are in package.json. Type check: passed."
+        },
+        {
+          "id": "grid-4-and-16",
+          "area": "Grid sizes",
+          "status": "pass",
+          "evidence": "Offered sizes: 4, 6, 8, 10, 12, 14, 16."
+        },
+        {
+          "id": "grid-sizes-pair-up",
+          "area": "Grid sizes",
+          "status": "pass",
+          "evidence": "Every offered size has its requested square layout and an even card count, with one empty cell on odd boards."
+        },
+        {
+          "id": "faces-drawn",
+          "area": "Faces",
+          "status": "pass",
+          "evidence": "No image files or emoji on the revealed cards."
+        },
+        {
+          "id": "faces-distinct-16",
+          "area": "Faces",
+          "status": "pass",
+          "evidence": "Individual visible card screenshots, including scrolled cards: 256/256 captured, 0 share a render with more than one other card. L1 color and shape thresholds are unchanged."
+        },
+        {
+          "id": "matching-pairs",
+          "area": "Matching",
+          "status": "pass",
+          "evidence": "Every pair matched in 12 turns."
+        },
+        {
+          "id": "input-same-card-twice",
+          "area": "Input",
+          "status": "pass",
+          "evidence": "Clicking a card twice didn't pair it with itself."
+        },
+        {
+          "id": "input-clicks-during-delay",
+          "area": "Input",
+          "status": "pass",
+          "evidence": "A click during the flip-back delay didn't keep the turn's cards up, and the game could still be finished"
+        },
+        {
+          "id": "moves-count",
+          "area": "Moves",
+          "status": "pass",
+          "evidence": "Moves went from 0 to 12."
+        },
+        {
+          "id": "moves-compared",
+          "area": "Moves",
+          "status": "pass",
+          "evidence": "A game with 10 extra misses showed 22 moves, a careful one 11."
+        },
+        {
+          "id": "new-game-resets",
+          "area": "New Game",
+          "status": "pass",
+          "evidence": "During the flip-back delay, New Game left every card face down and moves at 0."
+        },
+        {
+          "id": "win-shown",
+          "area": "Win",
+          "status": "pass",
+          "evidence": "The game showed that it was won."
+        },
+        {
+          "id": "best-score",
+          "area": "Best score",
+          "status": "pass",
+          "evidence": "Best went none, none (unfinished), 22 (worse), 11 (better), 11 (worst), 11 (reload), and showed none for 6x6."
+        },
+        {
+          "id": "phone-full-game",
+          "area": "Phone",
+          "status": "pass",
+          "evidence": "Finished a game by tapping."
+        },
+        {
+          "id": "keyboard-full-game",
+          "area": "Keyboard",
+          "status": "pass",
+          "evidence": "Finished a game with the keyboard alone."
+        },
+        {
+          "id": "l2-sizes",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R01.1: pass. Visible card counts: 16, 36, 64, 100, 144, 196, 256.\nR01.2: pass. Measured square cards in equal row and column counts at every supported side length.\nR01.3: pass. Revealed every position through play and counted exactly two of each named face at every size."
+        },
+        {
+          "id": "l2-selection",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R02.1: pass. First reveal shows a face with zero moves.\nR02.2: pass. Repeated first activation keeps names and moves.\nR02.3: pass. Activating a matched card keeps state.\nR03.1: pass. Second reveal retains the matching faces and names their matched state.\nR03.2: pass. Second reveal retains the matching faces and names their matched state.\nR03.3: pass. Pair counter changes immediately to one pair."
+        },
+        {
+          "id": "l2-mismatch",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R04.1: pass. Mismatch stays revealed through 799 controlled active milliseconds.\nObserved: {\"activeMs\":799,\"a\":1,\"b\":3,\"names\":[\"Row 1, column 1, matched, cyan solid star, marker top\",\"Row 1, column 2, revealed, cyan solid diamond, marker top\",\"Row 1, column 3, matched, cyan solid star, marker top\",\"Row 1, column 4, revealed, cyan solid plus, marker top\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}\nR04.2: pass. Both mismatching cards close at 800 active milliseconds with 5000 hidden milliseconds excluded.\nObserved: {\"activeMs\":800,\"hiddenMs\":5000,\"a\":1,\"b\":3,\"names\":[\"Row 1, column 1, matched, cyan solid star, marker top\",\"Row 1, column 2, closed\",\"Row 1, column 3, matched, cyan solid star, marker top\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}\nR04.3: pass. An activation during mismatch changes neither selection nor moves.\nR04.4: pass. Synthetic browser visibility hides the page for 5000 controlled milliseconds without closing the mismatch."
+        },
+        {
+          "id": "l2-moves",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R05.1: pass. One match and one mismatch cost two moves.\nR05.2: pass. First reveal shows a face with zero moves.\nR05.3: pass. An activation during mismatch changes neither selection nor moves.\nR05.4: pass. One match and one mismatch cost two moves.\nR05.9: pass. Moves: N shows the current count before, during and after play."
+        },
+        {
+          "id": "l2-completion",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R06.1: pass. Pair counter changes immediately to one pair.\nR06.2: pass. Pairs: M/T shows the current pair count and total throughout play.\nR06.3: pass. All eight pairs produce a win summary.\nR06.4: pass. The completion summary must contain the final eight moves.\nR06.5: pass. The completion summary must include final elapsed time.\nR06.6: pass. V18.1: All eight pairs produce a win summary.\nV18.2: Win pulse runs once for 600ms.\nV18.3: Reduced motion shows completion without an active animation.\nV18.4: No continuing flash, confetti canvas or repeating celebration remains."
+        },
+        {
+          "id": "l2-clock",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R07.1: pass. Clock before reveal=0, after 2300 active milliseconds=2.\nR07.2: pass. Clock before reveal=0, after 2300 active milliseconds=2.\nR07.3: pass. Hidden controlled time does not advance the displayed clock.\nR07.5: pass. Clock stays fixed after completion.\nR07.6: pass. Skipping render callbacks still accounts for 5000 active milliseconds.\nR07.7: pass. Clock uses the same controlled active-time advances as the mismatch journey.\nR07.8: pass. Both mismatching cards close at 800 active milliseconds with 5000 hidden milliseconds excluded.\nObserved: {\"activeMs\":800,\"hiddenMs\":5000,\"a\":1,\"b\":3,\"names\":[\"Row 1, column 1, matched, cyan solid star, marker top\",\"Row 1, column 2, closed\",\"Row 1, column 3, matched, cyan solid star, marker top\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}\nR07.10: pass. After a controlled jump beyond the displayed time limit, a match, an 800ms miss and the remaining game still finish through visible play.\nR07.11: pass. The visible clock stays at any implemented cap, or advances by the continued active interval. Layer 2 doesn't require a numeric cap. Layer 3 checks the exact stored limit separately.\nR07.12: pass. Time: m:ss floors seconds, pads them and continues minutes past 59 under a controlled clock."
+        },
+        {
+          "id": "l2-preferences",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R08.1: pass. A fresh HTTP origin starts with sixteen cards.\nR08.2: pass. A size selected on this origin survives reload.\nR08.3: pass. A size selected on this origin survives reload.\nR08.4: pass. Reload starts closed at zero moves with a different visibly learned deal."
+        },
+        {
+          "id": "l2-reset",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R09.1: pass. New Game keeps the size and clears progress with a different visibly discovered deal.\nR09.2: pass. Restart repeats the first visible face of this deal.\nR09.3: pass. Changing size replaces the board with that size.\nR09.4: pass. Restart, New Game and size change clear selection, matches, moves and elapsed time."
+        },
+        {
+          "id": "l2-best",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R10.1: pass. Unfinished exploration creates no best. A completed nine-move game records nine.\nR10.2: pass. Eight moves replaces nine. Equal and nine-move finishes then retain eight.\nR10.3: pass. The best survives reload on the same HTTP origin.\nR10.4: pass. Eight moves replaces nine. Equal and nine-move finishes then retain eight.\nR10.5: pass. Restart and New Game keep the saved best.\nR10.6: pass. Best: N follows the current size before and after completion, restart and reload. An unplayed size shows Best: none.\nR10.7: pass. A fresh origin displays Best: none."
+        },
+        {
+          "id": "l2-storage",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R11.3: pass. Malformed JSON, unsupported sizes, negative scores, null and arrays fall back safely on a fresh HTTP origin.\nR11.4: pass. With Storage reads and writes throwing SecurityError, a full visible-play game still finishes."
+        },
+        {
+          "id": "l2-stale",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "R12.1: pass. After pending mismatches, Restart, New Game, a size change and leaving the page invalidate old callbacks.\nR12.2: pass. After pending mismatches, Restart, New Game, a size change and leaving the page invalidate old callbacks."
+        },
+        {
+          "id": "l2-controls",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "C01.1: pass. Grid size is the name of a native select.\nC01.2: pass. Size labels: 4x4, 6x6, 8x8, 10x10, 12x12, 14x14, 16x16.\nC02.1: pass. Native button named New Game.\nC02.2: pass. New Game keeps the size and clears progress with a different visibly discovered deal.\nC03.1: pass. Native button named Restart.\nC03.2: pass. Restart repeats the first visible face of this deal."
+        },
+        {
+          "id": "l2-focus",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "C13.1: pass. New Game and Restart retain button focus.\nC13.3: pass. New Game and Restart retain button focus.\nC13.5: pass. Both deal changes reset the remembered card to zero.\nI11.1: pass. Initial load keeps document focus instead of focusing a control or card.\nI12.1: pass. Both deal changes reset the remembered card to zero."
+        },
+        {
+          "id": "l2-activation",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "I01.1: pass. Every discovered card is a native button.\nI01.2: pass. Pointer, completed tap, Enter and Space produce the same revealed board.\nI03.1: pass. Right-click and a held touch keep contextmenu uncancelled. Whether a real long press leaves cards closed is user acceptance, and the operating-system menu itself isn't captured.\nI03.2: pass. Context menu is not cancelled and a right click does not reveal a card.\nI04.1: pass. Hover changes no accessible game state.\nI04.2: pass. Cancelled touch pointer leaves game state unchanged."
+        },
+        {
+          "id": "l2-navigation",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "I05.1: pass. Initially only the first card is a board tab stop.\nI05.2: pass. Shift+Tab reenters at the remembered card.\nI05.3: pass. Initially only the first card is a board tab stop.\nI06.1: pass. ArrowLeft from 5 must focus 4.\nI06.2: pass. ArrowRight from 5 must focus 6.\nI06.3: pass. ArrowUp from 5 must focus 1.\nI06.4: pass. ArrowDown from 5 must focus 9.\nI06.9: pass. All navigation leaves every card closed at zero moves.\nI06.10: pass. Home, End, Ctrl+End and Alt+ArrowLeft keep card focus and game state unchanged.\nObserved: [{\"key\":\"Home\",\"focused\":true,\"before\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"after\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"beforeText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\",\"afterText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\"},{\"key\":\"End\",\"focused\":true,\"before\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"after\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"beforeText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\",\"afterText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\"},{\"key\":\"Control+End\",\"focused\":true,\"before\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"after\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"beforeText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\",\"afterText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\"},{\"key\":\"Alt+ArrowLeft\",\"focused\":true,\"before\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"after\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"beforeText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\",\"afterText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\"}]\nI07.1: pass. All four edges stop arrow movement without wrapping.\nI08.1: pass. Tab and Shift+Tab leave the board with one remembered stop.\nI08.2: pass. Tab and Shift+Tab leave the board with one remembered stop."
+        },
+        {
+          "id": "l2-matched",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "I09.1: pass. A matched card remains focusable with aria-disabled=true and ignored activation.\nI09.2: pass. A matched card remains focusable with aria-disabled=true and ignored activation.\nI09.3: pass. A matched card remains focusable with aria-disabled=true and ignored activation.\nI10.1: pass. Arrow focus moves during mismatch.\nI10.2: pass. An activation during mismatch changes neither selection nor moves."
+        },
+        {
+          "id": "l2-scroll",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "I13.1: pass. Corner and mid-board focused cards keep their 5px outline allowance inside every clipping ancestor after focus scrolling.\nI13.2: pass. All 256 cards have at least 6px scroll margin on every side and keep interior outlines visible at both viewport widths."
+        },
+        {
+          "id": "l2-names",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "I14.1: pass. All closed accessible names give their one-based row and column.\nI14.2: pass. Closed cards carry no face identifiers or named face SVG. Only the common back is mounted.\nObserved: {\"secret\":false,\"closed\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}\nI14.3: pass. Closed cards carry no face identifiers or named face SVG. Only the common back is mounted.\nObserved: {\"secret\":false,\"closed\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}\nI15.1: pass. Revealed and matched accessible names keep position, specified face name and state.\nObserved: {\"shown\":\"Row 1, column 1, revealed, cyan solid triangle, marker top\",\"matched\":\"Row 1, column 1, matched, cyan solid triangle, marker top\",\"expectedFace\":\"cyan solid triangle, marker top\"}\nI15.2: pass. Revealed and matched accessible names keep position, specified face name and state.\nObserved: {\"shown\":\"Row 1, column 1, revealed, cyan solid triangle, marker top\",\"matched\":\"Row 1, column 1, matched, cyan solid triangle, marker top\",\"expectedFace\":\"cyan solid triangle, marker top\"}"
+        },
+        {
+          "id": "l2-announcements",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "I16.1: pass. Exactly one polite atomic live region.\nI16.2: pass. One result announcement after a turn, none for focus, clock or mismatch closing.\nI16.3: pass. Eight matches produce eight announcements. The last announces the match and victory together.\nI16.4: pass. Two consecutive misses each cause their own live-region update.\nI16.5: pass. One result announcement after a turn, none for focus, clock or mismatch closing.\nI16.6: pass. The first and later matches use the singular and plural published wording.\nI16.7: pass. Both misses use the published wording exactly.\nI16.8: pass. The final match announces eight moves and the stopped clock in one published message."
+        },
+        {
+          "id": "l2-screen-reader",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "I17.1: pass. Keyboard-only discovery and completion. Initial tree:\n- main:\n  - paragraph: A little focus. A perfect pair.\n  - heading \"Neon Pairs\" [level=1]\n  - paragraph: Reveal two cards. Match their shape and marker to keep the pair.\n  - text: Grid size\n  - combobox \"Grid size\":\n    - option \"4x4\" [selected]\n    - option \"6x6\"\n    - option \"8x8\"\n    - option \"10x10\"\n    - option \"12x12\"\n    - option \"14x14\"\n    - option \"16x16\"\n  - button \"New Game\"\n  - button \"Restart\"\n  - term: \"Moves:\"\n  - definition: \"0\"\n  - term: \"Pairs:\"\n  - definition: 0/8\n  - term: \"Time:\"\n  - definition: 0:00\n  - term: \"Best:\"\n  - definition: none\n  - paragraph: Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\n  - status\n  - region \"Game board\":\n    - button \"Row 1, column 1, closed\"\n    - button \"Row 1, column 2, closed\"\n    - button \"Row 1, column 3, closed\"\n    - button \"Row 1, column 4, closed\"\n    - button \"Row 2, column 1, closed\"\n    - button \"Row 2, column 2, closed\"\n    - button \"Row 2, column 3, closed\"\n    - button \"Row 2, column 4, closed\"\n    - button \"Row 3, column 1, closed\"\n    - button \"Row 3, column 2, closed\"\n    - button \"Row 3, column 3, closed\"\n    - button \"Row 3, column 4, closed\"\n    - button \"Row 4, column 1, closed\"\n    - button \"Row 4, column 2, closed\"\n    - button \"Row 4, column 3, closed\"\n    - button \"Row 4, column 4, closed\"\n  - group: Reproduce a game\n  - paragraph\nCompleted tree:\n- main:\n  - paragraph: A little focus. A perfect pair.\n  - heading \"Neon Pairs\" [level=1]\n  - paragraph: Reveal two cards. Match their shape and marker to keep the pair.\n  - text: Grid size\n  - combobox \"Grid size\":\n    - option \"4x4\" [selected]\n    - option \"6x6\"\n    - option \"8x8\"\n    - option \"10x10\"\n    - option \"12x12\"\n    - option \"14x14\"\n    - option \"16x16\"\n  - button \"New Game\"\n  - button \"Restart\"\n  - term: \"Moves:\"\n  - definition: \"8\"\n  - term: \"Pairs:\"\n  - definition: 8/8\n  - term: \"Time:\"\n  - definition: 0:00\n  - term: \"Best:\"\n  - definition: \"8\"\n  - paragraph: Every pair found in 8 moves and 0:00. Well played.\n  - paragraph: Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\n  - status: Pair found. All pairs found in 8 moves and 0:00.\n  - region \"Game board\":\n    - button \"Row 1, column 1, matched, cyan solid circle, marker top\" [disabled]\n    - button \"Row 1, column 2, matched, cyan solid chevron, marker top\" [disabled]\n    - button \"Row 1, column 3, matched, cyan solid plus, marker top\" [disabled]\n    - button \"Row 1, column 4, matched, cyan solid diamond, marker top\" [disabled]\n    - button \"Row 2, column 1, matched, cyan solid triangle, marker top\" [disabled]\n    - button \"Row 2, column 2, matched, cyan solid diamond, marker top\" [disabled]\n    - button \"Row 2, column 3, matched, cyan solid square, marker top\" [disabled]\n    - button \"Row 2, column 4, matched, cyan solid hexagon, marker top\" [disabled]\n    - button \"Row 3, column 1, matched, cyan solid hexagon, marker top\" [disabled]\n    - button \"Row 3, column 2, matched, cyan solid square, marker top\" [disabled]\n    - button \"Row 3, column 3, matched, cyan solid star, marker top\" [disabled]\n    - button \"Row 3, column 4, matched, cyan solid triangle, marker top\" [disabled]\n    - button \"Row 4, column 1, matched, cyan solid circle, marker top\" [disabled]\n    - button \"Row 4, column 2, matched, cyan solid plus, marker top\" [disabled]\n    - button \"Row 4, column 3, matched, cyan solid chevron, marker top\" [disabled]\n    - button \"Row 4, column 4, matched, cyan solid star, marker top\" [disabled]\n  - group: Reproduce a game\n  - paragraph\nI17.2: pass. Named controls in the accessibility tree:\n- main:\n  - paragraph: A little focus. A perfect pair.\n  - heading \"Neon Pairs\" [level=1]\n  - paragraph: Reveal two cards. Match their shape and marker to keep the pair.\n  - text: Grid size\n  - combobox \"Grid size\":\n    - option \"4x4\" [selected]\n    - option \"6x6\"\n    - option \"8x8\"\n    - option \"10x10\"\n    - option \"12x12\"\n    - option \"14x14\"\n    - option \"16x16\"\n  - button \"New Game\"\n  - button \"Restart\"\n  - term: \"Moves:\"\n  - definition: \"0\"\n  - term: \"Pairs:\"\n  - definition: 0/8\n  - term: \"Time:\"\n  - definition: 0:00\n  - term: \"Best:\"\n  - definition: none\n  - paragraph: Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\n  - status\n  - region \"Game board\":\n    - button \"Row 1, column 1, closed\"\n    - button \"Row 1, column 2, closed\"\n    - button \"Row 1, column 3, closed\"\n    - button \"Row 1, column 4, closed\"\n    - button \"Row 2, column 1, closed\"\n    - button \"Row 2, column 2, closed\"\n    - button \"Row 2, column 3, closed\"\n    - button \"Row 2, column 4, closed\"\n    - button \"Row 3, column 1, closed\"\n    - button \"Row 3, column 2, closed\"\n    - button \"Row 3, column 3, closed\"\n    - button \"Row 3, column 4, closed\"\n    - button \"Row 4, column 1, closed\"\n    - button \"Row 4, column 2, closed\"\n    - button \"Row 4, column 3, closed\"\n    - button \"Row 4, column 4, closed\"\n  - group: Reproduce a game\n  - paragraph\nI17.3: pass. Closed positions and revealed states from the accessibility tree:\nRow 1, column 1, closed\nRow 1, column 2, closed\nRow 1, column 3, closed\nRow 1, column 4, closed\nRow 2, column 1, closed\nRow 2, column 2, closed\nRow 2, column 3, closed\nRow 2, column 4, closed\nRow 3, column 1, closed\nRow 3, column 2, closed\nRow 3, column 3, closed\nRow 3, column 4, closed\nRow 4, column 1, closed\nRow 4, column 2, closed\nRow 4, column 3, closed\nRow 4, column 4, closed\n- button \"Row 1, column 1, revealed, cyan solid circle, marker top\"\n- button \"Row 1, column 2, revealed, cyan solid chevron, marker top\"\n- button \"Row 1, column 3, revealed, cyan solid plus, marker top\"\n- button \"Row 1, column 4, revealed, cyan solid diamond, marker top\"\n- button \"Row 2, column 1, revealed, cyan solid triangle, marker top\"\n- button \"Row 2, column 2, revealed, cyan solid diamond, marker top\"\n- button \"Row 2, column 3, revealed, cyan solid square, marker top\"\n- button \"Row 2, column 4, revealed, cyan solid hexagon, marker top\"\n- button \"Row 3, column 1, revealed, cyan solid hexagon, marker top\"\n- button \"Row 3, column 2, revealed, cyan solid square, marker top\"\n- button \"Row 3, column 3, revealed, cyan solid star, marker top\"\n- button \"Row 3, column 4, revealed, cyan solid triangle, marker top\"\n- button \"Row 4, column 1, revealed, cyan solid circle, marker top\"\n- button \"Row 4, column 2, revealed, cyan solid plus, marker top\"\n- button \"Row 4, column 3, revealed, cyan solid chevron, marker top\"\n- button \"Row 4, column 4, revealed, cyan solid star, marker top\"\nTurn payloads: [\"Pair found. 1 pair matched.\",\"Pair found. 2 pairs matched.\",\"Pair found. 3 pairs matched.\",\"Pair found. 4 pairs matched.\",\"Pair found. 5 pairs matched.\",\"Pair found. 6 pairs matched.\",\"Pair found. 7 pairs matched.\",\"Pair found. All pairs found in 8 moves and 0:00.\"]\nI17.4: pass. Completion, moves and time in the accessibility tree:\n- main:\n  - paragraph: A little focus. A perfect pair.\n  - heading \"Neon Pairs\" [level=1]\n  - paragraph: Reveal two cards. Match their shape and marker to keep the pair.\n  - text: Grid size\n  - combobox \"Grid size\":\n    - option \"4x4\" [selected]\n    - option \"6x6\"\n    - option \"8x8\"\n    - option \"10x10\"\n    - option \"12x12\"\n    - option \"14x14\"\n    - option \"16x16\"\n  - button \"New Game\"\n  - button \"Restart\"\n  - term: \"Moves:\"\n  - definition: \"8\"\n  - term: \"Pairs:\"\n  - definition: 8/8\n  - term: \"Time:\"\n  - definition: 0:00\n  - term: \"Best:\"\n  - definition: \"8\"\n  - paragraph: Every pair found in 8 moves and 0:00. Well played.\n  - paragraph: Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\n  - status: Pair found. All pairs found in 8 moves and 0:00.\n  - region \"Game board\":\n    - button \"Row 1, column 1, matched, cyan solid circle, marker top\" [disabled]\n    - button \"Row 1, column 2, matched, cyan solid chevron, marker top\" [disabled]\n    - button \"Row 1, column 3, matched, cyan solid plus, marker top\" [disabled]\n    - button \"Row 1, column 4, matched, cyan solid diamond, marker top\" [disabled]\n    - button \"Row 2, column 1, matched, cyan solid triangle, marker top\" [disabled]\n    - button \"Row 2, column 2, matched, cyan solid diamond, marker top\" [disabled]\n    - button \"Row 2, column 3, matched, cyan solid square, marker top\" [disabled]\n    - button \"Row 2, column 4, matched, cyan solid hexagon, marker top\" [disabled]\n    - button \"Row 3, column 1, matched, cyan solid hexagon, marker top\" [disabled]\n    - button \"Row 3, column 2, matched, cyan solid square, marker top\" [disabled]\n    - button \"Row 3, column 3, matched, cyan solid star, marker top\" [disabled]\n    - button \"Row 3, column 4, matched, cyan solid triangle, marker top\" [disabled]\n    - button \"Row 4, column 1, matched, cyan solid circle, marker top\" [disabled]\n    - button \"Row 4, column 2, matched, cyan solid plus, marker top\" [disabled]\n    - button \"Row 4, column 3, matched, cyan solid chevron, marker top\" [disabled]\n    - button \"Row 4, column 4, matched, cyan solid star, marker top\" [disabled]\n  - group: Reproduce a game\n  - paragraph\nI17.5: pass. Tab leaves the board and keyboard New Game starts closed:\n- main:\n  - paragraph: A little focus. A perfect pair.\n  - heading \"Neon Pairs\" [level=1]\n  - paragraph: Reveal two cards. Match their shape and marker to keep the pair.\n  - text: Grid size\n  - combobox \"Grid size\":\n    - option \"4x4\" [selected]\n    - option \"6x6\"\n    - option \"8x8\"\n    - option \"10x10\"\n    - option \"12x12\"\n    - option \"14x14\"\n    - option \"16x16\"\n  - button \"New Game\"\n  - button \"Restart\"\n  - term: \"Moves:\"\n  - definition: \"0\"\n  - term: \"Pairs:\"\n  - definition: 0/8\n  - term: \"Time:\"\n  - definition: 0:00\n  - term: \"Best:\"\n  - definition: \"8\"\n  - paragraph: Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\n  - status\n  - region \"Game board\":\n    - button \"Row 1, column 1, closed\"\n    - button \"Row 1, column 2, closed\"\n    - button \"Row 1, column 3, closed\"\n    - button \"Row 1, column 4, closed\"\n    - button \"Row 2, column 1, closed\"\n    - button \"Row 2, column 2, closed\"\n    - button \"Row 2, column 3, closed\"\n    - button \"Row 2, column 4, closed\"\n    - button \"Row 3, column 1, closed\"\n    - button \"Row 3, column 2, closed\"\n    - button \"Row 3, column 3, closed\"\n    - button \"Row 3, column 4, closed\"\n    - button \"Row 4, column 1, closed\"\n    - button \"Row 4, column 2, closed\"\n    - button \"Row 4, column 3, closed\"\n    - button \"Row 4, column 4, closed\"\n  - group: Reproduce a game\n  - paragraph\nI17.6: pass. Project README tool record: Chromium 156.0.8078.4. Playwright 1.64.1. Screen reader: not run"
+        },
+        {
+          "id": "l2-native",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V01.1: pass. Native HTML controls provide the interaction elements.\nV01.3: pass. Revealed card artwork uses inline SVG."
+        },
+        {
+          "id": "l2-layout",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V02.1: pass. Measured content max-width and centered geometry.\nV02.2: pass. Content padding is 16px.\nV02.3: pass. Outer page fits the viewport.\nV03.1: pass. Board height cap is the lesser of 70dvh and 768px.\nV03.2: pass. Board viewport padding is 6px.\nV03.3: pass. Board allows both scroll axes.\nV04.1: pass. Square card bounds measured in CSS pixels.\nV04.2: pass. V04.2: computed value 6px.\nV04.3: pass. V04.3: computed value 2px.\nV04.4: pass. V04.4: computed value 8px.\nV05.1: pass. Phone 4-column board fits its board viewport.\nV05.2: pass. Phone 16-column board keeps 44px cards and internal horizontal overflow."
+        },
+        {
+          "id": "l2-colors",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V06.1: pass. Computed element colors include #090B14.\nV06.2: pass. Board scroll area, reproduction panel and visible non-card native controls use the Panel background.\nV06.3: pass. Closed card background matches its token.\nV06.4: pass. Revealed card background matches its token.\nV06.5: pass. Computed element colors include #F4F6FF.\nV06.6: pass. Board help, status labels and supporting notes use the Secondary color.\nV06.7: pass. Closed card border matches its token.\nV06.8: pass. Keyboard focus has a 3px white outline offset by 2px.\nV07.1: pass. Revealed SVG artwork uses each specified palette entry."
+        },
+        {
+          "id": "l2-typography",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V08.1: pass. Computed body font uses the system sans-serif stack.\nV08.2: pass. Body text is 16px on 24px lines.\nV08.3: pass. Title text is 24px.\nV08.4: pass. Board help, status labels and supporting notes are 14px.\nV09.1: pass. Positive authored spacing uses the scale. Zero, auto and normal pass. Reset margins pass and native control internals are excluded.\nV09.2: pass. Border, radius and font metrics keep their separate stated values."
+        },
+        {
+          "id": "l2-faces",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V10.1: pass. The 16x16 board must use 128 distinct named identities.\nObserved: {\"unique\":128,\"deck\":[\"rose solid chevron, marker left\",\"orange outline chevron, marker bottom\",\"yellow solid triangle, marker bottom-right\",\"magenta outline square, marker top-right\",\"magenta outline chevron, marker top-right\",\"magenta outline triangle, marker top-right\",\"yellow solid star, marker bottom-right\",\"orange outline hexagon, marker bottom\",\"cyan solid circle, marker top\",\"green solid chevron, marker right\",\"yellow solid diamond, marker bottom-right\",\"magenta outline plus, marker top-right\",\"rose outline chevron, marker left\",\"green outline square, marker right\",\"ice solid hexagon, marker top-left\",\"violet outline chevron, marker bottom-left\",\"green outline diamond, marker right\",\"orange solid diamond, marker bottom\",\"cyan solid hexagon, marker top\",\"cyan solid hexagon, marker top\",\"cyan solid triangle, marker top\",\"violet solid hexagon, marker bottom-left\",\"cyan outline circle, marker top\",\"violet outline star, marker bottom-left\",\"cyan solid square, marker top\",\"violet solid circle, marker bottom-left\",\"magenta outline star, marker top-right\",\"cyan solid plus, marker top\",\"yellow solid triangle, marker bottom-right\",\"orange outline chevron, marker bottom\",\"ice outline plus, marker top-left\",\"ice solid triangle, marker top-left\",\"violet outline square, marker bottom-left\",\"yellow outline square, marker bottom-right\",\"violet outline circle, marker bottom-left\",\"ice solid chevron, marker top-left\",\"green solid plus, marker right\",\"ice outline circle, marker top-left\",\"ice solid square, marker top-left\",\"magenta outline diamond, marker top-right\",\"rose solid hexagon, marker left\",\"green solid star, marker right\",\"violet solid diamond, marker bottom-left\",\"rose solid diamond, marker left\",\"magenta solid star, marker top-right\",\"green solid chevron, marker right\",\"rose solid triangle, marker left\",\"rose solid circle, marker left\",\"green outline hexagon, marker right\",\"orange solid hexagon, marker bottom\",\"magenta outline hexagon, marker top-right\",\"orange solid plus, marker bottom\",\"ice solid plus, marker top-left\",\"orange outline star, marker bottom\",\"yellow solid chevron, marker bottom-right\",\"magenta outline diamond, marker top-right\",\"rose outline triangle, marker left\",\"ice solid circle, marker top-left\",\"ice solid star, marker top-left\",\"magenta solid diamond, marker top-right\",\"rose outline plus, marker left\",\"cyan outline square, marker top\",\"cyan solid star, marker top\",\"rose outline circle, marker left\",\"yellow solid plus, marker bottom-right\",\"rose solid circle, marker left\",\"yellow outline circle, marker bottom-right\",\"violet outline triangle, marker bottom-left\",\"rose solid diamond, marker left\",\"cyan solid plus, marker top\",\"magenta solid chevron, marker top-right\",\"magenta outline star, marker top-right\",\"rose solid square, marker left\",\"cyan solid triangle, marker top\",\"orange solid star, marker bottom\",\"rose outline square, marker left\",\"magenta outline circle, marker top-right\",\"ice solid circle, marker top-left\",\"rose solid triangle, marker left\",\"magenta solid triangle, marker top-right\",\"rose outline triangle, marker left\",\"green outline plus, marker right\",\"green outline chevron, marker right\",\"cyan outline hexagon, marker top\",\"magenta outline plus, marker top-right\",\"violet outline square, marker bottom-left\",\"violet solid chevron, marker bottom-left\",\"rose solid star, marker left\",\"cyan solid star, marker top\",\"orange outline circle, marker bottom\",\"magenta solid triangle, marker top-right\",\"yellow outline triangle, marker bottom-right\",\"rose solid square, marker left\",\"magenta outline hexagon, marker top-right\",\"rose solid plus, marker left\",\"rose outline diamond, marker left\",\"green solid circle, marker right\",\"green solid triangle, marker right\",\"cyan outline star, marker top\",\"ice solid hexagon, marker top-left\",\"yellow solid plus, marker bottom-right\",\"rose outline star, marker left\",\"rose outline hexagon, marker left\",\"orange solid hexagon, marker bottom\",\"orange solid triangle, marker bottom\",\"magenta solid hexagon, marker top-right\",\"rose solid star, marker left\",\"green solid plus, marker right\",\"violet outline triangle, marker bottom-left\",\"green solid square, marker right\",\"yellow solid circle, marker bottom-right\",\"green outline hexagon, marker right\",\"rose outline plus, marker left\",\"cyan solid chevron, marker top\",\"yellow outline circle, marker bottom-right\",\"green outline star, marker right\",\"yellow outline diamond, marker bottom-right\",\"yellow outline hexagon, marker bottom-right\",\"green outline diamond, marker right\",\"magenta solid star, marker top-right\",\"orange outline square, marker bottom\",\"rose outline circle, marker left\",\"violet outline star, marker bottom-left\",\"yellow outline chevron, marker bottom-right\",\"orange outline plus, marker bottom\",\"orange solid circle, marker bottom\",\"green outline triangle, marker right\",\"green solid hexagon, marker right\",\"magenta solid square, marker top-right\",\"cyan outline star, marker top\",\"yellow outline star, marker bottom-right\",\"green solid circle, marker right\",\"orange outline triangle, marker bottom\",\"violet solid plus, marker bottom-left\",\"ice outline circle, marker top-left\",\"orange outline hexagon, marker bottom\",\"green outline triangle, marker right\",\"ice outline plus, marker top-left\",\"violet outline plus, marker bottom-left\",\"magenta solid plus, marker top-right\",\"ice outline hexagon, marker top-left\",\"yellow outline star, marker bottom-right\",\"violet solid star, marker bottom-left\",\"orange solid chevron, marker bottom\",\"violet solid chevron, marker bottom-left\",\"ice outline square, marker top-left\",\"yellow outline plus, marker bottom-right\",\"yellow outline diamond, marker bottom-right\",\"yellow solid chevron, marker bottom-right\",\"orange solid plus, marker bottom\",\"orange solid triangle, marker bottom\",\"violet outline hexagon, marker bottom-left\",\"violet solid triangle, marker bottom-left\",\"cyan outline circle, marker top\",\"ice outline diamond, marker top-left\",\"ice solid plus, marker top-left\",\"green outline plus, marker right\",\"violet solid square, marker bottom-left\",\"ice solid chevron, marker top-left\",\"violet solid diamond, marker bottom-left\",\"orange outline diamond, marker bottom\",\"green solid square, marker right\",\"magenta solid plus, marker top-right\",\"ice solid triangle, marker top-left\",\"magenta outline chevron, marker top-right\",\"ice solid diamond, marker top-left\",\"ice outline triangle, marker top-left\",\"cyan solid diamond, marker top\",\"cyan solid circle, marker top\",\"yellow solid circle, marker bottom-right\",\"yellow outline triangle, marker bottom-right\",\"cyan outline triangle, marker top\",\"magenta solid circle, marker top-right\",\"yellow outline hexagon, marker bottom-right\",\"ice outline triangle, marker top-left\",\"violet outline plus, marker bottom-left\",\"cyan outline chevron, marker top\",\"orange solid circle, marker bottom\",\"cyan outline diamond, marker top\",\"yellow solid square, marker bottom-right\",\"ice outline hexagon, marker top-left\",\"orange solid square, marker bottom\",\"orange outline diamond, marker bottom\",\"green solid diamond, marker right\",\"magenta solid circle, marker top-right\",\"orange outline triangle, marker bottom\",\"rose outline diamond, marker left\",\"orange solid diamond, marker bottom\",\"violet solid hexagon, marker bottom-left\",\"magenta solid hexagon, marker top-right\",\"violet solid circle, marker bottom-left\",\"violet outline hexagon, marker bottom-left\",\"cyan outline square, marker top\",\"green outline circle, marker right\",\"rose solid chevron, marker left\",\"violet solid plus, marker bottom-left\",\"magenta outline triangle, marker top-right\",\"orange outline circle, marker bottom\",\"violet outline chevron, marker bottom-left\",\"ice solid star, marker top-left\",\"rose outline square, marker left\",\"cyan solid chevron, marker top\",\"orange outline star, marker bottom\",\"ice outline square, marker top-left\",\"magenta solid diamond, marker top-right\",\"ice outline star, marker top-left\",\"rose outline star, marker left\",\"cyan outline plus, marker top\",\"ice outline star, marker top-left\",\"green outline circle, marker right\",\"yellow solid hexagon, marker bottom-right\",\"yellow solid hexagon, marker bottom-right\",\"cyan solid diamond, marker top\",\"ice outline chevron, marker top-left\",\"ice outline chevron, marker top-left\",\"magenta outline square, marker top-right\",\"orange outline square, marker bottom\",\"green outline chevron, marker right\",\"yellow outline square, marker bottom-right\",\"cyan outline plus, marker top\",\"orange solid chevron, marker bottom\",\"orange outline plus, marker bottom\",\"violet solid triangle, marker bottom-left\",\"green outline square, marker right\",\"ice outline diamond, marker top-left\",\"violet solid star, marker bottom-left\",\"magenta outline circle, marker top-right\",\"magenta solid square, marker top-right\",\"yellow solid diamond, marker bottom-right\",\"rose outline chevron, marker left\",\"green solid diamond, marker right\",\"orange solid star, marker bottom\",\"yellow outline plus, marker bottom-right\",\"cyan outline chevron, marker top\",\"violet outline diamond, marker bottom-left\",\"green solid star, marker right\",\"orange solid square, marker bottom\",\"ice solid square, marker top-left\",\"violet outline diamond, marker bottom-left\",\"yellow solid star, marker bottom-right\",\"rose solid hexagon, marker left\",\"ice solid diamond, marker top-left\",\"cyan outline triangle, marker top\",\"cyan solid square, marker top\",\"green outline star, marker right\",\"green solid hexagon, marker right\",\"cyan outline diamond, marker top\",\"rose outline hexagon, marker left\",\"violet outline circle, marker bottom-left\",\"violet solid square, marker bottom-left\",\"yellow outline chevron, marker bottom-right\",\"rose solid plus, marker left\",\"green solid triangle, marker right\",\"yellow solid square, marker bottom-right\",\"cyan outline hexagon, marker top\",\"magenta solid chevron, marker top-right\"]}\nV10.3: pass. Visible names span all eight shapes, markers and both fills in the specified lowercase form.\nV10.4: pass. Visible names span all eight shapes, markers and both fills in the specified lowercase form.\nV10.5: pass. Visible names span all eight shapes, markers and both fills in the specified lowercase form.\nV10.9: pass. Each revealed face name and rendered palette color agree with its marker index, without requiring numeric face IDs in Layer 2.\nV13.1: pass. Visible names span all eight shapes, markers and both fills in the specified lowercase form.\nV13.2: pass. Visible names span all eight shapes, markers and both fills in the specified lowercase form.\nV14.1: pass. Each hidden card draws the same neutral diamond contour, including CSS borders and SVG geometry.\nV14.2: pass. Closed cards carry no face identifiers or named face SVG. Only the common back is mounted.\nObserved: {\"secret\":false,\"closed\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}\nV15.1: pass. Revealed matched cards retain inline SVG artwork.\nV15.2: pass. Every matched card has a green border and a drawn green check contour.\nV15.3: pass. Matched cards keep full opacity."
+        },
+        {
+          "id": "l2-outline",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V16.1: pass. Keyboard focus has a 3px white outline offset by 2px.\nV16.2: pass. Hover changes only border colors to Text. Other changes: none.\nA matched card keeps the Green border while hovered."
+        },
+        {
+          "id": "l2-motion",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V17.1: pass. Only border-color properties have 120ms transitions.\nV17.2: pass. Reduced motion removes card transitions.\nV18.1: pass. All eight pairs produce a win summary.\nV18.2: pass. Win pulse runs once for 600ms.\nV18.3: pass. Reduced motion shows completion without an active animation.\nV18.4: pass. No continuing flash, confetti canvas or repeating celebration remains."
+        },
+        {
+          "id": "l2-large",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V19.1: pass. Large card counts at phone and desktop widths: 256, 256.\nV19.2: pass. Both viewport widths fit the page and keep New Game reachable.\nV19.3: pass. All sampled large-board cards remain at least 44px square.\nV19.4: pass. Native touch scroll gestures move the board on each overflowing axis. Plain arrows reach the last card and first and last cards accept completed taps at both widths.\nV19.5: pass. Corner and mid-board focused cards keep their 5px outline allowance inside every clipping ancestor after focus scrolling."
+        },
+        {
+          "id": "l2-zoom",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V20.1: pass. Controls, status and completed-game text have separate text and control boxes at the equivalent zoom viewport.\nV20.2: pass. The outer page fits 640 CSS pixels for both sizes and after victory.\nV20.3: pass. Pointer turns, Enter and Space turns and large-board keyboard navigation work at device scale 2.\nV20.4: pass. Focus scrolling keeps corner and interior card outlines inside every clipping ancestor.\nV20.5: pass. The viewport metadata keeps browser zoom enabled."
+        },
+        {
+          "id": "l2-silence",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "S01.1: pass. Audio constructor and playback instrumentation stays at zero in every journey.\nObserved: {\"expectedJourneys\":22,\"calls\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}"
+        },
+        {
+          "id": "l2-offline",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "T08.2: pass. Direct disk load requests only its main HTML file, with no uncaught errors.\nObserved: {\"requests\":[],\"errors\":[]}\nT08.3: pass. Computed body font uses the system sans-serif stack.\nT08.4: pass. The viewport metadata keeps browser zoom enabled.\nT09.2: pass. With Storage reads and writes throwing SecurityError, a full visible-play game still finishes.\nT10.4: pass. Distribution makes no network requests when loaded from disk.\nObserved: {\"requests\":[]}"
+        },
+        {
+          "id": "l2-static",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "S02.3: pass. Authored controls contain no sound toggle.\nT01.1: pass. Read dependency entries, authored TypeScript and DOM mounting imports.\nT01.2: pass. Authored JSX renders native buttons and select."
+        },
+        {
+          "id": "l2-build",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "T07.4: pass. The required unit-test command exits successfully and reports tests that passed.\nObserved: {\"command\":\"test\",\"code\":0,\"timedOut\":false,\"stdout\":\"\\n> neon-pairs-reference@1.0.0 test\\n> vitest run\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv5.0.5 \\u001b[39m\\u001b[90m/work\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m src/game/snapshot.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m32 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 16\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/session/session.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 18\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m scripts/replay.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 4867\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m replay CLI prints a final snapshot and rejects invalid files and arguments\\u001b[33m 2433\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m the replay command reads a relative path from the caller folder and names what failed\\u001b[33m 2428\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/game.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 14\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/replay.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m17 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 94\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m scripts/source-audit.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 92\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/session/storage.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m11 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 17\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m scripts/source-conventions.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m4 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 190\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/board/face-design.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 18\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/deck.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m23 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 32\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/snapshot-selection.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 7\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/board/keyboard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 9\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/move-cap.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 9\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/session/browser-clock.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 6\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/deck-rejection.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 10\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/saved-format.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 5\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/elapsed-time.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 5\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/replay-order.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 9\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/completion.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 13\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/board/card-state.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 8\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m20 passed\\u001b[39m\\u001b[22m\\u001b[90m (20)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m132 passed\\u001b[39m\\u001b[22m\\u001b[90m (132)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 03:45:56\\n\\u001b[2m   Duration \\u001b[22m 11.80s\\u001b[2m (tests 78%, import 10%, transform 9%, worker 3%)\\u001b[22m\\n\\n\\u001b[2m    Isolate \\u001b[22m \\u001b[33m20 workers spawned\\u001b[39m\\u001b[2m · ~225ms startup each (spawn + environment, per file)\\u001b[22m\\n\\u001b[2m            \\u001b[22m \\u001b[2mat least ~4.27s faster with \\u001b[22m\\u001b[33misolate: false\\u001b[39m\\u001b[2m — reuses workers across files instead of one per file\\u001b[22m\\n\\n\",\"stderr\":\"\",\"htmlBytes\":0}\nT07.6: pass. The required build command type checks and writes dist/index.html.\nObserved: {\"command\":\"build\",\"code\":0,\"timedOut\":false,\"stdout\":\"\\n> neon-pairs-reference@1.0.0 build\\n> npm run typecheck && vite build\\n\\n\\n> neon-pairs-reference@1.0.0 typecheck\\n> tsc -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p tsconfig.e2e.json\\n\\nvite v8.3.5 building client environment for production...\\ntransforming...\\n✓ 49 modules transformed.\\nrendering chunks...\\n[plugin vite:singlefile] \\n\\n[plugin vite:singlefile] Inlining: index-DCqvJJ6G.js\\n[plugin vite:singlefile] Inlining: style-CxJWKe8E.css\\ncomputing gzip size...\\ndist/index.html  241.17 kB │ gzip: 76.20 kB\\n\\n✓ built in 415ms\\n\",\"stderr\":\"\",\"htmlBytes\":241170}\nT08.1: pass. The built HTML has inline scripts, styles and artwork.\nObserved: {\"htmlBytes\":241170,\"externalTags\":[]}"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "clause-T01.1",
+          "clause": "T01.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Read dependency entries, authored TypeScript and DOM mounting imports."
+        },
+        {
+          "id": "clause-T01.2",
+          "clause": "T01.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Authored JSX renders native buttons and select."
+        },
+        {
+          "id": "clause-S02.3",
+          "clause": "S02.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Authored controls contain no sound toggle."
+        },
+        {
+          "id": "clause-I17.6",
+          "clause": "I17.6",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Project README tool record: Chromium 156.0.8078.4. Playwright 1.64.1. Screen reader: not run"
+        },
+        {
+          "id": "clause-R01.1",
+          "clause": "R01.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Visible card counts: 16, 36, 64, 100, 144, 196, 256."
+        },
+        {
+          "id": "clause-R01.2",
+          "clause": "R01.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Measured square cards in equal row and column counts at every supported side length."
+        },
+        {
+          "id": "clause-R01.3",
+          "clause": "R01.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Revealed every position through play and counted exactly two of each named face at every size."
+        },
+        {
+          "id": "clause-R02.1",
+          "clause": "R02.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "First reveal shows a face with zero moves."
+        },
+        {
+          "id": "clause-R05.2",
+          "clause": "R05.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "First reveal shows a face with zero moves."
+        },
+        {
+          "id": "clause-R02.2",
+          "clause": "R02.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Repeated first activation keeps names and moves."
+        },
+        {
+          "id": "clause-R03.1",
+          "clause": "R03.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Second reveal retains the matching faces and names their matched state."
+        },
+        {
+          "id": "clause-R03.2",
+          "clause": "R03.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Second reveal retains the matching faces and names their matched state."
+        },
+        {
+          "id": "clause-R03.3",
+          "clause": "R03.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Pair counter changes immediately to one pair."
+        },
+        {
+          "id": "clause-R06.1",
+          "clause": "R06.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Pair counter changes immediately to one pair."
+        },
+        {
+          "id": "clause-R02.3",
+          "clause": "R02.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Activating a matched card keeps state."
+        },
+        {
+          "id": "clause-R05.1",
+          "clause": "R05.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "One match and one mismatch cost two moves."
+        },
+        {
+          "id": "clause-R05.4",
+          "clause": "R05.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "One match and one mismatch cost two moves."
+        },
+        {
+          "id": "clause-R04.3",
+          "clause": "R04.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "An activation during mismatch changes neither selection nor moves."
+        },
+        {
+          "id": "clause-R05.3",
+          "clause": "R05.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "An activation during mismatch changes neither selection nor moves."
+        },
+        {
+          "id": "clause-I10.2",
+          "clause": "I10.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "An activation during mismatch changes neither selection nor moves."
+        },
+        {
+          "id": "clause-I10.1",
+          "clause": "I10.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Arrow focus moves during mismatch."
+        },
+        {
+          "id": "clause-R04.1",
+          "clause": "R04.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Mismatch stays revealed through 799 controlled active milliseconds.\nObserved: {\"activeMs\":799,\"a\":1,\"b\":3,\"names\":[\"Row 1, column 1, matched, cyan solid star, marker top\",\"Row 1, column 2, revealed, cyan solid diamond, marker top\",\"Row 1, column 3, matched, cyan solid star, marker top\",\"Row 1, column 4, revealed, cyan solid plus, marker top\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}"
+        },
+        {
+          "id": "clause-R04.4",
+          "clause": "R04.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Synthetic browser visibility hides the page for 5000 controlled milliseconds without closing the mismatch."
+        },
+        {
+          "id": "clause-R04.2",
+          "clause": "R04.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Both mismatching cards close at 800 active milliseconds with 5000 hidden milliseconds excluded.\nObserved: {\"activeMs\":800,\"hiddenMs\":5000,\"a\":1,\"b\":3,\"names\":[\"Row 1, column 1, matched, cyan solid star, marker top\",\"Row 1, column 2, closed\",\"Row 1, column 3, matched, cyan solid star, marker top\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}"
+        },
+        {
+          "id": "clause-R07.8",
+          "clause": "R07.8",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Both mismatching cards close at 800 active milliseconds with 5000 hidden milliseconds excluded.\nObserved: {\"activeMs\":800,\"hiddenMs\":5000,\"a\":1,\"b\":3,\"names\":[\"Row 1, column 1, matched, cyan solid star, marker top\",\"Row 1, column 2, closed\",\"Row 1, column 3, matched, cyan solid star, marker top\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}"
+        },
+        {
+          "id": "clause-I09.1",
+          "clause": "I09.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "A matched card remains focusable with aria-disabled=true and ignored activation."
+        },
+        {
+          "id": "clause-I09.2",
+          "clause": "I09.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "A matched card remains focusable with aria-disabled=true and ignored activation."
+        },
+        {
+          "id": "clause-I09.3",
+          "clause": "I09.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "A matched card remains focusable with aria-disabled=true and ignored activation."
+        },
+        {
+          "id": "clause-R05.9",
+          "clause": "R05.9",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Moves: N shows the current count before, during and after play."
+        },
+        {
+          "id": "clause-R06.2",
+          "clause": "R06.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Pairs: M/T shows the current pair count and total throughout play."
+        },
+        {
+          "id": "clause-R06.3",
+          "clause": "R06.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "All eight pairs produce a win summary."
+        },
+        {
+          "id": "clause-V18.1",
+          "clause": "V18.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "All eight pairs produce a win summary."
+        },
+        {
+          "id": "clause-R06.4",
+          "clause": "R06.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The completion summary must contain the final eight moves."
+        },
+        {
+          "id": "clause-R06.5",
+          "clause": "R06.5",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The completion summary must include final elapsed time."
+        },
+        {
+          "id": "clause-R07.1",
+          "clause": "R07.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Clock before reveal=0, after 2300 active milliseconds=2."
+        },
+        {
+          "id": "clause-R07.2",
+          "clause": "R07.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Clock before reveal=0, after 2300 active milliseconds=2."
+        },
+        {
+          "id": "clause-R07.3",
+          "clause": "R07.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Hidden controlled time does not advance the displayed clock."
+        },
+        {
+          "id": "clause-R07.6",
+          "clause": "R07.6",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Skipping render callbacks still accounts for 5000 active milliseconds."
+        },
+        {
+          "id": "clause-R07.5",
+          "clause": "R07.5",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Clock stays fixed after completion."
+        },
+        {
+          "id": "clause-R07.7",
+          "clause": "R07.7",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Clock uses the same controlled active-time advances as the mismatch journey."
+        },
+        {
+          "id": "clause-R08.1",
+          "clause": "R08.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "A fresh HTTP origin starts with sixteen cards."
+        },
+        {
+          "id": "clause-R08.2",
+          "clause": "R08.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "A size selected on this origin survives reload."
+        },
+        {
+          "id": "clause-R08.3",
+          "clause": "R08.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "A size selected on this origin survives reload."
+        },
+        {
+          "id": "clause-R08.4",
+          "clause": "R08.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Reload starts closed at zero moves with a different visibly learned deal."
+        },
+        {
+          "id": "clause-R09.2",
+          "clause": "R09.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Restart repeats the first visible face of this deal."
+        },
+        {
+          "id": "clause-C03.2",
+          "clause": "C03.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Restart repeats the first visible face of this deal."
+        },
+        {
+          "id": "clause-R09.1",
+          "clause": "R09.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "New Game keeps the size and clears progress with a different visibly discovered deal."
+        },
+        {
+          "id": "clause-C02.2",
+          "clause": "C02.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "New Game keeps the size and clears progress with a different visibly discovered deal."
+        },
+        {
+          "id": "clause-R09.3",
+          "clause": "R09.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Changing size replaces the board with that size."
+        },
+        {
+          "id": "clause-R09.4",
+          "clause": "R09.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Restart, New Game and size change clear selection, matches, moves and elapsed time."
+        },
+        {
+          "id": "clause-R10.7",
+          "clause": "R10.7",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "A fresh origin displays Best: none."
+        },
+        {
+          "id": "clause-R10.1",
+          "clause": "R10.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Unfinished exploration creates no best. A completed nine-move game records nine."
+        },
+        {
+          "id": "clause-R10.2",
+          "clause": "R10.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Eight moves replaces nine. Equal and nine-move finishes then retain eight."
+        },
+        {
+          "id": "clause-R10.4",
+          "clause": "R10.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Eight moves replaces nine. Equal and nine-move finishes then retain eight."
+        },
+        {
+          "id": "clause-R10.5",
+          "clause": "R10.5",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Restart and New Game keep the saved best."
+        },
+        {
+          "id": "clause-R10.3",
+          "clause": "R10.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The best survives reload on the same HTTP origin."
+        },
+        {
+          "id": "clause-R10.6",
+          "clause": "R10.6",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Best: N follows the current size before and after completion, restart and reload. An unplayed size shows Best: none."
+        },
+        {
+          "id": "clause-R07.12",
+          "clause": "R07.12",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Time: m:ss floors seconds, pads them and continues minutes past 59 under a controlled clock."
+        },
+        {
+          "id": "clause-I17.2",
+          "clause": "I17.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Named controls in the accessibility tree:\n- main:\n  - paragraph: A little focus. A perfect pair.\n  - heading \"Neon Pairs\" [level=1]\n  - paragraph: Reveal two cards. Match their shape and marker to keep the pair.\n  - text: Grid size\n  - combobox \"Grid size\":\n    - option \"4x4\" [selected]\n    - option \"6x6\"\n    - option \"8x8\"\n    - option \"10x10\"\n    - option \"12x12\"\n    - option \"14x14\"\n    - option \"16x16\"\n  - button \"New Game\"\n  - button \"Restart\"\n  - term: \"Moves:\"\n  - definition: \"0\"\n  - term: \"Pairs:\"\n  - definition: 0/8\n  - term: \"Time:\"\n  - definition: 0:00\n  - term: \"Best:\"\n  - definition: none\n  - paragraph: Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\n  - status\n  - region \"Game board\":\n    - button \"Row 1, column 1, closed\"\n    - button \"Row 1, column 2, closed\"\n    - button \"Row 1, column 3, closed\"\n    - button \"Row 1, column 4, closed\"\n    - button \"Row 2, column 1, closed\"\n    - button \"Row 2, column 2, closed\"\n    - button \"Row 2, column 3, closed\"\n    - button \"Row 2, column 4, closed\"\n    - button \"Row 3, column 1, closed\"\n    - button \"Row 3, column 2, closed\"\n    - button \"Row 3, column 3, closed\"\n    - button \"Row 3, column 4, closed\"\n    - button \"Row 4, column 1, closed\"\n    - button \"Row 4, column 2, closed\"\n    - button \"Row 4, column 3, closed\"\n    - button \"Row 4, column 4, closed\"\n  - group: Reproduce a game\n  - paragraph"
+        },
+        {
+          "id": "clause-I17.3",
+          "clause": "I17.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Closed positions and revealed states from the accessibility tree:\nRow 1, column 1, closed\nRow 1, column 2, closed\nRow 1, column 3, closed\nRow 1, column 4, closed\nRow 2, column 1, closed\nRow 2, column 2, closed\nRow 2, column 3, closed\nRow 2, column 4, closed\nRow 3, column 1, closed\nRow 3, column 2, closed\nRow 3, column 3, closed\nRow 3, column 4, closed\nRow 4, column 1, closed\nRow 4, column 2, closed\nRow 4, column 3, closed\nRow 4, column 4, closed\n- button \"Row 1, column 1, revealed, cyan solid circle, marker top\"\n- button \"Row 1, column 2, revealed, cyan solid chevron, marker top\"\n- button \"Row 1, column 3, revealed, cyan solid plus, marker top\"\n- button \"Row 1, column 4, revealed, cyan solid diamond, marker top\"\n- button \"Row 2, column 1, revealed, cyan solid triangle, marker top\"\n- button \"Row 2, column 2, revealed, cyan solid diamond, marker top\"\n- button \"Row 2, column 3, revealed, cyan solid square, marker top\"\n- button \"Row 2, column 4, revealed, cyan solid hexagon, marker top\"\n- button \"Row 3, column 1, revealed, cyan solid hexagon, marker top\"\n- button \"Row 3, column 2, revealed, cyan solid square, marker top\"\n- button \"Row 3, column 3, revealed, cyan solid star, marker top\"\n- button \"Row 3, column 4, revealed, cyan solid triangle, marker top\"\n- button \"Row 4, column 1, revealed, cyan solid circle, marker top\"\n- button \"Row 4, column 2, revealed, cyan solid plus, marker top\"\n- button \"Row 4, column 3, revealed, cyan solid chevron, marker top\"\n- button \"Row 4, column 4, revealed, cyan solid star, marker top\"\nTurn payloads: [\"Pair found. 1 pair matched.\",\"Pair found. 2 pairs matched.\",\"Pair found. 3 pairs matched.\",\"Pair found. 4 pairs matched.\",\"Pair found. 5 pairs matched.\",\"Pair found. 6 pairs matched.\",\"Pair found. 7 pairs matched.\",\"Pair found. All pairs found in 8 moves and 0:00.\"]"
+        },
+        {
+          "id": "clause-I17.4",
+          "clause": "I17.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Completion, moves and time in the accessibility tree:\n- main:\n  - paragraph: A little focus. A perfect pair.\n  - heading \"Neon Pairs\" [level=1]\n  - paragraph: Reveal two cards. Match their shape and marker to keep the pair.\n  - text: Grid size\n  - combobox \"Grid size\":\n    - option \"4x4\" [selected]\n    - option \"6x6\"\n    - option \"8x8\"\n    - option \"10x10\"\n    - option \"12x12\"\n    - option \"14x14\"\n    - option \"16x16\"\n  - button \"New Game\"\n  - button \"Restart\"\n  - term: \"Moves:\"\n  - definition: \"8\"\n  - term: \"Pairs:\"\n  - definition: 8/8\n  - term: \"Time:\"\n  - definition: 0:00\n  - term: \"Best:\"\n  - definition: \"8\"\n  - paragraph: Every pair found in 8 moves and 0:00. Well played.\n  - paragraph: Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\n  - status: Pair found. All pairs found in 8 moves and 0:00.\n  - region \"Game board\":\n    - button \"Row 1, column 1, matched, cyan solid circle, marker top\" [disabled]\n    - button \"Row 1, column 2, matched, cyan solid chevron, marker top\" [disabled]\n    - button \"Row 1, column 3, matched, cyan solid plus, marker top\" [disabled]\n    - button \"Row 1, column 4, matched, cyan solid diamond, marker top\" [disabled]\n    - button \"Row 2, column 1, matched, cyan solid triangle, marker top\" [disabled]\n    - button \"Row 2, column 2, matched, cyan solid diamond, marker top\" [disabled]\n    - button \"Row 2, column 3, matched, cyan solid square, marker top\" [disabled]\n    - button \"Row 2, column 4, matched, cyan solid hexagon, marker top\" [disabled]\n    - button \"Row 3, column 1, matched, cyan solid hexagon, marker top\" [disabled]\n    - button \"Row 3, column 2, matched, cyan solid square, marker top\" [disabled]\n    - button \"Row 3, column 3, matched, cyan solid star, marker top\" [disabled]\n    - button \"Row 3, column 4, matched, cyan solid triangle, marker top\" [disabled]\n    - button \"Row 4, column 1, matched, cyan solid circle, marker top\" [disabled]\n    - button \"Row 4, column 2, matched, cyan solid plus, marker top\" [disabled]\n    - button \"Row 4, column 3, matched, cyan solid chevron, marker top\" [disabled]\n    - button \"Row 4, column 4, matched, cyan solid star, marker top\" [disabled]\n  - group: Reproduce a game\n  - paragraph"
+        },
+        {
+          "id": "clause-I17.1",
+          "clause": "I17.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Keyboard-only discovery and completion. Initial tree:\n- main:\n  - paragraph: A little focus. A perfect pair.\n  - heading \"Neon Pairs\" [level=1]\n  - paragraph: Reveal two cards. Match their shape and marker to keep the pair.\n  - text: Grid size\n  - combobox \"Grid size\":\n    - option \"4x4\" [selected]\n    - option \"6x6\"\n    - option \"8x8\"\n    - option \"10x10\"\n    - option \"12x12\"\n    - option \"14x14\"\n    - option \"16x16\"\n  - button \"New Game\"\n  - button \"Restart\"\n  - term: \"Moves:\"\n  - definition: \"0\"\n  - term: \"Pairs:\"\n  - definition: 0/8\n  - term: \"Time:\"\n  - definition: 0:00\n  - term: \"Best:\"\n  - definition: none\n  - paragraph: Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\n  - status\n  - region \"Game board\":\n    - button \"Row 1, column 1, closed\"\n    - button \"Row 1, column 2, closed\"\n    - button \"Row 1, column 3, closed\"\n    - button \"Row 1, column 4, closed\"\n    - button \"Row 2, column 1, closed\"\n    - button \"Row 2, column 2, closed\"\n    - button \"Row 2, column 3, closed\"\n    - button \"Row 2, column 4, closed\"\n    - button \"Row 3, column 1, closed\"\n    - button \"Row 3, column 2, closed\"\n    - button \"Row 3, column 3, closed\"\n    - button \"Row 3, column 4, closed\"\n    - button \"Row 4, column 1, closed\"\n    - button \"Row 4, column 2, closed\"\n    - button \"Row 4, column 3, closed\"\n    - button \"Row 4, column 4, closed\"\n  - group: Reproduce a game\n  - paragraph\nCompleted tree:\n- main:\n  - paragraph: A little focus. A perfect pair.\n  - heading \"Neon Pairs\" [level=1]\n  - paragraph: Reveal two cards. Match their shape and marker to keep the pair.\n  - text: Grid size\n  - combobox \"Grid size\":\n    - option \"4x4\" [selected]\n    - option \"6x6\"\n    - option \"8x8\"\n    - option \"10x10\"\n    - option \"12x12\"\n    - option \"14x14\"\n    - option \"16x16\"\n  - button \"New Game\"\n  - button \"Restart\"\n  - term: \"Moves:\"\n  - definition: \"8\"\n  - term: \"Pairs:\"\n  - definition: 8/8\n  - term: \"Time:\"\n  - definition: 0:00\n  - term: \"Best:\"\n  - definition: \"8\"\n  - paragraph: Every pair found in 8 moves and 0:00. Well played.\n  - paragraph: Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\n  - status: Pair found. All pairs found in 8 moves and 0:00.\n  - region \"Game board\":\n    - button \"Row 1, column 1, matched, cyan solid circle, marker top\" [disabled]\n    - button \"Row 1, column 2, matched, cyan solid chevron, marker top\" [disabled]\n    - button \"Row 1, column 3, matched, cyan solid plus, marker top\" [disabled]\n    - button \"Row 1, column 4, matched, cyan solid diamond, marker top\" [disabled]\n    - button \"Row 2, column 1, matched, cyan solid triangle, marker top\" [disabled]\n    - button \"Row 2, column 2, matched, cyan solid diamond, marker top\" [disabled]\n    - button \"Row 2, column 3, matched, cyan solid square, marker top\" [disabled]\n    - button \"Row 2, column 4, matched, cyan solid hexagon, marker top\" [disabled]\n    - button \"Row 3, column 1, matched, cyan solid hexagon, marker top\" [disabled]\n    - button \"Row 3, column 2, matched, cyan solid square, marker top\" [disabled]\n    - button \"Row 3, column 3, matched, cyan solid star, marker top\" [disabled]\n    - button \"Row 3, column 4, matched, cyan solid triangle, marker top\" [disabled]\n    - button \"Row 4, column 1, matched, cyan solid circle, marker top\" [disabled]\n    - button \"Row 4, column 2, matched, cyan solid plus, marker top\" [disabled]\n    - button \"Row 4, column 3, matched, cyan solid chevron, marker top\" [disabled]\n    - button \"Row 4, column 4, matched, cyan solid star, marker top\" [disabled]\n  - group: Reproduce a game\n  - paragraph"
+        },
+        {
+          "id": "clause-I17.5",
+          "clause": "I17.5",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Tab leaves the board and keyboard New Game starts closed:\n- main:\n  - paragraph: A little focus. A perfect pair.\n  - heading \"Neon Pairs\" [level=1]\n  - paragraph: Reveal two cards. Match their shape and marker to keep the pair.\n  - text: Grid size\n  - combobox \"Grid size\":\n    - option \"4x4\" [selected]\n    - option \"6x6\"\n    - option \"8x8\"\n    - option \"10x10\"\n    - option \"12x12\"\n    - option \"14x14\"\n    - option \"16x16\"\n  - button \"New Game\"\n  - button \"Restart\"\n  - term: \"Moves:\"\n  - definition: \"0\"\n  - term: \"Pairs:\"\n  - definition: 0/8\n  - term: \"Time:\"\n  - definition: 0:00\n  - term: \"Best:\"\n  - definition: \"8\"\n  - paragraph: Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\n  - status\n  - region \"Game board\":\n    - button \"Row 1, column 1, closed\"\n    - button \"Row 1, column 2, closed\"\n    - button \"Row 1, column 3, closed\"\n    - button \"Row 1, column 4, closed\"\n    - button \"Row 2, column 1, closed\"\n    - button \"Row 2, column 2, closed\"\n    - button \"Row 2, column 3, closed\"\n    - button \"Row 2, column 4, closed\"\n    - button \"Row 3, column 1, closed\"\n    - button \"Row 3, column 2, closed\"\n    - button \"Row 3, column 3, closed\"\n    - button \"Row 3, column 4, closed\"\n    - button \"Row 4, column 1, closed\"\n    - button \"Row 4, column 2, closed\"\n    - button \"Row 4, column 3, closed\"\n    - button \"Row 4, column 4, closed\"\n  - group: Reproduce a game\n  - paragraph"
+        },
+        {
+          "id": "clause-R07.10",
+          "clause": "R07.10",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "After a controlled jump beyond the displayed time limit, a match, an 800ms miss and the remaining game still finish through visible play."
+        },
+        {
+          "id": "clause-R07.11",
+          "clause": "R07.11",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The visible clock stays at any implemented cap, or advances by the continued active interval. Layer 2 doesn't require a numeric cap. Layer 3 checks the exact stored limit separately."
+        },
+        {
+          "id": "clause-R12.1",
+          "clause": "R12.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "After pending mismatches, Restart, New Game, a size change and leaving the page invalidate old callbacks."
+        },
+        {
+          "id": "clause-R12.2",
+          "clause": "R12.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "After pending mismatches, Restart, New Game, a size change and leaving the page invalidate old callbacks."
+        },
+        {
+          "id": "clause-R11.3",
+          "clause": "R11.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Malformed JSON, unsupported sizes, negative scores, null and arrays fall back safely on a fresh HTTP origin."
+        },
+        {
+          "id": "clause-R11.4",
+          "clause": "R11.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "With Storage reads and writes throwing SecurityError, a full visible-play game still finishes."
+        },
+        {
+          "id": "clause-T09.2",
+          "clause": "T09.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "With Storage reads and writes throwing SecurityError, a full visible-play game still finishes."
+        },
+        {
+          "id": "clause-C01.1",
+          "clause": "C01.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Grid size is the name of a native select."
+        },
+        {
+          "id": "clause-C01.2",
+          "clause": "C01.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Size labels: 4x4, 6x6, 8x8, 10x10, 12x12, 14x14, 16x16."
+        },
+        {
+          "id": "clause-C02.1",
+          "clause": "C02.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Native button named New Game."
+        },
+        {
+          "id": "clause-C03.1",
+          "clause": "C03.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Native button named Restart."
+        },
+        {
+          "id": "clause-I11.1",
+          "clause": "I11.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Initial load keeps document focus instead of focusing a control or card."
+        },
+        {
+          "id": "clause-I05.1",
+          "clause": "I05.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Initially only the first card is a board tab stop."
+        },
+        {
+          "id": "clause-I05.3",
+          "clause": "I05.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Initially only the first card is a board tab stop."
+        },
+        {
+          "id": "clause-I06.1",
+          "clause": "I06.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "ArrowLeft from 5 must focus 4."
+        },
+        {
+          "id": "clause-I06.2",
+          "clause": "I06.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "ArrowRight from 5 must focus 6."
+        },
+        {
+          "id": "clause-I06.3",
+          "clause": "I06.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "ArrowUp from 5 must focus 1."
+        },
+        {
+          "id": "clause-I06.4",
+          "clause": "I06.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "ArrowDown from 5 must focus 9."
+        },
+        {
+          "id": "clause-I07.1",
+          "clause": "I07.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "All four edges stop arrow movement without wrapping."
+        },
+        {
+          "id": "clause-I06.9",
+          "clause": "I06.9",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "All navigation leaves every card closed at zero moves."
+        },
+        {
+          "id": "clause-I06.10",
+          "clause": "I06.10",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Home, End, Ctrl+End and Alt+ArrowLeft keep card focus and game state unchanged.\nObserved: [{\"key\":\"Home\",\"focused\":true,\"before\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"after\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"beforeText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\",\"afterText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\"},{\"key\":\"End\",\"focused\":true,\"before\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"after\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"beforeText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\",\"afterText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\"},{\"key\":\"Control+End\",\"focused\":true,\"before\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"after\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"beforeText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\",\"afterText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\"},{\"key\":\"Alt+ArrowLeft\",\"focused\":true,\"before\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"after\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"],\"beforeText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\",\"afterText\":\"A little focus. A perfect pair.\\n\\nNeon Pairs\\n\\nReveal two cards. Match their shape and marker to keep the pair.\\n\\nGrid size\\n4x4\\n6x6\\n8x8\\n10x10\\n12x12\\n14x14\\n16x16\\nNew Game\\nRestart\\nMoves: 0\\nPairs: 0/8\\nTime: 0:00\\nBest: none\\n\\nUse a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space reveals a card.\\n\\nReproduce a game\"}]"
+        },
+        {
+          "id": "clause-I05.2",
+          "clause": "I05.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Shift+Tab reenters at the remembered card."
+        },
+        {
+          "id": "clause-I08.1",
+          "clause": "I08.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Tab and Shift+Tab leave the board with one remembered stop."
+        },
+        {
+          "id": "clause-I08.2",
+          "clause": "I08.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Tab and Shift+Tab leave the board with one remembered stop."
+        },
+        {
+          "id": "clause-C13.1",
+          "clause": "C13.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "New Game and Restart retain button focus."
+        },
+        {
+          "id": "clause-C13.3",
+          "clause": "C13.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "New Game and Restart retain button focus."
+        },
+        {
+          "id": "clause-C13.5",
+          "clause": "C13.5",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Both deal changes reset the remembered card to zero."
+        },
+        {
+          "id": "clause-I12.1",
+          "clause": "I12.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Both deal changes reset the remembered card to zero."
+        },
+        {
+          "id": "clause-I01.1",
+          "clause": "I01.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Every discovered card is a native button."
+        },
+        {
+          "id": "clause-I01.2",
+          "clause": "I01.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Pointer, completed tap, Enter and Space produce the same revealed board."
+        },
+        {
+          "id": "clause-I03.2",
+          "clause": "I03.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Context menu is not cancelled and a right click does not reveal a card."
+        },
+        {
+          "id": "clause-I03.1",
+          "clause": "I03.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Right-click and a held touch keep contextmenu uncancelled. Whether a real long press leaves cards closed is user acceptance, and the operating-system menu itself isn't captured."
+        },
+        {
+          "id": "clause-I04.1",
+          "clause": "I04.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Hover changes no accessible game state."
+        },
+        {
+          "id": "clause-I04.2",
+          "clause": "I04.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Cancelled touch pointer leaves game state unchanged."
+        },
+        {
+          "id": "clause-I16.1",
+          "clause": "I16.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Exactly one polite atomic live region."
+        },
+        {
+          "id": "clause-I16.2",
+          "clause": "I16.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "One result announcement after a turn, none for focus, clock or mismatch closing."
+        },
+        {
+          "id": "clause-I16.5",
+          "clause": "I16.5",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "One result announcement after a turn, none for focus, clock or mismatch closing."
+        },
+        {
+          "id": "clause-I16.4",
+          "clause": "I16.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Two consecutive misses each cause their own live-region update."
+        },
+        {
+          "id": "clause-I16.7",
+          "clause": "I16.7",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Both misses use the published wording exactly."
+        },
+        {
+          "id": "clause-I16.3",
+          "clause": "I16.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Eight matches produce eight announcements. The last announces the match and victory together."
+        },
+        {
+          "id": "clause-I16.6",
+          "clause": "I16.6",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The first and later matches use the singular and plural published wording."
+        },
+        {
+          "id": "clause-I16.8",
+          "clause": "I16.8",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The final match announces eight moves and the stopped clock in one published message."
+        },
+        {
+          "id": "clause-V02.1",
+          "clause": "V02.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Measured content max-width and centered geometry."
+        },
+        {
+          "id": "clause-V02.2",
+          "clause": "V02.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Content padding is 16px."
+        },
+        {
+          "id": "clause-V02.3",
+          "clause": "V02.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Outer page fits the viewport."
+        },
+        {
+          "id": "clause-V03.1",
+          "clause": "V03.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Board height cap is the lesser of 70dvh and 768px."
+        },
+        {
+          "id": "clause-V03.2",
+          "clause": "V03.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Board viewport padding is 6px."
+        },
+        {
+          "id": "clause-V03.3",
+          "clause": "V03.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Board allows both scroll axes."
+        },
+        {
+          "id": "clause-V04.1",
+          "clause": "V04.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Square card bounds measured in CSS pixels."
+        },
+        {
+          "id": "clause-V04.2",
+          "clause": "V04.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V04.2: computed value 6px."
+        },
+        {
+          "id": "clause-V04.3",
+          "clause": "V04.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V04.3: computed value 2px."
+        },
+        {
+          "id": "clause-V04.4",
+          "clause": "V04.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V04.4: computed value 8px."
+        },
+        {
+          "id": "clause-V05.1",
+          "clause": "V05.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Phone 4-column board fits its board viewport."
+        },
+        {
+          "id": "clause-V05.2",
+          "clause": "V05.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Phone 16-column board keeps 44px cards and internal horizontal overflow."
+        },
+        {
+          "id": "clause-V01.1",
+          "clause": "V01.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Native HTML controls provide the interaction elements."
+        },
+        {
+          "id": "clause-V06.1",
+          "clause": "V06.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Computed element colors include #090B14."
+        },
+        {
+          "id": "clause-V06.5",
+          "clause": "V06.5",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Computed element colors include #F4F6FF."
+        },
+        {
+          "id": "clause-V06.2",
+          "clause": "V06.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Board scroll area, reproduction panel and visible non-card native controls use the Panel background."
+        },
+        {
+          "id": "clause-V06.6",
+          "clause": "V06.6",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Board help, status labels and supporting notes use the Secondary color."
+        },
+        {
+          "id": "clause-V06.3",
+          "clause": "V06.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Closed card background matches its token."
+        },
+        {
+          "id": "clause-V06.7",
+          "clause": "V06.7",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Closed card border matches its token."
+        },
+        {
+          "id": "clause-V08.1",
+          "clause": "V08.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Computed body font uses the system sans-serif stack."
+        },
+        {
+          "id": "clause-T08.3",
+          "clause": "T08.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Computed body font uses the system sans-serif stack."
+        },
+        {
+          "id": "clause-V08.2",
+          "clause": "V08.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Body text is 16px on 24px lines."
+        },
+        {
+          "id": "clause-V08.3",
+          "clause": "V08.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Title text is 24px."
+        },
+        {
+          "id": "clause-V08.4",
+          "clause": "V08.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Board help, status labels and supporting notes are 14px."
+        },
+        {
+          "id": "clause-V09.1",
+          "clause": "V09.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Positive authored spacing uses the scale. Zero, auto and normal pass. Reset margins pass and native control internals are excluded."
+        },
+        {
+          "id": "clause-V09.2",
+          "clause": "V09.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Border, radius and font metrics keep their separate stated values."
+        },
+        {
+          "id": "clause-V01.3",
+          "clause": "V01.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Revealed card artwork uses inline SVG."
+        },
+        {
+          "id": "clause-V06.4",
+          "clause": "V06.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Revealed card background matches its token."
+        },
+        {
+          "id": "clause-V06.8",
+          "clause": "V06.8",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Keyboard focus has a 3px white outline offset by 2px."
+        },
+        {
+          "id": "clause-V16.1",
+          "clause": "V16.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Keyboard focus has a 3px white outline offset by 2px."
+        },
+        {
+          "id": "clause-V16.2",
+          "clause": "V16.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Hover changes only border colors to Text. Other changes: none.\nA matched card keeps the Green border while hovered."
+        },
+        {
+          "id": "clause-V17.1",
+          "clause": "V17.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Only border-color properties have 120ms transitions."
+        },
+        {
+          "id": "clause-V17.2",
+          "clause": "V17.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Reduced motion removes card transitions."
+        },
+        {
+          "id": "clause-V14.1",
+          "clause": "V14.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Each hidden card draws the same neutral diamond contour, including CSS borders and SVG geometry."
+        },
+        {
+          "id": "clause-V10.1",
+          "clause": "V10.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The 16x16 board must use 128 distinct named identities.\nObserved: {\"unique\":128,\"deck\":[\"rose solid chevron, marker left\",\"orange outline chevron, marker bottom\",\"yellow solid triangle, marker bottom-right\",\"magenta outline square, marker top-right\",\"magenta outline chevron, marker top-right\",\"magenta outline triangle, marker top-right\",\"yellow solid star, marker bottom-right\",\"orange outline hexagon, marker bottom\",\"cyan solid circle, marker top\",\"green solid chevron, marker right\",\"yellow solid diamond, marker bottom-right\",\"magenta outline plus, marker top-right\",\"rose outline chevron, marker left\",\"green outline square, marker right\",\"ice solid hexagon, marker top-left\",\"violet outline chevron, marker bottom-left\",\"green outline diamond, marker right\",\"orange solid diamond, marker bottom\",\"cyan solid hexagon, marker top\",\"cyan solid hexagon, marker top\",\"cyan solid triangle, marker top\",\"violet solid hexagon, marker bottom-left\",\"cyan outline circle, marker top\",\"violet outline star, marker bottom-left\",\"cyan solid square, marker top\",\"violet solid circle, marker bottom-left\",\"magenta outline star, marker top-right\",\"cyan solid plus, marker top\",\"yellow solid triangle, marker bottom-right\",\"orange outline chevron, marker bottom\",\"ice outline plus, marker top-left\",\"ice solid triangle, marker top-left\",\"violet outline square, marker bottom-left\",\"yellow outline square, marker bottom-right\",\"violet outline circle, marker bottom-left\",\"ice solid chevron, marker top-left\",\"green solid plus, marker right\",\"ice outline circle, marker top-left\",\"ice solid square, marker top-left\",\"magenta outline diamond, marker top-right\",\"rose solid hexagon, marker left\",\"green solid star, marker right\",\"violet solid diamond, marker bottom-left\",\"rose solid diamond, marker left\",\"magenta solid star, marker top-right\",\"green solid chevron, marker right\",\"rose solid triangle, marker left\",\"rose solid circle, marker left\",\"green outline hexagon, marker right\",\"orange solid hexagon, marker bottom\",\"magenta outline hexagon, marker top-right\",\"orange solid plus, marker bottom\",\"ice solid plus, marker top-left\",\"orange outline star, marker bottom\",\"yellow solid chevron, marker bottom-right\",\"magenta outline diamond, marker top-right\",\"rose outline triangle, marker left\",\"ice solid circle, marker top-left\",\"ice solid star, marker top-left\",\"magenta solid diamond, marker top-right\",\"rose outline plus, marker left\",\"cyan outline square, marker top\",\"cyan solid star, marker top\",\"rose outline circle, marker left\",\"yellow solid plus, marker bottom-right\",\"rose solid circle, marker left\",\"yellow outline circle, marker bottom-right\",\"violet outline triangle, marker bottom-left\",\"rose solid diamond, marker left\",\"cyan solid plus, marker top\",\"magenta solid chevron, marker top-right\",\"magenta outline star, marker top-right\",\"rose solid square, marker left\",\"cyan solid triangle, marker top\",\"orange solid star, marker bottom\",\"rose outline square, marker left\",\"magenta outline circle, marker top-right\",\"ice solid circle, marker top-left\",\"rose solid triangle, marker left\",\"magenta solid triangle, marker top-right\",\"rose outline triangle, marker left\",\"green outline plus, marker right\",\"green outline chevron, marker right\",\"cyan outline hexagon, marker top\",\"magenta outline plus, marker top-right\",\"violet outline square, marker bottom-left\",\"violet solid chevron, marker bottom-left\",\"rose solid star, marker left\",\"cyan solid star, marker top\",\"orange outline circle, marker bottom\",\"magenta solid triangle, marker top-right\",\"yellow outline triangle, marker bottom-right\",\"rose solid square, marker left\",\"magenta outline hexagon, marker top-right\",\"rose solid plus, marker left\",\"rose outline diamond, marker left\",\"green solid circle, marker right\",\"green solid triangle, marker right\",\"cyan outline star, marker top\",\"ice solid hexagon, marker top-left\",\"yellow solid plus, marker bottom-right\",\"rose outline star, marker left\",\"rose outline hexagon, marker left\",\"orange solid hexagon, marker bottom\",\"orange solid triangle, marker bottom\",\"magenta solid hexagon, marker top-right\",\"rose solid star, marker left\",\"green solid plus, marker right\",\"violet outline triangle, marker bottom-left\",\"green solid square, marker right\",\"yellow solid circle, marker bottom-right\",\"green outline hexagon, marker right\",\"rose outline plus, marker left\",\"cyan solid chevron, marker top\",\"yellow outline circle, marker bottom-right\",\"green outline star, marker right\",\"yellow outline diamond, marker bottom-right\",\"yellow outline hexagon, marker bottom-right\",\"green outline diamond, marker right\",\"magenta solid star, marker top-right\",\"orange outline square, marker bottom\",\"rose outline circle, marker left\",\"violet outline star, marker bottom-left\",\"yellow outline chevron, marker bottom-right\",\"orange outline plus, marker bottom\",\"orange solid circle, marker bottom\",\"green outline triangle, marker right\",\"green solid hexagon, marker right\",\"magenta solid square, marker top-right\",\"cyan outline star, marker top\",\"yellow outline star, marker bottom-right\",\"green solid circle, marker right\",\"orange outline triangle, marker bottom\",\"violet solid plus, marker bottom-left\",\"ice outline circle, marker top-left\",\"orange outline hexagon, marker bottom\",\"green outline triangle, marker right\",\"ice outline plus, marker top-left\",\"violet outline plus, marker bottom-left\",\"magenta solid plus, marker top-right\",\"ice outline hexagon, marker top-left\",\"yellow outline star, marker bottom-right\",\"violet solid star, marker bottom-left\",\"orange solid chevron, marker bottom\",\"violet solid chevron, marker bottom-left\",\"ice outline square, marker top-left\",\"yellow outline plus, marker bottom-right\",\"yellow outline diamond, marker bottom-right\",\"yellow solid chevron, marker bottom-right\",\"orange solid plus, marker bottom\",\"orange solid triangle, marker bottom\",\"violet outline hexagon, marker bottom-left\",\"violet solid triangle, marker bottom-left\",\"cyan outline circle, marker top\",\"ice outline diamond, marker top-left\",\"ice solid plus, marker top-left\",\"green outline plus, marker right\",\"violet solid square, marker bottom-left\",\"ice solid chevron, marker top-left\",\"violet solid diamond, marker bottom-left\",\"orange outline diamond, marker bottom\",\"green solid square, marker right\",\"magenta solid plus, marker top-right\",\"ice solid triangle, marker top-left\",\"magenta outline chevron, marker top-right\",\"ice solid diamond, marker top-left\",\"ice outline triangle, marker top-left\",\"cyan solid diamond, marker top\",\"cyan solid circle, marker top\",\"yellow solid circle, marker bottom-right\",\"yellow outline triangle, marker bottom-right\",\"cyan outline triangle, marker top\",\"magenta solid circle, marker top-right\",\"yellow outline hexagon, marker bottom-right\",\"ice outline triangle, marker top-left\",\"violet outline plus, marker bottom-left\",\"cyan outline chevron, marker top\",\"orange solid circle, marker bottom\",\"cyan outline diamond, marker top\",\"yellow solid square, marker bottom-right\",\"ice outline hexagon, marker top-left\",\"orange solid square, marker bottom\",\"orange outline diamond, marker bottom\",\"green solid diamond, marker right\",\"magenta solid circle, marker top-right\",\"orange outline triangle, marker bottom\",\"rose outline diamond, marker left\",\"orange solid diamond, marker bottom\",\"violet solid hexagon, marker bottom-left\",\"magenta solid hexagon, marker top-right\",\"violet solid circle, marker bottom-left\",\"violet outline hexagon, marker bottom-left\",\"cyan outline square, marker top\",\"green outline circle, marker right\",\"rose solid chevron, marker left\",\"violet solid plus, marker bottom-left\",\"magenta outline triangle, marker top-right\",\"orange outline circle, marker bottom\",\"violet outline chevron, marker bottom-left\",\"ice solid star, marker top-left\",\"rose outline square, marker left\",\"cyan solid chevron, marker top\",\"orange outline star, marker bottom\",\"ice outline square, marker top-left\",\"magenta solid diamond, marker top-right\",\"ice outline star, marker top-left\",\"rose outline star, marker left\",\"cyan outline plus, marker top\",\"ice outline star, marker top-left\",\"green outline circle, marker right\",\"yellow solid hexagon, marker bottom-right\",\"yellow solid hexagon, marker bottom-right\",\"cyan solid diamond, marker top\",\"ice outline chevron, marker top-left\",\"ice outline chevron, marker top-left\",\"magenta outline square, marker top-right\",\"orange outline square, marker bottom\",\"green outline chevron, marker right\",\"yellow outline square, marker bottom-right\",\"cyan outline plus, marker top\",\"orange solid chevron, marker bottom\",\"orange outline plus, marker bottom\",\"violet solid triangle, marker bottom-left\",\"green outline square, marker right\",\"ice outline diamond, marker top-left\",\"violet solid star, marker bottom-left\",\"magenta outline circle, marker top-right\",\"magenta solid square, marker top-right\",\"yellow solid diamond, marker bottom-right\",\"rose outline chevron, marker left\",\"green solid diamond, marker right\",\"orange solid star, marker bottom\",\"yellow outline plus, marker bottom-right\",\"cyan outline chevron, marker top\",\"violet outline diamond, marker bottom-left\",\"green solid star, marker right\",\"orange solid square, marker bottom\",\"ice solid square, marker top-left\",\"violet outline diamond, marker bottom-left\",\"yellow solid star, marker bottom-right\",\"rose solid hexagon, marker left\",\"ice solid diamond, marker top-left\",\"cyan outline triangle, marker top\",\"cyan solid square, marker top\",\"green outline star, marker right\",\"green solid hexagon, marker right\",\"cyan outline diamond, marker top\",\"rose outline hexagon, marker left\",\"violet outline circle, marker bottom-left\",\"violet solid square, marker bottom-left\",\"yellow outline chevron, marker bottom-right\",\"rose solid plus, marker left\",\"green solid triangle, marker right\",\"yellow solid square, marker bottom-right\",\"cyan outline hexagon, marker top\",\"magenta solid chevron, marker top-right\"]}"
+        },
+        {
+          "id": "clause-V10.3",
+          "clause": "V10.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Visible names span all eight shapes, markers and both fills in the specified lowercase form."
+        },
+        {
+          "id": "clause-V10.4",
+          "clause": "V10.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Visible names span all eight shapes, markers and both fills in the specified lowercase form."
+        },
+        {
+          "id": "clause-V10.5",
+          "clause": "V10.5",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Visible names span all eight shapes, markers and both fills in the specified lowercase form."
+        },
+        {
+          "id": "clause-V13.1",
+          "clause": "V13.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Visible names span all eight shapes, markers and both fills in the specified lowercase form."
+        },
+        {
+          "id": "clause-V13.2",
+          "clause": "V13.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Visible names span all eight shapes, markers and both fills in the specified lowercase form."
+        },
+        {
+          "id": "clause-V07.1",
+          "clause": "V07.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Revealed SVG artwork uses each specified palette entry."
+        },
+        {
+          "id": "clause-V10.9",
+          "clause": "V10.9",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Each revealed face name and rendered palette color agree with its marker index, without requiring numeric face IDs in Layer 2."
+        },
+        {
+          "id": "clause-V15.1",
+          "clause": "V15.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Revealed matched cards retain inline SVG artwork."
+        },
+        {
+          "id": "clause-V15.2",
+          "clause": "V15.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Every matched card has a green border and a drawn green check contour."
+        },
+        {
+          "id": "clause-V15.3",
+          "clause": "V15.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Matched cards keep full opacity."
+        },
+        {
+          "id": "clause-I14.1",
+          "clause": "I14.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "All closed accessible names give their one-based row and column."
+        },
+        {
+          "id": "clause-I14.2",
+          "clause": "I14.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Closed cards carry no face identifiers or named face SVG. Only the common back is mounted.\nObserved: {\"secret\":false,\"closed\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}"
+        },
+        {
+          "id": "clause-I14.3",
+          "clause": "I14.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Closed cards carry no face identifiers or named face SVG. Only the common back is mounted.\nObserved: {\"secret\":false,\"closed\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}"
+        },
+        {
+          "id": "clause-V14.2",
+          "clause": "V14.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Closed cards carry no face identifiers or named face SVG. Only the common back is mounted.\nObserved: {\"secret\":false,\"closed\":[\"Row 1, column 1, closed\",\"Row 1, column 2, closed\",\"Row 1, column 3, closed\",\"Row 1, column 4, closed\",\"Row 2, column 1, closed\",\"Row 2, column 2, closed\",\"Row 2, column 3, closed\",\"Row 2, column 4, closed\",\"Row 3, column 1, closed\",\"Row 3, column 2, closed\",\"Row 3, column 3, closed\",\"Row 3, column 4, closed\",\"Row 4, column 1, closed\",\"Row 4, column 2, closed\",\"Row 4, column 3, closed\",\"Row 4, column 4, closed\"]}"
+        },
+        {
+          "id": "clause-I15.1",
+          "clause": "I15.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Revealed and matched accessible names keep position, specified face name and state.\nObserved: {\"shown\":\"Row 1, column 1, revealed, cyan solid triangle, marker top\",\"matched\":\"Row 1, column 1, matched, cyan solid triangle, marker top\",\"expectedFace\":\"cyan solid triangle, marker top\"}"
+        },
+        {
+          "id": "clause-I15.2",
+          "clause": "I15.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Revealed and matched accessible names keep position, specified face name and state.\nObserved: {\"shown\":\"Row 1, column 1, revealed, cyan solid triangle, marker top\",\"matched\":\"Row 1, column 1, matched, cyan solid triangle, marker top\",\"expectedFace\":\"cyan solid triangle, marker top\"}"
+        },
+        {
+          "id": "clause-I13.1",
+          "clause": "I13.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Corner and mid-board focused cards keep their 5px outline allowance inside every clipping ancestor after focus scrolling."
+        },
+        {
+          "id": "clause-V19.5",
+          "clause": "V19.5",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Corner and mid-board focused cards keep their 5px outline allowance inside every clipping ancestor after focus scrolling."
+        },
+        {
+          "id": "clause-I13.2",
+          "clause": "I13.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "All 256 cards have at least 6px scroll margin on every side and keep interior outlines visible at both viewport widths."
+        },
+        {
+          "id": "clause-V19.1",
+          "clause": "V19.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Large card counts at phone and desktop widths: 256, 256."
+        },
+        {
+          "id": "clause-V19.2",
+          "clause": "V19.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Both viewport widths fit the page and keep New Game reachable."
+        },
+        {
+          "id": "clause-V19.3",
+          "clause": "V19.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "All sampled large-board cards remain at least 44px square."
+        },
+        {
+          "id": "clause-V19.4",
+          "clause": "V19.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Native touch scroll gestures move the board on each overflowing axis. Plain arrows reach the last card and first and last cards accept completed taps at both widths."
+        },
+        {
+          "id": "clause-V18.2",
+          "clause": "V18.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Win pulse runs once for 600ms."
+        },
+        {
+          "id": "clause-V18.3",
+          "clause": "V18.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Reduced motion shows completion without an active animation."
+        },
+        {
+          "id": "clause-V18.4",
+          "clause": "V18.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "No continuing flash, confetti canvas or repeating celebration remains."
+        },
+        {
+          "id": "clause-V20.1",
+          "clause": "V20.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Controls, status and completed-game text have separate text and control boxes at the equivalent zoom viewport."
+        },
+        {
+          "id": "clause-V20.2",
+          "clause": "V20.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The outer page fits 640 CSS pixels for both sizes and after victory."
+        },
+        {
+          "id": "clause-V20.3",
+          "clause": "V20.3",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Pointer turns, Enter and Space turns and large-board keyboard navigation work at device scale 2."
+        },
+        {
+          "id": "clause-V20.4",
+          "clause": "V20.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Focus scrolling keeps corner and interior card outlines inside every clipping ancestor."
+        },
+        {
+          "id": "clause-V20.5",
+          "clause": "V20.5",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The viewport metadata keeps browser zoom enabled."
+        },
+        {
+          "id": "clause-T08.4",
+          "clause": "T08.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The viewport metadata keeps browser zoom enabled."
+        },
+        {
+          "id": "clause-T08.2",
+          "clause": "T08.2",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Direct disk load requests only its main HTML file, with no uncaught errors.\nObserved: {\"requests\":[],\"errors\":[]}"
+        },
+        {
+          "id": "clause-T10.4",
+          "clause": "T10.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Distribution makes no network requests when loaded from disk.\nObserved: {\"requests\":[]}"
+        },
+        {
+          "id": "clause-S01.1",
+          "clause": "S01.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "Audio constructor and playback instrumentation stays at zero in every journey.\nObserved: {\"expectedJourneys\":22,\"calls\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}"
+        },
+        {
+          "id": "clause-R06.6",
+          "clause": "R06.6",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "V18.1: All eight pairs produce a win summary.\nV18.2: Win pulse runs once for 600ms.\nV18.3: Reduced motion shows completion without an active animation.\nV18.4: No continuing flash, confetti canvas or repeating celebration remains."
+        },
+        {
+          "id": "clause-T07.4",
+          "clause": "T07.4",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The required unit-test command exits successfully and reports tests that passed.\nObserved: {\"command\":\"test\",\"code\":0,\"timedOut\":false,\"stdout\":\"\\n> neon-pairs-reference@1.0.0 test\\n> vitest run\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv5.0.5 \\u001b[39m\\u001b[90m/work\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m src/game/snapshot.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m32 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 16\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/session/session.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 18\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m scripts/replay.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 4867\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m replay CLI prints a final snapshot and rejects invalid files and arguments\\u001b[33m 2433\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m the replay command reads a relative path from the caller folder and names what failed\\u001b[33m 2428\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/game.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 14\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/replay.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m17 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 94\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m scripts/source-audit.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 92\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/session/storage.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m11 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 17\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m scripts/source-conventions.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m4 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 190\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/board/face-design.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 18\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/deck.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m23 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 32\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/snapshot-selection.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 7\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/board/keyboard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 9\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/move-cap.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 9\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/session/browser-clock.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 6\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/deck-rejection.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 10\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/saved-format.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 5\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/elapsed-time.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 5\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/replay-order.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 9\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/completion.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 13\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m src/game/board/card-state.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 8\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m20 passed\\u001b[39m\\u001b[22m\\u001b[90m (20)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m132 passed\\u001b[39m\\u001b[22m\\u001b[90m (132)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 03:45:56\\n\\u001b[2m   Duration \\u001b[22m 11.80s\\u001b[2m (tests 78%, import 10%, transform 9%, worker 3%)\\u001b[22m\\n\\n\\u001b[2m    Isolate \\u001b[22m \\u001b[33m20 workers spawned\\u001b[39m\\u001b[2m · ~225ms startup each (spawn + environment, per file)\\u001b[22m\\n\\u001b[2m            \\u001b[22m \\u001b[2mat least ~4.27s faster with \\u001b[22m\\u001b[33misolate: false\\u001b[39m\\u001b[2m — reuses workers across files instead of one per file\\u001b[22m\\n\\n\",\"stderr\":\"\",\"htmlBytes\":0}"
+        },
+        {
+          "id": "clause-T07.6",
+          "clause": "T07.6",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The required build command type checks and writes dist/index.html.\nObserved: {\"command\":\"build\",\"code\":0,\"timedOut\":false,\"stdout\":\"\\n> neon-pairs-reference@1.0.0 build\\n> npm run typecheck && vite build\\n\\n\\n> neon-pairs-reference@1.0.0 typecheck\\n> tsc -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p tsconfig.e2e.json\\n\\nvite v8.3.5 building client environment for production...\\ntransforming...\\n✓ 49 modules transformed.\\nrendering chunks...\\n[plugin vite:singlefile] \\n\\n[plugin vite:singlefile] Inlining: index-DCqvJJ6G.js\\n[plugin vite:singlefile] Inlining: style-CxJWKe8E.css\\ncomputing gzip size...\\ndist/index.html  241.17 kB │ gzip: 76.20 kB\\n\\n✓ built in 415ms\\n\",\"stderr\":\"\",\"htmlBytes\":241170}"
+        },
+        {
+          "id": "clause-T08.1",
+          "clause": "T08.1",
+          "area": "requirements",
+          "status": "pass",
+          "evidence": "The built HTML has inline scripts, styles and artwork.\nObserved: {\"htmlBytes\":241170,\"externalTags\":[]}"
+        }
+      ],
+      "mismatches": []
+    }
+  ]
+}
