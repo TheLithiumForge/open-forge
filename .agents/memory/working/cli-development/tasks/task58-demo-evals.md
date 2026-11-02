@@ -170,6 +170,10 @@ Built the same day: phases 1 to 4. `results add`, `check`, `judge --missing`, `p
 3. **Partial scenarios.** Add tasks that touch one part of the game, such as sound, card faces or keyboard controls, started from the reference with that part removed. Run them against plain docs, up-front Open Forge and scoped Open Forge. The existing-app cases are partial work already.
 4. **Later.** Try prompts that ask the agent to load only what the task needs.
 
+The full spec is [Eval Context And Cost Measures](../../../emerging/analysis/eval-context-and-cost-measures.md).
+
+**Linked AGENTS.md, 2026-11-02.** The maintainer decided the control also gets a `CLAUDE.md` that imports `AGENTS.md`, as Open Forge setups have, so Claude starts from the same instructions as Codex. Batches started on or before 2026-11-02 wrote `AGENTS.md` only. Codex reads `AGENTS.md` either way, so Sol runs stay comparable. The Claude batches restart with the new setup when Claude usage allows.
+
 **Later:** testing Extensions, starting with the Helpful setup. [Task 90](task90-extensions-install-their-routes.md) covers Extensions that need routes a preset left out, and the [Plan-Ahead Skill](../../../emerging/ideas/plan-ahead-skill.md) idea covers Guidance that doesn't change how agents ask.
 
 **Related:** the Emerging idea on

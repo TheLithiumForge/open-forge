@@ -16,7 +16,9 @@ import type { ScopePolicy } from "./scope.types.ts";
 
 export const SetupKind = { plain: "plain-docs", linked: "linked-agents", forge: "open-forge", inline: "spec-in-prompt", code: "code-only" } as const;
 export type SetupKind = (typeof SetupKind)[keyof typeof SetupKind];
-export const SetupFiles = { docs: "docs", readme: "README.md", agents: "AGENTS.md", manifestSuffix: ".manifest.json" } as const;
+export const SetupFiles = { docs: "docs", readme: "README.md", agents: "AGENTS.md", claude: "CLAUDE.md", manifestSuffix: ".manifest.json" } as const;
+// Open Forge's own CLAUDE.md imports AGENTS.md the same way, so both tools start from the linked instructions in every setup.
+export const LinkedClaudeInstructions = "@AGENTS.md\n";
 export const AcceptanceLine = "Follow the requirements in docs/ for this project.";
 
 export interface SetupOptions {
@@ -95,7 +97,10 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   const readme = startingReadme(options.projectFiles, kind === SetupKind.code ? null : AcceptanceLine)
     ?? (kind === SetupKind.inline ? InlineReadme : projectReadme(frozen.manifest));
   await writeNew(target, SetupFiles.readme, readme);
-  if (kind === SetupKind.linked) await writeNew(target, SetupFiles.agents, linkedInstructions(frozen.manifest));
+  if (kind === SetupKind.linked) {
+    await writeNew(target, SetupFiles.agents, linkedInstructions(frozen.manifest));
+    await writeNew(target, SetupFiles.claude, LinkedClaudeInstructions);
+  }
   const frameworkCommands = kind === SetupKind.forge ? await installFramework(target, options.runForge ?? createForgeRunner(), options.preset) : [];
   let files = await inventory(target);
   for (const record of documentFiles.length ? frozen.manifest.files : []) {

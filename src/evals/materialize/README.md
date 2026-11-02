@@ -40,7 +40,7 @@ This writes the project and its Git repository with one initial commit. It write
 The available setups are:
 
 - `plain-docs` - Game documents under `docs/` and a README pointer.
-- `linked-agents` - The same documents and an `AGENTS.md` with each document's description.
+- `linked-agents` - The same documents, an `AGENTS.md` with each document's description and a `CLAUDE.md` that imports it.
 - `open-forge` - The same documents with frontmatter, routed through a real Open Forge install.
 - `spec-in-prompt` - The Layer 2 player pack in the task prompt, with an empty project apart from its README.
 

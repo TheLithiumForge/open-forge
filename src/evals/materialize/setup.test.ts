@@ -7,7 +7,7 @@ import { contained, inventory, jsonBytes, writeNew } from "./files.ts";
 import { ForgeFlags, ForgeRequests, ForgeStatus, FrameworkVersion, type ForgeRunner } from "./forge.ts";
 import { GitCommand, GitRequests } from "./git.ts";
 import type { CommandRunner } from "./runner.ts";
-import { AcceptanceLine, linkedInstructions, materializeSetup, SetupFiles, SetupKind } from "./setup.ts";
+import { AcceptanceLine, LinkedClaudeInstructions, linkedInstructions, materializeSetup, SetupFiles, SetupKind } from "./setup.ts";
 import { materializeSpecs } from "./specs.ts";
 import { stripFrontmatter } from "./strip.ts";
 import { stripSetup } from "./strip-setup.ts";
@@ -58,7 +58,10 @@ test("three setups carry the same sentences, descriptions and acceptance with on
     const content = [readme];
     for (const file of frozen.files) content.push(stripFrontmatter(await readFile(join(destination, SetupFiles.docs, file.path))).toString());
     sentences.push(content.flatMap((text) => text.split(/(?<=[.!?])\s+/)));
-    if (kind === SetupKind.linked) assert.equal(await readFile(join(destination, SetupFiles.agents), "utf8"), linkedInstructions(frozen));
+    if (kind === SetupKind.linked) {
+      assert.equal(await readFile(join(destination, SetupFiles.agents), "utf8"), linkedInstructions(frozen));
+      assert.equal(await readFile(join(destination, SetupFiles.claude), "utf8"), LinkedClaudeInstructions);
+    }
     if (kind === SetupKind.forge) {
       assert.deepEqual(forgeCalls, [[ForgeFlags.version], ...ForgeRequests.flatMap((args) => [[...args, ForgeFlags.dryRun, ForgeFlags.format, ForgeFlags.json, ForgeFlags.detail, ForgeFlags.full], [...args, ForgeFlags.format, ForgeFlags.json, ForgeFlags.detail, ForgeFlags.full]])]);
       const catalogue = await readFile(join(destination, Scaffold.catalogue), "utf8");
