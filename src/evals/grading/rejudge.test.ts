@@ -7,7 +7,7 @@ import { MatrixJudges } from "../config/matrix.ts";
 import { rejudgeOptions } from "../config/preset-options.ts";
 import { JudgePresets, PresetName } from "../config/presets.ts";
 import { Flag } from "../config/commands.ts";
-import { AssessmentKind } from "../history/statuses.ts";
+import { AssessmentKind, FailureKind } from "../history/statuses.ts";
 import { FixtureVersions, temporaryHistory, v2Fixture } from "../history/test-fixtures.ts";
 import { ResultFiles } from "../paths.ts";
 import { writeNew } from "../materialize/files.ts";
@@ -42,4 +42,15 @@ test("rejudge judge presets append the chosen judges without altering the batch 
   const judgments = await history.store.readAssessments(batch.id);
   assert.deepEqual(judgments.map((assessment) => assessment.kind === AssessmentKind.judge ? assessment.requestedModel : null), JudgePresets[PresetName.both]);
   assert.deepEqual((await history.store.readBatch(batch.id)).config, batch.config);
+});
+
+test("rejudge skips an attempt that stopped on an infrastructure failure and kept no files", async (t) => {
+  const history = await temporaryHistory(); t.after(history.cleanup);
+  const { batch, run } = v2Fixture();
+  const stopped = { ...run, failureKind: FailureKind.infrastructure };
+  await history.store.saveBatch(batch); await history.store.saveRun(stopped);
+  let judged = 0;
+  await rejudgeRuns(FixtureSuite, [stopped], batch.config, FixtureVersions, { store: history.store, judge: async () => { judged += 1; return []; } });
+  assert.equal(judged, 0);
+  assert.deepEqual(await history.store.readAssessments(batch.id), []);
 });

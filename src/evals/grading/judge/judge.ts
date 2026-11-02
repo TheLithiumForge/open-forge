@@ -57,6 +57,13 @@ export function judgePrompt(suite: Suite, questions: readonly JudgeQuestion[], e
   ].join("\n\n");
 }
 
+/** A retry names what made the previous reply unusable, so the judge can fix that part. */
+export function retryPrompt(prompt: string, rejected: string): string {
+  return `${prompt}
+
+Your previous reply was rejected: ${rejected} Return the complete JSON again with that fixed.`;
+}
+
 export async function judgeRun(suite: Suite, choice: JudgeChoice, folder: string, home: string, timeoutMs: number, options: JudgeOptions = {}): Promise<JudgeAnswer[]> {
   const questions = await judgeQuestions(suite);
   const evidence = await judgeEvidence(folder, options.images);
@@ -69,11 +76,12 @@ export async function judgeRun(suite: Suite, choice: JudgeChoice, folder: string
   try {
     for (let ballot = 0; ballot < BallotCount; ballot += 1) {
       let reply = "";
+      let rejected: string | null = null;
       for (let attempt = 0; attempt <= JudgeFormatRetries; attempt += 1) {
         if (attempt > 0) formatRetries += 1;
         const space: RunSpace = { root: dirname(folder), work: folder, home: join(home, `ballot-${ballot}`, `try-${attempt}`), project: suite.project };
         let result: ProcessResult;
-        try { result = await assessor.run(space, choice, prompt, { ...options.stage, timeoutMs }, evidence); }
+        try { result = await assessor.run(space, choice, rejected === null ? prompt : retryPrompt(prompt, rejected), { ...options.stage, timeoutMs }, evidence); }
         catch (error) { failures.push(ballotFailure(ballot + 1, attempt, reply, error)); throw error; }
         reply = result.stdout;
         try {
@@ -85,6 +93,7 @@ export async function judgeRun(suite: Suite, choice: JudgeChoice, folder: string
             failures.push(ballotFailure(ballot + 1, attempt, reply, error));
             throw error;
           }
+          rejected = error instanceof Error ? error.message : String(error);
         }
       }
     }

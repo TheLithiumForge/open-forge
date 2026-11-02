@@ -55,6 +55,7 @@ test("a grading failure keeps the last ballot reply and whole-batch rejudge appe
   const runPath = join(fixture.store.runFolder(batch.id, run.id), ResultFiles.run);
   const checksPath = join(fixture.store.batchFolder(batch.id), HistoryFiles.assessments, `${AssessmentKind.checks}.jsonl`);
   const runBytes = await readFile(runPath), checkBytes = await readFile(checksPath);
+  const failingPrompts = prompts.length;
   const calls = new Map<string, number>();
   const recovered: JudgeAssessor = { supportsImages: true, run: async (_space, choice, prompt) => {
     prompts.push(prompt);
@@ -71,7 +72,9 @@ test("a grading failure keeps the last ballot reply and whole-batch rejudge appe
   assert.deepEqual(latest.map((item) => item.replacesAssessmentId), firstJudgments.map((item) => item.id));
   assert.ok(latest.every((item) => item.error === null && item.formatRetries === 1 && item.ballotFailures?.length === 0));
   assert.ok([...calls.values()].every((count) => count === BallotCount + 1));
-  assert.ok(prompts.every((prompt) => prompt === prompts[0]));
+  const retried = prompts.slice(failingPrompts).filter((prompt) => prompt !== prompts[0]);
+  assert.equal(retried.length, MatrixJudges.length);
+  assert.ok(retried.every((prompt) => prompt.startsWith(prompts[0] ?? "")));
   assert.deepEqual(await readFile(runPath), runBytes);
   assert.deepEqual(await readFile(checksPath), checkBytes);
   assert.equal((await fixture.store.readRun(batch.id, run.id)).functionalResult?.coverage.share, 1);

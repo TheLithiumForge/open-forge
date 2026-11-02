@@ -8,7 +8,7 @@ import { Tool } from "../../config/choices.ts";
 import type { Suite } from "../../benchmarks/suite.types.ts";
 import { judgeEvidence, type JudgeEvidence } from "./evidence.ts";
 import { prepareJudgeFolder } from "./judge-folder.ts";
-import { JudgeImageManifestLabel, judgeRun, type JudgeAssessor } from "./judge.ts";
+import { JudgeImageManifestLabel, judgeRun, retryPrompt, type JudgeAssessor } from "./judge.ts";
 import { containerFixture } from "../../execution/containers/test-docker.ts";
 import { ContainerPaths } from "../../execution/containers/settings.ts";
 import { AssessorImageLimits } from "../../execution/containers/files.ts";
@@ -85,10 +85,36 @@ test("malformed ballots, invented citations and a missing image transport are ju
   const first = answers[0];
   assert.ok(first);
   for (const changes of [{ answer: "maybe" }, { citations: [`source:${SourcePath}:9999`] }, { evidence: 1 }]) assert.throws(() => parseBallot({ answers: [{ ...first, ...changes }, ...answers.slice(1)] }, questions, evidence));
+  const lines = evidence.sources.find((source) => source.path === SourcePath)?.lines;
+  const overshoot = parseBallot({ answers: [{ ...first, citations: [`source:${SourcePath}:1-9999`] }, ...answers.slice(1)] }, questions, evidence);
+  assert.deepEqual(overshoot[0]?.citations, [`source:${SourcePath}:1-${lines}`]);
   const noImages: JudgeAssessor = { supportsImages: false, run: async () => { throw new Error("Unreachable assessor."); } };
   await assert.rejects(judgeRun(suite, choice, folder, join(root, "home"), 1000, { assessor: noImages }));
   const failed: JudgeAssessor = { supportsImages: true, run: async () => ({ code: 1, timedOut: false, stdout: "", stderr: "assessor failed" }) };
   await assert.rejects(judgeRun(suite, choice, folder, join(root, "home"), 1000, { assessor: failed }));
+});
+
+test("a rejected reply is retried with the reason it was rejected", async (t) => {
+  const root = await temporary(t);
+  const folder = join(root, "judge");
+  await prepareJudgeFolder(await application(root, "source"), folder);
+  const evidence = await judgeEvidence(folder);
+  const questions = await frozenQuestions();
+  const answers = questions.map((question) => ({ id: question.id, answer: JudgeVerdict.unsure, evidence: "Uncertain", citations: [`source:${SourcePath}:1`] }));
+  const invalid = { answers: answers.map((answer) => ({ ...answer, citations: [`source:${SourcePath}:9999`] })) };
+  let rejection = "";
+  try { parseBallot(invalid, questions, evidence); } catch (error) { rejection = error instanceof Error ? error.message : String(error); }
+  assert.ok(rejection);
+  const prompts: string[] = [];
+  const assessor: JudgeAssessor = { supportsImages: true, run: async (_space, _choice, prompt) => {
+    prompts.push(prompt);
+    return { code: 0, timedOut: false, stderr: "", stdout: JSON.stringify({ structured_output: prompts.length === 1 ? invalid : { answers } }) };
+  } };
+  const judged = await judgeRun(suite, choice, folder, join(root, "home"), 1000, { assessor });
+  assert.equal(judged.length, questions.length);
+  assert.equal(prompts.length, BallotCount + 1);
+  assert.equal(prompts[1], retryPrompt(prompts[0] ?? "", rejection));
+  assert.ok(prompts.slice(2).every((prompt) => prompt === prompts[0]));
 });
 
 test("the container adapter sends identical board and face sheet images and records their manifest", async () => {

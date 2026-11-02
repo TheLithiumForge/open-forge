@@ -75,7 +75,8 @@ export async function completeSavedJudgments(suite: Suite, run: RunView, config:
 }
 
 export async function rejudgeRuns(suite: Suite, runs: readonly RunView[], config: EvalConfig, versions: AssessmentVersions, services: SavedJudgeServices = {}, onlyRun?: string): Promise<void> {
-  const selected = runs.filter((run) => run.startedAt !== null && (onlyRun === undefined || run.id === onlyRun));
+  // An attempt that stopped on an infrastructure failure kept no files to judge, as in completeSavedJudgments.
+  const selected = runs.filter((run) => run.startedAt !== null && run.finishedAt !== null && run.failureKind !== FailureKind.infrastructure && (onlyRun === undefined || run.id === onlyRun));
   const options = services.options ?? { stage: { ...(config.containers === undefined ? {} : { limits: config.containers }) } };
   await runInParallel(selected, config.parallelRuns || 1, async (run) => {
     for (const choice of configuredJudges(config)) await judgeSavedRun(suite, run, choice, versions, { ...services, options }, false, config.judge);

@@ -43,13 +43,15 @@ export async function judgeEvidence(folder: string, imagePaths: readonly string[
   return { sources, images };
 }
 
-export function validCitation(citation: string, evidence: JudgeEvidence): boolean {
-  if (citation === "missing:images") return evidence.images.length === 0;
-  if (citation === "missing:source") return evidence.sources.length === 0;
-  if (evidence.images.some((image) => citation === image.id)) return true;
+/** The citation as it applies to the bundle, or null when it points outside it. A range running past a file's last line ends there. */
+export function boundCitation(citation: string, evidence: JudgeEvidence): string | null {
+  if (citation === "missing:images") return evidence.images.length === 0 ? citation : null;
+  if (citation === "missing:source") return evidence.sources.length === 0 ? citation : null;
+  if (evidence.images.some((image) => citation === image.id)) return citation;
   const match = /^source:(.+):(\d+)(?:-(\d+))?$/.exec(citation);
-  if (!match) return false;
+  if (!match) return null;
   const file = evidence.sources.find((source) => source.path === match[1]);
   const start = Number(match[2]), end = Number(match[3] ?? match[2]);
-  return file !== undefined && start >= 1 && end >= start && end <= file.lines;
+  if (file === undefined || start < 1 || end < start || start > file.lines) return null;
+  return end <= file.lines ? citation : `source:${file.path}:${start}-${file.lines}`;
 }

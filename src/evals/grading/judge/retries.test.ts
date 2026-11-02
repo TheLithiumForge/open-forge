@@ -7,7 +7,7 @@ import { JudgeFormatRetries, JudgeFailureReplyBytes, type JudgeReport } from "./
 import { BallotCount } from "./rubric.ts";
 import { assessorResult, ballotFixture, BallotTimeoutMs } from "./test-fixture.ts";
 
-test("format retries use the same prompt and evidence in fresh samples before completing all ballots", async (t) => {
+test("format retries add the rejection to the same prompt and evidence in fresh samples before completing all ballots", async (t) => {
   const fixture = await ballotFixture(t);
   for (const choice of MatrixJudges) {
     const calls: { prompt: string; home: string; evidence: JudgeEvidence }[] = [];
@@ -20,7 +20,12 @@ test("format retries use the same prompt and evidence in fresh samples before co
     const answers = await judgeRun(fixture.suite, choice, fixture.folder, fixture.home, BallotTimeoutMs, { assessor, onReport: (report) => reports.push(report) });
     assert.equal(calls.length, BallotCount + JudgeFormatRetries);
     assert.equal(new Set(calls.map((call) => call.home)).size, calls.length);
-    assert.ok(calls.every((call) => call.prompt === calls[0]?.prompt && call.evidence === calls[0]?.evidence));
+    const base = calls[0]?.prompt ?? "";
+    const retries = calls.slice(1, 1 + JudgeFormatRetries);
+    assert.ok(calls.every((call) => call.evidence === calls[0]?.evidence));
+    assert.ok(retries.every((call) => call.prompt !== base && call.prompt.startsWith(base)));
+    assert.equal(new Set(retries.map((call) => call.prompt)).size, JudgeFormatRetries);
+    assert.ok(calls.slice(1 + JudgeFormatRetries).every((call) => call.prompt === base));
     assert.ok(answers.every((answer) => answer.unsure === BallotCount && answer.yes === 0 && answer.no === 0));
     assert.deepEqual(reports, [{ formatRetries: JudgeFormatRetries, failures: [] }]);
   }
