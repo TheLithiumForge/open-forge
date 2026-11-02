@@ -21,6 +21,7 @@ import type { ScopePolicy } from "../materialize/scope.types.ts";
 import { progress } from "./progress.ts";
 import { executeRun } from "./run.ts";
 import { completeSavedJudgments } from "../grading/rejudge.ts";
+import { JudgeLimited } from "../grading/judge/reply.ts";
 import { runInParallel } from "./run-queue.ts";
 import { generateSetup } from "../config/setups.ts";
 import { opaqueId, removeFolder, suiteForSetup } from "./workspace.ts";
@@ -62,6 +63,11 @@ export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   for (const run of runs) await saveRun(run);
   void executeBatch(batch.id);
   return batch;
+}
+
+/** Whether resume replaces an interrupted or limited attempt. One replacement caps infrastructure failures, and a usage limit isn't one. */
+export function replacedOnResume(run: Pick<RunRecord, "status" | "replacesRunId">): boolean {
+  return run.replacesRunId === null || run.status === RunStatus.limited;
 }
 
 /** A batch left preparing or running by a stopped server can only be resumed, so it shows as paused. */
@@ -123,6 +129,13 @@ async function executeBatch(batchId: string): Promise<void> {
     let limited = false;
     // Batches saved before parallel runs existed have no setting, so they run one at a time.
     await runInParallel(batch.runs, batch.config.parallelRuns || 1, async (runId, index) => {
+      try { await attempt(runId, index); }
+      catch (error) {
+        if (!(error instanceof JudgeLimited)) throw error;
+        limited = true;
+      }
+    }, () => limited);
+    async function attempt(runId: string, index: number): Promise<void> {
       let run: RunRecord = await readRun(batchId, runId);
       if (!rerunStatuses.includes(run.status)) {
         await completeSavedJudgments(suiteForSetup(suite, run.setup), run, batch.config,
@@ -131,7 +144,7 @@ async function executeBatch(batchId: string): Promise<void> {
       }
       if (run.status !== RunStatus.pending) {
         if (run.finishedAt === null) await saveRun({ ...run, status: RunStatus.failed, failureKind: FailureKind.infrastructure, finishedAt: new Date().toISOString() });
-        if (run.replacesRunId !== null) return;
+        if (!replacedOnResume(run)) return;
         run = replacementRun(run, opaqueId(), "Resume after an interrupted or limited attempt.");
         batch = { ...batch, runs: [...batch.runs, run.id] };
         await saveRun(run);
@@ -149,7 +162,7 @@ async function executeBatch(batchId: string): Promise<void> {
         done = await executeRun({ run: replacement, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} replacement`, services });
       }
       if (done.status === RunStatus.limited) limited = true;
-    }, () => limited);
+    }
     batch = withReportedModels(batch, await readRuns(batch));
     if (limited) return await setStatus(BatchStatus.paused);
     await setStatus(BatchStatus.done);

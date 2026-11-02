@@ -12,6 +12,7 @@ import { plannedRun } from "../history/run-records.ts";
 import { TurnOutcome } from "./providers/agent-session.ts";
 import { completeSavedJudgments } from "../grading/rejudge.ts";
 import { executeRun, type RunServices } from "./run.ts";
+import { JudgeLimited } from "../grading/judge/reply.ts";
 
 const SourceFile = "game.ts", SourceText = "export const game = 'fixture';\n", BuiltPage = "dist/index.html";
 const Telemetry = { tokens: null, requests: null, peakContext: null, contextWindow: null, compactions: null, toolCalls: 0, failedToolCalls: 0,
@@ -86,6 +87,28 @@ test("resume fills only missing judgments and never starts the implementer again
   await completeSavedJudgments(FixtureSuite, saved, fixture.config, first.versions, { store: fixture.store, judge, scratch });
   await completeSavedJudgments(FixtureSuite, saved, fixture.config, first.versions, { store: fixture.store, judge, scratch });
   assert.deepEqual(fixture.calls, MatrixJudges.map(modelKey));
+  assert.deepEqual(fixture.counters(), { conversations: 1, builds: 1, checks: 1 });
+});
+
+test("a judge usage limit keeps the checked attempt without a judgment and resume adds it", async (t) => {
+  const fixture = await matrixRun(t);
+  const judge = fixture.services.judge, scratch = fixture.services.scratch; assert.ok(judge && scratch);
+  let limited = true;
+  const services: RunServices = { ...fixture.services, judge: async (...args) => {
+    if (limited) { limited = false; throw new JudgeLimited(); }
+    return judge(...args);
+  } };
+  await assert.rejects(executeRun({ run: fixture.run, suite: FixtureSuite, config: fixture.config, snapshot: "", position: "fixture", services }), JudgeLimited);
+  const saved = await fixture.store.readRun(fixture.batch.id, fixture.run.id);
+  assert.equal(saved.status, RunStatus.done);
+  assert.equal(saved.judgeAssessmentId, null);
+  const assessments = await fixture.store.readAssessments(fixture.batch.id);
+  assert.deepEqual(assessments.filter((item) => item.kind === AssessmentKind.judge), []);
+  const checked = assessments.find((item) => item.kind === AssessmentKind.checks); assert.ok(checked);
+  await completeSavedJudgments(FixtureSuite, saved, fixture.config, checked.versions, { store: fixture.store, judge, scratch });
+  const judgments = (await fixture.store.readAssessments(fixture.batch.id)).filter((item) => item.kind === AssessmentKind.judge);
+  assert.deepEqual(judgments.map((item) => item.requestedModel), MatrixJudges);
+  assert.ok(judgments.every((item) => item.error === null));
   assert.deepEqual(fixture.counters(), { conversations: 1, builds: 1, checks: 1 });
 });
 

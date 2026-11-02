@@ -5,6 +5,7 @@ import { judgeRun } from "./judge/judge.ts";
 import type { JudgeOptions } from "./judge/judge.ts";
 import type { JudgeReport } from "./judge/report.ts";
 import { prepareJudgeFolder } from "./judge/judge-folder.ts";
+import { JudgeLimited } from "./judge/reply.ts";
 import { judgeImagePaths } from "./judge/shot-paths.ts";
 import { ResultFiles } from "../paths.ts";
 import { judgeAssessment } from "../history/assessments.ts";
@@ -37,6 +38,8 @@ export async function rejudgeRun(run: RunView, versions: AssessmentVersions, dep
     const answers = await dependencies.evaluate(run, (received) => { report = received; });
     assessment = judgeAssessment(run, answers, versions, report);
   } catch (error) {
+    // A usage limit leaves the judgment missing, so resume or a later rejudge can still add it.
+    if (error instanceof JudgeLimited) throw error;
     assessment = { ...judgeAssessment(run, [], versions, report), error: error instanceof Error ? error.message : String(error) };
   }
   if (dependencies.choice !== undefined) assessment = { ...assessment, requestedModel: dependencies.choice, ballots: dependencies.choice.repeats, replacesAssessmentId: dependencies.previous?.id ?? null };

@@ -35,10 +35,15 @@ export interface SessionContext {
   readonly eventsPath: string;
 }
 
-const limitPattern = /usage limit|rate limit|limit reached|too many requests|\b429\b|quota/i;
+// Claude Code says "You've hit your 5-hour limit", which names neither usage nor rate.
+const limitPattern = /usage limit|rate limit|limit reached|too many requests|\b429\b|quota|hit your [\w -]*limit/i;
+
+export function limitReached(text: string): boolean {
+  return limitPattern.test(text);
+}
 
 export function outcomeForError(text: string): TurnOutcome {
-  return limitPattern.test(text) ? TurnOutcome.limited : TurnOutcome.failed;
+  return limitReached(text) ? TurnOutcome.limited : TurnOutcome.failed;
 }
 
 export function openSession(context: SessionContext): AgentSession {

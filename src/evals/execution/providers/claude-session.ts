@@ -3,7 +3,7 @@ import { appendFileSync } from "node:fs";
 import { createInterface } from "node:readline";
 import type { AgentTelemetry } from "../../history/results.types.ts";
 import { outcomeForError, TurnOutcome, type AgentSession, type SessionContext, type TurnResult } from "./agent-session.ts";
-import { ClaudeTelemetry, type ClaudeEvent } from "./claude-telemetry.ts";
+import { claudeLimitEvent, ClaudeTelemetry, type ClaudeEvent } from "./claude-telemetry.ts";
 import { spawnInRun } from "../containers/executor.ts";
 import { PinnedTool } from "./pinned-tools.ts";
 
@@ -31,6 +31,7 @@ export class ClaudeSession implements AgentSession {
   private child: ChildProcessWithoutNullStreams | null = null;
   private pending: ((result: TurnResult) => void) | null = null;
   private stderr = "";
+  private limited = false;
 
   constructor(context: SessionContext) {
     this.context = context;
@@ -84,9 +85,10 @@ export class ClaudeSession implements AgentSession {
       return; // Not an event line.
     }
     this.telemetry.record(event);
+    if (claudeLimitEvent(event)) this.limited = true;
     if (event.type !== "result") return;
     const text = event.result ?? "";
-    this.settle(event.is_error === true ? { outcome: outcomeForError(text), message: text, error: text } : { outcome: TurnOutcome.answered, message: text, error: null });
+    this.settle(event.is_error === true ? { outcome: this.limited ? TurnOutcome.limited : outcomeForError(text), message: text, error: text } : { outcome: TurnOutcome.answered, message: text, error: null });
   }
 
   private settle(result: TurnResult): void {

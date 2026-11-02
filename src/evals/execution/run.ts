@@ -9,6 +9,7 @@ import { withAgentStage } from "./containers/agent.ts";
 import { executionLabel, ExecutionLabelFile, LocalExecutionLabel } from "./containers/eligibility.ts";
 import type { Docker } from "./containers/docker.ts";
 import { judgeRun } from "../grading/judge/judge.ts";
+import { JudgeLimited } from "../grading/judge/reply.ts";
 import type { JudgeReport } from "../grading/judge/report.ts";
 import { completeSavedJudgments } from "../grading/rejudge.ts";
 import { configuredJudges } from "../config/judges.ts";
@@ -130,6 +131,11 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
       await removeFolder(judgeFolder);
     }
   } catch (error) {
+    if (error instanceof JudgeLimited && run.status === RunStatus.judging) {
+      // The attempt and its checks are complete. Resume adds the missing judgment without running the agent again.
+      await update({ status: RunStatus.done, finishedAt: new Date().toISOString() }, "the judge hit a usage limit. The batch pauses.");
+      throw error;
+    }
     if (error instanceof SimulatorFailure) {
       await writeFile(join(folder, ConversationFile), `${JSON.stringify(error.report, null, 2)}\n`);
       await update({ questions: error.report.questions, finalMessage: error.report.messages?.findLast((message) => message.role === ConversationRole.agent)?.text ?? run.finalMessage });

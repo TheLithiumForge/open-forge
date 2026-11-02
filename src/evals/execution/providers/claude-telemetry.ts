@@ -28,7 +28,14 @@ export interface ClaudeEvent {
   readonly total_cost_usd?: number;
   readonly result?: string;
   readonly is_error?: boolean;
+  readonly api_error_status?: number;
+  readonly rate_limit_info?: { readonly status?: string };
   readonly modelUsage?: Readonly<Record<string, { readonly contextWindow?: number }>>;
+}
+
+/** Claude reports a usage limit as a rejected rate limit event or a 429 result, whatever its message says. */
+export function claudeLimitEvent(event: ClaudeEvent): boolean {
+  return (event.type === "rate_limit_event" && event.rate_limit_info?.status === "rejected") || event.api_error_status === 429;
 }
 
 const count = (value: number | undefined): number => value ?? 0;
