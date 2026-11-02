@@ -11,8 +11,9 @@ test("resume replaces any first attempt and a replacement only when a usage limi
 });
 
 test("resume grades saved files only when the agent finished and grading stopped", () => {
-  for (const status of [RunStatus.checking, RunStatus.judging]) assert.equal(gradedOnResume({ status, agentSeconds: 60 }, true), true);
+  for (const status of [RunStatus.building, RunStatus.checking, RunStatus.judging]) assert.equal(gradedOnResume({ status, agentSeconds: 60 }, true), true);
   assert.equal(gradedOnResume({ status: RunStatus.checking, agentSeconds: 60 }, false), false);
   assert.equal(gradedOnResume({ status: RunStatus.checking, agentSeconds: null }, true), false);
-  for (const status of [RunStatus.agent, RunStatus.building, RunStatus.limited, RunStatus.pending]) assert.equal(gradedOnResume({ status, agentSeconds: 60 }, true), false);
+  assert.equal(gradedOnResume({ status: RunStatus.building, agentSeconds: 60 }, false), false);
+  for (const status of [RunStatus.agent, RunStatus.limited, RunStatus.pending]) assert.equal(gradedOnResume({ status, agentSeconds: 60 }, true), false);
 });

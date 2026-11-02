@@ -80,9 +80,13 @@ export function replacedOnResume(run: Pick<RunRecord, "status" | "replacesRunId"
   return !alreadyReplaced && (run.replacesRunId === null || run.status === RunStatus.limited);
 }
 
-/** Whether resume grades a run's saved files instead of starting it over, because the agent finished and only grading stopped. */
+/**
+ * Whether resume grades a run's saved files instead of starting it over, because the agent finished and only grading stopped.
+ * A first build runs before the files are saved, so a building run with saved files was stopped while its saved files were graded.
+ */
 export function gradedOnResume(run: Pick<RunRecord, "status" | "agentSeconds">, filesSaved: boolean): boolean {
-  return (run.status === RunStatus.checking || run.status === RunStatus.judging) && run.agentSeconds !== null && filesSaved;
+  const grading: readonly RunStatus[] = [RunStatus.building, RunStatus.checking, RunStatus.judging];
+  return grading.includes(run.status) && run.agentSeconds !== null && filesSaved;
 }
 
 /** A batch left preparing or running by a stopped server can only be resumed, so it shows as paused. */
