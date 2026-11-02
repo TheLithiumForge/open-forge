@@ -48,23 +48,55 @@ Each measure is per run, then summarized per setup and compared with the control
 
 Mixed reads are a known limit: one command that reads `AGENTS.md` and `docs/` counts toward framework, and `open-forge context` prints the up-front spec but counts as framework. Splitting a command's output by source would remove this limit.
 
+## Early results, 2026-11-02
+
+Progressive disclosure is the framework's main selling point, so these results matter mainly as a baseline for Open Forge used without scoping. The maintainer keeps the current batches as that first set and builds the scoped evals beside them.
+
+| Starting point | What the newest batches support, at one to three runs per cell |
+| --- | --- |
+| An idea | Not yet usable for Claude, whose checks wait on a recheck after timeouts. Sol: coverage 94 to 100% everywhere, judge score 4 to 8 points higher with Open Forge, 17 to 26% fewer tokens |
+| A short brief | Sol coverage waits on a recheck with the title fix. Claude: Essentials 7 points higher with 26% fewer tokens |
+| A full spec | Sol: Essentials matches plain docs at 95% with 7% fewer tokens. Minimal and Full Core lose about 3 points with 11 to 13% more tokens |
+| An existing app | Every setup reaches 100% coverage, so the checks can't separate them. Tokens: Essentials 7% fewer, Minimal 71% and Full Core 84% more |
+
+Essentials is the cheapest Open Forge preset in every starting point so far. The existing-app checks have a ceiling: they need sharper case checks before they can show a difference in correctness.
+
 ## Scoped Open Forge setups
 
-Add a scoped variant beside today's everything-up-front Open Forge setups. In the scoped variant, the spec documents are on-demand routed entries with clear descriptions and tags, and only a short overview loads up front. Before building it, audit the Neon Pairs documents: each should answer one concern, link instead of repeating, and be small enough to load alone. The maintainer suspects they aren't well scoped yet. Today's setups stay as data points for Open Forge used without scoping.
+The maintainer wants progressive disclosure designed explicitly, since it lets a product keep changing at a lower cost. Greenfield work should show that a spec-driven agent is more correct, even at some extra token cost. Brownfield work should show that good scopes load only what a change needs.
 
-Expected results: about the same tokens for a full build, more reading up front, fewer tokens and fewer documents read for partial work.
+Audit, 2026-11-02: the spec has ten documents, 571 lines and 39 KB, about 10 thousand tokens. They are already split by topic: overview, rules, controls, input, visuals, sound, technology, architecture, acceptance and reproducibility. Every Open Forge setup routes them with `--tag LoadNow`, so all ten load at the start and are sent again with every request. The feature case changes only the overview, architecture, controls and reproducibility documents. The repair case changes none of them.
+
+The scoped variant routes the same documents without `LoadNow`, as on-demand entries whose descriptions say what each covers. Only the overview loads up front. The first scoped setup is Full Core, scoped, as the maintainer asked. Essentials, scoped follows if Full Core shows the effect, since Essentials is the cheapest preset today. Before building it, finish the audit: each document should answer one concern, link instead of repeating, and name its scope clearly enough that an agent can choose it from the description alone. Today's setups stay as the data points for Open Forge without scoping.
+
+Expected results: about the same or slightly more tokens for a full build, fewer documents read and fewer tokens for scoped work.
 
 ## Partial-work scenarios
 
-Add tasks that touch one part of the game, such as sound only, card faces only or keyboard controls only. Each starts from the reference game with that part removed and gives the full spec, so the agent must find the relevant part. Run each against plain docs, up-front Open Forge and scoped Open Forge. The existing-app cases, a feature, a repair and both, are partial work already and gain a scoped variant too.
+These scenarios sit inside the existing starting points, so they need a name of their own. The working name is scoped work: a task confined to one area of the product.
+
+- **Greenfield parts.** Start from the reference game with one area removed, such as sound, card faces or keyboard input, give the full spec, and ask the agent to build that area. The agent must find the documents that cover it.
+- **Brownfield changes.** Keep the three existing-app cases and add changes confined to one scope, such as a new card back (visuals), a sound toggle (sound and controls), a keyboard focus repair (input) or a scoring rule change (rules).
+- **Checks.** Each scenario needs checks sharp enough to fail a wrong change, because today's existing-app checks pass every setup. Record changes outside the scenario's area as their own measure.
+- **Setups.** Plain docs, Full Core with everything up front, and Full Core, scoped.
+
+## Task-split runs
+
+Every run today is full auto: one request, and the agent does the whole job. Add a variant where the simulated user gives the same work as a sequence of tasks, one after another, as a person working with an agent would. Compare tokens, correctness and context growth with the full-auto run on the same setup. This also shows whether scoped context pays off over several tasks in one session.
 
 ## Prompt variants
 
 Later, try prompts that ask the agent to read only what the task needs, and compare them with the default prompt on the same setups.
 
+## Judging as its own stage
+
+Today `run` judges each run right after its checks, and `judge` can grade any saved run later. Since 2026-11-02 a judge's usage limit leaves a gap instead of pausing the batch. The recommended next step, waiting for the maintainer's decision, is that `run` stops after checks and usage analysis, and `judge` becomes the only way to judge. A batch's runs then finish sooner, Claude judging can wait for usage, and every judge grades the same finished set.
+
 ## Results page
 
 The page shows new and cached input apart, with output, and puts phase, context and process measures beside the token totals. Every measure keeps the control comparison and the model and judge filters. Measures marked approximate say so where they appear.
+
+Cost and correctness must read together. A table shown by default puts each setup's token change beside its coverage and judge score change, with the points gained per 10% more tokens. A multi-axis chart lets the reader choose the measure on each axis, the bubble size and the color, with its data table shown under it.
 
 ## Storage
 
@@ -72,11 +104,11 @@ Usage measures are derived from saved evidence, so they are stored as versioned 
 
 ## Order
 
-1. Record the recommended measures that saved events already support, and store them as versioned records.
-2. Show token classes, phases and context reads on the Results page.
-3. Measure the context each setup gives, up front and on demand.
-4. Audit the Neon Pairs documents, then add the scoped setups.
-5. Add the partial-work scenarios.
+1. Recheck the idea and short brief runs with the fixed checker, so the baseline is clean.
+2. Finish the document audit, then add Full Core, scoped.
+3. Add scoped work: greenfield parts and scoped brownfield changes, with sharper checks.
+4. Store the usage measures as versioned records and measure the context each setup gives.
+5. Add task-split runs.
 6. Try the prompt variants.
 
 ## Open questions
