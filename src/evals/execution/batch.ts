@@ -1,5 +1,7 @@
 import { randomInt } from "node:crypto";
-import { dirname } from "node:path";
+import { existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { ResultFiles } from "../paths.ts";
 import { dockerAvailable, ensureEvalImage } from "./containers/docker-image.ts";
 import { Isolation, Tool } from "../config/choices.ts";
 import { loadConfig } from "../config/config.ts";
@@ -8,7 +10,7 @@ import { suiteProtocol } from "../config/protocol.ts";
 import { answerBank, freezeProtocol } from "./conversation/answer-bank.ts";
 import type { BatchRecord, RunRecord } from "../history/results.types.ts";
 import { BatchStatus, FailureKind, RecordSchemaVersion, rerunStatuses, RunStatus } from "../history/statuses.ts";
-import { listBatches, readBatch, readRun, readRuns, readSetups, saveBatch, saveRun, saveSetups } from "../history/store.ts";
+import { listBatches, readBatch, readRun, readRuns, readSetups, runFolder, saveBatch, saveRun, saveSetups } from "../history/store.ts";
 import { captureExperiment, resumableExperiment, withReportedModels } from "../history/capture.ts";
 import { fingerprint } from "../history/fingerprints.ts";
 import { artifactHash } from "../history/artifacts.ts";
@@ -76,6 +78,11 @@ export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
 /** Whether resume replaces an interrupted or limited attempt. One replacement caps infrastructure failures, and a usage limit isn't one. */
 export function replacedOnResume(run: Pick<RunRecord, "status" | "replacesRunId">): boolean {
   return run.replacesRunId === null || run.status === RunStatus.limited;
+}
+
+/** Whether resume grades a run's saved files instead of starting it over, because the agent finished and only grading stopped. */
+export function gradedOnResume(run: Pick<RunRecord, "status" | "agentSeconds">, filesSaved: boolean): boolean {
+  return (run.status === RunStatus.checking || run.status === RunStatus.judging) && run.agentSeconds !== null && filesSaved;
 }
 
 /** A batch left preparing or running by a stopped server can only be resumed, so it shows as paused. */
@@ -153,6 +160,14 @@ async function executeBatch(batchId: string, parallel?: number): Promise<void> {
           { checker: batch.fingerprints.checks, rubric: batch.fingerprints.rubric, judge: batch.versions["judge"] ?? null });
         return;
       }
+      const attemptSuite = suiteForSetup(suite, run.setup);
+      const checks = suite.brownfield === undefined ? undefined : checksForSuite(suite, baselines.get(run.setup), scopes.get(run.setup));
+      const services = checks === undefined ? {} : { checks };
+      if (gradedOnResume(run, existsSync(join(runFolder(batchId, run.id), ResultFiles.files)))) {
+        const graded = await executeRun({ run, suite: attemptSuite, config: batch.config, snapshot: "", position: `${index + 1} of ${batch.runs.length}`, services, savedFiles: true });
+        if (graded.status === RunStatus.limited) limited = true;
+        return;
+      }
       if (run.status !== RunStatus.pending) {
         if (run.finishedAt === null) await saveRun({ ...run, status: RunStatus.failed, failureKind: FailureKind.infrastructure, finishedAt: new Date().toISOString() });
         if (!replacedOnResume(run)) return;
@@ -161,9 +176,6 @@ async function executeBatch(batchId: string, parallel?: number): Promise<void> {
         await saveRun(run);
         await saveBatch(batch);
       }
-      const attemptSuite = suiteForSetup(suite, run.setup);
-      const checks = suite.brownfield === undefined ? undefined : checksForSuite(suite, baselines.get(run.setup), scopes.get(run.setup));
-      const services = checks === undefined ? {} : { checks };
       let done = await executeRun({ run, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} of ${batch.runs.length}`, services });
       if (done.status === RunStatus.failed && done.failureKind === FailureKind.infrastructure && done.replacesRunId === null) {
         const replacement = replacementRun(done, opaqueId(), "One replacement for an infrastructure failure.");

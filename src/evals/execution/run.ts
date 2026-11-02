@@ -44,6 +44,8 @@ export interface RunInput {
   readonly signal?: AbortSignal;
   readonly docker?: Docker;
   readonly services?: RunServices;
+  /** Grades the files an earlier attempt already saved, without starting the agent again. */
+  readonly savedFiles?: boolean;
 }
 
 export interface RunServices {
@@ -68,26 +70,30 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
   const folder = store.runFolder(input.run.batchId, input.run.id);
   const batch = await store.readBatch(input.run.batchId);
   const reference = input.run.implementer === ReferenceImplementer;
+  const saved = input.savedFiles === true;
   const versions = { checker: batch.fingerprints.checks, rubric: batch.fingerprints.rubric, judge: batch.versions["judge"] ?? null,
     ...(batch.reference === undefined ? {} : { spec: batch.reference.specHash, specVersion: batch.reference.specVersion }) };
   await mkdir(folder, { recursive: true });
-  await writeFile(join(folder, ResultFiles.events), "", { flag: "a" });
-  await writeFile(join(folder, ConversationFile), `${JSON.stringify(emptyConversation(config), null, 2)}\n`);
-  await writeFile(join(folder, ExecutionLabelFile), `${JSON.stringify(executionLabel(config.isolation), null, 2)}\n`);
+  // Saved files keep the conversation and events of the attempt that made them.
+  if (!saved) {
+    await writeFile(join(folder, ResultFiles.events), "", { flag: "a" });
+    await writeFile(join(folder, ConversationFile), `${JSON.stringify(emptyConversation(config), null, 2)}\n`);
+    await writeFile(join(folder, ExecutionLabelFile), `${JSON.stringify(executionLabel(config.isolation), null, 2)}\n`);
+  }
   if (config.isolation === Isolation.local) progress.report(input.run.batchId, LocalExecutionLabel.reason);
-  const firstStatus = reference ? RunStatus.building : RunStatus.agent;
-  let run: RunRecord = { ...input.run, status: firstStatus, pipelineStatus: firstStatus, startedAt: new Date().toISOString(), error: null };
+  const firstStatus = reference || saved ? RunStatus.building : RunStatus.agent;
+  let run: RunRecord = { ...input.run, status: firstStatus, pipelineStatus: firstStatus, startedAt: saved ? input.run.startedAt : new Date().toISOString(), error: null };
   const update = async (changes: Partial<RunRecord>, note: string | null = null): Promise<void> => {
     run = { ...run, ...changes, pipelineStatus: changes.status ?? run.status, reportedModel: changes.telemetry?.model ?? run.reportedModel };
     await store.saveRun(run);
     if (note !== null) progress.report(run.batchId, `Run ${input.position}: ${note}`);
   };
-  await update({}, reference ? "grading the reference. Building offline." : "the agent is working.");
+  await update({}, reference ? "grading the reference. Building offline." : saved ? "grading the saved files. Building offline." : "the agent is working.");
   let space: RunSpace | null = null;
   let judgeReport: JudgeReport | undefined;
   try {
     if (config.isolation !== Isolation.docker && run.agent.tool !== Tool.mock) throw new Error("Real agents require container isolation.");
-    space = await (services.createSpace ?? createRunSpace)(suite.project, input.snapshot);
+    space = await (services.createSpace ?? createRunSpace)(suite.project, saved ? join(folder, ResultFiles.files) : input.snapshot);
     // The mock agent only installs our own reference, and the agent container runs nothing but a real provider's CLI.
     const agentIsolation = run.agent.tool === Tool.mock ? Isolation.local : Isolation.docker;
     const context = { isolation: agentIsolation, space, choice: run.agent, eventsPath: join(folder, ResultFiles.events) };
@@ -95,7 +101,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
       ...(config.containers === undefined ? {} : { limits: config.containers }),
       ...(input.signal === undefined ? {} : { signal: input.signal }), ...(input.docker === undefined ? {} : { docker: input.docker }) };
     if (reference) await freezeFiles(space, join(folder, ResultFiles.files));
-    else {
+    else if (!saved) {
     const talk = run.agent.tool !== Tool.mock
       ? await withAgentStage(space, run.agent.tool, stageOptions, () => (services.conversation ?? converse)(context, suite, config, { options: stageOptions }))
       : await (services.conversation ?? converse)(context, suite, config, { options: stageOptions });
@@ -114,7 +120,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     if (html !== null) await copyFile(html, join(folder, ResultFiles.game));
     await update({ status: RunStatus.checking, build }, `the build ${build.passed ? "passed" : "failed"}. Running the hidden checks.`);
     const project = space.work;
-    if (!reference) await freezeFiles(space, join(folder, ResultFiles.files));
+    if (!reference && !saved) await freezeFiles(space, join(folder, ResultFiles.files));
     const checks = await oneCheckAtATime(() => withCheckSlot(async () => (services.checks ?? layerChecks(suite.id))?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots), stage: { ...stageOptions, timeoutMs: checkMs } })));
     await update({ status: RunStatus.judging, checks: checks?.checks.map(legacyCheckView) ?? [], performance: checks?.performance ?? null, shots: checks?.shots ?? [] }, "checks done. The judge is reading the code.");
     const assessment = checksAssessment(run, checks?.checks ?? [], versions, checks?.selection);
@@ -142,8 +148,9 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
       await update({ questions: error.report.questions, finalMessage: error.report.messages?.findLast((message) => message.role === ConversationRole.agent)?.text ?? run.finalMessage });
     }
     // Both judges can still read the source when a verifier build fails.
-    if (!reference && run.status === RunStatus.building && space !== null) await freezeFiles(space, join(folder, ResultFiles.files)).catch(() => undefined);
-    const failureKind = run.status === RunStatus.agent ? FailureKind.infrastructure : run.status === RunStatus.judging || run.status === RunStatus.checking ? FailureKind.grading : FailureKind.attempt;
+    if (!reference && !saved && run.status === RunStatus.building && space !== null) await freezeFiles(space, join(folder, ResultFiles.files)).catch(() => undefined);
+    const failureKind = run.status === RunStatus.agent ? FailureKind.infrastructure
+      : saved || run.status === RunStatus.judging || run.status === RunStatus.checking ? FailureKind.grading : FailureKind.attempt;
     if (run.status === RunStatus.checking) {
       const failed = failedChecksAssessment(run, error, versions);
       await store.appendAssessment(failed);

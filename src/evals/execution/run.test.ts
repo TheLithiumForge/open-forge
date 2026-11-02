@@ -25,12 +25,13 @@ async function matrixRun(t: TestContext, failFirst = false) {
   const config = { ...original.config, judge: MatrixJudges[0], judges: MatrixJudges };
   const batch = { ...original, config };
   await history.store.saveBatch(batch); await history.store.saveRun(run);
-  const calls: string[] = [], sources: string[] = [], images: (readonly string[])[] = [];
+  const calls: string[] = [], sources: string[] = [], images: (readonly string[])[] = [], snapshots: string[] = [];
   let conversations = 0, builds = 0, checks = 0, beforeSecond: Buffer | undefined;
   const scratch = () => mkdtemp(join(history.root, "judge-"));
   // Real providers and candidate execution are replaced at the run boundary.
   const services: RunServices = { store: history.store, stop: async () => {}, scratch,
-    createSpace: async (project) => {
+    createSpace: async (project, snapshot) => {
+      snapshots.push(snapshot);
       const root = join(history.root, "attempt"), work = join(root, project), home = join(root, "home");
       await mkdir(work, { recursive: true }); await mkdir(home);
       await writeFile(join(work, SourceFile), SourceText);
@@ -49,7 +50,7 @@ async function matrixRun(t: TestContext, failFirst = false) {
       return [{ id: "fixture-question", area: "rules", question: "Fixture rule", yes: 3, no: 0, unsure: 0, evidence: ["Fixture source evidence."] }];
     },
   };
-  return { ...history, batch, config, run, services, calls, sources, images, counters: () => ({ conversations, builds, checks }), beforeSecond: () => beforeSecond };
+  return { ...history, batch, config, run, services, calls, sources, images, snapshots, counters: () => ({ conversations, builds, checks }), beforeSecond: () => beforeSecond };
 }
 
 test("one implementation is judged in order and the second assessment leaves the saved run unchanged", async (t) => {
@@ -88,6 +89,25 @@ test("resume fills only missing judgments and never starts the implementer again
   await completeSavedJudgments(FixtureSuite, saved, fixture.config, first.versions, { store: fixture.store, judge, scratch });
   assert.deepEqual(fixture.calls, MatrixJudges.map(modelKey));
   assert.deepEqual(fixture.counters(), { conversations: 1, builds: 1, checks: 1 });
+});
+
+test("grading saved files builds, checks and judges again without the agent and keeps the attempt's conversation", async (t) => {
+  const fixture = await matrixRun(t);
+  const config = { ...fixture.config, judges: [MatrixJudges[0]] };
+  await executeRun({ run: fixture.run, suite: FixtureSuite, config, snapshot: "", position: "fixture", services: fixture.services });
+  const folder = fixture.store.runFolder(fixture.batch.id, fixture.run.id);
+  const finished = await fixture.store.readRun(fixture.batch.id, fixture.run.id);
+  const source = await readFile(join(folder, ResultFiles.files, SourceFile));
+  const interrupted = { ...finished, status: RunStatus.checking, finishedAt: null };
+  await fixture.store.saveRun(interrupted);
+  const before = await readFile(join(folder, "conversation.json"));
+  const output = await executeRun({ run: interrupted, suite: FixtureSuite, config, snapshot: "", position: "fixture", services: fixture.services, savedFiles: true });
+  assert.equal(output.status, RunStatus.done);
+  assert.equal(output.startedAt, finished.startedAt);
+  assert.deepEqual(fixture.counters(), { conversations: 1, builds: 2, checks: 2 });
+  assert.equal(fixture.snapshots.at(-1), join(folder, ResultFiles.files));
+  assert.deepEqual(await readFile(join(folder, "conversation.json")), before);
+  assert.deepEqual(await readFile(join(folder, ResultFiles.files, SourceFile)), source);
 });
 
 test("a judge usage limit keeps the checked attempt without a judgment and resume adds it", async (t) => {
