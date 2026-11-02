@@ -5,7 +5,8 @@ export interface ContainerLimits {
 }
 
 export const DefaultContainerLimits: ContainerLimits = { cpus: 2, memory: "4g", processes: 512 };
-export const ContainerTimeouts = { commandMs: 30_000, imageMs: 20 * 60_000 } as const;
+// A copy out of a container moves the whole project, installed packages included, so a busy machine needs minutes.
+export const ContainerTimeouts = { commandMs: 30_000, copyMs: 10 * 60_000, imageMs: 20 * 60_000 } as const;
 export const ContainerPaths = {
   work: "/work",
   home: "/home/agent",

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ContainerStage, StageLabel } from "./stage.ts";
-import { containerLimits, DefaultContainerLimits, StageKind } from "./settings.ts";
+import { containerLimits, ContainerTimeouts, DefaultContainerLimits, StageKind } from "./settings.ts";
 import { evalImageTag } from "./docker-image.ts";
 import { assertStrictStage, containerFixture, FakeResult } from "./test-docker.ts";
 
@@ -87,6 +87,18 @@ test("stage networks carry the eval label, and leftover labelled networks are pr
     const network = (verb: string) => fixture.client.calls.filter((call) => call.args[0] === "network" && call.args[1] === verb);
     for (const call of network("create")) assert.deepEqual(call.args.slice(2, 4), ["--label", StageLabel]);
     assert.ok(network("prune").length <= 1);
+  } finally { await fixture.dispose(); }
+});
+
+test("copying a project out of a container gets the copy limit, since it includes installed packages", async () => {
+  const fixture = await containerFixture();
+  const stage = new ContainerStage({ docker: fixture.client, timeoutMs: TimeoutMs });
+  try {
+    await stage.open(evalImageTag());
+    await stage.copyOut("/work/.", fixture.space.work);
+    await stage.remove();
+    const copies = fixture.client.calls.filter((call) => call.args[0] === "cp");
+    assert.deepEqual(copies.map((call) => call.options.timeoutMs), [ContainerTimeouts.copyMs]);
   } finally { await fixture.dispose(); }
 });
 

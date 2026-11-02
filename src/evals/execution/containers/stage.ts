@@ -86,7 +86,7 @@ export class ContainerStage {
   }
 
   async required(args: readonly string[]): Promise<ProcessResult> {
-    return requireDockerResult(await this.client.run(args, this.commandOptions()));
+    return requireDockerResult(await this.client.run(args, this.commandOptions()), args);
   }
 
   async copyIn(source: string, target: string): Promise<void> {
@@ -95,7 +95,8 @@ export class ContainerStage {
 
   async copyOut(source: string, target: string): Promise<void> {
     // Recovery and removal still run after cancellation or the stage deadline.
-    requireDockerResult(await this.client.run(["cp", `${this.name}:${source}`, target], { timeoutMs: ContainerTimeouts.commandMs }));
+    const args = ["cp", `${this.name}:${source}`, target];
+    requireDockerResult(await this.client.run(args, { timeoutMs: ContainerTimeouts.copyMs }), args);
   }
 
   execArguments(command: readonly string[], user: string, env: Readonly<Record<string, string>>, auth: readonly string[] = []): string[] {
@@ -153,7 +154,7 @@ export class ContainerStage {
     // The container must leave its network before the network can be removed.
     const commands = [...(this.containerAttempted ? [["rm", "--force", this.name]] : []), ...(this.networkAttempted ? [["network", "rm", `${this.name}-net`]] : [])];
     for (const args of commands) {
-      try { requireDockerResult(await this.client.run(args, { timeoutMs: ContainerTimeouts.commandMs })); }
+      try { requireDockerResult(await this.client.run(args, { timeoutMs: ContainerTimeouts.commandMs }), args); }
       catch (error) { errors.push(error); }
     }
     if (errors.length > 0) throw new AggregateError(errors, `Container cleanup failed: ${errors.map((error) => error instanceof Error ? error.message : String(error)).join(" | ")}`);
