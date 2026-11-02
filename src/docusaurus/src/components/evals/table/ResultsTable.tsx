@@ -1,5 +1,5 @@
 import { useId, useMemo, useState } from "react";
-import { flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable, type ColumnFiltersState, type Header, type SortingState } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable, type ColumnFiltersState, type SortingState } from "@tanstack/react-table";
 import type { Batch } from "../records/records.types.ts";
 import type { Comparison } from "../data/aggregate.ts";
 import { StartingPoints } from "../data/cells.ts";
@@ -8,26 +8,12 @@ import { setupName, setupRank } from "../data/names.ts";
 import { CsvType, save } from "../download.ts";
 import { CellDialog } from "./CellDialog.tsx";
 import { ColumnIds, matchesSearch, resultColumns, startingPointText } from "./columns.tsx";
+import { SortHead } from "./SortHeader.tsx";
 
 const CsvName = "open-forge-eval-results.csv";
-const SortMarks = { asc: "↑", desc: "↓" } as const;
 const pointRank = (item: Comparison) => StartingPoints.findIndex((point) => point.id === item.cell.startingPoint);
 const readingOrder = (a: Comparison, b: Comparison) => pointRank(a) - pointRank(b) || a.cell.caseId.localeCompare(b.cell.caseId)
   || a.cell.modelLabel.localeCompare(b.cell.modelLabel) || setupRank(a.cell.setup) - setupRank(b.cell.setup) || (a.cell.judgeLabel ?? "").localeCompare(b.cell.judgeLabel ?? "");
-
-/**
- * A header cell. Measures group a value and a change column under one heading, so a column without a group spans both
- * header rows instead of leaving an empty cell above it.
- */
-function HeaderCell({ header, rows }: { readonly header: Header<Comparison, unknown>; readonly rows: number }) {
-  const sorted = header.column.getIsSorted();
-  const content = flexRender(header.column.columnDef.header, header.getContext());
-  const sortable = header.column.getCanSort() && header.column.columns.length === 0;
-  return <th scope="col" colSpan={header.colSpan} rowSpan={header.isPlaceholder ? rows : undefined}
-    aria-sort={sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : undefined}>
-    {sortable ? <button type="button" className="eval-sort" onClick={header.column.getToggleSortingHandler()}>{content}<span aria-hidden="true">{sorted === false ? "" : SortMarks[sorted]}</span></button> : content}
-  </th>;
-}
 
 function Choice({ label, value, values, onChange }: { readonly label: string; readonly value: string; readonly values: readonly (readonly [string, string])[]; readonly onChange: (value: string) => void }) {
   const id = useId();
@@ -67,9 +53,7 @@ export function ResultsTable({ items, batches }: { readonly items: readonly Comp
     <p className="eval-muted" role="status">{rows.length} of {data.length} rows. The CSV holds the rows shown, in this order.</p>
     <div className="eval-scroll" tabIndex={0} role="region" aria-label="All results">
       <table className="eval-table eval-results">
-        <thead>{table.getHeaderGroups().map((group, index, groups) => <tr key={group.id}>
-          {group.headers.filter((header) => index === 0 || header.column.depth > 0).map((header) => <HeaderCell key={header.id} header={header} rows={groups.length} />)}
-        </tr>)}</thead>
+        <SortHead table={table} />
         <tbody>{rows.map((row) => <tr key={row.id} className="eval-row" onClick={() => setOpened(row.original)}>
           {row.getVisibleCells().map((cell) => <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}
         </tr>)}</tbody>

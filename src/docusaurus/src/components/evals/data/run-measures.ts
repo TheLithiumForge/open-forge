@@ -1,5 +1,5 @@
 import type { Assessment, Batch, Choice, Judge, Run } from "../records/records.types.ts";
-import { latestRun } from "./analysis.ts";
+import { latestRun, tokenTotal } from "./analysis.ts";
 import { choiceKey, isReference } from "./observations.ts";
 
 /** A run stopped by a usage limit or a rejected sign-in waits to be redone when its batch resumes. */
@@ -60,4 +60,28 @@ export function judgeChoices(batch: Batch): Map<string, Choice> {
   const judges = new Map<string, Choice>();
   for (const item of batch.assessments) if (item.kind === "judge" && item.requestedModel !== null) judges.set(choiceKey(item.requestedModel), item.requestedModel);
   return judges;
+}
+
+/** One run's measures side by side, so a chart can plot two of them for the same run. The judge score belongs to one judge. */
+export interface RunValues {
+  readonly runId: string;
+  readonly repeat: number;
+  readonly coverage: number | null;
+  readonly judgeScore: number | null;
+  readonly tokens: number | null;
+  readonly newInput: number | null;
+  readonly cacheWrites: number | null;
+  readonly cachedInput: number | null;
+  readonly output: number | null;
+  readonly cacheHitRate: number | null;
+  readonly minutes: number | null;
+}
+
+export function runValues(run: Run, assessments: readonly Assessment[], judge: Choice | null): RunValues {
+  return {
+    runId: run.id, repeat: run.repeat, coverage: coverageOf(run, assessments), judgeScore: judge === null ? null : judgeScoreOf(run, judge, assessments),
+    tokens: tokenTotal(run), newInput: tokenClass(run, TokenClass.newInput), cacheWrites: tokenClass(run, TokenClass.cacheWrites),
+    cachedInput: tokenClass(run, TokenClass.cachedInput), output: tokenClass(run, TokenClass.output), cacheHitRate: cacheHitRate(run),
+    minutes: run.agentSeconds === null ? null : run.agentSeconds / 60,
+  };
 }

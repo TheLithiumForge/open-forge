@@ -1,8 +1,7 @@
 import type { Batch, Choice } from "../records/records.types.ts";
-import { tokenTotal } from "./analysis.ts";
 import { choiceKey } from "./observations.ts";
 import { modelLabel } from "./names.ts";
-import { cacheHitRate, checkState, CheckState, countedRuns, coverageOf, judgeChoices, judgeScoreOf, tokenClass, TokenClass } from "./run-measures.ts";
+import { checkState, CheckState, countedRuns, judgeChoices, runValues, type RunValues } from "./run-measures.ts";
 
 /**
  * The reader-facing view of the eval records. A starting point is what the agent receives, a setup is how its project is
@@ -56,6 +55,8 @@ export interface Cell {
   readonly outputTokens: Measure;
   readonly cacheHitRate: Measure;
   readonly minutes: Measure;
+  /** Every run's measures, in run order, with this cell's judge. */
+  readonly runValues: readonly RunValues[];
 }
 
 export function measure(values: readonly (number | null)[]): Measure {
@@ -94,20 +95,21 @@ export function cells(batches: readonly Batch[]): Cell[] {
       const group = runs.filter((run) => run.setup === setup && choiceKey(run.agent) === choiceKey(agent));
       const reported = group.find((run) => run.reportedModel !== null)?.reportedModel ?? null;
       const states = group.map((run) => checkState(run, batch.assessments));
+      const values = group.map((run) => runValues(run, batch.assessments, null));
+      const pick = (read: (value: RunValues) => number | null) => measure(values.map(read));
       const base = {
         startingPoint, caseId: batch.experiment.suite, batchId: batch.experiment.id, cliVersion: batch.experiment.cliVersion, setup, control,
         model: choiceKey(agent), modelLabel: modelLabel(agent, reported), runs: group.length, runIds: group.map((run) => run.id),
         checked: states.filter((state) => state === CheckState.checked).length, recheck: states.filter((state) => state === CheckState.recheck).length,
-        coverage: measure(group.map((run) => coverageOf(run, batch.assessments))),
-        tokens: measure(group.map(tokenTotal)), newInput: measure(group.map((run) => tokenClass(run, TokenClass.newInput))),
-        cacheWrites: measure(group.map((run) => tokenClass(run, TokenClass.cacheWrites))), cachedInput: measure(group.map((run) => tokenClass(run, TokenClass.cachedInput))),
-        outputTokens: measure(group.map((run) => tokenClass(run, TokenClass.output))), cacheHitRate: measure(group.map(cacheHitRate)),
-        minutes: measure(group.map((run) => run.agentSeconds === null ? null : run.agentSeconds / 60)),
+        coverage: pick((value) => value.coverage), tokens: pick((value) => value.tokens), newInput: pick((value) => value.newInput),
+        cacheWrites: pick((value) => value.cacheWrites), cachedInput: pick((value) => value.cachedInput), outputTokens: pick((value) => value.output),
+        cacheHitRate: pick((value) => value.cacheHitRate), minutes: pick((value) => value.minutes),
       };
-      if (judges.size === 0) return [{ ...base, judge: null, judgeLabel: null, judged: 0, judgeScore: measure([]) }];
+      if (judges.size === 0) return [{ ...base, judge: null, judgeLabel: null, judged: 0, judgeScore: measure([]), runValues: values }];
       return [...judges.values()].map((choice) => {
-        const scores = group.map((run) => judgeScoreOf(run, choice, batch.assessments));
-        return { ...base, judge: choiceKey(choice), judgeLabel: modelLabel(choice), judged: scores.filter((score) => score !== null).length, judgeScore: measure(scores) };
+        const judged = group.map((run) => runValues(run, batch.assessments, choice));
+        const scores = judged.map((value) => value.judgeScore);
+        return { ...base, judge: choiceKey(choice), judgeLabel: modelLabel(choice), judged: scores.filter((score) => score !== null).length, judgeScore: measure(scores), runValues: judged };
       });
     }));
   });

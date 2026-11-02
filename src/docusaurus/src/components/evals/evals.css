@@ -9,11 +9,16 @@
   --eval-axis: var(--ifm-color-emphasis-700);
   --eval-hover: var(--ifm-color-emphasis-100);
   --eval-border: var(--ifm-color-emphasis-300);
-  /* Token classes: one blue ramp, darker for the classes a setup changes most directly. */
+  /* Token classes: three distinct hues, and a muted neutral for cached input, which fills most of every bar. */
   --eval-token-new: #2a78d6;
-  --eval-token-output: #184f95;
-  --eval-token-writes: #5598e7;
-  --eval-token-cached: #86b6ef;
+  --eval-token-output: #eda100;
+  --eval-token-writes: #1baf7a;
+  --eval-token-cached: #b5b3ac;
+  /* Starting points on the measure chart: three hues and a neutral, each with its own shape. */
+  --eval-point-idea: #2a78d6;
+  --eval-point-brief: #eb6834;
+  --eval-point-full-spec: #1baf7a;
+  --eval-point-existing-app: #5f5e5a;
   --eval-coverage: #087b83;
   --eval-rules: #2765b0;
   --eval-code: #7950a3;
@@ -25,10 +30,14 @@
 [data-theme="dark"] .evals {
   --eval-open-forge: #f55400;
   --eval-other: #767d86;
-  --eval-token-new: #6da7ec;
-  --eval-token-output: #b7d3f6;
-  --eval-token-writes: #3987e5;
-  --eval-token-cached: #256abf;
+  --eval-token-new: #3987e5;
+  --eval-token-output: #c98500;
+  --eval-token-writes: #199e70;
+  --eval-token-cached: #6b6a64;
+  --eval-point-idea: #3987e5;
+  --eval-point-brief: #d95926;
+  --eval-point-full-spec: #199e70;
+  --eval-point-existing-app: #a8a7a0;
   --eval-coverage: #5ed2d2;
   --eval-rules: #82b7ff;
   --eval-code: #c6a0f5;
@@ -93,6 +102,9 @@
 .evals .eval-swatch-other { background: var(--eval-other); }
 .evals .eval-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.25rem; align-items: start; }
 .evals .eval-chart { min-width: 0; margin: 0; padding: 1rem; border: 1px solid var(--eval-border); border-radius: var(--ifm-global-radius); }
+.evals .eval-chart-wide { grid-column: 1 / -1; }
+.evals .eval-plot-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: .6rem; margin: 0 0 .5rem; }
+.evals .eval-legend li { display: inline-flex; align-items: center; gap: .35rem; }
 .evals .eval-chart figcaption h3 { margin: 0 0 .2rem; font-size: 1rem; }
 .evals .eval-chart figcaption p { margin: 0 0 .75rem; }
 .evals .eval-chart-plot { width: 100%; min-width: 0; }
@@ -129,6 +141,7 @@
 .evals tbody th { text-align: left; font-weight: var(--ifm-font-weight-semibold); background: transparent; border-bottom: var(--ifm-table-border-width) solid var(--ifm-table-border-color); }
 .evals .eval-table thead th { text-align: left; white-space: nowrap; vertical-align: bottom; }
 .evals .eval-results td:nth-child(n + 2):nth-child(-n + 4) { min-width: 8rem; max-width: 12rem; white-space: normal; }
+.evals .eval-sort-head { display: inline-flex; gap: .35rem; align-items: baseline; }
 .evals .eval-sort { display: inline-flex; gap: .3rem; padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer; }
 .evals .eval-row { cursor: pointer; }
 .evals .eval-row:hover > * { background-color: var(--eval-hover); }
@@ -197,6 +210,9 @@
 }
 @media (max-width: 576px) {
   .evals .eval-filters { gap: .5rem; }
+  .evals .eval-plot-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Names would run off a narrow plot. The open table below the chart names every point. */
+  .evals .eval-point-label { display: none; }
   .evals .eval-chart, .evals .eval-panel { padding: .75rem; }
   .evals .eval-dialog { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; border: 0; border-radius: 0; }
   .evals .eval-dialog-body { padding: 0 1rem 1.25rem; }

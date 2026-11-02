@@ -18,8 +18,9 @@ export interface SpreadRow extends Omit<ChartRow, "value"> {
 }
 
 const OpenForge: readonly string[] = OpenForgeSetups;
-const bySetup = <T extends { readonly setup: string }>(a: T, b: T) => setupRank(a.setup) - setupRank(b.setup);
-const identity = (setup: string) => ({ setup, name: setupName(setup), openForge: OpenForge.includes(setup) });
+export const bySetup = <T extends { readonly setup: string }>(a: T, b: T) => setupRank(a.setup) - setupRank(b.setup);
+/** A setup's id, reader name and whether it installs Open Forge. */
+export const identity = (setup: string) => ({ setup, name: setupName(setup), openForge: OpenForge.includes(setup) });
 
 /** Setups that only ever appear as a control. Their change is zero by definition, so charts draw them as the zero line. */
 export function controlSetups(all: readonly Cell[]): Set<string> {

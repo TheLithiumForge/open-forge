@@ -65,8 +65,10 @@ export function filtered<T extends { readonly cell: Cell } | Cell>(items: readon
   });
 }
 
-const average = (values: readonly (number | null)[]) => measure(values).mean;
-const geometric = (values: readonly (number | null)[]) => {
+/** The mean of the known values. */
+export const average = (values: readonly (number | null)[]) => measure(values).mean;
+/** The geometric mean of the known positive values, for ratios. */
+export const geometric = (values: readonly (number | null)[]) => {
   const logs = values.filter((value): value is number => value !== null && value > 0).map(Math.log);
   return logs.length === 0 ? null : Math.exp(logs.reduce((sum, value) => sum + value, 0) / logs.length);
 };

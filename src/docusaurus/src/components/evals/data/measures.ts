@@ -2,6 +2,7 @@ import type { Comparison } from "./aggregate.ts";
 import type { Cell, Measure } from "./cells.ts";
 import { change, compact, NoValue, percent, points } from "./format.ts";
 import type { MeasureId } from "./names.ts";
+import type { RunValues } from "./run-measures.ts";
 
 /** How a measure differs from its control: shares in percentage points, amounts as a ratio. */
 export const ChangeKind = { points: "points", ratio: "ratio" } as const;
@@ -26,6 +27,8 @@ export interface MeasureSpec {
   /** Whether the run charts show it, when the filters keep one model and one starting point. */
   readonly inSpread: boolean;
   readonly value: (cell: Cell) => Measure;
+  /** The same measure for one run. */
+  readonly run: (values: RunValues) => number | null;
   readonly format: (value: number | null) => string;
   /** The value as a CSV number: percent for shares, the plain amount otherwise. */
   readonly csv: (value: number | null) => number | null;
@@ -39,14 +42,14 @@ const base = { sameModelOnly: false, perJudge: false, inTable: true, inSpread: f
 const tokenMeasure = { ...base, definition: "tokens", changeKind: ChangeKind.ratio, format: compact, csv: amount } as const;
 
 export const CellMeasures: readonly MeasureSpec[] = [
-  { ...base, id: "check-coverage", definition: "check-coverage", title: "Check coverage", changeKind: ChangeKind.points, inSpread: true, value: (cell) => cell.coverage, format: shareText, csv: share },
-  { ...base, id: "judge-score", definition: "judge-score", title: "Judge score", changeKind: ChangeKind.points, perJudge: true, inSpread: true, value: (cell) => cell.judgeScore, format: shareText, csv: share },
-  { ...tokenMeasure, id: "tokens", title: "Tokens", inSpread: true, value: (cell) => cell.tokens },
-  { ...tokenMeasure, id: "new-input", title: "New input", value: (cell) => cell.newInput },
-  { ...tokenMeasure, id: "cached-input", title: "Cached input", value: (cell) => cell.cachedInput },
-  { ...tokenMeasure, id: "output", title: "Output", value: (cell) => cell.outputTokens },
-  { ...base, id: "cache-hit-rate", definition: "tokens", title: "Cache hit rate", changeKind: ChangeKind.points, inTable: false, value: (cell) => cell.cacheHitRate, format: shareText, csv: share },
-  { ...base, id: "time", definition: "time", title: "Minutes", changeKind: ChangeKind.ratio, sameModelOnly: true, inSpread: true, value: (cell) => cell.minutes, format: minutes, csv: amount },
+  { ...base, id: "check-coverage", definition: "check-coverage", title: "Check coverage", changeKind: ChangeKind.points, inSpread: true, value: (cell) => cell.coverage, run: (values) => values.coverage, format: shareText, csv: share },
+  { ...base, id: "judge-score", definition: "judge-score", title: "Judge score", changeKind: ChangeKind.points, perJudge: true, inSpread: true, value: (cell) => cell.judgeScore, run: (values) => values.judgeScore, format: shareText, csv: share },
+  { ...tokenMeasure, id: "tokens", title: "Tokens", inSpread: true, value: (cell) => cell.tokens, run: (values) => values.tokens },
+  { ...tokenMeasure, id: "new-input", title: "New input", value: (cell) => cell.newInput, run: (values) => values.newInput },
+  { ...tokenMeasure, id: "cached-input", title: "Cached input", value: (cell) => cell.cachedInput, run: (values) => values.cachedInput },
+  { ...tokenMeasure, id: "output", title: "Output", value: (cell) => cell.outputTokens, run: (values) => values.output },
+  { ...base, id: "cache-hit-rate", definition: "tokens", title: "Cache hit rate", changeKind: ChangeKind.points, inTable: false, value: (cell) => cell.cacheHitRate, run: (values) => values.cacheHitRate, format: shareText, csv: share },
+  { ...base, id: "time", definition: "time", title: "Minutes", changeKind: ChangeKind.ratio, sameModelOnly: true, inSpread: true, value: (cell) => cell.minutes, run: (values) => values.minutes, format: minutes, csv: amount },
 ];
 
 /** The change from the control: a difference for shares, a ratio for amounts. Null without both values. */
