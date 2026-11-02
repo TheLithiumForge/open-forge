@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { AgentTelemetry } from "../../history/results.types.ts";
 import { readsOpenForge } from "./open-forge-paths.ts";
@@ -83,6 +83,19 @@ interface RolloutSummary {
   requests: number[];
   contextWindow: number | null;
   compactions: number;
+}
+
+/** Codex's own session log, kept beside the run's events. It counts tokens per request, which the turn events don't. */
+export const CodexRolloutFile = "codex-rollout.jsonl";
+
+export async function saveRollouts(codexHome: string, target: string): Promise<boolean> {
+  const folder = join(codexHome, "sessions");
+  if (!existsSync(folder)) return false;
+  const files = (await readdir(folder, { recursive: true })).filter((name) => name.endsWith(".jsonl")).sort();
+  if (files.length === 0) return false;
+  const logs = await Promise.all(files.map((file) => readFile(join(folder, file), "utf8")));
+  await writeFile(target, logs.map((log) => log.endsWith("\n") ? log : `${log}\n`).join(""));
+  return true;
 }
 
 async function readRollouts(folder: string): Promise<RolloutSummary> {

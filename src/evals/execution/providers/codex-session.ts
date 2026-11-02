@@ -2,7 +2,8 @@ import { appendFileSync } from "node:fs";
 import type { AgentTelemetry } from "../../history/results.types.ts";
 import { outcomeForError, TurnOutcome, type AgentSession, type SessionContext, type TurnResult } from "./agent-session.ts";
 import { codexHomeOf, copySignInTo, keepRefreshedSignIn, type CodexSignInCopy } from "./codex-sign-in.ts";
-import { CodexTelemetry, type CodexEvent } from "./codex-telemetry.ts";
+import { CodexRolloutFile, CodexTelemetry, saveRollouts, type CodexEvent } from "./codex-telemetry.ts";
+import { dirname, join } from "node:path";
 import { spawnInRun, syncRunHome } from "../containers/executor.ts";
 import { stopProcessesUnder } from "../leftovers.ts";
 import { PinnedTool } from "./pinned-tools.ts";
@@ -83,6 +84,9 @@ export class CodexSession implements AgentSession {
   async finish(): Promise<AgentTelemetry> {
     await syncRunHome(this.context.space);
     keepRefreshedSignIn(this.signIn);
-    return this.telemetry.summary(codexHomeOf(this.context.space.home), this.context.choice.model);
+    const codexHome = codexHomeOf(this.context.space.home);
+    const summary = await this.telemetry.summary(codexHome, this.context.choice.model);
+    await saveRollouts(codexHome, join(dirname(this.context.eventsPath), CodexRolloutFile));
+    return summary;
   }
 }
