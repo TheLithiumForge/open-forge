@@ -40,13 +40,16 @@ Run the checks from this folder:
 ```powershell
 npm run typecheck
 npm test
+$env:NEON_PAIRS_NAMED_COMBINATION = '1'
 npm run test:e2e
 npm run format:check
 ```
 
 `npm test` runs the unit and static checks with Vitest 5.0.5. `test:e2e` type checks and builds current source before opening the new HTML. It also builds the face sheet and session harness as separate diagnostic entries. The game distribution contains no diagnostic entry.
 
-The locked install, type check, Vitest unit tests, build from current source and Chromium journeys have passed on the named combination. The browser command asserts all four runtime versions. Other versions have no test record here.
+The browser command writes the Node, npm, Playwright and Chromium versions it ran on to `test-results/browser-runtime.json`. With `NEON_PAIRS_NAMED_COMBINATION` set to `1`, it also fails unless they match the named combination. Use the flag for named-combination evidence. Other supported runtimes, such as Node 24.19, run without it.
+
+The locked install, type check, Vitest unit tests, build from current source and Chromium journeys have passed on the named combination with the flag set. Other versions have no test record here.
 
 ## Accessibility
 

@@ -50,7 +50,7 @@
     },
     {
       "path": "reference/tests/browser-test.ts",
-      "lines": 109
+      "lines": 112
     },
     {
       "path": "reference/tests/control-contract.e2e.test.ts",
@@ -89,8 +89,8 @@
     "referenceInstall": "passed",
     "referenceTypecheck": "passed",
     "vitest": {
-      "tests": 131,
-      "passed": 131,
+      "tests": 132,
+      "passed": 132,
       "failed": 0,
       "skipped": 0,
       "exit": 0
@@ -113,7 +113,10 @@
         "passed": 93,
         "failed": 0,
         "skipped": 0,
-        "exit": 0
+        "exit": 0,
+        "environment": {
+          "NEON_PAIRS_NAMED_COMBINATION": "1"
+        }
       },
       {
         "repetition": 2,
@@ -123,7 +126,10 @@
         "passed": 93,
         "failed": 0,
         "skipped": 0,
-        "exit": 0
+        "exit": 0,
+        "environment": {
+          "NEON_PAIRS_NAMED_COMBINATION": "1"
+        }
       },
       {
         "repetition": 3,
@@ -133,11 +139,14 @@
         "passed": 93,
         "failed": 0,
         "skipped": 0,
-        "exit": 0
+        "exit": 0,
+        "environment": {
+          "NEON_PAIRS_NAMED_COMBINATION": "1"
+        }
       }
     ],
     "mutations": {
-      "caught": 39,
+      "caught": 40,
       "survived": 0,
       "cleanUnitBaseline": "passed",
       "cleanBrowserBaseline": "passed",
@@ -146,8 +155,8 @@
     "buildArtifactSha256": "2e0cee7491affa5f209fc65f93532b2c51bbb55bc7305a4ae8101cf9a90a2035"
   },
   "packs": {
-    "fullSourceHash": "cb00d6bb3237e7e42e524fa38c657bcfaec4dc144a5787aba9ef6777dd5129fc",
-    "playerSourceHash": "cb9df64f6f600796fa8a7707acd387930fc32b95740fe87557b110f5a86e7ebb",
+    "fullSourceHash": "4e7515da5e8d842a0907d801f57c74fefeb973def03bb548829632493c428288",
+    "playerSourceHash": "99515cef50ad8985af4d4b4f45e79092518f140d8a2652484d5aa477ceb3791b",
     "selectionChanges": 4
   },
   "validation": {
@@ -160,7 +169,7 @@
     "screenReaderUsed": false
   },
   "limits": [
-    "Spoken output is user acceptance. No screen reader was run by the developer. Long press needs a real-device review for I03.2, because headless Chromium sends no click for synthesized taps.",
+    "Spoken output and a real-device touch long press are user acceptance, as the spec README states. No screen reader was run by the developer.",
     "Source and process review clauses need independent judgment.",
     "Protected checks, Layer 4 cases, run-limit data and the final seed freeze stay with the following workers. The checks still expect spec 2.1, and I06.10 has an empty check slot.",
     "Chromium's native button activates a card on Shift+Enter, Shift+Space, Ctrl+Space and Alt+Space. The reference leaves these modifier combinations to the browser, and the spec README lists them as out of scope.",
@@ -203,7 +212,10 @@
       "command": "npm run test:e2e",
       "folder": "reference",
       "repetitions": 3,
-      "exit": 0
+      "exit": 0,
+      "environment": {
+        "NEON_PAIRS_NAMED_COMBINATION": "1"
+      }
     },
     {
       "command": "node ../reference-audit/mutations.ts",
@@ -435,6 +447,25 @@
     "browserRuns": 3,
     "browserPassed": 93,
     "mutations": "39 caught for their declared reasons",
+    "evalsTypecheck": "passed",
+    "productTestsPassed": 242,
+    "productTestsFailed": 31
+  },
+  "specV22Polish3": {
+    "change": "evidence gaps from the two final 9.9 judgments",
+    "record": "reference-audit/review-v2.2.md",
+    "newMutations": ["M45"],
+    "rejectionVector": "np1-16-1079811049",
+    "specClarification": "README Out of scope line for real-device long press, within 2.2",
+    "browserRuntimeFlag": "NEON_PAIRS_NAMED_COMBINATION=1",
+    "layerFourFilesChanged": ["README.md"],
+    "referenceInstall": "passed offline",
+    "referenceTypecheck": "passed",
+    "vitestPassed": 132,
+    "build": "passed",
+    "browserRuns": 3,
+    "browserPassed": 93,
+    "mutations": "40 caught for their declared reasons",
     "evalsTypecheck": "passed",
     "productTestsPassed": 242,
     "productTestsFailed": 31

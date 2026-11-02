@@ -55,6 +55,7 @@ test('source reads only the environment its command and test runners need', asyn
     'scripts/replay-cli.ts:INIT_CWD',
     'scripts/replay.test.ts:npm_execpath',
     'tests/browser-test.ts:EXECUTABLE_ENV',
+    'tests/browser-test.ts:NAMED_COMBINATION_ENV',
     'tests/browser-test.ts:TEMP',
     'tests/browser-test.ts:TMP',
   ];

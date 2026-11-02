@@ -93,7 +93,7 @@ export async function mutationCheck(): Promise<void> {
   const input: unknown = JSON.parse(await readFile(new URL("./mutations.fixture.json", import.meta.url), "utf8"));
   assert.ok(Array.isArray(input));
   const mutations = input.map(mutation);
-  assert.equal(mutations.length, 39);
+  assert.equal(mutations.length, 40);
   await mkdir(WORK, { recursive: true });
   assert.equal(run(ROOT, [VITEST, "run"]).status, 0, "Clean unit baseline");
   const browserFiles = [...new Set(mutations.filter((m) => m.browser).map((m) => m.test))];

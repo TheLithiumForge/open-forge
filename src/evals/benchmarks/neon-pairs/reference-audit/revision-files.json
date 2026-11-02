@@ -474,5 +474,34 @@
       "src/evals/benchmarks/neon-pairs/trace.json"
     ],
     "deleted": []
+  },
+  "specV22Polish3": {
+    "record": "src/evals/benchmarks/neon-pairs/reference-audit/review-v2.2.md",
+    "created": [],
+    "changed": [
+      ".agents/memory/crystallized/documents/evals/neon-pairs/spec-notes.md",
+      ".agents/memory/crystallized/documents/evals/neon-pairs/spec/README.md",
+      "src/evals/benchmarks/neon-pairs/cases/l2-defined-idea/inputs.json",
+      "src/evals/benchmarks/neon-pairs/cases/l2-defined-idea/specs/manifest.json",
+      "src/evals/benchmarks/neon-pairs/cases/l3-full-spec/inputs.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/AUDIT.md",
+      "src/evals/benchmarks/neon-pairs/reference-audit/evidence/accessibility-journey.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/mutation-results.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/mutations.fixture.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/mutations.ts",
+      "src/evals/benchmarks/neon-pairs/reference-audit/review-v2.2.md",
+      "src/evals/benchmarks/neon-pairs/reference-audit/revision-files.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/seed-record.json",
+      "src/evals/benchmarks/neon-pairs/reference-audit/verification.json",
+      "src/evals/benchmarks/neon-pairs/reference/README.md",
+      "src/evals/benchmarks/neon-pairs/reference/scripts/source-conventions.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/deck-rejection.fixture.json",
+      "src/evals/benchmarks/neon-pairs/reference/src/game/deck-rejection.test.ts",
+      "src/evals/benchmarks/neon-pairs/reference/tests/browser-test.ts",
+      "src/evals/benchmarks/neon-pairs/specs/README.md",
+      "src/evals/benchmarks/neon-pairs/specs/manifest.json",
+      "src/evals/benchmarks/neon-pairs/trace.json"
+    ],
+    "deleted": []
   }
 }

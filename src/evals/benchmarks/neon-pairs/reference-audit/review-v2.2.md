@@ -4,7 +4,7 @@ Version 2.2 Review is the correction record for the maintainer's spec trim and t
 
 For example, Ctrl+End on a card that already has focus is now the browser's key, so the reference no longer needs a fix for its missing outline.
 
-Status: polished candidate for spec version 2.2. Two judges scored it 10 and 9.8 before the last polish. Long press needs a real-device review, and spoken output stays user acceptance.
+Status: polished candidate for spec version 2.2. Both final judges scored it 9.9 before the last evidence fixes. Long press and spoken output stay user acceptance.
 
 ## Spec trim
 
@@ -58,6 +58,16 @@ Sol then scored the polished candidate 10 and Opus 9.8, again with no clause vio
 | 10, input limits       | C05.2, C07.2 | The board code limit sits in `BoardCodeForm.tsx` and the snapshot limit in `Reproduction.tsx`, beside the controls that set them.                                                                                                                         | `tests/controls.e2e.test.ts` checks the published limits as its own literals. |
 
 This round changes two files the Layer 4 patches edit, `controls/Reproduction.tsx` and `session/use-game.ts`. The overseer regenerates the patches and retargets the focus-trap fixture.
+
+Both final judges scored the next candidate 9.9 with no clause violation. Their evidence gaps led to these changes:
+
+| Item                   | Clauses             | Change                                                                                                                                                                                                                                                                                                                                        | Test                                                                         |
+| ---------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 11, rejection boundary | D04.5, A10.3, D02.2 | No product change. The rejection fixture adds `np1-16-1079811049`, whose first draw for 256 results lands exactly on the limit. An independent BigInt reading of D03 and D04 computed its deck.                                                                                                                                               | `src/game/deck-rejection.test.ts`. Mutation M45 accepts a draw at the limit. |
+| 12, long press         | I03.1, I03.2        | The spec README's Out of scope list now says that confirming a real-device touch long press stays user acceptance, like spoken output, because automated browsers can't produce it. The clauses are unchanged, and the spec notes log the clarification within 2.2. Both packs are refrozen and the Layer 2 and Layer 3 case inputs repinned. | Right-click keeps executable evidence.                                       |
+| 13, other runtimes     | T03.1, T03.6        | The browser command records the Node, npm, Playwright and Chromium versions it ran on in `test-results/browser-runtime.json`. It requires the named combination only when `NEON_PAIRS_NAMED_COMBINATION` is `1`, so a supported runtime such as Node 24.19 can run it. The README's evidence run sets the flag.                               | The three recorded runs set the flag.                                        |
+
+This round changes one file the Layer 4 patches edit, `README.md`, in its Check section.
 
 ## Verification
 

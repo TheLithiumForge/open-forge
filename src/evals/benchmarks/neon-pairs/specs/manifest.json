@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "fixture": "neon-pairs",
-  "sourceHash": "cb00d6bb3237e7e42e524fa38c657bcfaec4dc144a5787aba9ef6777dd5129fc",
+  "sourceHash": "4e7515da5e8d842a0907d801f57c74fefeb973def03bb548829632493c428288",
   "sourceFiles": [
     {
       "path": "README.md",
-      "sha256": "cb84bc20c7da12aa84a0d002f8b6b9aa44d9384ae2dbb12e551aa21de960bb5a"
+      "sha256": "2db2238ae23e214b5ac3b29e6c0d66f24539d870f1cc22d431ae2d6fffb8edd8"
     },
     {
       "path": "_spec.md",
@@ -51,8 +51,8 @@
   "files": [
     {
       "path": "README.md",
-      "sha256": "e12e7db449c3adacfcb429225a6e515855582c652d0e33cd87dafd1c4f785ed7",
-      "sourceSha256": "cb84bc20c7da12aa84a0d002f8b6b9aa44d9384ae2dbb12e551aa21de960bb5a",
+      "sha256": "9300cb0d7af5d569740d23a6838d8b901062ffb633c5b5c0d204caa9da005204",
+      "sourceSha256": "2db2238ae23e214b5ac3b29e6c0d66f24539d870f1cc22d431ae2d6fffb8edd8",
       "metadata": {
         "description": "Neon Pairs game specification and document map",
         "tags": [

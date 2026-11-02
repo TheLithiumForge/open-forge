@@ -4257,6 +4257,11 @@
           "path": "reference/tests/lifecycle.e2e.test.ts",
           "symbol": "a right-click keeps the native context menu and activates no card",
           "evidence": "Executed by the recorded unit or browser command. A right-click opens no game action and the card leaves the contextmenu event unprevented."
+        },
+        {
+          "path": "reference-audit/AUDIT.md",
+          "symbol": "Real-device review",
+          "evidence": "User acceptance on a real touch device confirms that a long press opens the context menu without revealing a card, as the Out of scope list in specs/README.md states. Automated browsers can't produce that gesture. Right-click keeps executable evidence."
         }
       ]
     },
@@ -4278,7 +4283,7 @@
         {
           "path": "reference-audit/AUDIT.md",
           "symbol": "Real-device review",
-          "evidence": "Long press needs a review on a touch device. Headless Chromium's gesture tool sends no click even for a short tap, so a browser test can't show that a long press leaves the card closed."
+          "evidence": "User acceptance on a real touch device confirms that a long press opens the context menu without revealing a card, as the Out of scope list in specs/README.md states. Automated browsers can't produce that gesture. Right-click keeps executable evidence."
         }
       ]
     },
@@ -9145,6 +9150,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause T03.1. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/tests/browser-test.ts",
+          "symbol": "before hook records the Node, npm, Playwright and Chromium versions in test-results/browser-runtime.json",
+          "evidence": "Clause T03.1. Every browser run records the versions it ran on, so another supported runtime gets its own result. NEON_PAIRS_NAMED_COMBINATION=1 also requires the named combination."
         }
       ]
     },
@@ -9244,7 +9254,7 @@
         },
         {
           "path": "reference/tests/browser-test.ts",
-          "symbol": "before hook asserts actual Node, npm command, installed Playwright and running Chromium versions",
+          "symbol": "before hook records the runtime and, with NEON_PAIRS_NAMED_COMBINATION=1, asserts the named Node, npm, Playwright and Chromium versions",
           "evidence": "Executed by the recorded unit or browser command. Expected values come from independent literals or fixtures."
         }
       ]
@@ -9330,6 +9340,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause T03.6. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/tests/browser-test.ts",
+          "symbol": "before hook records the Node, npm, Playwright and Chromium versions in test-results/browser-runtime.json",
+          "evidence": "Clause T03.6. Every browser run records the versions it ran on, so another supported runtime gets its own result. NEON_PAIRS_NAMED_COMBINATION=1 also requires the named combination."
         }
       ]
     },
@@ -12684,6 +12699,11 @@
           "path": "reference/tests/all-sizes.e2e.test.ts",
           "symbol": "the independent deal reproduces the published example deck",
           "evidence": "Clause A10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits."
+        },
+        {
+          "path": "reference/src/game/deck-rejection.test.ts",
+          "symbol": "shuffle rejection also skips a draw exactly at the limit",
+          "evidence": "Clause A10.3. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits. np1-16-1079811049 draws exactly the limit for 256 results first. M45 accepts that draw and this check fails."
         }
       ]
     },
@@ -13192,6 +13212,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause D02.2. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/src/game/deck-rejection.test.ts",
+          "symbol": "shuffle rejection also skips a draw exactly at the limit",
+          "evidence": "Clause D02.2. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits. np1-16-1079811049 draws exactly the limit for 256 results first. M45 accepts that draw and this check fails."
         }
       ]
     },
@@ -13462,6 +13487,11 @@
           "path": "reference-audit/AUDIT.md",
           "symbol": "Reviews",
           "evidence": "Clause D04.5. Source or visual review supplements executable assertions. See the clause table for its verdict."
+        },
+        {
+          "path": "reference/src/game/deck-rejection.test.ts",
+          "symbol": "shuffle rejection also skips a draw exactly at the limit",
+          "evidence": "Clause D04.5. Executed in the recorded unit, static or browser gate. See reference-audit/verification.json and reference-audit/AUDIT.md for limits. np1-16-1079811049 draws exactly the limit for 256 results first. M45 accepts that draw and this check fails."
         }
       ]
     },

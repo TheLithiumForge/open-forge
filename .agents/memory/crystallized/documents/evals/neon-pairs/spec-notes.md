@@ -24,7 +24,7 @@ Counts use the ten product documents after frontmatter is stripped. Words are wh
 
 | Scope | Words | Requirement IDs | Clauses |
 | --- | --- | --- | --- |
-| Full pack | 6434 | 96 | 412 |
+| Full pack | 6469 | 96 | 412 |
 | Player subset | 1713 | 59 | 185 |
 
 The full pack isn't a reliable 30 to 60 minute implementation task. It adds exact generation, import validation, logical time and a replay command to the complete player game. Layer 3 uses a provisional 180-minute limit. The check batch measures real times before that limit is frozen. If it doesn't fit, give the board-code, snapshot and replay formats in a starting library or move that work to a separate task. Keep every player-facing rule, including accessibility, look and offline delivery.
@@ -100,6 +100,7 @@ Version 2.2 drops rules for corners that reasonable players and agents never rea
 | Maintainer trim, 2026-11-01 | Export `elapsedMs` and a pending mismatch's `remainingMs` as whole milliseconds. A pending mismatch exports at least 1ms. Drop the floor and ceiling rules. | C08.6, C08.7. D06.6 unchanged. |
 | Maintainer trim, 2026-11-01 | Add an Out of scope section to the spec README. The game needn't support keys and modifier combinations beyond the listed ones, holding a key down, several tabs or windows open at once, a pointer press that drifts or is dragged off a card, replay or snapshot files with exotic encodings such as a byte-order mark, or spoken screen-reader output. These are never tested or graded. Each tab may simply overwrite saved preferences. Spoken output stays user acceptance. | No clause added. README only. |
 | Maintainer trim, 2026-11-01 | Keep everything else, including the 640x400 equivalent zoom layout, the visible focus outline with its scroll margin, the board scrolling inside its frame, right-click and long press not activating a card and the stated size limits. | V20, V16.1, I13.2, V19, I03 and D10 unchanged. |
+| Clarification within 2.2, 2026-11-02 | Confirming that a touch long press on a real device opens the context menu without revealing a card stays user acceptance, like spoken screen-reader output, because automated browsers can't produce that gesture. Right-click stays tested. | I03.1 and I03.2 unchanged. README Out of scope only. |
 
 The README states the Out of scope list in product words, so it says "never tested" without grading terms. The I06.10 check slots stay empty until the checks packet adds them.
 

@@ -11,6 +11,14 @@ const BROWSER_TEMP = join(REFERENCE_ROOT, '.browser-work');
 const RESULTS = join(REFERENCE_ROOT, 'test-results');
 const CHROMIUM_VERSION = '156.0.8078.4';
 const EXECUTABLE_ENV = 'PLAYWRIGHT_CHROMIUM_EXECUTABLE';
+// Set to 1 for named-combination evidence. Other supported runtimes run and record their versions.
+const NAMED_COMBINATION_ENV = 'NEON_PAIRS_NAMED_COMBINATION';
+const NAMED_COMBINATION = {
+  node: '26.12.1',
+  npm: '11.20.0',
+  playwright: '1.64.1',
+  chromium: CHROMIUM_VERSION,
+};
 // Playwright hides scrollbars by default. Visible ones take layout space, as on a Windows desktop.
 const HIDE_SCROLLBARS = '--hide-scrollbars';
 export const Scrollbars = { hidden: 'hidden', visible: 'visible' } as const;
@@ -33,26 +41,21 @@ before(async () => {
   const playwright: unknown = JSON.parse(
     await readFile(new URL(import.meta.resolve('@playwright/test/package.json')), 'utf8'),
   );
-  assert.equal(process.versions.node, '26.12.1', 'T03 named Node');
-  assert.equal(npm, '11.20.0', 'T03 named npm');
   assert.ok(playwright && typeof playwright === 'object' && 'version' in playwright);
-  assert.equal(playwright.version, '1.64.1', 'T03 named Playwright');
   browser = await launch(Scrollbars.hidden);
-  assert.equal(browser.version(), CHROMIUM_VERSION);
-  artifact = await serveArtifact();
+  const runtime = {
+    node: process.versions.node,
+    npm,
+    playwright: String(playwright.version),
+    chromium: browser.version(),
+  };
+  const named = process.env[NAMED_COMBINATION_ENV] === '1';
   await writeFile(
     join(RESULTS, 'browser-runtime.json'),
-    JSON.stringify(
-      {
-        node: process.versions.node,
-        chromium: browser.version(),
-        npm,
-        playwright: playwright.version,
-      },
-      null,
-      2,
-    ),
+    JSON.stringify({ ...runtime, namedCombination: named }, null, 2),
   );
+  if (named) assert.deepEqual(runtime, NAMED_COMBINATION, 'T03 named combination');
+  artifact = await serveArtifact();
 });
 
 after(async () => {

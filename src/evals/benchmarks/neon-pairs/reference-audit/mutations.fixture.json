@@ -427,5 +427,16 @@
     "clauses": ["V09.1"],
     "testName": "every margin, padding and gap stays on the spacing scale at 360px",
     "reason": "V09 won game with the reproduction panel open"
+  },
+  {
+    "id": "M45",
+    "path": "src/game/deck.ts",
+    "find": "    } while (draw >= limit);",
+    "replace": "    } while (draw > limit);",
+    "test": "src/game/deck-rejection.test.ts",
+    "browser": false,
+    "clauses": ["D04.5", "A10.3", "D02.2"],
+    "testName": "shuffle rejection also skips a draw exactly at the limit",
+    "reason": "D04 a draw at the limit is rejected"
   }
 ]

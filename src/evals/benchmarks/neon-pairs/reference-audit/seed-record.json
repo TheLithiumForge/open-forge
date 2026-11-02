@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "status": "candidate",
   "specVersion": 2.2,
-  "specSourceHash": "cb00d6bb3237e7e42e524fa38c657bcfaec4dc144a5787aba9ef6777dd5129fc",
+  "specSourceHash": "4e7515da5e8d842a0907d801f57c74fefeb973def03bb548829632493c428288",
   "formatter": "prettier@3.9.6",
   "traceEntries": 412,
   "freezeApproved": false,
@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "cases/l2-defined-idea/specs/manifest.json",
-      "sha256": "71aabecd398c4d72a654c83ca131d70e0a1c57b144a22d562f9eb2c709b637e8"
+      "sha256": "e91df72b31c5f31db1d8fb308d044da7e804400213f811f1c816bb76b2167407"
     },
     {
       "path": "reference-audit/.gitignore",
@@ -18,11 +18,11 @@
     },
     {
       "path": "reference-audit/AUDIT.md",
-      "sha256": "62450b68f2369b1732fb9f4dd73320134abab705d1f9787281428f97cbffd7f4"
+      "sha256": "173259bda31ef8f11f73dcce59508bc9b8beef027a61a7c96cb2384a75c45f00"
     },
     {
       "path": "reference-audit/evidence/accessibility-journey.json",
-      "sha256": "d23c6339ae9feea47cd0f1c48675fb783adabac11e49afa7d99b1270839d11d7"
+      "sha256": "459a71a6a9dba2999315e1314ef5b954c17959c150967d522d9eca4bf4ff5d14"
     },
     {
       "path": "reference-audit/face-sheet-grayscale.png",
@@ -46,15 +46,15 @@
     },
     {
       "path": "reference-audit/mutation-results.json",
-      "sha256": "985bc86d2791110f97ca578fef7835f3328056e817c7cefcd320abd698192bd2"
+      "sha256": "1938ec79ee21c6032cfc08c38812b73beafd213b2b054cd5dba815b841aa0630"
     },
     {
       "path": "reference-audit/mutations.fixture.json",
-      "sha256": "c4ed47957849b77105299187ffcb74604a9837e4596ae481487eed1b1823f71c"
+      "sha256": "59c5e44ac4d9051e7f1e3d5347f8c8ce58dd40de739800efa77776994d38e901"
     },
     {
       "path": "reference-audit/mutations.ts",
-      "sha256": "ba3ac5af2ee211e828bb7b9ca71700d678a57af22c9926f7e4d346d9f4299cac"
+      "sha256": "fb54a4101c77c886f58346fda66dcbc71e644815361c10ea709c59717d620070"
     },
     {
       "path": "reference-audit/review-round-1.md",
@@ -74,11 +74,11 @@
     },
     {
       "path": "reference-audit/review-v2.2.md",
-      "sha256": "2519ba23e34b1af7416760762c9351816cba2c9131587e61dbd89716b6291058"
+      "sha256": "e423da020a9733e9758e717ba535d5125dc97e4f425a39e585a6ce6398f64b9b"
     },
     {
       "path": "reference-audit/revision-files.json",
-      "sha256": "ede3fdea979e100f9bfca16e888bea0fa4800ff39208b970816b2b651e561510"
+      "sha256": "06eb6f5169ed6d813144431467de3faa08ffd267b300d40c2fe8ae3ab6e2278b"
     },
     {
       "path": "reference-audit/revision-v2.1.md",
@@ -94,7 +94,7 @@
     },
     {
       "path": "reference-audit/verification.json",
-      "sha256": "c8d103c95c2c0362f586d8a8f68d3cf12a7a6e626290fce2613d2f01a9527ce2"
+      "sha256": "50b0a86b92460c859e390e9c264a38455023e6e7129db89103443caf64687785"
     },
     {
       "path": "reference/.gitignore",
@@ -110,7 +110,7 @@
     },
     {
       "path": "reference/README.md",
-      "sha256": "b57bc83adf57bb0ef85e6ae51a4820a5e2d28705fb61abe954c51c52a36d3b31"
+      "sha256": "cdb104a213e7f4cd895a55cc16a6cbe54379d15d270cb03f37ec2c2e025d0419"
     },
     {
       "path": "reference/art/face-sheet.css",
@@ -170,7 +170,7 @@
     },
     {
       "path": "reference/scripts/source-conventions.test.ts",
-      "sha256": "0fd9a714f4531c83fe49a9393a91d4fb14771813effa33815c494039227bd4cb"
+      "sha256": "6b05577c9af64303c14f6e1e7bf645e4e2ee8492cc875aa6f965b6ece2c99a74"
     },
     {
       "path": "reference/scripts/source-files.ts",
@@ -274,11 +274,11 @@
     },
     {
       "path": "reference/src/game/deck-rejection.fixture.json",
-      "sha256": "42d48094827008db46d7020d15f31b9702f90e65257bb9839473e7b559a0dfc1"
+      "sha256": "56deb19d6d31e26a751d71d7bb5c881c85f032841a1eceee39e136429ee4792b"
     },
     {
       "path": "reference/src/game/deck-rejection.test.ts",
-      "sha256": "18b3214547aded9f84c646fe1d9b5060bff50694cd38836c8655e82ec5d6c47a"
+      "sha256": "e7a52c56a6238e4eceb924f9bbb854561d58d90473d69d3fe63514b94f19fce9"
     },
     {
       "path": "reference/src/game/deck.test.ts",
@@ -454,7 +454,7 @@
     },
     {
       "path": "reference/tests/browser-test.ts",
-      "sha256": "9a09f45d972799f04ebaaf83e340de864ec777a481b789b1fd3f94a677cd301e"
+      "sha256": "bf1db358f409f4c708825e7d1f7702a6db7c0fe9e20f96d945b7174ef2234909"
     },
     {
       "path": "reference/tests/build-output.e2e.test.ts",
@@ -650,11 +650,11 @@
     },
     {
       "path": "specs/manifest.json",
-      "sha256": "6651a027c567a39d4b81fa2e13ee1d69f19ee27797adae985db38212df7f0865"
+      "sha256": "4c18fccee068b878caca527fe83049e40eb2b012aaa56c6e850fc7cbf8b61326"
     },
     {
       "path": "trace.json",
-      "sha256": "dc2634374dd9af3893e4096527f8627ead9af0ac4155fda08ea52dcb2c152748"
+      "sha256": "1d6a176f1883e3eb9d2924e19c81a15f99bced47431c67fa48b7412a205bd3d6"
     }
   ]
 }
