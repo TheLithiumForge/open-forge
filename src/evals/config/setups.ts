@@ -48,7 +48,7 @@ export async function generateSetup(suite: Suite, setup: string, run: ForgeRunne
       expected.add(SetupFiles.readme);
       if (definition.delivery.kind !== SetupKind.inline && definition.delivery.kind !== SetupKind.code) for (const file of result.manifest.specifications.files) expected.add(`${SetupFiles.docs}/${file.path}`);
       for (const file of suite.brownfield?.seed ?? []) expected.add(file.path);
-      if (definition.delivery.kind === SetupKind.linked) expected.add(SetupFiles.agents);
+      if (definition.delivery.kind === SetupKind.linked) for (const file of [SetupFiles.agents, SetupFiles.claude]) expected.add(file);
       for (const path of planned) expected.add(path);
       const files = (await inventory(folder)).map((file) => ({ path: file.path, bytes: file.bytes.length, sha256: sha256(file.bytes) }));
       return { folder, expected: [...expected].sort(), frameworkVersion: result.manifest.frameworkVersion, materialized: result.manifest,
