@@ -11,7 +11,7 @@ export const ValidationSources = {
 } as const;
 
 // Another layer's validation writes its report beside these sources while this one runs. A report is an output, not a grader input.
-const ValidationReport = /\.validation\.json$/;
+const ValidationReport = /(?:^|[/.])validation\.json$/;
 export function validationReport(path: string): boolean {
   return ValidationReport.test(path);
 }

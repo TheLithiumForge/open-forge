@@ -5,12 +5,14 @@ import { ReferenceExcluded } from "../../materialize/brownfield-inputs.ts";
 import type { CheckOutcome } from "../grading.types.ts";
 import { CheckStatus } from "../../history/statuses.ts";
 import { BrownfieldGuard, NeverSource, TransientRootFolders } from "./scope.ts";
+import { validationReport } from "./validation-inputs.ts";
 
 export async function protectedHashes(roots: readonly string[], project: string): Promise<readonly string[]> {
   const hashes: string[] = [];
   for (const [index, root] of roots.entries()) {
     if (contained(project, root) || contained(root, project)) throw new Error("Grader inputs must stay outside the submitted project.");
-    for (const file of await inventory(root, ReferenceExcluded)) hashes.push(`${index}/${file.path}:${sha256(file.bytes)}`);
+    // Validations of other layers and cases write their reports inside these roots while an attempt is checked.
+    for (const file of await inventory(root, ReferenceExcluded, new Set(), validationReport)) hashes.push(`${index}/${file.path}:${sha256(file.bytes)}`);
   }
   return hashes;
 }
