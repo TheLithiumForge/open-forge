@@ -36,6 +36,8 @@ Each measure is per run, then summarized per setup and compared with the control
 | Context read | Characters read from spec documents, framework files and code | Events | Built, approximate |
 | Context read | Which spec documents were read, against the documents the task needs | Events and a per-scenario list of relevant documents | Recommended |
 | Context read | Repeated reads of the same file | Events | Recommended |
+| Context read | Characters and estimated tokens read and searched by file type: Markdown documents against code, such as TypeScript, HTML and CSS. Reads and searches are counted apart | Events | Requested |
+| Framework use | Which framework files the agent read, such as the loader, Directives and Guidance, and whether the judge saw their rules followed | Events and judge answers | Requested |
 | Context growth | Context size per request, its peak and its growth over the run | Claude events, Codex session log | Recommended |
 | Process | Tool calls by kind: read, search, edit, test or build, other, and failed calls | Events | Recommended |
 | Process | Test and build runs by the agent, and how many passed | Events | Recommended |
@@ -61,6 +63,23 @@ Progressive disclosure is the framework's main selling point, so these results m
 
 Essentials is the cheapest Open Forge preset in every starting point so far. The existing-app checks have a ceiling: they need sharper case checks before they can show a difference in correctness.
 
+## Scopes come first
+
+The maintainer, 2026-11-02: scopes are as important to Open Forge as the framework itself, and everything Open Forge does is progressive disclosure. The current evals don't show that. They use Open Forge as a plain tool with an extra CLI and rules, with every document marked `LoadNow`, and that matches the baseline without beating it. Scoped Open Forge is the normal usage, so the evals and the Results page present it first. Today's setups are the baseline for unscoped use and stay as data points.
+
+An example scope layout for Neon Pairs, to refine during the audit:
+
+| Scope | Covers |
+| --- | --- |
+| Gameplay | Rules, scoring, the deal and win conditions |
+| Visuals | Layout, card faces, colors and animation, the VFX |
+| Sound | Sound effects and their controls, the SFX |
+| Input and accessibility | Mouse, touch and keyboard input, focus and screen reader behavior |
+| Persistence and sharing | Saved progress, board codes, snapshots and replay |
+| Technology | Stack, build and delivery |
+
+Each scope is a routed folder with an entrypoint whose description says when to read it, the same shape a monorepo uses for front end and back end. Only a short overview loads up front. Starting points with a full spec, Layers 3 and 4, have room for this: a full spec that is scoped well lets an agent load only the scopes a task touches.
+
 ## Scoped Open Forge setups
 
 The maintainer wants progressive disclosure designed explicitly, since it lets a product keep changing at a lower cost. Greenfield work should show that a spec-driven agent is more correct, even at some extra token cost. Brownfield work should show that good scopes load only what a change needs.
@@ -76,6 +95,7 @@ Expected results: about the same or slightly more tokens for a full build, fewer
 These scenarios sit inside the existing starting points, so they need a name of their own. The working name is scoped work: a task confined to one area of the product.
 
 - **Greenfield parts.** Start from the reference game with one area removed, such as sound, card faces or keyboard input, give the full spec, and ask the agent to build that area. The agent must find the documents that cover it.
+- **Partial builds from a full spec.** Give the whole scoped spec on Layer 3 and ask for only some scopes, such as gameplay and visuals. Check only the clauses of those scopes, which `requirements.json` maps to their documents, and measure the tokens and documents the run used.
 - **Brownfield changes.** Keep the three existing-app cases and add changes confined to one scope, such as a new card back (visuals), a sound toggle (sound and controls), a keyboard focus repair (input) or a scoring rule change (rules).
 - **Checks.** Each scenario needs checks sharp enough to fail a wrong change, because today's existing-app checks pass every setup. Record changes outside the scenario's area as their own measure.
 - **Setups.** Plain docs, Full Core with everything up front, and Full Core, scoped.
