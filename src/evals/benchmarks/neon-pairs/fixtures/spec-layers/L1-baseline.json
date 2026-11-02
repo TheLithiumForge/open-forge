@@ -115,7 +115,7 @@
                   },
                   {
                       "path":  "checks/validate.ts",
-                      "sha256":  "33ac5e6d370f70e10126f100439c46a2f7ad211a543edc18e3c80caf4c10c7c3"
+                      "sha256":  "496d2f617a63b20cc0afdab1e046bdf4298ccc568d5460ddbfaab7d4b6a8a5c4"
                   },
                   {
                       "path":  "checks/worker.ts",

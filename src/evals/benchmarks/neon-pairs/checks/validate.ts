@@ -9,7 +9,8 @@ import { buildProject } from "../../../grading/build.ts";
 import { runContainerChecks, runContainerRegressions } from "./container.ts";
 import { loadFixtures, materializeFixture, ReferenceFolder, type Fixture } from "./fixtures.ts";
 import { LayerVersion } from "./layer.ts";
-import { suiteGradingInputs } from "../../registry.ts";
+import { LayerOneCase, suiteGradingInputs } from "../../registry.ts";
+import { checkerDigests, LaterLayerCheckers } from "../../../history/capture.ts";
 import { fileDigests } from "../../../history/artifacts.ts";
 import { fingerprint } from "../../../history/fingerprints.ts";
 
@@ -66,11 +67,12 @@ export async function main(args: readonly string[]): Promise<void> {
   await writeFile(new URL("../layers/L1.validation.json", import.meta.url), `${JSON.stringify({ schemaVersion: 1, gradingVersion: LayerVersion, status: "validated", inputs, results }, null, 2)}\n`);
 }
 
+// Later layers keep their checks and validation reports in spec-layers folders, so their runs can't change Layer 1's inputs.
 async function validationInputs() {
-  return { definitions: await suiteGradingInputs("greenfield-baseline"),
-    checker: fingerprint(await fileDigests(fileURLToPath(new URL("./", import.meta.url)))),
+  return { definitions: await suiteGradingInputs(LayerOneCase),
+    checker: fingerprint(await checkerDigests(fileURLToPath(new URL("./", import.meta.url)), LayerOneCase)),
     reference: fingerprint(await fileDigests(fileURLToPath(ReferenceFolder))),
-    fixtures: fingerprint(await fileDigests(fileURLToPath(new URL("../fixtures/", import.meta.url)))),
+    fixtures: fingerprint(await fileDigests(fileURLToPath(new URL("../fixtures/", import.meta.url)), LaterLayerCheckers)),
   };
 }
 
