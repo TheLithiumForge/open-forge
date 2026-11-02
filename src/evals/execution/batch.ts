@@ -75,9 +75,9 @@ export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   return batch;
 }
 
-/** Whether resume replaces an interrupted or limited attempt. One replacement caps infrastructure failures, and a usage limit isn't one. */
-export function replacedOnResume(run: Pick<RunRecord, "status" | "replacesRunId">): boolean {
-  return run.replacesRunId === null || run.status === RunStatus.limited;
+/** Whether resume replaces an interrupted or limited attempt. One replacement caps infrastructure failures, and a usage limit isn't one. A run that already has a replacement keeps its status, so it's never replaced twice. */
+export function replacedOnResume(run: Pick<RunRecord, "status" | "replacesRunId">, alreadyReplaced: boolean): boolean {
+  return !alreadyReplaced && (run.replacesRunId === null || run.status === RunStatus.limited);
 }
 
 /** Whether resume grades a run's saved files instead of starting it over, because the agent finished and only grading stopped. */
@@ -145,6 +145,7 @@ async function executeBatch(batchId: string, parallel?: number): Promise<void> {
     } else if (batch.fingerprints.setupContent !== setupContent) throw new Error("The setup content changed since this batch started.");
     await setStatus(BatchStatus.running);
     let limited = false;
+    const replaced = new Set((await readRuns(batch)).flatMap((run) => run.replacesRunId === null ? [] : [run.replacesRunId]));
     // Batches saved before parallel runs existed have no setting, so they run one at a time.
     await runInParallel(batch.runs, parallel ?? (batch.config.parallelRuns || 1), async (runId, index) => {
       try { await attempt(runId, index); }
@@ -170,7 +171,8 @@ async function executeBatch(batchId: string, parallel?: number): Promise<void> {
       }
       if (run.status !== RunStatus.pending) {
         if (run.finishedAt === null) await saveRun({ ...run, status: RunStatus.failed, failureKind: FailureKind.infrastructure, finishedAt: new Date().toISOString() });
-        if (!replacedOnResume(run)) return;
+        if (!replacedOnResume(run, replaced.has(run.id))) return;
+        replaced.add(run.id);
         run = replacementRun(run, opaqueId(), "Resume after an interrupted or limited attempt.");
         batch = { ...batch, runs: [...batch.runs, run.id] };
         await saveRun(run);
