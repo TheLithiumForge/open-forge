@@ -20,7 +20,8 @@ export async function loadRecords(read: ReadText, schemas: readonly object[], in
       artifacts: JSON.parse(artifacts), assessments: assessments.flat()
     });
   }));
-  validator.matches(index, batches);
+  // Running batches change between reading the catalogue and their records, so only finished data must match exactly.
+  if (options.unfinished !== true) validator.matches(index, batches);
   return { batches, index };
 }
 export async function fetchLatest(data: EvalsData, request: typeof fetch = fetch): Promise<Snapshot> {

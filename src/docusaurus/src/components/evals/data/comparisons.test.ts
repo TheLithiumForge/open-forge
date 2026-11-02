@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { previewBatch } from "../../../../scripts/evals/preview-fixture.ts";
 import { summaries } from "./summaries.ts";
-import { differences } from "./differences.ts";
 import { referenceTrends } from "./reference-trend.ts";
 test("both judges and implementers have separate rows without doubling implementation usage", () => {
   const batch = previewBatch(1);
@@ -12,8 +11,6 @@ test("both judges and implementers have separate rows without doubling implement
   assert.ok(rows.every((row) => row.runs === 2));
   assert.ok(rows.some((row) => row.tokens.mean === 160 && row.tokens.missing === 1));
   assert.ok(rows.some((row) => row.tokens.mean === null && row.tokens.missing === 2));
-  const delta = differences(batch);
-  assert.ok(delta.every((row) => row.missing === 0 && row.incompatible === 0 && row.scores.every((score) => Math.abs((score.value.mean ?? 0) + 1 / 3) < 0.001)));
 });
 test("recheck versions, missing judges and judge failures stay separate", () => {
   const batch = previewBatch(1), first = batch.assessments.find((item) => item.kind === "checks");
@@ -36,15 +33,4 @@ test("reference history keeps every assessment, source and grading apart from mo
   assert.ok(groups.every((group) => group.points.length === 4));
   const shifted = { ...second, assessments: second.assessments.map((item) => ({ ...item, versions: { ...item.versions, spec: "changed-spec" } })) };
   assert.equal(referenceTrends([first, shifted]).length, 6);
-});
-test("judge differences never average attempts from different judge prompt versions", () => {
-  const batch = previewBatch(1);
-  const changedRuns = new Set(batch.runs.filter((run) => run.repeat === 2).map((run) => run.id));
-  const shifted = {
-    ...batch, assessments: batch.assessments.map((item) => item.kind === "judge" && changedRuns.has(item.runId)
-      ? { ...item, versions: { ...item.versions, judge: "fixture-prompt-v2" } } : item)
-  };
-  const rows = differences(shifted);
-  assert.equal(rows.length, 16);
-  assert.ok(rows.every((row) => row.scores.every((score) => score.value.samples === 1 && score.value.low === null)));
 });

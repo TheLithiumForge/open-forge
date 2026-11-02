@@ -1,9 +1,15 @@
 import type { Batch } from "../records/records.types.ts";
 import { ballotShare, gradingScope, interval, proportionInterval, tokenTotal, type AssessedRun, type Interval } from "./analysis.ts";
-import { observations, choiceLabel } from "./observations.ts";
+import { observations, choiceKey, choiceLabel } from "./observations.ts";
+import { modelLabel } from "./names.ts";
 export interface Summary {
   readonly layer: number | null;
   readonly judge: string;
+  /** The implementer and judge as filter keys and reader labels, matching the Results filters. */
+  readonly agentKey: string;
+  readonly modelLabel: string;
+  readonly judgeKey: string | null;
+  readonly judgeLabel: string | null;
   readonly grading: string;
   readonly judgeMissing: number;
   readonly judgeErrors: number;
@@ -62,6 +68,8 @@ export function summaries(batch: Batch): Summary[] {
     });
     const descriptive = (values: readonly number[]) => ({ ...interval(values), low: null, high: null });
     return {
+      agentKey: choiceKey(first.agent), modelLabel: modelLabel(first.agent, first.reportedModel),
+      judgeKey: first.judgeChoice == null ? null : choiceKey(first.judgeChoice), judgeLabel: first.judgeChoice == null ? null : modelLabel(first.judgeChoice),
       layer: batch.experiment.config.layer ?? null, judge: choiceLabel(first.judgeChoice), grading: JSON.stringify([first.checksAssessment?.versions ?? null, first.judgeAssessment?.versions ?? null]), judgeMissing: scored.filter((run) => run.judgeAssessment === null).length, judgeErrors: scored.filter((run) => run.judgeAssessment?.error != null).length, scope: gradingScope(batch, first), version: batch.experiment.cliVersion ?? "unknown", batchId: batch.experiment.id, createdAt: batch.experiment.createdAt,
       setup: first.setup, model: first.reportedModel ?? first.requestedModel ?? "unreported model", tool: first.agent.tool, effort: first.agent.effort,
       scoring: batch.experiment.config.isolation !== "local", runs: runs.length,

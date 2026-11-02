@@ -106,7 +106,7 @@ npm run evals -- site --port 4320
 
 ## `check`
 
-Check saved runs again in the verifier and append the results. Name a batch, and optionally one run. --rebuild builds the saved project again first. --diagnostics saves Layer 1 card crops and look comparisons beside the evidence.
+Check saved runs again in the verifier and append the results. Name a batch, and optionally one run. --rebuild builds the saved project again first. Every check also saves its diagnostics, such as Layer 1 card crops and look comparisons.
 
 ```sh
 npm run evals -- check <batch> --rebuild
@@ -144,7 +144,6 @@ npm run evals -- results add <batch>
 | `--accept-harness` | `resume` | Continue a batch on changed runner code and list the change in the batch record. Changed inputs, checks, rubric, tooling or models still need a new batch |
 | `--development` | `run`, `qualify` | Allow local isolation, which is never fit for scoring |
 | `--rebuild` | `check` | Build the saved project again before checking it |
-| `--diagnostics` | `check` | Save Layer 1 card crops and look comparisons beside the check evidence |
 | `--missing` | `judge` | Judge only runs without a judgment from that judge, counting one that ended in an error as missing |
 | `--batch <id>` | `summary` | The batch to summarize |
 | `--repository <folder>` | `results`, `site` | The results repository to add to, src/evals/results by default, or a folder in its layout for site to show |

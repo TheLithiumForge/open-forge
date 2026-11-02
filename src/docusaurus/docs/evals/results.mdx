@@ -3,36 +3,10 @@ title: Results
 hide_table_of_contents: true
 ---
 # Results
-Eval Results is a browser that compares coding runs by layer, setup, implementer and judge, and shows every run's checks, judgments and saved files.
+Eval Results is a page that compares how AI coding agents build the same game under different setups, with and without Open Forge.
 
-For example, choose Layer 3 to see how far each batch has come, then how each setup compares with plain docs on check coverage, judge answers and tokens. Open a run to see its screenshots, its code and every judge answer with the lines it cites. These are screening results. Nothing is a claim yet.
-
-## Sources
-
-The buttons above the layers choose where the records come from. Every record is validated against the published schemas before it shows.
-
-- **Published copy** is the results repository at the commit this site was built with.
-- **Fetch latest results** reads the public results repository at its newest commit.
-- **Local runs** appears when you start the site with `npm run evals -- site`. It reads your own runs, including batches still running, and refreshes on demand.
-- **Open a results folder** reads a results repository on your computer, such as an unzipped copy from **Download all results**.
-
-Each batch's **Download** saves its records as one JSON file. **Browse files** opens the batch folder in the results repository.
-
-## Reading a layer
-
-- **Batches** shows each batch's implemented, checked and judged runs. Scores are preliminary until every run is graded.
-- **Compared with the control** shows every setup against the plan's first setup: no setup on Layer 1, plain docs on later layers. Shares differ in points, tokens as a ratio. Tokens are the cost measure. Minutes mostly reflect the provider's speed, so compare them within one model.
-- The **setup table** gives each measure with its 95% interval and how many runs it measured. Binary gates use Wilson intervals. Other measures use 2,000 fixed-seed bootstrap samples. Single runs have no interval.
-- **Runs** opens each run's saved files and grades. Screenshots, the built game, the conversation, the event log and the code open from the current source.
-
-Different grading versions stay apart, missing values stay missing, and implementation time and tokens count once per run.
-
-## Data
-
-The [results repository](https://github.com/TheLithiumForge/open-forge-eval-results) keeps each batch under `versions/<cli-version>/batches/<batch>/`: `experiment.json`, `setups.jsonl`, `runs.jsonl`, `assessments/` and `artifacts.json`, with the evidence files in `evidence/`. `index.json` lists every batch, and the JSON Schemas in `schemas/` define every record.
+Every run starts from one of four starting points, from a one-line idea to an existing app. Each setup is compared with a control on the same starting point and model. The [Evals overview](index.md) explains how runs are made and graded.
 
 import Evals from '@site/src/components/evals/Evals'
 
 <Evals />
-
-Back to [Evals](index.md).

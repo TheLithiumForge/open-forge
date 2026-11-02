@@ -1,6 +1,7 @@
 import type { Assessment, Batch, Choice, Judge, Run } from "../records/records.types.ts";
 import { latestRun } from "./analysis.ts";
-import { choiceKey, choiceLabel, isReference } from "./observations.ts";
+import { choiceKey, isReference } from "./observations.ts";
+import { modelLabel } from "./names.ts";
 
 /** How far one batch has come. A replaced infrastructure failure or a run waiting to be redone isn't counted. */
 export interface BatchProgress {
@@ -33,6 +34,6 @@ export function batchProgress(batch: Batch): BatchProgress {
   return {
     planned: batch.experiment.reference === undefined ? agents.length * setups.length * runsPerSetup : 0,
     implemented: implemented.length, checked: checked.length,
-    judges: [...choices.values()].map((choice) => ({ judge: choiceLabel(choice), judged: implemented.filter((run) => judged(run, choice, batch.assessments)).length })),
+    judges: [...choices.values()].map((choice) => ({ judge: modelLabel(choice), judged: implemented.filter((run) => judged(run, choice, batch.assessments)).length })),
   };
 }

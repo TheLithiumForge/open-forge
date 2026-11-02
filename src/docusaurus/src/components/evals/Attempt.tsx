@@ -1,8 +1,9 @@
 import type { Batch, Run, Checks, Judge } from "./records/records.types.ts";
 import { latestRun, tokenTotal } from "./data/analysis.ts";
-import { choiceLabel } from "./data/observations.ts";
+import { modelLabel } from "./data/names.ts";
 import { number, percent } from "./data/format.ts";
 import { Evidence } from "./Evidence.tsx";
+import { RunTokens } from "./RunTokens.tsx";
 export function Attempt({ batch, run }: {
   readonly batch: Batch;
   readonly run: Run;
@@ -15,6 +16,7 @@ export function Attempt({ batch, run }: {
     <p>Batch <code>{batch.experiment.id}</code>. Run <code>{run.id}</code>.</p>
     <p>Requested model: {run.requestedModel ?? "Missing"}. Reported model: {run.reportedModel ?? "Missing"}.</p>
     <p>Latest check coverage: {percent(view.result?.coverage.share ?? null)}. Time: {number(run.agentSeconds)} seconds. Tokens: {number(tokenTotal(run))}.</p>
+    <RunTokens run={run} />
     <p>Failure kind: {run.failureKind ?? "None"}. {run.replacesRunId === null ? "" : `Replaces ${run.replacesRunId}. ${run.replacementReason ?? "Missing reason"}`}</p>
     {run.error === null ? null : <pre>{run.error}</pre>}
     <a href={json} download={`${run.id}.json`}>Download run records</a>
@@ -22,7 +24,7 @@ export function Attempt({ batch, run }: {
     <Evidence batch={batch} artifacts={batch.artifacts.filter((item) => item.runId === run.id && item.assessmentId === null)} />
     {records.length === 0 ? <p>Check and judge assessments are missing.</p> : null}
     {records.map((record) => <section key={record.id}>
-      <h3>{record.kind === "checks" ? "Checks" : `Judge ${choiceLabel(record.requestedModel)}`}</h3>
+      <h3>{record.kind === "checks" ? "Checks" : record.requestedModel === null ? "Judge" : `Judge ${modelLabel(record.requestedModel)}`}</h3>
       <p>Assessment <code>{record.id}</code>. {record.createdAt ?? "Missing time"}.</p>
       <p className="eval-key">Grading: {JSON.stringify(record.versions)}</p>
       {record.error === null ? null : <p role="alert">Grader error: {record.error}</p>}

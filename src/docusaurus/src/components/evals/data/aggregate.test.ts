@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { previewBatch } from "../../../../scripts/evals/preview-fixture.ts";
-import { All, cells, comparisons, filtered, modelLabel, options, setupSummaries } from "./aggregate.ts";
+import { All, comparisons, filtered, options, setupSummaries, type FilterOption } from "./aggregate.ts";
+import { cells, type Cell } from "./cells.ts";
 
 test("every setup compares with the plan's first setup on the same batch, model and judge", () => {
   const batch = previewBatch(1);
@@ -30,8 +31,14 @@ test("summaries count each batch and model once and filters narrow by model, jud
   for (const summary of setupSummaries(narrowed)) assert.ok(summary.groups <= 1);
 });
 
-test("model labels name the reported model and its reasoning effort", () => {
-  assert.equal(modelLabel({ tool: "claude", model: "opus", effort: "high" }, "claude-opus-5-5"), "Claude Opus 5.5, high reasoning");
-  assert.equal(modelLabel({ tool: "codex", model: "gpt-6.1-sol", effort: "xhigh" }), "GPT-6.1 Sol, xhigh reasoning");
-  assert.equal(modelLabel({ tool: "codex", model: "future-model", effort: null }), "future-model");
+test("filter options take a model's label from a cell with runs", () => {
+  const all = cells([previewBatch(1)]);
+  const withRuns = all.find((cell) => cell.runs > 0);
+  assert.ok(withRuns);
+  const empty: Cell = { ...withRuns, runs: 0, runIds: [], modelLabel: `${withRuns.modelLabel}, without runs` };
+  const orders: readonly (readonly Cell[])[] = [[empty, withRuns], [withRuns, empty]];
+  for (const order of orders) {
+    const chosen: FilterOption | undefined = options(order).models.find((option) => option.key === withRuns.model);
+    assert.equal(chosen?.label, withRuns.modelLabel);
+  }
 });
