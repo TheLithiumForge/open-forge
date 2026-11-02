@@ -172,6 +172,15 @@ Built the same day: phases 1 to 4. `results add`, `check`, `judge --missing`, `p
 
 The full spec is [Eval Context And Cost Measures](../../../emerging/analysis/eval-context-and-cost-measures.md).
 
+**CLI pipeline, 2026-11-02.** The maintainer set the eval CLI's design rules, now in [Running Evals](../../../crystallized/documents/evals/running-evals.md#command-design): capture everything by default, one stage per command, plain input and output, flags that add or narrow, and judging that never blocks implementation. Done the same day: diagnostics are always captured, Codex's session log is kept, and a judge's usage limit leaves a gap instead of pausing the batch. The audit's remaining changes:
+
+1. Add an `analyze` stage that stores usage measures as versioned records, and have `run` perform it for new runs.
+2. Give `progress` and `usage` a JSON form, and fold `summary` into them.
+3. Replace `results add`, a group with one child, with a direct command.
+4. Share selection flags across stages, such as setup, model and case, and give `check` a `--missing` like `judge`.
+5. Name both judges in the full plans, so every run gets every grade. Claude judging fills in later through `judge --missing` when usage allows.
+6. Decide whether `check` should always rebuild, since a saved build can be stale.
+
 **Linked AGENTS.md, 2026-11-02.** The maintainer decided the control also gets a `CLAUDE.md` that imports `AGENTS.md`, as Open Forge setups have, so Claude starts from the same instructions as Codex. Batches started on or before 2026-11-02 wrote `AGENTS.md` only. Codex reads `AGENTS.md` either way, so Sol runs stay comparable. The Claude batches restart with the new setup when Claude usage allows.
 
 **Later:** testing Extensions, starting with the Helpful setup. [Task 90](task90-extensions-install-their-routes.md) covers Extensions that need routes a preset left out, and the [Plan-Ahead Skill](../../../emerging/ideas/plan-ahead-skill.md) idea covers Guidance that doesn't change how agents ask.
