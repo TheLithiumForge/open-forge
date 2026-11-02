@@ -37,5 +37,6 @@ The game doesn't need to support these, so they're never tested:
 - How a pointer press behaves when it drifts or is dragged off a card
 - Replay or snapshot files with encodings beyond the stated rules, such as a byte-order mark
 - Spoken screen-reader output, which stays part of user acceptance as [Input](input.md#screen-reader) describes
+- Confirming that a touch long press on a real device opens the context menu without revealing a card, which stays part of user acceptance like spoken output because automated browsers can't produce that gesture
 
 Back to [Play](#play).
