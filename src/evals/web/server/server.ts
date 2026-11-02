@@ -12,8 +12,14 @@ import { refusal, type RequestFacts } from "./guard.ts";
 import { ApiPaths, handleApi, sendJson } from "./routes.ts";
 import { gameHeaders } from "../game-policy.ts";
 import { readPlainFile } from "./plain-file.ts";
+import { Flag } from "../../config/commands.ts";
+import { applyMachineOptions, splitMachineOptions } from "../../config/machine-options.ts";
 
-const Port = Number(process.env["EVALS_PORT"] ?? "4318");
+const { args: serverArgs, options: machine } = splitMachineOptions(process.argv.slice(2));
+applyMachineOptions(machine);
+const portAt = serverArgs.indexOf(Flag.port);
+const Port = Number(portAt < 0 ? "4318" : serverArgs[portAt + 1]);
+if (!Number.isInteger(Port) || Port < 1 || Port > 65535) throw new Error(`Give ${Flag.port} a port number.`);
 const contentTypes: Readonly<Record<string, string>> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml" };
 const runHost = /^([0-9a-f]{12})\.localhost(?::\d+)?$/;
 const shotPath = /^\/shots\/([\w-]+)\/([0-9a-f]{12})\/([\w.-]+\.png)$/;
@@ -84,5 +90,5 @@ createServer((request, response) => {
 }).listen(Port, "127.0.0.1", () => {
   const url = `http://localhost:${Port}/`;
   console.log(`Open Forge evals are running at ${url}`);
-  if (process.env["EVALS_NO_BROWSER"] === undefined) openBrowser(url);
+  if (!serverArgs.includes(Flag.noBrowser)) openBrowser(url);
 });

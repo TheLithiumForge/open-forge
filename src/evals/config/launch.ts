@@ -12,7 +12,7 @@ export function launchNode(file: string, args: readonly string[] = []): Promise<
   });
 }
 
-export async function launchUi(): Promise<number> {
+export async function launchUi(args: readonly string[] = []): Promise<number> {
   const built = await launchNode(join(EvalPaths.modules, "vite", "bin", "vite.js"), ["build", "--logLevel", "warn"]);
-  return built === 0 ? launchNode(join(evalsRoot, CliScripts.server)) : built;
+  return built === 0 ? launchNode(join(evalsRoot, CliScripts.server), args) : built;
 }

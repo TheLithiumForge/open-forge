@@ -1,4 +1,5 @@
 import { lstat, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { extname, join } from "node:path";
 import { record } from "../../benchmarks/neon-pairs/checks/layer.ts";
 
@@ -6,6 +7,13 @@ const hiddenNames = new Set([".agents", ".open-forge-state", ".git", ".claude", 
 const sourceExtensions = new Set([".ts", ".tsx", ".js", ".jsx", ".css", ".scss", ".html", ".json"]);
 const toolPackages = new Set(["@thelithiumforge/open-forge", "@openai/codex", "@anthropic-ai/claude-code"]);
 const decoder = new TextDecoder("utf-8", { fatal: true });
+// Saved evidence such as an accessibility tree dump is data the checks read, not source to review. A short stub
+// still tells the judge the file exists, so one deliverable can't push the whole project past the judge's input limit.
+export const JudgeDataLimit = 64 * 1024;
+
+function dataStub(bytes: Buffer): Buffer {
+  return Buffer.from(`${JSON.stringify({ omitted: "Generated data over the judge's per-file limit", bytes: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex") }, null, 2)}\n`);
+}
 
 function neutralManifest(bytes: Buffer): Buffer {
   let value: unknown;
@@ -43,7 +51,8 @@ export async function prepareJudgeFolder(frozenFiles: string, judgeFolder: strin
       else if (entry.isFile()) {
         const bytes = await readFile(from);
         decoder.decode(bytes);
-        await writeFile(to, entry.name === "package.json" ? neutralManifest(bytes) : bytes, { flag: "wx" });
+        const kept = entry.name === "package.json" ? neutralManifest(bytes) : extname(entry.name).toLowerCase() === ".json" && bytes.length > JudgeDataLimit ? dataStub(bytes) : bytes;
+        await writeFile(to, kept, { flag: "wx" });
       }
     }
   }

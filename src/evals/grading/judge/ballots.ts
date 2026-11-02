@@ -1,6 +1,6 @@
 import type { JudgeAnswer } from "../../history/results.types.ts";
 import { record } from "../../benchmarks/neon-pairs/checks/layer.ts";
-import { boundCitation, type JudgeEvidence } from "./evidence.ts";
+import { boundCitation, MissingCitation, type JudgeEvidence } from "./evidence.ts";
 import { BallotCount, JudgeEvidenceKind, JudgeVerdict, type JudgeQuestion } from "./rubric.ts";
 
 export interface Ballot { readonly id: string; readonly answer: JudgeVerdict; readonly evidence: string; readonly citations: readonly string[] }
@@ -15,6 +15,8 @@ export function parseBallot(value: unknown, questions: readonly JudgeQuestion[],
     if (!item["citations"].length) throw new Error(`Judge gave no citation for ${item["id"]}.`);
     const citations = item["citations"].map((citation: unknown) => {
       const bound = typeof citation === "string" ? boundCitation(citation, evidence) : null;
+      // Judges reach for missing:source to say a feature is absent, so the retry explains what to cite instead.
+      if (bound === null && (citation === MissingCitation.source || citation === MissingCitation.images)) throw new Error(`Judge cited ${citation}, which applies only when no such evidence was sent. To show something is absent, cite the files or images where it would be.`);
       if (bound === null) throw new Error(`Judge cited evidence outside its bundle: ${JSON.stringify(citation).slice(0, 200)}.`);
       return bound;
     });

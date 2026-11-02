@@ -3,7 +3,7 @@ import { mkdir, readdir, readFile, rm } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import { localToolCommand, PinnedTool } from "./providers/pinned-tools.ts";
 import { runCommand } from "./process.ts";
-import { EvalPaths } from "../paths.ts";
+import { scratchRoot } from "../paths.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
 
 export interface SetupFile {
@@ -44,7 +44,7 @@ async function listFiles(root: string, folder: string = root): Promise<SetupFile
 export async function prepareSnapshot(batchId: string, suite: Suite, setup: string): Promise<Snapshot> {
   const definition = suite.setups[setup];
   if (definition === undefined) throw new Error(`The suite has no setup called ${setup}.`);
-  const folder = join(EvalPaths.scratch, `snapshot-${batchId}-${setup}`, suite.project);
+  const folder = join(scratchRoot(), `snapshot-${batchId}-${setup}`, suite.project);
   // A stopped server can leave an old snapshot behind. Each install starts from an empty folder.
   await rm(dirname(folder), { recursive: true, force: true, maxRetries: 3 });
   await mkdir(folder, { recursive: true });

@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { checkSlotCount, withCheckSlot } from "./check-slot.ts";
+import { withCheckSlot } from "./check-slot.ts";
 
 const PollMs = 10;
 // Process IDs stay far below this on Windows and Linux, so no live process owns it.
@@ -33,7 +33,9 @@ test("a slot left by a process that died is claimed again and a failing stage st
   assert.deepEqual(await readdir(root), []);
 });
 
-test("the slot count comes from the environment and falls back on anything but a positive whole number", () => {
-  assert.equal(checkSlotCount("3"), 3);
-  for (const value of [undefined, "0", "1.5", "many"]) assert.equal(checkSlotCount(value), 2);
+test("without configured slots a check stage runs at once and leaves no slot folder", async (t) => {
+  const root = await mkdtemp(join(tmpdir(), "eval-check-slots-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  assert.equal(await withCheckSlot(async () => true, null), true);
+  assert.deepEqual(await readdir(root), []);
 });

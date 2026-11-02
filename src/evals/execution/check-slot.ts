@@ -7,17 +7,17 @@ import { setTimeout } from "node:timers/promises";
  * Browser checks are timed, and a crowded machine makes them run past their limit. Every eval process on this
  * machine shares these slots, so agents still run in parallel while check stages wait their turn.
  */
-export const CheckSlots = { environment: "EVALS_CHECK_SLOTS", rootEnvironment: "EVALS_CHECK_SLOT_ROOT", count: 2, pollMs: 5_000, claimGraceMs: 60_000, maxAgeMs: 6 * 60 * 60_000 } as const;
-// The test runner points this at a private folder, so tests never wait on a real evaluation's slots.
-export const CheckSlotRoot = process.env[CheckSlots.rootEnvironment] ?? join(tmpdir(), "open-forge-evals-check-slots");
+export const CheckSlots = { count: 2, pollMs: 5_000, claimGraceMs: 60_000, maxAgeMs: 6 * 60 * 60_000 } as const;
+export const CheckSlotRoot = join(tmpdir(), "open-forge-evals-check-slots");
 const OwnerFile = "owner.json";
 
 interface Owner { readonly pid: number; readonly at: string }
-export interface CheckSlotOptions { readonly root?: string; readonly count?: number; readonly pollMs?: number }
+export interface CheckSlotOptions { readonly root: string; readonly count: number; readonly pollMs?: number }
+// Commands that run checks turn the slots on. Library callers and tests run their checks directly.
+let configured: CheckSlotOptions | null = null;
 
-export function checkSlotCount(value = process.env[CheckSlots.environment]): number {
-  const count = Number(value ?? CheckSlots.count);
-  return Number.isInteger(count) && count >= 1 ? count : CheckSlots.count;
+export function useCheckSlots(count: number = CheckSlots.count, root = CheckSlotRoot): void {
+  configured = { root, count };
 }
 
 function alive(pid: number): boolean {
@@ -45,8 +45,9 @@ async function claim(slot: string): Promise<boolean> {
 }
 
 /** Runs one check stage in a machine-wide slot, waiting while every slot is taken. */
-export async function withCheckSlot<T>(work: () => Promise<T>, options: CheckSlotOptions = {}): Promise<T> {
-  const root = options.root ?? CheckSlotRoot, count = options.count ?? checkSlotCount();
+export async function withCheckSlot<T>(work: () => Promise<T>, options: CheckSlotOptions | null = configured): Promise<T> {
+  if (options === null) return work();
+  const { root, count } = options;
   await mkdir(root, { recursive: true });
   for (;;) {
     for (let index = 0; index < count; index += 1) {

@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 import { cp, mkdir, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
 import type { RunSpace } from "./containers/executor.ts";
-import { EvalPaths } from "../paths.ts";
+import { scratchRoot } from "../paths.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
 import { setupPrompt } from "../materialize/delivery.ts";
 
@@ -22,7 +22,7 @@ export function opaqueId(): string {
 
 /** A fresh folder for one run, holding a copy of the setup's snapshot and an empty home for the tools. */
 export async function createRunSpace(project: string, snapshot: string): Promise<RunSpace> {
-  const root = join(EvalPaths.scratch, opaqueId());
+  const root = join(scratchRoot(), opaqueId());
   const space = { root, work: join(root, project), home: join(root, "home"), project };
   await mkdir(space.home, { recursive: true });
   await cp(snapshot, space.work, { recursive: true });
@@ -31,7 +31,7 @@ export async function createRunSpace(project: string, snapshot: string): Promise
 
 /** A scratch folder outside any repository, for the judge's copy or the simulated user. */
 export async function scratchFolder(): Promise<string> {
-  const folder = join(EvalPaths.scratch, opaqueId());
+  const folder = join(scratchRoot(), opaqueId());
   await mkdir(folder, { recursive: true });
   return folder;
 }

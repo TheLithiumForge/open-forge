@@ -6,6 +6,9 @@ import { AssessorEvidenceLimit } from "../../execution/containers/assessor.ts";
 import { AssessorImageLimits, readAssessorImages } from "../../execution/containers/files.ts";
 import { visibleToJudge } from "./judge-folder.ts";
 
+/** Citations that say an evidence set was empty. */
+export const MissingCitation = { source: "missing:source", images: "missing:images" } as const;
+
 export interface JudgeSource { readonly path: string; readonly text: string; readonly lines: number }
 export interface JudgeImage { readonly id: string; readonly sha256: string; readonly png: Buffer; readonly width: number; readonly height: number }
 export interface JudgeEvidence { readonly sources: readonly JudgeSource[]; readonly images: readonly JudgeImage[] }
@@ -45,8 +48,8 @@ export async function judgeEvidence(folder: string, imagePaths: readonly string[
 
 /** The citation as it applies to the bundle, or null when it points outside it. A range running past a file's last line ends there. */
 export function boundCitation(citation: string, evidence: JudgeEvidence): string | null {
-  if (citation === "missing:images") return evidence.images.length === 0 ? citation : null;
-  if (citation === "missing:source") return evidence.sources.length === 0 ? citation : null;
+  if (citation === MissingCitation.images) return evidence.images.length === 0 ? citation : null;
+  if (citation === MissingCitation.source) return evidence.sources.length === 0 ? citation : null;
   if (evidence.images.some((image) => citation === image.id)) return citation;
   const match = /^source:(.+):(\d+)(?:-(\d+))?$/.exec(citation);
   if (!match) return null;

@@ -116,3 +116,12 @@ test("reference defaults and overrides dispatch without a model implementation",
   assert.equal(selections.length, 2);
   assert.deepEqual(fake.calls, []);
 });
+
+test("recheck and rejudge carry the machine flags into the scripts they start", async () => {
+  const fake = fakeServices(), launched: (readonly string[])[] = [];
+  const services = { ...fake.services, launch: async (_file: string, args: readonly string[]) => { launched.push(args); return 0; } };
+  const machine = ["--scratch", "work", "--check-slots", "1"];
+  assert.equal(await runCli([Command.recheck, "batch", Flag.diagnostics], services, machine), 0);
+  assert.equal(await runCli([Command.rejudge, "batch"], services, machine), 0);
+  assert.deepEqual(launched, [["batch", Flag.diagnostics, ...machine], ["batch", ...machine]]);
+});

@@ -17,12 +17,20 @@ export const EvalPaths = {
   uiDist: join(evalsRoot, "web", "dist"),
   docker: join(evalsRoot, "images"),
   modules: join(evalsRoot, "node_modules"),
-  // Runs work outside any Git repository, so no parent AGENTS.md or CLAUDE.md reaches the agent.
-  // Not under the temp folder, where Codex refuses to create its helper commands, and named so
-  // the agent's own path doesn't say what's being tested. EVALS_SCRATCH moves it to a roomier drive,
-  // which must also sit outside any Git repository.
-  scratch: process.env["EVALS_SCRATCH"] ?? join(homedir(), ".workspaces"),
 } as const;
+
+// Runs work outside any Git repository, so no parent AGENTS.md or CLAUDE.md reaches the agent. Not under the temp
+// folder, where Codex refuses to create its helper commands, and named so the agent's own path doesn't say what's
+// being tested. The --scratch flag moves it to a roomier drive, which must also sit outside any Git repository.
+let scratch = join(homedir(), ".workspaces");
+
+export function scratchRoot(): string {
+  return scratch;
+}
+
+export function useScratchRoot(folder: string): void {
+  scratch = folder;
+}
 
 export const ResultFiles = {
   batch: "batch.json",

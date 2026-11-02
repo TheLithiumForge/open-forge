@@ -18,6 +18,7 @@ import { batchMatrixSummary } from "./config/summary.ts";
 import { rejudgeOptions, runPresetOptions } from "./config/preset-options.ts";
 import { referenceOptions } from "./config/reference.ts";
 import { runReference } from "./execution/reference.ts";
+import { applyMachineOptions, splitMachineOptions } from "./config/machine-options.ts";
 
 export interface CliServices {
   readonly print: (text: string) => void;
@@ -69,7 +70,8 @@ function planCase<T extends { readonly cases?: readonly string[] }>(config: T, i
   return { ...config, cases: [id] };
 }
 
-export async function runCli(argv: readonly string[], services: CliServices = defaults): Promise<number> {
+/** Machine flags are already applied in this process and travel on to the scripts the CLI starts. */
+export async function runCli(argv: readonly string[], services: CliServices = defaults, machine: readonly string[] = []): Promise<number> {
   const request = parseCommand(argv);
   const { command, args } = request;
   if (request.help) { services.print(commandHelp(command === Command.help ? args[0] : command)); return 0; }
@@ -134,16 +136,16 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       if (batch === undefined || batch.startsWith("--")) throw new Error(CommandHelp.resume);
       return (services.resume ?? resumePlan)(batch, services.print, args.includes(Flag.parallel) ? parallelOption(args) : undefined, args.includes(Flag.acceptHarness));
     }
-    case Command.ui: checkedArgs(args, [], [], 0); return services.ui();
+    case Command.ui: checkedArgs(args, [Flag.noBrowser], [Flag.port], 0); return services.ui([...args, ...machine]);
     case Command.rejudge: {
       rejudgeOptions(args);
-      return services.launch(join(evalsRoot, CliScripts.rejudge), args);
+      return services.launch(join(evalsRoot, CliScripts.rejudge), [...args, ...machine]);
     }
     case Command.recheck: {
-      const operands = args.filter((arg) => arg !== Flag.rebuild);
+      const operands = args.filter((arg) => arg !== Flag.rebuild && arg !== Flag.diagnostics);
       if (operands.length < 1 || operands.length > 2) throw new Error(CommandHelp.recheck);
-      checkedArgs(args, [Flag.rebuild], [], operands.length);
-      return services.launch(join(evalsRoot, CliScripts.recheck), args);
+      checkedArgs(args, [Flag.rebuild, Flag.diagnostics], [], operands.length);
+      return services.launch(join(evalsRoot, CliScripts.recheck), [...args, ...machine]);
     }
     case Command.export: {
       checkedArgs(args, [], [Flag.out], 1);
@@ -156,6 +158,10 @@ export async function runCli(argv: readonly string[], services: CliServices = de
 }
 
 if (import.meta.main) {
-  try { process.exitCode = await runCli(process.argv.slice(2)); }
+  try {
+    const { args, machine, options } = splitMachineOptions(process.argv.slice(2));
+    applyMachineOptions(options);
+    process.exitCode = await runCli(args, defaults, machine);
+  }
   catch (error) { console.error(error instanceof Error ? error.message : String(error)); process.exitCode = 1; }
 }

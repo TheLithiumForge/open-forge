@@ -21,6 +21,7 @@ import { rejudgeOptions } from "../config/preset-options.ts";
 import { latestJudgeFor } from "../history/summary.ts";
 import { FailureKind } from "../history/statuses.ts";
 import { runInParallel } from "../execution/run-queue.ts";
+import { applyMachineOptions, splitMachineOptions } from "../config/machine-options.ts";
 
 const JudgeTimeoutMs = 15 * 60_000;
 
@@ -87,7 +88,9 @@ export async function rejudgeRuns(suite: Suite, runs: readonly RunView[], config
 }
 
 async function main(): Promise<void> {
-  const { batchId, onlyRun, overrides } = rejudgeOptions(process.argv.slice(2));
+  const { args, options } = splitMachineOptions(process.argv.slice(2));
+  applyMachineOptions(options);
+  const { batchId, onlyRun, overrides } = rejudgeOptions(args);
   const batch = await readBatch(batchId), suite = await loadSuite(batch.suite);
   const config = { ...batch.config, ...overrides };
   await rejudgeRuns(suite, await readRuns(batch), config, await gradingVersions(suite), {}, onlyRun);

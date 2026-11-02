@@ -81,7 +81,23 @@ Every command accepts `--help`. Each help text includes an example:
 | `rejudge` | Append judge ballots with optional judge presets | `npm run evals -- rejudge <batch> --judges both` |
 | `export` | Write sanitized finished records | `npm run evals -- export <batch> --out ./eval-export` |
 
-`run --case <id>` runs one case of a Layer 4 plan, so each case can run as its own process. `--parallel <n>` caps how many attempts `run` and `resume` start at once. The full plans run two at a time, because every attempt spends the signed-in account's own model limits. A batch resumes only on the runner code it started with. `resume --accept-harness` continues on changed runner code and lists the change in the batch record, while changed inputs, checks, rubric, tooling or models still need a new batch. Check stages share `EVALS_CHECK_SLOTS` machine-wide slots, two by default, so timed browser checks don't run past their limit while many agents work. `recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. `rejudge` uses the batch's saved judges unless you pass `--judges`. It accepts a judge preset instead of `--plan`. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
+Every setting is a flag. Secrets are the only exception: they stay in `.env.local`.
+
+| Flag | Commands | Effect |
+| --- | --- | --- |
+| `--implementers`, `--judges`, `--user` | `run`, `rejudge` takes `--judges` | Replace that role with a preset |
+| `--case <id>` | `run` | Run one case of a Layer 4 plan, so each case can run as its own process |
+| `--parallel <n>` | `run`, `resume` | How many attempts start at once. The full plans run two, because every attempt spends the signed-in account's own model limits |
+| `--accept-harness` | `resume` | Continue a batch on changed runner code and list the change in the batch record. Changed inputs, checks, rubric, tooling or models still need a new batch |
+| `--rebuild` | `recheck` | Build the saved project again before checking it |
+| `--diagnostics` | `recheck` | Save Layer 1 card crops and look comparisons beside the check evidence |
+| `--port <n>`, `--no-browser` | `ui` | Serve on another port, or without opening a browser |
+| `--scratch <folder>` | any command | Put attempt workspaces on a roomier drive, outside any Git repository |
+| `--check-slots <n>` | any command | How many check stages run at once across every eval process on this machine, 2 by default |
+
+A batch resumes only on the runner code it started with, so every attempt in it ran the same harness, unless `--accept-harness` records the change. Check stages share machine-wide slots, so timed browser checks don't run past their limit while many agents work.
+
+`recheck` and `rejudge` accept an optional attempt after the batch. `rejudge` uses the batch's saved judges unless you pass `--judges`. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
 
 ## Protocol
 
@@ -169,4 +185,4 @@ The [Results](../../.agents/memory/crystallized/documents/evals/results.md) docu
 - Each check keeps its first outcome. Rechecking saved files appends a new assessment and never changes the old one.
 - Real agents always run in Docker. `local` isolation is for harness development with the mock provider, and its runs are marked as not for scoring.
 - Codex reports no dollar cost, and Claude Code's cost is its own estimate. Missing token counts stay missing.
-- Each attempt works in a scratch folder outside any Git repository, by default `~/.workspaces`. Set `EVALS_SCRATCH` to a folder on a roomier drive when the home drive is short of space. It must also sit outside any Git repository.
+- Each attempt works in a scratch folder outside any Git repository, by default `~/.workspaces`. Pass `--scratch <folder>` to use a roomier drive when the home drive is short of space. It must also sit outside any Git repository.

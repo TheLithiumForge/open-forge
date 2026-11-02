@@ -6,8 +6,9 @@ import { test, type TestContext } from "node:test";
 import { PNG } from "pngjs";
 import { Tool } from "../../config/choices.ts";
 import type { Suite } from "../../benchmarks/suite.types.ts";
-import { judgeEvidence, type JudgeEvidence } from "./evidence.ts";
-import { prepareJudgeFolder } from "./judge-folder.ts";
+import { judgeEvidence, MissingCitation, type JudgeEvidence } from "./evidence.ts";
+import { JudgeDataLimit, prepareJudgeFolder } from "./judge-folder.ts";
+import { createHash } from "node:crypto";
 import { JudgeImageManifestLabel, judgeRun, retryPrompt, type JudgeAssessor } from "./judge.ts";
 import { containerFixture } from "../../execution/containers/test-docker.ts";
 import { ContainerPaths } from "../../execution/containers/settings.ts";
@@ -186,4 +187,32 @@ test("usable partial source survives a malformed manifest while generated HTML s
   const evidence = await judgeEvidence(folder);
   assert.equal(evidence.sources.some((file) => file.path === generated), false);
   assert.ok(evidence.sources.some((file) => file.path === SourcePath));
+});
+
+test("large generated JSON reaches the judge as a stub with its size and hash while source and small data stay whole", async (t) => {
+  const root = await temporary(t);
+  const source = await application(root, "source");
+  const large = JSON.stringify({ tree: "x".repeat(JudgeDataLimit) });
+  await mkdir(join(source, "evidence"));
+  await writeFile(join(source, "evidence", "tree.json"), large);
+  await writeFile(join(source, "evidence", "small.json"), "{}");
+  await writeFile(join(source, "src", "large.ts"), `export const text = ${JSON.stringify("y".repeat(JudgeDataLimit))};\n`);
+  const folder = join(root, "judge");
+  await prepareJudgeFolder(source, folder);
+  const stub = JSON.parse(await readFile(join(folder, "evidence", "tree.json"), "utf8"));
+  assert.equal(stub.bytes, Buffer.byteLength(large));
+  assert.equal(stub.sha256, createHash("sha256").update(large).digest("hex"));
+  assert.equal(await readFile(join(folder, "evidence", "small.json"), "utf8"), "{}");
+  assert.ok((await readFile(join(folder, "src", "large.ts"), "utf8")).length > JudgeDataLimit);
+});
+
+test("missing:source is refused while source was sent, so a retry cites the files instead", async (t) => {
+  const root = await temporary(t);
+  const folder = join(root, "judge");
+  await prepareJudgeFolder(await application(root, "source"), folder);
+  const evidence = await judgeEvidence(folder);
+  const questions = await frozenQuestions();
+  const answers = questions.map((question) => ({ id: question.id, answer: JudgeVerdict.unsure, evidence: "Absent", citations: [MissingCitation.source] }));
+  assert.throws(() => parseBallot({ answers }, questions, evidence));
+  assert.equal(parseBallot({ answers }, questions, { ...evidence, sources: [] }).length, questions.length);
 });

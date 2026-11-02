@@ -1,8 +1,9 @@
 import { ImplementerPresets, JudgePresets, UserPresets } from "./presets.ts";
+import { MachineHelp } from "./machine-options.ts";
 
 export const Command = { doctor: "doctor", images: "images", smoke: "smoke", qualify: "qualify", validateCase: "validate-case", run: "run", resume: "resume", reference: "reference", summary: "summary", ui: "ui", recheck: "recheck", rejudge: "rejudge", export: "export", help: "help" } as const;
 export type Command = (typeof Command)[keyof typeof Command];
-export const Flag = { help: "--help", plan: "--plan", implementers: "--implementers", judges: "--judges", user: "--user", layer: "--layer", case: "--case", all: "--all", batch: "--batch", parallel: "--parallel", acceptHarness: "--accept-harness", development: "--development", rebuild: "--rebuild", out: "--out" } as const;
+export const Flag = { help: "--help", plan: "--plan", implementers: "--implementers", judges: "--judges", user: "--user", layer: "--layer", case: "--case", all: "--all", batch: "--batch", parallel: "--parallel", acceptHarness: "--accept-harness", diagnostics: "--diagnostics", port: "--port", noBrowser: "--no-browser", development: "--development", rebuild: "--rebuild", out: "--out" } as const;
 export const CommandHelp = {
   reference: "Grade the tracked Neon Pairs reference without an agent. Defaults to --layer 3 --judges claude. Example: npm run evals -- reference --layer 3 --judges both",
   doctor: "Check Docker, Node, pinned tools, sign-ins and image digests. Example: npm run evals -- doctor",
@@ -13,8 +14,8 @@ export const CommandHelp = {
   run: `Run a saved plan. --implementers: ${Object.keys(ImplementerPresets).join(", ")}. --judges: ${Object.keys(JudgePresets).join(", ")}. --user: ${Object.keys(UserPresets).join(", ")}. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --parallel caps how many attempts run at once. Local isolation needs --development. Example: npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude`,
   resume: "Continue a batch that paused at a usage limit or stopped early. Finished attempts and judgments are kept. --parallel caps how many attempts run at once. --accept-harness continues on changed runner code and records it in the batch, while changed inputs, checks, rubric, tooling or models still need a new batch. Example: npm run evals -- resume <batch> --parallel 2 --accept-harness",
   summary: "Print reference history, or implementer and judge pairs for --batch. Example: npm run evals -- summary --batch <id>",
-  ui: "Build and open the local results app. Example: npm run evals -- ui",
-  recheck: "Append checks for saved attempts. Example: npm run evals -- recheck <batch> --rebuild",
+  ui: "Build and open the local results app. --port picks its port, 4318 by default, and --no-browser serves it without opening a browser. Example: npm run evals -- ui --port 4318 --no-browser",
+  recheck: "Append checks for saved attempts. --rebuild builds the saved project again first. --diagnostics saves Layer 1 card crops and look comparisons beside the evidence. Example: npm run evals -- recheck <batch> --rebuild",
   rejudge: `Append judge assessments for saved attempts. --judges: ${Object.keys(JudgePresets).join(", ")}. Defaults to the batch's saved judges. Example: npm run evals -- rejudge <batch> [attempt] --judges both`,
   export: "Export sanitized finished records to a new folder. Example: npm run evals -- export <batch> --out ./eval-export",
   help: "Show command help. Example: npm run evals -- help run",
@@ -40,6 +41,6 @@ export function option(args: readonly string[], flag: string): string {
 export function commandHelp(command?: string): string {
   const found = Object.values(Command).find((value) => value === command);
   if (command !== undefined && found === undefined) throw new Error("Unknown help command.");
-  return found === undefined ? Object.entries(CommandHelp).map(([name, text]) => `${name} - ${text}`).join("\n") : CommandHelp[found];
+  return found === undefined ? [...Object.entries(CommandHelp).map(([name, text]) => `${name} - ${text}`), `Machine flags for any command - ${MachineHelp}`].join("\n") : CommandHelp[found];
 }
 
