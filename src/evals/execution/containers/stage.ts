@@ -12,6 +12,19 @@ export interface StageOptions {
   readonly signal?: AbortSignal;
 }
 
+// Eval networks carry this label, so a later process can find the ones a killed process left behind.
+export const StageLabel = "open-forge-evals";
+// A labelled network this old with no container belongs to a process that stopped without cleaning up.
+const LeftoverNetworkAge = "30m";
+let leftoversSwept: Promise<unknown> | null = null;
+
+/** Docker's default address pools hold about thirty networks, so leftovers from killed processes block new stages. */
+function sweepLeftoverNetworks(client: Docker): Promise<unknown> {
+  leftoversSwept ??= client.run(["network", "prune", "--force", "--filter", `label=${StageLabel}`, "--filter", `until=${LeftoverNetworkAge}`],
+    { timeoutMs: ContainerTimeouts.commandMs }).catch(() => undefined);
+  return leftoversSwept;
+}
+
 export function createArguments(name: string, image: string, limits: ContainerLimits): string[] {
   return ["create", "--name", name, "--network", `${name}-net`, "--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--init",
     "--cpus", String(limits.cpus), "--memory", limits.memory, "--pids-limit", String(limits.processes),
@@ -47,13 +60,15 @@ export class ContainerStage {
     this.timer = setTimeout(this.abort, this.options.timeoutMs);
     this.unregisterShutdown = registerStageCleanup(() => this.remove());
     try {
+      await sweepLeftoverNetworks(this.client);
       this.networkAttempted = true;
-      await this.required(["network", "create", `${this.name}-net`]);
+      await this.required(["network", "create", "--label", StageLabel, `${this.name}-net`]);
       this.containerAttempted = true;
       await this.required(createArguments(this.name, image, limits));
       await this.required(["start", this.name]);
     } catch (error) {
-      await this.remove();
+      // A failed cleanup must not hide why the stage couldn't open.
+      await this.remove().catch(() => undefined);
       throw error;
     }
   }
@@ -141,6 +156,6 @@ export class ContainerStage {
       try { requireDockerResult(await this.client.run(args, { timeoutMs: ContainerTimeouts.commandMs })); }
       catch (error) { errors.push(error); }
     }
-    if (errors.length > 0) throw new AggregateError(errors, "Container cleanup failed.");
+    if (errors.length > 0) throw new AggregateError(errors, `Container cleanup failed: ${errors.map((error) => error instanceof Error ? error.message : String(error)).join(" | ")}`);
   }
 }

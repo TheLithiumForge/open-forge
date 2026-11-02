@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ContainerStage } from "./stage.ts";
+import { ContainerStage, StageLabel } from "./stage.ts";
 import { containerLimits, DefaultContainerLimits, StageKind } from "./settings.ts";
 import { evalImageTag } from "./docker-image.ts";
 import { assertStrictStage, containerFixture, FakeResult } from "./test-docker.ts";
@@ -64,6 +64,29 @@ test("cleanup attempts the network even when container removal fails", async () 
     fixture.client.hook = async (args) => args[0] === "rm" ? { ...FakeResult, code: 1 } : undefined;
     await assert.rejects(stage.remove(), AggregateError);
     assertStrictStage(fixture.client, StageKind.agent);
+  } finally { await fixture.dispose(); }
+});
+
+test("a stage that can't open reports that failure, not the cleanup failing after it", async () => {
+  const fixture = await containerFixture();
+  const stage = new ContainerStage({ docker: fixture.client, timeoutMs: TimeoutMs });
+  fixture.client.hook = async (args) => args[0] === "network" && ["create", "rm"].includes(args[1] ?? "") ? { ...FakeResult, code: 1 } : undefined;
+  try {
+    await assert.rejects(stage.open(evalImageTag()), (error) => !(error instanceof AggregateError));
+  } finally { await fixture.dispose(); }
+});
+
+test("stage networks carry the eval label, and leftover labelled networks are pruned once per process", async () => {
+  const fixture = await containerFixture();
+  try {
+    for (let index = 0; index < 2; index += 1) {
+      const stage = new ContainerStage({ docker: fixture.client, timeoutMs: TimeoutMs });
+      await stage.open(evalImageTag());
+      await stage.remove();
+    }
+    const network = (verb: string) => fixture.client.calls.filter((call) => call.args[0] === "network" && call.args[1] === verb);
+    for (const call of network("create")) assert.deepEqual(call.args.slice(2, 4), ["--label", StageLabel]);
+    assert.ok(network("prune").length <= 1);
   } finally { await fixture.dispose(); }
 });
 
