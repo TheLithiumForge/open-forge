@@ -19,7 +19,7 @@ These verdicts compare the checker with the reviewed source and its audit. Runti
 | V19.4 | Checker bug fixed | Native touch start, move and end events replace a synthetic scroll gesture. The final card must reach the browser viewport through touch, separately from keyboard reach. |
 | V18.4 | Checker bug fixed | A wall-clock wait lets Chromium finish CSS motion. Advancing the controlled JavaScript clock alone didn't finish that animation timeline. |
 | T07.4 | Checker bug fixed | Passing-count parsing accepts Vitest, Node and Playwright summaries, including colored output. Zero-test summaries fail. |
-| I03.1 | Checker bug fixed | Right-click and held native touch exercise an uncancelled contextmenu path without activation. The operating-system menu itself isn't captured. |
+| I03.1 | Checker bug fixed | Right-click and a held native touch keep contextmenu uncancelled. The synthetic held touch ends in a click no device sends, so long-press activation is user acceptance. The operating-system menu itself isn't captured. |
 | faces-distinct-16 | Checker bug fixed for L2 and L3 | Whole-page board samples included positions clipped by the internal scroll viewport. That could make the learning code mistake two unrelated cards for twins and copy a signature. Individual locator screenshots capture the cards after scrolling. L1-v2 and the duplicate thresholds stay unchanged. |
 
 No reference defect was identified for these failures. This is source and unit evidence, not a new Docker result.

@@ -86,6 +86,6 @@ L2 and L3 capture every revealed face through its card locator, which scrolls it
 
 T07.9 is the only entry in each layer's `uncheckable` array. It stays in cited review until the runner supplies authoring-process evidence.
 
-I03.1 checks an uncancelled contextmenu path after right-click and a held native touch. It doesn't capture an operating-system menu.
+I03.1 checks that contextmenu stays uncancelled after right-click and during a held native touch. Automated touch can't produce a real long press, and Chromium answers the synthetic one with a click a device never sends, so whether a long press leaves cards closed is user acceptance. Right-click activation stays with I03.2. It doesn't capture an operating-system menu.
 
 Browser regressions use synthetic pages. The reference and broken-fixture browser matrix still needs the overseer's container run.
