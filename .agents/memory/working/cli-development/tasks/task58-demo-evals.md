@@ -163,6 +163,13 @@ Terms: an implementation run is one agent building one setup once. Grading is ch
 
 Built the same day: phases 1 to 4. `results add`, `check`, `judge --missing`, `progress`, `site` and the generated CLI reference replace export, recheck, rejudge, summary tables and the local app. Resume grades saved files after a stop during grading, replaces a run at most once and pauses on a rejected sign-in. Open after the running batches finish: remove the retired app's packages, which the batch tooling fingerprint counts, then add finished batches and review the pages with real data.
 
+**Scoping and token analysis, 2026-11-02.** The maintainer asked to measure what Open Forge promises: scoped context costs more up front and less later. Findings: every Open Forge setup installs the spec with `route include ./docs --tag LoadNow`, so all ten spec documents load at start and nothing is progressively disclosed. Codex reports one token total per turn, 97% of it cached re-reads of the context, so token totals mostly measure context size times steps. The plan, in order:
+
+1. **Measure from saved runs.** For each setup, record the text the agent receives, split into up-front and on-demand lines and tokens. For each run, record what it actually read, split into docs, framework files and code. Split tokens into new input, cached input and output, and into analysis before the first edit and implementation after it. Claude's events give usage per request. Codex needs its session log saved from now on. Results append as versioned analysis records, like checks.
+2. **Scoped setups.** Add an Open Forge variant whose spec documents are on-demand routed entries with clear descriptions, beside today's everything-up-front variant. A full-product build should cost about the same. Partial work should cost less.
+3. **Partial scenarios.** Add tasks that touch one part of the game, such as sound, card faces or keyboard controls, started from the reference with that part removed. Run them against plain docs, up-front Open Forge and scoped Open Forge. The existing-app cases are partial work already.
+4. **Later.** Try prompts that ask the agent to load only what the task needs.
+
 **Later:** testing Extensions, starting with the Helpful setup. [Task 90](task90-extensions-install-their-routes.md) covers Extensions that need routes a preset left out, and the [Plan-Ahead Skill](../../../emerging/ideas/plan-ahead-skill.md) idea covers Guidance that doesn't change how agents ask.
 
 **Related:** the Emerging idea on

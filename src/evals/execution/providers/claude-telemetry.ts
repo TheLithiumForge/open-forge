@@ -8,6 +8,11 @@ interface ClaudeUsage {
   readonly output_tokens?: number;
 }
 
+/** A turn's result reports its real output, thinking included. */
+interface ClaudeResultUsage extends ClaudeUsage {
+  readonly output_tokens_details?: { readonly thinking_tokens?: number };
+}
+
 interface ContentBlock {
   readonly type?: string;
   readonly id?: string;
@@ -26,6 +31,7 @@ export interface ClaudeEvent {
   readonly model?: string;
   readonly message?: { readonly id?: string; readonly usage?: ClaudeUsage; readonly content?: readonly ContentBlock[] | string };
   readonly total_cost_usd?: number;
+  readonly usage?: ClaudeResultUsage;
   readonly result?: string;
   readonly is_error?: boolean;
   readonly api_error_status?: number;
@@ -54,6 +60,10 @@ export class ClaudeTelemetry {
   private contextWindow: number | null = null;
   private model: string | null = null;
   private sessionId: string | null = null;
+  // Stream events carry a message's usage from when it started, while its output is still a few tokens.
+  private resultOutput = 0;
+  private resultThinking = 0;
+  private results = 0;
 
   record(event: ClaudeEvent): void {
     this.sessionId = event.session_id ?? this.sessionId;
@@ -71,6 +81,10 @@ export class ClaudeTelemetry {
     this.cost += event.total_cost_usd ?? 0;
     const windows = Object.values(event.modelUsage ?? {}).map((entry) => entry.contextWindow ?? 0);
     if (windows.length > 0) this.contextWindow = Math.max(...windows);
+    if (event.usage === undefined) return;
+    this.results += 1;
+    this.resultOutput += count(event.usage.output_tokens);
+    this.resultThinking += count(event.usage.output_tokens_details?.thinking_tokens);
   }
 
   private recordBlock(block: ContentBlock): void {
@@ -91,8 +105,8 @@ export class ClaudeTelemetry {
         input: sum((usage) => usage.input_tokens),
         cachedInput: sum((usage) => usage.cache_read_input_tokens),
         cacheWrite: sum((usage) => usage.cache_creation_input_tokens),
-        output: sum((usage) => usage.output_tokens),
-        reasoning: 0, // Included in output tokens. Claude Code doesn't report it apart.
+        output: this.results > 0 ? this.resultOutput : sum((usage) => usage.output_tokens),
+        reasoning: this.resultThinking, // Already part of output.
       },
       requests: requests.length,
       peakContext: requests.length === 0 ? null : Math.max(...requests.map(contextOf)),

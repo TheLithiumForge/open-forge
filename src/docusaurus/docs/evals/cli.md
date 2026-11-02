@@ -72,6 +72,14 @@ Show how far each batch has come: implemented, checked and judged runs, then eac
 npm run evals -- progress <batch> <batch>
 ```
 
+## `usage`
+
+Show where each setup's tokens went, from saved runs: new, cached and output tokens, how much the agent read from spec documents, framework files and code, the share of steps before its first edit and, for Claude, the share of tokens spent before it. Names batches, or shows every model batch.
+
+```sh
+npm run evals -- usage <batch>
+```
+
 ## `reference`
 
 Grade the tracked Neon Pairs reference without an agent. Defaults to --layer 3 --judges claude.
