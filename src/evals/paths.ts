@@ -16,7 +16,6 @@ export const EvalPaths = {
   auth: join(evalsRoot, ".auth"),
   codexAuthHome: join(evalsRoot, ".auth", "codex"),
   envFile: join(evalsRoot, ".env.local"),
-  uiDist: join(evalsRoot, "web", "dist"),
   docker: join(evalsRoot, "images"),
   modules: join(evalsRoot, "node_modules"),
 } as const;

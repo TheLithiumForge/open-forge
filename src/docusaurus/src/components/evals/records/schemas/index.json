@@ -119,7 +119,7 @@
                 },
                 "specVersion": {
                   "type": [
-                    "integer",
+                    "number",
                     "null"
                   ],
                   "minimum": 0

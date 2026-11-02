@@ -5,7 +5,7 @@ import { HistoryFiles } from "./artifacts.ts";
 import { storedRun } from "./assessments.ts";
 import { jsonLines, readJson, safeId } from "./json-files.ts";
 import { legacyAssessments, legacyPicks } from "./legacy.ts";
-import type { AssessmentRecord, RunRecord } from "./records.types.ts";
+import type { AssessmentRecord, ExperimentRecord, RunRecord, RunView } from "./records.types.ts";
 import type { LegacyRunRecord, Preference } from "./results.types.ts";
 import { sanitizeRecords, type SanitizingOptions } from "./sanitize.ts";
 import { AssessmentKind, BatchStatus, RunStatus } from "./statuses.ts";
@@ -25,20 +25,7 @@ export async function exportBatch(store: HistoryStore, batchId: string, destinat
   const source = resolve(store.batchFolder(batch.id));
   if (target === source || target.startsWith(source + sep)) throw new Error("Export outside the source batch.");
   if (existsSync(target)) throw new Error("An exported batch is immutable. Export a linked correction instead.");
-  const runs = await Promise.all(views.map(async (view): Promise<RunRecord> => batch.legacy ? storedRun(view)
-    : readJson(join(store.runFolder(batch.id, view.id), ResultFiles.run))));
-  const assessments: AssessmentRecord[] = [];
-  if (batch.legacy) {
-    for (const view of views) assessments.push(...legacyAssessments(await readJson<LegacyRunRecord>(join(store.runFolder(batch.id, view.id), ResultFiles.run))));
-    const preferences = join(store.batchFolder(batch.id), ResultFiles.preferences);
-    if (existsSync(preferences)) assessments.push(...legacyPicks(batch.id, await readJson<Preference[]>(preferences)));
-  }
-  assessments.push(...await store.readAssessments(batch.id));
-  const files: Readonly<Record<string, unknown>> = {
-    [HistoryFiles.experiment]: batch, [HistoryFiles.setups]: await store.readSetups(batch),
-    [HistoryFiles.runs]: runs, [HistoryFiles.artifacts]: await store.readArtifacts(batch),
-    ...Object.fromEntries(Object.values(AssessmentKind).map((kind) => [`${HistoryFiles.assessments}/${kind}.jsonl`, assessments.filter((record) => record.kind === kind)])),
-  };
+  const files = await batchFiles(store, batch, views);
   // Scrub the whole pack together so a name found in one record is removed from every record.
   const userNames = [process.env["USERNAME"], process.env["USER"]].filter((name): name is string => name !== undefined);
   const sanitized = sanitizeRecords(files, { userNames: [...userNames, ...options.userNames ?? []] });
@@ -50,7 +37,7 @@ export async function exportBatch(store: HistoryStore, batchId: string, destinat
     for (const [name, value] of Object.entries(sanitized)) {
       const path = join(staging, name);
       await mkdir(dirname(path), { recursive: true });
-      await writeFile(path, name.endsWith(".jsonl") && Array.isArray(value) ? jsonLines(value) : `${JSON.stringify(value, null, 2)}\n`);
+      await writeFile(path, recordText(name, value));
     }
     await rename(staging, target);
   } catch (error) {
@@ -58,4 +45,27 @@ export async function exportBatch(store: HistoryStore, batchId: string, destinat
     throw error;
   }
   return target;
+}
+
+/** A record file's text: JSON Lines for a .jsonl name, indented JSON otherwise. */
+export function recordText(name: string, value: unknown): string {
+  return name.endsWith(".jsonl") && Array.isArray(value) ? jsonLines(value) : `${JSON.stringify(value, null, 2)}\n`;
+}
+
+/** A batch's record files in the published layout, keyed by their path inside the batch folder. */
+export async function batchFiles(store: HistoryStore, batch: ExperimentRecord, views: readonly RunView[]): Promise<Readonly<Record<string, unknown>>> {
+  const runs = await Promise.all(views.map(async (view): Promise<RunRecord> => batch.legacy ? storedRun(view)
+    : readJson(join(store.runFolder(batch.id, view.id), ResultFiles.run))));
+  const assessments: AssessmentRecord[] = [];
+  if (batch.legacy) {
+    for (const view of views) assessments.push(...legacyAssessments(await readJson<LegacyRunRecord>(join(store.runFolder(batch.id, view.id), ResultFiles.run))));
+    const preferences = join(store.batchFolder(batch.id), ResultFiles.preferences);
+    if (existsSync(preferences)) assessments.push(...legacyPicks(batch.id, await readJson<Preference[]>(preferences)));
+  }
+  assessments.push(...await store.readAssessments(batch.id));
+  return {
+    [HistoryFiles.experiment]: batch, [HistoryFiles.setups]: await store.readSetups(batch),
+    [HistoryFiles.runs]: runs, [HistoryFiles.artifacts]: await store.readArtifacts(batch),
+    ...Object.fromEntries(Object.values(AssessmentKind).map((kind) => [`${HistoryFiles.assessments}/${kind}.jsonl`, assessments.filter((record) => record.kind === kind)])),
+  };
 }

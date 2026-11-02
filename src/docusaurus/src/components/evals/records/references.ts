@@ -3,9 +3,10 @@ import type { Batch } from "./records.types.ts";
 function unique(ids: readonly string[], kind: string): void {
   if (new Set(ids).size !== ids.length) throw new Error(`Duplicate ${kind}.`);
 }
-export function validateReferences(batch: Batch): void {
+/** Checks a batch's identities and references. Published batches must be finished. Local views may show a batch while it runs. */
+export function validateReferences(batch: Batch, finished = true): void {
   const { experiment, runs, setups, assessments, artifacts } = batch;
-  if (!["done", "failed"].includes(experiment.status) || runs.length === 0 || runs.some((run) => !["done", "failed", "limited"].includes(run.pipelineStatus) || run.finishedAt === null)) throw new Error("Only finished exported batches can be published.");
+  if (finished && (!["done", "failed"].includes(experiment.status) || runs.length === 0 || runs.some((run) => !["done", "failed", "limited"].includes(run.pipelineStatus) || run.finishedAt === null))) throw new Error("Only finished exported batches can be published.");
   unique(runs.map((run) => run.id), "run"); unique(setups.map((setup) => setup.id), "setup"); unique(assessments.map((record) => record.id), "assessment");
   unique(experiment.runs, "planned run");
   if (experiment.runs.length !== runs.length || runs.some((run) => !experiment.runs.includes(run.id))) throw new Error("The experiment's run list differs from runs.jsonl.");

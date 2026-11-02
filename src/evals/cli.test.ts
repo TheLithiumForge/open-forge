@@ -14,7 +14,7 @@ function fakeServices() {
     print: (text) => output.push(text), doctor: async () => [], images: async () => { calls.push(Command.images); },
     smoke: async () => { calls.push(Command.smoke); return { status: RunStatus.done, questions: 1, assessments: 2 }; },
     qualify: async () => { calls.push(Command.qualify); return []; }, plan: async (_path, development) => { calls.push(`plan:${development}`); return FixtureConfig; },
-    suite: async () => FixtureSuite, run: async () => { calls.push(Command.run); return 0; }, ui: async () => { calls.push(Command.ui); return 0; },
+    suite: async () => FixtureSuite, run: async () => { calls.push(Command.run); return 0; }, site: async () => { calls.push(Command.site); return 0; },
     launch: async () => { calls.push("launch"); return 0; }, results: async (_batch, repository) => { calls.push(Command.results); return repository; },
     validateCase: async () => { throw new Error("Unexpected case validation."); },
   };
@@ -47,8 +47,8 @@ test("CLI rejects unknown and conflicting input before running anything", async 
 
 test("CLI dispatches smoke, images, UI, saved grading and export", async () => {
   const fake = fakeServices();
-  for (const args of [[Command.smoke], [Command.images], [Command.ui], [Command.check, "batch", Flag.rebuild], [Command.judge, "batch"], [Command.judge, "batch", Flag.judges, PresetName.both], [Command.judge, "batch", "run", Flag.judges, PresetName.codex], [Command.results, ResultsAction.add, "batch"], [Command.results, ResultsAction.add, "batch", Flag.repository, "elsewhere"]]) assert.equal(await runCli(args, fake.services), 0);
-  assert.deepEqual(fake.calls, [Command.smoke, Command.images, Command.ui, "launch", "launch", "launch", "launch", Command.results, Command.results]);
+  for (const args of [[Command.smoke], [Command.images], [Command.site], [Command.check, "batch", Flag.rebuild], [Command.judge, "batch"], [Command.judge, "batch", Flag.judges, PresetName.both], [Command.judge, "batch", "run", Flag.judges, PresetName.codex], [Command.results, ResultsAction.add, "batch"], [Command.results, ResultsAction.add, "batch", Flag.repository, "elsewhere"]]) assert.equal(await runCli(args, fake.services), 0);
+  assert.deepEqual(fake.calls, [Command.smoke, Command.images, Command.site, "launch", "launch", "launch", "launch", Command.results, Command.results]);
   for (const args of [[Command.results], [Command.results, "remove", "batch"], [Command.results, ResultsAction.add], [Command.results, ResultsAction.add, "batch", "other"]]) await assert.rejects(runCli(args, fake.services));
 });
 

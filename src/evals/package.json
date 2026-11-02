@@ -2,16 +2,15 @@
   "name": "open-forge-evals",
   "private": true,
   "type": "module",
-  "description": "Runs Open Forge evals on Claude Code and Codex and shows the results in a local web app",
+  "description": "Runs Open Forge evals on Claude Code and Codex in containers, and serves local results to the docs site",
   "engines": {
     "node": ">=22.18.0"
   },
   "scripts": {
     "setup": "npm install && playwright install chromium",
-    "start": "vite build --logLevel warn && node web/server/server.ts",
     "login:codex": "node config/codex-login.ts",
     "test": "node tests.ts",
-    "typecheck": "tsc --project tsconfig.json && tsc --project web/ui/tsconfig.json",
+    "typecheck": "tsc --project tsconfig.json",
     "docs:cli": "node config/cli-reference.ts"
   },
   "dependencies": {

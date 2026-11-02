@@ -8,6 +8,7 @@ import { Metric } from "./Metric.tsx";
 import { Attempt } from "./Attempt.tsx";
 import { PairSelector } from "./PairSelector.tsx";
 import { ResultPair } from "./ResultPair.tsx";
+import { Progress } from "./Progress.tsx";
 export function Results({ batches, layer }: {
   readonly batches: readonly Batch[];
   readonly layer: number | null;
@@ -28,7 +29,7 @@ export function Results({ batches, layer }: {
   const deltas = active === undefined || runs[0] === undefined ? [] : differences(active.batch).filter((item) => item.implementer === choiceLabel(runs[0]?.agent));
   return <>
     <h2>{layer === null ? "Unreported layer" : `Layer ${layer}`}</h2>
-    {selected.length === 0 ? <p>No batches are published for this layer.</p> : null}
+    {selected.length === 0 ? <p>No batches are published for this layer.</p> : <Progress batches={selected} />}
     {pair === undefined ? null : <PairSelector pairs={pairs} value={pair.key} onChange={choosePair} />}
     {active === undefined ? null : <>
       <div className="eval-field"><label htmlFor={batchId}>Batch and grading</label><select id={batchId} value={active.key} onChange={(event) => chooseGroup(event.target.value)}>

@@ -5,7 +5,8 @@ import { configuredDoctor } from "./config/doctor.ts";
 import { smokeAttempt } from "./config/smoke.ts";
 import { qualifySetups } from "./config/qualify.ts";
 import { resumePlan, runPlan } from "./config/run-plan.ts";
-import { CliScripts, launchNode, launchUi } from "./config/launch.ts";
+import { CliScripts, launchNode } from "./config/launch.ts";
+import { runSite, SiteDefaults, type SiteOptions } from "./site/site.ts";
 import { loadLocalEnv } from "./config/auth.ts";
 import { loadSuite } from "./benchmarks/suite.ts";
 import { buildEvalImages } from "./execution/containers/docker-image.ts";
@@ -31,7 +32,7 @@ export interface CliServices {
   readonly suite: typeof loadSuite;
   readonly run: typeof runPlan;
   readonly resume?: typeof resumePlan;
-  readonly ui: typeof launchUi;
+  readonly site: (options: SiteOptions) => Promise<number>;
   readonly launch: typeof launchNode;
   readonly results: (batch: string, repository: string) => Promise<string>;
   readonly validateCase: typeof validateCase;
@@ -41,7 +42,7 @@ export interface CliServices {
 }
 const defaults: CliServices = {
   print: console.log, doctor: configuredDoctor, images: buildEvalImages, smoke: smokeAttempt, qualify: qualifySetups,
-  plan: loadPlan, suite: loadSuite, run: runPlan, ui: launchUi, launch: (file, args) => { loadLocalEnv(); return launchNode(file, args); },
+  plan: loadPlan, suite: loadSuite, run: runPlan, site: (options) => runSite(options, console.log), launch: (file, args) => { loadLocalEnv(); return launchNode(file, args); },
   results: (batch, repository) => addResults(new HistoryStore(EvalPaths.runs), batch, repository, { run: (script, args, cwd) => launchNode(join(cwd, script), args, cwd) }),
   validateCase,
 };
@@ -152,7 +153,12 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       if (batch === undefined || batch.startsWith("--")) throw new Error(CommandHelp.resume);
       return (services.resume ?? resumePlan)(batch, services.print, args.includes(Flag.parallel) ? parallelOption(args) : undefined, args.includes(Flag.acceptHarness));
     }
-    case Command.ui: checkedArgs(args, [Flag.noBrowser], [Flag.port], 0); return services.ui([...args, ...machine]);
+    case Command.site: {
+      checkedArgs(args, [Flag.noBrowser], [Flag.port, Flag.repository], 0);
+      const port = args.includes(Flag.port) ? Number(option(args, Flag.port)) : SiteDefaults.port;
+      if (!Number.isInteger(port) || port < 1024 || port > 65534) throw new Error("Give --port a whole number from 1024 to 65534, since the data server takes the next port.");
+      return services.site({ port, repository: args.includes(Flag.repository) ? resolve(option(args, Flag.repository)) : null, browser: !args.includes(Flag.noBrowser) });
+    }
     case Command.judge: {
       judgeOptions(args);
       return services.launch(join(evalsRoot, CliScripts.judge), [...args, ...machine]);

@@ -88,12 +88,12 @@ Print reference history, or implementer and judge pairs for --batch.
 npm run evals -- summary --batch <id>
 ```
 
-## `ui`
+## `site`
 
-Build and open the local results app. --port picks its port, 4318 by default, and --no-browser serves it without opening a browser.
+Start the docs site on this machine and open its Results page with your local runs, including batches still running. A data server on the next port serves them to the page only. --repository shows a folder in the results repository's layout instead, such as src/evals/results. --port picks the docs port, 4320 by default. --no-browser starts both without opening a browser.
 
 ```sh
-npm run evals -- ui --port 4318 --no-browser
+npm run evals -- site --port 4320
 ```
 
 ## `check`
@@ -139,9 +139,9 @@ npm run evals -- results add <batch>
 | `--diagnostics` | `check` | Save Layer 1 card crops and look comparisons beside the check evidence |
 | `--missing` | `judge` | Judge only runs without a judgment from that judge, counting one that ended in an error as missing |
 | `--batch <id>` | `summary` | The batch to summarize |
-| `--repository <folder>` | `results` | Add to another results repository than src/evals/results |
-| `--port <n>` | `ui` | Serve the local results app on another port than 4318 |
-| `--no-browser` | `ui` | Serve the local results app without opening a browser |
+| `--repository <folder>` | `results`, `site` | The results repository to add to, src/evals/results by default, or a folder in its layout for site to show |
+| `--port <n>` | `site` | Serve the docs site on another port than 4320. Its data server takes the next port |
+| `--no-browser` | `site` | Start the docs site without opening a browser |
 | `--scratch <folder>` | Any command | Put run workspaces on a roomier drive, outside any Git repository |
 | `--check-slots <n>` | Any command | How many check stages run at once across every eval process on this machine. 1 by default, because browser checks are timed |
 

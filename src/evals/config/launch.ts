@@ -1,8 +1,7 @@
 import { spawn } from "node:child_process";
-import { join } from "node:path";
-import { EvalPaths, evalsRoot } from "../paths.ts";
+import { evalsRoot } from "../paths.ts";
 
-export const CliScripts = { check: "grading/recheck.ts", judge: "grading/rejudge.ts", server: "web/server/server.ts" } as const;
+export const CliScripts = { check: "grading/recheck.ts", judge: "grading/rejudge.ts" } as const;
 
 export function launchNode(file: string, args: readonly string[] = [], cwd: string = evalsRoot): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -12,7 +11,3 @@ export function launchNode(file: string, args: readonly string[] = [], cwd: stri
   });
 }
 
-export async function launchUi(args: readonly string[] = []): Promise<number> {
-  const built = await launchNode(join(EvalPaths.modules, "vite", "bin", "vite.js"), ["build", "--logLevel", "warn"]);
-  return built === 0 ? launchNode(join(evalsRoot, CliScripts.server), args) : built;
-}

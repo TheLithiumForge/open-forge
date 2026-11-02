@@ -1,7 +1,7 @@
 import { ImplementerPresets, JudgePresets, UserPresets } from "./presets.ts";
 import { MachineFlag, MachineHelp } from "./machine-options.ts";
 
-export const Command = { doctor: "doctor", images: "images", smoke: "smoke", qualify: "qualify", validateCase: "validate-case", run: "run", resume: "resume", progress: "progress", reference: "reference", summary: "summary", ui: "ui", check: "check", judge: "judge", results: "results", help: "help" } as const;
+export const Command = { doctor: "doctor", images: "images", smoke: "smoke", qualify: "qualify", validateCase: "validate-case", run: "run", resume: "resume", progress: "progress", reference: "reference", summary: "summary", site: "site", check: "check", judge: "judge", results: "results", help: "help" } as const;
 export type Command = (typeof Command)[keyof typeof Command];
 export const Flag = { help: "--help", plan: "--plan", implementers: "--implementers", judges: "--judges", user: "--user", layer: "--layer", case: "--case", all: "--all", batch: "--batch", parallel: "--parallel", acceptHarness: "--accept-harness", diagnostics: "--diagnostics", port: "--port", noBrowser: "--no-browser", development: "--development", rebuild: "--rebuild", missing: "--missing", repository: "--repository" } as const;
 export const ResultsAction = { add: "add" } as const;
@@ -16,7 +16,7 @@ export const CommandHelp = {
   resume: "Continue a batch that paused at a usage limit or a rejected sign-in, or stopped early. Finished runs and judgments are kept, and a run stopped while it was graded is graded from its saved files. --parallel caps how many runs go at once. --accept-harness continues on changed runner code and records it in the batch, while changed inputs, checks, rubric, tooling or models still need a new batch. Example: npm run evals -- resume <batch> --parallel 2 --accept-harness",
   progress: "Show how far each batch has come: implemented, checked and judged runs, then each setup's mean check coverage and each judge's yes share. These are preliminary scores while a batch runs. Names batches, or shows every model batch. Example: npm run evals -- progress <batch> <batch>",
   summary: "Print reference history, or implementer and judge pairs for --batch. Example: npm run evals -- summary --batch <id>",
-  ui: "Build and open the local results app. --port picks its port, 4318 by default, and --no-browser serves it without opening a browser. Example: npm run evals -- ui --port 4318 --no-browser",
+  site: "Start the docs site on this machine and open its Results page with your local runs, including batches still running. A data server on the next port serves them to the page only. --repository shows a folder in the results repository's layout instead, such as src/evals/results. --port picks the docs port, 4320 by default. --no-browser starts both without opening a browser. Example: npm run evals -- site --port 4320",
   check: "Check saved runs again in the verifier and append the results. Name a batch, and optionally one run. --rebuild builds the saved project again first. --diagnostics saves Layer 1 card crops and look comparisons beside the evidence. Example: npm run evals -- check <batch> --rebuild",
   judge: `Judge saved runs and append the ballots. Name a batch, and optionally one run. --judges: ${Object.keys(JudgePresets).join(", ")}. Defaults to the batch's saved judges. --missing judges only runs that judge hasn't judged without an error, so it can continue after a usage limit. Example: npm run evals -- judge <batch> --judges claude --missing`,
   results: "Add a finished batch, with its code, game, screenshots and conversations, to the results repository, replacing an earlier copy, then validate the repository. Evidence holding a sign-in, a machine path or the user name stops it. --repository picks another results repository than src/evals/results. Example: npm run evals -- results add <batch>",
@@ -65,9 +65,9 @@ export const FlagHelp: readonly FlagDoc[] = [
   { flag: Flag.diagnostics, commands: [Command.check], effect: "Save Layer 1 card crops and look comparisons beside the check evidence" },
   { flag: Flag.missing, commands: [Command.judge], effect: "Judge only runs without a judgment from that judge, counting one that ended in an error as missing" },
   { flag: `${Flag.batch} <id>`, commands: [Command.summary], effect: "The batch to summarize" },
-  { flag: `${Flag.repository} <folder>`, commands: [Command.results], effect: "Add to another results repository than src/evals/results" },
-  { flag: `${Flag.port} <n>`, commands: [Command.ui], effect: "Serve the local results app on another port than 4318" },
-  { flag: Flag.noBrowser, commands: [Command.ui], effect: "Serve the local results app without opening a browser" },
+  { flag: `${Flag.repository} <folder>`, commands: [Command.results, Command.site], effect: "The results repository to add to, src/evals/results by default, or a folder in its layout for site to show" },
+  { flag: `${Flag.port} <n>`, commands: [Command.site], effect: "Serve the docs site on another port than 4320. Its data server takes the next port" },
+  { flag: Flag.noBrowser, commands: [Command.site], effect: "Start the docs site without opening a browser" },
   { flag: `${MachineFlag.scratch} <folder>`, commands: "any", effect: "Put run workspaces on a roomier drive, outside any Git repository" },
   { flag: `${MachineFlag.checkSlots} <n>`, commands: "any", effect: "How many check stages run at once across every eval process on this machine. 1 by default, because browser checks are timed" },
 ];

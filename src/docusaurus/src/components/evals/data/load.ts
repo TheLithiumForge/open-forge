@@ -1,11 +1,11 @@
 import { AssessmentKinds, RecordFiles, type Catalogue } from "../records/catalogue.ts";
-import { createValidator, jsonLines } from "../records/validate-data.ts";
+import { createValidator, jsonLines, type ValidatorOptions } from "../records/validate-data.ts";
 import type { EvalsData, Snapshot } from "./snapshot.types.ts";
 export const ResultsRepository = "TheLithiumForge/open-forge-eval-results";
 export const RawRoot = `https://raw.githubusercontent.com/${ResultsRepository}`;
 export type ReadText = (path: string) => Promise<string>;
-export async function loadRecords(read: ReadText, schemas: readonly object[], indexSchema: object): Promise<Pick<Snapshot, "batches" | "index">> {
-  const validator = createValidator(schemas, indexSchema);
+export async function loadRecords(read: ReadText, schemas: readonly object[], indexSchema: object, options: ValidatorOptions = {}): Promise<Pick<Snapshot, "batches" | "index">> {
+  const validator = createValidator(schemas, indexSchema, options);
   const index: Catalogue = validator.index(JSON.parse(await read("index.json")));
   const batches = await Promise.all(index.batches.map(async (entry) => {
     const file = (path: string) => read(`${entry.path}/${path}`);

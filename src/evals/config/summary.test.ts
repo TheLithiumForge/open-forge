@@ -13,7 +13,7 @@ test("summary reads a saved batch and prints all planned pairs without model ser
   await history.store.saveRun({ ...run, agent: MatrixAgents[0] });
   const output: string[] = [], noEffect = async () => { throw new Error("An unrelated command ran."); };
   const services: CliServices = { print: (text) => output.push(text), doctor: noEffect, images: noEffect, smoke: noEffect, qualify: noEffect, plan: noEffect,
-    suite: noEffect, run: noEffect, ui: noEffect, launch: noEffect, results: noEffect, validateCase: noEffect, summary: (id) => batchMatrixSummary(id, history.store) };
+    suite: noEffect, run: noEffect, site: noEffect, launch: noEffect, results: noEffect, validateCase: noEffect, summary: (id) => batchMatrixSummary(id, history.store) };
   assert.equal(await runCli([Command.summary, Flag.batch, batch.id], services), 0);
   const value = JSON.parse(output[0] ?? "null");
   assert.equal(value.layer, 2);

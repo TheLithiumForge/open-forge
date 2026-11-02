@@ -30,7 +30,7 @@ const sources: CaptureSources = { root: evalsRoot, ...EvalPaths };
 const loadedSuiteFiles = new Set(["suite.json", "prompt.md", "intent.json", "intent.local.json", "rubric.json"]);
 
 async function harnessSources(root: string) {
-  const folders = ["execution", "config", "grading", "history", "web/server", "web/ui"];
+  const folders = ["execution", "config", "grading", "history", "site"];
   const nested = await Promise.all(folders.map(async (folder) => ({ folder, files: await fileDigests(join(root, folder)) })));
   const files = (await readdir(root, { withFileTypes: true })).filter((entry) => entry.isFile()
     && (entry.name.endsWith(".ts") || entry.name === "package.json" || entry.name === "package-lock.json"));

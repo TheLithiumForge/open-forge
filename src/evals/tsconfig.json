@@ -22,9 +22,8 @@
     "noUnusedParameters": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "erasableSyntaxOnly": true,
-    "paths": { "@/*": ["./web/ui/*"] }
+    "erasableSyntaxOnly": true
   },
-  "include": ["*.ts", "config/**/*.ts", "execution/**/*.ts", "images/**/*.ts", "grading/**/*.ts", "history/**/*.ts", "benchmarks/**/*.ts", "materialize/**/*.ts", "web/server/**/*.ts"],
+  "include": ["*.ts", "config/**/*.ts", "execution/**/*.ts", "images/**/*.ts", "grading/**/*.ts", "history/**/*.ts", "benchmarks/**/*.ts", "materialize/**/*.ts", "site/**/*.ts"],
   "exclude": ["benchmarks/**/reference/**", "node_modules", "*.tmp.ts"]
 }

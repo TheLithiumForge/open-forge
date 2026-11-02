@@ -18,7 +18,11 @@ function ordered(value: unknown): unknown {
       .sort(([left], [right]) => left.localeCompare(right)).map(([key, item]) => [key, ordered(item)]));
   return value;
 }
-export function createValidator(schemas: readonly object[], indexSchema: object) {
+export interface ValidatorOptions {
+  /** Accepts batches that are still running, which only a local view shows. */
+  readonly unfinished?: boolean;
+}
+export function createValidator(schemas: readonly object[], indexSchema: object, options: ValidatorOptions = {}) {
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   for (const schema of schemas)
     ajv.addSchema(schema);
@@ -52,7 +56,7 @@ export function createValidator(schemas: readonly object[], indexSchema: object)
         assessments: files.assessments.map((item) => record<Assessment>(item, "assessment")),
         artifacts: files.artifacts.map((item: unknown) => record<Artifact>(item, "artifact")),
       };
-      validateReferences(batch);
+      validateReferences(batch, options.unfinished !== true);
       return batch;
     },
     assessmentLines(input: string, kind: typeof AssessmentKinds[number]): Assessment[] {

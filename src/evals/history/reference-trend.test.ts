@@ -1,6 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import { test } from "node:test";
 import { SpecVersion } from "../benchmarks/neon-pairs/checks/spec-layers/requirements.ts";
 import { MatrixJudges } from "../config/matrix.ts";
@@ -10,9 +8,6 @@ import { ReferenceImplementer } from "./reference.ts";
 import { referenceHistory, referenceTrends, type ReferenceHistory } from "./reference-trend.ts";
 import { summarize } from "./summary.ts";
 import { summarizeMatrix } from "./summary-matrix.ts";
-import { allPairs } from "../web/server/compare.ts";
-import { batchView } from "../web/server/routes.ts";
-import { ResultFiles } from "../paths.ts";
 import type { RunRecord } from "./results.types.ts";
 import { AssessmentKind } from "./statuses.ts";
 
@@ -60,13 +55,6 @@ test("reference grades stay outside setup summaries, paired games and the model 
   assert.deepEqual(summarize([run, referenceRun], []), summarize([run], []));
   assert.deepEqual(summarizeMatrix(FixtureConfigFor(run), [run, referenceRun], reference.assessments, []),
     summarizeMatrix(FixtureConfigFor(run), [run], reference.assessments, []));
-  const { implementer: _implementer, ...modelFields } = referenceRun;
-  const model = { ...modelFields, id: run.id };
-  for (const item of [referenceRun, model]) {
-    const folder = history.store.runFolder(item.batchId, item.id);
-    await mkdir(folder, { recursive: true }); await writeFile(join(folder, ResultFiles.game), "<html>fixture</html>");
-  }
-  assert.deepEqual(allPairs([referenceRun, model], history.store.runFolder.bind(history.store)), []);
   const { reference: _reference, ...modelBatch } = reference.batch;
   assert.deepEqual(referenceTrends([{ ...reference, batch: modelBatch }]), []);
 });
@@ -75,7 +63,7 @@ function FixtureConfigFor(run: ReturnType<typeof v2Fixture>["run"]) {
   return { ...v2Fixture().batch.config, agents: [run.agent] };
 }
 
-test("saved reference history and the batch API expose the same version groups", async (t) => {
+test("saved reference history keeps the version groups of its records", async (t) => {
   const history = await temporaryHistory(); t.after(history.cleanup);
   const reference = referenceFixture();
   await history.store.saveBatch(reference.batch);
@@ -83,10 +71,4 @@ test("saved reference history and the batch API expose the same version groups",
   for (const assessment of reference.assessments) await history.store.appendAssessment(assessment);
   const groups = await referenceHistory(history.store);
   assert.deepEqual(groups, referenceTrends([reference]));
-  const view = await batchView(reference.batch.id, {
-    readBatch: history.store.readBatch.bind(history.store), readRuns: history.store.readRuns.bind(history.store),
-    readAssessments: history.store.readAssessments.bind(history.store), readPreferences: history.store.readPreferences.bind(history.store),
-  });
-  assert.deepEqual(view.referenceHistory, groups); assert.deepEqual(view.summary, []);
-  assert.equal(view.implementationAttempts, 0);
 });

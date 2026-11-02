@@ -59,3 +59,9 @@
   .evals .eval-bar { grid-template-columns: minmax(0, 1fr); gap: .15rem; }
   .evals .eval-bar-axis > span { display: none; }
 }
+.evals .eval-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: .5rem 0; }
+.evals progress { width: 6rem; vertical-align: middle; }
+.evals .eval-shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr)); gap: .75rem; margin: .75rem 0; }
+.evals .eval-shots a { display: flex; flex-direction: column; gap: .25rem; font-size: .75rem; overflow-wrap: anywhere; }
+.evals .eval-shots img { width: 100%; height: 9rem; object-fit: contain; border: 1px solid var(--ifm-color-emphasis-300); border-radius: var(--ifm-global-radius); background: var(--ifm-background-surface-color); }
+.evals .eval-files { max-height: 20rem; overflow-y: auto; font-size: .85rem; }
