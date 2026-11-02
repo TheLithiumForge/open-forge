@@ -40,3 +40,16 @@ test("Codex events count read commands by kind and the steps before its first pa
   assert.equal(usage.phases, null);
   assert.equal(usage.output, null);
 });
+
+test("actions sort into reads, edits, test or build runs and other work, and shell writes count as edits", () => {
+  const claude = eventUsage("claude", lines([
+    assistant("a", { type: "tool_use", id: "r1", name: "Read", input: { file_path: "/work/src/a.ts" } }, 100),
+    assistant("b", { type: "tool_use", id: "r2", name: "Read", input: { file_path: "/work/src/a.ts" } }, 250),
+    assistant("c", { type: "tool_use", id: "t", name: "Bash", input: { command: "npm test" } }, 200),
+    assistant("d", { type: "tool_use", id: "w", name: "Bash", input: { command: "cat > src/b.ts <<'EOF'" } }, 300),
+  ]));
+  assert.deepEqual(claude.actions, { read: 2, edit: 1, run: 1, other: 0 });
+  assert.equal(claude.repeatedReads, 1);
+  assert.equal(claude.stepsBeforeEdit, 3);
+  assert.equal(claude.peakContext, 301);
+});
