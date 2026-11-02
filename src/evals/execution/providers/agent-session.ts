@@ -9,7 +9,7 @@ import { MockSession } from "./mock-session.ts";
 export const TurnOutcome = {
   answered: "answered",
   failed: "failed",
-  // A usage or rate limit stopped the tool. The batch pauses instead of counting a failure.
+  // The provider refused to serve, through a usage limit or a rejected sign-in. The batch pauses instead of counting a failure.
   limited: "limited",
   timedOut: "timedOut",
 } as const;
@@ -37,13 +37,16 @@ export interface SessionContext {
 
 // Claude Code says "You've hit your 5-hour limit", which names neither usage nor rate.
 const limitPattern = /usage limit|rate limit|limit reached|too many requests|\b429\b|quota|hit your [\w -]*limit/i;
+// A rejected sign-in fails every later run the same way until someone signs in again.
+const signInPattern = /\b401\b|unauthori[sz]ed|missing bearer|not logged in|invalid api key|authentication_error/i;
 
-export function limitReached(text: string): boolean {
-  return limitPattern.test(text);
+/** Whether the provider refused to serve, through a usage limit or a rejected sign-in. */
+export function providerRefused(text: string): boolean {
+  return limitPattern.test(text) || signInPattern.test(text);
 }
 
 export function outcomeForError(text: string): TurnOutcome {
-  return limitReached(text) ? TurnOutcome.limited : TurnOutcome.failed;
+  return providerRefused(text) ? TurnOutcome.limited : TurnOutcome.failed;
 }
 
 export function openSession(context: SessionContext): AgentSession {

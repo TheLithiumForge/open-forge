@@ -25,6 +25,8 @@ import { JudgeLimited } from "../grading/judge/reply.ts";
 import { runInParallel } from "./run-queue.ts";
 import { generateSetup } from "../config/setups.ts";
 import { opaqueId, removeFolder, suiteForSetup } from "./workspace.ts";
+import { requireSignIns } from "../config/auth.ts";
+import { configuredJudges } from "../config/judges.ts";
 
 let activeBatch: string | null = null;
 
@@ -45,6 +47,11 @@ function shuffled<T>(items: readonly T[]): T[] {
   return copy;
 }
 
+/** Every tool a batch calls: its implementers, judges and simulated user. */
+export function batchTools(config: EvalConfig): Tool[] {
+  return [...config.agents, ...configuredJudges(config), config.simulatedUser].map((choice) => choice.tool);
+}
+
 export function planBatchRuns(config: EvalConfig, batchId: string): RunRecord[] {
   return shuffled(config.agents.flatMap((agent) => config.setups.flatMap((setup) => Array.from({ length: config.runsPerSetup }, (_, repeat) => plannedRun(opaqueId(), batchId, setup, agent, repeat + 1)))));
 }
@@ -53,6 +60,7 @@ export function planBatchRuns(config: EvalConfig, batchId: string): RunRecord[] 
 export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   if (activeBatch !== null) throw new Error("A batch is already running.");
   const requested = selected ?? await loadConfig();
+  requireSignIns(batchTools(requested));
   const suite = await loadSuite(requested.suite);
   const config = { ...requested, limits: { ...requested.limits, runMinutes: suite.runMinutes ?? requested.limits.runMinutes },
     protocol: suite.documents === undefined ? requested.protocol ?? suiteProtocol(suite) : freezeProtocol(answerBank(suite.intent), [suite.prompt, ...suite.documents]) };
@@ -84,6 +92,7 @@ export async function resumeBatch(batchId: string, parallel?: number, acceptHarn
   const batch = await readBatch(batchId);
   if (batch.reference !== undefined) throw new Error("Start a new reference grading with the reference command.");
   if (batch.legacy) throw new Error("Legacy batches are read only. Start a new batch.");
+  requireSignIns(batchTools(batch.config));
   const resumable = resumableExperiment(batch, await captureExperiment(batchId, batch.config, await loadSuite(batch.suite), batch.candidateLabel), acceptHarness);
   if (resumable !== batch) await saveBatch({ ...batch, harnessChanges: resumable.harnessChanges ?? [] });
   void executeBatch(batchId, parallel);

@@ -102,7 +102,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     await (services.stop ?? stopProcessesUnder)(space.root);
     if (talk.outcome === TurnOutcome.limited) {
       await freezeFiles(space, join(folder, ResultFiles.files));
-      await update({ status: RunStatus.limited, telemetry: talk.telemetry, agentSeconds: talk.seconds, finalMessage: talk.finalMessage, questions: talk.questions, error: talk.error, failureKind: FailureKind.infrastructure, finishedAt: new Date().toISOString() }, "the tool hit a usage limit. The batch pauses.");
+      await update({ status: RunStatus.limited, telemetry: talk.telemetry, agentSeconds: talk.seconds, finalMessage: talk.finalMessage, questions: talk.questions, error: talk.error, failureKind: FailureKind.infrastructure, finishedAt: new Date().toISOString() }, "the provider hit a usage limit or rejected the sign-in. The batch pauses.");
       return run;
     }
     await update({ status: RunStatus.building, finalMessage: talk.finalMessage, questions: talk.questions, telemetry: talk.telemetry, agentSeconds: talk.seconds, error: talk.error }, `the agent finished after ${Math.round(talk.seconds)}s. Building offline.`);
@@ -134,7 +134,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
   } catch (error) {
     if (error instanceof JudgeLimited && run.status === RunStatus.judging) {
       // The attempt and its checks are complete. Resume adds the missing judgment without running the agent again.
-      await update({ status: RunStatus.done, finishedAt: new Date().toISOString() }, "the judge hit a usage limit. The batch pauses.");
+      await update({ status: RunStatus.done, finishedAt: new Date().toISOString() }, "the judge's provider hit a usage limit or rejected the sign-in. The batch pauses.");
       throw error;
     }
     if (error instanceof SimulatorFailure) {

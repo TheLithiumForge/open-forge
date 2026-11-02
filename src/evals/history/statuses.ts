@@ -6,7 +6,7 @@ export const RunStatus = {
   judging: "judging",
   done: "done",
   failed: "failed",
-  // The tool hit a usage or rate limit. The run starts over when the batch resumes.
+  // The provider hit a usage limit or rejected the sign-in. The run starts over when the batch resumes.
   limited: "limited",
 } as const;
 export type RunStatus = (typeof RunStatus)[keyof typeof RunStatus];

@@ -22,6 +22,7 @@ import { latestJudgeFor } from "../history/summary.ts";
 import { FailureKind } from "../history/statuses.ts";
 import { runInParallel } from "../execution/run-queue.ts";
 import { applyMachineOptions, splitMachineOptions } from "../config/machine-options.ts";
+import { requireSignIns } from "../config/auth.ts";
 
 const JudgeTimeoutMs = 15 * 60_000;
 
@@ -93,6 +94,7 @@ async function main(): Promise<void> {
   const { batchId, onlyRun, overrides } = rejudgeOptions(args);
   const batch = await readBatch(batchId), suite = await loadSuite(batch.suite);
   const config = { ...batch.config, ...overrides };
+  requireSignIns(configuredJudges(config).map((choice) => choice.tool));
   await rejudgeRuns(suite, await readRuns(batch), config, await gradingVersions(suite), {}, onlyRun);
 }
 

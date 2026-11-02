@@ -3,20 +3,20 @@ import type { JudgeChoice } from "../../config/config.types.ts";
 import type { ProcessResult } from "../../execution/process.ts";
 import { record } from "../../benchmarks/neon-pairs/checks/layer.ts";
 import { replyJson } from "../../execution/reply-json.ts";
-import { limitReached } from "../../execution/providers/agent-session.ts";
+import { providerRefused } from "../../execution/providers/agent-session.ts";
 import { claudeLimitEvent } from "../../execution/providers/claude-telemetry.ts";
 
 export class JudgeAssessorFailure extends Error {}
-/** A usage limit isn't a judge failure. The batch pauses, and resume asks the judge again. */
+/** A usage limit or a rejected sign-in isn't a judge failure. The batch pauses, and resume asks the judge again. */
 export class JudgeLimited extends JudgeAssessorFailure {}
 
 function limited(result: ProcessResult): boolean {
-  if (limitReached(result.stderr)) return true;
+  if (providerRefused(result.stderr)) return true;
   return result.stdout.split("\n").some((line) => {
     try {
       const event: unknown = JSON.parse(line);
-      return record(event) && (claudeLimitEvent(event) || (["error", "turn.failed"].includes(String(event["type"])) && limitReached(JSON.stringify(event)))
-        || (event["is_error"] === true && typeof event["result"] === "string" && limitReached(event["result"])));
+      return record(event) && (claudeLimitEvent(event) || (["error", "turn.failed"].includes(String(event["type"])) && providerRefused(JSON.stringify(event)))
+        || (event["is_error"] === true && typeof event["result"] === "string" && providerRefused(event["result"])));
     } catch {
       return false; // Not an event line.
     }

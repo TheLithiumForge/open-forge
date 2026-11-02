@@ -31,6 +31,12 @@ export function signInStatus(): SignInStatus {
   };
 }
 
+/** Refuses to start work that calls a tool without a sign-in, because every run would fail the same way. */
+export function requireSignIns(tools: readonly Tool[], status: SignInStatus = signInStatus()): void {
+  const missing = [...new Set(tools)].filter((tool) => tool !== Tool.mock && !status[tool]);
+  if (missing.length > 0) throw new Error(`No ${missing.join(" or ")} sign-in. Run npm run evals -- doctor for the steps.`);
+}
+
 /** The sign-in variables to pass into a run, by name only, so values never land in a command line. */
 export function authVariableNames(provider?: Tool, env: NodeJS.ProcessEnv = process.env): readonly string[] {
   const names = provider === Tool.claude ? [AuthVariables.claudeToken, AuthVariables.anthropicKey]
