@@ -43,7 +43,8 @@ function yesShare(judgment: JudgeAssessment): number | null {
 export function batchProgress(batch: BatchRecord, runs: readonly RunView[], assessments: readonly AssessmentRecord[]): BatchProgress {
   const replaced = new Set(runs.flatMap((run) => run.replacesRunId === null ? [] : [run.replacesRunId]));
   const counted = runs.filter((run) => run.status !== RunStatus.limited && !(run.failureKind === FailureKind.infrastructure && replaced.has(run.id)));
-  const implemented = counted.filter((run) => run.agentSeconds !== null && run.finishedAt !== null);
+  // A run is implemented once its agent finished, while its grading may still be running.
+  const implemented = counted.filter((run) => run.agentSeconds !== null);
   const checked = (run: RunView): boolean => run.functionalResult !== null && run.functionalResult.coverage.errors === 0 && run.functionalResult.coverage.applicable > 0;
   const judges = new Map<string, ModelChoice>();
   for (const item of assessments) if (item.kind === AssessmentKind.judge && item.requestedModel !== null) judges.set(modelKey(item.requestedModel), item.requestedModel);
