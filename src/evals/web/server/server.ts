@@ -27,15 +27,15 @@ const assessmentShotPath = /^\/shots\/([\w-]+)\/([0-9a-f]{12})\/([\w-]+)\/([\w.-
 
 async function sendFile(response: ServerResponse, path: string, headers: Readonly<Record<string, string>> = {}): Promise<void> {
   if (!existsSync(path)) return void response.writeHead(404).end();
-  const root = path.startsWith(EvalPaths.uiDist + sep) ? EvalPaths.uiDist : EvalPaths.results;
+  const root = path.startsWith(EvalPaths.uiDist + sep) ? EvalPaths.uiDist : EvalPaths.runs;
   const bytes = await readPlainFile(root, path);
   response.writeHead(200, { "content-type": contentTypes[extname(path)] ?? "application/octet-stream", "x-content-type-options": "nosniff", ...headers }).end(bytes);
 }
 
 /** Finds which batch a run belongs to, for a game opened on its own origin. */
 async function batchOfRun(runId: string): Promise<string | null> {
-  if (!existsSync(EvalPaths.results)) return null;
-  for (const batchId of await readdir(EvalPaths.results)) if (existsSync(runFolder(batchId, runId))) return batchId;
+  if (!existsSync(EvalPaths.runs)) return null;
+  for (const batchId of await readdir(EvalPaths.runs)) if (existsSync(runFolder(batchId, runId))) return batchId;
   return null;
 }
 

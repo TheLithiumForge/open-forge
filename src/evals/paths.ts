@@ -10,7 +10,9 @@ export const EvalPaths = {
   localConfig: join(evalsRoot, "eval.config.local.json"),
   suites: join(evalsRoot, "benchmarks", "neon-pairs", "cases"),
   checks: join(evalsRoot, "benchmarks", "neon-pairs", "checks"),
-  results: join(evalsRoot, "runs"),
+  runs: join(evalsRoot, "runs"),
+  // The results repository submodule, where finished batches are added with their evidence.
+  resultsRepository: join(evalsRoot, "results"),
   auth: join(evalsRoot, ".auth"),
   codexAuthHome: join(evalsRoot, ".auth", "codex"),
   envFile: join(evalsRoot, ".env.local"),

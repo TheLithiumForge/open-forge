@@ -35,7 +35,7 @@ async function prepare(): Promise<void> {
 }
 
 export async function runReference(options: ReferenceOptions, report: (text: string) => void, services: ReferenceServices = {}): Promise<number> {
-  const store = services.store ?? new HistoryStore(EvalPaths.results);
+  const store = services.store ?? new HistoryStore(EvalPaths.runs);
   const config = referenceConfig(await (services.config ?? loadConfig)(), options);
   const suite = await (services.suite ?? loadSuite)(config.suite);
   const id = opaqueId(), runId = opaqueId();

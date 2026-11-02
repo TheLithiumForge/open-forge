@@ -1,9 +1,10 @@
 import { ImplementerPresets, JudgePresets, UserPresets } from "./presets.ts";
 import { MachineHelp } from "./machine-options.ts";
 
-export const Command = { doctor: "doctor", images: "images", smoke: "smoke", qualify: "qualify", validateCase: "validate-case", run: "run", resume: "resume", reference: "reference", summary: "summary", ui: "ui", recheck: "recheck", rejudge: "rejudge", export: "export", help: "help" } as const;
+export const Command = { doctor: "doctor", images: "images", smoke: "smoke", qualify: "qualify", validateCase: "validate-case", run: "run", resume: "resume", reference: "reference", summary: "summary", ui: "ui", recheck: "recheck", rejudge: "rejudge", results: "results", help: "help" } as const;
 export type Command = (typeof Command)[keyof typeof Command];
-export const Flag = { help: "--help", plan: "--plan", implementers: "--implementers", judges: "--judges", user: "--user", layer: "--layer", case: "--case", all: "--all", batch: "--batch", parallel: "--parallel", acceptHarness: "--accept-harness", diagnostics: "--diagnostics", port: "--port", noBrowser: "--no-browser", development: "--development", rebuild: "--rebuild", out: "--out" } as const;
+export const Flag = { help: "--help", plan: "--plan", implementers: "--implementers", judges: "--judges", user: "--user", layer: "--layer", case: "--case", all: "--all", batch: "--batch", parallel: "--parallel", acceptHarness: "--accept-harness", diagnostics: "--diagnostics", port: "--port", noBrowser: "--no-browser", development: "--development", rebuild: "--rebuild", repository: "--repository" } as const;
+export const ResultsAction = { add: "add" } as const;
 export const CommandHelp = {
   reference: "Grade the tracked Neon Pairs reference without an agent. Defaults to --layer 3 --judges claude. Example: npm run evals -- reference --layer 3 --judges both",
   doctor: "Check Docker, Node, pinned tools, sign-ins and image digests. Example: npm run evals -- doctor",
@@ -17,7 +18,7 @@ export const CommandHelp = {
   ui: "Build and open the local results app. --port picks its port, 4318 by default, and --no-browser serves it without opening a browser. Example: npm run evals -- ui --port 4318 --no-browser",
   recheck: "Append checks for saved attempts. --rebuild builds the saved project again first. --diagnostics saves Layer 1 card crops and look comparisons beside the evidence. Example: npm run evals -- recheck <batch> --rebuild",
   rejudge: `Append judge assessments for saved attempts. --judges: ${Object.keys(JudgePresets).join(", ")}. Defaults to the batch's saved judges. Example: npm run evals -- rejudge <batch> [attempt] --judges both`,
-  export: "Export sanitized finished records to a new folder. Example: npm run evals -- export <batch> --out ./eval-export",
+  results: "Add a finished batch, with its code, game, screenshots and conversations, to the results repository, replacing an earlier copy, then validate the repository. Evidence holding a sign-in, a machine path or the user name stops it. --repository picks another results repository than src/evals/results. Example: npm run evals -- results add <batch>",
   help: "Show command help. Example: npm run evals -- help run",
 } as const satisfies Record<Command, string>;
 

@@ -69,8 +69,8 @@ npm run evals -- rejudge <batch> --judges both
 
 Both commands accept an attempt after the batch. `--rebuild` runs the verifier again. Without `--judges`, rejudge uses the batch's saved judges. Earlier grades stay recorded with their versions.
 
-## Export
+## Add results
 
-Run `npm run evals -- export <batch> --out ./eval-export` to write a sanitized immutable pack. Export refuses an existing target. Records live in the public results repository. Publication needs a separate maintainer decision.
+Run `npm run evals -- results add <batch>` to add a finished batch to the results repository in `src/evals/results`. It copies the records and evidence, including agent code, the built game, screenshots and conversations. Adding a batch again replaces it. The command stops if evidence holds a sign-in, a machine path or your user name, and it validates the whole repository afterwards. Install the repository's tools once with `npm ci --prefix src/evals/results`. Publishing the repository is a separate maintainer decision.
 
 Back to [Evals](index.md).

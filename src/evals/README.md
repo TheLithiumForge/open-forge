@@ -79,7 +79,7 @@ Every command accepts `--help`. Each help text includes an example:
 | `ui` | Open the local results app | `npm run evals -- ui` |
 | `recheck` | Append checks for saved files | `npm run evals -- recheck <batch> --rebuild` |
 | `rejudge` | Append judge ballots with optional judge presets | `npm run evals -- rejudge <batch> --judges both` |
-| `export` | Write sanitized finished records | `npm run evals -- export <batch> --out ./eval-export` |
+| `results add` | Add a finished batch and its evidence to the results repository | `npm run evals -- results add <batch>` |
 
 Every setting is a flag. Secrets are the only exception: they stay in `.env.local`.
 

@@ -9,7 +9,7 @@ import { validationFixture } from "./validation-test-fixture.ts";
 function cliServices(): CliServices {
   const noEffect = async () => { throw new Error("An unrelated command ran."); };
   return { print: () => {}, doctor: noEffect, images: noEffect, smoke: noEffect, qualify: noEffect, plan: noEffect, suite: noEffect,
-    run: noEffect, ui: noEffect, launch: noEffect, export: noEffect, validateCase: noEffect };
+    run: noEffect, ui: noEffect, launch: noEffect, results: noEffect, validateCase: noEffect };
 }
 
 test("validate-case runs a case through the product and fake verifier stages without model services", async (t) => {

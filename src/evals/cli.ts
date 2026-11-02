@@ -1,5 +1,5 @@
-﻿import { join } from "node:path";
-import { Command, CommandHelp, Flag, commandHelp, option, parseCommand } from "./config/commands.ts";
+﻿import { join, resolve } from "node:path";
+import { Command, CommandHelp, Flag, ResultsAction, commandHelp, option, parseCommand } from "./config/commands.ts";
 import { loadPlan } from "./config/plans.ts";
 import { configuredDoctor } from "./config/doctor.ts";
 import { smokeAttempt } from "./config/smoke.ts";
@@ -10,7 +10,7 @@ import { loadLocalEnv } from "./config/auth.ts";
 import { loadSuite } from "./benchmarks/suite.ts";
 import { buildEvalImages } from "./execution/containers/docker-image.ts";
 import { HistoryStore } from "./history/store.ts";
-import { exportBatch } from "./history/export.ts";
+import { addResults } from "./history/results-add.ts";
 import { EvalPaths, evalsRoot } from "./paths.ts";
 import { validateCase } from "./grading/brownfield/validate.ts";
 import { BrownfieldFiles } from "./materialize/brownfield-case.ts";
@@ -32,7 +32,7 @@ export interface CliServices {
   readonly resume?: typeof resumePlan;
   readonly ui: typeof launchUi;
   readonly launch: typeof launchNode;
-  readonly export: (batch: string, target: string) => Promise<string>;
+  readonly results: (batch: string, repository: string) => Promise<string>;
   readonly validateCase: typeof validateCase;
   readonly summary?: typeof batchMatrixSummary;
   readonly reference?: typeof runReference;
@@ -40,7 +40,7 @@ export interface CliServices {
 const defaults: CliServices = {
   print: console.log, doctor: configuredDoctor, images: buildEvalImages, smoke: smokeAttempt, qualify: qualifySetups,
   plan: loadPlan, suite: loadSuite, run: runPlan, ui: launchUi, launch: (file, args) => { loadLocalEnv(); return launchNode(file, args); },
-  export: (batch, target) => exportBatch(new HistoryStore(EvalPaths.results), batch, target),
+  results: (batch, repository) => addResults(new HistoryStore(EvalPaths.runs), batch, repository, { run: (script, args, cwd) => launchNode(join(cwd, script), args, cwd) }),
   validateCase,
 };
 
@@ -147,10 +147,12 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       checkedArgs(args, [Flag.rebuild, Flag.diagnostics], [], operands.length);
       return services.launch(join(evalsRoot, CliScripts.recheck), [...args, ...machine]);
     }
-    case Command.export: {
-      checkedArgs(args, [], [Flag.out], 1);
-      if (args[0]?.startsWith("--") || args[0] === undefined) throw new Error(CommandHelp.export);
-      services.print(await services.export(args[0], option(args, Flag.out)));
+    case Command.results: {
+      const [action, batch] = args;
+      if (action !== ResultsAction.add || batch === undefined || batch.startsWith("--")) throw new Error(CommandHelp.results);
+      checkedArgs(args.slice(1), [], [Flag.repository], 1);
+      const repository = args.includes(Flag.repository) ? resolve(option(args, Flag.repository)) : EvalPaths.resultsRepository;
+      services.print(`Added the batch at ${await services.results(batch, repository)}`);
       return 0;
     }
     case Command.help: return 0;

@@ -2,6 +2,8 @@ import type { Batch, Choice, GradingVersions } from "./records.types.ts";
 export const IndexVersion = 1;
 export const RecordFiles = { experiment: "experiment.json", setups: "setups.jsonl", runs: "runs.jsonl", artifacts: "artifacts.json" } as const;
 export const AssessmentKinds = ["checks", "judge", "pick"] as const;
+// Each batch keeps its evidence beside its records, at the paths artifacts.json lists.
+export const EvidenceFolder = "evidence";
 export const SchemaNames = ["common", "experiment", "setup", "run", "assessment", "artifact"] as const;
 export interface CatalogueEntry {
   readonly id: string;
@@ -28,7 +30,8 @@ export function catalogue(batches: readonly Batch[]): Catalogue {
       return {
         id: experiment.id, layer: experiment.config.layer ?? null, cliVersion: experiment.cliVersion,
         createdAt: experiment.createdAt, implementers: unique(runs.map((run) => run.agent)),
-        judges: unique(assessments.flatMap((item) => item.kind === "judge" && item.requestedModel !== null ? [item.requestedModel] : [])),
+        // A judge choice also carries its ballot count, which the catalogue leaves to the records.
+        judges: unique(assessments.flatMap((item) => item.kind === "judge" && item.requestedModel !== null ? [{ tool: item.requestedModel.tool, model: item.requestedModel.model, effort: item.requestedModel.effort }] : [])),
         gradingVersions: unique(assessments.map((item) => item.versions)),
         path: `versions/${experiment.cliVersion}/batches/${experiment.id}`
       };

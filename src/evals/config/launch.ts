@@ -4,9 +4,9 @@ import { EvalPaths, evalsRoot } from "../paths.ts";
 
 export const CliScripts = { recheck: "grading/recheck.ts", rejudge: "grading/rejudge.ts", server: "web/server/server.ts" } as const;
 
-export function launchNode(file: string, args: readonly string[] = []): Promise<number> {
+export function launchNode(file: string, args: readonly string[] = [], cwd: string = evalsRoot): Promise<number> {
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [file, ...args], { cwd: evalsRoot, stdio: "inherit", windowsHide: true });
+    const child = spawn(process.execPath, [file, ...args], { cwd, stdio: "inherit", windowsHide: true });
     child.once("error", reject);
     child.once("exit", (code) => resolve(code ?? 1));
   });

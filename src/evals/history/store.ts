@@ -145,7 +145,7 @@ export class HistoryStore {
   }
 }
 
-const store = new HistoryStore(EvalPaths.results);
+const store = new HistoryStore(EvalPaths.runs);
 export const batchFolder = store.batchFolder.bind(store);
 export const runFolder = store.runFolder.bind(store);
 export const assessmentEvidenceFolder = store.assessmentEvidenceFolder.bind(store);
