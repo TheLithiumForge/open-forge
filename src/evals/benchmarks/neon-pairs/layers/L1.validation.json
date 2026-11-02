@@ -1,5 +1,526 @@
 {
   "schemaVersion": 1,
   "gradingVersion": "L1-v3",
-  "status": "pending"
+  "status": "validated",
+  "inputs": {
+    "definitions": [
+      {
+        "path": "layers/L1.json",
+        "sha256": "4b713d608321bbbf36026d0da1f3743379f89d16715abab2811f1693545a0cac"
+      },
+      {
+        "path": "layers/L1.requirements.json",
+        "sha256": "ffa81edcf7db0b833104c18a578ef47c2983a244819979c83d6c945e4fcf8a7b"
+      },
+      {
+        "path": "rubrics/L1.json",
+        "sha256": "6c7717043265187c9dc10daa8d2ed5e8062260286095c55c72371d465ca5164c"
+      }
+    ],
+    "checker": "c8adc7d87bbee5ee70744b2981d3d80a5ab40cc9355e2fb9458c5d4ef1798706",
+    "reference": "63e6fd597304f33cfb9a0bc80534d92c68f788142768575f59f306927d03a2f0",
+    "fixtures": "0fafe3bcc6915b7c3eadd0f21cae2a8e0a744e8723163b886f6632a300fc44e5"
+  },
+  "results": [
+    {
+      "fixture": "reference",
+      "outcomes": [
+        {
+          "id": "delivery-single-file",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "stack-react-typescript",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "grid-4-and-16",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "grid-sizes-pair-up",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "faces-drawn",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "faces-distinct-16",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "matching-pairs",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "input-same-card-twice",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "input-clicks-during-delay",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "moves-count",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "moves-compared",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "new-game-resets",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "win-shown",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "best-score",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "phone-full-game",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "keyboard-full-game",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "start-4x4",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "remember-size",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "no-sound",
+          "expected": "pass",
+          "actual": "pass"
+        }
+      ]
+    },
+    {
+      "fixture": "faces-repeat-32",
+      "outcomes": [
+        {
+          "id": "delivery-single-file",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "stack-react-typescript",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "grid-4-and-16",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "grid-sizes-pair-up",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "faces-drawn",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "faces-distinct-16",
+          "expected": "fail",
+          "actual": "fail"
+        },
+        {
+          "id": "matching-pairs",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "input-same-card-twice",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "input-clicks-during-delay",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "moves-count",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "moves-compared",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "new-game-resets",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "win-shown",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "best-score",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "phone-full-game",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "keyboard-full-game",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "start-4x4",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "remember-size",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "no-sound",
+          "expected": "pass",
+          "actual": "pass"
+        }
+      ]
+    },
+    {
+      "fixture": "best-overwritten",
+      "outcomes": [
+        {
+          "id": "delivery-single-file",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "stack-react-typescript",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "grid-4-and-16",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "grid-sizes-pair-up",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "faces-drawn",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "faces-distinct-16",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "matching-pairs",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "input-same-card-twice",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "input-clicks-during-delay",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "moves-count",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "moves-compared",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "new-game-resets",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "win-shown",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "best-score",
+          "expected": "fail",
+          "actual": "fail"
+        },
+        {
+          "id": "phone-full-game",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "keyboard-full-game",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "start-4x4",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "remember-size",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "no-sound",
+          "expected": "pass",
+          "actual": "pass"
+        }
+      ]
+    },
+    {
+      "fixture": "new-game-keeps-moves",
+      "outcomes": [
+        {
+          "id": "delivery-single-file",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "stack-react-typescript",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "grid-4-and-16",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "grid-sizes-pair-up",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "faces-drawn",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "faces-distinct-16",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "matching-pairs",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "input-same-card-twice",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "input-clicks-during-delay",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "moves-count",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "moves-compared",
+          "expected": "fail",
+          "actual": "fail"
+        },
+        {
+          "id": "new-game-resets",
+          "expected": "fail",
+          "actual": "fail"
+        },
+        {
+          "id": "win-shown",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "best-score",
+          "expected": "fail",
+          "actual": "fail"
+        },
+        {
+          "id": "phone-full-game",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "keyboard-full-game",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "start-4x4",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "remember-size",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "no-sound",
+          "expected": "pass",
+          "actual": "pass"
+        }
+      ]
+    },
+    {
+      "fixture": "keyboard-unreachable",
+      "outcomes": [
+        {
+          "id": "delivery-single-file",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "stack-react-typescript",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "grid-4-and-16",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "grid-sizes-pair-up",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "faces-drawn",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "faces-distinct-16",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "matching-pairs",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "input-same-card-twice",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "input-clicks-during-delay",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "moves-count",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "moves-compared",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "new-game-resets",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "win-shown",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "best-score",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "phone-full-game",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "keyboard-full-game",
+          "expected": "fail",
+          "actual": "fail"
+        },
+        {
+          "id": "start-4x4",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "remember-size",
+          "expected": "pass",
+          "actual": "pass"
+        },
+        {
+          "id": "no-sound",
+          "expected": "pass",
+          "actual": "pass"
+        }
+      ]
+    }
+  ]
 }

@@ -3,7 +3,7 @@ Layer 1 grading is a check pack that measures whether a Neon Pairs attempt meets
 
 The pack finds cards through visible play and compares their screenshots. For example, a 12x12 board has 144 cards even when New Game has a similar size. Card detection groups elements within their board container so it keeps that control out.
 
-The checker version is `L1-v3`. Reference and mutation validation is pending for this version.
+The checker version is `L1-v3`. `layers/L1.validation.json` records reference and mutation results with their input hashes.
 
 ## Check sets
 
@@ -22,7 +22,7 @@ node benchmarks/neon-pairs/checks/validate.ts --plan
 node benchmarks/neon-pairs/checks/validate.ts
 ```
 
-The plan prints expected results without executing games. The second command builds and checks the reference and four mutated copies in verifier containers. It copies plain output through `copyOutPlain`, validates the report and compares every outcome with the fixture's registered result. A complete match writes `layers/L1.validation.json` with the checked input hashes.
+The plan prints expected results without executing games. The second command runs the browser regressions, then builds and checks the reference and four mutated copies in verifier containers. It copies plain output through `copyOutPlain`, validates the report and compares every outcome with the fixture's registered result. A complete match writes `layers/L1.validation.json` with the checked input hashes.
 
 The reference stays unchanged. Fixture edits create separate projects and require each replacement to match exactly once. The mutations cover faces repeating after 32, overwritten best scores, retained moves and unreachable keyboard cards. Their JSON files record every expected result.
 
@@ -30,15 +30,13 @@ The reference stays unchanged. Fixture edits create separate projects and requir
 
 The small pages in `regression-fixtures.ts` cover the six faults from the first matrix batch. They use checker markup and scripts written for these tests. Saved attempts are read as data only.
 
-From `src/evals`, install Chromium in the worktree, then run the pages:
+From `src/evals`, run the pages in the existing verifier image:
 
-```powershell
-$env:PLAYWRIGHT_BROWSERS_PATH = Join-Path (Get-Location) '.playwright-browsers'
-npm exec -- playwright install chromium
-node --test benchmarks/neon-pairs/checks/regressions.test.ts
+```sh
+node benchmarks/neon-pairs/checks/validate.ts --regressions
 ```
 
-The tests compare working and broken pages through the checker functions. Pure tests also show which names, face pixels and win phrases the old checker misses. Browser tests run when `PLAYWRIGHT_BROWSERS_PATH` is set. They cover pointer and keyboard games, reset after play, dialog controls and every size from 4 through 16.
+The tests compare working and broken pages through the checker functions. Pure tests also show which names, face pixels and win phrases the old checker misses. Browser tests run when `PLAYWRIGHT_BROWSERS_PATH` is set, which the container command supplies. They cover pointer and keyboard games, reset after play, dialog controls and every size from 4 through 16.
 
 The focus glow fixture closes a mismatch, then finishes by pointer and by keyboard. Focus stays on the card after the mismatch closes. The inert copy still fails reveal detection in both modes.
 
@@ -46,7 +44,15 @@ The repeated activation fixture turns a card, moves focus away, then activates t
 
 Before activation, the checker captures known backs after focus moves. These images give each card alternate backs for the current game. A card can add an alternate back only before its first activation or revealed face, and only when its coarse signature matches its original back before focus moves. An activation attempt excludes the card even if the game ignores that input. A revealed face can resemble a back, so the card stays excluded after a mismatch closes. Reading the next fresh board resets this record.
 
-The pixel comparison ignores gradual light changes near card edges, where a nearby focus glow can reach a closed card. It keeps full resolution changes in the middle of the face, including soft dim strokes. Signatures for comparing faces keep their existing thresholds.
+The pixel comparison ignores gradual light changes near card edges, where a nearby focus glow can reach a closed card. It allows each pixel the color range within one pixel of the other image, in both directions, because 3D flips can round the same back differently. New strokes still differ from that nearby back, including soft dim strokes. Signatures for comparing faces keep their existing thresholds.
+
+The row fixture groups a 16x16 board into row containers. Card detection needs rows and columns in the chosen container, so one row of sixteen cards doesn't become the whole board. The matched-style fixture changes both faces after a match. Input checks compare both cards in one board screenshot, so the first card's earlier style doesn't create a false mismatch.
+
+## Diagnostics
+
+To save card crops and look comparisons during a recheck, set `EVALS_L1_DIAGNOSTICS=1` before running `npm run evals -- recheck <batch> <runId>` from the repository root. It defaults to off. Set `EVALS_SCRATCH` and npm's cache folder to a scratch drive before running.
+
+The assessment's evidence holds a `shots/diagnostics/` folder. Each numbered JSON file records its page, capture kind, card indexes, back decisions, color distance, shape distance, brightness distance and full pixel comparison. The matching PNG files show the card crops. `backs` starts a fresh board, `face` checks a reveal and `board` reads all cards together. Capture stops after 400 steps and covers boards with at most sixteen cards. Diagnostic files stay apart from the judge's screenshots. They leave the container through `copyOutPlain`, then pass filename, file count, byte, image and JSON checks before saving.
 
 ## Judge
 
@@ -58,17 +64,13 @@ The default judge adapter sends images through the assessor container with model
 
 ## Evidence
 
-Dependencies were installed with `npm ci --cache .npm-cache`. Product tests use fakes for Docker and model calls. The regression pages use the installed Chromium.
+From `src/evals`, run `npm run typecheck` and `npm test` for product checks. Product tests use fakes for Docker and model calls. The container regression command also runs the browser cases that a host test run skips without `PLAYWRIGHT_BROWSERS_PATH`.
 
-With the worktree Chromium path set, typecheck passes and `npm test` has 312 passes, one failure and zero skips. Every Layer 1 fixture test passes. The failure is "all preexisting L1 checker files stay byte identical" in `checks/spec-layers/catalog.test.ts`. The overseer needs to freeze that snapshot again after integrating these changes.
-
-Chromium was installed inside the worktree. The detector probe passed every even size from 4x4 through 16x16, including 144 cards at 12x12. Run `node benchmarks/neon-pairs/checks/browser-probe.ts` with `PLAYWRIGHT_BROWSERS_PATH` set to your installed browser folder to repeat that check. The probe uses checker markup with scripts disabled.
-
-The Docker validation matrix wasn't run in this packet. The previous validation record is cleared so `L1-v3` can't reuse results from the old checker.
+The detector probe in `browser-probe.ts` uses checker markup with scripts disabled. It checks every even size from 4x4 through 16x16, including 144 cards at 12x12. The browser regressions add row containers and the broken layout cases described above.
 
 ## Changes
 
-Each correction keeps a broken case in `regressions.test.ts`:
+The regression files keep working and broken cases for these corrections:
 
 | Finding | Correction | Broken case |
 | --- | --- | --- |
@@ -78,5 +80,8 @@ Each correction keeps a broken case in `regressions.test.ts`:
 | Win message | Read new finishing text after the last pair | No new message and unchanged finishing text |
 | Modal win | Try Escape, then a close, dismiss or play again button before actions | Dialog that cancels Escape and has no exit |
 | Odd sizes | Check the square layout with one empty cell on odd boards | Unpaired count, extra missing cards and wrong layout |
+| Closed 3D backs | Allow one-pixel edge ranges in both directions | New dim strokes and inert glowing cards |
+| Matched styles | Compare the two cards in the same screenshot | Inert glowing cards |
+| Row containers | Find rows and columns before choosing a board container | Wrong card counts and layouts |
 
 Signatures for comparing faces and the `remember-size` wish keep their previous rules. The `L1-v3` version also updates the layer, clause map, rubric, suite and fixture declarations.

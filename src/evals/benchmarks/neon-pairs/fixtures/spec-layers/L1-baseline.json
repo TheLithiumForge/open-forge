@@ -7,7 +7,7 @@
                   },
                   {
                       "path":  "checks/board.ts",
-                      "sha256":  "534cfd62a262d845439510aa2c59a73e4d4eeeada00ce9299c84c242880ed539"
+                      "sha256":  "5ff662d91937a0d8b41c8d01df414f39b911bd7222d7ddc230957e3241227488"
                   },
                   {
                       "path":  "checks/browser-probe.ts",
@@ -31,11 +31,11 @@
                   },
                   {
                       "path":  "checks/checks-large.ts",
-                      "sha256":  "5b624f8a411bd086be1317592562d0cd311820690947095bfa7b812ed6a98e82"
+                      "sha256":  "a23b12065568b48ff733797e8e0ec7b4e37329fcf8b41c02de92589204666fa4"
                   },
                   {
                       "path":  "checks/checks-play.ts",
-                      "sha256":  "d4282e715f417389b7677aee37c91d3e078cd49a66518c7d6445f035503b069a"
+                      "sha256":  "d7eaf94af4c7aacd9eafb8ca69745ed6f6e8d9f8368e9af0cb38c278bf5eb3d6"
                   },
                   {
                       "path":  "checks/checks-score.ts",
@@ -47,11 +47,11 @@
                   },
                   {
                       "path":  "checks/container.test.ts",
-                      "sha256":  "a864f3972c9d4c6900915a3077fa52557726e2926d274090134f9c5518d897ac"
+                      "sha256":  "689b05c6a709d1412df3ab28fbc6a7868080b2c4e211206287083766c9dc683d"
                   },
                   {
                       "path":  "checks/container.ts",
-                      "sha256":  "bcb1eb867e3cf0ec1bf3d3a0dce97b9bc583d009e682c10b890c75d66bcfb987"
+                      "sha256":  "fd875d3a36eaa063516c39544524f1c7d3a8c797e56a9d3b062982a77e88c4a3"
                   },
                   {
                       "path":  "checks/face-sheet.ts",
@@ -59,7 +59,7 @@
                   },
                   {
                       "path":  "checks/face-signature.ts",
-                      "sha256":  "d27dd7f068dc006f11db63a5c493aea832a71618f10742ee7ee4b7eda1e253d5"
+                      "sha256":  "a862c8e62cbf2a0fe50d8cea170f5773db023e30f830a8866409a4026473abbd"
                   },
                   {
                       "path":  "checks/fixtures.test.ts",
@@ -83,7 +83,7 @@
                   },
                   {
                       "path":  "checks/neon-pairs.ts",
-                      "sha256":  "f7760671559deb5592afb9f9e02c8cce9c5715bedb52976dfba034fa84ad66f3"
+                      "sha256":  "52429380659a6506caa11269eda6d5613bffa92ff3f0f532d86eaa7bb5f6fe18"
                   },
                   {
                       "path":  "checks/open-game.ts",
@@ -95,7 +95,7 @@
                   },
                   {
                       "path":  "checks/README.md",
-                      "sha256":  "249375fda9b14520c684bdd104c8f6938e8e3c97007bafea2c6317b8e68a1c0d"
+                      "sha256":  "861077236a26c8e01c185127b367b4a781449e6d0753c9e72b840eb13394337a"
                   },
                   {
                       "path":  "checks/report.test.ts",
@@ -115,7 +115,7 @@
                   },
                   {
                       "path":  "checks/validate.ts",
-                      "sha256":  "8f32ca965f47e79e409e3136b7dc6f34f2756379b202aa8d884723b462f692ff"
+                      "sha256":  "33ac5e6d370f70e10126f100439c46a2f7ad211a543edc18e3c80caf4c10c7c3"
                   },
                   {
                       "path":  "checks/worker.ts",

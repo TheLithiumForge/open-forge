@@ -6,7 +6,7 @@ import type { BuildResult } from "../../../history/results.types.ts";
 import type { SuiteChecks } from "../../suite-checks.types.ts";
 import { Isolation } from "../../../config/choices.ts";
 import { buildProject } from "../../../grading/build.ts";
-import { runContainerChecks } from "./container.ts";
+import { runContainerChecks, runContainerRegressions } from "./container.ts";
 import { loadFixtures, materializeFixture, ReferenceFolder, type Fixture } from "./fixtures.ts";
 import { LayerVersion } from "./layer.ts";
 import { suiteGradingInputs } from "../../registry.ts";
@@ -46,7 +46,9 @@ export async function main(args: readonly string[]): Promise<void> {
     for (const fixture of fixtures) process.stdout.write(`${fixture.id}: expected failures ${Object.entries(fixture.expected).filter(([, status]) => status === "fail").map(([id]) => id).join(", ") || "none"}. Not executed.\n`);
     return;
   }
-  if (args.length) throw new Error("Run validate.ts or validate.ts --plan.");
+  if (args.length && !(args.length === 1 && args[0] === "--regressions")) throw new Error("Run validate.ts, validate.ts --plan or validate.ts --regressions.");
+  process.stdout.write(await runContainerRegressions());
+  if (args[0] === "--regressions") return;
   const inputs = await validationInputs();
   let mismatches = 0;
   const results: ValidationResult[] = [];

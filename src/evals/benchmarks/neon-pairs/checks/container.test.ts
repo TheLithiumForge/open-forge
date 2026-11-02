@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { test } from "node:test";
@@ -10,6 +10,8 @@ import { CheckContainer } from "./container-paths.ts";
 import { ContainerPaths } from "../../../execution/containers/settings.ts";
 import { loadLayer } from "./layer.ts";
 import { runNeonPairsChecks } from "./neon-pairs.ts";
+import { DiagnosticEnabled, DiagnosticEnvironment, DiagnosticFolder, DiagnosticKind } from "./diagnostics.ts";
+import { PNG } from "pngjs";
 
 const success = { code: 0, timedOut: false, stdout: "", stderr: "" };
 const build = { passed: true, typecheck: true, seconds: 0, packages: null, html: "index.html", bytes: null, log: "" };
@@ -24,6 +26,10 @@ test("browser grading crosses the container interface and validates its copied-o
   await writeFile(html, "<html></html>");
   const layer = await loadLayer();
   const calls: (readonly string[])[] = [];
+  const previousDiagnostics = process.env[DiagnosticEnvironment];
+  t.after(() => { if (previousDiagnostics === undefined) delete process.env[DiagnosticEnvironment]; else process.env[DiagnosticEnvironment] = previousDiagnostics; });
+  process.env[DiagnosticEnvironment] = DiagnosticEnabled;
+  const diagnosticImage = `step-0000-${DiagnosticKind.backs}-card-0.png`;
   const client: Docker = {
     run: async (args) => {
       calls.push(args);
@@ -32,6 +38,10 @@ test("browser grading crosses the container interface and validates its copied-o
         assert.ok(target);
         await mkdir(target, { recursive: true });
         await writeFile(join(target, CheckContainer.report), JSON.stringify({ checks: layer.checks.map((check) => ({ ...check, status: CheckStatus.pass, evidence: "Fake container outcome" })), shots: [], performance: null }));
+        const diagnostics = join(target, CheckContainer.shots, DiagnosticFolder);
+        await mkdir(diagnostics, { recursive: true });
+        await writeFile(join(diagnostics, diagnosticImage), PNG.sync.write(new PNG({ width: 2, height: 2 })));
+        await writeFile(join(diagnostics, `step-0000-${DiagnosticKind.backs}.json`), JSON.stringify({ page: 0, kind: DiagnosticKind.backs, comparisons: [] }));
       }
       return success;
     },
@@ -41,6 +51,8 @@ test("browser grading crosses the container interface and validates its copied-o
   assert.ok(report.checks.every((check) => check.status === CheckStatus.pass));
   assert.ok(calls.some((args) => args[0] === "network" && args[1] === "disconnect"));
   assert.ok(calls.some((args) => args.includes(`${CheckContainer.harness}/${CheckContainer.worker}`)));
+  assert.ok(calls.some((args) => args.includes(`${DiagnosticEnvironment}=${DiagnosticEnabled}`)));
+  assert.equal(PNG.sync.read(await readFile(join(root, "shots", DiagnosticFolder, diagnosticImage))).width, 2);
   assert.ok(calls.some((args) => args[0] === "rm"));
   const copiedHarness = calls.findIndex((args) => args[0] === "cp" && args[2]?.endsWith(`:${CheckContainer.harness}`));
   const preparedHarness = calls.findIndex((args) => args[0] === "exec" && args.includes(ContainerPaths.prepare) && args.includes(CheckContainer.harness));

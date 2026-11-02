@@ -93,7 +93,9 @@ function unmatchedShare(a: FaceSignature, b: FaceSignature): number {
           const nx = x + dx;
           if (ny < 0 || nx < 0 || ny >= GridSize || nx >= GridSize) continue;
           closest = Math.min(closest, Math.abs(value - (b.shape[ny * GridSize + nx] ?? 0)));
+          if (closest <= FaceThresholds.changedCell) break;
         }
+        if (closest <= FaceThresholds.changedCell) break;
       }
       if (closest > FaceThresholds.changedCell) unmatched += 1;
     }

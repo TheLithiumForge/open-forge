@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { CheckOutcome } from "../../../grading/grading.types.ts";
 import { clicking, type Activate } from "./activation.ts";
-import { waitForBacks, waitForFace, Waits } from "./board.ts";
+import { boardLooks, waitForBacks, waitForFace, Waits } from "./board.ts";
 import { CheckArea, CheckId, guarded, result, withPageErrors } from "./check-ids.ts";
 import { CheckStatus } from "../../../history/statuses.ts";
 import { NoFace, sameFace } from "./face-signature.ts";
@@ -27,7 +27,8 @@ async function mismatch(page: Page, activate: Activate, board: Board, a: number,
   const faceA = await waitForFace(page, a, board.backs[a] ?? NoFace);
   await activate(b);
   const faceB = await waitForFace(page, b, board.backs[b] ?? NoFace);
-  return faceA !== null && faceB !== null && !sameFace(faceA, faceB);
+  const together = await boardLooks(page);
+  return faceA !== null && faceB !== null && !sameFace(together[a] ?? NoFace, together[b] ?? NoFace);
 }
 
 async function newGameDuringDelay(page: Page, activate: Activate): Promise<CheckOutcome> {
@@ -52,7 +53,8 @@ async function sameCardTwice(page: Page, activate: Activate): Promise<CheckOutco
   const second = await waitForFace(page, 1, board.backs[1] ?? NoFace);
   if (first === null || second === null) return result(CheckId.sameCardTwice, CheckArea.input, false, "A card didn't turn over.");
   if (afterDouble !== before) return result(CheckId.sameCardTwice, CheckArea.input, false, "Activating the same card twice counted a move.");
-  if (sameFace(first, second)) return result(CheckId.sameCardTwice, CheckArea.input, true, "Repeated activation kept the move count unchanged before the next matching card.");
+  const together = await boardLooks(page);
+  if (sameFace(together[0] ?? NoFace, together[1] ?? NoFace)) return result(CheckId.sameCardTwice, CheckArea.input, true, "Repeated activation kept the move count unchanged before the next matching card.");
   // The game can keep the card selected or let the second click put it back. Either way it must end face down.
   const down = await waitForBacks(page, [0], board.backs);
   return result(CheckId.sameCardTwice, CheckArea.input, down, down ? "Clicking a card twice didn't pair it with itself." : "The card clicked twice stayed face up, as if it had been paired with itself.");

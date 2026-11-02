@@ -4,7 +4,7 @@ import type { CheckOutcome } from "../../../grading/grading.types.ts";
 import { clicking, frameTimings } from "./activation.ts";
 import { CardAttribute } from "./board.ts";
 import { CheckArea, CheckId, guarded, result, withPageErrors } from "./check-ids.ts";
-import { faceDistance, type FaceSignature } from "./face-signature.ts";
+import { colorDistance, faceDistance, type FaceSignature, FaceThresholds } from "./face-signature.ts";
 import { offeredSizes, setGridSize } from "./grid-size.ts";
 import { Device, openGame, readBoard } from "./open-game.ts";
 import { learnFaces } from "./solver.ts";
@@ -37,7 +37,7 @@ const SharedFaceShare = 0.05;
  * faces are easy to tell apart is for people and the judge, since screenshots can't settle it.
  */
 function cardsSharingAFace(faces: readonly FaceSignature[]): number {
-  return faces.filter((face, index) => faces.filter((other, position) => position !== index && faceDistance(face, other) <= IdenticalFace).length >= 2).length;
+  return faces.filter((face, index) => faces.filter((other, position) => position !== index && colorDistance(face, other) / FaceThresholds.colors <= IdenticalFace && faceDistance(face, other) <= IdenticalFace).length >= 2).length;
 }
 
 /** Cards that show an image file or an emoji instead of a shape drawn by code. */

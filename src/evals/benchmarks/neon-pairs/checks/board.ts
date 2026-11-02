@@ -1,5 +1,6 @@
 import type { Locator, Page } from "playwright";
 import { decodePng, type FaceSignature, FaceThresholds, hasBackSignature, looksLikeBack, meanDistance, NoFace, regionSignature, rememberBackState, signatureOf } from "./face-signature.ts";
+import { diagnose, DiagnosticKind } from "./diagnostics.ts";
 
 // Playwright page callbacks below run in the browser, which is why the project includes DOM types.
 
@@ -35,17 +36,20 @@ export function markCards(page: Page): Promise<number> {
       let bestScore = 0;
       const scoped: Element[][] = [];
       for (const group of groups.values()) {
-        const counts = new Map<Element, number>();
+        const boards = new Map<Element, boolean>();
         const scopes = new Map<Element, Element[]>();
         for (const element of group) {
           let parent = element.parentElement;
           while (parent?.parentElement) {
-            let count = counts.get(parent);
-            if (count === undefined) {
-              count = group.filter((candidate) => parent?.contains(candidate)).length;
-              counts.set(parent, count);
+            let board = boards.get(parent);
+            if (board === undefined) {
+              const boxes = group.filter((candidate) => parent?.contains(candidate)).map((candidate) => candidate.getBoundingClientRect());
+              const first = boxes[0];
+              // A row can contain sixteen cards. Keep climbing until the scope includes a board.
+              board = boxes.length >= minimum && first !== undefined && boxes.some((box) => Math.abs(box.y - first.y) > first.height / 2) && boxes.some((box) => Math.abs(box.x - first.x) > first.width / 2);
+              boards.set(parent, board);
             }
-            if (count >= minimum) break;
+            if (board) break;
             parent = parent.parentElement;
           }
           if (parent) scopes.set(parent, [...(scopes.get(parent) ?? []), element]);
@@ -109,6 +113,7 @@ export async function waitForFace(page: Page, index: number, back: FaceSignature
     await ensureCard(page, index);
     const png = await card(page, index).screenshot({ animations: "disabled" });
     const current = signatureOf(png);
+    await diagnose(page, DiagnosticKind.face, [current], [back], [index]);
     if (!looksLikeBack(current, back)) {
       pageBacks.get(page)?.activated.add(index);
       await captured?.(png);
@@ -133,7 +138,9 @@ export async function boardLooks(page: Page): Promise<FaceSignature[]> {
     return { boxes, scale: window.devicePixelRatio };
   }, CardAttribute);
   const image = decodePng(await page.screenshot({ fullPage: true, animations: "disabled" }));
-  return layout.boxes.map((box) => regionSignature(image, { x: box.x * layout.scale, y: box.y * layout.scale, width: box.width * layout.scale, height: box.height * layout.scale }));
+  const looks = layout.boxes.map((box) => regionSignature(image, { x: box.x * layout.scale, y: box.y * layout.scale, width: box.width * layout.scale, height: box.height * layout.scale }));
+  await diagnose(page, DiagnosticKind.board, looks, pageBacks.get(page)?.backs ?? []);
+  return looks;
 }
 
 /** The whole board once nothing on it moves any more. */
@@ -163,13 +170,14 @@ export async function waitForBacks(page: Page, indexes: readonly number[], backs
 export async function backsOf(page: Page): Promise<FaceSignature[]> {
   const backs = await stableBoard(page);
   pageBacks.set(page, { backs, activated: new Set() });
+  await diagnose(page, DiagnosticKind.backs, backs, backs);
   return backs;
 }
 
 /** Captures known backs after focus moves, before an input can reveal a face. */
 export async function prepareBacks(page: Page, target: number): Promise<() => Promise<void>> {
   const board = pageBacks.get(page);
-  if (!board) return async () => {};
+  if (!board || board.activated.size === board.backs.length) return async () => {};
   const before = await boardLooks(page);
   const down = board.backs.map((back, index) => !board.activated.has(index) && hasBackSignature(before[index] ?? NoFace, back));
   return async () => {

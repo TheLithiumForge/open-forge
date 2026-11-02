@@ -11,11 +11,13 @@ import { scoreChecks } from "./checks-score.ts";
 import { completeChecks, loadLayer, selection } from "./layer.ts";
 import { takeShots } from "./screenshots.ts";
 import { Device, openGame } from "./open-game.ts";
+import { startDiagnostics } from "./diagnostics.ts";
 
 export interface CheckDependencies { readonly launch: () => Promise<Browser> }
 const dependencies: CheckDependencies = { launch: () => chromium.launch() };
 
 export async function runNeonPairsChecks(input: SuiteCheckInput, tools: CheckDependencies = dependencies): Promise<SuiteCheckOutput> {
+  startDiagnostics(input.shotsFolder);
   const layer = await loadLayer();
   const stack = stackCheck(input.project, input.build.typecheck);
   const checks: CheckOutcome[] = [stack];
