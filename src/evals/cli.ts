@@ -56,6 +56,13 @@ function checkedArgs(args: readonly string[], flags: readonly string[], values: 
   if (operands !== positions) throw new Error("Wrong number of operands. Use --help for an example.");
 }
 
+/** How many attempts may run at once. A plan's own setting applies unless this caps it. */
+function parallelOption(args: readonly string[]): number {
+  const value = Number(option(args, Flag.parallel));
+  if (!Number.isInteger(value) || value < 1) throw new Error("Give --parallel a whole number of at least 1.");
+  return value;
+}
+
 /** Narrows a Layer 4 plan to one of its cases. */
 function planCase<T extends { readonly cases?: readonly string[] }>(config: T, id: string): T {
   if (!config.cases?.includes(id)) throw new Error(`The plan has no case ${JSON.stringify(id)}.`);
@@ -113,8 +120,8 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     }
     case Command.run:
     case Command.qualify: {
-      checkedArgs(args, command === Command.run ? [Flag.development] : [], command === Command.run ? [Flag.plan, Flag.implementers, Flag.judges, Flag.user, Flag.case] : [Flag.plan], 0);
-      const overrides = command === Command.run ? runPresetOptions(args) : {};
+      checkedArgs(args, command === Command.run ? [Flag.development] : [], command === Command.run ? [Flag.plan, Flag.implementers, Flag.judges, Flag.user, Flag.case, Flag.parallel] : [Flag.plan], 0);
+      const overrides = command === Command.run ? { ...runPresetOptions(args), ...(args.includes(Flag.parallel) ? { parallelRuns: parallelOption(args) } : {}) } : {};
       const config = { ...await services.plan(option(args, Flag.plan), command === Command.qualify || args.includes(Flag.development)), ...overrides };
       if (command === Command.run) return services.run(args.includes(Flag.case) ? planCase(config, option(args, Flag.case)) : config, services.print);
       const suites = await Promise.all((config.cases ?? [config.suite]).map((id) => services.suite(id)));
@@ -122,10 +129,10 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       return 0;
     }
     case Command.resume: {
-      checkedArgs(args, [], [], 1);
+      checkedArgs(args, [], [Flag.parallel], 1);
       const [batch] = args;
-      if (batch === undefined) throw new Error(CommandHelp.resume);
-      return (services.resume ?? resumePlan)(batch, services.print);
+      if (batch === undefined || batch.startsWith("--")) throw new Error(CommandHelp.resume);
+      return (services.resume ?? resumePlan)(batch, services.print, args.includes(Flag.parallel) ? parallelOption(args) : undefined);
     }
     case Command.ui: checkedArgs(args, [], [], 0); return services.ui();
     case Command.rejudge: {

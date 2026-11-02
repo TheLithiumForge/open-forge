@@ -11,7 +11,7 @@ import { DocumentCase } from "../materialize/delivery.ts";
 import { evalsRoot } from "../paths.ts";
 
 const FullAttempts = 3;
-const FullParallel = 5;
+const FullParallel = 2;
 const PlanCases = ["greenfield-baseline", DocumentCase.two, DocumentCase.three];
 
 test("the saved check and full plans freeze their models, limits and complete case cells", async () => {

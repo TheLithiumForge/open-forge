@@ -78,16 +78,17 @@ export async function pauseInterruptedBatches(): Promise<void> {
   }
 }
 
-export async function resumeBatch(batchId: string): Promise<void> {
+/** Continues a paused batch. A parallel count overrides the saved one for this resume only, since it changes no attempt. */
+export async function resumeBatch(batchId: string, parallel?: number): Promise<void> {
   if (activeBatch !== null) throw new Error("A batch is already running.");
   const batch = await readBatch(batchId);
   if (batch.reference !== undefined) throw new Error("Start a new reference grading with the reference command.");
   if (batch.legacy) throw new Error("Legacy batches are read only. Start a new batch.");
   assertFrozenExecution(batch, await captureExperiment(batchId, batch.config, await loadSuite(batch.suite), batch.candidateLabel));
-  void executeBatch(batchId);
+  void executeBatch(batchId, parallel);
 }
 
-async function executeBatch(batchId: string): Promise<void> {
+async function executeBatch(batchId: string, parallel?: number): Promise<void> {
   activeBatch = batchId;
   let batch = await readBatch(batchId);
   const setStatus = async (status: BatchRecord["status"]): Promise<void> => {
@@ -128,7 +129,7 @@ async function executeBatch(batchId: string): Promise<void> {
     await setStatus(BatchStatus.running);
     let limited = false;
     // Batches saved before parallel runs existed have no setting, so they run one at a time.
-    await runInParallel(batch.runs, batch.config.parallelRuns || 1, async (runId, index) => {
+    await runInParallel(batch.runs, parallel ?? (batch.config.parallelRuns || 1), async (runId, index) => {
       try { await attempt(runId, index); }
       catch (error) {
         if (!(error instanceof JudgeLimited)) throw error;

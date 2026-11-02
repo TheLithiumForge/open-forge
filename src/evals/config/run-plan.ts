@@ -31,9 +31,9 @@ async function runSinglePlan(config: EvalConfig, report: (text: string) => void)
 }
 
 /** Continues a paused or interrupted batch in this process and waits for it. */
-export async function resumePlan(batchId: string, report: (text: string) => void): Promise<number> {
+export async function resumePlan(batchId: string, report: (text: string) => void, parallel?: number): Promise<number> {
   return followBatch(report, async () => {
-    await resumeBatch(batchId);
+    await resumeBatch(batchId, parallel);
     report(`Resumed batch ${batchId}.`);
     return batchId;
   });

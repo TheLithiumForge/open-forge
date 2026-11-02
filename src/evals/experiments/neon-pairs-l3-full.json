@@ -4,7 +4,7 @@
   "case": "l3-full-spec",
   "setups": ["plain-docs", "linked-agents", "minimal", "essentials", "full-core"],
   "runsPerSetup": 3,
-  "parallelRuns": 5,
+  "parallelRuns": 2,
   "agents": "claude",
   "judges": "claude",
   "simulatedUser": "claude",

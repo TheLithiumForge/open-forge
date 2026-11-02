@@ -75,12 +75,22 @@ test("run --case narrows a multi-case plan to one case and refuses a case the pl
 });
 
 test("resume continues one named batch and needs exactly one", async () => {
-  const fake = fakeServices(), resumed: string[] = [];
-  const services = { ...fake.services, resume: async (batch: string) => { resumed.push(batch); return 0; } };
+  const fake = fakeServices(), resumed: [string, number | undefined][] = [];
+  const services = { ...fake.services, resume: async (batch: string, _print: (text: string) => void, parallel?: number) => { resumed.push([batch, parallel]); return 0; } };
   assert.equal(await runCli([Command.resume, "batch"], services), 0);
-  assert.deepEqual(resumed, ["batch"]);
-  for (const args of [[Command.resume], [Command.resume, "batch", "other"], [Command.resume, "batch", Flag.plan, "fixture.json"]]) await assert.rejects(runCli(args, services));
-  assert.deepEqual(resumed, ["batch"]);
+  assert.equal(await runCli([Command.resume, "batch", Flag.parallel, "2"], services), 0);
+  assert.deepEqual(resumed, [["batch", undefined], ["batch", 2]]);
+  for (const args of [[Command.resume], [Command.resume, "batch", "other"], [Command.resume, "batch", Flag.plan, "fixture.json"], [Command.resume, "batch", Flag.parallel, "0"], [Command.resume, Flag.parallel, "2"]]) await assert.rejects(runCli(args, services));
+  assert.equal(resumed.length, 2);
+});
+
+test("run --parallel caps the plan's parallel attempts and refuses anything but a positive whole number", async () => {
+  const fake = fakeServices(), started: EvalConfig[] = [];
+  const services = { ...fake.services, run: async (config: EvalConfig) => { started.push(config); return 0; } };
+  assert.equal(await runCli([Command.run, Flag.plan, "fixture.json", Flag.parallel, "2"], services), 0);
+  assert.deepEqual(started[0], { ...FixtureConfig, parallelRuns: 2 });
+  for (const value of ["0", "1.5", "two"]) await assert.rejects(runCli([Command.run, Flag.plan, "fixture.json", Flag.parallel, value], services));
+  assert.equal(started.length, 1);
 });
 
 test("unknown role presets and removed rejudge plan flags fail without loading or launching anything", async () => {

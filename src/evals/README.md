@@ -81,7 +81,7 @@ Every command accepts `--help`. Each help text includes an example:
 | `rejudge` | Append judge ballots with optional judge presets | `npm run evals -- rejudge <batch> --judges both` |
 | `export` | Write sanitized finished records | `npm run evals -- export <batch> --out ./eval-export` |
 
-`run --case <id>` runs one case of a Layer 4 plan, so each case can run as its own process. `recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. `rejudge` uses the batch's saved judges unless you pass `--judges`. It accepts a judge preset instead of `--plan`. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
+`run --case <id>` runs one case of a Layer 4 plan, so each case can run as its own process. `--parallel <n>` caps how many attempts `run` and `resume` start at once. The full plans run two at a time, because every attempt spends the signed-in account's own model limits. `recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. `rejudge` uses the batch's saved judges unless you pass `--judges`. It accepts a judge preset instead of `--plan`. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
 
 ## Protocol
 

@@ -4,7 +4,7 @@
   "case": "l2-defined-idea",
   "setups": ["plain-docs", "linked-agents", "minimal", "essentials", "full-core", "spec-in-prompt"],
   "runsPerSetup": 3,
-  "parallelRuns": 5,
+  "parallelRuns": 2,
   "agents": "claude",
   "judges": "claude",
   "simulatedUser": "claude",

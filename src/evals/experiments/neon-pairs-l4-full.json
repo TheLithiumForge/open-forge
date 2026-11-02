@@ -4,7 +4,7 @@
   "cases": ["l4-f01", "l4-r01", "l4-fr01"],
   "setups": ["plain-docs", "linked-agents", "minimal", "essentials", "full-core", "code-only"],
   "runsPerSetup": 3,
-  "parallelRuns": 5,
+  "parallelRuns": 2,
   "agents": "claude",
   "judges": "claude",
   "simulatedUser": "claude",
