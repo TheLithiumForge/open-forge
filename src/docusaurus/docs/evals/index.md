@@ -3,60 +3,80 @@ slug: /evals
 title: Evals
 ---
 # Evals
-Open Forge Evals is a tool that compares the same coding task with and without Open Forge on the same implementer model.
+Open Forge Evals is a tool that gives the same coding task to an AI coding agent under different setups, with and without Open Forge, then grades every result the same way.
 
-For example, Neon Pairs gives each setup the same memory game request, freezes the finished files, then checks and judges those files. You can compare what passed with the time and tokens used.
+For example, Layer 2 asks Claude Code or Codex to build Neon Pairs, a memory game, from a short set of player-facing documents. One run gets the documents with a plain pointer, another gets them through Open Forge's Essentials preset. Browser checks and model judges then grade both games against the same requirements.
+
+## Questions
+
+The evals answer these questions, in this order:
+
+1. Does Open Forge leave an agent at least as good as no setup, on the same model?
+2. Which preset helps most, and what does it cost in tokens? Time is recorded too, but it mostly reflects the provider's speed, so it only compares setups of one model.
+3. How do results change across models and CLI versions?
+
+These are screening results. Every Open Forge CLI stays beta, and nothing here is a claim yet.
 
 ## Layers
 
-Each layer gives the implementer more information and adds checks to the earlier layers:
+Each layer gives the agent more to work from and checks more:
 
-| Layer | Implementer receives | What gets checked |
+| Layer | The agent receives | Setups compared |
 | --- | --- | --- |
-| 1, an idea | One task prompt | Playability and the stated request |
-| 2, a defined idea | A player-facing subset of the spec | Every provided requirement |
-| 3, a full spec | The full spec | Every executable clause, with review results apart |
-| 4, brownfield | Starting code, project rules and a change request | The change and no regressions |
+| 1, an idea | One short prompt | No setup, Minimal, Essentials, Full Core |
+| 2, a defined idea | Player-facing documents, a subset of the full spec | Plain docs, Linked AGENTS.md, Spec in prompt, Minimal, Essentials, Full Core |
+| 3, a full spec | The full Neon Pairs spec | Plain docs, Linked AGENTS.md, Minimal, Essentials, Full Core |
+| 4, brownfield | The reviewed reference game, its spec and a change request | Code only, Plain docs, Linked AGENTS.md, Minimal, Essentials, Full Core |
 
-Layer 2 leaves board codes, snapshots and replay to Layer 3. Layer 4 starts from the reviewed reference solution to the full Layer 3 spec. A Layer 3 model attempt doesn't seed Layer 4.
+Layer 4 has three cases: a feature (`l4-f01`), a repair (`l4-r01`) and both together (`l4-fr01`). Each starts from the reference solution to the full spec, never from an agent's Layer 3 game.
 
 ## Setups
 
-The current comparison uses four setups:
-
-| Setup | Context arrangement |
+| Setup | What the agent gets |
 | --- | --- |
-| No setup | The control without Open Forge |
-| Minimal | The Minimal Open Forge preset |
-| Essentials | The Essentials Open Forge preset |
-| Full Core | The Full Core Open Forge preset |
+| No setup | The prompt alone. The control on Layer 1 |
+| Plain docs | The documents and a neutral pointer to them. The control on later layers |
+| Linked AGENTS.md | A root `AGENTS.md` that links the same documents |
+| Spec in prompt | The same requirements pasted into the prompt |
+| Code only | Layer 4 only: the code, its tests and the request, without the documents |
+| Minimal, Essentials, Full Core | The same documents, installed with that Open Forge preset |
 
-Every attempt gets fresh tool settings and an empty Memory. Frozen inputs and limits stay the same within a comparison. Helpful and Extension testing wait until later.
+The control is the first setup of each plan. The [Results](results.mdx) page compares every other setup with it.
 
-## Models
+## How a run works
 
-The implementer writes the app. The judge reads the saved source and images and answers fixed questions. The simulated user classifies the implementer's questions and returns literal answers from a frozen bank. It gives no coding advice.
+An implementation run is one agent building one setup once. Grading is the checks and judges that score it, and it can run again later on the saved files.
 
-Two implementers and two judges give four pairs. Each implementer produces an attempt once, then both judges read that same attempt. The second judge runs through the judge command, which appends its ballots. This lets you compare the judges on the same work. Saved plans currently use Claude Opus to implement and judge, with Claude Sonnet as the simulated user. Codex records already saved stay in history while they apply.
+1. The runner installs the setup into a fresh project with the pinned Open Forge CLI.
+2. The agent, Claude Code or Codex CLI, works in its own container with the project and its sign-in, and nothing else from your machine.
+3. When the agent asks a question, a simulated user answers from a frozen answer bank in a separate container. It gives no coding advice.
+4. The runner saves the agent's files. A verifier container builds them offline, then runs hidden Playwright checks against the built game.
+5. Judges read the saved code and screenshots in an assessor container. Each answers fixed yes, no or unsure questions in three ballots, citing files and lines.
+6. Everything is saved as versioned records with the CLI, runner, model and grading versions.
 
-To choose role presets and run a saved plan, follow [Run evals](run.md).
+Because grading only reads saved files, a fixed check or a new judge can grade old runs without running the agent again.
 
 ## Grading
 
-Checks test frozen files. Every check returns `pass`, `fail`, `error` or `blocked` with evidence. Coverage is checks passed divided by all applicable checks. A blocked check counts as not passed. A grader error needs another check on the saved files. If unresolved, it counts as not passed and appears in the error count.
+Checks drive the built game in a browser and test behaviour that every correct build must show, such as flipping two cards and matching a pair. Layer 1 checks only what the prompt asks for. Layers 2 and 3 check each requirement the agent was given, and the full spec's board codes make deals repeatable. Layer 4 checks the requested change and that nothing else broke.
 
-The working gate passes only when every working check passes. Stated success passes only when every stated check passes. For Layer 1, `L1-v2` has 6 working checks, 16 stated checks and 3 wishes kept apart. Starting size, remembered size and no sound are wishes. Asking questions belongs to collaboration.
+Every check returns `pass`, `fail`, `error` or `blocked` with evidence:
 
-Judges cast three ballots per frozen yes, no or unsure question. Answers include file and line evidence. Rules, code, wishes and collaboration get separate scores. Unsure ballots stay counted. Human audits cover unsure answers, a registered random sample, split ballots, failed hidden checks and suspicious measurements. Blind human picks measure preference separately from correctness.
+- **Coverage** is checks passed among the applicable checks. A blocked check counts as not passed. A grader error is checked again on the saved files, and an unresolved one shows in the error count.
+- **Working gate** passes when every working check passes. **Stated success** passes when every check of the stated request passes.
+- **Judge yes share** is yes ballots among the judge's ballots for one area: rules, code or wishes. Unsure ballots are counted and shown apart.
 
-Failed attempts and timeouts stay in results. Infrastructure failures can get one replacement under the registered rule. Both attempts stay recorded. The check and judge commands append assessments with their grading versions.
+Two implementers, Claude Opus and Codex Sol, and two judges, Claude Opus and Codex Sol, give four implementer and judge pairs. Each run is implemented once, and both judges read the same saved files, so the judges can be compared on identical work.
 
-You can read coverage, gates, wishes, judge answers and usage in [Results](results.mdx). You can compare CLI versions and the reference data point in [History](history.mdx).
+Failed runs and timeouts stay in results. An infrastructure failure gets one replacement, and both runs stay recorded. A run stopped by a usage limit or a rejected sign-in is redone when the batch resumes.
+
+## Pages
+
+- [Run evals](run.md) installs the tool and runs, follows and grades batches on your machine.
+- [CLI reference](cli.md) lists every command and flag.
+- [Results](results.mdx) shows published, latest, local or downloaded results, with each batch's progress, setup comparisons and every run's evidence.
+- [History](history.mdx) compares CLI versions and the reference data point over time.
 
 ## Limits
 
-These are screening results. Every Open Forge CLI stays beta. Nothing is a claim yet. Current full plans use three runs per setup, and each case runs at most five times per setup, model and tool. These samples can't establish the future evidence requirements for a benefit or non-inferiority.
-
-Whole-game success and the working gate are descriptive results. Intervals describe screening variation. They don't establish a causal benefit. Different benchmark inputs, implementers, judges, tools and grading versions stay in separate comparison groups. Missing versions or reported models keep a batch apart from comparisons across batches.
-
-Missing tokens stay missing. Codex reports no dollar cost. Claude Code's cost is its estimate. Implementation usage comes from one attempt and isn't added again for each judge.
+Full plans run three times per setup, so differences are screening signals. They can't establish a benefit or non-inferiority. Different benchmark inputs, implementers, judges and grading versions stay in separate comparison groups. Missing values stay missing. Codex reports no dollar cost, and Claude Code's cost is its own estimate. Implementation usage comes from one run and isn't added again for each judge.

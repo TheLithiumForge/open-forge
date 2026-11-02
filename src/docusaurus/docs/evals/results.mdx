@@ -3,13 +3,33 @@ title: Results
 hide_table_of_contents: true
 ---
 # Results
-Eval Results is a browser that compares published coding attempts by layer, setup, implementer and judge.
+Eval Results is a browser that compares coding runs by layer, setup, implementer and judge, and shows every run's checks, judgments and saved files.
 
-For example, choose Layer 1 to compare each setup's coverage with its judge answers, then open an attempt to read the checks and evidence. These are screening results. Every CLI stays beta. Nothing is a claim yet.
+For example, choose Layer 3 to see how far each batch has come, then how each setup compares with plain docs on check coverage, judge answers and tokens. Open a run to see its screenshots, its code and every judge answer with the lines it cites. These are screening results. Nothing is a claim yet.
 
-When the results submodule is present, the initial records come from it at build time. Without it, the page starts with no published batches and an unknown data commit. The checked-in schemas let Fetch latest results work in either case. Fetch latest results reads the public repository at one data commit and validates its catalogue, records and references before showing them. A failed fetch keeps the previous data. Loaded gives the copy time for the initial data and the fetch time for refreshed data.
+## Sources
 
-Binary gates use 95% Wilson intervals. Other attempt metrics use 2,000 fixed-seed bootstrap samples and the 2.5th and 97.5th percentiles. Single attempts have no interval. Missing values stay missing. Different grading versions stay apart. Implementation time and tokens appear in each judge pair for comparison and count once per attempt within that pair.
+The buttons above the layers choose where the records come from. Every record is validated against the published schemas before it shows.
+
+- **Published copy** is the results repository at the commit this site was built with.
+- **Fetch latest results** reads the public results repository at its newest commit.
+- **Local runs** appears when you start the site with `npm run evals -- site`. It reads your own runs, including batches still running, and refreshes on demand.
+- **Open a results folder** reads a results repository on your computer, such as an unzipped copy from **Download all results**.
+
+Each batch's **Download** saves its records as one JSON file. **Browse files** opens the batch folder in the results repository.
+
+## Reading a layer
+
+- **Batches** shows each batch's implemented, checked and judged runs. Scores are preliminary until every run is graded.
+- **Compared with the control** shows every setup against the plan's first setup: no setup on Layer 1, plain docs on later layers. Shares differ in points, tokens as a ratio. Tokens are the cost measure. Minutes mostly reflect the provider's speed, so compare them within one model.
+- The **setup table** gives each measure with its 95% interval and how many runs it measured. Binary gates use Wilson intervals. Other measures use 2,000 fixed-seed bootstrap samples. Single runs have no interval.
+- **Runs** opens each run's saved files and grades. Screenshots, the built game, the conversation, the event log and the code open from the current source.
+
+Different grading versions stay apart, missing values stay missing, and implementation time and tokens count once per run.
+
+## Data
+
+The [results repository](https://github.com/TheLithiumForge/open-forge-eval-results) keeps each batch under `versions/<cli-version>/batches/<batch>/`: `experiment.json`, `setups.jsonl`, `runs.jsonl`, `assessments/` and `artifacts.json`, with the evidence files in `evidence/`. `index.json` lists every batch, and the JSON Schemas in `schemas/` define every record.
 
 import Evals from '@site/src/components/evals/Evals'
 

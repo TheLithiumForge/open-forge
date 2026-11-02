@@ -1,36 +1,71 @@
 # Run evals
-Open Forge Evals is a local runner that saves coding attempts and separate check and judge assessments.
+Open Forge Evals is a command-line runner that implements, checks and judges coding runs in Docker containers on your own machine.
 
-For example, a Layer 1 check plan runs Neon Pairs once per setup and implementer. The saved attempts give the local UI and later grading commands their inputs.
+For example, a Layer 2 full plan builds Neon Pairs three times for each of six setups, then checks and judges every game. `npm run evals -- progress` shows how far the batch has come, and `npm run evals -- site` opens the results in this documentation site, including batches still running.
 
 ## Requirements
 
-Run these commands from the repository root. You need:
+Run every command from the Open Forge repository root. You need:
 
 - Node 24 or later and npm.
-- Docker for model attempts and verifier builds.
-- A sign-in or API key for each chosen provider.
+- Docker, running. Agents, checks and judges only ever run in containers.
+- A Claude Code or Codex sign-in for each provider you choose. Runs spend that account's own usage.
 
-Install the pinned eval dependencies with `npm ci --prefix src/evals --cache .npm-cache`. The [evals README](../../../evals/README.md#install) covers provider sign-in and browser installation.
+## Install
+
+```sh
+npm ci --prefix src/evals
+```
+
+```sh
+npm ci --prefix src/docusaurus
+```
+
+The second command is only needed to see results with `site`. To add results to the results repository, also install its tools:
+
+```sh
+npm ci --prefix src/evals/results
+```
+
+Claude Code reads `CLAUDE_CODE_OAUTH_TOKEN` or `ANTHROPIC_API_KEY` from `src/evals/.env.local`. For a subscription token, run:
+
+```sh
+npm exec --prefix src/evals -- claude setup-token
+```
+
+Codex keeps its sign-in in an eval-only folder:
+
+```sh
+npm --prefix src/evals run login:codex
+```
+
+Sign-in values are the only settings outside flags. They stay in `src/evals/.env.local` and the eval-only folder, never in command arguments. Only the chosen provider's sign-in enters each container.
 
 ## First run
 
-Run `npm run evals -- smoke`. It prints `Smoke passed` after mock conversation, build, checks and judging finish. It removes its temporary records. The smoke uses no Docker or models.
+```sh
+npm run evals -- smoke
+```
 
-Before a model run, fill both base-image digests in `src/evals/images/lock.json`. Then run these commands in order:
+`smoke` runs a mock implementation through every stage without Docker or models and prints `Smoke passed`. Then check the machine and build the three images:
 
 ```sh
 npm run evals -- doctor
-npm run evals -- images
-npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1-check.json
-npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json
 ```
 
-`doctor` checks prerequisites without a paid probe or model sign-in. `images` builds the locked images. `qualify` checks generated setups before the scored sample. `run` saves attempts and assessments in the ignored `src/evals/runs/` folder. Check plans run once per setup and implementer. Full plans run three times.
+```sh
+npm run evals -- images
+```
 
-## Model presets
+`doctor` checks Node, Docker, the pinned tools, sign-ins and image digests without spending usage. Every command that calls a provider also refuses to start when its sign-in is missing.
 
-Each flag replaces only its role in the saved plan:
+## Run a batch
+
+A plan in `src/evals/experiments/` names the case, setups and repeats. Role flags replace its models:
+
+```sh
+npm run evals -- run --plan src/evals/experiments/neon-pairs-l2-full.json --implementers codex --judges codex --user codex
+```
 
 | Role | Flag | `claude` | `codex` | `both` |
 | --- | --- | --- | --- | --- |
@@ -38,39 +73,62 @@ Each flag replaces only its role in the saved plan:
 | Judge | `--judges` | Claude `opus`, high | Codex `gpt-6.1-sol`, xhigh | Claude then Codex |
 | Simulated user | `--user` | Claude `sonnet`, medium | Codex `gpt-6-luna`, low | Unavailable |
 
-To produce both implementers and have both judges grade each saved attempt, run:
+`--parallel` caps how many runs go at once. Layer 4 plans hold three cases, and `--case l4-f01` runs one of them as its own batch. Records go to the ignored `src/evals/runs/` folder.
+
+Two machine flags work with any command. `--scratch D:/eval-workspaces` puts run workspaces on a roomier drive. `--check-slots 5` lets five check stages run at once across every eval process. Each check uses about one processor core, so leave room for the agents.
+
+## Follow a batch
 
 ```sh
-npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude
+npm run evals -- progress
 ```
 
-Each judge casts three ballots per question. The second judge reads the saved source and images through the judge command. A resumed batch fills missing judgments without repeating a finished implementation. The batch saves resolved model choices so a later preset change leaves history intact.
+`progress` shows each batch's implemented, checked and judged runs, then each setup's mean check coverage and each judge's yes share. These scores are preliminary until every run is graded.
 
-## Read results
+A batch pauses when a provider hits a usage limit or rejects a sign-in. To continue it:
 
-Run `npm run evals -- ui` to open the local UI at `http://localhost:4318/`. Results has tables, charts, checks, judge answers, questions and screenshots. Play and compare lets you pick between games before revealing their setups. The config editor saves role presets for the next batch started in the app.
+```sh
+npm run evals -- resume <batch>
+```
 
-Run `npm run evals -- summary --batch <id>` to print the implementer and judge matrix. To read published batches, open [Results](results.mdx).
-
-## Reference
-
-Run `npm run evals -- reference --layer 3 --judges both` to grade the tracked Neon Pairs reference. It skips the implementer, then uses the normal build, hidden checks and judge containers. The command accepts Layer 2 or 3. It defaults to Layer 3 and the `claude` judge preset.
-
-Each reference batch records its source commit, content hash, spec version and spec hash. Assessments record grading hashes and judge choices. Run the command again to add a data point. The local UI's Reference over time view and the public [History](history.mdx) keep it separate from model comparisons.
+Finished runs and grades are kept. A run stopped while it was graded is graded from its saved files, without running the agent again. A batch continues only on the runner code it started with, unless `--accept-harness` records the change.
 
 ## Grade again
 
-After a grader error, check the saved files again. These commands append assessments:
+Grading reads saved files, so it can run any time after the implementation:
 
 ```sh
 npm run evals -- check <batch> --rebuild
-npm run evals -- judge <batch> --judges both
 ```
 
-Both commands accept an attempt after the batch. `--rebuild` runs the verifier again. Without `--judges`, judge uses the batch's saved judges. Earlier grades stay recorded with their versions.
+```sh
+npm run evals -- judge <batch> --judges claude --missing
+```
+
+`check` builds the saved project in the verifier again and appends new check results. `judge` appends ballots from the chosen judges. `--missing` judges only runs without a judgment from that judge, so judging can continue after a usage limit. Both accept one run after the batch. Earlier grades stay recorded with their versions.
+
+## See results
+
+```sh
+npm run evals -- site
+```
+
+`site` starts this documentation site on your machine and opens [Results](results.mdx) with your local runs, including batches still running. A data server on the next port serves the runs to that page only. `--port` moves both, and `--repository src/evals/results` shows a results repository instead.
 
 ## Add results
 
-Run `npm run evals -- results add <batch>` to add a finished batch to the results repository in `src/evals/results`. It copies the records and evidence, including agent code, the built game, screenshots and conversations. Adding a batch again replaces it. The command stops if evidence holds a sign-in, a machine path or your user name, and it validates the whole repository afterwards. Install the repository's tools once with `npm ci --prefix src/evals/results`. Publishing the repository is a separate maintainer decision.
+```sh
+npm run evals -- results add <batch>
+```
 
-Back to [Evals](index.md).
+`results add` copies a finished batch's records and evidence into the results repository in `src/evals/results`: agent code without installed packages, the built game, screenshots, conversations and event logs. Adding a batch again replaces it. The command stops if evidence holds a sign-in, a machine path or your user name, and it validates the whole repository afterwards. Publishing the repository is a separate maintainer decision.
+
+## Reference
+
+```sh
+npm run evals -- reference --layer 3 --judges both
+```
+
+`reference` grades the tracked Neon Pairs reference solution through the same build, checks and judges, without an agent. Each reference batch is a data point in [History](history.mdx).
+
+Every command and flag is in the [CLI reference](cli.md). Back to [Evals](index.md).

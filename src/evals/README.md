@@ -102,7 +102,7 @@ The batch freezes the Git-tracked working files from `benchmarks/neon-pairs/refe
 
 Run the command again to add a new batch. To grade its saved files again, use `check` or `judge`. These commands append assessments and record the spec used for that grading.
 
-`npm run evals -- summary` shows reference coverage and judge scores over time. Add `--batch <id>` to read one batch. The web UI's "Reference over time" view shows the same history. Matching reference, spec and grading versions share a group, with each assessment's time and reference commit shown in its row. Changed hashes or judge models form separate groups. Reference scores stay out of model setup comparisons. The results export includes their records and assessments.
+`npm run evals -- summary` shows reference coverage and judge scores over time. Add `--batch <id>` to read one batch. The docs site's History page shows the same history. Matching reference, spec and grading versions share a group, with each assessment's time and reference commit shown in its row. Changed hashes or judge models form separate groups. Reference scores stay out of model setup comparisons. `results add` includes their records and assessments.
 
 ## Plans
 
@@ -134,20 +134,15 @@ The switch shows the matching preset name. If the rows match none, it shows "Cus
 
 Published batches appear in the main documentation site under [Evals](https://thelithiumforge.github.io/open-forge/docs/evals). The [run guide](https://thelithiumforge.github.io/open-forge/docs/evals/run) covers commands and presets. The [results browser](https://thelithiumforge.github.io/open-forge/docs/evals/results) shows checks and judge pairs. The [history browser](https://thelithiumforge.github.io/open-forge/docs/evals/history) compares CLI versions and reference assessments. Fetch latest results loads validated records from the public results repository without a docs rebuild.
 
-Attempts stay in the ignored `src/evals/runs/` folder until you export them. Open the UI with `npm run evals -- ui`. It serves `http://localhost:4318/`.
-
-The UI has these views:
-
-- Play and compare - play games A and B on separate origins and pick one before revealing the setups.
-- Results - read tables, charts, checks, judge answers, questions and screenshots for each tool and model.
+Runs stay in the ignored `src/evals/runs/` folder until `npm run evals -- results add <batch>` adds them to the results repository. To see them before that, including batches still running, run `npm run evals -- site`. It starts the docs site with a data server on the next port and opens the Results page with your local runs. `npm run evals -- progress` prints each batch's completion and preliminary scores in the terminal.
 
 To print the same matrix from saved records, run `npm run evals -- summary --batch <id>`. Results group each implementer and judge apart, with every setup inside its pair. Different grading versions and reported models stay in separate groups. Each judge keeps its latest assessment. The judge difference is the second judge's score minus the first judge's score on matching attempts and grading versions. Missing judgments, errors and comparisons with different grading versions are counted apart.
 
 Implementation usage appears in each pair for comparison. It comes from one attempt and isn't added again for each judge.
 
-The pinned `mock` provider still hands in the reference game for harness development. Editing intent through the UI writes `intent.local.json` and changes the input fingerprint. A batch keeps its frozen bank even if a later edit changes that file.
+The pinned `mock` provider still hands in the reference game for harness development. An edited `intent.local.json` changes the input fingerprint. A batch keeps its frozen bank even if a later edit changes that file.
 
-The [Results](../../.agents/memory/crystallized/documents/evals/results.md) document explains saved records and export. [Grading](../../.agents/memory/crystallized/documents/evals/grading.md) explains checks and ballots. [Running Evals](../../.agents/memory/crystallized/documents/evals/running-evals.md) covers sign-in and recovery.
+The [Results](../../.agents/memory/crystallized/documents/evals/results.md) document explains saved records and the results repository. [Grading](../../.agents/memory/crystallized/documents/evals/grading.md) explains checks and ballots. [Running Evals](../../.agents/memory/crystallized/documents/evals/running-evals.md) covers sign-in and recovery.
 
 ## Limits
 

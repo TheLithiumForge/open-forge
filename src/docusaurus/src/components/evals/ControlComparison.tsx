@@ -3,10 +3,11 @@ import type { Summary } from "./data/summaries.ts";
 import { number, percent } from "./data/format.ts";
 
 type Measure = "coverage" | "rules" | "code" | "minutes" | "tokens";
-// Shares compare in points, and usage compares as a ratio to the control.
+// Shares compare in points, and usage compares as a ratio to the control. Tokens measure the agent's effort. Time mostly
+// reflects the provider's speed, so it comes last and compares setups within one model only.
 const Measures: readonly { readonly key: Measure; readonly title: string; readonly share: boolean }[] = [
   { key: "coverage", title: "Check coverage", share: true }, { key: "rules", title: "Judge rules", share: true },
-  { key: "code", title: "Judge code", share: true }, { key: "minutes", title: "Minutes", share: false }, { key: "tokens", title: "Tokens", share: false },
+  { key: "code", title: "Judge code", share: true }, { key: "tokens", title: "Tokens", share: false }, { key: "minutes", title: "Minutes, same model only", share: false },
 ];
 
 function difference(value: Interval, control: Interval, share: boolean): string {
@@ -27,7 +28,7 @@ export function ControlComparison({ rows, setups }: { readonly rows: readonly Su
   if (control === undefined || rows.length < 2) return null;
   return <div className="eval-control">
     <h4>Compared with the control, {controlName}</h4>
-    <p>Means over this batch's runs. Small samples make these differences screening signals, not claims. The intervals are in the table below.</p>
+    <p>Means over this batch's runs. Tokens are the cost measure. Minutes mostly reflect the provider's speed, so compare them between setups of one model, not between models. Small samples make these differences screening signals, not claims. The intervals are in the table below.</p>
     <div className="eval-scroll" tabIndex={0} role="region" aria-label={`Setups compared with ${controlName}`}><table>
       <thead><tr><th>Setup</th><th>Runs</th>{Measures.map((measure) => <th key={measure.key}>{measure.title}</th>)}</tr></thead>
       <tbody>{setups.flatMap((setup) => {
