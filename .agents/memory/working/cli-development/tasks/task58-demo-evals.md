@@ -151,6 +151,16 @@ The maintainer then decided that judging must be repeatable by anyone: headline 
 
 **2026-11-01:** [Eval Council Round 4](../../../emerging/analysis/eval-council-round4.md) reviewed both eval efforts, and the maintainer answered its open points: build on the pilot's containers, claim nothing yet, keep a simulated user and a judge at every layer, and grade as deterministically as each layer allows. Council round 5 wrote the [Eval Product Proposal](../../../emerging/analysis/eval-product-proposal.md), and the maintainer approved it the same day. The product moves to `src/evals/`, runs in containers and publishes results to a public results repository. Each case runs five times per setup. The work goes layer by layer: the product with Layer 1 tested end to end, then the documents for Layers 2, 3 and 4. A council builds the reference solution that seeds Layer 4.
 
+**2026-11-02:** the maintainer kept the custom runner and asked to justify it by integrating everything. Sol implementations and judges run freely. Claude implementations wait for usage. Their direction, as a plan:
+
+1. **Data.** The results repository holds each batch's records and evidence in git: code, built game, screenshots and transcripts. It replaces release assets and stays replaceable. One `results add <batch>` command replaces export and staging. Records stay typed, versioned JSONL with generated JSON Schemas and record CLI, runner and grading versions. The main repository commits only code, docs, schemas and the submodule pin.
+2. **CLI.** Grading becomes its own `check` and `judge` commands on any saved batch, run in the verifier and assessor containers. `progress` shows completion and preliminary scores. `resume` regrades runs stopped during grading instead of implementing them again. Every setting is a flag, with one generated reference. Secrets stay in `.env.local`.
+3. **One UI.** The Docusaurus Evals section replaces the local app. It reads published data, local data when started by the CLI, or a downloaded bundle. It shows progress, setup tables, charts, every check and judge ballot per run, and raw downloads.
+4. **Docs.** How the evals work, which exist, what results mean and how to run them.
+5. **Results.** Grade and add finished batches, check the pages with real data, then hand the repository to the maintainer to publish.
+
+Terms: an implementation run is one agent building one setup once. Grading is checks and judging, run any time after on saved files. A full run is both.
+
 **Later:** testing Extensions, starting with the Helpful setup. [Task 90](task90-extensions-install-their-routes.md) covers Extensions that need routes a preset left out, and the [Plan-Ahead Skill](../../../emerging/ideas/plan-ahead-skill.md) idea covers Guidance that doesn't change how agents ask.
 
 **Related:** the Emerging idea on
