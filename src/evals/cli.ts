@@ -4,7 +4,7 @@ import { loadPlan } from "./config/plans.ts";
 import { configuredDoctor } from "./config/doctor.ts";
 import { smokeAttempt } from "./config/smoke.ts";
 import { qualifySetups } from "./config/qualify.ts";
-import { runPlan } from "./config/run-plan.ts";
+import { resumePlan, runPlan } from "./config/run-plan.ts";
 import { CliScripts, launchNode, launchUi } from "./config/launch.ts";
 import { loadLocalEnv } from "./config/auth.ts";
 import { loadSuite } from "./benchmarks/suite.ts";
@@ -28,6 +28,7 @@ export interface CliServices {
   readonly plan: typeof loadPlan;
   readonly suite: typeof loadSuite;
   readonly run: typeof runPlan;
+  readonly resume?: typeof resumePlan;
   readonly ui: typeof launchUi;
   readonly launch: typeof launchNode;
   readonly export: (batch: string, target: string) => Promise<string>;
@@ -53,6 +54,12 @@ function checkedArgs(args: readonly string[], flags: readonly string[], values: 
     else operands += 1;
   }
   if (operands !== positions) throw new Error("Wrong number of operands. Use --help for an example.");
+}
+
+/** Narrows a Layer 4 plan to one of its cases. */
+function planCase<T extends { readonly cases?: readonly string[] }>(config: T, id: string): T {
+  if (!config.cases?.includes(id)) throw new Error(`The plan has no case ${JSON.stringify(id)}.`);
+  return { ...config, cases: [id] };
 }
 
 export async function runCli(argv: readonly string[], services: CliServices = defaults): Promise<number> {
@@ -106,13 +113,19 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     }
     case Command.run:
     case Command.qualify: {
-      checkedArgs(args, command === Command.run ? [Flag.development] : [], command === Command.run ? [Flag.plan, Flag.implementers, Flag.judges, Flag.user] : [Flag.plan], 0);
+      checkedArgs(args, command === Command.run ? [Flag.development] : [], command === Command.run ? [Flag.plan, Flag.implementers, Flag.judges, Flag.user, Flag.case] : [Flag.plan], 0);
       const overrides = command === Command.run ? runPresetOptions(args) : {};
       const config = { ...await services.plan(option(args, Flag.plan), command === Command.qualify || args.includes(Flag.development)), ...overrides };
-      if (command === Command.run) return services.run(config, services.print);
+      if (command === Command.run) return services.run(args.includes(Flag.case) ? planCase(config, option(args, Flag.case)) : config, services.print);
       const suites = await Promise.all((config.cases ?? [config.suite]).map((id) => services.suite(id)));
       for (const suite of suites) services.print(JSON.stringify(await services.qualify(suite, config.setups), null, 2));
       return 0;
+    }
+    case Command.resume: {
+      checkedArgs(args, [], [], 1);
+      const [batch] = args;
+      if (batch === undefined) throw new Error(CommandHelp.resume);
+      return (services.resume ?? resumePlan)(batch, services.print);
     }
     case Command.ui: checkedArgs(args, [], [], 0); return services.ui();
     case Command.rejudge: {

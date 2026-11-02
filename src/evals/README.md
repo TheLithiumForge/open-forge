@@ -73,6 +73,7 @@ Every command accepts `--help`. Each help text includes an example:
 | `smoke` | Run the mock attempt | `npm run evals -- smoke` |
 | `qualify` | Check generated setups | `npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1-check.json` |
 | `run` | Run a saved plan with optional role presets | `npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude` |
+| `resume` | Continue a batch that paused at a usage limit | `npm run evals -- resume <batch>` |
 | `reference` | Grade the tracked reference | `npm run evals -- reference --layer 3 --judges both` |
 | `summary` | Print the implementer and judge matrix | `npm run evals -- summary --batch <id>` |
 | `ui` | Open the local results app | `npm run evals -- ui` |
@@ -80,7 +81,7 @@ Every command accepts `--help`. Each help text includes an example:
 | `rejudge` | Append judge ballots with optional judge presets | `npm run evals -- rejudge <batch> --judges both` |
 | `export` | Write sanitized finished records | `npm run evals -- export <batch> --out ./eval-export` |
 
-`recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. `rejudge` uses the batch's saved judges unless you pass `--judges`. It accepts a judge preset instead of `--plan`. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
+`run --case <id>` runs one case of a Layer 4 plan, so each case can run as its own process. `recheck` and `rejudge` accept an optional attempt after the batch. `--rebuild` runs the saved project through the verifier again. `rejudge` uses the batch's saved judges unless you pass `--judges`. It accepts a judge preset instead of `--plan`. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
 
 ## Protocol
 

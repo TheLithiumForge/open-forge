@@ -63,6 +63,26 @@ test("run preset flags override only the requested plan roles before any impleme
   assert.deepEqual(started[1], { ...FixtureConfig, simulatedUser: UserPresets[PresetName.codex] });
 });
 
+test("run --case narrows a multi-case plan to one case and refuses a case the plan lacks", async () => {
+  const fake = fakeServices(), started: EvalConfig[] = [];
+  const cases = [FixtureSuite.id, `${FixtureSuite.id}-other`];
+  const services = { ...fake.services, plan: async () => ({ ...FixtureConfig, cases }), run: async (config: EvalConfig) => { started.push(config); return 0; } };
+  assert.equal(await runCli([Command.run, Flag.plan, "fixture.json", Flag.case, FixtureSuite.id], services), 0);
+  assert.deepEqual(started[0]?.cases, [FixtureSuite.id]);
+  await assert.rejects(runCli([Command.run, Flag.plan, "fixture.json", Flag.case, "unknown"], services));
+  await assert.rejects(runCli([Command.run, Flag.plan, "fixture.json", Flag.case, FixtureSuite.id], { ...services, plan: async () => FixtureConfig }));
+  assert.equal(started.length, 1);
+});
+
+test("resume continues one named batch and needs exactly one", async () => {
+  const fake = fakeServices(), resumed: string[] = [];
+  const services = { ...fake.services, resume: async (batch: string) => { resumed.push(batch); return 0; } };
+  assert.equal(await runCli([Command.resume, "batch"], services), 0);
+  assert.deepEqual(resumed, ["batch"]);
+  for (const args of [[Command.resume], [Command.resume, "batch", "other"], [Command.resume, "batch", Flag.plan, "fixture.json"]]) await assert.rejects(runCli(args, services));
+  assert.deepEqual(resumed, ["batch"]);
+});
+
 test("unknown role presets and removed rejudge plan flags fail without loading or launching anything", async () => {
   const fake = fakeServices();
   for (const flag of [Flag.implementers, Flag.judges, Flag.user]) await assert.rejects(runCli([Command.run, Flag.plan, "fixture.json", flag, "unknown"], fake.services));
