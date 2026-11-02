@@ -57,7 +57,7 @@ export async function writePreviewFixture(): Promise<void> {
   for (const batch of batches)
     await writeBatch(join(fixtureRoot, `versions/${batch.experiment.cliVersion}/batches/${batch.experiment.id}`), batch);
   await writeFile(join(fixtureRoot, "index.json"), JSON.stringify(catalogue(batches), null, 2));
-  console.log("Wrote authored preview data to .evals-fixture. Set RESULTS_RECORDS=.evals-fixture for a fixture build.");
+  console.log("Wrote authored preview data to .evals-fixture. Show it with npm run evals -- site --repository src/docusaurus/.evals-fixture from the repository root.");
 }
 if (import.meta.main)
   await writePreviewFixture();

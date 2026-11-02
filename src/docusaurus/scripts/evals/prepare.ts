@@ -2,7 +2,7 @@ import { copyFile, mkdir, readFile, readdir, access } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve } from "node:path";
 const site = fileURLToPath(new URL("../../", import.meta.url));
-export const resultsRoot = resolve(site, process.env["RESULTS_REPOSITORY"] ?? "../evals/results");
+export const resultsRoot = resolve(site, "../evals/results");
 export const recordCopyRoot = join(site, "src/components/evals/records");
 const modules = ["records.types.ts", "catalogue.ts", "references.ts", "validate-data.ts", "test-fixtures.ts", "schema-values.ts"] as const;
 export async function hasResultsRepository(root = resultsRoot): Promise<boolean> {

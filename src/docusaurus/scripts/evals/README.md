@@ -7,7 +7,7 @@ For example, an empty results submodule builds pages with an empty state. A fixt
 
 Run the commands below from `src/docusaurus/`. Install dependencies with `npm ci --cache .npm-cache`.
 
-The default data store is the `src/evals/results/` submodule. If it lives elsewhere, set `RESULTS_REPOSITORY` to that repository folder. With no submodule, the site uses its checked-in record code and schemas, shows an empty state and reports an unknown data commit. Fetch latest results still validates records with that copy.
+The data store is the `src/evals/results/` submodule. With no submodule, the site uses its checked-in record code and schemas, shows an empty state and reports an unknown data commit. Fetch latest results still validates records with that copy.
 
 ## Build
 
@@ -21,6 +21,6 @@ The plugin reads and validates the catalogue and every record at build time. It 
 
 Run `npm run evals:fixture` to write four authored batches into the ignored `.evals-fixture/` folder. They cover two implementers, two judges, four setups, two CLI versions and the reference trend. Some token counts are missing. Judge evidence includes HTML-looking text to check that it displays as text.
 
-Set `RESULTS_RECORDS=.evals-fixture`, then run `npm run build` and `npm run serve -- --port 4319`. The data label marks fixture records. The schemas and validation code come from the checked-in record copy.
+From the repository root, run `npm run evals -- site --repository src/docusaurus/.evals-fixture`. It starts the docs site and opens the Results page reading the fixture through its local data server. The schemas and validation code come from the checked-in record copy. Keep `.evals-fixture/` out of published records. Stop the site with Ctrl+C when you finish.
 
-Unset `RESULTS_RECORDS` to build from the data store again. To test a checkout without submodules, set `RESULTS_REPOSITORY` to a folder that doesn't exist, then run typecheck, tests and build. Keep `.evals-fixture/` out of published records. Stop the preview server when you finish.
+To see local runs, including batches still running, run `npm run evals -- site` instead.

@@ -2,6 +2,7 @@ import type { ResultGroup } from "./data/views.ts";
 import { Bars } from "./Charts.tsx";
 import { Metric } from "./Metric.tsx";
 import { SetupTable } from "./SetupTable.tsx";
+import { ControlComparison } from "./ControlComparison.tsx";
 export function ResultPair({ group }: {
   readonly group: ResultGroup;
 }) {
@@ -17,6 +18,7 @@ export function ResultPair({ group }: {
     <h3>{first.tool} {first.model} with {first.judge}</h3>
     <p>CLI {first.version}. Batch <code>{first.batchId}</code>. {first.scoring ? "Container attempts" : "Not for scoring. Local isolation"}.</p>
     <details><summary>Comparison and grading versions</summary><p className="eval-key">{first.scope}</p><p className="eval-key">{first.grading}</p></details>
+    <ControlComparison rows={rows} setups={batch.experiment.config.setups} />
     <SetupTable rows={rows} setups={batch.experiment.config.setups} />
     <details><summary>Usage and picks</summary><div className="eval-scroll" tabIndex={0} role="region" aria-label="Usage and picks"><table><thead><tr>{["Setup", "Tool calls", "Failed calls", "Peak context", "Blind picks", "Revealed picks", "Unknown reveal"].map((name) => <th key={name}>{name}</th>)}</tr></thead>
       <tbody>{rows.map((row) => <tr key={row.setup}><th scope="row">{row.setup}</th><td><Metric value={row.tools} share={false} /></td><td><Metric value={row.failedTools} share={false} /></td><td><Metric value={row.context} share={false} /></td><td><Metric value={row.picks} /></td><td><Metric value={row.revealedPicks} /></td><td>{row.unknownPicks}</td></tr>)}</tbody>

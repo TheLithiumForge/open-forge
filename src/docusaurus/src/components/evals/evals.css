@@ -65,3 +65,5 @@
 .evals .eval-shots a { display: flex; flex-direction: column; gap: .25rem; font-size: .75rem; overflow-wrap: anywhere; }
 .evals .eval-shots img { width: 100%; height: 9rem; object-fit: contain; border: 1px solid var(--ifm-color-emphasis-300); border-radius: var(--ifm-global-radius); background: var(--ifm-background-surface-color); }
 .evals .eval-files { max-height: 20rem; overflow-y: auto; font-size: .85rem; }
+.evals .eval-control h4 { margin-top: 1rem; }
+.evals .eval-control-row > * { background: var(--ifm-color-emphasis-100); }

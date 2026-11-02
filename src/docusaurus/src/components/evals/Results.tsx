@@ -18,7 +18,9 @@ export function Results({ batches, layer }: {
   const pairs = pairOptions(groups.flatMap((group) => group.rows));
   const [chosenPair, choosePair] = useState("");
   const [chosenGroup, chooseGroup] = useState("");
-  const pair = pairs.find((item) => item.key === chosenPair) ?? pairs[0];
+  // Without a choice, show the implementer and judge pair with the most runs.
+  const runCount = (key: string) => groups.flatMap((group) => group.rows).filter((row) => pairKey(row) === key).reduce((sum, row) => sum + row.runs, 0);
+  const pair = pairs.find((item) => item.key === chosenPair) ?? [...pairs].sort((a, b) => runCount(b.key) - runCount(a.key))[0];
   const candidates = groups.filter((group) => group.rows.some((row) => pairKey(row) === pair?.key));
   const active = candidates.find((group) => group.key === chosenGroup) ?? candidates[0];
   const row = active?.rows[0];

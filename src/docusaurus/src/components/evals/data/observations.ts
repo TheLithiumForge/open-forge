@@ -32,6 +32,9 @@ export function observations(batch: Batch, includeReference = false): AssessedRu
     for (const judge of ballots.filter((item) => !checks.some((check) => checkKey(check) === checkKey(item)))) {
       views.push({ ...latestRun({ ...run, functionalResult: null }, [judge]), judgeChoice: judge.requestedModel });
     }
+    // A run still waiting or working has nothing to compare yet. Published batches are finished, so this only trims local views.
+    if (views.length === 0 && run.finishedAt === null)
+      return [];
     if (views.length === 0)
       for (const choice of judges(batch))
         views.push({ ...latestRun(run, []), judgeChoice: choice });
