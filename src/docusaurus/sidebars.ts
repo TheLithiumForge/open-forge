@@ -71,7 +71,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Evals",
       link: { type: "doc", id: "evals/index" },
-      items: ["evals/run", "evals/results", "evals/history"],
+      items: ["evals/run", "evals/cli", "evals/results", "evals/history"],
     },
     {
       type: "category",

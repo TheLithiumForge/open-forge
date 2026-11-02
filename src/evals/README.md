@@ -64,40 +64,9 @@ npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json
 
 ## Commands
 
-Every command accepts `--help`. Each help text includes an example:
+The [CLI reference](../docusaurus/docs/evals/cli.md) lists every command and flag with an example. It is generated from the CLI's own help, and `npm run docs:cli --prefix src/evals` writes it again after a help change. Every setting is a flag. Secrets are the only exception: they stay in `.env.local`.
 
-| Command | Job | Example |
-| --- | --- | --- |
-| `doctor` | Check prerequisites | `npm run evals -- doctor` |
-| `images` | Build the three locked images | `npm run evals -- images` |
-| `smoke` | Run the mock attempt | `npm run evals -- smoke` |
-| `qualify` | Check generated setups | `npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1-check.json` |
-| `run` | Run a saved plan with optional role presets | `npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude` |
-| `resume` | Continue a batch that paused or stopped. Runs stopped during grading are graded from their saved files | `npm run evals -- resume <batch>` |
-| `progress` | Show each batch's completion and preliminary scores per setup | `npm run evals -- progress <batch>` |
-| `reference` | Grade the tracked reference | `npm run evals -- reference --layer 3 --judges both` |
-| `summary` | Print the implementer and judge matrix | `npm run evals -- summary --batch <id>` |
-| `ui` | Open the local results app | `npm run evals -- ui` |
-| `check` | Check saved runs again in the verifier | `npm run evals -- check <batch> --rebuild` |
-| `judge` | Judge saved runs, with optional judge presets | `npm run evals -- judge <batch> --judges claude --missing` |
-| `results add` | Add a finished batch and its evidence to the results repository | `npm run evals -- results add <batch>` |
-
-Every setting is a flag. Secrets are the only exception: they stay in `.env.local`.
-
-| Flag | Commands | Effect |
-| --- | --- | --- |
-| `--implementers`, `--judges`, `--user` | `run`, `judge` takes `--judges` | Replace that role with a preset |
-| `--case <id>` | `run` | Run one case of a Layer 4 plan, so each case can run as its own process |
-| `--parallel <n>` | `run`, `resume` | How many attempts start at once. The full plans run two, because every attempt spends the signed-in account's own model limits |
-| `--accept-harness` | `resume` | Continue a batch on changed runner code and list the change in the batch record. Changed inputs, checks, rubric, tooling or models still need a new batch |
-| `--missing` | `judge` | Judge only runs without a judgment from that judge, counting one that ended in an error as missing |
-| `--rebuild` | `check` | Build the saved project again before checking it |
-| `--diagnostics` | `check` | Save Layer 1 card crops and look comparisons beside the check evidence |
-| `--port <n>`, `--no-browser` | `ui` | Serve on another port, or without opening a browser |
-| `--scratch <folder>` | any command | Put attempt workspaces on a roomier drive, outside any Git repository |
-| `--check-slots <n>` | any command | How many check stages run at once across every eval process on this machine. 1 by default, because browser checks are timed |
-
-A batch resumes only on the runner code it started with, so every attempt in it ran the same harness, unless `--accept-harness` records the change. Check stages share machine-wide slots, so timed browser checks don't run past their limit while many agents work.
+A batch resumes only on the runner code it started with, so every run in it used the same harness, unless `--accept-harness` records the change. Check stages share machine-wide slots, so timed browser checks don't run past their limit while many agents work.
 
 `check` and `judge` accept an optional run after the batch. `judge` uses the batch's saved judges unless you pass `--judges`. Checks and ballots append assessments instead of replacing earlier grades. `results add` replaces an earlier copy of the batch in the results repository.
 

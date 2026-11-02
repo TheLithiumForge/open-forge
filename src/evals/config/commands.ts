@@ -1,5 +1,5 @@
 import { ImplementerPresets, JudgePresets, UserPresets } from "./presets.ts";
-import { MachineHelp } from "./machine-options.ts";
+import { MachineFlag, MachineHelp } from "./machine-options.ts";
 
 export const Command = { doctor: "doctor", images: "images", smoke: "smoke", qualify: "qualify", validateCase: "validate-case", run: "run", resume: "resume", progress: "progress", reference: "reference", summary: "summary", ui: "ui", check: "check", judge: "judge", results: "results", help: "help" } as const;
 export type Command = (typeof Command)[keyof typeof Command];
@@ -9,11 +9,11 @@ export const CommandHelp = {
   reference: "Grade the tracked Neon Pairs reference without an agent. Defaults to --layer 3 --judges claude. Example: npm run evals -- reference --layer 3 --judges both",
   doctor: "Check Docker, Node, pinned tools, sign-ins and image digests. Example: npm run evals -- doctor",
   images: "Build the three images from locked digests. Example: npm run evals -- images",
-  smoke: "Run a mock attempt through all stages and saved records, without Docker or models. Example: npm run evals -- smoke",
+  smoke: "Run a mock implementation run through every stage and saved records, without Docker or models. Example: npm run evals -- smoke",
   qualify: "Check fresh setup files and the pinned Open Forge version without models. Example: npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1.json",
   [Command.validateCase]: "Validate a Layer 4 starting project and solution in verifiers without models. Examples: npm run evals -- validate-case --case l4-f01 | npm run evals -- validate-case --all --plan src/evals/experiments/neon-pairs-l4-check.json",
-  run: `Run a saved plan. --implementers: ${Object.keys(ImplementerPresets).join(", ")}. --judges: ${Object.keys(JudgePresets).join(", ")}. --user: ${Object.keys(UserPresets).join(", ")}. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --parallel caps how many attempts run at once. Local isolation needs --development. Example: npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude`,
-  resume: "Continue a batch that paused at a usage limit or a rejected sign-in, or stopped early. Finished attempts and judgments are kept. --parallel caps how many attempts run at once. --accept-harness continues on changed runner code and records it in the batch, while changed inputs, checks, rubric, tooling or models still need a new batch. Example: npm run evals -- resume <batch> --parallel 2 --accept-harness",
+  run: `Run a saved plan. --implementers: ${Object.keys(ImplementerPresets).join(", ")}. --judges: ${Object.keys(JudgePresets).join(", ")}. --user: ${Object.keys(UserPresets).join(", ")}. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --parallel caps how many runs go at once. Local isolation needs --development. Example: npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude`,
+  resume: "Continue a batch that paused at a usage limit or a rejected sign-in, or stopped early. Finished runs and judgments are kept, and a run stopped while it was graded is graded from its saved files. --parallel caps how many runs go at once. --accept-harness continues on changed runner code and records it in the batch, while changed inputs, checks, rubric, tooling or models still need a new batch. Example: npm run evals -- resume <batch> --parallel 2 --accept-harness",
   progress: "Show how far each batch has come: implemented, checked and judged runs, then each setup's mean check coverage and each judge's yes share. These are preliminary scores while a batch runs. Names batches, or shows every model batch. Example: npm run evals -- progress <batch> <batch>",
   summary: "Print reference history, or implementer and judge pairs for --batch. Example: npm run evals -- summary --batch <id>",
   ui: "Build and open the local results app. --port picks its port, 4318 by default, and --no-browser serves it without opening a browser. Example: npm run evals -- ui --port 4318 --no-browser",
@@ -46,3 +46,28 @@ export function commandHelp(command?: string): string {
   return found === undefined ? [...Object.entries(CommandHelp).map(([name, text]) => `${name} - ${text}`), `Machine flags for any command - ${MachineHelp}`].join("\n") : CommandHelp[found];
 }
 
+
+export interface FlagDoc { readonly flag: string; readonly commands: readonly Command[] | "any"; readonly effect: string }
+/** What each flag does and which commands take it. The CLI reference page is generated from this and CommandHelp. */
+export const FlagHelp: readonly FlagDoc[] = [
+  { flag: `${Flag.help}`, commands: "any", effect: "Show the command's help and example without running it" },
+  { flag: `${Flag.plan} <file>`, commands: [Command.run, Command.qualify, Command.validateCase], effect: "The saved plan to run or check" },
+  { flag: `${Flag.implementers} <preset>`, commands: [Command.run], effect: `Replace the plan's implementers with ${Object.keys(ImplementerPresets).join(", ")}` },
+  { flag: `${Flag.judges} <preset>`, commands: [Command.run, Command.judge, Command.reference], effect: `Replace the judges with ${Object.keys(JudgePresets).join(", ")}` },
+  { flag: `${Flag.user} <preset>`, commands: [Command.run], effect: `Replace the simulated user with ${Object.keys(UserPresets).join(", ")}` },
+  { flag: `${Flag.case} <id>`, commands: [Command.run, Command.validateCase], effect: "Run or validate one Layer 4 case, so each case can run as its own process" },
+  { flag: Flag.all, commands: [Command.validateCase], effect: "Validate every case of the plan" },
+  { flag: `${Flag.layer} <n>`, commands: [Command.reference], effect: "Grade the reference against Layer 2 or 3" },
+  { flag: `${Flag.parallel} <n>`, commands: [Command.run, Command.resume], effect: "How many runs go at once. The full plans run two, because every run spends the signed-in account's own model limits" },
+  { flag: Flag.acceptHarness, commands: [Command.resume], effect: "Continue a batch on changed runner code and list the change in the batch record. Changed inputs, checks, rubric, tooling or models still need a new batch" },
+  { flag: Flag.development, commands: [Command.run, Command.qualify], effect: "Allow local isolation, which is never fit for scoring" },
+  { flag: Flag.rebuild, commands: [Command.check], effect: "Build the saved project again before checking it" },
+  { flag: Flag.diagnostics, commands: [Command.check], effect: "Save Layer 1 card crops and look comparisons beside the check evidence" },
+  { flag: Flag.missing, commands: [Command.judge], effect: "Judge only runs without a judgment from that judge, counting one that ended in an error as missing" },
+  { flag: `${Flag.batch} <id>`, commands: [Command.summary], effect: "The batch to summarize" },
+  { flag: `${Flag.repository} <folder>`, commands: [Command.results], effect: "Add to another results repository than src/evals/results" },
+  { flag: `${Flag.port} <n>`, commands: [Command.ui], effect: "Serve the local results app on another port than 4318" },
+  { flag: Flag.noBrowser, commands: [Command.ui], effect: "Serve the local results app without opening a browser" },
+  { flag: `${MachineFlag.scratch} <folder>`, commands: "any", effect: "Put run workspaces on a roomier drive, outside any Git repository" },
+  { flag: `${MachineFlag.checkSlots} <n>`, commands: "any", effect: "How many check stages run at once across every eval process on this machine. 1 by default, because browser checks are timed" },
+];

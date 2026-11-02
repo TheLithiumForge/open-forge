@@ -1,0 +1,148 @@
+---
+title: CLI reference
+---
+
+# CLI reference
+Open Forge Evals is one command, `npm run evals -- <command>`, run from the repository root.
+
+This page is generated from the CLI's own help, so it always matches `npm run evals -- help`. Every setting is a flag. Sign-in values are the only exception, and they stay in `src/evals/.env.local`.
+
+## `doctor`
+
+Check Docker, Node, pinned tools, sign-ins and image digests.
+
+```sh
+npm run evals -- doctor
+```
+
+## `images`
+
+Build the three images from locked digests.
+
+```sh
+npm run evals -- images
+```
+
+## `smoke`
+
+Run a mock implementation run through every stage and saved records, without Docker or models.
+
+```sh
+npm run evals -- smoke
+```
+
+## `qualify`
+
+Check fresh setup files and the pinned Open Forge version without models.
+
+```sh
+npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1.json
+```
+
+## `validate-case`
+
+Validate a Layer 4 starting project and solution in verifiers without models.
+
+```sh
+npm run evals -- validate-case --case l4-f01
+npm run evals -- validate-case --all --plan src/evals/experiments/neon-pairs-l4-check.json
+```
+
+## `run`
+
+Run a saved plan. --implementers: claude, codex, both. --judges: claude, codex, both. --user: claude, codex. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --parallel caps how many runs go at once. Local isolation needs --development.
+
+```sh
+npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude
+```
+
+## `resume`
+
+Continue a batch that paused at a usage limit or a rejected sign-in, or stopped early. Finished runs and judgments are kept, and a run stopped while it was graded is graded from its saved files. --parallel caps how many runs go at once. --accept-harness continues on changed runner code and records it in the batch, while changed inputs, checks, rubric, tooling or models still need a new batch.
+
+```sh
+npm run evals -- resume <batch> --parallel 2 --accept-harness
+```
+
+## `progress`
+
+Show how far each batch has come: implemented, checked and judged runs, then each setup's mean check coverage and each judge's yes share. These are preliminary scores while a batch runs. Names batches, or shows every model batch.
+
+```sh
+npm run evals -- progress <batch> <batch>
+```
+
+## `reference`
+
+Grade the tracked Neon Pairs reference without an agent. Defaults to --layer 3 --judges claude.
+
+```sh
+npm run evals -- reference --layer 3 --judges both
+```
+
+## `summary`
+
+Print reference history, or implementer and judge pairs for --batch.
+
+```sh
+npm run evals -- summary --batch <id>
+```
+
+## `ui`
+
+Build and open the local results app. --port picks its port, 4318 by default, and --no-browser serves it without opening a browser.
+
+```sh
+npm run evals -- ui --port 4318 --no-browser
+```
+
+## `check`
+
+Check saved runs again in the verifier and append the results. Name a batch, and optionally one run. --rebuild builds the saved project again first. --diagnostics saves Layer 1 card crops and look comparisons beside the evidence.
+
+```sh
+npm run evals -- check <batch> --rebuild
+```
+
+## `judge`
+
+Judge saved runs and append the ballots. Name a batch, and optionally one run. --judges: claude, codex, both. Defaults to the batch's saved judges. --missing judges only runs that judge hasn't judged without an error, so it can continue after a usage limit.
+
+```sh
+npm run evals -- judge <batch> --judges claude --missing
+```
+
+## `results`
+
+Add a finished batch, with its code, game, screenshots and conversations, to the results repository, replacing an earlier copy, then validate the repository. Evidence holding a sign-in, a machine path or the user name stops it. --repository picks another results repository than src/evals/results.
+
+```sh
+npm run evals -- results add <batch>
+```
+
+## Flags
+
+| Flag | Commands | Effect |
+| --- | --- | --- |
+| `--help` | Any command | Show the command's help and example without running it |
+| `--plan <file>` | `run`, `qualify`, `validate-case` | The saved plan to run or check |
+| `--implementers <preset>` | `run` | Replace the plan's implementers with claude, codex, both |
+| `--judges <preset>` | `run`, `judge`, `reference` | Replace the judges with claude, codex, both |
+| `--user <preset>` | `run` | Replace the simulated user with claude, codex |
+| `--case <id>` | `run`, `validate-case` | Run or validate one Layer 4 case, so each case can run as its own process |
+| `--all` | `validate-case` | Validate every case of the plan |
+| `--layer <n>` | `reference` | Grade the reference against Layer 2 or 3 |
+| `--parallel <n>` | `run`, `resume` | How many runs go at once. The full plans run two, because every run spends the signed-in account's own model limits |
+| `--accept-harness` | `resume` | Continue a batch on changed runner code and list the change in the batch record. Changed inputs, checks, rubric, tooling or models still need a new batch |
+| `--development` | `run`, `qualify` | Allow local isolation, which is never fit for scoring |
+| `--rebuild` | `check` | Build the saved project again before checking it |
+| `--diagnostics` | `check` | Save Layer 1 card crops and look comparisons beside the check evidence |
+| `--missing` | `judge` | Judge only runs without a judgment from that judge, counting one that ended in an error as missing |
+| `--batch <id>` | `summary` | The batch to summarize |
+| `--repository <folder>` | `results` | Add to another results repository than src/evals/results |
+| `--port <n>` | `ui` | Serve the local results app on another port than 4318 |
+| `--no-browser` | `ui` | Serve the local results app without opening a browser |
+| `--scratch <folder>` | Any command | Put run workspaces on a roomier drive, outside any Git repository |
+| `--check-slots <n>` | Any command | How many check stages run at once across every eval process on this machine. 1 by default, because browser checks are timed |
+
+Back to [Evals](index.md).
