@@ -7,7 +7,7 @@ import { setTimeout } from "node:timers/promises";
  * Browser checks are timed, and a crowded machine makes them run past their limit. Every eval process on this
  * machine shares these slots, so agents still run in parallel while check stages wait their turn.
  */
-export const CheckSlots = { count: 2, pollMs: 5_000, claimGraceMs: 60_000, maxAgeMs: 6 * 60 * 60_000 } as const;
+export const CheckSlots = { count: 1, pollMs: 5_000, claimGraceMs: 60_000, maxAgeMs: 6 * 60 * 60_000 } as const;
 export const CheckSlotRoot = join(tmpdir(), "open-forge-evals-check-slots");
 const OwnerFile = "owner.json";
 

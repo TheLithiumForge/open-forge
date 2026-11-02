@@ -93,7 +93,7 @@ Every setting is a flag. Secrets are the only exception: they stay in `.env.loca
 | `--diagnostics` | `recheck` | Save Layer 1 card crops and look comparisons beside the check evidence |
 | `--port <n>`, `--no-browser` | `ui` | Serve on another port, or without opening a browser |
 | `--scratch <folder>` | any command | Put attempt workspaces on a roomier drive, outside any Git repository |
-| `--check-slots <n>` | any command | How many check stages run at once across every eval process on this machine, 2 by default |
+| `--check-slots <n>` | any command | How many check stages run at once across every eval process on this machine. 1 by default, because browser checks are timed |
 
 A batch resumes only on the runner code it started with, so every attempt in it ran the same harness, unless `--accept-harness` records the change. Check stages share machine-wide slots, so timed browser checks don't run past their limit while many agents work.
 
