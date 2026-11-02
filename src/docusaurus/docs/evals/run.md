@@ -44,7 +44,7 @@ To produce both implementers and have both judges grade each saved attempt, run:
 npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude
 ```
 
-Each judge casts three ballots per question. The second judge reads the saved source and images through rejudge. A resumed batch fills missing judgments without repeating a finished implementation. The batch saves resolved model choices so a later preset change leaves history intact.
+Each judge casts three ballots per question. The second judge reads the saved source and images through the judge command. A resumed batch fills missing judgments without repeating a finished implementation. The batch saves resolved model choices so a later preset change leaves history intact.
 
 ## Read results
 
@@ -63,11 +63,11 @@ Each reference batch records its source commit, content hash, spec version and s
 After a grader error, check the saved files again. These commands append assessments:
 
 ```sh
-npm run evals -- recheck <batch> --rebuild
-npm run evals -- rejudge <batch> --judges both
+npm run evals -- check <batch> --rebuild
+npm run evals -- judge <batch> --judges both
 ```
 
-Both commands accept an attempt after the batch. `--rebuild` runs the verifier again. Without `--judges`, rejudge uses the batch's saved judges. Earlier grades stay recorded with their versions.
+Both commands accept an attempt after the batch. `--rebuild` runs the verifier again. Without `--judges`, judge uses the batch's saved judges. Earlier grades stay recorded with their versions.
 
 ## Add results
 

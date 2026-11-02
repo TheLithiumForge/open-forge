@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { join } from "node:path";
 import { EvalPaths, evalsRoot } from "../paths.ts";
 
-export const CliScripts = { recheck: "grading/recheck.ts", rejudge: "grading/rejudge.ts", server: "web/server/server.ts" } as const;
+export const CliScripts = { check: "grading/recheck.ts", judge: "grading/rejudge.ts", server: "web/server/server.ts" } as const;
 
 export function launchNode(file: string, args: readonly string[] = [], cwd: string = evalsRoot): Promise<number> {
   return new Promise((resolve, reject) => {

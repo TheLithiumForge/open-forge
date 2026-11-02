@@ -17,7 +17,7 @@ import { loadSuite } from "../benchmarks/suite.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
 import type { EvalConfig, JudgeChoice } from "../config/config.types.ts";
 import { configuredJudges } from "../config/judges.ts";
-import { rejudgeOptions } from "../config/preset-options.ts";
+import { judgeOptions } from "../config/preset-options.ts";
 import { latestJudgeFor } from "../history/summary.ts";
 import { FailureKind } from "../history/statuses.ts";
 import { runInParallel } from "../execution/run-queue.ts";
@@ -79,23 +79,27 @@ export async function completeSavedJudgments(suite: Suite, run: RunView, config:
   for (const choice of configuredJudges(config)) await judgeSavedRun(suite, run, choice, versions, { ...services, options }, true, config.judge);
 }
 
-export async function rejudgeRuns(suite: Suite, runs: readonly RunView[], config: EvalConfig, versions: AssessmentVersions, services: SavedJudgeServices = {}, onlyRun?: string): Promise<void> {
+export async function rejudgeRuns(suite: Suite, runs: readonly RunView[], config: EvalConfig, versions: AssessmentVersions, services: SavedJudgeServices = {}, onlyRun?: string, missingOnly = false): Promise<void> {
   // An attempt that stopped on an infrastructure failure kept no files to judge, as in completeSavedJudgments.
   const selected = runs.filter((run) => run.startedAt !== null && run.finishedAt !== null && run.failureKind !== FailureKind.infrastructure && (onlyRun === undefined || run.id === onlyRun));
   const options = services.options ?? { stage: { ...(config.containers === undefined ? {} : { limits: config.containers }) } };
   await runInParallel(selected, config.parallelRuns || 1, async (run) => {
-    for (const choice of configuredJudges(config)) await judgeSavedRun(suite, run, choice, versions, { ...services, options }, false, config.judge);
+    for (const choice of configuredJudges(config)) {
+      // Asked for missing judgments, a judgment that ended in an error counts as missing too.
+      const previous = missingOnly ? latestJudgeFor(run.id, await (services.store ?? { readAssessments }).readAssessments(run.batchId), choice, config.judge) : undefined;
+      if (previous === undefined || previous.error !== null) await judgeSavedRun(suite, run, choice, versions, { ...services, options }, false, config.judge);
+    }
   }, () => false);
 }
 
 async function main(): Promise<void> {
   const { args, options } = splitMachineOptions(process.argv.slice(2));
   applyMachineOptions(options);
-  const { batchId, onlyRun, overrides } = rejudgeOptions(args);
+  const { batchId, onlyRun, overrides, missingOnly } = judgeOptions(args);
   const batch = await readBatch(batchId), suite = await loadSuite(batch.suite);
   const config = { ...batch.config, ...overrides };
   requireSignIns(configuredJudges(config).map((choice) => choice.tool));
-  await rejudgeRuns(suite, await readRuns(batch), config, await gradingVersions(suite), {}, onlyRun);
+  await rejudgeRuns(suite, await readRuns(batch), config, await gradingVersions(suite), {}, onlyRun, missingOnly);
 }
 
 if (import.meta.main) await main();

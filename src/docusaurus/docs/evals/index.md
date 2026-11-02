@@ -37,7 +37,7 @@ Every attempt gets fresh tool settings and an empty Memory. Frozen inputs and li
 
 The implementer writes the app. The judge reads the saved source and images and answers fixed questions. The simulated user classifies the implementer's questions and returns literal answers from a frozen bank. It gives no coding advice.
 
-Two implementers and two judges give four pairs. Each implementer produces an attempt once, then both judges read that same attempt. The second judge runs through an appended rejudge. This lets you compare the judges on the same work. Saved plans currently use Claude Opus to implement and judge, with Claude Sonnet as the simulated user. Codex records already saved stay in history while they apply.
+Two implementers and two judges give four pairs. Each implementer produces an attempt once, then both judges read that same attempt. The second judge runs through the judge command, which appends its ballots. This lets you compare the judges on the same work. Saved plans currently use Claude Opus to implement and judge, with Claude Sonnet as the simulated user. Codex records already saved stay in history while they apply.
 
 To choose role presets and run a saved plan, follow [Run evals](run.md).
 
@@ -49,7 +49,7 @@ The working gate passes only when every working check passes. Stated success pas
 
 Judges cast three ballots per frozen yes, no or unsure question. Answers include file and line evidence. Rules, code, wishes and collaboration get separate scores. Unsure ballots stay counted. Human audits cover unsure answers, a registered random sample, split ballots, failed hidden checks and suspicious measurements. Blind human picks measure preference separately from correctness.
 
-Failed attempts and timeouts stay in results. Infrastructure failures can get one replacement under the registered rule. Both attempts stay recorded. Recheck and rejudge append assessments with their grading versions.
+Failed attempts and timeouts stay in results. Infrastructure failures can get one replacement under the registered rule. Both attempts stay recorded. The check and judge commands append assessments with their grading versions.
 
 You can read coverage, gates, wishes, judge answers and usage in [Results](results.mdx). You can compare CLI versions and the reference data point in [History](history.mdx).
 

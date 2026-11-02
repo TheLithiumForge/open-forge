@@ -15,7 +15,8 @@ import { EvalPaths, evalsRoot } from "./paths.ts";
 import { validateCase } from "./grading/brownfield/validate.ts";
 import { BrownfieldFiles } from "./materialize/brownfield-case.ts";
 import { batchMatrixSummary } from "./config/summary.ts";
-import { rejudgeOptions, runPresetOptions } from "./config/preset-options.ts";
+import { batchProgress, progressLines } from "./history/progress-report.ts";
+import { judgeOptions, runPresetOptions } from "./config/preset-options.ts";
 import { referenceOptions } from "./config/reference.ts";
 import { runReference } from "./execution/reference.ts";
 import { applyMachineOptions, splitMachineOptions } from "./config/machine-options.ts";
@@ -35,6 +36,7 @@ export interface CliServices {
   readonly results: (batch: string, repository: string) => Promise<string>;
   readonly validateCase: typeof validateCase;
   readonly summary?: typeof batchMatrixSummary;
+  readonly progress?: (batches: readonly string[]) => Promise<string[]>;
   readonly reference?: typeof runReference;
 }
 const defaults: CliServices = {
@@ -43,6 +45,15 @@ const defaults: CliServices = {
   results: (batch, repository) => addResults(new HistoryStore(EvalPaths.runs), batch, repository, { run: (script, args, cwd) => launchNode(join(cwd, script), args, cwd) }),
   validateCase,
 };
+
+/** Progress for the named batches, or for every model batch, newest first. */
+async function savedProgress(batches: readonly string[], store = new HistoryStore(EvalPaths.runs)): Promise<string[]> {
+  const records = batches.length > 0 ? await Promise.all(batches.map((id) => store.readBatch(id)))
+    : (await store.listBatches()).filter((batch) => !batch.legacy && batch.reference === undefined);
+  const lines: string[] = [];
+  for (const batch of records) lines.push(...progressLines(batchProgress(batch, await store.readRuns(batch), await store.readAssessments(batch.id))), "");
+  return lines;
+}
 
 function checkedArgs(args: readonly string[], flags: readonly string[], values: readonly string[], positions: number): void {
   let operands = 0;
@@ -90,6 +101,11 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     }
     case Command.images: checkedArgs(args, [], [], 0); await services.images(); return 0;
     case Command.smoke: checkedArgs(args, [], [], 0); services.print(`Smoke passed. ${JSON.stringify(await services.smoke())}`); return 0;
+    case Command.progress: {
+      if (args.some((arg) => arg.startsWith("--"))) throw new Error(CommandHelp.progress);
+      services.print((await (services.progress ?? savedProgress)(args)).join("\n"));
+      return 0;
+    }
     case Command.summary: {
       checkedArgs(args, [], [Flag.batch], 0);
       services.print(JSON.stringify(await (services.summary ?? batchMatrixSummary)(args.includes(Flag.batch) ? option(args, Flag.batch) : undefined), null, 2));
@@ -137,15 +153,15 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       return (services.resume ?? resumePlan)(batch, services.print, args.includes(Flag.parallel) ? parallelOption(args) : undefined, args.includes(Flag.acceptHarness));
     }
     case Command.ui: checkedArgs(args, [Flag.noBrowser], [Flag.port], 0); return services.ui([...args, ...machine]);
-    case Command.rejudge: {
-      rejudgeOptions(args);
-      return services.launch(join(evalsRoot, CliScripts.rejudge), [...args, ...machine]);
+    case Command.judge: {
+      judgeOptions(args);
+      return services.launch(join(evalsRoot, CliScripts.judge), [...args, ...machine]);
     }
-    case Command.recheck: {
+    case Command.check: {
       const operands = args.filter((arg) => arg !== Flag.rebuild && arg !== Flag.diagnostics);
-      if (operands.length < 1 || operands.length > 2) throw new Error(CommandHelp.recheck);
+      if (operands.length < 1 || operands.length > 2) throw new Error(CommandHelp.check);
       checkedArgs(args, [Flag.rebuild, Flag.diagnostics], [], operands.length);
-      return services.launch(join(evalsRoot, CliScripts.recheck), [...args, ...machine]);
+      return services.launch(join(evalsRoot, CliScripts.check), [...args, ...machine]);
     }
     case Command.results: {
       const [action, batch] = args;

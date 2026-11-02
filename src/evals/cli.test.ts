@@ -47,7 +47,7 @@ test("CLI rejects unknown and conflicting input before running anything", async 
 
 test("CLI dispatches smoke, images, UI, saved grading and export", async () => {
   const fake = fakeServices();
-  for (const args of [[Command.smoke], [Command.images], [Command.ui], [Command.recheck, "batch", Flag.rebuild], [Command.rejudge, "batch"], [Command.rejudge, "batch", Flag.judges, PresetName.both], [Command.rejudge, "batch", "run", Flag.judges, PresetName.codex], [Command.results, ResultsAction.add, "batch"], [Command.results, ResultsAction.add, "batch", Flag.repository, "elsewhere"]]) assert.equal(await runCli(args, fake.services), 0);
+  for (const args of [[Command.smoke], [Command.images], [Command.ui], [Command.check, "batch", Flag.rebuild], [Command.judge, "batch"], [Command.judge, "batch", Flag.judges, PresetName.both], [Command.judge, "batch", "run", Flag.judges, PresetName.codex], [Command.results, ResultsAction.add, "batch"], [Command.results, ResultsAction.add, "batch", Flag.repository, "elsewhere"]]) assert.equal(await runCli(args, fake.services), 0);
   assert.deepEqual(fake.calls, [Command.smoke, Command.images, Command.ui, "launch", "launch", "launch", "launch", Command.results, Command.results]);
   for (const args of [[Command.results], [Command.results, "remove", "batch"], [Command.results, ResultsAction.add], [Command.results, ResultsAction.add, "batch", "other"]]) await assert.rejects(runCli(args, fake.services));
 });
@@ -95,12 +95,12 @@ test("run --parallel caps the plan's parallel attempts and refuses anything but 
   assert.equal(started.length, 1);
 });
 
-test("unknown role presets and removed rejudge plan flags fail without loading or launching anything", async () => {
+test("unknown role presets and removed judge plan flags fail without loading or launching anything", async () => {
   const fake = fakeServices();
   for (const flag of [Flag.implementers, Flag.judges, Flag.user]) await assert.rejects(runCli([Command.run, Flag.plan, "fixture.json", flag, "unknown"], fake.services));
   for (const args of [[Command.run, Flag.plan, "fixture.json", Flag.user, PresetName.both],
-    [Command.rejudge, "batch", Flag.plan, "fixture.json"], [Command.rejudge, "batch", Flag.judges, "unknown"],
-    [Command.rejudge, "batch", Flag.judges, PresetName.claude, Flag.judges, PresetName.codex]]) await assert.rejects(runCli(args, fake.services));
+    [Command.judge, "batch", Flag.plan, "fixture.json"], [Command.judge, "batch", Flag.judges, "unknown"],
+    [Command.judge, "batch", Flag.judges, PresetName.claude, Flag.judges, PresetName.codex]]) await assert.rejects(runCli(args, fake.services));
   assert.deepEqual(fake.calls, []);
 });
 
@@ -118,11 +118,21 @@ test("reference defaults and overrides dispatch without a model implementation",
   assert.deepEqual(fake.calls, []);
 });
 
-test("recheck and rejudge carry the machine flags into the scripts they start", async () => {
+test("check and judge carry the machine flags into the scripts they start", async () => {
   const fake = fakeServices(), launched: (readonly string[])[] = [];
   const services = { ...fake.services, launch: async (_file: string, args: readonly string[] = []) => { launched.push(args); return 0; } };
   const machine = ["--scratch", "work", "--check-slots", "1"];
-  assert.equal(await runCli([Command.recheck, "batch", Flag.diagnostics], services, machine), 0);
-  assert.equal(await runCli([Command.rejudge, "batch"], services, machine), 0);
+  assert.equal(await runCli([Command.check, "batch", Flag.diagnostics], services, machine), 0);
+  assert.equal(await runCli([Command.judge, "batch"], services, machine), 0);
   assert.deepEqual(launched, [["batch", Flag.diagnostics, ...machine], ["batch", ...machine]]);
+});
+
+test("progress shows the named batches, or every batch, and takes no flags", async () => {
+  const fake = fakeServices(), asked: (readonly string[])[] = [];
+  const services = { ...fake.services, progress: async (batches: readonly string[]) => { asked.push(batches); return ["fixture progress"]; } };
+  assert.equal(await runCli([Command.progress], services), 0);
+  assert.equal(await runCli([Command.progress, "first", "second"], services), 0);
+  await assert.rejects(runCli([Command.progress, Flag.batch, "first"], services));
+  assert.deepEqual(asked, [[], ["first", "second"]]);
+  assert.deepEqual(fake.output, ["fixture progress", "fixture progress"]);
 });

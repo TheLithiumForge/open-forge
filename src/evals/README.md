@@ -73,31 +73,33 @@ Every command accepts `--help`. Each help text includes an example:
 | `smoke` | Run the mock attempt | `npm run evals -- smoke` |
 | `qualify` | Check generated setups | `npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1-check.json` |
 | `run` | Run a saved plan with optional role presets | `npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude` |
-| `resume` | Continue a batch that paused at a usage limit | `npm run evals -- resume <batch>` |
+| `resume` | Continue a batch that paused or stopped. Runs stopped during grading are graded from their saved files | `npm run evals -- resume <batch>` |
+| `progress` | Show each batch's completion and preliminary scores per setup | `npm run evals -- progress <batch>` |
 | `reference` | Grade the tracked reference | `npm run evals -- reference --layer 3 --judges both` |
 | `summary` | Print the implementer and judge matrix | `npm run evals -- summary --batch <id>` |
 | `ui` | Open the local results app | `npm run evals -- ui` |
-| `recheck` | Append checks for saved files | `npm run evals -- recheck <batch> --rebuild` |
-| `rejudge` | Append judge ballots with optional judge presets | `npm run evals -- rejudge <batch> --judges both` |
+| `check` | Check saved runs again in the verifier | `npm run evals -- check <batch> --rebuild` |
+| `judge` | Judge saved runs, with optional judge presets | `npm run evals -- judge <batch> --judges claude --missing` |
 | `results add` | Add a finished batch and its evidence to the results repository | `npm run evals -- results add <batch>` |
 
 Every setting is a flag. Secrets are the only exception: they stay in `.env.local`.
 
 | Flag | Commands | Effect |
 | --- | --- | --- |
-| `--implementers`, `--judges`, `--user` | `run`, `rejudge` takes `--judges` | Replace that role with a preset |
+| `--implementers`, `--judges`, `--user` | `run`, `judge` takes `--judges` | Replace that role with a preset |
 | `--case <id>` | `run` | Run one case of a Layer 4 plan, so each case can run as its own process |
 | `--parallel <n>` | `run`, `resume` | How many attempts start at once. The full plans run two, because every attempt spends the signed-in account's own model limits |
 | `--accept-harness` | `resume` | Continue a batch on changed runner code and list the change in the batch record. Changed inputs, checks, rubric, tooling or models still need a new batch |
-| `--rebuild` | `recheck` | Build the saved project again before checking it |
-| `--diagnostics` | `recheck` | Save Layer 1 card crops and look comparisons beside the check evidence |
+| `--missing` | `judge` | Judge only runs without a judgment from that judge, counting one that ended in an error as missing |
+| `--rebuild` | `check` | Build the saved project again before checking it |
+| `--diagnostics` | `check` | Save Layer 1 card crops and look comparisons beside the check evidence |
 | `--port <n>`, `--no-browser` | `ui` | Serve on another port, or without opening a browser |
 | `--scratch <folder>` | any command | Put attempt workspaces on a roomier drive, outside any Git repository |
 | `--check-slots <n>` | any command | How many check stages run at once across every eval process on this machine. 1 by default, because browser checks are timed |
 
 A batch resumes only on the runner code it started with, so every attempt in it ran the same harness, unless `--accept-harness` records the change. Check stages share machine-wide slots, so timed browser checks don't run past their limit while many agents work.
 
-`recheck` and `rejudge` accept an optional attempt after the batch. `rejudge` uses the batch's saved judges unless you pass `--judges`. Checks and ballots append assessments instead of replacing earlier grades. `export` writes a new immutable pack and refuses an existing target.
+`check` and `judge` accept an optional run after the batch. `judge` uses the batch's saved judges unless you pass `--judges`. Checks and ballots append assessments instead of replacing earlier grades. `results add` replaces an earlier copy of the batch in the results repository.
 
 ## Protocol
 
@@ -129,7 +131,7 @@ npm run evals -- reference --layer 3 --judges both
 
 The batch freezes the Git-tracked working files from `benchmarks/neon-pairs/reference/`. It leaves out ignored output, installed packages and build output. It records `reference` as the implementer, the last commit that changed the reference, a SHA-256 hash of the copied file list and bytes, the spec version and its content hash. Each assessment records the checker, rubric and judge prompt hashes. Judge assessments also record the requested model, effort, ballot count and reported model when available.
 
-Run the command again to add a new batch. To grade its saved files again, use `recheck` or `rejudge`. These commands append assessments and record the spec used for that grading.
+Run the command again to add a new batch. To grade its saved files again, use `check` or `judge`. These commands append assessments and record the spec used for that grading.
 
 `npm run evals -- summary` shows reference coverage and judge scores over time. Add `--batch <id>` to read one batch. The web UI's "Reference over time" view shows the same history. Matching reference, spec and grading versions share a group, with each assessment's time and reference commit shown in its row. Changed hashes or judge models form separate groups. Reference scores stay out of model setup comparisons. The results export includes their records and assessments.
 
@@ -147,7 +149,7 @@ The role presets are:
 
 `run --implementers`, `--judges` and `--user` each replace only that role in the plan. Unknown names fail before the run starts. For example, `run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both` restores all four pairs without changing a plan file. The two implementers produce two attempts per cell. Both judges read each saved attempt.
 
-Every judge preset casts three ballots per question. The first judge runs as an attempt finishes. Each later judge reads the same saved source and images through append-only rejudge. A resumed batch fills missing judgments without repeating a finished implementation.
+Every judge preset casts three ballots per question. The first judge runs as an attempt finishes. Each later judge reads the same saved source and images through the append-only judge command. A resumed batch fills missing judgments without repeating a finished implementation.
 
 A plan's `agents`, `judges` and `simulatedUser` can name these presets, give explicit model choices or use `local-config`. `local-config` copies that role from `src/evals/eval.config.local.json`, or `eval.config.json` when no local file exists. Older plans with one `judge` still work. Batches save resolved model choices, so later preset changes never alter saved history. Plans can select other cases and layers that the benchmark provides. Later layers use banks with only their permitted facts.
 
