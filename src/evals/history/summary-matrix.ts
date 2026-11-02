@@ -3,7 +3,7 @@ import { configuredJudges, modelKey } from "../config/judges.ts";
 import { summarizeMeasurements } from "../grading/counting.ts";
 import type { AssessmentRecord, AssessmentVersions, JudgeAssessment } from "./records.types.ts";
 import type { Preference, RunRecord } from "./results.types.ts";
-import { AssessmentKind, RunStatus } from "./statuses.ts";
+import { AssessmentKind, FailureKind, RunStatus } from "./statuses.ts";
 import { ReferenceImplementer } from "./reference.ts";
 import { agentLabel, JudgeAreas, latestJudgeFor, summarize, yesShare, type SetupSummary } from "./summary.ts";
 
@@ -47,7 +47,9 @@ function attempted(run: RunRecord): boolean {
 }
 
 export function summarizeMatrix(config: EvalConfig, input: readonly RunRecord[], assessments: readonly AssessmentRecord[], preferences: readonly Preference[]): MatrixSummary {
-  const runs = input.filter((run) => run.implementer !== ReferenceImplementer);
+  // An attempt replaced after an infrastructure failure never ran to the end, so its replacement stands in for it.
+  const replaced = new Set(input.flatMap((run) => run.replacesRunId === null ? [] : [run.replacesRunId]));
+  const runs = input.filter((run) => run.implementer !== ReferenceImplementer && !(run.failureKind === FailureKind.infrastructure && replaced.has(run.id)));
   const layer = config.layer ?? null, pairs: PairSummary[] = [];
   const agents = uniqueModels([...config.agents, ...runs.map((run) => run.agent)]);
   const judges = uniqueModels([...configuredJudges(config), ...assessments.flatMap((item) => item.kind === AssessmentKind.judge && item.requestedModel !== null ? [item.requestedModel] : [])]);

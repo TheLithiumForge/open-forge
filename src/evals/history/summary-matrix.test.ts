@@ -6,7 +6,7 @@ import { assessRun, checksAssessment, judgeAssessment } from "./assessments.ts";
 import { FixtureVersions, v2Fixture } from "./test-fixtures.ts";
 import { agentLabel, JudgeAreas } from "./summary.ts";
 import { summarizeMatrix } from "./summary-matrix.ts";
-import { AssessmentKind } from "./statuses.ts";
+import { AssessmentKind, FailureKind } from "./statuses.ts";
 import type { AssessmentRecord, JudgeAssessment } from "./records.types.ts";
 
 function fixture() {
@@ -95,4 +95,16 @@ test("attempts with different check versions stay in separate pair and differenc
   assert.equal(differences.length, 2);
   assert.equal(new Set(differences.map((row) => row.grading)).size, differences.length);
   assert.ok(differences.every((row) => row.rules.samples === 1));
+});
+
+test("an attempt replaced after an infrastructure failure leaves the pairs to its replacement", () => {
+  const data = fixture(), [first] = data.runs;
+  assert.ok(first);
+  const stopped = { ...first, id: `${first.id}-stopped`, failureKind: FailureKind.infrastructure };
+  const replacement = { ...first, replacesRunId: stopped.id };
+  const runs = [assessRun(stopped, data.assessments), ...data.views().map((run) => run.id === first.id ? assessRun(replacement, data.assessments) : run)];
+  const report = summarizeMatrix(data.config, runs, data.assessments, []);
+  assert.equal(report.implementationAttempts, data.runs.length);
+  assert.ok(report.pairs.every((pair) => pair.runs.every((run) => run.id !== stopped.id)));
+  assert.equal(report.pairs.length, MatrixAgents.length * MatrixJudges.length);
 });
