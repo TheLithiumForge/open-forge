@@ -22,6 +22,7 @@ import { judgeOptions, runPresetOptions } from "./config/preset-options.ts";
 import { referenceOptions } from "./config/reference.ts";
 import { runReference } from "./execution/reference.ts";
 import { applyMachineOptions, splitMachineOptions } from "./config/machine-options.ts";
+import { DiagnosticEnabled, DiagnosticEnvironment } from "./benchmarks/neon-pairs/checks/diagnostics.ts";
 
 export interface CliServices {
   readonly print: (text: string) => void;
@@ -182,9 +183,9 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       return services.launch(join(evalsRoot, CliScripts.judge), [...args, ...machine]);
     }
     case Command.check: {
-      const operands = args.filter((arg) => arg !== Flag.rebuild && arg !== Flag.diagnostics);
+      const operands = args.filter((arg) => arg !== Flag.rebuild);
       if (operands.length < 1 || operands.length > 2) throw new Error(CommandHelp.check);
-      checkedArgs(args, [Flag.rebuild, Flag.diagnostics], [], operands.length);
+      checkedArgs(args, [Flag.rebuild], [], operands.length);
       return services.launch(join(evalsRoot, CliScripts.check), [...args, ...machine]);
     }
     case Command.results: {
@@ -203,6 +204,9 @@ if (import.meta.main) {
   try {
     const { args, machine, options } = splitMachineOptions(process.argv.slice(2));
     applyMachineOptions(options);
+    // Every check saves its diagnostics. The checker reads this inside its container, so its own files and version stay
+    // the same. Scripts the CLI starts, such as check, inherit it.
+    process.env[DiagnosticEnvironment] = DiagnosticEnabled;
     process.exitCode = await runCli(args, defaults, machine);
   }
   catch (error) { console.error(error instanceof Error ? error.message : String(error)); process.exitCode = 1; }

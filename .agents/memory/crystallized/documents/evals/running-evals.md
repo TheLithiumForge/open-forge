@@ -50,6 +50,18 @@ On 2026-11-02 the maintainer made the docs site the only results UI and retired 
 
 The approved run begins with prerequisite and image checks, then a model-free smoke attempt, then setup checks. A saved plan gives `run` its implementation runs. The saved files give `check`, `judge`, `site` and `results add` their inputs. The [protocol](protocol.md#run-steps) defines the attempt steps.
 
+## Command design
+
+The maintainer set these rules on 2026-11-02. They apply the [Composable CLI Operations](../../../../directives/cli/composable-operation.md) rules that the Open Forge CLI follows to the eval pipeline.
+
+- **Capture everything by default.** A run always saves every data point it can measure: the tool's events and session log, screenshots, check diagnostics, usage measures and every grade its plan names. No flag turns capture on. Reports, filters and the Results page choose what to show afterwards.
+- **One stage, one command.** The pipeline is implement, check, judge, analyze, add results and show. Each stage is a command that reads saved records and appends its own versioned records, so any stage can run again later on any saved batch without repeating earlier stages. `run` performs every stage once for new runs.
+- **Plain input and output.** A command's result depends only on its input records, its flags and its versions. Read commands offer a JSON form beside the text table, so their output can feed another tool.
+- **Flags add or narrow, never change the job.** Each flag has one role: context such as `--scratch`, selection such as `--case` or `--missing`, projection such as an output format, or a named authority such as `--accept-harness`. A different behavior gets its own command.
+- **Judging never blocks implementation.** A judge's usage limit leaves that judgment missing and the batch keeps implementing. `judge --missing` fills the gaps later.
+
+The [Eval Context And Cost Measures](../../../emerging/analysis/eval-context-and-cost-measures.md) spec lists the measures each run captures.
+
 ## Provider sessions
 
 Drive the pinned CLIs directly. Each attempt gets fresh tool settings without user-level instructions, native memory, plugins, hooks or MCP servers. Open Forge files are the setup, so they stay. A fresh install starts with empty Memory.

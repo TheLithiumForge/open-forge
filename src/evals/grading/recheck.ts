@@ -16,10 +16,7 @@ import { checksForSuite } from "../benchmarks/registry.ts";
 import { layerChecks } from "./document-layers.ts";
 import { withCheckSlot } from "../execution/check-slot.ts";
 import { applyMachineOptions, splitMachineOptions } from "../config/machine-options.ts";
-import { DiagnosticEnabled, DiagnosticEnvironment } from "../benchmarks/neon-pairs/checks/diagnostics.ts";
 
-/** Saves Layer 1 card crops and look comparisons beside the check evidence. */
-export const DiagnosticsFlag = "--diagnostics";
 import type { SuiteCheckOutput } from "../benchmarks/suite-checks.types.ts";
 import type { BuildResult } from "../history/results.types.ts";
 
@@ -48,9 +45,7 @@ export async function recheckRun(run: RunView, versions: AssessmentVersions, dep
 async function main(): Promise<void> {
   const { args, options } = splitMachineOptions(process.argv.slice(2));
   applyMachineOptions(options);
-  // The checker reads this setting inside its container. Setting it here keeps the checker's own files, and so its version, unchanged.
-  if (args.includes(DiagnosticsFlag)) process.env[DiagnosticEnvironment] = DiagnosticEnabled;
-  const [batchId, onlyRun] = args.filter((arg) => arg !== RebuildFlag && arg !== DiagnosticsFlag);
+  const [batchId, onlyRun] = args.filter((arg) => arg !== RebuildFlag);
   if (batchId === undefined) throw new Error("Name the batch to check again.");
   const batch = await readBatch(batchId);
   const suite = await loadSuite(batch.suite);
