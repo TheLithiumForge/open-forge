@@ -1,7 +1,7 @@
 # Run evals
 Open Forge Evals is a command-line runner that implements, checks and judges coding runs in Docker containers on your own machine.
 
-For example, a Layer 2 full plan builds Neon Pairs three times for each of six setups, then checks and judges every game. `npm run evals -- progress` shows how far the batch has come, and `npm run evals -- site` opens the results in this documentation site, including batches still running.
+For example, the full plan for a [short brief](starting-points.mdx#brief) builds Neon Pairs three times for each of six setups, then checks and judges every game. `npm run evals -- progress` shows how far the batch has come, and `npm run evals -- site` opens the results in this documentation site, including batches still running.
 
 ## Requirements
 
@@ -73,7 +73,7 @@ npm run evals -- run --plan src/evals/experiments/neon-pairs-l2-full.json --impl
 | Judge | `--judges` | Claude `opus`, high | Codex `gpt-6.1-sol`, xhigh | Claude then Codex |
 | Simulated user | `--user` | Claude `sonnet`, medium | Codex `gpt-6-luna`, low | Unavailable |
 
-`--parallel` caps how many runs go at once. Layer 4 plans hold three cases, and `--case l4-f01` runs one of them as its own batch. Records go to the ignored `src/evals/runs/` folder.
+`--parallel` caps how many runs go at once. The [existing app](starting-points.mdx#existing-app) plans hold three cases, and `--case l4-f01` runs one of them as its own batch. Records go to the ignored `src/evals/runs/` folder.
 
 Two machine flags work with any command. `--scratch D:/eval-workspaces` puts run workspaces on a roomier drive. `--check-slots 5` lets five check stages run at once across every eval process. Each check uses about one processor core, so leave room for the agents.
 
@@ -83,7 +83,7 @@ Two machine flags work with any command. `--scratch D:/eval-workspaces` puts run
 npm run evals -- progress
 ```
 
-`progress` shows each batch's implemented, checked and judged runs, then each setup's mean check coverage and each judge's yes share. These scores are preliminary until every run is graded.
+`progress` shows each batch's implemented, checked and judged runs, then each setup's mean [check coverage](measures.mdx#check-coverage) and each judge's [judge score](measures.mdx#judge-score). These scores are preliminary until every run is graded.
 
 A batch pauses when a provider hits a usage limit or rejects a sign-in. To continue it:
 
@@ -129,6 +129,6 @@ npm run evals -- results add <batch>
 npm run evals -- reference --layer 3 --judges both
 ```
 
-`reference` grades the tracked Neon Pairs reference solution through the same build, checks and judges, without an agent. Each reference batch is a data point in [History](history.mdx).
+`reference` grades the tracked Neon Pairs reference solution through the same build, checks and judges, without an agent. `--layer 3` grades it as a full spec, and `--layer 2` as a short brief. Each reference batch is a data point in [History](history.mdx).
 
 Every command and flag is in the [CLI reference](cli.md). Back to [Evals](index.md).

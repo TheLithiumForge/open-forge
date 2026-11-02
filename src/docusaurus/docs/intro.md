@@ -132,7 +132,7 @@ In Full Core, startup reads `AGENTS.md`, the loader, nine entrypoints, and the C
 
 - **New here?** Follow [Installation](getting-started/installation.md), then the [ten-minute guide](getting-started/ten-minute-guide.md). [New or existing project](getting-started/greenfield-and-brownfield.md) covers what to write down first in each case.
 - **Keeping your own docs?** Register the folder as described in [Your own docs](getting-started/your-own-docs.md), then [share it with your team](getting-started/share-with-your-team.md).
-- **Want to see it work?** Try a [demo](demos/index.md): build a small app from an idea, or add a feature to a half-built one.
+- **Want to see it work?** Try a [demo](demos/index.md): build a memory game from an idea, or change the finished game.
 - **Wondering what's worth your attention?** The [Highlights](highlights.md) pick out the features that do the most work for particular kinds of users, starting with Decisions.
 - **Want to understand how it works?** Read the [Concepts](concepts/index.md), starting with [Routing](concepts/routing.md).
 - **Wondering what an Extension actually puts in your workspace?** The [Extensions](extensions/index.md) section explains every package file by file.

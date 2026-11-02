@@ -13,7 +13,16 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Try a demo",
       link: { type: "doc", id: "demos/index" },
-      items: ["demos/greenfield", "demos/brownfield"],
+      items: [
+        "demos/greenfield",
+        "demos/brownfield",
+        {
+          type: "category",
+          label: "Earlier demos",
+          link: { type: "doc", id: "demos/earlier/index" },
+          items: ["demos/earlier/greenfield", "demos/earlier/brownfield"],
+        },
+      ],
     },
     {
       type: "category",
@@ -71,7 +80,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Evals",
       link: { type: "doc", id: "evals/index" },
-      items: ["evals/run", "evals/cli", "evals/results", "evals/history"],
+      items: ["evals/starting-points", "evals/setups", "evals/measures", "evals/run", "evals/cli", "evals/results", "evals/history"],
     },
     {
       type: "category",

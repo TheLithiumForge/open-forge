@@ -1,0 +1,57 @@
+---
+title: Measures
+description: The four numbers the evals compare for every run, check coverage, judge score, tokens and time, with how checks and judges grade the saved files.
+---
+
+import CheckCoverage from "./_definitions/check-coverage.mdx"
+import JudgeScore from "./_definitions/judge-score.mdx"
+import Tokens from "./_definitions/tokens.mdx"
+import Time from "./_definitions/time.mdx"
+
+# Measures
+
+Measures are the numbers the evals record for every run, so you can compare setups on quality and cost.
+
+Check coverage and judge score measure quality. Tokens and time measure cost. They stay apart, with no combined score. For example, a setup can raise check coverage and use more tokens, and [Results](results.mdx) shows both against the same control. Results also keep each starting point, implementer and judge apart.
+
+## Check coverage \{#check-coverage}
+
+<CheckCoverage />
+
+## Judge score \{#judge-score}
+
+<JudgeScore />
+
+## Tokens \{#tokens}
+
+<Tokens />
+
+## Time \{#time}
+
+<Time />
+
+## Checks
+
+Checks grade the saved files after the agent stops, so the agent never sees them. A verifier container installs the project's packages without their install scripts, cuts its network and builds the game. Then the checks test the built game, most of them by playing it in a browser.
+
+Every check returns its evidence and one status:
+
+- `pass` - every assertion of the check passes.
+- `fail` - the game breaks an assertion.
+- `error` - the grader couldn't produce a result.
+- `blocked` - an earlier failure stopped the check.
+
+A grader error isn't a game failure. The [`check`](cli.md#check) command grades the saved files again without a new run. A check keeps its first outcome, and grading again adds a new assessment next to the old one.
+
+Two gates sum up the checks:
+
+- Working gate - passes when every working check passes, such as finishing a game by pointer, phone tap and keyboard.
+- Stated success - passes when every check of the stated request passes.
+
+## Judges
+
+A judge is a model that grades a run from its saved files in its own container, with its tools turned off or limited to a read-only sandbox. It gets the request, the spec when the starting point has one, the run's source code and the game's screenshots. Tests, documents and Open Forge files stay out of the source it reads.
+
+The judge answers each fixed question with yes, no or unsure and cites the files and lines or images behind the answer. It casts three ballots per question. Judging also reads only saved files, so a second judge can grade the same runs later and the two can be compared on identical work.
+
+Every saved plan uses Claude Opus at high effort as the judge for now. [Run evals](run.md#run-a-batch) shows how to choose other judges.

@@ -1,0 +1,72 @@
+---
+title: Starting points
+description: The four starting points the evals give an agent, from one short idea to an existing app, with the setups each one compares and how the simulated user answers.
+---
+
+import Idea from "./_definitions/idea.mdx"
+import Brief from "./_definitions/brief.mdx"
+import FullSpec from "./_definitions/full-spec.mdx"
+import ExistingApp from "./_definitions/existing-app.mdx"
+import FeatureCase from "./_definitions/l4-f01.mdx"
+import RepairCase from "./_definitions/l4-r01.mdx"
+import CombinedCase from "./_definitions/l4-fr01.mdx"
+
+# Starting points
+
+A starting point is how much an eval tells the agent about the task before it starts, from a one-line idea to an existing app it has to change.
+
+Every starting point builds or changes Neon Pairs, a browser memory game where you reveal two cards at a time to find the matching pairs. Each one gives the agent more to work from and checks more of the result. For example, an idea leaves the mismatch delay to the agent. A short brief states that a miss closes after 800 active milliseconds, and a check tests it.
+
+Plan files and the CLI number the starting points as layers 1 to 4, in the order below. The [Greenfield demo](../demos/greenfield.md) and the [Brownfield demo](../demos/brownfield.md) show where each input lives and how to try it with your own agent.
+
+## An idea \{#idea}
+
+<Idea />
+
+## A short brief \{#brief}
+
+<Brief />
+
+## A full spec \{#full-spec}
+
+<FullSpec />
+
+## An existing app \{#existing-app}
+
+<ExistingApp />
+
+### Feature \{#l4-f01}
+
+<FeatureCase />
+
+### Repair \{#l4-r01}
+
+<RepairCase />
+
+### Feature and repair \{#l4-fr01}
+
+<CombinedCase />
+
+## Compared setups \{#compared-setups}
+
+Each starting point compares its own setups. The first setup in each row is the control:
+
+| Starting point  | Layer | Setups compared                                                              |
+| --------------- | ----- | ---------------------------------------------------------------------------- |
+| An idea         | 1     | No setup, Minimal, Essentials, Full Core                                     |
+| A short brief   | 2     | Plain docs, Linked AGENTS.md, Minimal, Essentials, Full Core, Spec in prompt |
+| A full spec     | 3     | Plain docs, Linked AGENTS.md, Minimal, Essentials, Full Core                 |
+| An existing app | 4     | Plain docs, Linked AGENTS.md, Minimal, Essentials, Full Core, Code only      |
+
+The full plans in `src/evals/experiments/` run each setup three times, and each existing-app case counts as its own comparison. [Setups](setups.mdx) defines every setup.
+
+## Simulated user
+
+The simulated user is a model that answers the agent's questions during a run, from the starting point's frozen answer bank. It runs in its own container, apart from the agent.
+
+A fixed classifier splits each message into separate questions and matches each one to a topic in the bank:
+
+- A question with a matching topic gets the bank's answer, word for word.
+- Any other question gets "Your call, within the supplied requirements."
+
+The simulated user gives no coding advice and volunteers nothing. The agent gets three rounds of answers. A question after the third round gets the fallback reply, and the run stops after the agent's next reply. Every saved plan uses Claude Sonnet at medium effort as the simulated user for now.

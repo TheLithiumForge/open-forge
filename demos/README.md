@@ -2,6 +2,8 @@
 
 Small, realistic projects for trying Open Forge with your own agent. Each one comes with requests at several levels of detail and a list of checks, so you can see what changes when the workspace carries its own rules and reasons.
 
+These expense splitter demos came before Open Forge Evals and were never evaluated, so they have no eval results. The main demos now use Neon Pairs, the memory game the evals build and grade. The [Demos pages](https://thelithiumforge.github.io/open-forge/docs/demos) describe them, and their inputs live in [`src/evals/benchmarks/neon-pairs/`](../src/evals/benchmarks/neon-pairs/).
+
 | Demo                                                         | Start from                  | Try it to see                                                                                                |
 | ------------------------------------------------------------ | --------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | [Expense splitter, greenfield](expense-splitter/greenfield/) | An empty folder and an idea | How much an agent gets right from a one-line idea versus a full set of records                               |
@@ -28,4 +30,4 @@ The level 4 records come from Extensions, not from the base install: Decisions f
 
 ## Demos as evaluations
 
-The same inputs can compare agents, models, and tools. A planned task turns these checks into a repeatable evaluation. Until then, the `checks.md` in each demo is a manual scoring sheet.
+The `checks.md` in each demo is a manual scoring sheet. The repeatable evaluation, Open Forge Evals, uses Neon Pairs instead.

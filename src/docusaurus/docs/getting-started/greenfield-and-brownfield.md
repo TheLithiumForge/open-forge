@@ -22,7 +22,7 @@ The base Framework gives you routing, loading, and your selected Core categories
 ## Starting a new project
 
 1. **Install the Framework**, and the [Development Toolkit](../extensions/development-toolkit.md) Extension if you want the planning and development methods.
-2. **Start with the request, not a spec.** Describe what you want to build. A good agent asks about the choices that matter instead of guessing. The [demo seed levels](../demos/index.md#seed-levels) show how much detail changes the result.
+2. **Start with the request, not a spec.** Describe what you want to build. A good agent asks about the choices that matter instead of guessing. The [greenfield demo's starting points](../demos/greenfield.md#inputs) show how much detail changes the result.
 3. **Let direction settle as you go.** If the goal is still unclear, ask for a draft Vision and keep it in Emerging Memory until you accept it. A clear request can go straight to work.
 4. **Record decisions as you make them.** The reasons are easiest to capture while the choice is fresh. With Planning installed, say "Record this as a Decision", and the Planning rules have the agent save the choice and its reasons as a Decision in Crystallized Memory.
 5. **Turn the conversation into rules and specs.** When a convention or a requirement settles in conversation, ask the agent to write it down: a Directive for a rule the agent must follow or a Pattern for a shape worth repeating, with starters from the [Core Templates](../extensions/core-templates.md) Extension, or a Vision or Architecture for a spec, from [Project Documents](../extensions/project-documents.md).

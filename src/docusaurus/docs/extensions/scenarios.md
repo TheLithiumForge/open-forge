@@ -40,7 +40,7 @@ The CLI installs required packages from the same [catalogue](../glossary.md#cata
 
 When you write down what should happen before anyone tries it, a wrong result is easy to spot, whether you're designing an experience or checking a build. Keeping expected and observed results in separate records makes it hard for a run to quietly rewrite the requirement to match what happened.
 
-These starters used to ship with Planning. They moved into their own package so experience design and verification can use them without a planning method. The [demos](../demos/index.md) apply the same idea: each demo's checks list an action and its expected result.
+These starters used to ship with Planning. They moved into their own package so experience design and verification can use them without a planning method. The [earlier demos](../demos/earlier/index.md) apply the same idea: each demo's checks list an action and its expected result.
 
 ## What it installs
 

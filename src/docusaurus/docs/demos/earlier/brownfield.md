@@ -1,0 +1,57 @@
+---
+title: "Expense splitter: add a feature to a half-built app"
+sidebar_label: Expense splitter, brownfield
+description: An earlier, unevaluated demo that adopts Open Forge in a half-finished expense splitter, then adds percentage splits without breaking rules whose reasons live only in the author's notes.
+---
+
+# Expense splitter: add a feature to a half-built app
+
+A friend started an expense splitter and handed it to you. It works and it has tests. It also relies on two rules: money stays in whole cents, and the payer absorbs the leftover cent. The code follows both, but only the author's scratch notes explain why. Your job is to add percentage splits without breaking either. The whole demo is in [`demos/expense-splitter/brownfield`](../../../../../demos/expense-splitter/brownfield/).
+
+Status: not evaluated. This demo came before Open Forge Evals, so it has no eval results. Its levels are the seed levels on [Earlier demos](index.md#seed-levels).
+
+## What's inside
+
+| Path                                                                         | What it is                                                                    |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [`app/`](../../../../../demos/expense-splitter/brownfield/app/)                 | The half-built project: TypeScript run directly by Node.js 22.18+, with tests |
+| [`app/NOTES.md`](../../../../../demos/expense-splitter/brownfield/app/NOTES.md) | The author's scratch notes, where the reasons live                            |
+| [`seeds/`](../../../../../demos/expense-splitter/brownfield/seeds/)             | The feature request at four levels of detail                                  |
+| [`reference/`](../../../../../demos/expense-splitter/brownfield/reference/)     | Records a careful run might produce, for comparison afterwards                |
+| [`checks.md`](../../../../../demos/expense-splitter/brownfield/checks.md)       | How to tell whether the result is right                                       |
+
+## Run it
+
+1. Copy `app/` outside this repository, commit it, and run `npm test`.
+2. For a first install, choose Full Core so the next step has Maps, then install the [Development Toolkit](../../extensions/development-toolkit.md). Decisions come from Planning, which the Toolkit installs.
+
+   Already installed Essentials? Skip the first-install commands. [Restore Maps](../../getting-started/grow-your-framework.md#add-an-omitted-category) with `open-forge route init maps --framework --dry-run`, then the same command without `--dry-run`. Keep your other choices. If an ancestor has an explicit exclusion, restore it first as the [CLI reference](/guides/cli#route-init) explains.
+
+   ```sh
+   open-forge install --preset full-core --dry-run
+   open-forge install --preset full-core
+   open-forge extension install development-toolkit --dry-run
+   open-forge extension install development-toolkit
+   ```
+
+3. **Map what's already there.** Ask your agent:
+
+   > Add a Map of this project's important files, such as the README, the author's notes, and the tests, with a line on when to read each one.
+
+   A [Map](../../concepts/core-categories.md#maps) points to sources and copies nothing. The loader lists Maps, so a task that needs the project's sources checks the Maps entrypoint first. The Map itself then says where the notes are and when they matter. To have every task read it, tag the Maps line in the loader `#LoadNow`, or link the notes from the loader directly.
+
+   The rules the app already had get no Decisions. The advice here is to record Decisions from the moment you adopt Open Forge, for changes made from then on. For the older rules, the Map points to where their reasons live.
+
+4. Give your agent a seed request. Start with level 1 or 2. Neither mentions rounding, so the agent has to find the rules itself, in the code or through the Map to the author's notes. A good run keeps both rules and records its own choice, how percentage splits round, as a [Decision](../../highlights.md#decisions-keep-the-why) that stays proposed until you accept it.
+5. Check the result against [the checklist](../../../../../demos/expense-splitter/brownfield/checks.md), and compare your records with the [reference records](../../../../../demos/expense-splitter/brownfield/reference/).
+
+## The quiet failures
+
+The existing tests don't catch either of these failures:
+
+- **Floating point returns** through "just the percentage", and shares stop being whole cents.
+- **The extra cent goes to whoever was typed first** instead of to the payer. The result looks correct, but it contradicts how even splits already work.
+
+Run the same request on a second copy without Open Forge and compare. Look less at whether the feature works and more at whether the rules survived.
+
+**Next:** [Grow your own framework](../../getting-started/grow-your-framework.md).

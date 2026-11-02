@@ -46,7 +46,7 @@ Decisions sit beside the stack. Each one explains one choice, or a
 tightly related group, and links to the level that now holds its result.
 ```
 
-Take the [greenfield demo](../demos/greenfield.md)'s records. The Vision promises balances that are exact to the cent, and links to the Architecture for how. The Architecture says every amount is a whole number of cents, and links to the Decision that explains why. The scenarios give the exact expected results. Each level says only what a reader needs at that level.
+Take the [expense splitter greenfield demo](../demos/earlier/greenfield.md)'s records. The Vision promises balances that are exact to the cent, and links to the Architecture for how. The Architecture says every amount is a whole number of cents, and links to the Decision that explains why. The scenarios give the exact expected results. Each level says only what a reader needs at that level.
 
 The overview stays current when each change also reaches the levels above it. When a Decision changes a narrower Document, the Documents rules ask for the summaries above it to be updated wherever they no longer match. Kept this way, the top-level Documents give you the current picture of the whole, and every link from there leads to more detail.
 
@@ -61,7 +61,7 @@ The Templates prompt for links in both directions: a Vision links to its Archite
 
 ## Existing docs take part too
 
-Project Documents doesn't ask you to move anything. Your README, a wiki, or a folder of ADRs can hold the current state, and a [Map](../concepts/core-categories.md#maps) tells agents where to find it. A Decision made while adding a feature then updates the README section that describes that feature, and links to it. The [brownfield demo](../demos/brownfield.md) works this way.
+Project Documents doesn't ask you to move anything. Your README, a wiki, or a folder of ADRs can hold the current state, and a [Map](../concepts/core-categories.md#maps) tells agents where to find it. A Decision made while adding a feature then updates the README section that describes that feature, and links to it. The [expense splitter brownfield demo](../demos/earlier/brownfield.md) works this way.
 
 ## Where the rules live
 

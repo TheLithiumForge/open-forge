@@ -1,50 +1,80 @@
 ---
-title: "Greenfield: build it from an idea"
+title: "Greenfield: build Neon Pairs"
 sidebar_label: Greenfield
-description: Build a small expense splitter from an empty folder, with requests from one sentence to a full set of Open Forge records.
+description: Build Neon Pairs in an empty project from an idea, a short brief or a full spec, at any rung of the setup ladder, with the same inputs the evals use.
 ---
 
-# Greenfield: build it from an idea
+# Greenfield demo
 
-Start from an empty folder and a request for a command-line tool that splits shared expenses between friends. The whole demo is in [`demos/expense-splitter/greenfield`](../../../../demos/expense-splitter/greenfield/).
+The greenfield demo builds Neon Pairs in an empty project, starting from an idea, a short brief or a full spec.
 
-For a first try, start with level 1:
+Each starting point tells the agent more. The idea is one paragraph and leaves most choices to the agent. The full spec states every rule, down to how a board code repeats a deal. For example, give your agent the idea with no setup. Then give it the same prompt with Essentials installed and compare what each run asks and builds.
 
-> Build a small command-line tool that helps a group of friends split shared expenses and see who owes whom.
+## Inputs
 
-The other levels let you compare how more detail changes the result.
+The inputs are the files the evals use, under `src/evals/benchmarks/neon-pairs/`:
+
+| Starting point                                        | Prompt                                                                                                            | Documents                                                                                                            | Answer bank                                                                                                                                     |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| [An idea](../evals/starting-points.mdx#idea)          | [`cases/greenfield-baseline/prompt.md`](../../../evals/benchmarks/neon-pairs/cases/greenfield-baseline/prompt.md) | None                                                                                                                 | [`cases/greenfield-baseline/intent.json`](../../../evals/benchmarks/neon-pairs/cases/greenfield-baseline/intent.json), five private preferences |
+| [A short brief](../evals/starting-points.mdx#brief)   | [`cases/l2-defined-idea/prompt.md`](../../../evals/benchmarks/neon-pairs/cases/l2-defined-idea/prompt.md)         | [`cases/l2-defined-idea/specs/`](../../../evals/benchmarks/neon-pairs/cases/l2-defined-idea/specs/), seven documents | [`cases/l2-defined-idea/intent.json`](../../../evals/benchmarks/neon-pairs/cases/l2-defined-idea/intent.json), three open choices               |
+| [A full spec](../evals/starting-points.mdx#full-spec) | [`cases/l3-full-spec/prompt.md`](../../../evals/benchmarks/neon-pairs/cases/l3-full-spec/prompt.md)               | [`specs/`](../../../evals/benchmarks/neon-pairs/specs/), ten documents                                               | Empty                                                                                                                                           |
+
+Each document folder also holds a `manifest.json` with file hashes for the evals. Leave it out of your project.
+
+## Requirements
+
+To run the demo, you need:
+
+- An agent tool, such as Claude Code or Codex.
+- Node.js and npm, so the agent can install packages and build the game.
+- The Open Forge CLI, for rungs 3 to 5. [Installation](../getting-started/installation.md) covers it.
 
 ## Run it
 
-1. Create an empty project outside this repository, and commit a starting point.
-2. Install Open Forge and the [Development Toolkit](../extensions/development-toolkit.md):
+Each step sets up one part of the project the evals build for that rung of the [setup ladder](index.md#setup-ladder):
 
-   ```sh
-   open-forge install
-   open-forge extension install development-toolkit
+1. Create an empty folder outside the Open Forge repository, so the agent sees only the demo, and run `git init` in it.
+2. For a short brief or a full spec, copy the documents' `.md` files into `docs/`. Then add a `README.md` with this line, which puts the project on rung 1, Plain docs:
+
+   ```md
+   Follow the requirements in docs/ for this project.
    ```
 
-   Decisions, and Documents such as a Vision or Architecture, come from these Extensions, not from the base install.
+3. Add the setup for your rung:
+   - Rung 0 or 1 - nothing more.
+   - Rung 2 - add an `AGENTS.md` that says to follow the requirements in `docs/` and links each document with a one-line description.
+   - Rungs 3 to 5 - install the preset, then route the documents. For an idea, run only the first command.
 
-3. Give your agent the level 1 request above, or choose another level for a comparison:
+     ```sh
+     open-forge install --preset essentials --automatic
+     open-forge route include ./docs --tag LoadNow
+     open-forge index ./docs/_docs.md
+     ```
 
-   | Level | Request                                                                                                                              |
-   | ----- | ------------------------------------------------------------------------------------------------------------------------------------ |
-   | 1     | [One sentence](../../../../demos/expense-splitter/greenfield/seeds/1-idea.md)                                                        |
-   | 2     | [A short brief](../../../../demos/expense-splitter/greenfield/seeds/2-brief.md), with money handling deliberately left unsaid        |
-   | 3     | [The brief plus expected results](../../../../demos/expense-splitter/greenfield/seeds/3-scenarios.md), including rounding            |
-   | 4     | [A Vision, an Architecture, two Decisions, and scenarios](../../../../demos/expense-splitter/greenfield/seeds/4-records/) as records |
+     Use `minimal` for rung 3 or `full-core` for rung 5. Add `--dry-run` to a command to preview it first.
 
-   At level 4, copy the records into your project first, as the [level 4 README](../../../../demos/expense-splitter/greenfield/seeds/4-records/README.md) describes.
+4. Commit everything as one starting commit, so `git diff` later shows only what the agent changed.
+5. Start your agent in the folder and give it the prompt. For a short brief or a full spec, add this line after the prompt:
 
-4. Answer the agent's questions as a product owner would, and accept the proposals you agree with.
-5. Check the result against [the checklist](../../../../demos/expense-splitter/greenfield/checks.md).
+   ```text
+   Read docs/README.md and follow its linked requirements for this project.
+   ```
 
-## What to watch
+6. Answer the agent's questions the way the evals' simulated user does. When a question matches an entry in the answer bank, give that answer word for word. Reply "Your call, within the supplied requirements." to everything else, and give no coding advice.
+7. Build the game and open the HTML file it produces. From a short brief or a full spec, that's `dist/index.html`.
 
-- **Money.** Splitting 10.00 three ways in floating point gives 3.3333333333333335. Does the agent notice that money needs whole cents, or ask about it, before you tell it?
-- **Rounding.** Someone has to pay the extra cent. Does the agent choose a rule and tell you, or does it happen by accident?
-- **Reasons.** Do the choices end up as Decisions with their reasons, or only in the conversation?
-- **Level 4.** With the records in place, does the agent follow them, or rediscover them?
+To try Spec in prompt, skip `docs/` and the pointer line. Paste the short brief's documents after the prompt instead, starting with `README.md` and then in the order it links them.
 
-**Next:** [Grow your own framework](../getting-started/grow-your-framework.md).
+## What to compare
+
+Compare your runs on the points the evals measure:
+
+- Questions - from an idea, does the agent ask about the starting grid size or the colors? The answer bank helps only when it asks.
+- Requirements - from a short brief or a full spec, does the game follow the stated rules, such as a miss closing after 800 active milliseconds?
+- Code - does each component keep its logic, markup and styles together, as the prompt asks?
+- Cost - how many tokens and minutes did each run take? Your agent tool reports its usage.
+
+## Results
+
+[Results](../evals/results.mdx) shows the same starting points as the evals ran them, graded by hidden checks and judges. The checks run only inside the evals. [Run evals](../evals/run.md) shows how to run them on your machine.

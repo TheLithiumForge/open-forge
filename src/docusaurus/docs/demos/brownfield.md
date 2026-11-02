@@ -1,55 +1,81 @@
 ---
-title: "Brownfield: add a feature to a half-built app"
+title: "Brownfield: change Neon Pairs"
 sidebar_label: Brownfield
-description: Adopt Open Forge in a working but half-finished expense splitter, then add percentage splits without breaking rules whose reasons live only in the author's notes.
+description: Ask an agent to add a feature to the finished Neon Pairs game, repair a planted bug or both, at any rung of the setup ladder, with the same inputs the evals use.
 ---
 
-# Brownfield: add a feature to a half-built app
+# Brownfield demo
 
-A friend started an expense splitter and handed it to you. It works and it has tests. It also relies on two rules: money stays in whole cents, and the payer absorbs the leftover cent. The code follows both, but only the author's scratch notes explain why. Your job is to add percentage splits without breaking either. The whole demo is in [`demos/expense-splitter/brownfield`](../../../../demos/expense-splitter/brownfield/).
+The brownfield demo asks an agent to change a finished Neon Pairs game: add a feature, repair a planted bug or both.
 
-## What's inside
+Every run starts from the reviewed reference game, built to the full spec with its own tests. The request sounds like a player asking for a change, and the rules it touches are in the spec. For example, the feature case asks for a name you can give a saved game, and the spec's update says which snapshot version a named game uses. A careful agent finds that rule before it changes the save format.
 
-| Path                                                                         | What it is                                                                    |
-| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| [`app/`](../../../../demos/expense-splitter/brownfield/app/)                 | The half-built project: TypeScript run directly by Node.js 22.18+, with tests |
-| [`app/NOTES.md`](../../../../demos/expense-splitter/brownfield/app/NOTES.md) | The author's scratch notes, where the reasons live                            |
-| [`seeds/`](../../../../demos/expense-splitter/brownfield/seeds/)             | The feature request at four levels of detail                                  |
-| [`reference/`](../../../../demos/expense-splitter/brownfield/reference/)     | Records a careful run might produce, for comparison afterwards                |
-| [`checks.md`](../../../../demos/expense-splitter/brownfield/checks.md)       | How to tell whether the result is right                                       |
+## Inputs
+
+The inputs are the files the evals use, under `src/evals/benchmarks/neon-pairs/`:
+
+- [`reference/`](../../../evals/benchmarks/neon-pairs/reference/) - the reference game, with its source, tests and README.
+- [`specs/`](../../../evals/benchmarks/neon-pairs/specs/) - the full spec, ten documents.
+- `cases/<case>/` - each case's request, answer bank and changes to the starting files.
+
+The three cases are:
+
+| Case                                                                  | Request                                                                       | Starting code                   | Spec                                     |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------- | ---------------------------------------- |
+| [Feature, `l4-f01`](../evals/starting-points.mdx#l4-f01)              | [`request.md`](../../../evals/benchmarks/neon-pairs/cases/l4-f01/request.md)  | The reference                   | The spec with the files in `spec-delta/` |
+| [Repair, `l4-r01`](../evals/starting-points.mdx#l4-r01)               | [`request.md`](../../../evals/benchmarks/neon-pairs/cases/l4-r01/request.md)  | The reference with `seed.patch` | The spec                                 |
+| [Feature and repair, `l4-fr01`](../evals/starting-points.mdx#l4-fr01) | [`request.md`](../../../evals/benchmarks/neon-pairs/cases/l4-fr01/request.md) | The reference with `seed.patch` | The spec with the files in `spec-delta/` |
+
+Each case folder also holds the known solutions and the evals' change checks. Keep them away from the agent.
+
+## Requirements
+
+To run the demo, you need:
+
+- An agent tool, such as Claude Code or Codex.
+- Node.js and npm, to install the game's packages and run its tests.
+- The Open Forge CLI, for rungs 3 to 5. [Installation](../getting-started/installation.md) covers it.
 
 ## Run it
 
-1. Copy `app/` outside this repository, commit it, and run `npm test`.
-2. For a first install, choose Full Core so the next step has Maps, then install the [Development Toolkit](../extensions/development-toolkit.md). Decisions come from Planning, which the Toolkit installs.
+Each step sets up one part of the project the evals build for that rung of the [setup ladder](index.md#setup-ladder):
 
-   Already installed Essentials? Skip the first-install commands. [Restore Maps](../getting-started/grow-your-framework.md#add-an-omitted-category) with `open-forge route init maps --framework --dry-run`, then the same command without `--dry-run`. Keep your other choices. If an ancestor has an explicit exclusion, restore it first as the [CLI reference](/guides/cli#route-init) explains.
+1. Copy `reference/` into a new folder outside the Open Forge repository, and run `git init` in it. Copy only the files Git tracks, e.g. from a fresh clone, so installed packages and build output stay out.
+2. For a repair or both, apply the case's `seed.patch` in that folder. It plants the bug:
 
    ```sh
-   open-forge install --preset full-core --dry-run
-   open-forge install --preset full-core
-   open-forge extension install development-toolkit --dry-run
-   open-forge extension install development-toolkit
+   git apply <path-to-open-forge>/src/evals/benchmarks/neon-pairs/cases/l4-r01/seed.patch
    ```
 
-3. **Map what's already there.** Ask your agent:
+3. From rung 1 up, copy the spec's `.md` files into `docs/`. For a feature or both, replace them with the files in the case's `spec-delta/` folder. Then add this line to the end of `README.md`:
 
-   > Add a Map of this project's important files, such as the README, the author's notes, and the tests, with a line on when to read each one.
+   ```md
+   Follow the requirements in docs/ for this project.
+   ```
 
-   A [Map](../concepts/core-categories.md#maps) points to sources and copies nothing. The loader lists Maps, so a task that needs the project's sources checks the Maps entrypoint first. The Map itself then says where the notes are and when they matter. To have every task read it, tag the Maps line in the loader `#LoadNow`, or link the notes from the loader directly.
+4. Add the setup for your rung, as step 3 of the [Greenfield demo](greenfield.md#run-it) describes.
+5. Commit everything as one starting commit. With one commit, the history can't reveal the planted bug, as in the evals.
+6. Start your agent in the folder and give it the case's request. From rung 1 up, add this line after it:
 
-   The rules the app already had get no Decisions. The advice here is to record Decisions from the moment you adopt Open Forge, for changes made from then on. For the older rules, the Map points to where their reasons live.
+   ```text
+   Read docs/README.md and follow its linked requirements for this project.
+   ```
 
-4. Give your agent a seed request. Start with level 1 or 2. Neither mentions rounding, so the agent has to find the rules itself, in the code or through the Map to the author's notes. A good run keeps both rules and records its own choice, how percentage splits round, as a [Decision](../highlights.md#decisions-keep-the-why) that stays proposed until you accept it.
-5. Check the result against [the checklist](../../../../demos/expense-splitter/brownfield/checks.md), and compare your records with the [reference records](../../../../demos/expense-splitter/brownfield/reference/).
+7. Answer the agent's questions the way the evals' simulated user does. For a repair or both, `answers.json` holds one answer, a saved game that fails to open, for when the agent asks for an example. Reply "Your call, within the supplied requirements." to everything else, and give no coding advice.
+8. Run the game's checks from its README, then try the change in the game.
 
-## The quiet failures
+To try Code only, skip `docs/`, the README line and the pointer line, and give the request alone.
 
-The existing tests don't catch either of these failures:
+## What to compare
 
-- **Floating point returns** through "just the percentage", and shares stop being whole cents.
-- **The extra cent goes to whoever was typed first** instead of to the payer. The result looks correct, but it contradicts how even splits already work.
+Compare your runs on the points the evals measure:
 
-Run the same request on a second copy without Open Forge and compare. Look less at whether the feature works and more at whether the rules survived.
+- Rules - for the feature, does the agent read the spec's update and keep unnamed games at snapshot version 1?
+- Repair - does it fix the cause, or only the example the simulated user gave?
+- Scope - does the change stay within the parts the request needs, or does it rewrite unrelated code?
+- Regressions - do the game's existing tests still pass?
+- Cost - how many tokens and minutes did each run take?
 
-**Next:** [Grow your own framework](../getting-started/grow-your-framework.md).
+## Results
+
+[Results](../evals/results.mdx) shows the three cases as the evals ran them, graded by the change checks, the full spec's checks as regressions and two guards. The checks run only inside the evals. [Run evals](../evals/run.md) shows how to run them on your machine.

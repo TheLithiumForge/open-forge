@@ -1,0 +1,77 @@
+---
+title: Setups
+description: The eight project setups the evals compare, from No setup to Full Core, with the control for each starting point and how the runner builds them.
+---
+
+import NoSetup from "./_definitions/no-setup.mdx"
+import PlainDocs from "./_definitions/plain-docs.mdx"
+import LinkedAgents from "./_definitions/linked-agents.mdx"
+import Minimal from "./_definitions/minimal.mdx"
+import Essentials from "./_definitions/essentials.mdx"
+import FullCore from "./_definitions/full-core.mdx"
+import SpecInPrompt from "./_definitions/spec-in-prompt.mdx"
+import CodeOnly from "./_definitions/code-only.mdx"
+
+# Setups
+
+A setup is the project context an agent starts with in an eval run, from an empty folder to a full Open Forge install.
+
+Within one comparison, every setup gets the same prompt, the same requirements, the same starting code and the same simulated user. Only the arrangement of the context changes. For example, Plain docs and Essentials both hold the same short brief in `docs/`, and Essentials also routes it through the Open Forge loader.
+
+Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder), the scale the Demos use for how much setup a project has. Spec in prompt and Code only are delivery variants. They move or remove the documents instead of adding setup.
+
+## No setup \{#no-setup}
+
+<NoSetup />
+
+## Plain docs \{#plain-docs}
+
+<PlainDocs />
+
+## Linked AGENTS.md \{#linked-agents}
+
+<LinkedAgents />
+
+## Minimal \{#minimal}
+
+<Minimal />
+
+## Essentials \{#essentials}
+
+<Essentials />
+
+## Full Core \{#full-core}
+
+<FullCore />
+
+## Spec in prompt \{#spec-in-prompt}
+
+<SpecInPrompt />
+
+## Code only \{#code-only}
+
+<CodeOnly />
+
+## Control
+
+Each comparison measures every setup against a control, the first setup in its plan. The control is No setup for an idea, and Plain docs for a short brief, a full spec and an existing app. [Starting points](starting-points.mdx#compared-setups) lists the setups each starting point compares, and [Results](results.mdx) shows each setup's difference from its control.
+
+## How setups are built
+
+The runner builds every setup from one source, so setups differ only where their definitions say. Each project starts in a fresh folder outside any Git repository, so no parent `AGENTS.md` or `CLAUDE.md` reaches the agent. Setup manifests and grading files stay outside the project.
+
+The Open Forge setups use the pinned Open Forge CLI. For an idea, the runner runs one install command, e.g. for Essentials:
+
+```sh
+open-forge install --preset essentials --automatic
+```
+
+From a short brief on, the documents are written to `docs/` with a description and tags in their frontmatter. Then the runner installs the preset and routes the documents:
+
+```sh
+open-forge install --preset essentials --frontmatter scoped --automatic
+open-forge route include ./docs --tag LoadNow
+open-forge index ./docs/_docs.md
+```
+
+Each command runs with `--dry-run` first, and the setup stops if any command doesn't complete. Before the scored runs, the [`qualify`](cli.md#qualify) command installs fresh setups and checks their entry files, the Open Forge lock file, the planned files and any unwanted files.
