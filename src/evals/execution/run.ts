@@ -139,8 +139,8 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     }
   } catch (error) {
     if (error instanceof JudgeLimited && run.status === RunStatus.judging) {
-      // The attempt and its checks are complete. Resume adds the missing judgment without running the agent again.
-      await update({ status: RunStatus.done, finishedAt: new Date().toISOString() }, "the judge's provider hit a usage limit or rejected the sign-in. The batch pauses.");
+      // The attempt and its checks are complete. judge --missing adds the judgment later without running the agent again.
+      await update({ status: RunStatus.done, finishedAt: new Date().toISOString() }, "the judge's provider hit a usage limit or rejected the sign-in. The judgment stays missing for judge --missing.");
       throw error;
     }
     if (error instanceof SimulatorFailure) {

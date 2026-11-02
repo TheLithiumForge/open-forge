@@ -148,14 +148,15 @@ async function executeBatch(batchId: string, parallel?: number): Promise<void> {
       await saveSetups(batchId, setups);
     } else if (batch.fingerprints.setupContent !== setupContent) throw new Error("The setup content changed since this batch started.");
     await setStatus(BatchStatus.running);
-    let limited = false;
+    let limited = false, judgmentsMissing = false;
     const replaced = new Set((await readRuns(batch)).flatMap((run) => run.replacesRunId === null ? [] : [run.replacesRunId]));
     // Batches saved before parallel runs existed have no setting, so they run one at a time.
     await runInParallel(batch.runs, parallel ?? (batch.config.parallelRuns || 1), async (runId, index) => {
       try { await attempt(runId, index); }
       catch (error) {
+        // Judging never blocks implementation. The judgment stays missing, and judge --missing fills it later.
         if (!(error instanceof JudgeLimited)) throw error;
-        limited = true;
+        judgmentsMissing = true;
       }
     }, () => limited);
     async function attempt(runId: string, index: number): Promise<void> {
@@ -193,6 +194,7 @@ async function executeBatch(batchId: string, parallel?: number): Promise<void> {
       if (done.status === RunStatus.limited) limited = true;
     }
     batch = withReportedModels(batch, await readRuns(batch));
+    if (judgmentsMissing) progress.report(batchId, `A judge hit its usage limit, so some judgments are missing. Fill them later with npm run evals -- judge ${batchId} --missing.`);
     if (limited) return await setStatus(BatchStatus.paused);
     await setStatus(BatchStatus.done);
     progress.report(batchId, "The batch is done.");
