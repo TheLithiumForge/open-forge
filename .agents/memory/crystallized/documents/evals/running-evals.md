@@ -28,7 +28,7 @@ Container rules follow [Architecture](architecture.md#images). The [proposal's p
 
 ## Commands
 
-Run commands from the repository root as `npm run evals -- <command>`. The public run guide above describes the implemented commands. The `publish` command below is planned.
+Run commands from the repository root as `npm run evals -- <command>`. The public run guide above describes them, and the generated [CLI reference](../../../../../src/docusaurus/docs/evals/cli.md) lists every flag. Every setting is a flag. Only sign-in values live in `src/evals/.env.local`.
 
 | Command | Result |
 | --- | --- |
@@ -36,17 +36,19 @@ Run commands from the repository root as `npm run evals -- <command>`. The publi
 | `images` | Three images built from locked digests |
 | `smoke` | A mock attempt through the full flow without a model |
 | `qualify` | Setup delivery checks outside the scored sample |
-| `run --plan <plan>` | Attempts from a saved plan |
-| `ui` | Local blind comparison and saved results without model calls |
-| `recheck` | New check assessment on saved files |
-| `rejudge` | New judge assessment on saved files |
-| `publish` | Finished batch prepared for the results repository |
+| `run --plan <plan>` | Implementation runs from a saved plan |
+| `resume <batch>` | Continues a paused or stopped batch |
+| `progress` | Each batch's completion and preliminary scores |
+| `check <batch>` | New check assessment on saved files |
+| `judge <batch>` | New judge assessment on saved files, or only missing ones with `--missing` |
+| `site` | The docs site with local runs, including running batches |
+| `results add <batch>` | A finished batch and its evidence added to the results repository |
 
 The [proposal's command table](../../../emerging/analysis/eval-product-proposal.md#product) defines these commands.
 
-In the draft, `npm start` opens the local web app from `src/evals/`, and `npm run batch` runs the saved config. `eval.config.json` holds defaults, with `eval.config.local.json` for UI changes. Local preference edits change the input fingerprint. Keep those results separate. The [draft README](../../../../../src/evals/README.md) describes its current controls.
+On 2026-11-02 the maintainer made the docs site the only results UI and retired the local web app. An implementation run is one agent building one setup once. Grading is checks and judging, run any time later on saved files.
 
-The approved run begins with prerequisite and image checks, then a model-free smoke attempt, then setup checks. A saved plan gives `run` its attempts. The resulting files give `ui`, `recheck` and `rejudge` their inputs. The [protocol](protocol.md#run-steps) defines the attempt steps.
+The approved run begins with prerequisite and image checks, then a model-free smoke attempt, then setup checks. A saved plan gives `run` its implementation runs. The saved files give `check`, `judge`, `site` and `results add` their inputs. The [protocol](protocol.md#run-steps) defines the attempt steps.
 
 ## Provider sessions
 
@@ -79,11 +81,11 @@ Save install commands, output and every installed file's path, hash and size. Ke
 
 ## Recovery
 
-Stop the agent and its leftover processes before freezing files or starting the build. The verifier rebuilds offline and runs browser checks one at a time. Save files, built output, screenshots, events and measurements before deleting an attempt's container and temporary files.
+Stop the agent and its leftover processes before freezing files or starting the build. The verifier rebuilds offline. Browser check stages share machine-wide slots, one by default and set with `--check-slots`. Save files, built output, screenshots, events and measurements before deleting an attempt's container and temporary files.
 
-A usage or rate limit pauses the batch. Keep the interrupted record when resuming starts another attempt. Infrastructure replacement follows the registered rule. Failed coding attempts and timeouts stay in the comparison.
+A usage limit or a rejected sign-in pauses the batch, and resume redoes that run once. A run stopped while it was graded is graded from its saved files. Commands that call a provider refuse to start without its sign-in. Keep the interrupted record when resuming starts another run. Infrastructure replacement follows the registered rule. Failed coding attempts and timeouts stay in the comparison.
 
-Recheck saved files after a grader error. Recheck and rejudge append assessments and keep the earlier outcomes. The [grading contract](grading.md#counting) defines the counting, and the [results contract](results.md#records) defines the saved records. The [proposal's delivery plan](../../../emerging/analysis/eval-product-proposal.md#delivery-phases) requires cancellation, recovery and attempt accounting.
+Check saved files again after a grader error. `check` and `judge` append assessments and keep the earlier outcomes. The [grading contract](grading.md#counting) defines the counting, and the [results contract](results.md#records) defines the saved records. The [proposal's delivery plan](../../../emerging/analysis/eval-product-proposal.md#delivery-phases) requires cancellation, recovery and attempt accounting.
 
 ## Not decided yet
 

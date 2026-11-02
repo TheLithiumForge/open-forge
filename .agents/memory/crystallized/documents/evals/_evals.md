@@ -37,7 +37,7 @@ Back to [Documents](../_documents.md).
 - [Checks per layer, check statuses, counting rules, model judge and blind human audits](grading.md) - #Memory #Document #CurrentTruth #Evaluation #Grading #Judging #Measurement
 - [Editable Neon Pairs specification and frozen pack generation](neon-pairs/_neon-pairs.md) - #Memory #Document #CurrentTruth #Evaluation #Game #Specification
 - [The shared run steps, simulated user, judge evidence, fair comparison and pre-registration rules](protocol.md) - #Memory #Document #CurrentTruth #Evaluation #Protocol #Conversation
-- [The public results repository, result versions, schema v2 records, evidence assets and publishing flow](results.md) - #Memory #Document #CurrentTruth #Evaluation #Results #History #Publishing
+- [The public results repository, result versions, schema v2 records, evidence in Git and publishing flow](results.md) - #Memory #Document #CurrentTruth #Evaluation #Results #History #Publishing
 - [The approved eval commands, prerequisites, provider sessions, sign-in, setup preparation and recovery](running-evals.md) - #Memory #Document #CurrentTruth #Evaluation #Harness #Isolation
 - [What Open Forge Evals must show, the limits on public claims, the four layers and the separate comparison axes](vision.md) - #Memory #Document #CurrentTruth #Evaluation #Vision
 

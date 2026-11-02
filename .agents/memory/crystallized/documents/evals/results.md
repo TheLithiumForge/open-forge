@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: The public results repository, result versions, schema v2 records, evidence assets and publishing flow
+  description: The public results repository, result versions, schema v2 records, evidence in Git and publishing flow
   tags: [Memory, Document, CurrentTruth, Evaluation, Results, History, Publishing]
 ---
 
@@ -8,7 +8,7 @@ open-forge:
 
 Eval Results is the public record of Open Forge comparisons, with versioned measurements and saved evidence shown in the main documentation site.
 
-Status: approved on 2026-11-01. The repository, its original site and the submodule were created the same day, with no batches published yet. The publish command is Not built yet.
+Status: approved on 2026-11-01 and revised by the maintainer on 2026-11-02: evidence lives in the repository's Git history, and the docs site is the only results UI. `results add` is built. No batches are published yet.
 
 The public [`open-forge-eval-results`](https://github.com/TheLithiumForge/open-forge-eval-results) repository holds the records, schemas, generated `index.json` and evidence manifests. The [Evals pages](https://thelithiumforge.github.io/open-forge/docs/evals) in the main Docusaurus site show them. It's a submodule at `src/evals/results/`. The runner, specs and local UI stay in `src/evals/`. The [approval](../../../emerging/analysis/eval-product-proposal.md#approved) makes the repository public.
 
@@ -40,7 +40,7 @@ The planned repository layout is:
 | --- | --- |
 | `schemas/v2/` | JSON Schemas |
 | `benchmarks/<input-hash>/manifest.json` | Frozen input manifest |
-| `versions/<cli-version>/batches/<batch>/` | `experiment.json`, `setups.jsonl`, `runs.jsonl`, `assessments/` and `artifacts.json` |
+| `versions/<cli-version>/batches/<batch>/` | `experiment.json`, `setups.jsonl`, `runs.jsonl`, `assessments/`, `artifacts.json` and `evidence/` |
 | `index.json` | Generated batch catalogue, including layers, models, grading versions and record paths |
 | `scripts/` | Validation, views and publication tools |
 
@@ -48,25 +48,19 @@ Local unpublished runs stay in gitignored `src/evals/runs/`.
 
 ## Evidence storage
 
-Store each kind of evidence in its chosen place:
+Each batch keeps its evidence in Git beside its records, in `evidence/` at the paths `artifacts.json` lists: agent code without installed packages, the built game, screenshots, conversations and event logs. Staging verifies every file's size and SHA-256, and validation checks them again. The repository can be rebuilt from saved runs, so adding a batch again replaces it. This replaced the earlier plan of one release asset per batch, because evidence in Git can be browsed, linked from the site and checked by CI.
 
-| Place | Contents |
-| --- | --- |
-| Git | Records, schemas, manifests, catalogue and lockfiles |
-| Release assets | Compressed agent source, built games, screenshots, transcripts and tooling snapshots |
-
-Use one immutable release per batch. Checksum the assets and split them at 1 GiB. Remove credentials and machine paths during export. A correction creates a new release linked to the earlier release. The [proposal's storage rules](../../../emerging/analysis/eval-product-proposal.md#results-repository-and-site) define this split.
+Evidence that holds a sign-in, a machine path or the user name stops `results add` before anything is staged.
 
 ## Publishing
 
-After the batch is complete, the planned command is `npm run evals -- publish --batch <batch>` from the repository root. It will produce frozen, sanitized records and bundled files for staging.
+After a batch is finished, `npm run evals -- results add <batch>` from the repository root exports its sanitized records, checks its evidence, stages both through the results repository's own scripts and validates the repository.
 
 Publishing follows these steps:
 
-1. Check batch completeness, freeze the records, remove private data and bundle evidence.
-2. Open a results change and a draft release with the staged files.
-3. Validate schemas, references and comparison groups in CI.
-4. On merge, verify uploaded asset hashes, publish the release and update the catalogue.
+1. Add finished batches with `results add` and commit them in the results repository.
+2. The maintainer pushes the results repository and updates the submodule pin.
+3. CI validates schemas, references, evidence hashes and the catalogue.
 
 Each publication changes a remote repository and needs the maintainer's go. A failed validation keeps invalid records out of the site. The [proposal's publish flow](../../../emerging/analysis/eval-product-proposal.md#results-repository-and-site) defines these steps and permission.
 
@@ -74,7 +68,7 @@ Each publication changes a remote repository and needs the maintainer's go. A fa
 
 The Evals section lives in Open Forge's main documentation site under `src/docusaurus/`. The results repository is a data store with validation CI and no Pages deployment. The submodule pins the initial data copy read at build time.
 
-Fetch latest results resolves the public results repository's current commit. It then reads `index.json` and records through raw GitHub URLs pinned to that commit. The site validates their schemas and references before replacing the displayed data. A failed fetch keeps the previous copy. Record text is plain data. Each view shows its data commit, copy or fetch time and analysis version. New records can be read without a CLI or docs release.
+The Results page reads four sources through one validator: the copy pinned at build time, the latest published commit, local runs served by `npm run evals -- site` with running batches included, and a results folder picked on the reader's computer. It shows each batch's progress, compares every setup with the plan's first setup and links every run's evidence from the active source. Fetch latest results resolves the public results repository's current commit. It then reads `index.json` and records through raw GitHub URLs pinned to that commit. The site validates their schemas and references before replacing the displayed data. A failed fetch keeps the previous copy. Record text is plain data. Each view shows its data commit, copy or fetch time and analysis version. New records can be read without a CLI or docs release.
 
 The site provides layer overviews, setup tables for each implementer and judge pair, charts, attempt evidence, CLI history and the reference trend. Wilson and bootstrap intervals describe screening variation. Different grading versions stay apart. Missing values stay missing.
 

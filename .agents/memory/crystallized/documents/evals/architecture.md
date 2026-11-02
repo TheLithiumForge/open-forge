@@ -26,8 +26,8 @@ The planned folders have these jobs:
 | `materialize/` | Setups generated from one source |
 | `grading/` | Checks, judge, rubrics and appended assessments |
 | `benchmarks/neon-pairs/` | Frozen benchmark inputs and reference |
-| `history/` | Versioned records and export |
-| `web/` | Local server, blind comparison and results UI |
+| `history/` | Versioned records, progress and export to the results repository |
+| `site/` | Read-only data server that shows local runs in the docs site's Results page |
 | `images/` | Agent, verifier and assessor Dockerfiles |
 | `results/` | Results repository as a submodule |
 
