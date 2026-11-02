@@ -1,4 +1,4 @@
-import type { Page } from "playwright";
+import type { Locator, Page } from "playwright";
 import { CardAttribute, card } from "../board.ts";
 import { fullyVisible } from "./view-values.ts";
 
@@ -9,8 +9,24 @@ export const FocusSamples = [0, 255, 136, 119] as const;
 export const OutlineClauses = ["I13.1", "V19.5"] as const;
 export const ScrollMarginClause = "I13.2";
 
+/**
+ * The visible game title. The spec names the game but not the title element's whole text, so a subtitle beside the name
+ * still marks the title. An exact match comes first, then a heading that starts with the name, then the largest such text,
+ * so a skip link that repeats the name can't stand in for the title.
+ */
+export async function gameTitle(page: Page): Promise<Locator> {
+  const exact = page.getByText(GameTitle, { exact: true }).filter({ visible: true });
+  const named = new RegExp(`^\\s*${GameTitle}\\b`);
+  const heading = page.getByRole("heading", { name: named }).filter({ visible: true });
+  const text = page.getByText(named).filter({ visible: true });
+  await exact.or(heading).or(text).first().waitFor();
+  for (const candidate of [exact, heading]) if (await candidate.count() > 0) return candidate.first();
+  const sizes = await text.evaluateAll((elements) => elements.map((element) => Number.parseFloat(getComputedStyle(element).fontSize)));
+  return text.nth(sizes.indexOf(Math.max(...sizes)));
+}
+
 export async function markLayout(page: Page): Promise<void> {
-  const title = page.getByText(GameTitle, { exact: true }).filter({ visible: true });
+  const title = await gameTitle(page);
   await page.locator(`[${LayoutAttribute}]`).evaluateAll((elements, attribute) => elements.forEach((element) => element.removeAttribute(attribute)), LayoutAttribute);
   await title.evaluate((element, attribute) => element.setAttribute(attribute, "title"), LayoutAttribute);
   await page.evaluate(({ cards, layout, maximum }) => {

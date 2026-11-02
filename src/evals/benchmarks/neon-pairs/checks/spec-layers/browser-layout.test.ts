@@ -4,7 +4,7 @@ import { test } from "node:test";
 import { chromium } from "playwright";
 import { CardAttribute, card } from "../board.ts";
 import { markVisibleCards } from "./browser-cards.ts";
-import { ContentMaximum, cssGridBoard, FocusSamples, focusedOutline, focusSamples, LayoutAttribute, OutlineClauses, ScrollMarginClause } from "./browser-layout.ts";
+import { ContentMaximum, cssGridBoard, FocusSamples, focusedOutline, focusSamples, GameTitle, LayoutAttribute, OutlineClauses, ScrollMarginClause } from "./browser-layout.ts";
 import { fakeGame } from "./browser-game.fixture.ts";
 import { scroll } from "./browser-access.ts";
 import { layout, spacingOnScale, styles } from "./browser-view.ts";
@@ -95,5 +95,21 @@ test("zoom clauses execute at the equivalent viewport and reject broken layout, 
     const broken = new Evidence(); await zoom(page, broken);
     for (const clause of [ZoomClause.readable, ZoomClause.pageWidth, ZoomClause.play, ZoomClause.outline]) assert.equal(broken.outcomes.find((item) => item.clause === clause)?.status, "fail", clause);
     await context.close();
+  } finally { await browser.close(); }
+});
+
+test("layout discovery accepts a title with a subtitle in the same element and prefers it over a skip link", async () => {
+  const browser = await chromium.launch(existsSync(chromium.executablePath()) ? {} : { channel: "chrome" });
+  try {
+    const page = await browser.newPage(); await fakeGame(page);
+    await page.evaluate((name) => {
+      const title = document.querySelector(".title span");
+      if (title) title.textContent = `${name} with a subtitle`;
+      const skip = document.createElement("a"); skip.href = "#board"; skip.textContent = `${name}, skip to game`;
+      document.body.prepend(skip);
+    }, GameTitle);
+    const measured = await styles(page);
+    assert.equal(measured.title["fontSize"], "24px");
+    assert.equal(await page.locator(`[${LayoutAttribute}="title"]`).evaluate((element) => element.tagName), "SPAN");
   } finally { await browser.close(); }
 });
