@@ -191,9 +191,11 @@ The full spec is [Eval Context And Cost Measures](../../../emerging/analysis/eva
 - **Two CLI audit items:** `check --missing` grades only runs without a check free of errors, and `run --setups` narrows a plan's setups while keeping its control.
 - **Scoped tasks:** four small Layer 4 repairs, one each in Gameplay, Controls and input, Visuals and Sound, graded by clause checks that reuse the full-spec checker. They replace the partial greenfield builds, which no browser check could grade. The spec's [Scoped tasks](../../../emerging/analysis/eval-context-and-cost-measures.md#scoped-tasks-built-2026-11-03) section has the details.
 - **Results page:** each setup's newest runs for a case and model count, so a later batch can add one setup without hiding the others.
-- **`index` fix:** a separate change on `fix/index-refresh-outside-entries`, cut from `develop`, so `index` rebuilds every entry outside `.agents/` too.
+- **`index` fix:** cut from `develop` on `fix/index-refresh-outside-entries`, and cherry-picked onto this branch as `d48156886`, so `index` rebuilds every entry outside `.agents/` too. Eval runs use the published 0.9.0-beta.18 package, so it reaches them with the next release.
 
-The recheck of Sol's Layer 3 batch was stopped with about six runs left, at the maintainer's word. The proposed next plan is the [Order](../../../emerging/analysis/eval-context-and-cost-measures.md#order) in the spec.
+The recheck of Sol's Layer 3 batch was stopped with about six runs left, at the maintainer's word.
+
+**Plan approved, 2026-11-03.** The maintainer approved the [Eval Program Plan](../../../emerging/analysis/eval-program-plan.md): scenarios L4-1 to L4-3, then L3-1 to L3-3, and all five decisions. Phase 0 and 1 are committed: the four scoped tasks pass case validation, the L4-1 smoke and full plans qualify, plans can leave judging for later, Codex edits are counted, and the `analyze` stage records tokens by class and file type and tool calls, shown on the Results page. Next: the grading speedup the maintainer asked for, where containers use every core and the checker spreads its journeys across workers, then the L4-1 smoke on the maintainer's go.
 
 **Later:** testing Extensions, starting with the Helpful setup. [Task 90](task90-extensions-install-their-routes.md) covers Extensions that need routes a preset left out, and the [Plan-Ahead Skill](../../../emerging/ideas/plan-ahead-skill.md) idea covers Guidance that doesn't change how agents ask.
 
