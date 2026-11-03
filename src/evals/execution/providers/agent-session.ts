@@ -1,4 +1,4 @@
-import { Tool, type Isolation, type WorkMode } from "../../config/choices.ts";
+import { Tool, type Isolation } from "../../config/choices.ts";
 import type { ModelChoice } from "../../config/config.types.ts";
 import type { AgentTelemetry } from "../../history/results.types.ts";
 import type { RunSpace } from "../containers/executor.ts";
@@ -33,8 +33,6 @@ export interface SessionContext {
   readonly choice: ModelChoice;
   /** Every raw event the tool printed, kept for later checks of the numbers. */
   readonly eventsPath: string;
-  /** Absent means one agent. */
-  readonly workMode?: WorkMode;
 }
 
 // Claude Code says "You've hit your 5-hour limit", which names neither usage nor rate.

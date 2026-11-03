@@ -3,10 +3,16 @@ import type { EvalConfig, JudgeChoice, ModelChoice } from "./config.types.ts";
 import { modelKey } from "./judges.ts";
 import { MatrixAgents, MatrixEffort, MatrixJudges, MatrixModels } from "./matrix.ts";
 
-export const PresetName = { claude: "claude", codex: "codex", both: "both" } as const;
+export const PresetName = { claude: "claude", codex: "codex", both: "both", codexTeams: "codex-teams" } as const;
+/** Sol alone, Sol leading Sol subagents and Sol leading Luna subagents. The team is part of the implementer, so every scenario can run under each and results filter by it. */
+export const CodexTeams = [
+  MatrixAgents[0],
+  { ...MatrixAgents[0], team: { model: MatrixModels.codex, effort: MatrixEffort.high } },
+  { ...MatrixAgents[0], team: { model: MatrixModels.codexUser, effort: MatrixEffort.high } },
+] as const satisfies readonly ModelChoice[];
 export const CustomPreset = "Custom";
 export const ImplementerPresets = {
-  [PresetName.claude]: [MatrixAgents[1]], [PresetName.codex]: [MatrixAgents[0]], [PresetName.both]: MatrixAgents,
+  [PresetName.claude]: [MatrixAgents[1]], [PresetName.codex]: [MatrixAgents[0]], [PresetName.both]: MatrixAgents, [PresetName.codexTeams]: CodexTeams,
 } as const satisfies Readonly<Record<string, readonly ModelChoice[]>>;
 export const JudgePresets = {
   [PresetName.claude]: [MatrixJudges[0]], [PresetName.codex]: [MatrixJudges[1]], [PresetName.both]: MatrixJudges,

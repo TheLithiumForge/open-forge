@@ -2,7 +2,9 @@ import type { Assessment, Batch, Checks, Choice, Judge, Run } from "../records/r
 import { latestRun, type AssessedRun } from "./analysis.ts";
 export const ReferenceImplementer = "reference";
 export const Layers = [1, 2, 3, 4] as const;
-export const choiceKey = (choice: Choice | null | undefined) => JSON.stringify(choice == null ? null : [choice.tool, choice.model, choice.effort]);
+// A team is part of the implementer, so a solo agent and the same agent leading subagents count apart. A solo key is unchanged.
+export const choiceKey = (choice: Choice | null | undefined) => JSON.stringify(choice == null ? null
+  : choice.team === undefined ? [choice.tool, choice.model, choice.effort] : [choice.tool, choice.model, choice.effort, choice.team.model, choice.team.effort]);
 export const choiceLabel = (choice: Choice | null | undefined) => choice == null ? "Missing judge" : `${choice.tool} ${choice.model ?? "unreported model"} (${choice.effort ?? "unreported effort"})`;
 export const isReference = (run: Run) => run.implementer === ReferenceImplementer;
 export const checkKey = (item: Checks | Judge) => JSON.stringify([item.versions.checker, item.versions.rubric, item.versions.spec ?? null, item.versions.specVersion ?? null]);

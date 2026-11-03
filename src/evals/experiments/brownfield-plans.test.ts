@@ -5,15 +5,15 @@ import { test } from "node:test";
 import { resolvePlan } from "../config/plans.ts";
 import { FixtureConfig } from "../config/test-fixtures.ts";
 import { LayerFourCases, CodeOnlySetup, CombinedTaskCase, ScopedTaskCases } from "../materialize/brownfield-case.ts";
-import { DocumentSetups, OrchestratorLine, setupPrompt } from "../materialize/delivery.ts";
-import { Judging, WorkMode } from "../config/choices.ts";
+import { DocumentSetups } from "../materialize/delivery.ts";
+import { Judging } from "../config/choices.ts";
 import { BrownfieldSetups, OrchestratedSetups } from "../materialize/brownfield.ts";
 import { evalsRoot } from "../paths.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { runCli, type CliServices } from "../cli.ts";
 import { Command, Flag } from "../config/commands.ts";
 import { FixtureSuite } from "../config/test-fixtures.ts";
-import { ImplementerPresets, JudgePresets, UserPresets, PresetName } from "../config/presets.ts";
+import { CodexTeams, ImplementerPresets, JudgePresets, UserPresets, PresetName } from "../config/presets.ts";
 
 test("Layer 4 plans list all cases and setups with frozen models and independent case batches", async () => {
   for (const variant of ["check", "full"]) {
@@ -72,18 +72,14 @@ test("L4-2 plans chain the scoped tasks after Best score, one milestone each, on
   }
 });
 
-test("L4-3 plans run the four repairs at once with one agent and with an orchestrator, Plain docs first, with a longer limit", async () => {
+test("L4-3 plans run the four repairs at once with Sol alone and leading Sol or Luna subagents, Plain docs first, with a longer limit", async () => {
   for (const variant of ["smoke", "full"]) {
     const plan = resolvePlan(JSON.parse(await readFile(join(evalsRoot, "experiments", `neon-pairs-l4-3-${variant}.json`), "utf8")), FixtureConfig);
     assert.deepEqual(plan.cases, [CombinedTaskCase]);
-    assert.equal(plan.setups[0], DocumentSetups.plain);
-    assert.ok(plan.setups.includes(OrchestratedSetups.plain));
-    if (variant === "full") assert.deepEqual(plan.setups, [DocumentSetups.plain, OrchestratedSetups.plain, DocumentSetups.fullCoreScoped, OrchestratedSetups.fullCoreScoped]);
-    for (const setup of plan.setups) assert.equal(BrownfieldSetups[setup]?.workMode === WorkMode.orchestrated, setup.endsWith("-orchestrated"), setup);
+    assert.deepEqual(plan.setups, variant === "smoke" ? [DocumentSetups.plain] : [DocumentSetups.plain, DocumentSetups.fullCoreScoped]);
+    assert.deepEqual(plan.agents, CodexTeams);
     assert.equal(plan.judging, Judging.later);
   }
   const suite = await loadSuite(CombinedTaskCase);
   assert.equal(suite.runMinutes, 90);
-  assert.equal(setupPrompt(suite, OrchestratedSetups.plain).endsWith(OrchestratorLine), true);
-  assert.equal(setupPrompt(suite, DocumentSetups.plain).includes(OrchestratorLine), false);
 });

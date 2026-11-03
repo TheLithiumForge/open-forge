@@ -5,7 +5,10 @@ const ModelNames: Readonly<Record<string, string>> = { "claude-opus-5-5": "Claud
 
 export function modelLabel(choice: Choice, reported?: string | null): string {
   const name = ModelNames[reported ?? ""] ?? ModelNames[choice.model ?? ""] ?? reported ?? choice.model ?? choice.tool;
-  return choice.effort === null ? name : `${name}, ${choice.effort} reasoning`;
+  const solo = choice.effort === null ? name : `${name}, ${choice.effort} reasoning`;
+  if (choice.team === undefined) return solo;
+  // A team is part of the implementer, so its label names the subagents it leads.
+  return `${solo}, leading ${ModelNames[choice.team.model ?? ""] ?? choice.team.model ?? "unreported"} subagents`;
 }
 
 /** Setups in reading order: the controls, the other setups without Open Forge, then the Open Forge presets from small to large. */

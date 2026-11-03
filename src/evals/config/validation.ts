@@ -26,5 +26,11 @@ export function modelChoice(value: unknown): ModelChoice {
   const choice = object(value);
   const tool = choice["tool"];
   if (tool !== Tool.claude && tool !== Tool.codex && tool !== Tool.mock) throw new Error("Unknown model provider.");
-  return { tool, model: choice["model"] === null ? null : text(choice["model"]), effort: choice["effort"] === null ? null : text(choice["effort"]) };
+  const optionalText = (item: unknown): string | null => item === null ? null : text(item);
+  const base = { tool, model: optionalText(choice["model"]), effort: optionalText(choice["effort"]) };
+  if (choice["team"] === undefined) return base;
+  // Codex is the only tool whose subagents the harness can switch and count so far.
+  if (tool !== Tool.codex) throw new Error("Only Codex runs a team of subagents for now.");
+  const team = object(choice["team"]);
+  return { ...base, team: { model: optionalText(team["model"]), effort: optionalText(team["effort"]) } };
 }

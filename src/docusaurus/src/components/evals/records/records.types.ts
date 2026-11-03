@@ -1,5 +1,6 @@
 import type { AnalysisMethods, Judging, ThreadRoles, WorkModes } from "./schema-values.ts";
-export interface Choice { readonly tool: string; readonly model: string | null; readonly effort: string | null }
+/** A team is the subagents an implementer leads, each on this model and effort. */
+export interface Choice { readonly tool: string; readonly model: string | null; readonly effort: string | null; readonly team?: { readonly model: string | null; readonly effort: string | null } }
 export interface ReferenceVersion { readonly commit: string; readonly contentHash: string; readonly specHash: string; readonly specVersion: number }
 export interface GradingVersions { readonly checker: string | null; readonly rubric: string | null; readonly judge: string | null; readonly spec?: string | null; readonly specVersion?: number | null }
 /** A batch's place in a chain of milestones. Each milestone is its own batch, and its runs start from the parent batch's results. */

@@ -2,7 +2,8 @@ import type { EvalConfig, JudgeChoice, ModelChoice } from "./config.types.ts";
 import { integer, modelChoice, object } from "./validation.ts";
 
 export function modelKey(choice: ModelChoice): string {
-  return JSON.stringify([choice.tool, choice.model, choice.effort]);
+  // A team is part of the implementer, so a solo agent and the same agent leading subagents count apart.
+  return JSON.stringify(choice.team === undefined ? [choice.tool, choice.model, choice.effort] : [choice.tool, choice.model, choice.effort, choice.team.model, choice.team.effort]);
 }
 
 export function judgeChoice(value: unknown): JudgeChoice {

@@ -24,7 +24,9 @@ Code only takes information away, so it's compared only with Plain docs. [Setups
 | --- | --- | --- | --- | --- | --- |
 | L4-1 | Four small repairs, each in one scope: best score, arrow keys, reduced motion and silence | 1 to 4 | One agent | 48 | What does each step change on small work, and what does scoping save? |
 | L4-2 | The same four repairs as a chain, each starting from the previous result | 2 to 4 | One agent | 27, reusing L4-1 for the first repair | Does scoping keep its saving as changes pile up? |
-| L4-3 | All four repairs in one request, worked one at a time with tests after each | 2 and 4 | One agent, and an orchestrator that hands each repair to a subagent | 12 | What does an orchestrator cost against one agent, and does scoping lower its subagents' cost? |
+| L4-3 | All four repairs in one request, worked one at a time with tests after each | 2 and 4 | Sol alone, Sol leading Sol subagents and Sol leading Luna subagents | 18 | What does a team cost against one agent for the same work, does a smaller subagent model save tokens, and does scoping lower the subagents' cost? |
+
+A team is part of the implementer, as a model is. Any scenario can run with any team, and the Results page filters by team the way it filters by model, so teams are a selection of the data, not scenarios of their own.
 
 Each chained repair in L4-2 has a twin in L4-1, the same repair from a clean start. The difference between them shows what the earlier changes did. [Starting points](starting-points.mdx#scoped-tasks) describes the four repairs.
 

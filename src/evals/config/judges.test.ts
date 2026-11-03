@@ -4,6 +4,8 @@ import { parseConfig } from "./config.ts";
 import { configuredJudges, modelKey, readJudges } from "./judges.ts";
 import { MatrixAgents, MatrixJudges } from "./matrix.ts";
 import { Judging } from "./choices.ts";
+import { CodexTeams } from "./presets.ts";
+import { modelChoice } from "./validation.ts";
 import { LocalModel, PlanVersion, resolvePlan } from "./plans.ts";
 import { FixtureConfig } from "./test-fixtures.ts";
 import { planBatchRuns } from "../execution/batch.ts";
@@ -59,4 +61,14 @@ test("a chain plan names its chain and milestone for one Layer 4 case, and other
   assert.deepEqual(parseConfig({ ...chained, chain: { ...plan.chain, parentBatchId: "parent-batch" } }).chain, { ...plan.chain, parentBatchId: "parent-batch" });
   for (const chain of [{ id: "l4-2", milestone: 1 }, { id: "l4 2", milestone: 2 }]) assert.throws(() => resolvePlan({ ...plan, chain }, FixtureConfig));
   assert.throws(() => resolvePlan({ ...plan, cases: ["l4-r03", "l4-r04"] }, FixtureConfig));
+});
+
+test("a team is part of the implementer, so solo and team runs plan and count apart, and only Codex leads one", () => {
+  const [solo, sol, luna] = CodexTeams;
+  assert.deepEqual(modelChoice(JSON.parse(JSON.stringify(luna))), luna);
+  assert.equal(new Set(CodexTeams.map(modelKey)).size, 3);
+  assert.equal(modelKey(solo), modelKey({ tool: solo.tool, model: solo.model, effort: solo.effort }), "A solo key stays what it was before teams existed.");
+  assert.throws(() => modelChoice({ tool: "claude", model: "opus", effort: "high", team: { model: "opus", effort: "high" } }));
+  const runs = planBatchRuns({ ...FixtureConfig, agents: [solo, sol], setups: ["plain-docs"], runsPerSetup: 1 }, "batch");
+  assert.deepEqual(new Set(runs.map((run) => modelKey(run.agent))), new Set([modelKey(solo), modelKey(sol)]));
 });

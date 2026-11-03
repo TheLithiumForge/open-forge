@@ -3,10 +3,17 @@ import type { ContainerLimits } from "../execution/containers/settings.ts";
 import type { FrozenProtocol } from "../execution/conversation/answer-bank.ts";
 
 /** A tool and model. A null model or effort uses the tool's own default. */
+/** The subagents an implementer orchestrates, each on this model and effort. Absent means the implementer works alone. */
+export interface AgentTeam {
+  readonly model: string | null;
+  readonly effort: string | null;
+}
+
 export interface ModelChoice {
   readonly tool: Tool;
   readonly model: string | null;
   readonly effort: string | null;
+  readonly team?: AgentTeam;
 }
 
 export interface JudgeChoice extends ModelChoice {

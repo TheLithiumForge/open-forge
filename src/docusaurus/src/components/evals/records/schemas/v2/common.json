@@ -77,6 +77,36 @@
               "type": "null"
             }
           ]
+        },
+        "team": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "effort": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "model",
+            "effort"
+          ],
+          "additionalProperties": true
         }
       },
       "required": [
@@ -196,6 +226,36 @@
                     "type": "null"
                   }
                 ]
+              },
+              "team": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "effort": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "model",
+                  "effort"
+                ],
+                "additionalProperties": true
               }
             },
             "required": [
@@ -254,6 +314,36 @@
                     "type": "null"
                   }
                 ]
+              },
+              "team": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "effort": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "model",
+                  "effort"
+                ],
+                "additionalProperties": true
               }
             },
             "required": [
@@ -293,6 +383,36 @@
                   "type": "null"
                 }
               ]
+            },
+            "team": {
+              "type": "object",
+              "properties": {
+                "model": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "effort": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "model",
+                "effort"
+              ],
+              "additionalProperties": true
             },
             "repeats": {
               "type": "integer",
@@ -342,6 +462,36 @@
                   "type": "null"
                 }
               ]
+            },
+            "team": {
+              "type": "object",
+              "properties": {
+                "model": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "effort": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "model",
+                "effort"
+              ],
+              "additionalProperties": true
             }
           },
           "required": [
@@ -930,6 +1080,36 @@
                         "type": "null"
                       }
                     ]
+                  },
+                  "team": {
+                    "type": "object",
+                    "properties": {
+                      "model": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "effort": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "model",
+                      "effort"
+                    ],
+                    "additionalProperties": true
                   }
                 },
                 "required": [

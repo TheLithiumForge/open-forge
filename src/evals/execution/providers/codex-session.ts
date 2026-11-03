@@ -1,4 +1,4 @@
-import { WorkMode } from "../../config/choices.ts";
+import type { ModelChoice } from "../../config/config.types.ts";
 import { appendFileSync } from "node:fs";
 import type { AgentTelemetry } from "../../history/results.types.ts";
 import { outcomeForError, TurnOutcome, type AgentSession, type SessionContext, type TurnResult } from "./agent-session.ts";
@@ -26,20 +26,21 @@ export function codexArguments(context: SessionContext, threadId: string | null)
     "-c", 'web_search="disabled"',
     ...(model === null ? [] : ["-m", model]),
     ...(effort === null ? [] : ["-c", `model_reasoning_effort="${effort}"`]),
-    ...workModeArguments(context.workMode ?? WorkMode.oneAgent, model, effort),
+    ...teamArguments(context.choice),
     PromptFromStdin,
   ];
 }
 
 /**
- * Codex enables its subagents by default, so one agent switches them off. An orchestrator gets one level of subagents,
- * one at a time, each on the implementer's model and effort, so its runs stay comparable with one agent's.
+ * Codex enables its subagents by default, so a solo implementer switches them off. A team gets one level of subagents,
+ * one at a time, each on the team's model and effort.
  */
-export function workModeArguments(mode: WorkMode, model: string | null, effort: string | null): string[] {
-  if (mode === WorkMode.oneAgent) return ["--disable", CodexMultiAgent];
+export function teamArguments(choice: ModelChoice): string[] {
+  const team = choice.team;
+  if (team === undefined) return ["--disable", CodexMultiAgent];
   return ["--enable", CodexMultiAgent, "-c", "agents.max_depth=1", "-c", "agents.max_concurrent_threads_per_session=1",
-    ...(model === null ? [] : ["-c", `agents.default_subagent_model="${model}"`]),
-    ...(effort === null ? [] : ["-c", `agents.default_subagent_reasoning_effort="${effort}"`])];
+    ...(team.model === null ? [] : ["-c", `agents.default_subagent_model="${team.model}"`]),
+    ...(team.effort === null ? [] : ["-c", `agents.default_subagent_reasoning_effort="${team.effort}"`])];
 }
 
 /** Codex's feature for subagents, stable and on by default since 0.16x. */
