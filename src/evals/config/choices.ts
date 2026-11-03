@@ -12,6 +12,9 @@ export type Judging = (typeof Judging)[keyof typeof Judging];
 export const Checking = { run: "run", later: "later" } as const;
 export type Checking = (typeof Checking)[keyof typeof Checking];
 
-/** How a setup works: one agent does every task, or an orchestrator hands each task to a subagent of its own. */
-export const WorkMode = { oneAgent: "one-agent", orchestrated: "orchestrated" } as const;
+/**
+ * How a work packet is done: one agent with the whole packet in one request, a new agent per task with each starting
+ * from the previous task's result, or an orchestrator that hands each task to a subagent.
+ */
+export const WorkMode = { wholePacket: "whole-packet", taskByTask: "task-by-task", orchestrated: "orchestrated" } as const;
 export type WorkMode = (typeof WorkMode)[keyof typeof WorkMode];

@@ -1,0 +1,575 @@
+{
+  "schemaVersion": 1,
+  "status": "local-validation-passed-product-validation-pending",
+  "validation": "Fresh reference patch checks, builds, unit tests and public browser suites on all nine projects, local worker CLI, product patch and report parsers, and direct scope and protected-input checks.",
+  "node": "26.12.1",
+  "playwright": "1.64.1",
+  "chromium": "156.0.8078.4",
+  "specVersion": 2.2,
+  "referenceSpecVersion": 2.2,
+  "referenceHash": "d7d3840660da2f1aa6a0b19996b7c539b7b6f2cbc6add70e42986f16957386f1",
+  "productDocuments": [
+    {
+      "path": "README.md",
+      "sha256": "e12e7db449c3adacfcb429225a6e515855582c652d0e33cd87dafd1c4f785ed7"
+    },
+    {
+      "path": "acceptance.md",
+      "sha256": "b10c9502e036d3c76cbba8d47d65ff6facb282d91f9d6f7c794c1cac54cce5bd"
+    },
+    {
+      "path": "architecture.md",
+      "sha256": "8707282e3b30a5e5a771cfa8651a481e683d8d0f9bc48e68be8de37d89a34f52"
+    },
+    {
+      "path": "controls.md",
+      "sha256": "a199800ba9c73479eb83af0f39c40815b92a8b81b9819ff212365b3e06fd7442"
+    },
+    {
+      "path": "input.md",
+      "sha256": "561521000c174f0d3dba669739599b816a2df5edf325c56597195b3f0ebcdc53"
+    },
+    {
+      "path": "reproducibility.md",
+      "sha256": "00610b3365bbccefd942a3b53f961f6062251d6ec080c1dbeef4ee075effbb8d"
+    },
+    {
+      "path": "rules.md",
+      "sha256": "5bc52beb2a0af82dde856db4a8092e499c75f0e395db553f814ec6df0f5f5cb2"
+    },
+    {
+      "path": "sound.md",
+      "sha256": "ac13cd631905b38c47279868c12826bd57babdcde0a73974fa4bd071ff29b05d"
+    },
+    {
+      "path": "technology.md",
+      "sha256": "8af9ea621c07687b75543a282c119f4d66f9b5df82a2d5621f9cfdef3076605e"
+    },
+    {
+      "path": "visuals.md",
+      "sha256": "3686d12b2ee43f357e05d1e4777d5f3f0a3b4e407b2a276eb828196a5fe59642"
+    }
+  ],
+  "patchHashes": [
+    {
+      "path": "seed.patch",
+      "sha256": "a3a384556ec6237694ef4c5a3a26ceb7b9869857c2253722a271ba9be29fd6bc"
+    },
+    {
+      "path": "solution.patch",
+      "sha256": "eb1e91b34289b31318e241064685d525dff3a4a4b644cde5d1052f0d145f21bf"
+    },
+    {
+      "path": "alt-solution.patch",
+      "sha256": "b587d0a626c8df83eed10397a073cd519aeefd0679640f58a9d3a6c039926058"
+    }
+  ],
+  "supersedes": [],
+  "stages": [
+    {
+      "stage": "starting",
+      "patch": null,
+      "sourceHash": "dca005d2169efad9aae23a7a82d00f079308b87471845ec58239824366bf4509",
+      "patchCheck": "passed",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 132
+      },
+      "browser": {
+        "status": "passed",
+        "passed": 94,
+        "failed": 0
+      },
+      "expected": [
+        {
+          "id": "B5-01",
+          "status": "fail"
+        },
+        {
+          "id": "B5-02",
+          "status": "pass"
+        },
+        {
+          "id": "B5-03",
+          "status": "pass"
+        },
+        {
+          "id": "B5-04",
+          "status": "pass"
+        },
+        {
+          "id": "B5-05",
+          "status": "pass"
+        },
+        {
+          "id": "B5-06",
+          "status": "pass"
+        },
+        {
+          "id": "B5-07",
+          "status": "pass"
+        },
+        {
+          "id": "B5-08",
+          "status": "fail"
+        },
+        {
+          "id": "B5-09",
+          "status": "fail"
+        },
+        {
+          "id": "B5-10",
+          "status": "pass"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "No source paths changed."
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
+      "outcomes": [
+        {
+          "id": "repair-B5-01",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result. Assertion failed."
+        },
+        {
+          "id": "repair-B5-02",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: selection member order has no effect for one-card and mismatch states."
+        },
+        {
+          "id": "repair-B5-03",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: reordered unknown top-level members are rejected without changing progress or the draft."
+        },
+        {
+          "id": "repair-B5-04",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05: every missing top-level member is rejected in reordered input with progress unchanged."
+        },
+        {
+          "id": "repair-B5-05",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged."
+        },
+        {
+          "id": "repair-B5-06",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: reordered nested selections still reject unknown and missing members."
+        },
+        {
+          "id": "repair-B5-07",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps."
+        },
+        {
+          "id": "repair-B5-08",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume. Assertion failed."
+        },
+        {
+          "id": "repair-B5-09",
+          "area": "repair",
+          "status": "fail",
+          "evidence": "C09 and C12: reordered completed imports stay completed without Resume or a new best. Assertion failed."
+        },
+        {
+          "id": "repair-B5-10",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "C08 and C09: the app continues to load its own exported snapshot text."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-starting/build.log",
+          "sha256": "428511e4a8ebf1b08ca7495b08cc80a1447cb2ae1950e51f5545b5f4ee48f965"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-starting/unit.log",
+          "sha256": "26d7a65e81454352c72638b19d5ab3f5471e30d25ec54953eb6e058b49275401"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-starting/browser.log",
+          "sha256": "c1b6619387b7ee491a3db51ac6d2ba9ccaf9486460380debe96197bd65355b1e"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-starting/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-starting/worker-input.json",
+          "sha256": "7ab9a72075be67ffa4eea2a4d572fc1d2ade5e590a70b70bd816bf8e9ae480bb"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-starting/worker-report.json",
+          "sha256": "e12b6ee2269f5b1a3e136d1db7874ed77869d35a2670696bbefeee62d0f9e5f4"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-starting/seed-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "stage": "solution",
+      "patch": "solution.patch",
+      "sourceHash": "5658ab59ca79044bbbe3eaaa2ca997cfbc8414fea0c48b8713fdb4c883702d1b",
+      "patchCheck": "passed",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 133
+      },
+      "browser": {
+        "status": "passed",
+        "passed": 94,
+        "failed": 0
+      },
+      "expected": [
+        {
+          "id": "B5-01",
+          "status": "pass"
+        },
+        {
+          "id": "B5-02",
+          "status": "pass"
+        },
+        {
+          "id": "B5-03",
+          "status": "pass"
+        },
+        {
+          "id": "B5-04",
+          "status": "pass"
+        },
+        {
+          "id": "B5-05",
+          "status": "pass"
+        },
+        {
+          "id": "B5-06",
+          "status": "pass"
+        },
+        {
+          "id": "B5-07",
+          "status": "pass"
+        },
+        {
+          "id": "B5-08",
+          "status": "pass"
+        },
+        {
+          "id": "B5-09",
+          "status": "pass"
+        },
+        {
+          "id": "B5-10",
+          "status": "pass"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "added src/game/snapshot-order.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
+      "outcomes": [
+        {
+          "id": "repair-B5-01",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result."
+        },
+        {
+          "id": "repair-B5-02",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: selection member order has no effect for one-card and mismatch states."
+        },
+        {
+          "id": "repair-B5-03",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: reordered unknown top-level members are rejected without changing progress or the draft."
+        },
+        {
+          "id": "repair-B5-04",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05: every missing top-level member is rejected in reordered input with progress unchanged."
+        },
+        {
+          "id": "repair-B5-05",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged."
+        },
+        {
+          "id": "repair-B5-06",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: reordered nested selections still reject unknown and missing members."
+        },
+        {
+          "id": "repair-B5-07",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps."
+        },
+        {
+          "id": "repair-B5-08",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume."
+        },
+        {
+          "id": "repair-B5-09",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "C09 and C12: reordered completed imports stay completed without Resume or a new best."
+        },
+        {
+          "id": "repair-B5-10",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "C08 and C09: the app continues to load its own exported snapshot text."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-solution/build.log",
+          "sha256": "e46791f88e4a56384f375c8b1cd7888213caa891429444dadf9ffe22c1f3ca6d"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-solution/unit.log",
+          "sha256": "a24311363a03df8d3d9f97e61e9c837598e8981b2e1f8f0e2da4310ce35ff44d"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-solution/browser.log",
+          "sha256": "8a3a64a54ce3c30bf44b87b584d33c3809e15d10ccc8eb2fb694c884bbe1448d"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-solution/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-solution/worker-input.json",
+          "sha256": "f63d13b04187a733bbeb10ef224f5926fcfbbf448be3954302c6b69f60fc18b1"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-solution/worker-report.json",
+          "sha256": "7819f7894769ff030bd5e5dce2112c77afa11fee9f70eb676eff53567bb37b05"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-solution/seed-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-solution/solution-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "stage": "alternative",
+      "patch": "alt-solution.patch",
+      "sourceHash": "4067b954890a31a2153ea1aa34375fb7cf08c50e84a1b9bf53134c4543c7167b",
+      "patchCheck": "passed",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 133
+      },
+      "browser": {
+        "status": "passed",
+        "passed": 94,
+        "failed": 0
+      },
+      "expected": [
+        {
+          "id": "B5-01",
+          "status": "pass"
+        },
+        {
+          "id": "B5-02",
+          "status": "pass"
+        },
+        {
+          "id": "B5-03",
+          "status": "pass"
+        },
+        {
+          "id": "B5-04",
+          "status": "pass"
+        },
+        {
+          "id": "B5-05",
+          "status": "pass"
+        },
+        {
+          "id": "B5-06",
+          "status": "pass"
+        },
+        {
+          "id": "B5-07",
+          "status": "pass"
+        },
+        {
+          "id": "B5-08",
+          "status": "pass"
+        },
+        {
+          "id": "B5-09",
+          "status": "pass"
+        },
+        {
+          "id": "B5-10",
+          "status": "pass"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "added src/game/saved-format/snapshot-fields.ts: within diffScope\nadded src/game/snapshot-copy.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
+      "outcomes": [
+        {
+          "id": "repair-B5-01",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result."
+        },
+        {
+          "id": "repair-B5-02",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: selection member order has no effect for one-card and mismatch states."
+        },
+        {
+          "id": "repair-B5-03",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: reordered unknown top-level members are rejected without changing progress or the draft."
+        },
+        {
+          "id": "repair-B5-04",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D05: every missing top-level member is rejected in reordered input with progress unchanged."
+        },
+        {
+          "id": "repair-B5-05",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged."
+        },
+        {
+          "id": "repair-B5-06",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06: reordered nested selections still reject unknown and missing members."
+        },
+        {
+          "id": "repair-B5-07",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps."
+        },
+        {
+          "id": "repair-B5-08",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume."
+        },
+        {
+          "id": "repair-B5-09",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "C09 and C12: reordered completed imports stay completed without Resume or a new best."
+        },
+        {
+          "id": "repair-B5-10",
+          "area": "repair",
+          "status": "pass",
+          "evidence": "C08 and C09: the app continues to load its own exported snapshot text."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-alternative/build.log",
+          "sha256": "70ec59af596e436a6b1534a62a410b8b82c308ccce58947179ccb59fd2a2fb9c"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-alternative/unit.log",
+          "sha256": "4ee34586533795b63bd8d579570a14dd49c6032a889aeee57989a31a712f8772"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-alternative/browser.log",
+          "sha256": "d4bf686380c3db9aaba0afd0151fb11643047e76d99e23a0e7084c5d083945bf"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-alternative/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-alternative/worker-input.json",
+          "sha256": "c60f516237e082dd85210b59d8ea648c78204ca4327186536533680a24a65238"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-alternative/worker-report.json",
+          "sha256": "7819f7894769ff030bd5e5dce2112c77afa11fee9f70eb676eff53567bb37b05"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-alternative/seed-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-b5-pasted-saves-alternative/solution-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Full frozen Layer 3 regression validation is pending the separate checker update. The shared requirements loader still expects spec 2.1 while the pack is 2.2.",
+    "No Docker, WSL, model calls, sign-ins, downloads or dependency installs were run. Browser validation used src/evals/.playwright-browsers.",
+    "Direct scope and protected-input checks used reconstructed source trees outside containers. They do not establish container isolation."
+  ]
+}

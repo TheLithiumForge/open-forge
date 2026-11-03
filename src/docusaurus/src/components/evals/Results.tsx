@@ -9,12 +9,12 @@ import { FilterBar } from "./FilterBar.tsx";
 import { Headline } from "./Headline.tsx";
 import { ChartsSection } from "./charts/ChartsSection.tsx";
 import { ObjectiveSection } from "./ObjectiveSection.tsx";
-import { MilestoneSection, OrchestrationSection } from "./WorkViews.tsx";
+import { MilestoneSection, PacketSection } from "./WorkViews.tsx";
 import { ResultsTable } from "./table/ResultsTable.tsx";
 import { TradeoffTable } from "./table/TradeoffTable.tsx";
 import { DataStatus } from "./DataStatus.tsx";
 
-const Averages: Filters = { model: All, judge: All, startingPoint: All };
+const Averages: Filters = { model: All, judge: All, startingPoint: All, workMode: All };
 
 /**
  * The Results page: the headline, charts, objective measures, table and data status, all following one set of filters.
@@ -24,7 +24,7 @@ export function Results({ batches }: { readonly batches: readonly Batch[] }) {
   const [filters, setFilters] = useState<Filters>(Averages);
   const all = useMemo(() => newestCells(comparisons(cells(batches))), [batches]);
   const allCells = useMemo(() => all.map((item) => item.cell), [all]);
-  const { models, judges } = useMemo(() => options(allCells), [allCells]);
+  const { models, judges, workModes } = useMemo(() => options(allCells), [allCells]);
   const startingPoints = useMemo(() => [...new Set(allCells.map((cell) => cell.startingPoint))], [allCells]);
   const shown = useMemo(() => filtered(all, filters), [all, filters]);
   const standalone = useMemo(() => shown.filter((item) => item.cell.chain === null), [shown]);
@@ -35,13 +35,13 @@ export function Results({ batches }: { readonly batches: readonly Batch[] }) {
   const tradeoffs = useMemo(() => tradeoffRows(summaries, controlSetups(standaloneCells)), [summaries, standaloneCells]);
   const byId = useMemo(() => new Map(batches.map((batch) => [batch.experiment.id, batch])), [batches]);
   return <>
-    <FilterBar filters={filters} onChange={setFilters} models={models} judges={judges} startingPoints={startingPoints} averages />
+    <FilterBar filters={filters} onChange={setFilters} models={models} judges={judges} startingPoints={startingPoints} averages workModes={workModes} />
     <Headline summaries={summaries} reasons={reasons} />
     <TradeoffTable rows={tradeoffs} />
     <ChartsSection summaries={summaries} items={standalone} filters={filters} />
     <ObjectiveSection items={standalone} batches={byId} />
     <MilestoneSection items={shown} />
-    <OrchestrationSection items={standalone} batches={byId} />
+    <PacketSection items={shown} batches={byId} />
     <ResultsTable items={shown} batches={byId} />
     <DataStatus batches={batches} all={allCells} shown={shownCells} reasons={reasons} />
   </>;

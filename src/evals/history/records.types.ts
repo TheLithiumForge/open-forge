@@ -1,4 +1,3 @@
-import type { WorkMode } from "../config/choices.ts";
 import type { ModelChoice } from "../config/config.types.ts";
 import type { ScopePolicy } from "../materialize/scope.types.ts";
 import type { BallotFailure } from "../grading/judge/report.ts";
@@ -64,8 +63,8 @@ export interface ArtifactRecord {
 
 export interface SetupRecord {
   readonly scope?: ScopePolicy;
-  /** One agent when missing. */
-  readonly workMode?: WorkMode;
+  /** From the retired orchestrated setups. Work modes now belong to the plan. */
+  readonly workMode?: "one-agent" | "orchestrated";
   readonly schemaVersion: typeof RecordSchemaVersion;
   readonly id: string;
   readonly experimentId: string;

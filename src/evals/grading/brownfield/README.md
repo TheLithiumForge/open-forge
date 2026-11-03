@@ -43,7 +43,7 @@ Rechecks use the saved setup manifest. They append assessments through the exist
 Before running agents, check one case from the repository root:
 
 ```powershell
-npm run evals -- validate-case --case l4-f01
+npm run evals -- validate-case --case l4-f1-name-saves
 ```
 
 The command builds the starting project and runs every gate. It then applies `solution.patch` to a fresh starting snapshot and repeats the build. Before running the solution gates, it runs the project's own `npm test` and `npm run test:e2e` as the build account in the verifier. Their output files exercise the saved ignore rules. Both commands must pass with reported tests. If `alt-solution.patch` exists, the command repeats these steps on another fresh starting snapshot. Project code runs only in verifier containers. The command uses no models or sign-ins.
@@ -70,7 +70,7 @@ Every listed case loads before any build starts. The command checks every loaded
 
 ## Run plans
 
-The Layer 4 plans list `l4-f01`, `l4-r01` and `l4-fr01`. The CLI loads every listed case before installing setups or starting attempts. Each case gets its own batch and answer bank. Cases run in plan order and attempts keep the batch's random ordering.
+The Layer 4 plans list `l4-f1-name-saves`, `l4-b5-pasted-saves` and `l4-p2-name-and-pasted-saves`. The CLI loads every listed case before installing setups or starting attempts. Each case gets its own batch and answer bank. Cases run in plan order and attempts keep the batch's random ordering.
 
 Once the case folders and their known-solution validation are ready, run from the repository root:
 

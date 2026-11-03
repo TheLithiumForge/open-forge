@@ -47,7 +47,7 @@ test("every saved experiment names one provider's role presets, so the plan stat
   const folder = join(evalsRoot, "experiments"), names = (await readdir(folder)).filter((name) => name.endsWith(".json"));
   assert.ok(names.length > 0);
   // Each implementer preset belongs to one provider, whose judge and simulated user presets the plan names.
-  const families = { [PresetName.claude]: PresetName.claude, [PresetName.codex]: PresetName.codex, [PresetName.codexTeams]: PresetName.codex } as const;
+  const families = { [PresetName.claude]: PresetName.claude, [PresetName.codex]: PresetName.codex, [PresetName.codexOrchestrators]: PresetName.codex } as const;
   for (const name of names) {
     const source: unknown = JSON.parse(await readFile(join(folder, name), "utf8"));
     assert.ok(typeof source === "object" && source !== null && "agents" in source && "judges" in source && "simulatedUser" in source);

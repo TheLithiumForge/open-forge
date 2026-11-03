@@ -70,7 +70,8 @@ export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   const config = { ...requested, limits: { ...requested.limits, runMinutes: suite.runMinutes ?? requested.limits.runMinutes },
     protocol: suite.documents === undefined ? requested.protocol ?? suiteProtocol(suite) : freezeProtocol(answerBank(suite.intent), [suite.prompt, ...suite.documents]) };
   const id = `${new Date().toISOString().replaceAll(/[:.]/g, "-")}-${opaqueId()}`;
-  const chained = config.chain === undefined ? null : await planChain(config, id, suite);
+  // A chain's first step starts from the case's own starting code, as any batch does.
+  const chained = config.chain?.parentBatchId === undefined ? null : await planChain(config, id, suite);
   const runs = chained?.runs ?? planBatchRuns(config, id);
   const batch: BatchRecord = { ...await captureExperiment(id, config, suite), runs: runs.map((run) => run.id), ...(chained === null ? {} : { chain: chained.position }) };
   await saveBatch(batch);

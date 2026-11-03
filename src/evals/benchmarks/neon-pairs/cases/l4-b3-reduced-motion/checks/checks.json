@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "checks": [
+    { "id": "B3-01", "method": "clause", "clause": "V17.1", "kind": "repair", "description": "V17: cards keep their 120ms border-color transition.", "expected": { "starting": "pass", "solution": "pass" } },
+    { "id": "B3-02", "method": "clause", "clause": "V17.2", "kind": "repair", "description": "V17: reduced motion turns the card transition off.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "B3-03", "method": "clause", "clause": "V18.1", "kind": "repair", "description": "V18: completion shows a win banner.", "expected": { "starting": "pass", "solution": "pass" } },
+    { "id": "B3-04", "method": "clause", "clause": "V18.2", "kind": "repair", "description": "V18: the banner pulses once for 600ms, then stays static.", "expected": { "starting": "pass", "solution": "pass" } },
+    { "id": "B3-05", "method": "clause", "clause": "V18.3", "kind": "repair", "description": "V18: reduced motion shows the static banner at once.", "expected": { "starting": "fail", "solution": "pass" } }
+  ],
+  "regressionExpectations": { "regression-l2-completion": "fail", "regression-l3-t07-build": "fail" }
+}

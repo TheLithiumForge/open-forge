@@ -85,7 +85,7 @@ A run goes through three stages, and a plan can split them apart:
 
 A plan with `"checking": "later"` and `"judging": "later"` ends each run after its build, so `progress` shows when every agent is done, before any grading starts. Checks don't take processor cores from agents that are still working, and they can run whenever you choose, on any batch, old ones included. A plan with only `"judging": "later"` checks each run after its build and leaves the judges for later. Checks later needs judges later, since the judges read the checks' screenshots.
 
-`--parallel` caps how many runs go at once. The [existing app](starting-points.mdx#existing-app) plans hold three cases, and `--case l4-f01` runs one of them as its own batch. Records go to the ignored `src/evals/runs/` folder.
+`--parallel` caps how many runs go at once. The [existing app](starting-points.mdx#existing-app) plans hold three cases, and `--case l4-f1-name-saves` runs one of them as its own batch. Records go to the ignored `src/evals/runs/` folder.
 
 Two machine flags work with any command. `--scratch D:/eval-workspaces` puts run workspaces on a roomier drive. `--check-slots 5` lets five check stages run at once on the machine, within one batch and across batches. Each check uses about one processor core, so leave room for the agents.
 

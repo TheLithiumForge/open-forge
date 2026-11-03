@@ -7,3 +7,5 @@ export const AnalysisMethods = ["rollout", "stream", "events", "none"] as const;
 export const ThreadRoles = ["main", "subagent"] as const;
 /** One agent does the work, or an orchestrator hands each task to a subagent. */
 export const WorkModes = ["one-agent", "orchestrated"] as const;
+/** How a plan handed a work packet over. The setup-level WorkModes come from the retired orchestrated setups. */
+export const PacketWorkModes = ["whole-packet", "task-by-task", "orchestrated"] as const;

@@ -25,9 +25,9 @@ test("summaries count each batch and model once and filters narrow by model, jud
   if (control.tokenRatio !== null) assert.equal(control.tokenRatio, 1);
   const first = models[0];
   assert.ok(first);
-  const narrowed = filtered(all, { model: first.key, judge: All, startingPoint: All });
+  const narrowed = filtered(all, { model: first.key, judge: All, startingPoint: All, workMode: All });
   assert.ok(narrowed.every((item) => item.cell.model === first.key));
-  assert.equal(filtered(all, { model: All, judge: All, startingPoint: "existing-app" }).length, 0);
+  assert.equal(filtered(all, { model: All, judge: All, startingPoint: "existing-app", workMode: All }).length, 0);
   for (const summary of setupSummaries(narrowed)) assert.ok(summary.groups <= 1);
 });
 

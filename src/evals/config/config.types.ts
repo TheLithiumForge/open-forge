@@ -1,4 +1,4 @@
-import type { Checking, Isolation, Judging, Tool } from "./choices.ts";
+import type { Checking, Isolation, Judging, Tool, WorkMode } from "./choices.ts";
 import type { ContainerLimits } from "../execution/containers/settings.ts";
 import type { FrozenProtocol } from "../execution/conversation/answer-bank.ts";
 
@@ -48,6 +48,9 @@ export interface EvalConfig {
   /** Absent means each run's checks start after its build. Later needs judging later too, since the judges read the checks' screenshots. */
   readonly checking?: Checking;
   readonly chain?: ChainConfig;
+  /** The work packet a plan hands over, and how. Both are absent for a plan of single tasks. */
+  readonly packet?: string;
+  readonly workMode?: WorkMode;
   readonly simulatedUser: ModelChoice;
   readonly isolation: Isolation;
   readonly containers?: ContainerLimits;

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "layer": 4,
+  "packet": "l4-p1-four-bugs",
+  "workMode": "orchestrated",
+  "setups": ["organized-docs", "code-only", "plain-docs", "overloaded-docs", "full-core", "full-core-scoped", "full-core-scoped-memory"],
+  "runsPerSetup": 1,
+  "parallelRuns": 7,
+  "agents": "codex-orchestrators",
+  "judges": "codex",
+  "judging": "later",
+  "checking": "later",
+  "simulatedUser": "codex",
+  "isolation": "docker",
+  "limits": { "questionRounds": 3, "runMinutes": 60, "checkMinutes": 90 }
+}

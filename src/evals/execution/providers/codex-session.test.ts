@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { CodexTeams } from "../../config/presets.ts";
+import { CodexOrchestrators, ImplementerPresets, PresetName } from "../../config/presets.ts";
 import { CodexMultiAgent, teamArguments } from "./codex-session.ts";
 
 test("a solo implementer switches Codex's default subagents off, and a team gets one level of them on the team's model and effort", () => {
-  const [solo, sol, luna] = CodexTeams;
+  const [solo] = ImplementerPresets[PresetName.codex], [sol, luna] = CodexOrchestrators;
   assert.deepEqual(teamArguments(solo), ["--disable", CodexMultiAgent]);
   for (const team of [sol, luna]) {
     const args = teamArguments(team);

@@ -7,7 +7,7 @@ import { validationReport } from "./validation-inputs.ts";
 import { protectedHashes } from "./protected.ts";
 
 test("validation reports written beside grader sources aren't grader inputs", () => {
-  for (const path of ["L1.validation.json", "spec-layers/L3.validation.json", "cases/l4-f01/checks/validation.json"]) assert.equal(validationReport(path), true);
+  for (const path of ["L1.validation.json", "spec-layers/L3.validation.json", "cases/l4-f1-name-saves/checks/validation.json"]) assert.equal(validationReport(path), true);
   for (const path of ["L1.json", "L1.requirements.json", "validation.ts", "checks/validate.ts", "checks/invalidation.json"]) assert.equal(validationReport(path), false);
 });
 

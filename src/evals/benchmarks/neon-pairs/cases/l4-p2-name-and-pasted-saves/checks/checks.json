@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "checks": [
+    {
+      "id": "F1-01",
+      "method": "browser",
+      "description": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "F1-02",
+      "method": "browser",
+      "description": "C15.2: editing a name keeps cards, progress, active time and board code unchanged.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "F1-03",
+      "method": "browser",
+      "description": "D05 and C15.3: name, play a mismatch, wait 800ms, export, New Game and load the app text to restore the name and progress.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "F1-04",
+      "method": "browser",
+      "description": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields.",
+      "expected": {
+        "starting": "pass",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "F1-05",
+      "method": "browser",
+      "description": "C15.4: a named import restores its name paused and a later legacy import clears it.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "F1-06",
+      "method": "browser",
+      "description": "D05, D06 and D07: invalid names, missing fields, versions and version 1 state vectors are rejected inside named snapshots without changing progress.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "F1-07",
+      "method": "browser",
+      "description": "C15.5: fresh-deal actions and reload clear names, which never enter browser preferences.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "F1-08",
+      "method": "browser",
+      "description": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "F1-09",
+      "method": "browser",
+      "description": "C15.2 and C15.4: completed progress stays static, permits renaming and clearing, and keeps the best score.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "F1-10",
+      "method": "browser",
+      "description": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "B5-01",
+      "method": "browser",
+      "description": "D05: all top-level order variants, whitespace and CRLF drafts restore the same valid state as one result.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair"
+    },
+    {
+      "id": "B5-02",
+      "method": "browser",
+      "description": "D06: selection member order has no effect for one-card and mismatch states.",
+      "expected": {
+        "starting": "pass",
+        "solution": "pass"
+      },
+      "kind": "repair"
+    },
+    {
+      "id": "B5-03",
+      "method": "browser",
+      "description": "D06: reordered unknown top-level members are rejected without changing progress or the draft.",
+      "expected": {
+        "starting": "pass",
+        "solution": "pass"
+      },
+      "kind": "repair"
+    },
+    {
+      "id": "B5-04",
+      "method": "browser",
+      "description": "D05: every missing top-level member is rejected in reordered input with progress unchanged.",
+      "expected": {
+        "starting": "pass",
+        "solution": "pass"
+      },
+      "kind": "repair"
+    },
+    {
+      "id": "B5-05",
+      "method": "browser",
+      "description": "D07: reordered inconsistent progress and incomplete pairs are rejected with progress unchanged.",
+      "expected": {
+        "starting": "pass",
+        "solution": "pass"
+      },
+      "kind": "repair"
+    },
+    {
+      "id": "B5-06",
+      "method": "browser",
+      "description": "D06: reordered nested selections still reject unknown and missing members.",
+      "expected": {
+        "starting": "pass",
+        "solution": "pass"
+      },
+      "kind": "repair"
+    },
+    {
+      "id": "B5-07",
+      "method": "browser",
+      "description": "D06 and D07: reordered snapshots keep every version 1 state-validation rule, including both counter caps.",
+      "expected": {
+        "starting": "pass",
+        "solution": "pass"
+      },
+      "kind": "repair"
+    },
+    {
+      "id": "B5-08",
+      "method": "browser",
+      "description": "C10: reordered unfinished imports ignore activation and preserve pending time until Resume.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair"
+    },
+    {
+      "id": "B5-09",
+      "method": "browser",
+      "description": "C09 and C12: reordered completed imports stay completed without Resume or a new best.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "repair"
+    },
+    {
+      "id": "FR01-01",
+      "method": "browser",
+      "description": "D05: reordered named version 2 snapshots restore both the name and progress.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    }
+  ]
+}

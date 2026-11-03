@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "l4-p1-four-bugs",
+  "changeType": "R",
+  "title": "Fix four player reports",
+  "request": "request.md",
+  "specDelta": null,
+  "seedPatch": "seed.patch",
+  "solutionPatch": "solution.patch",
+  "checks": "checks",
+  "answers": "answers.json",
+  "supersedes": [],
+  "runMinutes": 90,
+  "diffScope": [
+    "README.md",
+    "art/**",
+    "src/game/**",
+    "tests/**"
+  ]
+}

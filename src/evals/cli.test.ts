@@ -177,7 +177,7 @@ test("chain-check grades the plan's children from the named parent batch and pri
   const chain = { id: "fixture-chain", milestone: 2 }, parent = "fixture-parent-batch";
   const services = { ...fake.services, plan: async () => ({ ...FixtureConfig, chain }), chainCheck: async (_config: EvalConfig, _suite: unknown, batch: string) => {
     checked.push(batch);
-    return [{ setup: "plain-docs", repeat: 1, parentRunId: "parent-run", buildPassed: true, target: [{ id: "repair-R03-01", status: "fail" }], changed: [] }];
+    return [{ setup: "plain-docs", repeat: 1, parentRunId: "parent-run", buildPassed: true, target: [{ id: "repair-B2-01", status: "fail" }], changed: [] }];
   } };
   assert.equal(await runCli([Command.chainCheck, Flag.plan, "fixture.json", Flag.parent, parent], services), 0);
   assert.deepEqual(checked, [parent]);

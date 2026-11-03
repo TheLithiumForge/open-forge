@@ -27,7 +27,7 @@ export interface Measure {
 /** One starting point, case, setup, implementer and judge. Checks and tokens don't depend on the judge, so judge rows repeat them. */
 export interface Cell {
   readonly startingPoint: StartingPointId;
-  /** The Layer 4 case, such as l4-f01, or the suite for earlier starting points. */
+  /** The Layer 4 case, such as l4-f1-name-saves, or the suite for earlier starting points. */
   readonly caseId: string;
   readonly batchId: string;
   /** When the batch started, so the newest runs of a setup win. */
@@ -37,8 +37,7 @@ export interface Cell {
   readonly control: string;
   /** The milestone this cell's batch belongs to, or null for a standalone batch. */
   readonly chain: { readonly id: string; readonly milestone: number } | null;
-  /** How the setup works: one agent, or an orchestrator with subagents. */
-  readonly workMode: string;
+  readonly workMode: WorkModeId;
   readonly model: string;
   readonly modelLabel: string;
   readonly judge: string | null;
@@ -77,10 +76,23 @@ export function startingPointOf(batch: Batch): StartingPointId | null {
   return StartingPoints.find((point) => point.layer === batch.experiment.config.layer)?.id ?? null;
 }
 
+function chainOf(batch: Batch): Cell["chain"] {
+  const position = batch.experiment.chain ?? batch.experiment.config.chain;
+  return position === undefined ? null : { id: position.id, milestone: position.milestone };
+}
+
 /** A chained milestone is its own measurement, so it never replaces the same case's standalone runs, nor they it. */
 const setupKey = (cell: Cell) => JSON.stringify([cell.caseId, cell.model, cell.setup, cell.chain?.id ?? null, cell.chain?.milestone ?? null]);
-/** One agent works alone unless the setup record says otherwise. */
-export const OneAgent = "one-agent";
+/** How a cell's work was handed over: one task alone, or a work packet whole, task by task or to an orchestrator. */
+export const WorkModeIds = { singleTask: "single-task", wholePacket: "whole-packet", taskByTask: "task-by-task", orchestrated: "orchestrated" } as const;
+export type WorkModeId = (typeof WorkModeIds)[keyof typeof WorkModeIds];
+const workModes: readonly string[] = Object.values(WorkModeIds);
+
+/** A plan names its work mode. Earlier batches ran single tasks, and a team led its runs as an orchestrator. */
+export function workModeOf(config: Batch["experiment"]["config"], agent: Batch["experiment"]["config"]["agents"][number]): WorkModeId {
+  if (config.workMode !== undefined && workModes.includes(config.workMode)) return config.workMode as WorkModeId;
+  return agent.team === undefined ? WorkModeIds.singleTask : WorkModeIds.orchestrated;
+}
 
 /**
  * Each setup's newest runs for a case and implementer. A later batch can add a setup beside its own control without hiding
@@ -116,8 +128,9 @@ export function cells(batches: readonly Batch[]): Cell[] {
       const pick = (read: (value: RunValues) => number | null) => measure(values.map(read));
       const base = {
         startingPoint, caseId: batch.experiment.suite, batchId: batch.experiment.id, createdAt: batch.experiment.createdAt, cliVersion: batch.experiment.cliVersion, setup, control,
-        chain: batch.experiment.chain === undefined ? null : { id: batch.experiment.chain.id, milestone: batch.experiment.chain.milestone },
-        workMode: batch.setups.find((record) => record.id === setup)?.workMode ?? OneAgent,
+        // A task-by-task packet's first task starts fresh, so only its plan names the chain.
+        chain: chainOf(batch),
+        workMode: workModeOf(batch.experiment.config, agent),
         judgedLater: batch.experiment.config.judging === Judging.later,
         model: choiceKey(agent), modelLabel: modelLabel(agent, reported), runs: group.length, runIds: group.map((run) => run.id),
         checked: states.filter((state) => state === CheckState.checked).length, recheck: states.filter((state) => state === CheckState.recheck).length,

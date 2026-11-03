@@ -433,6 +433,42 @@
             "later"
           ]
         },
+        "checking": {
+          "enum": [
+            "run",
+            "later"
+          ]
+        },
+        "packet": {
+          "type": "string"
+        },
+        "workMode": {
+          "enum": [
+            "whole-packet",
+            "task-by-task",
+            "orchestrated"
+          ]
+        },
+        "chain": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "milestone": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "parentBatchId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "milestone"
+          ],
+          "additionalProperties": true
+        },
         "simulatedUser": {
           "type": "object",
           "properties": {

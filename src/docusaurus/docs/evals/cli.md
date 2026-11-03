@@ -44,7 +44,7 @@ npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1.json
 Validate a Layer 4 starting project and solution in verifiers without models.
 
 ```sh
-npm run evals -- validate-case --case l4-f01
+npm run evals -- validate-case --case l4-f1-name-saves
 npm run evals -- validate-case --all --plan src/evals/experiments/neon-pairs-l4-check.json
 ```
 
@@ -58,7 +58,7 @@ npm run evals -- chain-check --plan src/evals/experiments/neon-pairs-l4-2-m2.jso
 
 ## `run`
 
-Run a saved plan. --implementers: claude, codex, both, codex-teams. --judges: claude, codex, both. --user: claude, codex. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --setups runs some of the plan's setups, always with its control. --parent names the previous milestone's batch for a chain plan. --parallel caps how many runs go at once. Local isolation needs --development.
+Run a saved plan. --implementers: claude, codex, both, codex-orchestrators. --judges: claude, codex, both. --user: claude, codex. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --setups runs some of the plan's setups, always with its control. --parent names the previous milestone's batch for a chain plan. --parallel caps how many runs go at once. Local isolation needs --development.
 
 ```sh
 npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude
@@ -150,7 +150,7 @@ npm run evals -- results add <batch>
 | --- | --- | --- |
 | `--help` | Any command | Show the command's help and example without running it |
 | `--plan <file>` | `run`, `qualify`, `validate-case`, `chain-check` | The saved plan to run or check |
-| `--implementers <preset>` | `run` | Replace the plan's implementers with claude, codex, both, codex-teams |
+| `--implementers <preset>` | `run` | Replace the plan's implementers with claude, codex, both, codex-orchestrators |
 | `--judges <preset>` | `run`, `judge`, `reference` | Replace the judges with claude, codex, both |
 | `--user <preset>` | `run` | Replace the simulated user with claude, codex |
 | `--case <id>` | `run`, `validate-case` | Run or validate one Layer 4 case, so each case can run as its own process |

@@ -3,9 +3,9 @@ import { test } from "node:test";
 import { previewBatch } from "../../../../scripts/evals/preview-fixture.ts";
 import type { Batch } from "../records/records.types.ts";
 import { comparisons } from "./aggregate.ts";
-import { cells, newestCells, OneAgent } from "./cells.ts";
+import { cells, newestCells, WorkModeIds } from "./cells.ts";
 import { latestAnalyses, objectiveRows } from "./objective.ts";
-import { milestoneRows, OrchestratedSuffix, orchestrationRows } from "./work-views.ts";
+import { milestoneRows, packetRows } from "./work-views.ts";
 
 const Chain = "fixture-chain";
 const byId = (batches: readonly Batch[]) => new Map(batches.map((batch) => [batch.experiment.id, batch]));
@@ -42,17 +42,19 @@ test("a chained milestone keeps its own cells beside the standalone runs of the 
   assert.ok(rows.every((row) => row.chain === Chain && row.milestone === 2 && row.tokens === row.standaloneTokens));
 });
 
-test("an orchestrated setup meets its one-agent twin in the same batch with the orchestrator's share of input", () => {
-  const base = previewBatch(1), twin = base.experiment.config.setups[0] ?? "", orchestrated = `${twin}${OrchestratedSuffix}`;
-  const moved = new Set(base.runs.filter((run) => run.setup === twin && run.repeat === 1).map((run) => run.id));
-  const tokens = { newInput: 100, cachedInput: 0, cacheWrite: 0, output: 0, reasoning: null };
-  const thread = (id: string, role: "main" | "subagent", newInput: number) => ({ id, parentId: null, role, requests: 1, tokens: { ...tokens, newInput }, peakContext: null, toolCalls: 0 });
-  const batch: Batch = { ...base, experiment: { ...base.experiment, config: { ...base.experiment.config, setups: [...base.experiment.config.setups, orchestrated] } },
-    setups: [...base.setups, { ...base.setups[0], schemaVersion: 2, id: orchestrated, experimentId: base.experiment.id, label: orchestrated, commands: [], contentHash: null, files: [], workMode: "orchestrated" }],
-    runs: base.runs.map((run) => moved.has(run.id) ? { ...run, setup: orchestrated } : run),
-    analyses: (base.analyses ?? []).map((item) => moved.has(item.runId) ? { ...item, threads: [thread("o", "main", 100), thread("s", "subagent", 300)] } : item) };
-  const rows = orchestrationRows(comparisons(cells([batch])), byId([batch]));
-  assert.equal(rows.length, batch.experiment.config.agents.length);
-  assert.ok(rows.every((row) => row.orchestratorShare === 0.25 && row.subagents === 1 && row.oneAgentTokens !== undefined));
-  assert.ok(cells([batch]).some((cell) => cell.workMode === OneAgent && cell.setup === twin));
+test("a task-by-task packet adds its tasks up into one row per scenario, beside the same packet handed over whole", () => {
+  const base = previewBatch(1), packet = "l4-p1-four-bugs";
+  const handed = (id: string, workMode: string, chain?: { readonly id: string; readonly milestone: number }): Batch =>
+    ({ ...base, experiment: { ...base.experiment, id, config: { ...base.experiment.config, packet, workMode, ...(chain === undefined ? {} : { chain }) } } });
+  const batches = [handed("step-1", WorkModeIds.taskByTask, { id: packet, milestone: 1 }), handed("step-2", WorkModeIds.taskByTask, { id: packet, milestone: 2 }), handed("whole", WorkModeIds.wholePacket)];
+  const rows = packetRows(comparisons(cells(batches)), byId(batches));
+  const stepped = rows.filter((row) => row.workMode === WorkModeIds.taskByTask), whole = rows.filter((row) => row.workMode === WorkModeIds.wholePacket);
+  assert.ok(stepped.length > 0 && stepped.length === whole.length);
+  for (const row of stepped) {
+    const twin = whole.find((other) => other.setup === row.setup && other.modelLabel === row.modelLabel);
+    assert.equal(row.steps, 2);
+    assert.equal(row.tokens, twin?.tokens === null || twin?.tokens === undefined ? null : twin.tokens * 2);
+  }
+  assert.ok(cells(batches).every((cell) => cell.workMode !== WorkModeIds.singleTask));
+  assert.ok(cells([base]).every((cell) => cell.workMode === WorkModeIds.singleTask));
 });

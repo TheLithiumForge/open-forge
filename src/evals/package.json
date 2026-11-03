@@ -11,7 +11,8 @@
     "login:codex": "node config/codex-login.ts",
     "test": "node tests.ts",
     "typecheck": "tsc --project tsconfig.json",
-    "docs:cli": "node config/cli-reference.ts"
+    "docs:cli": "node config/cli-reference.ts",
+    "packets": "node materialize/packets.ts"
   },
   "dependencies": {
     "@anthropic-ai/claude-code": "2.1.314",

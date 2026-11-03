@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "l4-p1-four-bugs",
+  "label": "P1",
+  "title": "Fix four player reports",
+  "intro": "A few things broke in the game, and I'd like them all fixed:",
+  "outro": "Keep the rest working, and please follow the project rules.",
+  "runMinutes": 90,
+  "tasks": [
+    { "id": "l4-b1-best-score", "symptom": "The best score acts strangely. A worse game can replace it, and a size I've never finished shows 0." },
+    { "id": "l4-b2-arrow-keys", "symptom": "I can't move between the cards with the arrow keys anymore." },
+    { "id": "l4-b3-reduced-motion", "symptom": "I turned on reduced motion on my computer, but the cards and the win banner still animate." },
+    { "id": "l4-b4-silence", "symptom": "The game started beeping when I find a pair." }
+  ]
+}

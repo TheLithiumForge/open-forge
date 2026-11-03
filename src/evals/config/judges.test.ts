@@ -4,7 +4,7 @@ import { parseConfig } from "./config.ts";
 import { configuredJudges, modelKey, readJudges } from "./judges.ts";
 import { MatrixAgents, MatrixJudges } from "./matrix.ts";
 import { Checking, Judging } from "./choices.ts";
-import { CodexTeams } from "./presets.ts";
+import { CodexOrchestrators, ImplementerPresets, PresetName } from "./presets.ts";
 import { modelChoice } from "./validation.ts";
 import { LocalModel, PlanVersion, resolvePlan } from "./plans.ts";
 import { FixtureConfig } from "./test-fixtures.ts";
@@ -26,7 +26,7 @@ test("judge lists keep their order and old single-judge plans override a current
 });
 
 test("a plan can leave judging for later, keep its judges for judge --missing and refuse other timings", () => {
-  const plan = { schemaVersion: PlanVersion, layer: 4, cases: ["l4-r02"], agents: MatrixAgents, judges: MatrixJudges,
+  const plan = { schemaVersion: PlanVersion, layer: 4, cases: ["l4-b1-best-score"], agents: MatrixAgents, judges: MatrixJudges,
     simulatedUser: LocalModel, isolation: FixtureConfig.isolation, setups: FixtureConfig.setups, runsPerSetup: 1 };
   const later = resolvePlan({ ...plan, judging: Judging.later }, FixtureConfig);
   assert.equal(later.judging, Judging.later);
@@ -37,7 +37,7 @@ test("a plan can leave judging for later, keep its judges for judge --missing an
 });
 
 test("a plan can leave its checks for later only when it judges later too, since the judges read the checks' screenshots", () => {
-  const plan = { schemaVersion: PlanVersion, layer: 4, cases: ["l4-r02"], agents: MatrixAgents, judges: MatrixJudges,
+  const plan = { schemaVersion: PlanVersion, layer: 4, cases: ["l4-b1-best-score"], agents: MatrixAgents, judges: MatrixJudges,
     simulatedUser: LocalModel, isolation: FixtureConfig.isolation, setups: FixtureConfig.setups, runsPerSetup: 1, judging: Judging.later };
   const later = resolvePlan({ ...plan, checking: Checking.later }, FixtureConfig);
   assert.equal(later.checking, Checking.later);
@@ -65,19 +65,19 @@ test("both implementers get each cell and repeat once regardless of the judge co
 });
 
 test("a chain plan names its chain and milestone for one Layer 4 case, and other shapes are refused", () => {
-  const plan = { schemaVersion: PlanVersion, layer: 4, cases: ["l4-r03"], agents: MatrixAgents, judges: MatrixJudges,
+  const plan = { schemaVersion: PlanVersion, layer: 4, cases: ["l4-b2-arrow-keys"], agents: MatrixAgents, judges: MatrixJudges,
     simulatedUser: LocalModel, isolation: FixtureConfig.isolation, setups: FixtureConfig.setups, runsPerSetup: 1, chain: { id: "l4-2", milestone: 2 } };
   const chained = resolvePlan(plan, FixtureConfig);
   assert.deepEqual(chained.chain, { id: "l4-2", milestone: 2 });
   assert.deepEqual(parseConfig({ ...chained, chain: { ...plan.chain, parentBatchId: "parent-batch" } }).chain, { ...plan.chain, parentBatchId: "parent-batch" });
   for (const chain of [{ id: "l4-2", milestone: 1 }, { id: "l4 2", milestone: 2 }]) assert.throws(() => resolvePlan({ ...plan, chain }, FixtureConfig));
-  assert.throws(() => resolvePlan({ ...plan, cases: ["l4-r03", "l4-r04"] }, FixtureConfig));
+  assert.throws(() => resolvePlan({ ...plan, cases: ["l4-b2-arrow-keys", "l4-b3-reduced-motion"] }, FixtureConfig));
 });
 
 test("a team is part of the implementer, so solo and team runs plan and count apart, and only Codex leads one", () => {
-  const [solo, sol, luna] = CodexTeams;
+  const [solo] = ImplementerPresets[PresetName.codex], [sol, luna] = CodexOrchestrators;
   assert.deepEqual(modelChoice(JSON.parse(JSON.stringify(luna))), luna);
-  assert.equal(new Set(CodexTeams.map(modelKey)).size, 3);
+  assert.equal(new Set([solo, sol, luna].map(modelKey)).size, 3);
   assert.equal(modelKey(solo), modelKey({ tool: solo.tool, model: solo.model, effort: solo.effort }), "A solo key stays what it was before teams existed.");
   assert.throws(() => modelChoice({ tool: "claude", model: "opus", effort: "high", team: { model: "opus", effort: "high" } }));
   const runs = planBatchRuns({ ...FixtureConfig, agents: [solo, sol], setups: ["plain-docs"], runsPerSetup: 1 }, "batch");

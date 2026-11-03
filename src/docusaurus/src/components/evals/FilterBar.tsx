@@ -21,7 +21,7 @@ function Select({ label, value, allLabel, options, onChange }: {
 }
 
 /** The filters every view below follows. "All" averages over every model, judge or starting point. */
-export function FilterBar({ filters, onChange, models, judges, startingPoints, averages }: {
+export function FilterBar({ filters, onChange, models, judges, startingPoints, averages, workModes }: {
   readonly filters: Filters;
   readonly onChange: (filters: Filters) => void;
   readonly models: readonly FilterOption[];
@@ -29,6 +29,8 @@ export function FilterBar({ filters, onChange, models, judges, startingPoints, a
   readonly startingPoints: readonly StartingPointId[];
   /** Whether "All" is a choice. History shows one line of results at a time, so it needs one value each. */
   readonly averages: boolean;
+  /** How the work was handed over. History follows one line of results, so it leaves this menu out. */
+  readonly workModes?: readonly FilterOption[];
 }) {
   const points = StartingPoints.filter((point) => startingPoints.includes(point.id)).map((point) => ({ key: point.id, label: point.title }));
   const startingPoint = (value: string) => StartingPoints.find((point) => point.id === value)?.id ?? All;
@@ -37,5 +39,7 @@ export function FilterBar({ filters, onChange, models, judges, startingPoints, a
     <Select label="Judge" value={filters.judge} allLabel={averages ? "All judges" : null} options={judges} onChange={(judge) => onChange({ ...filters, judge })} />
     <Select label="Starting point" value={filters.startingPoint} allLabel={averages ? "All starting points" : null} options={points}
       onChange={(value) => onChange({ ...filters, startingPoint: startingPoint(value) })} />
+    {workModes === undefined ? null : <Select label="Work mode" value={filters.workMode} allLabel={averages ? "All work modes" : null} options={workModes}
+      onChange={(workMode) => onChange({ ...filters, workMode })} />}
   </div>;
 }

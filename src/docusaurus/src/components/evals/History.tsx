@@ -12,7 +12,7 @@ export function History({ batches }: { readonly batches: readonly Batch[] }) {
   // Only batches with a known starting point have a history line.
   const rows = useMemo(() => batches.flatMap(summaries).filter((row) => StartingPoints.some((point) => point.layer === row.layer)), [batches]);
   const models = useMemo(() => filterOptions(rows.map((row) => ({ key: row.agentKey, label: row.modelLabel, runs: row.runs }))), [rows]);
-  const [chosen, choose] = useState<Filters>({ model: All, judge: All, startingPoint: All });
+  const [chosen, choose] = useState<Filters>({ model: All, judge: All, startingPoint: All, workMode: All });
   // Each unset filter takes the first value that still has history under the filters before it.
   const model = chosen.model === All ? models[0]?.key ?? All : chosen.model;
   const ofModel = rows.filter((row) => row.agentKey === model);
@@ -20,7 +20,7 @@ export function History({ batches }: { readonly batches: readonly Batch[] }) {
   const judge = chosen.judge === All ? ofModel[0]?.judgeKey ?? judges[0]?.key ?? All : chosen.judge;
   const points = StartingPoints.filter((point) => rows.some((row) => row.layer === point.layer));
   const startingPoint = chosen.startingPoint === All ? StartingPoints.find((point) => ofModel.some((row) => row.judgeKey === judge && row.layer === point.layer))?.id ?? points[0]?.id ?? All : chosen.startingPoint;
-  const filters: Filters = { model, judge, startingPoint };
+  const filters: Filters = { model, judge, startingPoint, workMode: All };
   const layer = StartingPoints.find((point) => point.id === filters.startingPoint)?.layer ?? null;
   const groups = new Map<string, Summary[]>();
   for (const row of ofModel.filter((item) => item.judgeKey === filters.judge && item.layer === layer)) {

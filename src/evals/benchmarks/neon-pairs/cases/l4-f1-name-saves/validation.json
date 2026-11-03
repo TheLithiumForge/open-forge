@@ -1,0 +1,563 @@
+{
+  "schemaVersion": 1,
+  "status": "local-validation-passed-product-validation-pending",
+  "validation": "Fresh reference patch checks, builds, unit tests and public browser suites on all nine projects, local worker CLI, product patch and report parsers, and direct scope and protected-input checks.",
+  "node": "26.12.1",
+  "playwright": "1.64.1",
+  "chromium": "156.0.8078.4",
+  "specVersion": 3,
+  "referenceSpecVersion": 2.2,
+  "referenceHash": "d7d3840660da2f1aa6a0b19996b7c539b7b6f2cbc6add70e42986f16957386f1",
+  "productDocuments": [
+    {
+      "path": "README.md",
+      "sha256": "327d0333f97f0cf6fac50248fb66e08417451252e94119991ed1508da56ad0dc"
+    },
+    {
+      "path": "acceptance.md",
+      "sha256": "b10c9502e036d3c76cbba8d47d65ff6facb282d91f9d6f7c794c1cac54cce5bd"
+    },
+    {
+      "path": "architecture.md",
+      "sha256": "2630515990aad980857df69b8295d6e17a94cc8c75bbd9215ad344ac00ffdafd"
+    },
+    {
+      "path": "controls.md",
+      "sha256": "905512bc21cd29bcf48639d4c0f66ece8eff393bc5fb2d7ebe520385b8fbed9b"
+    },
+    {
+      "path": "input.md",
+      "sha256": "561521000c174f0d3dba669739599b816a2df5edf325c56597195b3f0ebcdc53"
+    },
+    {
+      "path": "reproducibility.md",
+      "sha256": "f30d6e693918fdec272c868961b3da5c21c44f885559978424926203fddc43ec"
+    },
+    {
+      "path": "rules.md",
+      "sha256": "5bc52beb2a0af82dde856db4a8092e499c75f0e395db553f814ec6df0f5f5cb2"
+    },
+    {
+      "path": "sound.md",
+      "sha256": "ac13cd631905b38c47279868c12826bd57babdcde0a73974fa4bd071ff29b05d"
+    },
+    {
+      "path": "technology.md",
+      "sha256": "8af9ea621c07687b75543a282c119f4d66f9b5df82a2d5621f9cfdef3076605e"
+    },
+    {
+      "path": "visuals.md",
+      "sha256": "3686d12b2ee43f357e05d1e4777d5f3f0a3b4e407b2a276eb828196a5fe59642"
+    }
+  ],
+  "patchHashes": [
+    {
+      "path": "solution.patch",
+      "sha256": "652a0084585c2f003d92856575949229b80beb300ad7997631916d82931afb2e"
+    },
+    {
+      "path": "alt-solution.patch",
+      "sha256": "533d4c877104e7b905530ab5fdf654ccce2283c0d22f062b7643678f8e103ffd"
+    }
+  ],
+  "supersedes": [
+    "C08.2",
+    "D05.1",
+    "D05.2"
+  ],
+  "stages": [
+    {
+      "stage": "starting",
+      "patch": null,
+      "sourceHash": "d7d3840660da2f1aa6a0b19996b7c539b7b6f2cbc6add70e42986f16957386f1",
+      "patchCheck": "passed",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 132
+      },
+      "browser": {
+        "status": "passed",
+        "passed": 94,
+        "failed": 0
+      },
+      "expected": [
+        {
+          "id": "F1-01",
+          "status": "fail"
+        },
+        {
+          "id": "F1-02",
+          "status": "fail"
+        },
+        {
+          "id": "F1-03",
+          "status": "fail"
+        },
+        {
+          "id": "F1-04",
+          "status": "pass"
+        },
+        {
+          "id": "F1-05",
+          "status": "fail"
+        },
+        {
+          "id": "F1-06",
+          "status": "fail"
+        },
+        {
+          "id": "F1-07",
+          "status": "fail"
+        },
+        {
+          "id": "F1-08",
+          "status": "fail"
+        },
+        {
+          "id": "F1-09",
+          "status": "fail"
+        },
+        {
+          "id": "F1-10",
+          "status": "fail"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "No source paths changed."
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
+      "outcomes": [
+        {
+          "id": "feature-F1-01",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units. Assertion failed."
+        },
+        {
+          "id": "feature-F1-02",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.2: editing a name keeps cards, progress, active time and board code unchanged. Assertion failed."
+        },
+        {
+          "id": "feature-F1-03",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "D05 and C15.3: name, play a mismatch, wait 800ms, export, New Game and load the app text to restore the name and progress. Assertion failed."
+        },
+        {
+          "id": "feature-F1-04",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields."
+        },
+        {
+          "id": "feature-F1-05",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.4: a named import restores its name paused and a later legacy import clears it. Assertion failed."
+        },
+        {
+          "id": "feature-F1-06",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "D05, D06 and D07: invalid names, missing fields, versions and version 1 state vectors are rejected inside named snapshots without changing progress. Assertion failed."
+        },
+        {
+          "id": "feature-F1-07",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.5: fresh-deal actions and reload clear names, which never enter browser preferences. Assertion failed."
+        },
+        {
+          "id": "feature-F1-08",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval. Assertion failed."
+        },
+        {
+          "id": "feature-F1-09",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "C15.2 and C15.4: completed progress stays static, permits renaming and clearing, and keeps the best score. Assertion failed."
+        },
+        {
+          "id": "feature-F1-10",
+          "area": "feature",
+          "status": "fail",
+          "evidence": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more. Assertion failed."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-starting/build.log",
+          "sha256": "e2be1cffd86df957c8cae92e53935b5a299920e5bb8c8dda53b58abaeeafcc90"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-starting/unit.log",
+          "sha256": "59e24c693d00e2603b56206330bb2563e6b032d0279aa2ec2522fe217e999b11"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-starting/browser.log",
+          "sha256": "adff36a1468217d4ba820fb5f14e062050d712e9ded8397dc22017dbcec01d8e"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-starting/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-starting/worker-input.json",
+          "sha256": "afc6eb1cd45b948d076b829539d2b0d21144698157bfaaf6bb2b147edafe2a28"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-starting/worker-report.json",
+          "sha256": "6ce2e4c7ea481a649fb66b6a0508997ad49f207fa99f173e6de7911553e82b2a"
+        }
+      ]
+    },
+    {
+      "stage": "solution",
+      "patch": "solution.patch",
+      "sourceHash": "f4a4635c1d31bd36f9f21469c2f7a04dce1ca28f0616b0b86bbb46d767903b53",
+      "patchCheck": "passed",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 134
+      },
+      "browser": {
+        "status": "passed",
+        "passed": 94,
+        "failed": 0
+      },
+      "expected": [
+        {
+          "id": "F1-01",
+          "status": "pass"
+        },
+        {
+          "id": "F1-02",
+          "status": "pass"
+        },
+        {
+          "id": "F1-03",
+          "status": "pass"
+        },
+        {
+          "id": "F1-04",
+          "status": "pass"
+        },
+        {
+          "id": "F1-05",
+          "status": "pass"
+        },
+        {
+          "id": "F1-06",
+          "status": "pass"
+        },
+        {
+          "id": "F1-07",
+          "status": "pass"
+        },
+        {
+          "id": "F1-08",
+          "status": "pass"
+        },
+        {
+          "id": "F1-09",
+          "status": "pass"
+        },
+        {
+          "id": "F1-10",
+          "status": "pass"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "changed README.md: within diffScope\nchanged src/game/Game.tsx: within diffScope\nchanged src/game/controls/Reproduction.tsx: within diffScope\nchanged src/game/controls/control-labels.ts: within diffScope\nadded src/game/deal-name.test.ts: within diffScope\nadded src/game/deal-name.ts: within diffScope\nchanged src/game/game.ts: within diffScope\nchanged src/game/session/use-game.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
+      "outcomes": [
+        {
+          "id": "feature-F1-01",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units."
+        },
+        {
+          "id": "feature-F1-02",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.2: editing a name keeps cards, progress, active time and board code unchanged."
+        },
+        {
+          "id": "feature-F1-03",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05 and C15.3: name, play a mismatch, wait 800ms, export, New Game and load the app text to restore the name and progress."
+        },
+        {
+          "id": "feature-F1-04",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields."
+        },
+        {
+          "id": "feature-F1-05",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.4: a named import restores its name paused and a later legacy import clears it."
+        },
+        {
+          "id": "feature-F1-06",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: invalid names, missing fields, versions and version 1 state vectors are rejected inside named snapshots without changing progress."
+        },
+        {
+          "id": "feature-F1-07",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.5: fresh-deal actions and reload clear names, which never enter browser preferences."
+        },
+        {
+          "id": "feature-F1-08",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval."
+        },
+        {
+          "id": "feature-F1-09",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.2 and C15.4: completed progress stays static, permits renaming and clearing, and keeps the best score."
+        },
+        {
+          "id": "feature-F1-10",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-solution/build.log",
+          "sha256": "490e07af3b02ad13145b7b96345d2c6eb012298fd3f309d1a46dab77c59ab9fb"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-solution/unit.log",
+          "sha256": "60ee7c4c6cd4f8f6c0820d0aaf637cb55227909529d58746de10f2a62318af65"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-solution/browser.log",
+          "sha256": "9d03779bc91e7d96f06924025723bd9f8d1000052471b0124fd3bd36aff19dca"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-solution/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-solution/worker-input.json",
+          "sha256": "6b4e2cdb0119a531e844f8832cf869de8440e527bb7b1e346d1316ec02960a6a"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-solution/worker-report.json",
+          "sha256": "64ef51558ade161553098b2eda3c7da5d36566281c6c7f2ab5129d343f24ef2a"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-solution/solution-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "stage": "alternative",
+      "patch": "alt-solution.patch",
+      "sourceHash": "0f7d5cd264d673a183873cdcb1e395f2e41e8b9a9e5ea512155f801bd8e76a30",
+      "patchCheck": "passed",
+      "build": "passed",
+      "typecheck": "passed",
+      "units": {
+        "status": "passed",
+        "passed": 134
+      },
+      "browser": {
+        "status": "passed",
+        "passed": 94,
+        "failed": 0
+      },
+      "expected": [
+        {
+          "id": "F1-01",
+          "status": "pass"
+        },
+        {
+          "id": "F1-02",
+          "status": "pass"
+        },
+        {
+          "id": "F1-03",
+          "status": "pass"
+        },
+        {
+          "id": "F1-04",
+          "status": "pass"
+        },
+        {
+          "id": "F1-05",
+          "status": "pass"
+        },
+        {
+          "id": "F1-06",
+          "status": "pass"
+        },
+        {
+          "id": "F1-07",
+          "status": "pass"
+        },
+        {
+          "id": "F1-08",
+          "status": "pass"
+        },
+        {
+          "id": "F1-09",
+          "status": "pass"
+        },
+        {
+          "id": "F1-10",
+          "status": "pass"
+        }
+      ],
+      "mismatches": 0,
+      "scope": {
+        "id": "brownfield-diff-scope",
+        "area": "scope",
+        "status": "pass",
+        "evidence": "changed README.md: within diffScope\nchanged src/game/Game.tsx: within diffScope\nchanged src/game/controls/Reproduction.tsx: within diffScope\nadded src/game/controls/SnapshotName.tsx: within diffScope\nchanged src/game/controls/control-labels.ts: within diffScope\nchanged src/game/game.ts: within diffScope\nchanged src/game/session/use-game.ts: within diffScope\nadded src/game/snapshot-name.ts: within diffScope\nadded src/game/snapshot-names.test.ts: within diffScope\nchanged src/game/snapshot.ts: within diffScope"
+      },
+      "protectedInputs": {
+        "id": "brownfield-protected-inputs",
+        "area": "protected",
+        "status": "pass",
+        "evidence": "Grader input hashes stayed unchanged.\nThe project contains no private grader inputs."
+      },
+      "outcomes": [
+        {
+          "id": "feature-F1-01",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.1: the native Deal name control starts empty and limits input to 40 UTF-16 units."
+        },
+        {
+          "id": "feature-F1-02",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.2: editing a name keeps cards, progress, active time and board code unchanged."
+        },
+        {
+          "id": "feature-F1-03",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05 and C15.3: name, play a mismatch, wait 800ms, export, New Game and load the app text to restore the name and progress."
+        },
+        {
+          "id": "feature-F1-04",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05 and C08.2: unnamed exports and legacy imports keep version 1 and the original exact fields."
+        },
+        {
+          "id": "feature-F1-05",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.4: a named import restores its name paused and a later legacy import clears it."
+        },
+        {
+          "id": "feature-F1-06",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D05, D06 and D07: invalid names, missing fields, versions and version 1 state vectors are rejected inside named snapshots without changing progress."
+        },
+        {
+          "id": "feature-F1-07",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.5: fresh-deal actions and reload clear names, which never enter browser preferences."
+        },
+        {
+          "id": "feature-F1-08",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.2: naming paused progress keeps the pause and exact pending mismatch interval."
+        },
+        {
+          "id": "feature-F1-09",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "C15.2 and C15.4: completed progress stays static, permits renaming and clearing, and keeps the best score."
+        },
+        {
+          "id": "feature-F1-10",
+          "area": "feature",
+          "status": "pass",
+          "evidence": "D10.1: named snapshots accept exactly 65536 UTF-8 bytes and reject one byte more."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-alternative/build.log",
+          "sha256": "14f789a85be02651fe61d92f0fa2e13be20723f4aee3755085aa524e0db50c25"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-alternative/unit.log",
+          "sha256": "9aafe16a0c9b24c004a251816ab2d0a0290aa9d1d1e680ab35f22b02e6a06743"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-alternative/browser.log",
+          "sha256": "304e84a1b16002d8c8da322b44035bb8a843c6873bada0a0d68af3d3e56d57a0"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-alternative/worker.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-alternative/worker-input.json",
+          "sha256": "0ae894f4f7009b45e2f31d17e737575fffc347ffdec98b3bbbba599a0cd44e6d"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-alternative/worker-report.json",
+          "sha256": "64ef51558ade161553098b2eda3c7da5d36566281c6c7f2ab5129d343f24ef2a"
+        },
+        {
+          "path": "src/evals/.tmp/layer4-v22-evidence/l4-f1-name-saves-alternative/solution-check.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Full frozen Layer 3 regression validation is pending the separate checker update. The shared requirements loader still expects spec 2.1 while the pack is 2.2.",
+    "No Docker, WSL, model calls, sign-ins, downloads or dependency installs were run. Browser validation used src/evals/.playwright-browsers.",
+    "Direct scope and protected-input checks used reconstructed source trees outside containers. They do not establish container isolation."
+  ]
+}

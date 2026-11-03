@@ -11,7 +11,7 @@ export interface Experiment {
   readonly reference?: ReferenceVersion; readonly chain?: ChainPosition;
   readonly schemaVersion: 2; readonly id: string; readonly suite: string; readonly cliVersion: string | null; readonly candidateLabel: string | null;
   readonly createdAt: string; readonly status: string; readonly legacy: boolean; readonly runs: readonly string[];
-  readonly config: { readonly layer?: number; readonly judges?: readonly Choice[]; readonly judge?: Choice; readonly judging?: (typeof Judging)[keyof typeof Judging]; readonly isolation: string; readonly setups: readonly string[]; readonly runsPerSetup: number; readonly agents: readonly Choice[] };
+  readonly config: { readonly layer?: number; readonly judges?: readonly Choice[]; readonly judge?: Choice; readonly judging?: (typeof Judging)[keyof typeof Judging]; readonly checking?: string; readonly packet?: string; readonly workMode?: string; readonly chain?: { readonly id: string; readonly milestone: number }; readonly isolation: string; readonly setups: readonly string[]; readonly runsPerSetup: number; readonly agents: readonly Choice[] };
   readonly fingerprints: Readonly<Record<string, string | null>>; readonly versions: Readonly<Record<string, string>>;
 }
 export interface Outcome { readonly id: string; readonly area: string; readonly status: string; readonly evidence: string }

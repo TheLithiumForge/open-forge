@@ -7,11 +7,11 @@ import type { IntentItem } from "../benchmarks/suite.types.ts";
 export const ChangeType = { feature: "F", repair: "R", combined: "FR" } as const;
 export type ChangeType = (typeof ChangeType)[keyof typeof ChangeType];
 export const BrownfieldFiles = { definition: "case.json", request: "request.md", delta: "spec-delta", seed: "seed.patch", solution: "solution.patch", alternative: "alt-solution.patch", checks: "checks", answers: "answers.json", validation: "validation.json" } as const;
-export const LayerFourCases = ["l4-f01", "l4-r01", "l4-fr01"] as const;
+export const LayerFourCases = ["l4-f1-name-saves", "l4-b5-pasted-saves", "l4-p2-name-and-pasted-saves"] as const;
 /** Small repairs that each need one scope of the spec: Gameplay, Controls and input, Visuals and Sound. */
-export const ScopedTaskCases = ["l4-r02", "l4-r03", "l4-r04", "l4-r05"] as const;
+export const BugTasks = ["l4-b1-best-score", "l4-b2-arrow-keys", "l4-b3-reduced-motion", "l4-b4-silence"] as const;
 /** The four scoped tasks planted at once, for comparing one agent with an orchestrator. */
-export const CombinedTaskCase = "l4-r06";
+export const FourBugsPacket = "l4-p1-four-bugs";
 export const CodeOnlySetup = "code-only";
 export interface BrownfieldCase {
   readonly id: string; readonly changeType: ChangeType; readonly title: string; readonly root: string;

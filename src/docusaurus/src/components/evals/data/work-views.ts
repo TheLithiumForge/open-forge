@@ -1,6 +1,6 @@
 import type { Batch } from "../records/records.types.ts";
 import type { Comparison } from "./aggregate.ts";
-import { OneAgent, type Cell } from "./cells.ts";
+import { WorkModeIds, type Cell, type WorkModeId } from "./cells.ts";
 import { bySetup, identity, type ChartRow } from "./chart-data.ts";
 import type { ThreadRoles } from "../records/schema-values.ts";
 import { latestAnalyses } from "./objective.ts";
@@ -49,34 +49,53 @@ export function milestoneRows(items: readonly Comparison[]): MilestoneRow[] {
 }
 
 const MainThread: (typeof ThreadRoles)[number] = "main";
+const ModeOrder: readonly WorkModeId[] = Object.values(WorkModeIds);
 
-/** The plan names an orchestrated setup after its one-agent twin, such as plain-docs-orchestrated. */
-export const OrchestratedSuffix = "-orchestrated";
-
-/** An orchestrated setup's system tokens against its one-agent twin in the same batch, with the orchestrator's share. */
-export interface OrchestrationRow extends Omit<ChartRow, "value"> {
-  readonly caseId: string;
+/** One scenario's work on a packet in one work mode by one implementer. Task by task adds up its tasks. */
+export interface PacketRow extends Omit<ChartRow, "value"> {
+  readonly packet: string;
+  readonly workMode: WorkModeId;
+  readonly modelLabel: string;
+  /** The tasks this row adds up: one request for a whole or orchestrated packet, one per task otherwise. */
+  readonly steps: number;
   readonly tokens: number | null;
-  readonly oneAgentTokens: number | null;
-  /** The orchestrator thread's share of the system's input. */
+  readonly coverage: number | null;
+  /** The orchestrator thread's share of the system's input, for orchestrated work. */
   readonly orchestratorShare: number | null;
   readonly subagents: number | null;
-  readonly coverage: number | null;
-  readonly oneAgentCoverage: number | null;
 }
 
-export function orchestrationRows(items: readonly Comparison[], batches: ReadonlyMap<string, Batch>): OrchestrationRow[] {
+export function packetRows(items: readonly Comparison[], batches: ReadonlyMap<string, Batch>): PacketRow[] {
   const cells = unique(items);
-  return cells.filter((cell) => cell.workMode !== OneAgent).map((cell) => {
-    const twin = cells.find((other) => other.batchId === cell.batchId && other.model === cell.model && other.setup === cell.setup.replace(OrchestratedSuffix, "") && other.workMode === OneAgent);
+  const threads = (cell: Cell) => {
+    if (cell.workMode !== WorkModeIds.orchestrated) return { orchestratorShare: null, subagents: null };
     const batch = batches.get(cell.batchId);
     const analyses = cell.runIds.flatMap((id) => (batch === undefined ? [] : latestAnalyses(batch).get(id) ?? []));
     const input = (tokens: { readonly newInput: number; readonly cachedInput: number; readonly cacheWrite: number }) => tokens.newInput + tokens.cachedInput + tokens.cacheWrite;
-    const share = mean(analyses.map((analysis) => {
-      const main = analysis.threads.find((thread) => thread.role === MainThread), all = analysis.threads.reduce((sum, thread) => sum + input(thread.tokens), 0);
-      return main === undefined || all === 0 ? null : input(main.tokens) / all;
-    }));
-    return { ...identity(cell.setup), caseId: cell.caseId, tokens: cell.tokens.mean, oneAgentTokens: twin?.tokens.mean ?? null, orchestratorShare: share,
-      subagents: mean(analyses.map((analysis) => analysis.threads.filter((thread) => thread.role !== MainThread).length)), coverage: cell.coverage.mean, oneAgentCoverage: twin?.coverage.mean ?? null };
-  }).sort(bySetup);
+    return {
+      orchestratorShare: mean(analyses.map((analysis) => {
+        const main = analysis.threads.find((thread) => thread.role === MainThread), all = analysis.threads.reduce((sum, thread) => sum + input(thread.tokens), 0);
+        return main === undefined || all === 0 ? null : input(main.tokens) / all;
+      })),
+      subagents: mean(analyses.map((analysis) => analysis.threads.filter((thread) => thread.role !== MainThread).length)),
+    };
+  };
+  const whole = cells.filter((cell) => cell.workMode === WorkModeIds.wholePacket || cell.workMode === WorkModeIds.orchestrated).map((cell): PacketRow => ({
+    ...identity(cell.setup), packet: cell.caseId, workMode: cell.workMode, modelLabel: cell.modelLabel, steps: 1, tokens: cell.tokens.mean, coverage: cell.coverage.mean, ...threads(cell),
+  }));
+  const groups = new Map<string, Cell[]>();
+  for (const cell of cells) {
+    if (cell.workMode !== WorkModeIds.taskByTask || cell.chain === null) continue;
+    const key = JSON.stringify([cell.chain.id, cell.setup, cell.model]);
+    groups.set(key, [...groups.get(key) ?? [], cell]);
+  }
+  const stepped = [...groups.values()].flatMap((group): PacketRow[] => {
+    const [first] = group;
+    if (first?.chain == null) return [];
+    const known = group.map((cell) => cell.tokens.mean);
+    return [{ ...identity(first.setup), packet: first.chain.id, workMode: WorkModeIds.taskByTask, modelLabel: first.modelLabel, steps: group.length,
+      tokens: known.some((value) => value === null) ? null : known.reduce<number>((sum, value) => sum + (value ?? 0), 0),
+      coverage: mean(group.map((cell) => cell.coverage.mean)), orchestratorShare: null, subagents: null }];
+  });
+  return [...whole, ...stepped].sort((a, b) => a.packet.localeCompare(b.packet) || bySetup(a, b) || ModeOrder.indexOf(a.workMode) - ModeOrder.indexOf(b.workMode) || a.modelLabel.localeCompare(b.modelLabel));
 }

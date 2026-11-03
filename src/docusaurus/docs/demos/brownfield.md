@@ -22,9 +22,9 @@ The three cases are:
 
 | Case                                                                  | Request                                                                       | Starting code                   | Spec                                     |
 | --------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------- | ---------------------------------------- |
-| [Feature, `l4-f01`](../evals/starting-points.mdx#l4-f01)              | [`request.md`](../../../evals/benchmarks/neon-pairs/cases/l4-f01/request.md)  | The reference                   | The spec with the files in `spec-delta/` |
-| [Repair, `l4-r01`](../evals/starting-points.mdx#l4-r01)               | [`request.md`](../../../evals/benchmarks/neon-pairs/cases/l4-r01/request.md)  | The reference with `seed.patch` | The spec                                 |
-| [Feature and repair, `l4-fr01`](../evals/starting-points.mdx#l4-fr01) | [`request.md`](../../../evals/benchmarks/neon-pairs/cases/l4-fr01/request.md) | The reference with `seed.patch` | The spec with the files in `spec-delta/` |
+| [Feature, `l4-f1-name-saves`](../evals/starting-points.mdx#l4-f1-name-saves)              | [`request.md`](../../../evals/benchmarks/neon-pairs/cases/l4-f1-name-saves/request.md)  | The reference                   | The spec with the files in `spec-delta/` |
+| [Repair, `l4-b5-pasted-saves`](../evals/starting-points.mdx#l4-b5-pasted-saves)               | [`request.md`](../../../evals/benchmarks/neon-pairs/cases/l4-b5-pasted-saves/request.md)  | The reference with `seed.patch` | The spec                                 |
+| [Feature and repair, `l4-p2-name-and-pasted-saves`](../evals/starting-points.mdx#l4-p2-name-and-pasted-saves) | [`request.md`](../../../evals/benchmarks/neon-pairs/cases/l4-p2-name-and-pasted-saves/request.md) | The reference with `seed.patch` | The spec with the files in `spec-delta/` |
 
 Each case folder also holds the known solutions and the evals' change checks. Keep them away from the agent.
 
@@ -44,7 +44,7 @@ Each step sets up one part of the project the evals build for that rung of the [
 2. For a repair or both, apply the case's `seed.patch` in that folder. It plants the bug:
 
    ```sh
-   git apply <path-to-open-forge>/src/evals/benchmarks/neon-pairs/cases/l4-r01/seed.patch
+   git apply <path-to-open-forge>/src/evals/benchmarks/neon-pairs/cases/l4-b5-pasted-saves/seed.patch
    ```
 
 3. From rung 1 up, copy the spec's `.md` files into `docs/`. For a feature or both, replace them with the files in the case's `spec-delta/` folder. Then add this line to the end of `README.md`:

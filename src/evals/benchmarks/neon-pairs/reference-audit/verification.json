@@ -277,42 +277,42 @@
     "applyToCorrectedReference": 8,
     "results": [
       {
-        "case": "l4-f01",
+        "case": "l4-f1-name-saves",
         "patch": "solution.patch",
         "applies": true
       },
       {
-        "case": "l4-f01",
+        "case": "l4-f1-name-saves",
         "patch": "alt-solution.patch",
         "applies": true
       },
       {
-        "case": "l4-fr01",
+        "case": "l4-p2-name-and-pasted-saves",
         "patch": "seed.patch",
         "applies": true
       },
       {
-        "case": "l4-fr01",
+        "case": "l4-p2-name-and-pasted-saves",
         "patch": "solution.patch",
         "applies": true
       },
       {
-        "case": "l4-fr01",
+        "case": "l4-p2-name-and-pasted-saves",
         "patch": "alt-solution.patch",
         "applies": true
       },
       {
-        "case": "l4-r01",
+        "case": "l4-b5-pasted-saves",
         "patch": "seed.patch",
         "applies": true
       },
       {
-        "case": "l4-r01",
+        "case": "l4-b5-pasted-saves",
         "patch": "solution.patch",
         "applies": true
       },
       {
-        "case": "l4-r01",
+        "case": "l4-b5-pasted-saves",
         "patch": "alt-solution.patch",
         "applies": true
       }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "layer": 4,
-  "cases": ["l4-f01", "l4-r01", "l4-fr01"],
+  "cases": ["l4-f1-name-saves", "l4-b5-pasted-saves", "l4-p2-name-and-pasted-saves"],
   "setups": ["organized-docs", "linked-agents", "minimal", "essentials", "full-core", "full-core-scoped", "code-only", "plain-docs", "overloaded-docs", "full-core-scoped-memory"],
   "runsPerSetup": 1,
   "parallelRuns": 5,

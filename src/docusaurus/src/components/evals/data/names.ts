@@ -34,10 +34,14 @@ export function setupRank(id: string): number {
   return rank === -1 ? SetupOrder.length : rank;
 }
 
-/** The cases of an existing app. Earlier starting points have one case each, named by the starting point. */
+/** How the work was handed over, in reading order. */
+export const WorkModeNames = { "single-task": "One task", "whole-packet": "Whole packet", "task-by-task": "Task by task", orchestrated: "Orchestrated" } as const;
+
+/** The tasks and work packets of an existing app, B for a bug fix, F for a feature and P for a packet. Earlier starting points have one case each, named by the starting point. */
 export const CaseNames = {
-  "l4-f01": "Feature", "l4-r01": "Repair", "l4-fr01": "Feature and repair",
-  "l4-r02": "Best score", "l4-r03": "Arrow keys", "l4-r04": "Reduced motion", "l4-r05": "Silence",
+  "l4-b1-best-score": "B1 Best score", "l4-b2-arrow-keys": "B2 Arrow keys", "l4-b3-reduced-motion": "B3 Reduced motion", "l4-b4-silence": "B4 Silence",
+  "l4-b5-pasted-saves": "B5 Pasted saves", "l4-f1-name-saves": "F1 Name saves",
+  "l4-p1-four-bugs": "P1 Four bugs", "l4-p2-name-and-pasted-saves": "P2 Name and pasted saves",
 } as const satisfies Readonly<Record<string, string>>;
 export type CaseId = keyof typeof CaseNames;
 

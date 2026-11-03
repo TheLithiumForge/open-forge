@@ -1,7 +1,7 @@
 ﻿import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { EvalPaths } from "../paths.ts";
-import { Checking, Isolation, Judging } from "./choices.ts";
+import { Checking, Isolation, Judging, WorkMode } from "./choices.ts";
 import type { ChainConfig, EvalConfig } from "./config.types.ts";
 import { containerLimits } from "../execution/containers/settings.ts";
 import { QuestionRounds } from "../execution/conversation/answer-bank.ts";
@@ -33,12 +33,19 @@ export function parseConfig(value: unknown): EvalConfig {
   if (checking !== undefined && checking !== Checking.run && checking !== Checking.later) throw new Error("checking must be run or later.");
   if (checking === Checking.later && judging !== Judging.later) throw new Error("A plan that checks later judges later too, since the judges read the checks' screenshots.");
   const chain = source["chain"] === undefined ? undefined : readChain(source["chain"]);
+  const packet = source["packet"] === undefined ? undefined : text(source["packet"]), workMode = source["workMode"];
+  if ((packet === undefined) !== (workMode === undefined)) throw new Error("A packet plan names its packet and its work mode together.");
+  if (workMode !== undefined && !Object.values<unknown>(WorkMode).includes(workMode)) throw new Error("workMode must be whole-packet, task-by-task or orchestrated.");
+  // An orchestrator needs subagents to hand tasks to, and the other modes give every agent the work itself.
+  if (workMode !== undefined && agents.some((agent: unknown) => (typeof agent === "object" && agent !== null && "team" in agent) !== (workMode === WorkMode.orchestrated))) {
+    throw new Error("Orchestrated work needs implementers with a team, and the other work modes need implementers without one.");
+  }
   const limits = object(source["limits"]);
   const resources = source["containers"] === undefined ? undefined : object(source["containers"]);
   const containers = resources === undefined ? containerLimits() : containerLimits({ cpus: positive(resources["cpus"]), memory: text(resources["memory"]), processes: integer(resources["processes"]) });
   return { suite, isolation, agents: agents.map(modelChoice), setups: strings(source["setups"]),
     runsPerSetup: integer(source["runsPerSetup"]), parallelRuns: integer(source["parallelRuns"] ?? 1),
-    ...judges, ...(judging === undefined ? {} : { judging }), ...(checking === undefined ? {} : { checking }), ...(chain === undefined ? {} : { chain }), simulatedUser: modelChoice(source["simulatedUser"]), containers,
+    ...judges, ...(judging === undefined ? {} : { judging }), ...(checking === undefined ? {} : { checking }), ...(chain === undefined ? {} : { chain }), ...(packet === undefined ? {} : { packet, workMode: workMode as WorkMode }), simulatedUser: modelChoice(source["simulatedUser"]), containers,
     limits: { runMinutes: positive(limits["runMinutes"]), checkMinutes: positive(limits["checkMinutes"]), questionRounds: QuestionRounds },
     ...(source["protocol"] === undefined ? {} : { protocol: readProtocol(source["protocol"]) }),
     ...(source["layer"] === undefined ? {} : { layer: integer(source["layer"]) }),

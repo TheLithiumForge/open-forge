@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "l4-b3-reduced-motion",
+  "changeType": "R",
+  "title": "Respect reduced motion",
+  "request": "request.md",
+  "specDelta": null,
+  "seedPatch": "seed.patch",
+  "solutionPatch": "solution.patch",
+  "checks": "checks",
+  "answers": "answers.json",
+  "supersedes": [],
+  "diffScope": [
+    "src/game/**",
+    "tests/**",
+    "README.md"
+  ]
+}

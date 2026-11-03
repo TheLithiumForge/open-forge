@@ -48,9 +48,9 @@ The registered cases and their local starting results are:
 
 | Case | Type | Request | Checks | Starting result |
 | --- | --- | --- | --- | --- |
-| [F01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f01/README.md) | F | Name a game and keep the name with saved progress | 10 | One pass and nine feature failures |
-| [R01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r01/README.md) | R | Some copied saved games don't open while local exports work | 10 | Seven passes and three repair failures |
-| [FR01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-fr01/README.md) | FR | Add names and repair copied saved games | 20 | Seven passes and thirteen failures |
+| [F01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f1-name-saves/README.md) | F | Name a game and keep the name with saved progress | 10 | One pass and nine feature failures |
+| [R01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b5-pasted-saves/README.md) | R | Some copied saved games don't open while local exports work | 10 | Seven passes and three repair failures |
+| [FR01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-p2-name-and-pasted-saves/README.md) | FR | Add names and repair copied saved games | 20 | Seven passes and thirteen failures |
 
 F01 and FR01 replace C08.2, D05.1 and D05.2 under spec version 3. Their complete Controls, Reproducibility, Architecture and overview replacements keep the unchanged version 2.1 rules. C15.1 through C15.5 follow C14. Named games use snapshot version 2. Unnamed games, board codes and replay output keep version 1. Both snapshot versions keep the existing validation, pause, focus and best-score rules. Completed imports stay completed without Resume. R01 changes no product clause.
 
@@ -66,10 +66,10 @@ Scoped tasks are small repairs that each need one scope of the spec, added on 20
 
 | Case | Scope | Request | Checks |
 | --- | --- | --- | --- |
-| [R02](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r02/README.md) | Gameplay | The best score takes worse games and shows 0 without a record | 7 |
-| [R03](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r03/README.md) | Controls and input | Arrow keys no longer move between cards | 7 |
-| [R04](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r04/README.md) | Visuals | Cards and the win banner animate under reduced motion | 5 |
-| [R05](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r05/README.md) | Sound | The game beeps on a match | 4 |
+| [R02](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b1-best-score/README.md) | Gameplay | The best score takes worse games and shows 0 without a record | 7 |
+| [R03](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b2-arrow-keys/README.md) | Controls and input | Arrow keys no longer move between cards | 7 |
+| [R04](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b3-reduced-motion/README.md) | Visuals | Cards and the win banner animate under reduced motion | 5 |
+| [R05](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b4-silence/README.md) | Sound | The game beeps on a match | 4 |
 
 Scenario L4-1 runs them on the four context steps with Plain docs as the control, and leaves judging for later. Its plans are `neon-pairs-l4-1-smoke.json` and `neon-pairs-l4-1-full.json`. [Eval Context And Cost Measures](../../../../emerging/analysis/eval-context-and-cost-measures.md#scoped-tasks-built-2026-11-03) explains why they replaced partial greenfield builds.
 
@@ -89,7 +89,7 @@ Workers use Node built-ins, Playwright and files inside their case folder. Each 
 
 Local validation builds each starting project, known solution and alternative solution. The public unit tests pass on all nine trees. The case workers match all 120 starting and solution expectations. Both solutions pass each case's change checks and all 65 public browser journeys. The product patch parser accepts all six solution patches. Direct scope and protected-input checks pass on all nine source trees.
 
-Each case's `validation.json` records local evidence. The [packet validation record](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f01/packet-validation.json) lists product-test failures, the changed files and validation limits. Typechecking passes. Full frozen regression and Docker validation need the shared spec-version loader and stale Layer 2 input records fixed outside this packet.
+Each case's `validation.json` records local evidence. The [packet validation record](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f1-name-saves/packet-validation.json) lists product-test failures, the changed files and validation limits. Typechecking passes. Full frozen regression and Docker validation need the shared spec-version loader and stale Layer 2 input records fixed outside this packet.
 
 ## Change cases
 

@@ -1,4 +1,5 @@
 import { measure, type Cell, type StartingPointId } from "./cells.ts";
+import { WorkModeNames } from "./names.ts";
 
 /** A filter value that keeps every model, judge or starting point, so the views show averages. */
 export const All = "all";
@@ -19,6 +20,7 @@ export interface Filters {
   readonly model: string;
   readonly judge: string;
   readonly startingPoint: StartingPointId | typeof All;
+  readonly workMode: string;
 }
 
 /** One setup's comparison with the control, averaged over the starting points, cases and models that pass the filters. */
@@ -61,7 +63,7 @@ export function filtered<T extends { readonly cell: Cell } | Cell>(items: readon
   return items.filter((item) => {
     const cell: Cell = "cell" in item ? item.cell : item;
     return (filters.model === All || cell.model === filters.model) && (filters.judge === All || cell.judge === filters.judge)
-      && (filters.startingPoint === All || cell.startingPoint === filters.startingPoint);
+      && (filters.startingPoint === All || cell.startingPoint === filters.startingPoint) && (filters.workMode === All || cell.workMode === filters.workMode);
   });
 }
 
@@ -114,10 +116,12 @@ export function filterOptions(entries: readonly { readonly key: string | null; r
   return [...chosen].map(([key, { label }]) => ({ key, label }));
 }
 
-/** The models and judges present, for the filter menus. */
-export function options(all: readonly Cell[]): { readonly models: readonly FilterOption[]; readonly judges: readonly FilterOption[] } {
+/** The models, judges and work modes present, for the filter menus. */
+export function options(all: readonly Cell[]): { readonly models: readonly FilterOption[]; readonly judges: readonly FilterOption[]; readonly workModes: readonly FilterOption[] } {
+  const present = new Set(all.map((cell) => cell.workMode));
   return {
     models: filterOptions(all.map((cell) => ({ key: cell.model, label: cell.modelLabel, runs: cell.runs }))),
     judges: filterOptions(all.map((cell) => ({ key: cell.judge, label: cell.judgeLabel, runs: cell.runs }))),
+    workModes: Object.entries(WorkModeNames).filter(([key]) => present.has(key as Cell["workMode"])).map(([key, label]) => ({ key, label })),
   };
 }
