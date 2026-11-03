@@ -48,9 +48,17 @@ npm run evals -- validate-case --case l4-f01
 npm run evals -- validate-case --all --plan src/evals/experiments/neon-pairs-l4-check.json
 ```
 
+## `chain-check`
+
+Before a chain milestone runs, build one child start per setup from its parent runs, grade it as it is in verifiers without models, and list every check whose result differs from the parent's.
+
+```sh
+npm run evals -- chain-check --plan src/evals/experiments/neon-pairs-l4-2-m2.json --parent <batch>
+```
+
 ## `run`
 
-Run a saved plan. --implementers: claude, codex, both. --judges: claude, codex, both. --user: claude, codex. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --setups runs some of the plan's setups, always with its control. --parallel caps how many runs go at once. Local isolation needs --development.
+Run a saved plan. --implementers: claude, codex, both. --judges: claude, codex, both. --user: claude, codex. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --setups runs some of the plan's setups, always with its control. --parent names the previous milestone's batch for a chain plan. --parallel caps how many runs go at once. Local isolation needs --development.
 
 ```sh
 npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude
@@ -141,12 +149,13 @@ npm run evals -- results add <batch>
 | Flag | Commands | Effect |
 | --- | --- | --- |
 | `--help` | Any command | Show the command's help and example without running it |
-| `--plan <file>` | `run`, `qualify`, `validate-case` | The saved plan to run or check |
+| `--plan <file>` | `run`, `qualify`, `validate-case`, `chain-check` | The saved plan to run or check |
 | `--implementers <preset>` | `run` | Replace the plan's implementers with claude, codex, both |
 | `--judges <preset>` | `run`, `judge`, `reference` | Replace the judges with claude, codex, both |
 | `--user <preset>` | `run` | Replace the simulated user with claude, codex |
 | `--case <id>` | `run`, `validate-case` | Run or validate one Layer 4 case, so each case can run as its own process |
 | `--setups <ids>` | `run` | Run only these setups of the plan, comma-separated, in the plan's order. The plan's first setup is the control and must stay |
+| `--parent <batch>` | `run`, `chain-check` | Name the previous milestone's batch for a chain plan. Each run starts from the parent run with the same setup and repeat |
 | `--all` | `validate-case` | Validate every case of the plan |
 | `--layer <n>` | `reference` | Grade the reference against Layer 2 or 3 |
 | `--parallel <n>` | `run`, `resume` | How many runs go at once. The full plans run two, because every run spends the signed-in account's own model limits |

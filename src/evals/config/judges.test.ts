@@ -50,3 +50,13 @@ test("both implementers get each cell and repeat once regardless of the judge co
     assert.equal(runs.filter((run) => modelKey(run.agent) === modelKey(agent) && run.setup === setup && run.repeat === repeat).length, 1);
   }
 });
+
+test("a chain plan names its chain and milestone for one Layer 4 case, and other shapes are refused", () => {
+  const plan = { schemaVersion: PlanVersion, layer: 4, cases: ["l4-r03"], agents: MatrixAgents, judges: MatrixJudges,
+    simulatedUser: LocalModel, isolation: FixtureConfig.isolation, setups: FixtureConfig.setups, runsPerSetup: 1, chain: { id: "l4-2", milestone: 2 } };
+  const chained = resolvePlan(plan, FixtureConfig);
+  assert.deepEqual(chained.chain, { id: "l4-2", milestone: 2 });
+  assert.deepEqual(parseConfig({ ...chained, chain: { ...plan.chain, parentBatchId: "parent-batch" } }).chain, { ...plan.chain, parentBatchId: "parent-batch" });
+  for (const chain of [{ id: "l4-2", milestone: 1 }, { id: "l4 2", milestone: 2 }]) assert.throws(() => resolvePlan({ ...plan, chain }, FixtureConfig));
+  assert.throws(() => resolvePlan({ ...plan, cases: ["l4-r03", "l4-r04"] }, FixtureConfig));
+});

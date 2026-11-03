@@ -79,6 +79,19 @@ A plan with `"judging": "later"` finishes each run after its checks. Its judges 
 
 Two machine flags work with any command. `--scratch D:/eval-workspaces` puts run workspaces on a roomier drive. `--check-slots 5` lets five check stages run at once across every eval process. Each check uses about one processor core, so leave room for the agents.
 
+## Run a chain
+
+A chain runs tasks one after another on the same codebase, as [Scenarios](scenarios.mdx#layer-4) describes for L4-2. Its first milestone is an ordinary batch, such as L4-1's Best score batch. Each later milestone has its own plan with a `chain` field, and `--parent` names the previous milestone's batch.
+
+Each child run starts from its parent run with the same setup and repeat: the parent's saved files, without build output, with the next task's defect planted. A parent that didn't finish, didn't build or changed the lines the next defect needs starts no child. The batch lists those pairs with their reason, and they stay out of every mean. Each child saves its start in `start.json`, and checks compare against it.
+
+Before a milestone runs, `chain-check` builds one child start per setup and grades it without a model. A correct start keeps the parent's results apart from the checks the new defect touches:
+
+```sh
+npm run evals -- chain-check --plan src/evals/experiments/neon-pairs-l4-2-m2.json --parent <batch>
+npm run evals -- run --plan src/evals/experiments/neon-pairs-l4-2-m2.json --parent <batch>
+```
+
 ## Follow a batch
 
 ```sh

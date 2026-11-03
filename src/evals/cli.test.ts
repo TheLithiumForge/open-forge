@@ -160,3 +160,27 @@ test("analyze takes the named batches, or every batch, and only the missing flag
   assert.deepEqual(asked, [[[], false], [["first"], true]]);
   assert.deepEqual(fake.output, ["fixture analysis", "fixture analysis"]);
 });
+
+test("run --parent gives a chain plan its previous milestone's batch, and a chain plan without one or a plain plan with one is refused", async () => {
+  const fake = fakeServices(), started: EvalConfig[] = [];
+  const chain = { id: "fixture-chain", milestone: 2 }, parent = "fixture-parent-batch";
+  const run = async (config: EvalConfig) => { started.push(config); return 0; };
+  await runCli([Command.run, Flag.plan, "fixture.json", Flag.parent, parent], { ...fake.services, plan: async () => ({ ...FixtureConfig, chain }), run });
+  assert.deepEqual(started[0]?.chain, { ...chain, parentBatchId: parent });
+  await assert.rejects(runCli([Command.run, Flag.plan, "fixture.json"], { ...fake.services, plan: async () => ({ ...FixtureConfig, chain }), run }));
+  await assert.rejects(runCli([Command.run, Flag.plan, "fixture.json", Flag.parent, parent], { ...fake.services, run }));
+  assert.equal(started.length, 1);
+});
+
+test("chain-check grades the plan's children from the named parent batch and prints what moved", async () => {
+  const fake = fakeServices(), checked: string[] = [];
+  const chain = { id: "fixture-chain", milestone: 2 }, parent = "fixture-parent-batch";
+  const services = { ...fake.services, plan: async () => ({ ...FixtureConfig, chain }), chainCheck: async (_config: EvalConfig, _suite: unknown, batch: string) => {
+    checked.push(batch);
+    return [{ setup: "plain-docs", repeat: 1, parentRunId: "parent-run", buildPassed: true, target: [{ id: "repair-R03-01", status: "fail" }], changed: [] }];
+  } };
+  assert.equal(await runCli([Command.chainCheck, Flag.plan, "fixture.json", Flag.parent, parent], services), 0);
+  assert.deepEqual(checked, [parent]);
+  assert.equal(fake.output.length, 3);
+  await assert.rejects(runCli([Command.chainCheck, Flag.plan, "fixture.json"], services));
+});

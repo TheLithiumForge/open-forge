@@ -58,3 +58,16 @@ test("the product preflights every named case before installing any setup", asyn
   await runCli([Command.qualify, Flag.plan, "fixture.json"], { ...services, suite: async (id) => ({ ...FixtureSuite, id }) });
   assert.deepEqual(qualified, cases);
 });
+
+test("L4-2 plans chain the scoped tasks after Best score, one milestone each, on steps 2 to 4 with Plain docs first", async () => {
+  for (const [index, id] of ScopedTaskCases.slice(1).entries()) {
+    const milestone = index + 2;
+    const plan = resolvePlan(JSON.parse(await readFile(join(evalsRoot, "experiments", `neon-pairs-l4-2-m${milestone}.json`), "utf8")), FixtureConfig);
+    assert.deepEqual(plan.cases, [id]);
+    assert.deepEqual(plan.chain, { id: "l4-2", milestone });
+    assert.deepEqual(plan.setups, [DocumentSetups.plain, DocumentSetups.fullCore, DocumentSetups.fullCoreScoped]);
+    assert.equal(plan.runsPerSetup, 3);
+    assert.deepEqual(plan.agents, ImplementerPresets[PresetName.codex]);
+    assert.equal(plan.judging, Judging.later);
+  }
+});

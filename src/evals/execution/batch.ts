@@ -1,5 +1,6 @@
 import { randomInt } from "node:crypto";
 import { existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { ResultFiles } from "../paths.ts";
 import { dockerAvailable, ensureEvalImage } from "./containers/docker-image.ts";
@@ -15,7 +16,9 @@ import { captureExperiment, resumableExperiment, withReportedModels } from "../h
 import { fingerprint } from "../history/fingerprints.ts";
 import { artifactHash } from "../history/artifacts.ts";
 import { plannedRun, replacementRun } from "../history/run-records.ts";
-import type { SetupRecord } from "../history/records.types.ts";
+import type { ChainPosition, SetupRecord } from "../history/records.types.ts";
+import type { Suite } from "../benchmarks/suite.types.ts";
+import { chainedRunStart, parentFiles, planChainRuns } from "./chain-runs.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { checksForSuite } from "../benchmarks/registry.ts";
 import type { FileHash } from "../materialize/files.ts";
@@ -67,12 +70,26 @@ export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   const config = { ...requested, limits: { ...requested.limits, runMinutes: suite.runMinutes ?? requested.limits.runMinutes },
     protocol: suite.documents === undefined ? requested.protocol ?? suiteProtocol(suite) : freezeProtocol(answerBank(suite.intent), [suite.prompt, ...suite.documents]) };
   const id = `${new Date().toISOString().replaceAll(/[:.]/g, "-")}-${opaqueId()}`;
-  const runs = planBatchRuns(config, id);
-  const batch: BatchRecord = { ...await captureExperiment(id, config, suite), runs: runs.map((run) => run.id) };
+  const chained = config.chain === undefined ? null : await planChain(config, id, suite);
+  const runs = chained?.runs ?? planBatchRuns(config, id);
+  const batch: BatchRecord = { ...await captureExperiment(id, config, suite), runs: runs.map((run) => run.id), ...(chained === null ? {} : { chain: chained.position }) };
   await saveBatch(batch);
   for (const run of runs) await saveRun(run);
   void executeBatch(batch.id);
   return batch;
+}
+
+/** A chain milestone's runs, each paired with its parent run in the previous milestone's batch, and the pairs that can't start. */
+async function planChain(config: EvalConfig, batchId: string, suite: Suite): Promise<{ readonly runs: RunRecord[]; readonly position: ChainPosition }> {
+  const chain = config.chain, item = suite.brownfield?.case;
+  if (chain?.parentBatchId === undefined) throw new Error("A chain milestone needs its parent batch.");
+  if (item?.seedPatch === null || item === undefined) throw new Error("A chain milestone needs a Layer 4 case with a planted defect.");
+  const parentBatchId = chain.parentBatchId, parent = await readBatch(parentBatchId);
+  if (parent.status !== BatchStatus.done) throw new Error(`The parent batch ${parentBatchId} isn't done yet.`);
+  const seedPatch = await readFile(join(item.root, item.seedPatch), "utf8");
+  const planned = await planChainRuns(config, batchId, await readRuns(parent), (run) => parentFiles(runFolder, parentBatchId, run.id), seedPatch, opaqueId);
+  if (planned.runs.length === 0) throw new Error(`No parent run can start this milestone: ${planned.skipped.map((pair) => `${pair.setup} ${pair.repeat} ${pair.reason}`).join(", ")}.`);
+  return { runs: shuffled(planned.runs), position: { id: chain.id, milestone: chain.milestone, parentBatchId, skipped: planned.skipped } };
 }
 
 /** Whether resume replaces an interrupted or limited attempt. One replacement caps infrastructure failures, and a usage limit isn't one. A run that already has a replacement keeps its status, so it's never replaced twice. */
@@ -122,6 +139,8 @@ async function executeBatch(batchId: string, parallel?: number): Promise<void> {
   try {
     await setStatus(BatchStatus.preparing);
     const suite = await loadSuite(batch.suite);
+    const chainCase = suite.brownfield?.case;
+    const chainSeed = batch.chain === undefined || chainCase === undefined || chainCase.seedPatch === null ? null : await readFile(join(chainCase.root, chainCase.seedPatch), "utf8");
     if (batch.config.isolation === Isolation.docker || batch.config.agents.some((agent) => agent.tool !== Tool.mock)) {
       if (!(await dockerAvailable())) throw new Error("Docker isn't running. Start Docker, or set isolation to local.");
       progress.report(batchId, "Preparing the Docker image. The first time takes a few minutes.");
@@ -168,31 +187,47 @@ async function executeBatch(batchId: string, parallel?: number): Promise<void> {
         return;
       }
       const attemptSuite = suiteForSetup(suite, run.setup);
-      const checks = suite.brownfield === undefined ? undefined : checksForSuite(suite, baselines.get(run.setup), scopes.get(run.setup));
-      const services = checks === undefined ? {} : { checks };
-      if (gradedOnResume(run, existsSync(join(runFolder(batchId, run.id), ResultFiles.files)))) {
-        const graded = await executeRun({ run, suite: attemptSuite, config: batch.config, snapshot: "", position: `${index + 1} of ${batch.runs.length}`, services, savedFiles: true });
-        if (graded.status === RunStatus.limited) limited = true;
-        return;
+      const saved = gradedOnResume(run, existsSync(join(runFolder(batchId, run.id), ResultFiles.files)));
+      const chainStarts: string[] = [];
+      // A chained run starts from its parent's files, so its start and the scope guard's baseline are its own.
+      const prepare = async (target: RunRecord, savedFiles: boolean) => {
+        const parentBatchId = batch.chain?.parentBatchId ?? null, parentRunId = target.parentRunId ?? null;
+        const chained = parentBatchId === null || parentRunId === null || chainSeed === null ? null : await chainedRunStart({ folder: runFolder(batchId, target.id), parentBatchId, parentRunId,
+          parentFiles: parentFiles(runFolder, parentBatchId, parentRunId), scope: scopes.get(target.setup), seedPatch: chainSeed, project: suite.project, saved: savedFiles });
+        if (chained?.start) chainStarts.push(dirname(chained.start.folder));
+        const checks = suite.brownfield === undefined ? undefined : checksForSuite(suite, chained?.files ?? baselines.get(target.setup), scopes.get(target.setup));
+        return { snapshot: chained?.start?.folder ?? snapshots.get(target.setup) ?? "", services: checks === undefined ? {} : { checks } };
+      };
+      try {
+        if (saved) {
+          const { services } = await prepare(run, true);
+          const graded = await executeRun({ run, suite: attemptSuite, config: batch.config, snapshot: "", position: `${index + 1} of ${batch.runs.length}`, services, savedFiles: true });
+          if (graded.status === RunStatus.limited) limited = true;
+          return;
+        }
+        if (run.status !== RunStatus.pending) {
+          if (run.finishedAt === null) await saveRun({ ...run, status: RunStatus.failed, failureKind: FailureKind.infrastructure, finishedAt: new Date().toISOString() });
+          if (!replacedOnResume(run, replaced.has(run.id))) return;
+          replaced.add(run.id);
+          run = replacementRun(run, opaqueId(), "Resume after an interrupted or limited attempt.");
+          batch = { ...batch, runs: [...batch.runs, run.id] };
+          await saveRun(run);
+          await saveBatch(batch);
+        }
+        const first = await prepare(run, false);
+        let done = await executeRun({ run, suite: attemptSuite, config: batch.config, snapshot: first.snapshot, position: `${index + 1} of ${batch.runs.length}`, services: first.services });
+        if (done.status === RunStatus.failed && done.failureKind === FailureKind.infrastructure && done.replacesRunId === null) {
+          const replacement = replacementRun(done, opaqueId(), "One replacement for an infrastructure failure.");
+          batch = { ...batch, runs: [...batch.runs, replacement.id] };
+          await saveRun(replacement);
+          await saveBatch(batch);
+          const next = await prepare(replacement, false);
+          done = await executeRun({ run: replacement, suite: attemptSuite, config: batch.config, snapshot: next.snapshot, position: `${index + 1} replacement`, services: next.services });
+        }
+        if (done.status === RunStatus.limited) limited = true;
+      } finally {
+        for (const folder of chainStarts) await removeFolder(folder);
       }
-      if (run.status !== RunStatus.pending) {
-        if (run.finishedAt === null) await saveRun({ ...run, status: RunStatus.failed, failureKind: FailureKind.infrastructure, finishedAt: new Date().toISOString() });
-        if (!replacedOnResume(run, replaced.has(run.id))) return;
-        replaced.add(run.id);
-        run = replacementRun(run, opaqueId(), "Resume after an interrupted or limited attempt.");
-        batch = { ...batch, runs: [...batch.runs, run.id] };
-        await saveRun(run);
-        await saveBatch(batch);
-      }
-      let done = await executeRun({ run, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} of ${batch.runs.length}`, services });
-      if (done.status === RunStatus.failed && done.failureKind === FailureKind.infrastructure && done.replacesRunId === null) {
-        const replacement = replacementRun(done, opaqueId(), "One replacement for an infrastructure failure.");
-        batch = { ...batch, runs: [...batch.runs, replacement.id] };
-        await saveRun(replacement);
-        await saveBatch(batch);
-        done = await executeRun({ run: replacement, suite: attemptSuite, config: batch.config, snapshot: snapshots.get(run.setup) ?? "", position: `${index + 1} replacement`, services });
-      }
-      if (done.status === RunStatus.limited) limited = true;
     }
     batch = withReportedModels(batch, await readRuns(batch));
     if (judgmentsMissing) progress.report(batchId, `A judge hit its usage limit, so some judgments are missing. Fill them later with npm run evals -- judge ${batchId} --missing.`);

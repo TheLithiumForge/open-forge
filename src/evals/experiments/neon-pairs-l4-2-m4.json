@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "layer": 4,
+  "cases": ["l4-r05"],
+  "chain": { "id": "l4-2", "milestone": 4 },
+  "setups": ["plain-docs", "full-core", "full-core-scoped"],
+  "runsPerSetup": 3,
+  "parallelRuns": 3,
+  "agents": "codex",
+  "judges": "codex",
+  "judging": "later",
+  "simulatedUser": "codex",
+  "isolation": "docker",
+  "limits": { "questionRounds": 3, "runMinutes": 60, "checkMinutes": 90 }
+}

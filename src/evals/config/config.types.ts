@@ -19,6 +19,13 @@ export interface EvalLimits {
   readonly checkMinutes: number;
 }
 
+/** A milestone of a chain. Its runs start from the parent batch's runs with the next defect planted. The plan names the chain and milestone, and run --parent names the parent batch. */
+export interface ChainConfig {
+  readonly id: string;
+  readonly milestone: number;
+  readonly parentBatchId?: string;
+}
+
 export interface EvalConfig {
   readonly suite: string;
   readonly cases?: readonly string[];
@@ -31,6 +38,7 @@ export interface EvalConfig {
   readonly judges?: readonly JudgeChoice[];
   /** Absent means the judges read each run as it finishes. */
   readonly judging?: Judging;
+  readonly chain?: ChainConfig;
   readonly simulatedUser: ModelChoice;
   readonly isolation: Isolation;
   readonly containers?: ContainerLimits;

@@ -1,6 +1,7 @@
 ﻿import { join, resolve } from "node:path";
 import { Command, CommandHelp, Flag, ResultsAction, commandHelp, option, parseCommand } from "./config/commands.ts";
 import { loadPlan } from "./config/plans.ts";
+import type { ChainConfig } from "./config/config.types.ts";
 import { configuredDoctor } from "./config/doctor.ts";
 import { smokeAttempt } from "./config/smoke.ts";
 import { qualifySetups } from "./config/qualify.ts";
@@ -14,6 +15,7 @@ import { HistoryStore } from "./history/store.ts";
 import { addResults } from "./history/results-add.ts";
 import { EvalPaths, evalsRoot } from "./paths.ts";
 import { validateCase } from "./grading/brownfield/validate.ts";
+import { checkChain } from "./execution/chain-check.ts";
 import { BrownfieldFiles } from "./materialize/brownfield-case.ts";
 import { batchMatrixSummary } from "./config/summary.ts";
 import { savedAnalysis, savedProgress, savedUsage } from "./history/saved-batches.ts";
@@ -37,6 +39,7 @@ export interface CliServices {
   readonly launch: typeof launchNode;
   readonly results: (batch: string, repository: string) => Promise<string>;
   readonly validateCase: typeof validateCase;
+  readonly chainCheck?: typeof checkChain;
   readonly summary?: typeof batchMatrixSummary;
   readonly progress?: (batches: readonly string[]) => Promise<string[]>;
   readonly usage?: (batches: readonly string[]) => Promise<string[]>;
@@ -77,6 +80,16 @@ function planSetups<T extends { readonly setups: readonly string[] }>(config: T,
   if (unknown !== undefined) throw new Error(`The plan has no setup ${JSON.stringify(unknown)}.`);
   if (config.setups[0] !== undefined && !chosen.includes(config.setups[0])) throw new Error(`Keep the control, ${config.setups[0]}, so each setup has its baseline.`);
   return { ...config, setups: config.setups.filter((id) => chosen.includes(id)) };
+}
+
+/** Gives a chain plan the batch of its previous milestone. Only a chain plan takes one, and it always needs one. */
+function planParent<T extends { readonly chain?: ChainConfig }>(config: T, parent: string | null): T {
+  if (config.chain === undefined) {
+    if (parent !== null) throw new Error("Only a chain plan takes --parent.");
+    return config;
+  }
+  if (parent === null) throw new Error(`Chain ${config.chain.id} needs --parent <batch>, the batch of milestone ${config.chain.milestone - 1}.`);
+  return { ...config, chain: { ...config.chain, parentBatchId: parent } };
 }
 
 /** Narrows a Layer 4 plan to one of its cases. */
@@ -125,6 +138,19 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       services.print(JSON.stringify(await (services.summary ?? batchMatrixSummary)(args.includes(Flag.batch) ? option(args, Flag.batch) : undefined), null, 2));
       return 0;
     }
+    case Command.chainCheck: {
+      checkedArgs(args, [], [Flag.plan, Flag.parent], 0);
+      if (!args.includes(Flag.plan) || !args.includes(Flag.parent)) throw new Error(CommandHelp[Command.chainCheck]);
+      const config = planParent(await services.plan(option(args, Flag.plan), true), option(args, Flag.parent));
+      const parent = config.chain?.parentBatchId;
+      if (parent === undefined) throw new Error(CommandHelp[Command.chainCheck]);
+      for (const row of await (services.chainCheck ?? checkChain)(config, await services.suite(config.suite), parent)) {
+        services.print(`${row.setup} ${row.repeat} from ${row.parentRunId}: build ${row.buildPassed ? "passed" : "failed"}`);
+        services.print(`  new task: ${row.target.map((check) => `${check.id} ${check.status}`).join(", ") || "none"}`);
+        services.print(`  changed from the parent: ${row.changed.map((check) => `${check.id} ${check.parent ?? "absent"} to ${check.child}`).join(", ") || "none"}`);
+      }
+      return 0;
+    }
     case Command.validateCase: {
       checkedArgs(args, [Flag.all], [Flag.case, Flag.plan], 0);
       const all = args.includes(Flag.all);
@@ -152,10 +178,11 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     }
     case Command.run:
     case Command.qualify: {
-      checkedArgs(args, command === Command.run ? [Flag.development] : [], command === Command.run ? [Flag.plan, Flag.implementers, Flag.judges, Flag.user, Flag.case, Flag.setups, Flag.parallel] : [Flag.plan], 0);
+      checkedArgs(args, command === Command.run ? [Flag.development] : [], command === Command.run ? [Flag.plan, Flag.implementers, Flag.judges, Flag.user, Flag.case, Flag.setups, Flag.parallel, Flag.parent] : [Flag.plan], 0);
       const overrides = command === Command.run ? { ...runPresetOptions(args), ...(args.includes(Flag.parallel) ? { parallelRuns: parallelOption(args) } : {}) } : {};
       const planned = { ...await services.plan(option(args, Flag.plan), command === Command.qualify || args.includes(Flag.development)), ...overrides };
-      const config = args.includes(Flag.setups) ? planSetups(planned, option(args, Flag.setups)) : planned;
+      const narrowed = args.includes(Flag.setups) ? planSetups(planned, option(args, Flag.setups)) : planned;
+      const config = command === Command.run ? planParent(narrowed, args.includes(Flag.parent) ? option(args, Flag.parent) : null) : narrowed;
       if (command === Command.run) return services.run(args.includes(Flag.case) ? planCase(config, option(args, Flag.case)) : config, services.print);
       const suites = await Promise.all((config.cases ?? [config.suite]).map((id) => services.suite(id)));
       for (const suite of suites) services.print(JSON.stringify(await services.qualify(suite, config.setups), null, 2));

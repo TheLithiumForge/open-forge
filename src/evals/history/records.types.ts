@@ -23,6 +23,9 @@ export interface Fingerprints {
 /** A resume on changed runner code that measures the same inputs, tooling and models. */
 export interface HarnessChange { readonly at: string; readonly harnessSource: string | null }
 
+/** A pair of a chain without a child run, and why. */
+export interface ChainSkip { readonly setup: string; readonly repeat: number; readonly agent: ModelChoice; readonly parentRunId: string | null; readonly reason: string }
+
 /** A batch's place in a chain of milestones. Each milestone is its own batch, whose runs start from the parent batch's results. */
 export interface ChainPosition {
   readonly id: string;
@@ -30,6 +33,8 @@ export interface ChainPosition {
   readonly milestone: number;
   /** The batch of the previous milestone, or null for the first. */
   readonly parentBatchId: string | null;
+  /** Pairs without a child run, because the parent didn't finish or build, or the next defect didn't apply. */
+  readonly skipped?: readonly ChainSkip[];
 }
 
 export interface ExperimentRecord extends LegacyBatchRecord {

@@ -11,6 +11,7 @@ import { assessmentBase, checksAssessment, failedChecksAssessment } from "../his
 import { gradingVersions } from "../history/capture.ts";
 import type { AssessmentVersions, ChecksAssessment, RunView } from "../history/records.types.ts";
 import { appendAssessment, assessmentEvidenceFolder, readBatch, readRuns, readSetups, runFolder } from "../history/store.ts";
+import { savedChainBaseline } from "../execution/chain-runs.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { checksForSuite } from "../benchmarks/registry.ts";
 import { layerChecks } from "./document-layers.ts";
@@ -58,7 +59,9 @@ async function main(): Promise<void> {
   if (rebuild && !(await dockerAvailable())) throw new Error("Rebuilding needs Docker, because agent code never builds on this machine.");
   for (const run of await readRuns(batch)) {
     const setup = setups.find((setup) => setup.id === run.setup);
-    const checks = checksForSuite(suite, setup?.files, setup?.scope) ?? layerChecks(suite.id);
+    // A chained run started from its parent's files, so its own saved start is the scope guard's baseline.
+    const baseline = run.parentRunId == null ? setup?.files : await savedChainBaseline(runFolder(batch.id, run.id)) ?? setup?.files;
+    const checks = checksForSuite(suite, baseline, setup?.scope) ?? layerChecks(suite.id);
     if (checks === undefined) throw new Error(`No hidden checks for ${suite.id}.`);
     if (run.build === null || (onlyRun !== undefined && run.id !== onlyRun)) continue;
     // A recheck takes minutes per run, so --missing leaves every run that already has a check without errors.

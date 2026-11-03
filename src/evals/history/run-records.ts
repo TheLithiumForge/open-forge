@@ -13,5 +13,6 @@ export function plannedRun(id: string, batchId: string, setup: string, agent: Mo
 }
 
 export function replacementRun(run: RunView, id: string, reason: string): RunView {
-  return { ...plannedRun(id, run.batchId, run.setup, run.agent, run.repeat), replacesRunId: run.id, replacementReason: reason };
+  // A chained run's replacement starts from the same parent.
+  return { ...plannedRun(id, run.batchId, run.setup, run.agent, run.repeat), ...(run.parentRunId == null ? {} : { parentRunId: run.parentRunId }), replacesRunId: run.id, replacementReason: reason };
 }

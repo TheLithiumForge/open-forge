@@ -888,6 +888,80 @@
               "type": "null"
             }
           ]
+        },
+        "skipped": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "setup": {
+                "type": "string"
+              },
+              "repeat": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "agent": {
+                "type": "object",
+                "properties": {
+                  "tool": {
+                    "enum": [
+                      "claude",
+                      "codex",
+                      "mock"
+                    ]
+                  },
+                  "model": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "effort": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "tool",
+                  "model",
+                  "effort"
+                ],
+                "additionalProperties": true
+              },
+              "parentRunId": {
+                "anyOf": [
+                  {
+                    "$ref": "common.json#/$defs/id"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "setup",
+              "repeat",
+              "agent",
+              "parentRunId",
+              "reason"
+            ],
+            "additionalProperties": true
+          }
         }
       },
       "required": [
