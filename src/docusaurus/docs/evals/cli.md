@@ -138,7 +138,7 @@ npm run evals -- judge <batch> --judges claude --missing
 
 ## `results`
 
-Add a finished batch, with its code, game, screenshots and conversations, to the results repository, replacing an earlier copy, then validate the repository. Evidence holding a sign-in, a machine path or the user name stops it. --repository picks another results repository than src/evals/results. results import <published-batch-folder> rebuilds a published batch in the run store, so check --missing and judge --missing can grade it on any machine before results add publishes it again.
+Add a finished batch, with its code, game, screenshots and conversations, to the results repository, replacing an earlier copy, then validate the repository. Evidence holding a sign-in, a machine path or the user name stops it. --repository picks another results repository than src/evals/results. results import, given a published batch folder, rebuilds that batch in the run store, so check --missing and judge --missing can grade it on any machine before results add publishes it again.
 
 ```sh
 npm run evals -- results add <batch>
