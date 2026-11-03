@@ -1,5 +1,6 @@
 import type { EvalConfig, ModelChoice } from "../config/config.types.ts";
 import type { RunStatus, BatchStatus, PreferenceWinner } from "./statuses.ts";
+import type { ThreadUsage } from "./analysis/analysis.types.ts";
 
 /** Input is uncached input. Cached input and cache writes are counted apart. */
 export interface TokenCounts {
@@ -24,6 +25,8 @@ export interface AgentTelemetry {
   readonly reportedCostUsd: number | null;
   readonly model: string | null;
   readonly sessionId: string | null;
+  /** Every agent thread, when the run had subagents. Tokens are then the whole system's. */
+  readonly threads?: readonly ThreadUsage[];
 }
 
 export interface QuestionRound {

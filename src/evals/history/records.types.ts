@@ -1,3 +1,4 @@
+import type { WorkMode } from "../config/choices.ts";
 import type { ModelChoice } from "../config/config.types.ts";
 import type { ScopePolicy } from "../materialize/scope.types.ts";
 import type { BallotFailure } from "../grading/judge/report.ts";
@@ -22,7 +23,17 @@ export interface Fingerprints {
 /** A resume on changed runner code that measures the same inputs, tooling and models. */
 export interface HarnessChange { readonly at: string; readonly harnessSource: string | null }
 
+/** A batch's place in a chain of milestones. Each milestone is its own batch, whose runs start from the parent batch's results. */
+export interface ChainPosition {
+  readonly id: string;
+  /** The milestone's number in its chain, from 1. */
+  readonly milestone: number;
+  /** The batch of the previous milestone, or null for the first. */
+  readonly parentBatchId: string | null;
+}
+
 export interface ExperimentRecord extends LegacyBatchRecord {
+  readonly chain?: ChainPosition;
   readonly harnessChanges?: readonly HarnessChange[];
   readonly reference?: ReferenceVersion;
   readonly schemaVersion: typeof RecordSchemaVersion;
@@ -48,6 +59,8 @@ export interface ArtifactRecord {
 
 export interface SetupRecord {
   readonly scope?: ScopePolicy;
+  /** One agent when missing. */
+  readonly workMode?: WorkMode;
   readonly schemaVersion: typeof RecordSchemaVersion;
   readonly id: string;
   readonly experimentId: string;
@@ -58,6 +71,8 @@ export interface SetupRecord {
 }
 
 export interface RunRecord extends Omit<LegacyRunRecord, "status" | "checks" | "judge"> {
+  /** The run of the previous milestone whose saved files this run started from. */
+  readonly parentRunId?: string | null;
   readonly implementer?: typeof ReferenceImplementer;
   readonly reference?: ReferenceVersion;
   readonly schemaVersion: typeof RecordSchemaVersion;

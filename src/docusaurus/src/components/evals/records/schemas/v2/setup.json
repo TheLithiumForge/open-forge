@@ -6,6 +6,12 @@
     "schemaVersion": {
       "const": 2
     },
+    "workMode": {
+      "enum": [
+        "one-agent",
+        "orchestrated"
+      ]
+    },
     "id": {
       "$ref": "common.json#/$defs/id"
     },

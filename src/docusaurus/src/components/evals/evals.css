@@ -14,6 +14,20 @@
   --eval-token-output: #eda100;
   --eval-token-writes: #1baf7a;
   --eval-token-cached: #b5b3ac;
+  /* Context classes: the project's files in cool hues, tool output in greens, the conversation in warm hues, and neutrals for up-front text and the rest. */
+  --eval-class-upfront: #a3a9b1;
+  --eval-class-spec: #2a78d6;
+  --eval-class-framework: #d9480f;
+  --eval-class-code: #7950a3;
+  --eval-class-tests: #b48ad6;
+  --eval-class-search: #087b83;
+  --eval-class-test-output: #1baf7a;
+  --eval-class-command: #6f8f3a;
+  --eval-class-agent: #eda100;
+  --eval-class-user: #d6336c;
+  --eval-class-delegation: #8c5a2b;
+  --eval-class-report: #c08a3e;
+  --eval-class-other: #d3d1ca;
   /* Starting points on the measure chart: three hues and a neutral, each with its own shape. */
   --eval-point-idea: #2a78d6;
   --eval-point-brief: #eb6834;
@@ -34,6 +48,19 @@
   --eval-token-output: #c98500;
   --eval-token-writes: #199e70;
   --eval-token-cached: #6b6a64;
+  --eval-class-upfront: #6b7078;
+  --eval-class-spec: #3987e5;
+  --eval-class-framework: #f55400;
+  --eval-class-code: #a77fd6;
+  --eval-class-tests: #c6a0f5;
+  --eval-class-search: #2fb3b3;
+  --eval-class-test-output: #199e70;
+  --eval-class-command: #8db04f;
+  --eval-class-agent: #c98500;
+  --eval-class-user: #e8598b;
+  --eval-class-delegation: #b07a45;
+  --eval-class-report: #d6a35c;
+  --eval-class-other: #4f4e4a;
   --eval-point-idea: #3987e5;
   --eval-point-brief: #d95926;
   --eval-point-full-spec: #199e70;

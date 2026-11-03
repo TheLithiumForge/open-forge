@@ -2,9 +2,11 @@ import type { Batch, Choice, GradingVersions } from "./records.types.ts";
 export const IndexVersion = 1;
 export const RecordFiles = { experiment: "experiment.json", setups: "setups.jsonl", runs: "runs.jsonl", artifacts: "artifacts.json" } as const;
 export const AssessmentKinds = ["checks", "judge", "pick"] as const;
+/** Each run's objective measures sit beside its assessments. Batches published before they existed have no such file. */
+export const AnalysisFile = "assessments/analysis.jsonl";
 // Each batch keeps its evidence beside its records, at the paths artifacts.json lists.
 export const EvidenceFolder = "evidence";
-export const SchemaNames = ["common", "experiment", "setup", "run", "assessment", "artifact"] as const;
+export const SchemaNames = ["common", "experiment", "setup", "run", "assessment", "artifact", "analysis"] as const;
 export interface CatalogueEntry {
   readonly id: string;
   readonly layer: number | null;

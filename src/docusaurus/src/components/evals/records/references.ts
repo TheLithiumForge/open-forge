@@ -5,7 +5,7 @@ function unique(ids: readonly string[], kind: string): void {
 }
 /** Checks a batch's identities and references. Published batches must be finished. Local views may show a batch while it runs. */
 export function validateReferences(batch: Batch, finished = true): void {
-  const { experiment, runs, setups, assessments, artifacts } = batch;
+  const { experiment, runs, setups, assessments, artifacts, analyses = [] } = batch;
   if (finished && (!["done", "failed"].includes(experiment.status) || runs.length === 0 || runs.some((run) => !["done", "failed", "limited"].includes(run.pipelineStatus) || run.finishedAt === null))) throw new Error("Only finished exported batches can be published.");
   unique(runs.map((run) => run.id), "run"); unique(setups.map((setup) => setup.id), "setup"); unique(assessments.map((record) => record.id), "assessment");
   unique(experiment.runs, "planned run");
@@ -48,6 +48,13 @@ export function validateReferences(batch: Batch, finished = true): void {
         if ([...assessment.selection.working, ...assessment.selection.stated].some((id) => !assessment.selection.applicable.includes(id))) throw new Error("A gate names a check outside its applicable set.");
       }
     }
+  }
+  unique(analyses.map((record) => record.id), "analysis");
+  const analyzed = new Map<string, string>();
+  for (const record of analyses) {
+    if (record.experimentId !== experiment.id || !byRun.has(record.runId)) throw new Error("Analysis names an unknown experiment or run.");
+    if (record.replacesAnalysisId !== null && analyzed.get(record.replacesAnalysisId) !== record.runId) throw new Error("Analysis replacement must name an earlier analysis of the same run.");
+    analyzed.set(record.id, record.runId);
   }
   unique(artifacts.map((artifact) => `${artifact.runId}/${artifact.assessmentId}/${artifact.path}`), "artifact");
   for (const artifact of artifacts) {

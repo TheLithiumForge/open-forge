@@ -1,17 +1,16 @@
-import { readFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
-import { ResultFiles } from "../paths.ts";
 import type { RunView } from "./records.types.ts";
 import type { BatchRecord } from "./results.types.ts";
 import { FailureKind, RunStatus } from "./statuses.ts";
 import type { HistoryStore } from "./store.ts";
-import { ActionKind, eventUsage, ReadKind, type EventUsage } from "./usage-analysis.ts";
+import { ContextClass, ToolKind } from "./analysis/classes.ts";
+import { analyzeSavedRun } from "./analysis/saved-run.ts";
+import { setupUsage, type SetupUsage } from "./analysis/setup-summary.ts";
 
-const mean = (values: readonly number[]): number | null => values.length === 0 ? null : values.reduce((sum, value) => sum + value, 0) / values.length;
-const thousands = (value: number | null): string => value === null ? "-" : `${Math.round(value / 1000)}k`;
+/** How many file types the report shows, largest first. The rest add up in the last column. */
+const ShownFileTypes = 6;
+const thousands = (value: number | null | undefined): string => value == null ? "-" : `${Math.round(value / 1000)}k`;
 const share = (value: number | null): string => value === null ? "-" : `${Math.round(value * 100)}%`;
-const whole = (value: number | null): string => value === null ? "-" : value.toFixed(value < 10 ? 1 : 0);
+const whole = (value: number | null | undefined): string => value == null ? "-" : value.toFixed(value < 10 ? 1 : 0);
 
 function table(header: readonly string[], rows: readonly (readonly string[])[]): string[] {
   const widths = header.map((title, column) => Math.max(title.length, ...rows.map((row) => row[column]?.length ?? 0)));
@@ -19,44 +18,39 @@ function table(header: readonly string[], rows: readonly (readonly string[])[]):
   return [line(header), ...rows.map(line)];
 }
 
-/** Each setup's mean usage in a batch, from telemetry and saved events, over runs whose agent finished. */
-export async function usageLines(batch: BatchRecord, runs: readonly RunView[], store: Pick<HistoryStore, "runFolder">): Promise<string[]> {
+function cacheHit(row: SetupUsage): number | null {
+  if (row.newInput === null || row.cachedInput === null) return null;
+  const all = row.newInput + row.cachedInput + (row.cacheWrite ?? 0);
+  return all === 0 ? null : row.cachedInput / all;
+}
+
+/** The report's tables from the setups' means. */
+export function usageTables(rows: readonly SetupUsage[]): string[] {
+  const classes = Object.values(ContextClass).filter((type) => rows.some((row) => (row.classes[type] ?? 0) > 0));
+  const totals = new Map<string, number>();
+  for (const row of rows) for (const [type, value] of Object.entries(row.fileTypes)) totals.set(type, (totals.get(type) ?? 0) + value);
+  const types = [...totals].sort((a, b) => b[1] - a[1]).slice(0, ShownFileTypes).map(([type]) => type);
+  const otherTypes = (row: SetupUsage) => Object.entries(row.fileTypes).filter(([type]) => !types.includes(type)).reduce((sum, [, value]) => sum + value, 0);
+  return [
+    "Means per run, exact. New input includes Claude's cache writes. Cache hit is cached input among all input. Before edit is the share of input sent before the first edit's result, where the logs report each request.",
+    ...table(["setup", "runs", "new in", "cached in", "cache hit", "output", "requests", "peak context", "before edit"],
+      rows.map((row) => [row.setup, String(row.runs), thousands(row.newInput === null ? null : row.newInput + (row.cacheWrite ?? 0)), thousands(row.cachedInput), share(cacheHit(row)),
+        thousands(row.output), whole(row.requests), thousands(row.peakContext), share(row.beforeEdit)])), "",
+    "Input tokens by class, mean per run. Estimated from the logs, and each run's classes sum to its exact input.",
+    ...table(["setup", ...classes], rows.map((row) => [row.setup, ...classes.map((type) => thousands(row.classes[type]))])), "",
+    "Input tokens by file type, mean per run, estimated. Only file content and search results have a type.",
+    ...table(["setup", ...types, "other"], rows.map((row) => [row.setup, ...types.map((type) => thousands(row.fileTypes[type] ?? 0)), thousands(otherTypes(row))])), "",
+    "Tool calls by kind, mean per run. Runs are test, build and type check commands.",
+    ...table(["setup", ...Object.values(ToolKind), "failed", "steps before edit", "repeated reads", "files read"],
+      rows.map((row) => [row.setup, ...Object.values(ToolKind).map((kind) => whole(row.calls[kind])), whole(row.failed), whole(row.stepsBeforeEdit), whole(row.repeatedReads), whole(row.filesRead)])), "",
+  ];
+}
+
+/** Each setup's mean usage in a batch over runs whose agent finished, analyzed from their saved logs without saving a record. */
+export async function usageLines(batch: BatchRecord, runs: readonly RunView[], store: Pick<HistoryStore, "runFolder" | "readSetups">): Promise<string[]> {
   const replaced = new Set(runs.flatMap((run) => run.replacesRunId === null ? [] : [run.replacesRunId]));
   const counted = runs.filter((run) => run.agentSeconds !== null && run.status !== RunStatus.limited && !(run.failureKind === FailureKind.infrastructure && replaced.has(run.id)));
-  const usage = new Map<string, EventUsage>();
-  for (const run of counted) {
-    const path = join(store.runFolder(batch.id, run.id), ResultFiles.events);
-    if (existsSync(path)) usage.set(run.id, eventUsage(run.agent.tool, await readFile(path, "utf8")));
-  }
-  const groups = batch.config.setups.map((setup) => {
-    const group = counted.filter((run) => run.setup === setup);
-    return { setup, group, tokens: group.flatMap((run) => run.telemetry?.tokens == null ? [] : [run.telemetry.tokens]), events: group.flatMap((run) => usage.get(run.id) ?? []) };
-  });
-  const tokenRows = groups.map(({ setup, group, tokens, events }) => {
-    // Output comes from each turn's result where the events report it, since older Claude telemetry undercounted it.
-    const output = mean(group.flatMap((run) => { const fromEvents = usage.get(run.id)?.output; return fromEvents != null ? [fromEvents] : run.telemetry?.tokens == null ? [] : [run.telemetry.tokens.output]; }));
-    // Claude reports newly processed text as cache writes, so new input counts them too. Codex writes no cache.
-    const fresh = (item: (typeof tokens)[number]) => item.input + item.cacheWrite;
-    const hit = mean(tokens.flatMap((item) => fresh(item) + item.cachedInput === 0 ? [] : [item.cachedInput / (fresh(item) + item.cachedInput)]));
-    const analysis = mean(events.flatMap((item) => {
-      if (item.phases === null) return [];
-      const total = (split: typeof item.phases.analysis) => split.newInput + split.cachedInput + split.cacheWrite;
-      const all = total(item.phases.analysis) + total(item.phases.implementation);
-      return all === 0 ? [] : [total(item.phases.analysis) / all];
-    }));
-    return [setup, String(group.length), thousands(mean(tokens.map(fresh))), thousands(mean(tokens.map((item) => item.cachedInput))), share(hit),
-      thousands(output), share(analysis), thousands(mean(events.flatMap((item) => item.peakContext === null ? [] : [item.peakContext])))];
-  });
-  const processRows = groups.map(({ setup, events }) => {
-    const read = (kind: ReadKind) => thousands(mean(events.map((item) => item.reads[kind].characters)));
-    const action = (kind: ActionKind) => whole(mean(events.map((item) => item.actions[kind])));
-    const before = mean(events.flatMap((item) => item.stepsBeforeEdit === null || item.steps === 0 ? [] : [item.stepsBeforeEdit / item.steps]));
-    return [setup, read(ReadKind.docs), read(ReadKind.framework), read(ReadKind.code), whole(mean(events.map((item) => item.repeatedReads))),
-      action(ActionKind.read), action(ActionKind.edit), action(ActionKind.run), share(before)];
-  });
-  return [`Layer ${batch.config.layer ?? "?"} ${batch.suite}, batch ${batch.id}`,
-    "Means per run. Cache hit is cached input among all input. Analysis is the share of input tokens before the first edit, which only Claude reports. Peak context is the largest single request.",
-    ...table(["setup", "runs", "new in", "cached in", "cache hit", "output", "analysis", "peak context"], tokenRows), "",
-    "Reads count characters seen from each kind of file. Runs are test, build and type check commands.",
-    ...table(["setup", "read docs", "read framework", "read code", "repeated reads", "reads", "edits", "runs", "steps before edit"], processRows), ""];
+  const setups = await store.readSetups(batch);
+  const analyses = await Promise.all(counted.map(async (run) => ({ setup: run.setup, analysis: await analyzeSavedRun(store, batch, run, setups, null) })));
+  return [`Layer ${batch.config.layer ?? "?"} ${batch.suite}, batch ${batch.id}`, ...usageTables(setupUsage(batch.config.setups, analyses))];
 }

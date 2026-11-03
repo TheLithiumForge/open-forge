@@ -9,6 +9,9 @@
     "reference": {
       "$ref": "common.json#/$defs/reference"
     },
+    "chain": {
+      "$ref": "common.json#/$defs/chain"
+    },
     "id": {
       "$ref": "common.json#/$defs/id"
     },

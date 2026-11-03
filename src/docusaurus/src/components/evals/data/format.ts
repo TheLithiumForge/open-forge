@@ -15,9 +15,11 @@ export function metricTitle(value: Interval, share = true): string {
 export const NoValue = "No data";
 const Minus = "−";
 const compactFormat = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
+// Counts are whole, so a mean below a thousand reads as a whole number too.
+const compactCount = (value: number): string => compactFormat.format(Math.abs(value) < 1000 ? Math.round(value) : value);
 
 /** Large counts such as tokens, as 1.9M. */
-export const compact = (value: number | null): string => value === null ? NoValue : compactFormat.format(value);
+export const compact = (value: number | null): string => value === null ? NoValue : compactCount(value);
 /** A signed number with a real minus sign, and no sign at zero. */
 export function signed(value: number, digits: number): string {
   const text = Math.abs(value).toFixed(digits);
@@ -33,3 +35,5 @@ export function tokenChange(ratio: number | null): string {
   const shift = Math.round((ratio - 1) * 100);
   return shift === 0 ? "About the same" : `${Math.abs(shift)}% ${shift > 0 ? "more" : "fewer"}`;
 }
+/** A signed large count such as +12K, with a real minus sign and no sign at zero. */
+export const signedCompact = (value: number): string => `${value > 0 ? "+" : value < 0 ? Minus : ""}${compactCount(Math.abs(value))}`;

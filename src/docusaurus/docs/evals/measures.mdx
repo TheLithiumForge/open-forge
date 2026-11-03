@@ -1,6 +1,6 @@
 ---
 title: Measures
-description: The four numbers the evals compare for every run, check coverage, judge score, tokens and time, with how checks and judges grade the saved files.
+description: The numbers the evals compare for every run, check coverage, judge score, tokens and time, the objective measures from each run's logs, and how checks and judges grade the saved files.
 ---
 
 import CheckCoverage from "./_definitions/check-coverage.mdx"
@@ -12,7 +12,7 @@ import Time from "./_definitions/time.mdx"
 
 Measures are the numbers the evals record for every run, so you can compare setups on quality and cost.
 
-Check coverage and judge score measure quality. Tokens and time measure cost. They stay apart, with no combined score. For example, a setup can raise check coverage and use more tokens, and [Results](results.mdx) shows both against the same control. Results also keep each starting point, implementer and judge apart.
+Check coverage and judge score measure quality. Tokens and time measure cost, and the [objective measures](#objective-measures) show where the tokens went. They stay apart, with no combined score. For example, a setup can raise check coverage and use more tokens, and [Results](results.mdx) shows both against the same control. Results also keep each starting point, implementer and judge apart.
 
 ## Check coverage \{#check-coverage}
 
@@ -29,6 +29,78 @@ Check coverage and judge score measure quality. Tokens and time measure cost. Th
 ## Time \{#time}
 
 <Time />
+
+## Objective measures \{#objective-measures}
+
+Objective measures show where a run's tokens went and how the agent worked, from the run's own logs and with no judge. Every run gets them after its checks. The [`analyze`](cli.md#analyze) command adds them to saved runs, and a new analyzer version can recompute every run without running an agent again.
+
+Each run's analysis is one record in the batch's `assessments/analysis.jsonl`, next to its checks and judgments. [Results](results.mdx) shows each setup's means against its control.
+
+### Exact totals
+
+These come straight from the tool's own counts:
+
+- New input, cached input, cache writes and output - the token classes of [tokens](#tokens), per run and per user turn.
+- Requests - the model requests the run sent.
+- Peak context - the largest single request.
+- Compactions - how often the tool summarized the history to make room.
+- Input before the first edit - the input of the requests sent before the result of the agent's first edit. Up to there, the agent was reading and planning.
+- Threads - for a run with subagents, each thread's tokens, requests and peak. The run's tokens are then the whole system's.
+
+Claude's output comes from each turn's result, since its stream reports a message's usage from the message's start.
+
+### Tokens by class
+
+Every request sends the whole context again. So each part of the context costs its size times the requests that carry it, and the input tokens split into classes by where each part came from:
+
+| Class | What it counts |
+| --- | --- |
+| Up front | The first request: system prompt, tools, the instructions the tool loads by itself and the request |
+| Spec documents | Files under `docs/`, apart from scope entrypoints |
+| Open Forge files | `.agents/`, `AGENTS.md`, `CLAUDE.md`, scope entrypoints such as `_gameplay.md` and `open-forge` output |
+| Code | Project files that aren't specs, Open Forge files or tests |
+| Tests | Test files, test folders and fixtures |
+| Searches and listings | `rg`, `grep`, `ls`, `find`, `git status` and similar |
+| Test and build output | Tests, builds, type checks, lint and format checks |
+| Other commands | Every other command, and edit results |
+| Agent's own output | What the agent wrote earlier, sent again with each later request |
+| User answers | The simulated user's answers to the agent's questions |
+| Delegation briefs | An orchestrator's brief, at the start of a subagent's context |
+| Subagent reports | A subagent's final report, in the orchestrator's context |
+| Other | Growth no output explains, and the summary after a compaction |
+
+File content and search results also get a file type, such as `md` or `ts`.
+
+Each class keeps two values in the analysis. Input is everything the class cost over the run. Fresh is the part the provider hadn't cached, so it adds up to new input and cache writes.
+
+### Tool calls
+
+Tool calls count by kind from the agent's events:
+
+- Reads, searches, edits, test and build runs and other calls - a compound command such as `cat a.ts && npm test` counts once, as its most significant part. An edit counts first, then a test or build run, a read and a search.
+- Failed calls - calls that ended with an error or a non-zero exit code. A search with no match counts too.
+- Steps before the first edit - how many calls came before the first edit.
+- Repeated reads and files read - reads of a file the agent had already read, and the distinct files it read.
+
+### How the split is estimated
+
+The totals are exact, and only the split by class and file type is estimated. Every run's split adds up to its exact totals, so it always checks against them.
+
+Codex's session log and Claude's stream report every request's exact input. Between two requests, the context grows by the previous answer and the new tool outputs. That growth splits across them by size, at four characters per token. Within one output, the split works like this:
+
+- A command that prints several files splits its output by each file's size, or by the file headers `head` and `open-forge context` print.
+- A search splits by the file each result line names.
+- A pipeline's output comes from its first command, so `nl -ba a.ts | sed -n 1,80p` counts as `a.ts`.
+- A shrinking context, such as after dropped reasoning, shrinks every class alike.
+
+Older Codex runs have no saved session log. Their split is a rougher estimate from their events alone, and Results says how many runs it covers. Those runs keep their exact totals.
+
+Known limits:
+
+- Characters stand in for tokens, and code and prose tokenize differently.
+- Hidden reasoning has no text. Codex counts it as the agent's own output by its exact token count. Claude's stream doesn't, so its thinking spreads over the parts that joined with it.
+- The split doesn't know which files a script or `node -e` read.
+- A tool output the tool shortened for the model counts at the length the model saw.
 
 ## Checks
 
@@ -54,4 +126,4 @@ A judge is a model that grades a run from its saved files in its own container, 
 
 The judge answers each fixed question with yes, no or unsure and cites the files and lines or images behind the answer. It casts three ballots per question. Judging also reads only saved files, so a second judge can grade the same runs later and the two can be compared on identical work.
 
-Every saved plan uses Claude Opus at high effort as the judge for now. [Run evals](run.md#run-a-batch) shows how to choose other judges.
+Each plan names its judges. A plan with `"judging": "later"`, such as the scoped Layer 4 plans, runs no judge during the batch, and `judge --missing` adds judgments later. [Run evals](run.md#run-a-batch) shows how to choose other judges.

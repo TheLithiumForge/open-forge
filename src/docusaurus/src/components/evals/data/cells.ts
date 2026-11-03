@@ -35,6 +35,10 @@ export interface Cell {
   readonly cliVersion: string | null;
   readonly setup: string;
   readonly control: string;
+  /** The milestone this cell's batch belongs to, or null for a standalone batch. */
+  readonly chain: { readonly id: string; readonly milestone: number } | null;
+  /** How the setup works: one agent, or an orchestrator with subagents. */
+  readonly workMode: string;
   readonly model: string;
   readonly modelLabel: string;
   readonly judge: string | null;
@@ -73,7 +77,10 @@ export function startingPointOf(batch: Batch): StartingPointId | null {
   return StartingPoints.find((point) => point.layer === batch.experiment.config.layer)?.id ?? null;
 }
 
-const setupKey = (cell: Cell) => JSON.stringify([cell.caseId, cell.model, cell.setup]);
+/** A chained milestone is its own measurement, so it never replaces the same case's standalone runs, nor they it. */
+const setupKey = (cell: Cell) => JSON.stringify([cell.caseId, cell.model, cell.setup, cell.chain?.id ?? null, cell.chain?.milestone ?? null]);
+/** One agent works alone unless the setup record says otherwise. */
+export const OneAgent = "one-agent";
 
 /**
  * Each setup's newest runs for a case and implementer. A later batch can add a setup beside its own control without hiding
@@ -109,6 +116,8 @@ export function cells(batches: readonly Batch[]): Cell[] {
       const pick = (read: (value: RunValues) => number | null) => measure(values.map(read));
       const base = {
         startingPoint, caseId: batch.experiment.suite, batchId: batch.experiment.id, createdAt: batch.experiment.createdAt, cliVersion: batch.experiment.cliVersion, setup, control,
+        chain: batch.experiment.chain === undefined ? null : { id: batch.experiment.chain.id, milestone: batch.experiment.chain.milestone },
+        workMode: batch.setups.find((record) => record.id === setup)?.workMode ?? OneAgent,
         judgedLater: batch.experiment.config.judging === Judging.later,
         model: choiceKey(agent), modelLabel: modelLabel(agent, reported), runs: group.length, runIds: group.map((run) => run.id),
         checked: states.filter((state) => state === CheckState.checked).length, recheck: states.filter((state) => state === CheckState.recheck).length,

@@ -19,7 +19,8 @@ import { ResultFiles } from "../paths.ts";
 import type { RunRecord } from "../history/results.types.ts";
 import { FailureKind, RunStatus } from "../history/statuses.ts";
 import { ReferenceImplementer } from "../history/reference.ts";
-import { appendAssessment, readAssessments, readBatch, runFolder, saveRun } from "../history/store.ts";
+import { appendAnalysis, appendAssessment, readAnalyses, readAssessments, readBatch, readSetups, runFolder, saveRun } from "../history/store.ts";
+import { analyzeFinishedRun } from "../history/analysis/saved-run.ts";
 import { checksAssessment, failedChecksAssessment, judgeAssessment } from "../history/assessments.ts";
 import { countChecks, legacyCheckView } from "../grading/counting.ts";
 import type { Suite } from "../benchmarks/suite.types.ts";
@@ -49,7 +50,7 @@ export interface RunInput {
 }
 
 export interface RunServices {
-  readonly store?: Pick<HistoryStore, "runFolder" | "readBatch" | "saveRun" | "appendAssessment" | "readAssessments">;
+  readonly store?: Pick<HistoryStore, "runFolder" | "readBatch" | "saveRun" | "appendAssessment" | "readAssessments" | "readSetups" | "appendAnalysis" | "readAnalyses">;
   readonly createSpace?: typeof createRunSpace;
   readonly scratch?: typeof scratchFolder;
   readonly conversation?: typeof converse;
@@ -65,7 +66,7 @@ const JudgeTimeoutMs = 15 * 60_000;
 export async function executeRun(input: RunInput): Promise<RunRecord> {
   const { suite, config } = input;
   const services = input.services ?? {};
-  const store = services.store ?? { runFolder, readBatch, saveRun, appendAssessment, readAssessments };
+  const store = services.store ?? { runFolder, readBatch, saveRun, appendAssessment, readAssessments, readSetups, appendAnalysis, readAnalyses };
   const primaryJudge = configuredJudges(config)[0] ?? config.judge;
   const judgeNow = config.judging !== Judging.later;
   const folder = store.runFolder(input.run.batchId, input.run.id);
@@ -128,6 +129,8 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     const assessment = checksAssessment(run, checks?.checks ?? [], versions, checks?.selection);
     await store.appendAssessment(assessment);
     await update({ functionalResult: countChecks(assessment.outcomes, assessment.selection), checkOutcomes: assessment.outcomes, checkSelection: assessment.selection, checksAssessmentId: assessment.id });
+    // The objective measures come from the saved logs. A failure here never fails the run, and analyze --missing retries it.
+    if (!reference) await analyzeFinishedRun(store, run).catch((error: unknown) => progress.report(run.batchId, `Run ${input.position}: the analysis failed, so analyze --missing adds it later. ${error instanceof Error ? error.message : String(error)}`));
     if (!judgeNow) {
       await update({ status: RunStatus.done, finishedAt: new Date().toISOString() }, "done. The judges read it later with judge --missing.");
       return run;

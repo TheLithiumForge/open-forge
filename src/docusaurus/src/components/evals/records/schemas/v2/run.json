@@ -12,6 +12,16 @@
     "reference": {
       "$ref": "common.json#/$defs/reference"
     },
+    "parentRunId": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "id": {
       "$ref": "common.json#/$defs/id"
     },

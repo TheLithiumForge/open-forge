@@ -1,6 +1,6 @@
 import { Ajv2020 } from "ajv/dist/2020.js";
 import type { ValidateFunction } from "ajv";
-import type { Artifact, Assessment, Batch, Experiment, Run, Setup } from "./records.types.ts";
+import type { Analysis, Artifact, Assessment, Batch, Experiment, Run, Setup } from "./records.types.ts";
 import { AssessmentKinds, catalogue, type Catalogue } from "./catalogue.ts";
 import { validateReferences } from "./references.ts";
 export interface BatchFiles {
@@ -9,6 +9,8 @@ export interface BatchFiles {
   readonly runs: readonly unknown[];
   readonly assessments: readonly unknown[];
   readonly artifacts: unknown;
+  /** Missing for batches published before analyses existed. */
+  readonly analyses?: readonly unknown[];
 }
 function ordered(value: unknown): unknown {
   if (Array.isArray(value))
@@ -55,6 +57,7 @@ export function createValidator(schemas: readonly object[], indexSchema: object,
         runs: files.runs.map((item) => record<Run>(item, "run")),
         assessments: files.assessments.map((item) => record<Assessment>(item, "assessment")),
         artifacts: files.artifacts.map((item: unknown) => record<Artifact>(item, "artifact")),
+        analyses: (files.analyses ?? []).map((item) => record<Analysis>(item, "analysis")),
       };
       validateReferences(batch, options.unfinished !== true);
       return batch;

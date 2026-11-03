@@ -90,6 +90,8 @@ test("a plan that judges later finishes each run after its checks and calls no j
   assert.notEqual(saved.checksAssessmentId, null);
   assert.equal(saved.functionalResult?.coverage.share, 1);
   assert.deepEqual((await fixture.store.readAssessments(fixture.batch.id)).map((item) => item.kind), [AssessmentKind.checks]);
+  // The objective measures are part of the run, so the analysis is saved before the run finishes.
+  assert.deepEqual((await fixture.store.readAnalyses(fixture.batch.id)).map((item) => [item.runId, item.error]), [[fixture.run.id, null]]);
 });
 
 test("resume fills only missing judgments and never starts the implementer again", async (t) => {

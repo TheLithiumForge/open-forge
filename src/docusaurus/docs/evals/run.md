@@ -109,6 +109,14 @@ npm run evals -- judge <batch> --judges claude --missing
 
 `check` builds the saved project in the verifier again and appends new check results. `judge` appends ballots from the chosen judges. `--missing` judges only runs without a judgment from that judge, so judging can continue after a usage limit. Both accept one run after the batch. Earlier grades stay recorded with their versions.
 
+The [objective measures](measures.mdx#objective-measures) come from saved logs too, without a model:
+
+```sh
+npm run evals -- analyze <batch> --missing
+```
+
+`analyze` appends each run's analysis. `--missing` analyzes only runs without one from the current analyzer, such as runs saved before it existed. `usage` prints each setup's means from the same analysis without saving anything.
+
 ## See results
 
 ```sh

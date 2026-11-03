@@ -16,8 +16,7 @@ import { EvalPaths, evalsRoot } from "./paths.ts";
 import { validateCase } from "./grading/brownfield/validate.ts";
 import { BrownfieldFiles } from "./materialize/brownfield-case.ts";
 import { batchMatrixSummary } from "./config/summary.ts";
-import { batchProgress, progressLines } from "./history/progress-report.ts";
-import { usageLines } from "./history/usage-report.ts";
+import { savedAnalysis, savedProgress, savedUsage } from "./history/saved-batches.ts";
 import { judgeOptions, runPresetOptions } from "./config/preset-options.ts";
 import { referenceOptions } from "./config/reference.ts";
 import { runReference } from "./execution/reference.ts";
@@ -41,6 +40,7 @@ export interface CliServices {
   readonly summary?: typeof batchMatrixSummary;
   readonly progress?: (batches: readonly string[]) => Promise<string[]>;
   readonly usage?: (batches: readonly string[]) => Promise<string[]>;
+  readonly analyze?: (batches: readonly string[], missing: boolean) => Promise<string[]>;
   readonly reference?: typeof runReference;
 }
 const defaults: CliServices = {
@@ -49,26 +49,6 @@ const defaults: CliServices = {
   results: (batch, repository) => addResults(new HistoryStore(EvalPaths.runs), batch, repository, { run: (script, args, cwd) => launchNode(join(cwd, script), args, cwd) }),
   validateCase,
 };
-
-/** The named batches, or every model batch, newest first. */
-async function namedBatches(batches: readonly string[], store: HistoryStore) {
-  return batches.length > 0 ? await Promise.all(batches.map((id) => store.readBatch(id)))
-    : (await store.listBatches()).filter((batch) => !batch.legacy && batch.reference === undefined);
-}
-
-async function savedUsage(batches: readonly string[], store = new HistoryStore(EvalPaths.runs)): Promise<string[]> {
-  const lines: string[] = [];
-  for (const batch of await namedBatches(batches, store)) lines.push(...await usageLines(batch, await store.readRuns(batch), store));
-  return lines;
-}
-
-/** Progress for the named batches, or for every model batch, newest first. */
-async function savedProgress(batches: readonly string[], store = new HistoryStore(EvalPaths.runs)): Promise<string[]> {
-  const records = await namedBatches(batches, store);
-  const lines: string[] = [];
-  for (const batch of records) lines.push(...progressLines(batchProgress(batch, await store.readRuns(batch), await store.readAssessments(batch.id))), "");
-  return lines;
-}
 
 function checkedArgs(args: readonly string[], flags: readonly string[], values: readonly string[], positions: number): void {
   let operands = 0;
@@ -133,6 +113,11 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     case Command.usage: {
       if (args.some((arg) => arg.startsWith("--"))) throw new Error(CommandHelp.usage);
       services.print((await (services.usage ?? savedUsage)(args)).join("\n"));
+      return 0;
+    }
+    case Command.analyze: {
+      if (args.some((arg) => arg.startsWith("--") && arg !== Flag.missing)) throw new Error(CommandHelp.analyze);
+      services.print((await (services.analyze ?? savedAnalysis)(args.filter((arg) => arg !== Flag.missing), args.includes(Flag.missing))).join("\n"));
       return 0;
     }
     case Command.summary: {

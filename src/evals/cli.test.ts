@@ -150,3 +150,13 @@ test("progress shows the named batches, or every batch, and takes no flags", asy
   assert.deepEqual(asked, [[], ["first", "second"]]);
   assert.deepEqual(fake.output, ["fixture progress", "fixture progress"]);
 });
+
+test("analyze takes the named batches, or every batch, and only the missing flag", async () => {
+  const fake = fakeServices(), asked: [readonly string[], boolean][] = [];
+  const services = { ...fake.services, analyze: async (batches: readonly string[], missing: boolean) => { asked.push([batches, missing]); return ["fixture analysis"]; } };
+  assert.equal(await runCli([Command.analyze], services), 0);
+  assert.equal(await runCli([Command.analyze, "first", Flag.missing], services), 0);
+  await assert.rejects(runCli([Command.analyze, Flag.batch, "first"], services));
+  assert.deepEqual(asked, [[[], false], [["first"], true]]);
+  assert.deepEqual(fake.output, ["fixture analysis", "fixture analysis"]);
+});

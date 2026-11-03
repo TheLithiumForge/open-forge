@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
-import { catalogue, SchemaNames, RecordFiles, AssessmentKinds } from "../records/catalogue.ts";
+import { AnalysisFile, catalogue, SchemaNames, RecordFiles, AssessmentKinds } from "../records/catalogue.ts";
 import { previewBatch } from "../../../../scripts/evals/preview-fixture.ts";
 import type { Batch } from "../records/records.types.ts";
 import type { EvalsData } from "./snapshot.types.ts";
@@ -31,10 +31,7 @@ function files(batches: readonly Batch[]): Map<string, string> {
 test("empty and populated catalogues load only schema-valid records and matching references", async () => {
   const { schemas, indexSchema } = await schemaData();
   const empty = files([]);
-  const read = async (path: string) => {
-    const text = empty.get(path); if (text === undefined)
-      throw new Error("Missing file"); return text;
-  };
+  const read = async (path: string) => empty.get(path) ?? null;
   assert.equal((await loadRecords(read, schemas, indexSchema)).batches.length, 0);
   const batch = previewBatch(1);
   for (const [path, value] of files([batch]))
@@ -68,4 +65,14 @@ test("runtime fetch pins every raw record to one commit and rejects partial or i
   content.set("index.json", "{\"schemaVersion\":999,\"batches\":[]}");
   await assert.rejects(fetchLatest(data, request), /Invalid results data/);
   assert.equal(data.snapshot.batches.length, 0);
+});
+test("a batch published before analyses loads without them, and one with an analysis file loads its records", async () => {
+  const { schemas, indexSchema } = await schemaData();
+  const batch = previewBatch(1);
+  const tree = files([batch]);
+  const read = async (path: string) => tree.get(path) ?? null;
+  assert.deepEqual((await loadRecords(read, schemas, indexSchema)).batches[0]?.analyses, []);
+  const entry = catalogue([batch]).batches[0];
+  tree.set(`${entry?.path}/${AnalysisFile}`, (batch.analyses ?? []).map((item) => JSON.stringify(item)).join("\n"));
+  assert.equal((await loadRecords(read, schemas, indexSchema)).batches[0]?.analyses?.length, batch.analyses?.length);
 });

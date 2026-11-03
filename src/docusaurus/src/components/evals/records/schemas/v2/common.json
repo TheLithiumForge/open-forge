@@ -655,6 +655,102 @@
               "type": "null"
             }
           ]
+        },
+        "threads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "parentId": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "role": {
+                "enum": [
+                  "main",
+                  "subagent"
+                ]
+              },
+              "requests": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "tokens": {
+                "type": "object",
+                "properties": {
+                  "newInput": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cachedInput": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cacheWrite": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "reasoning": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "newInput",
+                  "cachedInput",
+                  "cacheWrite",
+                  "output",
+                  "reasoning"
+                ],
+                "additionalProperties": true
+              },
+              "peakContext": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "toolCalls": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "id",
+              "parentId",
+              "role",
+              "requests",
+              "tokens",
+              "peakContext",
+              "toolCalls"
+            ],
+            "additionalProperties": true
+          }
         }
       },
       "required": [
@@ -772,6 +868,292 @@
         "evidence"
       ],
       "additionalProperties": true
+    },
+    "chain": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "milestone": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "parentBatchId": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "milestone",
+        "parentBatchId"
+      ],
+      "additionalProperties": true
+    },
+    "tokenTotals": {
+      "type": "object",
+      "properties": {
+        "newInput": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cachedInput": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cacheWrite": {
+          "type": "number",
+          "minimum": 0
+        },
+        "output": {
+          "type": "number",
+          "minimum": 0
+        },
+        "reasoning": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "newInput",
+        "cachedInput",
+        "cacheWrite",
+        "output",
+        "reasoning"
+      ],
+      "additionalProperties": true
+    },
+    "thread": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "role": {
+          "enum": [
+            "main",
+            "subagent"
+          ]
+        },
+        "requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "object",
+          "properties": {
+            "newInput": {
+              "type": "number",
+              "minimum": 0
+            },
+            "cachedInput": {
+              "type": "number",
+              "minimum": 0
+            },
+            "cacheWrite": {
+              "type": "number",
+              "minimum": 0
+            },
+            "output": {
+              "type": "number",
+              "minimum": 0
+            },
+            "reasoning": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "newInput",
+            "cachedInput",
+            "cacheWrite",
+            "output",
+            "reasoning"
+          ],
+          "additionalProperties": true
+        },
+        "peakContext": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "toolCalls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "parentId",
+        "role",
+        "requests",
+        "tokens",
+        "peakContext",
+        "toolCalls"
+      ],
+      "additionalProperties": true
+    },
+    "contextPart": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "string"
+        },
+        "fileType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "input": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fresh": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "peak": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "class",
+        "fileType",
+        "input",
+        "fresh",
+        "peak"
+      ],
+      "additionalProperties": true
+    },
+    "process": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "object",
+          "properties": {
+            "read": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "search": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "edit": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "run": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "other": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "read",
+            "search",
+            "edit",
+            "run",
+            "other"
+          ],
+          "additionalProperties": true
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "steps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stepsBeforeEdit": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "repeatedReads": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "filesRead": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "filesEdited": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "calls",
+        "failed",
+        "steps",
+        "stepsBeforeEdit",
+        "repeatedReads",
+        "filesRead",
+        "filesEdited"
+      ],
+      "additionalProperties": true
+    },
+    "analysisMethod": {
+      "enum": [
+        "rollout",
+        "stream",
+        "events",
+        "none"
+      ]
     }
   }
 }

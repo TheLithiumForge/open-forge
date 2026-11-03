@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "analysis.json",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "kind": {
+      "const": "analysis"
+    },
+    "id": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "experimentId": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "runId": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "createdAt": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "version": {
+      "type": "string"
+    },
+    "replacesAnalysisId": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "method": {
+      "$ref": "common.json#/$defs/analysisMethod"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tokens": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/tokenTotals"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "totalsAgree": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "requests": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/count"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "peakContext": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/count"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "compactions": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/count"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "beforeEdit": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "$ref": "common.json#/$defs/count"
+            },
+            "input": {
+              "$ref": "common.json#/$defs/count"
+            },
+            "fresh": {
+              "$ref": "common.json#/$defs/count"
+            }
+          },
+          "required": [
+            "requests",
+            "input",
+            "fresh"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parts": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/contextPart"
+      }
+    },
+    "process": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/$defs/process"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "turns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "turn": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "tokens": {
+            "$ref": "common.json#/$defs/tokenTotals"
+          }
+        },
+        "required": [
+          "turn",
+          "tokens"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "threads": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/thread"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "kind",
+    "id",
+    "experimentId",
+    "runId",
+    "createdAt",
+    "version",
+    "replacesAnalysisId",
+    "error",
+    "method",
+    "sources",
+    "tokens",
+    "totalsAgree",
+    "requests",
+    "peakContext",
+    "compactions",
+    "beforeEdit",
+    "parts",
+    "process",
+    "turns",
+    "threads"
+  ],
+  "additionalProperties": true
+}

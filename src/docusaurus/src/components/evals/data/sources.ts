@@ -1,5 +1,5 @@
 import type { Artifact, Batch } from "../records/records.types.ts";
-import { loadRecords, RawRoot, ResultsRepository, type ReadText } from "./load.ts";
+import { loadRecords, NotFound, RawRoot, ResultsRepository, type ReadText } from "./load.ts";
 import type { EvalsData, Snapshot } from "./snapshot.types.ts";
 
 export const SourceKind = { published: "published", latest: "latest", local: "local", folder: "folder" } as const;
@@ -52,6 +52,7 @@ export async function loadLocal(data: EvalsData, port: number, request: typeof f
   const base = `http://localhost:${port}`;
   const read: ReadText = async (path) => {
     const response = await request(`${base}/${path}`, { cache: "no-store", credentials: "omit" });
+    if (response.status === NotFound) return null;
     if (!response.ok) throw new Error(`Local results failed (${response.status}) for ${path}`);
     return response.text();
   };
@@ -76,8 +77,7 @@ export function folderFiles<T extends { readonly webkitRelativePath: string }>(p
 export async function loadFolder(data: EvalsData, files: ReadonlyMap<string, Blob>, name: string, link: (file: Blob) => string = URL.createObjectURL): Promise<Loaded> {
   const read: ReadText = async (path) => {
     const file = files.get(path);
-    if (file === undefined) throw new Error(`The folder has no ${path}`);
-    return file.text();
+    return file === undefined ? null : file.text();
   };
   const records = await loadRecords(read, data.schemas, data.indexSchema, { unfinished: true });
   const links = new Map<string, string>();

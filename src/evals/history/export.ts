@@ -2,6 +2,7 @@ import { mkdir, rename, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { dirname, join, resolve, sep } from "node:path";
 import { HistoryFiles } from "./artifacts.ts";
+import { AnalysisFile } from "./analysis/classes.ts";
 import { storedRun } from "./assessments.ts";
 import { jsonLines, readJson, safeId } from "./json-files.ts";
 import { legacyAssessments, legacyPicks } from "./legacy.ts";
@@ -67,5 +68,6 @@ export async function batchFiles(store: HistoryStore, batch: ExperimentRecord, v
     [HistoryFiles.experiment]: batch, [HistoryFiles.setups]: await store.readSetups(batch),
     [HistoryFiles.runs]: runs, [HistoryFiles.artifacts]: await store.readArtifacts(batch),
     ...Object.fromEntries(Object.values(AssessmentKind).map((kind) => [`${HistoryFiles.assessments}/${kind}.jsonl`, assessments.filter((record) => record.kind === kind)])),
+    [`${HistoryFiles.assessments}/${AnalysisFile}`]: await store.readAnalyses(batch.id),
   };
 }

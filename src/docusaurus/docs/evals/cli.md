@@ -74,10 +74,18 @@ npm run evals -- progress <batch> <batch>
 
 ## `usage`
 
-Show where each setup's tokens went, from saved runs: new, cached and output tokens, how much the agent read from spec documents, framework files and code, the share of steps before its first edit and, for Claude, the share of tokens spent before it. Names batches, or shows every model batch.
+Show where each setup's tokens went, from saved runs and without saving anything: exact new, cached and output tokens, requests, peak context and the share of input before the first edit, then estimated input tokens by class and file type and tool calls by kind. It reads the same analysis analyze saves. Names batches, or shows every model batch.
 
 ```sh
 npm run evals -- usage <batch>
+```
+
+## `analyze`
+
+Work out each saved run's objective measures and append them as an analysis record: exact token totals, tokens by class and file type, tool calls by kind and the steps before the first edit. Codex's session log and Claude's stream give each request's exact input, so only the split of each request's growth is estimated. Codex runs saved without a session log get a rougher estimate from their events. Names batches, or analyzes every model batch. --missing analyzes only runs without a current analysis, such as runs from before this analyzer version.
+
+```sh
+npm run evals -- analyze <batch> --missing
 ```
 
 ## `reference`
@@ -145,7 +153,7 @@ npm run evals -- results add <batch>
 | `--accept-harness` | `resume` | Continue a batch on changed runner code and list the change in the batch record. Changed inputs, checks, rubric, tooling or models still need a new batch |
 | `--development` | `run`, `qualify` | Allow local isolation, which is never fit for scoring |
 | `--rebuild` | `check` | Build the saved project again before checking it |
-| `--missing` | `judge`, `check` | Grade only runs without a usable grade. For judge, that's a run without a judgment from that judge or one that ended in an error. For check, it's a run whose latest check graded nothing or ended a clause in an error |
+| `--missing` | `judge`, `check`, `analyze` | Grade or analyze only runs without a usable result. For judge, that's a run without a judgment from that judge or one that ended in an error. For check, it's a run whose latest check graded nothing or ended a clause in an error. For analyze, it's a run without an analysis from the current analyzer or one that ended in an error |
 | `--batch <id>` | `summary` | The batch to summarize |
 | `--repository <folder>` | `results`, `site` | The results repository to add to, src/evals/results by default, or a folder in its layout for site to show |
 | `--port <n>` | `site` | Serve the docs site on another port than 4320. Its data server takes the next port |

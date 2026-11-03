@@ -22,7 +22,10 @@ export async function loadEvalsData(repository = resultsRoot, records?: string):
   const indexSchema = await json(join(recordCopyRoot, "schemas/index.json"));
   const present = await hasResultsRepository(repository);
   const content = records !== undefined || present
-    ? await loadRecords((path) => readFile(join(records ?? repository, path), "utf8"), schemas, indexSchema)
+    ? await loadRecords((path) => readFile(join(records ?? repository, path), "utf8").catch((error: unknown) => {
+      if (error instanceof Error && "code" in error && error.code === "ENOENT") return null;
+      throw error;
+    }), schemas, indexSchema)
     : { batches: [], index: catalogue([]) };
   const commit = present ? dataCommit(repository) : "unknown";
   return { snapshot: { ...content, commit: `${commit}${records === undefined ? "" : " (fixture records)"}`, fetchedAt: new Date().toISOString() }, schemas, indexSchema };

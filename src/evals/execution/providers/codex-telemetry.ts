@@ -3,6 +3,9 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { AgentTelemetry } from "../../history/results.types.ts";
 import { readsOpenForge } from "./open-forge-paths.ts";
+import { codexThreads } from "../../history/analysis/codex-rollout.ts";
+import { addTokens } from "../../history/analysis/turns.ts";
+import { ThreadRole } from "../../history/analysis/classes.ts";
 
 interface CodexUsage {
   readonly input_tokens?: number;
@@ -55,8 +58,13 @@ export class CodexTelemetry {
   async summary(codexHome: string, model: string | null): Promise<AgentTelemetry> {
     const rollout = await readRollouts(join(codexHome, "sessions"));
     const sum = (pick: (usage: CodexUsage) => number | undefined): number => this.turns.reduce((total, usage) => total + count(pick(usage)), 0);
+    // The turn events cover the main thread only. With subagents, the session logs give every thread, and tokens are the system's.
+    const threads = rollout.found ? codexThreads(await joinedRollouts(join(codexHome, "sessions")), new Map()) : [];
+    const delegated = threads.some((thread) => thread.role === ThreadRole.subagent);
+    const system = delegated ? addTokens(threads.map((thread) => thread.tokens)) : null;
     return {
-      tokens: this.turns.length === 0 ? null : {
+      ...(delegated ? { threads: threads.map(({ id, parentId, role, steps, tokens, peakContext, toolCalls }) => ({ id, parentId, role, requests: steps.length, tokens, peakContext, toolCalls })) } : {}),
+      tokens: system !== null ? { input: system.newInput, cachedInput: system.cachedInput, cacheWrite: 0, output: system.output, reasoning: system.reasoning ?? 0 } : this.turns.length === 0 ? null : {
         input: sum((usage) => usage.input_tokens) - sum((usage) => usage.cached_input_tokens),
         cachedInput: sum((usage) => usage.cached_input_tokens),
         cacheWrite: 0, // Codex doesn't bill cache writes.
@@ -88,13 +96,18 @@ interface RolloutSummary {
 /** Codex's own session log, kept beside the run's events. It counts tokens per request, which the turn events don't. */
 export const CodexRolloutFile = "codex-rollout.jsonl";
 
-export async function saveRollouts(codexHome: string, target: string): Promise<boolean> {
-  const folder = join(codexHome, "sessions");
-  if (!existsSync(folder)) return false;
+/** Every session log in a Codex home, joined in file name order. Each thread writes its own file, which starts with its session line. */
+async function joinedRollouts(folder: string): Promise<string> {
+  if (!existsSync(folder)) return "";
   const files = (await readdir(folder, { recursive: true })).filter((name) => name.endsWith(".jsonl")).sort();
-  if (files.length === 0) return false;
   const logs = await Promise.all(files.map((file) => readFile(join(folder, file), "utf8")));
-  await writeFile(target, logs.map((log) => log.endsWith("\n") ? log : `${log}\n`).join(""));
+  return logs.map((log) => log.endsWith("\n") ? log : `${log}\n`).join("");
+}
+
+export async function saveRollouts(codexHome: string, target: string): Promise<boolean> {
+  const joined = await joinedRollouts(join(codexHome, "sessions"));
+  if (joined === "") return false;
+  await writeFile(target, joined);
   return true;
 }
 

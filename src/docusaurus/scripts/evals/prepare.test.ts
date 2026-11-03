@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { copyDifferences, hasResultsRepository, recordCopyRoot, prepare } from "./prepare.ts";
 import { loadEvalsData } from "./load-content.ts";
+import { SchemaNames } from "../../src/components/evals/records/catalogue.ts";
 const present = await hasResultsRepository();
 test("checked-in record copy matches the present results repository", { skip: !present }, async () => {
   assert.deepEqual(await copyDifferences(), [], "Run npm run evals:prepare to refresh the checked-in records.");
@@ -15,7 +16,7 @@ test("missing results repository keeps the checked-in copy and gives an empty va
   const data = await loadEvalsData(missing);
   assert.equal(data.snapshot.commit, "unknown");
   assert.deepEqual(data.snapshot.batches, []);
-  assert.equal(data.schemas.length, 6);
+  assert.equal(data.schemas.length, SchemaNames.length);
   assert.deepEqual(data.snapshot.index.batches, []);
 });
 

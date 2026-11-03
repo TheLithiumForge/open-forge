@@ -5,6 +5,8 @@ import { catalogue } from "../../docusaurus/src/components/evals/records/catalog
 import type { Batch } from "../../docusaurus/src/components/evals/records/records.types.ts";
 import { batchFiles, ExportFolders, recordText } from "../history/export.ts";
 import type { HistoryStore } from "../history/store.ts";
+import { HistoryFiles } from "../history/artifacts.ts";
+import { AnalysisFile } from "../history/analysis/classes.ts";
 
 /** One file the Results page asked for, or null when there is none. */
 export interface ResultsFile { readonly bytes: Buffer; readonly type: string }
@@ -12,6 +14,7 @@ export interface ResultsFile { readonly bytes: Buffer; readonly type: string }
 export type ResultsReader = (path: string) => Promise<ResultsFile | null>;
 
 export const IndexFile = "index.json";
+const AnalysisRecords = `${HistoryFiles.assessments}/${AnalysisFile}`;
 const EvidenceFolder = "evidence";
 // Agent code and games are shown as text, so nothing an agent wrote runs on the data server's origin.
 const Types: Readonly<Record<string, string>> = { ".json": "application/json", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".svg": "text/plain" };
@@ -55,8 +58,8 @@ export function localRunsReader(store: HistoryStore, now: () => number = Date.no
         const records = await files(batch.id);
         // Records here are the ones results add publishes, so they already have the published shape.
         return { experiment: records["experiment.json"], setups: records["setups.jsonl"], runs: records["runs.jsonl"],
-          assessments: [...Object.entries(records)].filter(([name]) => name.startsWith("assessments/")).flatMap(([, value]) => value as unknown[]),
-          artifacts: records["artifacts.json"] } as unknown as Batch;
+          assessments: [...Object.entries(records)].filter(([name]) => name.startsWith("assessments/") && name !== AnalysisRecords).flatMap(([, value]) => value as unknown[]),
+          artifacts: records["artifacts.json"], analyses: records[AnalysisRecords] } as unknown as Batch;
       }));
       return { bytes: Buffer.from(`${JSON.stringify(catalogue(batches), null, 2)}\n`), type: contentType(path) };
     }

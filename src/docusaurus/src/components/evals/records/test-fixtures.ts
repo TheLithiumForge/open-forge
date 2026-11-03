@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { Batch } from "./records.types.ts";
 import { SchemaVersion } from "./schema-values.ts";
-import { RecordFiles, AssessmentKinds } from "./catalogue.ts";
+import { RecordFiles, AssessmentKinds, AnalysisFile } from "./catalogue.ts";
 
 export const FixtureCheck = "opens";
 export const FixtureVersion = "0.0.0-fixture";
@@ -26,7 +26,11 @@ export function fixture(): Batch {
   const checks = { ...base, kind: "checks", runId, outcomes: [{ id: FixtureCheck, area: "play", status: "pass", evidence: "authored fixture" }],
       selection: { applicable: [FixtureCheck], working: [FixtureCheck], stated: [FixtureCheck] }, build: null, performance: null, shots: [] },
     judge = { ...base, id: randomUUID(), kind: "judge", runId, answers: [], requestedModel: choice, reportedModel: choice.model } as const;
-  return { experiment, runs: [run], setups: [setup], assessments: [{ ...checks, kind: "checks" }, judge], artifacts: [] };
+  const tokens = { newInput: 10, cachedInput: 90, cacheWrite: 0, output: 5, reasoning: 1 };
+  const analysis = { schemaVersion: SchemaVersion, kind: "analysis", id: randomUUID(), experimentId: batchId, runId, createdAt: time, version: "fixture", replacesAnalysisId: null, error: null,
+    method: "rollout", sources: [], tokens, totalsAgree: true, requests: 2, peakContext: 60, compactions: 0, beforeEdit: { requests: 1, input: 40, fresh: 40 }, parts: [{ class: "upfront", fileType: null, input: 100, fresh: 10, peak: 60 }],
+    process: null, turns: [{ turn: 1, tokens }], threads: [] } as const;
+  return { experiment, runs: [run], setups: [setup], assessments: [{ ...checks, kind: "checks" }, judge], artifacts: [], analyses: [analysis] };
 }
 export async function writeBatch(folder: string, batch: Batch): Promise<void> {
   await mkdir(join(folder, "assessments"), { recursive: true });
@@ -36,4 +40,5 @@ export async function writeBatch(folder: string, batch: Batch): Promise<void> {
   await writeFile(join(folder, RecordFiles.runs), lines(batch.runs));
   await writeFile(join(folder, RecordFiles.artifacts), JSON.stringify(batch.artifacts));
   for (const kind of AssessmentKinds) await writeFile(join(folder, "assessments", `${kind}.jsonl`), lines(batch.assessments.filter((assessment) => assessment.kind === kind)));
+  if (batch.analyses !== undefined) await writeFile(join(folder, AnalysisFile), lines(batch.analyses));
 }

@@ -1,12 +1,24 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Batch, Choice } from "../../src/components/evals/records/records.types.ts";
+import type { Analysis, Batch, Choice } from "../../src/components/evals/records/records.types.ts";
 import { fixture, FixtureDigest, writeBatch } from "../../src/components/evals/records/test-fixtures.ts";
 import { catalogue } from "../../src/components/evals/records/catalogue.ts";
 const fixtureRoot = fileURLToPath(new URL("../../.evals-fixture/", import.meta.url));
 const choices: readonly Choice[] = [{ tool: "mock", model: "fixture-alpha", effort: "high" }, { tool: "mock", model: "fixture-beta", effort: "high" }];
 const setups = ["none", "minimal", "essentials", "full-core"] as const;
+/** One run's authored analysis. Larger setups read more spec and framework text, and its parts sum to its input. */
+function previewAnalysis(batchId: string, runId: string, setupIndex: number, at: string): Analysis {
+  const spec = 2000 + setupIndex * 500, framework = setupIndex * 400, code = 3000, upfront = 10000;
+  const tokens = { newInput: 1000, cachedInput: upfront + spec + framework + code - 1000, cacheWrite: 0, output: 400, reasoning: 100 };
+  const part = (type: string, fileType: string | null, input: number) => ({ class: type, fileType, input, fresh: 0, peak: 0 });
+  const parts = [part("upfront", null, upfront), part("spec", "md", spec), part("code", "ts", code), ...framework === 0 ? [] : [part("framework", "md", framework)]]
+    .map((item, index) => ({ ...item, fresh: index === 0 ? tokens.newInput : 0 }));
+  return { schemaVersion: 2, kind: "analysis", id: `${runId}-analysis`, experimentId: batchId, runId, createdAt: at, version: "fixture", replacesAnalysisId: null, error: null,
+    method: "rollout", sources: [], tokens, totalsAgree: true, requests: 8, peakContext: 4000, compactions: 0, beforeEdit: { requests: 3, input: 4000, fresh: 400 }, parts,
+    process: { calls: { read: 6 + setupIndex, search: 2, edit: 3, run: 2, other: 1 }, failed: 1, steps: 14 + setupIndex, stepsBeforeEdit: 8 + setupIndex, repeatedReads: 1, filesRead: 9, filesEdited: 2 },
+    turns: [{ turn: 1, tokens }], threads: [] };
+}
 export function previewBatch(version: number, reference = false): Batch {
   const base = fixture(), seedRun = base.runs[0], check = base.assessments.find((item) => item.kind === "checks");
   if (seedRun === undefined || check === undefined)
@@ -49,6 +61,7 @@ export function previewBatch(version: number, reference = false): Batch {
     },
     runs, setups: (reference ? base.setups : setups.map((id) => ({ ...base.setups[0], schemaVersion: 2 as const, id, label: id, commands: [], contentHash: FixtureDigest, files: [] }))).map((setup) => ({ ...setup, experimentId: batchId })),
     assessments, artifacts: [],
+    analyses: reference ? [] : runs.map((run) => previewAnalysis(batchId, run.id, setups.findIndex((setup) => setup === run.setup), at)),
   };
 }
 export async function writePreviewFixture(): Promise<void> {

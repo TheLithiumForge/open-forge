@@ -1,9 +1,11 @@
-import type { Judging } from "./schema-values.ts";
+import type { AnalysisMethods, Judging, ThreadRoles, WorkModes } from "./schema-values.ts";
 export interface Choice { readonly tool: string; readonly model: string | null; readonly effort: string | null }
 export interface ReferenceVersion { readonly commit: string; readonly contentHash: string; readonly specHash: string; readonly specVersion: number }
 export interface GradingVersions { readonly checker: string | null; readonly rubric: string | null; readonly judge: string | null; readonly spec?: string | null; readonly specVersion?: number | null }
+/** A batch's place in a chain of milestones. Each milestone is its own batch, and its runs start from the parent batch's results. */
+export interface ChainPosition { readonly id: string; readonly milestone: number; readonly parentBatchId: string | null }
 export interface Experiment {
-  readonly reference?: ReferenceVersion;
+  readonly reference?: ReferenceVersion; readonly chain?: ChainPosition;
   readonly schemaVersion: 2; readonly id: string; readonly suite: string; readonly cliVersion: string | null; readonly candidateLabel: string | null;
   readonly createdAt: string; readonly status: string; readonly legacy: boolean; readonly runs: readonly string[];
   readonly config: { readonly layer?: number; readonly judges?: readonly Choice[]; readonly judge?: Choice; readonly judging?: (typeof Judging)[keyof typeof Judging]; readonly isolation: string; readonly setups: readonly string[]; readonly runsPerSetup: number; readonly agents: readonly Choice[] };
@@ -14,17 +16,24 @@ export interface Functional {
   readonly coverage: { readonly passed: number; readonly applicable: number; readonly errors: number; readonly share: number | null };
   readonly workingGate: boolean | null; readonly statedSuccess: boolean | null;
 }
+export interface TokenTotals { readonly newInput: number; readonly cachedInput: number; readonly cacheWrite: number; readonly output: number; readonly reasoning: number | null }
+/** One agent thread of a run. Orchestrated runs have one for the orchestrator and one per subagent. */
+export interface ThreadTelemetry {
+  readonly id: string; readonly parentId: string | null; readonly role: (typeof ThreadRoles)[number]; readonly requests: number;
+  readonly tokens: TokenTotals; readonly peakContext: number | null; readonly toolCalls: number;
+}
 export interface Run {
-  readonly implementer?: "reference"; readonly reference?: ReferenceVersion;
+  readonly implementer?: "reference"; readonly reference?: ReferenceVersion; readonly parentRunId?: string | null;
   readonly schemaVersion: 2; readonly id: string; readonly batchId: string; readonly setup: string; readonly agent: Choice; readonly repeat: number;
   readonly pipelineStatus: string; readonly failureKind: string | null; readonly replacesRunId: string | null; readonly replacementReason: string | null;
   readonly artifactHash: string | null; readonly requestedModel: string | null; readonly reportedModel: string | null;
   readonly functionalResult: Functional | null; readonly startedAt: string | null; readonly finishedAt: string | null; readonly agentSeconds: number | null;
   readonly error: string | null; readonly finalMessage: string | null;
   readonly telemetry: { readonly tokens: { readonly input: number; readonly cachedInput: number; readonly cacheWrite: number; readonly output: number } | null;
-    readonly toolCalls: number; readonly failedToolCalls: number; readonly peakContext: number | null } | null;
+    readonly toolCalls: number; readonly failedToolCalls: number; readonly peakContext: number | null; readonly threads?: readonly ThreadTelemetry[] } | null;
 }
 export interface Setup {
+  readonly workMode?: (typeof WorkModes)[number];
   readonly schemaVersion: 2; readonly id: string; readonly experimentId: string; readonly label: string;
   readonly commands: readonly (readonly string[])[]; readonly contentHash: string | null;
   readonly files: readonly { readonly path: string; readonly bytes: number; readonly sha256: string }[];
@@ -51,7 +60,25 @@ export interface Pick extends AssessmentBase {
   readonly winner: "left" | "right" | "tie"; readonly revealed: boolean | null;
 }
 export type Assessment = Checks | Judge | Pick;
+/** One class and file type of a run's context. The parts of a run sum exactly to its input, fresh input and largest request. */
+export interface ContextPart { readonly class: string; readonly fileType: string | null; readonly input: number; readonly fresh: number; readonly peak: number }
+export interface ProcessMeasures {
+  readonly calls: { readonly read: number; readonly search: number; readonly edit: number; readonly run: number; readonly other: number };
+  readonly failed: number; readonly steps: number; readonly stepsBeforeEdit: number | null; readonly repeatedReads: number; readonly filesRead: number; readonly filesEdited: number;
+}
+/** A run's objective measures, derived from its saved logs. A later analyzer version appends a replacement. */
+export interface Analysis {
+  readonly schemaVersion: 2; readonly kind: "analysis"; readonly id: string; readonly experimentId: string; readonly runId: string; readonly createdAt: string | null;
+  readonly version: string; readonly replacesAnalysisId: string | null; readonly error: string | null;
+  readonly method: (typeof AnalysisMethods)[number]; readonly sources: readonly string[]; readonly tokens: TokenTotals | null; readonly totalsAgree: boolean | null;
+  readonly requests: number | null; readonly peakContext: number | null; readonly compactions: number | null;
+  /** The requests before the first edit's result and their exact input, or null when unknown or the run never edited. */
+  readonly beforeEdit: { readonly requests: number; readonly input: number; readonly fresh: number } | null; readonly parts: readonly ContextPart[];
+  readonly process: ProcessMeasures | null; readonly turns: readonly { readonly turn: number; readonly tokens: TokenTotals }[]; readonly threads: readonly ThreadTelemetry[];
+}
 export interface Batch {
   readonly experiment: Experiment; readonly setups: readonly Setup[]; readonly runs: readonly Run[];
   readonly assessments: readonly Assessment[]; readonly artifacts: readonly Artifact[];
+  /** Batches published before analyses existed have none. */
+  readonly analyses?: readonly Analysis[];
 }

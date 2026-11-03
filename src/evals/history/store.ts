@@ -10,6 +10,8 @@ import type { ArtifactRecord, AssessmentRecord, ExperimentRecord, RunRecord, Run
 import type { LegacyBatchRecord, LegacyRunRecord, Preference } from "./results.types.ts";
 import type { SetupRecord as LegacySetupRecord } from "../execution/snapshot.ts";
 import { AssessmentKind, PreferenceWinner, RecordSchemaVersion } from "./statuses.ts";
+import type { AnalysisRecord } from "./analysis/analysis.types.ts";
+import { AnalysisFile } from "./analysis/classes.ts";
 
 export class HistoryStore {
   readonly root: string;
@@ -97,6 +99,22 @@ export class HistoryStore {
     return write;
   }
 
+  async readAnalyses(batchId: string): Promise<AnalysisRecord[]> {
+    return readJsonLines<AnalysisRecord>(join(this.assessmentFolder(batchId), AnalysisFile));
+  }
+
+  /** Analyses sit beside the assessments. A legacy batch keeps them in its overlay, like its assessments. */
+  appendAnalysis(record: AnalysisRecord): Promise<void> {
+    const write = this.writes.then(async () => {
+      if (!(await this.readBatch(record.experimentId)).runs.includes(record.runId)) throw new Error("An analysis must name a run in its experiment.");
+      const folder = this.assessmentFolder(record.experimentId);
+      await mkdir(folder, { recursive: true });
+      await appendFile(join(folder, AnalysisFile), jsonLines([record]));
+    });
+    this.writes = write.catch(() => {});
+    return write;
+  }
+
   async saveSetups(batchId: string, setups: readonly SetupRecord[]): Promise<void> {
     if (this.isLegacy(batchId)) throw new Error("Legacy setup files are read only.");
     await writeFile(join(this.batchFolder(batchId), HistoryFiles.setups), jsonLines(setups));
@@ -157,6 +175,8 @@ export const readRuns = store.readRuns.bind(store);
 export const listBatches = store.listBatches.bind(store);
 export const appendAssessment = store.appendAssessment.bind(store);
 export const readAssessments = store.readAssessments.bind(store);
+export const appendAnalysis = store.appendAnalysis.bind(store);
+export const readAnalyses = store.readAnalyses.bind(store);
 export const saveSetups = store.saveSetups.bind(store);
 export const readSetups = store.readSetups.bind(store);
 export const readPreferences = store.readPreferences.bind(store);
