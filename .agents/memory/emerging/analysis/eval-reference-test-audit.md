@@ -12,7 +12,7 @@ The maintainer asked on 2026-11-03 for only useful and essential tests, regressi
 
 ## What the suite costs
 
-The reference ships 22 unit test files and 37 browser test files. One best-score run's full browser suite on 2026-11-03 held 87 distinct tests and took 664 seconds back to back, with 34 runs sharing 12 cores. Agents ran it two or more times per run, so tests took about half of each run's time.
+The reference ships 20 unit test files and 37 browser test files with 93 browser tests. One best-score run's full browser suite on 2026-11-03 showed 87 distinct titles and took 664 seconds back to back, with 34 runs sharing 12 cores. Agents ran it two or more times per run, so tests took about half of each run's time.
 
 The project's unit-test command is also a regression check (T07.4). Its two replay CLI tests start npm in a child process and time out at vitest's 5000ms default when the verifier is busy. On 2026-11-03 that failed `regression-l2-build` and `regression-l3-t07-build` for every Open Forge cell of B4 silence, with byte-identical tests and `package.json` in every cell, so those regressions are timing, not the agents' work.
 
@@ -29,6 +29,8 @@ Seconds are from that run, summed over each group's browser tests.
 | Visual contract | layout and spacing per viewport, matched-mark per size and width, zoom, style, product-contract, input-contract, art, card-render | 135 | Parameterized viewports repeat one layout check |
 
 ## Proposal
+
+The [test audit council](test-audit-council/record.md) replaced this proposal. One browser test per journey would have changed how hard B1 and B2 are and lost coverage that recorded mutants prove, so the council keeps every test that fails on a planted bug or is a mutant's only killer. The first proposal follows for the record.
 
 1. Keep one browser test per journey in [Acceptance](../../../../src/evals/benchmarks/neon-pairs/specs/acceptance.md), which stays unchanged. Logic variants such as every size, clock edges and saved-best rules move to the unit tests or go where a unit test already covers them.
 2. Parameterized viewports check the two viewport sizes the spec names, not three.
