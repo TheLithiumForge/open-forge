@@ -13,6 +13,8 @@ import type { ScopePolicy } from "../materialize/scope.types.ts";
 import { ResultFiles } from "../paths.ts";
 
 /** Why a pair of a chain has no child run. Skipped pairs stay out of every mean, since the child never started. */
+// Statuses after the parent's build, when its saved files are final.
+const ParentReady: readonly string[] = [RunStatus.checking, RunStatus.judging, RunStatus.done];
 export const ChainSkipReason = { noParent: "no-parent", parentUnfinished: "parent-unfinished", parentBuild: "parent-build-failed", seedConflict: "seed-conflict" } as const;
 export type ChainSkipReason = (typeof ChainSkipReason)[keyof typeof ChainSkipReason];
 
@@ -27,10 +29,10 @@ export function parentRun(parents: readonly RunRecord[], agent: ModelChoice, set
   return parents.find((run) => run.setup === setup && run.repeat === repeat && modelKey(run.agent) === modelKey(agent) && !replaced.has(run.id));
 }
 
-/** Why a parent can't start a child, or null when it can. A child needs a parent whose agent finished and whose build passed. */
+/** Why a parent can't start a child, or null when it can. A child needs a parent whose agent finished and whose build passed. Its grading may still run, since the child needs only its files. */
 export function parentProblem(parent: RunRecord | undefined): ChainSkipReason | null {
   if (parent === undefined) return ChainSkipReason.noParent;
-  if (parent.status !== RunStatus.done) return ChainSkipReason.parentUnfinished;
+  if (!ParentReady.includes(parent.status)) return ChainSkipReason.parentUnfinished;
   return parent.build?.passed === true ? null : ChainSkipReason.parentBuild;
 }
 
@@ -46,6 +48,8 @@ export async function planChainRuns(config: EvalConfig, batchId: string, parents
   for (const agent of config.agents) for (const setup of config.setups) for (let repeat = 1; repeat <= config.runsPerSetup; repeat += 1) {
     const parent = parentRun(parents, agent, setup, repeat);
     let reason = parentProblem(parent);
+    // A parent without saved files never finished its attempt, whatever its status says.
+    if (reason === null && parent !== undefined && !existsSync(files(parent))) reason = ChainSkipReason.parentUnfinished;
     if (reason === null && parent !== undefined) {
       try { chainedFiles(await inventory(await realpath(files(parent)), new Set([GitDirectory, "node_modules"])), seedPatch); }
       catch (error) { if (!(error instanceof SeedConflict)) throw error; reason = ChainSkipReason.seedConflict; }

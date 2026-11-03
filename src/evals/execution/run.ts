@@ -122,9 +122,10 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     await (services.stop ?? stopProcessesUnder)(space.root);
     const html = build.html === null ? null : join(space.work, build.html);
     if (html !== null) await copyFile(html, join(folder, ResultFiles.game));
+    // The files freeze before the status says checking, so a chained child planned meanwhile reads a parent's final files.
+    if (!reference && !saved) await freezeFiles(space, join(folder, ResultFiles.files));
     await update({ status: RunStatus.checking, build }, `the build ${build.passed ? "passed" : "failed"}. Running the hidden checks.`);
     const project = space.work;
-    if (!reference && !saved) await freezeFiles(space, join(folder, ResultFiles.files));
     // The machine-wide check slots alone limit how many checks run at once, in this process or any other.
     const checks = await withCheckSlot(async () => (services.checks ?? layerChecks(suite.id))?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots), stage: { ...stageOptions, timeoutMs: checkMs } }));
     await update({ status: judgeNow ? RunStatus.judging : RunStatus.checking, checks: checks?.checks.map(legacyCheckView) ?? [], performance: checks?.performance ?? null, shots: checks?.shots ?? [] },

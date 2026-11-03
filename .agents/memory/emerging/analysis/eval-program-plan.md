@@ -181,3 +181,7 @@ To the first Layer 4 results: 52 runs and about 81M tokens, about 3M of them new
 3. **Judging.** `run` stops after checks and objective measures. Layer 4 scenarios skip the AI judges, which `judge --missing` can add later from saved files. Layer 3 is judged later the same way. Approved 2026-11-03. The objective measures Layer 4 needs, in the maintainer's words, are "tokens used, tokens per task, token per task per file type and so on" and tool calls: tokens per run and per task, tokens by file type and class, and tool calls by kind.
 4. **The orchestrated Open Forge cell.** Full Core, scoped with the shared lines, without Task Coordination at first. Approved 2026-11-03.
 5. **L4-3 size.** Four repairs give 23 clause checks, which raises the clause-only limit from 20 to 30 in `grading/brownfield/change-checks.ts`. Approved 2026-11-03.
+
+## Agent teams
+
+Added on 2026-11-03 at the maintainer's word. A team is part of the implementer, as a model is, so it's a selection of the data and not a scenario of its own. Any scenario can run with any team, and Results filter by team the way they filter by model. For now the teams are Sol alone, Sol leading Sol subagents and Sol leading Luna subagents, since Sol usage is plentiful. Claude counterparts come later: Opus alone, Opus leading Sonnet subagents and Opus leading Opus subagents, with more to follow. They need Claude's subagent switch and per-subagent counting first.

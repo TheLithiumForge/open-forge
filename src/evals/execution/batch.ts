@@ -85,7 +85,6 @@ async function planChain(config: EvalConfig, batchId: string, suite: Suite): Pro
   if (chain?.parentBatchId === undefined) throw new Error("A chain milestone needs its parent batch.");
   if (item?.seedPatch === null || item === undefined) throw new Error("A chain milestone needs a Layer 4 case with a planted defect.");
   const parentBatchId = chain.parentBatchId, parent = await readBatch(parentBatchId);
-  if (parent.status !== BatchStatus.done) throw new Error(`The parent batch ${parentBatchId} isn't done yet.`);
   const seedPatch = await readFile(join(item.root, item.seedPatch), "utf8");
   const planned = await planChainRuns(config, batchId, await readRuns(parent), (run) => parentFiles(runFolder, parentBatchId, run.id), seedPatch, opaqueId);
   if (planned.runs.length === 0) throw new Error(`No parent run can start this milestone: ${planned.skipped.map((pair) => `${pair.setup} ${pair.repeat} ${pair.reason}`).join(", ")}.`);

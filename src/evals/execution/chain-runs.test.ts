@@ -43,16 +43,16 @@ test("a child pairs with the parent of its setup and repeat, or with that parent
 
 test("only parents that finished, built and still take the next defect start a child, and the rest are skipped with a reason", async (t) => {
   if (Agent === undefined) throw new Error("The matrix needs an agent.");
-  const root = await parentFolders(t, { ready: Original, failed: Original, conflict: "export const moves = 9;\n" });
+  const root = await parentFolders(t, { ready: Original, failed: Original, conflict: "export const moves = 9;\n", grading: Original });
   const parents = [parent("ready", "plain-docs", 1), parent("failed", "plain-docs", 2, { build: { ...Passed, passed: false } }),
-    parent("conflict", "plain-docs", 3), parent("stopped", "full-core", 1, { status: RunStatus.failed })];
+    parent("conflict", "plain-docs", 3), parent("stopped", "full-core", 1, { status: RunStatus.failed }), parent("grading", "full-core", 2, { status: RunStatus.checking })];
   const config = { ...FixtureConfig, agents: [Agent], setups: ["plain-docs", "full-core"], runsPerSetup: 3 };
   let next = 0;
   const planned = await planChainRuns(config, "child-batch", parents, (run) => join(root, run.id), Seed, () => `child-${next += 1}`);
-  assert.deepEqual(planned.runs.map((run) => [run.setup, run.repeat, run.parentRunId]), [["plain-docs", 1, "ready"]]);
+  assert.deepEqual(planned.runs.map((run) => [run.setup, run.repeat, run.parentRunId]), [["plain-docs", 1, "ready"], ["full-core", 2, "grading"]], "A parent still being graded has its final files.");
   assert.deepEqual(planned.skipped.map((pair) => [pair.setup, pair.repeat, pair.reason]), [
     ["plain-docs", 2, ChainSkipReason.parentBuild], ["plain-docs", 3, ChainSkipReason.seedConflict],
-    ["full-core", 1, ChainSkipReason.parentUnfinished], ["full-core", 2, ChainSkipReason.noParent], ["full-core", 3, ChainSkipReason.noParent],
+    ["full-core", 1, ChainSkipReason.parentUnfinished], ["full-core", 3, ChainSkipReason.noParent],
   ]);
 });
 
