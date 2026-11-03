@@ -1,3 +1,4 @@
+import { WorkMode } from "../../config/choices.ts";
 import { appendFileSync } from "node:fs";
 import type { AgentTelemetry } from "../../history/results.types.ts";
 import { outcomeForError, TurnOutcome, type AgentSession, type SessionContext, type TurnResult } from "./agent-session.ts";
@@ -25,9 +26,24 @@ export function codexArguments(context: SessionContext, threadId: string | null)
     "-c", 'web_search="disabled"',
     ...(model === null ? [] : ["-m", model]),
     ...(effort === null ? [] : ["-c", `model_reasoning_effort="${effort}"`]),
+    ...workModeArguments(context.workMode ?? WorkMode.oneAgent, model, effort),
     PromptFromStdin,
   ];
 }
+
+/**
+ * Codex enables its subagents by default, so one agent switches them off. An orchestrator gets one level of subagents,
+ * one at a time, each on the implementer's model and effort, so its runs stay comparable with one agent's.
+ */
+export function workModeArguments(mode: WorkMode, model: string | null, effort: string | null): string[] {
+  if (mode === WorkMode.oneAgent) return ["--disable", CodexMultiAgent];
+  return ["--enable", CodexMultiAgent, "-c", "agents.max_depth=1", "-c", "agents.max_concurrent_threads_per_session=1",
+    ...(model === null ? [] : ["-c", `agents.default_subagent_model="${model}"`]),
+    ...(effort === null ? [] : ["-c", `agents.default_subagent_reasoning_effort="${effort}"`])];
+}
+
+/** Codex's feature for subagents, stable and on by default since 0.16x. */
+export const CodexMultiAgent = "multi_agent";
 
 /** Runs one `codex exec` per turn. Later turns resume the same thread with the user's answer. */
 export class CodexSession implements AgentSession {
