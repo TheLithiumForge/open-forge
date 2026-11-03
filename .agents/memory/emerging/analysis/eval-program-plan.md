@@ -209,3 +209,19 @@ Two cells failed and stay failed at the maintainer's word, not rerun:
 The first r05 batch, `2026-11-03T18-43-42-140Z-82ceb1aa931c`, lost five runs and their replacements the same way. It was stopped and replaced by the r05 batch above.
 
 At the maintainer's word the evening of 2026-11-03, only best-score and silence keep grading. The arrow-keys and reduced-motion batches, L4-3 and two L4-2 milestone 2 batches were stopped with their agents done or mid-run, so `check --missing` can grade their saved files later. The two L4-2 batches, `2026-11-03T19-37-55-110Z-b558a1f36762` and `2026-11-03T19-38-31-476Z-feee7ab192f6`, started by mistake: a scratchpad chain script outlived its stop and launched twice. [eval-work-structure.md](eval-work-structure.md) proposes what replaces L4-1, L4-2 and L4-3.
+
+### First results
+
+B1 best-score and B4 silence finished grading the same evening, one run per scenario, Sol 6.1 xhigh:
+
+| Scenario | B1 coverage | B4 coverage |
+| --- | --- | --- |
+| Organized docs | 100% | 100% |
+| Code only | 100% | 100% |
+| Plain docs | 100% | 100% |
+| Overloaded docs | 100% | 100% |
+| Full Core | 100% | 97% |
+| Full Core scoped | grader error | 98% |
+| Full Core scoped with memory | 94% | 98% |
+
+The B4 Open Forge cells lost their points to the replay test timeouts that [eval-reference-test-audit.md](eval-reference-test-audit.md) describes, not to their fixes. The B1 scoped cell's check failed when Windows refused to remove a check slot folder (`EPERM` on `rmdir`), so its saved files wait for `check --missing`. The B1 memory cell's regressions look real: a card stops turning over, no win shows and the best score stays empty. The P1 smoke's agent fixed all four bugs in 290 seconds on a quiet machine, against about 25 minutes per single bug under the evening's load.
