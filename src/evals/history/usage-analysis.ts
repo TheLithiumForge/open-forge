@@ -120,7 +120,10 @@ function codexUsage(events: readonly unknown[]): EventUsage {
   let steps = 0, stepsBeforeEdit: number | null = null;
   for (const event of events.map(record)) {
     const item = record(event?.["item"]);
-    if (event?.["type"] !== "item.completed" || item?.["type"] !== "command_execution") continue;
+    if (event?.["type"] !== "item.completed") continue;
+    // Codex's own patch tool reports its edits as file changes, not as commands.
+    if (item?.["type"] === "file_change") { steps += 1; stepsBeforeEdit ??= steps - 1; tally.add(ActionKind.edit); continue; }
+    if (item?.["type"] !== "command_execution") continue;
     steps += 1;
     const command = String(item["command"] ?? "");
     if (CodexEdit.test(command)) { stepsBeforeEdit ??= steps - 1; tally.add(ActionKind.edit); continue; }

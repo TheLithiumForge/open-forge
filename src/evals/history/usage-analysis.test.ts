@@ -41,6 +41,15 @@ test("Codex events count read commands by kind and the steps before its first pa
   assert.equal(usage.output, null);
 });
 
+test("Codex patch tool edits count as edits and mark the first edit", () => {
+  const command = (text: string) => ({ type: "item.completed", item: { type: "command_execution", command: text, aggregated_output: "" } });
+  const patch = { type: "item.completed", item: { type: "file_change", changes: [{ path: "/work/src/a.ts", kind: "update" }] } };
+  const usage = eventUsage("codex", lines([command("cat docs/rules.md"), { type: "item.started", item: patch.item }, patch, command("npm test")]));
+  assert.equal(usage.steps, 3);
+  assert.equal(usage.stepsBeforeEdit, 1);
+  assert.equal(usage.actions.edit, 1);
+});
+
 test("actions sort into reads, edits, test or build runs and other work, and shell writes count as edits", () => {
   const claude = eventUsage("claude", lines([
     assistant("a", { type: "tool_use", id: "r1", name: "Read", input: { file_path: "/work/src/a.ts" } }, 100),
