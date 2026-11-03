@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { Batch } from "./records/records.types.ts";
 import { All, comparisons, filtered, options, setupSummaries, type Filters } from "./data/aggregate.ts";
-import { cells } from "./data/cells.ts";
+import { cells, newestCells } from "./data/cells.ts";
 import { preliminaryReasons } from "./data/status.ts";
 import { controlSetups } from "./data/chart-data.ts";
 import { tradeoffRows } from "./data/tradeoff.ts";
@@ -17,7 +17,7 @@ const Averages: Filters = { model: All, judge: All, startingPoint: All };
 /** The Results page: the headline, charts, table and data status, all following one set of filters. */
 export function Results({ batches }: { readonly batches: readonly Batch[] }) {
   const [filters, setFilters] = useState<Filters>(Averages);
-  const all = useMemo(() => comparisons(cells(batches)), [batches]);
+  const all = useMemo(() => newestCells(comparisons(cells(batches))), [batches]);
   const allCells = useMemo(() => all.map((item) => item.cell), [all]);
   const { models, judges } = useMemo(() => options(allCells), [allCells]);
   const startingPoints = useMemo(() => [...new Set(allCells.map((cell) => cell.startingPoint))], [allCells]);

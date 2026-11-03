@@ -1,4 +1,4 @@
-import type { Batch, Choice } from "../records/records.types.ts";
+import type { Batch } from "../records/records.types.ts";
 import { choiceKey } from "./observations.ts";
 import { modelLabel } from "./names.ts";
 import { checkState, CheckState, countedRuns, judgeChoices, runValues, type RunValues } from "./run-measures.ts";
@@ -29,6 +29,8 @@ export interface Cell {
   /** The Layer 4 case, such as l4-f01, or the suite for earlier starting points. */
   readonly caseId: string;
   readonly batchId: string;
+  /** When the batch started, so the newest runs of a setup win. */
+  readonly createdAt: string;
   readonly cliVersion: string | null;
   readonly setup: string;
   readonly control: string;
@@ -68,29 +70,34 @@ export function startingPointOf(batch: Batch): StartingPointId | null {
   return StartingPoints.find((point) => point.layer === batch.experiment.config.layer)?.id ?? null;
 }
 
-const newestKey = (batch: Batch, agent: Choice) => JSON.stringify([batch.experiment.suite, choiceKey(agent)]);
+const setupKey = (cell: Cell) => JSON.stringify([cell.caseId, cell.model, cell.setup]);
 
-/** The newest batch for each case and implementer. Older batches used earlier inputs or grading, so they stay in history only. */
-export function newestBatches(batches: readonly Batch[]): Map<string, string> {
-  const newest = new Map<string, Batch>();
-  for (const batch of batches) for (const agent of batch.experiment.config.agents) {
-    const current = newest.get(newestKey(batch, agent));
-    if (current === undefined || current.experiment.createdAt < batch.experiment.createdAt) newest.set(newestKey(batch, agent), batch);
+/**
+ * Each setup's newest runs for a case and implementer. A later batch can add a setup beside its own control without hiding
+ * the setups an earlier batch ran. Older runs of a setup used earlier inputs or grading, so they stay in history only.
+ */
+export function newestCells<T extends { readonly cell: Cell }>(items: readonly T[]): T[] {
+  const newest = new Map<string, string>();
+  for (const { cell } of items) {
+    const current = newest.get(setupKey(cell));
+    if (current === undefined || current < cell.createdAt) newest.set(setupKey(cell), cell.createdAt);
   }
-  return new Map([...newest].map(([key, batch]) => [key, batch.experiment.id]));
+  return items.filter(({ cell }) => newest.get(setupKey(cell)) === cell.createdAt);
 }
 
-/** Every cell of the newest batch for each case and implementer. Batches without a known starting point, and reference grading, stay out. */
+/**
+ * Every cell of every batch, so each one can meet its own batch's control. Pick the shown ones with newestCells. Batches without a
+ * known starting point, and reference grading, stay out.
+ */
 export function cells(batches: readonly Batch[]): Cell[] {
   const comparable = batches.filter((batch) => startingPointOf(batch) !== null && batch.experiment.reference === undefined);
-  const newest = newestBatches(comparable);
   return comparable.flatMap((batch) => {
     const startingPoint = startingPointOf(batch);
     if (startingPoint === null) return [];
     const runs = countedRuns(batch);
     const judges = judgeChoices(batch);
     const control = batch.experiment.config.setups[0] ?? "";
-    const agents = batch.experiment.config.agents.filter((agent) => newest.get(newestKey(batch, agent)) === batch.experiment.id);
+    const agents = batch.experiment.config.agents;
     return agents.flatMap((agent) => batch.experiment.config.setups.flatMap((setup): Cell[] => {
       const group = runs.filter((run) => run.setup === setup && choiceKey(run.agent) === choiceKey(agent));
       const reported = group.find((run) => run.reportedModel !== null)?.reportedModel ?? null;
@@ -98,7 +105,7 @@ export function cells(batches: readonly Batch[]): Cell[] {
       const values = group.map((run) => runValues(run, batch.assessments, null));
       const pick = (read: (value: RunValues) => number | null) => measure(values.map(read));
       const base = {
-        startingPoint, caseId: batch.experiment.suite, batchId: batch.experiment.id, cliVersion: batch.experiment.cliVersion, setup, control,
+        startingPoint, caseId: batch.experiment.suite, batchId: batch.experiment.id, createdAt: batch.experiment.createdAt, cliVersion: batch.experiment.cliVersion, setup, control,
         model: choiceKey(agent), modelLabel: modelLabel(agent, reported), runs: group.length, runIds: group.map((run) => run.id),
         checked: states.filter((state) => state === CheckState.checked).length, recheck: states.filter((state) => state === CheckState.recheck).length,
         coverage: pick((value) => value.coverage), tokens: pick((value) => value.tokens), newInput: pick((value) => value.newInput),

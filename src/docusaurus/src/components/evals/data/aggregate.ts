@@ -82,7 +82,7 @@ export function setupSummaries(items: readonly Comparison[]): SetupSummary[] {
   return setups.map((setup) => {
     const groups = new Map<string, Comparison[]>();
     for (const item of items.filter((entry) => entry.cell.setup === setup)) {
-      const key = JSON.stringify([item.cell.batchId, item.cell.model]);
+      const key = JSON.stringify([item.cell.caseId, item.cell.model]);
       groups.set(key, [...groups.get(key) ?? [], item]);
     }
     const perGroup = [...groups.values()].map((group) => ({

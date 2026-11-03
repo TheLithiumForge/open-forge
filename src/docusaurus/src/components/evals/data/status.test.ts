@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { previewBatch } from "../../../../scripts/evals/preview-fixture.ts";
-import { cells } from "./cells.ts";
+import type { Batch } from "../records/records.types.ts";
+import { comparisons } from "./aggregate.ts";
+import { cells, newestCells } from "./cells.ts";
 import { DoneStatus, olderBatches, preliminaryReasons, PreliminaryReason } from "./status.ts";
 
 const RunningStatus = "running";
@@ -28,8 +30,19 @@ test("a running batch and runs waiting on grading make the view preliminary", ()
   assert.deepEqual(preliminaryReasons([done], unjudged), [PreliminaryReason.unjudged]);
 });
 
-test("only the newest batch for a case and model counts", () => {
+test("only the newest runs of each setup count, so a later batch can add a setup beside its control", () => {
   const older = previewBatch(1), newer = previewBatch(2);
-  const all = cells([older, newer]);
-  assert.deepEqual(olderBatches([older, newer], all).map((batch) => batch.experiment.id), [older.experiment.id]);
+  const shown = (batches: readonly Batch[]) => newestCells(comparisons(cells(batches))).map((item) => item.cell);
+  assert.deepEqual(olderBatches([older, newer], shown([older, newer])).map((batch) => batch.experiment.id), [older.experiment.id]);
+  const [control, added] = newer.experiment.config.setups;
+  assert.ok(control !== undefined && added !== undefined);
+  const partial = { ...newer, experiment: { ...newer.experiment, config: { ...newer.experiment.config, setups: [control, added] } },
+    runs: newer.runs.filter((run) => run.setup === control || run.setup === added) };
+  const mixed = newestCells(comparisons(cells([older, partial])));
+  assert.deepEqual(olderBatches([older, partial], mixed.map((item) => item.cell)), []);
+  assert.deepEqual(new Set(mixed.map((item) => item.cell.setup)), new Set(older.experiment.config.setups));
+  for (const item of mixed) {
+    assert.equal(item.cell.batchId, [control, added].includes(item.cell.setup) ? partial.experiment.id : older.experiment.id);
+    assert.equal(item.controlCell?.batchId, item.cell.batchId, "Each setup meets its own batch's control.");
+  }
 });

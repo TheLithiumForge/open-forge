@@ -54,7 +54,7 @@ export function setupPoints(items: readonly Comparison[], channels: Channels, by
   return [...sets].flatMap(([key, members]) => {
     const first = members[0];
     if (first === undefined) return [];
-    const groups = [...groupBy(members, (item) => JSON.stringify([item.cell.batchId, item.cell.model])).values()];
+    const groups = [...groupBy(members, (item) => JSON.stringify([item.cell.caseId, item.cell.model])).values()];
     const read = (measure: PlotMeasure | null) => measure === null ? null : aggregateMeasure(measure, groups);
     const own = identity(first.cell.setup), startingPoint = byStartingPoint ? first.cell.startingPoint : null;
     const label = startingPoint === null ? own.name : `${own.name}, ${startingPointTitle(startingPoint).toLowerCase()}`;

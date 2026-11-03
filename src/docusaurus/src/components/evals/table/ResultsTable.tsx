@@ -42,7 +42,7 @@ export function ResultsTable({ items, batches }: { readonly items: readonly Comp
   const points = [...new Set(data.map(startingPointText))].map((text) => [text, text] as const);
   return <section className="eval-section" aria-labelledby="eval-table">
     <h2 id="eval-table">All results</h2>
-    <p>One row for each starting point, case, setup, model and judge with a finished run, from the newest batch of each case and model. Values are means over the row's runs. Select a row to see its runs.</p>
+    <p>One row for each starting point, case, setup, model and judge with a finished run, from the newest runs of each setup for a case and model. Values are means over the row's runs. Select a row to see its runs.</p>
     <div className="eval-table-tools">
       <div className="eval-filter eval-search"><label htmlFor={searchId}>Search</label>
         <input id={searchId} type="search" value={search} placeholder="Setup, model, judge or batch" onChange={(event) => setSearch(event.target.value)} /></div>
