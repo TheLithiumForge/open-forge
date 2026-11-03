@@ -113,3 +113,24 @@ test("layout discovery accepts a title with a subtitle in the same element and p
     assert.equal(await page.locator(`[${LayoutAttribute}="title"]`).evaluate((element) => element.tagName), "SPAN");
   } finally { await browser.close(); }
 });
+
+test("layout discovery accepts a title in capitals or split across elements, and falls back to the largest heading", async () => {
+  const browser = await chromium.launch(existsSync(chromium.executablePath()) ? {} : { channel: "chrome" });
+  try {
+    const page = await browser.newPage(); await fakeGame(page);
+    const [first, second] = GameTitle.toUpperCase().split(" ");
+    await page.evaluate(({ first, second }) => {
+      const title = document.querySelector(".title");
+      if (!title) return;
+      const heading = document.createElement("h2"), part = document.createElement("span");
+      heading.className = "title"; heading.style.margin = "0"; heading.append(first ?? "", part); part.textContent = second ?? "";
+      title.replaceWith(heading);
+    }, { first, second });
+    assert.equal((await styles(page)).title["fontSize"], "24px");
+    assert.equal(await page.locator(`[${LayoutAttribute}="title"]`).evaluate((element) => element.tagName), "H2");
+    // A title that never names the game still anchors the layout, through the largest visible heading.
+    await page.locator(`[${LayoutAttribute}="title"]`).evaluate((element) => { element.textContent = "Find every pair"; });
+    assert.equal((await styles(page)).title["fontSize"], "24px");
+    assert.equal(await page.locator(`[${LayoutAttribute}="title"]`).evaluate((element) => element.tagName), "H2");
+  } finally { await browser.close(); }
+});

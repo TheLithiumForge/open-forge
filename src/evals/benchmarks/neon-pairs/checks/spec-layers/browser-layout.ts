@@ -9,20 +9,27 @@ export const FocusSamples = [0, 255, 136, 119] as const;
 export const OutlineClauses = ["I13.1", "V19.5"] as const;
 export const ScrollMarginClause = "I13.2";
 
+/** The candidate with the largest font, so a skip link or a caption can't stand in for the title. */
+async function largest(candidates: Locator): Promise<Locator> {
+  const sizes = await candidates.evaluateAll((elements) => elements.map((element) => Number.parseFloat(getComputedStyle(element).fontSize)));
+  return candidates.nth(sizes.indexOf(Math.max(...sizes)));
+}
+
 /**
- * The visible game title. The spec names the game but not the title element's whole text, so a subtitle beside the name
- * still marks the title. An exact match comes first, then a heading that starts with the name, then the largest such text,
- * so a skip link that repeats the name can't stand in for the title.
+ * The visible game title. The spec names the game but not the title element's whole text, case or markup, so a subtitle,
+ * capitals or a name split across elements still mark the title. An exact match comes first, then a heading whose name
+ * starts with the game's name, then the largest such text. A page that shows the name nowhere falls back to its largest
+ * visible heading, so the layout clauses measure the page's own title instead of erroring.
  */
 export async function gameTitle(page: Page): Promise<Locator> {
   const exact = page.getByText(GameTitle, { exact: true }).filter({ visible: true });
-  const named = new RegExp(`^\\s*${GameTitle}\\b`);
+  const named = new RegExp(`^\\s*${GameTitle.split(" ").join("\\s*")}\\b`, "i");
   const heading = page.getByRole("heading", { name: named }).filter({ visible: true });
   const text = page.getByText(named).filter({ visible: true });
-  await exact.or(heading).or(text).first().waitFor();
+  const anyHeading = page.getByRole("heading").filter({ visible: true });
+  await exact.or(heading).or(text).or(anyHeading).first().waitFor();
   for (const candidate of [exact, heading]) if (await candidate.count() > 0) return candidate.first();
-  const sizes = await text.evaluateAll((elements) => elements.map((element) => Number.parseFloat(getComputedStyle(element).fontSize)));
-  return text.nth(sizes.indexOf(Math.max(...sizes)));
+  return largest(await text.count() > 0 ? text : anyHeading);
 }
 
 export async function markLayout(page: Page): Promise<void> {
