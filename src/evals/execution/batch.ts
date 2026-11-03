@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { ResultFiles } from "../paths.ts";
 import { dockerAvailable, ensureEvalImage } from "./containers/docker-image.ts";
-import { Isolation, Tool } from "../config/choices.ts";
+import { Isolation, Judging, Tool } from "../config/choices.ts";
 import { loadConfig } from "../config/config.ts";
 import type { EvalConfig } from "../config/config.types.ts";
 import { suiteProtocol } from "../config/protocol.ts";
@@ -162,6 +162,7 @@ async function executeBatch(batchId: string, parallel?: number): Promise<void> {
     async function attempt(runId: string, index: number): Promise<void> {
       let run: RunRecord = await readRun(batchId, runId);
       if (!rerunStatuses.includes(run.status)) {
+        if (batch.config.judging === Judging.later) return;
         await completeSavedJudgments(suiteForSetup(suite, run.setup), run, batch.config,
           { checker: batch.fingerprints.checks, rubric: batch.fingerprints.rubric, judge: batch.versions["judge"] ?? null });
         return;

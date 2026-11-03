@@ -23,7 +23,7 @@ export function preliminaryReasons(batches: readonly Batch[], shown: readonly Ce
   if (shownBatches(batches, shown).some((batch) => batch.experiment.status !== DoneStatus)) reasons.push(PreliminaryReason.running);
   if (shown.some((cell) => cell.checked + cell.recheck < cell.runs)) reasons.push(PreliminaryReason.unchecked);
   if (shown.some((cell) => cell.recheck > 0)) reasons.push(PreliminaryReason.recheck);
-  if (shown.some((cell) => cell.judged < cell.runs)) reasons.push(PreliminaryReason.unjudged);
+  if (shown.some((cell) => !cell.judgedLater && cell.judged < cell.runs)) reasons.push(PreliminaryReason.unjudged);
   return reasons;
 }
 

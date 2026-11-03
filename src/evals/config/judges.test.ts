@@ -3,6 +3,7 @@ import { test } from "node:test";
 import { parseConfig } from "./config.ts";
 import { configuredJudges, modelKey, readJudges } from "./judges.ts";
 import { MatrixAgents, MatrixJudges } from "./matrix.ts";
+import { Judging } from "./choices.ts";
 import { LocalModel, PlanVersion, resolvePlan } from "./plans.ts";
 import { FixtureConfig } from "./test-fixtures.ts";
 import { planBatchRuns } from "../execution/batch.ts";
@@ -20,6 +21,17 @@ test("judge lists keep their order and old single-judge plans override a current
   assert.deepEqual(configuredJudges(older), [current.judge]);
   assert.equal(older.judges, undefined);
   assert.throws(() => resolvePlan({ ...plan, judge: current.judge }, current));
+});
+
+test("a plan can leave judging for later, keep its judges for judge --missing and refuse other timings", () => {
+  const plan = { schemaVersion: PlanVersion, layer: 4, cases: ["l4-r02"], agents: MatrixAgents, judges: MatrixJudges,
+    simulatedUser: LocalModel, isolation: FixtureConfig.isolation, setups: FixtureConfig.setups, runsPerSetup: 1 };
+  const later = resolvePlan({ ...plan, judging: Judging.later }, FixtureConfig);
+  assert.equal(later.judging, Judging.later);
+  assert.deepEqual(configuredJudges(later), MatrixJudges);
+  assert.equal(parseConfig(later).judging, Judging.later);
+  assert.equal(resolvePlan(plan, FixtureConfig).judging, undefined);
+  assert.throws(() => resolvePlan({ ...plan, judging: "never" }, FixtureConfig));
 });
 
 test("empty, duplicate, conflicting and malformed judges are refused", () => {

@@ -1,4 +1,5 @@
 import type { Batch } from "../records/records.types.ts";
+import { Judging } from "../records/schema-values.ts";
 import { choiceKey } from "./observations.ts";
 import { modelLabel } from "./names.ts";
 import { checkState, CheckState, countedRuns, judgeChoices, runValues, type RunValues } from "./run-measures.ts";
@@ -47,6 +48,8 @@ export interface Cell {
   readonly recheck: number;
   /** Runs this cell's judge scored. */
   readonly judged: number;
+  /** The batch leaves judging for later, so runs without a judgment don't make the view preliminary. */
+  readonly judgedLater: boolean;
   readonly coverage: Measure;
   readonly judgeScore: Measure;
   readonly tokens: Measure;
@@ -106,6 +109,7 @@ export function cells(batches: readonly Batch[]): Cell[] {
       const pick = (read: (value: RunValues) => number | null) => measure(values.map(read));
       const base = {
         startingPoint, caseId: batch.experiment.suite, batchId: batch.experiment.id, createdAt: batch.experiment.createdAt, cliVersion: batch.experiment.cliVersion, setup, control,
+        judgedLater: batch.experiment.config.judging === Judging.later,
         model: choiceKey(agent), modelLabel: modelLabel(agent, reported), runs: group.length, runIds: group.map((run) => run.id),
         checked: states.filter((state) => state === CheckState.checked).length, recheck: states.filter((state) => state === CheckState.recheck).length,
         coverage: pick((value) => value.coverage), tokens: pick((value) => value.tokens), newInput: pick((value) => value.newInput),

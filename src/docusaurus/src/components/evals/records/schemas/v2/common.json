@@ -307,6 +307,12 @@
           ],
           "additionalProperties": true
         },
+        "judging": {
+          "enum": [
+            "run",
+            "later"
+          ]
+        },
         "simulatedUser": {
           "type": "object",
           "properties": {

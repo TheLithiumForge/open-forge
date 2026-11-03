@@ -1,7 +1,7 @@
 ﻿import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { EvalPaths } from "../paths.ts";
-import { Isolation } from "./choices.ts";
+import { Isolation, Judging } from "./choices.ts";
 import type { EvalConfig } from "./config.types.ts";
 import { containerLimits } from "../execution/containers/settings.ts";
 import { QuestionRounds } from "../execution/conversation/answer-bank.ts";
@@ -27,12 +27,14 @@ export function parseConfig(value: unknown): EvalConfig {
   const isolation = source["isolation"];
   if (isolation !== Isolation.local && isolation !== Isolation.docker) throw new Error("Unknown isolation.");
   const judges = readJudges(source["judge"], source["judges"]);
+  const judging = source["judging"];
+  if (judging !== undefined && judging !== Judging.run && judging !== Judging.later) throw new Error("judging must be run or later.");
   const limits = object(source["limits"]);
   const resources = source["containers"] === undefined ? undefined : object(source["containers"]);
   const containers = resources === undefined ? containerLimits() : containerLimits({ cpus: positive(resources["cpus"]), memory: text(resources["memory"]), processes: integer(resources["processes"]) });
   return { suite, isolation, agents: agents.map(modelChoice), setups: strings(source["setups"]),
     runsPerSetup: integer(source["runsPerSetup"]), parallelRuns: integer(source["parallelRuns"] ?? 1),
-    ...judges, simulatedUser: modelChoice(source["simulatedUser"]), containers,
+    ...judges, ...(judging === undefined ? {} : { judging }), simulatedUser: modelChoice(source["simulatedUser"]), containers,
     limits: { runMinutes: positive(limits["runMinutes"]), checkMinutes: positive(limits["checkMinutes"]), questionRounds: QuestionRounds },
     ...(source["protocol"] === undefined ? {} : { protocol: readProtocol(source["protocol"]) }),
     ...(source["layer"] === undefined ? {} : { layer: integer(source["layer"]) }),

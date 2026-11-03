@@ -13,6 +13,7 @@ import { TurnOutcome } from "./providers/agent-session.ts";
 import { completeSavedJudgments } from "../grading/rejudge.ts";
 import { executeRun, type RunServices } from "./run.ts";
 import { JudgeLimited } from "../grading/judge/reply.ts";
+import { Judging } from "../config/choices.ts";
 
 const SourceFile = "game.ts", SourceText = "export const game = 'fixture';\n", BuiltPage = "dist/index.html";
 const Telemetry = { tokens: null, requests: null, peakContext: null, contextWindow: null, compactions: null, toolCalls: 0, failedToolCalls: 0,
@@ -76,6 +77,19 @@ test("a first judge error stays recorded and does not block the second judge", a
   assert.notEqual(judgments[0]?.error, null);
   assert.equal(judgments[1]?.error, null);
   assert.equal((await fixture.store.readRun(fixture.batch.id, fixture.run.id)).functionalResult?.coverage.share, 1);
+});
+
+test("a plan that judges later finishes each run after its checks and calls no judge", async (t) => {
+  const fixture = await matrixRun(t);
+  const output = await executeRun({ run: fixture.run, suite: FixtureSuite, config: { ...fixture.config, judging: Judging.later }, snapshot: "", position: "fixture", services: fixture.services });
+  assert.equal(output.status, RunStatus.done);
+  assert.deepEqual(fixture.calls, []);
+  assert.deepEqual(fixture.counters(), { conversations: 1, builds: 1, checks: 1 });
+  const saved = await fixture.store.readRun(fixture.batch.id, fixture.run.id);
+  assert.equal(saved.judgeAssessmentId, null);
+  assert.notEqual(saved.checksAssessmentId, null);
+  assert.equal(saved.functionalResult?.coverage.share, 1);
+  assert.deepEqual((await fixture.store.readAssessments(fixture.batch.id)).map((item) => item.kind), [AssessmentKind.checks]);
 });
 
 test("resume fills only missing judgments and never starts the implementer again", async (t) => {

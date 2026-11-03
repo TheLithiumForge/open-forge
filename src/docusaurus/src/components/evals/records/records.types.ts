@@ -1,3 +1,4 @@
+import type { Judging } from "./schema-values.ts";
 export interface Choice { readonly tool: string; readonly model: string | null; readonly effort: string | null }
 export interface ReferenceVersion { readonly commit: string; readonly contentHash: string; readonly specHash: string; readonly specVersion: number }
 export interface GradingVersions { readonly checker: string | null; readonly rubric: string | null; readonly judge: string | null; readonly spec?: string | null; readonly specVersion?: number | null }
@@ -5,7 +6,7 @@ export interface Experiment {
   readonly reference?: ReferenceVersion;
   readonly schemaVersion: 2; readonly id: string; readonly suite: string; readonly cliVersion: string | null; readonly candidateLabel: string | null;
   readonly createdAt: string; readonly status: string; readonly legacy: boolean; readonly runs: readonly string[];
-  readonly config: { readonly layer?: number; readonly judges?: readonly Choice[]; readonly judge?: Choice; readonly isolation: string; readonly setups: readonly string[]; readonly runsPerSetup: number; readonly agents: readonly Choice[] };
+  readonly config: { readonly layer?: number; readonly judges?: readonly Choice[]; readonly judge?: Choice; readonly judging?: (typeof Judging)[keyof typeof Judging]; readonly isolation: string; readonly setups: readonly string[]; readonly runsPerSetup: number; readonly agents: readonly Choice[] };
   readonly fingerprints: Readonly<Record<string, string | null>>; readonly versions: Readonly<Record<string, string>>;
 }
 export interface Outcome { readonly id: string; readonly area: string; readonly status: string; readonly evidence: string }

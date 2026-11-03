@@ -1,4 +1,4 @@
-import type { Isolation, Tool } from "./choices.ts";
+import type { Isolation, Judging, Tool } from "./choices.ts";
 import type { ContainerLimits } from "../execution/containers/settings.ts";
 import type { FrozenProtocol } from "../execution/conversation/answer-bank.ts";
 
@@ -29,6 +29,8 @@ export interface EvalConfig {
   readonly agents: readonly ModelChoice[];
   readonly judge: JudgeChoice;
   readonly judges?: readonly JudgeChoice[];
+  /** Absent means the judges read each run as it finishes. */
+  readonly judging?: Judging;
   readonly simulatedUser: ModelChoice;
   readonly isolation: Isolation;
   readonly containers?: ContainerLimits;

@@ -4,7 +4,7 @@ import { TurnOutcome } from "./providers/agent-session.ts";
 import type { RunSpace } from "./containers/executor.ts";
 import { buildProject } from "../grading/build.ts";
 import type { EvalConfig } from "../config/config.types.ts";
-import { Isolation, Tool } from "../config/choices.ts";
+import { Isolation, Judging, Tool } from "../config/choices.ts";
 import { withAgentStage } from "./containers/agent.ts";
 import { executionLabel, ExecutionLabelFile, LocalExecutionLabel } from "./containers/eligibility.ts";
 import type { Docker } from "./containers/docker.ts";
@@ -67,6 +67,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
   const services = input.services ?? {};
   const store = services.store ?? { runFolder, readBatch, saveRun, appendAssessment, readAssessments };
   const primaryJudge = configuredJudges(config)[0] ?? config.judge;
+  const judgeNow = config.judging !== Judging.later;
   const folder = store.runFolder(input.run.batchId, input.run.id);
   const batch = await store.readBatch(input.run.batchId);
   const reference = input.run.implementer === ReferenceImplementer;
@@ -122,10 +123,15 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     const project = space.work;
     if (!reference && !saved) await freezeFiles(space, join(folder, ResultFiles.files));
     const checks = await oneCheckAtATime(() => withCheckSlot(async () => (services.checks ?? layerChecks(suite.id))?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots), stage: { ...stageOptions, timeoutMs: checkMs } })));
-    await update({ status: RunStatus.judging, checks: checks?.checks.map(legacyCheckView) ?? [], performance: checks?.performance ?? null, shots: checks?.shots ?? [] }, "checks done. The judge is reading the code.");
+    await update({ status: judgeNow ? RunStatus.judging : RunStatus.checking, checks: checks?.checks.map(legacyCheckView) ?? [], performance: checks?.performance ?? null, shots: checks?.shots ?? [] },
+      judgeNow ? "checks done. The judge is reading the code." : "checks done.");
     const assessment = checksAssessment(run, checks?.checks ?? [], versions, checks?.selection);
     await store.appendAssessment(assessment);
     await update({ functionalResult: countChecks(assessment.outcomes, assessment.selection), checkOutcomes: assessment.outcomes, checkSelection: assessment.selection, checksAssessmentId: assessment.id });
+    if (!judgeNow) {
+      await update({ status: RunStatus.done, finishedAt: new Date().toISOString() }, "done. The judges read it later with judge --missing.");
+      return run;
+    }
     const judgeFolder = await (services.scratch ?? scratchFolder)();
     try {
       await prepareJudgeFolder(join(folder, ResultFiles.files), join(judgeFolder, "project"), run.build?.html);
@@ -168,6 +174,7 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
       await removeFolder(space.root);
     }
   }
+  if (!judgeNow) return run;
   await completeSavedJudgments(suite, run, config, versions, { store, ...(services.judge === undefined ? {} : { judge: services.judge }),
     ...(services.scratch === undefined ? {} : { scratch: services.scratch }), options: { stage: {
       ...(config.containers === undefined ? {} : { limits: config.containers }), ...(input.signal === undefined ? {} : { signal: input.signal }), ...(input.docker === undefined ? {} : { docker: input.docker }),

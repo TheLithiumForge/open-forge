@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { previewBatch } from "../../../../scripts/evals/preview-fixture.ts";
 import type { Batch } from "../records/records.types.ts";
+import { Judging } from "../records/schema-values.ts";
 import { comparisons } from "./aggregate.ts";
 import { cells, newestCells } from "./cells.ts";
 import { DoneStatus, olderBatches, preliminaryReasons, PreliminaryReason } from "./status.ts";
@@ -28,6 +29,15 @@ test("a running batch and runs waiting on grading make the view preliminary", ()
   assert.deepEqual(preliminaryReasons([done], recheck), [PreliminaryReason.recheck]);
   const unjudged = [{ ...first, judged: 0 }, ...shown.slice(1)];
   assert.deepEqual(preliminaryReasons([done], unjudged), [PreliminaryReason.unjudged]);
+});
+
+test("a batch that leaves judging for later is final without judgments", () => {
+  const batch = previewBatch(1);
+  const later = { ...batch, experiment: { ...batch.experiment, status: DoneStatus, config: { ...batch.experiment.config, judging: Judging.later } },
+    assessments: batch.assessments.filter((item) => item.kind !== "judge") };
+  const shown = cells([later]);
+  assert.ok(shown.every((cell) => cell.judgedLater && cell.judged < cell.runs));
+  assert.deepEqual(preliminaryReasons([later], shown), []);
 });
 
 test("only the newest runs of each setup count, so a later batch can add a setup beside its control", () => {

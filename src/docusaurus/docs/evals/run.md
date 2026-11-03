@@ -73,6 +73,8 @@ npm run evals -- run --plan src/evals/experiments/neon-pairs-l2-full.json --impl
 | Judge | `--judges` | Claude `opus`, high | Codex `gpt-6.1-sol`, xhigh | Claude then Codex |
 | Simulated user | `--user` | Claude `sonnet`, medium | Codex `gpt-6-luna`, low | Unavailable |
 
+A plan with `"judging": "later"` finishes each run after its checks. Its judges stay in the batch, and `judge <batch> --missing` adds their judgments whenever you choose, without running any agent again.
+
 `--parallel` caps how many runs go at once. The [existing app](starting-points.mdx#existing-app) plans hold three cases, and `--case l4-f01` runs one of them as its own batch. Records go to the ignored `src/evals/runs/` folder.
 
 Two machine flags work with any command. `--scratch D:/eval-workspaces` puts run workspaces on a roomier drive. `--check-slots 5` lets five check stages run at once across every eval process. Each check uses about one processor core, so leave room for the agents.
