@@ -15,6 +15,7 @@ import { loadSuite } from "./benchmarks/suite.ts";
 import { buildEvalImages } from "./execution/containers/docker-image.ts";
 import { HistoryStore } from "./history/store.ts";
 import { addResults } from "./history/results-add.ts";
+import { importResults } from "./history/results-import.ts";
 import { EvalPaths, evalsRoot } from "./paths.ts";
 import { validateCase } from "./grading/brownfield/validate.ts";
 import { checkChain } from "./execution/chain-check.ts";
@@ -40,6 +41,8 @@ export interface CliServices {
   readonly site: (options: SiteOptions) => Promise<number>;
   readonly launch: typeof launchNode;
   readonly results: (batch: string, repository: string) => Promise<string>;
+  /** Rebuilds a published batch folder in the run store, for grading it on another machine. */
+  readonly importResults?: (folder: string) => Promise<string>;
   readonly validateCase: typeof validateCase;
   readonly chainCheck?: typeof checkChain;
   readonly summary?: typeof batchMatrixSummary;
@@ -223,6 +226,11 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     }
     case Command.results: {
       const [action, batch] = args;
+      if (action === ResultsAction.import && batch !== undefined && !batch.startsWith("--")) {
+        checkedArgs(args.slice(1), [], [], 1);
+        services.print(`Imported batch ${await (services.importResults ?? ((folder) => importResults(folder, new HistoryStore(EvalPaths.runs))))(resolve(batch))}`);
+        return 0;
+      }
       if (action !== ResultsAction.add || batch === undefined || batch.startsWith("--")) throw new Error(CommandHelp.results);
       checkedArgs(args.slice(1), [], [Flag.repository], 1);
       const repository = args.includes(Flag.repository) ? resolve(option(args, Flag.repository)) : EvalPaths.resultsRepository;

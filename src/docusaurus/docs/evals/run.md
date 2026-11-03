@@ -139,6 +139,16 @@ npm run evals -- judge <batch> --judges claude --missing
 
 `check` grades a batch's runs at once, as many as the check slots allow, and appends new check results. `--rebuild` builds each saved project in the verifier again first. `--missing` checks only runs without a check free of errors, so it finishes a batch that checked later or one whose checker was fixed. `judge` appends ballots from the chosen judges. `--missing` judges only runs without a judgment from that judge, so judging can continue after a usage limit. Both accept one run after the batch. Earlier grades stay recorded with their versions.
 
+A published batch can be graded on another machine. `results import` rebuilds it in the run store from the results repository's records and evidence, and `results add` publishes it again with the new grades:
+
+```sh
+npm run evals -- results import src/evals/results/versions/<cli-version>/batches/<batch>
+npm run evals -- check <batch> --missing
+npm run evals -- results add <batch>
+```
+
+The results repository's Grade published runs workflow does this for every batch with waiting runs, spreading the batches over GitHub's runners and self-hosted ones, and opens one pull request with the grades.
+
 The [objective measures](measures.mdx#objective-measures) come from saved logs too, without a model:
 
 ```sh
