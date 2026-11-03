@@ -185,3 +185,5 @@ To the first Layer 4 results: 52 runs and about 81M tokens, about 3M of them new
 ## Agent teams
 
 Added on 2026-11-03 at the maintainer's word. A team is part of the implementer, as a model is, so it's a selection of the data and not a scenario of its own. Any scenario can run with any team, and Results filter by team the way they filter by model. For now the teams are Sol alone, Sol leading Sol subagents and Sol leading Luna subagents, since Sol usage is plentiful. Claude counterparts come later: Opus alone, Opus leading Sonnet subagents and Opus leading Opus subagents, with more to follow. They need Claude's subagent switch and per-subagent counting first.
+
+Reasoning levels, set by the maintainer the same day: Sol 6.1 at its usual xhigh and Luna always at max, as implementer, team member and simulated user. For Claude later, the maintainer suggested Opus at xhigh and Sonnet at high, still to confirm.
