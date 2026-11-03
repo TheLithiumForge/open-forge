@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "layer": 4,
+  "cases": ["l4-r06"],
+  "setups": ["plain-docs", "plain-docs-orchestrated"],
+  "runsPerSetup": 1,
+  "parallelRuns": 2,
+  "agents": "codex",
+  "judges": "codex",
+  "judging": "later",
+  "simulatedUser": "codex",
+  "isolation": "docker",
+  "limits": { "questionRounds": 3, "runMinutes": 90, "checkMinutes": 90 }
+}

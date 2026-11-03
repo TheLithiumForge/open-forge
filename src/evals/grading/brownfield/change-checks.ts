@@ -9,8 +9,8 @@ import type { AssertionOutcome } from "../../benchmarks/neon-pairs/checks/spec-l
 
 export const ChangeCheckFiles = { manifest: "checks.json", worker: "worker.ts", report: "report.json" } as const;
 export const ChangeCheckVersion = 1;
-/** A case's own checks number 10 to 20. A case graded only by full-spec clauses needs at least three of them. */
-export const ChangeCheckLimits = { minimum: 10, maximum: 20, clauseMinimum: 3, reportBytes: 1024 * 1024 } as const;
+/** A case's own checks number 10 to 20. A case graded only by full-spec clauses has 3 to 30, so several scoped tasks can combine. */
+export const ChangeCheckLimits = { minimum: 10, maximum: 20, clauseMinimum: 3, clauseMaximum: 30, reportBytes: 1024 * 1024 } as const;
 export const ChangeKind = { feature: "feature", repair: "repair" } as const;
 /** Clause checks take their result from the full-spec checker's assertion for one clause, so the case needs no worker of its own. */
 export const ChangeMethod = { clause: "clause" } as const;
@@ -27,9 +27,10 @@ export async function readChangeChecks(item: BrownfieldCase): Promise<ChangeChec
     return { id: check["id"], kind: check["kind"], clause: check["clause"] };
   });
   const clauses = checks.flatMap((check) => check.clause === undefined ? [] : [check.clause]);
-  const minimum = clauses.length === checks.length ? ChangeCheckLimits.clauseMinimum : ChangeCheckLimits.minimum;
-  if (checks.length < minimum || checks.length > ChangeCheckLimits.maximum || new Set(checks.map((check) => check.id)).size !== checks.length || new Set(clauses).size !== clauses.length) {
-    throw new Error(`A case needs ${minimum} to ${ChangeCheckLimits.maximum} distinct change checks.`);
+  const clauseOnly = clauses.length === checks.length;
+  const minimum = clauseOnly ? ChangeCheckLimits.clauseMinimum : ChangeCheckLimits.minimum, maximum = clauseOnly ? ChangeCheckLimits.clauseMaximum : ChangeCheckLimits.maximum;
+  if (checks.length < minimum || checks.length > maximum || new Set(checks.map((check) => check.id)).size !== checks.length || new Set(clauses).size !== clauses.length) {
+    throw new Error(`A case needs ${minimum} to ${maximum} distinct change checks.`);
   }
   for (const kind of Object.values(ChangeKind)) {
     const needed = item.changeType === ChangeType.combined || item.changeType === (kind === ChangeKind.feature ? ChangeType.feature : ChangeType.repair);

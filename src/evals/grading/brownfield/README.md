@@ -13,7 +13,7 @@ The runner reads `supersedes` as clause IDs and `diffScope` as project-relative 
 
 Each case's `checks/` folder provides `checks.json` and, when a check needs one, `worker.ts`. The manifest has `schemaVersion: 1` and a `checks` array. Each entry has a distinct `id` and `kind`, either `feature` or `repair`. A case has 10 to 20 checks. Combined cases have both groups.
 
-A clause check sets `"method": "clause"` and names one `clause`, such as `R10.2`, that the full frozen Layer 3 checker asserts. It takes that clause's result from the regression run, and the clause leaves the regression set, as a superseded one does. It needs no worker. A case whose checks are all clause checks needs 3 to 20 of them, with distinct clauses, and no `worker.ts`. When the regression run fails, every clause check reports an error with its message.
+A clause check sets `"method": "clause"` and names one `clause`, such as `R10.2`, that the full frozen Layer 3 checker asserts. It takes that clause's result from the regression run, and the clause leaves the regression set, as a superseded one does. It needs no worker. A case whose checks are all clause checks needs 3 to 30 of them, with distinct clauses, and no `worker.ts`, so several scoped tasks can combine into one case. When the regression run fails, every clause check reports an error with its message.
 
 The verifier starts the trusted worker with Node. Its one argument names an input JSON file with these fields:
 

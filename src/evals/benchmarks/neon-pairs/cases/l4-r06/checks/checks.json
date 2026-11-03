@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "checks": [
+    { "id": "R02-01", "method": "clause", "clause": "R10.1", "kind": "repair", "description": "R10: only completed games record a best score for their size.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-02", "method": "clause", "clause": "R10.2", "kind": "repair", "description": "R10: only fewer moves replace the best.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-03", "method": "clause", "clause": "R10.3", "kind": "repair", "description": "R10: the best stays after reload.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-04", "method": "clause", "clause": "R10.4", "kind": "repair", "description": "R10: equal or worse results keep the saved best.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-05", "method": "clause", "clause": "R10.5", "kind": "repair", "description": "R10: starting or restarting keeps best scores.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-06", "method": "clause", "clause": "R10.6", "kind": "repair", "description": "R10: the current size's best shows as Best: N during play and after completion.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-07", "method": "clause", "clause": "R10.7", "kind": "repair", "description": "R10: a size without a record shows Best: none.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R03-01", "method": "clause", "clause": "I06.1", "kind": "repair", "description": "I06: ArrowLeft moves to the previous card in the same row.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R03-02", "method": "clause", "clause": "I06.2", "kind": "repair", "description": "I06: ArrowRight moves to the next card in the same row.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R03-03", "method": "clause", "clause": "I06.3", "kind": "repair", "description": "I06: ArrowUp moves to the previous row in the same column.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R03-04", "method": "clause", "clause": "I06.4", "kind": "repair", "description": "I06: ArrowDown moves to the next row in the same column.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R03-05", "method": "clause", "clause": "I06.9", "kind": "repair", "description": "I06: movement changes focus without activating a card.", "expected": { "starting": "pass", "solution": "pass" } },
+    { "id": "R03-06", "method": "clause", "clause": "I07.1", "kind": "repair", "description": "I07: movement stops at board edges without wrapping.", "expected": { "starting": "pass", "solution": "pass" } },
+    { "id": "R03-07", "method": "clause", "clause": "I08.2", "kind": "repair", "description": "I08: movement keys navigate without putting every card in the tab order.", "expected": { "starting": "pass", "solution": "pass" } },
+    { "id": "R04-01", "method": "clause", "clause": "V17.1", "kind": "repair", "description": "V17: cards keep their 120ms border-color transition.", "expected": { "starting": "pass", "solution": "pass" } },
+    { "id": "R04-02", "method": "clause", "clause": "V17.2", "kind": "repair", "description": "V17: reduced motion turns the card transition off.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R04-03", "method": "clause", "clause": "V18.1", "kind": "repair", "description": "V18: completion shows a win banner.", "expected": { "starting": "pass", "solution": "pass" } },
+    { "id": "R04-04", "method": "clause", "clause": "V18.2", "kind": "repair", "description": "V18: the banner pulses once for 600ms, then stays static.", "expected": { "starting": "pass", "solution": "pass" } },
+    { "id": "R04-05", "method": "clause", "clause": "V18.3", "kind": "repair", "description": "V18: reduced motion shows the static banner at once.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R05-01", "method": "clause", "clause": "S01.1", "kind": "repair", "description": "S01: every action and state stays silent.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R05-02", "method": "clause", "clause": "S02.1", "kind": "repair", "description": "S02: the game includes no audio files.", "expected": { "starting": "pass", "solution": "pass" } },
+    { "id": "R05-03", "method": "clause", "clause": "S02.2", "kind": "repair", "description": "S02: the game makes no audio API calls.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R05-04", "method": "clause", "clause": "S02.3", "kind": "repair", "description": "S02: the game has no sound toggle.", "expected": { "starting": "pass", "solution": "pass" } }
+  ],
+  "regressionExpectations": { "regression-best-score": "fail", "regression-l2-build": "fail", "regression-l3-t07-build": "fail", "regression-l3-d07-browser": "fail", "regression-keyboard-full-game": "fail", "regression-l2-matched": "fail", "regression-l2-scroll": "fail", "regression-l2-screen-reader": "fail", "regression-l2-large": "fail", "regression-l2-zoom": "fail", "regression-l3-c10-browser": "fail", "regression-l3-c13-browser": "fail", "regression-l2-completion": "fail" }
+}

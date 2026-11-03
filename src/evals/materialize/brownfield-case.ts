@@ -10,12 +10,16 @@ export const BrownfieldFiles = { definition: "case.json", request: "request.md",
 export const LayerFourCases = ["l4-f01", "l4-r01", "l4-fr01"] as const;
 /** Small repairs that each need one scope of the spec: Gameplay, Controls and input, Visuals and Sound. */
 export const ScopedTaskCases = ["l4-r02", "l4-r03", "l4-r04", "l4-r05"] as const;
+/** The four scoped tasks planted at once, for comparing one agent with an orchestrator. */
+export const CombinedTaskCase = "l4-r06";
 export const CodeOnlySetup = "code-only";
 export interface BrownfieldCase {
   readonly id: string; readonly changeType: ChangeType; readonly title: string; readonly root: string;
   readonly request: string; readonly specDelta: string | null; readonly seedPatch: string | null;
   readonly solutionPatch: string; readonly altSolutionPatch: string | null; readonly checks: string; readonly answers: readonly IntentItem[];
   readonly supersedes: readonly string[]; readonly diffScope: readonly string[]; readonly inputs: readonly FileHash[];
+  /** The agent's time limit, when a case needs more than the default. */
+  readonly runMinutes?: number;
 }
 
 function text(value: unknown): string {
@@ -60,8 +64,10 @@ export async function readBrownfieldCase(root: string, expectedId?: string): Pro
   const supersedes = strings(json["supersedes"]), diffScope = strings(json["diffScope"]);
   if (supersedes.some((clause) => !/^[A-Z]\d{2}\.\d+$/.test(clause)) || !diffScope.length) throw new Error("Invalid supersedes or empty diffScope.");
   for (const pattern of diffScope) safeRelative(pattern);
+  const runMinutes = json["runMinutes"];
+  if (runMinutes !== undefined && (typeof runMinutes !== "number" || !Number.isInteger(runMinutes) || runMinutes < 1)) throw new Error("A case's runMinutes must be a whole number of minutes.");
   return { id, changeType, root, title: text(json["title"]), request: (await readFile(join(root, request), "utf8")).trim(), specDelta, seedPatch, solutionPatch, altSolutionPatch, checks, answers, supersedes, diffScope,
-    inputs: hashesWithoutValidation(files, checks) };
+    inputs: hashesWithoutValidation(files, checks), ...(runMinutes === undefined ? {} : { runMinutes }) };
 }
 
 export function hashesWithoutValidation(files: readonly FileBytes[], checks: string): FileHash[] {

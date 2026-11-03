@@ -1,0 +1,22 @@
+[
+  {
+    "id": "best-meaning",
+    "text": "The best score is the fewest moves I've needed to finish a game of that size.",
+    "judgedBy": "judge"
+  },
+  {
+    "id": "keys",
+    "text": "The four arrow keys, the way the game worked before.",
+    "judgedBy": "judge"
+  },
+  {
+    "id": "normal-motion",
+    "text": "Keep the motion as it is when reduced motion is off. Only my reduced-motion setting should make things still.",
+    "judgedBy": "judge"
+  },
+  {
+    "id": "sound-toggle",
+    "text": "No toggle or volume setting, please. The game should make no sound at all.",
+    "judgedBy": "judge"
+  }
+]
