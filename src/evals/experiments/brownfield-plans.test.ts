@@ -32,7 +32,7 @@ test("Layer 4 plans list all cases and setups with frozen models and independent
 test("the product preflights every named case before installing any setup", async () => {
   const cases = [LayerFourCases[0], LayerFourCases[1]], qualified: string[] = [];
   const noEffect = async () => { throw new Error("An unrelated product command ran."); };
-  const services: CliServices = { print: () => {}, doctor: noEffect, images: noEffect, smoke: noEffect, run: noEffect, ui: noEffect, launch: noEffect, export: noEffect, validateCase: noEffect,
+  const services: CliServices = { print: () => {}, doctor: noEffect, images: noEffect, smoke: noEffect, run: noEffect, site: noEffect, launch: noEffect, results: noEffect, validateCase: noEffect,
     plan: async () => ({ ...FixtureConfig, cases }), suite: async (id) => {
       if (id === cases[1]) throw new Error("The listed case is missing.");
       return { ...FixtureSuite, id };

@@ -24,6 +24,6 @@
     "skipLibCheck": true,
     "erasableSyntaxOnly": true
   },
-  "include": ["*.ts", "config/**/*.ts", "execution/**/*.ts", "images/**/*.ts", "grading/**/*.ts", "history/**/*.ts", "benchmarks/**/*.ts", "materialize/**/*.ts", "site/**/*.ts"],
+  "include": ["*.ts", "config/**/*.ts", "execution/**/*.ts", "images/**/*.ts", "grading/**/*.ts", "history/**/*.ts", "benchmarks/**/*.ts", "materialize/**/*.ts", "site/**/*.ts", "experiments/**/*.ts"],
   "exclude": ["benchmarks/**/reference/**", "node_modules", "*.tmp.ts"]
 }
