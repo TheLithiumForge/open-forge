@@ -13,6 +13,8 @@ import { LayerTwoFixture } from "./subset.ts";
 import { replaceSeedFiles, startingReadme, writeStartingFiles, SetupProjectMetadata } from "./brownfield-files.ts";
 import { captureScope } from "./scope-policy.ts";
 import type { ScopePolicy } from "./scope.types.ts";
+import { entrypointText, relink, scopedMetadata, scopedPath, scopeEntrypoint, unlink, type ScopeLayout } from "./scopes.ts";
+import { validateLinks } from "./markdown.ts";
 
 export const SetupKind = { plain: "plain-docs", linked: "linked-agents", forge: "open-forge", inline: "spec-in-prompt", code: "code-only" } as const;
 export type SetupKind = (typeof SetupKind)[keyof typeof SetupKind];
@@ -32,6 +34,8 @@ export interface SetupOptions {
   readonly frozen?: Awaited<ReturnType<typeof readFrozenSpecs>>;
   readonly projectFiles?: readonly FileBytes[];
   readonly seedFiles?: readonly FileBytes[];
+  /** Routes the spec by scope folders, with only the up-front documents loading at the start. Open Forge setups only. */
+  readonly scopes?: ScopeLayout;
 }
 
 export interface SetupManifest {
@@ -46,6 +50,23 @@ export interface SetupManifest {
   readonly readmeHash?: string;
   readonly projectFiles?: readonly FileHash[];
   readonly scope?: ScopePolicy;
+  readonly scopes?: ScopeLayout;
+}
+
+/** Where a spec document sits in the setup, relative to docs. */
+export function documentPath(manifest: Pick<SetupManifest, "scopes">, path: string): string {
+  return manifest.scopes === undefined ? path : scopedPath(manifest.scopes, path);
+}
+
+/** A document's body with its links as the frozen spec has them, so every setup compares against the same bytes. */
+export function frozenBody(manifest: Pick<SetupManifest, "scopes">, path: string, bytes: Uint8Array): Buffer {
+  const body = stripFrontmatter(bytes);
+  return manifest.scopes === undefined ? body : unlink(manifest.scopes, path, body);
+}
+
+/** The scope entrypoints a scoped setup adds, relative to docs. */
+export function scopeEntrypoints(manifest: Pick<SetupManifest, "scopes">): string[] {
+  return manifest.scopes?.scopes.map(scopeEntrypoint) ?? [];
 }
 
 export function projectReadme(manifest: SpecsManifest): string {
@@ -86,13 +107,23 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   }
   const frozen = options.frozen ?? await readFrozenSpecs(specs);
   if (kind === SetupKind.inline && frozen.manifest.fixture !== LayerTwoFixture) throw new Error("Spec in prompt is available only for the frozen Layer 2 player pack.");
+  const layout = options.scopes;
+  if (layout !== undefined && (kind !== SetupKind.forge || options.projectFiles !== undefined)) throw new Error("Only full-spec Open Forge setups route the spec by scope.");
+  const placed = layout === undefined ? {} : { scopes: layout };
   const target = await emptyDestination(destination, [specs, MaterializePaths.source]);
   if (options.projectFiles) await writeStartingFiles(target, options.projectFiles);
   const documentFiles = kind === SetupKind.inline || kind === SetupKind.code ? [] : frozen.documents;
   for (const file of documentFiles) {
     const record = frozen.manifest.files.find((entry) => entry.path === file.path);
     if (!record) throw new Error("Specification metadata is missing.");
-    await writeNew(target, `${SetupFiles.docs}/${file.path}`, kind === SetupKind.forge ? addMetadata(file.bytes, record.metadata) : file.bytes);
+    const bytes = layout === undefined ? file.bytes : relink(layout, file.path, file.bytes);
+    const metadata = layout === undefined ? record.metadata : scopedMetadata(layout, file.path, record.metadata);
+    await writeNew(target, `${SetupFiles.docs}/${documentPath(placed, file.path)}`, kind === SetupKind.forge ? addMetadata(bytes, metadata) : bytes);
+  }
+  if (layout !== undefined) {
+    validateLinks(documentFiles.map((file) => ({ path: scopedPath(layout, file.path), bytes: relink(layout, file.path, file.bytes) })));
+    // Open Forge would name a missing scope entrypoint after its path, so each scope's own description goes in first.
+    for (const scope of layout.scopes) await writeNew(target, `${SetupFiles.docs}/${scopeEntrypoint(scope)}`, entrypointText(scope));
   }
   const readme = startingReadme(options.projectFiles, kind === SetupKind.code ? null : AcceptanceLine)
     ?? (kind === SetupKind.inline ? InlineReadme : projectReadme(frozen.manifest));
@@ -104,8 +135,8 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   const frameworkCommands = kind === SetupKind.forge ? await installFramework(target, options.runForge ?? createForgeRunner(), options.preset) : [];
   let files = await inventory(target);
   for (const record of documentFiles.length ? frozen.manifest.files : []) {
-    const actual = files.find((file) => file.path === `${SetupFiles.docs}/${record.path}`);
-    if (!actual || sha256(stripFrontmatter(actual.bytes)) !== record.sha256) throw new Error(`Specification body changed: ${record.path}`);
+    const actual = files.find((file) => file.path === `${SetupFiles.docs}/${documentPath(placed, record.path)}`);
+    if (!actual || sha256(frozenBody(placed, record.path, actual.bytes)) !== record.sha256) throw new Error(`Specification body changed: ${record.path}`);
   }
   if (files.find((file) => file.path === SetupFiles.readme)?.bytes.toString() !== readme) throw new Error("Project acceptance README changed.");
   for (const file of options.projectFiles ?? []) if (!SetupProjectMetadata.has(file.path) && sha256(files.find((actual) => actual.path === file.path)?.bytes ?? "") !== sha256(file.bytes)) throw new Error("Setup installation changed the reference code.");
@@ -126,7 +157,7 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   }
   await initialCommit(target, options.runGit);
   const manifest: SetupManifest = { schemaVersion: ManifestVersion, kind, sourceHash: frozen.manifest.sourceHash, specifications: frozen.manifest,
-    frameworkVersion: kind === SetupKind.forge ? FrameworkVersion : null, frameworkCommands, files: hashes(files), ...(options.preset === undefined ? {} : { preset: options.preset }),
+    frameworkVersion: kind === SetupKind.forge ? FrameworkVersion : null, frameworkCommands, files: hashes(files), ...(options.preset === undefined ? {} : { preset: options.preset }), ...placed,
     ...(options.projectFiles === undefined ? {} : { readmeHash: sha256(finalReadme), projectFiles: hashes(options.seedFiles ?? options.projectFiles),
       scope: captureScope(files, kind === SetupKind.forge, [...options.seedFiles ?? options.projectFiles, ...documentFiles.map((file) => ({ ...file, path: `${SetupFiles.docs}/${file.path}` }))]) }) };
   await ordinaryPath(dirname(manifestPath));

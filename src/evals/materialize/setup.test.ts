@@ -8,10 +8,11 @@ import { ForgeFlags, ForgeRequests, ForgeStatus, FrameworkVersion, type ForgeRun
 import { GitCommand, GitRequests } from "./git.ts";
 import type { CommandRunner } from "./runner.ts";
 import { AcceptanceLine, LinkedClaudeInstructions, linkedInstructions, materializeSetup, SetupFiles, SetupKind } from "./setup.ts";
-import { materializeSpecs } from "./specs.ts";
+import { scopedPath, scopeEntrypoint, ScopeLayoutVersion, UpFrontTag, type ScopeLayout } from "./scopes.ts";
+import { materializeSpecs, SpecsFiles } from "./specs.ts";
 import { stripFrontmatter } from "./strip.ts";
 import { stripSetup } from "./strip-setup.ts";
-import { sample } from "./test-fixture.ts";
+import { SampleFiles, sample } from "./test-fixture.ts";
 
 const Scaffold = { loader: ".agents/loader.md", catalogue: "docs/_docs.md" } as const;
 const success = { code: 0, stdout: "", stderr: "" };
@@ -75,6 +76,31 @@ test("three setups carry the same sentences, descriptions and acceptance with on
   assert.deepEqual(sentences[2], sentences[0]);
   assert.deepEqual(exported[1], exported[0]);
   assert.deepEqual(exported[2], exported[0]);
+});
+
+test("a scoped setup moves the spec into scope folders, loads only the overview up front and strips to the flat files", async (t) => {
+  const options = await sample(t);
+  await materializeSpecs(options);
+  const scope = { slug: "gameplay", title: "Gameplay", description: "Gameplay scope for matching and moves", tags: ["Game"], documents: [SampleFiles.rules] };
+  const layout: ScopeLayout = { schemaVersion: ScopeLayoutVersion, upFront: [SpecsFiles.overview], scopes: [scope] };
+  const exported = [];
+  for (const scopes of [undefined, layout]) {
+    const destination = join(options.root, scopes === undefined ? "flat" : "scoped");
+    const runGit: CommandRunner = async () => success;
+    const result = await materializeSetup({ kind: SetupKind.forge, destination, specs: options.destination, runForge: fakeForge([]), runGit, ...(scopes === undefined ? {} : { scopes }) });
+    if (scopes !== undefined) {
+      assert.deepEqual(result.manifest.scopes, layout);
+      const rules = await readFile(join(destination, SetupFiles.docs, scopedPath(layout, SampleFiles.rules)));
+      assert.equal(documentMetadata(rules).tags.includes(UpFrontTag), false);
+      assert.equal(documentMetadata(await readFile(join(destination, SetupFiles.docs, SpecsFiles.overview))).tags.includes(UpFrontTag), true);
+      assert.equal(documentMetadata(await readFile(join(destination, SetupFiles.docs, scopeEntrypoint(scope)))).description, scope.description);
+      assert.ok((await readFile(join(destination, Scaffold.catalogue), "utf8")).includes(scope.description));
+    }
+    const stripped = join(options.root, `stripped-${scopes === undefined ? "flat" : "scoped"}`);
+    await stripSetup({ source: destination, destination: stripped, manifest: result.manifest });
+    exported.push(await inventory(stripped));
+  }
+  assert.deepEqual(exported[1], exported[0]);
 });
 
 test("a rejected CLI preview stops before apply, Git and manifest creation", async (t) => {

@@ -7,7 +7,8 @@ import { createForgeRunner, type ForgeRunner } from "../materialize/forge.ts";
 import { inventory, safeRelative, sha256 } from "../materialize/files.ts";
 import { ImageVersions } from "../execution/containers/docker-image.ts";
 import { object, text } from "./validation.ts";
-import { materializeSetup, SetupFiles, SetupKind, type SetupManifest } from "../materialize/setup.ts";
+import { documentPath, materializeSetup, scopeEntrypoints, SetupFiles, SetupKind, type SetupManifest } from "../materialize/setup.ts";
+import { loadScopeLayout } from "../materialize/scopes.ts";
 import { evalsRoot } from "../paths.ts";
 
 export const SetupCliFlags = { version: "--version", preview: "--dry-run", output: ["--format", "json", "--detail", "full"] } as const;
@@ -42,11 +43,15 @@ export async function generateSetup(suite: Suite, setup: string, run: ForgeRunne
         if (args.includes(SetupCliFlags.preview) && result.code === 0) for (const path of plannedFiles(result.stdout)) planned.add(path);
         return result;
       };
+      const scopes = definition.delivery.scopes === undefined ? undefined : await loadScopeLayout(join(evalsRoot, safeRelative(definition.delivery.scopes)));
       const result = await materializeSetup({ kind: definition.delivery.kind, destination: folder, ...(suite.specs === undefined ? {} : { specs: join(evalsRoot, safeRelative(suite.specs)) }),
         ...(suite.brownfield === undefined ? {} : { frozen: suite.brownfield.specifications, projectFiles: suite.brownfield.reference, seedFiles: suite.brownfield.seed }),
-        ...(definition.delivery.preset === undefined ? {} : { preset: definition.delivery.preset }), runForge: tracked });
+        ...(definition.delivery.preset === undefined ? {} : { preset: definition.delivery.preset }), ...(scopes === undefined ? {} : { scopes }), runForge: tracked });
       expected.add(SetupFiles.readme);
-      if (definition.delivery.kind !== SetupKind.inline && definition.delivery.kind !== SetupKind.code) for (const file of result.manifest.specifications.files) expected.add(`${SetupFiles.docs}/${file.path}`);
+      if (definition.delivery.kind !== SetupKind.inline && definition.delivery.kind !== SetupKind.code) {
+        for (const file of result.manifest.specifications.files) expected.add(`${SetupFiles.docs}/${documentPath(result.manifest, file.path)}`);
+        for (const path of scopeEntrypoints(result.manifest)) expected.add(`${SetupFiles.docs}/${path}`);
+      }
       for (const file of suite.brownfield?.seed ?? []) expected.add(file.path);
       if (definition.delivery.kind === SetupKind.linked) for (const file of [SetupFiles.agents, SetupFiles.claude]) expected.add(file);
       for (const path of planned) expected.add(path);

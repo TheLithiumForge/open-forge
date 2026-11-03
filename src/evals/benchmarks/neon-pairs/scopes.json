@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "upFront": ["README.md"],
+  "scopes": [
+    {
+      "slug": "gameplay",
+      "title": "Gameplay",
+      "description": "Gameplay scope for the board, turns, scoring, the clock, saved sizes and best scores",
+      "tags": ["Game", "Gameplay"],
+      "documents": ["rules.md"]
+    },
+    {
+      "slug": "interface",
+      "title": "Controls and input",
+      "description": "Interface scope for the game's controls and for pointer, touch, keyboard, focus and screen reader behavior",
+      "tags": ["Game", "Interface", "Accessibility"],
+      "documents": ["controls.md", "input.md"]
+    },
+    {
+      "slug": "visuals",
+      "title": "Visuals",
+      "description": "Visuals scope for layout, card artwork, colors, motion and zoom",
+      "tags": ["Game", "Visuals"],
+      "documents": ["visuals.md"]
+    },
+    {
+      "slug": "sound",
+      "title": "Sound",
+      "description": "Sound scope for the silent game and feedback without audio",
+      "tags": ["Game", "Sound"],
+      "documents": ["sound.md"]
+    },
+    {
+      "slug": "sharing",
+      "title": "Persistence and sharing",
+      "description": "Sharing scope for board codes, snapshots and replay formats",
+      "tags": ["Game", "Sharing"],
+      "documents": ["reproducibility.md"]
+    },
+    {
+      "slug": "technology",
+      "title": "Technology",
+      "description": "Technology scope for the language, package versions, build, distribution and code structure",
+      "tags": ["Game", "Technology"],
+      "documents": ["technology.md", "architecture.md"]
+    }
+  ]
+}

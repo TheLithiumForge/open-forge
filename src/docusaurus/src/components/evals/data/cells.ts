@@ -14,8 +14,8 @@ export const StartingPoints = [
   { id: "existing-app", layer: 4, title: "An existing app" },
 ] as const;
 export type StartingPointId = (typeof StartingPoints)[number]["id"];
-/** Setups that install Open Forge, from smallest to largest. */
-export const OpenForgeSetups = ["minimal", "essentials", "full-core"] as const;
+/** Setups that install Open Forge, from smallest to largest, then the scoped variant. */
+export const OpenForgeSetups = ["minimal", "essentials", "full-core", "full-core-scoped"] as const;
 
 export interface Measure {
   readonly mean: number | null;

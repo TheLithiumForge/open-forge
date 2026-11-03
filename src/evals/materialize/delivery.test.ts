@@ -10,6 +10,7 @@ import { CaseTimeLimitMinutes, DocumentCase, DocumentPointer, DocumentSetups, se
 import { DocumentFixtureFiles, documentInstaller } from "./document-test-fixture.ts";
 import { ForgePreset, FrameworkVersion } from "./forge.ts";
 import { materializeSetup, SetupFiles, SetupKind } from "./setup.ts";
+import { entrypointText, scopedPath, scopeEntrypoint } from "./scopes.ts";
 import { sample } from "./test-fixture.ts";
 
 test("document cases freeze the permitted banks, time limit and delivery cells", async () => {
@@ -19,8 +20,9 @@ test("document cases freeze the permitted banks, time limit and delivery cells",
   assert.equal(three.runMinutes, 180);
   assert.equal(two.intent.length, 3);
   assert.deepEqual(three.intent, []);
-  assert.deepEqual(Object.keys(two.setups), Object.values(DocumentSetups));
+  assert.deepEqual(Object.keys(two.setups), Object.values(DocumentSetups).filter((setup) => setup !== DocumentSetups.fullCoreScoped));
   assert.deepEqual(Object.keys(three.setups), Object.values(DocumentSetups).filter((setup) => setup !== DocumentSetups.inline));
+  assert.equal(three.setups[DocumentSetups.fullCoreScoped]?.delivery?.preset, ForgePreset.fullCore);
   for (const suite of [two, three]) {
     for (const preset of Object.values(ForgePreset)) assert.equal(suite.setups[preset]?.delivery?.preset, preset);
     assert.equal(suiteForSetup(suite, DocumentSetups.plain).prompt, `${suite.prompt}\n\n${DocumentPointer}`);
@@ -42,7 +44,7 @@ test("qualification checks every document cell with fake installs and fresh repo
     const calls: string[][] = [];
     const results = await qualifySetups(suite, Object.keys(suite.setups), documentInstaller(calls));
     assert.equal(results.length, Object.keys(suite.setups).length);
-    assert.equal(results.filter((result) => result.frameworkVersion === FrameworkVersion).length, Object.values(ForgePreset).length);
+    assert.equal(results.filter((result) => result.frameworkVersion === FrameworkVersion).length, Object.values(suite.setups).filter((setup) => setup.delivery?.kind === SetupKind.forge).length);
     for (const preset of Object.values(ForgePreset)) assert.ok(calls.some((args) => args.includes(preset)));
   }
 });
@@ -62,4 +64,27 @@ test("document qualification rejects changed product sentences and foreign files
       await assert.rejects(checkSetup(generated));
     } finally { await rm(dirname(generated.folder), { recursive: true, force: true }); }
   }
+});
+
+test("scoped qualification proves each moved document keeps its sentences and each scope keeps its description", async () => {
+  const generated = await generateSetup(await loadSuite(DocumentCase.three), DocumentSetups.fullCoreScoped, documentInstaller());
+  try {
+    const scopes = generated.materialized?.scopes;
+    const [scope] = scopes?.scopes ?? [];
+    const [document] = scope?.documents ?? [];
+    assert.ok(scopes !== undefined && scope !== undefined && document !== undefined);
+    await checkSetup(generated);
+    const changes = [
+      { path: scopedPath(scopes, document), change: (text: string) => `${text}Changed product sentences.\n` },
+      { path: scopeEntrypoint(scope), change: () => entrypointText({ ...scope, description: scope.title }).toString() },
+    ];
+    for (const { path, change } of changes) {
+      const file = join(generated.folder, SetupFiles.docs, path);
+      const original = await readFile(file, "utf8");
+      await writeFile(file, change(original));
+      await assert.rejects(checkSetup(generated));
+      await writeFile(file, original);
+    }
+    await checkSetup(generated);
+  } finally { await rm(dirname(generated.folder), { recursive: true, force: true }); }
 });

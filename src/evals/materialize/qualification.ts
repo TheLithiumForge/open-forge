@@ -2,8 +2,8 @@ import { readFile } from "node:fs/promises";
 import { documentMetadata } from "./frontmatter.ts";
 import { inventory, sha256 } from "./files.ts";
 import { initialRepository } from "./seed-repository.ts";
-import { LinkedClaudeInstructions, SetupFiles, SetupKind, linkedInstructions, projectReadme, InlineReadme, type SetupManifest } from "./setup.ts";
-import { stripFrontmatter } from "./strip.ts";
+import { documentPath, frozenBody, LinkedClaudeInstructions, SetupFiles, SetupKind, linkedInstructions, projectReadme, InlineReadme, type SetupManifest } from "./setup.ts";
+import { scopedMetadata, scopeEntrypoint } from "./scopes.ts";
 import { SetupProjectMetadata } from "./brownfield-files.ts";
 import { verifyScope } from "./scope-policy.ts";
 
@@ -14,9 +14,14 @@ export async function checkDocumentSetup(folder: string, manifest: SetupManifest
   if (manifest.readmeHash ? sha256(actual.get(SetupFiles.readme) ?? "") !== manifest.readmeHash : actual.get(SetupFiles.readme)?.toString() !== readme) throw new Error("The product pointer changed.");
   for (const file of manifest.specifications.files) {
     if (manifest.kind === SetupKind.inline || manifest.kind === SetupKind.code) break;
-    const bytes = actual.get(`${SetupFiles.docs}/${file.path}`);
-    if (!bytes || sha256(stripFrontmatter(bytes)) !== file.sha256) throw new Error(`Product sentences changed: ${file.path}`);
-    if (manifest.kind === SetupKind.forge && JSON.stringify(documentMetadata(bytes)) !== JSON.stringify(file.metadata)) throw new Error("Product routing descriptions changed.");
+    const bytes = actual.get(`${SetupFiles.docs}/${documentPath(manifest, file.path)}`);
+    if (!bytes || sha256(frozenBody(manifest, file.path, bytes)) !== file.sha256) throw new Error(`Product sentences changed: ${file.path}`);
+    const metadata = manifest.scopes === undefined ? file.metadata : scopedMetadata(manifest.scopes, file.path, file.metadata);
+    if (manifest.kind === SetupKind.forge && JSON.stringify(documentMetadata(bytes)) !== JSON.stringify(metadata)) throw new Error("Product routing descriptions changed.");
+  }
+  for (const scope of manifest.scopes?.scopes ?? []) {
+    const bytes = actual.get(`${SetupFiles.docs}/${scopeEntrypoint(scope)}`);
+    if (!bytes || documentMetadata(bytes).description !== scope.description) throw new Error(`The ${scope.title} scope lost its description.`);
   }
   if (manifest.kind === SetupKind.linked && actual.get(SetupFiles.agents)?.toString() !== linkedInstructions(manifest.specifications)) throw new Error("The linked instructions differ from the shared descriptions.");
   if (manifest.kind === SetupKind.linked && actual.get(SetupFiles.claude)?.toString() !== LinkedClaudeInstructions) throw new Error("The linked CLAUDE.md doesn't import AGENTS.md.");

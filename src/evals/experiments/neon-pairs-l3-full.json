@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "layer": 3,
   "case": "l3-full-spec",
-  "setups": ["plain-docs", "linked-agents", "minimal", "essentials", "full-core"],
+  "setups": ["plain-docs", "linked-agents", "minimal", "essentials", "full-core", "full-core-scoped"],
   "runsPerSetup": 3,
   "parallelRuns": 2,
   "agents": "claude",

@@ -10,10 +10,12 @@
     "linked-agents": { "label": "Linked AGENTS.md", "commands": [], "delivery": { "kind": "linked-agents" } },
     "minimal": { "label": "Minimal", "commands": [], "delivery": { "kind": "open-forge", "preset": "minimal" } },
     "essentials": { "label": "Essentials", "commands": [], "delivery": { "kind": "open-forge", "preset": "essentials" } },
-    "full-core": { "label": "Full Core", "commands": [], "delivery": { "kind": "open-forge", "preset": "full-core" } }
+    "full-core": { "label": "Full Core", "commands": [], "delivery": { "kind": "open-forge", "preset": "full-core" } },
+    "full-core-scoped": { "label": "Full Core, scoped", "commands": [], "delivery": { "kind": "open-forge", "preset": "full-core", "scopes": "benchmarks/neon-pairs/scopes.json" } }
   },
   "comparisons": {
     "presets": ["plain-docs", "minimal", "essentials", "full-core"],
-    "delivery": ["plain-docs", "linked-agents", "minimal"]
+    "delivery": ["plain-docs", "linked-agents", "minimal"],
+    "scopes": ["plain-docs", "full-core", "full-core-scoped"]
   }
 }

@@ -1,6 +1,6 @@
 ---
 title: Setups
-description: The eight project setups the evals compare, from No setup to Full Core, with the control for each starting point and how the runner builds them.
+description: The nine project setups the evals compare, from No setup to Full Core and its scoped variant, with the control for each starting point and how the runner builds them.
 ---
 
 import NoSetup from "./_definitions/no-setup.mdx"
@@ -9,6 +9,7 @@ import LinkedAgents from "./_definitions/linked-agents.mdx"
 import Minimal from "./_definitions/minimal.mdx"
 import Essentials from "./_definitions/essentials.mdx"
 import FullCore from "./_definitions/full-core.mdx"
+import FullCoreScoped from "./_definitions/full-core-scoped.mdx"
 import SpecInPrompt from "./_definitions/spec-in-prompt.mdx"
 import CodeOnly from "./_definitions/code-only.mdx"
 
@@ -18,7 +19,7 @@ A setup is the project context an agent starts with in an eval run, from an empt
 
 Within one comparison, every setup gets the same prompt, the same requirements, the same starting code and the same simulated user. Only the arrangement of the context changes. For example, Plain docs and Essentials both hold the same short brief in `docs/`, and Essentials also routes it through the Open Forge loader.
 
-Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder), the scale the Demos use for how much setup a project has. Spec in prompt and Code only are delivery variants. They move or remove the documents instead of adding setup.
+Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder), the scale the Demos use for how much setup a project has. Spec in prompt and Code only are delivery variants. They move or remove the documents instead of adding setup. Full Core, scoped keeps Full Core's install and routes the documents by scope.
 
 ## No setup \{#no-setup}
 
@@ -43,6 +44,10 @@ Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder
 ## Full Core \{#full-core}
 
 <FullCore />
+
+## Full Core, scoped \{#full-core-scoped}
+
+<FullCoreScoped />
 
 ## Spec in prompt \{#spec-in-prompt}
 
@@ -73,5 +78,7 @@ open-forge install --preset essentials --frontmatter scoped --automatic
 open-forge route include ./docs --tag LoadNow
 open-forge index ./docs/_docs.md
 ```
+
+Full Core, scoped moves the documents into their scope folders and writes each scope's entrypoint before these commands run, because `index` would otherwise name a new entrypoint after its folder path. Only the overview keeps its `LoadNow` tag. The scope layout is `src/evals/benchmarks/neon-pairs/scopes.json`.
 
 Each command runs with `--dry-run` first, and the setup stops if any command doesn't complete. Before the scored runs, the [`qualify`](cli.md#qualify) command installs fresh setups and checks their entry files, the Open Forge lock file, the planned files and any unwanted files.

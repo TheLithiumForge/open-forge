@@ -1,7 +1,8 @@
 import { emptyDestination, inventory, safeRelative, sha256, writeNew } from "./files.ts";
 import { MetadataNamespace, removeMetadata, splitMarkdown } from "./frontmatter.ts";
 import { validateLinks } from "./markdown.ts";
-import { SetupFiles, SetupKind, type SetupManifest } from "./setup.ts";
+import { documentPath, SetupFiles, SetupKind, type SetupManifest } from "./setup.ts";
+import { scopedMetadata, unlink } from "./scopes.ts";
 
 export interface StripOptions {
   readonly source: string;
@@ -12,7 +13,8 @@ export interface StripOptions {
 export async function stripSetup(options: StripOptions): Promise<void> {
   const files = await inventory(options.source);
   const specifications = options.manifest.kind === SetupKind.inline || options.manifest.kind === SetupKind.code ? [] : options.manifest.specifications.files;
-  const specs = new Map(specifications.map((file) => [`${SetupFiles.docs}/${safeRelative(file.path)}`, file]));
+  const specs = new Map(specifications.map((file) => [`${SetupFiles.docs}/${safeRelative(documentPath(options.manifest, file.path))}`, file]));
+  const { scopes } = options.manifest;
   const project = new Set(options.manifest.projectFiles?.map((file) => file.path));
   const scaffold = options.manifest.files.filter((file) => !specs.has(file.path) && !project.has(file.path) && file.path !== SetupFiles.readme);
   for (const file of scaffold) {
@@ -25,6 +27,10 @@ export async function stripSetup(options: StripOptions): Promise<void> {
   const removed = new Set(scaffold.map((file) => file.path));
   const output = files.filter((file) => !removed.has(file.path)).map((file) => {
     const record = specs.get(file.path);
+    // A scoped document goes back to the docs root with its frozen links, so every setup strips to the same files.
+    if (record && options.manifest.kind === SetupKind.forge && scopes !== undefined) {
+      return { ...file, path: `${SetupFiles.docs}/${record.path}`, bytes: unlink(scopes, record.path, removeMetadata(file.bytes, scopedMetadata(scopes, record.path, record.metadata))) };
+    }
     if (record && options.manifest.kind === SetupKind.forge) return { ...file, bytes: removeMetadata(file.bytes, record.metadata) };
     if (file.path.endsWith(".md") && splitMarkdown(file.bytes).document?.has(MetadataNamespace)) throw new Error(`Unrecorded Open Forge metadata: ${file.path}`);
     return file;
