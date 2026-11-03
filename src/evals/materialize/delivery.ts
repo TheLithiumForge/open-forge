@@ -7,6 +7,8 @@ export interface DocumentDelivery { readonly kind: SetupKind; readonly preset?: 
 export const DocumentPointer = "Read docs/README.md and follow its linked requirements for this project.";
 export const CaseTimeLimitMinutes = 60;
 export const DocumentCase = { two: "l2-defined-idea", three: "l3-full-spec" } as const;
+/** The Neon Pairs scope layout, relative to the evals folder. The full-spec suite names the same file. */
+export const NeonPairsScopes = "benchmarks/neon-pairs/scopes.json";
 export const DocumentSetups = { plain: "plain-docs", linked: "linked-agents", minimal: "minimal", essentials: "essentials", fullCore: "full-core", inline: "spec-in-prompt", fullCoreScoped: "full-core-scoped" } as const;
 
 export function setupPrompt(suite: Suite, setup: string): string {

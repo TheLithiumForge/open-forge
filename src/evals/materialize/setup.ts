@@ -108,18 +108,20 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   const frozen = options.frozen ?? await readFrozenSpecs(specs);
   if (kind === SetupKind.inline && frozen.manifest.fixture !== LayerTwoFixture) throw new Error("Spec in prompt is available only for the frozen Layer 2 player pack.");
   const layout = options.scopes;
-  if (layout !== undefined && (kind !== SetupKind.forge || options.projectFiles !== undefined)) throw new Error("Only full-spec Open Forge setups route the spec by scope.");
+  if (layout !== undefined && kind !== SetupKind.forge) throw new Error("Only Open Forge setups route the spec by scope.");
   const placed = layout === undefined ? {} : { scopes: layout };
   const target = await emptyDestination(destination, [specs, MaterializePaths.source]);
   if (options.projectFiles) await writeStartingFiles(target, options.projectFiles);
   const documentFiles = kind === SetupKind.inline || kind === SetupKind.code ? [] : frozen.documents;
-  for (const file of documentFiles) {
+  /** A spec document as this setup writes it: in its scope folder with scoped links and tags, or as frozen. */
+  const placedDocument = (file: FileBytes): FileBytes => {
     const record = frozen.manifest.files.find((entry) => entry.path === file.path);
     if (!record) throw new Error("Specification metadata is missing.");
     const bytes = layout === undefined ? file.bytes : relink(layout, file.path, file.bytes);
     const metadata = layout === undefined ? record.metadata : scopedMetadata(layout, file.path, record.metadata);
-    await writeNew(target, `${SetupFiles.docs}/${documentPath(placed, file.path)}`, kind === SetupKind.forge ? addMetadata(bytes, metadata) : bytes);
-  }
+    return { path: `${SetupFiles.docs}/${documentPath(placed, file.path)}`, bytes: kind === SetupKind.forge ? addMetadata(bytes, metadata) : bytes };
+  };
+  for (const file of documentFiles.map(placedDocument)) await writeNew(target, file.path, file.bytes);
   if (layout !== undefined) {
     validateLinks(documentFiles.map((file) => ({ path: scopedPath(layout, file.path), bytes: relink(layout, file.path, file.bytes) })));
     // Open Forge would name a missing scope entrypoint after its path, so each scope's own description goes in first.
@@ -142,11 +144,7 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   for (const file of options.projectFiles ?? []) if (!SetupProjectMetadata.has(file.path) && sha256(files.find((actual) => actual.path === file.path)?.bytes ?? "") !== sha256(file.bytes)) throw new Error("Setup installation changed the reference code.");
   const replaceDocuments = async (documents: readonly FileBytes[]): Promise<void> => {
     if (!documentFiles.length) return;
-    for (const file of documents) {
-      const metadata = frozen.manifest.files.find((entry) => entry.path === file.path)?.metadata;
-      if (!metadata) throw new Error("Missing brownfield product metadata.");
-      await writeFile(resolve(target, SetupFiles.docs, file.path), kind === SetupKind.forge ? addMetadata(file.bytes, metadata) : file.bytes);
-    }
+    for (const file of documents.map(placedDocument)) await writeFile(resolve(target, file.path), file.bytes);
   };
   let finalReadme = readme;
   if (options.seedFiles && options.projectFiles) {
@@ -159,7 +157,7 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   const manifest: SetupManifest = { schemaVersion: ManifestVersion, kind, sourceHash: frozen.manifest.sourceHash, specifications: frozen.manifest,
     frameworkVersion: kind === SetupKind.forge ? FrameworkVersion : null, frameworkCommands, files: hashes(files), ...(options.preset === undefined ? {} : { preset: options.preset }), ...placed,
     ...(options.projectFiles === undefined ? {} : { readmeHash: sha256(finalReadme), projectFiles: hashes(options.seedFiles ?? options.projectFiles),
-      scope: captureScope(files, kind === SetupKind.forge, [...options.seedFiles ?? options.projectFiles, ...documentFiles.map((file) => ({ ...file, path: `${SetupFiles.docs}/${file.path}` }))]) }) };
+      scope: captureScope(files, kind === SetupKind.forge, [...options.seedFiles ?? options.projectFiles, ...documentFiles.map((file) => ({ ...file, path: `${SetupFiles.docs}/${documentPath(placed, file.path)}` }))]) }) };
   await ordinaryPath(dirname(manifestPath));
   await writeFile(manifestPath, jsonBytes(manifest), { flag: "wx" });
   return { manifestPath, manifest };

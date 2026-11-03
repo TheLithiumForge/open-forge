@@ -6,7 +6,7 @@ import { loadSuite, saveIntent } from "../benchmarks/suite.ts";
 import { checkSetup, qualifySetups } from "../config/qualify.ts";
 import { generateSetup } from "../config/setups.ts";
 import { suiteForSetup } from "../execution/workspace.ts";
-import { CaseTimeLimitMinutes, DocumentCase, DocumentPointer, DocumentSetups, setupPrompt } from "./delivery.ts";
+import { CaseTimeLimitMinutes, DocumentCase, DocumentPointer, DocumentSetups, NeonPairsScopes, setupPrompt } from "./delivery.ts";
 import { DocumentFixtureFiles, documentInstaller } from "./document-test-fixture.ts";
 import { ForgePreset, FrameworkVersion } from "./forge.ts";
 import { materializeSetup, SetupFiles, SetupKind } from "./setup.ts";
@@ -23,6 +23,7 @@ test("document cases freeze the permitted banks, time limit and delivery cells",
   assert.deepEqual(Object.keys(two.setups), Object.values(DocumentSetups).filter((setup) => setup !== DocumentSetups.fullCoreScoped));
   assert.deepEqual(Object.keys(three.setups), Object.values(DocumentSetups).filter((setup) => setup !== DocumentSetups.inline));
   assert.equal(three.setups[DocumentSetups.fullCoreScoped]?.delivery?.preset, ForgePreset.fullCore);
+  assert.equal(three.setups[DocumentSetups.fullCoreScoped]?.delivery?.scopes, NeonPairsScopes);
   for (const suite of [two, three]) {
     for (const preset of Object.values(ForgePreset)) assert.equal(suite.setups[preset]?.delivery?.preset, preset);
     assert.equal(suiteForSetup(suite, DocumentSetups.plain).prompt, `${suite.prompt}\n\n${DocumentPointer}`);
