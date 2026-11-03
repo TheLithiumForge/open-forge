@@ -278,6 +278,8 @@ public sealed class DoctorOutsideIntegrationTests
 
     private const string Directory = "docs/team";
     private const string Anchor = Directory + "/_team.md";
+    private const string LeafDescription = "Independent leaf";
+    private const string LeafTag = "Body";
 
     private static TemporaryWorkspace Create(string root, string situation)
     {
@@ -292,10 +294,10 @@ public sealed class DoctorOutsideIntegrationTests
         if (situation != "missing-directory")
         {
             var contentDirectory = situation == "unsafe" ? "docs/real" : Directory;
-            files.WriteText(contentDirectory + "/ordinary.md", OpenForgeDocumentSeed.Metadata("Independent leaf", ["Body"], "# Leaf\n\nUntouched bytes.\n"));
+            files.WriteText(contentDirectory + "/ordinary.md", OpenForgeDocumentSeed.Metadata(LeafDescription, [LeafTag], "# Leaf\n\nUntouched bytes.\n"));
             if (situation != "missing-anchor") files.WriteText(situation is "compatibility" or "stale-compatibility" or "unlisted-compatibility" ? contentDirectory + "/index.md" : contentDirectory + "/_team.md",
                 OpenForgeDocumentSeed.Metadata("Independent anchor", ["Body"], OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
-                { Prefix = "# Team", Entries = "- [Leaf](ordinary.md) - #Body\n", LineEnding = "\n" })));
+                { Prefix = "# Team", Entries = $"- [{LeafDescription}](ordinary.md) - #{LeafTag}\n", LineEnding = "\n" })));
             if (situation == "ambiguous") files.WriteText(Directory + "/index.md", "# Independent competing anchor\n");
             if (situation == "unsafe") files.CreateDirectorySymbolicLink(Directory, files.Combine(contentDirectory));
         }

@@ -109,11 +109,7 @@ internal sealed partial class RouteMoveNavigationPlanner(
             ProjectRegion(request, request.Regions[index])))];
 
     private GeneratedNavigationRegion ProjectRegion(GeneratedNavigationProjectionRequest request, GeneratedNavigationRegionInput input)
-    {
-        var region = _regionPlanner.Plan(request, input);
-        return RouteMoveMaintenanceBoundaryInspector.IsOutside(request.Formation.Catalogue, input.Source.Base.CanonicalPath)
-            ? RouteMoveIncludedRowProjector.PreserveAuthoredBody(region, input.Document) : region;
-    }
+        => _regionPlanner.Plan(request, input);
 
     private static RouteMoveNavigationPlanningResult FormPlan(
         RouteMoveNavigationPlanningRequest request,

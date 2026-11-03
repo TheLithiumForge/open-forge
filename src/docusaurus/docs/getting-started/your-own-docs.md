@@ -84,6 +84,7 @@ open-forge index ./docs/_docs.md --dry-run
 
 Route create, init, update, move and remove, Index and Repair all work within the registration. A few rules keep that work bounded:
 
+- Index rebuilds each catalogue's line for a file or folder in the registration from that source's description, tags and `applyTo`, so keep them in its frontmatter. Links that leave the folder stay as you wrote them.
 - Move stays inside one registration. The registered directory and its root entrypoints stay protected.
 - A required rewrite of foreign content blocks the complete Move or Remove plan.
 - Existing recognized compatibility anchors can stay in a registered tree. Source references keep the filename, such as `./docs/index.md`, and get no short IDs.

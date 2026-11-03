@@ -51,6 +51,7 @@ public sealed class SourceOutsideEdgesIntegrationTests
     private static readonly string Anchor = WorkspaceRoutePath.CanonicalEntrypointPath(Directory);
     private static readonly string DetachedAnchor = WorkspaceRoutePath.CanonicalEntrypointPath(Disconnected);
     private static readonly string Nested = WorkspaceRoutePath.CanonicalEntrypointPath(Directory + "/nested");
+    private static readonly string NestedDestination = Nested[(Directory.Length + 1)..];
 
     [Theory(DisplayName = "A loader row to an inventoried outside overwrite retains its paired base identity and both layers")]
     [InlineData(WorkspaceLayout.DefaultMainRoot), InlineData(CustomRoot)]
@@ -239,7 +240,7 @@ public sealed class SourceOutsideEdgesIntegrationTests
         Assert.Equal(before, temporary.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "Registered catalogue projection retains conditioned authored descendants and unresolved links while generating only new descendants")]
+    [Theory(DisplayName = "Registered catalogue projection rebuilds routed descendant rows from metadata and retains unresolved, aliased and external links")]
     [InlineData(false), InlineData(true)]
     public async Task CatalogueProjectionRetainsRows(bool retainEdges)
     {
@@ -257,13 +258,22 @@ public sealed class SourceOutsideEdgesIntegrationTests
         Assert.Equal(GeneratedNavigationRegionState.Available, region.State);
         var rewritten = Parse(Encoding.UTF8.GetString(Assert.IsType<GeneratedNavigationBoundedChange>(region.Change).ExpectedDocumentBytes.AsSpan()));
         var actual = SourceGeneratedEntriesParser.Parse(rewritten).Entries;
+        string[] rebuilt = [ChildName, NestedDestination];
         foreach (var row in SourceGeneratedEntriesParser.Parse(document).Entries)
         {
-            var retained = Assert.Single(actual, candidate => candidate.Destination == row.Destination);
-            Assert.Equal(RowBytes(document, row), RowBytes(rewritten, retained));
+            var current = Assert.Single(actual, candidate => candidate.Destination == row.Destination);
+            if (!rebuilt.Contains(row.Destination))
+            {
+                Assert.Equal(RowBytes(document, row), RowBytes(rewritten, current));
+                continue;
+            }
+
+            Assert.Equal(OtherDescription, current.Description);
+            Assert.Empty(current.Tags);
+            Assert.Empty(current.ApplyTo);
         }
-        Assert.Contains(region.Entries, entry => entry.CanonicalPath == Unlisted);
-        Assert.DoesNotContain(region.Entries, entry => entry.CanonicalPath == Child || entry.CanonicalPath == Nested);
+        Assert.Equal(new[] { Child, Nested, Unlisted }.Order(StringComparer.Ordinal),
+            region.Entries.Select(entry => entry.CanonicalPath).Order(StringComparer.Ordinal));
     }
 
     private static void Seed(TemporaryWorkspace temporary, WorkspaceLayout layout, bool listed)
@@ -274,7 +284,7 @@ public sealed class SourceOutsideEdgesIntegrationTests
         temporary.CreateFile(guidePath, Catalogue(Row(FirstDescription, "../" + prefix + Child, Condition)));
         temporary.CreateFile(Anchor, Catalogue(string.Join("\r\n",
             Row(OtherDescription, ChildName, OtherCondition),
-            Row(OtherDescription, "nested/" + Path.GetFileName(Nested), Condition),
+            Row(OtherDescription, NestedDestination, Condition),
             Row(OtherDescription, MissingName, Condition),
             Row(OtherDescription, "../../" + Alias, Condition),
             Row(OtherDescription, ExternalLink, Condition))));

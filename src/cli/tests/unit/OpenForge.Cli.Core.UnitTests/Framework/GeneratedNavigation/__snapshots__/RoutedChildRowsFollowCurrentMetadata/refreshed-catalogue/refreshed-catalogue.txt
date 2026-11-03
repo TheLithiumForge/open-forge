@@ -1,0 +1,7 @@
+# Root
+
+## Entries
+
+- [Second file description](file.md) - #Alpha #Gamma
+- [Second _scope description](scope/_scope.md) - #Alpha #Gamma
+- [Project readme](../readme.md) - #Authored

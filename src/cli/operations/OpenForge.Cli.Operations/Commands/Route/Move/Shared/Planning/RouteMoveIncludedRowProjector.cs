@@ -11,31 +11,11 @@ using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
 internal sealed class RouteMoveIncludedRowProjector(SourceLinkDestinationResolver destinationResolver)
 {
-    internal static GeneratedNavigationRegion PreserveAuthoredBody(GeneratedNavigationRegion region, MarkdownDocumentFacts? document)
-    {
-        if (region.Change is not { } change || document?.GeneratedRegion.EntriesBlock is not { } block
-            || SourceGeneratedEntriesParser.Parse(document) is not { State: SourceGeneratedEntriesState.Complete, Entries.Count: > 0 }) return region;
-        var generated = string.Join(block.LineEnding, region.Entries.Select(entry => entry.Line));
-        var body = document.Source[block.Span.Start..block.Span.End];
-        if (generated.Length > 0) body = generated + block.LineEnding + body;
-        return GeneratedNavigationRegion.Available(region.Source, region.Entries, new GeneratedNavigationBoundedChange(new()
-        {
-            ContentLocation = change.ContentLocation,
-            BeforeBody = change.BeforeBody,
-            ExpectedBody = body,
-            Prefix = change.Prefix,
-            Suffix = change.Suffix,
-        })) with
-        { AuthoredLinkCount = region.AuthoredLinkCount };
-    }
-
     internal async ValueTask<RouteMoveIncludedRowProjection> ProjectAsync(RouteMoveReferenceScanInput input,
         RouteMoveReferenceDocument document, string sourcePath, string intendedSourcePath, CancellationToken cancellationToken)
     {

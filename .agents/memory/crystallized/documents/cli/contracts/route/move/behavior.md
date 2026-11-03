@@ -409,9 +409,11 @@ entrypoints inside the registration. Preserve Loader bytes and unlisted state.
 Project retained authored row destinations through the moved-path map, keeping
 labels, conditions, metadata, aliases and order. Compose these changes with the
 generated body from the same original snapshot, then combine disjoint authored
-prose edits into one effect. Malformed rows or uncertain required structure
+prose edits into one effect. The generated body rebuilds every row that reaches
+a routed child of its catalogue. Malformed rows or uncertain required structure
 refuse the complete plan. Readonly metadata inputs do not acquire write
-permission, and final verification checks row meanings and untouched bytes.
+permission. Final verification checks row meanings, the untouched bytes of rows
+that stay authored and the generated projection.
 
 ## Selection And Result Formation
 

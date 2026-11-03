@@ -11,7 +11,7 @@ open-forge:
 
 Formation retains the catalogue’s layout, aliases and included rows, including sources without inventory candidates. Loader destinations resolve from the selected loader directory. Native Skills remain at `.agents/skills` and may appear through the custom loader. Preserve direct loader rows to nested catalogues, their metadata and deliberate omissions. Neither reconstruction nor maintenance reactivates an omitted root. See [Workspace Layout](workspace-layout.md#source-transport).
 
-Registration adds outside anchors to structural topology and leaves loading membership to authored rows. An outside catalogue may retain its intrinsic form and row-owned loading policy together. Registration, inventory and prospective reconstruction preserve authored outside row bytes, metadata, conditions, aliases, mutual order and first-reaching policy, including stale targets and deliberate absence. Generated primary rows keep their established ordering and may precede those authored rows. Absolute mixed-row slots are not preserved. Existing primary identities remain intact when outside physical aliases merge, and an overwrite remains attached to its base.
+Registration adds outside anchors to structural topology and leaves loading membership to authored rows. An outside catalogue may retain its intrinsic form and row-owned loading policy together. Registration, inventory and prospective reconstruction preserve authored outside row bytes, metadata, conditions, aliases, mutual order and first-reaching policy, including stale targets and deliberate absence. A registered catalogue's rows for its own routed children are generated, as [Loader And Topology Rules](#loader-and-topology-rules) describes. Generated rows keep their established ordering and may precede those authored rows. Absolute mixed-row slots are not preserved. Existing primary identities remain intact when outside physical aliases merge, and an overwrite remains attached to its base.
 
 ## Boundary
 
@@ -85,10 +85,14 @@ Structural roots and Loader listing are separate facts. Projection retains
 outside Loader rows as authored, with their metadata and conditions, and never
 inserts one merely because its anchor is registered. This remains true when
 membership preservation is disabled or an anchor is missing. Within an outside
-catalogue, existing authored descendant and leaving-link rows retain their
-bytes, while new eligible descendants may receive generated rows.
+catalogue, as in any entrypoint, every projection rebuilds the row of each
+routed direct child from its current description, tags and `applyTo`. A row
+whose destination stays inside the registered folder and reaches such a child,
+directly or through a proven physical alias, is that child's generated row.
+Links that leave the folder, links to deeper descendants and stale targets
+stay authored and retain their bytes.
 
-Retained authored rows keep their mutual order, labels, tags, conditions, duplicates and provenance. Regenerated primary rows keep their established ordering, so preservation does not freeze absolute mixed-row slots. A command changing an outside destination supplies intended row meanings through retained catalogue evidence before projection. It must compose row, ordinary-reference and region changes once from the same original snapshot, folding Entries edits into the intended region rather than overlapping replacements.
+Retained authored rows keep their mutual order, labels, tags, conditions, duplicates and provenance. Regenerated rows keep their established ordering, so preservation does not freeze absolute mixed-row slots. A command changing an outside destination supplies intended row meanings through retained catalogue evidence before projection. It must compose row, ordinary-reference and region changes once from the same original snapshot, folding Entries edits into the intended region rather than overlapping replacements.
 
 A missing Loader produces zero roots. Operand-free Index selection blocks, while
 an explicit complete detached selection may still proceed. A missing

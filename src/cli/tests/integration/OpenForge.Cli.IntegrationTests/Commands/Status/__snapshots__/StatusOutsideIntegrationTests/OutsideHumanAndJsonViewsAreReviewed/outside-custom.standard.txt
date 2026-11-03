@@ -1,7 +1,11 @@
-Open Forge is installed, but 12 files need attention.
+Open Forge is installed, but 13 files need attention.
 Workspace: <workspace>
   Warning  .agents/skills/_skills.md  Entries section is missing
          .agents/skills/_skills.md has no Entries section.
+         open-forge index
+         Rebuild the Entries section.
+  Warning  docs/team/_team.md  Entries section is stale
+         The Entries section of docs/team/_team.md is stale.
          open-forge index
          Rebuild the Entries section.
   Warning  knowledge/main/directives/_directives.md  Entries section is missing
@@ -55,7 +59,7 @@ Startup context
   This workspace:       2 files, about 0.0k tokens
 Compared with shipped: 5 fewer files, about 4.0k fewer tokens
 All routed files: 5 files, about 0.1k tokens (startup is 21%)
-Routes: 0 root categories, 1 Entries section current, removed: directives, guidance, maps, memory, patterns, skills, templates
+Routes: 0 root categories, 0 Entries sections current, removed: directives, guidance, maps, memory, patterns, skills, templates
 Framework files: unavailable
 Included files: 0 listed, 1 unlisted, 0 missing, 0 hand-written loader rows.
 Startup outside the context folders: 0 files, about 0.0k tokens

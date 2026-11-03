@@ -394,8 +394,10 @@ post-move projection rather than treating navigation as a later cleanup step.
 
 Outside authored Entries retain labels, metadata, conditions, duplicates and
 order. Only required destinations and containing-source coordinates follow the
-move. Row and generated-body changes compose from one original snapshot into
-one effect, with no stale source destination or duplicate synthetic row.
+move. A row that reaches a routed child of its catalogue is generated, as in
+any entrypoint, and follows that child's current metadata. Row and
+generated-body changes compose from one original snapshot into one effect,
+with no stale source destination or duplicate synthetic row.
 
 ## Planning And Effects
 
