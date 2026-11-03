@@ -8,6 +8,10 @@ import ExistingApp from "@site/docs/evals/_definitions/existing-app.mdx";
 import Feature from "@site/docs/evals/_definitions/l4-f01.mdx";
 import Repair from "@site/docs/evals/_definitions/l4-r01.mdx";
 import FeatureRepair from "@site/docs/evals/_definitions/l4-fr01.mdx";
+import BestScore from "@site/docs/evals/_definitions/l4-r02.mdx";
+import ArrowKeys from "@site/docs/evals/_definitions/l4-r03.mdx";
+import ReducedMotion from "@site/docs/evals/_definitions/l4-r04.mdx";
+import Silence from "@site/docs/evals/_definitions/l4-r05.mdx";
 import NoSetup from "@site/docs/evals/_definitions/no-setup.mdx";
 import PlainDocs from "@site/docs/evals/_definitions/plain-docs.mdx";
 import LinkedAgents from "@site/docs/evals/_definitions/linked-agents.mdx";
@@ -46,6 +50,10 @@ export const Definitions: Readonly<Record<DefinitionId, Definition>> = {
   "l4-f01": { title: CaseNames["l4-f01"], kind: DefinitionKind.startingPoint, Content: Feature },
   "l4-r01": { title: CaseNames["l4-r01"], kind: DefinitionKind.startingPoint, Content: Repair },
   "l4-fr01": { title: CaseNames["l4-fr01"], kind: DefinitionKind.startingPoint, Content: FeatureRepair },
+  "l4-r02": { title: CaseNames["l4-r02"], kind: DefinitionKind.startingPoint, Content: BestScore },
+  "l4-r03": { title: CaseNames["l4-r03"], kind: DefinitionKind.startingPoint, Content: ArrowKeys },
+  "l4-r04": { title: CaseNames["l4-r04"], kind: DefinitionKind.startingPoint, Content: ReducedMotion },
+  "l4-r05": { title: CaseNames["l4-r05"], kind: DefinitionKind.startingPoint, Content: Silence },
   "no-setup": { title: SetupNames["no-setup"], kind: DefinitionKind.setup, Content: NoSetup },
   "plain-docs": { title: SetupNames["plain-docs"], kind: DefinitionKind.setup, Content: PlainDocs },
   "linked-agents": { title: SetupNames["linked-agents"], kind: DefinitionKind.setup, Content: LinkedAgents },

@@ -10,6 +10,10 @@ import ExistingApp from "./_definitions/existing-app.mdx"
 import FeatureCase from "./_definitions/l4-f01.mdx"
 import RepairCase from "./_definitions/l4-r01.mdx"
 import CombinedCase from "./_definitions/l4-fr01.mdx"
+import BestScoreTask from "./_definitions/l4-r02.mdx"
+import ArrowKeysTask from "./_definitions/l4-r03.mdx"
+import ReducedMotionTask from "./_definitions/l4-r04.mdx"
+import SilenceTask from "./_definitions/l4-r05.mdx"
 
 # Starting points
 
@@ -47,6 +51,28 @@ Plan files and the CLI number the starting points as layers 1 to 4, in the order
 
 <CombinedCase />
 
+### Scoped tasks \{#scoped-tasks}
+
+Scoped tasks are small repairs to the existing app that each need one scope of the spec, the way most work on a real product does. They test the promise behind [Full Core, scoped](setups.mdx#full-core-scoped): an agent that reads only the scope a task needs should spend fewer tokens than one that loads the whole spec up front, and get the same result.
+
+Each task's checks are the full spec's own checks for the clauses it repairs. Every other full-spec check runs as a regression check, so a fix that breaks something else fails.
+
+#### Best score \{#l4-r02}
+
+<BestScoreTask />
+
+#### Arrow keys \{#l4-r03}
+
+<ArrowKeysTask />
+
+#### Reduced motion \{#l4-r04}
+
+<ReducedMotionTask />
+
+#### Silence \{#l4-r05}
+
+<SilenceTask />
+
 ## Compared setups \{#compared-setups}
 
 Each starting point compares its own setups. The first setup in each row is the control:
@@ -57,6 +83,7 @@ Each starting point compares its own setups. The first setup in each row is the 
 | A short brief   | 2     | Plain docs, Linked AGENTS.md, Minimal, Essentials, Full Core, Spec in prompt               |
 | A full spec     | 3     | Plain docs, Linked AGENTS.md, Minimal, Essentials, Full Core, Full Core, scoped            |
 | An existing app | 4     | Plain docs, Linked AGENTS.md, Minimal, Essentials, Full Core, Full Core, scoped, Code only |
+| Scoped tasks    | 4     | Plain docs, Full Core, Full Core, scoped                                                   |
 
 The full plans in `src/evals/experiments/` run each setup three times, and each existing-app case counts as its own comparison. [Setups](setups.mdx) defines every setup.
 

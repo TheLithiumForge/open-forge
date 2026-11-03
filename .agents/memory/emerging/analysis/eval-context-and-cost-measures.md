@@ -8,7 +8,7 @@ open-forge:
 
 ## What should the evals measure to test Open Forge's promise about context?
 
-Status: requested by the maintainer on 2026-11-02 for [Task 58](../../working/cli-development/tasks/task58-demo-evals.md). The `usage` command, Claude's real output count and Codex's saved session log are built. Everything else here is not built yet.
+Status: requested by the maintainer on 2026-11-02 for [Task 58](../../working/cli-development/tasks/task58-demo-evals.md). Built: the `usage` command, Claude's real output count, Codex's saved session log and, on 2026-11-03, Full Core, scoped on Layers 3 and 4, `check --missing` and `run --setups`. Everything else here is not built yet.
 
 Open Forge promises that scoped context costs more up front and less later. A project whose documents are routed by scope lets an agent read only what a task needs. A full build of a well-specified product needs every document, so it shouldn't save tokens. Partial work, such as a bug fix or one new feature, should. The evals currently can't show either effect, because they measure only total tokens on full builds and on three existing-app cases.
 
@@ -67,16 +67,18 @@ Essentials is the cheapest Open Forge preset in every starting point so far. The
 
 The maintainer, 2026-11-02: scopes are as important to Open Forge as the framework itself, and everything Open Forge does is progressive disclosure. The current evals don't show that. They use Open Forge as a plain tool with an extra CLI and rules, with every document marked `LoadNow`, and that matches the baseline without beating it. Scoped Open Forge is the normal usage, so the evals and the Results page present it first. Today's setups are the baseline for unscoped use and stay as data points.
 
-An example scope layout for Neon Pairs, to refine during the audit:
+The Neon Pairs scope layout, in [`scopes.json`](../../../../src/evals/benchmarks/neon-pairs/scopes.json):
 
-| Scope | Covers |
-| --- | --- |
-| Gameplay | Rules, scoring, the deal and win conditions |
-| Visuals | Layout, card faces, colors and animation, the VFX |
-| Sound | Sound effects and their controls, the SFX |
-| Input and accessibility | Mouse, touch and keyboard input, focus and screen reader behavior |
-| Persistence and sharing | Saved progress, board codes, snapshots and replay |
-| Technology | Stack, build and delivery |
+| Folder | Scope | Documents |
+| --- | --- | --- |
+| `gameplay` | Gameplay: the board, turns, scoring, the clock, saved sizes and best scores | Rules |
+| `interface` | Controls and input, the UI scope: controls, pointer, touch, keyboard, focus and screen reader behavior | Controls, Input |
+| `visuals` | Visuals, the VFX: layout, card artwork, colors, motion and zoom | Visuals |
+| `sound` | Sound, the SFX: the silent game and feedback without audio | Sound |
+| `sharing` | Persistence and sharing: board codes, snapshots and replay formats | Reproducibility |
+| `technology` | Technology: language, packages, build, distribution and code structure | Technology, Architecture |
+
+The overview stays at the top of `docs/` and is the only document loaded up front. The acceptance examples stay beside it, on demand.
 
 Each scope is a routed folder with an entrypoint whose description says when to read it, the same shape a monorepo uses for front end and back end. Only a short overview loads up front. Starting points with a full spec, Layers 3 and 4, have room for this: a full spec that is scoped well lets an agent load only the scopes a task touches.
 
@@ -90,6 +92,12 @@ The scoped variant puts each document in a scope folder with its own entrypoint,
 
 Expected results: about the same or slightly more tokens for a full build, fewer documents read and fewer tokens for scoped work.
 
+Built on 2026-11-03 for Layer 3 as the `full-core-scoped` setup. Measured on fresh installs, Full Core puts 38,969 of its 41,668 spec bytes up front, about 9,700 tokens sent again with every request. The scoped setup puts 3,931 of 44,635 up front: the overview and the catalogues. `qualify` passes it with the real CLI, and the tests prove each moved document keeps its text apart from link targets. The same day it joined the three Layer 4 cases, whose changed documents are written to the scoped paths, and passed `qualify` there too.
+
+`open-forge index` gives a new entrypoint the placeholder description "Notes in ./docs/gameplay/_gameplay.md" on purpose, for its author to replace. The runner writes each scope's entrypoint with its real description first, as an author would.
+
+One Open Forge bug found while building it, for the CLI's backlog. In version 0.9.0-beta.18, `index` never refreshes an existing line in a catalogue outside `.agents/`, such as an included `docs/`. After a document or child entrypoint changes its description or tags, `index` reports every Entries section as current and keeps the old line. Inside `.agents/` the same change refreshes the line. `GeneratedNavigationRegionPlanner.ReadChildren` reads every existing line of a catalogue outside the source root as an authored link and skips generating that child's line. The maintainer decided on 2026-11-03 that `index` should rewrite every entry from the current description and tags. Until then, deleting a stale line and running `index` again writes the current one.
+
 ## Partial-work scenarios
 
 These scenarios sit inside the existing starting points, so they need a name of their own. The working name is scoped work: a task confined to one area of the product.
@@ -99,6 +107,21 @@ These scenarios sit inside the existing starting points, so they need a name of 
 - **Brownfield changes.** Keep the three existing-app cases and add changes confined to one scope, such as a new card back (visuals), a sound toggle (sound and controls), a keyboard focus repair (input) or a scoring rule change (rules).
 - **Checks.** Each scenario needs checks sharp enough to fail a wrong change, because today's existing-app checks pass every setup. Record changes outside the scenario's area as their own measure.
 - **Setups.** Plain docs, Full Core with everything up front, and Full Core, scoped.
+
+### Scoped tasks, built 2026-11-03
+
+The maintainer asked for smaller tasks that each need one or a few scopes while the rest stay on demand. Partial greenfield builds can't be graded: every browser check finds cards by the names the Input scope defines, and the deal, size and restart controls live in the Controls document. So the small tasks start from the reference game instead, as Layer 4 repairs:
+
+| Case | Scope | Seed | Change checks |
+| --- | --- | --- | --- |
+| `l4-r02` Best score | Gameplay | Any finished game replaces the best, and an unrecorded size shows 0 | R10.1 to R10.7 |
+| `l4-r03` Arrow keys | Controls and input | Arrow-key movement removed with its tests | I06.1 to I06.4, I06.9, I07.1, I08.2 |
+| `l4-r04` Reduced motion | Visuals | The reduced-motion style rules removed | V17.1, V17.2, V18.1 to V18.3 |
+| `l4-r05` Silence | Sound | A Web Audio tone on each match and the win | S01.1, S02.1 to S02.3 |
+
+Each change check is a clause check: it takes its result from the full-spec checker's assertion for one clause, so a task needs no browser worker of its own. Those clauses leave the regression set, and every other full-spec check still runs as regression. Guard clauses that pass at the start, such as normal motion in `l4-r04`, fail a fix that removes too much. The plans are `neon-pairs-l4-tasks-check.json` and `neon-pairs-l4-tasks-full.json`, with Sol against Plain docs, Full Core and Full Core, scoped.
+
+The Results page now keeps each setup's newest runs for a case and model, compared with their own batch's control. A later batch can then add Full Core, scoped beside its control without hiding the setups an earlier batch ran.
 
 ## Task-split runs
 
@@ -124,12 +147,27 @@ Usage measures are derived from saved evidence, so they are stored as versioned 
 
 ## Order
 
-1. Recheck the idea and short brief runs with the fixed checker, so the baseline is clean.
-2. Finish the document audit, then add Full Core, scoped.
-3. Add scoped work: greenfield parts and scoped brownfield changes, with sharper checks.
-4. Store the usage measures as versioned records and measure the context each setup gives.
-5. Add task-split runs.
-6. Try the prompt variants.
+Proposed on 2026-11-03 and approved by the maintainer the same day, with small tasks that each need one or a few scopes. Those became the scoped tasks, because partial builds can't be graded. No eval starts until the improvements are built and committed.
+
+Build first, without model usage:
+
+1. `check --missing`, so a recheck grades only runs without a valid check. A full Layer 2 recheck took 6.7 hours, about 20 minutes a run. Built on 2026-11-03.
+2. A `--setups` flag that narrows a plan's setups, so a scoped comparison runs three setups instead of six. Built on 2026-11-03. It keeps the plan's order and refuses to drop the control.
+3. [Scoped tasks](#scoped-tasks-built-2026-11-03), one per scope, graded by full-spec clauses. Built on 2026-11-03.
+4. Layer 4 with scopes: map each case's document changes to the scoped paths, and add Full Core, scoped to its setups. Built on 2026-11-03.
+5. Make `open-forge index` rebuild every entry from the current description and tags, outside `.agents/` too.
+
+Then grade, with the checker only:
+
+6. `check --missing` on Sol's Layer 2 and Layer 3 batches, with the second title fix.
+
+Then run with Sol, three runs per setup:
+
+7. Layer 3, full build: Plain docs, Full Core and Full Core, scoped. This checks that scoping costs nothing on a full build.
+8. The scoped tasks, with the same setups. Scoping should save tokens here.
+9. The three earlier Layer 4 cases with `--setups plain-docs,full-core-scoped`, beside the existing batches.
+
+Later: versioned usage records, task-split runs, prompt variants, and Claude runs when Claude usage allows.
 
 ## Open questions
 

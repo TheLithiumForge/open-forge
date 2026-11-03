@@ -1,0 +1,41 @@
+---
+title: Scenarios
+description: The eval scenarios approved on 2026-11-03, with the four context steps, Layer 4 first and Layer 3 after, and the question each one answers.
+---
+
+The evals run as scenarios. Each one answers one question and adds one mechanism, and it starts only after the one before it has been checked. Layer 4, the existing app, runs first because it takes the least time and gives the most meaningful results. Layer 3, the full spec, follows. Layers 2 and 1 keep their earlier runs as their baseline.
+
+## Context steps
+
+Each step adds one thing to the step before it, so each comparison has one cause.
+
+| Step | Setup | What the agent gets |
+| --- | --- | --- |
+| 1 | Code only | The project, its tests and the request |
+| 2 | Plain docs | The same, plus the spec documents with their links between them. This is the control. |
+| 3 | Full Core | Open Forge with the spec moved in unchanged and indexed, with every document loaded up front |
+| 4 | Full Core, scoped | Open Forge with the spec routed by scope, so a task loads only the parts it needs |
+
+Code only takes information away, so it's compared only with Plain docs. [Setups](setups.mdx) defines each setup.
+
+## Layer 4
+
+| Scenario | What runs | Steps | Way of working | Runs | Question |
+| --- | --- | --- | --- | --- | --- |
+| L4-1 | Four small repairs, each in one scope: best score, arrow keys, reduced motion and silence | 1 to 4 | One agent | 48 | What does each step change on small work, and what does scoping save? |
+| L4-2 | The same four repairs as a chain, each starting from the previous result | 2 to 4 | One agent | 27, reusing L4-1 for the first repair | Does scoping keep its saving as changes pile up? |
+| L4-3 | All four repairs in one request, worked one at a time with tests after each | 2 and 4 | One agent, and an orchestrator that hands each repair to a subagent | 12 | What does an orchestrator cost against one agent, and does scoping lower its subagents' cost? |
+
+Each chained repair in L4-2 has a twin in L4-1, the same repair from a clean start. The difference between them shows what the earlier changes did. [Starting points](starting-points.mdx#scoped-tasks) describes the four repairs.
+
+## Layer 3
+
+| Scenario | What runs | Steps | Way of working | Runs | Question |
+| --- | --- | --- | --- | --- | --- |
+| L3-1 | A full build from the full spec in one go | 2 to 4 | One agent | 9 | Does scoping cost nothing when a build needs every document? |
+| L3-2 | The same build in three milestones, a playable game, then visuals, then saving and sharing, graded after each | 2 to 4 | One agent | 27 | With milestones, does scoping spend fewer tokens for the same result? |
+| L3-3 | An orchestrated full build, after L4-3 shows orchestration works | 2 and 4 | One agent and an orchestrator | 12 | L4-3's question at full-build scale |
+
+## Measures
+
+Layer 4 scenarios run no model judges. Clause checks grade each repair, and `judge --missing` can still add judgments from the saved files later. The objective measures come from each run's saved logs: tokens in total and per task, tokens by file type and tool calls by kind. They're checked on the four L4-1 smoke runs before the full batch runs. [Measures](measures.mdx) defines the numbers the evals already report.

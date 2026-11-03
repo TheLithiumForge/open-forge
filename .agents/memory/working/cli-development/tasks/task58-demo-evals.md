@@ -177,11 +177,23 @@ The full spec is [Eval Context And Cost Measures](../../../emerging/analysis/eva
 1. Add an `analyze` stage that stores usage measures as versioned records, and have `run` perform it for new runs.
 2. Give `progress` and `usage` a JSON form, and fold `summary` into them.
 3. Replace `results add`, a group with one child, with a direct command.
-4. Share selection flags across stages, such as setup, model and case, and give `check` a `--missing` like `judge`.
+4. Share selection flags across stages, such as setup, model and case, and give `check` a `--missing` like `judge`. Done on 2026-11-03 for `check --missing` and `run --setups`.
 5. Name both judges in the full plans, so every run gets every grade. Claude judging fills in later through `judge --missing` when usage allows.
 6. Decide whether `check` should always rebuild, since a saved build can be stale.
 
 **Linked AGENTS.md, 2026-11-02.** The maintainer decided the control also gets a `CLAUDE.md` that imports `AGENTS.md`, as Open Forge setups have, so Claude starts from the same instructions as Codex. Batches started on or before 2026-11-02 wrote `AGENTS.md` only. Codex reads `AGENTS.md` either way, so Sol runs stay comparable. The Claude batches restart with the new setup when Claude usage allows.
+
+**2026-11-03.** All Sol batches finished: Layers 1 to 4, three runs per setup. Sol judged most runs and Claude part of them, and `judge --missing` fills the rest. The maintainer stopped further evals until the next plan is agreed and its improvements are committed, and may run Sol evals through a Sol agent. Built:
+
+- **Full Core, scoped** on Layers 3 and 4, with each spec document in a scope folder whose entrypoint says when to read it, as the maintainer chose. Only the overview loads up front, about 9% of the spec instead of 94%. The layout, the measures and an Open Forge `index` bug, stale lines in catalogues outside `.agents/`, are in [Eval Context And Cost Measures](../../../emerging/analysis/eval-context-and-cost-measures.md#scoped-open-forge-setups).
+- **A second title fix.** The Layer 3 recheck with the first fix graded every run. Layer 2 still errored on nine checks in 12 of 17 runs, because titles read `NEON PAIRS`, split the name across tags or never named the game. The checker now matches the name in any case and spacing and falls back to the largest visible heading.
+
+- **Two CLI audit items:** `check --missing` grades only runs without a check free of errors, and `run --setups` narrows a plan's setups while keeping its control.
+- **Scoped tasks:** four small Layer 4 repairs, one each in Gameplay, Controls and input, Visuals and Sound, graded by clause checks that reuse the full-spec checker. They replace the partial greenfield builds, which no browser check could grade. The spec's [Scoped tasks](../../../emerging/analysis/eval-context-and-cost-measures.md#scoped-tasks-built-2026-11-03) section has the details.
+- **Results page:** each setup's newest runs for a case and model count, so a later batch can add one setup without hiding the others.
+- **`index` fix:** a separate change on `fix/index-refresh-outside-entries`, cut from `develop`, so `index` rebuilds every entry outside `.agents/` too.
+
+The recheck of Sol's Layer 3 batch was stopped with about six runs left, at the maintainer's word. The proposed next plan is the [Order](../../../emerging/analysis/eval-context-and-cost-measures.md#order) in the spec.
 
 **Later:** testing Extensions, starting with the Helpful setup. [Task 90](task90-extensions-install-their-routes.md) covers Extensions that need routes a preset left out, and the [Plan-Ahead Skill](../../../emerging/ideas/plan-ahead-skill.md) idea covers Guidance that doesn't change how agents ask.
 

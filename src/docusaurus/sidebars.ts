@@ -80,7 +80,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Evals",
       link: { type: "doc", id: "evals/index" },
-      items: ["evals/starting-points", "evals/setups", "evals/measures", "evals/run", "evals/cli", "evals/results", "evals/history"],
+      items: ["evals/starting-points", "evals/setups", "evals/scenarios", "evals/measures", "evals/run", "evals/cli", "evals/results", "evals/history"],
     },
     {
       type: "category",

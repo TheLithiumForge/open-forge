@@ -1,0 +1,3 @@
+`l4-r03`, "Move between cards with the arrow keys", is a scoped task in the Controls and input scope. The starting code has lost arrow-key movement along with its tests, though Tab still reaches the board.
+
+Seven checks come from the full spec's movement rules: each arrow key, staying put at the edges, not activating a card and keeping one card in the tab order. The four arrow-key checks fail at the start. The other three make sure a fix doesn't open cards, wrap at the edges or add tab stops.

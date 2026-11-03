@@ -43,16 +43,19 @@ test("plans resolve role presets, explicit choices and local-config into concret
   assert.deepEqual(selected.judge, JudgePresets[PresetName.claude][0]);
 });
 
-test("every saved experiment selects the Claude role presets", async () => {
+test("every saved experiment names one provider's role presets, so the plan states what runs", async () => {
   const folder = join(evalsRoot, "experiments"), names = (await readdir(folder)).filter((name) => name.endsWith(".json"));
   assert.ok(names.length > 0);
+  const providers = [PresetName.claude, PresetName.codex] as const;
   for (const name of names) {
     const source: unknown = JSON.parse(await readFile(join(folder, name), "utf8"));
     assert.ok(typeof source === "object" && source !== null && "agents" in source && "judges" in source && "simulatedUser" in source);
-    assert.deepEqual([source.agents, source.judges, source.simulatedUser], [PresetName.claude, PresetName.claude, PresetName.claude]);
+    const provider = providers.find((preset) => preset === source.agents);
+    assert.ok(provider !== undefined, name);
+    assert.deepEqual([source.judges, source.simulatedUser], [provider, provider], name);
     const config = resolvePlan(source, FixtureConfig);
-    assert.deepEqual(config.agents, ImplementerPresets[PresetName.claude]);
-    assert.deepEqual(config.judges, JudgePresets[PresetName.claude]);
-    assert.deepEqual(config.simulatedUser, UserPresets[PresetName.claude]);
+    assert.deepEqual(config.agents, ImplementerPresets[provider]);
+    assert.deepEqual(config.judges, JudgePresets[provider]);
+    assert.deepEqual(config.simulatedUser, UserPresets[provider]);
   }
 });

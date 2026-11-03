@@ -1,0 +1,25 @@
+diff --git a/src/game/session/storage.ts b/src/game/session/storage.ts
+index 5841ade..9bae659 100644
+--- a/src/game/session/storage.ts
++++ b/src/game/session/storage.ts
+@@ -58,7 +58,5 @@ export function writePreferences(store: PreferenceStore | null, preferences: Pre
+ }
+ 
+ export function rememberBest(preferences: Preferences, size: number, moves: number): Preferences {
+-  const previous = preferences.bestMoves[String(size)];
+-  if (previous !== undefined && previous <= moves) return preferences;
+   return { ...preferences, bestMoves: { ...preferences.bestMoves, [size]: moves } };
+ }
+diff --git a/src/game/status/GameStatus.tsx b/src/game/status/GameStatus.tsx
+index db14b27..ab26aa0 100644
+--- a/src/game/status/GameStatus.tsx
++++ b/src/game/status/GameStatus.tsx
+@@ -27,7 +27,7 @@ export function GameStatus({ game, best, celebration }: GameStatusProps) {
+           <dt>{StatusLabel.time}</dt> <dd>{formatElapsed(game.elapsedMs)}</dd>
+         </div>
+         <div>
+-          <dt>{StatusLabel.best}</dt> <dd>{best ?? 'none'}</dd>
++          <dt>{StatusLabel.best}</dt> <dd>{best ?? 0}</dd>
+         </div>
+       </dl>
+       {isWon(game) && (

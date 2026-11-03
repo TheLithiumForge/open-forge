@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "checks": [
+    { "id": "R02-01", "method": "clause", "clause": "R10.1", "kind": "repair", "description": "R10: only completed games record a best score for their size.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-02", "method": "clause", "clause": "R10.2", "kind": "repair", "description": "R10: only fewer moves replace the best.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-03", "method": "clause", "clause": "R10.3", "kind": "repair", "description": "R10: the best stays after reload.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-04", "method": "clause", "clause": "R10.4", "kind": "repair", "description": "R10: equal or worse results keep the saved best.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-05", "method": "clause", "clause": "R10.5", "kind": "repair", "description": "R10: starting or restarting keeps best scores.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-06", "method": "clause", "clause": "R10.6", "kind": "repair", "description": "R10: the current size's best shows as Best: N during play and after completion.", "expected": { "starting": "fail", "solution": "pass" } },
+    { "id": "R02-07", "method": "clause", "clause": "R10.7", "kind": "repair", "description": "R10: a size without a record shows Best: none.", "expected": { "starting": "fail", "solution": "pass" } }
+  ],
+  "regressionExpectations": { "regression-best-score": "fail", "regression-l2-build": "fail", "regression-l3-t07-build": "fail", "regression-l3-d07-browser": "fail" }
+}

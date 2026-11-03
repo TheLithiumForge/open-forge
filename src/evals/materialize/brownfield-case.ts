@@ -8,6 +8,8 @@ export const ChangeType = { feature: "F", repair: "R", combined: "FR" } as const
 export type ChangeType = (typeof ChangeType)[keyof typeof ChangeType];
 export const BrownfieldFiles = { definition: "case.json", request: "request.md", delta: "spec-delta", seed: "seed.patch", solution: "solution.patch", alternative: "alt-solution.patch", checks: "checks", answers: "answers.json", validation: "validation.json" } as const;
 export const LayerFourCases = ["l4-f01", "l4-r01", "l4-fr01"] as const;
+/** Small repairs that each need one scope of the spec: Gameplay, Controls and input, Visuals and Sound. */
+export const ScopedTaskCases = ["l4-r02", "l4-r03", "l4-r04", "l4-r05"] as const;
 export const CodeOnlySetup = "code-only";
 export interface BrownfieldCase {
   readonly id: string; readonly changeType: ChangeType; readonly title: string; readonly root: string;

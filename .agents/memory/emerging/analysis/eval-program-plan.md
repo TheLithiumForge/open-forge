@@ -149,6 +149,10 @@ Before L4-2 and L4-3: optional v2 fields for parent, milestone, `workMode` and `
 
 Can wait: one generated source for record types, dropping legacy types, the suite and case rename, one setup registry, folding `summary` into `progress` and `usage`, removing the config files, and adding local batches to the results repository.
 
+Grading speed, raised by the maintainer on 2026-11-03: one project version is graded in one container with 2 CPU cores, and the checker runs its browser journeys one after another. Each journey opens a fresh browser session, so they are independent. Validations and rechecks can already run in parallel, one container each. Splitting one version's journeys across several containers would shorten each run's grading, keeping timing-sensitive journeys such as performance and clock checks apart. It changes how grading runs, so a checker validation must show identical results first. In a full batch, five check slots already fill about 10 of 12 cores, so it speeds single runs and validations more than whole batches.
+
+Direction from the maintainer the same day: "Each container should take as much resources are available. And it's internals should use all of the available ones." Containers have no fixed core cap and size to the machine, and the checker splits its journeys across the cores it gets. The maintainer will also run evals in a cloud container that opens a pull request with the results, so the harness scales to whatever machine runs it.
+
 ## Docs
 
 Gaps in `src/docusaurus/docs/evals`: `index.md` says every plan uses Claude and lists three cases, `measures.mdx` lacks the token classes and has a stale judge line, `_definitions/existing-app.mdx` says three cases, "setup ladder" already names the published rungs 0 to 5, and setup counts disagree between pages. `cells.ts` keys cells by case and setup, so a chained batch would hide standalone runs unless the chain joins the key.

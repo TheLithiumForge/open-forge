@@ -31,7 +31,10 @@ export function setupRank(id: string): number {
 }
 
 /** The cases of an existing app. Earlier starting points have one case each, named by the starting point. */
-export const CaseNames = { "l4-f01": "Feature", "l4-r01": "Repair", "l4-fr01": "Feature and repair" } as const satisfies Readonly<Record<string, string>>;
+export const CaseNames = {
+  "l4-f01": "Feature", "l4-r01": "Repair", "l4-fr01": "Feature and repair",
+  "l4-r02": "Best score", "l4-r03": "Arrow keys", "l4-r04": "Reduced motion", "l4-r05": "Silence",
+} as const satisfies Readonly<Record<string, string>>;
 export type CaseId = keyof typeof CaseNames;
 
 export function isCaseId(id: string): id is CaseId {

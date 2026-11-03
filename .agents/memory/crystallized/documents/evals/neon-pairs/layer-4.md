@@ -6,7 +6,7 @@ open-forge:
 # Layer Four
 Layer Four is the brownfield case that asks agents to change a council-built Neon Pairs game while keeping its earlier behavior working.
 
-Every attempt starts from the same audited solution or a registered defect copy of it. Code from a Layer 3 attempt never becomes the seed. For example, Hard mode needs a recorded format change, while a session repair starts with a symptom that doesn't reveal its cause.
+Every attempt starts from the same audited solution or a registered defect copy of it. The one exception is a chained milestone, approved on 2026-11-03: it starts from its own lineage's previous result with the next registered defect applied, and its first milestone still starts from the registered copy. The [Eval Program Plan](../../../../emerging/analysis/eval-program-plan.md#incremental-design) describes how. Code from a Layer 3 attempt never becomes the seed. For example, Hard mode needs a recorded format change, while a session repair starts with a symptom that doesn't reveal its cause.
 
 Status: the seed is the spec 2.2 reference, which needs 10 out of 10 from both a Claude Opus and a Codex Sol judge before this layer freezes. The three cases pass local starting, solution and alternative solution validation on it. Docker validation through the product is next.
 
@@ -14,6 +14,7 @@ Status: the seed is the spec 2.2 reference, which needs 10 out of 10 from both a
 
 - [Council seed](#council-seed)
 - [First cases](#first-cases)
+- [Scoped tasks](#scoped-tasks)
 - [Starting project](#starting-project)
 - [Worker contract](#worker-contract)
 - [Change cases](#change-cases)
@@ -58,6 +59,19 @@ The feature checks name a deal, play a mismatch, wait 800ms, export it, start Ne
 The repair checks cover top-level order variants as one result. Separate results cover nested selection order, invalid fields and progress, paused input and completed imports. CRLF drafts pass through the native textarea. The repair probes use published best-score text, card names and live-region text. They don't need the name control. FR01 uses ten feature results, nine repair results and one separate compatibility result for reordered named version 2 snapshots. The compatibility result is in the feature group under the worker contract. R01's own-export check is already covered by FR01's feature journeys.
 
 FR01's request joins F01's sentences and R01's sentences unchanged. R01 and FR01 can answer a request for a failing example with one copied snapshot. The bank describes the symptom without naming its cause.
+
+## Scoped tasks
+
+Scoped tasks are small repairs that each need one scope of the spec, added on 2026-11-03 to test scoped Open Forge setups. Each change check is a clause check: it takes its result from the full-spec checker's assertion for one clause, so a task needs no worker. Those clauses leave the regression set. A case graded only by clause checks needs at least three of them.
+
+| Case | Scope | Request | Checks |
+| --- | --- | --- | --- |
+| [R02](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r02/README.md) | Gameplay | The best score takes worse games and shows 0 without a record | 7 |
+| [R03](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r03/README.md) | Controls and input | Arrow keys no longer move between cards | 7 |
+| [R04](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r04/README.md) | Visuals | Cards and the win banner animate under reduced motion | 5 |
+| [R05](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-r05/README.md) | Sound | The game beeps on a match | 4 |
+
+Scenario L4-1 runs them on the four context steps with Plain docs as the control, and leaves judging for later. Its plans are `neon-pairs-l4-1-smoke.json` and `neon-pairs-l4-1-full.json`. [Eval Context And Cost Measures](../../../../emerging/analysis/eval-context-and-cost-measures.md#scoped-tasks-built-2026-11-03) explains why they replaced partial greenfield builds.
 
 ## Starting project
 
@@ -142,6 +156,8 @@ The guards report separate outcomes. A changed expectation without a published d
 ## Setups
 
 Use code only, plain docs, linked AGENTS.md and Open Forge. Open Forge has separate Minimal, Essentials and Full Core cells. Give each the identical case seed, request and public tests. Code only provides the source, public tests and request without product documents. Report it as a separate information ablation. The plain, linked and Open Forge forms get identical product facts and differ only in delivery. Don't include code only in an equal-information routing conclusion.
+
+The four context steps each add one thing to the step before: Code only, Plain docs with its linked specs, Full Core with every document up front, and Full Core, scoped. Plain docs stays the control. The published setup ladder keeps its own name for the six setups numbered 0 to 5.
 
 Run each registered case at most five times per cell, model and tool. The full eval runs three times per cell. The check eval runs once. Keep F, R and FR as separate case types, not setups. Pin the time limit before the batch. Start with 60 minutes per case in testing, then freeze the measured limit before scored attempts. Helpful and Extension testing wait.
 

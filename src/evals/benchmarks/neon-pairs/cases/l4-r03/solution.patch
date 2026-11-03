@@ -1,0 +1,251 @@
+diff --git a/art/face-sheet.tsx b/art/face-sheet.tsx
+index 887f4c5..bb84d82 100644
+--- a/art/face-sheet.tsx
++++ b/art/face-sheet.tsx
+@@ -24,6 +24,7 @@ createRoot(root).render(
+               activate={ignore}
+               focus={ignore}
+               clicked={ignore}
++              navigate={ignore}
+             />
+           </div>
+           <figcaption>
+diff --git a/src/game/board/Board.tsx b/src/game/board/Board.tsx
+index 48b16ac..6f74d1f 100644
+--- a/src/game/board/Board.tsx
++++ b/src/game/board/Board.tsx
+@@ -27,8 +27,8 @@ function cardClicked(card: HTMLElement): void {
+ 
+ export function Board({ game, ref, activate }: BoardProps) {
+   const { size, deck, matched, selection } = game;
+-  const { viewport, element, focused, focusRemembered, cardFocused } =
+-    useBoardFocus();
++  const { viewport, element, focused, focusRemembered, navigate, cardFocused } =
++    useBoardFocus(size);
+   useImperativeHandle(ref, () => ({ focusRemembered }), [focusRemembered]);
+   // A clock tick keeps both arrays, so the cards' props stay equal and no card renders again.
+   const faceUp = useMemo(() => faceUpCards({ matched, selection }), [matched, selection]);
+@@ -60,6 +60,7 @@ export function Board({ game, ref, activate }: BoardProps) {
+             activate={activateCard}
+             focus={cardFocused}
+             clicked={cardClicked}
++            navigate={navigate}
+           />
+         ))}
+       </div>
+diff --git a/src/game/board/Card.tsx b/src/game/board/Card.tsx
+index 675c971..74988c2 100644
+--- a/src/game/board/Card.tsx
++++ b/src/game/board/Card.tsx
+@@ -1,6 +1,7 @@
+ import { memo } from 'react';
+ import { Face } from './Face.tsx';
+ import { describeCard } from './card-state.ts';
++import type { KeyboardEvent } from 'react';
+ import './card.css';
+ 
+ interface CardProps {
+@@ -12,6 +13,7 @@ interface CardProps {
+   activate(index: number): void;
+   focus(index: number, card: HTMLElement): void;
+   clicked(card: HTMLElement): void;
++  navigate(event: KeyboardEvent<HTMLButtonElement>, index: number): void;
+ }
+ 
+ // Memoized, so a clock tick that changes no card renders none of them.
+@@ -24,6 +26,7 @@ export const Card = memo(function Card({
+   activate,
+   focus,
+   clicked,
++  navigate,
+ }: CardProps) {
+   const { state, label } = describeCard(index, size, face, matched);
+   // Chromium sends no click after a context menu, a long press or a touch scroll, so every click
+@@ -36,6 +39,7 @@ export const Card = memo(function Card({
+       aria-disabled={matched}
+       tabIndex={tabIndex}
+       onFocus={(event) => focus(index, event.currentTarget)}
++      onKeyDown={(event) => navigate(event, index)}
+       onClick={(event) => {
+         activate(index);
+         clicked(event.currentTarget);
+diff --git a/src/game/board/keyboard.test.ts b/src/game/board/keyboard.test.ts
+new file mode 100644
+index 0000000..97ad2d0
+--- /dev/null
++++ b/src/game/board/keyboard.test.ts
+@@ -0,0 +1,37 @@
++import assert from 'node:assert/strict';
++import { test } from 'vitest';
++import { BoardKey, navigationTarget } from './keyboard.ts';
++
++const PLAIN = { ctrlKey: false, altKey: false, shiftKey: false, metaKey: false };
++
++test('arrow navigation stops at row and column edges without wrapping', () => {
++  assert.equal(navigationTarget(0, 4, BoardKey.left, PLAIN), 0);
++  assert.equal(navigationTarget(3, 4, BoardKey.right, PLAIN), 3);
++  assert.equal(navigationTarget(2, 4, BoardKey.up, PLAIN), 2);
++  assert.equal(navigationTarget(14, 4, BoardKey.down, PLAIN), 14);
++  assert.equal(navigationTarget(5, 4, BoardKey.left, PLAIN), 4);
++  assert.equal(navigationTarget(5, 4, BoardKey.right, PLAIN), 6);
++  assert.equal(navigationTarget(5, 4, BoardKey.up, PLAIN), 1);
++  assert.equal(navigationTarget(5, 4, BoardKey.down, PLAIN), 9);
++  for (let row = 0; row < 4; row += 1)
++    assert.equal(
++      navigationTarget(row * 4, 4, BoardKey.left, PLAIN),
++      row * 4,
++      'I07 left movement stops at row edge',
++    );
++});
++
++test('only plain arrow keys move focus, leaving other keys and modifiers to the browser', () => {
++  const unlisted = [
++    [BoardKey.left, { ...PLAIN, altKey: true }],
++    [BoardKey.right, { ...PLAIN, shiftKey: true }],
++    [BoardKey.down, { ...PLAIN, metaKey: true }],
++    [BoardKey.up, { ...PLAIN, ctrlKey: true }],
++    ['End', { ...PLAIN, ctrlKey: true }],
++    ['Home', PLAIN],
++    ['End', PLAIN],
++    ['Tab', PLAIN],
++  ] as const;
++  for (const [key, modifiers] of unlisted)
++    assert.equal(navigationTarget(5, 4, key, modifiers), null, 'I06 unlisted key');
++});
+diff --git a/src/game/board/keyboard.ts b/src/game/board/keyboard.ts
+new file mode 100644
+index 0000000..9976006
+--- /dev/null
++++ b/src/game/board/keyboard.ts
+@@ -0,0 +1,37 @@
++export const BoardKey = {
++  left: 'ArrowLeft',
++  right: 'ArrowRight',
++  up: 'ArrowUp',
++  down: 'ArrowDown',
++} as const;
++
++interface KeyModifiers {
++  readonly ctrlKey: boolean;
++  readonly altKey: boolean;
++  readonly shiftKey: boolean;
++  readonly metaKey: boolean;
++}
++
++// I06 lists only the plain arrow keys. Every other key and modifier combination, such as
++// Alt+ArrowLeft for Back or Ctrl+End, stays with the browser.
++export function navigationTarget(
++  index: number,
++  size: number,
++  key: string,
++  modifiers: KeyModifiers,
++): number | null {
++  if (modifiers.ctrlKey || modifiers.altKey || modifiers.shiftKey || modifiers.metaKey) return null;
++  const rowStart = Math.floor(index / size) * size;
++  switch (key) {
++    case BoardKey.left:
++      return Math.max(rowStart, index - 1);
++    case BoardKey.right:
++      return Math.min(rowStart + size - 1, index + 1);
++    case BoardKey.up:
++      return Math.max(index % size, index - size);
++    case BoardKey.down:
++      return Math.min(size * (size - 1) + (index % size), index + size);
++    default:
++      return null;
++  }
++}
+diff --git a/src/game/board/use-board-focus.ts b/src/game/board/use-board-focus.ts
+index 10e8f6b..a554096 100644
+--- a/src/game/board/use-board-focus.ts
++++ b/src/game/board/use-board-focus.ts
+@@ -1,11 +1,13 @@
+ import { useCallback, useRef, useState } from 'react';
++import { navigationTarget } from './keyboard.ts';
+ import { useNearestScroll } from './nearest-scroll.ts';
++import type { KeyboardEvent } from 'react';
+ 
+ const KEYBOARD_FOCUS = ':focus-visible';
+ 
+-// Keeps the board's remembered tab stop and scrolls keyboard focus into view with nearest
+-// alignment.
+-export function useBoardFocus() {
++// Keeps the board's remembered tab stop, moves focus with the arrow keys and scrolls keyboard
++// focus into view with nearest alignment.
++export function useBoardFocus(size: number) {
+   const viewport = useRef<HTMLDivElement>(null);
+   const element = useRef<HTMLDivElement>(null);
+   const [focused, setFocused] = useState(0);
+@@ -16,6 +18,16 @@ export function useBoardFocus() {
+     card?.focus({ preventScroll: true });
+     if (card) scrollToNearest(card);
+   }, [focused, scrollToNearest]);
++  const navigate = useCallback(
++    (event: KeyboardEvent<HTMLButtonElement>, index: number): void => {
++      const target = navigationTarget(index, size, event.key, event);
++      if (target === null) return;
++      event.preventDefault();
++      const card = element.current?.querySelectorAll('button').item(target);
++      card?.focus({ preventScroll: true });
++    },
++    [size],
++  );
+   const cardFocused = useCallback(
+     (index: number, card: HTMLElement): void => {
+       setFocused(index);
+@@ -24,5 +36,5 @@ export function useBoardFocus() {
+     },
+     [scrollToNearest],
+   );
+-  return { viewport, element, focused, focusRemembered, cardFocused };
++  return { viewport, element, focused, focusRemembered, navigate, cardFocused };
+ }
+diff --git a/tests/keyboard.e2e.test.ts b/tests/keyboard.e2e.test.ts
+new file mode 100644
+index 0000000..55af2f7
+--- /dev/null
++++ b/tests/keyboard.e2e.test.ts
+@@ -0,0 +1,43 @@
++import { expect } from '@playwright/test';
++import { test } from './browser-test.ts';
++import { DealControl } from '../src/game/controls/control-labels.ts';
++import { loadTimedBoard, moves } from './game-fixture.ts';
++
++test('native Tab remembers board focus and matched cards stay focusable and inactive', async ({
++  page,
++}) => {
++  await loadTimedBoard(page);
++  const cards = page.locator('.card');
++  await cards.nth(5).focus();
++  await page.keyboard.press('Shift+Tab');
++  await expect(page.getByRole('button', { name: DealControl.restart, exact: true })).toBeFocused();
++  await page.keyboard.press('Tab');
++  await expect(cards.nth(5)).toBeFocused();
++  await page.keyboard.press('ArrowLeft');
++  await page.keyboard.press('Space');
++  await page.keyboard.press('ArrowRight');
++  await page.keyboard.press('Enter');
++  await expect(page.locator('.card.matched')).toHaveCount(2);
++  await expect(cards.nth(5)).toHaveAttribute('aria-disabled', 'true');
++  await expect(cards.nth(5)).toBeFocused();
++  await page.keyboard.press('Space');
++  expect(await moves(page)).toBe(1);
++  await page.keyboard.press('Tab');
++  expect(await page.locator('.card:focus').count()).toBe(0);
++});
++
++test('Alt+ArrowLeft and Ctrl+End stay with the browser and leave the board alone', async ({
++  page,
++}) => {
++  await loadTimedBoard(page);
++  const card = page.locator('.card').nth(5);
++  await card.focus();
++  const url = page.url();
++  for (const key of ['Alt+ArrowLeft', 'Control+End']) {
++    await page.keyboard.press(key);
++    await expect(card, `I06 ${key} keeps focus`).toBeFocused();
++    await expect(page.locator('.card.revealed'), `I06 ${key} reveals no card`).toHaveCount(0);
++  }
++  expect(await moves(page)).toBe(0);
++  expect(page.url()).toBe(url);
++});

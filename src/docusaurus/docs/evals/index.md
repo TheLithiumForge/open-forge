@@ -19,7 +19,7 @@ These are screening results. Every Open Forge CLI stays beta, and nothing here s
 
 ## Starting points
 
-A starting point is how much the agent is told before it starts: an idea, a short brief, a full spec or an existing app to change. The existing app has three cases, a feature, a repair and both together. [Starting points](starting-points.mdx) describes each one and the setups it compares.
+A starting point is how much the agent is told before it starts: an idea, a short brief, a full spec or an existing app to change. The existing app has three larger cases, a feature, a repair and both together, and four small repairs that each need one part of the spec. [Starting points](starting-points.mdx) describes each one and the setups it compares, and [Scenarios](scenarios.mdx) lists what runs next.
 
 ## Setups
 
@@ -44,7 +44,7 @@ A run is one agent building or changing the game once under one setup. Grading i
 
 Because grading only reads saved files, a fixed check or a new judge can grade old runs without running the agent again.
 
-Every saved plan uses Claude for now. Claude Opus implements and judges, and Claude Sonnet plays the simulated user. The tool also runs Codex, and `--implementers both --judges both` gives all four implementer and judge pairs. Each run is implemented once, and both judges read the same saved files, so the judges can be compared on identical work.
+Each saved plan names one provider for its implementers, judges and simulated user. Claude implementation runs are paused for now, so the scoped Layer 4 plans name Codex, with Sol 6.1 implementing and Luna playing the simulated user. Older plans name Claude, and role flags such as `--implementers codex` replace them. `--implementers both --judges both` gives all four implementer and judge pairs. Each run is implemented once, and both judges read the same saved files, so the judges can be compared on identical work.
 
 Failed runs and timeouts stay in results. An infrastructure failure gets one replacement, and both runs stay recorded. A run stopped by a usage limit or a rejected sign-in is redone when the batch resumes.
 

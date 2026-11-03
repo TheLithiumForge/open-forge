@@ -1,0 +1,26 @@
+diff --git a/src/game/board/card.css b/src/game/board/card.css
+index 9aa81f7..de2939b 100644
+--- a/src/game/board/card.css
++++ b/src/game/board/card.css
+@@ -46,3 +46,8 @@
+   height: 16%;
+   color: var(--green);
+ }
++@media (prefers-reduced-motion: reduce) {
++  .card {
++    transition: none;
++  }
++}
+diff --git a/src/game/status/status.css b/src/game/status/status.css
+index e7b5097..154fb22 100644
+--- a/src/game/status/status.css
++++ b/src/game/status/status.css
+@@ -35,3 +35,8 @@ dd {
+     opacity: 0.75;
+   }
+ }
++@media (prefers-reduced-motion: reduce) {
++  .celebrate {
++    animation: none;
++  }
++}

@@ -1,5 +1,5 @@
 The agent gets a working Neon Pairs game and a change request. The game is the reviewed reference built to the full spec, with its source, tests and README. Every setup except Code only also has the spec in `docs/`. Each run starts from a fresh Git repository with one commit, so the history can't reveal a planted bug.
 
-The request sounds like a player asking for a change, and the rules it touches are in the spec. An existing app has three cases: a feature, a repair and both together.
+The request sounds like a player asking for a change, and the rules it touches are in the spec. An existing app has three larger cases, a feature, a repair and both together, and four small repairs that each need one scope of the spec.
 
 Checks test the requested change, then run the full spec's checks again to catch regressions. Two guards check that the agent changed only the parts the request needs and that the grading files stayed unchanged.
