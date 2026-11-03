@@ -1,43 +1,23 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
-import { StatusLabel } from '../src/game/status/status-labels.ts';
 import { GRID_SIZES, boardCode } from '../src/game/deck.ts';
-import { EXAMPLE_DECK, EXAMPLE_CODE } from '../src/game/game.fixture.ts';
 import { loadFixedBoard } from './game-fixture.ts';
-import { specDeal, specPairs } from './deal-oracle.ts';
 
 const SEED = 1;
+const LARGEST = GRID_SIZES[GRID_SIZES.length - 1] ?? 0;
 
-test('the independent deal reproduces the published example deck', async () => {
-  expect(boardCode(4, SEED)).toBe(EXAMPLE_CODE);
-  expect(specDeal(4, SEED)).toEqual(EXAMPLE_DECK);
+// The unit tests finish every size. The browser only shows that the largest board starts and takes a reveal.
+test(`a ${LARGEST} by ${LARGEST} game starts with every card ready to reveal`, async ({ page }) => {
+  await loadFixedBoard(page);
+  await page.locator('summary').click();
+  await page.getByLabel(ReproductionControl.board, { exact: true }).fill(boardCode(LARGEST, SEED));
+  await page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }).click();
+  await page.locator('summary').click();
+  const cards = page.locator('.card');
+  await expect(cards).toHaveCount(LARGEST ** 2);
+  await expect(page.locator('.card .card-back')).toHaveCount(LARGEST ** 2);
+  await cards.first().focus();
+  await page.keyboard.press('Enter');
+  await expect(cards.first().locator('.card-back')).toHaveCount(0);
+  await expect(page.locator('.card .card-back')).toHaveCount(LARGEST ** 2 - 1);
 });
-
-for (const size of GRID_SIZES) {
-  test(`the delivered game completes every pair at size ${size}`, async ({ page }) => {
-    await loadFixedBoard(page);
-    const code = boardCode(size, SEED);
-    await page.locator('summary').click();
-    await page.getByLabel(ReproductionControl.board, { exact: true }).fill(code);
-    await page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }).click();
-    await page.locator('summary').click();
-    for (const pair of specPairs(size, SEED)) {
-      for (const index of pair) {
-        await page.locator('.card').nth(index).focus();
-        await page.keyboard.press('Enter');
-      }
-    }
-    await expect(page.locator('.card.matched')).toHaveCount(size ** 2);
-    expect(
-      Number(
-        await page
-          .locator('.stats > div')
-          .filter({ has: page.getByText(StatusLabel.moves, { exact: true }) })
-          .locator('dd')
-          .textContent(),
-      ),
-    ).toBe(size ** 2 / 2);
-    await expect(page.locator('.victory')).toHaveCount(1);
-  });
-}

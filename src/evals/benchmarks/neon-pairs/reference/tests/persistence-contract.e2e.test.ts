@@ -1,8 +1,8 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
-import { loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
+import { loadTimedBoard, exportedSnapshot, finishBoard, loadFixedBoard } from './game-fixture.ts';
+import { PREFERENCES_KEY } from '../src/game/session/storage.ts';
 
 test('better equal and worse completed scores persist after each reload', async ({
   page,
@@ -73,4 +73,45 @@ test('snapshot loads save only a valid size and every reload starts fresh', asyn
   await page.getByRole('button', { name: ReproductionControl.loadSnapshot, exact: true }).click();
   await page.reload();
   await expect(page.getByLabel(DealControl.size, { exact: true })).toHaveValue('6');
+});
+
+test('saved size and per-size completed bests survive reload and resets', async ({
+  page,
+  gameURL,
+}) => {
+  await loadFixedBoard(page, gameURL);
+  await finishBoard(page);
+  await page.getByRole('button', { name: DealControl.newGame, exact: true }).click();
+  expect(Number(await page.locator('.stats dd').nth(3).textContent())).toBe(8);
+  await page.getByRole('button', { name: DealControl.restart, exact: true }).click();
+  expect(Number(await page.locator('.stats dd').nth(3).textContent())).toBe(8);
+  await page.getByLabel(DealControl.size, { exact: true }).selectOption('6');
+  await page.reload();
+  await expect(page.locator('.card')).toHaveCount(36);
+  await page.getByLabel(DealControl.size, { exact: true }).selectOption('4');
+  expect(Number(await page.locator('.stats dd').nth(3).textContent())).toBe(8);
+});
+
+test('valid board loads save their size while invalid loads keep that preference', async ({
+  page,
+  gameURL,
+}) => {
+  await loadFixedBoard(page, gameURL);
+  await page.locator('summary').click();
+  const input = page.getByLabel(ReproductionControl.board, { exact: true });
+  await input.fill('np1-6-1');
+  await page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }).click();
+  await input.fill('invalid');
+  await page.getByRole('button', { name: ReproductionControl.loadBoard, exact: true }).click();
+  await page.reload();
+  await expect(page.locator('.card')).toHaveCount(36);
+});
+
+test('malformed stored preferences fall back to a playable default game', async ({
+  page,
+  gameURL,
+}) => {
+  await page.addInitScript((key) => localStorage.setItem(key, '{'), PREFERENCES_KEY);
+  await page.goto(gameURL);
+  await expect(page.locator('.card')).toHaveCount(16);
 });

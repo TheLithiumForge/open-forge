@@ -1,17 +1,12 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { boardCode } from '../src/game/deck.ts';
 import { SelectionKind } from '../src/game/selection.ts';
 import { SNAPSHOT_VERSION } from '../src/game/snapshot.ts';
 import { loadFixedBoard } from './game-fixture.ts';
 
-// Each layout gives a different card size. The 16x16 deck holds all 128 faces.
-const LAYOUTS = [
-  { width: 360, height: 800, size: 16 },
-  { width: 1280, height: 800, size: 16 },
-  { width: 1280, height: 800, size: 8 },
-] as const;
+// The mark scales with its card, so the smallest card is the strictest case. The 16x16 deck holds all 128 faces.
+const LAYOUTS = [{ width: 360, height: 800, size: 16 }] as const;
 
 for (const { width, height, size } of LAYOUTS)
   test(`check marks leave every matched face uncovered on ${size}x${size} at ${width}x${height}`, async ({

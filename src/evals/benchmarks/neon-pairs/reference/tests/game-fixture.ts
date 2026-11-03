@@ -1,5 +1,5 @@
+import { expect } from './browser-test.ts';
 import { fileURLToPath } from 'node:url';
-import { expect } from '@playwright/test';
 import { isJsonObject } from '../src/game/saved-format.ts';
 import { EXAMPLE_CODE, EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';

@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
 
 test('literal control labels, limits and invalid statuses match the public contract', async ({

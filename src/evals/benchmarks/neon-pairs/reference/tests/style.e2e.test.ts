@@ -1,6 +1,5 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
-import { loadFixedBoard } from './game-fixture.ts';
+import { expect, test } from './browser-test.ts';
+import { loadFixedBoard, exportedSnapshot } from './game-fixture.ts';
 
 const COLOR_VECTOR = {
   page: 'rgb(9, 11, 20)',
@@ -79,4 +78,43 @@ test('layout, typography, colors and card geometry match the product values', as
     width: '3px',
     offset: '2px',
   });
+});
+
+test('hover changes only card border color and matched marks stay legible', async ({ page }) => {
+  await loadFixedBoard(page);
+  await page.mouse.move(0, 0);
+  const card = page.locator('.card').nth(2);
+  const before = await card.evaluate((e) =>
+    Object.fromEntries(
+      [...getComputedStyle(e)].map((k) => [k, getComputedStyle(e).getPropertyValue(k)]),
+    ),
+  );
+  const progress = await exportedSnapshot(page);
+  await card.hover();
+  await expect(card).toHaveCSS('border-color', 'rgb(244, 246, 255)');
+  const after = await card.evaluate((e) =>
+    Object.fromEntries(
+      [...getComputedStyle(e)].map((k) => [k, getComputedStyle(e).getPropertyValue(k)]),
+    ),
+  );
+  const changed = Object.keys(before).filter((k) => before[k] !== after[k]);
+  expect(changed.length).toBeGreaterThan(0);
+  expect(
+    changed.filter(
+      (k) =>
+        !/^border-(?:(?:top|right|bottom|left|block(?:-start|-end)?|inline(?:-start|-end)?)-)?color$/.test(
+          k,
+        ),
+    ),
+  ).toEqual([]);
+  expect(await exportedSnapshot(page)).toEqual(progress);
+  await card.click();
+  await page.locator('.card').nth(6).click();
+  await expect(page.locator('.stats dd').nth(1)).toHaveText('1/8');
+  await page.mouse.move(0, 0);
+  await expect(card).toHaveCSS('border-color', 'rgb(139, 234, 125)');
+  await expect(card).toHaveCSS('opacity', '1');
+  const mark = card.locator('.matched-mark');
+  await expect(mark).toBeVisible();
+  await expect(mark.locator('path')).toHaveAttribute('d', 'm2 6 3 3 5-6');
 });

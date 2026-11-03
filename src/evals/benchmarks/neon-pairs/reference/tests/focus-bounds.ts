@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect } from './browser-test.ts';
 import type { Locator } from '@playwright/test';
 
 export async function expectFocusInside(card: Locator): Promise<void> {

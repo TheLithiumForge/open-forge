@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { loadFixedBoard } from './game-fixture.ts';
 import { boardGaps } from './focus-bounds.ts';
@@ -11,13 +10,15 @@ const LAST = SIZE ** 2 - 1;
 const EDGE_INSET_PX = 4;
 const WHEEL_PX = 240;
 const SUBPIXEL_PX = 0.25;
+// The two stated viewports, and the zoomed one at 640x400 where a card can be clipped.
 const VIEWS = [
   { width: 360, height: 800, scale: 1 },
-  { width: 1280, height: 720, scale: 1 },
   { width: 1280, height: 800, scale: 1 },
   { width: 640, height: 400, scale: 2 },
 ] as const;
-const TOUCH_VIEWS = VIEWS.filter((view) => view.height !== 720);
+const TOUCH_VIEWS = VIEWS;
+// A busy machine can show one unchanged frame while a scroll still runs, so the wheel waits for several.
+const SETTLED_FRAMES = 10;
 
 // After the press completes, the focused card sits fully inside the board and the window, with
 // nearest alignment leaving just the card's scroll margin at the edge it came in by.
@@ -83,18 +84,19 @@ async function wheelBoard(page: Page): Promise<void> {
   await page.mouse.wheel(0, WHEEL_PX);
   await expect.poll(() => viewport.evaluate((element) => element.scrollTop)).not.toBe(before);
   await viewport.evaluate(
-    (element) =>
+    (element, frames) =>
       new Promise<void>((settled) => {
         let last = element.scrollTop;
+        let stable = 0;
         const check = () => {
-          if (element.scrollTop === last) settled();
-          else {
-            last = element.scrollTop;
-            requestAnimationFrame(check);
-          }
+          stable = element.scrollTop === last ? stable + 1 : 0;
+          last = element.scrollTop;
+          if (stable >= frames) settled();
+          else requestAnimationFrame(check);
         };
         requestAnimationFrame(check);
       }),
+    SETTLED_FRAMES,
   );
 }
 

@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { finishBoard, loadFixedBoard } from './game-fixture.ts';
 
 test('card transitions use 120ms and a completed game has one 600ms pulse', async ({ page }) => {

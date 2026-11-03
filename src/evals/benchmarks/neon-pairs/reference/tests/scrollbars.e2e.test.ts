@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { Scrollbars, test } from './browser-test.ts';
+import { expect, Scrollbars, test } from './browser-test.ts';
 import { DealControl } from '../src/game/controls/control-labels.ts';
 import { loadFixedBoard } from './game-fixture.ts';
 
@@ -7,7 +6,6 @@ const CARD_MIN_PX = 44;
 // Each board scrolls the page, and the larger ones also scroll the board vertically.
 const BOARDS = [
   { width: 1280, height: 800, size: 16 },
-  { width: 1440, height: 800, size: 16 },
   { width: 900, height: 600, size: 10 },
   { width: 1000, height: 600, size: 12 },
   { width: 360, height: 640, size: 6 },

@@ -23,6 +23,7 @@ test('first reveal starts play without a move and ignores invalid activation', (
   for (const index of [2, -1, 16, 0.5, NaN, Infinity])
     assert.equal(activateCard(first, index), first);
   assert.equal(first.moves, 0);
+  assert.equal(activateCard(first, 6).moves, 1, 'R05 a different second card costs one move');
   assert.equal(start.started, false);
 });
 

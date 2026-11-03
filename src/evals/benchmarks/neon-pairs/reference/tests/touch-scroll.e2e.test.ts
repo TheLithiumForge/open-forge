@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { DealControl } from '../src/game/controls/control-labels.ts';
 import { loadFixedBoard, PHONE } from './game-fixture.ts';
 

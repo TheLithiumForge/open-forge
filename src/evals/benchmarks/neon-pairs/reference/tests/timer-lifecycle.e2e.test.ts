@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { SESSION_URL, loadTimedBoard, exportedSnapshot } from './game-fixture.ts';
 
 test('unmount clears the active timer and visibility listener', async ({ page }) => {

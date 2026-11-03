@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { StatusLabel } from '../src/game/status/status-labels.ts';
 import { loadTimedBoard, finishBoard } from './game-fixture.ts';

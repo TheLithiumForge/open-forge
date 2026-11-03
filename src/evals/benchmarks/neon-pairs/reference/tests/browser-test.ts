@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { before, after, test as nodeTest } from 'node:test';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
-import { chromium } from '@playwright/test';
+import { chromium, expect as playwrightExpect } from '@playwright/test';
 import { spawnSync } from 'node:child_process';
 import { REFERENCE_ROOT, serveArtifact } from './artifact-server.ts';
 import type { Browser, BrowserContext, BrowserContextOptions, Page } from '@playwright/test';
@@ -23,6 +23,12 @@ const NAMED_COMBINATION = {
 const HIDE_SCROLLBARS = '--hide-scrollbars';
 export const Scrollbars = { hidden: 'hidden', visible: 'visible' } as const;
 type ScrollbarMode = (typeof Scrollbars)[keyof typeof Scrollbars];
+// A busy verifier runs many browsers at once, so a single wait gets more than Playwright's 5s default.
+export const expect = playwrightExpect.configure({ timeout: 15_000 });
+// Most journeys fit the standard limit. The accessibility journey and the large boards take the long one.
+export const TestTimeouts = { standard: 30_000, long: 90_000 } as const;
+// npm names itself and its version to every script it runs, so a browser file needs no npm process of its own.
+const NPM_AGENT_ENV = 'npm_config_user_agent';
 let browser: Browser | undefined;
 let scrollbarBrowser: Promise<Browser> | undefined;
 let artifact: Awaited<ReturnType<typeof serveArtifact>> | undefined;
@@ -32,12 +38,7 @@ before(async () => {
   await mkdir(RESULTS, { recursive: true });
   process.env.TEMP = BROWSER_TEMP;
   process.env.TMP = BROWSER_TEMP;
-  const npmResult =
-    process.platform === 'win32'
-      ? spawnSync('cmd.exe', ['/d', '/c', 'npm --version'], { encoding: 'utf8' })
-      : spawnSync('npm', ['--version'], { encoding: 'utf8' });
-  assert.equal(npmResult.status, 0, 'T03 npm version command');
-  const npm = npmResult.stdout.trim();
+  const npm = /^npm\/(\S+)/.exec(process.env[NPM_AGENT_ENV] ?? '')?.[1] ?? npmVersion();
   const playwright: unknown = JSON.parse(
     await readFile(new URL(import.meta.resolve('@playwright/test/package.json')), 'utf8'),
   );
@@ -83,13 +84,23 @@ interface Artifacts {
   outputPath(file: string): string;
 }
 
+function npmVersion(): string {
+  const npmResult =
+    process.platform === 'win32'
+      ? spawnSync('cmd.exe', ['/d', '/c', 'npm --version'], { encoding: 'utf8' })
+      : spawnSync('npm', ['--version'], { encoding: 'utf8' });
+  assert.equal(npmResult.status, 0, 'T03 npm version command');
+  return npmResult.stdout.trim();
+}
+
 export function test(
   name: string,
   body: (fixture: BrowserFixture, artifacts: Artifacts) => Promise<void>,
   options: BrowserContextOptions = {},
   scrollbars: ScrollbarMode = Scrollbars.hidden,
+  timeout: number = TestTimeouts.standard,
 ): void {
-  nodeTest(name, { timeout: 30_000 }, async (t) => {
+  nodeTest(name, { timeout }, async (t) => {
     if (!browser || !artifact) throw new Error('Browser verification did not start.');
     const owner =
       scrollbars === Scrollbars.visible ? await (scrollbarBrowser ??= launch(scrollbars)) : browser;

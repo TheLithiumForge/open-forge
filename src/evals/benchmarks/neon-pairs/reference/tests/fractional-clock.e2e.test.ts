@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { MISMATCH_MS } from '../src/game/game.ts';
 import { SelectionKind } from '../src/game/selection.ts';
 import { isJsonObject } from '../src/game/saved-format.ts';
@@ -63,4 +62,26 @@ test('a mismatch starts its interval at its own activation between milliseconds'
     remainingMs: 1,
   });
   expectWholeNear(nearClose.elapsedMs, NEAR_CLOSE_MS - FIRST_MS, 'C08 elapsed time is within 1ms');
+});
+
+test('an overdue mismatch resolves before the next click even when its timer is delayed', async ({
+  page,
+}) => {
+  const setNow = await controlClock(page);
+  await loadFixedBoard(page);
+  await setNow(FIRST_MS);
+  await page.locator('.card').nth(0).click();
+  await setNow(SECOND_MS);
+  await page.locator('.card').nth(1).click();
+  // The clock passes the interval and the click lands in the same task, so no timer can close the
+  // mismatch first, however busy the machine is.
+  await page.evaluate(
+    ([event, overdue]) => {
+      document.dispatchEvent(new CustomEvent(event, { detail: overdue }));
+      document.querySelectorAll<HTMLButtonElement>('.card').item(2).click();
+    },
+    [CLOCK_EVENT, SECOND_MS + MISMATCH_MS + 1] as const,
+  );
+  await expect(page.locator('.card.revealed')).toHaveCount(1);
+  await expect(page.locator('.card').nth(2)).toHaveClass(/revealed/);
 });

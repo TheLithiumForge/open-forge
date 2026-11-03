@@ -1,6 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { loadTimedBoard } from './game-fixture.ts';

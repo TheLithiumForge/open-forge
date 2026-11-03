@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { GAME_URL, PHONE, exportedSnapshot, loadFixedBoard, moves } from './game-fixture.ts';
 

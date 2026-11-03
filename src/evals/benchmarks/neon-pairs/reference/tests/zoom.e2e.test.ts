@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, Scrollbars, test, TestTimeouts } from './browser-test.ts';
 import { DealControl, ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { loadFixedBoard, finishBoard, exportedSnapshot } from './game-fixture.ts';
 import { expectFocusInside } from './focus-bounds.ts';
@@ -8,7 +7,7 @@ import { expectReadableText } from './readability.ts';
 
 test(
   'the equivalent zoom layout keeps both board sizes playable',
-  async ({ page }, artifacts) => {
+  async ({ page }) => {
     await loadFixedBoard(page);
     await expect
       .poll(() => page.evaluate(() => ({ width: innerWidth, ratio: devicePixelRatio })))
@@ -27,7 +26,6 @@ test(
     });
     expect(readable).toBe(true);
     await expectReadableText(page);
-    await page.screenshot({ path: artifacts.outputPath('zoom-win.png'), fullPage: true });
     const completed = await exportedSnapshot(page);
     await page.locator('summary').click();
     await page
@@ -72,7 +70,8 @@ test(
       width: innerWidth,
     }));
     expect(layout.page).toBeLessThanOrEqual(layout.width);
-    await page.screenshot({ path: artifacts.outputPath('zoom-large.png'), fullPage: true });
   },
   { viewport: { width: 640, height: 400 }, deviceScaleFactor: 2 },
+  Scrollbars.hidden,
+  TestTimeouts.long,
 );

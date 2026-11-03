@@ -1,6 +1,5 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, Scrollbars, test, TestTimeouts } from './browser-test.ts';
 import { EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { accessibilityTree, accessibilityNode, moveKeyboardTo } from './accessibility-tree.ts';
 import { accessibilityFixture, playwrightVersion } from './accessibility-fixture.ts';
@@ -161,4 +160,4 @@ test('a complete keyboard journey exposes names, states and each result in Chrom
   );
   await writeFile(artifacts.outputPath('accessibility-journey.json'), record);
   await session.detach();
-});
+}, {}, Scrollbars.hidden, TestTimeouts.long);

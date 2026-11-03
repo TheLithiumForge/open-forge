@@ -9,6 +9,7 @@ import {
   SEED_MAX,
 } from './deck.ts';
 import { EXAMPLE_CODE, EXAMPLE_DECK, RANDOM_STATES, SPEC_VECTOR } from './game.fixture.ts';
+import { specDeal } from '../../tests/deal-oracle.ts';
 
 test('generation matches the independent specification vectors', () => {
   let state = 1;
@@ -44,6 +45,18 @@ for (const size of GRID_SIZES) {
     assert.deepEqual(generateBoard(board.boardCode), board);
     assert.ok(Object.isFrozen(board));
     assert.ok(Object.isFrozen(board.deck));
+  });
+}
+
+test('the independent deal reproduces the published example deck', () => {
+  assert.equal(boardCode(4, 1), EXAMPLE_CODE);
+  assert.deepEqual(specDeal(4, 1), EXAMPLE_DECK);
+});
+
+// An independent reading of the deal in exact arithmetic checks every size, so a deal bug above 4x4 can't hide.
+for (const size of GRID_SIZES) {
+  test(`generation matches the independent deal at size ${size}`, () => {
+    assert.deepEqual(generateBoard(boardCode(size, 1)).deck, specDeal(size, 1));
   });
 }
 

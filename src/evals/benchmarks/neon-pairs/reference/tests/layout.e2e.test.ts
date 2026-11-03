@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, Scrollbars, test, TestTimeouts } from './browser-test.ts';
 import { DealControl } from '../src/game/controls/control-labels.ts';
 import { loadFixedBoard, PHONE } from './game-fixture.ts';
 import { expectFocusInside } from './focus-bounds.ts';
@@ -33,7 +32,7 @@ for (const viewport of [PHONE, { width: 1280, height: 800 }, { width: 1280, heig
     await moveKeyboardTo(page, 16 ** 2 - 1, 16);
     await expect(page.locator('.card').last()).toBeFocused();
     await expectFocusInside(page.locator('.card').last());
-  });
+  }, {}, Scrollbars.hidden, TestTimeouts.long);
 }
 
 test('the default board fits a narrow phone and controls keep their target sizes', async ({
@@ -54,4 +53,23 @@ test('the default board fits a narrow phone and controls keep their target sizes
     expect(box?.height).toBeGreaterThanOrEqual(44);
     expect(box?.width).toBeGreaterThanOrEqual(44);
   }
+});
+
+const SIZE = 16;
+// Reaching row 9, column 9 scrolls the board and the page with nearest alignment, so only the
+// card's scroll margin keeps its outline in view.
+const INTERIOR = 8 * SIZE + 8;
+
+test('focus clearance survives nearest scroll to an interior card', async ({ page }) => {
+  await page.setViewportSize(PHONE);
+  await loadFixedBoard(page);
+  await page.getByLabel(DealControl.size, { exact: true }).selectOption(String(SIZE));
+  await page.getByRole('button', { name: DealControl.restart, exact: true }).focus();
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.card').first()).toHaveCSS('outline-width', '3px');
+  await expectFocusInside(page.locator('.card').first());
+  await moveKeyboardTo(page, INTERIOR, SIZE);
+  const interior = page.locator('.card').nth(INTERIOR);
+  await expect(interior).toBeFocused();
+  await expectFocusInside(interior);
 });

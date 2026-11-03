@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { EXAMPLE_CODE, EXAMPLE_PAIRS } from '../src/game/game.fixture.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { DEFAULT_SIZE, PREFERENCES_KEY, PREFERENCES_VERSION } from '../src/game/session/storage.ts';
@@ -34,10 +33,8 @@ function savedBest(page: Page) {
   return page.evaluate((key) => localStorage.getItem(key), PREFERENCES_KEY);
 }
 
-for (const [saved, imported] of [
-  [PERFECT, PERFECT + 2],
-  [PERFECT + 4, PERFECT],
-] as const)
+// A worse completed import is the case only a browser can show: the saved best and its label stay as they were.
+for (const [saved, imported] of [[PERFECT, PERFECT + 2]] as const)
   test(`a completed import in ${imported} moves leaves a saved best of ${saved} alone`, async ({
     page,
     gameURL,

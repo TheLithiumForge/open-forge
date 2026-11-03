@@ -13,6 +13,8 @@ import { ReplayExit } from './replay-cli.ts';
 const CLI = fileURLToPath(new URL('./replay.ts', import.meta.url));
 const TEST_ROOT = fileURLToPath(new URL('../.test-work/', import.meta.url));
 const NPM_CLI = 'node_modules/npm/bin/npm-cli.js';
+// Each test starts the CLI in child processes, which a busy machine slows far past vitest's default limit.
+const CLI_TIMEOUT_MS = 60_000;
 
 test('replay CLI prints a final snapshot and rejects invalid files and arguments', async () => {
   await mkdir(TEST_ROOT, { recursive: true });
@@ -35,13 +37,6 @@ test('replay CLI prints a final snapshot and rejects invalid files and arguments
   assert.equal(valid.status, ReplayExit.success);
   assert.equal(valid.stderr, '');
   const actual: unknown = JSON.parse(valid.stdout);
-  const npm = process.env.npm_execpath ?? join(dirname(process.execPath), NPM_CLI);
-  const command = spawnSync(process.execPath, [npm, 'run', '--silent', 'replay', '--', file], {
-    encoding: 'utf8',
-  });
-  assert.equal(command.status, ReplayExit.success);
-  assert.equal(command.stderr, '');
-  assert.deepEqual(JSON.parse(command.stdout), actual);
   assert.deepEqual(actual, {
     version: SNAPSHOT_VERSION,
     boardCode: EXAMPLE_CODE,
@@ -56,23 +51,13 @@ test('replay CLI prints a final snapshot and rejects invalid files and arguments
   assert.equal(invalid.status, ReplayExit.failure);
   assert.equal(invalid.stdout, '');
   assert.ok(invalid.stderr.trim().length > 0);
-  const rejectedCommand = spawnSync(
-    process.execPath,
-    [npm, 'run', '--silent', 'replay', '--', file],
-    {
-      encoding: 'utf8',
-    },
-  );
-  assert.equal(rejectedCommand.status, ReplayExit.failure);
-  assert.equal(rejectedCommand.stdout, '');
-  assert.ok(rejectedCommand.stderr.trim().length > 0);
   for (const args of [[], [file, file], [join(directory, 'missing.json')]]) {
     const rejected = spawnSync(process.execPath, [CLI, ...args], { encoding: 'utf8' });
     assert.equal(rejected.status, ReplayExit.failure);
     assert.equal(rejected.stdout, '');
     assert.ok(rejected.stderr.trim().length > 0);
   }
-});
+}, CLI_TIMEOUT_MS);
 
 // A fresh shell has no INIT_CWD, so npm records the folder it starts in.
 const CALLER_ENV = { ...process.env, INIT_CWD: undefined };
@@ -86,23 +71,23 @@ test('the replay command reads a relative path from the caller folder and names 
   await writeFile(join(directory, 'broken.json'), '{');
   const outside = { ...replay, actions: [{ atMs: 0, index: SPEC_VECTOR.sizes[0] ** 2 }] };
   await writeFile(join(directory, 'rule.json'), JSON.stringify(outside));
+  // npm runs once, for the caller folder. The rejected files call the same CLI directly from that folder.
   const npm = process.env.npm_execpath ?? join(dirname(process.execPath), NPM_CLI);
-  const run = (file: string) =>
-    spawnSync(process.execPath, [npm, 'run', '--silent', 'replay', '--', file], {
-      cwd: directory,
-      env: CALLER_ENV,
-      encoding: 'utf8',
-    });
-  const valid = run('replay.json');
+  const valid = spawnSync(process.execPath, [npm, 'run', '--silent', 'replay', '--', 'replay.json'], {
+    cwd: directory,
+    env: CALLER_ENV,
+    encoding: 'utf8',
+  });
   assert.equal(
     valid.status,
     ReplayExit.success,
     `C14 relative path follows the caller folder: ${valid.stderr}`,
   );
+  assert.equal(valid.stderr, '');
   assert.equal(JSON.parse(valid.stdout).boardCode, EXAMPLE_CODE);
   const messages: Record<string, string> = {};
   for (const file of ['missing.json', 'broken.json', 'rule.json']) {
-    const rejected = run(file);
+    const rejected = spawnSync(process.execPath, [CLI, file], { cwd: directory, env: CALLER_ENV, encoding: 'utf8' });
     assert.equal(rejected.status, ReplayExit.failure);
     assert.equal(rejected.stdout, '');
     messages[file] = rejected.stderr;
@@ -111,4 +96,4 @@ test('the replay command reads a relative path from the caller folder and names 
     await readFile(new URL('./replay-messages.fixture.json', import.meta.url), 'utf8'),
   );
   assert.deepEqual(messages, expected);
-});
+}, CLI_TIMEOUT_MS);

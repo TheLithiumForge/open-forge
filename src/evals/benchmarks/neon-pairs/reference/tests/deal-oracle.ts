@@ -23,11 +23,3 @@ export function specDeal(size: number, seed: number): number[] {
   }
   return deck;
 }
-
-export function specPairs(size: number, seed: number): number[][] {
-  const pairs = new Map<number, number[]>();
-  specDeal(size, seed).forEach((face, index) =>
-    pairs.set(face, [...(pairs.get(face) ?? []), index]),
-  );
-  return [...pairs.values()];
-}

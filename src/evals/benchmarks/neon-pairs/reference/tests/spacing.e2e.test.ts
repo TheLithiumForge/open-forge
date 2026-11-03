@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { test } from './browser-test.ts';
+import { expect, test } from './browser-test.ts';
 import { EXAMPLE_CODE } from '../src/game/game.fixture.ts';
 import { ReproductionControl } from '../src/game/controls/control-labels.ts';
 import { SelectionKind } from '../src/game/selection.ts';
