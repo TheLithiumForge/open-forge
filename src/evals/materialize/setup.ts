@@ -124,7 +124,7 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   for (const file of documentFiles.map(placedDocument)) await writeNew(target, file.path, file.bytes);
   if (layout !== undefined) {
     validateLinks(documentFiles.map((file) => ({ path: scopedPath(layout, file.path), bytes: relink(layout, file.path, file.bytes) })));
-    // Open Forge would name a missing scope entrypoint after its path, so each scope's own description goes in first.
+    // Index gives a new entrypoint a placeholder description for its author to replace, so each scope's real one goes in first.
     for (const scope of layout.scopes) await writeNew(target, `${SetupFiles.docs}/${scopeEntrypoint(scope)}`, entrypointText(scope));
   }
   const readme = startingReadme(options.projectFiles, kind === SetupKind.code ? null : AcceptanceLine)

@@ -79,6 +79,6 @@ open-forge route include ./docs --tag LoadNow
 open-forge index ./docs/_docs.md
 ```
 
-Full Core, scoped moves the documents into their scope folders and writes each scope's entrypoint before these commands run, because `index` would otherwise name a new entrypoint after its folder path. Only the overview keeps its `LoadNow` tag. The scope layout is `src/evals/benchmarks/neon-pairs/scopes.json`.
+Full Core, scoped moves the documents into their scope folders and writes each scope's entrypoint with its description before these commands run. `index` gives a new entrypoint a placeholder description for its author to replace, so the runner writes the real one first, as an author would. Only the overview keeps its `LoadNow` tag. The scope layout is `src/evals/benchmarks/neon-pairs/scopes.json`.
 
 Each command runs with `--dry-run` first, and the setup stops if any command doesn't complete. Before the scored runs, the [`qualify`](cli.md#qualify) command installs fresh setups and checks their entry files, the Open Forge lock file, the planned files and any unwanted files.

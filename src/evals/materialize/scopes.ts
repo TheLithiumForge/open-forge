@@ -55,7 +55,7 @@ export function scopeEntrypoint(scope: SpecScope): string {
   return `${scope.slug}/_${scope.slug}.md`;
 }
 
-/** The scope's entrypoint before Open Forge indexes it. Open Forge fills the Entries and keeps the description and tags. */
+/** The scope's entrypoint as its author writes it before indexing. Open Forge fills the Entries and keeps the description and tags. */
 export function entrypointText(scope: SpecScope): Buffer {
   return addMetadata(Buffer.from(`# ${scope.title}\n\n${scope.description}.\n\n## Axioms\n\n${InheritedAxioms}\n\n## Entries\n`), { description: scope.description, tags: scope.tags });
 }
