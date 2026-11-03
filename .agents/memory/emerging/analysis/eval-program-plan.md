@@ -8,7 +8,7 @@ open-forge:
 
 ## How do the next evals get from the concept to results without going in circles?
 
-Status: drafted on 2026-11-03 by a planning pass over the [concept](eval-program-concept.md), the harness, the saved Sol records and the docs. Waiting for the maintainer's approval. Nothing here runs before that.
+Status: drafted on 2026-11-03 by a planning pass over the [concept](eval-program-concept.md), the harness, the saved Sol records and the docs. The maintainer approved the scenarios, the dropped items and all five decisions the same day. The objective measures moved before the full Layer 4 batch, so the smoke runs prove the data is there. Agent runs wait for Phase 0 to be committed.
 
 The base can carry the plan. The circles came from changing several things inside one batch. So the first Layer 4 batch needs no new harness code, and each later phase adds one mechanism, proven by a check without models and a one-run smoke test before any three-run batch. Everything runs on Codex Sol at high effort.
 
@@ -162,18 +162,18 @@ Needed: a Scenarios page, context steps and ways of working in `setups.mdx`, mil
 | 0 Base | The before-the-first-run list | `npm test`, typecheck, case validations, `qualify` on the tasks plan, `smoke` | 0 |
 | 1 Spec | Approval, the `layer-4.md` amendment, registered lines, L4-1 docs | Maintainer review | 0 |
 | 2 L4-1 smoke | l4-r02 on four steps, one run each | Graded without grader errors, a rollout saved per run, Codex first edit present | 4 runs, about 6M |
-| 3 L4-1 | Tasks plan, three runs | All runs checked, `usage` reviewed with the maintainer | 48 runs, about 75M |
-| 4 Composition | `analyze` on L4-1 | Class totals match each run's input, three runs checked by hand | 0 |
+| 3 Objective measures | `analyze` on the smoke runs: tokens per run and task, by file type and class, and tool calls by kind | Class totals match each run's input, the smoke runs checked by hand, so missing data shows up before the full batch | 0 |
+| 4 L4-1 | Tasks plan, three runs, analyzed as they finish | All runs checked and analyzed, results reviewed with the maintainer | 48 runs, about 75M |
 | 5 L4-2 | Chained starts, parent fields, site key | Without models, one child start per step graded, failing only the r03 clauses | 27 runs, about 45M |
 | 6 L4-3 | Combined case, groups, work modes, thread telemetry | Case validation, `codex features list`, one orchestrated smoke run counting each subagent once | 13 runs, about 77M |
 | 7 L3-1 and L3-2 | Milestone prompts, coverage by scope | One-run smoke of M1 | 36 runs, about 74M |
 
 To the first Layer 4 results: 52 runs and about 81M tokens, about 3M of them new input. All of Layer 4: about 92 runs and 200M tokens.
 
-## Open decisions
+## Decisions
 
-1. **Chained starts.** Later milestones start from their lineage's result, amending `layer-4.md` for chains only. Recommended.
-2. **Step 3 and the name.** Step 3 is today's Full Core, and the four steps are called "context steps" so the published "setup ladder" keeps its meaning. Recommended.
-3. **Judging.** `run` stops after checks and analysis. Clause-checked Layer 4 scenarios skip judges, and Layer 3 is judged later with `judge --missing`. Recommended.
-4. **The orchestrated Open Forge cell.** Full Core, scoped with the shared lines, without Task Coordination at first. Recommended.
-5. **L4-3 size.** Four repairs give 23 clause checks, which raises the clause-only limit from 20 to 30 in `grading/brownfield/change-checks.ts`. Recommended over three repairs.
+1. **Chained starts.** Later milestones start from their lineage's result, amending `layer-4.md` for chains only. Approved 2026-11-03.
+2. **Step 3 and the name.** Step 3 is today's Full Core, and the four steps are called "context steps" so the published "setup ladder" keeps its meaning. Approved 2026-11-03.
+3. **Judging.** `run` stops after checks and objective measures. Layer 4 scenarios skip the AI judges, which `judge --missing` can add later from saved files. Layer 3 is judged later the same way. Approved 2026-11-03. The objective measures Layer 4 needs, in the maintainer's words, are "tokens used, tokens per task, token per task per file type and so on" and tool calls: tokens per run and per task, tokens by file type and class, and tool calls by kind.
+4. **The orchestrated Open Forge cell.** Full Core, scoped with the shared lines, without Task Coordination at first. Approved 2026-11-03.
+5. **L4-3 size.** Four repairs give 23 clause checks, which raises the clause-only limit from 20 to 30 in `grading/brownfield/change-checks.ts`. Approved 2026-11-03.
