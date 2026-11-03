@@ -23,6 +23,8 @@ export interface BatchProgress {
   readonly status: string;
   readonly planned: number;
   readonly implemented: number;
+  /** Implemented runs whose offline build passed, so their saved files are ready for the checks. */
+  readonly built: number;
   readonly checked: number;
   readonly judges: readonly { readonly judge: string; readonly judged: number }[];
   readonly setups: readonly SetupProgress[];
@@ -72,7 +74,7 @@ export function batchProgress(batch: BatchRecord, runs: readonly RunView[], asse
   return {
     id: batch.id, layer: batch.config.layer ?? null, suite: batch.suite, status: batch.status,
     planned: batch.config.agents.length * batch.config.setups.length * batch.config.runsPerSetup,
-    implemented: implemented.length, checked: implemented.filter(checked).length,
+    implemented: implemented.length, built: implemented.filter((run) => run.build?.passed === true).length, checked: implemented.filter(checked).length,
     judges: [...judges.values()].map((choice) => ({ judge: agentLabel(choice), judged: implemented.filter((run) => judgment(run, choice) !== undefined).length })),
     setups,
   };
@@ -91,7 +93,7 @@ export function progressLines(progress: BatchProgress): string[] {
   const line = (cells: readonly string[]): string => cells.map((cell, column) => cell.padEnd(widths[column] ?? 0)).join("  ").trimEnd();
   return [
     `Layer ${progress.layer ?? "?"} ${progress.suite}, batch ${progress.id}, ${progress.status}`,
-    `Implemented ${progress.implemented} of ${progress.planned} (${percent(share)}), checked ${progress.checked}${judged.length === 0 ? "" : `, ${judged.join(", ")}`}`,
+    `Implemented ${progress.implemented} of ${progress.planned} (${percent(share)}), built ${progress.built}, checked ${progress.checked}${judged.length === 0 ? "" : `, ${judged.join(", ")}`}`,
     line(header), ...rows.map(line),
   ];
 }

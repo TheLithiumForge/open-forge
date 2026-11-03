@@ -1,4 +1,4 @@
-import type { Isolation, Judging, Tool } from "./choices.ts";
+import type { Checking, Isolation, Judging, Tool } from "./choices.ts";
 import type { ContainerLimits } from "../execution/containers/settings.ts";
 import type { FrozenProtocol } from "../execution/conversation/answer-bank.ts";
 
@@ -37,7 +37,7 @@ export interface EvalConfig {
   readonly suite: string;
   readonly cases?: readonly string[];
   readonly runsPerSetup: number;
-  /** How many runs go at once. Hidden checks still run one at a time. */
+  /** How many runs go at once. The machine-wide check slots pace the hidden checks. */
   readonly parallelRuns: number;
   readonly setups: readonly string[];
   readonly agents: readonly ModelChoice[];
@@ -45,6 +45,8 @@ export interface EvalConfig {
   readonly judges?: readonly JudgeChoice[];
   /** Absent means the judges read each run as it finishes. */
   readonly judging?: Judging;
+  /** Absent means each run's checks start after its build. Later needs judging later too, since the judges read the checks' screenshots. */
+  readonly checking?: Checking;
   readonly chain?: ChainConfig;
   readonly simulatedUser: ModelChoice;
   readonly isolation: Isolation;

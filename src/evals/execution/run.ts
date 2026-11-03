@@ -4,7 +4,7 @@ import { TurnOutcome } from "./providers/agent-session.ts";
 import type { RunSpace } from "./containers/executor.ts";
 import { buildProject } from "../grading/build.ts";
 import type { EvalConfig } from "../config/config.types.ts";
-import { Isolation, Judging, Tool } from "../config/choices.ts";
+import { Checking, Isolation, Judging, Tool } from "../config/choices.ts";
 import { withAgentStage } from "./containers/agent.ts";
 import { executionLabel, ExecutionLabelFile, LocalExecutionLabel } from "./containers/eligibility.ts";
 import type { Docker } from "./containers/docker.ts";
@@ -62,13 +62,14 @@ export interface RunServices {
 
 const JudgeTimeoutMs = 15 * 60_000;
 
-/** One run, start to finish: the agent and its questions, the offline build, the hidden checks and the judge. */
+/** One run, start to finish: the agent and its questions, the offline build, the hidden checks and the judge. A plan can leave the checks and the judge to stages of their own. */
 export async function executeRun(input: RunInput): Promise<RunRecord> {
   const { suite, config } = input;
   const services = input.services ?? {};
   const store = services.store ?? { runFolder, readBatch, saveRun, appendAssessment, readAssessments, readSetups, appendAnalysis, readAnalyses };
   const primaryJudge = configuredJudges(config)[0] ?? config.judge;
   const judgeNow = config.judging !== Judging.later;
+  const checkNow = config.checking !== Checking.later;
   const folder = store.runFolder(input.run.batchId, input.run.id);
   const batch = await store.readBatch(input.run.batchId);
   const reference = input.run.implementer === ReferenceImplementer;
@@ -124,6 +125,12 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     if (html !== null) await copyFile(html, join(folder, ResultFiles.game));
     // The files freeze before the status says checking, so a chained child planned meanwhile reads a parent's final files.
     if (!reference && !saved) await freezeFiles(space, join(folder, ResultFiles.files));
+    if (!checkNow) {
+      await update({ build });
+      if (!reference) await analyzeFinishedRun(store, run).catch((error: unknown) => progress.report(run.batchId, `Run ${input.position}: the analysis failed, so analyze --missing adds it later. ${error instanceof Error ? error.message : String(error)}`));
+      await update({ status: RunStatus.done, finishedAt: new Date().toISOString() }, `the build ${build.passed ? "passed" : "failed"}. Done. check --missing runs the hidden checks later.`);
+      return run;
+    }
     await update({ status: RunStatus.checking, build }, `the build ${build.passed ? "passed" : "failed"}. Running the hidden checks.`);
     const project = space.work;
     // The machine-wide check slots alone limit how many checks run at once, in this process or any other.

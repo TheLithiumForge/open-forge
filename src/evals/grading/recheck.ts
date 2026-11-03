@@ -57,6 +57,8 @@ async function main(): Promise<void> {
   const versions = await gradingVersions(suite);
   const rebuild = args.includes(RebuildFlag);
   if (rebuild && !(await dockerAvailable())) throw new Error("Rebuilding needs Docker, because agent code never builds on this machine.");
+  // Every run waits for a machine-wide check slot, so the slots alone pace a batch's checks, as they do during run.
+  const graded: Promise<unknown>[] = [];
   for (const run of await readRuns(batch)) {
     const setup = setups.find((setup) => setup.id === run.setup);
     // A chained run started from its parent's files, so its own saved start is the scope guard's baseline.
@@ -71,7 +73,7 @@ async function main(): Promise<void> {
       continue;
     }
     const savedBuild = run.build;
-    await recheckRun(run, versions, { append: appendAssessment, evaluate: async (_, assessmentId) => {
+    graded.push(recheckRun(run, versions, { append: appendAssessment, evaluate: (_, assessmentId) => withCheckSlot(async () => {
       const folder = runFolder(batchId, run.id);
       const evidence = assessmentEvidenceFolder(batch.id, assessmentId);
       const shotsFolder = join(evidence, ResultFiles.shots);
@@ -89,13 +91,14 @@ async function main(): Promise<void> {
           game = build.html === null ? "" : join(project, build.html);
           if (existsSync(game)) await copyFile(game, join(evidence, ResultFiles.game));
         }
-        const result = await withCheckSlot(() => checks({ project, build, html: existsSync(game) && build.passed ? game : null, shotsFolder }));
+        const result = await checks({ project, build, html: existsSync(game) && build.passed ? game : null, shotsFolder });
         return { ...result, shots: result.shots.map((shot) => `${assessmentId}/${shot}`), build };
       } finally {
         if (space !== null) await removeFolder(space.root);
       }
-    } });
+    }) }).then((assessment) => console.log(`${run.id} ${run.setup}: ${assessment.error === null ? "checked" : `check failed. ${assessment.error}`}.`)));
   }
+  await Promise.all(graded);
 }
 
 if (import.meta.main) await main();

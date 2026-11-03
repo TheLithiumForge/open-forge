@@ -8,6 +8,7 @@
   "agents": "codex-teams",
   "judges": "codex",
   "judging": "later",
+  "checking": "later",
   "simulatedUser": "codex",
   "isolation": "docker",
   "limits": { "questionRounds": 3, "runMinutes": 90, "checkMinutes": 90 }

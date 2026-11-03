@@ -1,7 +1,7 @@
 ﻿import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { EvalPaths } from "../paths.ts";
-import { Isolation, Judging } from "./choices.ts";
+import { Checking, Isolation, Judging } from "./choices.ts";
 import type { ChainConfig, EvalConfig } from "./config.types.ts";
 import { containerLimits } from "../execution/containers/settings.ts";
 import { QuestionRounds } from "../execution/conversation/answer-bank.ts";
@@ -29,13 +29,16 @@ export function parseConfig(value: unknown): EvalConfig {
   const judges = readJudges(source["judge"], source["judges"]);
   const judging = source["judging"];
   if (judging !== undefined && judging !== Judging.run && judging !== Judging.later) throw new Error("judging must be run or later.");
+  const checking = source["checking"];
+  if (checking !== undefined && checking !== Checking.run && checking !== Checking.later) throw new Error("checking must be run or later.");
+  if (checking === Checking.later && judging !== Judging.later) throw new Error("A plan that checks later judges later too, since the judges read the checks' screenshots.");
   const chain = source["chain"] === undefined ? undefined : readChain(source["chain"]);
   const limits = object(source["limits"]);
   const resources = source["containers"] === undefined ? undefined : object(source["containers"]);
   const containers = resources === undefined ? containerLimits() : containerLimits({ cpus: positive(resources["cpus"]), memory: text(resources["memory"]), processes: integer(resources["processes"]) });
   return { suite, isolation, agents: agents.map(modelChoice), setups: strings(source["setups"]),
     runsPerSetup: integer(source["runsPerSetup"]), parallelRuns: integer(source["parallelRuns"] ?? 1),
-    ...judges, ...(judging === undefined ? {} : { judging }), ...(chain === undefined ? {} : { chain }), simulatedUser: modelChoice(source["simulatedUser"]), containers,
+    ...judges, ...(judging === undefined ? {} : { judging }), ...(checking === undefined ? {} : { checking }), ...(chain === undefined ? {} : { chain }), simulatedUser: modelChoice(source["simulatedUser"]), containers,
     limits: { runMinutes: positive(limits["runMinutes"]), checkMinutes: positive(limits["checkMinutes"]), questionRounds: QuestionRounds },
     ...(source["protocol"] === undefined ? {} : { protocol: readProtocol(source["protocol"]) }),
     ...(source["layer"] === undefined ? {} : { layer: integer(source["layer"]) }),

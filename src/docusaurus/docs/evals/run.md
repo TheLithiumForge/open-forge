@@ -75,7 +75,15 @@ npm run evals -- run --plan src/evals/experiments/neon-pairs-l2-full.json --impl
 
 `--implementers codex-teams` runs Sol alone, Sol leading Sol subagents and Sol leading Luna subagents, with Sol at xhigh and Luna at max, as the maintainer set them. A team is part of the implementer, so its runs are planned, counted and filtered apart, as another model's are. A solo Codex run switches Codex's subagents off, and a team leader gets one level of them, one at a time, with a registered line after the request that tells it to delegate each task.
 
-A plan with `"judging": "later"` finishes each run after its checks. Its judges stay in the batch, and `judge <batch> --missing` adds their judgments whenever you choose, without running any agent again.
+A run goes through three stages, and a plan can split them apart:
+
+| Stage | What it does | Command |
+| --- | --- | --- |
+| Work | The agent and its questions, the offline build, the saved files and the [objective measures](measures.mdx#objective-measures) | `run` |
+| Checks | The hidden checks on the saved files | `check <batch> --missing` |
+| Judges | The AI judges on the saved files and the checks' screenshots | `judge <batch> --missing` |
+
+A plan with `"checking": "later"` and `"judging": "later"` ends each run after its build, so `progress` shows when every agent is done, before any grading starts. Checks don't take processor cores from agents that are still working, and they can run whenever you choose, on any batch, old ones included. A plan with only `"judging": "later"` checks each run after its build and leaves the judges for later. Checks later needs judges later, since the judges read the checks' screenshots.
 
 `--parallel` caps how many runs go at once. The [existing app](starting-points.mdx#existing-app) plans hold three cases, and `--case l4-f01` runs one of them as its own batch. Records go to the ignored `src/evals/runs/` folder.
 
@@ -122,7 +130,7 @@ npm run evals -- check <batch> --rebuild
 npm run evals -- judge <batch> --judges claude --missing
 ```
 
-`check` builds the saved project in the verifier again and appends new check results. `judge` appends ballots from the chosen judges. `--missing` judges only runs without a judgment from that judge, so judging can continue after a usage limit. Both accept one run after the batch. Earlier grades stay recorded with their versions.
+`check` grades a batch's runs at once, as many as the check slots allow, and appends new check results. `--rebuild` builds each saved project in the verifier again first. `--missing` checks only runs without a check free of errors, so it finishes a batch that checked later or one whose checker was fixed. `judge` appends ballots from the chosen judges. `--missing` judges only runs without a judgment from that judge, so judging can continue after a usage limit. Both accept one run after the batch. Earlier grades stay recorded with their versions.
 
 The [objective measures](measures.mdx#objective-measures) come from saved logs too, without a model:
 

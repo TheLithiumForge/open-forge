@@ -13,7 +13,7 @@ import { TurnOutcome } from "./providers/agent-session.ts";
 import { completeSavedJudgments } from "../grading/rejudge.ts";
 import { executeRun, type RunServices } from "./run.ts";
 import { JudgeLimited } from "../grading/judge/reply.ts";
-import { Judging } from "../config/choices.ts";
+import { Checking, Judging } from "../config/choices.ts";
 
 const SourceFile = "game.ts", SourceText = "export const game = 'fixture';\n", BuiltPage = "dist/index.html";
 const Telemetry = { tokens: null, requests: null, peakContext: null, contextWindow: null, compactions: null, toolCalls: 0, failedToolCalls: 0,
@@ -91,6 +91,19 @@ test("a plan that judges later finishes each run after its checks and calls no j
   assert.equal(saved.functionalResult?.coverage.share, 1);
   assert.deepEqual((await fixture.store.readAssessments(fixture.batch.id)).map((item) => item.kind), [AssessmentKind.checks]);
   // The objective measures are part of the run, so the analysis is saved before the run finishes.
+  assert.deepEqual((await fixture.store.readAnalyses(fixture.batch.id)).map((item) => [item.runId, item.error]), [[fixture.run.id, null]]);
+});
+
+test("a plan that checks later ends each run after its build and measures, with no checks or judges", async (t) => {
+  const fixture = await matrixRun(t);
+  const output = await executeRun({ run: fixture.run, suite: FixtureSuite, config: { ...fixture.config, judging: Judging.later, checking: Checking.later }, snapshot: "", position: "fixture", services: fixture.services });
+  assert.equal(output.status, RunStatus.done);
+  assert.deepEqual(fixture.calls, []);
+  assert.deepEqual(fixture.counters(), { conversations: 1, builds: 1, checks: 0 });
+  const saved = await fixture.store.readRun(fixture.batch.id, fixture.run.id);
+  assert.equal(saved.build?.passed, true);
+  assert.equal(saved.checksAssessmentId, null);
+  assert.deepEqual(await fixture.store.readAssessments(fixture.batch.id), []);
   assert.deepEqual((await fixture.store.readAnalyses(fixture.batch.id)).map((item) => [item.runId, item.error]), [[fixture.run.id, null]]);
 });
 

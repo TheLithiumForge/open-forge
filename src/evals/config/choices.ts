@@ -8,6 +8,10 @@ export type Isolation = (typeof Isolation)[keyof typeof Isolation];
 export const Judging = { run: "run", later: "later" } as const;
 export type Judging = (typeof Judging)[keyof typeof Judging];
 
+/** When a batch's hidden checks run. Later ends each run after its build and measures, so check --missing grades the saved files as a stage of its own. */
+export const Checking = { run: "run", later: "later" } as const;
+export type Checking = (typeof Checking)[keyof typeof Checking];
+
 /** How a setup works: one agent does every task, or an orchestrator hands each task to a subagent of its own. */
 export const WorkMode = { oneAgent: "one-agent", orchestrated: "orchestrated" } as const;
 export type WorkMode = (typeof WorkMode)[keyof typeof WorkMode];

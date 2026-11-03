@@ -6,7 +6,7 @@ import { resolvePlan } from "../config/plans.ts";
 import { FixtureConfig } from "../config/test-fixtures.ts";
 import { LayerFourCases, CodeOnlySetup, CombinedTaskCase, ScopedTaskCases } from "../materialize/brownfield-case.ts";
 import { DocumentSetups, OverloadSetups } from "../materialize/delivery.ts";
-import { Judging } from "../config/choices.ts";
+import { Checking, Judging } from "../config/choices.ts";
 import { BrownfieldSetups } from "../materialize/brownfield.ts";
 import { evalsRoot } from "../paths.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
@@ -31,7 +31,7 @@ test("Layer 4 plans list all cases and setups with frozen models and independent
   await assert.rejects(loadSuite("l4-missing-fixture"));
 });
 
-test("L4-1 plans run the scoped tasks once with Sol on every context step, Organized docs first, and judge later", async () => {
+test("L4-1 plans run the scoped tasks once with Sol on every context step, Organized docs first, and judge later, with the full plan checking later", async () => {
   for (const variant of ["smoke", "full"]) {
     const plan = resolvePlan(JSON.parse(await readFile(join(evalsRoot, "experiments", `neon-pairs-l4-1-${variant}.json`), "utf8")), FixtureConfig);
     assert.deepEqual(plan.cases, variant === "smoke" ? [ScopedTaskCases[0]] : [...ScopedTaskCases]);
@@ -41,6 +41,8 @@ test("L4-1 plans run the scoped tasks once with Sol on every context step, Organ
     assert.deepEqual(plan.agents, ImplementerPresets[PresetName.codex]);
     assert.deepEqual(plan.simulatedUser, UserPresets[PresetName.codex]);
     assert.equal(plan.judging, Judging.later);
+    // The smoke plan checks inline, since it proves grading works. The full plan leaves the checks to check --missing.
+    assert.equal(plan.checking, variant === "smoke" ? undefined : Checking.later);
     for (const id of plan.cases ?? []) assert.ok((await loadSuite(id)).brownfield !== undefined, id);
   }
 });
@@ -69,6 +71,7 @@ test("L4-2 plans chain the scoped tasks after Best score, one milestone each, on
     assert.equal(plan.runsPerSetup, 1);
     assert.deepEqual(plan.agents, ImplementerPresets[PresetName.codex]);
     assert.equal(plan.judging, Judging.later);
+    assert.equal(plan.checking, Checking.later);
   }
 });
 
@@ -79,6 +82,7 @@ test("L4-3 plans run the four repairs at once with Sol alone and leading Sol or 
     assert.deepEqual(plan.setups, variant === "smoke" ? [DocumentSetups.organized] : [DocumentSetups.organized, DocumentSetups.fullCoreScoped]);
     assert.deepEqual(plan.agents, CodexTeams);
     assert.equal(plan.judging, Judging.later);
+    assert.equal(plan.checking, variant === "smoke" ? undefined : Checking.later);
   }
   const suite = await loadSuite(CombinedTaskCase);
   assert.equal(suite.runMinutes, 90);

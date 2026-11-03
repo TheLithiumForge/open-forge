@@ -30,7 +30,7 @@ export function resolvePlan(value: unknown, current: EvalConfig, development = f
   if (plan["chain"] !== undefined && (layer !== 4 || cases !== undefined && cases.length !== 1)) throw new Error("A chain plan runs one Layer 4 case.");
   if (cases !== undefined && (!cases.length || cases.some((id) => !/^l4-[\w-]+$/.test(id)) || new Set(cases).size !== cases.length || plan["case"] !== undefined || layer !== 4)) throw new Error("A multi-case plan needs distinct Layer 4 cases and no single case field.");
   const config = parseConfig({ ...current, suite: cases === undefined ? text(plan["case"]) : text(cases[0]), layer, development, protocol: undefined,
-    isolation: plan["isolation"], agents: agents.map(modelChoice), judge, judges, judging: plan["judging"], chain: plan["chain"], simulatedUser,
+    isolation: plan["isolation"], agents: agents.map(modelChoice), judge, judges, judging: plan["judging"], checking: plan["checking"], chain: plan["chain"], simulatedUser,
     setups: strings(plan["setups"]), runsPerSetup: integer(plan["runsPerSetup"]), parallelRuns: integer(plan["parallelRuns"] ?? 1),
     limits: { ...current.limits, ...object(plan["limits"] ?? {}) } });
   return cases === undefined ? config : { ...config, cases };

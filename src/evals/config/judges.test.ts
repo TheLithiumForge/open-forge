@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { parseConfig } from "./config.ts";
 import { configuredJudges, modelKey, readJudges } from "./judges.ts";
 import { MatrixAgents, MatrixJudges } from "./matrix.ts";
-import { Judging } from "./choices.ts";
+import { Checking, Judging } from "./choices.ts";
 import { CodexTeams } from "./presets.ts";
 import { modelChoice } from "./validation.ts";
 import { LocalModel, PlanVersion, resolvePlan } from "./plans.ts";
@@ -34,6 +34,17 @@ test("a plan can leave judging for later, keep its judges for judge --missing an
   assert.equal(parseConfig(later).judging, Judging.later);
   assert.equal(resolvePlan(plan, FixtureConfig).judging, undefined);
   assert.throws(() => resolvePlan({ ...plan, judging: "never" }, FixtureConfig));
+});
+
+test("a plan can leave its checks for later only when it judges later too, since the judges read the checks' screenshots", () => {
+  const plan = { schemaVersion: PlanVersion, layer: 4, cases: ["l4-r02"], agents: MatrixAgents, judges: MatrixJudges,
+    simulatedUser: LocalModel, isolation: FixtureConfig.isolation, setups: FixtureConfig.setups, runsPerSetup: 1, judging: Judging.later };
+  const later = resolvePlan({ ...plan, checking: Checking.later }, FixtureConfig);
+  assert.equal(later.checking, Checking.later);
+  assert.equal(parseConfig(later).checking, Checking.later);
+  assert.equal(resolvePlan(plan, FixtureConfig).checking, undefined);
+  assert.throws(() => resolvePlan({ ...plan, checking: Checking.later, judging: Judging.run }, FixtureConfig));
+  assert.throws(() => resolvePlan({ ...plan, checking: "never" }, FixtureConfig));
 });
 
 test("empty, duplicate, conflicting and malformed judges are refused", () => {

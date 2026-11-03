@@ -122,7 +122,7 @@ npm run evals -- site --port 4320
 
 ## `check`
 
-Check saved runs again in the verifier and append the results. Name a batch, and optionally one run. --rebuild builds the saved project again first. --missing checks only runs without a check free of errors, so a fixed checker can finish a batch without grading it all again. Every check also saves its diagnostics, such as Layer 1 card crops and look comparisons.
+Check saved runs in the verifier and append the results, as many at once as the check slots allow. Name a batch, and optionally one run. --rebuild builds the saved project again first. --missing checks only runs without a check free of errors, so it finishes a batch that checked later, or a fixed checker finishes one without grading it all again. Every check also saves its diagnostics, such as Layer 1 card crops and look comparisons.
 
 ```sh
 npm run evals -- check <batch> --missing

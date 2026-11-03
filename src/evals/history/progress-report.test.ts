@@ -18,12 +18,13 @@ test("progress counts runs whose agent finished, checked and judged runs, leavin
   const failed = { ...finished, id: "failed", status: RunStatus.failed, failureKind: FailureKind.infrastructure };
   const replacement = { ...finished, id: "replacement", status: RunStatus.agent, agentSeconds: null, finishedAt: null, replacesRunId: "failed" };
   const limited = { ...finished, id: "limited", status: RunStatus.limited, failureKind: FailureKind.infrastructure };
-  const grading = { ...finished, id: "grading", status: RunStatus.checking, finishedAt: null, functionalResult: null };
+  const grading = { ...finished, id: "grading", status: RunStatus.checking, finishedAt: null, functionalResult: null, build: finished.build === null ? null : { ...finished.build, passed: false } };
   const answers = [{ id: "rule", area: "rules", question: "Rule", yes: 2, no: 0, unsure: 1, evidence: [] }];
   const judged = { ...judgeAssessment(finished, answers, FixtureVersions), requestedModel: Judge };
   const errored = { ...judgeAssessment(unchecked, answers, FixtureVersions), requestedModel: Judge, error: "Fixture judge failure." };
   const progress = batchProgress(batch, [finished, unchecked, failed, replacement, limited, grading], [judged, errored]);
   assert.deepEqual([progress.planned, progress.implemented, progress.checked], [3, 3, 1]);
+  assert.equal(progress.built, 2);
   assert.deepEqual(progress.judges.map((judge) => judge.judged), [1]);
   assert.deepEqual(progress.setups.map((row) => [row.implemented, row.checked, row.coverage, row.judges[0]?.judged, row.judges[0]?.yesShare]), [[3, 1, 0.75, 1, 2 / 3]]);
   assert.equal(progressLines(progress).length, 4);
