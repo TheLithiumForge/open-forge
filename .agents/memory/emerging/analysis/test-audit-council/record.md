@@ -1,13 +1,13 @@
 ---
 open-forge:
-  description: Council record for trimming the Neon Pairs reference's own tests, with the ranking, the four gates, a verdict per test file, the dissent, the experiment and the cost, waiting for the maintainer's approval
+  description: Council record for trimming the Neon Pairs reference's own tests, with the ranking, the four gates, a verdict per test file, the dissent, the experiment and the cost, approved and applied
   responsibility: Preserve the November 2026 reference test audit council's ranking, chair decisions, dissent and open decisions without changing the reference
   tags: [Memory, Analysis, Contextual, Candidate, Evaluation, NeonPairs, Tests, Brownfield, Proposal]
 ---
 
 # Reference Test Audit Council
 
-Status: unaccepted proposal from 2026-11-03. Nothing in the reference has changed. It replaces the proposal in [eval-reference-test-audit.md](../eval-reference-test-audit.md), whose findings stand except where this record corrects them.
+Status: approved by the maintainer on 2026-11-03 and applied in c4bb3f6c0, with the changes under Applied. It replaces the proposal in [eval-reference-test-audit.md](../eval-reference-test-audit.md), whose findings stand except where this record corrects them.
 
 ## Question
 
@@ -71,7 +71,18 @@ Run `reference-audit/mutations.ts` with the full unit and browser suites for eac
 
 Changing the reference changes every task's recorded hashes, so every task and packet is validated again and the reference is graded again. The seeds touch only source files and the keyboard files, which stay byte for byte, so no patch is regenerated. Runs before the change stay comparable only with each other.
 
+## Applied
+
+The maintainer approved the trim, asking that the browser still start a 16x16 game without playing it through. So all-sizes holds one test that starts the largest board with every card ready and takes one reveal, and `deck.test.ts` checks every size's deal against the independent oracle.
+
+Two verdicts changed while applying it:
+
+- **controls stays its own file.** Merging it into control-contract passed the project's 200-line limit for a source file.
+- **art keeps its element screenshots.** Cropping all 128 faces from one screenshot needs a PNG decoder, and the project pins its packages. The screenshot-only test still went.
+
+The keyboard tests stayed byte for byte, so no task patch changed. Mutants M19 and M25 now name layout as their killer, and M39 the session unit test, which was checked to kill it. `reference-audit/mutation-results.json` still records the old run, since the mutation script needs the named Chromium on the machine that runs it.
+
 ## Open decisions
 
-1. Approve the trim as decided above, or lean further toward the Minimalist.
-2. Keep or trim the three source-convention tests that no spec rule states.
+1. Keep or trim the three source-convention tests that no spec rule states.
+2. Run the mutation experiment above once the named Chromium is set up for the mutation script.
