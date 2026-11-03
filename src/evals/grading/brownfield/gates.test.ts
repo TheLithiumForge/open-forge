@@ -12,7 +12,8 @@ import type { LayerOutput } from "../../benchmarks/neon-pairs/checks/spec-layers
 import { runBrownfieldChecks } from "./gates.ts";
 import { regressionDefinition, regressionOutcomes } from "./regression.ts";
 import { BrownfieldGuard, changedFiles } from "./scope.ts";
-import { ChangeKind, readChangeChecks } from "./change-checks.ts";
+import { ChangeCheckFiles, ChangeCheckLimits, ChangeCheckVersion, ChangeKind, ChangeMethod, readChangeChecks } from "./change-checks.ts";
+import { BrownfieldFiles } from "../../materialize/brownfield-case.ts";
 
 const Build = { passed: true, typecheck: true, seconds: 0, packages: null, html: "dist/index.html", bytes: null, log: "" };
 
@@ -55,6 +56,29 @@ test("combined cases report feature failures apart from repairs and frozen regre
   const changes = changedFiles(hashes(inputs.seed), hashes(inputs.seed).filter((file) => file.path !== BrownfieldFixture.source), ["src/**"]);
   assert.equal(changes[0]?.change, "deleted");
   assert.equal(changes[0]?.allowed, true);
+});
+
+test("clause checks take one full-spec clause's result each, leave the regression set and run no worker", async (t) => {
+  const fixture = await brownfieldFixture(t);
+  const targets = ["R04.1", "R05.2", "R06.1"], [failed] = targets;
+  const checks = targets.map((clause, index) => ({ id: `clause-${index}`, method: ChangeMethod.clause, clause, kind: index === 1 ? ChangeKind.feature : ChangeKind.repair }));
+  const manifest = join(fixture.caseRoot, BrownfieldFiles.checks, ChangeCheckFiles.manifest);
+  await writeFile(manifest, JSON.stringify({ schemaVersion: ChangeCheckVersion, checks }));
+  const inputs = await brownfieldInputs(fixture.caseRoot, fixture.reference, fixture.destination);
+  const project = join(fixture.root, "candidate");
+  for (const file of inputs.seed) await writeNew(project, file.path, file.bytes);
+  const evidence = await passingRegression();
+  const output = await runBrownfieldChecks(inputs, hashes(inputs.seed), { project, html: null, build: Build, shotsFolder: join(fixture.root, "shots") }, {
+    protectedRoots: [fixture.caseRoot],
+    regression: async () => ({ ...evidence, assertions: evidence.assertions.map((assertion) => assertion.clause === failed ? { ...assertion, status: CheckStatus.fail } : assertion) }),
+    changes: async () => { throw new Error("A case graded only by clauses ran a worker."); },
+  });
+  for (const check of checks) assert.equal(output.checks.find((outcome) => outcome.id === `${check.kind}-${check.id}`)?.status, check.clause === failed ? CheckStatus.fail : CheckStatus.pass);
+  assert.ok(output.checks.filter((check) => check.area === "regression").every((check) => check.status === CheckStatus.pass), "Target clauses leave the regression set.");
+  await writeFile(manifest, JSON.stringify({ schemaVersion: ChangeCheckVersion, checks: checks.slice(0, ChangeCheckLimits.clauseMinimum - 1) }));
+  await assert.rejects(readChangeChecks(inputs.case));
+  await writeFile(manifest, JSON.stringify({ schemaVersion: ChangeCheckVersion, checks: checks.map((check) => ({ ...check, clause: "R4.1" })) }));
+  await assert.rejects(readChangeChecks(inputs.case));
 });
 
 test("scope and protected inputs fail independently and a regression error doesn't block repair checks", async (t) => {

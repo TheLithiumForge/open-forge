@@ -6,8 +6,8 @@ import { isRecord } from "../../materialize/frontmatter.ts";
 import { CheckStatus } from "../../history/statuses.ts";
 import { loadDefinition } from "../../benchmarks/neon-pairs/checks/spec-layers/load.ts";
 import { LayerId } from "../../benchmarks/neon-pairs/checks/spec-layers/requirements.ts";
-import { ChangeCheckFiles, readChangeChecks } from "./change-checks.ts";
-import { regressionDefinition } from "./regression.ts";
+import { ChangeCheckFiles, clauseTargets, readChangeChecks } from "./change-checks.ts";
+import { caseRegression } from "./regression.ts";
 import { BrownfieldGuard } from "./scope.ts";
 import type { CheckOutcome } from "../grading.types.ts";
 
@@ -37,7 +37,7 @@ export async function readValidationExpectations(item: BrownfieldCase): Promise<
   for (const kind of new Set(declared.map((check) => check.kind))) {
     if (!changes.some((check) => check.id.startsWith(`${kind}-`) && check.starting === CheckStatus.fail)) throw new Error(`The starting project must fail at least one ${kind} check.`);
   }
-  const frozen = regressionDefinition(await loadDefinition(LayerId.three), item.supersedes);
+  const frozen = caseRegression(await loadDefinition(LayerId.three), item.supersedes, clauseTargets(declared));
   const overrides = manifest["regressionExpectations"] ?? {};
   if (!isRecord(overrides)) throw new Error("Invalid starting regression expectations.");
   const ids = frozen.checks.map((check) => `regression-${check.id}`);

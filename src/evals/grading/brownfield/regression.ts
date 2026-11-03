@@ -18,6 +18,13 @@ export function regressionDefinition(frozen: Definition, supersedes: readonly st
     review: [...pending.values()], uncheckable: frozen.uncheckable.filter((entry) => !excluded.has(entry.clause)) };
 }
 
+/** The regression set without a case's superseded clauses and the clauses it grades as change checks, which must each be asserted. */
+export function caseRegression(frozen: Definition, supersedes: readonly string[], targets: readonly string[]): Definition {
+  const asserted = new Set(frozen.checks.flatMap((check) => check.assertions.map((assertion) => assertion.clause)));
+  if (targets.some((clause) => !asserted.has(clause))) throw new Error("A clause check names a clause the full-spec checker doesn't assert.");
+  return regressionDefinition(frozen, [...supersedes, ...targets]);
+}
+
 export const RegressionReviewArea = "regression-review";
 export function regressionReview(definition: Definition): CheckOutcome[] {
   return definition.review.map((entry) => ({ id: `review-${entry.clause}`, area: RegressionReviewArea, status: CheckStatus.blocked, evidence: `${entry.clause}: ${entry.reason}` }));

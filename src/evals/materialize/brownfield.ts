@@ -30,7 +30,8 @@ export function brownfieldSuite(inputs: BrownfieldInputs): Suite {
 
 export async function loadBrownfieldSuite(root: string, expectedId?: string, reference?: string, specs?: string): Promise<Suite> {
   const inputs = await brownfieldInputs(root, reference, specs, expectedId);
-  await readChangeChecks(inputs.case);
-  if (!inputs.case.inputs.some((file) => file.path === `${inputs.case.checks}/${ChangeCheckFiles.worker}`)) throw new Error("The case has no verifier change worker.");
+  const declared = await readChangeChecks(inputs.case);
+  const needsWorker = declared.some((check) => check.clause === undefined);
+  if (needsWorker && !inputs.case.inputs.some((file) => file.path === `${inputs.case.checks}/${ChangeCheckFiles.worker}`)) throw new Error("The case has no verifier change worker.");
   return brownfieldSuite(inputs);
 }
