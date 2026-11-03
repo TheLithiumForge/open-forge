@@ -16,15 +16,3 @@ export async function runInParallel<T>(items: readonly T[], limit: number, work:
   };
   await Promise.all(Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, () => worker()));
 }
-
-let checkQueue: Promise<unknown> = Promise.resolve();
-
-/**
- * Runs hidden checks one at a time across parallel runs. The checks time real flips and delays, which
- * a busier browser would miss, while the agents and judges can share the machine.
- */
-export function oneCheckAtATime<T>(check: () => Promise<T>): Promise<T> {
-  const result = checkQueue.then(check, check);
-  checkQueue = result.catch(() => undefined);
-  return result;
-}

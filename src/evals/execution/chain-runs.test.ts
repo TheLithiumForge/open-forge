@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
@@ -70,4 +70,19 @@ test("a chained run saves its start, a resume reads it back, and a replacement k
   assert.equal(await savedChainBaseline(join(root, "ready")), undefined, `Only a chained run has a ${ChainStartFile}.`);
   const child = { ...parent("child", "plain-docs", 1), parentRunId: "ready" } as RunRecord;
   assert.equal(replacementRun(child, "again", "Fixture replacement.").parentRunId, "ready");
+});
+
+test("a parent reached through a junction, as runners reach the run folders, still starts its child", async (t) => {
+  if (Agent === undefined) throw new Error("The matrix needs an agent.");
+  const root = await parentFolders(t, { ready: Original });
+  const linked = join(root, "linked");
+  await symlink(root, linked, "junction");
+  const config = { ...FixtureConfig, agents: [Agent], setups: ["plain-docs"], runsPerSetup: 1 };
+  const planned = await planChainRuns(config, "child-batch", [parent("ready", "plain-docs", 1)], (run) => join(linked, run.id), Seed, () => "child");
+  assert.equal(planned.runs.length, 1);
+  const folder = join(root, "child");
+  await mkdir(folder);
+  const built = await chainedRunStart({ folder, parentBatchId: "parent-batch", parentRunId: "ready", parentFiles: join(linked, "ready"), scope: undefined, seedPatch: Seed, project: "neon-pairs", saved: false });
+  t.after(() => built.start === null ? Promise.resolve() : rm(dirname(built.start.folder), { recursive: true, force: true }));
+  assert.deepEqual(built.files.map((file) => file.path), ["src/game.ts"]);
 });

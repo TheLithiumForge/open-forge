@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, realpath, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { EvalConfig, ModelChoice } from "../config/config.types.ts";
 import { modelKey } from "../config/judges.ts";
@@ -38,6 +38,7 @@ export function parentFiles(runFolder: (batchId: string, runId: string) => strin
   return join(runFolder(parentBatchId, parentRunId), ResultFiles.files);
 }
 
+// Runners reach the run folders through a junction, and the inventory refuses links, so parent folders resolve to their real path first.
 /** Pairs every planned child with its parent. A pair whose parent can't start a child, or whose defect won't apply, is skipped. */
 export async function planChainRuns(config: EvalConfig, batchId: string, parents: readonly RunRecord[], files: (parent: RunRecord) => string, seedPatch: string,
   id: () => string): Promise<{ readonly runs: RunRecord[]; readonly skipped: ChainSkip[] }> {
@@ -46,7 +47,7 @@ export async function planChainRuns(config: EvalConfig, batchId: string, parents
     const parent = parentRun(parents, agent, setup, repeat);
     let reason = parentProblem(parent);
     if (reason === null && parent !== undefined) {
-      try { chainedFiles(await inventory(files(parent), new Set([GitDirectory, "node_modules"])), seedPatch); }
+      try { chainedFiles(await inventory(await realpath(files(parent)), new Set([GitDirectory, "node_modules"])), seedPatch); }
       catch (error) { if (!(error instanceof SeedConflict)) throw error; reason = ChainSkipReason.seedConflict; }
     }
     if (reason === null && parent !== undefined) runs.push({ ...plannedRun(id(), batchId, setup, agent, repeat), parentRunId: parent.id });
@@ -60,7 +61,7 @@ export async function chainedRunStart(input: { readonly folder: string; readonly
   readonly scope: ScopePolicy | undefined; readonly seedPatch: string; readonly project: string; readonly saved: boolean }): Promise<{ readonly start: ChainedStart | null; readonly files: readonly FileHash[] }> {
   const manifestPath = join(input.folder, ChainStartFile);
   if (input.saved && existsSync(manifestPath)) return { start: null, files: (JSON.parse(await readFile(manifestPath, "utf8")) as ChainStartManifest).files };
-  const start = await writeChainedStart(input.parentFiles, input.scope?.ignores ?? [], input.seedPatch, input.project);
+  const start = await writeChainedStart(await realpath(input.parentFiles), input.scope?.ignores ?? [], input.seedPatch, input.project);
   const manifest: ChainStartManifest = { schemaVersion: ChainStartVersion, parentBatchId: input.parentBatchId, parentRunId: input.parentRunId, files: start.files };
   await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
   return { start, files: start.files };

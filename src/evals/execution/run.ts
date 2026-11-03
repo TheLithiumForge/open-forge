@@ -30,11 +30,11 @@ import { ConversationRole, emptyConversation, SimulatorFailure } from "./convers
 import { ConversationFile } from "./conversation/answer-bank.ts";
 import { layerChecks } from "../grading/document-layers.ts";
 import { converse } from "./conversation/conversation.ts";
-import { oneCheckAtATime } from "./run-queue.ts";
 import { withCheckSlot } from "./check-slot.ts";
 import { progress } from "./progress.ts";
 import { stopProcessesUnder } from "./leftovers.ts";
 import { createRunSpace, freezeFiles, removeFolder, scratchFolder } from "./workspace.ts";
+import { OrchestratorLine } from "../materialize/delivery.ts";
 
 export interface RunInput {
   readonly run: RunRecord;
@@ -98,16 +98,17 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     space = await (services.createSpace ?? createRunSpace)(suite.project, saved ? join(folder, ResultFiles.files) : input.snapshot);
     // The mock agent only installs our own reference, and the agent container runs nothing but a real provider's CLI.
     const agentIsolation = run.agent.tool === Tool.mock ? Isolation.local : Isolation.docker;
-    const workMode = suite.setups[run.setup]?.workMode;
-    const context = { isolation: agentIsolation, space, choice: run.agent, eventsPath: join(folder, ResultFiles.events), ...(workMode === undefined ? {} : { workMode }) };
+    const context = { isolation: agentIsolation, space, choice: run.agent, eventsPath: join(folder, ResultFiles.events) };
+    // A team's orchestrator gets the registered line that tells it to delegate each task, after the request.
+    const teamSuite = run.agent.team === undefined ? suite : { ...suite, prompt: `${suite.prompt}\n\n${OrchestratorLine}` };
     const stageOptions = { timeoutMs: config.limits.runMinutes * 60_000,
       ...(config.containers === undefined ? {} : { limits: config.containers }),
       ...(input.signal === undefined ? {} : { signal: input.signal }), ...(input.docker === undefined ? {} : { docker: input.docker }) };
     if (reference) await freezeFiles(space, join(folder, ResultFiles.files));
     else if (!saved) {
     const talk = run.agent.tool !== Tool.mock
-      ? await withAgentStage(space, run.agent.tool, stageOptions, () => (services.conversation ?? converse)(context, suite, config, { options: stageOptions }))
-      : await (services.conversation ?? converse)(context, suite, config, { options: stageOptions });
+      ? await withAgentStage(space, run.agent.tool, stageOptions, () => (services.conversation ?? converse)(context, teamSuite, config, { options: stageOptions }))
+      : await (services.conversation ?? converse)(context, teamSuite, config, { options: stageOptions });
     await (services.stop ?? stopProcessesUnder)(space.root);
     if (talk.outcome === TurnOutcome.limited) {
       await freezeFiles(space, join(folder, ResultFiles.files));
@@ -124,7 +125,8 @@ export async function executeRun(input: RunInput): Promise<RunRecord> {
     await update({ status: RunStatus.checking, build }, `the build ${build.passed ? "passed" : "failed"}. Running the hidden checks.`);
     const project = space.work;
     if (!reference && !saved) await freezeFiles(space, join(folder, ResultFiles.files));
-    const checks = await oneCheckAtATime(() => withCheckSlot(async () => (services.checks ?? layerChecks(suite.id))?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots), stage: { ...stageOptions, timeoutMs: checkMs } })));
+    // The machine-wide check slots alone limit how many checks run at once, in this process or any other.
+    const checks = await withCheckSlot(async () => (services.checks ?? layerChecks(suite.id))?.({ project, build, html, shotsFolder: join(folder, ResultFiles.shots), stage: { ...stageOptions, timeoutMs: checkMs } }));
     await update({ status: judgeNow ? RunStatus.judging : RunStatus.checking, checks: checks?.checks.map(legacyCheckView) ?? [], performance: checks?.performance ?? null, shots: checks?.shots ?? [] },
       judgeNow ? "checks done. The judge is reading the code." : "checks done.");
     const assessment = checksAssessment(run, checks?.checks ?? [], versions, checks?.selection);

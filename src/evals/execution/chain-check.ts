@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, realpath } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import type { EvalConfig } from "../config/config.types.ts";
 import { Isolation } from "../config/choices.ts";
@@ -47,7 +47,7 @@ export async function checkChain(config: EvalConfig, suite: Suite, parentBatchId
   return Promise.all(planned.runs.map(async (child): Promise<ChainCheckRow> => {
     const parentRunId = child.parentRunId ?? "", source = parents.find((run) => run.id === parentRunId);
     const scope = setups.find((setup) => setup.id === child.setup)?.scope;
-    const start = await writeChainedStart(parentFiles(runFolder, parentBatchId, parentRunId), scope?.ignores ?? [], seedPatch, suite.project);
+    const start = await writeChainedStart(await realpath(parentFiles(runFolder, parentBatchId, parentRunId)), scope?.ignores ?? [], seedPatch, suite.project);
     const space = await createRunSpace(suite.project, start.folder);
     try {
       const build = await buildProject(Isolation.docker, space, config.limits.checkMinutes * 60_000);
