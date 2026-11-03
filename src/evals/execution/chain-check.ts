@@ -55,7 +55,8 @@ export async function checkChain(config: EvalConfig, suite: Suite, parentBatchId
       if (checks === undefined) throw new Error("The case has no hidden checks.");
       const graded = await checks({ project: space.work, build, html: build.html === null ? null : join(space.work, build.html), shotsFolder: join(space.root, "shots") });
       return { setup: child.setup, repeat: child.repeat, parentRunId, buildPassed: build.passed,
-        target: graded.checks.filter((check) => check.area !== "regression" && !check.id.startsWith("brownfield-")).map(({ id, status }) => ({ id, status })),
+        // Review clauses wait for a judge, so the new task's own checks are the feature and repair ones.
+        target: graded.checks.filter((check) => check.area === "repair" || check.area === "feature").map(({ id, status }) => ({ id, status })),
         changed: changedChecks(source?.checkOutcomes ?? [], graded.checks) };
     } finally {
       await removeFolder(space.root);
