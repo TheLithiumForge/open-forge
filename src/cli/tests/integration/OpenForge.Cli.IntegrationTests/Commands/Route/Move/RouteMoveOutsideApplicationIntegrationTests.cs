@@ -1,22 +1,22 @@
+using System.Runtime.CompilerServices;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Move;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
-using OpenForge.Cli.Core.Framework.Sources.Loading;
-using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Settings;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
 [Trait("Feature", "route-move"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
 public sealed class RouteMoveOutsideApplicationIntegrationTests
 {
-    [Theory(DisplayName = "Outside leaf preview and application retain conditioned rows and never relist the Loader")]
+    [Theory(DisplayName = "Outside leaf preview and application retain conditioned leaving rows, rebuild routed child rows and never relist the Loader")]
     [InlineData(false, false, false), InlineData(true, false, true), InlineData(false, true, true), InlineData(true, true, false)]
     public async Task Leaf(bool custom, bool compatibility, bool listed)
     {
@@ -37,16 +37,7 @@ public sealed class RouteMoveOutsideApplicationIntegrationTests
         Assert.Equal(Encoding.UTF8.GetBytes(RouteMoveOutsideWorkspace.OverwriteText), workspace.Bytes(SourceOverwritePath.ReadAdjacentPath(RouteMoveOutsideWorkspace.Destination)));
         Assert.Equal(loader, workspace.Bytes(workspace.Loader));
         Assert.Equal(settings, workspace.Bytes(WorkspaceSettingsDefinitions.RelativePath));
-        var expectedRows = new[]
-        {
-            $"- [First](../right/new%20note.md) - #Docs #{SourceLoadingClosureResolver.LoadNowTag} - applies to `src/**`",
-            "- [Second](../right/new%20note.md) - #Review - applies to `tests/**`",
-            "- [Topic](topic/_topic.md) - #Docs",
-            "- [Incoming](incoming.md) - #Docs",
-        };
-        var left = workspace.Read(workspace.LeftCatalogue);
-        var parsed = SourceGeneratedEntriesParser.Parse(new MarkdownDocumentParser().Parse(left));
-        Assert.Equal(expectedRows, parsed.Entries.Select(row => left[row.Span.Start..row.Span.End]));
+        CaptureLeftCatalogue(workspace);
         var repeated = await operation.ExecuteAsync(workspace.Request(mode: RouteMoveMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(RouteMoveFindingCode.SourceNotFound, Assert.Single(repeated.Findings).Code);
     }
@@ -114,6 +105,12 @@ public sealed class RouteMoveOutsideApplicationIntegrationTests
     internal static void Complete(RouteMoveResult result)
         => Assert.True(result.Status == CliSemanticStatus.Complete, string.Join(Environment.NewLine, result.Findings.Select(finding => $"{finding.Code}: {finding.Cause}")));
 
+    private static void CaptureLeftCatalogue(RouteMoveOutsideWorkspace workspace, [CallerMemberName] string testName = "")
+        => CommandOutputSnapshot.MatchDetailSnapshot(new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["left-catalogue.content"] = workspace.Read(workspace.LeftCatalogue),
+        }, testName: testName);
+
     [Theory(DisplayName = "A stale canonical Loader row cannot veto an available outside compatibility anchor")]
     [InlineData(false), InlineData(true)]
     public async Task StaleLoader(bool custom)
@@ -130,7 +127,7 @@ public sealed class RouteMoveOutsideApplicationIntegrationTests
         Assert.Equal(Encoding.UTF8.GetBytes(RouteMoveOutsideWorkspace.OverwriteText), workspace.Bytes(SourceOverwritePath.ReadAdjacentPath(RouteMoveOutsideWorkspace.Destination)));
     }
 
-    [Theory(DisplayName = "Outside row destination projection preserves authored blank lines and repeated row policy bytes")]
+    [Theory(DisplayName = "Outside row destination projection keeps repeated row policy bytes and authored prose while the list takes its generated form")]
     [InlineData(false), InlineData(true)]
     public async Task RowBytes(bool custom)
     {
@@ -138,13 +135,11 @@ public sealed class RouteMoveOutsideApplicationIntegrationTests
         var original = workspace.Read(workspace.LeftCatalogue).Replace("\n- [Second]", "\n\n- [Second]", StringComparison.Ordinal)
             + "\nUntouched café bytes and [ordinary prose](old%20note.md#leaf).\n";
         workspace.Write(workspace.LeftCatalogue, original);
-        var expected = Encoding.UTF8.GetBytes(original.Replace("(old%20note.md)", "(../right/new%20note.md)", StringComparison.Ordinal)
-            .Replace("(old%20note.md#leaf)", "(../right/new%20note.md#leaf)", StringComparison.Ordinal));
         workspace.OwnLeaf();
         var result = await RouteMoveOperationFactory.Create(workspace.LockStore.StoreRoot).ExecuteAsync(
             workspace.Request(mode: RouteMoveMode.Apply), TestContext.Current.CancellationToken);
         Complete(result);
-        Assert.Equal(expected, workspace.Bytes(workspace.LeftCatalogue));
+        CaptureLeftCatalogue(workspace);
     }
 
     [Theory(DisplayName = "Outside SKILL filenames remain ordinary Markdown leaves")]

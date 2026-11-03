@@ -1,0 +1,13 @@
+---
+open-forge:
+  description: Independent route metadata
+  tags: [Fixture]
+---
+# Authored route
+
+Keep this introduction byte-exact.
+
+## Entries
+
+- [After outside](note.md) - #Fixture #Before - applies to `src/**`
+- [Foreign independent label](../../../foreign/readonly.md) - #Fixture - applies to `docs/**`

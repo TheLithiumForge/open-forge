@@ -1,0 +1,13 @@
+---
+open-forge:
+  description: Outside fixture
+  tags: [Docs]
+---
+# Root
+
+## Entries
+
+- [Outside fixture](incoming.md) - #Docs
+- [Outside fixture](topic/_topic.md) - #Docs
+- [First](../right/new%20note.md) - #Docs #LoadNow - applies to `src/**`
+- [Second](../right/new%20note.md) - #Review - applies to `tests/**`

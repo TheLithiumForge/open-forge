@@ -1,0 +1,12 @@
+---
+open-forge:
+  description: Project Alpha
+  tags: [Project]
+---
+
+# Root
+
+## Entries
+
+- [After overview](overview.md) - #Before #Memory
+- [Foreign readable policy](../../foreign/readonly.md) - #Fixture - applies to `docs/**`

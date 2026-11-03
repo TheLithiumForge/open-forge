@@ -122,7 +122,7 @@ internal static class IndexText
 
     // @OpenForgeText index.index.help.behavior
     internal static string HelpBehavior()
-        => "With no source, rebuild the Loader and every reachable entrypoint.\n--dry-run shows the complete checked plan and writes nothing.\nFill absent metadata and create missing navigation files below existing routed roots. Keep supplied fields and authored content. This command asks no questions.\nRepeating it makes no further changes. Use Git or a backup to restore saved content.";
+        => "With no source, rebuild the Loader and every reachable entrypoint.\n--dry-run shows the complete checked plan and writes nothing.\nFill absent metadata and create missing navigation files below existing routed roots. Rebuild each routed file's Entries line from its current metadata. Keep supplied fields and authored content. This command asks no questions.\nRepeating it makes no further changes. Use Git or a backup to restore saved content.";
 
     // @OpenForgeText index.index.help.relatedcommands
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()

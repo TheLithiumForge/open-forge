@@ -342,6 +342,8 @@ loading tags, conditions and order. It never relists a registration or extends
 write authority to a readable foreign source. Required generated changes remain
 inside the selected outside boundary. Authored outside Entries retain their
 independent labels, metadata, conditions and order when source fields change.
+A row that reaches a routed child of its catalogue is generated and follows
+that child's changed fields.
 
 The dependency-minimal generated effects are:
 

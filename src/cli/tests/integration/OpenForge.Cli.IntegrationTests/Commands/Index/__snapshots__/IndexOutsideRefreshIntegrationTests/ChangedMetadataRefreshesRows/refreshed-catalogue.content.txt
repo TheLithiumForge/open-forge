@@ -1,0 +1,13 @@
+---
+open-forge:
+  description: docs/team
+  tags: [Alpha]
+---
+
+# Root
+
+## Entries
+
+- [Second file description](file.md) - #Alpha #Gamma
+- [Second _scope description](scope/_scope.md) - #Alpha #Gamma
+- [reference/note.md](../../reference/note.md) - #Authored - applies to `src/**`

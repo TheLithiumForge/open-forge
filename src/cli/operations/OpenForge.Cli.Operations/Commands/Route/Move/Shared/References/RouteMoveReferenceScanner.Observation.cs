@@ -74,9 +74,21 @@ internal sealed partial class RouteMoveReferenceScanner
             {
                 var literal = intended.Source[row.Span.Start..row.Span.End];
                 var index = remaining.FindIndex(candidate => document.Text[candidate.Span.Start..candidate.Span.End] == literal);
-                if (index < 0) return Failed("A final outside authored row changed its untouched bytes or order.");
-                var actual = remaining[index];
-                remaining.RemoveRange(0, index + 1);
+                SourceGeneratedEntry actual;
+                if (index >= 0)
+                {
+                    actual = remaining[index];
+                    remaining.RemoveRange(0, index + 1);
+                }
+                else if (FindRebuiltRow(sourceCatalogue, expected.DestinationSourcePath, row, parsed.Entries) is { } rebuilt)
+                {
+                    actual = rebuilt;
+                }
+                else
+                {
+                    return Failed("A final outside authored row changed its untouched bytes or order.");
+                }
+
                 var facts = await _destinationResolver.ResolveAsync(new SourceLinkDestinationInput
                 {
                     Workspace = plan.Request.Workspace,
@@ -170,6 +182,28 @@ internal sealed partial class RouteMoveReferenceScanner
         throw new InvalidOperationException(
             "A moved Route Move reference document requires one accepted destination effect.");
     }
+
+    // Generated navigation rebuilds an outside catalogue's row for each routed child, and the navigation
+    // observation proves that projection. Such a row keeps its meaning through the final row that reaches
+    // the same target inside the registered folder. Every other row must survive with its exact bytes.
+    private static SourceGeneratedEntry? FindRebuiltRow(
+        SourceCatalogue catalogue,
+        string documentPath,
+        SourceGeneratedEntry row,
+        IReadOnlyList<SourceGeneratedEntry> entries)
+    {
+        if (ReadInsideTarget(catalogue, documentPath, row.Destination) is not { } target)
+        {
+            return null;
+        }
+
+        return entries.FirstOrDefault(entry => ReadInsideTarget(catalogue, documentPath, entry.Destination) == target);
+    }
+
+    private static string? ReadInsideTarget(SourceCatalogue catalogue, string documentPath, string destination)
+        => SourceGeneratedDestinationResolver.Resolve(catalogue.Layout, documentPath, false, destination) is { } path
+            ? catalogue.Aliases.GetValueOrDefault(path) ?? path
+            : null;
 
     private static bool MeaningsMatch(
         IReadOnlyList<RouteMoveReferenceMeaning> expected,

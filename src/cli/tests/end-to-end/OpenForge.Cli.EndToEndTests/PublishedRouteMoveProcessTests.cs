@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 using System.Text;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Contracts;
+using OpenForge.Cli.TestSupport.Snapshots;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.EndToEndTests.Shared.Route;
 
@@ -10,7 +11,7 @@ namespace OpenForge.Cli.EndToEndTests;
 
 public sealed partial class PublishedRouteMoveProcessTests
 {
-    [Fact(DisplayName = "Published outside Move preserves repeated authored rows and consumes the old exact identity"), Trait("Feature", "route-move"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published outside Move rebuilds repeated rows for its moved child and consumes the old exact identity"), Trait("Feature", "route-move"), Trait("Evidence", "EndToEnd")]
     public async Task OutsideComposition()
     {
         using var workspace = TemporaryWorkspace.Create(nameof(OutsideComposition));
@@ -54,7 +55,7 @@ public sealed partial class PublishedRouteMoveProcessTests
             AssertMoveCompleted(await PublishedProcessTestSupport.RunAsync(target, workspace.Path, arguments, locks.EnvironmentVariables));
             Assert.False(File.Exists(workspace.Combine(source)));
             Assert.Equal(Encoding.UTF8.GetBytes(body), File.ReadAllBytes(workspace.Combine(destination)));
-            Assert.Equal(Encoding.UTF8.GetBytes(rows.Replace($"({oldName}{PublishedTokens.Layout.MarkdownExtension})", $"({newName}{PublishedTokens.Layout.MarkdownExtension})", StringComparison.Ordinal)), File.ReadAllBytes(workspace.Combine(anchor)));
+            CommandOutputSnapshot.MatchSnapshot(File.ReadAllText(workspace.Combine(anchor)), "moved-catalogue");
             Assert.Equal(Encoding.UTF8.GetBytes(loader), File.ReadAllBytes(workspace.Combine(Loader)));
             Assert.Equal(Encoding.UTF8.GetBytes(settings), File.ReadAllBytes(workspace.Combine(PublishedTokens.Settings.RelativePath)));
             var repeat = await PublishedProcessTestSupport.RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes, arguments, locks.EnvironmentVariables);

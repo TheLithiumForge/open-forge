@@ -1,4 +1,4 @@
-Open Forge is installed, but 12 files need attention.
+Open Forge is installed, but 13 files need attention.
   Warning  .agents/directives/_directives.md  Entries section is missing
          .agents/directives/_directives.md has no Entries section.
          open-forge index
@@ -34,6 +34,9 @@ Open Forge is installed, but 12 files need attention.
          open-forge index
   Warning  .agents/templates/_templates.md  Entries section is missing
          .agents/templates/_templates.md has no Entries section.
+         open-forge index
+  Warning  docs/team/_team.md  Entries section is stale
+         The Entries section of docs/team/_team.md is stale.
          open-forge index
   Startup reads 2 of 5 routed files, about 0.0k tokens.
 Included files: 0 listed, 1 unlisted, 0 missing, 0 hand-written loader rows.

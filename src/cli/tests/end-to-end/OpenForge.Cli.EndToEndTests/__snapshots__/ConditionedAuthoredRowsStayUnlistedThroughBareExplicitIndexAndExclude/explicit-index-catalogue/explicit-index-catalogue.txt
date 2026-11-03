@@ -1,0 +1,13 @@
+---
+open-forge:
+  description: Team
+  tags: [HJourney]
+---
+# Team
+
+Independent authored prefix.
+
+## Entries
+
+- [Child](child.md) - #HJourney
+- [Fresh](fresh.md) - #HJourney

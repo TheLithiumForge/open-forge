@@ -205,18 +205,8 @@ internal sealed class GeneratedNavigationRegionPlanner
 
         var selected = new List<SourceLogicalSource>();
         var physicalPaths = new HashSet<string>(PhysicalIdentityTracker.PathComparer);
-        var authoredOutsidePaths = new HashSet<string>(StringComparer.Ordinal);
-        if (SourceLogicalPath.IsOutsideSource(request.Formation.Catalogue.Layout, parent.Base.CanonicalPath))
-        {
-            foreach (var entry in SourceGeneratedEntriesParser.Parse(document).Entries)
-                if (SourceGeneratedDestinationResolver.ResolveLinked(request.Formation.Catalogue.Layout, parent.Base.CanonicalPath, false, entry.Destination) is { } path)
-                    authoredOutsidePaths.Add(request.Formation.Catalogue.FindByPath(path)?.Base.CanonicalPath ?? path);
-            foreach (var row in request.Formation.Catalogue.IncludedRows.Where(row => row.ParentPath == parent.Base.CanonicalPath))
-                authoredOutsidePaths.Add(request.Formation.Catalogue.FindByPath(row.Path)?.Base.CanonicalPath ?? row.AliasOf ?? row.Path);
-        }
         foreach (var childPath in childPaths)
         {
-            if (authoredOutsidePaths.Contains(childPath)) continue;
             if (!request.Sharing.Includes(childPath)) continue;
             var child = request.FindSource(childPath);
             if (child is null)
@@ -481,17 +471,27 @@ internal sealed class GeneratedNavigationRegionPlanner
 
         var authored = new List<string>();
         var generatedPaths = entries.Select(entry => entry.CanonicalPath).ToHashSet(StringComparer.Ordinal);
+        var aliases = request?.Formation.Catalogue.Aliases ?? new Dictionary<string, string>(StringComparer.Ordinal);
+        var outside = SourceLogicalPath.IsOutsideSource(layout, source.Base.CanonicalPath);
         var text = document.Source[block.Span.Start..block.Span.End].Replace("\r\n", "\n", StringComparison.Ordinal);
         foreach (var line in text.Split('\n'))
         {
             if (!MarkdownEntryRowParser.TryParse(line, out var row, out _)) continue;
-            var outsidePath = SourceGeneratedDestinationResolver.ResolveLinked(roots, source.Base.CanonicalPath, false, row.Destination);
-            if (SourceLogicalPath.IsOutsideSource(layout, source.Base.CanonicalPath)
-                && (outsidePath is null || !generatedPaths.Contains(outsidePath)))
+
+            // In an outside catalogue, a row that stays inside the registered folder and reaches a routed
+            // child, directly or through a proven physical alias, is that child's generated row.
+            // Every other row there, including a link that leaves the folder, is authored.
+            if (outside)
             {
-                authored.Add(line);
+                var inside = SourceGeneratedDestinationResolver.Resolve(layout, source.Base.CanonicalPath, false, row.Destination);
+                if (inside is null || !generatedPaths.Contains(aliases.GetValueOrDefault(inside) ?? inside))
+                {
+                    authored.Add(line);
+                }
+
                 continue;
             }
+
             var path = source.Base.Form == SourceDocumentForm.Loader
                 ? SourceGeneratedDestinationResolver.Resolve(roots, source.Identity.CanonicalBasePath, true, row.Destination)
                 : null;
