@@ -16,7 +16,7 @@ export const StartingPoints = [
 ] as const;
 export type StartingPointId = (typeof StartingPoints)[number]["id"];
 /** Setups that install Open Forge, from smallest to largest, then the scoped variant. */
-export const OpenForgeSetups = ["minimal", "essentials", "full-core", "full-core-scoped"] as const;
+export const OpenForgeSetups = ["minimal", "essentials", "full-core", "full-core-scoped", "full-core-scoped-memory"] as const;
 
 export interface Measure {
   readonly mean: number | null;

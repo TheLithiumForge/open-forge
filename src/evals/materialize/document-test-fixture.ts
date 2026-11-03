@@ -22,7 +22,14 @@ export function documentInstaller(calls: string[][] = [], ignoreContext = false)
       files[marker] = `# ${preset}\n`;
       files[QualificationFiles.lock] = JSON.stringify({ framework: { source: { version: FrameworkVersion }, paths: [QualificationFiles.loader, marker] }, extensions: [], libraries: [] });
       if (ignoreContext) files[".gitignore"] = `${await readFile(join(cwd, ".gitignore"), "utf8")}${FixtureIgnoredContext}`;
-    } else if (args[0] === "index") {
+    } else if (args[0] === "extension" && args[1] === "install") {
+      // The fake records each requested Extension in the lock, as a real install does, with no files of its own.
+      const flags = args.findIndex((arg, index) => index > 1 && arg.startsWith("--"));
+      const ids = args.slice(2, flags < 0 ? undefined : flags);
+      const lock = JSON.parse(await readFile(join(cwd, QualificationFiles.lock), "utf8")) as { extensions: unknown[] };
+      if (!args.includes(ForgeFlags.dryRun)) await writeFile(join(cwd, QualificationFiles.lock), JSON.stringify({ ...lock, extensions: ids.map((id) => ({ id, dependencies: [], paths: [] })) }));
+      return { code: 0, stdout: jsonBytes({ status: "completed", effects: [] }).toString(), stderr: "" };
+    } else if (args[0] === "index" && args[1] !== undefined && !args[1].startsWith("--")) {
       const docs = await inventory(join(cwd, SetupFiles.docs));
       files[DocumentFixtureFiles.catalogue] = `# Documents\n\n## Entries\n\n${docs.map((file) => `- [${documentMetadata(file.bytes).description}](${file.path})`).join("\n")}\n`;
     }

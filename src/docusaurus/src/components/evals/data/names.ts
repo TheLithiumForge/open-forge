@@ -13,8 +13,9 @@ export function modelLabel(choice: Choice, reported?: string | null): string {
 
 /** Setups in reading order: the controls, the other setups without Open Forge, then the Open Forge presets from small to large. */
 export const SetupNames = {
-  "no-setup": "No setup", "code-only": "Code only", "plain-docs": "Plain docs", "organized-docs": "Organized docs", "linked-agents": "Linked AGENTS.md", "spec-in-prompt": "Spec in prompt",
+  "no-setup": "No setup", "code-only": "Code only", "plain-docs": "Plain docs", "organized-docs": "Organized docs", "overloaded-docs": "Overloaded docs", "linked-agents": "Linked AGENTS.md", "spec-in-prompt": "Spec in prompt",
   minimal: "Minimal", essentials: "Essentials", "full-core": "Full Core", "full-core-scoped": "Full Core, scoped",
+  "full-core-scoped-memory": "Full Core, scoped, with memory",
 } as const satisfies Readonly<Record<string, string>>;
 export type SetupId = keyof typeof SetupNames;
 const SetupOrder: readonly string[] = Object.keys(SetupNames);

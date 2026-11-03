@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "layer": 4,
   "cases": ["l4-f01", "l4-r01", "l4-fr01"],
-  "setups": ["organized-docs", "linked-agents", "minimal", "essentials", "full-core", "full-core-scoped", "code-only", "plain-docs"],
+  "setups": ["organized-docs", "linked-agents", "minimal", "essentials", "full-core", "full-core-scoped", "code-only", "plain-docs", "overloaded-docs", "full-core-scoped-memory"],
   "runsPerSetup": 3,
   "parallelRuns": 2,
   "agents": "claude",

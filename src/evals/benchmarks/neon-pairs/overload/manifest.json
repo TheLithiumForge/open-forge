@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "notes": [
+    { "file": "dom-cards-not-canvas.md", "kind": "decision", "description": "Decision to render cards as native DOM buttons instead of a canvas board", "tags": ["Game", "Decision", "Rendering"] },
+    { "file": "single-file-build.md", "kind": "decision", "description": "Decision to ship the game as one self-contained HTML file", "tags": ["Game", "Decision", "Build"] },
+    { "file": "park-miller-deals.md", "kind": "decision", "description": "Decision to generate reproducible deals with the Park-Miller generator", "tags": ["Game", "Decision", "Reproducibility"] },
+    { "file": "no-backend.md", "kind": "decision", "description": "Decision to keep the game on the device with no backend or accounts", "tags": ["Game", "Decision", "Storage"] },
+    { "file": "large-board-performance.md", "kind": "analysis", "description": "Profiling the 16 by 16 board and why faces mount only when revealed", "tags": ["Game", "Analysis", "Performance"] },
+    { "file": "storage-in-private-windows.md", "kind": "analysis", "description": "How local storage fails across browsers and private windows", "tags": ["Game", "Analysis", "Storage"] },
+    { "file": "bundle-size.md", "kind": "analysis", "description": "Size of the single HTML file and the Preact comparison", "tags": ["Game", "Analysis", "Build"] },
+    { "file": "daily-challenge.md", "kind": "idea", "description": "Idea for a shared daily board, not adopted", "tags": ["Game", "Idea"] },
+    { "file": "match-chime.md", "kind": "idea", "description": "Idea for a chime on each match, rejected", "tags": ["Game", "Idea", "Sound"] },
+    { "file": "color-themes.md", "kind": "idea", "description": "Idea for light and color vision themes, parked", "tags": ["Game", "Idea", "Visuals"] },
+    { "file": "timed-mode.md", "kind": "idea", "description": "Idea for a countdown mode, parked", "tags": ["Game", "Idea"] },
+    { "file": "css-grid-tryout.md", "kind": "observation", "description": "Tryout of CSS Grid against flexbox for the board layout", "tags": ["Game", "Observation", "Layout"] },
+    { "file": "flip-transform-tryout.md", "kind": "observation", "description": "Tryout of 3D flips against transform and opacity for revealing cards", "tags": ["Game", "Observation", "Motion"] },
+    { "file": "worker-shuffle-spike.md", "kind": "observation", "description": "Spike on shuffling the deck in a Web Worker, not worth it", "tags": ["Game", "Observation", "Performance"] },
+    { "file": "touch-delay-tryout.md", "kind": "observation", "description": "Tryout of removing the tap delay and double tap zoom on phones", "tags": ["Game", "Observation", "Input"] }
+  ]
+}

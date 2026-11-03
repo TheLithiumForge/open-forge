@@ -6,6 +6,9 @@ import { inventory, safeRelative } from "../materialize/files.ts";
 import { ImageVersions } from "../execution/containers/docker-image.ts";
 import { generateSetup, type GeneratedSetup } from "./setups.ts";
 import { object, text } from "./validation.ts";
+
+// A lock list that may be empty, such as an Extension without dependencies.
+const textList = (value: unknown): string[] => Array.isArray(value) ? value.map(text) : [];
 import { checkDocumentSetup } from "../materialize/qualification.ts";
 
 export const QualificationFiles = { agents: "AGENTS.md", loader: ".agents/loader.md", lock: ".agents/open-forge.lock.json" } as const;
@@ -30,7 +33,16 @@ export async function checkSetup(generated: GeneratedSetup): Promise<QualifiedSe
     if (source["version"] !== undefined && source["version"] !== null && source["version"] !== generated.frameworkVersion) throw new Error("The installed framework version differs from the CLI.");
     if (!Array.isArray(framework["paths"]) || framework["paths"].length === 0) throw new Error("The framework lock has no installed files.");
     for (const value of framework["paths"]) if (!names.includes(safeRelative(text(value)))) throw new Error("An installed Open Forge file is missing.");
-    for (const key of ["extensions", "libraries"]) if (Array.isArray(lock[key]) && lock[key].length > 0) throw new Error("The setup contains an unexpected Extension or Library.");
+    if (Array.isArray(lock["libraries"]) && lock["libraries"].length > 0) throw new Error("The setup contains an unexpected Library.");
+    // A setup may carry the Extensions it asked for and the dependencies they declare, with every file they installed.
+    const installed = Array.isArray(lock["extensions"]) ? lock["extensions"].map((entry) => object(entry)) : [];
+    const requested = generated.materialized?.extensions ?? [];
+    const allowed = new Set(requested.flatMap((id) => [id, ...textList(installed.find((entry) => entry["id"] === id)?.["dependencies"])]));
+    for (const id of requested) if (!installed.some((entry) => entry["id"] === id)) throw new Error(`The setup is missing its ${id} Extension.`);
+    for (const entry of installed) {
+      if (!allowed.has(text(entry["id"]))) throw new Error("The setup contains an unexpected Extension.");
+      for (const value of textList(entry["paths"])) if (!names.includes(safeRelative(value))) throw new Error("An installed Extension file is missing.");
+    }
   }
   return { setup: generated.record.setup, files: files.length, frameworkVersion: generated.frameworkVersion };
 }

@@ -1,16 +1,18 @@
 ---
 title: Setups
-description: The ten project setups the evals compare, from No setup to Full Core and its scoped variant, with the control for each starting point and how the runner builds them.
+description: The twelve project setups the evals compare, from No setup to Full Core and its scoped variants, with the control for each starting point and how the runner builds them.
 ---
 
 import NoSetup from "./_definitions/no-setup.mdx"
 import PlainDocs from "./_definitions/plain-docs.mdx"
 import OrganizedDocs from "./_definitions/organized-docs.mdx"
+import OverloadedDocs from "./_definitions/overloaded-docs.mdx"
 import LinkedAgents from "./_definitions/linked-agents.mdx"
 import Minimal from "./_definitions/minimal.mdx"
 import Essentials from "./_definitions/essentials.mdx"
 import FullCore from "./_definitions/full-core.mdx"
 import FullCoreScoped from "./_definitions/full-core-scoped.mdx"
+import FullCoreScopedMemory from "./_definitions/full-core-scoped-memory.mdx"
 import SpecInPrompt from "./_definitions/spec-in-prompt.mdx"
 import CodeOnly from "./_definitions/code-only.mdx"
 
@@ -20,7 +22,7 @@ A setup is the project context an agent starts with in an eval run, from an empt
 
 Within one comparison, every setup gets the same prompt, the same requirements, the same starting code and the same simulated user. Only the arrangement of the context changes. For example, Organized docs and Essentials both hold the same short brief in `docs/`, and Essentials also routes it through the Open Forge loader.
 
-Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder), the scale the Demos use for how much setup a project has. Spec in prompt, Code only and Plain docs are delivery variants. They move or remove the documents instead of adding setup. Full Core, scoped keeps Full Core's install and routes the documents by scope.
+Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder), the scale the Demos use for how much setup a project has. Spec in prompt, Code only and Plain docs are delivery variants. They move or remove the documents instead of adding setup. Full Core, scoped keeps Full Core's install and routes the documents by scope. Overloaded docs and Full Core, scoped, with memory add the notes a real project collects beside its spec, so they test whether an agent can tell the spec from the history around it.
 
 ## No setup \{#no-setup}
 
@@ -33,6 +35,10 @@ Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder
 ## Organized docs \{#organized-docs}
 
 <OrganizedDocs />
+
+## Overloaded docs \{#overloaded-docs}
+
+<OverloadedDocs />
 
 ## Linked AGENTS.md \{#linked-agents}
 
@@ -53,6 +59,10 @@ Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder
 ## Full Core, scoped \{#full-core-scoped}
 
 <FullCoreScoped />
+
+## Full Core, scoped, with memory \{#full-core-scoped-memory}
+
+<FullCoreScopedMemory />
 
 ## Spec in prompt \{#spec-in-prompt}
 

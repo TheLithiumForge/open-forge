@@ -15,6 +15,8 @@ import Silence from "@site/docs/evals/_definitions/l4-r05.mdx";
 import NoSetup from "@site/docs/evals/_definitions/no-setup.mdx";
 import PlainDocs from "@site/docs/evals/_definitions/plain-docs.mdx";
 import OrganizedDocs from "@site/docs/evals/_definitions/organized-docs.mdx";
+import OverloadedDocs from "@site/docs/evals/_definitions/overloaded-docs.mdx";
+import FullCoreScopedMemory from "@site/docs/evals/_definitions/full-core-scoped-memory.mdx";
 import LinkedAgents from "@site/docs/evals/_definitions/linked-agents.mdx";
 import SpecInPrompt from "@site/docs/evals/_definitions/spec-in-prompt.mdx";
 import CodeOnly from "@site/docs/evals/_definitions/code-only.mdx";
@@ -58,6 +60,8 @@ export const Definitions: Readonly<Record<DefinitionId, Definition>> = {
   "no-setup": { title: SetupNames["no-setup"], kind: DefinitionKind.setup, Content: NoSetup },
   "plain-docs": { title: SetupNames["plain-docs"], kind: DefinitionKind.setup, Content: PlainDocs },
   "organized-docs": { title: SetupNames["organized-docs"], kind: DefinitionKind.setup, Content: OrganizedDocs },
+  "overloaded-docs": { title: SetupNames["overloaded-docs"], kind: DefinitionKind.setup, Content: OverloadedDocs },
+  "full-core-scoped-memory": { title: SetupNames["full-core-scoped-memory"], kind: DefinitionKind.setup, Content: FullCoreScopedMemory },
   "linked-agents": { title: SetupNames["linked-agents"], kind: DefinitionKind.setup, Content: LinkedAgents },
   "spec-in-prompt": { title: SetupNames["spec-in-prompt"], kind: DefinitionKind.setup, Content: SpecInPrompt },
   "code-only": { title: SetupNames["code-only"], kind: DefinitionKind.setup, Content: CodeOnly },

@@ -10,6 +10,7 @@ import type { CommandRunner } from "./runner.ts";
 import { ManifestVersion, SpecsFiles, type SpecsManifest } from "./specs.ts";
 import { stripFrontmatter } from "./strip.ts";
 import { withoutLinks } from "./plain-links.ts";
+import { NoteExtensions, noteBytes, noteHashes, notePath, type Overload } from "./overload.ts";
 import { LayerTwoFixture } from "./subset.ts";
 import { replaceSeedFiles, startingReadme, writeStartingFiles, SetupProjectMetadata } from "./brownfield-files.ts";
 import { captureScope } from "./scope-policy.ts";
@@ -37,6 +38,8 @@ export interface SetupOptions {
   readonly seedFiles?: readonly FileBytes[];
   /** False writes the documents without the links between them, for Plain docs. Plain document setups only. */
   readonly links?: false;
+  /** Notes beside the spec, mixed into docs/ or placed on their Memory routes in an Open Forge setup. */
+  readonly overload?: Overload;
   /** Routes the spec by scope folders, with only the up-front documents loading at the start. Open Forge setups only. */
   readonly scopes?: ScopeLayout;
 }
@@ -56,6 +59,10 @@ export interface SetupManifest {
   readonly scopes?: ScopeLayout;
   /** Each document body's hash with its links removed, which a setup without links writes in place of the frozen body. */
   readonly linkFree?: readonly FileHash[];
+  /** Where each note landed and its body hash, for setups that carry the overload notes. */
+  readonly notes?: readonly FileHash[];
+  /** The bundled Extensions the setup asked for. Their dependencies come with them. */
+  readonly extensions?: readonly string[];
 }
 
 /** Where a spec document sits in the setup, relative to docs. */
@@ -142,11 +149,19 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
     await writeNew(target, SetupFiles.agents, linkedInstructions(frozen.manifest));
     await writeNew(target, SetupFiles.claude, LinkedClaudeInstructions);
   }
-  const frameworkCommands = kind === SetupKind.forge ? await installFramework(target, options.runForge ?? createForgeRunner(), options.preset) : [];
+  const overload = options.overload, forge = kind === SetupKind.forge;
+  const writeNotes = async (): Promise<void> => { for (const note of overload?.notes ?? []) await writeNew(target, notePath(note, forge, SetupFiles.docs), noteBytes(note, forge)); };
+  if (overload !== undefined && !forge) await writeNotes();
+  const frameworkCommands = forge ? await installFramework(target, options.runForge ?? createForgeRunner(), options.preset,
+    overload === undefined ? {} : { extensions: NoteExtensions, place: writeNotes }) : [];
   let files = await inventory(target);
   for (const record of documentFiles.length ? frozen.manifest.files : []) {
     const actual = files.find((file) => file.path === `${SetupFiles.docs}/${documentPath(placed, record.path)}`);
     if (!actual || sha256(frozenBody(placed, record.path, actual.bytes)) !== expectedBody(record.path, record.sha256)) throw new Error(`Specification body changed: ${record.path}`);
+  }
+  for (const note of overload === undefined ? [] : noteHashes(overload, forge, SetupFiles.docs)) {
+    const actual = files.find((file) => file.path === note.path);
+    if (!actual || sha256(stripFrontmatter(actual.bytes)) !== note.sha256) throw new Error(`Overload note changed: ${note.path}`);
   }
   if (files.find((file) => file.path === SetupFiles.readme)?.bytes.toString() !== readme) throw new Error("Project acceptance README changed.");
   for (const file of options.projectFiles ?? []) if (!SetupProjectMetadata.has(file.path) && sha256(files.find((actual) => actual.path === file.path)?.bytes ?? "") !== sha256(file.bytes)) throw new Error("Setup installation changed the reference code.");
@@ -163,7 +178,7 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   }
   await initialCommit(target, options.runGit);
   const manifest: SetupManifest = { schemaVersion: ManifestVersion, kind, sourceHash: frozen.manifest.sourceHash, specifications: frozen.manifest,
-    frameworkVersion: kind === SetupKind.forge ? FrameworkVersion : null, frameworkCommands, files: hashes(files), ...(options.preset === undefined ? {} : { preset: options.preset }), ...placed, ...(linkFree === undefined ? {} : { linkFree }),
+    frameworkVersion: kind === SetupKind.forge ? FrameworkVersion : null, frameworkCommands, files: hashes(files), ...(options.preset === undefined ? {} : { preset: options.preset }), ...placed, ...(linkFree === undefined ? {} : { linkFree }), ...(overload === undefined ? {} : { notes: noteHashes(overload, forge, SetupFiles.docs), ...(forge ? { extensions: [...NoteExtensions] } : {}) }),
     ...(options.projectFiles === undefined ? {} : { readmeHash: sha256(finalReadme), projectFiles: hashes(options.seedFiles ?? options.projectFiles),
       scope: captureScope(files, kind === SetupKind.forge, [...options.seedFiles ?? options.projectFiles, ...documentFiles.map((file) => ({ ...file, path: `${SetupFiles.docs}/${documentPath(placed, file.path)}` }))]) }) };
   await ordinaryPath(dirname(manifestPath));

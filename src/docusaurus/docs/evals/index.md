@@ -23,7 +23,7 @@ A starting point is how much the agent is told before it starts: an idea, a shor
 
 ## Setups
 
-A setup is the project context the agent starts with. Six setups are rungs on the [setup ladder](../demos/index.md#setup-ladder), from No setup at rung 0 to Open Forge's Full Core preset at rung 5. Spec in prompt and Code only are delivery variants that move or remove the documents.
+A setup is the project context the agent starts with. Six setups are rungs on the [setup ladder](../demos/index.md#setup-ladder), from No setup at rung 0 to Open Forge's Full Core preset at rung 5. Spec in prompt, Code only and Plain docs are delivery variants that move, remove or unlink the documents. Overloaded docs and Full Core, scoped, with memory add project notes beside the spec.
 
 Each starting point measures its setups against a control: No setup for an idea and Organized docs for the others. [Setups](setups.mdx) defines every setup and how the runner builds it.
 

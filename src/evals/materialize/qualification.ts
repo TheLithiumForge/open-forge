@@ -5,6 +5,7 @@ import { initialRepository } from "./seed-repository.ts";
 import { documentPath, frozenBody, LinkedClaudeInstructions, SetupFiles, SetupKind, linkedInstructions, projectReadme, InlineReadme, type SetupManifest } from "./setup.ts";
 import { scopedMetadata, scopeEntrypoint } from "./scopes.ts";
 import { SetupProjectMetadata } from "./brownfield-files.ts";
+import { stripFrontmatter } from "./strip.ts";
 import { verifyScope } from "./scope-policy.ts";
 
 export async function checkDocumentSetup(folder: string, manifest: SetupManifest): Promise<string> {
@@ -20,6 +21,7 @@ export async function checkDocumentSetup(folder: string, manifest: SetupManifest
     const metadata = manifest.scopes === undefined ? file.metadata : scopedMetadata(manifest.scopes, file.path, file.metadata);
     if (manifest.kind === SetupKind.forge && JSON.stringify(documentMetadata(bytes)) !== JSON.stringify(metadata)) throw new Error("Product routing descriptions changed.");
   }
+for (const note of manifest.notes ?? []) {    const bytes = actual.get(note.path);    if (!bytes || sha256(stripFrontmatter(bytes)) !== note.sha256) throw new Error(`An overload note is missing or changed: ${note.path}`);  }
   for (const scope of manifest.scopes?.scopes ?? []) {
     const bytes = actual.get(`${SetupFiles.docs}/${scopeEntrypoint(scope)}`);
     if (!bytes || documentMetadata(bytes).description !== scope.description) throw new Error(`The ${scope.title} scope lost its description.`);

@@ -9,6 +9,7 @@ import { ImageVersions } from "../execution/containers/docker-image.ts";
 import { object, text } from "./validation.ts";
 import { documentPath, materializeSetup, scopeEntrypoints, SetupFiles, SetupKind, type SetupManifest } from "../materialize/setup.ts";
 import { loadScopeLayout } from "../materialize/scopes.ts";
+import { loadOverload, noteHashes } from "../materialize/overload.ts";
 import { evalsRoot } from "../paths.ts";
 
 export const SetupCliFlags = { version: "--version", preview: "--dry-run", output: ["--format", "json", "--detail", "full"] } as const;
@@ -44,10 +45,12 @@ export async function generateSetup(suite: Suite, setup: string, run: ForgeRunne
         return result;
       };
       const scopes = definition.delivery.scopes === undefined ? undefined : await loadScopeLayout(join(evalsRoot, safeRelative(definition.delivery.scopes)));
+      const overload = definition.delivery.overload === undefined ? undefined : await loadOverload(join(evalsRoot, safeRelative(definition.delivery.overload)));
       const result = await materializeSetup({ kind: definition.delivery.kind, destination: folder, ...(suite.specs === undefined ? {} : { specs: join(evalsRoot, safeRelative(suite.specs)) }),
         ...(suite.brownfield === undefined ? {} : { frozen: suite.brownfield.specifications, projectFiles: suite.brownfield.reference, seedFiles: suite.brownfield.seed }),
         ...(definition.delivery.preset === undefined ? {} : { preset: definition.delivery.preset }), ...(scopes === undefined ? {} : { scopes }),
-        ...(definition.delivery.links === false ? { links: false } : {}), runForge: tracked });
+        ...(definition.delivery.links === false ? { links: false } : {}), ...(overload === undefined ? {} : { overload }), runForge: tracked });
+      for (const note of overload === undefined ? [] : noteHashes(overload, definition.delivery.kind === SetupKind.forge, SetupFiles.docs)) expected.add(note.path);
       expected.add(SetupFiles.readme);
       if (definition.delivery.kind !== SetupKind.inline && definition.delivery.kind !== SetupKind.code) {
         for (const file of result.manifest.specifications.files) expected.add(`${SetupFiles.docs}/${documentPath(result.manifest, file.path)}`);

@@ -1,4 +1,4 @@
-import { CaseTimeLimitMinutes, DocumentSetups, NeonPairsScopes } from "./delivery.ts";
+import { CaseTimeLimitMinutes, DocumentSetups, NeonPairsOverload, NeonPairsScopes, OverloadSetups } from "./delivery.ts";
 import { CodeOnlySetup, type BrownfieldCase } from "./brownfield-case.ts";
 import { brownfieldInputs, type BrownfieldInputs } from "./brownfield-inputs.ts";
 import { orderedDocuments } from "./document-order.ts";
@@ -17,6 +17,9 @@ export const BrownfieldSetups: Readonly<Record<string, SetupDefinition>> = {
   [DocumentSetups.fullCoreScoped]: { label: "Full Core, scoped", commands: [], delivery: { kind: SetupKind.forge, preset: ForgePreset.fullCore, scopes: NeonPairsScopes } },
   [CodeOnlySetup]: { label: "Code only", commands: [], delivery: { kind: SetupKind.code } },
   [DocumentSetups.plain]: { label: "Plain docs", commands: [], delivery: { kind: SetupKind.plain, links: false } },
+  // Overloaded docs add project notes to Organized docs. With memory, the same notes sit on their Open Forge Memory routes.
+  [OverloadSetups.docs]: { label: "Overloaded docs", commands: [], delivery: { kind: SetupKind.plain, overload: NeonPairsOverload } },
+  [OverloadSetups.memory]: { label: "Full Core, scoped, with memory", commands: [], delivery: { kind: SetupKind.forge, preset: ForgePreset.fullCore, scopes: NeonPairsScopes, overload: NeonPairsOverload } },
 };
 
 export function brownfieldSuite(inputs: BrownfieldInputs): Suite {
