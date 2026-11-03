@@ -29,8 +29,8 @@ The setup ladder is a scale for how much setup a project gives an agent, from no
 | Rung | Setup            | What the project has                                                                                  |
 | ---- | ---------------- | ----------------------------------------------------------------------------------------------------- |
 | 0    | No setup         | Nothing but your request                                                                              |
-| 1    | Plain docs       | Your documents in `docs/` and a README line that says to follow them                                  |
-| 2    | Linked AGENTS.md | Plain docs plus an `AGENTS.md` that links each document with a one-line description                   |
+| 1    | Organized docs   | Your documents in `docs/` and a README line that says to follow them                                  |
+| 2    | Linked AGENTS.md | Organized docs plus an `AGENTS.md` that links each document with a one-line description                   |
 | 3    | Minimal          | Open Forge's loader, Directives and Crystallized Memory, with the documents routed through the loader |
 | 4    | Essentials       | Minimal plus Patterns, Skills, Emerging Memory and Working Memory                                     |
 | 5    | Full Core        | Every built-in Open Forge category and Memory state                                                   |

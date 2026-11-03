@@ -2,11 +2,12 @@
   "id": "l3-full-spec",
   "title": "Full specification",
   "project": "neon-pairs",
-  "baseline": "plain-docs",
+  "baseline": "organized-docs",
   "specs": "benchmarks/neon-pairs/specs",
   "runMinutes": 180,
   "setups": {
-    "plain-docs": { "label": "Plain docs", "commands": [], "delivery": { "kind": "plain-docs" } },
+    "organized-docs": { "label": "Organized docs", "commands": [], "delivery": { "kind": "plain-docs" } },
+    "plain-docs": { "label": "Plain docs", "commands": [], "delivery": { "kind": "plain-docs", "links": false } },
     "linked-agents": { "label": "Linked AGENTS.md", "commands": [], "delivery": { "kind": "linked-agents" } },
     "minimal": { "label": "Minimal", "commands": [], "delivery": { "kind": "open-forge", "preset": "minimal" } },
     "essentials": { "label": "Essentials", "commands": [], "delivery": { "kind": "open-forge", "preset": "essentials" } },
@@ -14,8 +15,8 @@
     "full-core-scoped": { "label": "Full Core, scoped", "commands": [], "delivery": { "kind": "open-forge", "preset": "full-core", "scopes": "benchmarks/neon-pairs/scopes.json" } }
   },
   "comparisons": {
-    "presets": ["plain-docs", "minimal", "essentials", "full-core"],
-    "delivery": ["plain-docs", "linked-agents", "minimal"],
-    "scopes": ["plain-docs", "full-core", "full-core-scoped"]
+    "presets": ["organized-docs", "minimal", "essentials", "full-core"],
+    "delivery": ["organized-docs", "linked-agents", "minimal"],
+    "scopes": ["organized-docs", "full-core", "full-core-scoped"]
   }
 }

@@ -26,7 +26,7 @@ test("document cases freeze the permitted banks, time limit and delivery cells",
   assert.equal(three.setups[DocumentSetups.fullCoreScoped]?.delivery?.scopes, NeonPairsScopes);
   for (const suite of [two, three]) {
     for (const preset of Object.values(ForgePreset)) assert.equal(suite.setups[preset]?.delivery?.preset, preset);
-    assert.equal(suiteForSetup(suite, DocumentSetups.plain).prompt, `${suite.prompt}\n\n${DocumentPointer}`);
+    assert.equal(suiteForSetup(suite, DocumentSetups.organized).prompt, `${suite.prompt}\n\n${DocumentPointer}`);
   }
   const inline = setupPrompt(two, DocumentSetups.inline);
   assert.equal(inline, `${two.prompt}\n\n${two.documents?.join("\n\n")}`);
@@ -52,7 +52,7 @@ test("qualification checks every document cell with fake installs and fresh repo
 
 test("document qualification rejects changed product sentences and foreign files", async () => {
   const suite = await loadSuite(DocumentCase.two);
-  for (const setup of [DocumentSetups.plain, DocumentSetups.minimal]) {
+  for (const setup of [DocumentSetups.organized, DocumentSetups.minimal]) {
     const generated = await generateSetup(suite, setup, documentInstaller());
     try {
       await checkSetup(generated);

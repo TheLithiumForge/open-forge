@@ -9,6 +9,7 @@ import { MaterializePaths } from "./paths.ts";
 import type { CommandRunner } from "./runner.ts";
 import { ManifestVersion, SpecsFiles, type SpecsManifest } from "./specs.ts";
 import { stripFrontmatter } from "./strip.ts";
+import { withoutLinks } from "./plain-links.ts";
 import { LayerTwoFixture } from "./subset.ts";
 import { replaceSeedFiles, startingReadme, writeStartingFiles, SetupProjectMetadata } from "./brownfield-files.ts";
 import { captureScope } from "./scope-policy.ts";
@@ -34,6 +35,8 @@ export interface SetupOptions {
   readonly frozen?: Awaited<ReturnType<typeof readFrozenSpecs>>;
   readonly projectFiles?: readonly FileBytes[];
   readonly seedFiles?: readonly FileBytes[];
+  /** False writes the documents without the links between them, for Plain docs. Plain document setups only. */
+  readonly links?: false;
   /** Routes the spec by scope folders, with only the up-front documents loading at the start. Open Forge setups only. */
   readonly scopes?: ScopeLayout;
 }
@@ -51,6 +54,8 @@ export interface SetupManifest {
   readonly projectFiles?: readonly FileHash[];
   readonly scope?: ScopePolicy;
   readonly scopes?: ScopeLayout;
+  /** Each document body's hash with its links removed, which a setup without links writes in place of the frozen body. */
+  readonly linkFree?: readonly FileHash[];
 }
 
 /** Where a spec document sits in the setup, relative to docs. */
@@ -109,15 +114,18 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   if (kind === SetupKind.inline && frozen.manifest.fixture !== LayerTwoFixture) throw new Error("Spec in prompt is available only for the frozen Layer 2 player pack.");
   const layout = options.scopes;
   if (layout !== undefined && kind !== SetupKind.forge) throw new Error("Only Open Forge setups route the spec by scope.");
+  if (options.links === false && kind !== SetupKind.plain) throw new Error("Only plain document setups drop the links between documents.");
   const placed = layout === undefined ? {} : { scopes: layout };
   const target = await emptyDestination(destination, [specs, MaterializePaths.source]);
   if (options.projectFiles) await writeStartingFiles(target, options.projectFiles);
   const documentFiles = kind === SetupKind.inline || kind === SetupKind.code ? [] : frozen.documents;
+  const linkFree = options.links === false ? documentFiles.map((file) => ({ path: file.path, sha256: sha256(withoutLinks(stripFrontmatter(file.bytes))) })) : undefined;
+  const expectedBody = (path: string, frozenHash: string): string => linkFree?.find((entry) => entry.path === path)?.sha256 ?? frozenHash;
   /** A spec document as this setup writes it: in its scope folder with scoped links and tags, or as frozen. */
   const placedDocument = (file: FileBytes): FileBytes => {
     const record = frozen.manifest.files.find((entry) => entry.path === file.path);
     if (!record) throw new Error("Specification metadata is missing.");
-    const bytes = layout === undefined ? file.bytes : relink(layout, file.path, file.bytes);
+    const linked = layout === undefined ? file.bytes : relink(layout, file.path, file.bytes), bytes = linkFree === undefined ? linked : withoutLinks(linked);
     const metadata = layout === undefined ? record.metadata : scopedMetadata(layout, file.path, record.metadata);
     return { path: `${SetupFiles.docs}/${documentPath(placed, file.path)}`, bytes: kind === SetupKind.forge ? addMetadata(bytes, metadata) : bytes };
   };
@@ -138,7 +146,7 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   let files = await inventory(target);
   for (const record of documentFiles.length ? frozen.manifest.files : []) {
     const actual = files.find((file) => file.path === `${SetupFiles.docs}/${documentPath(placed, record.path)}`);
-    if (!actual || sha256(frozenBody(placed, record.path, actual.bytes)) !== record.sha256) throw new Error(`Specification body changed: ${record.path}`);
+    if (!actual || sha256(frozenBody(placed, record.path, actual.bytes)) !== expectedBody(record.path, record.sha256)) throw new Error(`Specification body changed: ${record.path}`);
   }
   if (files.find((file) => file.path === SetupFiles.readme)?.bytes.toString() !== readme) throw new Error("Project acceptance README changed.");
   for (const file of options.projectFiles ?? []) if (!SetupProjectMetadata.has(file.path) && sha256(files.find((actual) => actual.path === file.path)?.bytes ?? "") !== sha256(file.bytes)) throw new Error("Setup installation changed the reference code.");
@@ -155,7 +163,7 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   }
   await initialCommit(target, options.runGit);
   const manifest: SetupManifest = { schemaVersion: ManifestVersion, kind, sourceHash: frozen.manifest.sourceHash, specifications: frozen.manifest,
-    frameworkVersion: kind === SetupKind.forge ? FrameworkVersion : null, frameworkCommands, files: hashes(files), ...(options.preset === undefined ? {} : { preset: options.preset }), ...placed,
+    frameworkVersion: kind === SetupKind.forge ? FrameworkVersion : null, frameworkCommands, files: hashes(files), ...(options.preset === undefined ? {} : { preset: options.preset }), ...placed, ...(linkFree === undefined ? {} : { linkFree }),
     ...(options.projectFiles === undefined ? {} : { readmeHash: sha256(finalReadme), projectFiles: hashes(options.seedFiles ?? options.projectFiles),
       scope: captureScope(files, kind === SetupKind.forge, [...options.seedFiles ?? options.projectFiles, ...documentFiles.map((file) => ({ ...file, path: `${SetupFiles.docs}/${documentPath(placed, file.path)}` }))]) }) };
   await ordinaryPath(dirname(manifestPath));

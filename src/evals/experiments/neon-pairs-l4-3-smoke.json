@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "layer": 4,
   "cases": ["l4-r06"],
-  "setups": ["plain-docs"],
+  "setups": ["organized-docs"],
   "runsPerSetup": 1,
   "parallelRuns": 3,
   "agents": "codex-teams",

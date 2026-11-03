@@ -15,7 +15,8 @@ export async function checkDocumentSetup(folder: string, manifest: SetupManifest
   for (const file of manifest.specifications.files) {
     if (manifest.kind === SetupKind.inline || manifest.kind === SetupKind.code) break;
     const bytes = actual.get(`${SetupFiles.docs}/${documentPath(manifest, file.path)}`);
-    if (!bytes || sha256(frozenBody(manifest, file.path, bytes)) !== file.sha256) throw new Error(`Product sentences changed: ${file.path}`);
+    const expected = manifest.linkFree?.find((entry) => entry.path === file.path)?.sha256 ?? file.sha256;
+    if (!bytes || sha256(frozenBody(manifest, file.path, bytes)) !== expected) throw new Error(`Product sentences changed: ${file.path}`);
     const metadata = manifest.scopes === undefined ? file.metadata : scopedMetadata(manifest.scopes, file.path, file.metadata);
     if (manifest.kind === SetupKind.forge && JSON.stringify(documentMetadata(bytes)) !== JSON.stringify(metadata)) throw new Error("Product routing descriptions changed.");
   }

@@ -1,9 +1,9 @@
 ---
 title: Scenarios
-description: The eval scenarios approved on 2026-11-03, with the four context steps, Layer 4 first and Layer 3 after, and the question each one answers.
+description: The eval scenarios approved on 2026-11-03, with the five context steps, Layer 4 first and Layer 3 after, and the question each one answers.
 ---
 
-The evals run as scenarios. Each one answers one question and adds one mechanism, and it starts only after the one before it has been checked. Layer 4, the existing app, runs first because it takes the least time and gives the most meaningful results. Layer 3, the full spec, follows. Layers 2 and 1 keep their earlier runs as their baseline.
+The evals run as scenarios. Each one answers one question and adds one mechanism, and it starts only after the one before it has been checked. For now each cell runs once, so the numbers are a first read, not a measured difference. Layer 4, the existing app, runs first because it takes the least time and gives the most meaningful results. Layer 3, the full spec, follows. Layers 2 and 1 keep their earlier runs as their baseline.
 
 ## Context steps
 
@@ -12,19 +12,20 @@ Each step adds one thing to the step before it, so each comparison has one cause
 | Step | Setup | What the agent gets |
 | --- | --- | --- |
 | 1 | Code only | The project, its tests and the request |
-| 2 | Plain docs | The same, plus the spec documents with their links between them. This is the control. |
-| 3 | Full Core | Open Forge with the spec moved in unchanged and indexed, with every document loaded up front |
-| 4 | Full Core, scoped | Open Forge with the spec routed by scope, so a task loads only the parts it needs |
+| 2 | Plain docs | The same, plus the spec documents, with every word but no links between them |
+| 3 | Organized docs | The same documents with their links, as a careful team keeps them. This is the control. |
+| 4 | Full Core | Open Forge with the spec moved in unchanged and indexed, with every document loaded up front |
+| 5 | Full Core, scoped | Open Forge with the spec routed by scope, so a task loads only the parts it needs |
 
-Code only takes information away, so it's compared only with Plain docs. [Setups](setups.mdx) defines each setup.
+Code only takes information away, and Plain docs takes the organization away, so both compare with Organized docs. [Setups](setups.mdx) defines each setup.
 
 ## Layer 4
 
 | Scenario | What runs | Steps | Way of working | Runs | Question |
 | --- | --- | --- | --- | --- | --- |
-| L4-1 | Four small repairs, each in one scope: best score, arrow keys, reduced motion and silence | 1 to 4 | One agent | 48 | What does each step change on small work, and what does scoping save? |
-| L4-2 | The same four repairs as a chain, each starting from the previous result | 2 to 4 | One agent | 27, reusing L4-1 for the first repair | Does scoping keep its saving as changes pile up? |
-| L4-3 | All four repairs in one request, worked one at a time with tests after each | 2 and 4 | Sol alone, Sol leading Sol subagents and Sol leading Luna subagents | 18 | What does a team cost against one agent for the same work, does a smaller subagent model save tokens, and does scoping lower the subagents' cost? |
+| L4-1 | Four small repairs, each in one scope: best score, arrow keys, reduced motion and silence | 1 to 5 | One agent | 20 | What does each step change on small work, and what does scoping save? |
+| L4-2 | The same four repairs as a chain, each starting from the previous result | 2 to 5 | One agent | 12, reusing L4-1 for the first repair | Does scoping keep its saving as changes pile up? |
+| L4-3 | All four repairs in one request, worked one at a time with tests after each | 3 and 5 | Sol alone, Sol leading Sol subagents and Sol leading Luna subagents | 6 | What does a team cost against one agent for the same work, does a smaller subagent model save tokens, and does scoping lower the subagents' cost? |
 
 A team is part of the implementer, as a model is. Any scenario can run with any team, and the Results page filters by team the way it filters by model, so teams are a selection of the data, not scenarios of their own.
 
@@ -34,9 +35,9 @@ Each chained repair in L4-2 has a twin in L4-1, the same repair from a clean sta
 
 | Scenario | What runs | Steps | Way of working | Runs | Question |
 | --- | --- | --- | --- | --- | --- |
-| L3-1 | A full build from the full spec in one go | 2 to 4 | One agent | 9 | Does scoping cost nothing when a build needs every document? |
-| L3-2 | The same build in three milestones, a playable game, then visuals, then saving and sharing, graded after each | 2 to 4 | One agent | 27 | With milestones, does scoping spend fewer tokens for the same result? |
-| L3-3 | An orchestrated full build, after L4-3 shows orchestration works | 2 and 4 | One agent and an orchestrator | 12 | L4-3's question at full-build scale |
+| L3-1 | A full build from the full spec in one go | 2 to 5 | One agent | 4 | Does scoping cost nothing when a build needs every document? |
+| L3-2 | The same build in three milestones, a playable game, then visuals, then saving and sharing, graded after each | 2 to 5 | One agent | 12 | With milestones, does scoping spend fewer tokens for the same result? |
+| L3-3 | An orchestrated full build, after L4-3 shows orchestration works | 3 and 5 | One agent and an orchestrator | 6 | L4-3's question at full-build scale |
 
 ## Measures
 

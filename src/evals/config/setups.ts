@@ -46,7 +46,8 @@ export async function generateSetup(suite: Suite, setup: string, run: ForgeRunne
       const scopes = definition.delivery.scopes === undefined ? undefined : await loadScopeLayout(join(evalsRoot, safeRelative(definition.delivery.scopes)));
       const result = await materializeSetup({ kind: definition.delivery.kind, destination: folder, ...(suite.specs === undefined ? {} : { specs: join(evalsRoot, safeRelative(suite.specs)) }),
         ...(suite.brownfield === undefined ? {} : { frozen: suite.brownfield.specifications, projectFiles: suite.brownfield.reference, seedFiles: suite.brownfield.seed }),
-        ...(definition.delivery.preset === undefined ? {} : { preset: definition.delivery.preset }), ...(scopes === undefined ? {} : { scopes }), runForge: tracked });
+        ...(definition.delivery.preset === undefined ? {} : { preset: definition.delivery.preset }), ...(scopes === undefined ? {} : { scopes }),
+        ...(definition.delivery.links === false ? { links: false } : {}), runForge: tracked });
       expected.add(SetupFiles.readme);
       if (definition.delivery.kind !== SetupKind.inline && definition.delivery.kind !== SetupKind.code) {
         for (const file of result.manifest.specifications.files) expected.add(`${SetupFiles.docs}/${documentPath(result.manifest, file.path)}`);

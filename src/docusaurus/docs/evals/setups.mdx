@@ -1,10 +1,11 @@
 ---
 title: Setups
-description: The nine project setups the evals compare, from No setup to Full Core and its scoped variant, with the control for each starting point and how the runner builds them.
+description: The ten project setups the evals compare, from No setup to Full Core and its scoped variant, with the control for each starting point and how the runner builds them.
 ---
 
 import NoSetup from "./_definitions/no-setup.mdx"
 import PlainDocs from "./_definitions/plain-docs.mdx"
+import OrganizedDocs from "./_definitions/organized-docs.mdx"
 import LinkedAgents from "./_definitions/linked-agents.mdx"
 import Minimal from "./_definitions/minimal.mdx"
 import Essentials from "./_definitions/essentials.mdx"
@@ -17,9 +18,9 @@ import CodeOnly from "./_definitions/code-only.mdx"
 
 A setup is the project context an agent starts with in an eval run, from an empty folder to a full Open Forge install.
 
-Within one comparison, every setup gets the same prompt, the same requirements, the same starting code and the same simulated user. Only the arrangement of the context changes. For example, Plain docs and Essentials both hold the same short brief in `docs/`, and Essentials also routes it through the Open Forge loader.
+Within one comparison, every setup gets the same prompt, the same requirements, the same starting code and the same simulated user. Only the arrangement of the context changes. For example, Organized docs and Essentials both hold the same short brief in `docs/`, and Essentials also routes it through the Open Forge loader.
 
-Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder), the scale the Demos use for how much setup a project has. Spec in prompt and Code only are delivery variants. They move or remove the documents instead of adding setup. Full Core, scoped keeps Full Core's install and routes the documents by scope.
+Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder), the scale the Demos use for how much setup a project has. Spec in prompt, Code only and Plain docs are delivery variants. They move or remove the documents instead of adding setup. Full Core, scoped keeps Full Core's install and routes the documents by scope.
 
 ## No setup \{#no-setup}
 
@@ -28,6 +29,10 @@ Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder
 ## Plain docs \{#plain-docs}
 
 <PlainDocs />
+
+## Organized docs \{#organized-docs}
+
+<OrganizedDocs />
 
 ## Linked AGENTS.md \{#linked-agents}
 
@@ -59,7 +64,7 @@ Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder
 
 ## Control
 
-Each comparison measures every setup against a control, the first setup in its plan. The control is No setup for an idea, and Plain docs for a short brief, a full spec and an existing app. [Starting points](starting-points.mdx#compared-setups) lists the setups each starting point compares, and [Results](results.mdx) shows each setup's difference from its control.
+Each comparison measures every setup against a control, the first setup in its plan. The control is No setup for an idea, and Organized docs for a short brief, a full spec and an existing app. [Starting points](starting-points.mdx#compared-setups) lists the setups each starting point compares, and [Results](results.mdx) shows each setup's difference from its control.
 
 ## How setups are built
 

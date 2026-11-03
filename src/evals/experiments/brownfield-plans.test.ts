@@ -31,13 +31,13 @@ test("Layer 4 plans list all cases and setups with frozen models and independent
   await assert.rejects(loadSuite("l4-missing-fixture"));
 });
 
-test("L4-1 plans run the scoped tasks with Sol on the four context steps, Plain docs first, and judge later", async () => {
+test("L4-1 plans run the scoped tasks once with Sol on the five context steps, Organized docs first, and judge later", async () => {
   for (const variant of ["smoke", "full"]) {
     const plan = resolvePlan(JSON.parse(await readFile(join(evalsRoot, "experiments", `neon-pairs-l4-1-${variant}.json`), "utf8")), FixtureConfig);
     assert.deepEqual(plan.cases, variant === "smoke" ? [ScopedTaskCases[0]] : [...ScopedTaskCases]);
-    assert.deepEqual(plan.setups, [DocumentSetups.plain, CodeOnlySetup, DocumentSetups.fullCore, DocumentSetups.fullCoreScoped]);
+    assert.deepEqual(plan.setups, [DocumentSetups.organized, CodeOnlySetup, DocumentSetups.plain, DocumentSetups.fullCore, DocumentSetups.fullCoreScoped]);
     assert.ok(plan.setups.every((setup) => setup in BrownfieldSetups));
-    assert.equal(plan.runsPerSetup, variant === "smoke" ? 1 : 3);
+    assert.equal(plan.runsPerSetup, 1);
     assert.deepEqual(plan.agents, ImplementerPresets[PresetName.codex]);
     assert.deepEqual(plan.simulatedUser, UserPresets[PresetName.codex]);
     assert.equal(plan.judging, Judging.later);
@@ -59,14 +59,14 @@ test("the product preflights every named case before installing any setup", asyn
   assert.deepEqual(qualified, cases);
 });
 
-test("L4-2 plans chain the scoped tasks after Best score, one milestone each, on steps 2 to 4 with Plain docs first", async () => {
+test("L4-2 plans chain the scoped tasks after Best score, one milestone each, on the four document steps with Organized docs first", async () => {
   for (const [index, id] of ScopedTaskCases.slice(1).entries()) {
     const milestone = index + 2;
     const plan = resolvePlan(JSON.parse(await readFile(join(evalsRoot, "experiments", `neon-pairs-l4-2-m${milestone}.json`), "utf8")), FixtureConfig);
     assert.deepEqual(plan.cases, [id]);
     assert.deepEqual(plan.chain, { id: "l4-2", milestone });
-    assert.deepEqual(plan.setups, [DocumentSetups.plain, DocumentSetups.fullCore, DocumentSetups.fullCoreScoped]);
-    assert.equal(plan.runsPerSetup, 3);
+    assert.deepEqual(plan.setups, [DocumentSetups.organized, DocumentSetups.plain, DocumentSetups.fullCore, DocumentSetups.fullCoreScoped]);
+    assert.equal(plan.runsPerSetup, 1);
     assert.deepEqual(plan.agents, ImplementerPresets[PresetName.codex]);
     assert.equal(plan.judging, Judging.later);
   }
@@ -76,7 +76,7 @@ test("L4-3 plans run the four repairs at once with Sol alone and leading Sol or 
   for (const variant of ["smoke", "full"]) {
     const plan = resolvePlan(JSON.parse(await readFile(join(evalsRoot, "experiments", `neon-pairs-l4-3-${variant}.json`), "utf8")), FixtureConfig);
     assert.deepEqual(plan.cases, [CombinedTaskCase]);
-    assert.deepEqual(plan.setups, variant === "smoke" ? [DocumentSetups.plain] : [DocumentSetups.plain, DocumentSetups.fullCoreScoped]);
+    assert.deepEqual(plan.setups, variant === "smoke" ? [DocumentSetups.organized] : [DocumentSetups.organized, DocumentSetups.fullCoreScoped]);
     assert.deepEqual(plan.agents, CodexTeams);
     assert.equal(plan.judging, Judging.later);
   }

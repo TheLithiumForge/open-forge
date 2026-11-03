@@ -14,6 +14,7 @@ import ReducedMotion from "@site/docs/evals/_definitions/l4-r04.mdx";
 import Silence from "@site/docs/evals/_definitions/l4-r05.mdx";
 import NoSetup from "@site/docs/evals/_definitions/no-setup.mdx";
 import PlainDocs from "@site/docs/evals/_definitions/plain-docs.mdx";
+import OrganizedDocs from "@site/docs/evals/_definitions/organized-docs.mdx";
 import LinkedAgents from "@site/docs/evals/_definitions/linked-agents.mdx";
 import SpecInPrompt from "@site/docs/evals/_definitions/spec-in-prompt.mdx";
 import CodeOnly from "@site/docs/evals/_definitions/code-only.mdx";
@@ -56,6 +57,7 @@ export const Definitions: Readonly<Record<DefinitionId, Definition>> = {
   "l4-r05": { title: CaseNames["l4-r05"], kind: DefinitionKind.startingPoint, Content: Silence },
   "no-setup": { title: SetupNames["no-setup"], kind: DefinitionKind.setup, Content: NoSetup },
   "plain-docs": { title: SetupNames["plain-docs"], kind: DefinitionKind.setup, Content: PlainDocs },
+  "organized-docs": { title: SetupNames["organized-docs"], kind: DefinitionKind.setup, Content: OrganizedDocs },
   "linked-agents": { title: SetupNames["linked-agents"], kind: DefinitionKind.setup, Content: LinkedAgents },
   "spec-in-prompt": { title: SetupNames["spec-in-prompt"], kind: DefinitionKind.setup, Content: SpecInPrompt },
   "code-only": { title: SetupNames["code-only"], kind: DefinitionKind.setup, Content: CodeOnly },
