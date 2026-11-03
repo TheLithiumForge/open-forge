@@ -75,6 +75,18 @@ test("run --case narrows a multi-case plan to one case and refuses a case the pl
   assert.equal(started.length, 1);
 });
 
+test("run --setups narrows a plan to some setups in its order and keeps the control", async () => {
+  const fake = fakeServices(), started: EvalConfig[] = [];
+  const services = { ...fake.services, run: async (config: EvalConfig) => { started.push(config); return 0; } };
+  const [control, first, second] = FixtureConfig.setups;
+  assert.ok(control !== undefined && first !== undefined && second !== undefined);
+  assert.equal(await runCli([Command.run, Flag.plan, "fixture.json", Flag.setups, `${second},${control}`], services), 0);
+  assert.deepEqual(started[0]?.setups, [control, second]);
+  await assert.rejects(runCli([Command.run, Flag.plan, "fixture.json", Flag.setups, first], services));
+  await assert.rejects(runCli([Command.run, Flag.plan, "fixture.json", Flag.setups, `${control},unknown`], services));
+  assert.equal(started.length, 1);
+});
+
 test("resume continues one named batch and needs exactly one", async () => {
   const fake = fakeServices(), resumed: [string, number | undefined, boolean | undefined][] = [];
   const services = { ...fake.services, resume: async (batch: string, _print: (text: string) => void, parallel?: number, accept?: boolean) => { resumed.push([batch, parallel, accept]); return 0; } };
@@ -124,7 +136,9 @@ test("check and judge carry the machine flags into the scripts they start", asyn
   const machine = ["--scratch", "work", "--check-slots", "1"];
   assert.equal(await runCli([Command.check, "batch", Flag.rebuild], services, machine), 0);
   assert.equal(await runCli([Command.judge, "batch"], services, machine), 0);
-  assert.deepEqual(launched, [["batch", Flag.rebuild, ...machine], ["batch", ...machine]]);
+  assert.equal(await runCli([Command.check, "batch", "run", Flag.missing], services, machine), 0);
+  assert.deepEqual(launched, [["batch", Flag.rebuild, ...machine], ["batch", ...machine], ["batch", "run", Flag.missing, ...machine]]);
+  await assert.rejects(runCli([Command.check, "batch", Flag.missing, Flag.missing], services, machine));
 });
 
 test("progress shows the named batches, or every batch, and takes no flags", async () => {

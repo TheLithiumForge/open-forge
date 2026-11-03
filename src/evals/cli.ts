@@ -90,6 +90,15 @@ function parallelOption(args: readonly string[]): number {
   return value;
 }
 
+/** Narrows a plan to some of its setups, in the plan's order. The plan's first setup is every comparison's control, so it stays. */
+function planSetups<T extends { readonly setups: readonly string[] }>(config: T, value: string): T {
+  const chosen = value.split(",").map((id) => id.trim());
+  const unknown = chosen.find((id) => !config.setups.includes(id));
+  if (unknown !== undefined) throw new Error(`The plan has no setup ${JSON.stringify(unknown)}.`);
+  if (config.setups[0] !== undefined && !chosen.includes(config.setups[0])) throw new Error(`Keep the control, ${config.setups[0]}, so each setup has its baseline.`);
+  return { ...config, setups: config.setups.filter((id) => chosen.includes(id)) };
+}
+
 /** Narrows a Layer 4 plan to one of its cases. */
 function planCase<T extends { readonly cases?: readonly string[] }>(config: T, id: string): T {
   if (!config.cases?.includes(id)) throw new Error(`The plan has no case ${JSON.stringify(id)}.`);
@@ -158,9 +167,10 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     }
     case Command.run:
     case Command.qualify: {
-      checkedArgs(args, command === Command.run ? [Flag.development] : [], command === Command.run ? [Flag.plan, Flag.implementers, Flag.judges, Flag.user, Flag.case, Flag.parallel] : [Flag.plan], 0);
+      checkedArgs(args, command === Command.run ? [Flag.development] : [], command === Command.run ? [Flag.plan, Flag.implementers, Flag.judges, Flag.user, Flag.case, Flag.setups, Flag.parallel] : [Flag.plan], 0);
       const overrides = command === Command.run ? { ...runPresetOptions(args), ...(args.includes(Flag.parallel) ? { parallelRuns: parallelOption(args) } : {}) } : {};
-      const config = { ...await services.plan(option(args, Flag.plan), command === Command.qualify || args.includes(Flag.development)), ...overrides };
+      const planned = { ...await services.plan(option(args, Flag.plan), command === Command.qualify || args.includes(Flag.development)), ...overrides };
+      const config = args.includes(Flag.setups) ? planSetups(planned, option(args, Flag.setups)) : planned;
       if (command === Command.run) return services.run(args.includes(Flag.case) ? planCase(config, option(args, Flag.case)) : config, services.print);
       const suites = await Promise.all((config.cases ?? [config.suite]).map((id) => services.suite(id)));
       for (const suite of suites) services.print(JSON.stringify(await services.qualify(suite, config.setups), null, 2));
@@ -183,9 +193,9 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       return services.launch(join(evalsRoot, CliScripts.judge), [...args, ...machine]);
     }
     case Command.check: {
-      const operands = args.filter((arg) => arg !== Flag.rebuild);
+      const operands = args.filter((arg) => arg !== Flag.rebuild && arg !== Flag.missing);
       if (operands.length < 1 || operands.length > 2) throw new Error(CommandHelp.check);
-      checkedArgs(args, [Flag.rebuild], [], operands.length);
+      checkedArgs(args, [Flag.rebuild, Flag.missing], [], operands.length);
       return services.launch(join(evalsRoot, CliScripts.check), [...args, ...machine]);
     }
     case Command.results: {

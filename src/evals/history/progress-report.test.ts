@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { judgeAssessment } from "./assessments.ts";
-import { batchProgress, progressLines } from "./progress-report.ts";
+import { batchProgress, checkedWithoutErrors, progressLines } from "./progress-report.ts";
 import { FailureKind, RunStatus } from "./statuses.ts";
 import { FixtureVersions, v2Fixture } from "./test-fixtures.ts";
 
@@ -27,4 +27,12 @@ test("progress counts runs whose agent finished, checked and judged runs, leavin
   assert.deepEqual(progress.judges.map((judge) => judge.judged), [1]);
   assert.deepEqual(progress.setups.map((row) => [row.implemented, row.checked, row.coverage, row.judges[0]?.judged, row.judges[0]?.yesShare]), [[3, 1, 0.75, 1, 2 / 3]]);
   assert.equal(progressLines(progress).length, 4);
+});
+
+test("a run counts as checked, and check --missing leaves it, only when its latest check graded a clause without errors", () => {
+  const functional = { coverage: Coverage, workingGate: true, statedSuccess: false };
+  assert.equal(checkedWithoutErrors({ functionalResult: functional }), true);
+  assert.equal(checkedWithoutErrors({ functionalResult: { ...functional, coverage: { ...Coverage, errors: 1 } } }), false);
+  assert.equal(checkedWithoutErrors({ functionalResult: { ...functional, coverage: { ...Coverage, applicable: 0 } } }), false);
+  assert.equal(checkedWithoutErrors({ functionalResult: null }), false);
 });

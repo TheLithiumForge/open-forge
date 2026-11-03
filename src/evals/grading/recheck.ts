@@ -16,11 +16,13 @@ import { checksForSuite } from "../benchmarks/registry.ts";
 import { layerChecks } from "./document-layers.ts";
 import { withCheckSlot } from "../execution/check-slot.ts";
 import { applyMachineOptions, splitMachineOptions } from "../config/machine-options.ts";
+import { checkedWithoutErrors } from "../history/progress-report.ts";
 
 import type { SuiteCheckOutput } from "../benchmarks/suite-checks.types.ts";
 import type { BuildResult } from "../history/results.types.ts";
 
 const RebuildFlag = "--rebuild";
+const MissingFlag = "--missing";
 const BuildMs = 25 * 60_000;
 
 export interface RecheckDependencies {
@@ -45,7 +47,8 @@ export async function recheckRun(run: RunView, versions: AssessmentVersions, dep
 async function main(): Promise<void> {
   const { args, options } = splitMachineOptions(process.argv.slice(2));
   applyMachineOptions(options);
-  const [batchId, onlyRun] = args.filter((arg) => arg !== RebuildFlag);
+  const [batchId, onlyRun] = args.filter((arg) => arg !== RebuildFlag && arg !== MissingFlag);
+  const missingOnly = args.includes(MissingFlag);
   if (batchId === undefined) throw new Error("Name the batch to check again.");
   const batch = await readBatch(batchId);
   const suite = await loadSuite(batch.suite);
@@ -58,6 +61,8 @@ async function main(): Promise<void> {
     const checks = checksForSuite(suite, setup?.files, setup?.scope) ?? layerChecks(suite.id);
     if (checks === undefined) throw new Error(`No hidden checks for ${suite.id}.`);
     if (run.build === null || (onlyRun !== undefined && run.id !== onlyRun)) continue;
+    // A recheck takes minutes per run, so --missing leaves every run that already has a check without errors.
+    if (missingOnly && checkedWithoutErrors(run)) continue;
     if (rebuild && run.status !== RunStatus.done) {
       console.log(`${run.id}: not rebuilt, because the run didn't finish (${run.status}).`);
       continue;

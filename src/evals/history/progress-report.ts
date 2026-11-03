@@ -39,13 +39,18 @@ function yesShare(judgment: JudgeAssessment): number | null {
   return all === 0 ? null : yes / all;
 }
 
+/** Whether a run's latest check graded at least one clause and no clause ended in an error. */
+export function checkedWithoutErrors(run: Pick<RunView, "functionalResult">): boolean {
+  return run.functionalResult !== null && run.functionalResult.coverage.errors === 0 && run.functionalResult.coverage.applicable > 0;
+}
+
 /** Completion and preliminary scores for a batch. A replaced infrastructure failure or a run waiting to be redone isn't counted. */
 export function batchProgress(batch: BatchRecord, runs: readonly RunView[], assessments: readonly AssessmentRecord[]): BatchProgress {
   const replaced = new Set(runs.flatMap((run) => run.replacesRunId === null ? [] : [run.replacesRunId]));
   const counted = runs.filter((run) => run.status !== RunStatus.limited && !(run.failureKind === FailureKind.infrastructure && replaced.has(run.id)));
   // A run is implemented once its agent finished, while its grading may still be running.
   const implemented = counted.filter((run) => run.agentSeconds !== null);
-  const checked = (run: RunView): boolean => run.functionalResult !== null && run.functionalResult.coverage.errors === 0 && run.functionalResult.coverage.applicable > 0;
+  const checked = checkedWithoutErrors;
   const judges = new Map<string, ModelChoice>();
   for (const item of assessments) if (item.kind === AssessmentKind.judge && item.requestedModel !== null) judges.set(modelKey(item.requestedModel), item.requestedModel);
   const judgment = (run: RunView, choice: ModelChoice): JudgeAssessment | undefined => {

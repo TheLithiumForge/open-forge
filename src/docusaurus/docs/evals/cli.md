@@ -50,7 +50,7 @@ npm run evals -- validate-case --all --plan src/evals/experiments/neon-pairs-l4-
 
 ## `run`
 
-Run a saved plan. --implementers: claude, codex, both. --judges: claude, codex, both. --user: claude, codex. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --parallel caps how many runs go at once. Local isolation needs --development.
+Run a saved plan. --implementers: claude, codex, both. --judges: claude, codex, both. --user: claude, codex. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --setups runs some of the plan's setups, always with its control. --parallel caps how many runs go at once. Local isolation needs --development.
 
 ```sh
 npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude
@@ -106,10 +106,10 @@ npm run evals -- site --port 4320
 
 ## `check`
 
-Check saved runs again in the verifier and append the results. Name a batch, and optionally one run. --rebuild builds the saved project again first. Every check also saves its diagnostics, such as Layer 1 card crops and look comparisons.
+Check saved runs again in the verifier and append the results. Name a batch, and optionally one run. --rebuild builds the saved project again first. --missing checks only runs without a check free of errors, so a fixed checker can finish a batch without grading it all again. Every check also saves its diagnostics, such as Layer 1 card crops and look comparisons.
 
 ```sh
-npm run evals -- check <batch> --rebuild
+npm run evals -- check <batch> --missing
 ```
 
 ## `judge`
@@ -138,13 +138,14 @@ npm run evals -- results add <batch>
 | `--judges <preset>` | `run`, `judge`, `reference` | Replace the judges with claude, codex, both |
 | `--user <preset>` | `run` | Replace the simulated user with claude, codex |
 | `--case <id>` | `run`, `validate-case` | Run or validate one Layer 4 case, so each case can run as its own process |
+| `--setups <ids>` | `run` | Run only these setups of the plan, comma-separated, in the plan's order. The plan's first setup is the control and must stay |
 | `--all` | `validate-case` | Validate every case of the plan |
 | `--layer <n>` | `reference` | Grade the reference against Layer 2 or 3 |
 | `--parallel <n>` | `run`, `resume` | How many runs go at once. The full plans run two, because every run spends the signed-in account's own model limits |
 | `--accept-harness` | `resume` | Continue a batch on changed runner code and list the change in the batch record. Changed inputs, checks, rubric, tooling or models still need a new batch |
 | `--development` | `run`, `qualify` | Allow local isolation, which is never fit for scoring |
 | `--rebuild` | `check` | Build the saved project again before checking it |
-| `--missing` | `judge` | Judge only runs without a judgment from that judge, counting one that ended in an error as missing |
+| `--missing` | `judge`, `check` | Grade only runs without a usable grade. For judge, that's a run without a judgment from that judge or one that ended in an error. For check, it's a run whose latest check graded nothing or ended a clause in an error |
 | `--batch <id>` | `summary` | The batch to summarize |
 | `--repository <folder>` | `results`, `site` | The results repository to add to, src/evals/results by default, or a folder in its layout for site to show |
 | `--port <n>` | `site` | Serve the docs site on another port than 4320. Its data server takes the next port |
