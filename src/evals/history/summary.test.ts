@@ -3,7 +3,9 @@ import { test } from "node:test";
 import { assessRun, checksAssessment } from "./assessments.ts";
 import { replacementRun } from "./run-records.ts";
 import { CheckStatus, FailureKind, RunStatus } from "./statuses.ts";
-import { summarize } from "./summary.ts";
+import { agentLabel, summarize } from "./summary.ts";
+import { CodexTeams } from "../config/presets.ts";
+import type { ModelChoice } from "../config/config.types.ts";
 import { FixtureVersions, v2Fixture } from "./test-fixtures.ts";
 
 test("a judge failure keeps coverage and failed attempts keep missing token counts", () => {
@@ -30,4 +32,11 @@ test("a replaced infrastructure failure stays recorded without counting twice", 
   assert.equal(row?.attempts, 1);
   assert.equal(row?.tokenMissing, 2);
   assert.equal(failed.replacesRunId, null);
+});
+
+test("each team is its own implementer, and its label extends the label of the agent leading it", () => {
+  const labels = CodexTeams.map(agentLabel);
+  assert.equal(new Set(labels).size, CodexTeams.length);
+  const choices: readonly ModelChoice[] = CodexTeams;
+  for (const { team, ...lead } of choices) if (team !== undefined) assert.ok(agentLabel({ ...lead, team }).startsWith(agentLabel(lead)));
 });

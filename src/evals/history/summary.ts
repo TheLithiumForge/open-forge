@@ -45,7 +45,9 @@ export interface SetupSummary {
 }
 
 export function agentLabel(agent: ModelChoice): string {
-  return [agent.tool, agent.model ?? "default model", agent.effort ?? "default effort"].join(" · ");
+  const solo = [agent.tool, agent.model ?? "default model", agent.effort ?? "default effort"].join(" · ");
+  // A team is part of the implementer, so its label names the subagents it leads.
+  return agent.team === undefined ? solo : `${solo} leading ${agent.team.model ?? "default model"} · ${agent.team.effort ?? "default effort"}`;
 }
 
 function mean(values: readonly (number | null | undefined)[]): number | null {
