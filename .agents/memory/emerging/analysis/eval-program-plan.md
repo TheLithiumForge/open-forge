@@ -187,3 +187,25 @@ To the first Layer 4 results: 52 runs and about 81M tokens, about 3M of them new
 Added on 2026-11-03 at the maintainer's word. A team is part of the implementer, as a model is, so it's a selection of the data and not a scenario of its own. Any scenario can run with any team, and Results filter by team the way they filter by model. For now the teams are Sol alone, Sol leading Sol subagents and Sol leading Luna subagents, since Sol usage is plentiful. Claude counterparts come later: Opus alone, Opus leading Sonnet subagents and Opus leading Opus subagents, with more to follow. They need Claude's subagent switch and per-subagent counting first.
 
 Reasoning levels, set by the maintainer the same day: Sol 6.1 at its usual xhigh and Luna always at max, as implementer, team member and simulated user. For Claude later, the maintainer suggested Opus at xhigh and Sonnet at high, still to confirm.
+
+## L4-1 run of 2026-11-03
+
+The first full L4-1 started at 18:43 with one run per cell, Sol 6.1 at xhigh and judging left for later. The maintainer then narrowed the work to L4-1 for now, so the L4-2 milestones weren't started.
+
+| Repair | Batch | Runner |
+| --- | --- | --- |
+| r02 best score | `2026-11-03T18-42-54-577Z-b1ab87589ee4` | `evals-runner-5` at 74f8710aa |
+| r03 arrow keys | `2026-11-03T18-43-11-226Z-9d089fb9b26f` | `evals-runner-5` |
+| r04 reduced motion | `2026-11-03T18-43-25-426Z-a0c364be5337` | `evals-runner-5` |
+| r05 silence | `2026-11-03T18-57-43-775Z-3722a33cd622` | `evals-runner-6` at cf40fb0e3 |
+
+Thirty-four parallel runs, with L4-3 beside them, filled Docker's default address pools, so new stage networks failed with "all predefined address pools have been fully subnetted". Each such run got one replacement, and most replacements ran. cf40fb0e3 adds overflow subnets, but only the r05 rerun uses it.
+
+Two cells failed and stay failed at the maintainer's word, not rerun:
+
+- **r04 Full Core, scoped.** The run and its one replacement both failed to create their network.
+- **r04 Full Core.** Codex answered "Selected model is at capacity" near the end of the agent's work, and the network then failed too. The run counts as a failed attempt, not infrastructure, so it got no replacement. It isn't the setup's fault, so read it as missing data, not a failure.
+
+The first r05 batch, `2026-11-03T18-43-42-140Z-82ceb1aa931c`, lost five runs and their replacements the same way. It was stopped and replaced by the r05 batch above.
+
+At the maintainer's word the evening of 2026-11-03, only best-score and silence keep grading. The arrow-keys and reduced-motion batches, L4-3 and two L4-2 milestone 2 batches were stopped with their agents done or mid-run, so `check --missing` can grade their saved files later. The two L4-2 batches, `2026-11-03T19-37-55-110Z-b558a1f36762` and `2026-11-03T19-38-31-476Z-feee7ab192f6`, started by mistake: a scratchpad chain script outlived its stop and launched twice. [eval-work-structure.md](eval-work-structure.md) proposes what replaces L4-1, L4-2 and L4-3.
