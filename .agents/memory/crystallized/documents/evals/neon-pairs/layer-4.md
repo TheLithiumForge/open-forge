@@ -48,30 +48,30 @@ The registered cases and their local starting results are:
 
 | Case | Type | Request | Checks | Starting result |
 | --- | --- | --- | --- | --- |
-| [F01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f1-name-saves/README.md) | F | Name a game and keep the name with saved progress | 10 | One pass and nine feature failures |
-| [R01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b5-pasted-saves/README.md) | R | Some copied saved games don't open while local exports work | 10 | Seven passes and three repair failures |
-| [FR01](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-p2-name-and-pasted-saves/README.md) | FR | Add names and repair copied saved games | 20 | Seven passes and thirteen failures |
+| [F1](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-f1-name-saves/README.md) | F | Name a game and keep the name with saved progress | 10 | One pass and nine feature failures |
+| [B5](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b5-pasted-saves/README.md) | R | Some copied saved games don't open while local exports work | 10 | Seven passes and three repair failures |
+| [P2](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-p2-name-and-pasted-saves/README.md) | FR | Add names and repair copied saved games | 20 | Seven passes and thirteen failures |
 
-F01 and FR01 replace C08.2, D05.1 and D05.2 under spec version 3. Their complete Controls, Reproducibility, Architecture and overview replacements keep the unchanged version 2.1 rules. C15.1 through C15.5 follow C14. Named games use snapshot version 2. Unnamed games, board codes and replay output keep version 1. Both snapshot versions keep the existing validation, pause, focus and best-score rules. Completed imports stay completed without Resume. R01 changes no product clause.
+F1 and P2 replace C08.2, D05.1 and D05.2 under spec version 3. Their complete Controls, Reproducibility, Architecture and overview replacements keep the unchanged version 2.1 rules. C15.1 through C15.5 follow C14. Named games use snapshot version 2. Unnamed games, board codes and replay output keep version 1. Both snapshot versions keep the existing validation, pause, focus and best-score rules. Completed imports stay completed without Resume. B5 changes no product clause.
 
 The feature checks name a deal, play a mismatch, wait 800ms, export it, start New Game and reload the app's text. They also cover editing paused and completed progress, clearing names, browser reload, preferences, UTF-16 limits and the version 1 invalid-state vectors inside version 2 snapshots.
 
-The repair checks cover top-level order variants as one result. Separate results cover nested selection order, invalid fields and progress, paused input and completed imports. CRLF drafts pass through the native textarea. The repair probes use published best-score text, card names and live-region text. They don't need the name control. FR01 uses ten feature results, nine repair results and one separate compatibility result for reordered named version 2 snapshots. The compatibility result is in the feature group under the worker contract. R01's own-export check is already covered by FR01's feature journeys.
+The repair checks cover top-level order variants as one result. Separate results cover nested selection order, invalid fields and progress, paused input and completed imports. CRLF drafts pass through the native textarea. The repair probes use published best-score text, card names and live-region text. They don't need the name control. P2 uses ten feature results, nine repair results and one separate compatibility result for reordered named version 2 snapshots. The compatibility result is in the feature group under the worker contract. B5's own-export check is already covered by P2's feature journeys.
 
-FR01's request joins F01's sentences and R01's sentences unchanged. R01 and FR01 can answer a request for a failing example with one copied snapshot. The bank describes the symptom without naming its cause.
+P2's request joins F1's sentences and B5's sentences unchanged. B5 and P2 can answer a request for a failing example with one copied snapshot. The bank describes the symptom without naming its cause.
 
-## Scoped tasks
+## Bug fixes and packets
 
-Scoped tasks are small repairs that each need one scope of the spec, added on 2026-11-03 to test scoped Open Forge setups. Each change check is a clause check: it takes its result from the full-spec checker's assertion for one clause, so a task needs no worker. Those clauses leave the regression set. A case graded only by clause checks needs at least three of them.
+B1 to B4 are small bug fixes that each need one scope of the spec, added on 2026-11-03 to test scoped Open Forge setups. Each change check is a clause check: it takes its result from the full-spec checker's assertion for one clause, so a task needs no worker. Those clauses leave the regression set. A case graded only by clause checks needs at least three of them.
 
 | Case | Scope | Request | Checks |
 | --- | --- | --- | --- |
-| [R02](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b1-best-score/README.md) | Gameplay | The best score takes worse games and shows 0 without a record | 7 |
-| [R03](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b2-arrow-keys/README.md) | Controls and input | Arrow keys no longer move between cards | 7 |
-| [R04](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b3-reduced-motion/README.md) | Visuals | Cards and the win banner animate under reduced motion | 5 |
-| [R05](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b4-silence/README.md) | Sound | The game beeps on a match | 4 |
+| [B1](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b1-best-score/README.md) | Gameplay | The best score takes worse games and shows 0 without a record | 7 |
+| [B2](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b2-arrow-keys/README.md) | Controls and input | Arrow keys no longer move between cards | 7 |
+| [B3](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b3-reduced-motion/README.md) | Visuals | Cards and the win banner animate under reduced motion | 5 |
+| [B4](../../../../../../src/evals/benchmarks/neon-pairs/cases/l4-b4-silence/README.md) | Sound | The game beeps on a match | 4 |
 
-Scenario L4-1 runs them on the four context steps with Plain docs as the control, and leaves judging for later. Its plans are `neon-pairs-l4-1-smoke.json` and `neon-pairs-l4-1-full.json`. [Eval Context And Cost Measures](../../../../emerging/analysis/eval-context-and-cost-measures.md#scoped-tasks-built-2026-11-03) explains why they replaced partial greenfield builds.
+Work packet P1 hands B1 to B4 over together. `npm run evals -- packets` generates its request, seed, solution, checks and answers from theirs, and a test keeps them in step. A packet plan names its work mode: whole packet, one agent with every task in one request, task by task, a new agent per task from the previous task's result, or orchestrated, an orchestrator handing each task to a subagent. The P1 plans are `neon-pairs-p1-smoke.json`, `neon-pairs-p1-whole-packet.json`, `neon-pairs-p1-task-by-task.json` and `neon-pairs-p1-orchestrated.json`. [Eval Context And Cost Measures](../../../../emerging/analysis/eval-context-and-cost-measures.md#scoped-tasks-built-2026-11-03) explains why the bug fixes replaced partial greenfield builds, and [Eval Work Structure](../../../../emerging/analysis/eval-work-structure.md) why packets and work modes replaced the L4-1, L4-2 and L4-3 scenarios.
 
 ## Starting project
 
@@ -79,7 +79,7 @@ Materialize the reference, private seed patch and applicable product delta befor
 
 Each folder keeps its request, bank, check manifest, seed where needed, known solution and alternative solution. The alternative uses different local modules and tests. Every patch is regenerated with minimal Git hunks from scratch copies under `src/evals/.tmp/` against the current reference or the resulting starting tree.
 
-The runner applies patches, builds, checks frozen regressions and enforces diff scope and protected inputs. F01 and FR01 allow the game source area, application tests and README. R01 allows the snapshot and saved-format areas, their tests, application tests and README. These areas allow different implementations. They don't prescribe the known solution's file choices.
+The runner applies patches, builds, checks frozen regressions and enforces diff scope and protected inputs. F1 and P2 allow the game source area, application tests and README. B5 allows the snapshot and saved-format areas, their tests, application tests and README. These areas allow different implementations. They don't prescribe the known solution's file choices.
 
 ## Worker contract
 

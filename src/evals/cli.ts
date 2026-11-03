@@ -1,7 +1,9 @@
 ﻿import { join, resolve } from "node:path";
 import { Command, CommandHelp, Flag, ResultsAction, commandHelp, option, parseCommand } from "./config/commands.ts";
 import { loadPlan } from "./config/plans.ts";
-import type { ChainConfig } from "./config/config.types.ts";
+import type { ChainConfig, EvalConfig } from "./config/config.types.ts";
+import { WorkMode } from "./config/choices.ts";
+import { readPacket } from "./materialize/packets.ts";
 import { configuredDoctor } from "./config/doctor.ts";
 import { smokeAttempt } from "./config/smoke.ts";
 import { qualifySetups } from "./config/qualify.ts";
@@ -92,6 +94,14 @@ function planParent<T extends { readonly chain?: ChainConfig }>(config: T, paren
   return { ...config, chain: { ...config.chain, parentBatchId: parent } };
 }
 
+/** A later task of a task-by-task packet, as the chain step that the task's batch runs. */
+async function packetStep(config: EvalConfig, task: string): Promise<EvalConfig> {
+  const packet = await readPacket(join(EvalPaths.suites, config.suite));
+  const index = packet.tasks.findIndex((item) => item.id === task);
+  if (index < 1) throw new Error(`Name a later task of ${packet.id} with --case: ${packet.tasks.slice(1).map((item) => item.id).join(", ")}.`);
+  return { ...config, suite: task, chain: { id: packet.id, milestone: index + 1 } };
+}
+
 /** Narrows a Layer 4 plan to one of its cases. */
 function planCase<T extends { readonly cases?: readonly string[] }>(config: T, id: string): T {
   if (!config.cases?.includes(id)) throw new Error(`The plan has no case ${JSON.stringify(id)}.`);
@@ -139,9 +149,10 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       return 0;
     }
     case Command.chainCheck: {
-      checkedArgs(args, [], [Flag.plan, Flag.parent], 0);
+      checkedArgs(args, [], [Flag.plan, Flag.parent, Flag.case], 0);
       if (!args.includes(Flag.plan) || !args.includes(Flag.parent)) throw new Error(CommandHelp[Command.chainCheck]);
-      const config = planParent(await services.plan(option(args, Flag.plan), true), option(args, Flag.parent));
+      const planned = await services.plan(option(args, Flag.plan), true);
+      const config = planParent(planned.workMode === WorkMode.taskByTask ? await packetStep(planned, args.includes(Flag.case) ? option(args, Flag.case) : "") : planned, option(args, Flag.parent));
       const parent = config.chain?.parentBatchId;
       if (parent === undefined) throw new Error(CommandHelp[Command.chainCheck]);
       for (const row of await (services.chainCheck ?? checkChain)(config, await services.suite(config.suite), parent)) {

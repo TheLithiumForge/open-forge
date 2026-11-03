@@ -44,7 +44,7 @@ export function Headline({ summaries, reasons }: {
 }) {
   return <section className="eval-section" aria-labelledby="eval-headline">
     <h2 id="eval-headline">Compared with the control</h2>
-    <p>Each card shows how a setup with Open Forge differs from the control on the same starting point, case and model, averaged over everything the filters keep. Coverage and judge scores change in percentage points, tokens in percent. The samples are small, so read these as screening signals, not claims.</p>
+    <p>Each card shows how a scenario with Open Forge differs from the control on the same starting point, case and model, averaged over everything the filters keep. Coverage and judge scores change in percentage points, tokens in percent. The samples are small, so read these as screening signals, not claims.</p>
     {reasons.length === 0 ? null : <p className="eval-preliminary">
       <span className="badge badge--warning">Preliminary</span> {reasons.map((reason) => ReasonText[reason]).join(" ")} These numbers can still change.
     </p>}

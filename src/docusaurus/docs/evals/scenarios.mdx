@@ -1,53 +1,99 @@
 ---
 title: Scenarios
-description: The eval scenarios approved on 2026-11-03, with the five context steps and their two overloaded variants, Layer 4 first and Layer 3 after, and the question each one answers.
+description: The twelve scenarios the evals compare, the project contexts from No setup to Full Core and its scoped variants, with the control for each starting point and how the runner builds them.
 ---
 
-The evals run as scenarios. Each one answers one question and adds one mechanism, and it starts only after the one before it has been checked. For now each cell runs once, so the numbers are a first read, not a measured difference. Layer 4, the existing app, runs first because it takes the least time and gives the most meaningful results. Layer 3, the full spec, follows. Layers 2 and 1 keep their earlier runs as their baseline.
+import NoSetup from "./_definitions/no-setup.mdx"
+import PlainDocs from "./_definitions/plain-docs.mdx"
+import OrganizedDocs from "./_definitions/organized-docs.mdx"
+import OverloadedDocs from "./_definitions/overloaded-docs.mdx"
+import LinkedAgents from "./_definitions/linked-agents.mdx"
+import Minimal from "./_definitions/minimal.mdx"
+import Essentials from "./_definitions/essentials.mdx"
+import FullCore from "./_definitions/full-core.mdx"
+import FullCoreScoped from "./_definitions/full-core-scoped.mdx"
+import FullCoreScopedMemory from "./_definitions/full-core-scoped-memory.mdx"
+import SpecInPrompt from "./_definitions/spec-in-prompt.mdx"
+import CodeOnly from "./_definitions/code-only.mdx"
 
-## Context steps
+# Scenarios
 
-Each step adds one thing to the step before it, so each comparison has one cause.
+A scenario is the project context an agent starts with in an eval run, from an empty folder to a full Open Forge install. Plan files and records call a scenario a setup, so the published [setup ladder](../demos/index.md#setup-ladder) keeps its meaning.
 
-| Step | Setup | What the agent gets |
-| --- | --- | --- |
-| 1 | Code only | The project, its tests and the request |
-| 2 | Plain docs | The same, plus the spec documents, with every word but no links between them |
-| 3 | Organized docs | The same documents with their links, as a careful team keeps them. This is the control. |
-| 4 | Full Core | Open Forge with the spec moved in unchanged and indexed, with every document loaded up front |
-| 5 | Full Core, scoped | Open Forge with the spec routed by scope, so a task loads only the parts it needs |
+Within one comparison, every scenario gets the same prompt, the same requirements, the same starting code and the same simulated user. Only the arrangement of the context changes. For example, Organized docs and Essentials both hold the same short brief in `docs/`, and Essentials also routes it through the Open Forge loader.
 
-Code only takes information away, and Plain docs takes the organization away, so both compare with Organized docs. [Setups](setups.mdx) defines each setup.
+Six setups are rungs 0 to 5 of the [setup ladder](../demos/index.md#setup-ladder), the scale the Demos use for how much setup a project has. Spec in prompt, Code only and Plain docs are delivery variants. They move or remove the documents instead of adding setup. Full Core, scoped keeps Full Core's install and routes the documents by scope. Overloaded docs and Full Core, scoped, with memory add the notes a real project collects beside its spec, so they test whether an agent can tell the spec from the history around it.
 
-Two variants add the notes a real project collects beside its spec: decisions, analyses, ideas that were rejected or parked, and tryouts and spikes. The notes add no requirement, so any change they cause is noise.
+## No setup \{#no-setup}
 
-| Variant of | Setup | What the agent gets |
-| --- | --- | --- |
-| 3 | Overloaded docs | Organized docs with the notes mixed into `docs/` |
-| 5 | Full Core, scoped, with memory | Full Core, scoped with the same notes on Memory routes, decisions as accepted knowledge and the rest as candidates |
+<NoSetup />
 
-Each variant compares with its step, so the pair shows whether Memory routes keep the notes from getting in the way.
+## Plain docs \{#plain-docs}
 
-## Layer 4
+<PlainDocs />
 
-| Scenario | What runs | Steps | Way of working | Runs | Question |
-| --- | --- | --- | --- | --- | --- |
-| L4-1 | Four small repairs, each in one scope: best score, arrow keys, reduced motion and silence | 1 to 5 and both variants | One agent | 28 | What does each step change on small work, what does scoping save, and what do the notes cost? |
-| L4-2 | The same four repairs as a chain, each starting from the previous result | 2 to 5 and both variants | One agent | 18, reusing L4-1 for the first repair | Does scoping keep its saving as changes pile up? |
-| L4-3 | All four repairs in one request, worked one at a time with tests after each | 3 and 5 | Sol alone, Sol leading Sol subagents and Sol leading Luna subagents | 6 | What does a team cost against one agent for the same work, does a smaller subagent model save tokens, and does scoping lower the subagents' cost? |
+## Organized docs \{#organized-docs}
 
-A team is part of the implementer, as a model is. Any scenario can run with any team, and the Results page filters by team the way it filters by model, so teams are a selection of the data, not scenarios of their own.
+<OrganizedDocs />
 
-Each chained repair in L4-2 has a twin in L4-1, the same repair from a clean start. The difference between them shows what the earlier changes did. [Starting points](starting-points.mdx#scoped-tasks) describes the four repairs.
+## Overloaded docs \{#overloaded-docs}
 
-## Layer 3
+<OverloadedDocs />
 
-| Scenario | What runs | Steps | Way of working | Runs | Question |
-| --- | --- | --- | --- | --- | --- |
-| L3-1 | A full build from the full spec in one go | 2 to 5 | One agent | 4 | Does scoping cost nothing when a build needs every document? |
-| L3-2 | The same build in three milestones, a playable game, then visuals, then saving and sharing, graded after each | 2 to 5 | One agent | 12 | With milestones, does scoping spend fewer tokens for the same result? |
-| L3-3 | An orchestrated full build, after L4-3 shows orchestration works | 3 and 5 | One agent and an orchestrator | 6 | L4-3's question at full-build scale |
+## Linked AGENTS.md \{#linked-agents}
 
-## Measures
+<LinkedAgents />
 
-Layer 4 scenarios run no model judges. Clause checks grade each repair, and `judge --missing` can still add judgments from the saved files later. The objective measures come from each run's saved logs: tokens in total and per task, tokens by file type and tool calls by kind. They're checked on the four L4-1 smoke runs before the full batch runs. [Measures](measures.mdx) defines the numbers the evals already report.
+## Minimal \{#minimal}
+
+<Minimal />
+
+## Essentials \{#essentials}
+
+<Essentials />
+
+## Full Core \{#full-core}
+
+<FullCore />
+
+## Full Core, scoped \{#full-core-scoped}
+
+<FullCoreScoped />
+
+## Full Core, scoped, with memory \{#full-core-scoped-memory}
+
+<FullCoreScopedMemory />
+
+## Spec in prompt \{#spec-in-prompt}
+
+<SpecInPrompt />
+
+## Code only \{#code-only}
+
+<CodeOnly />
+
+## Control
+
+Each comparison measures every scenario against a control, the first setup in its plan. The control is No setup for an idea, and Organized docs for a short brief, a full spec and an existing app. [Starting points](starting-points.mdx#compared-setups) lists the setups each starting point compares, and [Results](results.mdx) shows each setup's difference from its control.
+
+## How scenarios are built
+
+The runner builds every scenario from one source, so scenarios differ only where their definitions say. Each project starts in a fresh folder outside any Git repository, so no parent `AGENTS.md` or `CLAUDE.md` reaches the agent. Setup manifests and grading files stay outside the project.
+
+The Open Forge setups use the pinned Open Forge CLI. For an idea, the runner runs one install command, e.g. for Essentials:
+
+```sh
+open-forge install --preset essentials --automatic
+```
+
+From a short brief on, the documents are written to `docs/` with a description and tags in their frontmatter. Then the runner installs the preset and routes the documents:
+
+```sh
+open-forge install --preset essentials --frontmatter scoped --automatic
+open-forge route include ./docs --tag LoadNow
+open-forge index ./docs/_docs.md
+```
+
+Full Core, scoped moves the documents into their scope folders and writes each scope's entrypoint with its description before these commands run. `index` gives a new entrypoint a placeholder description for its author to replace, so the runner writes the real one first, as an author would. Only the overview keeps its `LoadNow` tag. The scope layout is `src/evals/benchmarks/neon-pairs/scopes.json`.
+
+Each command runs with `--dry-run` first, and the setup stops if any command doesn't complete. Before the scored runs, the [`qualify`](cli.md#qualify) command installs fresh setups and checks their entry files, the Open Forge lock file, the planned files and any unwanted files.

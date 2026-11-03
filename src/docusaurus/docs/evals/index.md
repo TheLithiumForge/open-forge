@@ -19,13 +19,13 @@ These are screening results. Every Open Forge CLI stays beta, and nothing here s
 
 ## Starting points
 
-A starting point is how much the agent is told before it starts: an idea, a short brief, a full spec or an existing app to change. The existing app has three larger cases, a feature, a repair and both together, and four small repairs that each need one part of the spec. [Starting points](starting-points.mdx) describes each one and the setups it compares, and [Scenarios](scenarios.mdx) lists what runs next.
+A starting point is how much the agent is told before it starts: an idea, a short brief, a full spec or an existing app to change. The existing app has a pool of tasks, B for a bug fix and F for a feature, and work packets that hand several tasks over at once. [Starting points](starting-points.mdx) describes each one and the scenarios it compares, and [Work](work.mdx) describes the tasks, the packets and the work modes that hand a packet over.
 
-## Setups
+## Scenarios
 
-A setup is the project context the agent starts with. Six setups are rungs on the [setup ladder](../demos/index.md#setup-ladder), from No setup at rung 0 to Open Forge's Full Core preset at rung 5. Spec in prompt, Code only and Plain docs are delivery variants that move, remove or unlink the documents. Overloaded docs and Full Core, scoped, with memory add project notes beside the spec.
+A scenario is the project context the agent starts with. Six scenarios are rungs on the [setup ladder](../demos/index.md#setup-ladder), from No setup at rung 0 to Open Forge's Full Core preset at rung 5. Spec in prompt, Code only and Plain docs are delivery variants that move, remove or unlink the documents. Overloaded docs and Full Core, scoped, with memory add project notes beside the spec.
 
-Each starting point measures its setups against a control: No setup for an idea and Organized docs for the others. [Setups](setups.mdx) defines every setup and how the runner builds it.
+Each starting point measures its scenarios against a control: No setup for an idea and Organized docs for the others. [Scenarios](scenarios.mdx) defines every scenario and how the runner builds it.
 
 ## Measures
 

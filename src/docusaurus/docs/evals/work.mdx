@@ -1,0 +1,76 @@
+---
+title: Work
+description: The Layer 4 task pool, the work packets made from it and the work modes that hand a packet over, with the terms the evals use and what each comparison answers.
+---
+
+# Work
+
+The evals hold a pool of tasks and the ways of doing them. A task is one change to the existing app. A work packet hands several tasks over together, and its work mode says how. Every task and packet runs on every [scenario](scenarios.mdx), the project contexts from Code only to Open Forge, so the comparisons can separate what the context changes from what the way of working changes.
+
+## Terms
+
+| Term | Meaning |
+| --- | --- |
+| Layer | How much the agent gets before it starts: an idea, a short brief, a full spec or an existing app. [Starting points](starting-points.mdx) describes each one. |
+| Task | One change request from the pool, with its own checks |
+| Work packet | Tasks handed over together, with all of their checks |
+| Work mode | How a packet is done |
+| Scenario | The project context the agent starts with |
+| Implementer | The model and its reasoning level, and in orchestrated work, its subagents' model |
+| Run | One task or packet, in one scenario and work mode, by one implementer |
+| Stage | Work, then checks, then judges, each run whenever you choose, as [Run](run.md#run-a-batch) describes |
+
+## Task pool
+
+B is a bug fix and F a feature. Each bug fix plants one bug in the working game, and its request describes the symptom in the player's words.
+
+| Task | Request | Spec scope |
+| --- | --- | --- |
+| [B1 Best score](starting-points.mdx#l4-b1-best-score) | A worse game replaces the best score | Gameplay |
+| [B2 Arrow keys](starting-points.mdx#l4-b2-arrow-keys) | The arrow keys stopped moving between cards | Controls |
+| [B3 Reduced motion](starting-points.mdx#l4-b3-reduced-motion) | Animations ignore reduced motion | Visuals |
+| [B4 Silence](starting-points.mdx#l4-b4-silence) | The game beeps on each pair | Sound |
+| [B5 Pasted saves](starting-points.mdx#l4-b5-pasted-saves) | Pasted saved games won't open | Sharing |
+| [F1 Name saves](starting-points.mdx#l4-f1-name-saves) | Name a game before saving it | Sharing |
+
+## Work packets
+
+| Packet | Tasks |
+| --- | --- |
+| [P1 Four bugs](starting-points.mdx#l4-p1-four-bugs) | B1, B2, B3 and B4 |
+| [P2 Name and pasted saves](starting-points.mdx#l4-p2-name-and-pasted-saves) | F1 and B5 |
+
+P1's request, starting code, solution, checks and answers are generated from its tasks, so they can never drift apart. P2 was built by hand before packets existed and isn't generated yet.
+
+## Work modes
+
+| Work mode | What the agent gets |
+| --- | --- |
+| Whole packet | One agent, one chat, every task in one request |
+| Task by task | A new agent per task, each starting from the previous task's result |
+| Orchestrated | One orchestrator for the packet, handing each task to a subagent |
+
+Task by task runs each task as a batch of its own, in order, and adds their tokens up for the packet. Orchestrated work runs Sol leading Sol subagents and Sol leading Luna subagents, and the orchestrator gets one registered line after the request that tells it to delegate each task. The Results page filters by work mode, and its Work packets table puts each scenario's work modes side by side.
+
+Earlier batches ran one task alone from a clean start. They show as One task.
+
+## What the comparisons answer
+
+- Scenarios within one work mode: what does the project context change?
+- Work modes within one scenario: what does handing a packet over whole, task by task or to an orchestrator cost, and does it change the result?
+- Implementers within orchestrated work: does a smaller subagent model save tokens?
+
+## Plans
+
+| Plan | Work mode | Runs |
+| --- | --- | --- |
+| `neon-pairs-p1-smoke.json` | Whole packet, Organized docs only, checked inline | 1 |
+| `neon-pairs-p1-whole-packet.json` | Whole packet | 7, one per scenario |
+| `neon-pairs-p1-task-by-task.json` | Task by task | 28, four tasks per scenario |
+| `neon-pairs-p1-orchestrated.json` | Orchestrated | 14, two orchestrators per scenario |
+
+Each cell runs once for now, so the numbers are a first read, not a measured difference. Small fixes like these reach nearly full coverage in every scenario, so the first differences show in tokens and time.
+
+## Layer 3
+
+Layer 3 fits the same work modes. The full build in one request is a whole packet, and the three milestones, a playable game, then visuals, then saving and sharing, are task by task.

@@ -37,7 +37,7 @@ The setup ladder is a scale for how much setup a project gives an agent, from no
 
 Rungs 3 to 5 are the Open Forge presets, and [Installation](../getting-started/installation.md#choose-the-installed-routes) describes what each one installs. You can place any project on the ladder. E.g. a repository whose README points to a `docs/` folder sits on rung 1.
 
-Two setups in the evals aren't rungs. Spec in prompt pastes a short brief into the prompt instead of the project, and Code only leaves the documents out of an existing app. These delivery variants test where the requirements live and what the documents add. [Setups](../evals/setups.mdx) defines all eight setups as the evals build them.
+Two setups in the evals aren't rungs. Spec in prompt pastes a short brief into the prompt instead of the project, and Code only leaves the documents out of an existing app. These delivery variants test where the requirements live and what the documents add. [Setups](../evals/scenarios.mdx) defines all eight setups as the evals build them.
 
 ## Results
 

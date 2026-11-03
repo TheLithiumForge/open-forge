@@ -43,7 +43,7 @@ export function resultColumns(batches: ReadonlyMap<string, Batch>, open: (item: 
     ],
   }));
   return [
-    helper.accessor((item): SortValue => item.cell.setup, { id: ColumnIds.setup, header: "Setup", filterFn: equalsChoice,
+    helper.accessor((item): SortValue => item.cell.setup, { id: ColumnIds.setup, header: "Scenario", filterFn: equalsChoice,
       sortingFn: (a, b) => setupRank(a.original.cell.setup) - setupRank(b.original.cell.setup),
       cell: (info) => <Term id={info.row.original.cell.setup} batch={batches.get(info.row.original.cell.batchId)}>{setupName(info.row.original.cell.setup)}</Term> }),
     helper.accessor((item): SortValue => startingPointText(item), { id: ColumnIds.startingPoint, header: "Starting point", filterFn: equalsChoice,

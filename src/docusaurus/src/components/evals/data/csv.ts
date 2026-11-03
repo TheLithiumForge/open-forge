@@ -24,7 +24,7 @@ export function toCsv(header: readonly string[], rows: readonly (readonly CsvVal
 
 /** The shown table rows with raw numbers: shares in percent, changes in points or percent. */
 export function resultsCsv(items: readonly Comparison[]): string {
-  const header = ["Starting point", "Case", "Setup", "Control", "Model", "Judge", "Batch", "CLI version", "Runs", "Checked runs", "Runs waiting on a recheck", "Judged runs",
+  const header = ["Starting point", "Task", "Scenario", "Control", "Model", "Judge", "Batch", "CLI version", "Runs", "Checked runs", "Runs waiting on a recheck", "Judged runs",
     ...CellMeasures.flatMap((spec) => [spec.title, `${spec.title} change, ${spec.changeKind === ChangeKind.points ? "points" : "percent"}`])];
   const rows = items.map((item) => [
     startingPointTitle(item.cell.startingPoint), caseLabel(item.cell), setupName(item.cell.setup), setupName(item.cell.control), item.cell.modelLabel, item.cell.judgeLabel,

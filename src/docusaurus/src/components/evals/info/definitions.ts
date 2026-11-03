@@ -31,7 +31,7 @@ import Tokens from "@site/docs/evals/_definitions/tokens.mdx";
 import Time from "@site/docs/evals/_definitions/time.mdx";
 
 /** The concept pages, whose heading anchors equal the definition ids. */
-export const ConceptPages = { setups: "/docs/evals/setups", startingPoints: "/docs/evals/starting-points", measures: "/docs/evals/measures" } as const;
+export const ConceptPages = { setups: "/docs/evals/scenarios", startingPoints: "/docs/evals/starting-points", measures: "/docs/evals/measures" } as const;
 
 export type DefinitionId = StartingPointId | CaseId | SetupId | MeasureId;
 export const DefinitionKind = { startingPoint: "startingPoint", setup: "setup", measure: "measure" } as const;

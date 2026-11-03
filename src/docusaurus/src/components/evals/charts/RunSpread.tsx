@@ -19,7 +19,7 @@ export function RunSpread({ cells }: { readonly cells: readonly Cell[] }) {
   return <div className="eval-spread">
     <h3>Every run</h3>
     <p>Each dot is one run, and the short line is the mean. Judge scores show one dot per run and judge. Time compares these setups fairly because they share one model.</p>
-    {cases.length < 2 ? null : <div className="eval-segmented" role="group" aria-label="Case">
+    {cases.length < 2 ? null : <div className="eval-segmented" role="group" aria-label="Task">
       {cases.map((cell) => <button key={cell.caseId} type="button" aria-pressed={cell.caseId === shown.caseId} onClick={() => choose(cell.caseId)}>{caseLabel(cell)}</button>)}
     </div>}
     <p className="eval-muted"><Term id={caseDefinition(shown)}>{caseLabel(shown)}</Term>, {shown.modelLabel}.</p>

@@ -31,7 +31,7 @@ function FileTypes({ rows }: { readonly rows: readonly ObjectiveRow[] }) {
   const rest = (row: ObjectiveRow) => Object.entries(row.measures.fileTypes).filter(([type]) => !types.includes(type)).reduce((sum, [, value]) => sum + value, 0);
   return <><h3>By file type</h3>
     <p>Mean input tokens per run from file content and search results, by file extension. Markdown is mostly spec documents and Open Forge files, and the rest is mostly code and tests.</p>
-    <Table label="Input tokens by file type" head={["Setup", ...types.map((type) => `.${type}`), "Other"]}>
+    <Table label="Input tokens by file type" head={["Scenario", ...types.map((type) => `.${type}`), "Other"]}>
       {rows.map((row) => <tr key={row.setup}><SetupCell row={row} />
         {types.map((type) => <td key={type}>{compact(row.measures.fileTypes[type] ?? 0)}{tokenDelta(row.measures.fileTypes[type] ?? 0, row.control === null ? null : row.control.fileTypes[type] ?? 0)}</td>)}
         <td>{compact(rest(row))}</td></tr>)}
@@ -41,7 +41,7 @@ function FileTypes({ rows }: { readonly rows: readonly ObjectiveRow[] }) {
 function ToolCalls({ rows }: { readonly rows: readonly ObjectiveRow[] }) {
   return <><h3>Tool calls by kind</h3>
     <p>Mean calls per run from the agent's own events, with the change from the control in brackets. A compound command counts once, as its most significant part: an edit, then a test or build run, a read, a search. Steps before the first edit show how long the agent read and planned.</p>
-    <Table label="Tool calls by kind" head={["Setup", ...ToolKinds.map((kind) => kind.title), "Failed", "Steps before the first edit", "Peak context"]}>
+    <Table label="Tool calls by kind" head={["Scenario", ...ToolKinds.map((kind) => kind.title), "Failed", "Steps before the first edit", "Peak context"]}>
       {rows.map((row) => <tr key={row.setup}><SetupCell row={row} />
         {ToolKinds.map((kind) => <td key={kind.key}>{decimal(row.measures.calls[kind.key])}{countDelta(row.measures.calls[kind.key], row.control?.calls[kind.key])}</td>)}
         <td>{decimal(row.measures.failed)}</td>

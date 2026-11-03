@@ -47,7 +47,7 @@ export function ResultsTable({ items, batches }: { readonly items: readonly Comp
       <div className="eval-filter eval-search"><label htmlFor={searchId}>Search</label>
         <input id={searchId} type="search" value={search} placeholder="Setup, model, judge or batch" onChange={(event) => setSearch(event.target.value)} /></div>
       <Choice label="Starting point" value={filterValue(ColumnIds.startingPoint)} values={points} onChange={setFilter(ColumnIds.startingPoint)} />
-      <Choice label="Setup" value={filterValue(ColumnIds.setup)} values={setups} onChange={setFilter(ColumnIds.setup)} />
+      <Choice label="Scenario" value={filterValue(ColumnIds.setup)} values={setups} onChange={setFilter(ColumnIds.setup)} />
       <button type="button" className="button button--sm button--secondary" onClick={() => save(CsvName, resultsCsv(rows.map((row) => row.original)), CsvType)}>Download CSV</button>
     </div>
     <p className="eval-muted" role="status">{rows.length} of {data.length} rows. The CSV holds the rows shown, in this order.</p>

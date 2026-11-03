@@ -37,7 +37,7 @@ export function ChartsSection({ summaries, items, filters }: {
   const narrowed = filters.model !== All && filters.startingPoint !== All;
   return <section className="eval-section" aria-labelledby="eval-charts">
     <h2 id="eval-charts">Charts</h2>
-    <p>Each chart starts from the same averages as the cards, for every setup. Each starting point has its own control: <Term id="no-setup" /> for an idea and <Term id="plain-docs" /> for the others. The control is the zero line.</p>
+    <p>Each chart starts from the same averages as the cards, for every scenario. Each starting point has its own control: <Term id="no-setup" /> for an idea and <Term id="plain-docs" /> for the others. The control is the zero line.</p>
     {coverage.length === 0 ? <p>No setup has a comparison with the control in these filters.</p> : <>
       <Legend />
       <div className="eval-charts">

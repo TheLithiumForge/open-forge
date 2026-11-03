@@ -50,10 +50,10 @@ npm run evals -- validate-case --all --plan src/evals/experiments/neon-pairs-l4-
 
 ## `chain-check`
 
-Before a chain milestone runs, build one child start per setup from its parent runs, grade it as it is in verifiers without models, and list every check whose result differs from the parent's.
+Before a later task of a task-by-task packet runs, build one child start per setup from the previous task's runs, grade it as it is in verifiers without models, and list every check whose result differs from the parent's.
 
 ```sh
-npm run evals -- chain-check --plan src/evals/experiments/neon-pairs-l4-2-m2.json --parent <batch>
+npm run evals -- chain-check --plan src/evals/experiments/neon-pairs-p1-task-by-task.json --case l4-b2-arrow-keys --parent <batch>
 ```
 
 ## `run`
@@ -153,9 +153,9 @@ npm run evals -- results add <batch>
 | `--implementers <preset>` | `run` | Replace the plan's implementers with claude, codex, both, codex-orchestrators |
 | `--judges <preset>` | `run`, `judge`, `reference` | Replace the judges with claude, codex, both |
 | `--user <preset>` | `run` | Replace the simulated user with claude, codex |
-| `--case <id>` | `run`, `validate-case` | Run or validate one Layer 4 case, so each case can run as its own process |
+| `--case <id>` | `run`, `validate-case`, `chain-check` | Run or validate one Layer 4 case, so each case can run as its own process, or name the task chain-check plants next in a task-by-task packet |
 | `--setups <ids>` | `run` | Run only these setups of the plan, comma-separated, in the plan's order. The plan's first setup is the control and must stay |
-| `--parent <batch>` | `run`, `chain-check` | Name the previous milestone's batch for a chain plan. Each run starts from the parent run with the same setup and repeat |
+| `--parent <batch>` | `run`, `chain-check` | Name the previous task's batch. Each run starts from the parent run with the same setup and repeat |
 | `--all` | `validate-case` | Validate every case of the plan |
 | `--layer <n>` | `reference` | Grade the reference against Layer 2 or 3 |
 | `--parallel <n>` | `run`, `resume` | How many runs go at once. The full plans run two, because every run spends the signed-in account's own model limits |

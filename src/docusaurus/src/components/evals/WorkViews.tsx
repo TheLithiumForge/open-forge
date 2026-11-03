@@ -9,16 +9,16 @@ import { Term } from "./info/Term.tsx";
 const ratio = (value: number | null, base: number | null) => value === null || base === null || base === 0 ? null : value / base;
 const difference = (value: number | null, base: number | null) => value === null || base === null ? null : value - base;
 
-/** Chained milestones beside the same task run alone, shown only when a chain exists. */
+/** Each task of a task-by-task packet beside the same task run alone, shown only when such a packet ran. */
 export function MilestoneSection({ items }: { readonly items: readonly Comparison[] }) {
   const rows = useMemo(() => milestoneRows(items), [items]);
   if (rows.length === 0) return null;
   return <section className="eval-section" aria-labelledby="eval-milestones">
-    <h2 id="eval-milestones">Milestones</h2>
-    <p>Each milestone of a chain starts from its own lineage's result, so earlier changes and records carry over. Its twin is the same task run on its own from the shared start, and the difference is the effect of what built up.</p>
-    <div className="eval-scroll" tabIndex={0} role="region" aria-label="Milestones">
+    <h2 id="eval-milestones">Task by task</h2>
+    <p>In task-by-task work, each task after the first starts from the previous task's result, so earlier changes and records carry over. Its twin is the same task run alone from a clean start, and the difference is the effect of what built up.</p>
+    <div className="eval-scroll" tabIndex={0} role="region" aria-label="Task by task">
       <table className="eval-table">
-        <thead><tr>{["Chain", "Milestone", "Task", "Setup", "Tokens", "Alone", "Token change", "Check coverage", "Coverage change"].map((title) => <th key={title} scope="col">{title}</th>)}</tr></thead>
+        <thead><tr>{["Packet", "Step", "Task", "Scenario", "Tokens", "Alone", "Token change", "Check coverage", "Coverage change"].map((title) => <th key={title} scope="col">{title}</th>)}</tr></thead>
         <tbody>{rows.map((row) => <tr key={`${row.chain}-${row.milestone}-${row.setup}`}>
           <th scope="row">{row.chain}</th><td>{row.milestone}</td><td>{row.caseId}</td><td><Term id={row.setup}>{row.name}</Term></td>
           <td>{compact(row.tokens)}</td><td>{compact(row.standaloneTokens)}</td><td>{change(ratio(row.tokens, row.standaloneTokens))}</td>

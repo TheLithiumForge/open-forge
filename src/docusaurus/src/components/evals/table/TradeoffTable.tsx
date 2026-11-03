@@ -27,7 +27,7 @@ function perStep(row: TradeoffRow, value: number | null): string {
 const perStepHeader = (id: string, title: string) => () => <><Term id={id}>{title}</Term> per {TokenStep}% more <Term id="tokens">tokens</Term></>;
 
 const Columns: ColumnDef<TradeoffRow, SortValue>[] = [
-  helper.accessor((row): SortValue => row.setup, { id: "setup", header: "Setup", sortingFn: (a, b) => setupRank(a.original.setup) - setupRank(b.original.setup),
+  helper.accessor((row): SortValue => row.setup, { id: "setup", header: "Scenario", sortingFn: (a, b) => setupRank(a.original.setup) - setupRank(b.original.setup),
     cell: (info) => <Term id={info.row.original.setup}>{info.row.original.name}</Term> }),
   helper.accessor((row): SortValue => known(row.tokenChange), { id: "tokens", header: () => <Term id="tokens" />, meta: { label: "tokens" }, sortUndefined: "last", cell: (info) => tokens(info.row.original) }),
   helper.accessor((row): SortValue => known(row.coverageChange), { id: "coverage", header: () => <Term id="check-coverage" />, meta: { label: "check coverage" }, sortUndefined: "last", cell: (info) => points(info.row.original.coverageChange) }),

@@ -1,6 +1,6 @@
 ---
 title: Starting points
-description: The four starting points the evals give an agent, from one short idea to an existing app, with the setups each one compares and how the simulated user answers.
+description: The four starting points the evals give an agent, from one short idea to an existing app, with the scenarios each one compares and how the simulated user answers.
 ---
 
 import Idea from "./_definitions/idea.mdx"
@@ -14,6 +14,7 @@ import BestScoreTask from "./_definitions/l4-b1-best-score.mdx"
 import ArrowKeysTask from "./_definitions/l4-b2-arrow-keys.mdx"
 import ReducedMotionTask from "./_definitions/l4-b3-reduced-motion.mdx"
 import SilenceTask from "./_definitions/l4-b4-silence.mdx"
+import FourBugsPacket from "./_definitions/l4-p1-four-bugs.mdx"
 
 # Starting points
 
@@ -39,53 +40,57 @@ Plan files and the CLI number the starting points as layers 1 to 4, in the order
 
 <ExistingApp />
 
-### Feature \{#l4-f1-name-saves}
+### F1 Name saves \{#l4-f1-name-saves}
 
 <FeatureCase />
 
-### Repair \{#l4-b5-pasted-saves}
+### B5 Pasted saves \{#l4-b5-pasted-saves}
 
 <RepairCase />
 
-### Feature and repair \{#l4-p2-name-and-pasted-saves}
+### P2 Name and pasted saves \{#l4-p2-name-and-pasted-saves}
 
 <CombinedCase />
 
-### Scoped tasks \{#scoped-tasks}
+### Bug fixes \{#scoped-tasks}
 
-Scoped tasks are small repairs to the existing app that each need one scope of the spec, the way most work on a real product does. They test the promise behind [Full Core, scoped](setups.mdx#full-core-scoped): an agent that reads only the scope a task needs should spend fewer tokens than one that loads the whole spec up front, and get the same result.
+B1 to B4 are small bug fixes to the existing app that each need one scope of the spec, the way most work on a real product does. They test the promise behind [Full Core, scoped](scenarios.mdx#full-core-scoped): an agent that reads only the scope a task needs should spend fewer tokens than one that loads the whole spec up front, and get the same result.
 
 Each task's checks are the full spec's own checks for the clauses it repairs. Every other full-spec check runs as a regression check, so a fix that breaks something else fails.
 
-#### Best score \{#l4-b1-best-score}
+#### B1 Best score \{#l4-b1-best-score}
 
 <BestScoreTask />
 
-#### Arrow keys \{#l4-b2-arrow-keys}
+#### B2 Arrow keys \{#l4-b2-arrow-keys}
 
 <ArrowKeysTask />
 
-#### Reduced motion \{#l4-b3-reduced-motion}
+#### B3 Reduced motion \{#l4-b3-reduced-motion}
 
 <ReducedMotionTask />
 
-#### Silence \{#l4-b4-silence}
+#### B4 Silence \{#l4-b4-silence}
 
 <SilenceTask />
 
-## Compared setups \{#compared-setups}
+#### P1 Four bugs \{#l4-p1-four-bugs}
 
-Each starting point compares its own setups. The first setup in each row is the control:
+<FourBugsPacket />
 
-| Starting point  | Layer | Setups compared                                                                                                                                     |
+## Compared scenarios \{#compared-setups}
+
+Each starting point compares its own scenarios. The first one in each row is the control:
+
+| Starting point  | Layer | Scenarios compared                                                                                                                                    |
 | --------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | An idea         | 1     | No setup, Minimal, Essentials, Full Core                                                                                                            |
 | A short brief   | 2     | Organized docs, Plain docs, Linked AGENTS.md, Minimal, Essentials, Full Core, Spec in prompt                                                        |
 | A full spec     | 3     | Organized docs, Plain docs, Linked AGENTS.md, Minimal, Essentials, Full Core, Full Core, scoped                                                     |
 | An existing app | 4     | Organized docs, Plain docs, Overloaded docs, Linked AGENTS.md, Minimal, Essentials, Full Core, Full Core, scoped, Full Core, scoped, with memory, Code only |
-| Scoped tasks    | 4     | Organized docs, Code only, Plain docs, Overloaded docs, Full Core, Full Core, scoped, Full Core, scoped, with memory                                |
+| P1 and B1 to B4 | 4     | Organized docs, Code only, Plain docs, Overloaded docs, Full Core, Full Core, scoped, Full Core, scoped, with memory                                |
 
-The full plans in `src/evals/experiments/` run each setup once for now, and each existing-app case counts as its own comparison. [Setups](setups.mdx) defines every setup.
+The full plans in `src/evals/experiments/` run each scenario once for now, and each task or packet counts as its own comparison. [Scenarios](scenarios.mdx) defines every scenario, and [Work](work.mdx) the tasks, packets and work modes.
 
 ## Simulated user
 

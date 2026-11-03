@@ -54,7 +54,7 @@ export function DeltaChart({ title, description, rows, format, tick, step }: {
   </ResponsiveContainer>;
   return <ChartFigure title={title} description={description} height={rows.length * RowHeight + AxisBand} plot={plot}
     data={<table>
-      <thead><tr><th scope="col">Setup</th><th scope="col">Change from the control</th></tr></thead>
+      <thead><tr><th scope="col">Scenario</th><th scope="col">Change from the control</th></tr></thead>
       <tbody>{rows.map((row) => <tr key={row.setup}><th scope="row"><Term id={row.setup}>{row.name}</Term></th><td>{row.value === null ? NoValue : format(row.value)}</td></tr>)}</tbody>
     </table>} />;
 }

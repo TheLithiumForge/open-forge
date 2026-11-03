@@ -43,7 +43,7 @@ export function ContextClassChart({ rows }: { readonly rows: readonly ObjectiveR
     title={<>Input <Term id="tokens">tokens</Term> by where they came from</>}
     description="Mean input tokens per run by class. Every request sends the whole context again, so a class costs its size times the requests that carry it. The split is estimated, and each run's classes add up to its exact input. In the data, each value shows its change from the control in brackets."
     data={<table>
-      <thead><tr><th scope="col">Setup</th>{present.map((item) => <th key={item.key} scope="col">{item.title}</th>)}</tr></thead>
+      <thead><tr><th scope="col">Scenario</th>{present.map((item) => <th key={item.key} scope="col">{item.title}</th>)}</tr></thead>
       <tbody>{rows.map((row) => <tr key={row.setup}>
         <th scope="row"><Term id={row.setup}>{row.name}</Term></th>
         {present.map((item) => <td key={item.key}>{cell(row, item)}</td>)}

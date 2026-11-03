@@ -49,7 +49,7 @@ export function TokenClassChart({ rows }: { readonly rows: readonly TokenClassRo
     title={<><Term id="tokens" /> by class</>}
     description={<>Mean tokens per run, with the total of the classes shown on the right. Compare setups within one starting point, since starting points differ in size. {TokenNote}</>}
     data={<table>
-      <thead><tr><th scope="col">Setup</th>{Classes.map((item) => <th key={item.key} scope="col">{item.title}</th>)}<th scope="col">Total</th></tr></thead>
+      <thead><tr><th scope="col">Scenario</th>{Classes.map((item) => <th key={item.key} scope="col">{item.title}</th>)}<th scope="col">Total</th></tr></thead>
       <tbody>{rows.map((row) => <tr key={row.setup}>
         <th scope="row"><Term id={row.setup}>{row.name}</Term></th>{Classes.map((item) => <td key={item.key}>{compact(row[item.key])}</td>)}<td>{compact(total(row))}</td>
       </tr>)}</tbody>

@@ -57,7 +57,7 @@ export function SpreadChart({ title, description, rows, format, domain }: {
   </ResponsiveContainer>;
   return <ChartFigure title={title} description={description} height={rows.length * RowHeight + AxisBand} plot={plot}
     data={<table>
-      <thead><tr><th scope="col">Setup</th><th scope="col">Runs</th><th scope="col">Mean</th></tr></thead>
+      <thead><tr><th scope="col">Scenario</th><th scope="col">Runs</th><th scope="col">Mean</th></tr></thead>
       <tbody>{rows.map((row) => <tr key={row.setup}>
         <th scope="row"><Term id={row.setup}>{row.name}</Term></th>
         <td>{row.values.length === 0 ? NoValue : row.values.map((value) => format(value)).join(", ")}</td><td>{format(row.mean)}</td>
