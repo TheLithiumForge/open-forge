@@ -3,7 +3,7 @@ import { MachineFlag, MachineHelp } from "./machine-options.ts";
 
 export const Command = { doctor: "doctor", images: "images", smoke: "smoke", qualify: "qualify", validateCase: "validate-case", chainCheck: "chain-check", run: "run", resume: "resume", progress: "progress", usage: "usage", analyze: "analyze", reference: "reference", summary: "summary", site: "site", check: "check", judge: "judge", results: "results", help: "help" } as const;
 export type Command = (typeof Command)[keyof typeof Command];
-export const Flag = { help: "--help", plan: "--plan", implementers: "--implementers", judges: "--judges", user: "--user", layer: "--layer", case: "--case", all: "--all", batch: "--batch", parallel: "--parallel", acceptHarness: "--accept-harness", port: "--port", noBrowser: "--no-browser", development: "--development", rebuild: "--rebuild", missing: "--missing", repository: "--repository", setups: "--setups", parent: "--parent" } as const;
+export const Flag = { imported: "--imported", help: "--help", plan: "--plan", implementers: "--implementers", judges: "--judges", user: "--user", layer: "--layer", case: "--case", all: "--all", batch: "--batch", parallel: "--parallel", acceptHarness: "--accept-harness", port: "--port", noBrowser: "--no-browser", development: "--development", rebuild: "--rebuild", missing: "--missing", repository: "--repository", setups: "--setups", parent: "--parent" } as const;
 export const ResultsAction = { add: "add", import: "import" } as const;
 export const CommandHelp = {
   reference: "Grade the tracked Neon Pairs reference without an agent. Defaults to --layer 3 --judges claude. Example: npm run evals -- reference --layer 3 --judges both",
@@ -69,6 +69,7 @@ export const FlagHelp: readonly FlagDoc[] = [
   { flag: Flag.rebuild, commands: [Command.check], effect: "Build the saved project again before checking it" },
   { flag: Flag.missing, commands: [Command.judge, Command.check, Command.analyze], effect: "Grade or analyze only runs without a usable result. For judge, that's a run without a judgment from that judge or one that ended in an error. For check, it's a run whose latest check graded nothing or ended a clause in an error. For analyze, it's a run without an analysis from the current analyzer or one that ended in an error" },
   { flag: `${Flag.batch} <id>`, commands: [Command.summary], effect: "The batch to summarize" },
+  { flag: Flag.imported, commands: [Command.results], effect: "Republish a batch that results import brought in. It was scrubbed when first published, so this machine's user name is neither scrubbed nor treated as a leak" },
   { flag: `${Flag.repository} <folder>`, commands: [Command.results, Command.site], effect: "The results repository to add to, src/evals/results by default, or a folder in its layout for site to show" },
   { flag: `${Flag.port} <n>`, commands: [Command.site], effect: "Serve the docs site on another port than 4320. Its data server takes the next port" },
   { flag: Flag.noBrowser, commands: [Command.site], effect: "Start the docs site without opening a browser" },

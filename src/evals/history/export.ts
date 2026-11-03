@@ -16,7 +16,10 @@ import { ResultFiles } from "../paths.ts";
 export const ExportFolders = { versions: "versions", batches: "batches" } as const;
 const finishedStatuses: readonly string[] = [RunStatus.done, RunStatus.failed, RunStatus.limited];
 
-export async function exportBatch(store: HistoryStore, batchId: string, destination: string, options: SanitizingOptions = {}): Promise<string> {
+/** A batch published before was scrubbed then, so its republication on another machine scrubs no machine user, such as a CI runner's generic name. */
+export interface ExportOptions extends SanitizingOptions { readonly scrubMachineUser?: boolean }
+
+export async function exportBatch(store: HistoryStore, batchId: string, destination: string, options: ExportOptions = {}): Promise<string> {
   const batch = await store.readBatch(batchId);
   if (batch.cliVersion === null) throw new Error("The batch needs a known CLI version before export.");
   const views = await store.readRuns(batch);
@@ -28,7 +31,7 @@ export async function exportBatch(store: HistoryStore, batchId: string, destinat
   if (existsSync(target)) throw new Error("An exported batch is immutable. Export a linked correction instead.");
   const files = await batchFiles(store, batch, views);
   // Scrub the whole pack together so a name found in one record is removed from every record.
-  const userNames = [process.env["USERNAME"], process.env["USER"]].filter((name): name is string => name !== undefined);
+  const userNames = options.scrubMachineUser === false ? [] : [process.env["USERNAME"], process.env["USER"]].filter((name): name is string => name !== undefined);
   const sanitized = sanitizeRecords(files, { userNames: [...userNames, ...options.userNames ?? []] });
   if (sanitized === null || typeof sanitized !== "object" || Array.isArray(sanitized)) throw new Error("Invalid export pack.");
   await mkdir(dirname(target), { recursive: true });

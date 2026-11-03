@@ -20,6 +20,8 @@ export interface AddResultsServices {
   readonly run: (script: string, args: readonly string[], cwd: string) => Promise<number>;
   readonly secrets?: () => Promise<readonly string[]>;
   readonly machine?: Machine;
+  /** The batch came from results import, so it was scrubbed when first published and this machine's user name is no secret. */
+  readonly imported?: boolean;
 }
 
 /** Every sign-in value this machine holds, so evidence can be checked for them without printing any. */
@@ -60,11 +62,12 @@ export async function addResults(store: HistoryStore, batchId: string, repositor
       : [join("assessments", artifact.assessmentId, artifact.path), store.assessmentEvidenceFolder(batch.id, artifact.assessmentId)];
     files.set(name, await readFile(join(folder, artifact.path)));
   }
-  const leaks = evidenceLeaks(files, await (services.secrets ?? signInSecrets)(), services.machine ?? { home: homedir(), user: userInfo().username });
+  const machine = services.machine ?? { home: homedir(), user: userInfo().username };
+  const leaks = evidenceLeaks(files, await (services.secrets ?? signInSecrets)(), services.imported === true ? { ...machine, user: "" } : machine);
   if (leaks.length > 0) throw new Error(`Evidence would publish private data, so nothing was added:\n${leaks.map((leak) => `${leak.kind}: ${leak.file}`).join("\n")}`);
   const scratch = await mkdtemp(join(tmpdir(), "eval-results-add-"));
   try {
-    const exported = await exportBatch(store, batchId, join(scratch, "records"));
+    const exported = await exportBatch(store, batchId, join(scratch, "records"), { scrubMachineUser: services.imported !== true });
     const evidence = join(scratch, "evidence");
     for (const [name, bytes] of files) {
       await mkdir(dirname(join(evidence, name)), { recursive: true });

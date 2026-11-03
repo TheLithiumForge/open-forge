@@ -164,6 +164,7 @@ npm run evals -- results add <batch>
 | `--rebuild` | `check` | Build the saved project again before checking it |
 | `--missing` | `judge`, `check`, `analyze` | Grade or analyze only runs without a usable result. For judge, that's a run without a judgment from that judge or one that ended in an error. For check, it's a run whose latest check graded nothing or ended a clause in an error. For analyze, it's a run without an analysis from the current analyzer or one that ended in an error |
 | `--batch <id>` | `summary` | The batch to summarize |
+| `--imported` | `results` | Republish a batch that results import brought in. It was scrubbed when first published, so this machine's user name is neither scrubbed nor treated as a leak |
 | `--repository <folder>` | `results`, `site` | The results repository to add to, src/evals/results by default, or a folder in its layout for site to show |
 | `--port <n>` | `site` | Serve the docs site on another port than 4320. Its data server takes the next port |
 | `--no-browser` | `site` | Start the docs site without opening a browser |

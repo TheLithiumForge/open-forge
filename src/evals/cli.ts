@@ -40,7 +40,7 @@ export interface CliServices {
   readonly resume?: typeof resumePlan;
   readonly site: (options: SiteOptions) => Promise<number>;
   readonly launch: typeof launchNode;
-  readonly results: (batch: string, repository: string) => Promise<string>;
+  readonly results: (batch: string, repository: string, imported?: boolean) => Promise<string>;
   /** Rebuilds a published batch folder in the run store, for grading it on another machine. */
   readonly importResults?: (folder: string) => Promise<string>;
   readonly validateCase: typeof validateCase;
@@ -54,7 +54,7 @@ export interface CliServices {
 const defaults: CliServices = {
   print: console.log, doctor: configuredDoctor, images: buildEvalImages, smoke: smokeAttempt, qualify: qualifySetups,
   plan: loadPlan, suite: loadSuite, run: runPlan, site: (options) => runSite(options, console.log), launch: (file, args) => { loadLocalEnv(); return launchNode(file, args); },
-  results: (batch, repository) => addResults(new HistoryStore(EvalPaths.runs), batch, repository, { run: (script, args, cwd) => launchNode(join(cwd, script), args, cwd) }),
+  results: (batch, repository, imported = false) => addResults(new HistoryStore(EvalPaths.runs), batch, repository, { run: (script, args, cwd) => launchNode(join(cwd, script), args, cwd), imported }),
   validateCase,
 };
 
@@ -232,9 +232,9 @@ export async function runCli(argv: readonly string[], services: CliServices = de
         return 0;
       }
       if (action !== ResultsAction.add || batch === undefined || batch.startsWith("--")) throw new Error(CommandHelp.results);
-      checkedArgs(args.slice(1), [], [Flag.repository], 1);
+      checkedArgs(args.slice(1), [Flag.imported], [Flag.repository], 1);
       const repository = args.includes(Flag.repository) ? resolve(option(args, Flag.repository)) : EvalPaths.resultsRepository;
-      services.print(`Added the batch at ${await services.results(batch, repository)}`);
+      services.print(`Added the batch at ${await services.results(batch, repository, args.includes(Flag.imported))}`);
       return 0;
     }
     case Command.help: return 0;

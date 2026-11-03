@@ -68,3 +68,20 @@ test("results add stops before staging when evidence would publish private data 
     assert.deepEqual(calls, []);
   } finally { await cleanup(); }
 });
+
+test("an imported batch is republished without treating this machine's user name as a leak, while its home path still stops it", async () => {
+  const { root, store, cleanup } = await temporaryHistory();
+  try {
+    const repository = join(root, "repository");
+    await mkdir(join(repository, "scripts"), { recursive: true });
+    await writeFile(join(repository, ResultsScripts.stage), "");
+    await mkdir(join(repository, "node_modules"));
+    const named = await finishedBatch(store, `Thanks, ${Machine.user}.`);
+    const calls: string[] = [];
+    const services = { run: async (script: string) => { calls.push(script); return 0; }, secrets: async () => [], machine: Machine, imported: true };
+    await addResults(store, named.id, repository, services);
+    assert.deepEqual(calls, [ResultsScripts.stage, ResultsScripts.validate]);
+    const pathed = await finishedBatch(store, `Read ${Machine.home}.`);
+    await assert.rejects(addResults(store, pathed.id, repository, services));
+  } finally { await cleanup(); }
+});
