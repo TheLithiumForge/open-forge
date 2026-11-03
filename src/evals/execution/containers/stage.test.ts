@@ -67,6 +67,18 @@ test("cleanup attempts the network even when container removal fails", async () 
   } finally { await fixture.dispose(); }
 });
 
+test("cleanup counts a container or network that's already gone as removed", async () => {
+  const fixture = await containerFixture();
+  const stage = new ContainerStage({ docker: fixture.client, timeoutMs: TimeoutMs });
+  try {
+    await stage.open(evalImageTag());
+    fixture.client.hook = async (args) => args[0] === "rm" ? { ...FakeResult, code: 1, stderr: "Error response from daemon: No such container: fixture" }
+      : args[0] === "network" && args[1] === "rm" ? { ...FakeResult, code: 1, stderr: "Error response from daemon: network fixture-net not found" } : undefined;
+    await stage.remove();
+    assert.ok(fixture.client.calls.some((call) => call.args[0] === "network" && call.args[1] === "rm"));
+  } finally { await fixture.dispose(); }
+});
+
 test("a stage that can't open reports that failure, not the cleanup failing after it", async () => {
   const fixture = await containerFixture();
   const stage = new ContainerStage({ docker: fixture.client, timeoutMs: TimeoutMs });

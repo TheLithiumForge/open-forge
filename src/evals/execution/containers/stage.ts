@@ -16,6 +16,8 @@ export interface StageOptions {
 export const StageLabel = "open-forge-evals";
 // A labelled network this old with no container belongs to a process that stopped without cleaning up.
 const LeftoverNetworkAge = "30m";
+// Docker's answer for a container or network that no longer exists.
+const AlreadyRemoved = /no such (container|network)|\bnot found\b/i;
 let leftoversSwept: Promise<unknown> | null = null;
 
 /** Docker's default address pools hold about thirty networks, so leftovers from killed processes block new stages. */
@@ -154,7 +156,12 @@ export class ContainerStage {
     // The container must leave its network before the network can be removed.
     const commands = [...(this.containerAttempted ? [["rm", "--force", this.name]] : []), ...(this.networkAttempted ? [["network", "rm", `${this.name}-net`]] : [])];
     for (const args of commands) {
-      try { requireDockerResult(await this.client.run(args, { timeoutMs: ContainerTimeouts.commandMs }), args); }
+      try {
+        const result = await this.client.run(args, { timeoutMs: ContainerTimeouts.commandMs });
+        // A container or network something else already removed is gone, which is what cleanup wants.
+        if (result.code !== 0 && !result.timedOut && AlreadyRemoved.test(result.stderr)) continue;
+        requireDockerResult(result, args);
+      }
       catch (error) { errors.push(error); }
     }
     if (errors.length > 0) throw new AggregateError(errors, `Container cleanup failed: ${errors.map((error) => error instanceof Error ? error.message : String(error)).join(" | ")}`);
