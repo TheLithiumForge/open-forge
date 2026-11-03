@@ -4,11 +4,12 @@ import { modelKey } from "./judges.ts";
 import { MatrixAgents, MatrixEffort, MatrixJudges, MatrixModels } from "./matrix.ts";
 
 export const PresetName = { claude: "claude", codex: "codex", both: "both", codexTeams: "codex-teams" } as const;
-/** Sol alone, Sol leading Sol subagents and Sol leading Luna subagents. The team is part of the implementer, so every scenario can run under each and results filter by it. */
+/** Sol alone, Sol leading Sol subagents and Sol leading Luna subagents, Sol at xhigh and Luna at max. The team is part of the implementer, so every scenario can run under each and results filter by it. */
 export const CodexTeams = [
   MatrixAgents[0],
-  { ...MatrixAgents[0], team: { model: MatrixModels.codex, effort: MatrixEffort.high } },
-  { ...MatrixAgents[0], team: { model: MatrixModels.codexUser, effort: MatrixEffort.high } },
+  { ...MatrixAgents[0], team: { model: MatrixModels.codex, effort: MatrixEffort.xhigh } },
+  // Luna always runs at max reasoning, as the maintainer asked.
+  { ...MatrixAgents[0], team: { model: MatrixModels.codexUser, effort: MatrixEffort.max } },
 ] as const satisfies readonly ModelChoice[];
 export const CustomPreset = "Custom";
 export const ImplementerPresets = {
@@ -19,7 +20,7 @@ export const JudgePresets = {
 } as const satisfies Readonly<Record<string, readonly JudgeChoice[]>>;
 export const UserPresets = {
   [PresetName.claude]: { tool: Tool.claude, model: MatrixModels.claudeUser, effort: MatrixEffort.medium },
-  [PresetName.codex]: { tool: Tool.codex, model: MatrixModels.codexUser, effort: MatrixEffort.low },
+  [PresetName.codex]: { tool: Tool.codex, model: MatrixModels.codexUser, effort: MatrixEffort.max },
 } as const satisfies Readonly<Record<string, ModelChoice>>;
 
 function named<T>(presets: Readonly<Record<string, T>>, name: string): T {

@@ -19,7 +19,7 @@ test("each named role uses the owned matrix models, efforts, ballots and order",
   assert.deepEqual(judgePreset(PresetName.both), MatrixJudges);
   assert.ok(judgePreset(PresetName.both).every((judge) => judge.repeats === MatrixBallots));
   assert.deepEqual(userPreset(PresetName.claude), { tool: Tool.claude, model: MatrixModels.claudeUser, effort: MatrixEffort.medium });
-  assert.deepEqual(userPreset(PresetName.codex), { tool: Tool.codex, model: MatrixModels.codexUser, effort: MatrixEffort.low });
+  assert.deepEqual(userPreset(PresetName.codex), { tool: Tool.codex, model: MatrixModels.codexUser, effort: MatrixEffort.max });
   for (const name of ["unknown", "toString"]) for (const read of [implementerPreset, judgePreset, userPreset]) assert.throws(() => read(name));
   assert.throws(() => userPreset(PresetName.both));
 });

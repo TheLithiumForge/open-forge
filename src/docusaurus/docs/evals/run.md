@@ -69,11 +69,11 @@ npm run evals -- run --plan src/evals/experiments/neon-pairs-l2-full.json --impl
 
 | Role | Flag | `claude` | `codex` | `both` |
 | --- | --- | --- | --- | --- |
-| Implementer | `--implementers` | Claude `opus`, high | Codex `gpt-6.1-sol`, high | Codex then Claude |
+| Implementer | `--implementers` | Claude `opus`, high | Codex `gpt-6.1-sol`, xhigh | Codex then Claude |
 | Judge | `--judges` | Claude `opus`, high | Codex `gpt-6.1-sol`, xhigh | Claude then Codex |
-| Simulated user | `--user` | Claude `sonnet`, medium | Codex `gpt-6-luna`, low | Unavailable |
+| Simulated user | `--user` | Claude `sonnet`, medium | Codex `gpt-6-luna`, max | Unavailable |
 
-`--implementers codex-teams` runs Sol alone, Sol leading Sol subagents and Sol leading Luna subagents, all at high effort. A team is part of the implementer, so its runs are planned, counted and filtered apart, as another model's are. A solo Codex run switches Codex's subagents off, and a team leader gets one level of them, one at a time, with a registered line after the request that tells it to delegate each task.
+`--implementers codex-teams` runs Sol alone, Sol leading Sol subagents and Sol leading Luna subagents, with Sol at xhigh and Luna at max, as the maintainer set them. A team is part of the implementer, so its runs are planned, counted and filtered apart, as another model's are. A solo Codex run switches Codex's subagents off, and a team leader gets one level of them, one at a time, with a registered line after the request that tells it to delegate each task.
 
 A plan with `"judging": "later"` finishes each run after its checks. Its judges stay in the batch, and `judge <batch> --missing` adds their judgments whenever you choose, without running any agent again.
 
