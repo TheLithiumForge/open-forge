@@ -2,7 +2,7 @@
 
 L4-R06 plants the four scoped repairs at once, for scenario L4-3, which compares one agent with an orchestrator that hands each task to a subagent.
 
-Status: waiting on product validation.
+Status: passes case validation.
 
 ## Case
 
