@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ContainerStage, StageLabel } from "./stage.ts";
+import { ContainerStage, DockerNetworkMessages, OverflowSubnets, StageLabel } from "./stage.ts";
 import { containerLimits, ContainerTimeouts, DefaultContainerLimits, StageKind } from "./settings.ts";
 import { evalImageTag } from "./docker-image.ts";
 import { assertStrictStage, containerFixture, FakeResult } from "./test-docker.ts";
@@ -99,6 +99,27 @@ test("stage networks carry the eval label, and leftover labelled networks are pr
     const network = (verb: string) => fixture.client.calls.filter((call) => call.args[0] === "network" && call.args[1] === verb);
     for (const call of network("create")) assert.deepEqual(call.args.slice(2, 4), ["--label", StageLabel]);
     assert.ok(network("prune").length <= 1);
+  } finally { await fixture.dispose(); }
+});
+
+test("once Docker's default pools are full, a stage network takes a free subnet from the overflow range", async () => {
+  const fixture = await containerFixture();
+  let taken = 0;
+  fixture.client.hook = async (args) => {
+    if (args[0] !== "network" || args[1] !== "create") return undefined;
+    if (!args.includes("--subnet")) return { ...FakeResult, code: 1, stderr: `Error response from daemon: ${DockerNetworkMessages.poolsExhausted}` };
+    taken += 1;
+    return taken === 1 ? { ...FakeResult, code: 1, stderr: `Error response from daemon: ${DockerNetworkMessages.subnetTaken}` } : undefined;
+  };
+  try {
+    const stage = new ContainerStage({ docker: fixture.client, timeoutMs: TimeoutMs });
+    await stage.open(evalImageTag());
+    await stage.remove();
+    const subnets = fixture.client.calls.filter((call) => call.args[0] === "network" && call.args[1] === "create").map((call) => call.args[call.args.indexOf("--subnet") + 1]);
+    assert.equal(subnets.length, 3);
+    const [, first, second] = subnets;
+    assert.ok(first?.startsWith(`${OverflowSubnets.prefix}.`) && second?.startsWith(`${OverflowSubnets.prefix}.`));
+    assert.notEqual(first, second);
   } finally { await fixture.dispose(); }
 });
 

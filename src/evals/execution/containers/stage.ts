@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 import type { ChildProcessWithoutNullStreams } from "node:child_process";
 import { docker, requireDockerResult, type Docker, type DockerOptions } from "./docker.ts";
 import { containerLimits, ContainerPaths, ContainerTimeouts, ContainerUsers, type ContainerLimits } from "./settings.ts";
@@ -19,6 +19,11 @@ const LeftoverNetworkAge = "30m";
 // Docker's answer for a container or network that no longer exists.
 const AlreadyRemoved = /no such (container|network)|\bnot found\b/i;
 let leftoversSwept: Promise<unknown> | null = null;
+
+// Docker's words when its default pools are full and when a requested subnet is already in use.
+export const DockerNetworkMessages = { poolsExhausted: "all predefined address pools have been fully subnetted", subnetTaken: "Pool overlaps with other one on this address space" } as const;
+// Past Docker's default pools, which hold about thirty networks, a stage takes a /24 from this private range.
+export const OverflowSubnets = { prefix: "10.213", count: 256 } as const;
 
 /** Docker's default address pools hold about thirty networks, so leftovers from killed processes block new stages. */
 function sweepLeftoverNetworks(client: Docker): Promise<unknown> {
@@ -64,7 +69,7 @@ export class ContainerStage {
     try {
       await sweepLeftoverNetworks(this.client);
       this.networkAttempted = true;
-      await this.required(["network", "create", "--label", StageLabel, `${this.name}-net`]);
+      await this.createNetwork();
       this.containerAttempted = true;
       await this.required(createArguments(this.name, image, limits));
       await this.required(["start", this.name]);
@@ -73,6 +78,22 @@ export class ContainerStage {
       await this.remove().catch(() => undefined);
       throw error;
     }
+  }
+
+  /** Creates the stage network in Docker's default pools, or in the overflow range once those are full, as many parallel runs fill them. */
+  private async createNetwork(): Promise<void> {
+    const create = async (subnet: readonly string[]) => {
+      const args = ["network", "create", "--label", StageLabel, ...subnet, `${this.name}-net`];
+      return { args, result: await this.client.run(args, this.commandOptions()) };
+    };
+    const first = await create([]);
+    if (first.result.code === 0 || !first.result.stderr.includes(DockerNetworkMessages.poolsExhausted)) { requireDockerResult(first.result, first.args); return; }
+    const start = randomInt(OverflowSubnets.count);
+    for (let step = 0; step < OverflowSubnets.count; step += 1) {
+      const attempt = await create(["--subnet", `${OverflowSubnets.prefix}.${(start + step) % OverflowSubnets.count}.0/24`]);
+      if (attempt.result.code === 0 || !attempt.result.stderr.includes(DockerNetworkMessages.subnetTaken)) { requireDockerResult(attempt.result, attempt.args); return; }
+    }
+    requireDockerResult(first.result, first.args);
   }
 
   private commandOptions(env?: Readonly<Record<string, string>>, input?: string): DockerOptions {
