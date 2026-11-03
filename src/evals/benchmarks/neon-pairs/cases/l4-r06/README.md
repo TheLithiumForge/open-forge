@@ -1,12 +1,12 @@
 # L4-R06 Fix Four Player Reports
 
-L4-R06 plants the four scoped repairs at once, for scenario L4-3, which compares one agent with an orchestrator that hands each task to a subagent.
+L4-R06 plants the four scoped repairs at once, for scenario L4-3, which compares Sol alone with Sol leading a team of subagents.
 
 Status: passes case validation.
 
 ## Case
 
-The seed is the four scoped tasks' seeds together: [Best score](../l4-r02/README.md), [Arrow keys](../l4-r03/README.md), [Reduced motion](../l4-r04/README.md) and [Silence](../l4-r05/README.md). They touch separate files, so they combine without overlap. The request lists the four symptoms and asks for them one at a time, with the project's tests run after each one. Both ways of working get the same request, and an orchestrated setup adds one registered line telling the orchestrator to delegate each task.
+The seed is the four scoped tasks' seeds together: [Best score](../l4-r02/README.md), [Arrow keys](../l4-r03/README.md), [Reduced motion](../l4-r04/README.md) and [Silence](../l4-r05/README.md). They touch separate files, so they combine without overlap. The request lists the four symptoms and asks for them one at a time, with the project's tests run after each one. Every implementer gets the same request, and a team's leader gets one registered line telling it to delegate each task.
 
 ## Checks
 

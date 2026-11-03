@@ -1,4 +1,3 @@
-import { WorkMode } from "../config/choices.ts";
 import { CaseTimeLimitMinutes, DocumentSetups, NeonPairsScopes } from "./delivery.ts";
 import { CodeOnlySetup, type BrownfieldCase } from "./brownfield-case.ts";
 import { brownfieldInputs, type BrownfieldInputs } from "./brownfield-inputs.ts";
@@ -9,9 +8,6 @@ import { SetupKind } from "./setup.ts";
 import type { Suite, SetupDefinition } from "../benchmarks/suite.types.ts";
 import { ChangeCheckFiles, readChangeChecks } from "../grading/brownfield/change-checks.ts";
 
-/** Setups where an orchestrator hands each task to a subagent, for scenario L4-3. */
-export const OrchestratedSetups = { plain: "plain-docs-orchestrated", fullCoreScoped: "full-core-scoped-orchestrated" } as const;
-
 export const BrownfieldSetups: Readonly<Record<string, SetupDefinition>> = {
   [DocumentSetups.plain]: { label: "Plain docs", commands: [], delivery: { kind: SetupKind.plain } },
   [DocumentSetups.linked]: { label: "Linked AGENTS.md", commands: [], delivery: { kind: SetupKind.linked } },
@@ -20,9 +16,6 @@ export const BrownfieldSetups: Readonly<Record<string, SetupDefinition>> = {
   [DocumentSetups.fullCore]: { label: "Full Core", commands: [], delivery: { kind: SetupKind.forge, preset: ForgePreset.fullCore } },
   [DocumentSetups.fullCoreScoped]: { label: "Full Core, scoped", commands: [], delivery: { kind: SetupKind.forge, preset: ForgePreset.fullCore, scopes: NeonPairsScopes } },
   [CodeOnlySetup]: { label: "Code only", commands: [], delivery: { kind: SetupKind.code } },
-  // The same files as their one-agent twins. Only the way of working differs, so the pair compares one agent with an orchestrator.
-  [OrchestratedSetups.plain]: { label: "Plain docs, orchestrated", commands: [], delivery: { kind: SetupKind.plain }, workMode: WorkMode.orchestrated },
-  [OrchestratedSetups.fullCoreScoped]: { label: "Full Core, scoped, orchestrated", commands: [], delivery: { kind: SetupKind.forge, preset: ForgePreset.fullCore, scopes: NeonPairsScopes }, workMode: WorkMode.orchestrated },
 };
 
 export function brownfieldSuite(inputs: BrownfieldInputs): Suite {

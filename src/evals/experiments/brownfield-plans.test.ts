@@ -7,7 +7,7 @@ import { FixtureConfig } from "../config/test-fixtures.ts";
 import { LayerFourCases, CodeOnlySetup, CombinedTaskCase, ScopedTaskCases } from "../materialize/brownfield-case.ts";
 import { DocumentSetups } from "../materialize/delivery.ts";
 import { Judging } from "../config/choices.ts";
-import { BrownfieldSetups, OrchestratedSetups } from "../materialize/brownfield.ts";
+import { BrownfieldSetups } from "../materialize/brownfield.ts";
 import { evalsRoot } from "../paths.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { runCli, type CliServices } from "../cli.ts";
@@ -19,7 +19,7 @@ test("Layer 4 plans list all cases and setups with frozen models and independent
   for (const variant of ["check", "full"]) {
     const plan = resolvePlan(JSON.parse(await readFile(join(evalsRoot, "experiments", `neon-pairs-l4-${variant}.json`), "utf8")), FixtureConfig);
     assert.deepEqual(plan.cases, [...LayerFourCases]);
-    assert.deepEqual(plan.setups, Object.keys(BrownfieldSetups).filter((id) => !Object.values<string>(OrchestratedSetups).includes(id)));
+    assert.deepEqual(plan.setups, Object.keys(BrownfieldSetups));
     assert.ok(plan.setups.includes(CodeOnlySetup));
     assert.equal(plan.runsPerSetup, variant === "check" ? 1 : 3);
     assert.deepEqual(plan.agents, ImplementerPresets[PresetName.claude]);

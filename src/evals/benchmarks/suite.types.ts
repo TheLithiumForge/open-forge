@@ -1,4 +1,3 @@
-import type { WorkMode } from "../config/choices.ts";
 import type { JudgedBy, RubricArea } from "./suite-values.ts";
 import type { DocumentDelivery } from "../materialize/delivery.ts";
 import type { BrownfieldInputs } from "../materialize/brownfield-inputs.ts";
@@ -21,8 +20,6 @@ export interface SetupDefinition {
   /** Open Forge CLI arguments, run in order in an empty project folder. */
   readonly commands: readonly (readonly string[])[];
   readonly delivery?: DocumentDelivery;
-  /** How the agent works. Absent means one agent, with Codex's subagents switched off. */
-  readonly workMode?: WorkMode;
 }
 
 export interface Suite {
