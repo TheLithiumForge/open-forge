@@ -225,3 +225,39 @@ B1 best-score and B4 silence finished grading the same evening, one run per scen
 | Full Core scoped with memory | 94% | 98% |
 
 The B4 Open Forge cells lost their points to the replay test timeouts that [eval-reference-test-audit.md](eval-reference-test-audit.md) describes, not to their fixes. The B1 scoped cell's check failed when Windows refused to remove a check slot folder (`EPERM` on `rmdir`), so its saved files wait for `check --missing`. The B1 memory cell's regressions look real: a card stops turning over, no win shows and the best score stays empty. The P1 smoke's agent fixed all four bugs in 290 seconds on a quiet machine, against about 25 minutes per single bug under the evening's load.
+
+## Full Sol run of 2026-11-04
+
+182 runs of GPT-6.1 Sol at xhigh, Sol alone, Sol leading Sol and Sol leading Luna at max, two runs per cell, all of Layer 4's packets and L3. Agents ran on the maintainer's PC from a runner pinned at 317c0a80b, 7 hours in all. Checks ran on GitHub's runners, one job per run. L3's judges ran on the maintainer's PC at Sol xhigh with 3 ballots per run. Layer 4 isn't judged. Bought on the API, the agents' tokens would cost about $245.
+
+| Work | Implementer | Coverage | Cost per task | Minutes per packet or build |
+| --- | --- | --- | --- | --- |
+| P1 whole packet | Sol | 99.9% | $0.19 | 16.9 |
+| P1 task by task | Sol | 99.9% | $0.57 | 61.7 |
+| P1 orchestrated | Sol leading Sol | 99.9% | $0.43 | 20.7 |
+| P1 orchestrated | Sol leading Luna | 99.7% | $0.29 | 21.3 |
+| P2 whole packet | Sol | 98.5% | $0.36 | 14.6 |
+| P2 orchestrated | Sol leading Sol | 98.7% | $0.82 | 14.9 |
+| P2 orchestrated | Sol leading Luna | 98.7% | $0.51 | 20.4 |
+| L3 | Sol | 92.5% | $1.04 | 28.1 |
+| L3 | Sol leading Sol | 93.4% | $3.87 | 44.1 |
+| L3 | Sol leading Luna | 89.9% | $3.32 | 74.9 |
+
+### What the run shows
+
+- Quality barely separates the scenarios. On L3 two runs of one cell differ by 2.4 points on average and up to 10.6, and by 25% in cost on average and up to 65%, which is as large as any difference between scenarios. With and without Open Forge, L3 coverage is 92.0% and 92.9% for Sol alone, 93.4% and 93.4% for Sol teams, and 89.4% and 90.3% for Luna teams.
+- Handing work over whole is cheapest and fastest. Task by task costs three times as much and takes 3.6 times as long for the same result. Subagents cost more than one agent at every size here, with no gain in coverage.
+- Tokens mislead across models. On L3 a Luna team used about 2.4 times the tokens of a Sol team and cost 14% less. Its Sol lead still takes about 85% of its cost. Its lead makes 191 requests, where Sol alone does the whole job in 46. What those requests do hasn't been read yet.
+- Judges don't separate runs yet. Scores take only three values, 54.5%, 59.1% and 63.6%. Three questions were unsure on all 126 ballots and a fourth on 120, because judges aren't shown tests, install records or a grayscale sheet, and the rest are nearly always yes.
+- Seven L3 clauses fail in 26 to 38 of 42 runs, led by zoom, hidden card drawing and compiler options. They fail about as often when graded locally, so they're real or over-precise, not CI's. Which of the two hasn't been reviewed.
+
+### What went wrong
+
+- GitHub's slower machines lost races with the page, so four L3 clauses failed in about 30 of 40 runs and passed locally with the same checker and code. Checks now let the page finish its queued work. Three runs graded on both machines then matched on all 104 clauses. L3's first grades were reverted. Layer 4 keeps the older checker's grades, since it scored about 100% and no clause differed by scenario in a way a race explains.
+- P2's check demands the label "Deal name", which only the docs state, so all 6 Code only runs fail 10 feature clauses for a working feature. P2 Code only's score is a grading artifact.
+- The task project's README tells agents to install a browser the image already has, so about half the Layer 4 runs download one, up to 678 MB, and their times aren't comparable.
+- Most runs report formatting failures in files they didn't touch, some edit those files out of scope, and a screenshot test times out under load in about 1 run in 6.
+- One L3 agent went silent after 15 minutes and held a slot until the 3-hour limit. No working agent went quiet for more than 2.6 minutes, so an idle watchdog at about 20 minutes would have freed it.
+- One run's record has no token totals because Codex sent no final turn event. Its transcript has them, and telemetry could read that.
+- Opening the Results page downloads 43 MB, mostly check evidence.
+- The reference hasn't been graded with the fixed checker.
