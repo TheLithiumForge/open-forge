@@ -10,6 +10,8 @@ import { setTimeout } from "node:timers/promises";
 export const CheckSlots = { count: 1, pollMs: 5_000, claimGraceMs: 60_000, maxAgeMs: 6 * 60 * 60_000 } as const;
 export const CheckSlotRoot = join(tmpdir(), "open-forge-evals-check-slots");
 const OwnerFile = "owner.json";
+// Windows refuses to remove a folder while another process reads its owner file, so removal retries briefly.
+const RemoveOptions = { recursive: true, force: true, maxRetries: 10, retryDelay: 200 } as const;
 
 interface Owner { readonly pid: number; readonly at: string }
 export interface CheckSlotOptions { readonly root: string; readonly count: number; readonly pollMs?: number }
@@ -37,7 +39,7 @@ async function claim(slot: string): Promise<boolean> {
   try { await mkdir(slot); }
   catch (error) {
     if (!(error instanceof Error && "code" in error && error.code === "EEXIST")) throw error;
-    if (await stale(slot).catch(() => false)) await rm(slot, { recursive: true, force: true });
+    if (await stale(slot).catch(() => false)) await rm(slot, RemoveOptions).catch(() => undefined);
     return false;
   }
   await writeFile(join(slot, OwnerFile), JSON.stringify({ pid: process.pid, at: new Date().toISOString() } satisfies Owner));
@@ -54,7 +56,8 @@ export async function withCheckSlot<T>(work: () => Promise<T>, options: CheckSlo
       const slot = join(root, `slot-${index}`);
       if (!await claim(slot)) continue;
       try { return await work(); }
-      finally { await rm(slot, { recursive: true, force: true }); }
+      // A slot that can't be removed yet must not turn a finished check into a failure.
+      finally { await rm(slot, RemoveOptions).catch(() => undefined); }
     }
     await setTimeout(options.pollMs ?? CheckSlots.pollMs);
   }

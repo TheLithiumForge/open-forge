@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { resolvePlan } from "../config/plans.ts";
 import { FixtureConfig } from "../config/test-fixtures.ts";
-import { Isolation } from "../config/choices.ts";
+import { Checking, Isolation, Judging } from "../config/choices.ts";
 import { ImplementerPresets, JudgePresets, UserPresets, PresetName } from "../config/presets.ts";
 import { loadSuite } from "../benchmarks/suite.ts";
 import { DocumentCase } from "../materialize/delivery.ts";
@@ -32,4 +32,17 @@ test("the saved check and full plans freeze their models, limits and complete ca
       if (index > 0) assert.equal(plan.limits.runMinutes, suite.runMinutes);
     }
   }
+});
+
+test("the Sol full-spec plan builds twice per scenario with Sol alone and leading Sol or Luna subagents, and leaves checks and judges for later", async () => {
+  const suite = await loadSuite(DocumentCase.three);
+  const plan = resolvePlan(JSON.parse(await readFile(join(evalsRoot, "experiments", "neon-pairs-l3-sol.json"), "utf8")), FixtureConfig);
+  assert.equal(plan.suite, suite.id);
+  assert.deepEqual(plan.setups, Object.keys(suite.setups).filter((setup) => setup !== "helpful"));
+  assert.equal(plan.runsPerSetup, 2);
+  assert.deepEqual(plan.agents, ImplementerPresets[PresetName.codexAll]);
+  assert.deepEqual(plan.simulatedUser, UserPresets[PresetName.codex]);
+  assert.equal(plan.judging, Judging.later);
+  assert.equal(plan.checking, Checking.later);
+  assert.equal(plan.limits.runMinutes, suite.runMinutes);
 });

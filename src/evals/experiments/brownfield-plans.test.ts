@@ -45,6 +45,7 @@ test("the product preflights every named case before installing any setup", asyn
   assert.deepEqual(qualified, cases);
 });
 
+const NamePastedPacket = LayerFourCases[2];
 const P1Scenarios = [DocumentSetups.organized, CodeOnlySetup, DocumentSetups.plain, OverloadSetups.docs, DocumentSetups.fullCore, DocumentSetups.fullCoreScoped, OverloadSetups.memory];
 const plan = async (name: string) => resolvePlan(JSON.parse(await readFile(join(evalsRoot, "experiments", `neon-pairs-${name}.json`), "utf8")), FixtureConfig);
 
@@ -57,7 +58,7 @@ test("P1 plans hand the four bug fixes over in each work mode, on every scenario
     assert.equal(resolved.cases, undefined);
     assert.deepEqual(resolved.setups, P1Scenarios);
     assert.ok(resolved.setups.every((setup) => setup in BrownfieldSetups));
-    assert.equal(resolved.runsPerSetup, 1);
+    assert.equal(resolved.runsPerSetup, 2);
     assert.deepEqual(resolved.agents, agents);
     assert.deepEqual(resolved.simulatedUser, UserPresets[PresetName.codex]);
     assert.equal(resolved.judging, Judging.later);
@@ -79,4 +80,15 @@ test("a packet plan matches its implementers to its work mode and names no cases
   assert.throws(() => resolvePlan({ ...whole, workMode: WorkMode.orchestrated }, FixtureConfig));
   assert.throws(() => resolvePlan({ ...whole, cases: [FourBugsPacket] }, FixtureConfig));
   assert.throws(() => resolvePlan({ ...whole, workMode: undefined }, FixtureConfig));
+});
+
+test("P2 plans hand the feature and its repair over whole or to an orchestrator, since B5's bug can't be planted on F1's result", async () => {
+  for (const [mode, agents] of [[WorkMode.wholePacket, ImplementerPresets[PresetName.codex]], [WorkMode.orchestrated, CodexOrchestrators]] as const) {
+    const resolved = await plan(`p2-${mode}`);
+    assert.equal(resolved.suite, NamePastedPacket);
+    assert.equal(resolved.workMode, mode);
+    assert.deepEqual(resolved.setups, P1Scenarios);
+    assert.deepEqual(resolved.agents, agents);
+    assert.equal(resolved.checking, Checking.later);
+  }
 });

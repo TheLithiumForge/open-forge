@@ -4,7 +4,7 @@
   "packet": "l4-p1-four-bugs",
   "workMode": "orchestrated",
   "setups": ["organized-docs", "code-only", "plain-docs", "overloaded-docs", "full-core", "full-core-scoped", "full-core-scoped-memory"],
-  "runsPerSetup": 1,
+  "runsPerSetup": 2,
   "parallelRuns": 7,
   "agents": "codex-orchestrators",
   "judges": "codex",
