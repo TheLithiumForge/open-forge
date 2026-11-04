@@ -10,6 +10,7 @@ on:
     branches: [main]
     paths:
       - "src/docusaurus/**"
+      - "src/evals/results"
       - "docs/cli.md"
       - "docs/extensions.md"
       - "docs/development.md"
@@ -17,6 +18,7 @@ on:
   pull_request:
     paths:
       - "src/docusaurus/**"
+      - "src/evals/results"
       - "docs/cli.md"
       - "docs/extensions.md"
       - "docs/development.md"
@@ -43,9 +45,11 @@ jobs:
       run:
         working-directory: src/docusaurus
     steps:
+      # The Evals pages build their copy of the published results from the results submodule.
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
+          submodules: true
       - uses: actions/setup-node@v7.0.0
         with:
           node-version: "24.19.0"

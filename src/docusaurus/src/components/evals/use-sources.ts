@@ -36,16 +36,18 @@ export function useSources(): Sources {
     finally { setBusy(null); }
   }
   const local = () => { if (port !== null) void load("Reading local runs", () => loadLocal(data, port)); };
-  // The site command opens this page with the local data server's port, so local runs show first.
-  useEffect(local, [port]);
+  const latest = () => void load("Fetching the latest published results", async () => {
+    const snapshot = await fetchLatest(data);
+    return { snapshot, source: commitSource(SourceKind.latest, "Latest published results", snapshot.commit) };
+  });
+  // The site command opens this page with the local data server's port, so local runs show first. Otherwise
+  // readers get the latest published results, and the copy from this site's build stays when the fetch fails.
+  useEffect(() => { if (port === null) latest(); else local(); }, [port]);
 
   return {
     shown, busy, error, port, local,
     published: () => { setError(null); setShown(initial); },
-    latest: () => void load("Fetching the latest published results", async () => {
-      const snapshot = await fetchLatest(data);
-      return { snapshot, source: commitSource(SourceKind.latest, "Latest published results", snapshot.commit) };
-    }),
+    latest,
     folder: (picked) => {
       const files = Array.from(picked);
       if (files.length === 0) return;

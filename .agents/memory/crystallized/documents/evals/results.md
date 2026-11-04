@@ -61,6 +61,7 @@ Publishing follows these steps:
 1. Add finished batches with `results add` and commit them in the results repository.
 2. The maintainer pushes the results repository and updates the submodule pin.
 3. CI validates schemas, references, evidence hashes and the catalogue.
+4. For a batch published with its checks left for later, the Grade published runs workflow checks it on GitHub's runners and self-hosted ones, from the Open Forge commit in `OPEN_FORGE_REF`, and opens one pull request with the grades. AI judges never run there, since those jobs build agent-written code. The [results repository council](../../../emerging/analysis/results-repository-council.md) records why.
 
 Each publication changes a remote repository and needs the maintainer's go. A failed validation keeps invalid records out of the site. The [proposal's publish flow](../../../emerging/analysis/eval-product-proposal.md#results-repository-and-site) defines these steps and permission.
 
@@ -68,7 +69,7 @@ Each publication changes a remote repository and needs the maintainer's go. A fa
 
 The Evals section lives in Open Forge's main documentation site under `src/docusaurus/`. The results repository is a data store with validation CI and no Pages deployment. The submodule pins the initial data copy read at build time.
 
-The Results page reads four sources through one validator: the copy pinned at build time, the latest published commit, local runs served by `npm run evals -- site` with running batches included, and a results folder picked on the reader's computer. It shows each batch's progress, compares every setup with the plan's first setup and links every run's evidence from the active source. Fetch latest results resolves the public results repository's current commit. It then reads `index.json` and records through raw GitHub URLs pinned to that commit. The site validates their schemas and references before replacing the displayed data. A failed fetch keeps the previous copy. Record text is plain data. Each view shows its data commit, copy or fetch time and analysis version. New records can be read without a CLI or docs release.
+The Results page reads four sources through one validator: the copy pinned at build time, the latest published commit, which it fetches on open unless the local site command opened it, local runs served by `npm run evals -- site` with running batches included, and a results folder picked on the reader's computer. It shows each batch's progress, compares every setup with the plan's first setup and links every run's evidence from the active source. Fetch latest results resolves the public results repository's current commit. It then reads `index.json` and records through raw GitHub URLs pinned to that commit. The site validates their schemas and references before replacing the displayed data. A failed fetch keeps the previous copy. Record text is plain data. Each view shows its data commit, copy or fetch time and analysis version. New records can be read without a CLI or docs release.
 
 The site provides layer overviews, setup tables for each implementer and judge pair, charts, attempt evidence, CLI history and the reference trend. Wilson and bootstrap intervals describe screening variation. Different grading versions stay apart. Missing values stay missing.
 
