@@ -3,16 +3,21 @@ import type { EvalConfig, JudgeChoice, ModelChoice } from "./config.types.ts";
 import { modelKey } from "./judges.ts";
 import { MatrixAgents, MatrixEffort, MatrixJudges, MatrixModels } from "./matrix.ts";
 
-export const PresetName = { claude: "claude", codex: "codex", both: "both", codexOrchestrators: "codex-orchestrators", codexAll: "codex-all" } as const;
+export const PresetName = { claude: "claude", codex: "codex", both: "both", codexOrchestrators: "codex-orchestrators", codexAll: "codex-all", codexSolo: "codex-solo" } as const;
 /** Sol leading Sol subagents and Sol leading Luna subagents, Sol at xhigh and Luna at max, for orchestrated work. The team is part of the implementer, so results filter by it. */
 export const CodexOrchestrators = [
   { ...MatrixAgents[0], team: { model: MatrixModels.codex, effort: MatrixEffort.xhigh } },
   // Luna always runs at max reasoning, as the maintainer asked.
   { ...MatrixAgents[0], team: { model: MatrixModels.codexUser, effort: MatrixEffort.max } },
 ] as const satisfies readonly ModelChoice[];
+/** Luna at max and Terra at xhigh, each working alone, so cheaper models can be read against Sol on the same work. */
+export const CodexSolo = [
+  { tool: Tool.codex, model: MatrixModels.codexUser, effort: MatrixEffort.max },
+  { tool: Tool.codex, model: MatrixModels.terra, effort: MatrixEffort.xhigh },
+] as const satisfies readonly ModelChoice[];
 export const CustomPreset = "Custom";
 export const ImplementerPresets = {
-  [PresetName.claude]: [MatrixAgents[1]], [PresetName.codex]: [MatrixAgents[0]], [PresetName.both]: MatrixAgents, [PresetName.codexOrchestrators]: CodexOrchestrators, [PresetName.codexAll]: [MatrixAgents[0], ...CodexOrchestrators],
+  [PresetName.claude]: [MatrixAgents[1]], [PresetName.codex]: [MatrixAgents[0]], [PresetName.both]: MatrixAgents, [PresetName.codexOrchestrators]: CodexOrchestrators, [PresetName.codexAll]: [MatrixAgents[0], ...CodexOrchestrators], [PresetName.codexSolo]: CodexSolo,
 } as const satisfies Readonly<Record<string, readonly ModelChoice[]>>;
 export const JudgePresets = {
   [PresetName.claude]: [MatrixJudges[0]], [PresetName.codex]: [MatrixJudges[1]], [PresetName.both]: MatrixJudges,

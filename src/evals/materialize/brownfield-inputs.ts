@@ -28,7 +28,8 @@ export async function brownfieldInputs(root: string, reference: string = Materia
   if (!files.some((file) => file.path === "package.json")) throw new Error("The reference has no package.json.");
   const seed = item.seedPatch === null ? files : applyPatch(files, await readFile(join(root, item.seedPatch), "utf8"));
   validateStartingFiles(seed);
-  const frozen = await readFrozenSpecs(specs);
+  const specsRoot = item.documents === undefined ? specs : join(root, item.documents);
+  const frozen = await readFrozenSpecs(specsRoot);
   const delta = item.specDelta === null ? [] : await inventory(join(root, item.specDelta));
   if (delta.some((file) => !frozen.manifest.files.some((original) => original.path === file.path))) throw new Error("A spec delta must replace named documents from the frozen pack.");
   const documents = frozen.documents.map((file) => {
@@ -47,5 +48,5 @@ export async function brownfieldInputs(root: string, reference: string = Materia
     if (!body) throw new Error("Missing brownfield product document.");
     return { ...file, sha256: sha256(body.bytes), sourceSha256: replacement ? sha256(replacement.bytes) : file.sourceSha256 };
   }) };
-  return { case: item, referenceRoot: reference, specsRoot: specs, reference: files, seed, specifications: { manifest, documents }, referenceDocuments: frozen.documents };
+  return { case: item, referenceRoot: reference, specsRoot, reference: files, seed, specifications: { manifest, documents }, referenceDocuments: frozen.documents };
 }

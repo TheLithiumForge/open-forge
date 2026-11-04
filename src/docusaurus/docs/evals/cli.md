@@ -58,7 +58,7 @@ npm run evals -- chain-check --plan src/evals/experiments/neon-pairs-p1-task-by-
 
 ## `run`
 
-Run a saved plan. --implementers: claude, codex, both, codex-orchestrators, codex-all. --judges: claude, codex, both. --user: claude, codex. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --setups runs some of the plan's setups, always with its control. --parent names the previous milestone's batch for a chain plan. --parallel caps how many runs go at once. Local isolation needs --development.
+Run a saved plan. --implementers: claude, codex, both, codex-orchestrators, codex-all, codex-solo. --judges: claude, codex, both. --user: claude, codex. Each replaces that role in the plan. --case runs one case of a Layer 4 plan, so each case can run as its own process. --setups runs some of the plan's setups, always with its control. --parent names the previous milestone's batch for a chain plan. --parallel caps how many runs go at once. Local isolation needs --development.
 
 ```sh
 npm run evals -- run --plan src/evals/experiments/neon-pairs-l1-check.json --implementers both --judges both --user claude
@@ -150,7 +150,7 @@ npm run evals -- results add <batch>
 | --- | --- | --- |
 | `--help` | Any command | Show the command's help and example without running it |
 | `--plan <file>` | `run`, `qualify`, `validate-case`, `chain-check` | The saved plan to run or check |
-| `--implementers <preset>` | `run` | Replace the plan's implementers with claude, codex, both, codex-orchestrators, codex-all |
+| `--implementers <preset>` | `run` | Replace the plan's implementers with claude, codex, both, codex-orchestrators, codex-all, codex-solo |
 | `--judges <preset>` | `run`, `judge`, `reference` | Replace the judges with claude, codex, both |
 | `--user <preset>` | `run` | Replace the simulated user with claude, codex |
 | `--case <id>` | `run`, `validate-case`, `chain-check` | Run or validate one Layer 4 case, so each case can run as its own process, or name the task chain-check plants next in a task-by-task packet |

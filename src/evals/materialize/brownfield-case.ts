@@ -8,6 +8,8 @@ export const ChangeType = { feature: "F", repair: "R", combined: "FR" } as const
 export type ChangeType = (typeof ChangeType)[keyof typeof ChangeType];
 export const BrownfieldFiles = { definition: "case.json", request: "request.md", delta: "spec-delta", seed: "seed.patch", solution: "solution.patch", alternative: "alt-solution.patch", checks: "checks", answers: "answers.json", validation: "validation.json" } as const;
 export const LayerFourCases = ["l4-f1-name-saves", "l4-b5-pasted-saves", "l4-p2-name-and-pasted-saves"] as const;
+/** F2 tests documents at scale, so it brings its own pack and is validated apart from the cases that share the specs. */
+export const DocumentScaleCase = "l4-f2-tournament";
 /** Small repairs that each need one scope of the spec: Gameplay, Controls and input, Visuals and Sound. */
 export const BugTasks = ["l4-b1-best-score", "l4-b2-arrow-keys", "l4-b3-reduced-motion", "l4-b4-silence"] as const;
 /** The four scoped tasks planted at once, for comparing one agent with an orchestrator. */
@@ -20,6 +22,10 @@ export interface BrownfieldCase {
   readonly supersedes: readonly string[]; readonly diffScope: readonly string[]; readonly inputs: readonly FileHash[];
   /** The agent's time limit, when a case needs more than the default. */
   readonly runMinutes?: number;
+  /** The case's own frozen document pack, in place of the shared specs and any delta, for a project whose docs are the test. */
+  readonly documents?: string;
+  /** The scope layout that places the pack's documents in folders. */
+  readonly scopes?: string;
 }
 
 function text(value: unknown): string {
@@ -47,13 +53,17 @@ export async function readBrownfieldCase(root: string, expectedId?: string): Pro
     return path(key, fallback);
   };
   const request = path("request", BrownfieldFiles.request), answersPath = path("answers", BrownfieldFiles.answers);
-  const specDelta = optional("specDelta", BrownfieldFiles.delta, changeType !== ChangeType.repair);
-  const seedPatch = optional("seedPatch", BrownfieldFiles.seed, changeType !== ChangeType.feature);
+  const documents = json["documents"] === undefined ? undefined : safeRelative(text(json["documents"]));
+  const scopes = json["scopes"] === undefined ? undefined : safeRelative(text(json["scopes"]));
+  if (scopes !== undefined && documents === undefined) throw new Error("A case's scopes place its own document pack.");
+  // A pack replaces the shared docs, and its case starts from a seed that removes what would distract from them.
+  const specDelta = optional("specDelta", BrownfieldFiles.delta, changeType !== ChangeType.repair && documents === undefined);
+  const seedPatch = optional("seedPatch", BrownfieldFiles.seed, changeType !== ChangeType.feature || documents !== undefined);
   const solutionPatch = path("solutionPatch", BrownfieldFiles.solution), checks = path("checks", BrownfieldFiles.checks);
   const alternative = [...solutionPatch.split("/").slice(0, -1), BrownfieldFiles.alternative].join("/");
   const altSolutionPatch = files.some((file) => file.path === alternative) ? alternative : null;
-  for (const name of [request, answersPath, seedPatch, solutionPatch].filter((name) => name !== null)) if (!files.some((file) => file.path === name)) throw new Error(`Missing brownfield input: ${name}`);
-  for (const name of [checks, specDelta].filter((name) => name !== null)) if (!files.some((file) => file.path.startsWith(`${name}/`))) throw new Error(`Missing brownfield input folder: ${name}`);
+  for (const name of [request, answersPath, seedPatch, solutionPatch, scopes ?? null].filter((name) => name !== null)) if (!files.some((file) => file.path === name)) throw new Error(`Missing brownfield input: ${name}`);
+  for (const name of [checks, specDelta, documents ?? null].filter((name) => name !== null)) if (!files.some((file) => file.path.startsWith(`${name}/`))) throw new Error(`Missing brownfield input folder: ${name}`);
   const bank: unknown = JSON.parse(await readFile(join(root, answersPath), "utf8"));
   if (!Array.isArray(bank)) throw new Error("Invalid brownfield answer bank.");
   const answers = bank.map((entry: unknown): IntentItem => {
@@ -67,7 +77,7 @@ export async function readBrownfieldCase(root: string, expectedId?: string): Pro
   const runMinutes = json["runMinutes"];
   if (runMinutes !== undefined && (typeof runMinutes !== "number" || !Number.isInteger(runMinutes) || runMinutes < 1)) throw new Error("A case's runMinutes must be a whole number of minutes.");
   return { id, changeType, root, title: text(json["title"]), request: (await readFile(join(root, request), "utf8")).trim(), specDelta, seedPatch, solutionPatch, altSolutionPatch, checks, answers, supersedes, diffScope,
-    inputs: hashesWithoutValidation(files, checks), ...(runMinutes === undefined ? {} : { runMinutes }) };
+    inputs: hashesWithoutValidation(files, checks), ...(runMinutes === undefined ? {} : { runMinutes }), ...(documents === undefined ? {} : { documents }), ...(scopes === undefined ? {} : { scopes }) };
 }
 
 export function hashesWithoutValidation(files: readonly FileBytes[], checks: string): FileHash[] {

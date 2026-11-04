@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "layer": 3,
+  "case": "l3-full-spec",
+  "setups": ["organized-docs", "plain-docs", "full-core-scoped"],
+  "runsPerSetup": 3,
+  "parallelRuns": 10,
+  "agents": "codex-solo",
+  "judges": "codex",
+  "judging": "later",
+  "checking": "later",
+  "simulatedUser": "codex",
+  "isolation": "docker",
+  "limits": {"questionRounds": 3, "runMinutes": 240, "checkMinutes": 90}
+}

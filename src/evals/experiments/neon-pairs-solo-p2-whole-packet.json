@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "layer": 4,
+  "packet": "l4-p2-name-and-pasted-saves",
+  "workMode": "whole-packet",
+  "setups": ["organized-docs", "code-only", "plain-docs", "full-core-scoped"],
+  "runsPerSetup": 3,
+  "parallelRuns": 10,
+  "agents": "codex-solo",
+  "judges": "codex",
+  "judging": "later",
+  "checking": "later",
+  "simulatedUser": "codex",
+  "isolation": "docker",
+  "limits": {"questionRounds": 3, "runMinutes": 120, "checkMinutes": 90}
+}

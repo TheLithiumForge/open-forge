@@ -77,8 +77,8 @@ export function frozenBody(manifest: Pick<SetupManifest, "scopes">, path: string
 }
 
 /** The scope entrypoints a scoped setup adds, relative to docs. */
-export function scopeEntrypoints(manifest: Pick<SetupManifest, "scopes">): string[] {
-  return manifest.scopes?.scopes.map(scopeEntrypoint) ?? [];
+export function scopeEntrypoints(manifest: Pick<SetupManifest, "scopes" | "kind">): string[] {
+  return manifest.kind === SetupKind.forge ? manifest.scopes?.scopes.map(scopeEntrypoint) ?? [] : [];
 }
 
 export function projectReadme(manifest: SpecsManifest): string {
@@ -120,7 +120,7 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   const frozen = options.frozen ?? await readFrozenSpecs(specs);
   if (kind === SetupKind.inline && frozen.manifest.fixture !== LayerTwoFixture) throw new Error("Spec in prompt is available only for the frozen Layer 2 player pack.");
   const layout = options.scopes;
-  if (layout !== undefined && kind !== SetupKind.forge) throw new Error("Only Open Forge setups route the spec by scope.");
+  if (layout !== undefined && kind !== SetupKind.forge && (kind !== SetupKind.plain || options.links === false)) throw new Error("Only Open Forge and linked plain setups place the spec in scope folders.");
   if (options.links === false && kind !== SetupKind.plain) throw new Error("Only plain document setups drop the links between documents.");
   const placed = layout === undefined ? {} : { scopes: layout };
   const target = await emptyDestination(destination, [specs, MaterializePaths.source]);
@@ -140,7 +140,7 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   if (layout !== undefined) {
     validateLinks(documentFiles.map((file) => ({ path: scopedPath(layout, file.path), bytes: relink(layout, file.path, file.bytes) })));
     // Index gives a new entrypoint a placeholder description for its author to replace, so each scope's real one goes in first.
-    for (const scope of layout.scopes) await writeNew(target, `${SetupFiles.docs}/${scopeEntrypoint(scope)}`, entrypointText(scope));
+    if (kind === SetupKind.forge) for (const scope of layout.scopes) await writeNew(target, `${SetupFiles.docs}/${scopeEntrypoint(scope)}`, entrypointText(scope));
   }
   const readme = startingReadme(options.projectFiles, kind === SetupKind.code ? null : AcceptanceLine)
     ?? (kind === SetupKind.inline ? InlineReadme : projectReadme(frozen.manifest));

@@ -1,7 +1,7 @@
 import { Tool } from "./choices.ts";
 import type { JudgeChoice, ModelChoice } from "./config.types.ts";
 
-export const MatrixModels = { codex: "gpt-6.1-sol", claude: "opus", claudeUser: "sonnet", codexUser: "gpt-6-luna" } as const;
+export const MatrixModels = { codex: "gpt-6.1-sol", claude: "opus", claudeUser: "sonnet", codexUser: "gpt-6-luna", terra: "gpt-6.1-terra" } as const;
 export const MatrixEffort = { max: "max", xhigh: "xhigh", high: "high", medium: "medium", low: "low" } as const;
 export const MatrixBallots = 3;
 export const MatrixAgents = [

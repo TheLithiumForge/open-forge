@@ -1,3 +1,5 @@
+import { join, relative } from "node:path";
+import { evalsRoot } from "../paths.ts";
 import { CaseTimeLimitMinutes, DocumentSetups, NeonPairsOverload, NeonPairsScopes, OverloadSetups } from "./delivery.ts";
 import { CodeOnlySetup, type BrownfieldCase } from "./brownfield-case.ts";
 import { brownfieldInputs, type BrownfieldInputs } from "./brownfield-inputs.ts";
@@ -22,9 +24,22 @@ export const BrownfieldSetups: Readonly<Record<string, SetupDefinition>> = {
   [OverloadSetups.memory]: { label: "Full Core, scoped, with memory", commands: [], delivery: { kind: SetupKind.forge, preset: ForgePreset.fullCore, scopes: NeonPairsScopes, overload: NeonPairsOverload } },
 };
 
+/**
+ * The setups of one case. A case with its own scopes puts Organized docs in the same folders as Open Forge, as a careful
+ * team would with that many documents, so the framework's routing is all that separates them.
+ */
+function caseSetups(item: BrownfieldCase): Readonly<Record<string, SetupDefinition>> {
+  if (item.scopes === undefined) return BrownfieldSetups;
+  const scopes = relative(evalsRoot, join(item.root, item.scopes)).replaceAll("\\", "/");
+  return { ...BrownfieldSetups,
+    [DocumentSetups.organized]: { label: "Organized docs", commands: [], delivery: { kind: SetupKind.plain, scopes } },
+    [DocumentSetups.fullCoreScoped]: { label: "Full Core, scoped", commands: [], delivery: { kind: SetupKind.forge, preset: ForgePreset.fullCore, scopes } } };
+}
+
 export function brownfieldSuite(inputs: BrownfieldInputs): Suite {
   const item: BrownfieldCase = inputs.case;
-  return { id: item.id, title: item.title, project: "neon-pairs", baseline: DocumentSetups.organized, setups: BrownfieldSetups,
+  const setups = caseSetups(item);
+  return { id: item.id, title: item.title, project: "neon-pairs", baseline: DocumentSetups.organized, setups,
     prompt: item.request, intent: item.answers, rubric: [], intentEdited: false, runMinutes: item.runMinutes ?? CaseTimeLimitMinutes,
     documents: orderedDocuments(inputs.specifications.manifest, inputs.specifications.documents).map((file) => file.bytes.toString()),
     fingerprint: sha256(JSON.stringify({ inputs: item.inputs, seed: inputs.seed.map((file) => ({ path: file.path, sha256: sha256(file.bytes) })), specs: inputs.specifications.manifest })),
