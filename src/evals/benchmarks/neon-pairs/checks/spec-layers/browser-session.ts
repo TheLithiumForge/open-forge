@@ -11,6 +11,7 @@ import { allowedRequest } from "./delivery-request.ts";
 export const Labels = { size: "Grid size", fresh: "New Game", restart: "Restart", reproduce: "Reproduce a game", code: "Board code", loadBoard: "Load board", snapshot: "Snapshot JSON", export: "Export snapshot", loadSnapshot: "Load snapshot", resume: "Resume" } as const;
 export interface Session { readonly page: Page; readonly context: BrowserContext; readonly errors: string[]; readonly requests: string[]; readonly origin: string; close(): Promise<void> }
 export const FractionalClockKey = "__evalFractionalMilliseconds";
+export const SettleTasks = 4;
 export interface SessionOptions { readonly file?: boolean; readonly width?: number; readonly height?: number; readonly deviceScaleFactor?: number; readonly blockedStorage?: boolean; readonly fractionalClock?: boolean }
 
 export async function session(browser: Browser, html: string, options: SessionOptions = {}): Promise<Session> {
@@ -65,7 +66,26 @@ export async function session(browser: Browser, html: string, options: SessionOp
   } catch (error) { await context.close(); server.close(); throw error; }
 }
 
+/** Runs in the page: passes tasks through the message-channel queue, one after another. */
+export async function drainTasks(tasks: number): Promise<void> {
+  for (let task = 0; task < tasks; task++) {
+    await new Promise<void>((done) => {
+      const channel = new MessageChannel();
+      channel.port1.onmessage = () => { channel.port1.close(); done(); };
+      channel.port2.postMessage(null);
+    });
+  }
+}
+
+/**
+ * Waits for the work an action queued in the page. React schedules effects and later renders on message-channel tasks,
+ * which the paused clock leaves running, so tasks through the same queue finish after them. Without this a slower
+ * machine reads the page before the app has answered, and a correct game fails.
+ */
+export async function settled(page: Page): Promise<void> { await page.evaluate(drainTasks, SettleTasks); }
+
 export async function names(page: Page): Promise<string[]> {
+  await settled(page);
   const count = await markCards(page);
   const result: string[] = [];
   for (let index = 0; index < count; index++) result.push(cardName(await card(page, index).ariaSnapshot()) ?? "");
@@ -75,6 +95,7 @@ export async function click(page: Page, index: number): Promise<void> {
   // A player can click aria-disabled cards while the game ignores the activation.
   await card(page, index).click({ force: true });
   await page.mouse.move(0, 0);
+  await settled(page);
 }
 export async function step(page: Page, ms: number): Promise<void> { await page.clock.runFor(ms); }
 export async function moveFocus(page: Page, target: number, size: number): Promise<void> {
@@ -89,9 +110,9 @@ export async function changeSize(page: Page, size: number): Promise<void> {
   const option = select.locator("option").filter({ hasText: new RegExp(`^${size}\\s*[x×]\\s*${size}$`) });
   const value = await option.getAttribute("value");
   if (value === null) throw new BehaviorFailure(`No ${size} by ${size} option.`);
-  await select.selectOption(value); await markCards(page);
+  await select.selectOption(value); await settled(page); await markCards(page);
 }
-export async function reset(page: Page, fresh = false): Promise<void> { await page.getByRole("button", { name: fresh ? Labels.fresh : Labels.restart, exact: true }).click(); await markCards(page); }
+export async function reset(page: Page, fresh = false): Promise<void> { await page.getByRole("button", { name: fresh ? Labels.fresh : Labels.restart, exact: true }).click(); await settled(page); await markCards(page); }
 export async function hidden(page: Page, value: boolean): Promise<void> {
   await page.evaluate((isHidden) => {
     Object.defineProperty(document, "hidden", { configurable: true, get: () => isHidden });
@@ -124,7 +145,7 @@ export async function solve(page: Page, deck: readonly string[]): Promise<void> 
     }
   }
 }
-export async function body(page: Page): Promise<string> { return page.locator("body").innerText(); }
+export async function body(page: Page): Promise<string> { await settled(page); return page.locator("body").innerText(); }
 export function metric(text: string, label: "moves" | "pairs" | "time" | "best"): number | null {
   if (label === "time") { const milliseconds = elapsedIn(text); return milliseconds === null ? null : milliseconds / 1000; }
   const prefixes = { moves: "(?<!best[ \\t])moves", pairs: "(?:matched[ \\t]+)?pairs", time: "(?:active[ \\t]+)?(?:time|elapsed)", best: "best(?:[ \\t]+moves)?" };
