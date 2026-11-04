@@ -3,12 +3,12 @@ import { MachineFlag, MachineHelp } from "./machine-options.ts";
 
 export const Command = { doctor: "doctor", images: "images", smoke: "smoke", qualify: "qualify", validateCase: "validate-case", chainCheck: "chain-check", run: "run", resume: "resume", progress: "progress", usage: "usage", analyze: "analyze", reference: "reference", summary: "summary", site: "site", check: "check", judge: "judge", results: "results", help: "help" } as const;
 export type Command = (typeof Command)[keyof typeof Command];
-export const Flag = { ref: "--ref", imported: "--imported", help: "--help", plan: "--plan", implementers: "--implementers", judges: "--judges", user: "--user", layer: "--layer", case: "--case", all: "--all", batch: "--batch", parallel: "--parallel", acceptHarness: "--accept-harness", port: "--port", noBrowser: "--no-browser", development: "--development", rebuild: "--rebuild", missing: "--missing", repository: "--repository", setups: "--setups", parent: "--parent" } as const;
+export const Flag = { tag: "--tag", ref: "--ref", imported: "--imported", help: "--help", plan: "--plan", implementers: "--implementers", judges: "--judges", user: "--user", layer: "--layer", case: "--case", all: "--all", batch: "--batch", parallel: "--parallel", acceptHarness: "--accept-harness", port: "--port", noBrowser: "--no-browser", development: "--development", rebuild: "--rebuild", missing: "--missing", repository: "--repository", setups: "--setups", parent: "--parent" } as const;
 export const ResultsAction = { add: "add", import: "import", grade: "grade" } as const;
 export const CommandHelp = {
   reference: "Grade the tracked Neon Pairs reference without an agent. Defaults to --layer 3 --judges claude. Example: npm run evals -- reference --layer 3 --judges both",
   doctor: "Check Docker, Node, pinned tools, sign-ins and image digests. Example: npm run evals -- doctor",
-  images: "Build the three images from locked digests. Example: npm run evals -- images",
+  images: "Build the three images from locked digests, or only the kinds named: agent, verifier or assessor. --tag prints each image's local name instead of building it. Example: npm run evals -- images verifier",
   smoke: "Run a mock implementation run through every stage and saved records, without Docker or models. Example: npm run evals -- smoke",
   qualify: "Check fresh setup files and the pinned Open Forge version without models. Example: npm run evals -- qualify --plan src/evals/experiments/neon-pairs-l1.json",
   [Command.validateCase]: "Validate a Layer 4 starting project and solution in verifiers without models. Examples: npm run evals -- validate-case --case l4-f1-name-saves | npm run evals -- validate-case --all --plan src/evals/experiments/neon-pairs-l4-check.json",
@@ -69,6 +69,7 @@ export const FlagHelp: readonly FlagDoc[] = [
   { flag: Flag.rebuild, commands: [Command.check], effect: "Build the saved project again before checking it" },
   { flag: Flag.missing, commands: [Command.judge, Command.check, Command.analyze], effect: "Grade or analyze only runs without a usable result. For judge, that's a run without a judgment from that judge or one that ended in an error. For check, it's a run whose latest check graded nothing or ended a clause in an error. For analyze, it's a run without an analysis from the current analyzer or one that ended in an error" },
   { flag: `${Flag.batch} <id>`, commands: [Command.summary], effect: "The batch to summarize" },
+  { flag: Flag.tag, commands: [Command.images], effect: "Print each named image's local name instead of building it, so a pulled image can be tagged for the checks" },
   { flag: `${Flag.ref} <commit>`, commands: [Command.results], effect: "The Open Forge commit whose graders results grade runs, HEAD by default. It must be pushed, since the workflow checks it out from GitHub" },
   { flag: Flag.imported, commands: [Command.results], effect: "Republish a batch that results import brought in. It was scrubbed when first published, so this machine's user name is neither scrubbed nor treated as a leak" },
   { flag: `${Flag.repository} <folder>`, commands: [Command.results, Command.site], effect: "The results repository to add to, src/evals/results by default, or a folder in its layout for site to show" },

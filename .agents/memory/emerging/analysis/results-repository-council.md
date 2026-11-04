@@ -25,7 +25,7 @@ All three chose the same shape: keep the results repository a data store, with r
 ## Pipeline
 
 1. `npm run evals -- results add <batch>` publishes a batch whose checks were left for later, and the maintainer pushes it.
-2. `npm run evals -- results grade` starts the Grade published runs workflow from the Open Forge repository with the graders of its pushed commit. The workflow finds the waiting batches, gives each a runner from `GRADE_RUNNERS` in turn, imports it, runs `check --missing` and republishes it with `--imported`.
+2. `npm run evals -- results grade` starts the Grade published runs workflow from the Open Forge repository with the graders of its pushed commit. The workflow builds the verifier image once or pulls it from GitHub's container registry, then checks each waiting run in its own job on GitHub's Ubuntu runners, up to 20 at a time, and republishes its batch with `--imported`.
 3. A publish job copies only the expected grades under append-only rules, validates and pushes them to `main`.
 4. The Evals pages show the grades on their next open.
 
@@ -44,6 +44,6 @@ Made on 2026-11-04 in the results repository's `ed099c1` and the main repository
 
 - Push the results repository before the main repository, since the main one pins results commits that aren't public yet.
 - In the results repository settings, turn the old Pages site off, and let GitHub Actions push to `main` if it's protected.
-- Keep self-hosted runners out of pull request workflows, wipe their Docker state between jobs and limit their runner group to this repository.
+- The maintainer chose GitHub's runners over the self-hosted ones on 2026-11-04, since public repositories run 20 jobs at a time for free. Make the verifier package public after its first push.
 - Grading runs one at a time, so two runs never push grades for the same batch.
 - Watch repository size. One batch of 12 runs took about 17 MB. Before it nears 1 GB, move screenshots to release assets referenced by hash, and add a summary file so the pages make fewer requests.

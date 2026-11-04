@@ -31,11 +31,12 @@ export async function dockerAvailable(client: Docker = docker): Promise<boolean>
   return info.code === 0 && !info.timedOut;
 }
 
-export async function buildEvalImages(client: Docker = docker, ensure = false, lock?: unknown): Promise<void> {
+/** Builds the eval images, or only the kinds named, such as the verifier a CI check needs. */
+export async function buildEvalImages(client: Docker = docker, ensure = false, lock?: unknown, kinds: readonly ImageKind[] = Object.values(StageKind)): Promise<void> {
   // Validate the complete lock before Docker can build any image.
   const locked = lockedImageArguments(lock);
   const tools = [`CLAUDE_VERSION=${ImageVersions.claude}`, `CODEX_VERSION=${ImageVersions.codex}`, `OPEN_FORGE_VERSION=${ImageVersions.openForge}`];
-  for (const kind of Object.values(StageKind)) {
+  for (const kind of kinds) {
     const tag = evalImageTag(kind);
     if (ensure) {
       const inspected = await client.run(["image", "inspect", tag], { timeoutMs: ContainerTimeouts.commandMs });

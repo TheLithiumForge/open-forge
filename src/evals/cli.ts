@@ -12,7 +12,8 @@ import { CliScripts, launchNode } from "./config/launch.ts";
 import { runSite, SiteDefaults, type SiteOptions } from "./site/site.ts";
 import { loadLocalEnv } from "./config/auth.ts";
 import { loadSuite } from "./benchmarks/suite.ts";
-import { buildEvalImages } from "./execution/containers/docker-image.ts";
+import { buildEvalImages, evalImageTag } from "./execution/containers/docker-image.ts";
+import { StageKind, type StageKind as ImageKind } from "./execution/containers/settings.ts";
 import { HistoryStore } from "./history/store.ts";
 import { addResults } from "./history/results-add.ts";
 import { importResults } from "./history/results-import.ts";
@@ -32,7 +33,7 @@ import { DiagnosticEnabled, DiagnosticEnvironment } from "./benchmarks/neon-pair
 export interface CliServices {
   readonly print: (text: string) => void;
   readonly doctor: typeof configuredDoctor;
-  readonly images: () => Promise<void>;
+  readonly images: (kinds: readonly ImageKind[]) => Promise<void>;
   readonly smoke: typeof smokeAttempt;
   readonly qualify: typeof qualifySetups;
   readonly plan: typeof loadPlan;
@@ -55,7 +56,7 @@ export interface CliServices {
   readonly reference?: typeof runReference;
 }
 const defaults: CliServices = {
-  print: console.log, doctor: configuredDoctor, images: buildEvalImages, smoke: smokeAttempt, qualify: qualifySetups,
+  print: console.log, doctor: configuredDoctor, images: (kinds) => buildEvalImages(undefined, false, undefined, kinds), smoke: smokeAttempt, qualify: qualifySetups,
   plan: loadPlan, suite: loadSuite, run: runPlan, site: (options) => runSite(options, console.log), launch: (file, args) => { loadLocalEnv(); return launchNode(file, args); },
   results: (batch, repository, imported = false) => addResults(new HistoryStore(EvalPaths.runs), batch, repository, { run: (script, args, cwd) => launchNode(join(cwd, script), args, cwd), imported }),
   validateCase,
@@ -100,6 +101,13 @@ function planParent<T extends { readonly chain?: ChainConfig }>(config: T, paren
   return { ...config, chain: { ...config.chain, parentBatchId: parent } };
 }
 
+/** The image kinds named, or every kind when none is. */
+function imageKinds(names: readonly string[]): ImageKind[] {
+  const kinds: readonly string[] = Object.values(StageKind);
+  for (const name of names) if (!kinds.includes(name)) throw new Error(`Name image kinds from ${kinds.join(", ")}.`);
+  return names.length === 0 ? Object.values(StageKind) : names as ImageKind[];
+}
+
 /** A later task of a task-by-task packet, as the chain step that the task's batch runs. */
 async function packetStep(config: EvalConfig, task: string): Promise<EvalConfig> {
   const packet = await readPacket(join(EvalPaths.suites, config.suite));
@@ -132,7 +140,15 @@ export async function runCli(argv: readonly string[], services: CliServices = de
       for (const check of checks) services.print(`${check.passed ? "pass" : "fail"} ${check.name}: ${check.detail}`);
       return checks.every((check) => check.passed) ? 0 : 1;
     }
-    case Command.images: checkedArgs(args, [], [], 0); await services.images(); return 0;
+    case Command.images: {
+      const names = args.filter((arg) => !arg.startsWith("--"));
+      checkedArgs(args, [Flag.tag], [], names.length);
+      const kinds = imageKinds(names);
+      // A CI job that pulls a published image retags it to the name the checks expect.
+      if (args.includes(Flag.tag)) for (const kind of kinds) services.print(evalImageTag(kind));
+      else await services.images(kinds);
+      return 0;
+    }
     case Command.smoke: checkedArgs(args, [], [], 0); services.print(`Smoke passed. ${JSON.stringify(await services.smoke())}`); return 0;
     case Command.progress: {
       if (args.some((arg) => arg.startsWith("--"))) throw new Error(CommandHelp.progress);

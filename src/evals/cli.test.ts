@@ -7,6 +7,8 @@ import { RunStatus } from "./history/statuses.ts";
 import { ImplementerPresets, JudgePresets, UserPresets, PresetName } from "./config/presets.ts";
 import type { EvalConfig } from "./config/config.types.ts";
 import { referenceOptions, ReferenceLayer } from "./config/reference.ts";
+import { evalImageTag } from "./execution/containers/docker-image.ts";
+import { StageKind } from "./execution/containers/settings.ts";
 
 function fakeServices() {
   const calls: string[] = [], output: string[] = [];
@@ -183,4 +185,17 @@ test("chain-check grades the plan's children from the named parent batch and pri
   assert.deepEqual(checked, [parent]);
   assert.equal(fake.output.length, 3);
   await assert.rejects(runCli([Command.chainCheck, Flag.plan, "fixture.json"], services));
+});
+
+test("images builds only the kinds named, and --tag prints their local names without building", async () => {
+  const built: (readonly string[])[] = [];
+  const fake = fakeServices();
+  const services = { ...fake.services, images: async (kinds: readonly string[]) => { built.push(kinds); } };
+  assert.equal(await runCli([Command.images, StageKind.verifier], services), 0);
+  assert.equal(await runCli([Command.images], services), 0);
+  assert.deepEqual(built, [[StageKind.verifier], Object.values(StageKind)]);
+  assert.equal(await runCli([Command.images, StageKind.verifier, Flag.tag], services), 0);
+  assert.equal(fake.output.at(-1), evalImageTag(StageKind.verifier));
+  assert.equal(built.length, 2);
+  await assert.rejects(runCli([Command.images, `${StageKind.verifier}-unknown`], services));
 });
